@@ -1,0 +1,65 @@
+import os
+import sys
+import glob
+import imp
+import inspect
+
+#This dynamically loads a module and return it in a variable
+def __import__(name, globals=None, locals=None, fromlist=None):
+  # Fast path: see if the module has already been imported.
+  try:
+      return sys.modules[name]
+  except KeyError:
+      pass
+
+  # If any of the following calls raises an exception,
+  # there's a problem we can't handle -- let the caller handle it.
+
+  fp, pathname, description = imp.find_module(name)
+
+  try:
+      return imp.load_module(name, fp, pathname, description)
+  finally:
+      # Since we may exit via an exception, close fp explicitly.
+      if fp:
+          fp.close()
+  pass
+pass
+
+#Find the directory containing 3ML
+threeML_dir                   = os.path.abspath(os.path.dirname(__file__))
+
+#Import all modules
+sys.path.insert(0,threeML_dir)
+mods                          = [ os.path.basename(f)[:-3] for f in glob.glob(os.path.join(threeML_dir,"*.py"))]
+#Filter out __init__
+modsToImport                  = filter(lambda x:x!="__init__.py",mods)
+#Import everything
+for mod in modsToImport:
+  exec("from %s import *" %(mod))
+
+
+plugins_dir                   = os.path.join(os.path.dirname(__file__),"plugins")
+sys.path.insert(1,plugins_dir)
+plugins                       = glob.glob(os.path.join(plugins_dir,"*.py"))
+msgs                          = []
+for plug in plugins:
+  thisPlugin                  = __import__(os.path.basename(plug.split(".")[0]))
+  #Get the classes within this module
+  classes                     = inspect.getmembers(thisPlugin,lambda x:inspect.isclass(x) and inspect.getmodule(x)==thisPlugin)
+  for name,cls in classes:
+    if(not issubclass(cls,likePrototype)):
+      #This is not a plugin
+      pass
+    else:
+      string                  = "%s for %s" %(cls.__name__,thisPlugin.__instrument_name)
+      msgs.append("* %-60s available" %(string))
+      #import it again in the uppermost namespace
+      exec("from %s import %s" %(os.path.basename(thisPlugin.__name__),cls.__name__))
+    pass
+  pass
+pass
+
+def getAvailablePlugins():
+  print("Plugins:\n")
+  print("\n".join(msgs))
