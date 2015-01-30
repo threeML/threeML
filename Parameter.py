@@ -53,7 +53,7 @@ class Parameter(object):
   pass
   
   def setValue(self,value):
-    self.value                = value
+    self.value                = float(value)
     for c in self.callback:
       c()
   pass

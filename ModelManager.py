@@ -163,7 +163,7 @@ class ModelManager(object):
     elif(kind.lower()=="nufnu"):
       x                       = [self.energies]
       keVtoErg                = 1.60217657e-9
-      y                       = [self.values*numpy.power(numpy.array(self.energies)*keVtoErg,2)]
+      y                       = [self.values*numpy.power(numpy.array(self.energies),2)*keVtoErg]
       xerr                    = [[]]
       yerr                    = [[]]
       labels                  = ['']

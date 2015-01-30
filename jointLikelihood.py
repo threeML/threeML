@@ -1,4 +1,3 @@
-import likePrototype
 import minimization
 import ROOT
 import collections
@@ -51,15 +50,14 @@ class JointLikelihood(object):
   pass
   
   def _buildGlobalLikelihoodFunctions(self):
+    self.ncalls                   = 0
     
     #Global likelihood function, profiling out nuisance parameters
     def minusLogLikeProfile(args):
-      
+      self.ncalls                += 1
       #Assign the new values to the parameters
-      values                  = []
       for i,parname in enumerate(self.freeParameters.keys()):
         self.modelManager[parname].setValue(args[i])
-        values.append(args[i])
       pass
       
       valuesString                = self.modelManager.printParamValues(False)      
@@ -80,7 +78,7 @@ class JointLikelihood(object):
         return 1e6
       
       if(self.verbose):
-        print("Trying with parameters %s, resulting in logL = %s" %(valuesString),globalLogLike)
+        print("Trying with parameters %s, resulting in logL = %s" %(valuesString,globalLogLike))
       
       return globalLogLike*(-1)
     pass
@@ -279,26 +277,26 @@ class JointLikelihood(object):
   
   def fit(self,minos=False,normOnly=False):
     
-    #Fit the normalizations of the spectral model first, otherwise, if they are too far off, they will
-    #prevent the minimizer to find a solution
-    self.freeParameters       = self.modelManager.getFreeNormalizationParameters()
-    if(len(self.freeParameters.values())>0):
-      minimizer               = self.Minimizer(self.minusLogLikeProfile,self.freeParameters)
-      xs,xserr,logLmin        = minimizer.minimize(False,False)
-    pass
-    
-    if(normOnly):
-      self.freeParameters       = self.modelManager.getFreeParameters()
-      return self.modelManager.getFreeNormalizationParameters(),logLmin
-    
-    import pdb;pdb.set_trace()
-    
-    #Now, assuming that we have a decent normalization, constrain it to remain within 1/100th and 100 times
-    #the current value (it improves A LOT the convergence speed, especially with MINUIT)
-    for k,v in self.freeParameters.iteritems():
-      value                   = v.value
-      v.setBounds(value/100.0,value*100.0)
-      v.setDelta(value/10.0)
+    if(1==0):
+      #Fit the normalizations of the spectral model first, otherwise, if they are too far off, they will
+      #prevent the minimizer to find a solution
+      self.freeParameters       = self.modelManager.getFreeNormalizationParameters()
+      if(len(self.freeParameters.values())>0):
+        minimizer               = self.Minimizer(self.minusLogLikeProfile,self.freeParameters)
+        xs,xserr,logLmin        = minimizer.minimize(False,False)
+      pass
+      
+      if(normOnly):
+        self.freeParameters       = self.modelManager.getFreeParameters()
+        return self.modelManager.getFreeNormalizationParameters(),logLmin
+     
+      #Now, assuming that we have a decent normalization, constrain it to remain within 1/100th and 100 times
+      #the current value (it improves A LOT the convergence speed, especially with MINUIT)
+      for k,v in self.freeParameters.iteritems():
+        value		      = v.value
+        v.setBounds(value/100.0,value*100.0)
+        v.setDelta(value/10.0)
+      pass
     pass
     
     #Now perform the real fit
@@ -327,7 +325,7 @@ class JointLikelihood(object):
     
     #Print and store results for future use
     print("\nValues for the parameters at the minimum are:")
-    for i,(k,v) in enumerate(self.freeParameters.iteritems()):
+    for i,(k,v) in enumerate(self.modelManager.getFreeParameters().iteritems()):
       if(v.isNuisance()):
         msg                   = "(nuisance)"
       else:
@@ -336,7 +334,10 @@ class JointLikelihood(object):
       
       print("%-50s = %6.3g %s" %(k,v.value,msg))
       self.bestFitValues[k]   = v.value
-      self.approxErrors[k]    = xserr[i]
+      if(v.isNuisance()):
+        self.approxErrors[k]  = 0
+      else:
+        self.approxErrors[k]    = xserr[i]
     pass
     self.logLmin              = logLmin
     

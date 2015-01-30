@@ -1,4 +1,5 @@
 import UnbinnedAnalysis
+import BinnedAnalysis
 import pyLikelihood as pyLike
 import os
 import shutil
@@ -9,17 +10,18 @@ from threeML.Parameter import Parameter
 
 __instrument_name = "Fermi LAT (standard classes)"
 
-class FermiLATUnbinnedLike(likePrototype):
-  def __init__(self,name,eventFile,ft2File,exposureMap,livetimeCube,xmlModel,irf):
+class FermiLATLike(likePrototype):
+  def __init__(self, name, ft2File, irf, livetimeCube, xmlModel, kind,*args):
+
     self.name                 = name
-    self.eventFile            = eventFile
-    self.ft2File              = ft2File
-    self.exposureMap          = exposureMap
+    
+    self.ft2File              = ft2File   
+    self.irf                  = irf
     self.livetimeCube         = livetimeCube
     
-    #Compute the total number of observed counts
-    data                      = pyfits.getdata(self.eventFile,"EVENTS")
-    self.Ncounts              = data.shape[0]
+    #Make a copy of the xml model file and use that (it will be modified)
+    self.xmlModel             = "__jointLikexml.xml"
+    shutil.copyfile(xmlModel,self.xmlModel)
     
     #This is the limit on the effective area correction factor,
     #which is a multiplicative factor in front of the whole model
@@ -31,25 +33,35 @@ class FermiLATUnbinnedLike(likePrototype):
     
     self.effCorrLimit         = 0.1
     
-    #Make a copy of the xml model file and use that (it will be modified)
-    self.xmlModel             = "__jointLikexml.xml"
-    shutil.copyfile(xmlModel,self.xmlModel)
-    
-    self.irf                  = irf
-    
-    #Read the files and generate the pyLikelihood object
-    self.obs                  = UnbinnedAnalysis.UnbinnedObs(self.eventFile,
+    if(kind.upper()=='UNBINNED'):
+      eventFile, exposureMap  = args
+      self.eventFile          = eventFile
+      self.exposureMap          = exposureMap
+      #Read the files and generate the pyLikelihood object
+      self.obs                  = UnbinnedAnalysis.UnbinnedObs(self.eventFile,
                                              self.ft2File,
                                              expMap=self.exposureMap,
                                              expCube=self.livetimeCube,
                                              irfs=self.irf)
     
-    ##The following is quite slow (a couple of seconds)
-    self.like                 = UnbinnedAnalysis.UnbinnedAnalysis(self.obs,
+      ##The following is quite slow (a couple of seconds)
+      self.like                 = UnbinnedAnalysis.UnbinnedAnalysis(self.obs,
                                              self.xmlModel,
-                                             optimizer='MINUIT')
-    
-    
+                                             optimizer='NEWMINUIT')
+    elif(kind.upper()=="BINNED"):
+       sourceMaps,binnedExpoMap  = args
+       self.sourceMaps           = sourceMaps
+       self.binnedExpoMap        = binnedExpoMap
+       
+       self.obs                  = BinnedAnalysis.BinnedObs(srcMaps=self.sourceMaps,
+                                 	     expCube=self.livetimeCube,
+                                 	     binnedExpMap=self.binnedExpoMap,
+                                 	     irfs=self.irf)
+       self.like                 = BinnedAnalysis.BinnedAnalysis(self.obs,
+                                             self.xmlModel,
+					     optimizer='NEWMINUIT')
+    else:
+      raise ValueError("FermiLATLike: 'kind' must be either BINNED or UNBINNED")
   pass
     
   def setModel(self,ModelManagerInstance):

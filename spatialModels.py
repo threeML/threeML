@@ -37,4 +37,11 @@ class PointSource(SpatialModel):
     self.parameters['RA']     = Parameter('RA',ra,0.0,360.0,0.01,fixed=True,nuisance=False,dataset=None,unit='deg')
     self.parameters['Dec']    = Parameter('Dec',dec,-90.0,90.0,0.01,fixed=True,nuisance=False,dataset=None,unit='deg')
   pass
+  
+  def getRA(self):
+    return self.parameters['RA'].value
+  
+  def getDec(self):
+    return self.parameters['Dec'].value
+  
 pass

@@ -43,10 +43,9 @@ class MinuitMinimizer(Minimizer):
     self.minimizer            = ROOT.Math.Factory.CreateMinimizer("Minuit","Minimize")
     self.minimizer.Clear()
     self.minimizer.SetMaxFunctionCalls(1000)
-    self.minimizer.SetMaxIterations(100000)
-    self.minimizer.SetTolerance(self.ftol)
+    self.minimizer.SetTolerance(0.1)
     self.minimizer.SetPrintLevel(self.verbosity)
-    self.minimizer.SetStrategy(0)
+    #self.minimizer.SetStrategy(0)
     
     self.minimizer.SetFunction(self.functor)
     
