@@ -54,6 +54,11 @@ class Parameter(object):
   
   def setValue(self,value):
     self.value                = float(value)
+    
+    if(abs(self.delta) > 0.2*abs(self.value)):
+      #Fix the delta to be less than 50% of the value
+      self.delta              = 0.2 * self.value
+    
     for c in self.callback:
       c()
   pass

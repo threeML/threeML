@@ -19,6 +19,12 @@ class FermiLATLike(likePrototype):
     self.irf                  = irf
     self.livetimeCube         = livetimeCube
     
+    #These are the boundaries and the number of energies for the computation
+    #of the model
+    self.emin                 = 1e4
+    self.emax                 = 3e8
+    self.Nenergies            = 1000
+    
     #Make a copy of the xml model file and use that (it will be modified)
     self.xmlModel             = "__jointLikexml.xml"
     shutil.copyfile(xmlModel,self.xmlModel)
@@ -47,7 +53,7 @@ class FermiLATLike(likePrototype):
       ##The following is quite slow (a couple of seconds)
       self.like                 = UnbinnedAnalysis.UnbinnedAnalysis(self.obs,
                                              self.xmlModel,
-                                             optimizer='NEWMINUIT')
+                                             optimizer='DRMNFB')
     elif(kind.upper()=="BINNED"):
        sourceMaps,binnedExpoMap  = args
        self.sourceMaps           = sourceMaps
@@ -59,7 +65,7 @@ class FermiLATLike(likePrototype):
                                  	     irfs=self.irf)
        self.like                 = BinnedAnalysis.BinnedAnalysis(self.obs,
                                              self.xmlModel,
-					     optimizer='NEWMINUIT')
+					     optimizer='DRMNFB')
     else:
       raise ValueError("FermiLATLike: 'kind' must be either BINNED or UNBINNED")
   pass
@@ -95,6 +101,7 @@ class FermiLATLike(likePrototype):
     particular detector
     '''
     self._updateGtlikeModel()
+    
     try:
       #Use .optimize instead of .fit because we don't need the errors
       #(.optimize is faster than .fit)
@@ -134,7 +141,7 @@ class FermiLATLike(likePrototype):
     #Write on disk the current model
     tempName                  = os.path.join(os.path.dirname(os.path.abspath(self.xmlModel)),'__fileSpectrum.txt')
     #This will recompute the model if necessary
-    self.modelManager.writeToFile(tempName,1e4,3e8,300)
+    self.modelManager.writeToFile(tempName,self.emin,self.emax,self.Nenergies)
     
     #Generate a new FileFunction spectrum and assign it to the source
     fileFunction              = pyLike.FileFunction()
@@ -152,8 +159,8 @@ class FermiLATLike(likePrototype):
     self.like.writeXml(self.xmlModel)
     self.like.logLike.reReadXml(self.xmlModel)
     '''
-    gtlikeSrcModel            = self.like.deleteSource(self.modelManager.name)
-    self.modelManager.computeModel(1e4,3e8,300)
+    gtlikeSrcModel            = self.like[self.modelManager.name]
+    self.modelManager.computeModel(self.emin,self.emax,self.Nenergies)
     
     my_function               = gtlikeSrcModel.getSrcFuncs()['Spectrum']
     my_file_function          = pyLike.FileFunction_cast(my_function)
@@ -164,7 +171,7 @@ class FermiLATLike(likePrototype):
     my_file_function.setParam("Normalization",1)
     my_file_function.setSpectrum(energies/1000.0, dnde*1000.0)
     gtlikeSrcModel.setSpectrum(my_file_function)
-    self.like.addSource(gtlikeSrcModel)
+    #self.like.addSource(gtlikeSrcModel)
   pass
   
   def getLogLike(self):

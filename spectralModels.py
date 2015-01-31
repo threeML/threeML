@@ -6,6 +6,7 @@ from IPython.display import display, Latex, HTML
 import math
 import scipy.integrate
 import operator
+import numexpr
 
 keVtoErg                 = 1.60217657E-9
 
@@ -177,12 +178,15 @@ class PowerLaw(SpectralModel):
     def integral(e1,e2):
       a                      = self.parameters['gamma'].value
       piv                    = self.parameters['Epiv'].value
+      norm                   = self.parameters['A'].value
+      
       if(a!=-1):
         def f(energy):
-          return self.parameters['A'].value * numpy.power(energy/piv,a+1)/(a+1)
+          
+          return self.parameters['A'].value * math.pow(energy/piv,a+1)/(a+1)
       else:
         def f(energy):
-          return self.parameters['A'].value * numpy.log(energy/piv)
+          return self.parameters['A'].value * math.pow(energy/piv)
       return f(e2)-f(e1)
     self.integral            = integral
   pass
@@ -190,7 +194,9 @@ class PowerLaw(SpectralModel):
   def __call__(self,energy):
     self.ncalls             += 1
     piv                      = self.parameters['Epiv'].value
-    return numpy.maximum(self.parameters['A'].value * numpy.power(energy/piv,self.parameters['gamma'].value),1e-30)
+    norm                     = self.parameters['A'].value
+    gamma                    = self.parameters['gamma'].value
+    return numpy.maximum( numexpr.evaluate("norm * (energy/piv)**gamma"), 1e-30)
   pass
   
   def photonFlux(self,e1,e2):

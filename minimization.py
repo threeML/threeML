@@ -56,6 +56,7 @@ class MinuitMinimizer(Minimizer):
   
   def minimize(self,minos=False,printout=True,verbosity=0):
     self.minimizer.SetPrintLevel(int(verbosity))
+    
     self.minimizer.Minimize()
     
     #This improves on the error computation
@@ -132,7 +133,7 @@ except:
   pass
 else:
   class BOBYQAMinimizer(Minimizer):
-    def __init__(self,function,parameters,ftol=1e-6,verbosity=1):
+    def __init__(self,function,parameters,ftol=1e-5,verbosity=1):
       super(BOBYQAMinimizer, self).__init__(function,parameters,ftol,verbosity)
       
       #setup the bobyqa minimizer
@@ -153,14 +154,14 @@ else:
       self.bob.set_min_objective(self.wrapper)
       self.bob.set_ftol_abs(ftol)
       #Stop if the value of all the parameter change by less than 1%
-      self.bob.set_xtol_rel(0.01)
+      self.bob.set_xtol_rel(0.001)
       self.bob.set_initial_step(self.steps)
       
       self.bob.set_lower_bounds(self.lowerBounds)
       self.bob.set_upper_bounds(self.upperBounds)
       
-      self.globalOptimizer      = nlopt.opt(nlopt.G_MLSL_LDS,self.Npar)
-      self.globalOptimizer.set_local_optimizer(self.bob)
+      #self.globalOptimizer      = nlopt.opt(nlopt.G_MLSL_LDS,self.Npar)
+      #self.globalOptimizer.set_local_optimizer(self.bob)
 
       
     pass
