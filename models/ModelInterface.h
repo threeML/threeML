@@ -20,7 +20,7 @@ namespace threeML {
       
       int getNumberOfPointSources();
       
-      void getPointSourcePosition(int srcid, double *lon, double *lat);
+      void getPointSourcePosition(int srcid, double *j2000_ra, double *j2000_dec);
       
       std::vector<double> getPointSourceFluxes(int srcid, std::vector<double> energies);
       
@@ -30,12 +30,12 @@ namespace threeML {
       
       int getNumberOfExtendedSources();
       
-      std::vector<double> getExtendedSourceFluxes(int srcid, double lon, double lat, 
+      std::vector<double> getExtendedSourceFluxes(int srcid, double j2000_ra, double j2000_dec, 
                                    std::vector<double> energies);
       
       std::string getExtendedSourceName(int srcid);
       
-      bool isInsideAnyExtendedSource(double lat, double lon);
+      bool isInsideAnyExtendedSource(double j2000_ra, double j2000_dec);
       
     private:
       
