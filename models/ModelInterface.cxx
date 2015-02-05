@@ -22,7 +22,7 @@ namespace threeML {
         
         //TODO: add a verification of the interface for the pyObject
         
-        m_nPtSources = boost::python::extract<int>(m_pyModel.attr("nPtSources"));
+        m_nPtSources = boost::python::extract<int>(m_pyModel.attr("getNumberOfPointSources")());
         
       }
       
@@ -38,14 +38,10 @@ namespace threeML {
       
   void ModelInterface::getPointSourcePosition(int srcid, double *j2000_ra, double *j2000_dec)
       {
-        std::map<int, skyPosition>::iterator it = m_ptsrcPos.find(srcid);
+        boost::python::object coords = m_pyModel.attr("getPointSourcePosition")(srcid);
         
-        if(it == m_ptsrcPos.end()) {
-          throw 10;
-        }
-        
-        (*lon) = m_ptsrcPos[srcid].first;
-        (*lat) = m_ptsrcPos[srcid].second;
+        (*j2000_ra) = boost::python::extract<double>(coords[0]);
+        (*j2000_dec) = boost::python::extract<double>(coords[1]);
       }
     
   std::vector<double> ModelInterface::getPointSourceFluxes(int srcid, std::vector<double> energies) 
@@ -64,7 +60,7 @@ namespace threeML {
       
   int ModelInterface::getNumberOfExtendedSources() 
       {
-        return m_nExtSources;
+        return 0;
       }
       
   std::vector<double> ModelInterface::getExtendedSourceFluxes(int srcid, double j2000_ra, double j2000_dec, 
@@ -77,7 +73,9 @@ namespace threeML {
   
   std::string ModelInterface::getPointSourceName(int srcid) 
       {
-        std::string name("test");
+        std::string name = boost::python::extract<std::string>(
+                                m_pyModel.attr("getPointSourceName")(srcid)
+                                );
         return name;
       }
   
