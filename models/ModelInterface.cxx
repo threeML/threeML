@@ -26,7 +26,7 @@ namespace threeML {
         
       }
       
-  bool ModelInterface::isInsideAnyExtendedSource(double lat, double lon) 
+  bool ModelInterface::isInsideAnyExtendedSource(double j2000_ra, double j2000_dec) 
       { 
         return true;
       }
@@ -36,7 +36,7 @@ namespace threeML {
         return m_nPtSources;
       }
       
-  void ModelInterface::getPointSourcePosition(int srcid, double *lon, double *lat)
+  void ModelInterface::getPointSourcePosition(int srcid, double *j2000_ra, double *j2000_dec)
       {
         std::map<int, skyPosition>::iterator it = m_ptsrcPos.find(srcid);
         
@@ -67,7 +67,7 @@ namespace threeML {
         return m_nExtSources;
       }
       
-  std::vector<double> ModelInterface::getExtendedSourceFluxes(int srcid, double lon, double lat, 
+  std::vector<double> ModelInterface::getExtendedSourceFluxes(int srcid, double j2000_ra, double j2000_dec, 
                                    std::vector<double> energies)
       {
         std::vector<double> fluxes;
