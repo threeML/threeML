@@ -37,6 +37,11 @@ namespace threeML {
       
       bool isInsideAnyExtendedSource(double j2000_ra, double j2000_dec);
       
+      void getExtendedSourceBoundaries(int srcid, double *j2000_ra_min,
+                                                  double *j2000_ra_max,
+                                                  double *j2000_dec_min,
+                                                  double *j2000_dec_max) {}
+      
     private:
       
       double m_nPtSources, m_nExtSources;
