@@ -79,7 +79,7 @@ namespace threeML {
         return name;
       }
   
-  std::string getExtendedSourceName(int srcid)
+  std::string ModelInterface::getExtendedSourceName(int srcid)
       {
         std::string name("test");
         return name;
