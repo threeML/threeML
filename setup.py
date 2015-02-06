@@ -3,11 +3,20 @@
 from distutils.core import setup
 from distutils.extension import Extension
 from distutils.command.install_headers import install_headers
+import os
 
-include_dirs = [ '/home/giacomov/software/boost/boost_1_57_0/']
- 
-library_dirs = [ '/home/giacomov/software/boost/boost_1_57_0/bin.v2/libs/python/build/gcc-4.7/debug/' ]
+boost_root = os.environ.get("BOOSTROOT")
 
+if(boost_root):
+  print("\n\n **** Using boost.python from the env. variable $BOOSTROOT (%s)" %(boost_root))
+  include_dirs = [ os.path.join(boost_root,'include')]
+  library_dirs = [ os.path.join(boost_root,'lib') ]
+  print("     Include dir: %s" %(include_dirs))
+  print("     Library dir: %s" %(library_dirs))
+else:
+  include_dirs = []
+  library_dirs = []
+pass
  
 setup(name="threeML",
     packages = ['threeML',
