@@ -48,8 +48,8 @@ from .models.ExtendedSource import ExtendedSource
 from .models.LikelihoodModel import LikelihoodModel
 from .models.spectralModels import *
 
-from ModelInterface import ModelInterface
-from ModelInterface import FakePlugin 
+from pyModelInterface import ModelInterface
+from pyModelInterface import FakePlugin 
 
 #Now look for plugins
 plugins_dir                   = os.path.join(os.path.dirname(__file__),"plugins")
