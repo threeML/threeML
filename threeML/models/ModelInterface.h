@@ -42,7 +42,12 @@ namespace threeML {
                                                   double *j2000_ra_max,
                                                   double *j2000_dec_min,
                                                   double *j2000_dec_max) {}
-      
+    
+    protected:
+      //Default constructor is here, so that only derived class
+      //can use it
+      ModelInterface() {}
+    
     private:
       
       double m_nPtSources, m_nExtSources;
