@@ -1,7 +1,6 @@
-import minimization
-import ROOT
+from threeML.minimizer import minimization
 import collections
-import emcee
+
 import numpy
 import scipy.optimize
 import scipy.stats
@@ -110,6 +109,8 @@ class JointLikelihood(object):
   pass
   
   def explore(self,nwalkers,nsamplesPerWalker,burn=None):
+    
+    import emcee
     
     self.freeParameters       = self.modelManager.getFreeParameters()
     

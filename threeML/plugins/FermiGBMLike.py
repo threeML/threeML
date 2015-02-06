@@ -1,15 +1,15 @@
 import pyfits
 import xml.etree.ElementTree as ET
 import os
-from threeML.gammaln import logfactorial
+from threeML.plugins.gammaln import logfactorial
 import numpy
-from threeML.ogip import OGIPPHA
-from threeML.likePrototype import likePrototype
+from threeML.plugins.ogip import OGIPPHA
+from threeML.pluginPrototype import pluginPrototype
 import scipy.integrate
 
 __instrument_name = "Fermi GBM (all detectors)"
 
-class FermiGBMLike(likePrototype):
+class FermiGBMLike(pluginPrototype):
   
   def __init__(self,name,phafile,bkgfile,rspfile):
     '''

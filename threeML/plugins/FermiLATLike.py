@@ -5,12 +5,12 @@ import os
 import shutil
 import numpy
 import pyfits
-from threeML.likePrototype import likePrototype
-from threeML.Parameter import Parameter
+from threeML.pluginPrototype import pluginPrototype
+from threeML.models.Parameter import Parameter
 
 __instrument_name = "Fermi LAT (standard classes)"
 
-class FermiLATLike(likePrototype):
+class FermiLATLike(pluginPrototype):
   def __init__(self, name, ft2File, irf, livetimeCube, xmlModel, kind,*args):
 
     self.name                 = name

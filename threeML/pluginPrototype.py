@@ -1,10 +1,10 @@
 '''
-Define the interface for a likelihood class.
+Define the interface for a plugin class.
 '''
 
 import abc
 
-class likePrototype(object):
+class pluginPrototype(object):
   __metaclass__               = abc.ABCMeta  
   
   @abc.abstractmethod

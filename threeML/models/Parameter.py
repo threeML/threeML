@@ -1,4 +1,4 @@
-import Priors
+from threeML.bayesian import Priors
 
 class Parameter(object):
   def __init__(self,name,initValue,minValue,maxValue,delta,**kwargs):
