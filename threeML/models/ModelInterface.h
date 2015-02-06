@@ -22,6 +22,7 @@ namespace threeML {
       
       void getPointSourcePosition(int srcid, double *j2000_ra, double *j2000_dec);
       
+      //Fluxes are differential fluxes in MeV^-1 cm^-1 s^-1
       std::vector<double> getPointSourceFluxes(int srcid, std::vector<double> energies);
       
       std::string getPointSourceName(int srcid);
