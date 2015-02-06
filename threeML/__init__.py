@@ -52,7 +52,7 @@ mplugins                      = filter(lambda x:x.find("__init__")<0,mplugins)
 msgs                          = []
 
 for i,plug in enumerate(mplugins):
-  
+  #Loop over each candidates plugins
   try:
     thisPlugin                  = __import__(os.path.basename(".".join(plug.split(".")[:-1])))
   except:
