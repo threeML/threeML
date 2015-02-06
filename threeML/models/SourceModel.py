@@ -3,7 +3,7 @@ from Parameter import Parameter
 import fancyDisplay
 from IPython.display import display, Latex, HTML
 
-class SpatialModel(object):  
+class SourceModel(object):  
   def __getitem__(self,argument):
     return self.parameters[argument]
   
@@ -27,21 +27,4 @@ class SpatialModel(object):
     
     return ''
   pass
-pass
-
-class PointSource(SpatialModel):
-  def __init__(self,ra,dec):
-    self.functionName         = "Point source"
-    self.formula              = r"\begin{equation}f(RA',Dec') = \delta(RA'-RA)\delta(Dec'-Dec)\end{equation}"
-    self.parameters           = collections.OrderedDict()
-    self.parameters['RA']     = Parameter('RA',ra,0.0,360.0,0.01,fixed=True,nuisance=False,dataset=None,unit='deg')
-    self.parameters['Dec']    = Parameter('Dec',dec,-90.0,90.0,0.01,fixed=True,nuisance=False,dataset=None,unit='deg')
-  pass
-  
-  def getRA(self):
-    return self.parameters['RA'].value
-  
-  def getDec(self):
-    return self.parameters['Dec'].value
-  
 pass
