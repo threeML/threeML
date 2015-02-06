@@ -54,7 +54,7 @@ msgs                          = []
 for i,plug in enumerate(mplugins):
   
   try:
-    thisPlugin                  = __import__(os.path.basename(plug.split(".")[0]))
+    thisPlugin                  = __import__(os.path.basename(".".join(plug.split(".")[:-1])))
   except:
     raise
     print("\nWARNING: Could not import plugin %s. Do you have the relative instrument software installed and configured?" %(plug))
