@@ -30,5 +30,15 @@ setup(name="threeML",
         include_dirs=include_dirs,
         library_dirs=library_dirs)
     ],
-    headers=["threeML/models/ModelInterface.h"])
+    headers=["threeML/models/ModelInterface.h"],
+    install_requires=[
+          'numpy',
+          'scipy',
+          'numexpr',
+          'numdifftools',
+          'emcee',
+          'pyfits',
+          'matplotlib',
+          'ipython>=2.0.0, <3.0.0'          
+      ])
 
