@@ -41,6 +41,15 @@ modsToImport                  = filter(lambda x:x.find("__init__")<0,mods)
 for mod in modsToImport:
   exec("from %s import *" %(mod))
 
+#Import in the current namespace everything under the 
+#models directory
+from .models.PointSource import PointSource
+from .models.ExtendedSource import ExtendedSource
+from .models.LikelihoodModel import LikelihoodModel
+from .models.spectralModels import *
+
+from ModelInterface import ModelInterface
+from ModelInterface import FakePlugin 
 
 #Now look for plugins
 plugins_dir                   = os.path.join(os.path.dirname(__file__),"plugins")
