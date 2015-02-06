@@ -2,6 +2,7 @@
  
 from distutils.core import setup
 from distutils.extension import Extension
+from distutils.command.install_headers import install_headers
 
 include_dirs = [ '/home/giacomov/software/boost/boost_1_57_0/']
  
@@ -17,10 +18,10 @@ setup(name="threeML",
     version = '0.1',
     description = "The Multi-Mission Maximum Likelihood framework",
     author = 'Giacomo Vianello',
-    author_email = 'giacomov@stanford.edu',
+    author_email = 'giacomo.vianello@gmail.com',
     url = 'https://github.com/giacomov/3ML',
     download_url = 'https://github.com/giacomov/3ML/tarball/0.1',
-    keywords = [],
+    keywords = ['Likelihood','Multi-mission','3ML','HAWC','Fermi','joint','fit'],
     classifiers = [],
     ext_modules=[
         Extension("threeML.ModelInterface", ["threeML/models/ModelInterface.cxx",
@@ -28,5 +29,6 @@ setup(name="threeML",
         libraries = ["boost_python"],
         include_dirs=include_dirs,
         library_dirs=library_dirs)
-    ])
+    ],
+    headers=["threeML/models/ModelInterface.h"])
 
