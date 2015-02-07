@@ -48,8 +48,9 @@ from .models.ExtendedSource import ExtendedSource
 from .models.LikelihoodModel import LikelihoodModel
 from .models.spectralModels import *
 
-from pyModelInterface import ModelInterface
+from pyModelInterface import pyToCppModelInterface
 from pyModelInterface import FakePlugin 
+from pyModelInterface import FixedPointSource
 
 #Now look for plugins
 plugins_dir                   = os.path.join(os.path.dirname(__file__),"plugins")

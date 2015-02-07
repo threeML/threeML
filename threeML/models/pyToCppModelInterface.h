@@ -1,31 +1,27 @@
-#ifndef FIXED_POINT_SOURCE_H
-#define FIXED_POINT_SOURCE_H
+//Author: G.Vianello (giacomov@slac.stanford.edu)
 
-#include <string>
-#include <vector>
+//This implements a real ModelInterface, which is used to bridge between a 3ML
+//LikelihoodModel class (living in the python world) and plug-ins which are
+//living in the C++ world. The plugins will only use the pyToCppModelInterface class
+//to talk (without knowing it) to the python LikelihoodModel class.
+
+#ifndef PYTOCPPMODEL_INTERFACE_H
+#define PYTOCPPMODEL_INTERFACE_H
+
 #include "ModelInterface.h"
+#include <vector>
+#include <string>
 
+#include <Python.h>
+#include <boost/python.hpp>
 
 namespace threeML {
-      
-  class FixedPointSource : public ModelInterface 
-  {
+    
+  class pyToCppModelInterface : public ModelInterface {
+  
     public:
       
-      //Predefined values are for the Crab at TeV energies
-      
-      FixedPointSource(std::string = "Crab",
-                       double photonIndex = -2.63, 
-                       double normalization = 3.45e-17, //ph. MeV^-1 cm^-2 s^-1
-                       double pivotEnergy = 1e6,
-                       double ra = 83.63,
-                       double dec = 22.01);
-      
-      //The use of "const" at the end of a method declaration means
-      //that the method will not change anything in the class
-      //(not even private members)
-      
-      void describe() const;
+      pyToCppModelInterface(PyObject *pyModelUninterpreted);
       
       //Point source interface
       
@@ -52,20 +48,14 @@ namespace threeML {
       void getExtendedSourceBoundaries(int srcid, double *j2000_ra_min,
                                                   double *j2000_ra_max,
                                                   double *j2000_dec_min,
-                                                  double *j2000_dec_max) const {}
-      
-
+                                                  double *j2000_dec_max)  const {}
     
     private:
       
-      std::string m_name;
-      double m_photonIndex;
-      double m_normalization;
-      double m_ra;
-      double m_dec;
-      double m_pivotEnergy;
-    
-    
+      double m_nPtSources, m_nExtSources;
+            
+      boost::python::object m_pyModel;
+      
   };
 
 }

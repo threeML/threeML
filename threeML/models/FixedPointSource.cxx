@@ -1,5 +1,6 @@
 #include "FixedPointSource.h"
 #include <math.h>
+#include <iostream>
 
 namespace threeML {
   
@@ -14,12 +15,13 @@ namespace threeML {
        m_normalization(normalization),
        m_ra(ra),
        m_dec(dec),
-       m_pivotEnergy(pivotEnergy)
+       m_pivotEnergy(pivotEnergy),
+       ModelInterface()
       { 
       
       }
   
-  void FixedPointSource::describe() 
+  void FixedPointSource::describe() const
       {
         std::cout << "Fixed Point Source: " << std::endl;
         std::cout << "  Name:          " << m_name << std::endl;
@@ -30,23 +32,24 @@ namespace threeML {
         std::cout << "  Pivot energy:  " << m_pivotEnergy << " (MeV)" << std::endl; 
       }
       
-  bool FixedPointSource::isInsideAnyExtendedSource(double j2000_ra, double j2000_dec) 
+  bool FixedPointSource::isInsideAnyExtendedSource(double j2000_ra, double j2000_dec) const
       { 
         return false;
       }
       
-  int FixedPointSource::getNumberOfPointSources() 
+  int FixedPointSource::getNumberOfPointSources() const
       {
+                
         return 1;
       }
       
-  void FixedPointSource::getPointSourcePosition(int srcid, double *j2000_ra, double *j2000_dec)
+  void FixedPointSource::getPointSourcePosition(int srcid, double *j2000_ra, double *j2000_dec) const
       {        
         (*j2000_ra) = m_ra;
         (*j2000_dec) = m_dec;
       }
     
-  std::vector<double> FixedPointSource::getPointSourceFluxes(int srcid, std::vector<double> energies) 
+  std::vector<double> FixedPointSource::getPointSourceFluxes(int srcid, std::vector<double> energies) const
       { 
         std::vector<double> fluxes(energies.size(),0.0);
         
@@ -61,25 +64,26 @@ namespace threeML {
         return fluxes;
       }
       
-  int FixedPointSource::getNumberOfExtendedSources() 
+  int FixedPointSource::getNumberOfExtendedSources() const
       {
         return 0;
       }
       
-  std::vector<double> FixedPointSource::getExtendedSourceFluxes(int srcid, double j2000_ra, double j2000_dec, 
-                                   std::vector<double> energies)
+  std::vector<double> 
+       FixedPointSource::getExtendedSourceFluxes(int srcid, double j2000_ra, double j2000_dec, 
+                                                 std::vector<double> energies) const
       {
         std::vector<double> fluxes(energies.size(),0.0);
         return fluxes;
       }
   
   
-  std::string FixedPointSource::getPointSourceName(int srcid) 
+  std::string FixedPointSource::getPointSourceName(int srcid) const
       {
         return m_name;
       }
   
-  std::string FixedPointSource::getExtendedSourceName(int srcid)
+  std::string FixedPointSource::getExtendedSourceName(int srcid) const
       {
         std::string name("test");
         return name;

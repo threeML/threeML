@@ -55,7 +55,9 @@ setup(
         
         Extension("threeML.pyModelInterface", 
                   
-                  ["threeML/models/ModelInterface_boost.cxx"],
+                  ["threeML/models/pyToCppModelInterface.cxx",
+                   "threeML/models/FixedPointSource.cxx",
+                   "threeML/models/ModelInterface_boost.cxx"],
         
         
         
@@ -67,7 +69,7 @@ setup(
         
         Extension("threeML.libModelInterface", 
                   
-                  ["threeML/models/ModelInterface.cxx",
+                  ["threeML/models/pyToCppModelInterface.cxx",
                    "threeML/models/FixedPointSource.cxx"],
         
         

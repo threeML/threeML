@@ -1,27 +1,29 @@
+#ifndef FAKE_PLUGIN_H
+#define FAKE_PLUGIN_H
+
 #include <vector>
+#include <iostream>
+#include "ModelInterface.h"
 
 namespace threeML {
-
-class ModelInterface;
-
-
+  
   class FakePlugin {
     public:
-      FakePlugin(const ModelInterface &model) : mi(model) 
+      FakePlugin(const ModelInterface *model) : mi(model) 
         {
           std::cout << std::endl << "Model received:" << std::endl;
           
-          int n = mi.getNumberOfPointSources();
+          int n = mi->getNumberOfPointSources();
           std::cout << "Number of point sources: " << n << std::endl;    
           
           int i;
           for(i=0; i < n; ++i) 
             {
-              std::cout << "Point source " << i << " (" << mi.getPointSourceName(i) << ")" << std::endl;
+              std::cout << "Point source " << i << " (" << mi->getPointSourceName(i) << ")" << std::endl;
               
               double ra;
               double dec;
-              mi.getPointSourcePosition(i,&ra,&dec);
+              mi->getPointSourcePosition(i,&ra,&dec);
               
               std::cout << "  R.A. = " << ra << ", Dec. = " << dec << std::endl; 
             }
@@ -42,13 +44,13 @@ class ModelInterface;
       void go() {
           
           int i;
-          int n = mi.getNumberOfPointSources();
+          int n = mi->getNumberOfPointSources();
                     
           for(i=0; i < n; ++i) 
             {
-              std::cout << "Flux for " << mi.getPointSourceName(i) << ":" << std::endl;
+              std::cout << "Flux for " << mi->getPointSourceName(i) << ":" << std::endl;
               
-              std::vector<double> fluxes = mi.getPointSourceFluxes(i,m_energies);
+              std::vector<double> fluxes = mi->getPointSourceFluxes(i,m_energies);
               
               int j;
               for(j=0; j < m_energies.size(); ++j) 
@@ -60,9 +62,10 @@ class ModelInterface;
       }
       
     private:
-      ModelInterface mi;
+      const ModelInterface *mi;
       std::vector<double> m_energies;
   
   };
 
 }
+#endif
