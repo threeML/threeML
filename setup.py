@@ -83,6 +83,8 @@ setup(
     
     
     headers=["threeML/models/ModelInterface.h",
+             "threeML/models/pyToCppModelInterface.h",
+             "threeML/models/FakePlugin.h",
              "threeML/models/FixedPointSource.h"],
     
     install_requires=[
