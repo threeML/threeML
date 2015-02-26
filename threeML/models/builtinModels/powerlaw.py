@@ -1,8 +1,11 @@
 from threeML.models.spectralModels import SpectralModel
+from threeML.models.Parameter import Parameter
+import collections
 
 
 
 class PowerLaw(SpectralModel):
+
     def setup(self):
         self.functionName        = "Powerlaw"
         self.formula             = r'\begin{equation}f(E) = A E^{\gamma}\end{equation}'
@@ -13,20 +16,19 @@ class PowerLaw(SpectralModel):
     
         self.ncalls              = 0
     
-    def integral(e1,e2):
-        a                      = self.parameters['gamma'].value
-        piv                    = self.parameters['Epiv'].value
-        norm                   = self.parameters['A'].value
+        def integral(e1,e2):
+            a                      = self.parameters['gamma'].value
+            piv                    = self.parameters['Epiv'].value
+            norm                   = self.parameters['A'].value
       
-        if(a!=-1):
-            def f(energy):
-          
-                return self.parameters['A'].value * math.pow(energy/piv,a+1)/(a+1)
-        else:
-            def f(energy):
-                return self.parameters['A'].value * math.pow(energy/piv)
-        return f(e2)-f(e1)
-    self.integral            = integral
+            if(a!=-1):
+                def f(energy):
+                    return self.parameters['A'].value * math.pow(energy/piv,a+1)/(a+1)
+            else:
+                def f(energy):
+                    return self.parameters['A'].value * math.pow(energy/piv)
+            return f(e2)-f(e1)
+        self.integral            = integral
  
   
     def __call__(self,energy):

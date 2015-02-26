@@ -48,6 +48,9 @@ from .models.ExtendedSource import ExtendedSource
 from .models.LikelihoodModel import LikelihoodModel
 from .models.spectralModels import *
 
+#Import the builtinModels
+#from .models.builtinModels.modelContainer import *
+
 from pyModelInterface import pyToCppModelInterface
 from pyModelInterface import FakePlugin 
 from pyModelInterface import FixedPointSource
