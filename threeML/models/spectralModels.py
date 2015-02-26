@@ -81,10 +81,19 @@ class SpectralModel(object):
 
     def __init__(self):
 
+        import collections        
         self.setup()
 
+
         self._validate() # Raise runtime error if the users
-    
+
+        for k,v in self.parameters.iteritems():
+
+            object.__setattr__(self,k,v)
+
+
+
+        
     @abc.abstractmethod
     def setup(self):
         # virtual member implemented by the user
@@ -98,12 +107,36 @@ class SpectralModel(object):
     
         val = ModelValidate(self)
     
+    def __getattr__(self, item):
+     
+        
+        
+        if self.__dict__.has_key("parameters"):
+            if self.parameters.has_key(item):
+                return self.parameters[item]
+            else:
+                object.__getattribute__(self,item)
+        else:
+            object.__getattribute__(self,item)
+        
+    def __setattr__(self,item,value):
 
-    
+                
+        
+        if self.__dict__.has_key("parameters"):
+            
+            if self.parameters.has_key(item):
+                (self.parameters[item]).setValue(value)
+            else:
+                object.__setattr__(self,item,value)
+                
+        else:
+            
+            object.__setattr__(self,item,value)
 
-  
-    def __getitem__(self,argument):
-        return self.parameters[argument]
+    # Removed by J. Michael to switch to a different scheme
+    #def __getitem__(self,argument):
+    #    return self.parameters[argument]
 
     def __repr__(self):
         print("Spectral model: %s" %(self.functionName))
@@ -258,57 +291,7 @@ class CompositeModel(SpectralModel):
 pass
 
 
-class PowerLaw(SpectralModel):
-  def setup(self):
-    self.functionName        = "Powerlaw"
-    self.formula             = r'\begin{equation}f(E) = A E^{\gamma}\end{equation}'
-    self.parameters          = collections.OrderedDict()
-    self.parameters['gamma'] = Parameter('gamma',-2.0,-10,10,0.1,fixed=False,nuisance=False,dataset=None)
-    self.parameters['A']     = Parameter('A',1.0,1e-10,1e10,0.02,fixed=False,nuisance=False,dataset=None,normalization=True)
-    self.parameters['Epiv']  = Parameter('Epiv',1.0,1e-10,1e10,1,fixed=True)
-    
-    self.ncalls              = 0
-    
-    def integral(e1,e2):
-      a                      = self.parameters['gamma'].value
-      piv                    = self.parameters['Epiv'].value
-      norm                   = self.parameters['A'].value
-      
-      if(a!=-1):
-        def f(energy):
-          
-          return self.parameters['A'].value * math.pow(energy/piv,a+1)/(a+1)
-      else:
-        def f(energy):
-          return self.parameters['A'].value * math.pow(energy/piv)
-      return f(e2)-f(e1)
-    self.integral            = integral
-  pass
-  
-  def __call__(self,energy):
-    self.ncalls             += 1
-    piv                      = self.parameters['Epiv'].value
-    norm                     = self.parameters['A'].value
-    gamma                    = self.parameters['gamma'].value
-    return numpy.maximum( numexpr.evaluate("norm * (energy/piv)**gamma"), 1e-30)
-  pass
-  
-  def photonFlux(self,e1,e2):
-    return self.integral(e1,e2)
-  
-  def energyFlux(self,e1,e2):
-    a                        = self.parameters['gamma'].value
-    piv                      = self.parameters['Epiv'].value
-    if(a!=-2):
-      def eF(e):
-        return numpy.maximum(self.parameters['A'].value * numpy.power(e/piv,2-a)/(2-a),1e-30)
-    else:
-      def eF(e):
-        return numpy.maximum(self.parameters['A'].value * numpy.log(e/piv),1e-30)
-    pass
-    
-    return (eF(e2)-eF(e1))*keVtoErg
-pass
+
 
 from scipy import weave
 from scipy.weave import converters
