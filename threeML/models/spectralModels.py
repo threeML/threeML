@@ -32,7 +32,7 @@ class ModelValidate(object):
         if self.tt[2]: #Check that parameters exist
             
             self.checks.append(checks2)
-            self.tt.append(type(model.parameters == collections.OrderedDict))
+            self.tt.append(isinstance(model.parameters,collections.OrderedDict))
 
         else:
 
@@ -41,7 +41,7 @@ class ModelValidate(object):
 
         if self.tt[4]: #Check that the parameters are right type
 
-            for p in self.parameters.keys():
+            for p in model.parameters.keys():
 
                 self.checks.append("self.parameters[%s] is not an instance Parameter"%p)
                 self.tt.append(isinstance(model.parameters[p],Parameter))
@@ -53,7 +53,8 @@ class ModelValidate(object):
     
     def _printSetupErr(self):
 
-        self.tt = numpy.array(self.tt)
+        self.tt = ~numpy.array(self.tt)
+        
         self.checks =numpy.array(self.checks)
 
         
@@ -80,7 +81,7 @@ class SpectralModel(object):
 
     def __init__(self):
 
-        self.setup(*args,**kwargs)
+        self.setup()
 
         self._validate() # Raise runtime error if the users
     
