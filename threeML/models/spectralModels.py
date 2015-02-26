@@ -7,6 +7,7 @@ import math
 import scipy.integrate
 import operator
 import numexpr
+import abc
 
 keVtoErg                 = 1.60217657E-9
 
@@ -17,136 +18,161 @@ class ModelValidate(object):
 
         self.checks = ["'self.functionName' not set in *setup* ",\
                     "'self.formula' not set in *setup*",\
-                    "'self.parameters' not set in *setup*"\
+                    "'self.parameters' not set in *setup*",\
+                    "'self.integral(e1,e2)' not defined in *setup*"\
                     ]
         checks2 = "'self.parameters' is NOT of type collections.OrderedDict"
 
-        self.tt = [hasattr(model,'functionName'),hasattr(model,'formula'),hasattr(model,'parameters')]
+        self.tt = [hasattr(model,'functionName'),\
+                   hasattr(model,'formula'),\
+                   hasattr(model,'parameters'),\
+                   hasattr(model,'integral')]
 
 
-        if self.tt[2]:
-
+        if self.tt[2]: #Check that parameters exist
             
-
             self.checks.append(checks2)
             self.tt.append(type(model.parameters == collections.OrderedDict))
 
+        else:
+
+            self._printSetupErr()
+            return
+
+        if self.tt[4]: #Check that the parameters are right type
+
+            for p in self.parameters.keys():
+
+                self.checks.append("self.parameters[%s] is not an instance Parameter"%p)
+                self.tt.append(isinstance(model.parameters[p],Parameter))
+                
+        self._printSetupErr()
+
+
+
+    
     def _printSetupErr(self):
 
         self.tt = numpy.array(self.tt)
         self.checks =numpy.array(self.checks)
 
         
-      
+        problems = self.checks[self.tt]
+
+        if len(problems) == 0:
+            return
+
+        print "Error: The SpectralModel class is not proper!"
+        print "The following problems were found:"
+        print
+        for prob in problems:
+                print "\t"+prob
+
+        raise RuntimeError("Correct the SpectralModel definition!")        
+          
         
 
 
 
 class SpectralModel(object):
-   __metaclass__           = abc.ABCMeta # Make the user code certain
+    __metaclass__           = abc.ABCMeta # Make the user code certain
     
 
-   def __init__(self):
+    def __init__(self):
 
-    self.setup(*args,**kwargs)
+        self.setup(*args,**kwargs)
 
-    self._validate() # Raise runtime error if the users
+        self._validate() # Raise runtime error if the users
     
     @abc.abstractmethod
-  def setup(self):
-    # virtual member implemented by the user
-    pass
+    def setup(self):
+        # virtual member implemented by the user
+        pass
     
-  def _validate(self):
-    '''
-    Member called to check that the model has all the proper
-    attributes after the setup is called in the __init__ member
+    def _validate(self):
+        '''
+        Member called to check that the model has all the proper
+        attributes after the setup is called in the __init__ member
+        '''
     
-    '''
-    
-    
-
-    
-    
-      
-    else:
-
-      
-   def _printSetupErr(self)
+        val = ModelValidate(self)
     
 
     
 
   
-  def __getitem__(self,argument):
-    return self.parameters[argument]
-  
-  def __repr__(self):
-    print("Spectral model: %s" %(self.functionName))
-    print("Formula:\n")
-    display(Latex(self.formula))
-    print("")
-    print("Current parameters:\n")
-    table                    = fancyDisplay.HtmlTable(8)
-    table.addHeadings("Name","Value","Minimum","Maximum","Delta","Status","Unit","Prior")
-    for k,v in self.parameters.iteritems():
-      if(v.isFree()):
-        ff                   = "free"
-      else:
-        ff                   = "fixed"
-      pass
-      table.addRow(v.name,v.value,v.minValue,v.maxValue,v.delta,ff,v.unit,v.prior.getName())
-    pass
-    display(HTML(table.__repr__()))
-    
-    return ''
-  pass
-  
-  @abc.abstractmethod
-  def __call__(self):
-    raise NotImplemented("The method __call__ has not been implemented. This is a bug")
-  
-  #If there is an analytical solution to the integral of the function,
-  #override these methods: the analytical way is always A LOT faster
-  #than numerical integration
-  def photonFlux(self,e1,e2):
-    return scipy.integrate.quad(self.__call__,e1,e2,epsabs=0.01,epsrel=1e-4)[0]
-  pass
-  
-  def energyFlux(self,e1,e2):
-    def eF(e):
-      return e*self.__call__(e)
-    
-    return scipy.integrate.quad(eF,e1,e2,epsabs=0,epsrel=1e-3)[0]*keVtoErg
-  pass
-  
-  #The following methods define the aritmetical operations on model, so
-  #that the user can define "composite" models
-  def __add__(self,b):
-    return CompositeModel(self,b,operator.add)
-  
-  def __radd__(self,b):
-    return CompositeModel(self,b,operator.add)
-  
-  def __sub__(self,b):
-    return CompositeModel(self,b,operator.sub)
-  
-  def __rsub__(self,b):
-    return CompositeModel(self,b,operator.sub)
-  
-  def __div__(self,b):
-    return CompositeModel(self,b,operator.div)
+    def __getitem__(self,argument):
+        return self.parameters[argument]
 
-  def __rdiv__(self,b):
-    return CompositeModel(self,b,operator.div)
+    def __repr__(self):
+        print("Spectral model: %s" %(self.functionName))
+        print("Formula:\n")
+        display(Latex(self.formula))
+        print("")
+        print("Current parameters:\n")
+        table                    = fancyDisplay.HtmlTable(8)
+        table.addHeadings("Name","Value","Minimum","Maximum","Delta","Status","Unit","Prior")
+        for k,v in self.parameters.iteritems():
+            if(v.isFree()):
+                ff                   = "free"
+            else:
+                ff                   = "fixed"
+        
+        table.addRow(v.name,v.value,v.minValue,v.maxValue,v.delta,ff,v.unit,v.prior.getName())
+        
+        display(HTML(table.__repr__()))
+    
+        return ''
+ 
   
-  def __mul__(self,b):
-    return CompositeModel(self,b,operator.mul)
+    @abc.abstractmethod
+    def __call__(self):
+        raise NotImplemented("The method __call__ has not been implemented. This is a bug")
+  
+    #If there is an analytical solution to the integral of the function,
+    #override these methods: the analytical way is always A LOT faster
+    #than numerical integration
+    def photonFlux(self,e1,e2):
+        return scipy.integrate.quad(self.__call__,e1,e2,epsabs=0.01,epsrel=1e-4)[0]
+   
+  
+    def energyFlux(self,e1,e2):
+        def eF(e):
+            return e*self.__call__(e)
+    
+        return scipy.integrate.quad(eF,e1,e2,epsabs=0,epsrel=1e-3)[0]*keVtoErg
+ 
+  
+    #The following methods define the aritmetical operations on model, so
+    #that the user can define "composite" models
+    def __add__(self,b):
+        return CompositeModel(self,b,operator.add)
+  
+    def __radd__(self,b):
+        return CompositeModel(self,b,operator.add)
+  
+    def __sub__(self,b):
+        return CompositeModel(self,b,operator.sub)
+  
+    def __rsub__(self,b):
+        return CompositeModel(self,b,operator.sub)
+  
+    def __div__(self,b):
+        return CompositeModel(self,b,operator.div)
 
-  def __rmul__(self,b):
-    return CompositeModel(self,b,operator.mul)
+    def __rdiv__(self,b):
+        return CompositeModel(self,b,operator.div)
   
-pass
+    def __mul__(self,b):
+        return CompositeModel(self,b,operator.mul)
+
+    def __rmul__(self,b):
+        return CompositeModel(self,b,operator.mul)
+  
+
+
+#I may have to look at how composite model is screwed up by my new scheme!!
+
 
 #The following class represent the combination of two
 #models with an aritmetical operation. For example,
@@ -232,7 +258,7 @@ pass
 
 
 class PowerLaw(SpectralModel):
-  def __init__(self):
+  def setup(self):
     self.functionName        = "Powerlaw"
     self.formula             = r'\begin{equation}f(E) = A E^{\gamma}\end{equation}'
     self.parameters          = collections.OrderedDict()
