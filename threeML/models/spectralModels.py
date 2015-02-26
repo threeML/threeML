@@ -10,7 +10,74 @@ import numexpr
 
 keVtoErg                 = 1.60217657E-9
 
-class SpectralModel(object):  
+
+class ModelValidate(object):
+
+    def __init__(self,model):
+
+        self.checks = ["'self.functionName' not set in *setup* ",\
+                    "'self.formula' not set in *setup*",\
+                    "'self.parameters' not set in *setup*"\
+                    ]
+        checks2 = "'self.parameters' is NOT of type collections.OrderedDict"
+
+        self.tt = [hasattr(model,'functionName'),hasattr(model,'formula'),hasattr(model,'parameters')]
+
+
+        if self.tt[2]:
+
+            
+
+            self.checks.append(checks2)
+            self.tt.append(type(model.parameters == collections.OrderedDict))
+
+    def _printSetupErr(self):
+
+        self.tt = numpy.array(self.tt)
+        self.checks =numpy.array(self.checks)
+
+        
+      
+        
+
+
+
+class SpectralModel(object):
+   __metaclass__           = abc.ABCMeta # Make the user code certain
+    
+
+   def __init__(self):
+
+    self.setup(*args,**kwargs)
+
+    self._validate() # Raise runtime error if the users
+    
+    @abc.abstractmethod
+  def setup(self):
+    # virtual member implemented by the user
+    pass
+    
+  def _validate(self):
+    '''
+    Member called to check that the model has all the proper
+    attributes after the setup is called in the __init__ member
+    
+    '''
+    
+    
+
+    
+    
+      
+    else:
+
+      
+   def _printSetupErr(self)
+    
+
+    
+
+  
   def __getitem__(self,argument):
     return self.parameters[argument]
   
@@ -35,7 +102,7 @@ class SpectralModel(object):
     return ''
   pass
   
-  #You MUST override this
+  @abc.abstractmethod
   def __call__(self):
     raise NotImplemented("The method __call__ has not been implemented. This is a bug")
   
