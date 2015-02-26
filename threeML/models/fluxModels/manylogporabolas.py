@@ -1,9 +1,16 @@
-from threeML.models.spectralModels import SpectralModel
+from threeML.models.spectralmodel import SpectralModel
+from threeML.models.Parameter import Parameter
+import numpy
+import math
+import scipy.integrate
+import operator
+import numexpr
+
+import collections
 
 
-
-class ManyLogparabolas(SpectralModel):
-  def __init__(self,nBreaks=30,emin=5.0,emax=1e9,**kwargs):
+class ManyLogParabolas(SpectralModel):
+  def setup(self,nBreaks=30,emin=5.0,emax=1e9,**kwargs):
     self.functionName        = "ManyLogparabolas"
     self.formula             = r'\begin{equation}f(E) = K_{0} E^{\alpha}\end{equation}'
     self.parameters          = collections.OrderedDict()

@@ -1,8 +1,16 @@
-from threeML.models.spectralModels import SpectralModel
+from threeML.models.spectralmodel import SpectralModel
+from threeML.models.Parameter import Parameter
+import numpy
+import math
+import scipy.integrate
+import operator
+import numexpr
+
+import collections
 
 
 class LogParabola(SpectralModel):
-      def __init__(self):
+    def __init__(self):
             self.functionName        = "LogParabola"
             self.formula             = r'\begin{equation}f(E) = A E^{\gamma+\beta \log(E)}\end{equation}'
             self.parameters          = collections.OrderedDict()
@@ -18,9 +26,7 @@ class LogParabola(SpectralModel):
             def integral(e1,e2):
                 return self((e1+e2)/2.0)*(e2-e1)
             self.integral            = integral
-  
-  
-      def __call__(self,energy):
+    def __call__(self,energy):
           self.ncalls             += 1
           piv                     = self.parameters['Epiv'].value
           gamma                = self.parameters['gamma'].value

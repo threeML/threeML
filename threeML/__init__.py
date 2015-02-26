@@ -46,10 +46,10 @@ for mod in modsToImport:
 from .models.PointSource import PointSource
 from .models.ExtendedSource import ExtendedSource
 from .models.LikelihoodModel import LikelihoodModel
-from .models.spectralModels import *
+from .models.spectralmodel import *
 
 #Import the builtinModels
-#from .models.builtinModels.modelContainer import *
+from .models.fluxModels import *
 
 from pyModelInterface import pyToCppModelInterface
 from pyModelInterface import FakePlugin 

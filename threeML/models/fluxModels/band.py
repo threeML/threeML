@@ -1,5 +1,12 @@
-from threeML.models.spectralModels import SpectralModel
+from threeML.models.spectralmodel import SpectralModel
+from threeML.models.Parameter import Parameter
+import numpy
+import math
+import scipy.integrate
+import operator
+import numexpr
 
+import collections
 
 class Band(SpectralModel):
     def setup(self):
@@ -19,9 +26,9 @@ class Band(SpectralModel):
         self.parameters['E0']    = Parameter('E0',500,10,1e5,50,fixed=False,nuisance=False,dataset=None,unit='keV')
         self.parameters['K']     = Parameter('K',1,1e-4,1e3,0.1,fixed=False,nuisance=False,dataset=None,normalization=True)
     
-    def integral(e1,e2):
-        return self((e1+e2)/2.0)*(e2-e1)
-    self.integral            = integral
+        def integral(e1,e2):
+            return self((e1+e2)/2.0)*(e2-e1)
+        self.integral            = integral
     
   
   

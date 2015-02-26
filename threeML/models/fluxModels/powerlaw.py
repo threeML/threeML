@@ -1,5 +1,10 @@
-from threeML.models.spectralModels import SpectralModel
+from threeML.models.spectralmodel import SpectralModel
 from threeML.models.Parameter import Parameter
+import math
+import scipy.integrate
+import operator
+import numexpr
+
 import collections
 
 

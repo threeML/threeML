@@ -33,6 +33,7 @@ setup(
                 'threeML/bayesian',
                 'threeML/minimizer',
                 'threeML/models',
+                'threeML/models/fluxModels',
                 'threeML/plugins'],
     
     version = 'v0.0.5',
