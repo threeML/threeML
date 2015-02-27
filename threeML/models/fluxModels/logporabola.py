@@ -10,7 +10,7 @@ import collections
 
 
 class LogParabola(SpectralModel):
-    def __init__(self):
+    def setup(self):
             self.functionName        = "LogParabola"
             self.formula             = r'\begin{equation}f(E) = A E^{\gamma+\beta \log(E)}\end{equation}'
             self.parameters          = collections.OrderedDict()

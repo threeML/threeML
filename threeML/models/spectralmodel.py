@@ -95,7 +95,7 @@ class SpectralModel(object):
 
         
     @abc.abstractmethod
-    def setup(self):
+    def setup(*args,**kwargs):
         # virtual member implemented by the user
         pass
     
