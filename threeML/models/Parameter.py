@@ -43,9 +43,8 @@ class Parameter(object):
   pass
 
   def __eq__(self,value):
-    self.value = value
+    self.setValue(value)
     
-  
   def __repr__(self):
     if(self.fixed):
       ff                      = "fixed"
