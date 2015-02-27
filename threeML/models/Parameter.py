@@ -41,6 +41,10 @@ class Parameter(object):
     #The callback functions will be executed on any parameter value change
     self.callback.append(callback)
   pass
+
+  def __eq__(self,value):
+    self.value = value
+    
   
   def __repr__(self):
     if(self.fixed):
