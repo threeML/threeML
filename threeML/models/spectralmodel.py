@@ -8,7 +8,7 @@ import scipy.integrate
 import operator
 import numexpr
 import abc
-
+import matplotlib.pyplot as plt
 keVtoErg                 = 1.60217657E-9
 
 
@@ -138,6 +138,29 @@ class SpectralModel(object):
     #def __getitem__(self,argument):
     #    return self.parameters[argument]
 
+
+    def display(self,emin,emax,logscale=True):
+        '''
+        Display the model 
+
+        '''
+
+        self.eneUnit = 'keV'
+        
+        fig = plt.figure(567)
+        ax = fig.add_subplot(111)
+            
+        if logscale:
+            eGrid = numpy.logspace(numpy.log10(emin),numpy.log10(emax))
+
+            ax.loglog(eGrid,self(eGrid),'-',color='red')
+
+
+        ax.set_xlabel("Energy [%s]"%self.eneUnit)
+
+
+        
+    
     def __repr__(self):
         print("Spectral model: %s" %(self.functionName))
         print("Formula:\n")
@@ -204,7 +227,7 @@ class SpectralModel(object):
         return CompositeModel(self,b,operator.mul)
   
 
-
+# J. Michael
 #I may have to look at how composite model is screwed up by my new scheme!!
 
 
