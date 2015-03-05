@@ -1,0 +1,61 @@
+from threeML.models.spectralmodel import SpectralModel
+from threeML.models.Parameter import Parameter
+import math
+import scipy.integrate
+import operator
+import numexpr
+
+import collections
+
+
+
+class ExponentialCutoff(SpectralModel):
+
+    def setup(self):
+        self.functionName        = "ExponentialCutoff"
+        self.formula             = r'$f(E) = A {\rm exp}\left(-E/E_{\rm fold}   \right)$'
+        self.parameters          = collections.OrderedDict()
+        self.parameters['Efold'] = Parameter('A',1.,1.E-10,1,E10,0.1,fixed=False,nuisance=False,dataset=None,normalization=True)
+        self.parameters['Efold'] = Parameter('Efold',100.,1.,1E6,0.1,fixed=False,nuisance=False,dataset=None)
+            
+        self.ncalls              = 0
+    
+        def integral(e1,e2):
+            eFold                      = self.parameters['Efold'].value
+            A                          = self.parameters['A'].value
+
+            
+            def f(x):
+
+                return -A * eFold * numpy.exp(-x/eFold)
+
+            return f(e2) - f(e1)
+            
+        self.integral            = integral
+ 
+  
+    def __call__(self,energy):
+        self.ncalls             += 1
+        eFold                      = self.parameters['Efold'].value
+        A                          = self.parameters['A'].value
+        return numpy.maximum( numexpr.evaluate("exp(-energy/eFold)"), 1e-30)
+   
+  
+    def photonFlux(self,e1,e2):
+        return self.integral(e1,e2)
+  
+    def energyFlux(self,e1,e2):
+        eFold                      = self.parameters['Efold'].value
+        A                          = self.parameters['A'].value
+
+        def eF(x):
+
+            return -numpy.exp(-x/eFold)*(x/eFold + 1./(eFold*eFold ))
+
+        return eF(e2) - eF(e1)
+
+        
+
+
+        #return (eF(e2)-eF(e1))*keVtoErg
+
