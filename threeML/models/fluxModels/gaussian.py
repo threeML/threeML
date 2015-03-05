@@ -11,7 +11,7 @@ import numpy
 import collections
 
 
-
+#test
 class Gaussian(SpectralModel):
 
     def setup(self):
@@ -23,7 +23,7 @@ class Gaussian(SpectralModel):
         self.parameters['sigma'] = Parameter('sigma',1.,1E-2,1E1,0.1,fixed=False,nuisance=False,dataset=None)
             
         self.ncalls              = 0
-    
+        
         def integral(e1,e2):
 
             sigma                      = self.parameters['sigma'].value
@@ -47,7 +47,7 @@ class Gaussian(SpectralModel):
         sigma                      = self.parameters['sigma'].value
         mu                         = self.parameters['mu'].value
         A                          = self.parameters['A'].value
-        return numpy.maximum( numexpr.evaluate("A * exp(-0.5 * (x-mu)/(sigma) * (x-mu)/(sigma)   )"), 1e-30)
+        return numpy.maximum( numexpr.evaluate("A * exp(-0.5 * (energy-mu)/(sigma) * (energy-mu)/(sigma)   )"), 1e-30)
    
   
     def photonFlux(self,e1,e2):
@@ -59,14 +59,12 @@ class Gaussian(SpectralModel):
         A                          = self.parameters['A'].value
 
         
-        
         def eF(x):
             term1 = (mu - x)/(numpy.sqrt(2.)*sigma) 
             term2 = -0.5 * (x-mu)/(sigma) * (x-mu)/(sigma)
 
-
-             val = numpy.sqrt(numpy.pi/2.) * scipy.special.erf(term1) * sigma
-             val += numpy.exp(term2) * sigma * sigma
+            val = numpy.sqrt(numpy.pi/2.) * scipy.special.erf(term1) * sigma
+            val += numpy.exp(term2) * sigma * sigma
              
             return -A*val
 
