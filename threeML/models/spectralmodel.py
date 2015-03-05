@@ -9,13 +9,14 @@ import operator
 import numexpr
 import abc
 import matplotlib.pyplot as plt
-keVtoErg                 = 1.60217657E-9
+
 
 
 class ModelValidate(object):
 
     def __init__(self,model):
 
+        self.keVtoErg                 = 1.60217657E-9
         self.checks = ["'self.functionName' not set in *setup* ",\
                     "'self.formula' not set in *setup*",\
                     "'self.parameters' not set in *setup*",\
@@ -139,23 +140,39 @@ class SpectralModel(object):
     #    return self.parameters[argument]
 
 
-    def display(self,emin,emax,logscale=True):
+    def display(self,emin=10.,emax=5000.,logscale=True,fluxType="vfv"):
         '''
         Display the model 
 
         '''
 
+        eIndxDic = {"ph":0.,"ene":1.,"vfv":2.}
+        eIndx = eIndxDic[fluxType]
+        
         self.eneUnit = 'keV'
         
         fig = plt.figure(567)
         ax = fig.add_subplot(111)
             
         if logscale:
-            eGrid = numpy.logspace(numpy.log10(emin),numpy.log10(emax))
+            eGrid = numpy.logspace(numpy.log10(emin),numpy.log10(emax),100)
 
-            ax.loglog(eGrid,self(eGrid),'-',color='red')
+            ax.loglog(eGrid,eGrid**eIndx*self(eGrid),'-',color='red')
+
+        else:
+            eGrid = numpy.linspace(emin,emax,100)
+
+            ax.plot(eGrid,eGrid**eIndx*self(eGrid),'-',color='red')
 
 
+
+
+
+
+
+
+            
+         
         ax.set_xlabel("Energy [%s]"%self.eneUnit)
 
 
@@ -306,12 +323,21 @@ class CompositeModel(SpectralModel):
       pass
     pass
     self.integral           = lambda e1,e2: integrals[0](e1,e2)+integrals[1](e1,e2)
-  pass
+    for k,v in self.parameters.iteritems():
+
+        object.__setattr__(self,k,v)
+
+   
   
   def __call__(self,x):
     return self.operator(self.oneCall(x),self.twoCall(x))
   pass
+
+  def setup(self):
+    # DO NOTHING
+    pass
 pass
+
 
 
 
