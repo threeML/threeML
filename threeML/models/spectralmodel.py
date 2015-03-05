@@ -1,7 +1,7 @@
 import numpy
 import collections
 from Parameter import Parameter
-import fancyDisplay
+#import fancyDisplay
 from IPython.display import display, Latex, HTML
 import math
 import scipy.integrate
@@ -10,6 +10,7 @@ import numexpr
 import abc
 import matplotlib.pyplot as plt
 
+import astropy.table
 
 
 class ModelValidate(object):
@@ -184,17 +185,20 @@ class SpectralModel(object):
         display(Latex(self.formula))
         print("")
         print("Current parameters:\n")
-        table                    = fancyDisplay.HtmlTable(8)
-        table.addHeadings("Name","Value","Minimum","Maximum","Delta","Status","Unit","Prior")
+
+        maxLen = max(map(lambda p: len(p.name) ,self.parameters.values()))
+
+        
+        table = astropy.table.Table(names=["Name","Value","Minimum","Maximum","Delta","Status","Unit","Prior"],dtype=["S%d"%maxLen,float,float,float,float,"S5","S6","S20"])
         for k,v in self.parameters.iteritems():
             if(v.isFree()):
                 ff                   = "free"
             else:
                 ff                   = "fixed"
         
-        table.addRow(v.name,v.value,v.minValue,v.maxValue,v.delta,ff,v.unit,v.prior.getName())
+            table.add_row ([v.name,v.value,v.minValue,v.maxValue,v.delta,ff,v.unit,v.prior.getName()])
         
-        display(HTML(table.__repr__()))
+        display()
     
         return ''
  
