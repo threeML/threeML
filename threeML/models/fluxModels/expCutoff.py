@@ -50,12 +50,9 @@ class ExponentialCutoff(SpectralModel):
 
         def eF(x):
 
-            return -numpy.exp(-x/eFold)*(x/eFold + 1./(eFold*eFold ))
+            return -numpy.exp(-x/eFold)*(x*eFold + (eFold*eFold ))
 
-        return eF(e2) - eF(e1)
+        return (eF(e2) - eF(e1))*self.keVtoErg
 
         
-
-
-        #return (eF(e2)-eF(e1))*keVtoErg
 
