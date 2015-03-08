@@ -8,6 +8,7 @@ class TableModel(SpectralModel):
     def SetTableFile(self,tableFile):
     
         self._ReadTable(tableFile)
+        self._CreateInterpolation()
     
     def _ReadTable(self,tableFile):
         '''
@@ -39,9 +40,9 @@ class TableModel(SpectralModel):
 
         
         
-def FITSTableModel(TableModel):
+class FITSTableModel(TableModel):
     
-    def ReadTable(self,fitsFileName):
+    def _ReadTable(self,fitsFileName):
         
         # Open the FITS file
         self._fitsFile = fits.open(fitsFileName)
@@ -55,9 +56,9 @@ def FITSTableModel(TableModel):
         # Extract the fluxes and reshape them
         # For the interpolator
         shape = self._numParamValues
-        shape.append(len(self._numEvalEnergies))
+        shape.append(self._numEvalEnergies)
         
-        self._tableFluxes =  self._fitsFile[3].data['INTPSPEC'].reshape(*shape)
+        self._tableFluxes =  self._fitsFile[3].data['INTPSPEC'].reshape(*shape) / self._binWidths
         
         
         
@@ -71,7 +72,7 @@ def FITSTableModel(TableModel):
         
     def _ExtractParameters(self):
         
-        self._numParamValues = (self._fitsFile[1]["NUMBVALS"]).tolist()
-        self._tableParams    = (self._fitsFile[1]["VALUE"]).tolist()
+        self._numParamValues = (self._fitsFile[1].data["NUMBVALS"]).tolist()
+        self._tableParams    = (self._fitsFile[1].data["VALUE"]).tolist()
     
     
