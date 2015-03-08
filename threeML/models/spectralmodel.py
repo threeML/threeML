@@ -20,15 +20,13 @@ class ModelValidate(object):
         self.keVtoErg                 = 1.60217657E-9
         self.checks = ["'self.functionName' not set in *setup* ",\
                     "'self.formula' not set in *setup*",\
-                    "'self.parameters' not set in *setup*",\
-                    "'self.integral(e1,e2)' not defined in *setup*"\
+                    "'self.parameters' not set in *setup*"\
                     ]
         checks2 = "'self.parameters' is NOT of type collections.OrderedDict"
 
         self.tt = [hasattr(model,'functionName'),\
                    hasattr(model,'formula'),\
-                   hasattr(model,'parameters'),\
-                   hasattr(model,'integral')]
+                   hasattr(model,'parameters')]
 
 
         if self.tt[2]: #Check that parameters exist
@@ -41,7 +39,7 @@ class ModelValidate(object):
             self._printSetupErr()
             return
 
-        if self.tt[4]: #Check that the parameters are right type
+        if self.tt[3]: #Check that the parameters are right type
 
             for p in model.parameters.keys():
 
@@ -200,7 +198,7 @@ class SpectralModel(object):
         
             table.add_row ([v.name,v.value,v.minValue,v.maxValue,v.delta,ff,v.unit,v.prior.getName()])
         
-        display()
+        display(table)
     
         return ''
  
