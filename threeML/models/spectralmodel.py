@@ -55,11 +55,13 @@ class ModelValidate(object):
     
     def _printSetupErr(self):
 
+        # negate the things which are correct to return the errors
         self.tt = ~numpy.array(self.tt)
-        
+
+        #Turn the checks into a numpy array
         self.checks =numpy.array(self.checks)
 
-        
+        #Now select only the problems found via the index table
         problems = self.checks[self.tt]
 
         if len(problems) == 0:

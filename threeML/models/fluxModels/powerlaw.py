@@ -60,5 +60,5 @@ class PowerLaw(SpectralModel):
                 return numpy.maximum(self.parameters['A'].value * numpy.log(e/piv),1e-30)
    
     
-        return (eF(e2)-eF(e1))*keVtoErg
+        return (eF(e2)-eF(e1))*self.keVtoErg
 

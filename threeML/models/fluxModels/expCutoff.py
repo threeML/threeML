@@ -4,6 +4,8 @@ import math
 import scipy.integrate
 import operator
 import numexpr
+import numpy
+
 
 import collections
 
@@ -15,7 +17,7 @@ class ExponentialCutoff(SpectralModel):
         self.functionName        = "ExponentialCutoff"
         self.formula             = r'$f(E) = A {\rm exp}\left(-E/E_{\rm fold}   \right)$'
         self.parameters          = collections.OrderedDict()
-        self.parameters['Efold'] = Parameter('A',1.,1.E-10,1,E10,0.1,fixed=False,nuisance=False,dataset=None,normalization=True)
+        self.parameters['A']     = Parameter('A',1.,1.E-10,1.E10,0.1,fixed=False,nuisance=False,dataset=None,normalization=True)
         self.parameters['Efold'] = Parameter('Efold',100.,1.,1E6,0.1,fixed=False,nuisance=False,dataset=None)
             
         self.ncalls              = 0

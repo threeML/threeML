@@ -4,3 +4,6 @@ from logporabola import LogParabola
 from madness import Madness
 from manybrokenpowerlaws import ManyBrokenPowerlaws
 from manylogporabolas import ManyLogParabolas
+from blackbody import Blackbody
+from expCutoff import ExponentialCutoff
+from gaussian import Gaussian
