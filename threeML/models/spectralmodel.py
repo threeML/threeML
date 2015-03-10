@@ -156,12 +156,12 @@ class SpectralModel(object):
         ax = fig.add_subplot(111)
             
         if logscale:
-            eGrid = numpy.logspace(numpy.log10(emin),numpy.log10(emax),100)
+            eGrid = numpy.logspace(numpy.log10(emin),numpy.log10(emax),1000)
 
             ax.loglog(eGrid,eGrid**eIndx*self(eGrid),'-',color='red')
 
         else:
-            eGrid = numpy.linspace(emin,emax,100)
+            eGrid = numpy.linspace(emin,emax,1000)
 
             ax.plot(eGrid,eGrid**eIndx*self(eGrid),'-',color='red')
 
