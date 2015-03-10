@@ -83,7 +83,7 @@ class FITSTableModel(TableModel):
     
 class NumpyTableModel(TableModel):
 
-    def _ReadTable(self,npzFile):
+    def _ReadTable(self,npzfile):
 
         npz = numpy.load(npzfile)
         self._evalEnergies = npz["energy"]
@@ -141,6 +141,6 @@ def MakeNumpyTableModel(params,evaluationEnergies,tableFluxes,filename):
         return
     f = open(filename,"w")
     
-    numpy.savez(f,params=params,energy=evaluationEnergies,fluxes=tableFluxes )
+    numpy.savez_compressed(f,params=params,energy=evaluationEnergies,fluxes=tableFluxes )
     
     f.close()

@@ -8,3 +8,4 @@ from blackbody import Blackbody
 from expCutoff import ExponentialCutoff
 from gaussian import Gaussian
 from asaf import AsafModel
+from bandTable import BandTable
