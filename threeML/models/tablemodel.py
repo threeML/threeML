@@ -4,12 +4,17 @@ import numpy
 from threeML.models.spectralmodel import SpectralModel
 
 class TableModel(SpectralModel):
+
     
     def SetTableFile(self,tableFile):
+
     
         self._ReadTable(tableFile)
         self._CreateInterpolation()
+        
+
     
+        
     def _ReadTable(self,tableFile):
         '''
         Virtual function. Implementation defined
@@ -30,6 +35,7 @@ class TableModel(SpectralModel):
         # Create the interpolation grid
         # 
         tmp = self._tableParams
+        
         tmp.append(self._evalEnergies)
         
         interpGrid = tuple(tmp)
@@ -75,4 +81,66 @@ class FITSTableModel(TableModel):
         self._numParamValues = (self._fitsFile[1].data["NUMBVALS"]).tolist()
         self._tableParams    = (self._fitsFile[1].data["VALUE"]).tolist()
     
+class NumpyTableModel(TableModel):
+
+    def _ReadTable(self,npzFile):
+
+        npz = numpy.load(npzfile)
+        self._evalEnergies = npz["energy"]
+        self._tableParams  = npz["params"].tolist()
+        self._tableFluxes  = npz["fluxes"]
+
+
+def MakeNumpyTableModel(params,evaluationEnergies,tableFluxes,filename):
+    '''
+    Helper function to save a table model into a numpy format.
+
+    params:              a list of lists for the parameters values
+    evalulationEnergies: array of the energies the model is evaluated at
+    tablefluxes:         the table fluxes in a nested array
+    filename: File name to save the table to. No extension required
+
+    An example of how to build the table and params::
+
+    f(ene,par1,par2) ---> the generating function
     
+    param1 = [1,2,3,...] ---> the parameter values for par1
+    param2 = [5,6,7,...] ---> the parameter values for par2
+
+    eneGrid = [1,....,1e5] ---> the evaluation energies
+
+    tabMod = []
+    for p1 in par1:
+     tmp = []
+     for p2 in par2:
+      tmp2.append(f(eneGrid,p1,p2))
+     tmp.append(tmp2)
+    tabMod.append(tmp)
+
+    params = [param1,param2]
+
+
+    MakeNumpyTable(params,eneGrid,tabMod,"table")    
+    
+    '''
+
+    #Check the shape
+    tableShape = tableFluxes.shape
+    tmp = []
+    for p in params:
+        
+        tmp.append(len(p))
+    tmp.append(len(evaluationEnergies))
+    
+    if tuple(tmp) != tableShape:
+        print "The parameters, evaluation energies and"
+        print "table fluxes do not have the same shape!"
+        print tuple(tmp)
+        print tableShape
+    
+        return
+    f = open(filename,"w")
+    
+    numpy.savez(f,params=params,energy=evaluationEnergies,fluxes=tableFluxes )
+    
+    f.close()
