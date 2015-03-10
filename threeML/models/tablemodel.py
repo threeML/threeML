@@ -2,7 +2,7 @@ import astropy.io.fits as fits
 import scipy.interpolate
 import numpy
 from threeML.models.spectralmodel import SpectralModel
-
+import copy
 class TableModel(SpectralModel):
 
     
@@ -34,14 +34,15 @@ class TableModel(SpectralModel):
         
         # Create the interpolation grid
         # 
-        tmp = self._tableParams
+        tmp = copy.deepcopy(self._tableParams)
         
-        tmp.append(self._evalEnergies)
-        
+        tmp.append(self._evalEnergies.tolist())
+        tmp = map(lambda x: numpy.array(x,dtype=numpy.float32),tmp)
         interpGrid = tuple(tmp)
+        self._tableFluxes.dtype = numpy.float32
+        zero = numpy.float32(0.)
         
-        
-        self._interpFunc = scipy.interpolate.RegularGridInterpolator(interpGrid,self._tableFluxes,method="linear",fill_value=None)
+        self._interpFunc = scipy.interpolate.RegularGridInterpolator(interpGrid,self._tableFluxes,method="linear",fill_value=zero,bounds_error=False)
         
 
         
@@ -64,7 +65,7 @@ class FITSTableModel(TableModel):
         shape = self._numParamValues
         shape.append(self._numEvalEnergies)
         
-        self._tableFluxes =  self._fitsFile[3].data['INTPSPEC'].reshape(*shape) / self._binWidths
+        self._tableFluxes =  self._fitsFile[3].data['INTPSPEC'].reshape(*shape) / self._binWidths #convert!
         
         
         
