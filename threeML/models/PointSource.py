@@ -25,7 +25,7 @@ class PointSource(SourceModel):
       self.spectralModel      = spectralModel
     
     pass
-  pass
+  pass    
   
   def getFlux(self,energies):
     return self.spectralModel(energies)
