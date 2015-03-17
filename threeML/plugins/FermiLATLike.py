@@ -4,7 +4,7 @@ import pyLikelihood as pyLike
 import os
 import shutil
 import numpy
-import pyfits
+import astropy.io.fits as pyfits
 from threeML.pluginPrototype import pluginPrototype
 from threeML.models.Parameter import Parameter
 
