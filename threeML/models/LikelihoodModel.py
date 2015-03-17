@@ -38,14 +38,17 @@ class LikelihoodModel(object):
   
   def __init__(self,*sources):
     
+    if(len(sources)==0):
+      raise RuntimeError("You have to provide at least one source")
+    
     #Store sources in ordered dictionaries, so that we can
     #access them by name or by id (ordinal number)
     
     self.pointSources         = MyCollection()
     self.extendedSources      = MyCollection()
     
-    if(len(sources)==0):
-      raise RuntimeError("You have to provide at least one source")
+    #Make also a dictionary of all parameters
+    self.parameters         = collections.OrderedDict()
     
     #Loop through the provided sources
     for source in sources:
@@ -57,6 +60,7 @@ class LikelihoodModel(object):
         self.extendedSources[source.name] = source
       
       elif(isinstance(source,PointSource)):
+        
         #Current source is a point source
         
         self.pointSources[source.name]    = source
@@ -65,13 +69,32 @@ class LikelihoodModel(object):
       
         #User error, source is not a source (!)
         
-        raise RuntimeError("One of the argument provided is not a "+ 
+        raise RuntimeError("One of the argument provided is not a "+
                            "point source nor an extended source")
       
       pass
       
+      #Now get the parameters and add them to the
+      #internal dictionary
+      
+      self.parameters[source.name] = source.getAllParameters()
+      
     pass
   pass
+  
+  def getFreeParameters(self):
+    
+    freeParameters            = collections.OrderedDict()
+    
+    for srcName,srcParameters in self.parameters.iteritems():
+      
+      for parName,par in srcParameters.iteritems():
+        
+        if(par.isFree() and (not par.isNuisance())):
+          
+          freeParameters[(srcName,parName)]     = par
+    
+    return freeParameters
   
   def getNumberOfPointSources(self):
     return len(self.pointSources)
