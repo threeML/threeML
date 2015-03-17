@@ -55,6 +55,12 @@ from pyModelInterface import pyToCppModelInterface
 from pyModelInterface import FakePlugin 
 from pyModelInterface import FixedPointSource
 
+#Import the classic Maximum Likelihood Estimation package
+from .classicMLE.jointLikelihood import JointLikelihood
+
+#Import the DataList class
+from dataList import DataList
+
 #Now look for plugins
 plugins_dir                   = os.path.join(os.path.dirname(__file__),"plugins")
 sys.path.insert(1,plugins_dir)
