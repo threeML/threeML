@@ -34,7 +34,8 @@ setup(
                 'threeML/minimizer',
                 'threeML/models',
                 'threeML/models/fluxModels',
-                'threeML/plugins'],
+                'threeML/plugins',
+                'threeML/classicMLE'],
     
     version = 'v0.0.5',
     
@@ -96,6 +97,7 @@ setup(
           'emcee',
           'astropy',
           'matplotlib',
-          'ipython>=2.0.0, <3.0.0'          
+          'ipython>=2.0.0, <3.0.0',
+          'iminuit'         
       ])
 
