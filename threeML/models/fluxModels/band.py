@@ -21,9 +21,9 @@ class Band(SpectralModel):
         '''
 
         self.parameters         = collections.OrderedDict()
-        self.parameters['alpha'] = Parameter('alpha',-1.0,-10,10,0.1,fixed=False,nuisance=False,dataset=None)
-        self.parameters['beta']  = Parameter('beta',-2.0,-10,10,0.1,fixed=False,nuisance=False,dataset=None)
-        self.parameters['E0']    = Parameter('E0',500,10,1e5,50,fixed=False,nuisance=False,dataset=None,unit='keV')
+        self.parameters['alpha'] = Parameter('alpha',-1.0,-5,10,0.1,fixed=False,nuisance=False,dataset=None)
+        self.parameters['beta']  = Parameter('beta',-2.0,-10,0,0.1,fixed=False,nuisance=False,dataset=None)
+        self.parameters['E0']    = Parameter('E0',500,10,1e5,10,fixed=False,nuisance=False,dataset=None,unit='keV')
         self.parameters['K']     = Parameter('K',1,1e-4,1e3,0.1,fixed=False,nuisance=False,dataset=None,normalization=True)
     
         def integral(e1,e2):
