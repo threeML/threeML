@@ -3,7 +3,6 @@ from threeML.models.spatialmodel import SpatialModel #SpatialModel does not exis
 from threeML.models.Parameter import Parameter, SpatialParameter #SpatialParameter does not exist yet, needs to be implemented
 import numpy as np
 import scipy.stats
-import math
 
 import collections
 
@@ -56,10 +55,10 @@ class MultiVariateGaussian(SpatialModel):
         angle                       = np.deg2rad(self.parameters['angle'](energy).value)
         
         
-        sigma_1=sigma
-        sigma_2=sigma*math.sqrt(1-eccentricity**2)
+        sigma_1=sigma**2
+        sigma_2=sigma_1*(1-eccentricity**2)
         rot=np.array([[np.cos(angle),-np.sin(angle)],[np.sin(angle),np.cos(angle)]])
-        cov=np.dot(rot,np.dot(np.array([[sigma_1**2,0],[0,sigma_2**2]]),rot.T))
+        cov=np.dot(rot,np.dot(np.array([[sigma_1,0],[0,sigma_2]]),rot.T))
         return numpy.maximum(np.power(180/np.pi,2)*scipy.stats.multivariate_normal.pdf(np.array([RA,Dec]).T, mean=np.array([RA0,Dec0]).T, cov=cov), 1e-30)
    
   
