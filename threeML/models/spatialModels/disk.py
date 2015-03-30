@@ -2,7 +2,7 @@ from threeML.models.spatialmodel import SpatialModel #SpatialModel does not exis
 from threeML.models.Parameter import Parameter, SpatialParameter #SpatialParameter does not exist yet, needs to be implemented
 import numpy as np
 
-class Gaussian(SpatialModel):
+class Disk(SpatialModel):
     
     def setup(self):
         self.functionName        = "Disk"
