@@ -1,5 +1,5 @@
 from threeML.models.spatialmodel import SpatialModel
-from threeML.models.Parameter import Parameter, SpatialParameter #SpatialParameter does not exist yet, needs to be implemented
+from threeML.models.Parameter import Parameter, SpatialParameter
 import numpy as np
 
 class Disk(SpatialModel):
@@ -19,6 +19,6 @@ class Disk(SpatialModel):
         self.ncalls             += 1
         RA0                         = self.parameters['RA0'].value
         Dec0                        = self.parameters['Dec0'].value
-        radius                      = self.parameters['radius'](energy).value
+        radius                      = self.parameters['radius'].getValue(energy)
         
         return np.power(180/np.pi,2)*1./(np.pi*radius**2) * (angsep(RA,Dec,RA0,Dec0)<radius)

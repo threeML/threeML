@@ -1,5 +1,5 @@
 from threeML.models.spatialmodel import SpatialModel
-from threeML.models.Parameter import Parameter, SpatialParameter #SpatialParameter does not exist yet, needs to be implemented
+from threeML.models.Parameter import Parameter, SpatialParameter
 import numpy as np
 
 class Ellipse(SpatialModel):
@@ -21,9 +21,9 @@ class Ellipse(SpatialModel):
         self.ncalls             += 1
         RA0                         = self.parameters['RA0'].value
         Dec0                        = self.parameters['Dec0'].value
-        maj_saxis                   = self.parameters['maj_saxis'](energy).value
-        eccentricity                = self.parameters['eccentricity'](energy).value
-        angle                       = self.parameters['angle'](energy).value
+        maj_saxis                   = self.parameters['maj_saxis'].getValue(energy)
+        eccentricity                = self.parameters['eccentricity'].getValue(energy)
+        angle                       = self.parameters['angle'].getValue(energy)
         
         s=np.sin(np.deg2rad(angle))
         c=np.cos(np.deg2rad(angle))

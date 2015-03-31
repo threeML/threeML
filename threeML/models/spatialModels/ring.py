@@ -1,5 +1,5 @@
 from threeML.models.spatialmodel import SpatialModel
-from threeML.models.Parameter import Parameter, SpatialParameter #SpatialParameter does not exist yet, needs to be implemented
+from threeML.models.Parameter import Parameter, SpatialParameter
 import numpy as np
 
 
@@ -21,8 +21,8 @@ class Ring(SpatialModel):
         self.ncalls             += 1
         RA0                         = self.parameters['RA0'].value
         Dec0                        = self.parameters['Dec0'].value
-        radius                      = self.parameters['radius'](energy).value
-        inner_frac                  = self.parameters['inner_frac'](energy).value
+        radius                      = self.parameters['radius'].getValue(energy)
+        inner_frac                  = self.parameters['inner_frac'].getValue(energy)
         
         return np.power(180/np.pi,2)*1./(np.pi*radius**2*(1-inner_frac**2)) * (angsep(RA,Dec,RA0,Dec0)<radius)*(angsep(RA,Dec,RA0,Dec0)>(inner_frac*radius))
 
@@ -47,10 +47,10 @@ class EllipticalRing(SpatialModel):
         self.ncalls             += 1
         RA0                         = self.parameters['RA0'].value
         Dec0                        = self.parameters['Dec0'].value
-        maj_saxis                   = self.parameters['maj_saxis'](energy).value
-        eccentricity                = self.parameters['eccentricity'](energy).value
-        angle                       = self.parameters['angle'](energy).value
-        inner_frac                  = self.parameters['inner_frac'](energy).value
+        maj_saxis                   = self.parameters['maj_saxis'].getValue(energy)
+        eccentricity                = self.parameters['eccentricity'].getValue(energy)
+        angle                       = self.parameters['angle'].getValue(energy)
+        inner_frac                  = self.parameters['inner_frac'].getValue(energy)
         
         
         s=np.sin(np.deg2rad(angle))

@@ -1,5 +1,5 @@
 from threeML.models.spatialmodel import SpatialModel
-from threeML.models.Parameter import Parameter, SpatialParameter #SpatialParameter does not exist yet, needs to be implemented
+from threeML.models.Parameter import Parameter, SpatialParameter
 import numpy as np
 import scipy.stats
 
@@ -23,7 +23,7 @@ class Gaussian(SpatialModel):
         self.ncalls             += 1
         RA0                         = self.parameters['RA0'].value
         Dec0                        = self.parameters['Dec0'].value
-        sigma                       = self.parameters['sigma'](energy).value
+        sigma                       = self.parameters['sigma'].getValue(energy)
         
         return numpy.maximum( np.power(180/np.pi,2)*1./(2 * np.pi * sigma**2) * np.exp(-0.5 * np.power(angsep(RA,Dec,ra0,dec0),2)/sigma**2), 1e-30)
 
@@ -49,9 +49,9 @@ class MultiVariateGaussian(SpatialModel):
         self.ncalls             += 1
         RA0                         = self.parameters['RA0'].value
         Dec0                        = self.parameters['Dec0'].value
-        sigma                       = self.parameters['sigma'](energy).value
-        eccentricity                = self.parameters['eccentricity'](energy).value
-        angle                       = np.deg2rad(self.parameters['angle'](energy).value)
+        sigma                       = self.parameters['sigma'].getValue(energy)
+        eccentricity                = self.parameters['eccentricity'].getValue(energy)
+        angle                       = np.deg2rad(self.parameters['angle'].getValue(energy)
         
         
         sigma_1=sigma**2
