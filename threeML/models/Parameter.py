@@ -123,7 +123,7 @@ class SpatialParameter(object):
         
         for k,v in kwargs.iteritems():
             if(k.lower()=='unit'):
-            self.unit             = str(v)
+                self.unit             = str(v)
             elif(k.lower()=='normalization'):
                 self.normalization    = bool(v)
             elif(k.lower()=='fixed'):
