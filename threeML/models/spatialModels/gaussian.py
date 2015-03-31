@@ -1,5 +1,4 @@
-#from threeML.models.spectralmodel import SpectralModel
-from threeML.models.spatialmodel import SpatialModel #SpatialModel does not exist yet, needs to be written!!!
+from threeML.models.spatialmodel import SpatialModel
 from threeML.models.Parameter import Parameter, SpatialParameter #SpatialParameter does not exist yet, needs to be implemented
 import numpy as np
 import scipy.stats
