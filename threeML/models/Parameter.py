@@ -106,6 +106,7 @@ pass
 
 
 class SpatialParameter(object):
+    
     #this class provides a place holder for spatial parameters that vary with energy, for the moment works exactly as the regular parameter with value indepedent from energy
     def __init__(self,name,initValue,minValue,maxValue,delta,**kwargs):
         self.name                 = str(name)
