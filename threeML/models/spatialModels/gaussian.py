@@ -27,6 +27,10 @@ class Gaussian(SpatialModel):
         
         return numpy.maximum( np.power(180/np.pi,2)*1./(2 * np.pi * sigma**2) * np.exp(-0.5 * np.power(angsep(RA,Dec,ra0,dec0),2)/sigma**2), 1e-30)
 
+    def integratedFlux(self,energy):
+    
+        return 1.
+
 
 class MultiVariateGaussian(SpatialModel):
     
@@ -60,7 +64,9 @@ class MultiVariateGaussian(SpatialModel):
         cov=np.dot(rot,np.dot(np.array([[sigma_1,0],[0,sigma_2]]),rot.T))
         return numpy.maximum(np.power(180/np.pi,2)*scipy.stats.multivariate_normal.pdf(np.array([RA,Dec]).T, mean=np.array([RA0,Dec0]).T, cov=cov), 1e-30)
    
-  
+    def integratedFlux(self,energy):
+                                                 
+        return 1.
 
 
 

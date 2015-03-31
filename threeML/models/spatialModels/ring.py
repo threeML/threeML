@@ -26,6 +26,9 @@ class Ring(SpatialModel):
         
         return np.power(180/np.pi,2)*1./(np.pi*radius**2*(1-inner_frac**2)) * (angsep(RA,Dec,RA0,Dec0)<radius)*(angsep(RA,Dec,RA0,Dec0)>(inner_frac*radius))
 
+    def integratedFlux(self,energy):
+    
+        return 1.
 
 class EllipticalRing(SpatialModel):
     
@@ -57,3 +60,6 @@ class EllipticalRing(SpatialModel):
         c=np.cos(np.deg2rad(angle))
         return np.power(180/np.pi,2)*1./(np.pi*maj_saxis**2*(1-inner_frac**2)*np.sqrt(1-eccentricity**2))*(np.power(c*RA+s*Dec-ra0,2)/maj_saxis**2+np.power(-s*RA+c*Dec-Dec0,2)/(maj_saxis**2*(1-eccentricity**2))<1)*(np.power(c*RA+s*Dec-ra0,2)/maj_saxis**2+np.power(-s*RA+c*Dec-Dec0,2)/(maj_saxis**2*(1-eccentricity**2))>1*inner_frac**2)
 
+    def integratedFlux(self,energy):
+    
+        return 1.

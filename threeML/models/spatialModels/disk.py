@@ -22,3 +22,7 @@ class Disk(SpatialModel):
         radius                      = self.parameters['radius'].getValue(energy)
         
         return np.power(180/np.pi,2)*1./(np.pi*radius**2) * (angsep(RA,Dec,RA0,Dec0)<radius)
+
+    def integratedFlux(self,energy):
+
+        return 1.
