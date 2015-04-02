@@ -3,7 +3,7 @@ from scipy import weave
 from scipy.weave import converters
 
 class wBand(Band):
-      def __call__(self,e):
+    def __call__(self,e):
       energies                 = numpy.array(e,ndmin=1,copy=False)
       alpha                    = self.parameters['alpha'].value
       beta                     = self.parameters['beta'].value
