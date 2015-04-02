@@ -34,6 +34,7 @@ setup(
                 'threeML/minimizer',
                 'threeML/models',
                 'threeML/models/fluxModels',
+                'threeML/models/spatialModels',
                 'threeML/plugins',
                 'threeML/classicMLE'],
     

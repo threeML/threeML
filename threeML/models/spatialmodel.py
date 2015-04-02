@@ -5,7 +5,7 @@ import abc
 
 
 
-class SpatiallModel(object):
+class SpatialModel(object):
     __metaclass__           = abc.ABCMeta # Make the user code certain
     
 
