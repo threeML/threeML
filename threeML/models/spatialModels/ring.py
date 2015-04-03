@@ -1,6 +1,9 @@
+#Author: L. Tibaldo, ltibaldo@slac.stanford.edu
 from threeML.models.spatialmodel import SpatialModel
 from threeML.models.Parameter import Parameter, SpatialParameter
 import numpy as np
+from angsep import angsep
+import collections
 
 
 class Ring(SpatialModel):
@@ -58,7 +61,9 @@ class EllipticalRing(SpatialModel):
         
         s=np.sin(np.deg2rad(angle))
         c=np.cos(np.deg2rad(angle))
-        return np.power(180/np.pi,2)*1./(np.pi*maj_saxis**2*(1-inner_frac**2)*np.sqrt(1-eccentricity**2))*(np.power(c*RA+s*Dec-ra0,2)/maj_saxis**2+np.power(-s*RA+c*Dec-Dec0,2)/(maj_saxis**2*(1-eccentricity**2))<1)*(np.power(c*RA+s*Dec-ra0,2)/maj_saxis**2+np.power(-s*RA+c*Dec-Dec0,2)/(maj_saxis**2*(1-eccentricity**2))>1*inner_frac**2)
+        return np.power(180/np.pi,2)*1./(np.pi*maj_saxis**2*(1-inner_frac**2)*np.sqrt(1-eccentricity**2))*(np.power(c*RA+s*Dec-c*RA0-s*Dec0,2)/maj_saxis**2+np.power(-s*RA+c*Dec+s*RA0-c*Dec0,2)/(maj_saxis**2*(1-eccentricity**2))<1)*(np.power(c*RA+s*Dec-c*RA0-s*Dec0,2)/maj_saxis**2+np.power(-s*RA+c*Dec+s*RA0-c*Dec0,2)/(maj_saxis**2*(1-eccentricity**2))>1*inner_frac**2
+                                                                                                                                                                                                                                        )
+    
 
     def integratedFlux(self,energy):
     
