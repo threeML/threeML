@@ -64,7 +64,7 @@ class MultiVariateGaussian(SpatialModel):
         sigma2=sigma1*(1-eccentricity**2)
         rot=np.array([[np.cos(angle),-np.sin(angle)],[np.sin(angle),np.cos(angle)]])
         cov=np.dot(rot,np.dot(np.array([[sigma1,0],[0,sigma2]]),rot.T))
-        return np.maximum(np.power(180/np.pi,2)*scipy.stats.multivariate_normal.pdf(np.array([RA,Dec]).T, mean=np.array([RA0,Dec0]).T, cov=cov), 1e-30)
+        return np.maximum(np.power(180/np.pi,2)*scipy.stats.multivariate_normal.pdf(np.array([Dec,RA]).T, mean=np.array([RA0,Dec0]), cov=cov), 1e-30)
    
     def integratedFlux(self,energy):
                                                  
