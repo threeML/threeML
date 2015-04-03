@@ -1,6 +1,10 @@
+#Author: L. Tibaldo, ltibaldo@slac.stanford.edu
+
 from threeML.models.spatialmodel import SpatialModel
 from threeML.models.Parameter import Parameter, SpatialParameter
 import numpy as np
+import collections
+from angsep import angsep
 
 class Disk(SpatialModel):
     
