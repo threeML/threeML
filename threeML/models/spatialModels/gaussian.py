@@ -1,3 +1,5 @@
+#author L. Tibaldo (ltibaldo@slac.stanford.edu)
+
 from threeML.models.spatialmodel import SpatialModel
 from threeML.models.Parameter import Parameter, SpatialParameter
 import numpy as np
