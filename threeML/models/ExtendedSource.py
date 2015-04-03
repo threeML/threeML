@@ -1,3 +1,5 @@
+#Author: L. Tibaldo, ltibaldo@slac.stanford.edu
+
 from SourceModel import SourceModel
 import numpy as np
 
@@ -31,7 +33,7 @@ class ExtendedSource(SourceModel):
     def getFlux(self,energies):
         return self.spatialModel.integratedFlux(energies)*self.spectralModel(energies)
 
-    def getDirFlux(self,RA,Dec,energies):
+    def getBrightness(self,RA,Dec,energies):
         return self.spatialModel(RA,Dec,energies)*self.spectralModel(energies)
 
 

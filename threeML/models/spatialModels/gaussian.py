@@ -9,7 +9,7 @@ from angsep import angsep
 import collections
 
 
-class Gaussian(SpatialModel):
+class SimpleGaussian(SpatialModel):
 
     def setup(self):
         self.functionName        = "Gaussian"
