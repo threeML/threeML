@@ -150,7 +150,7 @@ class FermiGBMLike(pluginPrototype):
   
     #There are no nuisance parameters here (at least for now)
     
-    pass
+    return self.getLogLike()
   
   def getFoldedModel(self):
     
