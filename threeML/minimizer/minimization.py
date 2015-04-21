@@ -17,7 +17,7 @@ class Minimizer(object):
     raise NotImplemented("This is the method of the base class. Must be implemented by the actual minimizer")
 
 class iMinuitMinimizer(Minimizer):
-  def __init__(self,function,parameters,ftol=1e-3,verbosity=0):
+  def __init__(self,function,parameters,ftol=1,verbosity=0):
     
     super(iMinuitMinimizer, self).__init__(function,parameters,ftol,verbosity)
     
@@ -64,21 +64,46 @@ class iMinuitMinimizer(Minimizer):
     self.minuit.tol           = ftol
     #self.minuit.strategy      = 2 #More accurate
         
-  def minimize(self,minos=False,printout=True,verbosity=0):
-    
+  def minimize(self):
+        
     self.minuit.migrad()
+    self.minuit.hesse()
     
-    return self.minuit.values, self.minuit.errors, self.minuit.fval
+    return self.minuit.values, self.minuit.fval
+  
+  def printFitResults(self):
+    
+    self.minuit.print_param()
+  
+  def printCorrelationMatrix(self):
+    
+    self.minuit.print_matrix()
   
   def getErrors(self,fast): 
     
-    #This is to get the covariance matrix right
-    self.minuit.hesse()
+    #Set the print_level to 0 to avoid printing too many tables
+    self.minuit.print_level = 0
     
     if(fast):
+      
       #Do not execute MINOS
+            
+      #This is to get the covariance matrix right
+      self.minuit.hesse()
+      
+      self.minuit.print_param()
+      
       return self.minuit.errors
     
+    else:
+      
+      errors = self.minuit.minos()
+      
+      self.minuit.print_param()
+      
+      return errors
+  
+  def getLikelihoodProfiles(self):
     #Execute MINOS profiles
     parameters                     = self.minuit.list_of_vary_param()
     
@@ -89,7 +114,7 @@ class iMinuitMinimizer(Minimizer):
       
       figures.append(plt.figure())
       
-      errors[par]                  = self.minuit.draw_mnprofile(par, bound = 1.5, text=False)
+      errors[par]                  = self.minuit.draw_mnprofile(par, bound = 1.2, text=False)
     
     return errors, figures
   
