@@ -7,6 +7,10 @@ import scipy.stats
 import sys
 import matplotlib.pyplot as plt
 
+from astropy.table import Table
+
+from IPython.display import display
+
 class JointLikelihood(object):
   
   def __init__(self, likelihoodModel, dataList, **kwargs):
@@ -56,9 +60,9 @@ class JointLikelihood(object):
       
       for dataset in self.dataList.values():
           
-          dataset.innerFit()
+          globalLogLike         += dataset.innerFit()
           
-          globalLogLike         += dataset.getLogLike()      
+          #dataset.getLogLike()      
       
       if("%s" % globalLogLike=='nan'):
         print("Warning: these parameters returned a logLike = Nan: %s" %(trialValues))
@@ -92,7 +96,7 @@ class JointLikelihood(object):
     
       raise ValueError("Do not know minimizer %s" %(minimizer))
   
-  def fit(self,minos=False):
+  def fit(self):
         
     #Isolate the free parameters
     #NB: nuisance parameters are NOT in this dictionary
@@ -101,30 +105,51 @@ class JointLikelihood(object):
     
     #Instance the minimizer
     self.minimizer            = self.Minimizer(self.minusLogLikeProfile,
-                                               self.freeParameters,
-                                               1,3)
+                                               self.freeParameters)
     
     #Perform the fit
-    xs,xserr,logLmin          = self.minimizer.minimize(minos,False)
+    xs, logLmin          = self.minimizer.minimize()
     
-    print("Minimum of -logLikelihood is: %s" %(logLmin))
+    #Print results
+    print("Best fit values:\n")
+    self.minimizer.printFitResults()
     
-    print("Contributions to the -logLikelihood at the minimum:")
+    print("\nCorrelation matrix:\n")
+    self.minimizer.printCorrelationMatrix()
+    
+    print("\nMinimum of -logLikelihood is: %s\n" %(logLmin))
+    
+    print("Contributions to the -logLikelihood at the minimum:\n")
+    
+    data                      = []
+    nameLength                = 0
     
     for dataset in self.dataList.values():
       
-      print("%-50s: %s" %(dataset.getName(),dataset.getLogLike()*(-1)))
+      nameLength              = max(nameLength, len(dataset.getName()) + 1)
+      data.append([dataset.getName(),dataset.getLogLike()*(-1)])
     
-    #Print and store results for future use
+    table                     = Table( rows  = data,
+                                       names = ["Detector","-LogL"],
+                                       dtype = ('S%i' %nameLength, float))
     
+    display(table)
+        
     return xs,logLmin    
   
-  def getErrors(self,fast=True):
+  def getErrors(self,fast=False):
     
     if(not hasattr(self,'minimizer')):
       raise RuntimeError("You have to run the .fit method before calling errors.")
     
     return self.minimizer.getErrors(fast)
+  
+  def getLikelihoodProfiles(self):
+    
+    if(not hasattr(self,'minimizer')):
+      raise RuntimeError("You have to run the .fit method before calling errors.")
+    
+    return self.minimizer.getLikelihoodProfiles()
   
   def getContours(self,param1,param2):
     
