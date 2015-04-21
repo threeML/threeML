@@ -1,0 +1,47 @@
+<source_library title="source library">
+
+
+<source name="bn090217206" type="PointSource">
+   
+   <spectrum type="PowerLaw2">
+      <parameter free="1" max="100000.0" min="1e-06" name="Integral" scale="0.001" value="0.01" />
+      <parameter free="1" max="0.01" min="-6.0" name="Index" scale="1.0" value="-2.0" />
+      <parameter free="0" max="200000.0" min="20.0" name="LowerLimit" scale="1.0" value="100" />
+      <parameter free="0" max="500000" min="20.0" name="UpperLimit" scale="1.0" value="100000" />
+    </spectrum>
+   <spatialModel type="SkyDirFunction">
+   <parameter free="0" max="360.0" min="-360.0" name="RA" scale="1.0" value="204.9" />
+   <parameter free="0" max="90.0" min="-90.0" name="DEC" scale="1.0" value="-8.4" />
+</spatialModel>
+</source>
+
+
+<source name="IsotropicTemplate" statErr="0" sysErr="0.1" type="DiffuseSource">
+   <spectrum file="/home/giacomov/GlastExternals/diffuseModels/v2r0/iso_source_v05_rev1.txt" type="FileFunction">
+      <parameter free="1" max="1000" min="1e-05" name="Normalization" scale="1" value="1" />
+   </spectrum>
+   <spatialModel type="ConstantValue">
+      <parameter free="0" max="10.0" min="0.0" name="Value" scale="1.0" value="1.0" />
+   </spatialModel>
+</source>
+
+
+<source name="GalacticTemplate" statErr="0" sysErr="0.15" type="DiffuseSource">
+   <spectrum type="ConstantValue">
+     <parameter free="0" max="10.0" min="0.0" name="Value" scale="1.0" value="1.0" />
+   </spectrum>
+   <spatialModel file="/home/giacomov/develop/threeML/examples/lat/gll_iem_v05_rev1_cut.fit" type="MapCubeFunction">
+     <parameter free="0" max="1000.0" min="0.001" name="Normalization" scale="1.0" value="1.0" />
+   </spatialModel>
+</source>
+
+
+</source_library>
+<!-- OBJECT=bn090217206 -->
+<!-- DEC=-8.4 -->
+<!-- RA=204.9 -->
+<!-- IRF=P7REP_SOURCE_V15 -->
+<!-- OBJECT=bn090217206 -->
+<!-- DEC=-8.4 -->
+<!-- RA=204.9 -->
+<!-- IRF=P7REP_SOURCE_V15 -->
