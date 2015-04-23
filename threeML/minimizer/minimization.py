@@ -65,10 +65,27 @@ class iMinuitMinimizer(Minimizer):
     #self.minuit.strategy      = 2 #More accurate
         
   def minimize(self):
-        
-    self.minuit.migrad()
-    self.minuit.hesse()
     
+    #Repeat Migrad up to 10 times, until it converges
+    for i in range(10):
+      
+      self.minuit.migrad()
+      
+      if(self.minuit.migrad_ok()):
+        
+        #Converged
+        break
+      
+      else:
+        
+        #Try again
+        
+        #This estimates the covariance matrix, which improves
+        #the chances of converging at the next iteration
+        self.minuit.hesse()
+        
+        continue
+          
     return self.minuit.values, self.minuit.fval
   
   def printFitResults(self):
