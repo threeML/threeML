@@ -1,0 +1,2 @@
+class ModelAssertionViolation(Exception):
+    pass
