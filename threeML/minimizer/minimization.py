@@ -79,11 +79,6 @@ class iMinuitMinimizer(Minimizer):
       else:
         
         #Try again
-        
-        #This estimates the covariance matrix, which improves
-        #the chances of converging at the next iteration
-        self.minuit.hesse()
-        
         continue
           
     return self.minuit.values, self.minuit.fval
