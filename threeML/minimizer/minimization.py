@@ -1,6 +1,7 @@
 import numpy
 import itertools
 import iminuit
+import warnings
 import matplotlib.pyplot as plt
 
 
@@ -126,7 +127,13 @@ class iMinuitMinimizer(Minimizer):
       
       figures.append(plt.figure())
       
-      errors[par]                  = self.minuit.draw_mnprofile(par, bound = 1.2, text=False)
+      #Suppress UserWarnings, which can be too many due to migrad failing in region
+      #of the parameter space too far from the best fit
+      with warnings.catch_warnings() as w:
+        
+        warnings.filterwarnings("ignore",category=UserWarning)
+        
+        errors[par]                  = self.minuit.draw_mnprofile(par, bound = 1.2, text=False)
     
     return errors, figures
   
