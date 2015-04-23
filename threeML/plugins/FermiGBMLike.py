@@ -177,7 +177,8 @@ class FermiGBMLike(pluginPrototype):
     '''
     
     #Get the folded model for this spectrum (this is the rate predicted, 
-    #in cts/s)    
+    #in cts/s)
+    
     folded                    = self.getFoldedModel()
     
     #Model is folded+background (i.e., we assume negligible errors on the 
