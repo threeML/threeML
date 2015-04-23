@@ -60,7 +60,20 @@ class JointLikelihood(object):
       
       for dataset in self.dataList.values():
           
-          globalLogLike         += dataset.innerFit()
+          try:
+          
+            globalLogLike         += dataset.innerFit()
+          
+          except CustomExceptions.ModelAssertionViolation:
+            
+            #This is a zone of the parameter space which is not allowed. Return
+            #a big number for the likelihood so that the fit engine will avoid it
+            return 1e6
+          
+          except:
+            
+            #Do not intercept other errors
+            raise
           
           #dataset.getLogLike()      
       
