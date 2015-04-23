@@ -8,7 +8,7 @@ from IPython.display import display, Latex, HTML
 class SourceModel(object):  
   
   def __init__(self):
-    print("HEY")
+    print("You should not see this!")
   
   def __getitem__(self,argument):
     return self.parameters[argument]
@@ -33,12 +33,14 @@ class SourceModel(object):
     
     display(Latex(self.formula))
     
-    print("")
-    print("Current parameters:\n")
+    if(hasattr(self,'spectralModel')):
+      print("\nSpectral model: %s" %(self.spectralModel.functionName))
+    
+    print("\nCurrent parameters:\n")
     
     data = []
     nameLength = 0
-        
+    
     for dic in [self.parameters,self.spectralModel.parameters]:
       for k,v in dic.iteritems():
         if(v.isFree()):
