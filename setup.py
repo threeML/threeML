@@ -30,6 +30,7 @@ setup(
     name="threeML",
     
     packages = ['threeML',
+                'threeML/exceptions',
                 'threeML/bayesian',
                 'threeML/minimizer',
                 'threeML/models',
