@@ -1,4 +1,6 @@
 from threeML.minimizer import minimization
+from threeML.exceptions import CustomExceptions
+
 import collections
 
 import numpy
