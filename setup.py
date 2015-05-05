@@ -37,7 +37,8 @@ setup(
                 'threeML/models/fluxModels',
                 'threeML/models/spatialModels',
                 'threeML/plugins',
-                'threeML/classicMLE'],
+                'threeML/classicMLE',
+                'threeML/catalogs'],
     
     version = 'v0.0.5',
     
@@ -99,7 +100,7 @@ setup(
           'emcee',
           'astropy',
           'matplotlib',
-          'ipython>=2.0.0, <3.0.0',
+          'ipython >= 2.0.0',
           'iminuit'         
       ])
 
