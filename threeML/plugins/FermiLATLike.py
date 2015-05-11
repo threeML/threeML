@@ -11,7 +11,7 @@ from threeML.models.Parameter import Parameter
 from GtBurst import LikelihoodComponent
 from GtBurst import IRFS
 
-import FuncFactory
+from GtBurst import FuncFactory
 
 __instrument_name = "Fermi LAT (standard classes)"
 
