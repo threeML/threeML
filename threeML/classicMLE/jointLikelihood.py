@@ -80,7 +80,7 @@ class JointLikelihood(object):
           #dataset.getLogLike()      
       
       if("%s" % globalLogLike=='nan'):
-        print("Warning: these parameters returned a logLike = Nan: %s" %(trialValues))
+        print("Warning: these parameters returned a logLike = Nan: %s" %(trialValues,))
         return 1e6
       
       if(self.verbose):
