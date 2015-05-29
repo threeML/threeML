@@ -5,6 +5,8 @@ from threeML.plugins.gammaln import logfactorial
 import numpy
 from threeML.plugins.ogip import OGIPPHA
 from threeML.pluginPrototype import pluginPrototype
+from threeML.models.Parameter import Parameter
+from threeML.minimizer import minimization
 import scipy.integrate
 
 import warnings
@@ -19,6 +21,8 @@ class FermiGBMLike(pluginPrototype):
     FermiGBMLike("GBM","spectrum.pha{2}","bkgfile.bkg{2}","rspfile.rsp{2}")
     to load the second spectrum, second background spectrum and second response.
     '''
+    
+    self.name                 = name
     
     #Check that all file exists
     notExistant               = []
@@ -39,7 +43,6 @@ class FermiGBMLike(pluginPrototype):
       
       raise IOError("One or more input file do not exist!")
     
-    
     self.phafile              = OGIPPHA(phafile,filetype='observed')
     self.exposure             = self.phafile.getExposure()
     self.bkgfile              = OGIPPHA(bkgfile,filetype="background")
@@ -55,12 +58,53 @@ class FermiGBMLike(pluginPrototype):
     self.counts               = ( self.phafile.getRates()[self.mask]
                                   * self.exposure )
     
+    #Check that counts is positive
+    idx                       = (self.counts < 0)
+    
+    if(numpy.sum(idx) > 0):
+      
+      warnings.warn("The observed spectrum for %s " % self.name + 
+                    "has negative channels! Fixing those to zero.", 
+                     RuntimeWarning)
+      self.counts[idx]        = 0
+    
+    pass
+    
+    #Get the background counts for this spectrum
     self.bkgCounts            = ( self.bkgfile.getRates()[self.mask]
                                   * self.exposure )
     
-    self.name                 = name
-  pass
     
+    #Check that bkgCounts is positive
+    idx                       = (self.bkgCounts < 0)
+    
+    if(numpy.sum(idx) > 0):
+      
+      warnings.warn("The background spectrum for %s " % self.name + 
+                    "has negative channels! Fixing those to zero.", 
+                     RuntimeWarning)
+      self.bkgCounts[idx]     = 0
+    
+    #Keep a copy which will never be modified
+    self.counts_backup        = numpy.array(self.counts,copy=True)
+    self.bkgCounts_backup     = numpy.array(self.bkgCounts,copy=True)
+    
+    #Effective area correction is disabled by default, i.e.,
+    #the nuisance parameter is fixed to 1    
+    self.nuisanceParameters       = {}
+    self.nuisanceParameters['InterCalib'] = Parameter("InterCalib",1,0.9,1.1,0.01,fixed=True,nuisance=True)    
+    
+  pass
+  
+  def useIntercalibrationConst(self,factorLowBound=0.9,factorHiBound=1.1):
+    self.nuisanceParameters['InterCalib'].free()
+    self.nuisanceParameters['InterCalib'].setBounds(factorLowBound,factorHiBound)
+    
+  def fixIntercalibrationConst(self,value=1):
+    
+    self.nuisanceParameters['InterCalib'].setValue(1)
+    self.nuisanceParameters['InterCalib'].fix()
+  
   def setActiveMeasurements(self,*args):
     '''Set the measurements to be used during the analysis. 
     Use as many ranges as you need,
@@ -87,8 +131,8 @@ class FermiGBMLike(pluginPrototype):
     pass
     self.mask                 = numpy.array(mask,numpy.bool)
     
-    self.counts               = self.phafile.getRates()[self.mask]*self.exposure
-    self.bkgCounts            = self.bkgfile.getRates()[self.mask]*self.exposure
+    self.counts               = self.counts_backup[self.mask]
+    self.bkgCounts            = self.bkgCounts_backup[self.mask]
     
     print("Now using %s channels out of %s" %( numpy.sum(self.mask),
                                                self.phafile.getRates().shape[0]
@@ -150,7 +194,37 @@ class FermiGBMLike(pluginPrototype):
   
     #There are no nuisance parameters here (at least for now)
     
-    return self.getLogLike()
+    #Effective area correction
+    if(self.nuisanceParameters['InterCalib'].isFree()):
+      
+      #import pdb;pdb.set_trace()
+      
+      #A true fit would be an overkill, and slow
+      #Just sample a 100 values and choose the minimum
+      values                  = numpy.linspace(self.nuisanceParameters['InterCalib'].minValue,
+                                               self.nuisanceParameters['InterCalib'].maxValue,
+                                               100)
+      
+      
+      folded                  = self.getFoldedModel()
+      
+      modelCounts             = folded * self.exposure
+      
+      fitfun                  = lambda cons: self._computeLogLike(cons * modelCounts + self.bkgCounts)
+      
+      logLval                 = map(fitfun, values)
+      
+      idx                     = numpy.argmax(logLval)
+      
+      self.nuisanceParameters['InterCalib'].setValue(values[idx])
+      
+      
+      
+      return logLval[idx]
+    
+    else:
+      
+      return self.getLogLike()
   
   def getFoldedModel(self):
     
@@ -170,11 +244,7 @@ class FermiGBMLike(pluginPrototype):
              e2[self.mask],
              self.counts )
   
-  def getLogLike(self):
-    '''
-    Return the value of the log-likelihood with the current values for the
-    parameters
-    '''
+  def _getModelCounts(self):
     
     #Get the folded model for this spectrum (this is the rate predicted, 
     #in cts/s)
@@ -185,9 +255,23 @@ class FermiGBMLike(pluginPrototype):
     #background)
     modelCounts               = folded * self.exposure + self.bkgCounts
     
-    logLike                   = numpy.sum(- modelCounts 
-                                          + self.counts * numpy.log(modelCounts)
-                                          - logfactorial(self.counts) )
+    return modelCounts
+  
+  def _computeLogLike(self, modelCounts):
+    
+    return numpy.sum(- modelCounts 
+                     + self.counts * numpy.log(modelCounts)
+                     - logfactorial(self.counts) )
+  
+  def getLogLike(self):
+    '''
+    Return the value of the log-likelihood with the current values for the
+    parameters
+    '''
+    
+    modelCounts               = self._getModelCounts()
+    
+    logLike                   = self._computeLogLike(modelCounts)
     
     return logLike
       
@@ -196,7 +280,7 @@ class FermiGBMLike(pluginPrototype):
     Return a list of nuisance parameter names. Return an empty list if there
     are no nuisance parameters
     '''
-    return []
+    return self.nuisanceParameters.keys()
   pass
 pass
 
@@ -274,7 +358,7 @@ class Response(object):
     
     trueFluxes                  = self.integralFunction( self.mc_channels[:,0],
                                                          self.mc_channels[:,1] )
-  
+        
     foldedCounts                = numpy.dot( trueFluxes, self.matrix.T )
     
     return foldedCounts
