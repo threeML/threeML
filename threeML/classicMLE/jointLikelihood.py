@@ -101,31 +101,41 @@ class JointLikelihood(object):
     #a good starting point for them (if we start too far from the data,
     #minuit and the other minimizers will have trouble)
     
+    #Get the list of free parameters
     freeParams               = self.likelihoodModel.getFreeParameters()
     
-    normParameters           = filter( lambda x : x.isNormalization() , freeParams.values() )
+    #Now isolate the normalizations, and use them as free parameters in the loglikelihood
     
-    self.freeParameters      = {}
+    self.freeParameters      = collections.OrderedDict()
     
-    #Prepare the grid
+    for (k,v) in freeParams.iteritems():
+      
+      if v.isNormalization():
+        
+        self.freeParameters[k] = v
+        
+    #Prepare the grid of values to scan
     
     grids                    = []
     
-    for norm in normParameters:
-      
-      self.freeParameters[norm.name()] = norm
-      
+    for norm in self.freeParameters.values():
+            
       grids.append(numpy.logspace( numpy.log10( norm.minValue ),
                                    numpy.log10( norm.maxValue ), 
-                                   50 )
+                                   50 ))
       
     #Compute the global likelihood at each point in the grid
     globalGrid               = cartesian(grids)
     
-    logLikes                 = map(minuxLogLikeProfile, globalGrid)
+    logLikes                 = map(self.minusLogLikeProfile, globalGrid)
     
     idx                      = numpy.argmin(logLikes)
-    print("Minimum is %s with %s" %(logLikes[idx],globalGrid[idx]))
+    #print("Minimum is %s with %s" %(logLikes[idx],globalGrid[idx]))
+    
+    for i,norm in enumerate(self.freeParameters.values()):
+      
+      norm.setValue(globalGrid[idx][i])
+      norm.setDelta(norm.value / 40)
     
   def minusLogLikeProfile(self, *trialValues):
       
@@ -196,11 +206,23 @@ class JointLikelihood(object):
       raise ValueError("Do not know minimizer %s" %(minimizer))
   
   def fit(self):
-        
+    
+    #Pre-fit: will fix the normalizations so that they are not too far
+    #from the data (which would make the fitting below fail)
+    self.preFit()
+    
     #Isolate the free parameters
     #NB: nuisance parameters are NOT in this dictionary
     
     self.freeParameters       = self.likelihoodModel.getFreeParameters()
+    
+    #Now check and fix if needed all the deltas of the parameters
+    #to 5% of their value (otherwise the fit will be super-slow)
+    for k,v in self.freeParameters.iteritems():
+      
+      if (abs(v.delta) < abs(v.value) * 0.1):
+                
+        v.setDelta(abs(v.value) * 0.1)
     
     #Instance the minimizer
     self.minimizer            = self.Minimizer(self.minusLogLikeProfile,
