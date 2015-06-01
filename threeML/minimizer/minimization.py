@@ -18,7 +18,7 @@ class Minimizer(object):
     raise NotImplemented("This is the method of the base class. Must be implemented by the actual minimizer")
 
 class iMinuitMinimizer(Minimizer):
-  def __init__(self,function,parameters,ftol=1,verbosity=0):
+  def __init__(self,function,parameters,ftol=1000,verbosity=0):
     
     super(iMinuitMinimizer, self).__init__(function,parameters,ftol,verbosity)
     
@@ -63,7 +63,7 @@ class iMinuitMinimizer(Minimizer):
     self.minuit               = iminuit.Minuit(self.function, **pars)
     
     self.minuit.tol           = ftol
-    #self.minuit.strategy      = 2 #More accurate
+    self.minuit.strategy      = 1 #More accurate
         
   def minimize(self):
     
