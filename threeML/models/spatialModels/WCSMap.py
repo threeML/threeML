@@ -12,6 +12,7 @@ class WCSMap(SpatialModel):
 
     def setup(self,file):
         #assumes that file is a fits file with WCS map in hdu 0
+        self.filename=file
         self.w=WCS(file)
         self.map=np.nan_to_num(pf.getdata(file,0))
         
@@ -34,6 +35,9 @@ class WCSMap(SpatialModel):
         px,py = self.w.wcs_world2pix(lon, lat, 1)
         px = np.round(px).astype('int')
         py = np.round(py).astype('int')
-        vals = self.map[py,px]
+        try:
+            vals = self.map[py,px]
+        except ValueError:
+...         print "The WCS map in file {} is not defined at the sky coordnates requested by the user".format(self.filename)
 
         return Norm*vals
