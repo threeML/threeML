@@ -8,7 +8,26 @@ from astropy.wcs import WCS
 from astropy import coordinates as coord
 from astropy import units as u
 
-class WCSMap(SpatialModel):
+def fp_linear_interp(px,py,map,filename):
+        #4-point linear interpolation to determine the values at the requested coords
+        px_0=px.astype('int')
+        py_0=py.astype('int')
+        px_arr=np.array([px_0,px_0,px_0+1,px_0+1])
+        py_arr=np.array([py_0,py_0+1,py_0,py_0+1])
+        b=px-px_0
+        a=1.-b
+        d=py-py_0
+        c=1.-d
+        try:
+            vals = self.map[py_arr,px_arr]
+        except ValueError:
+            print "The WCS map in file {} is not defined at the sky coordinates requested by the user".format(filename)
+        vals=vals*np.array([a*c,a*d,b*c,b*d])
+        vals=np.sum(vals,axis=0)
+
+        return vals
+
+class WCSSpatialMap(SpatialModel):
 
     def setup(self,file):
         #assumes that file is a fits file with WCS map in hdu 0
@@ -33,20 +52,6 @@ class WCSMap(SpatialModel):
         else:
             lon, lat = RA, Dec
         px,py = self.w.wcs_world2pix(lon, lat, 1)
-        #4-point linear interpolation to determine the values at the requested coords
-        px_0=px.astype('int')
-        py_0=py.astype('int')
-        px_arr=np.array([px_0,px_0,px_0+1,px_0+1])
-        py_arr=np.array([py_0,py_0+1,py_0,py_0+1])
-        b=px-px_0
-        a=1.-b
-        d=py-py_0
-        c=1.-d
-        try:
-            vals = self.map[py_arr,px_arr]
-        except ValueError:
-            print "The WCS map in file {} is not defined at the sky coordinates requested by the user".format(self.filename)
-        vals=vals*np.array([a*c,a*d,b*c,b*d])
-        vals=np.sum(vals,axis=0)
+        vals=fp_linear_interp(px,py,self.map,self.filename)
 
         return Norm*vals
