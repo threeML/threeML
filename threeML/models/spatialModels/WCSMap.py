@@ -38,9 +38,15 @@ class WCSMap(SpatialModel):
         py_0=np.int(py)
         px_arr=np.array([px_0,px_0,px_0+1,px_0+1])
         py_arr=np.array([py_0,py_0+1,py_0,py_0+1])
+        b=px-px_0
+        a=1.-b
+        d=py-py_0
+        c=1.-d
         try:
             vals = self.map[py_arr,px_arr]
         except ValueError:
-...         print "The WCS map in file {} is not defined at the sky coordinates requested by the user".format(self.filename)
+            print "The WCS map in file {} is not defined at the sky coordinates requested by the user".format(self.filename)
+        vals=np.product(vals,np.array([a*c,a*d,b*c,b*d]))
+        vals=np.sum(vals,axis=1)
 
         return Norm*vals
