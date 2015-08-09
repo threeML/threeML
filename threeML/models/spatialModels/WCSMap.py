@@ -26,7 +26,7 @@ class WCSMap(SpatialModel):
         self.ncalls += 1
         Norm = self.parameters['Norm'].value
         #if the map is in Galactic coords need to convert from Celestial
-        if w.wcs.lngtyp=='GLON'
+        if w.wcs.lngtyp=='GLON':
             c = coord.ICRS(ra=RA, dec=Dec, unit=(u.degree, u.degree))
             lon = c.galactic.l
             lat = c.galactic.b
@@ -34,8 +34,8 @@ class WCSMap(SpatialModel):
             lon, lat = RA, Dec
         px,py = self.w.wcs_world2pix(lon, lat, 1)
         #4-point linear interpolation to determine the values at the requested coords
-        px_0=np.int(px)
-        py_0=np.int(py)
+        px_0=px.astype('int')
+        py_0=py.astype('int')
         px_arr=np.array([px_0,px_0,px_0+1,px_0+1])
         py_arr=np.array([py_0,py_0+1,py_0,py_0+1])
         b=px-px_0
@@ -46,7 +46,7 @@ class WCSMap(SpatialModel):
             vals = self.map[py_arr,px_arr]
         except ValueError:
             print "The WCS map in file {} is not defined at the sky coordinates requested by the user".format(self.filename)
-        vals=np.product(vals,np.array([a*c,a*d,b*c,b*d]))
-        vals=np.sum(vals,axis=1)
+        vals=vals*np.array([a*c,a*d,b*c,b*d])
+        vals=np.sum(vals,axis=0)
 
         return Norm*vals
