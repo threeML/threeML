@@ -33,10 +33,13 @@ class WCSMap(SpatialModel):
         else:
             lon, lat = RA, Dec
         px,py = self.w.wcs_world2pix(lon, lat, 1)
-        px = np.round(px).astype('int')
-        py = np.round(py).astype('int')
+        #4-point linear interpolation to determine the values at the requested coords
+        px_0=np.int(px)
+        py_0=np.int(py)
+        px_arr=np.array([px_0,px_0,px_0+1,px_0+1])
+        py_arr=np.array([py_0,py_0+1,py_0,py_0+1])
         try:
-            vals = self.map[py,px]
+            vals = self.map[py_arr,px_arr]
         except ValueError:
 ...         print "The WCS map in file {} is not defined at the sky coordinates requested by the user".format(self.filename)
 
