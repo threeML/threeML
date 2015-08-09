@@ -38,6 +38,6 @@ class WCSMap(SpatialModel):
         try:
             vals = self.map[py,px]
         except ValueError:
-...         print "The WCS map in file {} is not defined at the sky coordnates requested by the user".format(self.filename)
+...         print "The WCS map in file {} is not defined at the sky coordinates requested by the user".format(self.filename)
 
         return Norm*vals
