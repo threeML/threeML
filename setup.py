@@ -38,9 +38,12 @@ setup(
                 'threeML/models/spatialModels',
                 'threeML/plugins',
                 'threeML/classicMLE',
-                'threeML/catalogs'],
+                'threeML/catalogs',
+                'threeML/io',
+                'threeML/utils',
+                'threeML/parallel'],
     
-    version = 'v0.0.5',
+    version = 'v0.1.0',
     
     description = "The Multi-Mission Maximum Likelihood framework",
     
@@ -50,7 +53,7 @@ setup(
     
     url = 'https://github.com/giacomov/3ML',
     
-    download_url = 'https://github.com/giacomov/3ML/archive/v0.0.5',
+    download_url = 'https://github.com/giacomov/3ML/archive/v0.1.0',
     
     keywords = ['Likelihood','Multi-mission','3ML','HAWC','Fermi','joint','fit'],
     
@@ -93,14 +96,15 @@ setup(
              "threeML/models/FixedPointSource.h"],
     
     install_requires=[
-          'numpy',
+          'numpy >= 1.6',
           'scipy',
           'numexpr',
           'numdifftools',
           'emcee',
-          'astropy',
+          'astropy >= 1.0.0',
           'matplotlib',
           'ipython >= 2.0.0',
-          'iminuit'         
+          'iminuit',
+          'uncertainties'      
       ])
 
