@@ -315,19 +315,30 @@ class iMinuitMinimizer(Minimizer):
                     src2, param2, p2min, p2max, p2steps,
                     progress=True, **kwargs):
     
-    #Fix the parameters
+    #Fix the parameters under scrutiny and get the values for the others
+    
+    values = {}
     
     for s,p in zip( [src1, src2], [param1,param2] ):
+        
+        if s is None:
+            
+            #Only one parameter to analyze
+            
+            continue
+        
+        key = "%s_of_%s" %(p,s)
         
         try:
           #Fix the parameter p for source s
           
-          self.minuit.fixed[ "%s_of_%s" %(p,s) ] = True
+          self.minuit.fixed[ key ] = True
         
         except KeyError:
             
             raise ValueError("Parameter %s is not a free parameter for source %s." %(p,s))
-    
+        
+        values[ key ] = float( self.minuit.values[key] )
     
     #Check the keywords
     p1log = False
@@ -349,28 +360,56 @@ class iMinuitMinimizer(Minimizer):
         
         a = numpy.linspace( p1min, p1max, p1steps)
     
-    if p2log:
+    if param2 is not None:
     
-        b = numpy.logspace( numpy.log10(p2min), numpy.log10(p2max), p2steps)
+        if p2log:
+        
+            b = numpy.logspace( numpy.log10(p2min), numpy.log10(p2max), p2steps)
+        
+        else:
+        
+            b = numpy.linspace( p2min, p2max, p2steps)
     
     else:
+        
+        #Only one parameter to step through
+        #Put b as nan so that the worker can realize that it does not have
+        #to step through it
+        
+        b = numpy.array([numpy.nan])
     
-        b = numpy.linspace( p2min, p2max, p2steps)
+    #Generate the grid
     
     grid = cartesian([a,b])
-        
-    def countourWorker(args):
+    
+    #Define the parallel worker
+    
+    def contourWorker(args):
       
       aa, bb = args
       
+      #First of all restore the best fit values
+      for k,v in values.iteritems():
+          
+          self.minuit.values[ k ] = v
+      
+      #Now set the parameters under scrutiny to the current values
+      
       self.minuit.values[ "%s_of_%s" % ( param1, src1 ) ] = aa
       
+      if bb is not numpy.nan:
+          
+          self.minuit.values[ "%s_of_%s" % ( param2, src2 ) ] = bb
       
-      self.minuit.values[ "%s_of_%s" % ( param2, src2 ) ] = bb
-      
-      
+      else:
+          
+          #We are stepping through one param only.
+          #Do nothing
+          
+          pass
+          
       #High tolerance for speed
-      self.minuit.tol = 100
+      self.minuit.tol = 10
       
       #mpl.warning("Running migrad")
       
@@ -390,18 +429,20 @@ class iMinuitMinimizer(Minimizer):
             
       return self.minuit.fval     
     
+    #Do the computation
+    
     if(progress):
       
       prog = ProgressBar(grid.shape[0])
       
       def wrap(args):
         prog.increase()
-        return countourWorker(args)
+        return contourWorker(args)
       
       r = map( wrap, grid )
       
     else:
       
-      r = map( countourWorker, grid )
+      r = map( contourWorker, grid )
     
     return a,b,numpy.array(r).reshape((a.shape[0],b.shape[0]))

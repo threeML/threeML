@@ -369,14 +369,36 @@ class JointLikelihood(object):
     return self.minimizer.getLikelihoodProfiles()
   
   def getContours(self, src1, param1, p1min, p1max, p1steps,
-                        src2, param2, p2min, p2max, p2steps,
-                        threads = 1, debug = False, **kwargs):
+                        src2=None, param2=None, p2min=None, p2max=None, p2steps=None,
+                        **kwargs):
     
     if(not hasattr(self,'currentMinimum')):
       raise RuntimeError("You have to run the .fit method before calling getContours.")
     
+    
+    #Default values
+    threads = 1
+    debug = False
+    
+    #Check the current keywords
+    for k,v in kwargs.iteritems():
+        
+        if k=="threads":
+            
+            threads = int( v )
+        
+        elif k=="debug":
+            
+            debug = bool( v )
+    
+    
     #Check that parameters are existent and free
     for s,p in zip( [ src1, src2 ], [ param1, param2 ] ):
+      
+      if s is None:
+          
+          #Stepping through one parameter only
+          continue
       
       if ( (s, p) not in self.freeParameters.keys() ):
            
@@ -393,8 +415,8 @@ class JointLikelihood(object):
                                  self.freeParameters)
       
       a, b, cc = minimizer.contours(src1, param1, p1min, p1max, p1steps,
-                                         src2, param2, p2min, p2max, p2steps,
-                                         True)
+                                    src2, param2, p2min, p2max, p2steps,
+                                    True, **kwargs)
       
       #Restore the original
       self.freeParameters = backup_freeParameters
@@ -419,13 +441,26 @@ class JointLikelihood(object):
       
       #Now this is guaranteed to be a integer number
       p1_split_steps = p1steps // int(threads)
-            
-      #Prepare arrays for results
-      pcc = numpy.zeros( ( p1steps, p2steps ) )
       
-      #Prepare the two axes of the parameter space
-      pa = numpy.linspace( p1min, p1max, p1steps )
-      pb = numpy.linspace( p2min, p2max, p2steps )
+      #Prepare arrays for results
+      
+      if src2 is None:
+          
+          #One array
+          pcc = pcc = numpy.zeros( ( p1steps ) )
+          
+          pa = numpy.linspace( p1min, p1max, p1steps )
+          pb = None
+      
+      else:
+      
+          pcc = numpy.zeros( ( p1steps, p2steps ) )
+      
+          #Prepare the two axes of the parameter space
+          pa = numpy.linspace( p1min, p1max, p1steps )
+          pb = numpy.linspace( p2min, p2max, p2steps )
+      
+      #Define the parallel worker which will go through the computation
       
       #NOTE: I only divide
       #on the first parameter axis so that the different
@@ -444,7 +479,9 @@ class JointLikelihood(object):
         this_p1min = pa[i * p1_split_steps]
         this_p1max = pa[(i+1) * p1_split_steps - 1]
         
-        print("From %s to %s" %(this_p1min, this_p1max))
+        if debug:
+            
+            print("From %s to %s" %(this_p1min, this_p1max))
         
         aa, bb, ccc = minimizer.contours(src1, param1, this_p1min, this_p1max, p1_split_steps,
                                          src2, param2, p2min, p2max, p2steps,
@@ -499,21 +536,14 @@ class JointLikelihood(object):
       res = amr.get()
       
       for i in range(threads):
-        pcc[ i * p1_split_steps : (i+1) * p1_split_steps,
-            : ] = res[i]
         
-      
-      #for i in range(threads):
-      #  
-      #  this_p1min = pa[i * p1_split_steps]
-      #  this_p1max = pa[(i+1) * p1_split_steps - 1]
-      #    
-      #  aa, bb, ccc = self.minimizer.contours(src1, param1, this_p1min, this_p1max, p1_split_steps,
-      #                                        src2, param2, p2min, p2max, p2steps)
-      #  
-      #  pcc[ i * p1_split_steps : (i+1) * p1_split_steps,
-      #      : ] = ccc
-    
+        if src2 is None:
+        
+            pcc[ i * p1_split_steps : (i+1) * p1_split_steps ] = res[i][:,0]
+        
+        else:
+        
+            pcc[ i * p1_split_steps : (i+1) * p1_split_steps, : ] = res[i]
       
       #Keep them separated up to now for debugging purposes
       cc = pcc
@@ -521,19 +551,81 @@ class JointLikelihood(object):
       b = pb
       
     pass
+    
+    if src2 is not None:
+    
+        fig = self._plotContours("%s of %s" %(param1, src1), a, "%s of %s" % (param2, src2), b, cc)
+    
+    else:
         
-    fig = self._plotContours("%s of %s" %(param1, src1), a, "%s of %s" % (param2, src2), b, cc)
+        fig = self._plotProfile( "%s of %s" %(param1, src1), a, cc )
     
     #Check if we found a better minimum
     if( self.currentMinimum - cc.min() > 0.1 ):
       
-      idx = cc.argmin()
+      if src2 is not None:
       
-      aidx, bidx = numpy.unravel_index(idx, cc.shape)
+          idx = cc.argmin()
+          
+          aidx, bidx = numpy.unravel_index(idx, cc.shape)
+          
+          print("Found a better minimum: %s with %s = %s and %s = %s" 
+                 %(cc.min(),param1,a[aidx],param2,b[bidx]))
       
-      print("Found a better minimum: %s with %s = %s and %s = %s" %(cc.min(),param1,a[aidx],param2,b[bidx]))
+      else:
+          
+          idx = cc.argmin()
+          
+          print("Found a better minimum: %s with %s = %s" 
+                 %(cc.min(),param1,a[idx]))
+    
+    pass
     
     return a, b, cc, fig
+  
+  def _plotProfile(self, name1, a, cc):
+      
+      #plot 1,2 and 3 sigma horizontal lines
+      sigmas = [1,2,3]
+      
+      #Compute the corresponding probability. We do not
+      #pre-compute them because we will introduce at
+      #some point the possibility to personalize the
+      #levels
+      probs = []
+      
+      for s in sigmas:
+          
+          #One-sided probability
+          #It is one-sided because we consider one side at the time
+          #when computing the error
+          
+          probs.append( 1 - (scipy.stats.norm.sf(s) * 2) )
+      
+      #Compute the corresponding delta chisq. (chisq has 1 d.o.f.)
+      
+      deltachi2 = scipy.stats.chi2.ppf(probs, 1)
+      
+      fig = plt.figure()
+      sub = fig.add_subplot(111)
+     
+      sub.plot( a, cc, lw=2)
+      
+      #Decide colors
+      colors = ['blue','cyan','red']
+      
+      for s,d,c in zip( sigmas, deltachi2, colors ):
+          
+          sub.axhline( self.currentMinimum + d , linestyle='--' , 
+                       color=c, label=r'%s $\sigma$' %( s ), lw = 2 )
+      
+      plt.legend( loc=0, frameon=True )
+      
+      sub.set_xlabel( name1 )
+      sub.set_ylabel( "-log( likelihood )" )
+      
+      return fig
+      
   
   def _plotContours(self, name1, a, name2, b, cc):
       
@@ -547,9 +639,14 @@ class JointLikelihood(object):
       probs = []
       
       for s in sigmas:
-          probs.append(1-(scipy.stats.norm.sf(s)*2.0))
+          
+          #One-sided probability
+          #It is one-sided because we consider one side at the time
+          #when computing the error
+          
+          probs.append( 1 - (scipy.stats.norm.sf(s) * 2) )
       
-      #Compute the corresponding delta chisq.
+      #Compute the corresponding delta chisq. (chisq has 2 d.o.f.)
       deltachi2 = scipy.stats.chi2.ppf(probs, 2)
       
       #Boundaries for the colormap
