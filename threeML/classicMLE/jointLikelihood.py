@@ -1,69 +1,26 @@
 from threeML.minimizer import minimization
 from threeML.exceptions import CustomExceptions
+from threeML.io.Table import Table
+from threeML.utils.cartesian import cartesian
+from threeML.parallel.ParallelClient import ParallelClient
+from threeML.io.ProgressBar import ProgressBar
 
 import collections
+import warnings
+import copy
 
 import numpy
 import scipy.optimize
 import scipy.stats
-import sys
+import sys, time
 import matplotlib.pyplot as plt
 
-from astropy.table import Table
+import matplotlib.cm as cm
+from matplotlib.colors import BoundaryNorm
 
 from IPython.display import display
 
 import numpy as np
-
-def cartesian(arrays, out=None):
-    """
-    Generate a cartesian product of input arrays.
-
-    Parameters
-    ----------
-    arrays : list of array-like
-        1-D arrays to form the cartesian product of.
-    out : ndarray
-        Array to place the cartesian product in.
-
-    Returns
-    -------
-    out : ndarray
-        2-D array of shape (M, len(arrays)) containing cartesian products
-        formed of input arrays.
-
-    Examples
-    --------
-    >>> cartesian(([1, 2, 3], [4, 5], [6, 7]))
-    array([[1, 4, 6],
-           [1, 4, 7],
-           [1, 5, 6],
-           [1, 5, 7],
-           [2, 4, 6],
-           [2, 4, 7],
-           [2, 5, 6],
-           [2, 5, 7],
-           [3, 4, 6],
-           [3, 4, 7],
-           [3, 5, 6],
-           [3, 5, 7]])
-
-    """
-
-    arrays = [np.asarray(x) for x in arrays]
-    dtype = arrays[0].dtype
-
-    n = np.prod([x.size for x in arrays])
-    if out is None:
-        out = np.zeros([n, len(arrays)], dtype=dtype)
-
-    m = n / arrays[0].size
-    out[:,0] = np.repeat(arrays[0], m)
-    if arrays[1:]:
-        cartesian(arrays[1:], out=out[0:m,1:])
-        for j in xrange(1, arrays[0].size):
-            out[j*m:(j+1)*m,1:] = out[0:m,1:]
-    return out
 
 class JointLikelihood(object):
   
@@ -123,7 +80,13 @@ class JointLikelihood(object):
       grids.append(numpy.logspace( numpy.log10( norm.minValue ),
                                    numpy.log10( norm.maxValue ), 
                                    50 ))
-      
+    
+    if len(grids) == 0:
+        
+        #No norm. Maybe they are fixed ?
+        
+        return
+    
     #Compute the global likelihood at each point in the grid
     globalGrid               = cartesian(grids)
     
@@ -164,6 +127,7 @@ class JointLikelihood(object):
             
             #This is a zone of the parameter space which is not allowed. Return
             #a big number for the likelihood so that the fit engine will avoid it
+            warnings.warn("Fitting engine in forbidden space: %s" %(trialValues,))
             return 1e6
           
           except:
@@ -174,7 +138,7 @@ class JointLikelihood(object):
           #dataset.getLogLike()      
       
       if("%s" % globalLogLike=='nan'):
-        print("Warning: these parameters returned a logLike = Nan: %s" %(trialValues,))
+        warnings.warn("These parameters returned a logLike = Nan: %s" %(trialValues,))
         return 1e6
       
       if(self.verbose):
@@ -183,31 +147,58 @@ class JointLikelihood(object):
       return globalLogLike*(-1)
   
   
-  def setMinimizer(self,minimizer):
+  def _setupMinimizer(self,minimizer):
   
     if(minimizer.upper()=="IMINUIT"):
     
-      self.Minimizer          = minimization.iMinuitMinimizer
+      return minimization.iMinuitMinimizer
     
     elif(minimizer.upper()=="MINUIT"):
     
-      self.Minimizer          = minimization.MinuitMinimizer
+      return minimization.MinuitMinimizer
     
     elif(minimizer.upper()=="SCIPY"):
     
-      self.Minimizer          = minimization.ScipyMinimizer
+      return minimization.ScipyMinimizer
     
     elif(minimizer.upper()=="BOBYQA"):
     
-      self.Minimizer          = minimization.BOBYQAMinimizer
+      return minimization.BOBYQAMinimizer
     
     else:
     
       raise ValueError("Do not know minimizer %s" %(minimizer))
   
+  def setMinimizer(self, minimizer):
+    
+    self.Minimizer = self._setupMinimizer(minimizer)
+  
+  def _getTableOfParameters(self,parameters):
+    
+    data = []
+    nameLength = 0
+    
+    for k,v in parameters.iteritems():
+     
+     curName                 = "%s_of_%s" %(k[1],k[0])
+               
+     data.append([curName,"%s" % v.value,v.unit])
+     
+     if(len(v.name) > nameLength):
+       nameLength = len(curName)
+   
+    pass
+    
+    table                     = Table(rows = data,
+                                      names = ["Name","Value","Unit"],
+                                      dtype=('S%i' %nameLength, str, 'S15'))
+    
+    return table
+
+  
   def fit(self):
     
-    #Pre-fit: will fix the normalizations so that they are not too far
+    #Pre-fit: will fit the normalizations so that they are not too far
     #from the data (which would make the fitting below fail)
     self.preFit()
     
@@ -217,7 +208,7 @@ class JointLikelihood(object):
     self.freeParameters       = self.likelihoodModel.getFreeParameters()
     
     #Now check and fix if needed all the deltas of the parameters
-    #to 5% of their value (otherwise the fit will be super-slow)
+    #to 10% of their value (otherwise the fit will be super-slow)
     for k,v in self.freeParameters.iteritems():
       
       if (abs(v.delta) < abs(v.value) * 0.1):
@@ -233,37 +224,142 @@ class JointLikelihood(object):
     
     #Print results
     print("Best fit values:\n")
+    
     self.minimizer.printFitResults()
     
+    print("Nuisance parameters:\n")
+    
+    nuisanceParam = collections.OrderedDict()
+    
+    for dataset in self.dataList.values():
+      
+      for pName in dataset.getNuisanceParameters():
+        
+        nuisanceParam[ ( dataset.getName(), pName )] = dataset.nuisanceParameters[pName]
+    
+    table = self._getTableOfParameters(nuisanceParam)
+    display(table)
+    
     print("\nCorrelation matrix:\n")
+    
     self.minimizer.printCorrelationMatrix()
     
     print("\nMinimum of -logLikelihood is: %s\n" %(logLmin))
     
     print("Contributions to the -logLikelihood at the minimum:\n")
     
+    mLogLikes                 = collections.OrderedDict()
+    mLogLikes['total']        = logLmin
+    
+    self.currentMinimum       = float(logLmin)
+    
     data                      = []
     nameLength                = 0
     
     for dataset in self.dataList.values():
       
+      ml                      = dataset.getLogLike()*(-1)
+      
+      mLogLikes[dataset.getName()] = ml
+      
       nameLength              = max(nameLength, len(dataset.getName()) + 1)
-      data.append([dataset.getName(),dataset.getLogLike()*(-1)])
+      data.append( [ dataset.getName(), ml ] )
     
     table                     = Table( rows  = data,
                                        names = ["Detector","-LogL"],
                                        dtype = ('S%i' %nameLength, float))
+          
+    table['-LogL'].format = '2.2f'
     
     display(table)
-        
-    return xs,logLmin    
+    
+    #Prepare the dictionary with the results
+    results                   = collections.OrderedDict()
+    
+    results['parameters']     = xs
+    results['minusLogLike']   = mLogLikes
+    
+    return results
   
   def getErrors(self,fast=False):
     
-    if(not hasattr(self,'minimizer')):
+    if(not hasattr(self,'currentMinimum')):
       raise RuntimeError("You have to run the .fit method before calling errors.")
-    
+        
     return self.minimizer.getErrors(fast)
+  
+  def explore(self):
+      
+      errors = self.getErrors(fast=True)
+      
+      import emcee
+      import emcee.utils
+      
+      #Dimensionality of the problem
+      ndim = len(self.minimizer.parameters.values())
+      
+      #emcee wants the +logLike, and has a different
+      #calling sequence. This is just a wrapper around
+      #the likelihood
+      
+      def funwrap(trialList):
+        
+        return self.minimizer.function(*trialList)*(-1)
+      
+      #How many walkers?
+      nwalkers = ndim * 8
+      
+      #Prepare the start values for the walkers
+      
+      #Best fit values
+      p0_ = numpy.asarray(map(lambda x:x.value, self.minimizer.parameters.values()))
+      
+      #Randomize using the errors on the parameters from the fit
+      
+      deltas                  = []
+    
+      for k,par in self.minimizer.parameters.iteritems():
+      
+        curName                 = "%s_of_%s" %(k[1],k[0])
+              
+        deltas.append(errors[curName])
+      
+      p0 = emcee.utils.sample_ball(p0_, deltas, nwalkers)
+      
+      #Ensure that at least one of the p0 is the best fit
+      p0[0] = p0_
+      
+      #Ensure that the starting points are good
+      logLike = map(funwrap, p0)
+      
+      idx = numpy.isfinite(logLike)
+      
+      if( numpy.sum(~idx) > 0 ):
+                
+        p0 = p0[idx]
+        nwalkers = p0.shape[0]
+        
+        #nwalkers must be even
+        if( nwalkers % 2 != 0):
+          p0 = p0[1:]
+          nwalkers = p0.shape[0]
+        
+        #There is either inf or Nan in logLike,
+        #one or more of the starting points are invalid
+        warnings.warn("One or more starting points for the MCMC are invalid. Removing them. Walkers are now %s" %(nwalkers))
+      pass
+      
+      sampler = emcee.EnsembleSampler(nwalkers, len(self.minimizer.parameters.values()), funwrap)
+      
+      #Burn-in
+      pos, prob, state = sampler.run_mcmc(p0, 100)
+      
+      sampler.reset()
+      
+      #Real sampling
+      sampler.run_mcmc(pos, 1000)
+      
+      return sampler
   
   def getLikelihoodProfiles(self):
     
@@ -272,10 +368,231 @@ class JointLikelihood(object):
     
     return self.minimizer.getLikelihoodProfiles()
   
-  def getContours(self,param1,param2):
+  def getContours(self, src1, param1, p1min, p1max, p1steps,
+                        src2, param2, p2min, p2max, p2steps,
+                        threads = 1, debug = False, **kwargs):
     
-    return self.minimizer.getContours(param1,param2)
+    if(not hasattr(self,'currentMinimum')):
+      raise RuntimeError("You have to run the .fit method before calling getContours.")
+    
+    #Check that parameters are existent and free
+    for s,p in zip( [ src1, src2 ], [ param1, param2 ] ):
+      
+      if ( (s, p) not in self.freeParameters.keys() ):
+           
+           raise ValueError("Parameter %s of source %s does not exists in the current model" %(p,s))
+    
+    if(threads <= 1):
+      #Create a new minimizer to avoid messing up with the best
+      #fit
+      
+      #Copy of the parameters
+      backup_freeParameters = copy.deepcopy(self.freeParameters)
+      
+      minimizer = self.Minimizer(self.minusLogLikeProfile,
+                                 self.freeParameters)
+      
+      a, b, cc = minimizer.contours(src1, param1, p1min, p1max, p1steps,
+                                         src2, param2, p2min, p2max, p2steps,
+                                         True)
+      
+      #Restore the original
+      self.freeParameters = backup_freeParameters
+                                             
+    #if( 2==2 ):
+    else:
+      
+      if( threads > p1steps):
+        
+        threads = int(p1steps)
+        
+        warnings.warn("The number of threads is larger than the number of steps. Reducing it to %s." %(threads))
+                  
+      #Check if the number of steps is divisible by the number
+      #of threads, otherwise issue a warning and make it so
+      
+      if( float(p1steps) % threads != 0 ):
+        
+        p1steps = p1steps // threads * threads
+        
+        warnings.warn("The number of steps is not a multiple of the number of threads. Reducing steps to %s" %(p1steps))
+      
+      #Now this is guaranteed to be a integer number
+      p1_split_steps = p1steps // int(threads)
+            
+      #Prepare arrays for results
+      pcc = numpy.zeros( ( p1steps, p2steps ) )
+      
+      #Prepare the two axes of the parameter space
+      pa = numpy.linspace( p1min, p1max, p1steps )
+      pb = numpy.linspace( p2min, p2max, p2steps )
+      
+      #NOTE: I only divide
+      #on the first parameter axis so that the different
+      #threads are more or less well mixed for points close and
+      #far from the best fit
+      
+      def worker(i):
+        
+        #Re-create the minimizer
+        
+        #backup_freeParameters = copy.deepcopy(self.freeParameters)
+        
+        minimizer = self.Minimizer(self.minusLogLikeProfile,
+                                   self.freeParameters)
+        
+        this_p1min = pa[i * p1_split_steps]
+        this_p1max = pa[(i+1) * p1_split_steps - 1]
+        
+        print("From %s to %s" %(this_p1min, this_p1max))
+        
+        aa, bb, ccc = minimizer.contours(src1, param1, this_p1min, this_p1max, p1_split_steps,
+                                         src2, param2, p2min, p2max, p2steps,
+                                         False)
+        
+        #self.freeParameters = backup_freeParameters
+        
+        return ccc
+      
+      try:
+        
+        client = ParallelClient(**kwargs)
+      
+      except:
+        
+        sys.stderr.write("\nCannot connect to IPython cluster. Is the cluster running ?\n\n\n")
+        
+        raise RuntimeError("Cannot connect to IPython cluster.")
+        
+      lview = client.load_balanced_view()
+      #lview.block = True
+      amr = lview.map_async(worker, range(threads))
+      
+      #Execute and print progress
+      
+      prog = ProgressBar(threads)
+      
+      while not amr.ready():
+        
+        #Avoid checking too often
+        time.sleep(1)
+        
+        if(debug):
+          stdouts = amr.stdout
+          
+          # clear_output doesn't do much in terminal environments
+          for stdout, stderr in zip(amr.stdout, amr.stderr):
+            if stdout:
+                print "%s" % (stdout[-1000:])
+            if stderr:
+                print "%s" % (stderr[-1000:])
+          sys.stdout.flush()        
+        
+        prog.animate( amr.progress )
+      
+      #Force to display 100% at the end
+      prog.animate( threads - 1 )
+      
+      #Now get results and print some diagnostic
+      print("\n")
+      print("Serial time: %1.f (speed-up: %.1f)" %(amr.serial_time, float(amr.serial_time) / amr.wall_time))
+      res = amr.get()
+      
+      for i in range(threads):
+        pcc[ i * p1_split_steps : (i+1) * p1_split_steps,
+            : ] = res[i]
+        
+      
+      #for i in range(threads):
+      #  
+      #  this_p1min = pa[i * p1_split_steps]
+      #  this_p1max = pa[(i+1) * p1_split_steps - 1]
+      #    
+      #  aa, bb, ccc = self.minimizer.contours(src1, param1, this_p1min, this_p1max, p1_split_steps,
+      #                                        src2, param2, p2min, p2max, p2steps)
+      #  
+      #  pcc[ i * p1_split_steps : (i+1) * p1_split_steps,
+      #      : ] = ccc
+    
+      
+      #Keep them separated up to now for debugging purposes
+      cc = pcc
+      a = pa
+      b = pb
+      
+    pass
+        
+    fig = self._plotContours("%s of %s" %(param1, src1), a, "%s of %s" % (param2, src2), b, cc)
+    
+    #Check if we found a better minimum
+    if( abs( cc.min() - self.currentMinimum ) > 0.1 ):
+      
+      print("Found a better minimum: %s" %(cc.min()))
+    
+    return a, b, cc, fig
   
+  def _plotContours(self, name1, a, name2, b, cc):
+      
+      #plot 1,2 and 3 sigma contours
+      sigmas = [1,2,3]
+      
+      #Compute the corresponding probability. We do not
+      #pre-compute them because we will introduce at
+      #some point the possibility to personalize the
+      #levels
+      probs = []
+      
+      for s in sigmas:
+          probs.append(1-(scipy.stats.norm.sf(s)*2.0))
+      
+      #Compute the corresponding delta chisq.
+      deltachi2 = scipy.stats.chi2.ppf(probs, 2)
+      
+      #Boundaries for the colormap
+      bounds = [cc.min()]
+      bounds.extend(cc.min() + deltachi2)
+      bounds.append(cc.max())
+      
+      #Define the color palette
+      palette = cm.Pastel1
+      palette.set_over('white')
+      palette.set_under('white')
+      palette.set_bad('white')
+      
+      fig = plt.figure()
+      sub = fig.add_subplot(111)
+      
+      #Show the contours with square axis
+      im = sub.imshow(cc,
+                 cmap=palette,
+                 extent=[b.min(),b.max(),a.min(),a.max()],
+                 aspect=(b.max()-b.min())/(a.max()-a.min()),
+                 origin='lower',
+                 norm=BoundaryNorm(bounds,256),
+                 interpolation='bicubic',
+                 vmax=(cc.min()+deltachi2).max())
+      
+      #Plot the color bar with the sigmas
+      cb = fig.colorbar(im, boundaries=bounds[:-1])
+      lbounds = [0]
+      lbounds.extend(bounds[:-1])
+      cb.set_ticks(lbounds)
+      ll = ['']
+      ll.extend(map(lambda x:r'%i $\sigma$' %x, sigmas))
+      cb.set_ticklabels(ll)
+      
+      #Align the labels to the end of the color level
+      for t in cb.ax.get_yticklabels():
+          t.set_verticalalignment('baseline')   
+      
+      #Draw the line contours
+      sub.contour(b,a, cc, cc.min()+deltachi2)
+      
+      sub.set_xlabel(name2)
+      sub.set_ylabel(name1)
+      
+      return fig
+      
 #  def _restoreBestFitValues(self):
 #    #Restore best fit values
 #    for k in self.freeParameters.keys():
