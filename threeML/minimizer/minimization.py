@@ -313,10 +313,10 @@ class iMinuitMinimizer(Minimizer):
   
   def contours(self, src1, param1, p1min, p1max, p1steps,
                     src2, param2, p2min, p2max, p2steps,
-                    progress=True):
+                    progress=True, **kwargs):
     
     #Fix the parameters
-        
+    
     for s,p in zip( [src1, src2], [param1,param2] ):
         
         try:
@@ -329,9 +329,34 @@ class iMinuitMinimizer(Minimizer):
             raise ValueError("Parameter %s is not a free parameter for source %s." %(p,s))
     
     
+    #Check the keywords
+    p1log = False
+    p2log = False
+    
+    if 'log' in kwargs.keys():
+        
+        p1log = bool( kwargs['log'][0] )
+        p2log = bool( kwargs['log'][1] )
+    
     #Generate the steps
-    a = numpy.linspace( p1min, p1max, p1steps)
-    b = numpy.linspace( p2min, p2max, p2steps)
+    
+    if p1log:
+    
+        a = numpy.logspace( numpy.log10(p1min), numpy.log10(p1max), p1steps)
+    
+    else:
+        
+        
+        a = numpy.linspace( p1min, p1max, p1steps)
+    
+    if p2log:
+    
+        b = numpy.logspace( numpy.log10(p2min), numpy.log10(p2max), p2steps)
+    
+    else:
+    
+        b = numpy.linspace( p2min, p2max, p2steps)
+    
     grid = cartesian([a,b])
         
     def countourWorker(args):
