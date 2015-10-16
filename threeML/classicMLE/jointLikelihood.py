@@ -448,7 +448,7 @@ class JointLikelihood(object):
         
         aa, bb, ccc = minimizer.contours(src1, param1, this_p1min, this_p1max, p1_split_steps,
                                          src2, param2, p2min, p2max, p2steps,
-                                         False)
+                                         False, **kwargs)
         
         #self.freeParameters = backup_freeParameters
         
@@ -525,9 +525,13 @@ class JointLikelihood(object):
     fig = self._plotContours("%s of %s" %(param1, src1), a, "%s of %s" % (param2, src2), b, cc)
     
     #Check if we found a better minimum
-    if( abs( cc.min() - self.currentMinimum ) > 0.1 ):
+    if( self.currentMinimum - cc.min() > 0.1 ):
       
-      print("Found a better minimum: %s" %(cc.min()))
+      idx = cc.argmin()
+      
+      aidx, bidx = numpy.unravel_index(idx, cc.shape)
+      
+      print("Found a better minimum: %s with %s = %s and %s = %s" %(cc.min(),param1,a[aidx],param2,b[bidx]))
     
     return a, b, cc, fig
   
