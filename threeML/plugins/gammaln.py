@@ -1,6 +1,7 @@
 import numpy
+from scipy.special import gammaln
 
-def gammaln(x):
+def _gammaln(x):
     """Vectorized calculation of ln(abs(gamma(array))) across a Numpy array.
 
     Numpy does not have a native implementation of gammaln.

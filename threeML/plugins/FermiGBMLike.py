@@ -10,6 +10,7 @@ from threeML.minimizer import minimization
 import scipy.integrate
 
 import warnings
+import collections
 
 __instrument_name = "Fermi GBM (all detectors)"
 
@@ -92,7 +93,7 @@ class FermiGBMLike(pluginPrototype):
     #Effective area correction is disabled by default, i.e.,
     #the nuisance parameter is fixed to 1    
     self.nuisanceParameters       = {}
-    self.nuisanceParameters['InterCalib'] = Parameter("InterCalib",1,0.9,1.1,0.01,fixed=True,nuisance=True)    
+    self.nuisanceParameters['InterCalib'] = Parameter("InterCalib",1,0.9,1.1,0.01,fixed=True,nuisance=True)
     
   pass
   
@@ -100,9 +101,37 @@ class FermiGBMLike(pluginPrototype):
     self.nuisanceParameters['InterCalib'].free()
     self.nuisanceParameters['InterCalib'].setBounds(factorLowBound,factorHiBound)
     
-  def fixIntercalibrationConst(self,value=1):
+    #Check that the parameter is within the provided bounds
+    value                     = self.nuisanceParameters['InterCalib'].value
     
-    self.nuisanceParameters['InterCalib'].setValue(1)
+    if( value < factorLowBound ):
+            
+      warnings.warn("The intercalibration constant was %s, lower than the provided lower bound." %(value,factorLowBound) +
+                    " Setting it equal to the lower bound")
+      
+      self.nuisanceParameters['InterCalib'].setValue(float(factorLowBound))
+
+      
+      
+    if( value > factorHiBound):
+      
+      warnings.warn("The intercalibration constant was %s, larger than the provided hi bound." %(value,factorHiBound) +
+                    " Setting it equal to the hi bound")
+      
+      self.nuisanceParameters['InterCalib'].setValue(float(factorHiBound))
+    
+  def fixIntercalibrationConst(self,value=None):
+    
+    if(value is not None):
+      #Fixing the constant to the provided value
+      self.nuisanceParameters['InterCalib'].setValue(float(value))
+    
+    else:
+    
+      #Do nothing, i.e., leave the constant to the value
+      #it currently has
+      pass
+      
     self.nuisanceParameters['InterCalib'].fix()
   
   def setActiveMeasurements(self,*args):
@@ -191,14 +220,10 @@ class FermiGBMLike(pluginPrototype):
   pass
 
   def innerFit(self):
-  
-    #There are no nuisance parameters here (at least for now)
-    
+        
     #Effective area correction
     if(self.nuisanceParameters['InterCalib'].isFree()):
-      
-      #import pdb;pdb.set_trace()
-      
+            
       #A true fit would be an overkill, and slow
       #Just sample a 100 values and choose the minimum
       values                  = numpy.linspace(self.nuisanceParameters['InterCalib'].minValue,
@@ -206,22 +231,31 @@ class FermiGBMLike(pluginPrototype):
                                                100)
       
       
+      #I do not use getLogLike so I can compute only once the folded model
+      #(which is not going to change during the inner fit)
+      
       folded                  = self.getFoldedModel()
       
       modelCounts             = folded * self.exposure
       
-      fitfun                  = lambda cons: self._computeLogLike(cons * modelCounts + self.bkgCounts)
+      def fitfun(cons):
+        
+        self.nuisanceParameters['InterCalib'].setValue( cons )
+        
+        return (-1) * self._computeLogLike(self.nuisanceParameters['InterCalib'].value * modelCounts + self.bkgCounts)
+            
+      #logLval                 = map(fitfun, values)
+      #idx                     = numpy.argmax(logLval)
+      #self.nuisanceParameters['InterCalib'].setValue(values[idx])
+      #return logLval[idx]
       
-      logLval                 = map(fitfun, values)
+      parameters              = collections.OrderedDict()
+      parameters[ (self.name, 'InterCalib') ]      = self.nuisanceParameters['InterCalib']
+      minimizer               = minimization.iMinuitMinimizer(fitfun, parameters)
+      bestFit, mlogLmin       = minimizer.minimize()
       
-      idx                     = numpy.argmax(logLval)
+      return mlogLmin * (-1)
       
-      self.nuisanceParameters['InterCalib'].setValue(values[idx])
-      
-      
-      
-      return logLval[idx]
-    
     else:
       
       return self.getLogLike()
@@ -253,7 +287,7 @@ class FermiGBMLike(pluginPrototype):
     
     #Model is folded+background (i.e., we assume negligible errors on the 
     #background)
-    modelCounts               = folded * self.exposure + self.bkgCounts
+    modelCounts               = self.nuisanceParameters['InterCalib'].value * folded * self.exposure + self.bkgCounts
     
     return modelCounts
   
@@ -271,7 +305,7 @@ class FermiGBMLike(pluginPrototype):
     
     modelCounts               = self._getModelCounts()
     
-    logLike                   = self._computeLogLike(modelCounts)
+    logLike                   = self._computeLogLike( modelCounts )
     
     return logLike
       
