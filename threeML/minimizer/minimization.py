@@ -1,9 +1,21 @@
 import numpy
-import itertools
-import iminuit
+import math
+
 import warnings
 import matplotlib.pyplot as plt
+import collections
 
+from threeML.io.Table import Table, NumericMatrix
+from threeML.utils.cartesian import cartesian
+from threeML.io.ProgressBar import ProgressBar
+
+from minuit2 import Minuit2 as Minuit
+
+from IPython.display import display
+
+import uncertainties
+
+import re
 
 class Minimizer(object):
   def __init__(self,function,parameters,ftol=1e-3,verbosity=1):
@@ -17,8 +29,17 @@ class Minimizer(object):
   def minimize(self):
     raise NotImplemented("This is the method of the base class. Must be implemented by the actual minimizer")
 
+#This is a function to add a method to a class
+#We will need it in the MinuitMinimizer
+
+def add_method(self, method, name=None):
+    if name is None:
+        name = method.func_name
+    setattr(self.__class__, name, method)
+
+
 class iMinuitMinimizer(Minimizer):
-  def __init__(self,function,parameters,ftol=1000,verbosity=0):
+  def __init__(self,function,parameters,ftol=1e3,verbosity=0):
     
     super(iMinuitMinimizer, self).__init__(function,parameters,ftol,verbosity)
     
@@ -28,7 +49,7 @@ class iMinuitMinimizer(Minimizer):
     
     for k,par in parameters.iteritems():
       
-      curName                 = "%s of %s" %(k[1],k[0])
+      curName                 = "%s_of_%s" %(k[1],k[0])
       
       varnames.append(curName)
       
@@ -39,40 +60,55 @@ class iMinuitMinimizer(Minimizer):
       pars['error_%s' % curName] = par.delta
       
       #Limits
-      pars['limit_%s' % curName] = [par.minValue,par.maxValue]
+      pars['limit_%s' % curName] = (par.minValue,par.maxValue)
       
       #This is useless, since all parameters here are free,
       #but do it anyway for clarity
       pars['fix_%s' % curName]   = False
     
-    
-    #Since the number and names of the parameters cannot be extracted
-    #from the signature of the likelihood function in input,
-    #we use the forced_parameters facility which allows for their
-    #explicit specification (see iMinuit manual for details)
-    
-    pars['forced_parameters'] = varnames 
-    
-    #This is to tell iMinuit that we are dealing with likelihoods,
+    #This is to tell Minuit that we are dealing with likelihoods,
     #not chi square
     pars['errordef']          = 0.5
         
     pars['print_level']       = verbosity
     
-    #Finally we can instance the Minuit class
-    self.minuit               = iminuit.Minuit(self.function, **pars)
+    #We need to make a function with the parameters as explicit
+    #variables in the calling sequence, so that Minuit will be able
+    #to probe the parameter's names
+    var_spelledout            = ",".join(varnames)
     
-    self.minuit.tol           = ftol
-    self.minuit.strategy      = 1 #More accurate
+    #Write and compile the code for such function
+      
+    code                      = 'def _f(self, %s):\n  return self.function(%s)' % (var_spelledout, var_spelledout)
+    exec(code)
+    
+    #Add the function just created as a method of the class
+    #so it will be able to use the 'self' pointer
+    add_method(self, _f, "_f")    
         
-  def minimize(self):
+    #Finally we can instance the Minuit class
+    self.minuit               = Minuit(self._f, **pars)
+        
+    self.minuit.tol           = 100 #ftol
+    self.minuit.up            = 0.5 #This is a likelihood
+    self.minuit.strategy      = 0 #More accurate
+    
+  def migradConverged(self):
+    
+    #In the MINUIT manual this is the condition for MIGRAD to have converged
+    #0.002 * tolerance * UPERROR
+    return ( self.minuit.edm <= 0.002 * self.minuit.tol * self.minuit.up)
+  
+  
+  def _runMigrad(self, trials=10):
     
     #Repeat Migrad up to 10 times, until it converges
-    for i in range(10):
+    
+    for i in range(trials):
       
       self.minuit.migrad()
       
-      if(self.minuit.migrad_ok()):
+      if self.migradConverged():
         
         #Converged
         break
@@ -81,65 +117,266 @@ class iMinuitMinimizer(Minimizer):
         
         #Try again
         continue
-          
-    return self.minuit.values, self.minuit.fval
   
-  def printFitResults(self):
+  def minimize(self):
     
-    self.minuit.print_param()
-  
-  def printCorrelationMatrix(self):
+    self._runMigrad(10)
     
-    self.minuit.print_matrix()
-  
-  def getErrors(self,fast): 
-    
-    #Set the print_level to 0 to avoid printing too many tables
-    self.minuit.print_level = 0
-    
-    if(fast):
+    if not self.migradConverged():
       
-      #Do not execute MINOS
-            
-      #This is to get the covariance matrix right
-      self.minuit.hesse()
+      print("\nMIGRAD did not converge in 10 trials.")
       
-      self.minuit.print_param()
-      
-      return self.minuit.errors
+      return map(lambda x:0,self.minuit.values), 1e9
     
     else:
       
-      errors = self.minuit.minos()
+      self.minuit.hesse()
+            
+      #Make a ordered dict for the results
+      bestFit                   = collections.OrderedDict()
       
-      self.minuit.print_param()
-      
-      return errors
-  
-  def getLikelihoodProfiles(self):
-    #Execute MINOS profiles
-    parameters                     = self.minuit.list_of_vary_param()
-    
-    errors                         = {}
-    figures                        = []
-    
-    for par in parameters:
-      
-      figures.append(plt.figure())
-      
-      #Suppress UserWarnings, which can be too many due to migrad failing in region
-      #of the parameter space too far from the best fit
-      with warnings.catch_warnings() as w:
+      for k,par in self.parameters.iteritems():
         
-        warnings.filterwarnings("ignore",category=UserWarning)
+        curName                 = "%s_of_%s" %(k[1],k[0])
         
-        errors[par]                  = self.minuit.draw_mnprofile(par, bound = 1.2, text=False)
-    
-    return errors, figures
+        bestFit[curName]        = self.minuit.values[curName]
+        
+      return bestFit, self.minuit.fval
   
-  def getContours(self, param1, param2):
+  def printFitResults(self):
     
-    #This is to get the covariance matrix right
-    self.minuit.hesse()
+    #I do not use the print_param facility in iminuit because
+    #it does not work well with console output, since it fails
+    #to autoprobe that it is actually run in a console and uses
+    #the HTML backend instead
     
-    self.minuit.draw_mncontour(param1, param2, bins=100, nsigma=2, numpoints=20, sigma_res=4)
+    data = []
+    nameLength = 0
+    
+    for k,v in self.parameters.iteritems():
+     
+     curName                 = "%s_of_%s" %(k[1],k[0])
+     
+     #Format the value and the error with sensible significant
+     #numbers
+     x                      = uncertainties.ufloat(v.value, self.minuit.errors[curName])
+     rep                    = x.__str__().replace("+/-"," +/- ")
+          
+     data.append([curName,rep,v.unit])
+     
+     if(len(v.name) > nameLength):
+       nameLength = len(curName)
+   
+    pass
+    
+    table                     = Table(rows = data,
+                                      names = ["Name","Value","Unit"],
+                                      dtype=('S%i' %nameLength, str, 'S15'))
+    
+    display(table)
+    print("\nNOTE: errors on parameters are approximate. Use getErrors().\n")
+      
+  def printCorrelationMatrix(self):
+        
+    #Print a custom covariance matrix because iminuit does
+    #not guess correctly the frontend when 3ML is used
+    #from terminal
+    
+    cov                       = self.minuit.covariance
+    
+    keys                      = self.parameters.keys()
+    
+    parNames                  = map(lambda k:"%s_of_%s" %(k[1],k[0]), keys ) 
+    
+    data = []
+    nameLength = 0
+    
+    for key1, name1 in zip(keys, parNames):
+       
+      if( len(name1) > nameLength ):
+        
+        nameLength = len(name1)
+     
+      thisRow                 = []
+      
+      v1                      = self.parameters[key1]
+      
+      for key2, name2 in zip(keys, parNames):
+       
+        corr                  = cov[(name1, name2)] / ( math.sqrt(cov[(name1, name1)]) * math.sqrt(cov[(name2, name2)]) ) 
+       
+        thisRow.append(corr)
+      
+      pass
+      
+      data.append(thisRow)
+      
+    pass
+    
+    dtypes                    = []
+    dtypes.extend( map(lambda x:float, parNames) )
+    
+    cols                      = []
+    cols.extend(parNames)
+    
+    table                     = NumericMatrix(rows = data,
+                                      names = cols,
+                                      dtype= dtypes)
+    
+    for col in table.colnames:
+      
+      table[col].format = '2.2f'
+    
+    display(table)
+      
+  def getErrors(self,fast): 
+    
+    #Run again the fit because the user might have changed the parameter
+    #configuration
+    self._runMigrad()
+    
+    #Now set aside the current values for the parameters,
+    #because minos will change them
+    #Make a ordered dict for the results
+    bestFit                   = collections.OrderedDict()
+    
+    for k,par in self.parameters.iteritems():
+      
+      curName                 = "%s_of_%s" %(k[1],k[0])
+      
+      bestFit[curName]        = self.minuit.values[curName]
+
+    
+    if not self.migradConverged():
+      
+      print("\nMIGRAD results are not valid. Cannot compute errors. Did you run the fit first ?")
+      
+      return map(lambda x:None, self.parameters.keys())
+       
+    self.minuit.minos()
+          
+    #Make a ordered dict for the results
+    errors                   = collections.OrderedDict()
+    
+    for k,par in self.parameters.iteritems():
+      
+      curName                 = "%s_of_%s" %(k[1],k[0])
+      
+      errors[curName]         = (self.minuit.merrors[(curName, -1)], self.minuit.merrors[(curName, 1)])
+      
+      #Set the parameter back to the best fit value
+      par.setValue( bestFit[curName] )
+    
+    
+    #Print a table with the errors
+    data = []
+    nameLength = 0
+    
+    for k,v in self.parameters.iteritems():
+    
+      curName                 = "%s_of_%s" %(k[1],k[0])
+      
+      #Format the value and the error with sensible significant
+      #numbers
+      x                      = uncertainties.ufloat(v.value, abs(errors[curName][0]))
+      
+      num, uncm, ex          = re.match('\(?(\-?[0-9]+\.?[0-9]+) ([0-9]+\.[0-9]+)\)?(e[\+|\-][0-9]+)?',
+                                        x.__str__().replace("+/-"," ")).groups()
+      
+      x                      = uncertainties.ufloat(v.value, abs(errors[curName][1]))
+      _, uncp, _             = re.match('\(?(\-?[0-9]+\.?[0-9]+) ([0-9]+\.[0-9]+)\)?(e[\+|\-][0-9]+)?',
+                                        x.__str__().replace("+/-"," ")).groups()
+      
+      if(ex==None):
+        
+        #Number without exponent
+        prettystring           = "%s -%s +%s" %(num, uncm, uncp)
+      
+      else:
+        
+        prettystring           = "(%s -%s +%s)%s" %(num, uncm, uncp, ex)
+        
+      data.append([curName,prettystring,v.unit])
+     
+      if(len(v.name) > nameLength):
+        nameLength = len(curName)
+    pass
+    
+    table                     = Table(rows = data,
+                                      names = ["Name","Value","Unit"],
+                                      dtype=('S%i' %nameLength, str, 'S15'))
+    
+    display(table)
+
+    
+    return errors
+  
+  def contours(self, src1, param1, p1min, p1max, p1steps,
+                    src2, param2, p2min, p2max, p2steps,
+                    progress=True):
+    
+    #Fix the parameters
+        
+    for s,p in zip( [src1, src2], [param1,param2] ):
+        
+        try:
+          #Fix the parameter p for source s
+          
+          self.minuit.fixed[ "%s_of_%s" %(p,s) ] = True
+        
+        except KeyError:
+            
+            raise ValueError("Parameter %s is not a free parameter for source %s." %(p,s))
+    
+    
+    #Generate the steps
+    a = numpy.linspace( p1min, p1max, p1steps)
+    b = numpy.linspace( p2min, p2max, p2steps)
+    grid = cartesian([a,b])
+        
+    def countourWorker(args):
+      
+      aa, bb = args
+      
+      self.minuit.values[ "%s_of_%s" % ( param1, src1 ) ] = aa
+      
+      
+      self.minuit.values[ "%s_of_%s" % ( param2, src2 ) ] = bb
+      
+      
+      #High tolerance for speed
+      self.minuit.tol = 100
+      
+      #mpl.warning("Running migrad")
+      
+      try:
+        
+        self.minuit.migrad()
+      
+      except:
+            
+        #In this context this is not such a big deal,
+        #because we might be so far from the minimum that
+        #the fit cannot converge
+        
+        return 1e6
+            
+      #mpl.warning("Returning")
+            
+      return self.minuit.fval     
+    
+    if(progress):
+      
+      prog = ProgressBar(grid.shape[0])
+      
+      def wrap(args):
+        prog.increase()
+        return countourWorker(args)
+      
+      r = map( wrap, grid )
+      
+    else:
+      
+      r = map( countourWorker, grid )
+    
+    return a,b,numpy.array(r).reshape((a.shape[0],b.shape[0]))
