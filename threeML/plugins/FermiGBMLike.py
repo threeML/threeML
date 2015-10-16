@@ -244,10 +244,12 @@ class FermiGBMLike(pluginPrototype):
         
         return (-1) * self._computeLogLike(self.nuisanceParameters['InterCalib'].value * modelCounts + self.bkgCounts)
             
-      #logLval                 = map(fitfun, values)
-      #idx                     = numpy.argmax(logLval)
-      #self.nuisanceParameters['InterCalib'].setValue(values[idx])
+      logLval                 = map(fitfun, values)
+      idx                     = numpy.argmax(logLval)
+      self.nuisanceParameters['InterCalib'].setValue(values[idx])
       #return logLval[idx]
+      
+      #Now refine with minuit
       
       parameters              = collections.OrderedDict()
       parameters[ (self.name, 'InterCalib') ]      = self.nuisanceParameters['InterCalib']
