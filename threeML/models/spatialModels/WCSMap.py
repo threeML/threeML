@@ -33,7 +33,7 @@ def fp_linear_interp(pos,map,filename):
         if len(pos)==2:
             fp_pos=[py_arr,px_arr]
         else:
-            fp_pos=[4*[pos[-3],py_arr,px_arr]
+            fp_pos=[4*[pos[-3],py_arr,px_arr]]
         try:
             vals = map[fp_pos]
         except ValueError:
