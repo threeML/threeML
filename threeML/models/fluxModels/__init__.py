@@ -1,6 +1,6 @@
 from band import Band
 from powerlaw import PowerLaw
-from logporabola import LogParabola
+from logparabola import LogParabola, LogParabolaEp
 from madness import Madness
 from manybrokenpowerlaws import ManyBrokenPowerlaws
 from manylogporabolas import ManyLogParabolas

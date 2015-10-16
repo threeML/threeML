@@ -55,6 +55,10 @@ class Parameter(object):
     return "%20s: %10g %10g %10g %10g %s %s" %(self.name,self.value,self.minValue,self.maxValue,self.delta,ff,self.unit)
   pass
   
+  def getValue(self):
+    
+    return self.value
+  
   def setValue(self,value):
     self.value                = float(value)
     

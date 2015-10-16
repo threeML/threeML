@@ -72,7 +72,7 @@ class LogUniformPrior(Prior):
   def __call__(self,value):
     if(self.minValue < value < self.maxValue and value>0):
       #This is = log(1/value)
-      return -numpy.log(value)
+      return -math.log(value)
     else:
       return -numpy.inf
     pass
@@ -84,3 +84,35 @@ class LogUniformPrior(Prior):
     return 10**((cube * decades) + startDecade)
 
 pass
+
+class GaussianPrior(Prior):
+  
+  def __init__(self, mu, sigma):
+    
+    self.mu                   = float(mu)
+    self.sigma                = float(sigma)
+    self.two_sigmasq          = 2 * self.sigma**2.0
+    self.one_on_sigmaSqrt_2pi = 1.0 / ( self.sigma * math.sqrt(2 * math.pi) )
+    
+  def getName(self):
+    
+    return "GaussianPrior"
+  
+  def setBounds(self,newMinValue,newMaxValue):
+    #Useless in this context
+    pass
+  
+  def __call__(self, value):
+    
+    val                       = (   self.one_on_sigmaSqrt_2pi 
+                                  * math.exp( - (value - self.mu)**2 
+                                                      / 
+                                              self.two_sigmasq ) )
+  
+    if( val < 1e-15):
+      
+      return - numpy.inf
+    
+    else:
+      
+      return math.log(val)

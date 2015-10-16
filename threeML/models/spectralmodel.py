@@ -141,7 +141,7 @@ class SpectralModel(object):
     #    return self.parameters[argument]
 
 
-    def display(self,emin=10.,emax=5000.,logscale=True,fluxType="vfv"):
+    def display(self,emin=10.,emax=5000.,logscale=True,fluxType="vfv",**kwargs):
         '''
         Display the model 
 
@@ -158,12 +158,12 @@ class SpectralModel(object):
         if logscale:
             eGrid = numpy.logspace(numpy.log10(emin),numpy.log10(emax),1000)
 
-            ax.loglog(eGrid,eGrid**eIndx*self(eGrid),'-',color='red')
+            ax.loglog(eGrid,eGrid**eIndx*self(eGrid),'-',**kwargs)
 
         else:
             eGrid = numpy.linspace(emin,emax,1000)
 
-            ax.plot(eGrid,eGrid**eIndx*self(eGrid),'-',color='red')
+            ax.plot(eGrid,eGrid**eIndx*self(eGrid),'-',**kwargs)
 
 
 
