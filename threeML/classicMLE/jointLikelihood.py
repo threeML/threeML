@@ -650,8 +650,8 @@ class JointLikelihood(object):
       deltachi2 = scipy.stats.chi2.ppf(probs, 2)
       
       #Boundaries for the colormap
-      bounds = [cc.min()]
-      bounds.extend(cc.min() + deltachi2)
+      bounds = [self.currentMinimum]
+      bounds.extend(self.currentMinimum + deltachi2)
       bounds.append(cc.max())
       
       #Define the color palette
@@ -671,7 +671,7 @@ class JointLikelihood(object):
                  origin='lower',
                  norm=BoundaryNorm(bounds,256),
                  interpolation='bicubic',
-                 vmax=(cc.min()+deltachi2).max())
+                 vmax=(self.currentMinimum+deltachi2).max())
       
       #Plot the color bar with the sigmas
       cb = fig.colorbar(im, boundaries=bounds[:-1])
@@ -687,7 +687,7 @@ class JointLikelihood(object):
           t.set_verticalalignment('baseline')   
       
       #Draw the line contours
-      sub.contour(b,a, cc, cc.min()+deltachi2)
+      sub.contour(b,a, cc, self.currentMinimum + deltachi2)
       
       sub.set_xlabel(name2)
       sub.set_ylabel(name1)
