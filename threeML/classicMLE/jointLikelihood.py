@@ -402,7 +402,7 @@ class JointLikelihood(object):
       
       if ( (s, p) not in self.freeParameters.keys() ):
            
-           raise ValueError("Parameter %s of source %s does not exists in the current model" %(p,s))
+           raise ValueError("Parameter %s of source %s is not a free parameter of current model" %(p,s))
     
     if(threads <= 1):
       #Create a new minimizer to avoid messing up with the best
