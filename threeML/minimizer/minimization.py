@@ -89,9 +89,9 @@ class iMinuitMinimizer(Minimizer):
     #Finally we can instance the Minuit class
     self.minuit               = Minuit(self._f, **pars)
         
-    self.minuit.tol           = 100 #ftol
+    self.minuit.tol           = 10 #ftol
     self.minuit.up            = 0.5 #This is a likelihood
-    self.minuit.strategy      = 0 #More accurate
+    self.minuit.strategy      = 1 #More accurate
     
   def migradConverged(self):
     
@@ -389,9 +389,9 @@ class iMinuitMinimizer(Minimizer):
       aa, bb = args
       
       #First of all restore the best fit values
-      for k,v in values.iteritems():
+      #for k,v in values.iteritems():
           
-          self.minuit.values[ k ] = v
+      #    self.minuit.values[ k ] = v
       
       #Now set the parameters under scrutiny to the current values
       
