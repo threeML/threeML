@@ -604,7 +604,7 @@ class JointLikelihood(object):
       
       #Compute the corresponding delta chisq. (chisq has 1 d.o.f.)
       
-      deltachi2 = scipy.stats.chi2.ppf(probs, 1)
+      deltachi2 = scipy.stats.chi2.ppf(probs, 1) / 2.0 #two-sided!
       
       fig = plt.figure()
       sub = fig.add_subplot(111)
@@ -647,7 +647,7 @@ class JointLikelihood(object):
           probs.append( 1 - (scipy.stats.norm.sf(s) * 2) )
       
       #Compute the corresponding delta chisq. (chisq has 2 d.o.f.)
-      deltachi2 = scipy.stats.chi2.ppf(probs, 2)
+      deltachi2 = scipy.stats.chi2.ppf(probs, 2) / 2.0 #two-sided
       
       #Boundaries for the colormap
       bounds = [self.currentMinimum]
