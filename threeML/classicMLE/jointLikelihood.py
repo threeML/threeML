@@ -105,6 +105,17 @@ class JointLikelihood(object):
       #Keep track of the number of calls
       self.ncalls                += 1
       
+      #Check that we don't have nans in the trialValues
+      #(sometimes happen when MINUIT fails to estimate the derivatives)
+      
+      trialValues = numpy.array( trialValues )
+      
+      #This is the fastest way to check for any nan
+      #(try other methods if you don't believe me)
+      if not numpy.isfinite(numpy.dot(trialValues,trialValues)):
+          
+          return minimization.FIT_FAILED
+      
       #Assign the new values to the parameters
       
       for i,parname in enumerate(self.freeParameters.keys()):
@@ -139,7 +150,7 @@ class JointLikelihood(object):
       
       if("%s" % globalLogLike=='nan'):
         warnings.warn("These parameters returned a logLike = Nan: %s" %(trialValues,))
-        return 1e6
+        return minimization.FIT_FAILED
       
       if(self.verbose):
         print("Trying with parameters %s, resulting in logL = %s" %(trialValues,globalLogLike))
@@ -196,11 +207,14 @@ class JointLikelihood(object):
     return table
 
   
-  def fit(self):
+  def fit(self,prefit=True):
     
     #Pre-fit: will fit the normalizations so that they are not too far
     #from the data (which would make the fitting below fail)
-    self.preFit()
+    
+    if prefit:
+        
+        self.preFit()
     
     #Isolate the free parameters
     #NB: nuisance parameters are NOT in this dictionary
@@ -376,6 +390,10 @@ class JointLikelihood(object):
       raise RuntimeError("You have to run the .fit method before calling getContours.")
     
     
+    if param1==param2 and src1==src2:
+      
+      raise RuntimeError("You have to specify two different parameters.")
+    
     #Default values
     threads = 1
     debug = False
@@ -420,6 +438,10 @@ class JointLikelihood(object):
       
       #Restore the original
       self.freeParameters = backup_freeParameters
+      
+      if src2 is None:
+      
+          cc = cc[:, 0]
                                              
     #if( 2==2 ):
     else:
@@ -525,7 +547,7 @@ class JointLikelihood(object):
                 print "%s" % (stderr[-1000:])
           sys.stdout.flush()        
         
-        prog.animate( amr.progress )
+        prog.animate( amr.progress - 1 )
       
       #Force to display 100% at the end
       prog.animate( threads - 1 )
@@ -608,8 +630,16 @@ class JointLikelihood(object):
       
       fig = plt.figure()
       sub = fig.add_subplot(111)
-     
-      sub.plot( a, cc, lw=2)
+      
+      #Neutralize values of the loglike too high
+      #(fit failed)
+      idx = (cc == minimization.FIT_FAILED)
+      
+      sub.plot( a[~idx], cc[~idx], lw=2)
+      
+      #Now plot the failed fits as "x"
+      
+      sub.plot( a[idx], [cc.min()] * a[idx].shape[0], 'x', c='red',markersize=2)
       
       #Decide colors
       colors = ['blue','cyan','red']
@@ -618,6 +648,11 @@ class JointLikelihood(object):
           
           sub.axhline( self.currentMinimum + d , linestyle='--' , 
                        color=c, label=r'%s $\sigma$' %( s ), lw = 2 )
+      
+      #Fix the axis to cover from the minimum to the 3 sigma line
+      sub.set_ylim( [ self.currentMinimum - deltachi2[0] , 
+                      self.currentMinimum + (deltachi2[-1] * 2) ] )
+      
       
       plt.legend( loc=0, frameon=True )
       
