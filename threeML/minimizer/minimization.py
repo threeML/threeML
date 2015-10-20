@@ -17,6 +17,9 @@ import uncertainties
 
 import re
 
+#Special constants
+FIT_FAILED = 1e6
+
 class Minimizer(object):
   def __init__(self,function,parameters,ftol=1e-3,verbosity=1):
     
@@ -252,8 +255,20 @@ class iMinuitMinimizer(Minimizer):
       print("\nMIGRAD results are not valid. Cannot compute errors. Did you run the fit first ?")
       
       return map(lambda x:None, self.parameters.keys())
-       
-    self.minuit.minos()
+    
+    try:
+    
+      self.minuit.minos()
+    
+    except:
+      
+      print("MINOS has failed. This usually means that the fit is very difficult, for example "
+            "because of high correlation between parameters. Check the correlation matrix printed"
+            "in the fit step, and check contour plots with getContours(). If you are using a "
+            "user-defined model, you can also try to "
+            "reformulate your model with less correlated parameters.")
+      
+      return None
           
     #Make a ordered dict for the results
     errors                   = collections.OrderedDict()
@@ -423,11 +438,17 @@ class iMinuitMinimizer(Minimizer):
         #because we might be so far from the minimum that
         #the fit cannot converge
         
-        return 1e6
-            
+        return FIT_FAILED
+      
+      else:
+        
+        pass
+        
+        #print("%s -> %s" % (self.minuit.values, self.minuit.fval))
+      
       #mpl.warning("Returning")
             
-      return self.minuit.fval     
+      return self.minuit.fval    
     
     #Do the computation
     
