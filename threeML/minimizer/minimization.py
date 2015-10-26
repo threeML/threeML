@@ -362,7 +362,10 @@ class iMinuitMinimizer(Minimizer):
     if 'log' in kwargs.keys():
         
         p1log = bool( kwargs['log'][0] )
-        p2log = bool( kwargs['log'][1] )
+        
+        if param2 is not None:
+            
+            p2log = bool( kwargs['log'][1] )
     
     #Generate the steps
     
