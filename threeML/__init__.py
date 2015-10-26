@@ -95,3 +95,8 @@ pass
 def getAvailablePlugins():
   print("Plugins:\n")
   print("\n".join(msgs))
+
+from .parallel.ParallelClient import parallel_computation
+
+#Now read the configuration and make it available as threeML_config
+from .config.Config import threeML_config
