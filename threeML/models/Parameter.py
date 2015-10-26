@@ -1,5 +1,9 @@
 from threeML.bayesian import Priors
 
+import numpy
+
+import scipy.stats
+
 class Parameter(object):
   def __init__(self,name,initValue,minValue,maxValue,delta,**kwargs):
     self.name                 = str(name)
@@ -54,6 +58,48 @@ class Parameter(object):
     
     return "%20s: %10g %10g %10g %10g %s %s" %(self.name,self.value,self.minValue,self.maxValue,self.delta,ff,self.unit)
   pass
+  
+  def getRandomizedValue( self, var = 0.1 ):
+    
+    #Get a value close to the current value, but not identical
+    #(used for the inizialization of Bayesian samplers)
+    
+    if ( self.minValue is not None ) or ( self.maxValue is not None ):
+        
+        #Bounded parameter. Use a truncated normal so we are guaranteed
+        #to have a random value within the boundaries
+        
+        std = abs( var * self.value )
+        
+        if self.minValue is not None:
+            
+            a = ( self.minValue - self.value ) / std 
+        
+        else:
+            
+            a = - numpy.inf
+        
+        if self.maxValue is not None:
+            
+            b = ( self.maxValue - self.value ) / std 
+        
+        else:
+            
+            b = numpy.inf
+              
+        sample = scipy.stats.truncnorm.rvs( a, b, loc = self.value, scale = std, size = 1)
+        
+        if sample < self.minValue or sample > self.maxValue:
+            
+            raise RuntimeError("BUG!!")
+        
+        return sample[0]
+    
+    else:
+        
+        #The parameter has no boundaries
+        
+        return numpy.random.normal( self.value, var * self.value )
   
   def getValue(self):
     
