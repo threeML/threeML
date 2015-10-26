@@ -4,6 +4,8 @@ from threeML.io.Table import Table
 from threeML.utils.cartesian import cartesian
 from threeML.parallel.ParallelClient import ParallelClient
 from threeML.io.ProgressBar import ProgressBar
+from threeML.config.Config import threeML_config
+
 
 import collections
 import warnings
@@ -99,7 +101,7 @@ class JointLikelihood(object):
       
       norm.setValue(globalGrid[idx][i])
       norm.setDelta(norm.value / 40)
-    
+  
   def minusLogLikeProfile(self, *trialValues):
       
       #Keep track of the number of calls
@@ -139,7 +141,7 @@ class JointLikelihood(object):
             #This is a zone of the parameter space which is not allowed. Return
             #a big number for the likelihood so that the fit engine will avoid it
             warnings.warn("Fitting engine in forbidden space: %s" %(trialValues,))
-            return 1e6
+            return minimization.FIT_FAILED
           
           except:
             
@@ -301,80 +303,7 @@ class JointLikelihood(object):
       raise RuntimeError("You have to run the .fit method before calling errors.")
         
     return self.minimizer.getErrors(fast)
-  
-  def explore(self):
-      
-      errors = self.getErrors(fast=True)
-      
-      import emcee
-      import emcee.utils
-      
-      #Dimensionality of the problem
-      ndim = len(self.minimizer.parameters.values())
-      
-      #emcee wants the +logLike, and has a different
-      #calling sequence. This is just a wrapper around
-      #the likelihood
-      
-      def funwrap(trialList):
-        
-        return self.minimizer.function(*trialList)*(-1)
-      
-      #How many walkers?
-      nwalkers = ndim * 8
-      
-      #Prepare the start values for the walkers
-      
-      #Best fit values
-      p0_ = numpy.asarray(map(lambda x:x.value, self.minimizer.parameters.values()))
-      
-      #Randomize using the errors on the parameters from the fit
-      
-      deltas                  = []
     
-      for k,par in self.minimizer.parameters.iteritems():
-      
-        curName                 = "%s_of_%s" %(k[1],k[0])
-              
-        deltas.append(errors[curName])
-      
-      p0 = emcee.utils.sample_ball(p0_, deltas, nwalkers)
-      
-      #Ensure that at least one of the p0 is the best fit
-      p0[0] = p0_
-      
-      #Ensure that the starting points are good
-      logLike = map(funwrap, p0)
-      
-      idx = numpy.isfinite(logLike)
-      
-      if( numpy.sum(~idx) > 0 ):
-                
-        p0 = p0[idx]
-        nwalkers = p0.shape[0]
-        
-        #nwalkers must be even
-        if( nwalkers % 2 != 0):
-          p0 = p0[1:]
-          nwalkers = p0.shape[0]
-        
-        #There is either inf or Nan in logLike,
-        #one or more of the starting points are invalid
-        warnings.warn("One or more starting points for the MCMC are invalid. Removing them. Walkers are now %s" %(nwalkers))
-      pass
-      
-      sampler = emcee.EnsembleSampler(nwalkers, len(self.minimizer.parameters.values()), funwrap)
-      
-      #Burn-in
-      pos, prob, state = sampler.run_mcmc(p0, 100)
-      
-      sampler.reset()
-      
-      #Real sampling
-      sampler.run_mcmc(pos, 1000)
-      
-      return sampler
-  
   def getLikelihoodProfiles(self):
     
     if(not hasattr(self,'minimizer')):
@@ -395,17 +324,12 @@ class JointLikelihood(object):
       raise RuntimeError("You have to specify two different parameters.")
     
     #Default values
-    threads = 1
     debug = False
     
     #Check the current keywords
     for k,v in kwargs.iteritems():
         
-        if k=="threads":
-            
-            threads = int( v )
-        
-        elif k=="debug":
+        if k=="debug":
             
             debug = bool( v )
     
@@ -422,7 +346,8 @@ class JointLikelihood(object):
            
            raise ValueError("Parameter %s of source %s is not a free parameter of current model" %(p,s))
     
-    if(threads <= 1):
+    if not threeML_config['parallel']['use-parallel']:
+      
       #Create a new minimizer to avoid messing up with the best
       #fit
       
@@ -443,8 +368,23 @@ class JointLikelihood(object):
       
           cc = cc[:, 0]
                                              
-    #if( 2==2 ):
     else:
+      
+      #With parallel computation
+      
+      #Connect to the engines
+      try:
+        
+        client = ParallelClient(**kwargs)
+      
+      except:
+        
+        sys.stderr.write("\nCannot connect to IPython cluster. Is the cluster running ?\n\n\n")
+        
+        raise RuntimeError("Cannot connect to IPython cluster.")
+
+      
+      threads = client.getNumberOfEngines()
       
       if( threads > p1steps):
         
@@ -512,17 +452,7 @@ class JointLikelihood(object):
         #self.freeParameters = backup_freeParameters
         
         return ccc
-      
-      try:
-        
-        client = ParallelClient(**kwargs)
-      
-      except:
-        
-        sys.stderr.write("\nCannot connect to IPython cluster. Is the cluster running ?\n\n\n")
-        
-        raise RuntimeError("Cannot connect to IPython cluster.")
-        
+              
       lview = client.load_balanced_view()
       #lview.block = True
       amr = lview.map_async(worker, range(threads))
@@ -534,7 +464,7 @@ class JointLikelihood(object):
       while not amr.ready():
         
         #Avoid checking too often
-        time.sleep(1)
+        time.sleep(1 + np.random.uniform(0,1))
         
         if(debug):
           stdouts = amr.stdout
@@ -591,7 +521,7 @@ class JointLikelihood(object):
           
           aidx, bidx = numpy.unravel_index(idx, cc.shape)
           
-          print("Found a better minimum: %s with %s = %s and %s = %s" 
+          print("\nFound a better minimum: %s with %s = %s and %s = %s" 
                  %(cc.min(),param1,a[aidx],param2,b[bidx]))
       
       else:
