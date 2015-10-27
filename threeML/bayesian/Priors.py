@@ -2,6 +2,8 @@ import numpy
 import abc
 import math
 
+import scipy.stats
+
 class Prior(object):
   __metaclass__               = abc.ABCMeta
     
@@ -72,15 +74,15 @@ class LogUniformPrior(Prior):
   def __call__(self,value):
     if(self.minValue < value < self.maxValue and value>0):
       #This is = log(1/value)
-      return -math.log(value)
+      return -math.log10(value)
     else:
       return -numpy.inf
     pass
   pass
   
   def multinestCall(self,cube):
-    decades                   = math.log10(self.maxValue)-math.log10(self.minValue)
-    startDecade               = math.log10(self.minValue)
+    decades                   = math.log1010(self.maxValue)-math.log1010(self.minValue)
+    startDecade               = math.log1010(self.minValue)
     return 10**((cube * decades) + startDecade)
 
 pass
@@ -89,10 +91,9 @@ class GaussianPrior(Prior):
   
   def __init__(self, mu, sigma):
     
-    self.mu                   = float(mu)
-    self.sigma                = float(sigma)
-    self.two_sigmasq          = 2 * self.sigma**2.0
-    self.one_on_sigmaSqrt_2pi = 1.0 / ( self.sigma * math.sqrt(2 * math.pi) )
+    self.mu = float(mu)
+    self.sigma = abs( float(sigma) )
+        
     
   def getName(self):
     
@@ -104,10 +105,10 @@ class GaussianPrior(Prior):
   
   def __call__(self, value):
     
-    val                       = (   self.one_on_sigmaSqrt_2pi 
-                                  * math.exp( - (value - self.mu)**2 
-                                                      / 
-                                              self.two_sigmasq ) )
+    #Here I multiply by sigma because of scipy "scale" behavior
+    #(see scipy documentation)
+    
+    val                       = scipy.stats.norm.pdf( value, loc=self.mu, scale=self.sigma ) * self.sigma
   
     if( val < 1e-15):
       
@@ -115,4 +116,4 @@ class GaussianPrior(Prior):
     
     else:
       
-      return math.log(val)
+      return math.log10(val)
