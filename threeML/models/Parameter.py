@@ -105,6 +105,10 @@ class Parameter(object):
     
     return self.value
   
+  def getPriorValue( self ):
+    
+    return self.prior( self.value )
+  
   def setValue(self,value):
     self.value                = float(value)
     
