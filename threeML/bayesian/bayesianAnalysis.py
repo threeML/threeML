@@ -2,9 +2,33 @@ from threeML.parallel.ParallelClient import ParallelClient
 
 from threeML.config.Config import threeML_config
 
+from threeML.io.ProgressBar import ProgressBar
+
+from threeML.io.triangle import corner
 
 import emcee
 import emcee.utils
+
+import numpy
+import time
+
+def sampleWithProgress( p0, sampler, nsamples, **kwargs ):
+    
+    progress = ProgressBar( nsamples )
+    
+    for i, result in enumerate( sampler.sample(p0, iterations = nsamples, **kwargs) ):
+        
+        progress.animate( ( i + 1 ) )
+        
+        pos, prob, state = result
+    
+    progress.animate( nsamples )
+    print("")
+    return pos, prob, state
+
+def sampleWithoutProgress( p0, sampler, nsamples, **kwargs ):
+    
+    return sampler.run_mcmc( p0, nsamples, **kwargs )
 
 class bayesianAnalysis( object ):
     
@@ -28,15 +52,33 @@ class bayesianAnalysis( object ):
           
           dataset.setModel(self.likelihoodModel)
     
-    def posterior( self, trialList ):
+    def posterior( self, trialValues ):
+        
+        #Assign this trial values to the parameters and
+        #store the corresponding values for the priors
+        lps = []
         
         for i,( srcName, paramName ) in enumerate( self.freeParameters.keys() ):
-                        
-            self.likelihoodModel.parameters[ srcName ][ paramName ].setValue( trialValues[i] )
+            
+            thisParam = self.likelihoodModel.parameters[ srcName ][ paramName ]
+                  
+            thisParam.setValue( trialValues[i] )
+            
+            pval = thisParam.getPriorValue()
+            
+            if not numpy.isfinite( pval ):
+                
+                return -numpy.inf
+            
+            lps.append( pval )
+            
+        logLike = numpy.sum( map( lambda dataset: dataset.getLogLike(), self.dataList.values() ) )
         
-        logLike = numpy.sum( map( lambda dataset: dataset.getLogLike(), self.dataList ) )
+        if not numpy.isfinite( logLike ):
+            
+            return -numpy.inf
         
-        logPrior = numpy.sum( map( lambda val, parameter: parameter.prior( val ), zip(  ) ) )
+        logPrior = numpy.sum( lps )
         
         return logLike + logPrior
     
@@ -83,14 +125,62 @@ class bayesianAnalysis( object ):
             sampler = emcee.EnsembleSampler( nwalkers, ndim, 
                                              self.posterior )
         
-        pos, prob, state = sampler.run_mcmc( p0, burn_in )
+        print("Running burn-in of %s samples..." % burn_in )
+
+            
+        pos, prob, state = sampleWithProgress( p0, sampler, burn_in )
+        
+        #Reset sampler
         
         sampler.reset()
         
-        sampler.run_mcmc( pos, nsamples, rstate0=state )
+        #Run the true sampling
+        
+        print("Sampling...")
+        
+        beg = time.time()
+        
+        _ = sampleWithoutProgress( pos, sampler, nsamples, rstate0=state ) 
+        
+        end = time.time()
+        
+        print("%s" %(end - beg))
+        
+        #sampler.run_mcmc( pos, nsamples, rstate0=state )
         
         acc = numpy.mean( sampler.acceptance_fraction )
         
-        print( "Mean acceptance fraction: " % acc )
+        print( "Mean acceptance fraction: %s" % acc )
         
-        return sampler
+        self.sampler = sampler
+        
+        return self.getSamples()
+    
+    def getSamples( self ):
+        
+        return self.sampler.flatchain
+    
+    def cornerPlot( self ):
+        
+        if hasattr( self, "sampler" ):
+            
+            labels = []
+            priors = []
+            
+            for i,( srcName, paramName ) in enumerate( self.freeParameters.keys() ):
+                
+                thisLabel = "%s of %s" % ( paramName, srcName )
+                
+                labels.append( thisLabel )
+                
+                priors.append( self.likelihoodModel.parameters[ srcName ][ paramName ].prior )
+            
+            fig = corner( self.sampler.flatchain, labels=labels, 
+                          quantiles=[0.16, 0.50, 0.84],
+                          priors = priors )
+            
+            return fig
+        
+        else:
+            
+            raise RuntimeError("You have to run the sampler first, using the sample() method")
