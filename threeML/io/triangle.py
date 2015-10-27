@@ -27,7 +27,7 @@
 #of the authors and should not be interpreted as representing official policies,
 #either expressed or implied, of the FreeBSD Project.
 
-#This version has been modified by G.Vianello to adapt it to 3ML
+#This version has been modified by G.Vianello to adapt it and customize it to 3ML
 
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
@@ -59,8 +59,8 @@ import matplotlib.cm as cm
 
 
 def corner(xs, weights=None, labels=None, extents=None, truths=None,
-           truth_color="#4682b4", scale_hist=False, quantiles=[],
-           verbose=True, plot_contours=True, plot_datapoints=True,
+           truth_color="#4682b4", scale_hist=True, quantiles=[],
+           verbose=False, plot_contours=True, plot_datapoints=True,
            fig=None, **kwargs):
     """
     Make a *sick* corner plot showing the projections of a data set in a
@@ -116,7 +116,7 @@ def corner(xs, weights=None, labels=None, extents=None, truths=None,
         Overplot onto the provided figure object.
 
     """
-
+    
     # Deal with 1D sample lists.
     xs = np.atleast_1d(xs)
     if len(xs.shape) == 1:
@@ -183,10 +183,35 @@ def corner(xs, weights=None, labels=None, extents=None, truths=None,
         # Plot the histograms.
         n, b, p = ax.hist(x, weights=weights, bins=kwargs.get("bins", 50),
                           range=extents[i], histtype="step",
-                          color=kwargs.get("color", "k"))
+                          color=kwargs.get("color", "k") )
         if truths is not None:
             ax.axvline(truths[i], color=truth_color)
-
+        
+        #########################
+        # Added by GV
+        #########################
+        
+        #Plot priors
+        
+        priors = kwargs.get("priors", None)
+        
+        if priors is not None:
+            
+            thisP = priors[i]
+            
+            bc = (b[:-1] + b[1:] ) / 2.0
+            
+            pvals = np.array( map(lambda x: 10.0**thisP( x ), bc) )
+            
+            #Renorm to one
+            pvals = pvals / pvals.max()
+            
+            #Plot the prior with the same maximum as the data
+            
+            ax.plot(bc, pvals * n.max() , color='red', linestyle=':' )
+        
+        #########################
+        
         # Plot quantiles if wanted.
         if len(quantiles) > 0:
             qvalues = quantile(x, quantiles, weights=weights)
