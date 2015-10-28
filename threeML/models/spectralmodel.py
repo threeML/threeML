@@ -81,10 +81,11 @@ class SpectralModel(object):
     __metaclass__           = abc.ABCMeta # Make the user code certain
     
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
 
         import collections        
-        self.setup()
+        
+        self.setup(*args, **kwargs)
 
 
         self._validate() # Raise runtime error if the users
