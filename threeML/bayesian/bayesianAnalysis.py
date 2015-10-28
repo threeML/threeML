@@ -140,7 +140,7 @@ class bayesianAnalysis( object ):
         
         beg = time.time()
         
-        _ = sampleWithoutProgress( pos, sampler, nsamples, rstate0=state ) 
+        _ = sampleWithProgress( pos, sampler, nsamples, rstate0=state ) 
         
         end = time.time()
         
@@ -160,7 +160,7 @@ class bayesianAnalysis( object ):
         
         return self.sampler.flatchain
     
-    def cornerPlot( self ):
+    def cornerPlot( self, **kwargs ):
         
         if hasattr( self, "sampler" ):
             
@@ -177,7 +177,7 @@ class bayesianAnalysis( object ):
             
             fig = corner( self.sampler.flatchain, labels=labels, 
                           quantiles=[0.16, 0.50, 0.84],
-                          priors = priors )
+                          priors = priors, **kwargs )
             
             return fig
         
