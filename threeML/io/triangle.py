@@ -177,19 +177,58 @@ def corner(xs, weights=None, labels=None, extents=None, truths=None,
             except TypeError:
                 q = [0.5 - 0.5*extents[i], 0.5 + 0.5*extents[i]]
                 extents[i] = quantile(xs[i], q, weights=weights)
-
+    
+    ######################
+    # Added by GV
+    ######################
+    
+    #Figure out which parameters are to be made in log scale
+    
+    logbins = kwargs.get("logbins", None)
+    
+    if logbins is None:
+        
+        #No logbins (default)
+        
+        logbins = map( lambda x: False, xs )
+    
+    else:
+        
+        #Check that logbins is the right size
+        
+        if len( logbins ) != len( xs ):
+            
+            raise RuntimeError("if you specify logbins, it must have the same length of the number of parameters")
+    
+    pass
+    
+    ######################
+    
     for i, x in enumerate(xs):
         ax = axes[i, i]
+        
         # Plot the histograms.
-        n, b, p = ax.hist(x, weights=weights, bins=kwargs.get("bins", 50),
-                          range=extents[i], histtype="step",
-                          color=kwargs.get("color", "k") )
-        if truths is not None:
-            ax.axvline(truths[i], color=truth_color)
         
         #########################
-        # Added by GV
+        # Modified by GV
         #########################
+        
+        nbins = kwargs.get("bins", 50)
+        
+        if logbins[i]:
+            
+            mybins = np.logspace( np.log10(x.min()), np.log10(x.max()), nbins ) 
+            
+        else:
+            
+            mybins = np.linspace( x.min(), x.max(), nbins )
+        
+        n, b, p = ax.hist(x, weights=weights, bins=mybins,
+                          range=extents[i], histtype="step",
+                          color=kwargs.get("color", "k") )
+        
+        if truths is not None:
+            ax.axvline(truths[i], color=truth_color)
         
         #Plot priors
         
@@ -277,7 +316,48 @@ def corner(xs, weights=None, labels=None, extents=None, truths=None,
                 if labels is not None:
                     ax.set_ylabel(labels[i])
                     ax.yaxis.set_label_coords(-0.3, 0.5)
-
+        
+    ######################
+    # Added by GV
+    ######################
+    
+    nax = len( logbins )
+    
+    for i,ll in enumerate( logbins ):
+        
+        if ll:
+            
+            #All plots on the i-th line need a 
+            #log y-axis
+            
+            for j in range( nax ):
+                
+                #Do not log scale the y scale of the
+                #histogram
+                if j < i:
+                
+                    axes[i,j].set_yscale("symlog", linthreshy=1e-4)
+                
+                #Remove tick labels from all but the first
+                #plot
+                if j > 0:
+                    
+                    axes[i,j].set_yticklabels([])
+            
+            #All plots on the j-th column need
+            #a log x-axis
+            
+            for j in range( nax ):
+                
+                axes[j,i].set_xscale("symlog", linthreshx=1e-4)
+                
+                #Remove tick labels from all but the last
+                #plot
+                if j < nax - 1:
+                    
+                    axes[j,i].set_xticklabels([])
+    
+        
     return fig
 
 
