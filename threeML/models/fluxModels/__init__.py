@@ -11,3 +11,5 @@ from asaf import AsafModel
 from bandTable import BandTable
 from pion import Pion
 from nar import NAR
+
+from CustomSpectralModel import CustomSpectralModel
