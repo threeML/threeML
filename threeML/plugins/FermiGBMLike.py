@@ -86,6 +86,14 @@ class FermiGBMLike(pluginPrototype):
                      RuntimeWarning)
       self.bkgCounts[idx]     = 0
     
+    #Check that the observed counts are positive
+    
+    idx = self.counts < 0
+    
+    if numpy.sum( idx ) > 0:
+       
+       raise RuntimeError("Negative counts in observed spectrum %s. Data are corrupted." % ( phafile ))
+    
     #Keep a copy which will never be modified
     self.counts_backup        = numpy.array(self.counts,copy=True)
     self.bkgCounts_backup     = numpy.array(self.bkgCounts,copy=True)
