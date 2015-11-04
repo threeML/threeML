@@ -1,6 +1,7 @@
 #!/usr/bin/env python
  
-from distutils.core import setup
+#from distutils.core import setup
+from setuptools import setup
 from distutils.extension import Extension
 from distutils.command.install_headers import install_headers
 import os, sys
@@ -24,7 +25,41 @@ else:
   library_dirs = []
 
 pass
- 
+
+#This finds root configuration
+from subprocess import Popen, PIPE
+def root_config(*opts):
+    args = ['root-config'] + ['--'+o for o in opts]
+    
+    try:
+        
+	config = Popen(args, stdout=PIPE).communicate()[0].strip().split(' ')
+    
+    except:
+        
+	print("You need ROOT installed")
+	
+	sys.exit(-1)
+    
+    else:
+        
+	return config
+
+###########################################################
+#Get ROOT informations
+
+incdirs = []
+libdirs = []
+libs = ["Minuit2"]
+
+version, incdir, libdir = root_config('version', 'incdir', 'libdir')
+incdirs.append(incdir)
+libdirs.append(libdir)
+libs += ["Core","Cint","RIO","Net","Hist","Graf","Rint","Matrix","MathCore"]
+print("Linking against Minuit2 library from ROOT %s" % version)
+
+
+	
 setup(
     
     name="threeML",
@@ -70,24 +105,35 @@ setup(
         
         
         
-        libraries = ["boost_python"],
+                  libraries = ["boost_python"],
         
-        include_dirs=include_dirs,
+                  include_dirs=include_dirs,
         
-        library_dirs=library_dirs),
+                  library_dirs=library_dirs),
         
-        Extension("threeML.libModelInterface", 
+        #Extension("threeML.libModelInterface", 
                   
-                  ["threeML/models/pyToCppModelInterface.cxx",
-                   "threeML/models/FixedPointSource.cxx"],
+        #          ["threeML/models/pyToCppModelInterface.cxx",
+        #           "threeML/models/FixedPointSource.cxx"],
         
         
         
-        libraries = ["boost_python"],
+        #          libraries = ["boost_python"],
         
-        include_dirs=include_dirs,
+        #          include_dirs=include_dirs,
         
-        library_dirs=library_dirs),
+        #          library_dirs=library_dirs),
+	
+	Extension("threeML.minuit2",
+	          
+		  ["threeML/minuit2/minuit2.cpp"],
+		  
+		  library_dirs=libdirs,
+                  libraries=libs,
+                  include_dirs=incdirs
+		  
+		  )
+		  
     ],
     
     
@@ -106,13 +152,13 @@ setup(
           'numpy >= 1.6',
           'scipy',
           'numexpr',
-          'numdifftools',
           'emcee',
           'astropy >= 1.0.0',
           'matplotlib',
-          'ipython >= 2.0.0',
-          'iminuit',
+          'ipython >= 2.0.0, < 3.9.9',
           'uncertainties',
-          'yaml'     
+          'pyyaml',
+	  'dill',
+	  'parse'
       ])
 
