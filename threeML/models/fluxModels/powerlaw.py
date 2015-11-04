@@ -15,11 +15,11 @@ class PowerLaw(SpectralModel):
 
     def setup(self):
         self.functionName        = "Powerlaw"
-        self.formula             = r'\begin{equation}f(E) = A E^{\gamma}\end{equation}'
+        self.formula             = r'\begin{equation}f(E) = A (E / E_{piv})^{\gamma}\end{equation}'
         self.parameters          = collections.OrderedDict()
         self.parameters['gamma'] = Parameter('gamma',-2.0,-10,10,0.1,fixed=False,nuisance=False,dataset=None)
         self.parameters['A']     = Parameter('A',1.0,1e-10,1e10,0.02,fixed=False,nuisance=False,dataset=None,normalization=True)
-        self.parameters['Epiv']  = Parameter('Epiv',1.0,1e-10,1e10,1,fixed=True)
+        self.parameters['Epiv']  = Parameter('Epiv',1.0,1e-10,1e10,1,fixed=True,units='keV')
     
         self.ncalls              = 0
     
@@ -33,7 +33,7 @@ class PowerLaw(SpectralModel):
                     return self.parameters['A'].value * math.pow(energy/piv,a+1)/(a+1)
             else:
                 def f(energy):
-                    return self.parameters['A'].value * math.pow(energy/piv)
+                    return self.parameters['A'].value * math.log(energy/piv)
             return f(e2)-f(e1)
         self.integral            = integral
  
@@ -43,7 +43,7 @@ class PowerLaw(SpectralModel):
         piv                      = self.parameters['Epiv'].value
         norm                     = self.parameters['A'].value
         gamma                    = self.parameters['gamma'].value
-        return numpy.maximum( numexpr.evaluate("norm * (energy/piv)**gamma"), 1e-30)
+        return numpy.maximum( numexpr.evaluate("norm * (energy/piv)**gamma"), 1e-100)
    
   
     def photonFlux(self,e1,e2):
@@ -54,10 +54,10 @@ class PowerLaw(SpectralModel):
         piv                      = self.parameters['Epiv'].value
         if(a!=-2):
             def eF(e):
-                return numpy.maximum(self.parameters['A'].value * numpy.power(e/piv,2-a)/(2-a),1e-30)
+                return numpy.maximum(self.parameters['A'].value * numpy.power(e/piv,2-a)/(2-a),1e-100)
         else:
             def eF(e):
-                return numpy.maximum(self.parameters['A'].value * numpy.log(e/piv),1e-30)
+                return numpy.maximum(self.parameters['A'].value * numpy.log(e/piv),1e-100)
    
     
         return (eF(e2)-eF(e1))*self.keVtoErg
