@@ -46,13 +46,14 @@ namespace threeML {
       
   bool pyToCppModelInterface::isInsideAnyExtendedSource(double j2000_ra, double j2000_dec) const
       { 
-        return true;
+        return false;
       }
       
   int pyToCppModelInterface::getNumberOfPointSources() const
       {
-        std::cerr << "NOOO" << std::endl;
+
         return m_nPtSources;
+
       }
       
   void pyToCppModelInterface::getPointSourcePosition(int srcid, double *j2000_ra, double *j2000_dec) const
@@ -108,6 +109,15 @@ namespace threeML {
         try {
           
            fluxes_v = to_std_vector<double>(fluxes);
+	   
+	   /*
+	   for(int i=0; i < fluxes_v.size(); ++i) 
+	   {
+	       
+	       std::cerr << "e[" << i << "] = " << fluxes_v[i] << std::endl;
+	       
+	   }*/
+	   
         
         } catch (...) {
         
