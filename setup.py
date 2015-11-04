@@ -145,7 +145,7 @@ setup(
     #Install configuration file in user home and in the package repository
     
     data_files = [( os.path.join( os.path.expanduser( '~' ), '.threeML' ) ,["threeML/config/threeML_config.yml"]),
-                  ( os.path.join( sys.prefix, 'threeML/config' ), ["threeML/config/threeML_config.yml"])
+                  ( 'threeML/config', ["threeML/config/threeML_config.yml"])
                   ],
     
     install_requires=[
