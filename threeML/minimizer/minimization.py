@@ -9,7 +9,7 @@ from threeML.io.Table import Table, NumericMatrix
 from threeML.utils.cartesian import cartesian
 from threeML.io.ProgressBar import ProgressBar
 
-from minuit2 import Minuit2 as Minuit
+from threeML.minuit2 import Minuit2 as Minuit
 
 from IPython.display import display
 
