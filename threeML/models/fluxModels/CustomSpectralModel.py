@@ -165,6 +165,34 @@ class CustomSpectralModel( SpectralModel ):
         
         self.formula = "".join( self.formula.split() )
         
+        self.finalSetup()
+        
+    
+    def __getstate__( self ):
+        
+        #This is used by pickle to get the state of the current
+        #instance. The return value of this method will be used
+        #by the __setstate__ method on the other side (the remote
+        #side) to recreate the class
+        
+        d = {}
+        
+        d['formula'] = self.formula
+        d['userFunction'] = self.userFunction
+        d['parameters'] = self.parameters
+        
+        return d
+    
+    def __setstate__( self, state ):
+        
+        self.formula = state['formula']
+        self.userFunction = state['userFunction']
+        self.parameters = state['parameters']
+        
+        self.finalSetup()
+        
+    def finalSetup( self ):
+        
         #Now compile the formula
         
         self._compiledFormula = parser.expr(self.formula).compile()
@@ -178,6 +206,7 @@ class CustomSpectralModel( SpectralModel ):
         self._locals['log'] = numpy.log
         self._locals['log10'] = numpy.log10
         self._locals['power'] = numpy.power
+        self._locals['exp'] = numpy.exp
         
         #If the user specified a user-defined formula, add it to the
         #dictionary
@@ -198,7 +227,9 @@ class CustomSpectralModel( SpectralModel ):
         
         except:
                         
-            raise RuntimeError("Test did not work. Check your syntax (Remember: parameters are case-sensitive!).")
+            print("\n\nTest did not work. Check your syntax (Remember: parameters are case-sensitive!).\n\n")
+            
+            raise
         
         else:
             
@@ -218,6 +249,6 @@ class CustomSpectralModel( SpectralModel ):
                 
             self._locals[p] = self.parameters[p].value
             
-        self._locals['e'] = e
+        self._locals['e'] = numpy.array( e )
             
         return eval( self._compiledFormula, self._locals )
