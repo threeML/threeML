@@ -8,9 +8,9 @@ class pluginPrototype(object):
   __metaclass__               = abc.ABCMeta  
   
   @abc.abstractmethod
-  def setModel(self,ModelManagerInstance):
+  def setModel(self,LikelihoodModelInstance):
     '''
-    Set the model to be used in the joint minimization. Must be a ModelManager instance.
+    Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
     '''
     pass
   pass
@@ -45,7 +45,7 @@ class pluginPrototype(object):
   def innerFit(self):
     '''
     This is used for the profile likelihood. Keeping fixed all parameters in the
-    modelManager, this method minimize the logLike over the remaining nuisance
+    LikelihoodModel, this method minimize the logLike over the remaining nuisance
     parameters, i.e., the parameters belonging only to the model for this
     particular detector. If there are no nuisance parameters, simply return the
     logLike value.
