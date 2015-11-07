@@ -153,7 +153,7 @@ setup(
           'scipy',
           'numexpr',
           'emcee',
-          'astropy >= 1.0.0',
+          'astropy==1.0.3',
           'matplotlib',
           'ipython >= 2.0.0, < 3.9.9',
           'uncertainties',
