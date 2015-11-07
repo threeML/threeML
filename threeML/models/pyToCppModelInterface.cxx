@@ -93,16 +93,16 @@ namespace threeML {
         
         boost::python::object fluxes;
         
-        try {
+        //try {
         
            fluxes = m_pyModel.attr("getPointSourceFluxes")(srcid,energies);
         
-        } catch (...) {
+        //} catch (...) {
           
-          throw std::runtime_error(
-                    "ModelInterface: Could not get the fluxes from the python side");
+        //  throw std::runtime_error(
+        //            "ModelInterface: Could not get the fluxes from the python side");
            
-        }
+        //}
         
         std::vector<double> fluxes_v;
         
