@@ -18,7 +18,7 @@ import uncertainties
 import re
 
 #Special constants
-FIT_FAILED = 1e6
+FIT_FAILED = 1e12
 
 class Minimizer(object):
   def __init__(self,function,parameters,ftol=1e-3,verbosity=1):
@@ -63,7 +63,7 @@ class iMinuitMinimizer(Minimizer):
       pars['error_%s' % curName] = par.delta
       
       #Limits
-      pars['limit_%s' % curName] = (par.minValue,par.maxValue)
+      pars['limit_%s' % curName] = ( par.minValue, par.maxValue )
       
       #This is useless, since all parameters here are free,
       #but do it anyway for clarity
@@ -79,6 +79,12 @@ class iMinuitMinimizer(Minimizer):
     #variables in the calling sequence, so that Minuit will be able
     #to probe the parameter's names
     var_spelledout            = ",".join(varnames)
+    
+    #A dictionary to keep a way to convert from var. name to
+    #variable position in the function calling sequence 
+    #(will use this in contours)
+    
+    self.nameToPos = { k: i for i, k in enumerate( varnames ) }
     
     #Write and compile the code for such function
       
@@ -186,6 +192,11 @@ class iMinuitMinimizer(Minimizer):
     #from terminal
     
     cov                       = self.minuit.covariance
+    
+    if cov is None:
+        
+        raise RuntimeError("Cannot compute covariance. This usually means that there are unconstrained" + 
+                           " parameters. Fix those or reduce their allowed range, or use a simpler model.")
     
     keys                      = self.parameters.keys()
     
@@ -406,6 +417,11 @@ class iMinuitMinimizer(Minimizer):
       
       aa, bb = args
       
+      name1 = "%s_of_%s" % ( param1, src1 )
+      
+      #Will change this if needed
+      name2 = None
+      
       #First of all restore the best fit values
       #for k,v in values.iteritems():
           
@@ -413,11 +429,13 @@ class iMinuitMinimizer(Minimizer):
       
       #Now set the parameters under scrutiny to the current values
       
-      self.minuit.values[ "%s_of_%s" % ( param1, src1 ) ] = aa
+      self.minuit.values[ name1 ] = aa
       
       if bb is not numpy.nan:
           
-          self.minuit.values[ "%s_of_%s" % ( param2, src2 ) ] = bb
+          name2 = "%s_of_%s" % ( param2, src2 )
+          
+          self.minuit.values[ name2 ] = bb
       
       else:
           
@@ -431,6 +449,32 @@ class iMinuitMinimizer(Minimizer):
       
       #mpl.warning("Running migrad")
       
+      #Handle the corner case where there are no free parameters
+      #after fixing the two under scrutiny
+      free = [k for k, v in self.minuit.fixed.iteritems() if not v]
+            
+      if len( free )==0:
+          
+          #All parameters are fixed, just return the likelihood function
+          
+          if name2 is None:
+              
+              val = self._f(aa)
+          
+          else:
+              
+              #This is needed because the user could specify the
+              #variables in reverse order
+              
+              myvars = [0] * 2
+              myvars[ self.nameToPos[ name1 ] ] = aa
+              myvars[ self.nameToPos[ name2 ] ] = bb 
+          
+              val = self._f(*myvars)
+                    
+          return val
+          
+
       try:
         
         self.minuit.migrad()

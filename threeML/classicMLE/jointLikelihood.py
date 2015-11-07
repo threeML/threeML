@@ -323,6 +323,14 @@ class JointLikelihood(object):
       
       raise RuntimeError("You have to specify two different parameters.")
     
+    if p1min > p1max:
+      
+      raise RuntimeError("Minimum larger than maximum for parameter 1")
+    
+    if (not src2 is None) and p2min > p2max:
+      
+      raise RuntimeError("Minimum larger than maximum for parameter 2")
+    
     #Default values
     debug = False
     
@@ -593,6 +601,17 @@ class JointLikelihood(object):
       
   
   def _plotContours(self, name1, a, name2, b, cc):
+      
+      #Check that we have something to plot
+      
+      delta = cc.max() - cc.min()
+      
+      if delta < 0.5:
+          
+          print("\n\nThe maximum difference in statistic is %s among all the points in the grid." % delta)
+          print(" This is too small. Enlarge the search region to display a contour plot")
+          
+          return None
       
       #plot 1,2 and 3 sigma contours
       sigmas = [1,2,3]
