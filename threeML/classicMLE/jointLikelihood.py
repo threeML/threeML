@@ -677,7 +677,7 @@ class JointLikelihood(object):
       sub.set_ylabel(name1)
       
       return fig
-      
+   
 #  def _restoreBestFitValues(self):
 #    #Restore best fit values
 #    for k in self.freeParameters.keys():
