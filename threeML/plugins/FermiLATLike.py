@@ -13,6 +13,10 @@ from GtBurst import IRFS
 
 from GtBurst import FuncFactory
 
+import matplotlib.pyplot as plt
+
+from matplotlib import gridspec
+
 __instrument_name = "Fermi LAT (standard classes)"
 
 class myPointSource(LikelihoodComponent.GenericSource):
@@ -271,7 +275,7 @@ class FermiLATLike(pluginPrototype):
       return 1e5
     else:
       #Update the value for the nuisance parameters
-      for par in self.nuisanceParameters:
+      for par in self.nuisanceParameters.values():
         newValue             = self.getNuisanceParameterValue(par.name)
         par.setValue(newValue)
       pass
@@ -366,11 +370,71 @@ class FermiLATLike(pluginPrototype):
   pass
   
   def getModelAndData(self):
+  
     fake = numpy.array([])
+  
     return fake,fake,fake,fake
+  
   pass
   
+  def display( self ):
+    
+    e1 = self.like.energies[:-1]
+    e2 = self.like.energies[1:]
+    
+    ec = ( e1 + e2 ) / 2.0
+    de = ( e2 - e1 ) / 2.0
+    
+    sum_model = numpy.zeros_like( self.like._srcCnts( self.like.sourceNames()[0] ) )
+    
+    fig = plt.figure()
+    
+    gs = gridspec.GridSpec(2,1, height_ratios=[2,1])
+    gs.update(hspace=0)
+    
+    sub = plt.subplot( gs[0] )
+    
+    for sourceName in self.like.sourceNames():
+      
+      sum_model = sum_model + self.like._srcCnts(sourceName)
+      
+      sub.plot( ec, self.like._srcCnts( sourceName ), label = sourceName )
+   
+    sub.plot( ec, sum_model, label = 'Total Model' )
+   
+    sub.errorbar( ec, self.like._Nobs(), xerr=de, 
+                  yerr = numpy.sqrt( self.like._Nobs() ), 
+                  fmt='.', label='Counts')
+    
+    plt.legend( bbox_to_anchor=(1.05, 1), loc=2, numpoints=1)
+    
+    #Residuals
+    
+    sub1 = plt.subplot( gs[1] )
+    
+    #Using model variance to account for low statistic
+    
+    resid = ( self.like._Nobs() - sum_model ) / numpy.sqrt( sum_model )
+    
+    sub1.axhline( 0, linestyle='--' )
+    sub1.errorbar( ec, resid, xerr=de, yerr=1.0, capsize=0, fmt='.' )
+    
+    sub.set_xscale("log")
+    sub.set_yscale("log", nonposy='clip')
+    
+    sub.set_ylabel("Counts per bin") 
+    
+    sub1.set_xscale("log")
+    
+    sub1.set_xlabel("Energy (MeV)")
+    sub1.set_ylabel("Residuals")
+    
+    sub.set_xticks( [] )
+    
+    return fig
+  
   def _setNuisanceParameters(self):
+
     #Get the list of the sources
     sources                   = list(self.like.model.srcNames)
     
@@ -383,12 +447,13 @@ class FermiLATLike(pluginPrototype):
       freeParamNames.extend(thisNames)
     pass
     
-    self.nuisanceParameters   = []
+    self.nuisanceParameters   = {}
+    
     for name in freeParamNames:
       value                   = self.getNuisanceParameterValue(name)
       bounds                  = self.getNuisanceParameterBounds(name)
       delta                   = self.getNuisanceParameterDelta(name)
-      self.nuisanceParameters.append(Parameter(name,value,bounds[0],bounds[1],delta,nuisance=True))
+      self.nuisanceParameters[name] = Parameter(name,value,bounds[0],bounds[1],delta,nuisance=True)
     pass
     
   pass
