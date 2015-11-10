@@ -1,7 +1,7 @@
 import collections
 from Parameter import Parameter
 
-from astropy.table import Table
+from threeML.io.Table import Table
 
 from IPython.display import display, Latex, HTML
 

@@ -10,7 +10,7 @@ import numexpr
 import abc
 import matplotlib.pyplot as plt
 
-import astropy.table
+from threeML.io.Table import Table
 
 
 class ModelValidate(object):
@@ -190,7 +190,7 @@ class SpectralModel(object):
         maxLen = max(map(lambda p: len(p.name) ,self.parameters.values()))
 
         
-        table = astropy.table.Table(names=["Name","Value","Minimum","Maximum","Delta","Status","Unit","Prior"],dtype=["S%d"%maxLen,float,float,float,float,"S5","S6","S20"])
+        table = Table(names=["Name","Value","Minimum","Maximum","Delta","Status","Unit","Prior"],dtype=["S%d"%maxLen,float,float,float,float,"S5","S6","S20"])
         for k,v in self.parameters.iteritems():
             if(v.isFree()):
                 ff                   = "free"
