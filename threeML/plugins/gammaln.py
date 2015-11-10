@@ -22,4 +22,5 @@ def _gammaln(x):
     return (tmp + numpy.log(gammaln_stp*ser))
 
 def logfactorial(n):
-    return gammaln(n+1)
+    
+    return gammaln( n + 1)
