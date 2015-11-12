@@ -78,6 +78,7 @@ BOOST_PYTHON_MODULE(pyModelInterface)
   class_<pyToCppModelInterface, bases<ModelInterface> >("pyToCppModelInterface",init<PyObject *>())
        .def("getNumberOfPointSources", &pyToCppModelInterface::getNumberOfPointSources)
        .def("getPointSourceFluxes", &pyToCppModelInterface::getPointSourceFluxes)
+       .def("update", &pyToCppModelInterface::update)
   ;
   
   class_<FakePlugin>("FakePlugin",init<ModelInterface *>())
