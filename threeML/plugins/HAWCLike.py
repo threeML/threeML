@@ -182,7 +182,9 @@ class HAWCLike( pluginPrototype ):
         Return the value of the log-likelihood with the current values for the
         parameters
         '''
-                
+        
+        self.pymodel.update()
+        
         logL = self.theLikeHAWC.getLogLike( self.fitCommonNorm )
                 
         return logL
@@ -198,6 +200,8 @@ class HAWCLike( pluginPrototype ):
     def innerFit(self):
         
         self.theLikeHAWC.SetBackgroundNormFree( self.fitCommonNorm )
+        
+        self.pymodel.update()
         
         logL = self.theLikeHAWC.getLogLike( self.fitCommonNorm )
         

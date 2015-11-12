@@ -10,6 +10,7 @@
 
 #include "ModelInterface.h"
 #include <vector>
+#include <map>
 #include <string>
 
 #include <Python.h>
@@ -49,12 +50,18 @@ namespace threeML {
                                                   double *j2000_ra_max,
                                                   double *j2000_dec_min,
                                                   double *j2000_dec_max)  const {}
-    
+      
+      void update();
+      
     private:
       
       double m_nPtSources, m_nExtSources;
             
       boost::python::object m_pyModel;
+      
+      mutable int n_calls;
+            
+      mutable std::map<int, std::vector<double> > m_cache;
       
   };
 

@@ -13,7 +13,7 @@ namespace threeML {
          }
 
   pyToCppModelInterface::pyToCppModelInterface(PyObject *pyModelUninterpreted) :
-       m_nPtSources(0), m_nExtSources(0)
+       m_nPtSources(0), m_nExtSources(0), n_calls(0)
       {         
         
         try 
@@ -83,11 +83,39 @@ namespace threeML {
                     "ModelInterface: Could not convert the coordinates I got from the python side");
         }
       }
-    
+  
+  void pyToCppModelInterface::update()
+      { 
+         
+         //std::cerr << "Emptying cache" << std::endl;
+         
+         //Empty the cache
+         m_cache.clear();
+      
+      }
+  
   std::vector<double> 
          pyToCppModelInterface::getPointSourceFluxes(int srcid, std::vector<double> energies) const
-      { 
-                
+      {         
+        
+        if ( m_cache.count( srcid )==1 ) 
+        {
+          
+          //std::cerr << "Cached" << std::endl;
+          
+          //Return cached version
+        
+          return m_cache[srcid];
+        
+        } else {
+          
+          n_calls += 1;
+          
+          //std::cerr << "Filling cache for " << srcid << " (" << n_calls << ")" << std::endl;
+          
+        }
+        
+        
         //Construct a generic object (instead of for example a list) so that
         //the pyModel can return any iterable (list, numpy.array, etc)
         
@@ -125,6 +153,10 @@ namespace threeML {
                     "ModelInterface: Could not convert the fluxes I got from the python side");
           
         }
+        
+        //Cache result
+        
+        m_cache[srcid] = fluxes_v;
         
         return fluxes_v;
       }
