@@ -114,7 +114,7 @@ class JointLikelihood(object):
       
       #This is the fastest way to check for any nan
       #(try other methods if you don't believe me)
-      if not numpy.isfinite(numpy.dot(trialValues,trialValues)):
+      if not numpy.isfinite(numpy.dot(trialValues,trialValues.T)):
           
           return minimization.FIT_FAILED
       
