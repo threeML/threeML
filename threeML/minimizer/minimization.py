@@ -9,7 +9,7 @@ from threeML.io.Table import Table, NumericMatrix
 from threeML.utils.cartesian import cartesian
 from threeML.io.ProgressBar import ProgressBar
 
-from threeML.minuit2 import Minuit2 as Minuit
+from iminuit import Minuit
 
 from IPython.display import display
 
@@ -99,17 +99,27 @@ class iMinuitMinimizer(Minimizer):
     self.minuit               = Minuit(self._f, **pars)
         
     self.minuit.tol           = 10 #ftol
-    self.minuit.up            = 0.5 #This is a likelihood
+    
+    try:
+        
+        self.minuit.up            = 0.5 #This is a likelihood
+    
+    except:
+        
+        #iMinuit uses errodef, not up
+        
+        self.minuit.errordef  = 0.5
+    
     self.minuit.strategy      = 1 #More accurate
     
   def migradConverged(self):
     
     #In the MINUIT manual this is the condition for MIGRAD to have converged
-    #0.002 * tolerance * UPERROR
-    return ( self.minuit.edm <= 0.002 * self.minuit.tol * self.minuit.up)
+    #0.002 * tolerance * UPERROR (which is 0.5 for likelihood)
+    return ( self.minuit.edm <= 0.002 * self.minuit.tol * 0.5)
   
   
-  def _runMigrad(self, trials=10):
+  def _runMigrad(self, trials=2):
     
     #Repeat Migrad up to 10 times, until it converges
     
@@ -129,7 +139,7 @@ class iMinuitMinimizer(Minimizer):
   
   def minimize(self):
     
-    self._runMigrad(10)
+    self._runMigrad()
     
     if not self.migradConverged():
       
