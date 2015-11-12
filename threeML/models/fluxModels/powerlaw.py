@@ -18,7 +18,7 @@ class PowerLaw(SpectralModel):
         self.formula             = r'\begin{equation}f(E) = A (E / E_{piv})^{\gamma}\end{equation}'
         self.parameters          = collections.OrderedDict()
         self.parameters['gamma'] = Parameter('gamma',-2.0,-10,10,0.1,fixed=False,nuisance=False,dataset=None)
-        self.parameters['A']     = Parameter('A',1.0,1e-5,1e5,0.1,fixed=False,nuisance=False,dataset=None,normalization=True)
+        self.parameters['logA']     = Parameter('logA',-4,-40,30,0.1,fixed=False,nuisance=False,dataset=None,normalization=True)
         self.parameters['Epiv']  = Parameter('Epiv',1.0,1e-10,1e10,1,fixed=True,unit='keV')
     
         self.ncalls              = 0
@@ -26,14 +26,15 @@ class PowerLaw(SpectralModel):
         def integral(e1,e2):
             a                      = self.parameters['gamma'].value
             piv                    = self.parameters['Epiv'].value
-            norm                   = self.parameters['A'].value
+            norm                   = pow(10, self.parameters['logA'].value)
       
             if(a!=-1):
                 def f(energy):
-                    return self.parameters['A'].value * math.pow(energy/piv,a+1)/(a+1)
+                    return norm * math.pow(energy/piv,a+1)/(a+1)
             else:
                 def f(energy):
-                    return self.parameters['A'].value * math.log(energy/piv)
+                    return norm * math.log(energy/piv)
+                    
             return f(e2)-f(e1)
         self.integral            = integral
  
@@ -41,8 +42,9 @@ class PowerLaw(SpectralModel):
     def __call__(self,energy):
         self.ncalls             += 1
         piv                      = self.parameters['Epiv'].value
-        norm                     = self.parameters['A'].value
+        norm                     = pow(10, self.parameters['logA'].value)
         gamma                    = self.parameters['gamma'].value
+        
         return numpy.maximum( numexpr.evaluate("norm * (energy/piv)**gamma"), 1e-100)
    
   
@@ -52,12 +54,13 @@ class PowerLaw(SpectralModel):
     def energyFlux(self,e1,e2):
         a                        = self.parameters['gamma'].value
         piv                      = self.parameters['Epiv'].value
+        norm                     = pow(10, self.parameters['logA'].value)
         if(a!=-2):
             def eF(e):
-                return numpy.maximum(self.parameters['A'].value * numpy.power(e/piv,2-a)/(2-a),1e-100)
+                return numpy.maximum( norm * numpy.power(e/piv,2-a)/(2-a), 1e-100 )
         else:
             def eF(e):
-                return numpy.maximum(self.parameters['A'].value * numpy.log(e/piv),1e-100)
+                return numpy.maximum( norm * numpy.log(e/piv), 1e-100 )
    
     
         return (eF(e2)-eF(e1))*self.keVtoErg
