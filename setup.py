@@ -39,7 +39,8 @@ def root_config(*opts):
         
 	print("You need ROOT installed")
 	
-	sys.exit(-1)
+	#sys.exit(-1)
+        return None
     
     else:
         
@@ -52,11 +53,15 @@ incdirs = []
 libdirs = []
 libs = ["Minuit2"]
 
-version, incdir, libdir = root_config('version', 'incdir', 'libdir')
-incdirs.append(incdir)
-libdirs.append(libdir)
-libs += ["Core","Cint","RIO","Net","Hist","Graf","Rint","Matrix","MathCore"]
-print("Linking against Minuit2 library from ROOT %s" % version)
+r_config = root_config('version', 'incdir', 'libdir')
+
+if r_config is not None:
+
+    version, incdir, libdir = r_config
+    incdirs.append(incdir)
+    libdirs.append(libdir)
+    libs += ["Core","Cint","RIO","Net","Hist","Graf","Rint","Matrix","MathCore"]
+    print("Linking against Minuit2 library from ROOT %s" % version)
 
 
 	
@@ -124,15 +129,15 @@ setup(
         
         #          library_dirs=library_dirs),
 	
-	Extension("threeML.minuit2",
+	#Extension("threeML.minuit2",
 	          
-		  ["threeML/minuit2/minuit2.cpp"],
+	#	  ["threeML/minuit2/minuit2.cpp"],
 		  
-		  library_dirs=libdirs,
-                  libraries=libs,
-                  include_dirs=incdirs
+	#	  library_dirs=libdirs,
+        #          libraries=libs,
+        #          include_dirs=incdirs
 		  
-		  )
+	#	  )
 		  
     ],
     
@@ -159,6 +164,7 @@ setup(
           'uncertainties',
           'pyyaml',
 	  'dill',
-	  'parse'
+	  'parse',
+          'iminuit'
       ])
 
