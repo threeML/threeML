@@ -17,7 +17,18 @@ __instrument_name = "HAWC"
 
 class HAWCLike( pluginPrototype ):
     
-    def __init__( self, name, maptree, response, ntransits ):
+    def __init__( self, name, maptree, response, ntransits, **kwargs ):
+        
+        #This controls if the likeHAWC class should load the entire
+        #map or just a small disc around a source (faster).
+        #Default is the latter, which is way faster. LIFF will decide
+        #autonomously which ROI to use depending on the source model
+        
+        self.fullsky = False
+        
+        if 'fullsky' in kwargs.keys():
+            
+            self.fullsky = bool( kwargs['fullsky'] )
         
         self.name = str( name )
         
@@ -54,9 +65,20 @@ class HAWCLike( pluginPrototype ):
         
         self.deactivateCommonNorm()
         
+        #This is to keep track of whether the user defined a ROI or not
+        
+        self.roi_ra = None
+        
         #Further setup
         
         self.__setup()
+    
+    def setROI(self, ra, dec, radius):
+        
+        self.roi_ra = ra
+        self.roi_dec = dec
+        
+        self.roi_radius = radius
     
     def __setup(self):
         
@@ -88,6 +110,13 @@ class HAWCLike( pluginPrototype ):
         d['minChannel'] = self.minChannel
         d['maxChannel'] = self.maxChannel
         
+        d['roi_ra'] = self.roi_ra
+        
+        if self.roi_ra is not None:
+        
+            d['roi_dec'] = self.roi_dec
+            d['roi_radius'] = self.roi_radius
+        
         return d
     
     def __setstate__( self, state ):
@@ -98,10 +127,14 @@ class HAWCLike( pluginPrototype ):
         maptree = state['maptree']
         response = state['response']
         ntransits = state['ntransits']
-                
-        self.__init__( name, maptree, response, ntransits )
         
         #Now report the class to its state
+        
+        self.__init__( name, maptree, response, ntransits )
+        
+        if state['roi_ra'] is not None:
+        
+            self.setROI( state['roi_ra'], state['roi_dec'], state['roi_radius'] )
         
         self.setActiveMeasurements( state['minChannel'], state['maxChannel'] )
         
@@ -132,14 +165,26 @@ class HAWCLike( pluginPrototype ):
         #Now init the HAWC LIFF software
     
         try:
-        
+            
+            #Load all sky
+            #(ROI will be defined later)
+            
             self.theLikeHAWC = liff.LikeHAWC( self.maptree, 
                                               self.ntransits,
                                               self.response,
                                               self.pymodel,
                                               self.minChannel,
-                                              self.maxChannel )
-        
+                                              self.maxChannel,
+                                              self.fullsky )
+            
+            if self.roi_ra is None and self.fullsky:
+                
+                raise RuntimeError("You have to define a ROI with the setROI method")
+            
+            if self.roi_ra is not None and self.fullsky:
+            
+                self.theLikeHAWC.SetROI( self.roi_ra, self.roi_dec, self.roi_radius )
+            
         except:
             
             print("Could not instance the LikeHAWC class from LIFF. " +
