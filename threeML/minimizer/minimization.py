@@ -389,7 +389,7 @@ class iMinuitMinimizer(Minimizer):
     newargs['errordef'] = 0.5
     
     newargs['print_level'] = 0
-    
+        
     #Now create the new minimizer
     self.contour_minuit = Minuit( self._f, **newargs )
     
@@ -441,7 +441,7 @@ class iMinuitMinimizer(Minimizer):
     #Define the parallel worker
     
     def contourWorker(args):
-      
+            
       aa, bb = args
       
       name1 = "%s_of_%s" % ( param1, src1 )
@@ -456,13 +456,20 @@ class iMinuitMinimizer(Minimizer):
       
       #Now set the parameters under scrutiny to the current values
       
-      self.contour_minuit.values[ name1 ] = aa
+      #Since iminuit does not allow to fix parameters,
+      #I am forced to create a new one (which sucks)
       
-      if bb is not numpy.nan:
+      newargs = dict( self.minuit.fitarg )
+      
+      newargs[ 'fix_%s' % name1 ] = True
+      newargs[ '%s' % name1 ] = aa
+            
+      if numpy.isfinite(bb):
           
           name2 = "%s_of_%s" % ( param2, src2 )
           
-          self.contour_minuit.values[ name2 ] = bb
+          newargs[ 'fix_%s' % name2 ] = True
+          newargs[ '%s' % name2 ] = bb
       
       else:
           
@@ -470,9 +477,14 @@ class iMinuitMinimizer(Minimizer):
           #Do nothing
           
           pass
-          
+      
+      newargs['errordef'] = 0.5
+      newargs['print_level'] = 0
+      
+      m = Minuit(self._f, **newargs )
+      
       #High tolerance for speed
-      self.contour_minuit.tol = 10
+      m.tol = 100
       
       #mpl.warning("Running migrad")
       
@@ -481,7 +493,7 @@ class iMinuitMinimizer(Minimizer):
       
       #free = [k for k, v in self.contour_minuit.fixed.iteritems() if not v]
             
-      if len( self.contour_minuit.list_of_vary_param() )==0:
+      if len( m.list_of_vary_param() )==0:
           
           #All parameters are fixed, just return the likelihood function
           
@@ -505,7 +517,7 @@ class iMinuitMinimizer(Minimizer):
 
       try:
         
-        self.contour_minuit.migrad()
+        m.migrad()
       
       except:
             
@@ -523,7 +535,7 @@ class iMinuitMinimizer(Minimizer):
       
       #mpl.warning("Returning")
             
-      return self.contour_minuit.fval    
+      return m.fval    
     
     #Do the computation
     
