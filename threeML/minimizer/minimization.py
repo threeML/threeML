@@ -351,9 +351,19 @@ class iMinuitMinimizer(Minimizer):
                     src2, param2, p2min, p2max, p2steps,
                     progress=True, **kwargs):
     
-    #Fix the parameters under scrutiny and get the values for the others
+    #First create another minimizer 
     
-    values = {}
+    newargs = dict( self.minuit.fitarg )
+    
+    #Update the values for the parameters with the best fit one
+    
+    for key, value in self.minuit.values.iteritems():
+        
+        newargs[key] = value
+    
+    #Fix the parameters under scrutiny
+    
+    #values = {}
     
     for s,p in zip( [src1, src2], [param1,param2] ):
         
@@ -365,16 +375,21 @@ class iMinuitMinimizer(Minimizer):
         
         key = "%s_of_%s" %(p,s)
         
-        try:
-          #Fix the parameter p for source s
-          
-          self.minuit.fixed[ key ] = True
-        
-        except KeyError:
+        if key not in newargs.keys():
             
             raise ValueError("Parameter %s is not a free parameter for source %s." %(p,s))
         
-        values[ key ] = float( self.minuit.values[key] )
+        else:
+            
+            newargs[ 'fix_%s' % key ] = True
+        
+        #values[ key ] = float( self.minuit.values[key] )
+    
+    #This is a likelihood
+    newargs['errordef'] = 0.5
+    
+    #Now create the new minimizer
+    self.contour_minuit = Minuit( self._f, **newargs )
     
     #Check the keywords
     p1log = False
@@ -439,13 +454,13 @@ class iMinuitMinimizer(Minimizer):
       
       #Now set the parameters under scrutiny to the current values
       
-      self.minuit.values[ name1 ] = aa
+      self.contour_minuit.values[ name1 ] = aa
       
       if bb is not numpy.nan:
           
           name2 = "%s_of_%s" % ( param2, src2 )
           
-          self.minuit.values[ name2 ] = bb
+          self.contour_minuit.values[ name2 ] = bb
       
       else:
           
@@ -455,15 +470,16 @@ class iMinuitMinimizer(Minimizer):
           pass
           
       #High tolerance for speed
-      self.minuit.tol = 10
+      self.contour_minuit.tol = 10
       
       #mpl.warning("Running migrad")
       
       #Handle the corner case where there are no free parameters
       #after fixing the two under scrutiny
-      free = [k for k, v in self.minuit.fixed.iteritems() if not v]
+      
+      #free = [k for k, v in self.contour_minuit.fixed.iteritems() if not v]
             
-      if len( free )==0:
+      if len( self.contour_minuit.list_of_vary_param() )==0:
           
           #All parameters are fixed, just return the likelihood function
           
@@ -487,7 +503,7 @@ class iMinuitMinimizer(Minimizer):
 
       try:
         
-        self.minuit.migrad()
+        self.contour_minuit.migrad()
       
       except:
             
@@ -505,7 +521,7 @@ class iMinuitMinimizer(Minimizer):
       
       #mpl.warning("Returning")
             
-      return self.minuit.fval    
+      return self.contour_minuit.fval    
     
     #Do the computation
     

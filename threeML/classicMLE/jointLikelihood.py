@@ -209,7 +209,7 @@ class JointLikelihood(object):
     return table
 
   
-  def fit(self,prefit=True):
+  def fit(self,prefit=False):
     
     #Pre-fit: will fit the normalizations so that they are not too far
     #from the data (which would make the fitting below fail)
@@ -492,7 +492,9 @@ class JointLikelihood(object):
       
       #Now get results and print some diagnostic
       print("\n")
-      print("Serial time: %1.f (speed-up: %.1f)" %(amr.serial_time, float(amr.serial_time) / amr.wall_time))
+      
+      #print("Serial time: %1.f (speed-up: %.1f)" %(amr.serial_time, float(amr.serial_time) / amr.wall_time))
+      
       res = amr.get()
       
       for i in range(threads):
