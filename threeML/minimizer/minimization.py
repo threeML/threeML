@@ -388,6 +388,8 @@ class iMinuitMinimizer(Minimizer):
     #This is a likelihood
     newargs['errordef'] = 0.5
     
+    newargs['print_level'] = 0
+    
     #Now create the new minimizer
     self.contour_minuit = Minuit( self._f, **newargs )
     
