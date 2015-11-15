@@ -208,6 +208,8 @@ class FermiLATLike(pluginPrototype):
                                  	     irfs=self.irf)
     pass
         
+    #Activate inner minimization by default
+    self.setInnerMinimization( True )
     
   pass
     
@@ -254,6 +256,10 @@ class FermiLATLike(pluginPrototype):
     return self.name
   pass
   
+  def setInnerMinimization( self, s ):
+    
+    self.innerMinimization = bool( s )
+  
   def innerFit(self):
     '''
     This is used for the profile likelihood. Keeping fixed all parameters in the
@@ -262,6 +268,10 @@ class FermiLATLike(pluginPrototype):
     particular detector
     '''
     self._updateGtlikeModel()
+    
+    if not self.innerMinimization:
+        
+        return self.like.logLike.value()
     
     try:
       #Use .optimize instead of .fit because we don't need the errors
@@ -333,9 +343,7 @@ class FermiLATLike(pluginPrototype):
       values                  = self.likelihoodModel.getPointSourceFluxes(
                                                          srcName,
                                                          energies
-                                                         )
-      values                  = numpy.maximum(values, 1e-30)
-      
+                                                         )      
       gtlikeSrcModel          = self.like[srcName]
     
       my_function             = gtlikeSrcModel.getSrcFuncs()['Spectrum']
@@ -402,8 +410,8 @@ class FermiLATLike(pluginPrototype):
    
     sub.plot( ec, sum_model, label = 'Total Model' )
    
-    sub.errorbar( ec, self.like._Nobs(), xerr=de, 
-                  yerr = numpy.sqrt( self.like._Nobs() ), 
+    sub.errorbar( ec, self.like.nobs, xerr=de, 
+                  yerr = numpy.sqrt( self.like.nobs ), 
                   fmt='.', label='Counts')
     
     plt.legend( bbox_to_anchor=(1.05, 1), loc=2, numpoints=1)
@@ -414,10 +422,12 @@ class FermiLATLike(pluginPrototype):
     
     #Using model variance to account for low statistic
     
-    resid = ( self.like._Nobs() - sum_model ) / numpy.sqrt( sum_model )
+    resid = ( self.like.nobs - sum_model ) / sum_model
     
     sub1.axhline( 0, linestyle='--' )
-    sub1.errorbar( ec, resid, xerr=de, yerr=1.0, capsize=0, fmt='.' )
+    sub1.errorbar( ec, resid, xerr=de, 
+                   yerr=numpy.sqrt(self.like.nobs) / sum_model,
+                   capsize=0, fmt='.' )
     
     sub.set_xscale("log")
     sub.set_yscale("log", nonposy='clip')
@@ -427,7 +437,7 @@ class FermiLATLike(pluginPrototype):
     sub1.set_xscale("log")
     
     sub1.set_xlabel("Energy (MeV)")
-    sub1.set_ylabel("Residuals")
+    sub1.set_ylabel("(Mo. - data) / mo.")
     
     sub.set_xticks( [] )
     
