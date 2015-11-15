@@ -212,7 +212,7 @@ class SpectralModel(object):
     #override these methods: the analytical way is always A LOT faster
     #than numerical integration
     def photonFlux(self,e1,e2):
-        return scipy.integrate.quad(self.__call__,e1,e2,epsabs=0.01,epsrel=1e-4)[0]
+        return scipy.integrate.quad(self.__call__,e1,e2,epsabs=0,epsrel=1e-4)[0]
    
   
     def energyFlux(self,e1,e2):
