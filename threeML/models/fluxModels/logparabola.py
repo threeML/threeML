@@ -16,7 +16,7 @@ class LogParabola(SpectralModel):
             self.parameters          = collections.OrderedDict()
             self.parameters['gamma'] = Parameter('gamma',-1.5,-10,10,0.1,fixed=False,nuisance=False,dataset=None)
             self.parameters['beta'] = Parameter('beta',-0.5,-10,10,0.1,fixed=False,nuisance=False,dataset=None)
-            self.parameters['A']     = Parameter('A',1.0,1e-10,1e10,0.02,fixed=False,nuisance=False,dataset=None,normalization=True)
+            self.parameters['logA']     = Parameter('logA',-10,-40,20,1,fixed=False,nuisance=False,dataset=None,normalization=True)
             self.parameters['Epiv']  = Parameter('Epiv',1.0,1e-10,1e10,1,fixed=True)
     
             self.ncalls              = 0
@@ -26,13 +26,15 @@ class LogParabola(SpectralModel):
             def integral(e1,e2):
                 return self((e1+e2)/2.0)*(e2-e1)
             self.integral            = integral
+    
     def __call__(self,energy):
+          
           self.ncalls             += 1
           piv                     = self.parameters['Epiv'].value
           gamma                = self.parameters['gamma'].value
           beta                    = self.parameters['beta'].value
-
-          return numpy.maximum(self.parameters['A'].value * numpy.power(energy/piv,gamma+(beta*numpy.log10(energy/piv))),1e-35)
+          
+          return pow(10, self.parameters['logA'].value) * numpy.power(energy/piv,gamma+(beta*numpy.log10(energy/piv)))
   
   
 
