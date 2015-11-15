@@ -138,13 +138,15 @@ namespace threeML {
           
            fluxes_v = to_std_vector<double>(fluxes);
 	   
-	   /*
+	   
+           //Transform in ph/cm2/s/MeV from ph/cm2/s/keV
+           
 	   for(int i=0; i < fluxes_v.size(); ++i) 
 	   {
 	       
-	       std::cerr << "e[" << i << "] = " << fluxes_v[i] << std::endl;
+	       fluxes_v[i] = fluxes_v[i] / 1000.0;
 	       
-	   }*/
+	   }
 	   
         
         } catch (...) {
