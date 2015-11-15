@@ -1,6 +1,7 @@
 from PointSource import PointSource
 from ExtendedSource import ExtendedSource
 import collections
+import numpy
 
 class MyCollection(object):
   '''
@@ -111,7 +112,7 @@ class LikelihoodModel(object):
   pass
   
   def getPointSourceFluxes(self,id_or_name, energies):
-    return self.pointSources[id_or_name].getFlux(energies)
+    return self.pointSources[id_or_name].getFlux( numpy.array(energies) )
   
   def getPointSourceName(self,id_or_name):
     return self.pointSources[id_or_name].name
