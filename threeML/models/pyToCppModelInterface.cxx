@@ -122,8 +122,20 @@ namespace threeML {
         boost::python::object fluxes;
         
         //try {
+   
+
+        //Transform MeV to keV
         
-           fluxes = m_pyModel.attr("getPointSourceFluxes")(srcid,energies);
+        for(int i=0; i < energies.size(); ++i) 
+	      {
+	       
+	        energies[i] = energies[i] * 1000.0;
+	       
+	      }
+	   
+     
+        //expects and returns MeV-related-units
+        fluxes = m_pyModel.attr("getPointSourceFluxes")(srcid,energies);
         
         //} catch (...) {
           
@@ -141,12 +153,12 @@ namespace threeML {
 	   
            //Transform in ph/cm2/s/MeV from ph/cm2/s/keV
            
-	   for(int i=0; i < fluxes_v.size(); ++i) 
-	   {
+	         for(int i=0; i < fluxes_v.size(); ++i) 
+	         {
 	       
-	       fluxes_v[i] = fluxes_v[i] / 1000.0;
+	           fluxes_v[i] = fluxes_v[i] * 1000.0;
 	       
-	   }
+	         }
 	   
         
         } catch (...) {
