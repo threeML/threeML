@@ -3,6 +3,8 @@
 from SourceModel import SourceModel
 import numpy as np
 
+import collections
+
 class ExtendedSource(SourceModel):
     def __init__(self,name,spatialModel,spectralModel):
 
@@ -28,6 +30,19 @@ class ExtendedSource(SourceModel):
             self.spectralModel      = spectralModel
 
         pass
+        
+        self.parameters           = collections.OrderedDict()
+        
+        for k,v in self.spatialModel.parameters.iteritems():
+            
+            self.parameters[ k ] = v
+        
+        for k,v in self.spectralModel.parameters.iteritems():
+            
+            self.parameters[ k ] = v
+        
+        self.formula = self.spatialModel.formula
+        
     pass
 
     def getFlux(self,energies):
@@ -35,6 +50,10 @@ class ExtendedSource(SourceModel):
 
     def getBrightness(self,RA,Dec,energies):
         return self.spatialModel(RA,Dec,energies)*self.spectralModel(energies)
+    
+    def getBoundaries(self):
+        
+        return self.spatialModel.getBoundaries()
 
 
 
