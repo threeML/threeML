@@ -148,8 +148,6 @@ class iMinuitMinimizer(Minimizer):
       return map(lambda x:0,self.minuit.values), 1e9
     
     else:
-      
-      self.minuit.hesse()
             
       #Make a ordered dict for the results
       bestFit                   = collections.OrderedDict()
@@ -159,7 +157,19 @@ class iMinuitMinimizer(Minimizer):
         curName                 = "%s_of_%s" %(k[1],k[0])
         
         bestFit[curName]        = self.minuit.values[curName]
+      
+      #NOTE: hesse must be callsed AFTER the fit because it
+      #will change the value of the parameters
+      
+      self.minuit.hesse()
+      
+      #Restore best fit
+      for k,par in self.parameters.iteritems():
         
+        curName                 = "%s_of_%s" %(k[1],k[0])
+        
+        par.setValue( bestFit[curName] )
+      
       return bestFit, self.minuit.fval
   
   def printFitResults(self):
