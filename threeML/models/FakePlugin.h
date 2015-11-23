@@ -34,7 +34,7 @@ namespace threeML {
       void createEnergies(int n) 
           {
             m_energies.resize(n,0);
-            int i;
+            unsigned int i;
             for(i=0; i < m_energies.size(); ++i) 
             {
               m_energies[i] = (i+1)*100.0;
@@ -52,7 +52,7 @@ namespace threeML {
               
               std::vector<double> fluxes = mi->getPointSourceFluxes(i,m_energies);
               
-              int j;
+              unsigned int j;
               for(j=0; j < m_energies.size(); ++j) 
                 {
                   std::cout << m_energies[j] << " MeV -> " << fluxes[j] << std::endl;
