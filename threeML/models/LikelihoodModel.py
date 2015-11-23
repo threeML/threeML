@@ -98,10 +98,8 @@ class LikelihoodModel(object):
     return freeParameters
   
   def getNumberOfPointSources(self):
-    return len(self.pointSources)
-  
-  def getNumberOfExtendedSources(self):
-    return len(self.extendedSources)
+    
+    return len(self.pointSources) 
   
   def getPointSourcePosition(self,id_or_name):
     '''
@@ -110,14 +108,34 @@ class LikelihoodModel(object):
     '''
     return self.pointSources[id_or_name].getPosition()
   pass
-  
+      
   def getPointSourceFluxes(self,id_or_name, energies):
     return self.pointSources[id_or_name].getFlux( numpy.array(energies) )
   
   def getPointSourceName(self,id_or_name):
     return self.pointSources[id_or_name].name
   
+  ##############################################
   
+  def getNumberOfExtendedSources(self):
+    return len(self.extendedSources)
+
+  def getExtendedSourceFluxes(self, srcid, j2000_ra, j2000_dec, energies):
+    
+    return self.extendedSources[srcid].getBrightness( j2000_ra, j2000_dec, energies)
   
+  def getExtendedSourceName(self,id_or_name):
+    
+    return self.extendedSources[id_or_name].name
+  
+  def getExtendedSourceBoundaries( self, id_or_name ):
+    
+    ramin, ramax, decmin, decmax = self.extendedSources[id_or_name].getBoundaries()
+    
+    return numpy.array( [ramin, ramax, decmin, decmax]  )
+  
+  def isInsideAnyExtendedSource( j2000_ra,  j2000_dec):
+    
+    return true
   
     
