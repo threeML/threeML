@@ -49,7 +49,7 @@ namespace threeML {
       void getExtendedSourceBoundaries(int srcid, double *j2000_ra_min,
                                                   double *j2000_ra_max,
                                                   double *j2000_dec_min,
-                                                  double *j2000_dec_max)  const {}
+                                                  double *j2000_dec_max)  const;
       
       void update();
       
