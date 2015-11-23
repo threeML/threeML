@@ -42,11 +42,24 @@ namespace threeML {
                       "ModelInterface: Could not use getNumberOfPointSources from python Object");
         
         }
+        
+        try {
+        
+        
+          m_nExtSources = boost::python::extract<int>(m_pyModel.attr("getNumberOfExtendedSources")());
+        
+        } catch (...) {
+        
+          throw std::runtime_error(
+                      "ModelInterface: Could not use getNumberOfExtendedSources from python Object");
+        
+        }
+        
       }
       
   bool pyToCppModelInterface::isInsideAnyExtendedSource(double j2000_ra, double j2000_dec) const
       { 
-        return false;
+        return true;
       }
       
   int pyToCppModelInterface::getNumberOfPointSources() const
@@ -126,7 +139,7 @@ namespace threeML {
 
         //Transform MeV to keV
         
-        for(int i=0; i < energies.size(); ++i) 
+        for(unsigned int i=0; i < energies.size(); ++i) 
 	      {
 	       
 	        energies[i] = energies[i] * 1000.0;
@@ -153,7 +166,7 @@ namespace threeML {
 	   
            //Transform in ph/cm2/s/MeV from ph/cm2/s/keV
            
-	         for(int i=0; i < fluxes_v.size(); ++i) 
+	         for(unsigned int i=0; i < fluxes_v.size(); ++i) 
 	         {
 	       
 	           fluxes_v[i] = fluxes_v[i] * 1000.0;
@@ -177,15 +190,89 @@ namespace threeML {
       
   int pyToCppModelInterface::getNumberOfExtendedSources() const
       {
-        return 0;
+        return m_nExtSources;
       }
       
   std::vector<double> 
        pyToCppModelInterface::getExtendedSourceFluxes(int srcid, double j2000_ra, double j2000_dec, 
                                                  std::vector<double> energies) const
-      {
-        std::vector<double> fluxes;
-        return fluxes;
+      {         
+        
+        if ( m_cache.count( srcid * 1000 )==1 ) 
+        {
+          
+          //std::cerr << "Cached" << std::endl;
+          
+          //Return cached version
+        
+          return m_cache[srcid];
+        
+        } else {
+          
+          n_calls += 1;
+          
+          //std::cerr << "Filling cache for " << srcid << " (" << n_calls << ")" << std::endl;
+          
+        }
+        
+        
+        //Construct a generic object (instead of for example a list) so that
+        //the pyModel can return any iterable (list, numpy.array, etc)
+        
+        boost::python::object fluxes;
+        
+        //try {
+   
+
+        //Transform MeV to keV
+        
+        for(unsigned int i=0; i < energies.size(); ++i) 
+	      {
+	       
+	        energies[i] = energies[i] * 1000.0;
+	       
+	      }
+	   
+     
+        //expects and returns MeV-related-units
+        fluxes = m_pyModel.attr("getExtendedSourceFluxes")(srcid, j2000_ra, j2000_dec, energies);
+        
+        //} catch (...) {
+          
+        //  throw std::runtime_error(
+        //            "ModelInterface: Could not get the fluxes from the python side");
+           
+        //}
+        
+        std::vector<double> fluxes_v;
+        
+        try {
+          
+           fluxes_v = to_std_vector<double>(fluxes);
+	   
+	   
+           //Transform in ph/cm2/s/MeV from ph/cm2/s/keV
+           
+	         for(unsigned int i=0; i < fluxes_v.size(); ++i) 
+	         {
+	       
+	           fluxes_v[i] = fluxes_v[i] * 1000.0;
+	       
+	         }
+	   
+        
+        } catch (...) {
+        
+          throw std::runtime_error(
+                    "ModelInterface: Could not convert the fluxes I got from the python side");
+          
+        }
+        
+        //Cache result
+        
+        m_cache[srcid * 1000] = fluxes_v;
+        
+        return fluxes_v;
       }
   
   
@@ -211,8 +298,42 @@ namespace threeML {
   
   std::string pyToCppModelInterface::getExtendedSourceName(int srcid) const
       {
-        std::string name("test");
+        
+        std::string name;
+        
+        try {
+        
+           name = boost::python::extract<std::string>(
+                                  m_pyModel.attr("getExtendedSourceName")(srcid)
+                                  );
+        } catch (...) {
+        
+          throw std::runtime_error(
+                    "ModelInterface: Could not get the extended source name from the python side");
+        
+        }
+        
         return name;
       }
+
+  void pyToCppModelInterface::getExtendedSourceBoundaries(int srcid, double *j2000_ra_min,
+                                                          double *j2000_ra_max,
+                                                          double *j2000_dec_min,
+                                                          double *j2000_dec_max) const
+    {
+    
+      boost::python::object boundaries;
+      
+      boundaries = m_pyModel.attr("getExtendedSourceBoundaries")( srcid );
+      
+      std::vector<double> boundaries_v = to_std_vector<double>(boundaries);
+      
+      *j2000_ra_min = boundaries_v[0];
+      *j2000_ra_max = boundaries_v[1];
+      *j2000_dec_min = boundaries_v[2];
+      *j2000_dec_max = boundaries_v[3];
+    
+    }
+
 
 }
