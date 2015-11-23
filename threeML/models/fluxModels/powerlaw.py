@@ -30,10 +30,10 @@ class PowerLaw(SpectralModel):
       
             if(a!=-1):
                 def f(energy):
-                    return norm * math.pow(energy/piv,a+1)/(a+1)
+                    return norm * energy * math.pow(energy/piv,a)/(a+1)
             else:
                 def f(energy):
-                    return norm * math.log(energy/piv)
+                    return norm * piv * math.log(energy)
                     
             return f(e2)-f(e1)
         self.integral            = integral
