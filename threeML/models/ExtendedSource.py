@@ -37,9 +37,12 @@ class ExtendedSource(SourceModel):
             
             self.parameters[ k ] = v
         
-        for k,v in self.spectralModel.parameters.iteritems():
+        
+        #Parameters from the spectral model are already imported elsewhere
+        
+        #for k,v in self.spectralModel.parameters.iteritems():
             
-            self.parameters[ k ] = v
+        #    self.parameters[ k ] = v
         
         self.formula = self.spatialModel.formula
         
