@@ -33,6 +33,21 @@ class SimpleGaussian(SpatialModel):
     def integratedFlux(self,energy):
     
         return 1.
+    
+    def getBoundaries(self):
+        
+        #Truncate the gaussian at 2 times the max of sigma allowed
+        
+        maxSigma = self.parameters['sigma'].maxValue
+        
+        minRa = self.parameters['RA0'].value - 2 * maxSigma
+        maxRa = self.parameters['RA0'].value + 2 * maxSigma
+        
+        minDec = self.parameters['Dec0'].value - 2 * maxSigma
+        maxDec = self.parameters['Dec0'].value + 2 * maxSigma
+        
+        return minRa, maxRa, minDec, maxDec
+                      
 
 
 class MultiVariateGaussian(SpatialModel):
