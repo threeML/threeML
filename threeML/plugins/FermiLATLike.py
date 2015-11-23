@@ -163,8 +163,8 @@ class FermiLATLike(pluginPrototype):
     #These are the boundaries and the number of energies for the computation
     #of the model (in keV)
     self.emin                 = 1e4
-    self.emax                 = 3e8
-    self.Nenergies            = 1000
+    self.emax                 = 5e8
+    self.Nenergies            = 1200
     
     #This is the limit on the effective area correction factor,
     #which is a multiplicative factor in front of the whole model
