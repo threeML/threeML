@@ -10,6 +10,11 @@ from hawc import liff
 
 import os, sys, collections
 
+import matplotlib.pyplot as plt
+from matplotlib import gridspec
+
+import numpy
+
 defaultMinChannel = 0
 defaultMaxChannel = 9
 
@@ -253,4 +258,77 @@ class HAWCLike( pluginPrototype ):
         self.nuisanceParameters['CommonNorm'].setValue( self.theLikeHAWC.CommonNorm() )
         
         return logL
+    
+    def display( self, radius = 2.0 ):
+        
+        figs = []
+        
+        nsrc = self.model.getNumberOfPointSources()
+        
+        for srcid in range(nsrc):
+            
+            ra, dec = self.model.getPointSourcePosition( srcid )
+            
+            model = numpy.array( self.theLikeHAWC.GetTopHatExpectedExcesses( ra, dec, radius ) )
+            
+            signal = numpy.array(self.theLikeHAWC.GetTopHatExcesses( ra, dec, radius ) )
+            
+            bkg = numpy.array( self.theLikeHAWC.GetTopHatBackgrounds( ra, dec, radius ) )
+            
+            total = signal + bkg
+            
+            fig = plt.figure()
+            
+            gs = gridspec.GridSpec(2,1, height_ratios=[2,1])
+            gs.update(hspace=0)
+            
+            sub = plt.subplot( gs[0] )
+            
+            nHitBins = numpy.arange( self.minChannel, self.maxChannel + 1 )
+            
+            sub.errorbar( nHitBins, total, yerr=numpy.sqrt(total), 
+                          capsize=0, color='black', label='Observation',
+                          fmt='.')
+
+            sub.plot( nHitBins, model + bkg, label='Model + bkg')
+            
+            plt.legend( bbox_to_anchor=(1.05, 1), loc=2, numpoints=1)
+            
+            #Residuals
+            
+            sub1 = plt.subplot( gs[1] )
+            
+            #Using model variance to account for low statistic
+            
+            resid = ( signal - model ) / model
+            
+            sub1.axhline( 0, linestyle='--' )
+            
+            
+            sub1.errorbar( nHitBins, resid,
+                           yerr=numpy.sqrt(total) / model,
+                           capsize=0, fmt='.' )
+            
+            
+            sub.set_xlim( [nHitBins.min() - 0.5, nHitBins.max() + 0.5] )
+            
+            sub.set_yscale("log", nonposy='clip')
+            
+            sub.set_ylabel("Counts per bin") 
+            
+            #sub1.set_xscale("log")
+            
+            sub1.set_xlabel("Analysis bin")
+            
+            sub1.set_ylabel("(Mo. - data) / mo.")
+            
+            sub1.set_xlim( [nHitBins.min() - 0.5, nHitBins.max() + 0.5] )
+            
+            sub.set_xticks( [] )
+            sub1.set_xticks( nHitBins )
+            
+            figs.append(fig)
+            
+        return figs
+    
 
