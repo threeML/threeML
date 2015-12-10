@@ -8,13 +8,14 @@
 #ifndef PYTOCPPMODEL_INTERFACE_H
 #define PYTOCPPMODEL_INTERFACE_H
 
+#include <boost/python.hpp>
+
+#include <Python.h>
+
 #include "ModelInterface.h"
 #include <vector>
 #include <map>
 #include <string>
-
-#include <Python.h>
-#include <boost/python.hpp>
 
 namespace threeML {
     
