@@ -30,6 +30,11 @@ pass
 
 #Import in the current namespace everything under the 
 #models directory
+
+#This must be here before the authomatic import of subpackages,
+#otherwise we will incur in weird issues with other packages
+#using similar names (for example, the io package)
+
 from .models.PointSource import PointSource
 from .models.ExtendedSource import ExtendedSource
 from .models.LikelihoodModel import LikelihoodModel
