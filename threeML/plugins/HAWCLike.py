@@ -6,7 +6,7 @@ from threeML.io.fileUtils import fileExistingAndReadable, sanitizeFilename
 
 from threeML.pyModelInterface import pyToCppModelInterface
 
-from hawc import liff
+from hawc import liff_3ML
 
 import os, sys, collections
 
@@ -174,13 +174,13 @@ class HAWCLike( pluginPrototype ):
             #Load all sky
             #(ROI will be defined later)
             
-            self.theLikeHAWC = liff.LikeHAWC( self.maptree, 
-                                              self.ntransits,
-                                              self.response,
-                                              self.pymodel,
-                                              self.minChannel,
-                                              self.maxChannel,
-                                              self.fullsky )
+            self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree, 
+                                                 self.ntransits,
+                                                 self.response,
+                                                 self.pymodel,
+                                                 self.minChannel,
+                                                 self.maxChannel,
+                                                 self.fullsky)
             
             if self.roi_ra is None and self.fullsky:
                 
