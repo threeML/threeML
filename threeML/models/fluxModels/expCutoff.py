@@ -15,15 +15,21 @@ class ExponentialCutoff(SpectralModel):
 
     def setup(self):
         self.functionName        = "ExponentialCutoff"
-        self.formula             = r'$f(E) = A {\rm exp}\left(-E/E_{\rm fold}   \right)$'
+        self.formula             = r'$f(E) = A {\rm exp}\left(-E/10^{\log_{10}{E_{\rm fold}}}   \right)$'
         self.parameters          = collections.OrderedDict()
         self.parameters['A']     = Parameter('A',1.,1.E-10,1.E10,0.1,fixed=False,nuisance=False,dataset=None,normalization=True)
-        self.parameters['Efold'] = Parameter('Efold',100.,1.,1E6,0.1,fixed=False,nuisance=False,dataset=None)
+        self.parameters['logEfold'] = Parameter('logEfold', 10., 1., 20., 0.1,
+                                                unit='keV',
+                                                fixed=False,
+                                                nuisance=False,
+                                                dataset=None)
+#        self.parameters['Efold'] = Parameter('Efold',100.,1.,1E6,0.1,fixed=False,nuisance=False,dataset=None)
             
         self.ncalls              = 0
     
         def integral(e1,e2):
-            eFold                      = self.parameters['Efold'].value
+            logEfold                   = self.parameters['logEfold'].value
+            eFold                      = 10**logEfold
             A                          = self.parameters['A'].value
 
             
@@ -38,7 +44,8 @@ class ExponentialCutoff(SpectralModel):
   
     def __call__(self,energy):
         self.ncalls             += 1
-        eFold                      = self.parameters['Efold'].value
+        logEfold                   = self.parameters['logEfold'].value
+        eFold                      = 10**logEfold
         A                          = self.parameters['A'].value
         return numpy.maximum( numexpr.evaluate("exp(-energy/eFold)"), 1e-30)
    
@@ -47,7 +54,8 @@ class ExponentialCutoff(SpectralModel):
         return self.integral(e1,e2)
   
     def energyFlux(self,e1,e2):
-        eFold                      = self.parameters['Efold'].value
+        logEfold                   = self.parameters['logEfold'].value
+        eFold                      = 10**logEfold
         A                          = self.parameters['A'].value
 
         def eF(x):
@@ -55,6 +63,4 @@ class ExponentialCutoff(SpectralModel):
             return -numpy.exp(-x/eFold)*(x*eFold + (eFold*eFold ))
 
         return (eF(e2) - eF(e1))*self.keVtoErg
-
-        
 
