@@ -98,7 +98,7 @@ class iMinuitMinimizer(Minimizer):
     #Finally we can instance the Minuit class
     self.minuit               = Minuit(self._f, **pars)
         
-    self.minuit.tol           = 10 #ftol
+    self.minuit.tol           = 100 #ftol
     
     try:
         
@@ -110,7 +110,7 @@ class iMinuitMinimizer(Minimizer):
         
         self.minuit.errordef  = 0.5
     
-    self.minuit.strategy      = 1 #More accurate
+    self.minuit.strategy      = 0 #More accurate
     
   def migradConverged(self):
     
