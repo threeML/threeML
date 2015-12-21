@@ -320,7 +320,7 @@ class HAWCLike( pluginPrototype ):
             
             sub1.set_xlabel("Analysis bin")
             
-            sub1.set_ylabel("(Mo. - data) / mo.")
+            sub1.set_ylabel(r"$\frac{excess - mod.}{mod.}$",fontsize=20)
             
             sub1.set_xlim( [nHitBins.min() - 0.5, nHitBins.max() + 0.5] )
             
