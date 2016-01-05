@@ -198,6 +198,7 @@ namespace threeML {
                                                  std::vector<double> energies) const
       {         
         
+/*
         if ( m_cache.count( srcid * 1000 )==1 ) 
         {
           
@@ -205,15 +206,15 @@ namespace threeML {
           
           //Return cached version
         
-          return m_cache[srcid];
+          return m_cache[srcid * 1000];
         
         } else {
-          
+*/          
           n_calls += 1;
           
           //std::cerr << "Filling cache for " << srcid << " (" << n_calls << ")" << std::endl;
           
-        }
+//        }
         
         
         //Construct a generic object (instead of for example a list) so that
@@ -270,7 +271,7 @@ namespace threeML {
         
         //Cache result
         
-        m_cache[srcid * 1000] = fluxes_v;
+//        m_cache[srcid * 1000] = fluxes_v;
         
         return fluxes_v;
       }

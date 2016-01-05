@@ -78,12 +78,14 @@ class HAWCLike( pluginPrototype ):
         
         self.__setup()
     
-    def setROI(self, ra, dec, radius):
+    def setROI(self, ra, dec, radius, fixedROI=False):
         
         self.roi_ra = ra
         self.roi_dec = dec
         
         self.roi_radius = radius
+
+        self.fixedROI = fixedROI
     
     def __setup(self):
         
@@ -139,7 +141,7 @@ class HAWCLike( pluginPrototype ):
         
         if state['roi_ra'] is not None:
         
-            self.setROI( state['roi_ra'], state['roi_dec'], state['roi_radius'] )
+            self.setROI( state['roi_ra'], state['roi_dec'], state['roi_radius'], state['fixedROI'] )
         
         self.setActiveMeasurements( state['minChannel'], state['maxChannel'] )
         
@@ -188,7 +190,7 @@ class HAWCLike( pluginPrototype ):
             
             if self.roi_ra is not None and self.fullsky:
             
-                self.theLikeHAWC.SetROI( self.roi_ra, self.roi_dec, self.roi_radius )
+                self.theLikeHAWC.SetROI( self.roi_ra, self.roi_dec, self.roi_radius, self.fixedROI )
             
         except:
             
@@ -331,4 +333,12 @@ class HAWCLike( pluginPrototype ):
             
         return figs
     
+    def writeModelMap(self, fileName):
+        
+        self.theLikeHAWC.WriteModelMap( fileName )
+    
+    def writeResidualMap(self, fileName):
+        
+        self.theLikeHAWC.WriteResidualMap( fileName )
+  
 
