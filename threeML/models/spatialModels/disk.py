@@ -34,12 +34,20 @@ class Disk(SpatialModel):
 
         maxRadius = self.parameters['radius'].maxValue
 
-        minDec = self.parameters['Dec0'].value - maxRadius
-        maxDec = self.parameters['Dec0'].value + maxRadius 
+        minDec = max(-90.,self.parameters['Dec0'].value - maxRadius)
+        maxDec = min(90.,self.parameters['Dec0'].value + maxRadius)
 
-        maxADec = max(np.absolute(minDec),np.absolute(maxDec))
-        minRa = self.parameters['RA0'].value - maxRadius/np.cos(maxADec*np.pi/180.)
-        maxRa = self.parameters['RA0'].value + maxRadius/np.cos(maxADec*np.pi/180.)
+        maxAbsDec = max(np.absolute(minDec),np.absolute(maxDec))
+        if maxAbsDec > 89. or maxRadius/np.cos(maxAbsDec*np.pi/180.) >= 180.:
+            minRa = 0.
+            maxRa = 360.
+        else:
+            minRa = self.parameters['RA0'].value - maxRadius/np.cos(maxAbsDec*np.pi/180.)
+            maxRa = self.parameters['RA0'].value + maxRadius/np.cos(maxAbsDec*np.pi/180.)
+            if minRa < 0.:
+                minRa = minRa + 360.
+            elif maxRa > 360.:
+                maxRa = maxRa - 360.
 
         return minRa, maxRa, minDec, maxDec
 
