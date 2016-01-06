@@ -18,7 +18,7 @@ class PowerLaw(SpectralModel):
         self.formula             = r'\begin{equation}f(E) = A (E / E_{piv})^{\gamma}\end{equation}'
         self.parameters          = collections.OrderedDict()
         self.parameters['gamma'] = Parameter('gamma',-2.0,-10,10,0.1,fixed=False,nuisance=False,dataset=None)
-        self.parameters['logA']     = Parameter('logA',-4,-40,30,0.1,fixed=False,nuisance=False,dataset=None,normalization=True)
+        self.parameters['logA']     = Parameter('logA',-4,-40,30,0.1,fixed=False,nuisance=False,dataset=None,normalization=False)
         self.parameters['Epiv']  = Parameter('Epiv',1.0,1e-10,1e10,1,fixed=True,unit='keV')
     
         self.ncalls              = 0

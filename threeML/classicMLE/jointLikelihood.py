@@ -133,8 +133,8 @@ class JointLikelihood(object):
       for dataset in self.dataList.values():
           
           try:
-          
-            globalLogLike         += dataset.innerFit()
+            
+            thisLogLike = dataset.innerFit()
           
           except CustomExceptions.ModelAssertionViolation:
             
@@ -147,6 +147,13 @@ class JointLikelihood(object):
             
             #Do not intercept other errors
             raise
+          
+                      
+          if thisLogLike > 0:
+             
+              raise RuntimeError("LogLike cannot be larger than 0")
+          
+          globalLogLike         += thisLogLike
           
           #dataset.getLogLike()      
       

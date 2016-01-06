@@ -29,3 +29,25 @@ class Disk(SpatialModel):
 
     def integratedFlux(self, energy):
         return 1.
+
+    def getBoundaries(self):
+
+        maxRadius = self.parameters['radius'].maxValue
+
+        minDec = max(-90.,self.parameters['Dec0'].value - maxRadius)
+        maxDec = min(90.,self.parameters['Dec0'].value + maxRadius)
+
+        maxAbsDec = max(np.absolute(minDec),np.absolute(maxDec))
+        if maxAbsDec > 89. or maxRadius/np.cos(maxAbsDec*np.pi/180.) >= 180.:
+            minRa = 0.
+            maxRa = 360.
+        else:
+            minRa = self.parameters['RA0'].value - maxRadius/np.cos(maxAbsDec*np.pi/180.)
+            maxRa = self.parameters['RA0'].value + maxRadius/np.cos(maxAbsDec*np.pi/180.)
+            if minRa < 0.:
+                minRa = minRa + 360.
+            elif maxRa > 360.:
+                maxRa = maxRa - 360.
+
+        return minRa, maxRa, minDec, maxDec
+
