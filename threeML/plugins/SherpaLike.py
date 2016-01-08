@@ -48,7 +48,7 @@ class Likelihood2SherpaTableModel():
         vals = np.zeros(len(self.table_model._TableModel__x))
         for ipt in self.onPtSrc:
             vals += self.likelihoodModel.getPointSourceFluxes(ipt, self.table_model._TableModel__x)
-        # sherpa wants fluxes in ph/MeV/cm2 which is default in 3ML
+        # sherpa wants fluxes in ph/keV/cm2 which is default in 3ML
         # may use astropy.units.Quantity to make this bullet proof
         self.table_model._TableModel__y = vals
 
@@ -108,7 +108,7 @@ class SherpaLike(pluginPrototype):
         value of the statistics
         """
         self._updateModel()
-        return datastack.ui.calc_stat()
+        return -datastack.ui.calc_stat()
 
     def getName(self):
         """Return a name for this dataset set during the construction
