@@ -134,3 +134,10 @@ class SherpaLike(pluginPrototype):
         """
         # TODO remove once the inner fit requirement has been dropped
         return self.getLogLike()
+
+    def display(self):
+        """creates plots comparing data to model
+        """
+        self.ds.plot_data()
+        self.ds.plot_model(overplot=True)
+        # TODO see if possible to show model subcomponents
