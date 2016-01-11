@@ -25,11 +25,11 @@ class Likelihood2SherpaTableModel():
         self.table_model = TableModel("table.source")
 
         # fetch energies
-        e_lo = np.array(datastack.get_arf(1).energ_lo)
-        e_hi = np.array(datastack.get_arf(1).energ_hi)
-        ebounds = np.unique(np.append(e_lo, e_hi))
+        self.e_lo = np.array(datastack.get_arf(1).energ_lo)
+        self.e_hi = np.array(datastack.get_arf(1).energ_hi)
+
         # TODO figure out what to do if the binning is different across the datastack
-        self.table_model._TableModel__x = ebounds
+        self.table_model._TableModel__x = self.e_lo  # according to Sherpa TableModel specs, TBV
 
         # determine which sources are inside the ON region
         self.onPtSrc = []  # list of point sources in the ON region
@@ -47,9 +47,9 @@ class Likelihood2SherpaTableModel():
         """
         vals = np.zeros(len(self.table_model._TableModel__x))
         for ipt in self.onPtSrc:
-            vals += self.likelihoodModel.getPointSourceFluxes(ipt, self.table_model._TableModel__x)
-        # sherpa wants fluxes in ph/keV/cm2 which is default in 3ML
-        # may use astropy.units.Quantity to make this bullet proof
+            vals += [self.likelihoodModel.pointSources[ipt].spectralModel.integral(bounds[0], bounds[1]) for bounds in
+                     zip(self.e_lo, self.e_hi)]
+            # integrated fluxes over same energy bins as for dataset, according to Sherpa TableModel specs, TBV
         self.table_model._TableModel__y = vals
 
 
