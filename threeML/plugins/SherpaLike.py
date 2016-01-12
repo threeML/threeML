@@ -99,6 +99,19 @@ class SherpaLike(pluginPrototype):
         self.model.update()
         self.ds.set_source(self.model.table_model)
 
+    def setEnergyRange(self,e_lo,e_hi):
+        """Define an energy threshold for the fit
+        which is different from the full range in the pha files
+
+        Parameters
+        ------------
+        e_lo : float
+        lower energy threshold in keV
+        e_hi : float
+        higher energy threshold in keV
+        """
+        self.ds.notice(e_lo,e_hi)
+
     def getLogLike(self):
         """Returns the current statistics value
 
@@ -138,6 +151,8 @@ class SherpaLike(pluginPrototype):
     def display(self):
         """creates plots comparing data to model
         """
+        datastack.ui.set_xlog()
+        datastack.ui.set_ylog()
         self.ds.plot_data()
         self.ds.plot_model(overplot=True)
         # TODO see if possible to show model subcomponents
