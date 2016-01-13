@@ -240,6 +240,19 @@ class HAWCLike( pluginPrototype ):
         logL = self.theLikeHAWC.getLogLike( self.fitCommonNorm )
                 
         return logL
+
+    def calcTS(self):
+        
+        '''
+        Return the value of the log-likelihood test statistic, defined as
+        2*[log(LL_model) - log(LL_bkg)]
+        '''
+        
+        self.pymodel.update()
+        
+        TS = self.theLikeHAWC.calcTS( self.fitCommonNorm )
+                
+        return TS
   
     def getNuisanceParameters(self):
         '''
