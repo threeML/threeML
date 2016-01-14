@@ -47,7 +47,7 @@ class Likelihood2SherpaTableModel():
         """
         vals = np.zeros(len(self.table_model._TableModel__x))
         for ipt in self.onPtSrc:
-            vals += [self.likelihoodModel.pointSources[ipt].spectralModel.integral(bounds[0], bounds[1]) for bounds in
+            vals += [self.likelihoodModel.pointSources[ipt].spectralModel.photonFlux(bounds[0], bounds[1]) for bounds in
                      zip(self.e_lo, self.e_hi)]
             # integrated fluxes over same energy bins as for dataset, according to Sherpa TableModel specs, TBV
         self.table_model._TableModel__y = vals
