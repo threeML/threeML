@@ -3,6 +3,7 @@ from sherpa.astro import datastack
 from sherpa.models import TableModel
 from threeML.pluginPrototype import pluginPrototype
 from threeML.models.Parameter import Parameter
+import matplotlib.pyplot as plt
 
 __instrument_name = "All OGIP compliant instruments"
 
@@ -151,8 +152,38 @@ class SherpaLike(pluginPrototype):
     def display(self):
         """creates plots comparing data to model
         """
-        datastack.ui.set_xlog()
-        datastack.ui.set_ylog()
-        self.ds.plot_data()
-        self.ds.plot_model(overplot=True)
+        # datastack.ui.set_xlog()
+        # datastack.ui.set_ylog()
+        # self.ds.plot_data()
+        # self.ds.plot_model(overplot=True)
         # TODO see if possible to show model subcomponents
+        f, axarr = plt.subplots(2, sharex=True)
+        f.subplots_adjust(hspace=0)
+        plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
+        energies = datastack.ui.get_data_plot(1).x
+        dlne = np.log(energies[1:])-np.log(energies[:-1])
+        dlne = np.append(dlne[0],dlne)#TODO do this properly for arbitrary binning
+        de = np.power(10,np.log10(energies)+dlne)-np.power(10,np.log10(energies)-dlne)
+        # TODO figure out what to do if different binning within the ds
+        counts = np.zeros(len(energies))
+        model = np.zeros(len(energies))
+        bkg = np.zeros(len(energies))
+        for id in self.ds.ids:
+            counts += datastack.ui.get_data_plot(id).y*datastack.get_exposure(id)*de
+            model += datastack.ui.get_model_plot(id).y*datastack.get_exposure(id)*de
+            bkg += datastack.ui.get_bkg_plot(id).y*datastack.get_exposure(id)*de*datastack.ui.get_bkg_scale(id)
+        tot = model+bkg
+        axarr[0].errorbar(energies,counts,xerr=np.zeros(len(energies)),yerr=np.sqrt(counts),fmt='ko',capsize=0)
+        axarr[0].plot(energies,model,label='source')
+        axarr[0].plot(energies,bkg,label='background')
+        axarr[0].plot(energies,tot,label='total model')
+        leg = axarr[0].legend()
+        axarr[1].errorbar(energies[counts>0],((counts-tot)/tot)[counts>0],xerr=np.zeros(len(energies[counts>0])),yerr=(np.sqrt(counts)/tot)[counts>0],fmt='ko',capsize=0)
+        axarr[1].plot(energies,np.zeros(len(energies)),color='k',linestyle='--')
+        axarr[0].set_xscale('log')
+        axarr[1].set_xscale('log')
+        axarr[0].set_yscale('log')
+        axarr[0].set_ylabel('counts')
+        axarr[1].set_ylabel('residuals (counts-model)/model')
+        axarr[1].set_xlabel("energy (keV)")
+
