@@ -68,6 +68,6 @@ class Config( object ):
         return yaml.dump( self._configuration, default_flow_style=False )
 
 
-#Now read the config file, so it will be available as Config.c
+# Now read the config file, so it will be available as Config.c
 threeML_config = Config()
 
