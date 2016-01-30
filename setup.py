@@ -20,9 +20,7 @@ copy_args = sys.argv[1:]
 
 if '--with-boost' in copy_args:
 
-    final_messages.append("Built the boost.python extension. You can now use C/C++ plugins.")
-
-    build_boost = True
+    final_messages.append("Built the boost.python extension.")
 
     copy_args.remove('--with-boost')
 
@@ -33,12 +31,34 @@ if '--with-boost' in copy_args:
 
     if boost_root:
 
+        # Check that the directory provided actually exists
+
+        if not os.path.exists(boost_root):
+
+            print("\nERROR: the directory %s specified in BOOSTROOT does not exist!" % boost_root)
+            sys.exit(-1)
+
         # The user want to override pre-defined location of boost
 
         print("\n\n **** Using boost.python from the env. variable $BOOSTROOT (%s)" % (boost_root))
 
         include_dirs = [os.path.join(boost_root, 'include')]
         library_dirs = [os.path.join(boost_root, 'lib')]
+
+        # Check that the include and library directories exist
+
+        if not os.path.exists(include_dirs[0]):
+
+            print("\nERROR: the include directory %s for boost.python does not exist!" % include_dirs[0])
+
+            sys.exit(-1)
+
+
+        if not os.path.exists(library_dirs[0]):
+
+            print("\nERROR: the library directory %s for boost.python does not exist!" % library_dirs[0])
+
+            sys.exit(-1)
 
         final_messages.append("Used boost.python from the env. variable BOOSTROOT")
         final_messages.append("     Include dir: %s" % include_dirs)
@@ -77,11 +97,6 @@ else:
 
     # No need to build the C/C++ wrappers, set up the ext_modules_configuration
     # and the headers configuration accordingly
-
-    final_messages.append("- boost.python extension not built. If you didn't built it previously, you will not be able "
-                          "to use C/C++ plugins.")
-
-    build_boost = False
 
     ext_modules_configuration = None
     headers_configuration = None
