@@ -3,6 +3,7 @@ import sys
 import glob
 import inspect
 import imp
+import warnings
 
 #This dynamically loads a module and return it in a variable
 def __import__(name, globals=None, locals=None, fromlist=None):
@@ -39,13 +40,22 @@ from .models.PointSource import PointSource
 from .models.ExtendedSource import ExtendedSource
 from .models.LikelihoodModel import LikelihoodModel
 from .models.spectralmodel import *
+from .exceptions import CustomExceptions
+from .exceptions.CustomExceptions import custom_warnings
 
 #Import the builtinModels
 from .models.fluxModels import *
 
-from pyModelInterface import pyToCppModelInterface
-from pyModelInterface import FakePlugin 
-from pyModelInterface import FixedPointSource
+try:
+
+  from pyModelInterface import pyToCppModelInterface
+  from pyModelInterface import FakePlugin
+  from pyModelInterface import FixedPointSource
+
+except:
+
+  custom_warnings.warn("The C/C++ wrapper is not available. You will not be able to use plugins which require it.",
+                CustomExceptions.CppInterfaceNotAvailable)
 
 #Import the classic Maximum Likelihood Estimation package
 from .classicMLE.jointLikelihood import JointLikelihood
@@ -81,7 +91,8 @@ for i,plug in enumerate(mplugins):
   try:
     thisPlugin                  = __import__(os.path.basename(".".join(plug.split(".")[:-1])))
   except:
-    print("\nWARNING: Could not import plugin %s. Do you have the relative instrument software installed and configured?" %(plug))
+    custom_warnings.warn("Could not import plugin %s. Do you have the relative instrument software installed "
+                         "and configured?" %(plug), CustomExceptions.CannotImportPlugin)
     continue
   #Get the classes within this module
   classes                     = inspect.getmembers(thisPlugin,lambda x:inspect.isclass(x) and inspect.getmodule(x)==thisPlugin)
