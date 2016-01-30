@@ -213,7 +213,7 @@ class FermiLATLike(PluginPrototype):
     
   pass
     
-  def setModel(self, likelihoodModel):
+  def set_model(self, likelihoodModel):
     '''
     Set the model to be used in the joint minimization. 
     Must be a LikelihoodModel instance.
@@ -243,13 +243,13 @@ class FermiLATLike(PluginPrototype):
     
     #Here we need also to compute the logLike value, so that the model
     #in the XML file will be chanded if needed
-    dumb                      = self.getLogLike()
+    dumb                      = self.get_log_like()
     
     #Build the list of the nuisance parameters
     self._setNuisanceParameters()
   pass
   
-  def getName(self):
+  def get_name(self):
     '''
     Return a name for this dataset (likely set during the constructor)
     '''
@@ -260,7 +260,7 @@ class FermiLATLike(PluginPrototype):
     
     self.innerMinimization = bool( s )
   
-  def innerFit(self):
+  def inner_fit(self):
     '''
     This is used for the profile likelihood. Keeping fixed all parameters in the
     modelManager, this method minimize the logLike over the remaining nuisance
@@ -357,7 +357,7 @@ class FermiLATLike(PluginPrototype):
     
   pass
   
-  def getLogLike(self):
+  def get_log_like(self):
     '''
     Return the value of the log-likelihood with the current values for the
     parameters stored in the ModelManager instance
@@ -468,7 +468,7 @@ class FermiLATLike(PluginPrototype):
     
   pass
   
-  def getNuisanceParameters(self):
+  def get_nuisance_parameters(self):
     '''
     Return a list of nuisance parameters. Return an empty list if there
     are no nuisance parameters

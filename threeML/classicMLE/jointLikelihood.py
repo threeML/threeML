@@ -44,7 +44,7 @@ class JointLikelihood(object):
     
     for dataset in self.dataList.values():
       
-      dataset.setModel(self.likelihoodModel)
+      dataset.set_model(self.likelihoodModel)
     
     #This is to keep track of the number of calls to the likelihood
     #function
@@ -134,7 +134,7 @@ class JointLikelihood(object):
           
           try:
             
-            thisLogLike = dataset.innerFit()
+            thisLogLike = dataset.inner_fit()
           
           except CustomExceptions.ModelAssertionViolation:
             
@@ -256,9 +256,9 @@ class JointLikelihood(object):
     
     for dataset in self.dataList.values():
       
-      for pName in dataset.getNuisanceParameters():
+      for pName in dataset.get_nuisance_parameters():
         
-        nuisanceParam[ ( dataset.getName(), pName )] = dataset.nuisanceParameters[pName]
+        nuisanceParam[ ( dataset.get_name(), pName )] = dataset.nuisanceParameters[pName]
     
     table = self._getTableOfParameters(nuisanceParam)
     display(table)
@@ -281,12 +281,12 @@ class JointLikelihood(object):
     
     for dataset in self.dataList.values():
       
-      ml                      = dataset.getLogLike()*(-1)
+      ml                      = dataset.get_log_like()*(-1)
       
-      mLogLikes[dataset.getName()] = ml
+      mLogLikes[dataset.get_name()] = ml
       
-      nameLength              = max(nameLength, len(dataset.getName()) + 1)
-      data.append( [ dataset.getName(), ml ] )
+      nameLength              = max(nameLength, len(dataset.get_name()) + 1)
+      data.append( [ dataset.get_name(), ml ] )
     
     table                     = Table( rows  = data,
                                        names = ["Detector","-LogL"],

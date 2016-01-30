@@ -145,7 +145,7 @@ class HAWCLike( PluginPrototype ):
         
         self.setActiveMeasurements( state['minChannel'], state['maxChannel'] )
         
-        self.setModel( state['model'] )
+        self.set_model( state['model'] )
 
     
     def setActiveMeasurements( self, minChannel, maxChannel ):
@@ -159,13 +159,13 @@ class HAWCLike( PluginPrototype ):
                              "will not be effective until you create a new JointLikelihood or Bayesian" +
                              "instance")
         
-    def setModel( self, LikelihoodModelInstance ):
+    def set_model( self, likelihood_model_instance ):
         '''
         Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
         '''
         
         #Instance the python - C++ bridge
-        self.model = LikelihoodModelInstance
+        self.model = likelihood_model_instance
         
         self.pymodel = pyToCppModelInterface( self.model )
         
@@ -214,7 +214,7 @@ class HAWCLike( PluginPrototype ):
         
         self.theLikeHAWC.SetCommonNorm( self.nuisanceParameters['CommonNorm'].value )
     
-    def getName(self):
+    def get_name(self):
         '''
         Return a name for this dataset (likely set during the constructor)
         '''
@@ -228,7 +228,7 @@ class HAWCLike( PluginPrototype ):
         
         self.fitCommonNorm = False
     
-    def getLogLike(self):
+    def get_log_like(self):
         
         '''
         Return the value of the log-likelihood with the current values for the
@@ -237,7 +237,7 @@ class HAWCLike( PluginPrototype ):
         
         self.pymodel.update()
         
-        logL = self.theLikeHAWC.getLogLike( self.fitCommonNorm )
+        logL = self.theLikeHAWC.get_log_like( self.fitCommonNorm )
                 
         return logL
 
@@ -254,7 +254,7 @@ class HAWCLike( PluginPrototype ):
                 
         return TS
   
-    def getNuisanceParameters(self):
+    def get_nuisance_parameters(self):
         '''
         Return a list of nuisance parameters. Return an empty list if there
         are no nuisance parameters
@@ -262,13 +262,13 @@ class HAWCLike( PluginPrototype ):
         
         return self.nuisanceParameters.keys()
   
-    def innerFit(self):
+    def inner_fit(self):
         
         self.theLikeHAWC.SetBackgroundNormFree( self.fitCommonNorm )
         
         self.pymodel.update()
         
-        logL = self.theLikeHAWC.getLogLike( self.fitCommonNorm )
+        logL = self.theLikeHAWC.get_log_like( self.fitCommonNorm )
         
         self.nuisanceParameters['CommonNorm'].setValue( self.theLikeHAWC.CommonNorm() )
         

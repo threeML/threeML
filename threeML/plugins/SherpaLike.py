@@ -82,7 +82,7 @@ class SherpaLike(PluginPrototype):
         self.nuisanceParameters = {}
         self.nuisanceParameters['InterCalib'] = Parameter("InterCalib", 1, 0.9, 1.1, 0.01, fixed=True, nuisance=True)
 
-    def setModel(self, likelihoodModel):
+    def set_model(self, likelihoodModel):
         """Set model for the source region
 
         Parameters
@@ -113,7 +113,7 @@ class SherpaLike(PluginPrototype):
         """
         self.ds.notice(e_lo, e_hi)
 
-    def getLogLike(self):
+    def get_log_like(self):
         """Returns the current statistics value
 
         Returns
@@ -124,7 +124,7 @@ class SherpaLike(PluginPrototype):
         self._updateModel()
         return -datastack.ui.calc_stat()
 
-    def getName(self):
+    def get_name(self):
         """Return a name for this dataset set during the construction
 
         Returns:
@@ -134,7 +134,7 @@ class SherpaLike(PluginPrototype):
         """
         return self.name
 
-    def getNuisanceParameters(self):
+    def get_nuisance_parameters(self):
         """Return a list of nuisance parameters.
         Return an empty list if there are no nuisance parameters.
         Not implemented yet.
@@ -142,12 +142,12 @@ class SherpaLike(PluginPrototype):
         # TODO implement nuisance parameters
         return self.nuisanceParameters.keys()
 
-    def innerFit(self):
+    def inner_fit(self):
         """Inner fit. Just a hack to get it to work now.
         Will be removed.
         """
         # TODO remove once the inner fit requirement has been dropped
-        return self.getLogLike()
+        return self.get_log_like()
 
     def display(self):
         """creates plots comparing data to model

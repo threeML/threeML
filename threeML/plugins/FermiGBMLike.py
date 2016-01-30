@@ -176,14 +176,14 @@ class FermiGBMLike(PluginPrototype):
                                               ) )
   pass
   
-  def getName(self):
+  def get_name(self):
     '''
     Return a name for this dataset (likely set during the constructor)
     '''
     return self.name
   pass
   
-  def setModel(self,likelihoodModel):
+  def set_model(self,likelihoodModel):
     '''
     Set the model to be used in the joint minimization.
     '''
@@ -227,7 +227,7 @@ class FermiGBMLike(PluginPrototype):
                                integral)
   pass
 
-  def innerFit(self):
+  def inner_fit(self):
         
     #Effective area correction
     if(self.nuisanceParameters['InterCalib'].isFree()):
@@ -268,7 +268,7 @@ class FermiGBMLike(PluginPrototype):
       
     else:
       
-      return self.getLogLike()
+      return self.get_log_like()
   
   def getFoldedModel(self):
     
@@ -307,7 +307,7 @@ class FermiGBMLike(PluginPrototype):
                      + self.counts * numpy.log(modelCounts)
                      - logfactorial(self.counts) )
   
-  def getLogLike(self):
+  def get_log_like(self):
     '''
     Return the value of the log-likelihood with the current values for the
     parameters
@@ -319,7 +319,7 @@ class FermiGBMLike(PluginPrototype):
     
     return logLike
       
-  def getNuisanceParameters(self):
+  def get_nuisance_parameters(self):
     '''
     Return a list of nuisance parameter names. Return an empty list if there
     are no nuisance parameters

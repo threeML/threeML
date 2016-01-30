@@ -52,7 +52,7 @@ class bayesianAnalysis( object ):
         
         for dataset in self.dataList.values():
           
-          dataset.setModel(self.likelihoodModel)
+          dataset.set_model(self.likelihoodModel)
     
     def _logp( self, trialValues ):
         
@@ -80,7 +80,7 @@ class bayesianAnalysis( object ):
         
         try:    
             
-            logLike = numpy.sum( map( lambda dataset: dataset.getLogLike(), self.dataList.values() ) )
+            logLike = numpy.sum( map( lambda dataset: dataset.get_log_like(), self.dataList.values() ) )
         
         except ModelAssertionViolation:
             
@@ -122,7 +122,7 @@ class bayesianAnalysis( object ):
             
             lps.append( pval )
             
-        logLike = numpy.sum( map( lambda dataset: dataset.getLogLike(), self.dataList.values() ) )
+        logLike = numpy.sum( map( lambda dataset: dataset.get_log_like(), self.dataList.values() ) )
         
         if not numpy.isfinite( logLike ):
             

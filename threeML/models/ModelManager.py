@@ -43,8 +43,8 @@ class ModelManager(object):
     
     #Link the datasets to this modelManager
     for k,dataset in self.dataList.datasets.iteritems():
-      dataset.setModel(self)
-      thisNuisances           = dataset.getNuisanceParameters()
+      dataset.set_model(self)
+      thisNuisances           = dataset.get_nuisance_parameters()
       for nuisance in thisNuisances:
         nuisance.setDataset(dataset)
         self.parameters[nuisance.name] = nuisance
@@ -367,7 +367,7 @@ class ModelManager(object):
     table                    = fancyDisplay.HtmlTable(7)
     table.addHeadings("Name","Value","Minimum","Maximum","Delta","Dataset","Unit")
     for v in toPrint:
-      table.addRow(v.name,v.value,v.minValue,v.maxValue,v.delta,v.dataset.getName(),v.unit)
+      table.addRow(v.name,v.value,v.minValue,v.maxValue,v.delta,v.dataset.get_name(),v.unit)
     pass
     display(HTML(table.__repr__()))
 
