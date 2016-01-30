@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-# from distutils.core import setup
-#from distutils.extension import Extension
-import os, sys
+import os
+import sys
 
 from setuptools import setup, Extension
 
@@ -34,13 +33,12 @@ if '--with-boost' in copy_args:
         # Check that the directory provided actually exists
 
         if not os.path.exists(boost_root):
-
             print("\nERROR: the directory %s specified in BOOSTROOT does not exist!" % boost_root)
             sys.exit(-1)
 
         # The user want to override pre-defined location of boost
 
-        print("\n\n **** Using boost.python from the env. variable $BOOSTROOT (%s)" % (boost_root))
+        print("\n\n **** Using boost.python from the env. variable $BOOSTROOT (%s)" % boost_root)
 
         include_dirs = [os.path.join(boost_root, 'include')]
         library_dirs = [os.path.join(boost_root, 'lib')]
@@ -48,14 +46,11 @@ if '--with-boost' in copy_args:
         # Check that the include and library directories exist
 
         if not os.path.exists(include_dirs[0]):
-
             print("\nERROR: the include directory %s for boost.python does not exist!" % include_dirs[0])
 
             sys.exit(-1)
 
-
         if not os.path.exists(library_dirs[0]):
-
             print("\nERROR: the library directory %s for boost.python does not exist!" % library_dirs[0])
 
             sys.exit(-1)
@@ -101,10 +96,9 @@ else:
     ext_modules_configuration = None
     headers_configuration = None
 
-
 setup(
 
-    script_args = copy_args,
+    script_args=copy_args,
 
     name="threeML",
 
@@ -135,14 +129,14 @@ setup(
 
     download_url='https://github.com/giacomov/3ML/archive/v0.2.0',
 
-    keywords=['Likelihood', 'Multi-mission', '3ML', 'HAWC', 'Fermi', 'HESS','joint', 'fit','bayesian',
+    keywords=['Likelihood', 'Multi-mission', '3ML', 'HAWC', 'Fermi', 'HESS', 'joint', 'fit', 'bayesian',
               'multi-wavelength'],
 
-    classifiers = [],
+    classifiers=[],
 
-    ext_modules = ext_modules_configuration,
+    ext_modules=ext_modules_configuration,
 
-    headers = headers_configuration,
+    headers=headers_configuration,
 
     # Install configuration file in user home and in the package repository
 
@@ -168,7 +162,6 @@ setup(
 # Now print the final messages if there are any
 
 if len(final_messages) > 0:
-
     print("\n#############")
     print("FINAL NOTES:")
     print("#############")
