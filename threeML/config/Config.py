@@ -1,26 +1,30 @@
 import os, sys
+import pkg_resources
 import yaml
+
 
 class Config( object ):
     
     def __init__( self ):
         
-        #Read the config file
+        # Read the config file
         
-        #Define a list of possible path where the config file might be
-        #The first successful path will be the active configuration file
+        # Define a list of possible path where the config file might be
+        # The first successful path will be the active configuration file
         
         possiblePaths = []
         
-        #First possible path is the .threeML directory under the user-home
+        # First possible path is the .threeML directory under the user-home
         
         possiblePaths.append( os.path.join( os.path.expanduser( '~' ), '.threeML'  ) )
         
-        #Second possible path is the config subdir under the package path
-        #(which is where this Config.py file is)
-        
-        possiblePaths.append( os.path.join( sys.prefix, 'threeML/config' ) ) 
-        
+        # Second possible path is the config subdir under the package path
+        # (which is where this Config.py file is)
+
+        distribution = pkg_resources.get_distribution("threeML")
+
+        possiblePaths.append( os.path.join( distribution.location, 'threeML/config' ) )
+
         self._configuration = None
         self._filename = None
         
