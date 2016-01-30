@@ -1,4 +1,4 @@
-from threeML.pluginPrototype import pluginPrototype
+from threeML.plugin_prototype import PluginPrototype
 
 from threeML.models.Parameter import Parameter
 
@@ -20,7 +20,7 @@ defaultMaxChannel = 9
 
 __instrument_name = "HAWC"
 
-class HAWCLike( pluginPrototype ):
+class HAWCLike( PluginPrototype ):
     
     def __init__( self, name, maptree, response, ntransits, **kwargs ):
         

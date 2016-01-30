@@ -8,7 +8,7 @@ from threeML.plugins.GenericOGIPLike import GenericOGIPLike
 
 import numpy
 from threeML.plugins.ogip import OGIPPHA
-from threeML.pluginPrototype import pluginPrototype
+from threeML.plugin_prototype import PluginPrototype
 from threeML.models.Parameter import Parameter
 from threeML.minimizer import minimization
 import scipy.integrate

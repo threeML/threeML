@@ -4,7 +4,7 @@ import os
 from threeML.plugins.gammaln import logfactorial
 import numpy
 from threeML.plugins.ogip import OGIPPHA
-from threeML.pluginPrototype import pluginPrototype
+from threeML.plugin_prototype import PluginPrototype
 from threeML.models.Parameter import Parameter
 from threeML.minimizer import minimization
 import scipy.integrate
@@ -14,7 +14,7 @@ import collections
 
 __instrument_name = "Fermi GBM (all detectors)"
 
-class FermiGBMLike(pluginPrototype):
+class FermiGBMLike(PluginPrototype):
   
   def __init__(self,name,phafile,bkgfile,rspfile):
     '''

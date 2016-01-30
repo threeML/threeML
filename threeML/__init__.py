@@ -53,7 +53,7 @@ from .models.LikelihoodModel import LikelihoodModel
 from .models.spectralmodel import *
 from .exceptions import CustomExceptions
 from .exceptions.CustomExceptions import custom_warnings
-from .pluginPrototype import pluginPrototype
+from .plugin_prototype import PluginPrototype
 
 # Import the builtinModels
 
@@ -129,7 +129,7 @@ for i, plug in enumerate(found_plugins):
 
     for name, cls in classes:
 
-        if not issubclass(cls, pluginPrototype):
+        if not issubclass(cls, PluginPrototype):
 
             # This is not a plugin
 

@@ -1,7 +1,7 @@
 import numpy as np
 from sherpa.astro import datastack
 from sherpa.models import TableModel
-from threeML.pluginPrototype import pluginPrototype
+from threeML.plugin_prototype import PluginPrototype
 from threeML.models.Parameter import Parameter
 import matplotlib.pyplot as plt
 
@@ -54,7 +54,7 @@ class Likelihood2SherpaTableModel():
         self.table_model._TableModel__y = vals
 
 
-class SherpaLike(pluginPrototype):
+class SherpaLike(PluginPrototype):
     """Generic plugin based on sherpa for data in OGIP format
 
     Parameters
