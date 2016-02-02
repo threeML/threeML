@@ -4,6 +4,7 @@ from sherpa.models import TableModel
 from threeML.plugin_prototype import PluginPrototype
 from threeML.models.Parameter import Parameter
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
 
 __instrument_name = "All OGIP compliant instruments"
 
@@ -157,9 +158,13 @@ class SherpaLike(PluginPrototype):
         # self.ds.plot_data()
         # self.ds.plot_model(overplot=True)
         # TODO see if possible to show model subcomponents
-        f, axarr = plt.subplots(2, sharex=True)
-        f.subplots_adjust(hspace=0)
-        plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
+        f = plt.figure(self.name)
+        gs = gridspec.GridSpec(2,1, height_ratios=[2,1])
+        gs.update(hspace=0)
+        axarr =[]
+        axarr.append(f.add_subplot(gs[0]))
+        axarr.append(f.add_subplot(gs[1],sharex = axarr[0]))
+        plt.setp([a.get_xticklabels() for a in axarr[:-1]], visible=False)
         energies = datastack.ui.get_data_plot(1).x
         dlne = np.log(energies[1:]) - np.log(energies[:-1])
         dlne = np.append(dlne[0], dlne)  # TODO do this properly for arbitrary binning
