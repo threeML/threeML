@@ -295,7 +295,7 @@ class JointLikelihood(object):
       #the current value (it improves A LOT the convergence speed, especially with MINUIT)
       for k,v in self.freeParameters.iteritems():
         value		      = v.value
-        v.setBounds(value/100.0,value*100.0)
+        v.set_bounds(value/100.0,value*100.0)
         v.setDelta(value/10.0)
       pass
     pass

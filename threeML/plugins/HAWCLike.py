@@ -2,7 +2,7 @@ from threeML.plugin_prototype import PluginPrototype
 
 from threeML.models.Parameter import Parameter
 
-from threeML.io.fileUtils import fileExistingAndReadable, sanitizeFilename
+from threeML.io.file_utils import fileExistingAndReadable, sanitizeFilename
 
 from threeML.pyModelInterface import pyToCppModelInterface
 

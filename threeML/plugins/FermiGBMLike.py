@@ -107,7 +107,7 @@ class FermiGBMLike(PluginPrototype):
   
   def useIntercalibrationConst(self,factorLowBound=0.9,factorHiBound=1.1):
     self.nuisanceParameters['InterCalib'].free()
-    self.nuisanceParameters['InterCalib'].setBounds(factorLowBound,factorHiBound)
+    self.nuisanceParameters['InterCalib'].set_bounds(factorLowBound,factorHiBound)
     
     #Check that the parameter is within the provided bounds
     value                     = self.nuisanceParameters['InterCalib'].value
@@ -261,7 +261,7 @@ class FermiGBMLike(PluginPrototype):
       
       parameters              = collections.OrderedDict()
       parameters[ (self.name, 'InterCalib') ]      = self.nuisanceParameters['InterCalib']
-      minimizer               = minimization.iMinuitMinimizer(fitfun, parameters)
+      minimizer               = minimization.MinuitMinimizer(fitfun, parameters)
       bestFit, mlogLmin       = minimizer.minimize()
       
       return mlogLmin * (-1)

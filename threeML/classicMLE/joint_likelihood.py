@@ -1,0 +1,815 @@
+import collections
+import copy
+import math
+import time
+
+import numpy
+import scipy.optimize
+import scipy.stats
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+from matplotlib.colors import BoundaryNorm
+
+from IPython.display import display
+import numpy as np
+
+from threeML.minimizer import minimization
+from threeML.exceptions import custom_exceptions
+from threeML.io.table import Table
+from threeML.utils.cartesian import cartesian
+from threeML.parallel.parallel_client import ParallelClient
+from threeML.io.progress_bar import ProgressBar
+from threeML.config.config import threeML_config
+from threeML.exceptions.custom_exceptions import custom_warnings
+
+
+class ReducingNumberOfThreads(Warning):
+    pass
+
+
+class ReducingNumberOfSteps(Warning):
+    pass
+
+
+class NotANumberInLikelihood(Warning):
+    pass
+
+
+class JointLikelihood(object):
+    def __init__(self, likelihood_model, data_list, **kwargs):
+
+        # Process optional keyword parameters
+        self.verbose = False
+
+        for k, v in kwargs.iteritems():
+
+            if k.lower() == "verbose":
+                self.verbose = bool(kwargs["verbose"])
+
+        self._likelihood_model = likelihood_model
+
+        self._data_list = data_list
+
+        for dataset in self._data_list.values():
+            dataset.set_model(self._likelihood_model)
+
+        # This is to keep track of the number of calls to the likelihood
+        # function
+        self.ncalls = 0
+
+        self.set_minimizer('MINUIT')
+
+        # Initial set of free parameters
+
+        self.free_parameters = self._likelihood_model.getFreeParameters()
+
+        # Initially set the value of _current_minimum to None, it will be change by the fit() method
+
+        self._current_minimum = None
+
+        self._minimizer = None
+
+    @property
+    def likelihood_model(self):
+        """
+        :return: likelihood model for this analysis
+        """
+
+        return self._likelihood_model
+
+    @property
+    def data_list(self):
+        """
+        :return: data list for this analysis
+        """
+
+        return self._data_list
+
+    @property
+    def current_minimum(self):
+        """
+        :return: current minimum of the joint likelihood (available only after the fit() method)
+        """
+        return self._current_minimum
+
+    @property
+    def minimizer(self):
+        """
+        :return: an instance of the minimizer used in the fit (available only after the fit() method)
+        """
+        return self._minimizer
+
+    def _update_free_parameters(self):
+
+        """Update the dictionary of free parameters"""
+
+        self.free_parameters = self._likelihood_model.getFreeParameters()
+
+    def fit(self, pre_fit=False):
+        """
+        Perform a fit of the current likelihood model on the datasets
+        :param pre_fit: (True or False) If True, perform a pre-fit with only normalizations free (experimental)
+        :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum
+        for each dataset and the total one.
+        """
+
+        # Pre-fit: will fit the normalizations so that they are not too far
+        # from the data (which would make the fitting below fail)
+
+        if pre_fit:
+            self.__pre_fit()
+
+        # Update the list of free parameters, to be safe against changes the user might do between
+        # the creation of this class and the calling of this method
+
+        self._update_free_parameters()
+
+        # Now check and fix if needed all the deltas of the parameters
+        # to 10% of their value (otherwise the fit will be super-slow)
+
+        for k, v in self.free_parameters.iteritems():
+
+            if abs(v.delta) < abs(v.value) * 0.1:
+                v.setDelta(abs(v.value) * 0.1)
+
+        # Instance the minimizer
+
+        self._minimizer = self.Minimizer(self.minus_log_like_profile,
+                                         self.free_parameters)
+
+        # Perform the fit
+
+        xs, log_likelihood_minimum = self._minimizer.minimize()
+
+        # Store the current minimum for the -log likelihood
+
+        self._current_minimum = float(log_likelihood_minimum)
+
+        # Print results
+
+        print("Best fit values:\n")
+
+        self._minimizer.print_fit_results()
+
+        print("Nuisance parameters:\n")
+
+        nuisance_parameters = collections.OrderedDict()
+
+        for dataset in self._data_list.values():
+
+            for pName in dataset.get_nuisance_parameters():
+                nuisance_parameters[(dataset.get_name(), pName)] = dataset.nuisanceParameters[pName]
+
+        table = self._get_table_of_parameters(nuisance_parameters)
+
+        display(table)
+
+        print("\nCorrelation matrix:\n")
+
+        self._minimizer.print_correlation_matrix()
+
+        print("\nMinimum of -logLikelihood is: %s\n" % log_likelihood_minimum)
+
+        print("Contributions to the -logLikelihood at the minimum:\n")
+
+        # Fill the dictionary with the values of the -log likelihood (total, and dataset by dataset)
+
+        minus_log_likelihood_values = collections.OrderedDict()
+
+        minus_log_likelihood_values['total'] = log_likelihood_minimum
+
+        data = []
+        name_length = 0
+
+        for dataset in self._data_list.values():
+            ml = dataset.get_log_like() * (-1)
+
+            minus_log_likelihood_values[dataset.get_name()] = ml
+
+            name_length = max(name_length, len(dataset.get_name()) + 1)
+            data.append([dataset.get_name(), ml])
+
+        table = Table(rows=data,
+                      names=["Detector", "-LogL"],
+                      dtype=('S%i' % name_length, float))
+
+        table['-LogL'].format = '2.2f'
+
+        display(table)
+
+        # Prepare the dictionary with the results
+
+        results = collections.OrderedDict()
+
+        results['parameters'] = xs
+        results['minusLogLike'] = minus_log_likelihood_values
+
+        return results
+
+    def get_errors(self):
+        """
+        Compute the errors on the parameters using an accurate algorithm.
+        :return: a dictionary containing the asymmetric errors for each parameter.
+        """
+
+        # Check that the user performed a fit first
+
+        assert self._current_minimum is not None, "You have to run the .fit method before calling errors."
+
+        return self._minimizer.get_errors()
+
+    def get_contours(self, source_1, param_1, param_1_minimum, param_1_maximum, param_1_n_steps,
+                     source_2=None, param_2=None, param_2_minimum=None, param_2_maximum=None, param_2_n_steps=None,
+                     progress=True, **options):
+        """
+        Generate confidence contours for the given parameters by stepping for the given number of steps between
+        the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to
+        generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d
+        contour of param_1 vs param_2.
+
+        NOTE: if using parallel computation, param_1_n_steps must be an integer multiple of the number of running
+        engines. If that is not the case, the code will reduce the number of steps to match that requirement, and
+        issue a warning
+
+        :param source_1: name of the source for the first parameter
+        :param param_1: name of the first parameter
+        :param param_1_minimum: lower bound for the range for the first parameter
+        :param param_1_maximum: upper bound for the range for the first parameter
+        :param param_1_n_steps: number of steps for the first parameter
+        :param source_2: name of the source for the second parameter
+        :param param_2: name of the second parameter
+        :param param_2_minimum: lower bound for the range for the second parameter
+        :param param_2_maximum: upper bound for the range for the second parameter
+        :param param_2_n_steps: number of steps for the second parameter
+        :param progress: (True or False) whether to display progress or not
+        :param log: by default the steps are taken linearly. With this optional parameter you can provide a tuple of
+        booleans which specify whether the steps are to be taken logarithmically. For example,
+        'log=(True,False)' specify that the steps for the first parameter are to be taken logarithmically, while they
+        are linear for the second parameter. If you are generating the profile for only one parameter, you can specify
+         'log=(True,)' or 'log=(False,)' (optional)
+        :return: a : an array corresponding to the steps for the first parameter
+                 b : an array corresponding to the steps for the second parameter (or None if stepping only in one
+                 direction)
+                 contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the
+                 corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to
+                 an array of size param_1_steps.
+        """
+
+        # Check that we have a valid fit
+
+        assert self._current_minimum is not None, "You have to run the .fit method before calling get_contours."
+
+        # Check minimal assumptions about the procedure
+
+        assert not (param_1 == param_2 and source_1 == source_2), "You have to specify two different parameters"
+
+        assert param_1_minimum < param_1_maximum, "Minimum larger than maximum for parameter 1"
+
+        if source_2 is not None:
+            assert param_2_minimum < param_2_maximum, "Minimum larger than maximum for parameter 2"
+
+        # Check whether we are parallelizing or not
+
+        if not threeML_config['parallel']['use-parallel']:
+
+            # Create a new minimizer to avoid messing up with the best
+            # fit
+
+            # Copy of the parameters
+
+            backup_free_parameters = copy.deepcopy(self.free_parameters)
+
+            minimizer = self.Minimizer(self.minus_log_like_profile,
+                                       self.free_parameters)
+
+            a, b, cc = minimizer.contours(source_1, param_1, param_1_minimum, param_1_maximum, param_1_n_steps,
+                                          source_2, param_2, param_2_minimum, param_2_maximum, param_2_n_steps,
+                                          progress, **options)
+
+            # Restore the original
+            self.free_parameters = backup_free_parameters
+
+            # Collapse the second dimension of the results if we are doing a 1d contour
+
+            if source_2 is None:
+                cc = cc[:, 0]
+
+        else:
+
+            # With parallel computation
+
+            # In order to distribute fairly the computation, the strategy is to parallelize the computation
+            # by assigning to the engines one "line" of the grid at the time
+
+            # Connect to the engines
+
+            client = ParallelClient(**options)
+
+            # Get the number of engines
+
+            n_engines = client.getNumberOfEngines()
+
+            # Check whether the number of threads is larger than the number of steps in the first direction
+
+            if n_engines > param_1_n_steps:
+                n_engines = int(param_1_n_steps)
+
+                custom_warnings.warn("The number of engines is larger than the number of steps. Using only %s engines."
+                                     % n_engines, ReducingNumberOfThreads)
+
+            # Check if the number of steps is divisible by the number
+            # of threads, otherwise issue a warning and make it so
+
+            if float(param_1_n_steps) % n_engines != 0:
+                # Set the number of steps to an integer multiple of the engines
+                # (note that // is the floor division, also called integer division)
+
+                param_1_n_steps = (param_1_n_steps // n_engines) * n_engines
+
+                custom_warnings.warn("Number of steps is not a multiple of the number of threads. Reducing steps to %s"
+                                     % param_1_n_steps, ReducingNumberOfSteps)
+
+            # Compute the number of splits, i.e., how many lines in the grid for each engine.
+            # (note that this is guaranteed to be an integer number after the previous checks)
+
+            p1_split_steps = param_1_n_steps // n_engines
+
+            # Prepare arrays for results
+
+            if source_2 is None:
+
+                # One array
+                pcc = numpy.zeros(param_1_n_steps)
+
+                pa = numpy.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
+                pb = None
+
+            else:
+
+                pcc = numpy.zeros((param_1_n_steps, param_2_n_steps))
+
+                # Prepare the two axes of the parameter space
+                pa = numpy.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
+                pb = numpy.linspace(param_2_minimum, param_2_maximum, param_2_n_steps)
+
+            # Define the parallel worker which will go through the computation
+
+            # NOTE: I only divide
+            # on the first parameter axis so that the different
+            # threads are more or less well mixed for points close and
+            # far from the best fit
+
+            def worker(start_index):
+
+                # Re-create the minimizer
+
+                # backup_freeParameters = copy.deepcopy(self.freeParameters)
+
+                this_minimizer = self.Minimizer(self.minus_log_like_profile,
+                                                self.free_parameters)
+
+                this_p1min = pa[start_index * p1_split_steps]
+                this_p1max = pa[(start_index + 1) * p1_split_steps - 1]
+
+                # print("From %s to %s" % (this_p1min, this_p1max))
+
+                aa, bb, ccc = this_minimizer.contours(source_1, param_1, this_p1min, this_p1max, p1_split_steps,
+                                                      source_2, param_2, param_2_minimum, param_2_maximum,
+                                                      param_2_n_steps,
+                                                      False, **options)
+
+                # self.freeParameters = backup_freeParameters
+
+                return ccc
+
+            # Get a balanced view of the engines
+
+            lview = client.load_balanced_view()
+            # lview.block = True
+
+            # Distribute the work among the engines and start it, but return immediately the control
+            # to the main thread
+
+            amr = lview.map_async(worker, range(n_engines))
+
+            # print progress
+
+            progress = ProgressBar(n_engines)
+
+            # This loop will check from time to time the status of the computation, which is happening on
+            # different threads, and update the progress bar
+
+            while not amr.ready():
+                # Check and report the status of the computation every second
+
+                time.sleep(1 + np.random.uniform(0, 1))
+
+                # if (debug):
+                #     stdouts = amr.stdout
+                #
+                #     # clear_output doesn't do much in terminal environments
+                #     for stdout, stderr in zip(amr.stdout, amr.stderr):
+                #         if stdout:
+                #             print "%s" % (stdout[-1000:])
+                #         if stderr:
+                #             print "%s" % (stderr[-1000:])
+                #     sys.stdout.flush()
+
+                progress.animate(amr.progress - 1)
+
+            # Always display 100% at the end
+
+            progress.animate(n_engines - 1)
+
+            # Add a new line after the progress bar
+            print("\n")
+
+            # print("Serial time: %1.f (speed-up: %.1f)" %(amr.serial_time, float(amr.serial_time) / amr.wall_time))
+
+            # Get the results. This will raise exceptions if something wrong happened during the computation.
+            # We don't catch it so that the user will be aware of that
+
+            res = amr.get()
+
+            # Now re-assemble the vector of results taking the different parts from the engines
+
+            for i in range(n_engines):
+
+                if source_2 is None:
+
+                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps] = res[i][:, 0]
+
+                else:
+
+                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps, :] = res[i]
+
+            # Give the results the names that the following code expect. These are kept separate for debugging
+            # purposes
+
+            cc = pcc
+            a = pa
+            b = pb
+
+        # Here we have done the computation, in parallel computation or not. Let's make the plot
+        # with the contour
+
+        if source_2 is not None:
+
+            # 2d contour
+
+            fig = self._plot_contours("%s of %s" % (param_1, source_1), a, "%s of %s" % (param_2, source_2), b, cc)
+
+        else:
+
+            # 1d contour (i.e., a profile)
+
+            fig = self._plot_profile("%s of %s" % (param_1, source_1), a, cc)
+
+        # Check if we found a better minimum. This shouldn't happen, but in case of very difficult fit
+        # it might.
+
+        if self._current_minimum - cc.min() > 0.1:
+
+            if source_2 is not None:
+
+                idx = cc.argmin()
+
+                aidx, bidx = numpy.unravel_index(idx, cc.shape)
+
+                print("\nFound a better minimum: %s with %s = %s and %s = %s. Run again your fit starting from here."
+                      % (cc.min(), param_1, a[aidx], param_2, b[bidx]))
+
+            else:
+
+                idx = cc.argmin()
+
+                print("Found a better minimum: %s with %s = %s. Run again your fit starting from here."
+                      % (cc.min(), param_1, a[idx]))
+
+        return a, b, cc, fig
+
+    def __pre_fit(self):
+
+        # This is a simple scan through the normalization parameters to guess
+        # a good starting point for them (if we start too far from the data,
+        # minuit and the other minimizers will have trouble)
+
+        # Get the list of free parameters
+        free_parameters = self._likelihood_model.getFreeParameters()
+
+        # Now isolate the normalizations, and use them as free parameters in the loglikelihood
+
+        self.free_parameters = collections.OrderedDict()
+
+        for (k, v) in free_parameters.iteritems():
+
+            if v.isNormalization():
+                self.free_parameters[k] = v
+
+        # Prepare the grid of values to scan
+
+        grids = []
+
+        for norm in self.free_parameters.values():
+            grids.append(numpy.logspace(math.log10(norm.minValue),
+                                        math.log10(norm.maxValue),
+                                        50))
+
+        if len(grids) == 0:
+            # No norm. Maybe they are fixed ?
+
+            return
+
+        # Compute the global likelihood at each point in the grid
+        global_grid = cartesian(grids)
+
+        log_likelihood_values = map(self.minus_log_like_profile, global_grid)
+
+        idx = numpy.argmin(log_likelihood_values)
+        # print("Minimum is %s with %s" %(logLikes[idx],globalGrid[idx]))
+
+        # Set the parameters to the best values found by the grid search
+
+        for i, norm in enumerate(self.free_parameters.values()):
+            norm.setValue(global_grid[idx][i])
+            norm.setDelta(norm.value / 40)
+
+    def minus_log_like_profile(self, *trial_values):
+        """
+        Return the minus log likelihood for a given set of trial values
+
+        :param trial_values: the trial values. Must be in the same number as the free parameters in the model
+        :return: minus log likelihood
+        """
+
+        # Keep track of the number of calls
+        self.ncalls += 1
+
+        # Tranform the trial values in a numpy array
+
+        trial_values = numpy.array(trial_values)
+
+        # Check that there are no nans within the trial values
+
+        # This is the fastest way to check for any nan
+        # (try other methods if you don't believe me)
+
+        if not numpy.isfinite(numpy.dot(trial_values, trial_values.T)):
+            # There are nans, something weird is going on. Return FIT_FAILED so the engine
+            # stays away from this (or fail)
+
+            return minimization.FIT_FAILED
+
+        # Assign the new values to the parameters
+
+        for i, (source_name, parameter_name) in enumerate(self.free_parameters.keys()):
+            self._likelihood_model.parameters[source_name][parameter_name].setValue(trial_values[i])
+
+        # Now profile out nuisance parameters and compute the new value
+        # for the likelihood
+
+        summed_log_likelihood = 0
+
+        for dataset in self._data_list.values():
+
+            try:
+
+                this_log_like = dataset.inner_fit()
+
+            except custom_exceptions.ModelAssertionViolation:
+
+                # This is a zone of the parameter space which is not allowed. Return
+                # a big number for the likelihood so that the fit engine will avoid it
+
+                custom_warnings.warn("Fitting engine in forbidden space: %s" % (trial_values,),
+                                     custom_exceptions.ForbiddenRegionOfParameterSpace)
+
+                return minimization.FIT_FAILED
+
+            except:
+
+                # Do not intercept other errors
+
+                raise
+
+            # if this_log_like > 0:
+
+            #    raise RuntimeError("LogLike cannot be larger than 0")
+
+            summed_log_likelihood += this_log_like
+
+            # dataset.getLogLike()
+
+        # Check that the global like is not NaN
+        # I use this weird check because it is not guaranteed that the plugins return np.nan,
+        # especially if they are written in something other than python
+
+        if "%s" % summed_log_likelihood == 'nan':
+            custom_warnings.warn("These parameters returned a logLike = Nan: %s" % (trial_values,),
+                                 NotANumberInLikelihood)
+
+            return minimization.FIT_FAILED
+
+        if self.verbose:
+            print("Trying with parameters %s, resulting in logL = %s" % (trial_values, summed_log_likelihood))
+
+        # Return the minus log likelihood
+
+        return summed_log_likelihood * (-1)
+
+    def _setup_minimizer(self, minimizer):
+
+        # At the moment we only have the Minuit minimizer
+
+        if minimizer.upper() == "MINUIT":
+
+            return minimization.MinuitMinimizer
+
+        else:
+
+            raise ValueError("Do not know minimizer %s" % minimizer)
+
+    def set_minimizer(self, minimizer):
+        """
+        Set the minimizer to be used, among those available.
+
+        NOTE: at the moment only MINUIT is supported
+
+        :param minimizer: the name of the new minimizer
+        :return: (none)
+        """
+
+        self.Minimizer = self._setup_minimizer(minimizer)
+
+    def _get_table_of_parameters(self, parameters):
+
+        data = []
+        max_length_of_name = 0
+
+        for k, v in parameters.iteritems():
+
+            current_name = "%s_of_%s" % (k[1], k[0])
+
+            data.append([current_name, "%s" % v.value, v.unit])
+
+            if len(v.name) > max_length_of_name:
+                max_length_of_name = len(current_name)
+
+        table = Table(rows=data,
+                      names=["Name", "Value", "Unit"],
+                      dtype=('S%i' % max_length_of_name, str, 'S15'))
+
+        return table
+
+    def _plot_profile(self, name1, a, cc):
+        """
+        Plot the likelihood profile.
+
+        :param name1: Name of parameter
+        :param a: grid for the parameter
+        :param cc: log. likelihood values for the parameter
+        :return: a figure containing the likelihood profile
+        """
+
+        # plot 1,2 and 3 sigma horizontal lines
+
+        sigmas = [1, 2, 3]
+
+        # Compute the corresponding probability. We do not
+        # pre-compute them because we will introduce at
+        # some point the possibility to personalize the
+        # levels
+
+        probabilities = []
+
+        for s in sigmas:
+            # One-sided probability
+            # It is one-sided because we consider one side at the time
+            # when computing the error
+
+            probabilities.append(1 - (scipy.stats.norm.sf(s) * 2))
+
+        # Compute the corresponding delta chisq. (chisq has 1 d.o.f.)
+
+        # noinspection PyTypeChecker
+        delta_chi2 = np.array(scipy.stats.chi2.ppf(probabilities, 1) / 2.0)  # two-sided!
+
+        fig = plt.figure()
+        sub = fig.add_subplot(111)
+
+        # Neutralize values of the loglike too high
+        # (fit failed)
+        idx = (cc == minimization.FIT_FAILED)
+
+        sub.plot(a[~idx], cc[~idx], lw=2)
+
+        # Now plot the failed fits as "x"
+
+        sub.plot(a[idx], [cc.min()] * a[idx].shape[0], 'x', c='red', markersize=2)
+
+        # Decide colors
+        colors = ['blue', 'cyan', 'red']
+
+        for s, d, c in zip(sigmas, delta_chi2, colors):
+            sub.axhline(self._current_minimum + d, linestyle='--',
+                        color=c, label=r'%s $\sigma$' % s, lw=2)
+
+        # Fix the axis to cover from the minimum to the 3 sigma line
+        sub.set_ylim([self._current_minimum - delta_chi2[0],
+                      self._current_minimum + (delta_chi2[-1] * 2)])
+
+        plt.legend(loc=0, frameon=True)
+
+        sub.set_xlabel(name1)
+        sub.set_ylabel("-log( likelihood )")
+
+        return fig
+
+    def _plot_contours(self, name1, a, name2, b, cc):
+        """
+        Make a contour plot.
+
+        :param name1: Name of the first parameter
+        :param a: Grid for the first parameter (dimension N)
+        :param name2: Name of the second parameter
+        :param b: grid for the second parameter (dimension M)
+        :param cc: N x M matrix containing the value of the log.likelihood for each point in the grid
+        :return: figure containing the contour
+        """
+
+        # Check that we have something to plot
+
+        delta = cc.max() - cc.min()
+
+        if delta < 0.5:
+            print("\n\nThe maximum difference in statistic is %s among all the points in the grid." % delta)
+            print(" This is too small. Enlarge the search region to display a contour plot")
+
+            return None
+
+        # plot 1,2 and 3 sigma contours
+        sigmas = [1, 2, 3]
+
+        # Compute the corresponding probability. We do not
+        # pre-compute them because we will introduce at
+        # some point the possibility to personalize the
+        # levels
+        probabilities = []
+
+        for s in sigmas:
+            # One-sided probability
+            # It is one-sided because we consider one side at the time
+            # when computing the error
+
+            probabilities.append(1 - (scipy.stats.norm.sf(s) * 2))
+
+        # Compute the corresponding delta chisq. (chisq has 2 d.o.f.)
+        delta_chi2 = scipy.stats.chi2.ppf(probabilities, 2) / 2.0  # two-sided
+
+        # Boundaries for the colormap
+        bounds = [self._current_minimum]
+        # noinspection PyTypeChecker
+        bounds.extend(self._current_minimum + delta_chi2)
+        bounds.append(cc.max())
+
+        # Define the color palette
+        palette = cm.Pastel1
+        palette.set_over('white')
+        palette.set_under('white')
+        palette.set_bad('white')
+
+        fig = plt.figure()
+        sub = fig.add_subplot(111)
+
+        # Show the contours with square axis
+        im = sub.imshow(cc,
+                        cmap=palette,
+                        extent=[b.min(), b.max(), a.min(), a.max()],
+                        aspect=(b.max() - b.min()) / (a.max() - a.min()),
+                        origin='lower',
+                        norm=BoundaryNorm(bounds, 256),
+                        interpolation='bicubic',
+                        vmax=(self._current_minimum + delta_chi2).max())
+
+        # Plot the color bar with the sigmas
+        cb = fig.colorbar(im, boundaries=bounds[:-1])
+        lbounds = [0]
+        lbounds.extend(bounds[:-1])
+        cb.set_ticks(lbounds)
+        ll = ['']
+        ll.extend(map(lambda x: r'%i $\sigma$' % x, sigmas))
+        cb.set_ticklabels(ll)
+
+        # Align the labels to the end of the color level
+        for t in cb.ax.get_yticklabels():
+            t.set_verticalalignment('baseline')
+
+        # Draw the line contours
+        sub.contour(b, a, cc, self._current_minimum + delta_chi2)
+
+        # Set the axes labels
+
+        sub.set_xlabel(name2)
+        sub.set_ylabel(name1)
+
+        return fig

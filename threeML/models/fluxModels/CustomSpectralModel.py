@@ -151,7 +151,7 @@ class CustomSpectralModel( SpectralModel ):
                             
                             raise RuntimeError("Could not understand expression %s" %pexpr)
                 
-                self.parameters[p].setBounds(minValue,maxValue)
+                self.parameters[p].set_bounds(minValue,maxValue)
             
             #If the boundsExpr is not empty at this point, it means that there is a bounds
             #specification for a parameter which does not exists...

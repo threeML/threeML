@@ -14,7 +14,13 @@ def my_format_warning(message, category, *args):
 
 custom_warnings.formatwarning = my_format_warning
 
+
 class ModelAssertionViolation(Exception):
+
+    pass
+
+
+class ForbiddenRegionOfParameterSpace(Warning):
 
     pass
 
@@ -23,6 +29,12 @@ class CppInterfaceNotAvailable(Warning):
 
     pass
 
+
 class CannotImportPlugin(Warning):
+
+    pass
+
+
+class LikelihoodIsInfinite(Warning):
 
     pass

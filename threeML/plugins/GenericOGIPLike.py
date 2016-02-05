@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import os
 
 from threeML.plugins.gammaln import logfactorial
-from threeML.io import fileUtils
+from threeML.io import file_utils
 
 import numpy
 from threeML.plugins.ogip import OGIPPHA
@@ -38,9 +38,9 @@ class GenericOGIPLike(PluginPrototype):
         #The file could contain a {#} specification, like spectrum.pha{3},
         #which indicate the 3rd spectrum in the spectrum.pha file
         
-        inputFiles[i] = fileUtils.sanitizeFilename( inputFiles[i].split("{")[0] )
+        inputFiles[i] = file_utils.sanitizeFilename( inputFiles[i].split("{")[0] )
         
-        if not fileUtils.fileExistingAndReadable( inputFiles[i] ):
+        if not file_utils.fileExistingAndReadable( inputFiles[i] ):
             
             raise IOError("File %s does not exist or is not readable" % ( inputFiles[i] ) )
     
@@ -49,9 +49,9 @@ class GenericOGIPLike(PluginPrototype):
     #Check the arf, if provided
     if arffile is not None:
         
-        arffile = fileUtils.sanitizeFilename( arffile.split("{")[0] )
+        arffile = file_utils.sanitizeFilename( arffile.split("{")[0] )
         
-        if not fileUtils.fileExistingAndReadable( arffile ):
+        if not file_utils.fileExistingAndReadable( arffile ):
             
             raise IOError("File %s does not exist or is not readable" % ( arf ) )
     
@@ -118,7 +118,7 @@ class GenericOGIPLike(PluginPrototype):
   
   def useIntercalibrationConst(self,factorLowBound=0.9,factorHiBound=1.1):
     self.nuisanceParameters['InterCalib'].free()
-    self.nuisanceParameters['InterCalib'].setBounds(factorLowBound,factorHiBound)
+    self.nuisanceParameters['InterCalib'].set_bounds(factorLowBound,factorHiBound)
     
     #Check that the parameter is within the provided bounds
     value                     = self.nuisanceParameters['InterCalib'].value
@@ -272,7 +272,7 @@ class GenericOGIPLike(PluginPrototype):
       
       parameters              = collections.OrderedDict()
       parameters[ (self.name, 'InterCalib') ]      = self.nuisanceParameters['InterCalib']
-      minimizer               = minimization.iMinuitMinimizer(fitfun, parameters)
+      minimizer               = minimization.MinuitMinimizer(fitfun, parameters)
       bestFit, mlogLmin       = minimizer.minimize()
       
       return mlogLmin * (-1)

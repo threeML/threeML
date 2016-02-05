@@ -1,7 +1,7 @@
 import collections
 from Parameter import Parameter
 
-from threeML.io.Table import Table
+from threeML.io.table import Table
 
 from IPython.display import display, Latex, HTML
 

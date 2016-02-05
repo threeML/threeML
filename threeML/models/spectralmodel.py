@@ -10,7 +10,7 @@ import numexpr
 import abc
 import matplotlib.pyplot as plt
 
-from threeML.io.Table import Table
+from threeML.io.table import Table
 
 
 class ModelValidate(object):

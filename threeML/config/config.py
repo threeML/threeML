@@ -19,7 +19,7 @@ class Config( object ):
         possiblePaths.append( os.path.join( os.path.expanduser( '~' ), '.threeML'  ) )
         
         # Second possible path is the config subdir under the package path
-        # (which is where this Config.py file is)
+        # (which is where this config.py file is)
 
         distribution = pkg_resources.get_distribution("threeML")
 

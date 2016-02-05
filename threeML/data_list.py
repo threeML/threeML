@@ -10,18 +10,24 @@ class DataList(object):
     """
 
     def __init__(self, *data_sets):
+        """
+        Container for data sets (i.e., plugin instances)
 
-        self._innerDict = collections.OrderedDict()
+        :param data_sets: as many data sets as needed
+        :return: (none)
+        """
+
+        self._inner_dictionary = collections.OrderedDict()
 
         for d in data_sets:
 
-            if d.getName() in self._innerDict.keys():
+            if d.getName() in self._inner_dictionary.keys():
 
                 raise RuntimeError("You have to use unique names for data sets. %s already exists." % (d.getName()))
 
             else:
 
-                self._innerDict[d.getName()] = d
+                self._inner_dictionary[d.getName()] = d
 
     def __setitem__(self, key, value):
 
@@ -32,19 +38,19 @@ class DataList(object):
 
         else:
 
-            self._innerDict[key] = value
+            self._inner_dictionary[key] = value
 
     def __getitem__(self, key):
 
-        return self._innerDict[key]
+        return self._inner_dictionary[key]
 
     def keys(self):
 
-        return self._innerDict.keys()
+        return self._inner_dictionary.keys()
 
     def values(self):
 
-        return self._innerDict.values()
+        return self._inner_dictionary.values()
 
 
 pass

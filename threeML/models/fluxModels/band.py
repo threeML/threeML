@@ -1,6 +1,6 @@
 from threeML.models.spectralmodel import SpectralModel
 from threeML.models.Parameter import Parameter
-from threeML.exceptions import CustomExceptions
+from threeML.exceptions import custom_exceptions
 
 import numpy
 import math
@@ -48,7 +48,7 @@ class Band(SpectralModel):
         K                        = self.parameters['K'].value
         
         if(alpha < beta):
-          raise CustomExceptions.ModelAssertionViolation("Alpha cannot be less than beta")
+          raise custom_exceptions.ModelAssertionViolation("Alpha cannot be less than beta")
         
         out                      = numpy.zeros(energies.flatten().shape[0])
         idx                      = (energies < (alpha-beta)*E0)

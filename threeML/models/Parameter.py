@@ -1,4 +1,4 @@
-from threeML.bayesian import Priors
+from threeML.bayesian import priors
 
 import numpy
 
@@ -36,9 +36,9 @@ class Parameter(object):
     #Default prior is a uniform prior
     if(self.normalization):
       #This is a scale parameter
-      self.setPrior(Priors.LogUniformPrior(self.minValue,self.maxValue))
+      self.setPrior(priors.LogUniformPrior(self.minValue,self.maxValue))
     else:
-      self.setPrior(Priors.UniformPrior(self.minValue,self.maxValue))
+      self.setPrior(priors.UniformPrior(self.minValue,self.maxValue))
   pass
   
   def setCallback(self,callback):
@@ -123,7 +123,7 @@ class Parameter(object):
   def setBounds(self,minValue,maxValue):
     self.minValue             = minValue
     self.maxValue             = maxValue
-    self.prior.setBounds(minValue,maxValue)
+    self.prior.set_bounds(minValue,maxValue)
   pass
   
   def setDelta(self,delta):
@@ -193,9 +193,9 @@ class SpatialParameter(object):
         #Default prior is a uniform prior
         if(self.normalization):
         #This is a scale parameter
-            self.setPrior(Priors.LogUniformPrior(self.minValue,self.maxValue))
+            self.setPrior(priors.LogUniformPrior(self.minValue,self.maxValue))
         else:
-            self.setPrior(Priors.UniformPrior(self.minValue,self.maxValue))
+            self.setPrior(priors.UniformPrior(self.minValue,self.maxValue))
     pass
                 
     def setCallback(self,callback):
@@ -234,7 +234,7 @@ class SpatialParameter(object):
     def setBounds(self,minValue,maxValue):
         self.minValue             = minValue
         self.maxValue             = maxValue
-        self.prior.setBounds(minValue,maxValue)
+        self.prior.set_bounds(minValue,maxValue)
     pass
             
     def setDelta(self,delta):

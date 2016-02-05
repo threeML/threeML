@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import os
 
 from threeML.plugins.gammaln import logfactorial
-from threeML.io import fileUtils
+from threeML.io import file_utils
 from threeML.plugins.GenericOGIPLike import GenericOGIPLike
 
 import numpy

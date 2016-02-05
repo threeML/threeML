@@ -51,8 +51,8 @@ from .models.PointSource import PointSource
 from .models.ExtendedSource import ExtendedSource
 from .models.LikelihoodModel import LikelihoodModel
 from .models.spectralmodel import *
-from .exceptions import CustomExceptions
-from .exceptions.CustomExceptions import custom_warnings
+from .exceptions import custom_exceptions
+from .exceptions.custom_exceptions import custom_warnings
 from .plugin_prototype import PluginPrototype
 
 # Import the builtinModels
@@ -68,15 +68,15 @@ try:
 except ImportError:
 
     custom_warnings.warn("The C/C++ wrapper is not available. You will not be able to use plugins which require it.",
-                         CustomExceptions.CppInterfaceNotAvailable)
+                         custom_exceptions.CppInterfaceNotAvailable)
 
 # Import the classic Maximum Likelihood Estimation package
 
-from .classicMLE.jointLikelihood import JointLikelihood
+from .classicMLE.joint_likelihood import JointLikelihood
 
 # Import the DataList class
 
-from dataList import DataList
+from data_list import DataList
 
 
 # Find the directory containing 3ML
@@ -120,7 +120,7 @@ for i, plug in enumerate(found_plugins):
     except ImportError:
 
         custom_warnings.warn("Could not import plugin %s. Do you have the relative instrument software installed "
-                             "and configured?" % plug, CustomExceptions.CannotImportPlugin)
+                             "and configured?" % plug, custom_exceptions.CannotImportPlugin)
         continue
 
     # Get the classes within this module
@@ -151,7 +151,7 @@ def get_available_plugins():
 
     print("\n".join(msgs))
 
-from .parallel.ParallelClient import parallel_computation
+from .parallel.parallel_client import parallel_computation
 
 # Now read the configuration and make it available as threeML_config
-from .config.Config import threeML_config
+from .config.config import threeML_config
