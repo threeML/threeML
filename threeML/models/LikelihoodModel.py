@@ -136,6 +136,6 @@ class LikelihoodModel(object):
   
   def isInsideAnyExtendedSource( j2000_ra,  j2000_dec):
     
-    return true
+    return True
   
     

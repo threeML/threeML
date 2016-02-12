@@ -197,7 +197,7 @@ class SpectralModel(object):
             else:
                 ff                   = "fixed"
         
-            table.add_row ([v.name,v.value,v.minValue,v.maxValue,v.delta,ff,v.unit,v.prior.get_name()])
+            table.add_row ([v.name,v.value,v.minValue,v.maxValue,v.delta,ff,v.unit,v.prior.name])
         
         display(table)
     

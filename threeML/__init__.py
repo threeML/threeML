@@ -61,8 +61,11 @@ from .models.fluxModels import *
 
 try:
 
+    # noinspection PyUnresolvedReferences
     from pyModelInterface import pyToCppModelInterface
+    # noinspection PyUnresolvedReferences
     from pyModelInterface import FakePlugin
+    # noinspection PyUnresolvedReferences
     from pyModelInterface import FixedPointSource
 
 except ImportError:
@@ -73,6 +76,10 @@ except ImportError:
 # Import the classic Maximum Likelihood Estimation package
 
 from .classicMLE.joint_likelihood import JointLikelihood
+
+# Import the Bayesian analysis
+from .bayesian.bayesian_analysis import BayesianAnalysis
+from .bayesian.priors import LogUniformPrior, UniformPrior, GaussianPrior
 
 # Import the DataList class
 
@@ -107,7 +114,7 @@ found_plugins = glob.glob(os.path.join(plugins_dir, "*.py"))
 
 found_plugins = filter(lambda x: x.find("__init__") < 0, found_plugins)
 
-msgs = []
+_available_plugins = {}
 
 for i, plug in enumerate(found_plugins):
 
@@ -137,8 +144,7 @@ for i, plug in enumerate(found_plugins):
 
         else:
 
-            string = "%s for %s" % (cls.__name__, thisPlugin.__instrument_name)
-            msgs.append("* %-60s available" % string)
+            _available_plugins[thisPlugin.__instrument_name] = cls.__name__
 
             # import it again in the uppermost namespace
 
@@ -146,10 +152,33 @@ for i, plug in enumerate(found_plugins):
 
 
 def get_available_plugins():
+    """
+    Print a list of available plugins
 
-    print("Plugins:\n")
+    :return:
+    """
+    print("Available plugins:\n")
 
-    print("\n".join(msgs))
+    for instrument, class_name in _available_plugins.iteritems():
+
+        print("%s for %s" % (class_name, instrument))
+
+
+def is_plugin_available(plugin):
+    """
+    Test whether the plugin for the provided instrument is available
+
+    :param plugin: the name of the plugin class
+    :return: True or False
+    """
+
+    if plugin in _available_plugins.values():
+
+        return True
+
+    else:
+
+        return False
 
 from .parallel.parallel_client import parallel_computation
 

@@ -20,7 +20,7 @@ class Prior(object):
         return self._prior_name
 
     # This is used only by children
-    def __set_name(self, new_name):
+    def _set_name(self, new_name):
         self._prior_name = new_name
 
     @abc.abstractmethod
@@ -145,7 +145,7 @@ class LogUniformPrior(UniformPrior):
 
         # Update the name
 
-        self.__set_name("LogUniformPrior")
+        self._set_name("LogUniformPrior")
 
     # Override the __call__ method of the UniformPrior class
 

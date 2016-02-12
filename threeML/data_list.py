@@ -21,13 +21,13 @@ class DataList(object):
 
         for d in data_sets:
 
-            if d.getName() in self._inner_dictionary.keys():
+            if d.get_name() in self._inner_dictionary.keys():
 
-                raise RuntimeError("You have to use unique names for data sets. %s already exists." % (d.getName()))
+                raise RuntimeError("You have to use unique names for data sets. %s already exists." % (d.get_name()))
 
             else:
 
-                self._inner_dictionary[d.getName()] = d
+                self._inner_dictionary[d.get_name()] = d
 
     def __setitem__(self, key, value):
 

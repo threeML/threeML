@@ -36,15 +36,18 @@ class NotANumberInLikelihood(Warning):
 
 
 class JointLikelihood(object):
-    def __init__(self, likelihood_model, data_list, **kwargs):
+    def __init__(self, likelihood_model, data_list, verbose=False):
+        """
+        Implement a joint likelihood analysis.
+
+        :param likelihood_model: the model for the likelihood analysis
+        :param data_list: the list of data sets (plugin instances) to be used in this analysis
+        :param verbose: (True or False) print every step in the -log likelihood minimization
+        :return:
+        """
 
         # Process optional keyword parameters
-        self.verbose = False
-
-        for k, v in kwargs.iteritems():
-
-            if k.lower() == "verbose":
-                self.verbose = bool(kwargs["verbose"])
+        self.verbose = verbose
 
         self._likelihood_model = likelihood_model
 
@@ -108,9 +111,10 @@ class JointLikelihood(object):
     def fit(self, pre_fit=False):
         """
         Perform a fit of the current likelihood model on the datasets
+
         :param pre_fit: (True or False) If True, perform a pre-fit with only normalizations free (experimental)
         :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum
-        for each dataset and the total one.
+                 for each dataset and the total one.
         """
 
         # Pre-fit: will fit the normalizations so that they are not too far
@@ -209,6 +213,7 @@ class JointLikelihood(object):
     def get_errors(self):
         """
         Compute the errors on the parameters using an accurate algorithm.
+
         :return: a dictionary containing the asymmetric errors for each parameter.
         """
 
@@ -243,16 +248,15 @@ class JointLikelihood(object):
         :param param_2_n_steps: number of steps for the second parameter
         :param progress: (True or False) whether to display progress or not
         :param log: by default the steps are taken linearly. With this optional parameter you can provide a tuple of
-        booleans which specify whether the steps are to be taken logarithmically. For example,
-        'log=(True,False)' specify that the steps for the first parameter are to be taken logarithmically, while they
-        are linear for the second parameter. If you are generating the profile for only one parameter, you can specify
-         'log=(True,)' or 'log=(False,)' (optional)
-        :return: a : an array corresponding to the steps for the first parameter
-                 b : an array corresponding to the steps for the second parameter (or None if stepping only in one
-                 direction)
-                 contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the
-                 corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to
-                 an array of size param_1_steps.
+                    booleans which specify whether the steps are to be taken logarithmically. For example,
+                    'log=(True,False)' specify that the steps for the first parameter are to be taken logarithmically,
+                    while they are linear for the second parameter. If you are generating the profile for only one
+                    parameter, you can specify 'log=(True,)' or 'log=(False,)' (optional)
+        :return: a tuple containing an array corresponding to the steps for the first parameter, an array corresponding
+                 to the steps for the second parameter (or None if stepping only in one direction), a matrix of size
+                 param_1_steps x param_2_steps containing the value of the function at the corresponding points in the
+                 grid. If param_2_steps is None (only one parameter), then this reduces to an array of
+                 size param_1_steps.
         """
 
         # Check that we have a valid fit
