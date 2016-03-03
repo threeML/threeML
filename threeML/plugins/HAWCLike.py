@@ -346,9 +346,9 @@ class HAWCLike( PluginPrototype ):
             
         return figs
     
-    def writeModelMap(self, fileName):
+    def writeModelMap(self, fileName, poisson=False):
         
-        self.theLikeHAWC.WriteModelMap( fileName )
+        self.theLikeHAWC.WriteModelMap( fileName, poisson )
     
     def writeResidualMap(self, fileName):
         
