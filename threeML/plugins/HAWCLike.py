@@ -15,6 +15,8 @@ from matplotlib import gridspec
 
 import numpy
 
+import ROOT
+
 defaultMinChannel = 0
 defaultMaxChannel = 9
 
@@ -22,12 +24,29 @@ __instrument_name = "HAWC"
 
 class HAWCLike( PluginPrototype ):
     
-    def __init__( self, name, maptree, response, ntransits, **kwargs ):
+    def __init__( self, name, maptree, response, ntransits = None, **kwargs ):
         
         #This controls if the likeHAWC class should load the entire
         #map or just a small disc around a source (faster).
         #Default is the latter, which is way faster. LIFF will decide
         #autonomously which ROI to use depending on the source model
+        if ntransits is None:
+        
+            mapfile = ROOT.TFile(maptree)
+        
+            file = mapfile.Get("BinInfo")
+            
+            for event in mapfile.BinInfo:
+              
+                print event.totalDuration
+  
+                break
+            
+            self.ntransits = mapfile.BinInfo.totalDuration / 24
+
+        else:
+
+            self.ntransits = ntransits
         
         self.fullsky = False
         
@@ -42,10 +61,7 @@ class HAWCLike( PluginPrototype ):
         self.maptree = os.path.abspath( sanitizeFilename( maptree ) )
         
         self.response = os.path.abspath( sanitizeFilename( response ) )
-        
-        #
-        self.ntransits = ntransits
-        
+
         #Check that they exists and can be read
         
         if not fileExistingAndReadable( self.maptree ):
@@ -77,7 +93,62 @@ class HAWCLike( PluginPrototype ):
         #Further setup
         
         self.__setup()
-    
+###
+#    def __init__( self, name, maptree, response, **kwargs ):
+#        
+#        #This is same as above except it finds the ntransit on its own.
+#        
+#        self.fullsky = False
+#        
+#        if 'fullsky' in kwargs.keys():
+#            
+#            self.fullsky = bool( kwargs['fullsky'] )
+#        
+#        self.name = str( name )
+#        
+#        #Sanitize files in input (expand variables and so on)
+#        
+#        self.maptree = os.path.abspath( sanitizeFilename( maptree ) )
+#        
+#        self.response = os.path.abspath( sanitizeFilename( response ) )
+#        
+#        #
+#        file = maptree.Get("BinInfo")
+#        
+#        self.ntransits = maptree.BinInfo.totalDuration / 24
+#        
+#        #Check that they exists and can be read
+#        
+#        if not fileExistingAndReadable( self.maptree ):
+#        
+#            raise IOError("MapTree %s does not exist or is not readable" % maptree)
+#    
+#        if not fileExistingAndReadable( self.response ):
+#        
+#            raise IOError("Response %s does not exist or is not readable" % response)
+#        
+#        #Post-pone the creation of the LIFF instance to when
+#        #we have the likelihood model
+#        
+#        self.instanced = False
+#        
+#        #Default value for minChannel and maxChannel
+#        
+#        self.minChannel = int( defaultMinChannel )
+#        self.maxChannel = int( defaultMaxChannel )
+#        
+#        #By default the fit of the CommonNorm is deactivated
+#        
+#        self.deactivateCommonNorm()
+#        
+#        #This is to keep track of whether the user defined a ROI or not
+#        
+#        self.roi_ra = None
+#        
+#        #Further setup
+#        
+#        self.__setup()
+###
     def setROI(self, ra, dec, radius, fixedROI=False):
         
         self.roi_ra = ra
