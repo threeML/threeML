@@ -22,7 +22,7 @@ __instrument_name = "HAWC"
 
 class HAWCLike( PluginPrototype ):
     
-    def __init__( self, name, maptree, response, ntransits, **kwargs ):
+    def __init__( self, name, maptree, response, ntransits = None, **kwargs ):
         
         #This controls if the likeHAWC class should load the entire
         #map or just a small disc around a source (faster).
@@ -42,10 +42,10 @@ class HAWCLike( PluginPrototype ):
         self.maptree = os.path.abspath( sanitizeFilename( maptree ) )
         
         self.response = os.path.abspath( sanitizeFilename( response ) )
-        
+
         #
         self.ntransits = ntransits
-        
+
         #Check that they exists and can be read
         
         if not fileExistingAndReadable( self.maptree ):
@@ -77,7 +77,7 @@ class HAWCLike( PluginPrototype ):
         #Further setup
         
         self.__setup()
-    
+
     def setROI(self, ra, dec, radius, fixedROI=False):
         
         self.roi_ra = ra
@@ -176,13 +176,22 @@ class HAWCLike( PluginPrototype ):
             #Load all sky
             #(ROI will be defined later)
             
-            self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree, 
-                                                 self.ntransits,
-                                                 self.response,
-                                                 self.pymodel,
-                                                 self.minChannel,
-                                                 self.maxChannel,
-                                                 self.fullsky)
+            if self.ntransits is None:
+                self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree,
+                                                     self.response,
+                                                     self.pymodel,
+                                                     self.minChannel,
+                                                     self.maxChannel,
+                                                     self.fullsky)
+            
+            if self.ntransits is not None:
+                self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree,
+                                                     self.ntransits,
+                                                     self.response,
+                                                     self.pymodel,
+                                                     self.minChannel,
+                                                     self.maxChannel,
+                                                     self.fullsky)
             
             if self.roi_ra is None and self.fullsky:
                 
