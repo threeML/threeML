@@ -184,7 +184,7 @@ class HAWCLike( PluginPrototype ):
                                                      self.maxChannel,
                                                      self.fullsky)
             
-            if self.ntransits is not None:
+            else:
                 self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree,
                                                      self.ntransits,
                                                      self.response,
