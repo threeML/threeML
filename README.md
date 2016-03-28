@@ -34,7 +34,7 @@ If you are interested in HAWC analysis, you need C/C++ support and of course you
 Then build 3ML with boost:
 
 ```
-> python setup.py build --with-boost
+> python setup.py install --with-boost
 ```
 At the end you should see a message like this:
 
