@@ -33,8 +33,9 @@ class LogParabola(SpectralModel):
           piv                     = self.parameters['Epiv'].value
           gamma                = self.parameters['gamma'].value
           beta                    = self.parameters['beta'].value
+          norm                     = pow(10, self.parameters['logA'].value)
           
-          return pow(10, self.parameters['logA'].value) * numpy.power(energy/piv,gamma+(beta*numpy.log10(energy/piv)))
+          return numexpr.evaluate("norm * (energy/piv)**(gamma+beta*log10(energy/piv))")
   
   
 
