@@ -18,7 +18,7 @@ import uncertainties
 import re
 
 #Special constants
-FIT_FAILED = 1e12
+FIT_FAILED = -1e12
 
 class Minimizer(object):
   def __init__(self,function,parameters,ftol=1e-3,verbosity=1):

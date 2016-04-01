@@ -72,20 +72,23 @@ if '--with-boost' in copy_args:
 
         Extension("threeML.pyModelInterface",
 
-                  ["threeML/models/pyToCppModelInterface.cxx",
-                   "threeML/models/FixedPointSource.cxx",
-                   "threeML/models/ModelInterface_boost.cxx"],
+                  ["threeML/c_interface/pyToCppModelInterface.cxx",
+                   #"threeML/models/FixedPointSource.cxx",
+                   #"threeML/models/ModelInterface_boost.cxx"
+                  ],
 
                   libraries=["boost_python"],
 
                   include_dirs=include_dirs,
 
-                  library_dirs=library_dirs)]
+                  library_dirs=library_dirs,
+                  extra_compile_args = []) ]
 
-    headers_configuration = ["threeML/models/ModelInterface.h",
-                             "threeML/models/pyToCppModelInterface.h",
-                             "threeML/models/FakePlugin.h",
-                             "threeML/models/FixedPointSource.h"]
+    headers_configuration = [#"threeML/models/ModelInterface.h",
+                             "threeML/c_interface/pyToCppModelInterface.h",
+                             #"threeML/models/FakePlugin.h",
+                             #"threeML/models/FixedPointSource.h"
+                             ]
 
 
 else:
@@ -147,7 +150,7 @@ setup(
     install_requires=[
         'numpy >= 1.6',
         'scipy',
-        'numexpr',
+        #'numexpr',
         'emcee',
         'astropy==1.0.3',
         'matplotlib',

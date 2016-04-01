@@ -149,9 +149,9 @@ class JointLikelihood(object):
             raise
           
                       
-          if thisLogLike > 0:
+          #if thisLogLike > 0:
              
-              raise RuntimeError("LogLike cannot be larger than 0")
+          #    raise RuntimeError("LogLike cannot be larger than 0")
           
           globalLogLike         += thisLogLike
           

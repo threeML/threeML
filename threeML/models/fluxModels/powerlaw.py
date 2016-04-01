@@ -3,7 +3,7 @@ from threeML.models.Parameter import Parameter
 import math
 import scipy.integrate
 import operator
-import numexpr
+#import numexpr
 import numpy
 
 
@@ -45,7 +45,7 @@ class PowerLaw(SpectralModel):
         norm                     = pow(10, self.parameters['logA'].value)
         gamma                    = self.parameters['gamma'].value
         
-        return numpy.maximum( numexpr.evaluate("norm * (energy/piv)**gamma"), 1e-100)
+        return numpy.maximum( norm * (energy/piv)**gamma, 1e-100)
    
   
     def photonFlux(self,e1,e2):

@@ -62,8 +62,8 @@ from .models.fluxModels import *
 try:
 
     from pyModelInterface import pyToCppModelInterface
-    from pyModelInterface import FakePlugin
-    from pyModelInterface import FixedPointSource
+    #from pyModelInterface import FakePlugin
+    #from pyModelInterface import FixedPointSource
 
 except ImportError:
 

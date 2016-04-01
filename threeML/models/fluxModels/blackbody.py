@@ -3,7 +3,6 @@ from threeML.models.Parameter import Parameter
 import math
 import scipy.integrate
 import operator
-import numexpr
 
 import collections
 
@@ -34,7 +33,7 @@ class Blackbody(SpectralModel):
         A                        = self.parameters['A'].value
         kT                       = self.parameters['kT'].value
         
-        return numpy.maximum( numexpr.evaluate("A*energyx**2.*power( exp(energy/kT) -1., -1."), 1e-30)
+        return numpy.maximum( A*energyx**2.*power( exp(energy/kT) -1., -1.), 1e-30)
    
   
     def photonFlux(self,e1,e2):

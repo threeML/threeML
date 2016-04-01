@@ -4,7 +4,6 @@ import numpy
 import math
 import scipy.integrate
 import operator
-import numexpr
 import collections
 
 

@@ -6,7 +6,7 @@ from IPython.display import display, Latex, HTML
 import math
 import scipy.integrate
 import operator
-import numexpr
+#import numexpr
 import abc
 import matplotlib.pyplot as plt
 

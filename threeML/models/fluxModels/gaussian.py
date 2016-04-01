@@ -4,7 +4,6 @@ import math
 import scipy.integrate
 import scipy.special
 import operator
-import numexpr
 import numpy
 
 
@@ -47,7 +46,7 @@ class Gaussian(SpectralModel):
         sigma                      = self.parameters['sigma'].value
         mu                         = self.parameters['mu'].value
         A                          = self.parameters['A'].value
-        return numpy.maximum( numexpr.evaluate("A * exp(-0.5 * (energy-mu)/(sigma) * (energy-mu)/(sigma)   )"), 1e-30)
+        return numpy.maximum( A * exp(-0.5 * (energy-mu)/(sigma) * (energy-mu)/(sigma)   ), 1e-30)
    
   
     def photonFlux(self,e1,e2):
