@@ -230,13 +230,13 @@ class FermiLATLike(pluginPrototype):
     if( self.kind == "BINNED" ):
       self.like                  = BinnedAnalysis.BinnedAnalysis( self.obs,
                                                                 xmlFile,
-					                      optimizer='DRMNFB')
+					                      optimizer='NEWMINUIT')
 
     else:
       
       self.like                  = UnbinnedAnalysis.UnbinnedAnalysis( self.obs,
                                                                 xmlFile,
-					                      optimizer='DRMNFB')
+					                      optimizer='NEWMINUIT')
       
     
     self.likelihoodModel       = likelihoodModel

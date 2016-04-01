@@ -3,7 +3,6 @@ from threeML.models.Parameter import Parameter
 import math
 import scipy.integrate
 import operator
-import numexpr
 import numpy
 
 
@@ -40,7 +39,7 @@ class ExponentialCutoff(SpectralModel):
         self.ncalls             += 1
         eFold                      = pow(10, self.parameters['logEfold'].value)
         A                          = self.parameters['A'].value
-        return numpy.maximum( numexpr.evaluate("exp(-energy/eFold)"), 1e-30)
+        return numpy.maximum( exp(-energy/eFold), 1e-30)
    
   
     def photonFlux(self,e1,e2):
