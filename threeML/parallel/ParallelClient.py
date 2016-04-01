@@ -4,8 +4,15 @@ import os
 
 from threeML.config.Config import threeML_config
 
-from IPython.parallel import Client
+try:
+    
+    from IPython.parallel import Client
 
+except:
+    
+    from ipyparallel import Client
+    
+    
 from contextlib import contextmanager
 
 @contextmanager

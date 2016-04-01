@@ -1,4 +1,4 @@
-from threeML.pluginPrototype import pluginPrototype
+from threeML.plugin_prototype import PluginPrototype
 
 from threeML.models.Parameter import Parameter
 
@@ -20,9 +20,9 @@ defaultMaxChannel = 9
 
 __instrument_name = "HAWC"
 
-class HAWCLike( pluginPrototype ):
+class HAWCLike( PluginPrototype ):
     
-    def __init__( self, name, maptree, response, ntransits, **kwargs ):
+    def __init__( self, name, maptree, response, ntransits = None, **kwargs ):
         
         #This controls if the likeHAWC class should load the entire
         #map or just a small disc around a source (faster).
@@ -42,10 +42,10 @@ class HAWCLike( pluginPrototype ):
         self.maptree = os.path.abspath( sanitizeFilename( maptree ) )
         
         self.response = os.path.abspath( sanitizeFilename( response ) )
-        
+
         #
         self.ntransits = ntransits
-        
+
         #Check that they exists and can be read
         
         if not fileExistingAndReadable( self.maptree ):
@@ -77,13 +77,15 @@ class HAWCLike( pluginPrototype ):
         #Further setup
         
         self.__setup()
-    
-    def setROI(self, ra, dec, radius):
+
+    def setROI(self, ra, dec, radius, fixedROI=False):
         
         self.roi_ra = ra
         self.roi_dec = dec
         
         self.roi_radius = radius
+
+        self.fixedROI = fixedROI
     
     def __setup(self):
         
@@ -139,7 +141,7 @@ class HAWCLike( pluginPrototype ):
         
         if state['roi_ra'] is not None:
         
-            self.setROI( state['roi_ra'], state['roi_dec'], state['roi_radius'] )
+            self.setROI( state['roi_ra'], state['roi_dec'], state['roi_radius'], state['fixedROI'] )
         
         self.setActiveMeasurements( state['minChannel'], state['maxChannel'] )
         
@@ -174,13 +176,22 @@ class HAWCLike( pluginPrototype ):
             #Load all sky
             #(ROI will be defined later)
             
-            self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree, 
-                                                 self.ntransits,
-                                                 self.response,
-                                                 self.pymodel,
-                                                 self.minChannel,
-                                                 self.maxChannel,
-                                                 self.fullsky)
+            if self.ntransits is None:
+                self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree,
+                                                     self.response,
+                                                     self.pymodel,
+                                                     self.minChannel,
+                                                     self.maxChannel,
+                                                     self.fullsky)
+            
+            else:
+                self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree,
+                                                     self.ntransits,
+                                                     self.response,
+                                                     self.pymodel,
+                                                     self.minChannel,
+                                                     self.maxChannel,
+                                                     self.fullsky)
             
             if self.roi_ra is None and self.fullsky:
                 
@@ -188,7 +199,7 @@ class HAWCLike( pluginPrototype ):
             
             if self.roi_ra is not None and self.fullsky:
             
-                self.theLikeHAWC.SetROI( self.roi_ra, self.roi_dec, self.roi_radius )
+                self.theLikeHAWC.SetROI( self.roi_ra, self.roi_dec, self.roi_radius, self.fixedROI )
             
         except:
             
@@ -238,6 +249,19 @@ class HAWCLike( pluginPrototype ):
         logL = self.theLikeHAWC.getLogLike( self.fitCommonNorm )
                 
         return logL
+
+    def calcTS(self):
+        
+        '''
+        Return the value of the log-likelihood test statistic, defined as
+        2*[log(LL_model) - log(LL_bkg)]
+        '''
+        
+        self.pymodel.update()
+        
+        TS = self.theLikeHAWC.calcTS( self.fitCommonNorm )
+                
+        return TS
   
     def getNuisanceParameters(self):
         '''
@@ -331,4 +355,12 @@ class HAWCLike( pluginPrototype ):
             
         return figs
     
+    def writeModelMap(self, fileName, poisson=False):
+        
+        self.theLikeHAWC.WriteModelMap( fileName, poisson )
+    
+    def writeResidualMap(self, fileName):
+        
+        self.theLikeHAWC.WriteResidualMap( fileName )
+  
 

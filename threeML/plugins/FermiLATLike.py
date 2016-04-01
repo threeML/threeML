@@ -5,7 +5,7 @@ import os
 import shutil
 import numpy
 import astropy.io.fits as pyfits
-from threeML.pluginPrototype import pluginPrototype
+from threeML.plugin_prototype import PluginPrototype
 from threeML.models.Parameter import Parameter
 
 from GtBurst import LikelihoodComponent
@@ -142,7 +142,7 @@ class LikelihoodModelConverter(object):
     return myPointSource( src, name )
 
 
-class FermiLATLike(pluginPrototype):
+class FermiLATLike(PluginPrototype):
   
   def __init__(self, name, eventFile, ft2File, livetimeCube, kind, *args):
     

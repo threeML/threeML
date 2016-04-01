@@ -7,7 +7,7 @@ from threeML.io import fileUtils
 
 import numpy
 from threeML.plugins.ogip import OGIPPHA
-from threeML.pluginPrototype import pluginPrototype
+from threeML.plugin_prototype import PluginPrototype
 from threeML.models.Parameter import Parameter
 from threeML.minimizer import minimization
 from threeML.utils import Binner
@@ -22,7 +22,7 @@ from matplotlib import gridspec
 
 __instrument_name = "All OGIP-compliant instruments"
 
-class GenericOGIPLike(pluginPrototype):
+class GenericOGIPLike(PluginPrototype):
   
   def __init__(self, name, phafile, bkgfile, rspfile, arffile=None):
     

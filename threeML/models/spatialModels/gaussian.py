@@ -40,11 +40,20 @@ class SimpleGaussian(SpatialModel):
         
         maxSigma = self.parameters['sigma'].maxValue
         
-        minRa = self.parameters['RA0'].value - 2 * maxSigma
-        maxRa = self.parameters['RA0'].value + 2 * maxSigma
-        
-        minDec = self.parameters['Dec0'].value - 2 * maxSigma
-        maxDec = self.parameters['Dec0'].value + 2 * maxSigma
+        minDec = max(-90.,self.parameters['Dec0'].value - 2 * maxSigma)
+        maxDec = min(90.,self.parameters['Dec0'].value + 2 * maxSigma)
+
+        maxAbsDec = max(np.absolute(minDec),np.absolute(maxDec))
+        if maxAbsDec > 89. or 2*maxSigma/np.cos(maxAbsDec*np.pi/180.) >= 180.:
+            minRa = 0.
+            maxRa = 360.
+        else:
+            minRa = self.parameters['RA0'].value - 2*maxSigma/np.cos(maxAbsDec*np.pi/180.)
+            maxRa = self.parameters['RA0'].value + 2*maxSigma/np.cos(maxAbsDec*np.pi/180.)
+            if minRa < 0.:
+                minRa = minRa + 360.
+            elif maxRa > 360.:
+                maxRa = maxRa - 360.
         
         return minRa, maxRa, minDec, maxDec
                       
