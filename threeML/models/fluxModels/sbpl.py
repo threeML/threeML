@@ -3,7 +3,6 @@ from threeML.models.Parameter import Parameter
 import math
 import scipy.integrate
 import operator
-import numexpr
 
 import collections
 
