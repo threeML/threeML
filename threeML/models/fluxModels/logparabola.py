@@ -26,7 +26,7 @@ class LogParabola(SpectralModel):
                 return self((e1+e2)/2.0)*(e2-e1)
             self.integral            = integral
     
-    def __call__(self,energy):
+    def __call__(self,e):
           
           self.ncalls             += 1
           piv                     = self.parameters['Epiv'].value
@@ -34,7 +34,9 @@ class LogParabola(SpectralModel):
           beta                    = self.parameters['beta'].value
           norm                     = pow(10, self.parameters['logA'].value)
           
-          return norm * (energy/piv)**(gamma+beta*numpy.log10(energy/piv))
+          energies = numpy.array( e, ndmin=1, copy=False)          
+ 
+          return norm * (energies/piv)**(gamma+beta*numpy.log10(energies/piv))
   
   
 

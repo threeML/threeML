@@ -35,11 +35,14 @@ class ExponentialCutoff(SpectralModel):
         self.integral            = integral
  
   
-    def __call__(self,energy):
+    def __call__(self,e):
         self.ncalls             += 1
         eFold                      = pow(10, self.parameters['logEfold'].value)
         A                          = self.parameters['A'].value
-        return numpy.maximum( exp(-energy/eFold), 1e-30)
+        
+        energies = numpy.array( e, ndmin=1, copy=False)
+        
+        return numpy.maximum( numpy.exp(-energies/eFold), 1e-30)
    
   
     def photonFlux(self,e1,e2):

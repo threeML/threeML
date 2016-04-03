@@ -39,13 +39,15 @@ class PowerLaw(SpectralModel):
         self.integral            = integral
  
   
-    def __call__(self,energy):
+    def __call__(self,e):
         self.ncalls             += 1
         piv                      = self.parameters['Epiv'].value
         norm                     = pow(10, self.parameters['logA'].value)
         gamma                    = self.parameters['gamma'].value
         
-        return numpy.maximum( norm * (energy/piv)**gamma, 1e-100)
+        energies = numpy.array( e, ndmin=1, copy=False)
+
+        return numpy.maximum( norm * (energies/piv)**gamma, 1e-100)
    
   
     def photonFlux(self,e1,e2):
