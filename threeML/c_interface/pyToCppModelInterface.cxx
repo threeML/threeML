@@ -1,3 +1,4 @@
+#include <boost/python.hpp>
 #include "ModelInterface.h"
 #include "pyToCppModelInterface.h"
 
@@ -5,7 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <boost/python.hpp>
+//#include <boost/python.hpp>
 
 
 namespace threeML {
