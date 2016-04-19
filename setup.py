@@ -120,7 +120,7 @@ setup(
               'threeML/parallel',
               'threeML/config'],
 
-    version='v0.2.0',
+    version='v0.1.0',
 
     description="The Multi-Mission Maximum Likelihood framework",
 
