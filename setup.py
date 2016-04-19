@@ -5,6 +5,11 @@ import sys
 
 from setuptools import setup, Extension
 
+# Get the version number
+execfile('threeML/version.py')
+
+# Now a global __version__ is available
+
 # This list will contain the messages to print just before the end of the setup
 # so that the user actually note them, instead of loosing them in the tons of
 # messages of the build process
@@ -120,7 +125,7 @@ setup(
               'threeML/parallel',
               'threeML/config'],
 
-    version='v0.1.0',
+    version=__version__,
 
     description="The Multi-Mission Maximum Likelihood framework",
 
@@ -130,7 +135,7 @@ setup(
 
     url='https://github.com/giacomov/3ML',
 
-    download_url='https://github.com/giacomov/3ML/archive/v0.2.0',
+    download_url='https://github.com/giacomov/3ML/archive/%s' % __version__,
 
     keywords=['Likelihood', 'Multi-mission', '3ML', 'HAWC', 'Fermi', 'HESS', 'joint', 'fit', 'bayesian',
               'multi-wavelength'],
