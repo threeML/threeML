@@ -3,4 +3,4 @@ from disk import Disk
 from ellipse import Ellipse
 from gaussian import SimpleGaussian, MultiVariateGaussian
 from ring import Ring, EllipticalRing
-from diffuseNebula import DiffuseNebula
+from diffusion import Diffusion

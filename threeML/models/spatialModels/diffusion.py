@@ -9,9 +9,9 @@ from angsep import angsep
 import collections
 
 
-class DiffuseNebula(SpatialModel):
+class Diffusion(SpatialModel):
     def setup(self):
-        self.functionName        = "DiffuseNebula"
+        self.functionName        = "Diffusion"
         self.formula             = r'$f({\rm RA, Dec}) = \left(\frac{180^\circ}{\pi}\right)^2 \frac{1.2154}{\sqrt{\pi^3} \rdiff ({\rm angsep} ({\rm RA, Dec, RA_0, Dec_0})+0.06 \rdiff)} \, {\rm exp}\left(-\frac{{\rm angsep}^2 ({\rm RA, Dec, RA_0, Dec_0})}{\rdiff^2} \right) $'
         self.parameters          = collections.OrderedDict()
         self.parameters['RA0']     = Parameter('RA0',1.,0,360,0.1,fixed=False,nuisance=False,dataset=None)
@@ -26,8 +26,8 @@ class DiffuseNebula(SpatialModel):
         self.ncalls             += 1
         RA0                         = self.parameters['RA0'].value
         Dec0                        = self.parameters['Dec0'].value
-        #energy in kev -> 20 TeV
-        rdiff                       = self.parameters['rdiff'].value * np.power(np.divide(energy,2e10),(self.parameters['delta'].value - 1.)/4.)
+        #energy in kev -> TeV
+        rdiff                       = self.parameters['rdiff'].value * np.power(np.divide(energy,2e10),(self.parameters['delta'].value - 1.)/2.*(0.54+0.046*np.log10(np.divide(energy,1e9))))
         
         return np.maximum( np.power(180/np.pi,2)*1.2154/(np.pi * np.sqrt(np.pi) * rdiff * (angsep(RA,Dec,RA0,Dec0) + 0.06 * rdiff)) * np.exp(-1. * np.power(angsep(RA,Dec,RA0,Dec0),2)/rdiff**2), 1e-30)
 
