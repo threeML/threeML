@@ -4,7 +4,7 @@ from threeML.models.Parameter import Parameter
 
 from threeML.io.fileUtils import fileExistingAndReadable, sanitizeFilename
 
-from threeML.pyModelInterface import pyToCppModelInterface
+from cthreeML.pyModelInterface import pyToCppModelInterface
 
 from hawc import liff_3ML
 

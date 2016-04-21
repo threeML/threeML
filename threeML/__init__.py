@@ -61,13 +61,11 @@ from .models.fluxModels import *
 
 try:
 
-    from pyModelInterface import pyToCppModelInterface
-    #from pyModelInterface import FakePlugin
-    #from pyModelInterface import FixedPointSource
+    from cthreeML.pyModelInterface import pyToCppModelInterface
 
 except ImportError:
 
-    custom_warnings.warn("The C/C++ wrapper is not available. You will not be able to use plugins which require it.",
+    custom_warnings.warn("cthreeML is not installed. You will not be able to use plugins which require it.",
                          CustomExceptions.CppInterfaceNotAvailable)
 
 # Import the classic Maximum Likelihood Estimation package
