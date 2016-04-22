@@ -160,7 +160,8 @@ class HAWCLike( PluginPrototype ):
         Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
         '''
         
-        #Instance the python - C++ bridge
+        # Instance the python - C++ bridge
+
         self.model = likelihood_model_instance
         
         self.pymodel = pyToCppModelInterface( self.model )
@@ -269,7 +270,7 @@ class HAWCLike( PluginPrototype ):
         
         return logL
     
-    def display( self, radius = 2.0 ):
+    def display( self, radius = 0.5 ):
         
         figs = []
         
