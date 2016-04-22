@@ -205,9 +205,9 @@ class HAWCLike( PluginPrototype ):
         self.nuisanceParameters['CommonNorm'].add_callback( self._CommonNormCallback )
         
     
-    def _CommonNormCallback( self ):
+    def _CommonNormCallback( self, value ):
         
-        self.theLikeHAWC.SetCommonNorm( self.nuisanceParameters['CommonNorm'].value )
+        self.theLikeHAWC.SetCommonNorm( value )
     
     def get_name(self):
         '''
