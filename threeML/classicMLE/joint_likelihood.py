@@ -229,11 +229,11 @@ class JointLikelihood(object):
         engines. If that is not the case, the code will reduce the number of steps to match that requirement, and
         issue a warning
 
-        :param param_1: name of the first parameter
+        :param param_1: fully qualified name of the first parameter or parameter instance
         :param param_1_minimum: lower bound for the range for the first parameter
         :param param_1_maximum: upper bound for the range for the first parameter
         :param param_1_n_steps: number of steps for the first parameter
-        :param param_2: name of the second parameter
+        :param param_2: fully qualified name of the second parameter or parameter instance
         :param param_2_minimum: lower bound for the range for the second parameter
         :param param_2_maximum: upper bound for the range for the second parameter
         :param param_2_n_steps: number of steps for the second parameter
@@ -249,6 +249,15 @@ class JointLikelihood(object):
                  grid. If param_2_steps is None (only one parameter), then this reduces to an array of
                  size param_1_steps.
         """
+
+        if hasattr(param_1,"value"):
+
+            # Substitute with the name
+            param_1 = param_1.path
+
+        if hasattr(param_2,'value'):
+
+            param_2 = param_2.path
 
         # Check that the parameters exist
         assert param_1 in self._likelihood_model.free_parameters, "Parameter %s is not a free parameters of the " \
