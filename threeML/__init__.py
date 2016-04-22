@@ -175,3 +175,5 @@ from .config.config import threeML_config
 
 # Finally import everything from astromodels
 from astromodels import *
+
+import astropy.units as u
