@@ -273,11 +273,11 @@ class HAWCLike( PluginPrototype ):
         
         figs = []
         
-        nsrc = self.model.getNumberOfPointSources()
+        nsrc = self.model.get_number_of_point_sources()
         
         for srcid in range(nsrc):
             
-            ra, dec = self.model.getPointSourcePosition( srcid )
+            ra, dec = self.model.get_point_source_position( srcid )
             
             model = numpy.array( self.theLikeHAWC.GetTopHatExpectedExcesses( ra, dec, radius ) )
             
