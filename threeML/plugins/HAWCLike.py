@@ -1,8 +1,8 @@
 from threeML.plugin_prototype import PluginPrototype
 
-from threeML.models.Parameter import Parameter
+from astromodels import Parameter
 
-from threeML.io.fileUtils import fileExistingAndReadable, sanitizeFilename
+from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 
 from cthreeML.pyModelInterface import pyToCppModelInterface
 
@@ -22,7 +22,7 @@ __instrument_name = "HAWC"
 
 class HAWCLike( PluginPrototype ):
     
-    def __init__( self, name, maptree, response, ntransits = None, **kwargs ):
+    def __init__( self, name, maptree, response, **kwargs ):
         
         #This controls if the likeHAWC class should load the entire
         #map or just a small disc around a source (faster).
@@ -39,20 +39,17 @@ class HAWCLike( PluginPrototype ):
         
         #Sanitize files in input (expand variables and so on)
         
-        self.maptree = os.path.abspath( sanitizeFilename( maptree ) )
+        self.maptree = os.path.abspath(sanitize_filename(maptree))
         
-        self.response = os.path.abspath( sanitizeFilename( response ) )
-
-        #
-        self.ntransits = ntransits
+        self.response = os.path.abspath(sanitize_filename(response))
 
         #Check that they exists and can be read
         
-        if not fileExistingAndReadable( self.maptree ):
+        if not file_existing_and_readable(self.maptree):
         
             raise IOError("MapTree %s does not exist or is not readable" % maptree)
     
-        if not fileExistingAndReadable( self.response ):
+        if not file_existing_and_readable(self.response):
         
             raise IOError("Response %s does not exist or is not readable" % response)
         
@@ -77,7 +74,7 @@ class HAWCLike( PluginPrototype ):
         #Further setup
         
         self.__setup()
-
+    
     def setROI(self, ra, dec, radius, fixedROI=False):
         
         self.roi_ra = ra
@@ -95,8 +92,9 @@ class HAWCLike( PluginPrototype ):
         #Create the dictionary of nuisance parameters
         
         self.nuisanceParameters = collections.OrderedDict()
-        self.nuisanceParameters['CommonNorm'] = Parameter("CommonNorm",1.0,0.5,1.5,0.01,
-                                                           fixed=True,nuisance=True)
+        self.nuisanceParameters['CommonNorm'] = Parameter("CommonNorm",1.0,min_value=0.5,max_value=1.5,
+                                                          delta=0.01)
+        self.nuisanceParameters['CommonNorm'].fix = True
     
     def __getstate__(self):
         
@@ -112,7 +110,6 @@ class HAWCLike( PluginPrototype ):
         d['name']= self.name
         d['maptree'] = self.maptree
         d['response'] = self.response
-        d['ntransits'] = self.ntransits
         d['model'] = self.model
         d['minChannel'] = self.minChannel
         d['maxChannel'] = self.maxChannel
@@ -137,18 +134,17 @@ class HAWCLike( PluginPrototype ):
         
         #Now report the class to its state
         
-        self.__init__( name, maptree, response, ntransits )
+        self.__init__( name, maptree, response )
         
         if state['roi_ra'] is not None:
         
             self.setROI( state['roi_ra'], state['roi_dec'], state['roi_radius'], state['fixedROI'] )
         
-        self.setActiveMeasurements( state['minChannel'], state['maxChannel'] )
+        self.set_active_measurements(state['minChannel'], state['maxChannel'])
         
-        self.setModel( state['model'] )
-
+        self.set_model( state['model'] )
     
-    def setActiveMeasurements( self, minChannel, maxChannel ):
+    def set_active_measurements(self, minChannel, maxChannel):
         
         self.minChannel = int( minChannel )
         self.maxChannel = int( maxChannel )
@@ -159,13 +155,13 @@ class HAWCLike( PluginPrototype ):
                              "will not be effective until you create a new JointLikelihood or Bayesian" +
                              "instance")
         
-    def setModel( self, LikelihoodModelInstance ):
+    def set_model( self, likelihood_model_instance ):
         '''
         Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
         '''
         
         #Instance the python - C++ bridge
-        self.model = LikelihoodModelInstance
+        self.model = likelihood_model_instance
         
         self.pymodel = pyToCppModelInterface( self.model )
         
@@ -176,22 +172,12 @@ class HAWCLike( PluginPrototype ):
             #Load all sky
             #(ROI will be defined later)
             
-            if self.ntransits is None:
-                self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree,
-                                                     self.response,
-                                                     self.pymodel,
-                                                     self.minChannel,
-                                                     self.maxChannel,
-                                                     self.fullsky)
-            
-            else:
-                self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree,
-                                                     self.ntransits,
-                                                     self.response,
-                                                     self.pymodel,
-                                                     self.minChannel,
-                                                     self.maxChannel,
-                                                     self.fullsky)
+            self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree, 
+                                                 self.response,
+                                                 self.pymodel,
+                                                 self.minChannel,
+                                                 self.maxChannel,
+                                                 self.fullsky)
             
             if self.roi_ra is None and self.fullsky:
                 
@@ -216,14 +202,14 @@ class HAWCLike( PluginPrototype ):
         #engine or the Bayesian sampler change the CommonNorm value, the change will be
         #propagated to the LikeHAWC instance
         
-        self.nuisanceParameters['CommonNorm'].setCallback( self._CommonNormCallback )
+        self.nuisanceParameters['CommonNorm'].add_callback( self._CommonNormCallback )
         
     
-    def _CommonNormCallback( self ):
+    def _CommonNormCallback( self, value ):
         
-        self.theLikeHAWC.SetCommonNorm( self.nuisanceParameters['CommonNorm'].value )
+        self.theLikeHAWC.SetCommonNorm( value )
     
-    def getName(self):
+    def get_name(self):
         '''
         Return a name for this dataset (likely set during the constructor)
         '''
@@ -237,7 +223,7 @@ class HAWCLike( PluginPrototype ):
         
         self.fitCommonNorm = False
     
-    def getLogLike(self):
+    def get_log_like(self):
         
         '''
         Return the value of the log-likelihood with the current values for the
@@ -263,7 +249,7 @@ class HAWCLike( PluginPrototype ):
                 
         return TS
   
-    def getNuisanceParameters(self):
+    def get_nuisance_parameters(self):
         '''
         Return a list of nuisance parameters. Return an empty list if there
         are no nuisance parameters
@@ -271,7 +257,7 @@ class HAWCLike( PluginPrototype ):
         
         return self.nuisanceParameters.keys()
   
-    def innerFit(self):
+    def inner_fit(self):
         
         self.theLikeHAWC.SetBackgroundNormFree( self.fitCommonNorm )
         
@@ -279,7 +265,7 @@ class HAWCLike( PluginPrototype ):
         
         logL = self.theLikeHAWC.getLogLike( self.fitCommonNorm )
         
-        self.nuisanceParameters['CommonNorm'].setValue( self.theLikeHAWC.CommonNorm() )
+        self.nuisanceParameters['CommonNorm'].value = self.theLikeHAWC.CommonNorm()
         
         return logL
     
@@ -287,11 +273,11 @@ class HAWCLike( PluginPrototype ):
         
         figs = []
         
-        nsrc = self.model.getNumberOfPointSources()
+        nsrc = self.model.get_number_of_point_sources()
         
         for srcid in range(nsrc):
             
-            ra, dec = self.model.getPointSourcePosition( srcid )
+            ra, dec = self.model.get_point_source_position( srcid )
             
             model = numpy.array( self.theLikeHAWC.GetTopHatExpectedExcesses( ra, dec, radius ) )
             
@@ -355,9 +341,9 @@ class HAWCLike( PluginPrototype ):
             
         return figs
     
-    def writeModelMap(self, fileName, poisson=False):
+    def writeModelMap(self, fileName):
         
-        self.theLikeHAWC.WriteModelMap( fileName, poisson )
+        self.theLikeHAWC.WriteModelMap( fileName )
     
     def writeResidualMap(self, fileName):
         

@@ -2,9 +2,7 @@ import numpy as np
 from sherpa.astro import datastack
 from sherpa.models import TableModel
 from threeML.plugin_prototype import PluginPrototype
-from threeML.models.Parameter import Parameter
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
 
 __instrument_name = "All OGIP compliant instruments"
 
@@ -81,9 +79,8 @@ class SherpaLike(PluginPrototype):
         # Effective area correction is disabled by default, i.e.,
         # the nuisance parameter is fixed to 1
         self.nuisanceParameters = {}
-        self.nuisanceParameters['InterCalib'] = Parameter("InterCalib", 1, 0.9, 1.1, 0.01, fixed=True, nuisance=True)
 
-    def setModel(self, likelihoodModel):
+    def set_model(self, likelihoodModel):
         """Set model for the source region
 
         Parameters
@@ -114,7 +111,7 @@ class SherpaLike(PluginPrototype):
         """
         self.ds.notice(e_lo, e_hi)
 
-    def getLogLike(self):
+    def get_log_like(self):
         """Returns the current statistics value
 
         Returns
@@ -125,7 +122,7 @@ class SherpaLike(PluginPrototype):
         self._updateModel()
         return -datastack.ui.calc_stat()
 
-    def getName(self):
+    def get_name(self):
         """Return a name for this dataset set during the construction
 
         Returns:
@@ -135,7 +132,7 @@ class SherpaLike(PluginPrototype):
         """
         return self.name
 
-    def getNuisanceParameters(self):
+    def get_nuisance_parameters(self):
         """Return a list of nuisance parameters.
         Return an empty list if there are no nuisance parameters.
         Not implemented yet.
@@ -143,12 +140,12 @@ class SherpaLike(PluginPrototype):
         # TODO implement nuisance parameters
         return self.nuisanceParameters.keys()
 
-    def innerFit(self):
+    def inner_fit(self):
         """Inner fit. Just a hack to get it to work now.
         Will be removed.
         """
         # TODO remove once the inner fit requirement has been dropped
-        return self.getLogLike()
+        return self.get_log_like()
 
     def display(self):
         """creates plots comparing data to model
@@ -158,13 +155,9 @@ class SherpaLike(PluginPrototype):
         # self.ds.plot_data()
         # self.ds.plot_model(overplot=True)
         # TODO see if possible to show model subcomponents
-        f = plt.figure(self.name)
-        gs = gridspec.GridSpec(2,1, height_ratios=[2,1])
-        gs.update(hspace=0)
-        axarr =[]
-        axarr.append(f.add_subplot(gs[0]))
-        axarr.append(f.add_subplot(gs[1],sharex = axarr[0]))
-        plt.setp([a.get_xticklabels() for a in axarr[:-1]], visible=False)
+        f, axarr = plt.subplots(2, sharex=True)
+        f.subplots_adjust(hspace=0)
+        plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
         energies = datastack.ui.get_data_plot(1).x
         dlne = np.log(energies[1:]) - np.log(energies[:-1])
         dlne = np.append(dlne[0], dlne)  # TODO do this properly for arbitrary binning

@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 import os
-import sys
 
-from setuptools import setup, Extension
+from setuptools import setup
 
 # Get the version number
 execfile('threeML/version.py')
@@ -24,9 +23,6 @@ setup(
               'threeML/exceptions',
               'threeML/bayesian',
               'threeML/minimizer',
-              'threeML/models',
-              'threeML/models/fluxModels',
-              'threeML/models/spatialModels',
               'threeML/plugins',
               'threeML/classicMLE',
               'threeML/catalogs',
@@ -40,7 +36,7 @@ setup(
     description="The Multi-Mission Maximum Likelihood framework",
 
     long_description="3ML can be used for single or multi-instrument likelihood modeling or Bayesian inference",
-    
+
     license='BSD-3',
 
     author='Giacomo Vianello',
@@ -68,12 +64,11 @@ setup(
         'emcee',
         'astropy>=1.0.3',
         'matplotlib',
-        'ipython',
         'uncertainties',
         'pyyaml',
         'dill',
-        'parse',
-        'iminuit'
+        'iminuit',
+        'astromodels'
     ])
 
 # Now print the final messages if there are any

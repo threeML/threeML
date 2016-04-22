@@ -31,8 +31,8 @@ class JointLikelihood(object):
       #generate the new XML model which allow the user to set
       #a prior for the effective area correction after instanciating
       #this class)
-      ds.setModel(self.likelihoodModel)
-      dumb                   = ds.getLogLike()
+      ds.set_model(self.likelihoodModel)
+      dumb                   = ds.get_log_like()
     pass
     
     self._buildGlobalLikelihoodFunctions()
@@ -66,9 +66,9 @@ class JointLikelihood(object):
       globalLogLike              = 0
       for dataset in self.dataSets:
           #print("Dataset %s" % dataset.getName())
-          dataset.innerFit()
+          dataset.inner_fit()
           #print("Inner fit done")
-          globalLogLike         += dataset.getLogLike()
+          globalLogLike         += dataset.get_log_like()
           #print("Like computation done")
       pass
       
@@ -94,7 +94,7 @@ class JointLikelihood(object):
       #Now compute the new value for the likelihood
       globalLogLike              = 0
       for dataset in self.dataSets:
-          globalLogLike         += dataset.getLogLike()
+          globalLogLike         += dataset.get_log_like()
       pass
       
       if(self.verbose):
@@ -295,7 +295,7 @@ class JointLikelihood(object):
       #the current value (it improves A LOT the convergence speed, especially with MINUIT)
       for k,v in self.freeParameters.iteritems():
         value		      = v.value
-        v.setBounds(value/100.0,value*100.0)
+        v.set_bounds(value/100.0,value*100.0)
         v.setDelta(value/10.0)
       pass
     pass
@@ -321,7 +321,7 @@ class JointLikelihood(object):
     print("Contributions to the -logLikelihood at the minimum:")
     
     for dataset in self.dataSets:
-      print("%-50s: %s" %(dataset.getName(),dataset.getLogLike()*(-1)))
+      print("%-50s: %s" %(dataset.get_name(),dataset.get_log_like()*(-1)))
     pass
     
     #Print and store results for future use

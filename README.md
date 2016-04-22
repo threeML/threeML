@@ -15,14 +15,11 @@ Clone the repository with:
 > git clone https://github.com/giacomov/3ML.git
 ```
 
-## Build 3ML without support for C/C++ plugins
+## Build 3ML without support for C/C++ plugins (default, for most users)
 
-:exclamation: *Do not do this if you need the HAWC plugin!* Follow instead the instructions in the next paragraph.
-
-At the moment only the HAWC plugin needs the C/C++ wrapper interface. *If you are not interested in using HAWC data*, it is strongly adviced that you build 3ML without support for C/C++ plugins, by simply doing:
+At the moment only the HAWC plugin needs the C/C++ wrapper interface. If you are not interested in using HAWC data, it is strongly adviced that you build 3ML without support for C/C++ plugins, by simply doing:
 
 ```
-# This will build 3ML without support for HAWC!
 > python setup.py install
 ```
 
@@ -37,7 +34,7 @@ If you are interested in HAWC analysis, you need C/C++ support and of course you
 Then build 3ML with boost:
 
 ```
-> python setup.py install --with-boost
+> python setup.py build --with-boost
 ```
 At the end you should see a message like this:
 
