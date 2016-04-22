@@ -3,7 +3,7 @@
 import os
 import sys
 
-from setuptools import setup, Extension
+from distutils.core import setup, Extension
 
 # This list will contain the messages to print just before the end of the setup
 # so that the user actually note them, instead of loosing them in the tons of
@@ -117,7 +117,7 @@ setup(
               'threeML/parallel',
               'threeML/config'],
 
-    version='v0.2.0',
+    version='0.2.0',
 
     description="The Multi-Mission Maximum Likelihood framework",
 
@@ -127,7 +127,7 @@ setup(
 
     url='https://github.com/giacomov/3ML',
 
-    download_url='https://github.com/giacomov/3ML/archive/v0.2.0',
+    download_url='https://github.com/giacomov/3ML/archive/0.2.0',
 
     keywords=['Likelihood', 'Multi-mission', '3ML', 'HAWC', 'Fermi', 'HESS', 'joint', 'fit', 'bayesian',
               'multi-wavelength'],
@@ -147,15 +147,13 @@ setup(
     install_requires=[
         'numpy >= 1.6',
         'scipy',
-        'numexpr',
         'emcee',
-        'astropy==1.0.3',
+        'astropy',
         'matplotlib',
-        'ipython >= 2.0.0, < 3.9.9',
+        'ipython',
         'uncertainties',
         'pyyaml',
         'dill',
-        'parse',
         'iminuit'
     ])
 

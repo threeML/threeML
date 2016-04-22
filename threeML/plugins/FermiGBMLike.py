@@ -1,16 +1,16 @@
-import astropy.io.fits as pyfits
-import xml.etree.ElementTree as ET
 import os
-from threeML.plugins.gammaln import logfactorial
+import warnings
+import collections
+
+import astropy.io.fits as pyfits
 import numpy
+import scipy.integrate
+
+from threeML.plugins.gammaln import logfactorial
 from threeML.plugins.ogip import OGIPPHA
 from threeML.plugin_prototype import PluginPrototype
 from threeML.models.Parameter import Parameter
 from threeML.minimizer import minimization
-import scipy.integrate
-
-import warnings
-import collections
 
 __instrument_name = "Fermi GBM (all detectors)"
 
@@ -189,7 +189,7 @@ class FermiGBMLike(PluginPrototype):
     '''
     self.likelihoodModel         = likelihoodModel
     
-    nPointSources                = self.likelihoodModel.getNumberOfPointSources()
+    nPointSources                = self.likelihoodModel.get_number_of_point_sources()
     
     #This is a wrapper which iterates over all the point sources and get
     #the fluxes
@@ -197,11 +197,11 @@ class FermiGBMLike(PluginPrototype):
     
     def diffFlux(energies):
       
-      fluxes                     = self.likelihoodModel.getPointSourceFluxes(0,energies)
+      fluxes                     = self.likelihoodModel.get_point_source_fluxes(0,energies)
       
       #If we have only one point source, this will never be executed
       for i in range(1, nPointSources):
-        fluxes                  += self.likelihoodModel.getPointSourceFluxes(i,energies)
+        fluxes                  += self.likelihoodModel.get_point_source_fluxes(i,energies)
       
       return fluxes
     

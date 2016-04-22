@@ -8,7 +8,7 @@ from astropy.utils.xml.writer import xml_escape
 
 class Table(astropy.table.Table):
     
-    def _base_repr_(self, html=False, show_name=True):
+    def _base_repr_(self, html=False, show_name=True, **kwargs):
         '''Override the method in the astropy.Table class
         to avoid displaying the description, and the format
         of the columns'''
@@ -25,8 +25,9 @@ class Table(astropy.table.Table):
 
         return out
 
+
 class NumericMatrix(Table):
     
-    def _base_repr_(self, html=False):
-        return super(NumericMatrix, self)._base_repr_(html, False)
+    def _base_repr_(self, html=False,**kwargs):
+        return super(NumericMatrix, self)._base_repr_(html, show_name=False, **kwargs)
     

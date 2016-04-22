@@ -3,7 +3,12 @@ import emcee.utils
 import numpy
 import collections
 import re
+import math
+
 from IPython.display import display
+
+import matplotlib.pyplot as plt
+
 import uncertainties
 
 from threeML.io.table import Table
@@ -13,6 +18,7 @@ from threeML.io.progress_bar import ProgressBar
 from threeML.io.triangle import corner
 from threeML.exceptions.custom_exceptions import ModelAssertionViolation, LikelihoodIsInfinite, custom_warnings
 
+from astromodels import uniform_prior, log_uniform_prior
 
 def sample_with_progress(p0, sampler, n_samples, **kwargs):
     # Create progress bar
@@ -87,7 +93,41 @@ class BayesianAnalysis(object):
 
         # Get the initial list of free parameters, useful for debugging purposes
 
-        self._free_parameters = self._likelihood_model.getFreeParameters()
+        self._update_free_parameters()
+
+    def set_uniform_priors(self):
+        """
+        Automatically set all parameters to uniform or log-uniform priors. The latter is used when the range spanned
+        by the parameter is larger than 2 orders of magnitude.
+
+        :return: (none)
+        """
+
+        for parameter_name, parameter in self._free_parameters.iteritems():
+
+            if parameter.min_value is None or parameter.max_value is None:
+
+                custom_warnings.warn("Cannot decide the prior for parameter %s, since it has no "
+                                     "minimum or no maximum value (or both)")
+
+                continue
+
+            n_orders_of_magnitude = numpy.log10(parameter.max_value - parameter.min_value)
+
+            if n_orders_of_magnitude > 2:
+
+                print("Using log-uniform prior for %s" % parameter_name)
+
+                parameter.prior = log_uniform_prior(lower_bound=parameter.min_value,
+                                                    upper_bound=parameter.max_value)
+
+            else:
+
+                print("Using uniform prior for %s" % parameter_name)
+
+                parameter.prior = uniform_prior(lower_bound=parameter.min_value,
+                                                upper_bound=parameter.max_value,
+                                                value=1.0)
 
     def sample(self, n_walkers, burn_in, n_samples):
         """
@@ -191,17 +231,11 @@ class BayesianAnalysis(object):
 
         self._samples = collections.OrderedDict()
 
-        for i, (src_name, param_name) in enumerate(self._free_parameters.keys()):
-
-            # The first time we encounter a source we create a dictionary for that source
-
-            if src_name not in self._samples.keys():
-
-                self._samples[src_name] = collections.OrderedDict()
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
             # Add the samples for this parameter for this source
 
-            self._samples[src_name][param_name] = self._raw_samples[:,i]
+            self._samples[parameter_name] = self._raw_samples[:,i]
 
     @property
     def raw_samples(self):
@@ -244,40 +278,32 @@ class BayesianAnalysis(object):
 
         credible_intervals = collections.OrderedDict()
 
-        for i, (src_name, param_name) in enumerate(self._free_parameters.keys()):
-
-            # The first time we encounter a source we create a dictionary for that source
-
-            if src_name not in credible_intervals.keys():
-
-                credible_intervals[src_name] = collections.OrderedDict()
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
             # Get the percentiles from the posterior samples
 
-            lower_bound,median,upper_bound = numpy.percentile(self.samples[src_name][param_name],
+            lower_bound,median,upper_bound = numpy.percentile(self.samples[parameter_name],
                                                               (100-probability,50,probability))
 
             # Save them in the dictionary
 
-            credible_intervals[src_name][param_name] = {'lower bound': lower_bound,
-                                                        'median': median,
-                                                        'upper bound': upper_bound}
+            credible_intervals[parameter_name] = {'lower bound': lower_bound,
+                                                  'median': median,
+                                                  'upper bound': upper_bound}
 
         # Print a table with the errors
 
         data = []
         name_length = 0
 
-        for i, (src_name, param_name) in enumerate(self._free_parameters.keys()):
-
-            current_name = "%s_of_%s" % (src_name, param_name)
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
             # Format the value and the error with sensible significant
             # numbers
 
-            lower_bound, median, upper_bound = [credible_intervals[src_name][param_name][key] for key in ('lower bound',
-                                                                                                          'median',
-                                                                                                          'upper bound')
+            lower_bound, median, upper_bound = [credible_intervals[parameter_name][key] for key in ('lower bound',
+                                                                                                    'median',
+                                                                                                    'upper bound')
                                                 ]
 
             # Process the negative "error"
@@ -310,12 +336,12 @@ class BayesianAnalysis(object):
 
                 pretty_string = "(%s -%s +%s)%s" % (number, unc_lower_bound, unc_upper_bound, exponent)
 
-            unit = self._free_parameters[src_name, param_name].unit
+            unit = self._free_parameters[parameter_name].unit
 
-            data.append([current_name, pretty_string, unit])
+            data.append([parameter_name, pretty_string, unit])
 
-            if len(current_name) > name_length:
-                name_length = len(current_name)
+            if len(parameter_name) > name_length:
+                name_length = len(parameter_name)
 
         # Create and display the table
 
@@ -326,7 +352,6 @@ class BayesianAnalysis(object):
         display(table)
 
         return credible_intervals
-
 
     def corner_plot(self, **kwargs):
         """
@@ -345,12 +370,13 @@ class BayesianAnalysis(object):
             labels = []
             priors = []
 
-            for i, (src_name, param_name) in enumerate(self._free_parameters.keys()):
-                this_label = "%s of %s" % (param_name, src_name)
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
-                labels.append(this_label)
+                short_name = parameter_name.split(".")[-1]
 
-                priors.append(self._likelihood_model.parameters[src_name][param_name].prior)
+                labels.append(short_name)
+
+                priors.append(self._likelihood_model.parameters[parameter_name].prior)
 
             fig = corner(self.raw_samples, labels=labels,
                          quantiles=[0.16, 0.50, 0.84],
@@ -362,19 +388,169 @@ class BayesianAnalysis(object):
 
             raise RuntimeError("You have to run the sampler first, using the sample() method")
 
+    def plot_chains(self, thin=None):
+        """
+        Produce a plot of the series of samples for each parameter
+
+        :parameter thin: use only one sample every 'thin' samples
+        :return: a matplotlib.figure instance
+        """
+
+        figures = []
+
+        for parameter_name in self._free_parameters.keys():
+
+            figure, subplot = plt.subplots(1, 1)
+
+            if thin is None:
+
+                # Use all samples
+
+                subplot.plot(self.samples[parameter_name])
+
+            else:
+
+                assert isinstance(thin, int), "Thin must be a integer number"
+
+                subplot.plot(self.samples[parameter_name][::thin])
+
+            subplot.set_ylabel(parameter_name.replace(".","\n"))
+            subplot.set_xlabel("sample #")
+
+            figures.append(figure)
+
+        return figures
+
+    def convergence_plots(self, n_samples_in_each_subset, n_subsets):
+        """
+        Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same
+        values if the MCMC has converged to the posterior distribution.
+
+        The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second
+        is to take random samples from the chain (bootstrap)
+
+        :param n_samples_in_each_subset: number of samples in each subset
+        :param n_subsets: number of subsets to take for each strategy
+        :return: a matplotlib.figure instance
+        """
+
+        # Compute all the quantities
+
+        averages = {}
+        bootstrap_averages = {}
+
+        variances = {}
+        bootstrap_variances = {}
+
+        n_samples = self._raw_samples[:, 0].shape[0]
+
+        stepsize = n_samples // n_subsets
+
+        assert stepsize > 10, "Too few samples for this method to be effective"
+
+        print("Stepsize for sliding window is %s" % stepsize)
+
+        for parameter_name in self._free_parameters.keys():
+
+            this_samples = self.samples[parameter_name]
+
+            # First compute averages and variances using the sliding window
+
+            this_averages = []
+            this_variances = []
+
+            for i in range(n_subsets):
+
+                idx1 = i*stepsize
+                idx2 = idx1 + n_samples_in_each_subset
+
+                if idx2 > n_samples - 1:
+
+                    break
+
+                this_averages.append(numpy.average(this_samples[idx1 : idx2]))
+                this_variances.append(numpy.std(this_samples[idx1 : idx2]))
+
+            averages[parameter_name] = this_averages
+
+            variances[parameter_name] = this_variances
+
+            # Now choose random samples and do the same
+
+            this_bootstrap_averages = []
+            this_bootstrap_variances = []
+
+            for i in range(n_subsets):
+
+                samples = numpy.random.choice(self.samples[parameter_name], n_samples)
+
+                this_bootstrap_averages.append(numpy.average(samples))
+                this_bootstrap_variances.append(numpy.std(samples))
+
+            bootstrap_averages[parameter_name] = this_bootstrap_averages
+            bootstrap_variances[parameter_name] = this_bootstrap_variances
+
+        # Now plot all these things
+
+        def plot_one_histogram(subplot, data, label):
+
+            nbins = self.freedman_diaconis_rule(data)
+
+            subplot.hist(data, nbins, label=label)
+
+            subplot.locator_params(nbins=4)
+
+        figures = []
+
+        for i, parameter_name in enumerate(self._free_parameters.keys()):
+
+            fig, subs = plt.subplots(1,2,sharey=True)
+
+            fig.suptitle(parameter_name)
+
+            plot_one_histogram(subs[0], averages[parameter_name], 'sliding window')
+            plot_one_histogram(subs[0], bootstrap_averages[parameter_name], 'bootstrap')
+
+            subs[0].set_ylabel("N subsets")
+            subs[0].set_xlabel("Average")
+
+            plot_one_histogram(subs[1], variances[parameter_name], 'sliding window')
+            plot_one_histogram(subs[1], bootstrap_variances[parameter_name], 'bootstrap')
+
+            subs[1].set_xlabel("Std. deviation")
+
+            figures.append(fig)
+
+        return figures
+
+    @staticmethod
+    def freedman_diaconis_rule(data):
+        """
+        Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data
+
+        :param data: an array of data
+        :return: the optimal number of bins
+        """
+
+        q25, q75 = numpy.percentile(data, [25.0, 75.0])
+        iqr = abs(q75 - q25)
+
+        binsize = 2 * iqr * pow(len(data), -1/3.0)
+
+        nbins = numpy.ceil((max(data)-min(data)) / binsize)
+
+        return nbins
+
     def _update_free_parameters(self):
         """
         Update the dictionary of the current free parameters
         :return:
         """
 
-        self._free_parameters = self._likelihood_model.getFreeParameters()
+        self._free_parameters = self._likelihood_model.free_parameters
 
     def _get_posterior(self, trial_values):
         """Compute the posterior for the normal sampler"""
-
-        # Here we don't use the self._logp nor the self._logLike to
-        # avoid looping twice over the parameters (for speed)
 
         # Assign this trial values to the parameters and
         # store the corresponding values for the priors
@@ -386,20 +562,20 @@ class BayesianAnalysis(object):
 
         log_prior = 0
 
-        for i, (src_name, param_name) in enumerate(self._free_parameters.keys()):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
-            this_param = self._likelihood_model.parameters[src_name][param_name]
+            prior_value = parameter.prior(trial_values[i])
 
-            this_param.setValue(trial_values[i])
-
-            pval = this_param.getPriorValue()
-
-            if not numpy.isfinite(pval):
+            if prior_value == 0:
                 # Outside allowed region of parameter space
 
                 return -numpy.inf
 
-            log_prior += pval
+            else:
+
+                parameter.value = trial_values[i]
+
+                log_prior += math.log10(prior_value)
 
         # Get the value of the log-likelihood for this parameters
 
@@ -432,6 +608,8 @@ class BayesianAnalysis(object):
 
             return -numpy.inf
 
+        #print("Log like is %s, log_prior is %s, for trial values %s" % (log_like, log_prior,trial_values))
+
         return log_like + log_prior
 
     def _get_starting_points(self, n_walkers, variance=0.1):
@@ -446,14 +624,7 @@ class BayesianAnalysis(object):
 
         for i in range(n_walkers):
 
-            this_p0 = []
-
-            for (src_name, param_name) in self._free_parameters.keys():
-                this_par = self._likelihood_model.parameters[src_name][param_name]
-
-                this_val = this_par.getRandomizedValue(variance)
-
-                this_p0.append(this_val)
+            this_p0 = map(lambda x:x.get_randomized_value(variance), self._free_parameters.values())
 
             p0.append(this_p0)
 

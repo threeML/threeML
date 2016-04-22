@@ -73,6 +73,6 @@ class ParallelClient(Client):
         # engines
         self.direct_view().use_dill()
 
-    def getNumberOfEngines(self):
+    def get_number_of_engines(self):
 
         return len(self.direct_view())
