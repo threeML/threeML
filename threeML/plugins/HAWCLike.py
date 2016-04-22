@@ -232,7 +232,7 @@ class HAWCLike( PluginPrototype ):
         
         self.pymodel.update()
         
-        logL = self.theLikeHAWC.get_log_like( self.fitCommonNorm )
+        logL = self.theLikeHAWC.getLogLike( self.fitCommonNorm )
                 
         return logL
 
@@ -263,7 +263,7 @@ class HAWCLike( PluginPrototype ):
         
         self.pymodel.update()
         
-        logL = self.theLikeHAWC.get_log_like( self.fitCommonNorm )
+        logL = self.theLikeHAWC.getLogLike( self.fitCommonNorm )
         
         self.nuisanceParameters['CommonNorm'].value = self.theLikeHAWC.CommonNorm()
         
