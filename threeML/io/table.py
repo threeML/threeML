@@ -4,7 +4,6 @@
 #more appealing, especially when in the Ipython notebook
 
 import astropy.table
-from astropy.utils.xml.writer import xml_escape
 
 class Table(astropy.table.Table):
     

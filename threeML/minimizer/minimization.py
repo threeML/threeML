@@ -6,13 +6,13 @@ import time
 import numpy
 from iminuit import Minuit
 
-from IPython.display import display
 import uncertainties
 
 from threeML.io.table import Table, NumericMatrix
 from threeML.utils.cartesian import cartesian
 from threeML.io.progress_bar import ProgressBar
 from threeML.parallel.parallel_client import ParallelClient
+from threeML.io.display import display
 
 # Special constants
 FIT_FAILED = 1e12

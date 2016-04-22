@@ -1,6 +1,4 @@
 import collections
-import copy
-import math
 import time
 
 import numpy
@@ -10,13 +8,12 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from matplotlib.colors import BoundaryNorm
 
-from IPython.display import display
+from threeML.io.display import display
 import numpy as np
 
 from threeML.minimizer import minimization
 from threeML.exceptions import custom_exceptions
 from threeML.io.table import Table
-from threeML.utils.cartesian import cartesian
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.io.progress_bar import ProgressBar
 from threeML.config.config import threeML_config

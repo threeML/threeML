@@ -5,8 +5,6 @@ import collections
 import re
 import math
 
-from IPython.display import display
-
 import matplotlib.pyplot as plt
 
 import uncertainties
@@ -17,6 +15,7 @@ from threeML.config.config import threeML_config
 from threeML.io.progress_bar import ProgressBar
 from threeML.io.triangle import corner
 from threeML.exceptions.custom_exceptions import ModelAssertionViolation, LikelihoodIsInfinite, custom_warnings
+from threeML.io.display import display
 
 from astromodels import uniform_prior, log_uniform_prior
 
