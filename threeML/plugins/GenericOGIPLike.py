@@ -9,7 +9,7 @@ from matplotlib import gridspec
 
 from threeML.io import file_utils
 from threeML.minimizer import minimization
-from threeML.models.Parameter import Parameter
+from astromodels import Parameter
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.gammaln import logfactorial
 from threeML.plugins.ogip import OGIPPHA
@@ -33,9 +33,9 @@ class GenericOGIPLike(PluginPrototype):
             # The file could contain a {#} specification, like spectrum.pha{3},
             # which indicate the 3rd spectrum in the spectrum.pha file
 
-            inputFiles[i] = file_utils.sanitizeFilename(inputFiles[i].split("{")[0])
+            inputFiles[i] = file_utils.sanitize_filename(inputFiles[i].split("{")[0])
 
-            if not file_utils.fileExistingAndReadable(inputFiles[i]):
+            if not file_utils.file_existing_and_readable(inputFiles[i]):
                 raise IOError("File %s does not exist or is not readable" % (inputFiles[i]))
 
         phafile, bkgfile, rspfile = inputFiles
@@ -43,9 +43,9 @@ class GenericOGIPLike(PluginPrototype):
         # Check the arf, if provided
         if arffile is not None:
 
-            arffile = file_utils.sanitizeFilename(arffile.split("{")[0])
+            arffile = file_utils.sanitize_filename(arffile.split("{")[0])
 
-            if not file_utils.fileExistingAndReadable(arffile):
+            if not file_utils.file_existing_and_readable(arffile):
                 raise IOError("File %s does not exist or is not readable" % (arffile))
 
         self.phafile = OGIPPHA(phafile, filetype='observed')
@@ -101,7 +101,8 @@ class GenericOGIPLike(PluginPrototype):
         # Effective area correction is disabled by default, i.e.,
         # the nuisance parameter is fixed to 1
         self.nuisanceParameters = {}
-        self.nuisanceParameters['InterCalib'] = Parameter("InterCalib", 1, 0.9, 1.1, 0.01, fixed=True, nuisance=True)
+        self.nuisanceParameters['InterCalib'] = Parameter("InterCalib", 1, min_value=0.9, max_value=1.1, delta=0.01)
+        self.nuisanceParameters['InterCalib'].fix = True
 
     pass
 
@@ -229,7 +230,7 @@ class GenericOGIPLike(PluginPrototype):
     def inner_fit(self):
 
         # Effective area correction
-        if (self.nuisanceParameters['InterCalib'].isFree()):
+        if (self.nuisanceParameters['InterCalib'].free):
 
             # A true fit would be an overkill, and slow
             # Just sample a 100 values and choose the minimum

@@ -2,7 +2,6 @@ import numpy as np
 from sherpa.astro import datastack
 from sherpa.models import TableModel
 from threeML.plugin_prototype import PluginPrototype
-from threeML.models.Parameter import Parameter
 import matplotlib.pyplot as plt
 
 __instrument_name = "All OGIP compliant instruments"
@@ -80,7 +79,6 @@ class SherpaLike(PluginPrototype):
         # Effective area correction is disabled by default, i.e.,
         # the nuisance parameter is fixed to 1
         self.nuisanceParameters = {}
-        self.nuisanceParameters['InterCalib'] = Parameter("InterCalib", 1, 0.9, 1.1, 0.01, fixed=True, nuisance=True)
 
     def set_model(self, likelihoodModel):
         """Set model for the source region

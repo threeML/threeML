@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from matplotlib.colors import BoundaryNorm
 
-from threeML.io.display import display
+from threeML.io.rich_display import display
 import numpy as np
 
 from threeML.minimizer import minimization
@@ -249,6 +249,15 @@ class JointLikelihood(object):
                  grid. If param_2_steps is None (only one parameter), then this reduces to an array of
                  size param_1_steps.
         """
+
+        # Check that the parameters exist
+        assert param_1 in self._likelihood_model.free_parameters, "Parameter %s is not a free parameters of the " \
+                                                                 "current model" % param_1
+
+        if param_2 is not None:
+            assert param_2 in self._likelihood_model.free_parameters, "Parameter %s is not a free parameters of the " \
+                                                                      "current model" % param_2
+
 
         # Check that we have a valid fit
 

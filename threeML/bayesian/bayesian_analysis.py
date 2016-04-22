@@ -15,7 +15,7 @@ from threeML.config.config import threeML_config
 from threeML.io.progress_bar import ProgressBar
 from threeML.io.triangle import corner
 from threeML.exceptions.custom_exceptions import ModelAssertionViolation, LikelihoodIsInfinite, custom_warnings
-from threeML.io.display import display
+from threeML.io.rich_display import display
 
 from astromodels import uniform_prior, log_uniform_prior
 

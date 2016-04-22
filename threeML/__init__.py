@@ -47,30 +47,19 @@ def import_module(module_name):
 # otherwise we will incur in weird issues with other packages
 # using similar names (for example, the io package)
 
-from .models.PointSource import PointSource
-from .models.ExtendedSource import ExtendedSource
-from .models.LikelihoodModel import LikelihoodModel
-from .models.spectralmodel import *
 from .exceptions import custom_exceptions
 from .exceptions.custom_exceptions import custom_warnings
 from .plugin_prototype import PluginPrototype
 
-# Import the builtinModels
-
-from .models.fluxModels import *
-
 try:
 
     # noinspection PyUnresolvedReferences
-    from pyModelInterface import pyToCppModelInterface
-    # noinspection PyUnresolvedReferences
-    from pyModelInterface import FakePlugin
-    # noinspection PyUnresolvedReferences
-    from pyModelInterface import FixedPointSource
+    from cthreeML.pyModelInterface import pyToCppModelInterface
 
 except ImportError:
 
-    custom_warnings.warn("The C/C++ wrapper is not available. You will not be able to use plugins which require it.",
+    custom_warnings.warn("The cthreeML package is not installed. You will not be able to use plugins which require "
+                         "the C/C++ interface (currently HAWC)",
                          custom_exceptions.CppInterfaceNotAvailable)
 
 # Import the classic Maximum Likelihood Estimation package
@@ -79,7 +68,6 @@ from .classicMLE.joint_likelihood import JointLikelihood
 
 # Import the Bayesian analysis
 from .bayesian.bayesian_analysis import BayesianAnalysis
-from .bayesian.priors import LogUniformPrior, UniformPrior, GaussianPrior
 
 # Import the DataList class
 
@@ -184,3 +172,6 @@ from .parallel.parallel_client import parallel_computation
 
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config
+
+# Finally import everything from astromodels
+from astromodels import *

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
 from threeML.plugin_prototype import PluginPrototype
-from threeML.models.Parameter import Parameter
+from astromodels import Parameter
 from threeML.plugins.gammaln import logfactorial
 
 __instrument_name = "Fermi LAT (standard classes)"
@@ -275,7 +275,7 @@ class FermiLATLike(PluginPrototype):
                 # Update the value for the nuisance parameters
                 for par in self.nuisanceParameters.values():
                     newValue = self.getNuisanceParameterValue(par.name)
-                    par.setValue(newValue)
+                    par.value = newValue
                 pass
 
                 log_like = self.like.logLike.value()
@@ -454,7 +454,8 @@ class FermiLATLike(PluginPrototype):
             value = self.getNuisanceParameterValue(name)
             bounds = self.getNuisanceParameterBounds(name)
             delta = self.getNuisanceParameterDelta(name)
-            self.nuisanceParameters[name] = Parameter(name, value, bounds[0], bounds[1], delta, nuisance=True)
+            self.nuisanceParameters[name] = Parameter(name, value, min_value=bounds[0],
+                                                      max_value=bounds[1], delta=delta)
         pass
 
     pass

@@ -1,10 +1,10 @@
 from threeML.plugin_prototype import PluginPrototype
 
-from threeML.models.Parameter import Parameter
+from astromodels import Parameter
 
-from threeML.io.file_utils import fileExistingAndReadable, sanitizeFilename
+from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 
-from threeML.pyModelInterface import pyToCppModelInterface
+from cthreeML.pyModelInterface import pyToCppModelInterface
 
 from hawc import liff_3ML
 
@@ -39,20 +39,20 @@ class HAWCLike( PluginPrototype ):
         
         #Sanitize files in input (expand variables and so on)
         
-        self.maptree = os.path.abspath( sanitizeFilename( maptree ) )
+        self.maptree = os.path.abspath(sanitize_filename(maptree))
         
-        self.response = os.path.abspath( sanitizeFilename( response ) )
+        self.response = os.path.abspath(sanitize_filename(response))
         
         #
         self.ntransits = ntransits
         
         #Check that they exists and can be read
         
-        if not fileExistingAndReadable( self.maptree ):
+        if not file_existing_and_readable(self.maptree):
         
             raise IOError("MapTree %s does not exist or is not readable" % maptree)
     
-        if not fileExistingAndReadable( self.response ):
+        if not file_existing_and_readable(self.response):
         
             raise IOError("Response %s does not exist or is not readable" % response)
         
@@ -95,8 +95,9 @@ class HAWCLike( PluginPrototype ):
         #Create the dictionary of nuisance parameters
         
         self.nuisanceParameters = collections.OrderedDict()
-        self.nuisanceParameters['CommonNorm'] = Parameter("CommonNorm",1.0,0.5,1.5,0.01,
-                                                           fixed=True,nuisance=True)
+        self.nuisanceParameters['CommonNorm'] = Parameter("CommonNorm",1.0,min_value=0.5,max_value=1.5,
+                                                          delta=0.01)
+        self.nuisanceParameters['CommonNorm'].fix()
     
     def __getstate__(self):
         
@@ -207,7 +208,7 @@ class HAWCLike( PluginPrototype ):
         #engine or the Bayesian sampler change the CommonNorm value, the change will be
         #propagated to the LikeHAWC instance
         
-        self.nuisanceParameters['CommonNorm'].setCallback( self._CommonNormCallback )
+        self.nuisanceParameters['CommonNorm'].add_callback( self._CommonNormCallback )
         
     
     def _CommonNormCallback( self ):
@@ -270,7 +271,7 @@ class HAWCLike( PluginPrototype ):
         
         logL = self.theLikeHAWC.get_log_like( self.fitCommonNorm )
         
-        self.nuisanceParameters['CommonNorm'].setValue( self.theLikeHAWC.CommonNorm() )
+        self.nuisanceParameters['CommonNorm'].value = self.theLikeHAWC.CommonNorm()
         
         return logL
     
