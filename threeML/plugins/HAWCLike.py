@@ -22,7 +22,7 @@ __instrument_name = "HAWC"
 
 class HAWCLike( PluginPrototype ):
     
-    def __init__( self, name, maptree, response, ntransits, **kwargs ):
+    def __init__( self, name, maptree, response, **kwargs ):
         
         #This controls if the likeHAWC class should load the entire
         #map or just a small disc around a source (faster).
@@ -42,10 +42,7 @@ class HAWCLike( PluginPrototype ):
         self.maptree = os.path.abspath(sanitize_filename(maptree))
         
         self.response = os.path.abspath(sanitize_filename(response))
-        
-        #
-        self.ntransits = ntransits
-        
+
         #Check that they exists and can be read
         
         if not file_existing_and_readable(self.maptree):
@@ -113,7 +110,6 @@ class HAWCLike( PluginPrototype ):
         d['name']= self.name
         d['maptree'] = self.maptree
         d['response'] = self.response
-        d['ntransits'] = self.ntransits
         d['model'] = self.model
         d['minChannel'] = self.minChannel
         d['maxChannel'] = self.maxChannel
@@ -138,18 +134,17 @@ class HAWCLike( PluginPrototype ):
         
         #Now report the class to its state
         
-        self.__init__( name, maptree, response, ntransits )
+        self.__init__( name, maptree, response )
         
         if state['roi_ra'] is not None:
         
             self.setROI( state['roi_ra'], state['roi_dec'], state['roi_radius'], state['fixedROI'] )
         
-        self.setActiveMeasurements( state['minChannel'], state['maxChannel'] )
+        self.set_active_measurements(state['minChannel'], state['maxChannel'])
         
         self.set_model( state['model'] )
-
     
-    def setActiveMeasurements( self, minChannel, maxChannel ):
+    def set_active_measurements(self, minChannel, maxChannel):
         
         self.minChannel = int( minChannel )
         self.maxChannel = int( maxChannel )
@@ -178,7 +173,6 @@ class HAWCLike( PluginPrototype ):
             #(ROI will be defined later)
             
             self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree, 
-                                                 self.ntransits,
                                                  self.response,
                                                  self.pymodel,
                                                  self.minChannel,
