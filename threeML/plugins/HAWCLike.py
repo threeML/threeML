@@ -94,7 +94,7 @@ class HAWCLike( PluginPrototype ):
         self.nuisanceParameters = collections.OrderedDict()
         self.nuisanceParameters['CommonNorm'] = Parameter("CommonNorm",1.0,min_value=0.5,max_value=1.5,
                                                           delta=0.01)
-        self.nuisanceParameters['CommonNorm'].fix()
+        self.nuisanceParameters['CommonNorm'].fix = True
     
     def __getstate__(self):
         
