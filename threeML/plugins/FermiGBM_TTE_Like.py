@@ -13,21 +13,23 @@ from threeML.plugins.ogip import OGIPPHA
 from threeML.plugins.FermiGBMLike import FermiGBMLike
 from astromodels.parameter import Parameter
 
-__instrument_name = "Fermi GBM (all detectors)"
+__instrument_name = "Fermi GBM TTE (all detectors)"
 
 
-class FermiGBMLike(FermiGBMLike):
-    def __init__(self, name, ttefile, bkgselections, rspfile):
+class FermiGBM_TTE_Like(FermiGBMLike):
+    def __init__(self, name, ttefile, bkgselections, srcinterval, rspfile):
         '''
         If the input files are TTE files. Background selections are specified as
-        a nested list/array e.g. [[-10,0],[10,20]]
+        a comma separated string e.g. "-10-0,10-20"
+
+        Initial source selection is input as a string e.g. "0-5"
         
-        FermiGBMLike("GBM","glg_tte_n6_bn080916412.fit",[[-10,0][10,20]],"rspfile.rsp{2}")
+        FermiGBM_TTE_Like("GBM","glg_tte_n6_bn080916412.fit","-10-0,10-20","0-5","rspfile.rsp{2}")
         to load the second spectrum, second background spectrum and second response.
         '''
 
         self.name = name
-        self._backgroundselections = bkgselections
+        #self._backgroundselections = bkgselections
         self._backgroundexists = False
         # Check that all file exists
         notExistant = []
@@ -46,9 +48,11 @@ class FermiGBMLike(FermiGBMLike):
 
             raise IOError("One or more input file do not exist!")
 
-        self.phafile = OGIPPHA(phafile, filetype='observed')
-        self.exposure = self.phafile.getExposure()
-        self.bkgfile = OGIPPHA(bkgfile, filetype="background")
+        #self.phafile = OGIPPHA(phafile, filetype='observed')
+        #self.exposure = self.phafile.getExposure()
+        #self.bkgfile = OGIPPHA(bkgfile, filetype="background")
+
+
         self.response = Response(rspfile)
 
         # Start with an empty mask (the user will overwrite it using the
@@ -57,9 +61,15 @@ class FermiGBMLike(FermiGBMLike):
             numpy.ones(self.phafile.getRates().shape),
             numpy.bool)
 
+        # Fit the background
+        self.setBackgroundInterval(*bkgselections.split(','))
+
+        # Obtain the counts for the initial input interval
+        self.setActiveTime(interval)
+        
         # Get the counts for this spectrum
-        self.counts = (self.phafile.getRates()[self.mask]
-                       * self.exposure)
+        #self.counts = (self.phafile.getRates()[self.mask]
+        #               * self.exposure)
 
         # Check that counts is positive
         idx = (self.counts < 0)
@@ -73,10 +83,11 @@ class FermiGBMLike(FermiGBMLike):
         pass
 
         # Get the background counts for this spectrum
-        self.bkgCounts = (self.bkgfile.getRates()[self.mask]
-                          * self.exposure)
+        #self.bkgCounts = (self.bkgfile.getRates()[self.mask]
+        #                  * self.exposure)
 
         # Check that bkgCounts is positive
+
         idx = (self.bkgCounts < 0)
 
         if (numpy.sum(idx) > 0):
@@ -104,6 +115,78 @@ class FermiGBMLike(FermiGBMLike):
 
     pass
 
+
+
+    def setActiveTime(self,arg):
+        '''Set the time interval to be used during the analysis.
+        For now, only one interval can be selected. This may be
+        updated in the future to allow for self consistent time
+        resolved analysis.
+        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
+
+        setActiveTime("0.0-10.0")
+
+        which will set the energy range 0-10. seconds.
+        '''
+
+        tmp = arg.replace(" ", "").split("-")
+        if len(arg)==4:   # Both numbers are negative
+            tmp2 = map(lambda x: -float(),tmp[1::2])
+        elif len(arg)==3: # First number is negative
+            tmp2 = [-float(tmp[1]),float(tmp[2])]
+        else:             # Niether are negative
+                tmp2= map(float,tmp)
+        self.tmin,self.tmax = tmp2
+
+        # First build the mas for the events in time
+        timemask = numpy.logical_and(self.ttefile.events>=self.tmin,
+                                     self.ttefile.events<=self.tmax)
+        tmpcounts        = [] # Temporary list to hold the total counts per chan
+        tmpbackground    = [] # Temporary list to hold the background counts per chan
+        tmpbackgrounderr = [] # Temporary list to hold the background counts per chan
+
+        for chan in range(self.ttefile.nchans):
+
+            channelmask = self.ttefile.pha == chan
+            countsmask  = numpy.logical_and(channelmask,timemask)
+            totalcounts = len(self.ttefile.events[countmask])
+
+            # Now integrate the appropriate background polynomial
+            backgroundcounts = self._polynomials[chan].integral(self.tmin,self.tmax)
+            backgrounderror  = self._polynomials[chan].integralError(self.tmin,self.tmax)
+             
+            tmpcounts.append(totalcounts)
+            tmpbackground.append(backgroundcounts)
+            tmpbackgrounderr.append(backgrounderror)
+
+        self.counts    = numpy.array(tmpcounts)
+        self.bkgCounts = numpy.array(tmpbackground)
+        self.bkgError  = numpy.array(tmpbackgrounderr)
+
+
+    def setBackgroundInterval(self,*args):
+        '''Set the time interval to fit the background.
+        Multiple intervals can be input as separate arguments
+        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
+
+        setBackgroundInterval("-10.0-0.0","10.-15.")
+        '''
+
+         self._backgroundselections = []
+         for arg in args:
+            tmp =  arg.replace(" ", "").split("-")
+            if len(arg)==4:   # Both numbers are negative
+                tmp2 = map(lambda x: -float(),tmp[1::2])
+            elif len(arg)==3: # First number is negative
+                tmp2 = [-float(tmp[1]),float(tmp[2])]
+            else:             # Niether are negative
+                tmp2= map(float,tmp)
+            self._backgroundselections.append(tmp2)
+        self._backgroundselections=numpy.array(self._backgroundselections)
+
+        # Fit the background with the given intervals
+        self._FitBackground()
+                
     def _fitGlobalAndDetermineOptimumGrade(self,cnts,bins):
         #Fit the sum of all the channels to determine the optimal polynomial
         #grade
