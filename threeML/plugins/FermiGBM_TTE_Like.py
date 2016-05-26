@@ -32,7 +32,7 @@ class FermiGBMLike(FermiGBMLike):
         # Check that all file exists
         notExistant = []
 
-        if (not os.path.exists(ttefile):
+        if (not os.path.exists(ttefile)):
             notExistant.append(ttefile)
 
 
@@ -214,16 +214,7 @@ class FermiGBMLike(FermiGBMLike):
             # Select the masked events
             currentevents = self.ttefile.events[bkgchanmask]
 
-
-        #    eneLcs.append(evts)
-        #self.eneLcs = eneLcs
-        #self.bkgCoeff = []
-
-        #polynomials               = []
-
-      
-        #for elc,cw in zip(eneLcs,chanWidth):
-            # Now bin the selected events into 1 second bins
+            
             binwidth=1.
             cnts,bins=numpy.histogram(currentevents-self.ttefile.triggertime,
                                       bins=numpy.arange(self.ttefile.startevents-self.ttefile.triggertime,
