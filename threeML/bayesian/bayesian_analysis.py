@@ -126,6 +126,8 @@ class BayesianAnalysis(object):
 
         p0 = self._get_starting_points(n_walkers)
 
+        sampling_procedure = sample_with_progress
+
         if threeML_config['parallel']['use-parallel']:
 
             c = ParallelClient()
@@ -134,6 +136,10 @@ class BayesianAnalysis(object):
             sampler = emcee.EnsembleSampler(n_walkers, n_dim,
                                             self._get_posterior,
                                             pool=view)
+
+            # Sampling with progress in parallel is super-slow, so let's
+            # use the non-interactive one
+            sampling_procedure = sample_without_progress
 
         else:
 
@@ -144,7 +150,7 @@ class BayesianAnalysis(object):
 
         # Prepare the list of likelihood values
         self._log_like_values = []
-        pos, prob, state = sample_with_progress(p0, sampler, burn_in)
+        pos, prob, state = sampling_procedure(p0, sampler, burn_in)
 
         # Reset sampler
 
@@ -157,7 +163,7 @@ class BayesianAnalysis(object):
         # Reset also the list of likelihood values
         self._log_like_values = []
 
-        _ = sample_with_progress(pos, sampler, n_samples, rstate0=state)
+        _ = sampling_procedure(pos, sampler, n_samples, rstate0=state)
 
         acc = numpy.mean(sampler.acceptance_fraction)
 
