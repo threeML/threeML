@@ -132,9 +132,11 @@ class BayesianAnalysis(object):
 
             c = ParallelClient()
             view = c[:]
+            posterior = self._get_posterior
+            view.push({"posterior": posterior})
 
             sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                            self._get_posterior,
+                                            posterior,
                                             pool=view)
 
             # Sampling with progress in parallel is super-slow, so let's
