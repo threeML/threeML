@@ -18,6 +18,7 @@ __instrument_name = "Fermi GBM (all detectors)"
 
 
 class FermiGBMLike(PluginPrototype):
+
     def __init__(self, name, phafile, bkgfile, rspfile):
         '''
         If the input files are PHA2 files, remember to specify the spectrum number, for example:
@@ -121,7 +122,8 @@ class FermiGBMLike(PluginPrototype):
 
     pass
 
-    def useIntercalibrationConst(self, factorLowBound=0.9, factorHiBound=1.1):
+    def use_intercalibration_constant(self, factorLowBound=0.9, factorHiBound=1.1):
+
         self.nuisanceParameters['InterCalib'].free()
         self.nuisanceParameters['InterCalib'].set_bounds(factorLowBound, factorHiBound)
 
@@ -142,7 +144,7 @@ class FermiGBMLike(PluginPrototype):
 
             self.nuisanceParameters['InterCalib'].setValue(float(factorHiBound))
 
-    def fixIntercalibrationConst(self, value=None):
+    def fix_intercalibration_constant(self, value=None):
 
         if (value is not None):
             # Fixing the constant to the provided value
@@ -156,7 +158,7 @@ class FermiGBMLike(PluginPrototype):
 
         self.nuisanceParameters['InterCalib'].fix()
 
-    def setActiveMeasurements(self, *args):
+    def set_active_measurements(self, *args):
         '''Set the measurements to be used during the analysis.
         Use as many ranges as you need,
         specified as 'emin-emax'. Energies are in keV. Example:
@@ -176,8 +178,8 @@ class FermiGBMLike(PluginPrototype):
         for arg in args:
             ee = map(float, arg.replace(" ", "").split("-"))
             emin, emax = sorted(ee)
-            idx1 = self.response.energyToChannel(emin)
-            idx2 = self.response.energyToChannel(emax)
+            idx1 = self.response.energy_to_channel(emin)
+            idx2 = self.response.energy_to_channel(emax)
             mask[idx1:idx2 + 1] = True
         pass
         self.mask = np.array(mask, np.bool)
@@ -238,8 +240,8 @@ class FermiGBMLike(PluginPrototype):
                                       + 4 * self.diffFlux((e1 + e2) / 2.0)
                                       + self.diffFlux(e2))
 
-        self.response.setFunction(diffFlux,
-                                  integral)
+        self.response.set_function(diffFlux,
+                                   integral)
 
     pass
 
@@ -247,14 +249,14 @@ class FermiGBMLike(PluginPrototype):
 
         return self.get_log_like()
 
-    def getFoldedModel(self):
+    def get_folded_model(self):
 
         # Get the folded model for this spectrum
         # (this is the rate predicted, in cts/s)
 
         return self.response.convolve()[self.mask]
 
-    def getModelAndData(self):
+    def get_model_and_data(self):
 
         e1, e2 = (self.response.ebounds[:, 0],
                   self.response.ebounds[:, 1])
@@ -265,12 +267,12 @@ class FermiGBMLike(PluginPrototype):
                 e2[self.mask],
                 self.counts)
 
-    def _getModelCounts(self):
+    def _get_model_counts(self):
 
         # Get the folded model for this spectrum (this is the rate predicted,
         # in cts/s)
 
-        folded = self.getFoldedModel()
+        folded = self.get_folded_model()
 
         # Model is folded+background (i.e., we assume negligible errors on the
         # background)
@@ -281,7 +283,7 @@ class FermiGBMLike(PluginPrototype):
 
         return clippedModelCounts
 
-    def _computeLogLike(self, modelCounts):
+    def _compute_log_like(self, modelCounts):
 
         # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
         # observed counts. It is a profile likelihood.
@@ -326,9 +328,9 @@ class FermiGBMLike(PluginPrototype):
         parameters
         '''
 
-        modelCounts = self._getModelCounts()
+        modelCounts = self._get_model_counts()
 
-        logLike = self._computeLogLike(modelCounts)
+        logLike = self._compute_log_like(modelCounts)
 
         return logLike
 
@@ -339,13 +341,9 @@ class FermiGBMLike(PluginPrototype):
         '''
         return self.nuisanceParameters.keys()
 
-    pass
-
-
-pass
-
 
 class Response(object):
+
     def __init__(self, rspfile):
 
         rspNumber = 1
@@ -386,7 +384,7 @@ class Response(object):
             self.mc_channels = np.vstack([data.field("ENERG_LO"),
                                              data.field("ENERG_HI")]).T
 
-    def setFunction(self, differentialFunction, integralFunction=None):
+    def set_function(self, differentialFunction, integralFunction=None):
         '''
         Set the function to be used for the convolution
         '''
@@ -420,11 +418,11 @@ class Response(object):
 
         return foldedCounts
 
-    def getCountsVector(self, e1, e2):
+    def get_counts_vector(self, e1, e2):
 
         trueFluxes = self.integralFunction(self.mc_channels[:, 0], self.mc_channels[:, 1])
 
-    def energyToChannel(self, energy):
+    def energy_to_channel(self, energy):
 
         '''Finds the channel containing the provided energy.
         NOTE: returns the channel index (starting at zero),
