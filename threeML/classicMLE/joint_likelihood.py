@@ -379,7 +379,7 @@ class JointLikelihood(object):
 
                 # Re-create the minimizer
 
-                backup_freeParameters = copy.deepcopy(self.freeParameters)
+                backup_freeParameters = map(lambda x:x.value, self._likelihood_model.free_parameters.values())
 
                 this_minimizer = self.Minimizer(self.minus_log_like_profile,
                                                 self._free_parameters)
@@ -394,7 +394,11 @@ class JointLikelihood(object):
                                                       param_2_n_steps,
                                                       False, **options)
 
-                self.freeParameters = backup_freeParameters
+                # Restore best fit values
+
+                for val, par in zip(backup_freeParameters, self._likelihood_model.free_parameters.values()):
+
+                    par.value = val
 
                 return ccc
 
