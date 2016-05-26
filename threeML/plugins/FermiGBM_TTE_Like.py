@@ -10,17 +10,19 @@ from threeML.minimizer import minimization
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.gammaln import logfactorial
 from threeML.plugins.ogip import OGIPPHA
-
+from threeML.plugins.FermiGBMLike import FermiGBMLike
 from astromodels.parameter import Parameter
 
 __instrument_name = "Fermi GBM (all detectors)"
 
 
-class FermiGBMLike(PluginPrototype):
-    def __init__(self, name, phafile, bkgfile, rspfile):
+class FermiGBMLike(FermiGBMLike):
+    def __init__(self, name, ttefile, bkgselections, rspfile):
         '''
-        If the input files are PHA2 files, remember to specify the spectrum number, for example:
-        FermiGBMLike("GBM","spectrum.pha{2}","bkgfile.bkg{2}","rspfile.rsp{2}")
+        If the input files are TTE files. Background selections are specified as
+        a nested list/array e.g. [[-10,0],[10,20]]
+        
+        FermiGBMLike("GBM","glg_tte_n6_bn080916412.fit",[[-10,0][10,20]],"rspfile.rsp{2}")
         to load the second spectrum, second background spectrum and second response.
         '''
 
@@ -29,11 +31,9 @@ class FermiGBMLike(PluginPrototype):
         # Check that all file exists
         notExistant = []
 
-        if (not os.path.exists(phafile.split("{")[0])):
-            notExistant.append(phafile.split("{")[0])
+        if (not os.path.exists(ttefile):
+            notExistant.append(ttefile)
 
-        if (not os.path.exists(bkgfile.split("{")[0])):
-            notExistant.append(bkgfile.split("{")[0])
 
         if (not os.path.exists(rspfile.split("{")[0])):
             notExistant.append(rspfile.split("{")[0])
@@ -103,6 +103,97 @@ class FermiGBMLike(PluginPrototype):
 
     pass
 
+    def _FitBackground(self):
+
+        self._backgroundexists = True
+        ## Seperate everything by energy channel
+        
+        
+        eneLcs = []
+
+        eMax = self.chanLU['E_MAX']
+        eMin = self.chanLU['E_MIN']
+        chanWidth = eMax - eMin
+
+        
+        for x,cw in enumerate(chanWidth):
+
+            truthTable = self.evtExt["PHA"] == x
+
+            evts = self.evtExt[truthTable]
+
+
+            truthTables = []
+            for sel in self.bkgIntervals:
+                
+                truthTables.append(logical_and(evts["TIME"]-self.trigTime>= sel[0] , evts["TIME"]-self.trigTime<= sel[1] ))
+                
+            
+            tt = truthTables[0]
+            if len(truthTables)>1:
+                                
+                for y in truthTables[1:]:
+                    
+                    tt=logical_or(tt,y)
+
+            self.bkgRegion=tt
+            
+            evts = evts[tt]
+
+            eneLcs.append(evts)
+        self.eneLcs = eneLcs
+        self.bkgCoeff = []
+
+        polynomials               = []
+
+      
+        for elc,cw in zip(eneLcs,chanWidth):
+
+            cnts,bins=histogram(elc["TIME"]-self.trigTime,bins=self.bins)
+
+ 
+#            tt=cnts>=0
+            meanT=[]
+            for i in xrange(len(bins)-1):
+
+                m = mean((bins[i],bins[i+1]))
+                meanT.append(m)
+            meanT = array(meanT)
+
+            truthTables = []
+            for sel in self.bkgIntervals:
+                
+                truthTables.append(logical_and(meanT>= sel[0] , meanT<= sel[1] ))
+                
+            
+            tt = truthTables[0]
+            if len(truthTables)>1:
+                                
+                for y in truthTables[1:]:
+                    
+                    tt=logical_or(tt,y)
+
+
+            
+            cnts=cnts/self.binWidth
+            
+            
+            thisPolynomial,cstat    = self._fitChannel(cnts[tt],meanT[tt], self.optimalPolGrade)      
+
+
+            
+
+            
+            polynomials.append(thisPolynomial)
+        #pass
+        self.polynomials          = polynomials
+
+
+
+
+
+
+    
     def useIntercalibrationConst(self, factorLowBound=0.9, factorHiBound=1.1):
         self.nuisanceParameters['InterCalib'].free()
         self.nuisanceParameters['InterCalib'].set_bounds(factorLowBound, factorHiBound)
@@ -124,6 +215,21 @@ class FermiGBMLike(PluginPrototype):
 
             self.nuisanceParameters['InterCalib'].setValue(float(factorHiBound))
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
     def fixIntercalibrationConst(self, value=None):
 
         if (value is not None):
@@ -327,3 +433,18 @@ class FermiGBMLike(PluginPrototype):
 
 
 pass
+
+class GBMTTEFile(object):
+
+    def __init__(ttefile):
+
+        tte = pyfits.open(ttefile)
+        
+        self._events = tte['EVENTS'].data['TIME']
+        self._phatag = tte['EVENTS'].data['PHA']
+        self._triggertime = tte['PRIMARY'].header['TRIGTIME']
+        self._startevents = tte['PRIMARY'].header['TSTART']
+        self._stopevents = tte['PRIMARY'].header['TSTOP']
+        self.nchans = tte['EBOUNDS']['NAXIS2']
+
+
