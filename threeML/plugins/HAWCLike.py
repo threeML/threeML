@@ -133,7 +133,7 @@ class HAWCLike(PluginPrototype):
         name = state['name']
         maptree = state['maptree']
         response = state['response']
-        ntransits = state['ntransits']
+        ntransits = state['n_transits']
 
         self._n_transits = ntransits
 
