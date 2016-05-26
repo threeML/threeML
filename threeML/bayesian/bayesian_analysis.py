@@ -17,7 +17,8 @@ from threeML.io.triangle import corner
 from threeML.exceptions.custom_exceptions import ModelAssertionViolation, LikelihoodIsInfinite, custom_warnings
 from threeML.io.rich_display import display
 
-from astromodels import uniform_prior, log_uniform_prior
+# J. Michael 25/5/2016 This is not working!
+#from astromodels import uniform_prior, log_uniform_prior
 
 def sample_with_progress(p0, sampler, n_samples, **kwargs):
     # Create progress bar
