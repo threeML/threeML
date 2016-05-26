@@ -12,6 +12,7 @@ from threeML.io.table import Table, NumericMatrix
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.cartesian import cartesian
 from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
+from threeML.exceptions.custom_exceptions import custom_warnings
 
 try:
 
@@ -228,6 +229,7 @@ class MinuitMinimizer(Minimizer):
         """
 
         for k, par in self.parameters.iteritems():
+
             par.value = self.best_fit_parameters[k]
 
             minuit_name = self._parameter_name_to_minuit_name(k)
@@ -260,6 +262,7 @@ class MinuitMinimizer(Minimizer):
             self._best_fit_parameters = collections.OrderedDict()
 
             for k, par in self.parameters.iteritems():
+
                 minuit_name = self._parameter_name_to_minuit_name(k)
 
                 self._best_fit_parameters[k] = self.minuit.values[minuit_name]
@@ -588,7 +591,15 @@ class MinuitMinimizer(Minimizer):
 
         # Restore best fit
 
-        self._restore_best_fit()
+        if self._best_fit_parameters:
+
+            self._restore_best_fit()
+
+        else:
+
+            custom_warnings.warn("No best fit to restore before contours computation. "
+                                 "Perform the fit before running contours to remove this warnings.")
+
 
         # Duplicate the options used for the original minimizer
 

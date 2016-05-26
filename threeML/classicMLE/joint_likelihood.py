@@ -1,6 +1,6 @@
 import collections
 import time
-
+import copy
 import numpy
 import scipy.optimize
 import scipy.stats
@@ -379,7 +379,7 @@ class JointLikelihood(object):
 
                 # Re-create the minimizer
 
-                # backup_freeParameters = copy.deepcopy(self.freeParameters)
+                backup_freeParameters = copy.deepcopy(self.freeParameters)
 
                 this_minimizer = self.Minimizer(self.minus_log_like_profile,
                                                 self._free_parameters)
@@ -394,7 +394,7 @@ class JointLikelihood(object):
                                                       param_2_n_steps,
                                                       False, **options)
 
-                # self.freeParameters = backup_freeParameters
+                self.freeParameters = backup_freeParameters
 
                 return ccc
 
