@@ -68,7 +68,8 @@ setup(
         'pyyaml',
         'dill',
         'iminuit',
-        'astromodels'
+        'astromodels',
+        'corner>=1.0.2'
     ])
 
 # Now print the final messages if there are any

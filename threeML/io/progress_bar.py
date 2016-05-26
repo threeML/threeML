@@ -13,10 +13,17 @@ class ProgressBar:
         self.__update_amount(0)
 
     def animate(self, iter):
-        print('\r', self, end='')
-        sys.stdout.flush()
-        self.lastIter = iter
-        self.update_iteration(iter + 1)
+
+        try:
+
+            print('\r', self, end='')
+            sys.stdout.flush()
+            self.lastIter = iter
+            self.update_iteration(iter + 1)
+
+        except:
+            # Do not crash in any case. This isn't an important operation
+            pass
     
     def increase(self):
         
