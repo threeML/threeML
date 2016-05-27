@@ -3,7 +3,7 @@ import os
 import warnings
 
 import astropy.io.fits as pyfits
-import numpy
+import numpy as np
 import scipy.integrate
 import math
 
@@ -62,9 +62,9 @@ class FermiGBM_TTE_Like(FermiGBMLike):
 
         # Start with an empty mask (the user will overwrite it using the
         # setActiveMeasurement method)
-        self.mask = numpy.asarray(
-            numpy.ones(self.ttefile.nchans),
-            numpy.bool)
+        self.mask = np.asarray(
+            np.ones(self.ttefile.nchans),
+            np.bool)
 
         # Fit the background and
         # Obtain the counts for the initial input interval
@@ -80,7 +80,7 @@ class FermiGBM_TTE_Like(FermiGBMLike):
             tmp2= map(float,tmp)
         self.tmin,self.tmax = tmp2        
         
-        self.setBackgroundInterval(*bkgselections.split(','))
+        self.set_background_interval(*bkgselections.split(','))
 
         
         #self._initialSetup()
@@ -92,7 +92,7 @@ class FermiGBM_TTE_Like(FermiGBMLike):
         # Check that counts is positive
         idx = (self.counts < 0)
 
-        if (numpy.sum(idx) > 0):
+        if (np.sum(idx) > 0):
             warnings.warn("The observed spectrum for %s " % self.name +
                           "has negative channels! Fixing those to zero.",
                           RuntimeWarning)
@@ -108,28 +108,34 @@ class FermiGBM_TTE_Like(FermiGBMLike):
 
         idx = (self.bkgCounts < 0)
 
-        if (numpy.sum(idx) > 0):
+        if (np.sum(idx) > 0):
             warnings.warn("The background spectrum for %s " % self.name +
                           "has negative channels! Fixing those to zero.",
                           RuntimeWarning)
             self.bkgCounts[idx] = 0
 
+        # Check that errors are zeros when the bkg is zero
+        if np.any((self.bkgErr == 0) & (self.bkgCounts > 0)):
+
+            raise RuntimeError("The background error is zero but the background counts are not zero for some bins. "
+                               "Data are corrupted.")
+            
         # Check that the observed counts are positive
 
         idx = self.counts < 0
 
-        if numpy.sum(idx) > 0:
+        if np.sum(idx) > 0:
             raise RuntimeError("Negative counts in observed spectrum %s. Data are corrupted." % ('fix this'))
 
         # Keep a copy which will never be modified
-        self.counts_backup          = numpy.array(self.counts, copy=True)
-        self.bkgCounts_backup       = numpy.array(self.bkgCounts, copy=True)
-        self.bkgError_backup = numpy.array(self.bkgError, copy=True)
+        self.counts_backup          = np.array(self.counts, copy=True)
+        self.bkgCounts_backup       = np.array(self.bkgCounts, copy=True)
+        self.bkgErr_backup = np.array(self.bkgErr, copy=True)
 
         if self._energyselectionexists:
             self.counts    = self.counts[self.mask]
             self.bkgCounts = self.bkgCounts[self.mask]
-            self.bkgError = self.bkgError[self.mask] 
+            self.bkgErr = self.bkgErr[self.mask] 
         
         # Effective area correction is disabled by default, i.e.,
         # the nuisance parameter is fixed to 1
@@ -140,21 +146,21 @@ class FermiGBM_TTE_Like(FermiGBMLike):
         
 
 
-    def setActiveTime(self,arg):
+    def set_active_time_interval(self,arg):
         '''Set the time interval to be used during the analysis.
         For now, only one interval can be selected. This may be
         updated in the future to allow for self consistent time
         resolved analysis.
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
 
-        setActiveTime("0.0-10.0")
+        set_active_time_interval("0.0-10.0")
 
         which will set the energy range 0-10. seconds.
         '''
 
         tmp = arg.replace(" ", "").split("-")
         if len(tmp)==4:   # Both numbers are negative
-            tmp2 = map(lambda x: -float(),tmp[1::2])
+            tmp2 = map(lambda x: -float(x),tmp[1::2])
         elif len(tmp)==3: # First number is negative
             tmp2 = [-float(tmp[1]),float(tmp[2])]
         else:             # Niether are negative
@@ -162,7 +168,7 @@ class FermiGBM_TTE_Like(FermiGBMLike):
         self.tmin,self.tmax = tmp2
 
         # First build the mas for the events in time
-        timemask = numpy.logical_and(self.ttefile.events-self.ttefile.triggertime>=self.tmin,
+        timemask = np.logical_and(self.ttefile.events-self.ttefile.triggertime>=self.tmin,
                                      self.ttefile.events-self.ttefile.triggertime<=self.tmax)
         tmpcounts        = [] # Temporary list to hold the total counts per chan
         tmpbackground    = [] # Temporary list to hold the background counts per chan
@@ -171,7 +177,7 @@ class FermiGBM_TTE_Like(FermiGBMLike):
         for chan in range(self.ttefile.nchans):
 
             channelmask = self.ttefile.pha == chan
-            countsmask  = numpy.logical_and(channelmask,timemask)
+            countsmask  = np.logical_and(channelmask,timemask)
             totalcounts = len(self.ttefile.events[countsmask])
 
             # Now integrate the appropriate background polynomial
@@ -182,14 +188,14 @@ class FermiGBM_TTE_Like(FermiGBMLike):
             tmpbackground.append(backgroundcounts)
             tmpbackgrounderr.append(backgrounderror)
 
-        self.counts    = numpy.array(tmpcounts)
-        self.bkgCounts = numpy.array(tmpbackground)
-        self.bkgError  = numpy.array(tmpbackgrounderr)
+        self.counts    = np.array(tmpcounts)
+        self.bkgCounts = np.array(tmpbackground)
+        self.bkgErr  = np.array(tmpbackgrounderr)
 
         # Run through the proper checks on counts
         self._initialSetup()
 
-    def setBackgroundInterval(self,*args):
+    def set_background_interval(self,*args):
         '''Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
@@ -207,14 +213,14 @@ class FermiGBM_TTE_Like(FermiGBMLike):
             else:             # Niether are negative
                 tmp2= map(float,tmp)
             self._backgroundselections.append(tmp2)
-        self._backgroundselections=numpy.array(self._backgroundselections)
+        self._backgroundselections=np.array(self._backgroundselections)
 
         # Fit the background with the given intervals
         self._FitBackground()
 
         # Since changing the background will alter the counts
         # We need to recalculate the source interval
-        self.setActiveTime("%.5f-%.5f"%(self.tmin,self.tmax))
+        self.set_active_time_interval("%.5f-%.5f"%(self.tmin,self.tmax))
                 
     def _fitGlobalAndDetermineOptimumGrade(self,cnts,bins):
         #Fit the sum of all the channels to determine the optimal polynomial
@@ -225,11 +231,11 @@ class FermiGBM_TTE_Like(FermiGBMLike):
 
         #y                         = []
         #for i in range(Nintervals):
-        #  y.append(numpy.sum(counts[i]))
+        #  y.append(np.sum(counts[i]))
         #pass
-        #y                         = numpy.array(y)
+        #y                         = np.array(y)
 
-        #exposure                  = numpy.array(data.field("EXPOSURE"))
+        #exposure                  = np.array(data.field("EXPOSURE"))
 
         print("\nLooking for optimal polynomial grade:")
         #Fit all the polynomials
@@ -241,7 +247,7 @@ class FermiGBM_TTE_Like(FermiGBMLike):
           logLikelihoods.append(logLike)         
         pass
         #Found the best one
-        deltaLoglike              = numpy.array(map(lambda x:2*(x[0]-x[1]),zip(logLikelihoods[:-1],logLikelihoods[1:])))
+        deltaLoglike              = np.array(map(lambda x:2*(x[0]-x[1]),zip(logLikelihoods[:-1],logLikelihoods[1:])))
         print("\ndelta log-likelihoods:")
         for i in range(maxGrade):
           print("%s -> %s: delta Log-likelihood = %s" %(i,i+1,deltaLoglike[i]))
@@ -277,22 +283,22 @@ class FermiGBM_TTE_Like(FermiGBMLike):
 
         allbkgmasks = []
         for bkgsel in self._backgroundselections:
-            allbkgmasks.append(numpy.logical_and(self.ttefile.events-self.ttefile.triggertime>= bkgsel[0],
+            allbkgmasks.append(np.logical_and(self.ttefile.events-self.ttefile.triggertime>= bkgsel[0],
                                                   self.ttefile.events-self.ttefile.triggertime<= bkgsel[1] ))
         backgroundmask = allbkgmasks[0]
         
         # If there are multiple masks:
         if len(allbkgmasks)>1:
             for mask in allbkgmasks[1:]:
-                backgroundmask = numpy.logical_or(backgroundmask,mask)
+                backgroundmask = np.logical_or(backgroundmask,mask)
 
         # Now we will find the the best poly order unless the use specidied one
         # The total cnts (over channels) is binned to 1 sec intervals
         if self._polyorder ==-1:
             totalbkgevents = self.ttefile.events[backgroundmask]
             binwidth=1.
-            cnts,bins=numpy.histogram(totalbkgevents-self.ttefile.triggertime,
-                                      bins=numpy.arange(self.ttefile.startevents-self.ttefile.triggertime,
+            cnts,bins=np.histogram(totalbkgevents-self.ttefile.triggertime,
+                                      bins=np.arange(self.ttefile.startevents-self.ttefile.triggertime,
                                                         self.ttefile.stopevents-self.ttefile.triggertime,
                                                         binwidth))
 
@@ -300,20 +306,20 @@ class FermiGBM_TTE_Like(FermiGBMLike):
             # Find the mean time of the bins
             meantime=[]
             for i in xrange(len(bins)-1):
-                m = numpy.mean((bins[i],bins[i+1]))
+                m = np.mean((bins[i],bins[i+1]))
                 meantime.append(m)
-            meantime = numpy.array(meantime)
+            meantime = np.array(meantime)
 
             # Remove bins with zero counts
             allnonzeromask = []
             for bkgsel in self._backgroundselections:              
-                allnonzeromask.append(numpy.logical_and(meantime>= bkgsel[0],
+                allnonzeromask.append(np.logical_and(meantime>= bkgsel[0],
                                                      meantime<= bkgsel[1] ))
 
             nonzeromask = allnonzeromask[0]
             if len(allnonzeromask)>1:
                 for mask in allnonzeromask[1:]:
-                    nonzeromask=numpy.logical_or(mask,nonzeromask)
+                    nonzeromask=np.logical_or(mask,nonzeromask)
 
             self.optimalPolGrade = self._fitGlobalAndDetermineOptimumGrade(cnts[nonzeromask],meantime[nonzeromask])
         else:
@@ -325,14 +331,14 @@ class FermiGBM_TTE_Like(FermiGBMLike):
             channelmask = self.ttefile.pha == chan
             #channelselectedevents = self.ttefile.events[channelmask]
             # Mask background events and current channel
-            bkgchanmask = numpy.logical_and(backgroundmask,channelmask)
+            bkgchanmask = np.logical_and(backgroundmask,channelmask)
             # Select the masked events
             currentevents = self.ttefile.events[bkgchanmask]
 
             
             binwidth=1.
-            cnts,bins=numpy.histogram(currentevents-self.ttefile.triggertime,
-                                      bins=numpy.arange(self.ttefile.startevents-self.ttefile.triggertime,
+            cnts,bins=np.histogram(currentevents-self.ttefile.triggertime,
+                                      bins=np.arange(self.ttefile.startevents-self.ttefile.triggertime,
                                                         self.ttefile.stopevents-self.ttefile.triggertime,
                                                         binwidth))
 
@@ -341,20 +347,20 @@ class FermiGBM_TTE_Like(FermiGBMLike):
             # Find the mean time of the bins
             meantime=[]
             for i in xrange(len(bins)-1):
-                m = numpy.mean((bins[i],bins[i+1]))
+                m = np.mean((bins[i],bins[i+1]))
                 meantime.append(m)
-            meantime = numpy.array(meantime)
+            meantime = np.array(meantime)
 
             # Remove bins with zero counts
             allnonzeromask = []
             for bkgsel in self._backgroundselections:              
-                allnonzeromask.append(numpy.logical_and(meantime>= bkgsel[0],
+                allnonzeromask.append(np.logical_and(meantime>= bkgsel[0],
                                                       meantime<= bkgsel[1] ))
         
             nonzeromask = allnonzeromask[0]
             if len(allnonzeromask)>1:
                 for mask in allnonzeromask[1:]:
-                    nonzeromask=numpy.logical_or(mask,nonzeromask)
+                    nonzeromask=np.logical_or(mask,nonzeromask)
 
 
             # Finally, we fit the background and add the polynomial to a list
@@ -394,7 +400,7 @@ class FermiGBM_TTE_Like(FermiGBMLike):
           print("  Initial estimate with SVD..."),
         with warnings.catch_warnings():
           warnings.simplefilter("ignore")
-          initialGuess            = numpy.polyfit(x,y,polGrade)
+          initialGuess            = np.polyfit(x,y,polGrade)
         pass
         initialGuess              = initialGuess[::-1]
         if(test):
@@ -410,8 +416,8 @@ class FermiGBM_TTE_Like(FermiGBMLike):
         if(len(negativeMask.nonzero()[0])>0):
           #Least square fit failed to converge to a meaningful solution
           #Reset the initialGuess to reasonable value
-          initialGuess[0]         = numpy.mean(y)
-          meanx                   = numpy.mean(x)
+          initialGuess[0]         = np.mean(y)
+          meanx                   = np.mean(x)
           initialGuess            = map(lambda x:abs(x[1])/pow(meanx,x[0]),enumerate(initialGuess))
 
         #Improve the solution using a logLikelihood statistic (Cash statistic)
@@ -464,12 +470,12 @@ class FermiGBM_TTE_Like(FermiGBMLike):
 
 
 
-    def setActiveMeasurements(self, *args):
+    def set_active_measurements(self, *args):
         '''Set the measurements to be used during the analysis.
         Use as many ranges as you need,
         specified as 'emin-emax'. Energies are in keV. Example:
 
-        setActiveMeasurements('10-12.5','56.0-100.0')
+        set_active_measurements('10-12.5','56.0-100.0')
 
         which will set the energy range 10-12.5 keV and 56-100 keV to be
         used in the analysis'''
@@ -479,21 +485,21 @@ class FermiGBM_TTE_Like(FermiGBMLike):
         # out the non-used channels during the logLike
 
         # Now build the mask: values for which the mask is 0 will be masked
-        mask = numpy.zeros(self.ttefile.nchans)
+        mask = np.zeros(self.ttefile.nchans)
 
         for arg in args:
             ee = map(float, arg.replace(" ", "").split("-"))
             emin, emax = sorted(ee)
-            idx1 = self.response.energyToChannel(emin)
-            idx2 = self.response.energyToChannel(emax)
+            idx1 = self.response.energy_to_channel(emin)
+            idx2 = self.response.energy_to_channel(emax)
             mask[idx1:idx2 + 1] = True
         pass
-        self.mask = numpy.array(mask, numpy.bool)
+        self.mask = np.array(mask, np.bool)
 
         self.counts = self.counts_backup[self.mask]
         self.bkgCounts = self.bkgCounts_backup[self.mask]
-        self.bkgError = self.bkgError[self.mask]
-        print("Now using %s channels out of %s" % (numpy.sum(self.mask),
+        self.bkgErr = self.bkgErr[self.mask]
+        print("Now using %s channels out of %s" % (np.sum(self.mask),
                                                    self.ttefile.nchans
                                                    ))
 
@@ -531,11 +537,11 @@ class BkgLogLikelihood(object):
     #Initialize the exposure to 1.0 (i.e., non-influential)
     #It will be replaced by the real exposure if the exposure keyword
     #have been used
-    self.exposure             = numpy.zeros(len(x))+1.0
+    self.exposure             = np.zeros(len(x))+1.0
         
     for key in kwargs.keys():
       if  (key.lower()=="exposure"):            
-        self.exposure = numpy.array(kwargs[key])
+        self.exposure = np.array(kwargs[key])
     pass  
         
   pass
@@ -544,17 +550,17 @@ class BkgLogLikelihood(object):
     #Evaluate the logarithm with protection for negative or small
     #numbers, using a smooth linear extrapolation (better than just a sharp
     #cutoff)
-    tiny                      = numpy.float64(numpy.finfo(M[0]).tiny)
+    tiny                      = np.float64(np.finfo(M[0]).tiny)
     
     nontinyMask               = (M > 2.0*tiny)
-    tinyMask                  = numpy.logical_not(nontinyMask)
+    tinyMask                  = np.logical_not(nontinyMask)
     
     if(len(tinyMask.nonzero()[0])>0):      
-      logM                     = numpy.zeros(len(M))
-      logM[tinyMask]           = numpy.abs(M[tinyMask])/tiny + numpy.log(tiny) -1
-      logM[nontinyMask]        = numpy.log(M[nontinyMask])
+      logM                     = np.zeros(len(M))
+      logM[tinyMask]           = np.abs(M[tinyMask])/tiny + np.log(tiny) -1
+      logM[nontinyMask]        = np.log(M[nontinyMask])
     else:
-      logM                     = numpy.log(M)
+      logM                     = np.log(M)
     return logM
   pass
   
@@ -583,11 +589,11 @@ class BkgLogLikelihood(object):
     #Evaluate v_i = D_i * log(M_i): if D_i = 0 then the product is zero
     #whatever value has log(M_i). Thus, initialize the whole vector v = {v_i}
     #to zero, then overwrite the elements corresponding to D_i > 0
-    d_times_logM              = numpy.zeros(len(self.y))
+    d_times_logM              = np.zeros(len(self.y))
     nonzeroMask               = (self.y > 0)
     d_times_logM[nonzeroMask] = self.y[nonzeroMask] * logM[nonzeroMask]
     
-    logLikelihood             = numpy.sum( Mfixed - d_times_logM )
+    logLikelihood             = np.sum( Mfixed - d_times_logM )
 
     return logLikelihood    
   pass
@@ -598,10 +604,10 @@ class BkgLogLikelihood(object):
       number of the type corresponding to v. This is to avoid warnings
       and errors like underflows or overflows in math operations.
     '''
-    tiny                      = numpy.float64(numpy.finfo(v[0]).tiny)
-    zeroMask                  = (numpy.abs(v) <= tiny)
+    tiny                      = np.float64(np.finfo(v[0]).tiny)
+    zeroMask                  = (np.abs(v) <= tiny)
     if(len(zeroMask.nonzero()[0])>0):
-      v[zeroMask]               = numpy.sign(v[zeroMask])*tiny
+      v[zeroMask]               = np.sign(v[zeroMask])*tiny
     
     return v, tiny
   pass
@@ -616,7 +622,7 @@ class BkgLogLikelihood(object):
     
     #Get the number of parameters and initialize the gradient to 0
     Nfree                     = self.model.getNumFreeParams()
-    derivs                    = numpy.zeros(Nfree)
+    derivs                    = np.zeros(Nfree)
     
     #Set the parameters, if a new set has been provided
     if(parameters!=None):
@@ -634,13 +640,13 @@ class BkgLogLikelihood(object):
     #and then overwrite the elements for which y > 0. This is to avoid
     #possible underflow and overflow due to the finite precision of the
     #computer
-    y_divided_M               = numpy.zeros(len(self.y))
+    y_divided_M               = np.zeros(len(self.y))
     nonzero                   = (self.y > 0)
     y_divided_M[nonzero]      = self.y[nonzero]/M[nonzero]
        
     for p in range(Nfree):
       thisModelDerivs, tinyMd = self._fixPrecision(modelDerivs[p])
-      derivs[p]               = numpy.sum(thisModelDerivs * (1.0 - y_divided_M) )
+      derivs[p]               = np.sum(thisModelDerivs * (1.0 - y_divided_M) )
     pass
     
     return derivs
@@ -655,7 +661,7 @@ class Polynomial(object):
     self.degree               = len(params)-1
     
     #Build an empty covariance matrix
-    self.covMatrix            = numpy.zeros([self.degree+1,self.degree+1])
+    self.covMatrix            = np.zeros([self.degree+1,self.degree+1])
   pass
   
   def horner(self, x):
@@ -703,13 +709,13 @@ class Polynomial(object):
     for i in range(Npar):
       freeDerivs.append(map(lambda xx:pow(xx,i),x))
     pass
-    return numpy.array(freeDerivs)
+    return np.array(freeDerivs)
   pass
   
   def computeCovarianceMatrix(self,statisticGradient):
     self.covMatrix            = computeCovarianceMatrix(statisticGradient,self.params)
     #Check that the covariance matrix is positive-defined
-    negativeElements          = (numpy.matrix.diagonal(self.covMatrix) < 0)
+    negativeElements          = (np.matrix.diagonal(self.covMatrix) < 0)
     if(len(negativeElements.nonzero()[0]) > 0):
       raise RuntimeError("Negative element in the diagonal of the covariance matrix. Try to reduce the polynomial grade.")
   pass  
@@ -734,7 +740,7 @@ class Polynomial(object):
     # Based on http://root.cern.ch/root/html/tutorials/fit/ErrorIntegral.C.html
     
     #Set the weights
-    i_plus_1                  = numpy.array(range(1,self.degree+1+1),'d')
+    i_plus_1                  = np.array(range(1,self.degree+1+1),'d')
     def evalBasis(x):
       return (1/i_plus_1) * pow(x,i_plus_1)
     c                         = evalBasis(xmax) - evalBasis(xmin)
@@ -779,12 +785,12 @@ def computeCovarianceMatrix(grad,par,full_output=False,
     """
 
     nparams                   = len(par)
-    step_size                 = numpy.ones(nparams)*init_step
-    step_size                 = numpy.maximum(step_size,min_step*1.1)
-    step_size                 = numpy.minimum(step_size,max_step*0.9)
-    hess                      = numpy.zeros([nparams,nparams])
-    min_flags                 = numpy.asarray([False]*nparams)
-    max_flags                 = numpy.asarray([False]*nparams)
+    step_size                 = np.ones(nparams)*init_step
+    step_size                 = np.maximum(step_size,min_step*1.1)
+    step_size                 = np.minimum(step_size,max_step*0.9)
+    hess                      = np.zeros([nparams,nparams])
+    min_flags                 = np.asarray([False]*nparams)
+    max_flags                 = np.asarray([False]*nparams)
 
     def revised_step(delta_f,current_step,index):
         if (current_step == max_step):
@@ -810,7 +816,7 @@ def computeCovarianceMatrix(grad,par,full_output=False,
             else:
                 return True,0
     
-    iters                     = numpy.zeros(nparams)
+    iters                     = np.zeros(nparams)
     for i in xrange(nparams):
         converged             = False
         
@@ -842,7 +848,7 @@ def computeCovarianceMatrix(grad,par,full_output=False,
         if not converged:
             print 'Warning: step size for parameter %d (%.2g) did not result in convergence.'%(i,di)
     try:
-        cov = numpy.linalg.inv(hess)
+        cov = np.linalg.inv(hess)
     except:
         print 'Error inverting hessian.'
         raise Exception('Error inverting hessian')
