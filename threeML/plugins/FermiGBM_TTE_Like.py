@@ -168,6 +168,7 @@ class FermiGBM_TTE_Like(FermiGBMLike):
         else:             # Niether are negative
                 tmp2= map(float,tmp)
         self.tmin,self.tmax = tmp2
+        self.exposure = self.tmax-self.tmin
 
         # First build the mas for the events in time
         timemask = np.logical_and(self.ttefile.events-self.ttefile.triggertime>=self.tmin,
@@ -502,6 +503,7 @@ class FermiGBM_TTE_Like(FermiGBMLike):
 
         which will set the energy range 10-12.5 keV and 56-100 keV to be
         used in the analysis'''
+
         self._energyselectionexists = True
         # To implelemnt this we will use an array of boolean index,
         # which will filter
@@ -521,7 +523,7 @@ class FermiGBM_TTE_Like(FermiGBMLike):
 
         self.counts = self.counts_backup[self.mask]
         self.bkgCounts = self.bkgCounts_backup[self.mask]
-        self.bkgErr = self.bkgErr[self.mask]
+        self.bkgErr = self.bkgErr_backup[self.mask]
         print("Now using %s channels out of %s" % (np.sum(self.mask),
                                                    self.ttefile.nchans
                                                    ))

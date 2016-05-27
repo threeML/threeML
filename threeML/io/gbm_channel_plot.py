@@ -47,12 +47,15 @@ def excluded_channel_plot(chan_min,chan_max,mask,counts,bkg,ax):
 def slice_disjoint(arr):
     slices=[]
     startSlice = 0
-    
+    counter =0
     for i in range(len(arr)-1): 
         if arr[i+1]>arr[i]+1:
             endSlice = arr[i]
             slices.append([startSlice,endSlice])
             startSlice=arr[i+1]
+            counter+=1
+    if counter == 0:
+        return [[arr[0],arr[-1]]]
     if endSlice!=arr[-1]:
         slices.append([startSlice,arr[-1]])
     return slices
