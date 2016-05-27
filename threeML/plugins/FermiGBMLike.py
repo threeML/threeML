@@ -11,6 +11,7 @@ from threeML.minimizer import minimization
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.gammaln import logfactorial
 from threeML.plugins.ogip import OGIPPHA
+from threeML.io.gbm_channel_plot import gbm_channel_plot, excluded_channel_plot
 
 from astromodels.parameter import Parameter
 
@@ -341,6 +342,21 @@ class FermiGBMLike(PluginPrototype):
         '''
         return self.nuisanceParameters.keys()
 
+    def view_count_spectrum(self):
+        '''
+        View the count and background spectrum. Useful to check energy selections.
+
+        '''
+        # First plot the counts
+        _  = gbm_channel_plot(self.response.ebounds[:,0],self.response.ebounds[:,1],self.counts_backup,color='#377eb8',lw=2,alpha=1)
+        ax = gbm_channel_plot(self.response.ebounds[:,0],self.response.ebounds[:,1],self.bkgCounts_backup,color='#e41a1c',alpha=.8)
+        # Now fade the non-used channels
+        excluded_channel_plot(self.response.ebounds[:,0],self.response.ebounds[:,1],self.mask,self.counts_backup,self.bkgCounts_backup,ax)
+                
+        ax.set_xlabel("Energy (keV)")
+        ax.set_ylabel("Counts/keV")
+        ax.set_xlim(left=self.response.ebounds[0,0],right=self.response.ebounds[-1,1])
+        
 
 class Response(object):
 

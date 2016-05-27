@@ -18,7 +18,9 @@ from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_wa
 from threeML.io.rich_display import display
 from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
 
+
 from astromodels import ModelAssertionViolation
+
 
 def sample_with_progress(p0, sampler, n_samples, **kwargs):
     # Create progress bar
