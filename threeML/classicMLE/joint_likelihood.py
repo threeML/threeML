@@ -1,6 +1,6 @@
 import collections
 import time
-
+import copy
 import numpy
 import scipy.optimize
 import scipy.stats
@@ -17,8 +17,9 @@ from threeML.io.table import Table
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.io.progress_bar import ProgressBar
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
 
+from astromodels import ModelAssertionViolation
 
 class ReducingNumberOfThreads(Warning):
     pass
@@ -121,13 +122,13 @@ class JointLikelihood(object):
         self._update_free_parameters()
 
         # Now check and fix if needed all the deltas of the parameters
-        # to 10% of their value (otherwise the fit will be super-slow)
+        # to 20% of their value (otherwise the fit will be super-slow)
 
         for k, v in self._free_parameters.iteritems():
 
-            if abs(v.delta) < abs(v.value) * 0.1:
+            if abs(v.delta) < abs(v.value) * 0.2:
 
-                v.delta = abs(v.value) * 0.1
+                v.delta = abs(v.value) * 0.2
 
         # Instance the minimizer
 
@@ -137,6 +138,10 @@ class JointLikelihood(object):
         # Perform the fit
 
         xs, log_likelihood_minimum = self._minimizer.minimize()
+
+        if log_likelihood_minimum == minimization.FIT_FAILED:
+
+            raise FitFailed("The fit failed to converge.")
 
         # Store the current minimum for the -log likelihood
 
@@ -164,7 +169,13 @@ class JointLikelihood(object):
 
         print("\nCorrelation matrix:\n")
 
-        self._minimizer.print_correlation_matrix()
+        try:
+
+            self._minimizer.print_correlation_matrix()
+
+        except minimization.CannotComputeCovariance:
+
+            print("\n(not available. Minimizer could not compute correlation matrix)\n\n")
 
         print("\nMinimum of -logLikelihood is: %s\n" % log_likelihood_minimum)
 
@@ -368,7 +379,7 @@ class JointLikelihood(object):
 
                 # Re-create the minimizer
 
-                # backup_freeParameters = copy.deepcopy(self.freeParameters)
+                backup_freeParameters = map(lambda x:x.value, self._likelihood_model.free_parameters.values())
 
                 this_minimizer = self.Minimizer(self.minus_log_like_profile,
                                                 self._free_parameters)
@@ -383,7 +394,11 @@ class JointLikelihood(object):
                                                       param_2_n_steps,
                                                       False, **options)
 
-                # self.freeParameters = backup_freeParameters
+                # Restore best fit values
+
+                for val, par in zip(backup_freeParameters, self._likelihood_model.free_parameters.values()):
+
+                    par.value = val
 
                 return ccc
 
@@ -504,7 +519,7 @@ class JointLikelihood(object):
         # Keep track of the number of calls
         self.ncalls += 1
 
-        # Tranform the trial values in a numpy array
+        # Transform the trial values in a numpy array
 
         trial_values = numpy.array(trial_values)
 
@@ -536,7 +551,7 @@ class JointLikelihood(object):
 
                 this_log_like = dataset.inner_fit()
 
-            except custom_exceptions.ModelAssertionViolation:
+            except ModelAssertionViolation:
 
                 # This is a zone of the parameter space which is not allowed. Return
                 # a big number for the likelihood so that the fit engine will avoid it
@@ -584,6 +599,10 @@ class JointLikelihood(object):
         if minimizer.upper() == "MINUIT":
 
             return minimization.MinuitMinimizer
+
+        elif minimizer.upper() == "ROOT":
+
+            return minimization.ROOTMinimizer
 
         else:
 

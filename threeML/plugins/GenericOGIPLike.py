@@ -19,12 +19,12 @@ __instrument_name = "All OGIP-compliant instruments"
 
 
 class GenericOGIPLike(PluginPrototype):
+
     def __init__(self, name, phafile, bkgfile, rspfile, arffile=None):
 
         self.name = name
 
         # Check that all file exists
-        notExistant = []
 
         inputFiles = [phafile, bkgfile, rspfile]
 

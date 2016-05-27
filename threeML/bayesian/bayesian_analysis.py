@@ -13,12 +13,14 @@ from threeML.io.table import Table
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.io.progress_bar import ProgressBar
-from threeML.io.triangle import corner
-from threeML.exceptions.custom_exceptions import ModelAssertionViolation, LikelihoodIsInfinite, custom_warnings
+from corner import corner
+from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
 from threeML.io.rich_display import display
+from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
 
-# J. Michael 25/5/2016 This is not working!
-#from astromodels import uniform_prior, log_uniform_prior
+
+from astromodels import ModelAssertionViolation
+
 
 def sample_with_progress(p0, sampler, n_samples, **kwargs):
     # Create progress bar
@@ -29,10 +31,15 @@ def sample_with_progress(p0, sampler, n_samples, **kwargs):
 
     pos, prob, state = [None, None, None]
 
+    # This is only for producing the progress bar
+    progress_bar_iter = max(int(n_samples / 100),1)
+
     for i, result in enumerate(sampler.sample(p0, iterations=n_samples, **kwargs)):
         # Show progress
 
-        progress.animate((i + 1))
+        if i % progress_bar_iter == 0:
+
+            progress.animate((i + 1))
 
         # Get the vectors with the results
 
@@ -90,44 +97,23 @@ class BayesianAnalysis(object):
         self._samples = None
         self._raw_samples = None
         self._sampler = None
+        self._log_like_values = None
 
         # Get the initial list of free parameters, useful for debugging purposes
 
         self._update_free_parameters()
 
-    def set_uniform_priors(self):
+    @property
+    def log_like_values(self):
         """
-        Automatically set all parameters to uniform or log-uniform priors. The latter is used when the range spanned
-        by the parameter is larger than 2 orders of magnitude.
+        Returns the value of the log_likelihood found by the bayesian sampler while sampling from the posterior. If
+        you need to find the values of the parameters which generated a given value of the log. likelihood, remember
+        that the samples accessible through the property .raw_samples are ordered in the same way as the vector
+        returned by this method.
 
-        :return: (none)
+        :return: a vector of log. like values
         """
-
-        for parameter_name, parameter in self._free_parameters.iteritems():
-
-            if parameter.min_value is None or parameter.max_value is None:
-
-                custom_warnings.warn("Cannot decide the prior for parameter %s, since it has no "
-                                     "minimum or no maximum value (or both)")
-
-                continue
-
-            n_orders_of_magnitude = numpy.log10(parameter.max_value - parameter.min_value)
-
-            if n_orders_of_magnitude > 2:
-
-                print("Using log-uniform prior for %s" % parameter_name)
-
-                parameter.prior = log_uniform_prior(lower_bound=parameter.min_value,
-                                                    upper_bound=parameter.max_value)
-
-            else:
-
-                print("Using uniform prior for %s" % parameter_name)
-
-                parameter.prior = uniform_prior(lower_bound=parameter.min_value,
-                                                upper_bound=parameter.max_value,
-                                                value=1.0)
+        return self._log_like_values
 
     def sample(self, n_walkers, burn_in, n_samples):
         """
@@ -142,6 +128,8 @@ class BayesianAnalysis(object):
 
         p0 = self._get_starting_points(n_walkers)
 
+        sampling_procedure = sample_with_progress
+
         if threeML_config['parallel']['use-parallel']:
 
             c = ParallelClient()
@@ -151,6 +139,10 @@ class BayesianAnalysis(object):
                                             self._get_posterior,
                                             pool=view)
 
+            # Sampling with progress in parallel is super-slow, so let's
+            # use the non-interactive one
+            sampling_procedure = sample_without_progress
+
         else:
 
             sampler = emcee.EnsembleSampler(n_walkers, n_dim,
@@ -158,7 +150,9 @@ class BayesianAnalysis(object):
 
         print("Running burn-in of %s samples...\n" % burn_in)
 
-        pos, prob, state = sample_with_progress(p0, sampler, burn_in)
+        # Prepare the list of likelihood values
+        self._log_like_values = []
+        pos, prob, state = sampling_procedure(p0, sampler, burn_in)
 
         # Reset sampler
 
@@ -168,7 +162,10 @@ class BayesianAnalysis(object):
 
         print("\nSampling...\n")
 
-        _ = sample_with_progress(pos, sampler, n_samples, rstate0=state)
+        # Reset also the list of likelihood values
+        self._log_like_values = []
+
+        _ = sampling_procedure(pos, sampler, n_samples, rstate0=state)
 
         acc = numpy.mean(sampler.acceptance_fraction)
 
@@ -312,8 +309,7 @@ class BayesianAnalysis(object):
 
             # Split the uncertainty in number, negative error, and exponent (if any)
 
-            number, unc_lower_bound, exponent = re.match('\(?(\-?[0-9]+\.?[0-9]+) ([0-9]+\.[0-9]+)\)?(e[\+|\-][0-9]+)?',
-                                           x.__str__().replace("+/-", " ")).groups()
+            number, unc_lower_bound, exponent = get_uncertainty_tokens(x)
 
             # Process the positive "error"
 
@@ -321,8 +317,7 @@ class BayesianAnalysis(object):
 
             # Split the uncertainty in number, positive error, and exponent (if any)
 
-            _, unc_upper_bound, _ = re.match('\(?(\-?[0-9]+\.?[0-9]+) ([0-9]+\.[0-9]+)\)?(e[\+|\-][0-9]+)?',
-                                  x.__str__().replace("+/-", " ")).groups()
+            _, unc_upper_bound, _ = get_uncertainty_tokens(x)
 
             if exponent is None:
 
@@ -378,9 +373,16 @@ class BayesianAnalysis(object):
 
                 priors.append(self._likelihood_model.parameters[parameter_name].prior)
 
-            fig = corner(self.raw_samples, labels=labels,
-                         quantiles=[0.16, 0.50, 0.84],
-                         priors=priors, **kwargs)
+            # default arguments
+            default_args = {'show_titles': True, 'title_fmt': ".2g", 'labels': labels,
+                            'quantiles': [0.16, 0.50, 0.84]}
+
+            # Update the default arguents with the one provided (if any). Note that .update also adds new keywords,
+            # if they weren't present in the original dictionary, so you can use any option in kwargs, not just
+            # the one in default_args
+            default_args.update(kwargs)
+
+            fig = corner(self.raw_samples, **default_args)
 
             return fig
 
@@ -601,6 +603,8 @@ class BayesianAnalysis(object):
 
         log_like = numpy.sum(log_like_values)
 
+        self._log_like_values.append(log_like)
+
         if not numpy.isfinite(log_like):
             # Issue warning
 
@@ -608,7 +612,7 @@ class BayesianAnalysis(object):
 
             return -numpy.inf
 
-        #print("Log like is %s, log_prior is %s, for trial values %s" % (log_like, log_prior,trial_values))
+        # print("Log like is %s, log_prior is %s, for trial values %s" % (log_like, log_prior,trial_values))
 
         return log_like + log_prior
 

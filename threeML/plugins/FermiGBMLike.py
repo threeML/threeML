@@ -3,8 +3,9 @@ import os
 import warnings
 
 import astropy.io.fits as pyfits
-import numpy
+import numpy as np
 import scipy.integrate
+from math import log
 
 from threeML.minimizer import minimization
 from threeML.plugin_prototype import PluginPrototype
@@ -17,6 +18,7 @@ __instrument_name = "Fermi GBM (all detectors)"
 
 
 class FermiGBMLike(PluginPrototype):
+
     def __init__(self, name, phafile, bkgfile, rspfile):
         '''
         If the input files are PHA2 files, remember to specify the spectrum number, for example:
@@ -52,48 +54,65 @@ class FermiGBMLike(PluginPrototype):
 
         # Start with an empty mask (the user will overwrite it using the
         # setActiveMeasurement method)
-        self.mask = numpy.asarray(
-            numpy.ones(self.phafile.getRates().shape),
-            numpy.bool)
+        self.mask = np.asarray(
+            np.ones(self.phafile.getRates().shape),
+            np.bool)
 
         # Get the counts for this spectrum
         self.counts = (self.phafile.getRates()[self.mask]
                        * self.exposure)
 
+
         # Check that counts is positive
         idx = (self.counts < 0)
 
-        if (numpy.sum(idx) > 0):
+        if (np.sum(idx) > 0):
             warnings.warn("The observed spectrum for %s " % self.name +
                           "has negative channels! Fixing those to zero.",
                           RuntimeWarning)
             self.counts[idx] = 0
 
-        pass
-
         # Get the background counts for this spectrum
         self.bkgCounts = (self.bkgfile.getRates()[self.mask]
                           * self.exposure)
 
+        # Get the error on the background counts
+        self.bkgErr = self.bkgfile.getRatesErrors()[self.mask] * self.exposure
+
         # Check that bkgCounts is positive
         idx = (self.bkgCounts < 0)
 
-        if (numpy.sum(idx) > 0):
+        if (np.sum(idx) > 0):
             warnings.warn("The background spectrum for %s " % self.name +
                           "has negative channels! Fixing those to zero.",
                           RuntimeWarning)
             self.bkgCounts[idx] = 0
 
+        # Check that bkgErr is positive
+        idx = (self.bkgCounts < 0)
+
+        if (np.sum(idx) > 0):
+
+            raise RuntimeError("The background spectrum for %s " % self.name +
+                                "has negative errors! Fixing those to zero.")
+
+        # Check that errors are zeros when the bkg is zero
+        if np.any((self.bkgErr == 0) & (self.bkgCounts > 0)):
+
+            raise RuntimeError("The background error is zero but the background counts are not zero for some bins. "
+                               "Data are corrupted.")
+
         # Check that the observed counts are positive
 
         idx = self.counts < 0
 
-        if numpy.sum(idx) > 0:
+        if np.sum(idx) > 0:
             raise RuntimeError("Negative counts in observed spectrum %s. Data are corrupted." % (phafile))
 
         # Keep a copy which will never be modified
-        self.counts_backup = numpy.array(self.counts, copy=True)
-        self.bkgCounts_backup = numpy.array(self.bkgCounts, copy=True)
+        self.counts_backup = np.array(self.counts, copy=True)
+        self.bkgCounts_backup = np.array(self.bkgCounts, copy=True)
+        self.bkgErr_backup = np.array(self.bkgErr, copy=True)
 
         # Effective area correction is disabled by default, i.e.,
         # the nuisance parameter is fixed to 1
@@ -103,7 +122,8 @@ class FermiGBMLike(PluginPrototype):
 
     pass
 
-    def useIntercalibrationConst(self, factorLowBound=0.9, factorHiBound=1.1):
+    def use_intercalibration_constant(self, factorLowBound=0.9, factorHiBound=1.1):
+
         self.nuisanceParameters['InterCalib'].free()
         self.nuisanceParameters['InterCalib'].set_bounds(factorLowBound, factorHiBound)
 
@@ -124,7 +144,7 @@ class FermiGBMLike(PluginPrototype):
 
             self.nuisanceParameters['InterCalib'].setValue(float(factorHiBound))
 
-    def fixIntercalibrationConst(self, value=None):
+    def fix_intercalibration_constant(self, value=None):
 
         if (value is not None):
             # Fixing the constant to the provided value
@@ -138,7 +158,7 @@ class FermiGBMLike(PluginPrototype):
 
         self.nuisanceParameters['InterCalib'].fix()
 
-    def setActiveMeasurements(self, *args):
+    def set_active_measurements(self, *args):
         '''Set the measurements to be used during the analysis.
         Use as many ranges as you need,
         specified as 'emin-emax'. Energies are in keV. Example:
@@ -153,21 +173,22 @@ class FermiGBMLike(PluginPrototype):
         # out the non-used channels during the logLike
 
         # Now build the mask: values for which the mask is 0 will be masked
-        mask = numpy.zeros(self.phafile.getRates().shape)
+        mask = np.zeros(self.phafile.getRates().shape)
 
         for arg in args:
             ee = map(float, arg.replace(" ", "").split("-"))
             emin, emax = sorted(ee)
-            idx1 = self.response.energyToChannel(emin)
-            idx2 = self.response.energyToChannel(emax)
+            idx1 = self.response.energy_to_channel(emin)
+            idx2 = self.response.energy_to_channel(emax)
             mask[idx1:idx2 + 1] = True
         pass
-        self.mask = numpy.array(mask, numpy.bool)
+        self.mask = np.array(mask, np.bool)
 
         self.counts = self.counts_backup[self.mask]
         self.bkgCounts = self.bkgCounts_backup[self.mask]
+        self.bkgErr = self.bkgErr_backup[self.mask]
 
-        print("Now using %s channels out of %s" % (numpy.sum(self.mask),
+        print("Now using %s channels out of %s" % (np.sum(self.mask),
                                                    self.phafile.getRates().shape[0]
                                                    ))
 
@@ -219,62 +240,23 @@ class FermiGBMLike(PluginPrototype):
                                       + 4 * self.diffFlux((e1 + e2) / 2.0)
                                       + self.diffFlux(e2))
 
-        self.response.setFunction(diffFlux,
-                                  integral)
+        self.response.set_function(diffFlux,
+                                   integral)
 
     pass
 
     def inner_fit(self):
 
-        # Effective area correction
-        if (self.nuisanceParameters['InterCalib'].free):
+        return self.get_log_like()
 
-            # A true fit would be an overkill, and slow
-            # Just sample a 100 values and choose the minimum
-            values = numpy.linspace(self.nuisanceParameters['InterCalib'].min_value,
-                                    self.nuisanceParameters['InterCalib'].max_value,
-                                    100)
-
-            # I do not use getLogLike so I can compute only once the folded model
-            # (which is not going to change during the inner fit)
-
-            folded = self.getFoldedModel()
-
-            modelCounts = folded * self.exposure
-
-            def fitfun(cons):
-
-                self.nuisanceParameters['InterCalib'].value = cons
-
-                return (-1) * self._computeLogLike(
-                    self.nuisanceParameters['InterCalib'].value * modelCounts + self.bkgCounts)
-
-            logLval = map(fitfun, values)
-            idx = numpy.argmax(logLval)
-            self.nuisanceParameters['InterCalib'].value = values[idx]
-            # return logLval[idx]
-
-            # Now refine with minuit
-
-            parameters = collections.OrderedDict()
-            parameters[(self.name, 'InterCalib')] = self.nuisanceParameters['InterCalib']
-            minimizer = minimization.MinuitMinimizer(fitfun, parameters)
-            bestFit, mlogLmin = minimizer.minimize()
-
-            return mlogLmin * (-1)
-
-        else:
-
-            return self.get_log_like()
-
-    def getFoldedModel(self):
+    def get_folded_model(self):
 
         # Get the folded model for this spectrum
         # (this is the rate predicted, in cts/s)
 
         return self.response.convolve()[self.mask]
 
-    def getModelAndData(self):
+    def get_model_and_data(self):
 
         e1, e2 = (self.response.ebounds[:, 0],
                   self.response.ebounds[:, 1])
@@ -285,24 +267,60 @@ class FermiGBMLike(PluginPrototype):
                 e2[self.mask],
                 self.counts)
 
-    def _getModelCounts(self):
+    def _get_model_counts(self):
 
         # Get the folded model for this spectrum (this is the rate predicted,
         # in cts/s)
 
-        folded = self.getFoldedModel()
+        folded = self.get_folded_model()
 
         # Model is folded+background (i.e., we assume negligible errors on the
         # background)
-        modelCounts = self.nuisanceParameters['InterCalib'].value * folded * self.exposure + self.bkgCounts
+        modelCounts = self.nuisanceParameters['InterCalib'].value * folded * self.exposure
 
-        return modelCounts
+        # Put all negative predicted counts to zero
+        clippedModelCounts = np.clip(modelCounts, 0, 1e10)
 
-    def _computeLogLike(self, modelCounts):
+        return clippedModelCounts
 
-        return numpy.sum(- modelCounts
-                         + self.counts * numpy.log(modelCounts)
-                         - logfactorial(self.counts))
+    def _compute_log_like(self, modelCounts):
+
+        # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
+        # observed counts. It is a profile likelihood.
+
+        MB = self.bkgCounts + modelCounts
+        s2 = self.bkgErr**2
+
+        b = 0.5 * (np.sqrt( MB**2 - 2 * s2 * (MB - 2 * self.counts) + self.bkgErr**4)
+                   + self.bkgCounts - modelCounts - s2)
+
+        # Now there are two branches: when the background is 0 we are in the normal situation of a pure
+        # Poisson likelihood, while when the background is not zero we use the profile likelihood
+
+        # NOTE: In the constructor we enforced that bkgErr can be 0 only when also bkgCounts = 0
+        # Also it is evident from the expression above that when bkgCounts = 0 and bkgErr=0 also b=0
+
+        # Let's do the branch with background > 0 first
+
+        idx = self.bkgCounts > 0
+
+        log_likes = np.empty_like(modelCounts)
+
+        log_likes[idx] = ( -(b[idx] - self.bkgCounts[idx])**2 / (2 * s2[idx])
+                           + self.counts[idx] * np.log(b[idx] + modelCounts[idx])
+                           - b[idx] - modelCounts[idx] - logfactorial(self.counts[idx])
+                           - 0.5 * log(2*np.pi) - np.log(self.bkgErr[idx]))
+
+        # Let's do the other branch
+
+        nidx = ~idx
+
+        # the 1e-100 in the log is to avoid zero divisions
+        # This is the Poisson likelihood with no background
+        log_likes[nidx] = self.counts[nidx] * np.log(modelCounts[nidx] + 1e-100) - modelCounts[nidx] \
+                          - logfactorial(self.counts[nidx])
+
+        return np.sum(log_likes)
 
     def get_log_like(self):
         '''
@@ -310,9 +328,9 @@ class FermiGBMLike(PluginPrototype):
         parameters
         '''
 
-        modelCounts = self._getModelCounts()
+        modelCounts = self._get_model_counts()
 
-        logLike = self._computeLogLike(modelCounts)
+        logLike = self._compute_log_like(modelCounts)
 
         return logLike
 
@@ -323,13 +341,9 @@ class FermiGBMLike(PluginPrototype):
         '''
         return self.nuisanceParameters.keys()
 
-    pass
-
-
-pass
-
 
 class Response(object):
+
     def __init__(self, rspfile):
 
         rspNumber = 1
@@ -364,13 +378,13 @@ class Response(object):
 
             self.matrix = variableToMatrix(data.field('MATRIX'))
 
-            self.ebounds = numpy.vstack([f['EBOUNDS'].data.field("E_MIN"),
+            self.ebounds = np.vstack([f['EBOUNDS'].data.field("E_MIN"),
                                          f['EBOUNDS'].data.field("E_MAX")]).T
 
-            self.mc_channels = numpy.vstack([data.field("ENERG_LO"),
+            self.mc_channels = np.vstack([data.field("ENERG_LO"),
                                              data.field("ENERG_HI")]).T
 
-    def setFunction(self, differentialFunction, integralFunction=None):
+    def set_function(self, differentialFunction, integralFunction=None):
         '''
         Set the function to be used for the convolution
         '''
@@ -389,7 +403,7 @@ class Response(object):
                 return scipy.integrate.quad(self.differentialFunction, x, y)[0]
 
             # NB: vectorize is super slow!
-            self.integralFunction = numpy.vectorize(integral, otypes=[numpy.float])
+            self.integralFunction = np.vectorize(integral, otypes=[np.float])
 
         else:
 
@@ -400,15 +414,15 @@ class Response(object):
         trueFluxes = self.integralFunction(self.mc_channels[:, 0],
                                            self.mc_channels[:, 1])
 
-        foldedCounts = numpy.dot(trueFluxes, self.matrix.T)
+        foldedCounts = np.dot(trueFluxes, self.matrix.T)
 
         return foldedCounts
 
-    def getCountsVector(self, e1, e2):
+    def get_counts_vector(self, e1, e2):
 
         trueFluxes = self.integralFunction(self.mc_channels[:, 0], self.mc_channels[:, 1])
 
-    def energyToChannel(self, energy):
+    def energy_to_channel(self, energy):
 
         '''Finds the channel containing the provided energy.
         NOTE: returns the channel index (starting at zero),
@@ -436,7 +450,7 @@ def variableToMatrix(variableLengthMatrix):
 
     nrows = len(variableLengthMatrix)
     ncolumns = max([len(elem) for elem in variableLengthMatrix])
-    matrix = numpy.zeros([ncolumns, nrows])
+    matrix = np.zeros([ncolumns, nrows])
 
     for i in range(nrows):
         for j in range(ncolumns):

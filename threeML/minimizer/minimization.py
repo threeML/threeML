@@ -1,18 +1,30 @@
-import math
 import collections
-import re
+import math
 import time
 
 import numpy
+import uncertainties
 from iminuit import Minuit
 
-import uncertainties
-
-from threeML.io.table import Table, NumericMatrix
-from threeML.utils.cartesian import cartesian
 from threeML.io.progress_bar import ProgressBar
-from threeML.parallel.parallel_client import ParallelClient
 from threeML.io.rich_display import display
+from threeML.io.table import Table, NumericMatrix
+from threeML.parallel.parallel_client import ParallelClient
+from threeML.utils.cartesian import cartesian
+from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
+from threeML.exceptions.custom_exceptions import custom_warnings
+
+try:
+
+    import ROOT
+
+except ImportError:
+
+    has_ROOT = False
+
+else:
+
+    has_ROOT = True
 
 # Special constants
 FIT_FAILED = 1e12
@@ -86,8 +98,11 @@ class MinuitMinimizer(Minimizer):
 
         variable_names_for_iminuit = []
 
-        for k, par in parameters.iteritems():
+        # NOTE: we use the scaled_ versions of value, min_value and max_value because they don't have
+        # units, and hence they are much faster to set and retrieve. These are indeed introduced by
+        # astromodels to be used for computing-intensive situations like fitting
 
+        for k, par in parameters.iteritems():
             current_name = self._parameter_name_to_minuit_name(k)
 
             variable_names_for_iminuit.append(current_name)
@@ -146,7 +161,7 @@ class MinuitMinimizer(Minimizer):
 
             self.minuit.errordef = 0.5
 
-        self.minuit.strategy = 1  # More accurate
+        self.minuit.strategy = 0  # More accurate
 
         self._best_fit_parameters = None
         self._function_minimum_value = None
@@ -179,7 +194,7 @@ class MinuitMinimizer(Minimizer):
         :return: a minuit-friendly name for the parameter, such as source_component_shape_parname
         """
 
-        return parameter.replace(".","_")
+        return parameter.replace(".", "_")
 
     def _migrad_has_converged(self):
 
@@ -220,7 +235,6 @@ class MinuitMinimizer(Minimizer):
             minuit_name = self._parameter_name_to_minuit_name(k)
 
             self.minuit.values[minuit_name] = par.value
-
 
     def minimize(self):
         """
@@ -390,6 +404,8 @@ class MinuitMinimizer(Minimizer):
         :return: a dictionary containing the asymmetric errors for each parameter.
         """
 
+        self._restore_best_fit()
+
         if not self._migrad_has_converged():
             raise CannotComputeErrors("MIGRAD results not valid, cannot compute errors. Did you run the fit first ?")
 
@@ -399,18 +415,21 @@ class MinuitMinimizer(Minimizer):
 
         except:
 
-            raise MINOSFailed("MINOS has failed. This usually means that the fit is very difficult, for example "
-                              "because of high correlation between parameters. Check the correlation matrix printed"
-                              "in the fit step, and check contour plots with getContours(). If you are using a "
-                              "user-defined model, you can also try to "
-                              "reformulate your model with less correlated parameters.")
+            raise
+
+        # except:
+        #
+        #     raise MINOSFailed("MINOS has failed. This usually means that the fit is very difficult, for example "
+        #                       "because of high correlation between parameters. Check the correlation matrix printed"
+        #                       "in the fit step, and check contour plots with getContours(). If you are using a "
+        #                       "user-defined model, you can also try to "
+        #                       "reformulate your model with less correlated parameters.")
 
         # Make a ordered dict for the results
 
         errors = collections.OrderedDict()
 
         for k, par in self.parameters.iteritems():
-
             minuit_name = self._parameter_name_to_minuit_name(k)
 
             errors[k] = (self.minuit.merrors[(minuit_name, -1)], self.minuit.merrors[(minuit_name, 1)])
@@ -434,8 +453,7 @@ class MinuitMinimizer(Minimizer):
 
             # Split the uncertainty in number, negative error, and exponent (if any)
 
-            num, uncm, exponent = re.match('\(?(\-?[0-9]+\.?[0-9]+) ([0-9]+\.[0-9]+)\)?(e[\+|\-][0-9]+)?',
-                                           x.__str__().replace("+/-", " ")).groups()
+            num, uncm, exponent = get_uncertainty_tokens(x)
 
             # Process the positive error
 
@@ -443,8 +461,7 @@ class MinuitMinimizer(Minimizer):
 
             # Split the uncertainty in number, positive error, and exponent (if any)
 
-            _, uncp, _ = re.match('\(?(\-?[0-9]+\.?[0-9]+) ([0-9]+\.[0-9]+)\)?(e[\+|\-][0-9]+)?',
-                                  x.__str__().replace("+/-", " ")).groups()
+            _, uncp, _ = get_uncertainty_tokens(x)
 
             if exponent is None:
 
@@ -529,11 +546,9 @@ class MinuitMinimizer(Minimizer):
             p1log = bool(options['log'][0])
 
             if param_2 is not None:
-
                 p2log = bool(options['log'][1])
 
         if 'parallel' in options.keys():
-
             parallel = bool(options['parallel'])
 
         # Generate the steps
@@ -576,7 +591,15 @@ class MinuitMinimizer(Minimizer):
 
         # Restore best fit
 
-        self._restore_best_fit()
+        if self._best_fit_parameters:
+
+            self._restore_best_fit()
+
+        else:
+
+            custom_warnings.warn("No best fit to restore before contours computation. "
+                                 "Perform the fit before running contours to remove this warnings.")
+
 
         # Duplicate the options used for the original minimizer
 
@@ -596,7 +619,7 @@ class MinuitMinimizer(Minimizer):
 
         # Instance the worker
 
-        contour_worker = ContourWorker(self._f,self.minuit.values,new_args,
+        contour_worker = ContourWorker(self._f, self.minuit.values, new_args,
                                        minuit_param_1, minuit_param_2,
                                        self.name_to_position)
 
@@ -694,8 +717,99 @@ class MinuitMinimizer(Minimizer):
                                                                            param_2_steps.shape[0]))
 
 
-class ContourWorker(object):
+if has_ROOT:
 
+    class FuncWrapper(ROOT.TPyMultiGenFunction):
+
+        def __init__(self, function, dimensions):
+
+            ROOT.TPyMultiGenFunction.__init__(self, self)
+            self.function = function
+            self.dimensions = int(dimensions)
+
+        def NDim(self):
+            return self.dimensions
+
+        def DoEval(self, args):
+
+            new_args = map(lambda i:args[i],range(self.dimensions))
+
+            return self.function(*new_args)
+
+
+class ROOTMinimizer(Minimizer):
+
+    def __init__(self, function, parameters, ftol=1e-1, verbosity=10):
+
+        super(ROOTMinimizer, self).__init__(function, parameters, ftol, verbosity)
+
+        # Setup the minimizer algorithm
+        self.functor = FuncWrapper(self.function, self.Npar)
+        self.minimizer = ROOT.Math.Factory.CreateMinimizer("Minuit", "Minimize")
+        self.minimizer.Clear()
+        self.minimizer.SetMaxFunctionCalls(1000)
+        self.minimizer.SetTolerance(0.1)
+        self.minimizer.SetPrintLevel(self.verbosity)
+        # self.minimizer.SetStrategy(0)
+
+        self.minimizer.SetFunction(self.functor)
+
+        for i, par in enumerate(self.parameters.values()):
+
+            if par.min_value is not None and par.max_value is not None:
+
+                self.minimizer.SetLimitedVariable(i, par.name, par.value,
+                                                  par.delta, par.min_value,
+                                                  par.max_value)
+
+            elif par.min_value is not None and par.max_value is None:
+
+                # Lower limited
+                self.minimizer.SetLowerLimitedVariable(i, par.name, par.value,
+                                                       par.delta, par.min_value)
+
+            elif par.min_value is None and par.max_value is not None:
+
+                # upper limited
+                self.minimizer.SetUpperLimitedVariable(i, par.name, par.value,
+                                                       par.delta, par.max_value)
+
+            else:
+
+                # No limits
+                self.minimizer.SetVariable(i, par.name, par.value, par.delta)
+
+    def minimize(self, minos=False):
+
+        self.minimizer.SetPrintLevel(int(self.verbosity))
+
+        self.minimizer.Minimize()
+
+        # This improves on the error computation
+        # self.minimizer.Hesse()
+
+        xs = numpy.array(map(lambda x: x[0], zip(self.minimizer.X(), range(self.Npar))))
+
+        if (minos):
+
+            # Get the errors
+            xserr = []
+            for i in range(xs.shape[0]):
+                minv = ROOT.Double(0)
+                maxv = ROOT.Double(0)
+                self.minimizer.GetMinosError(i, minv, maxv)
+                xserr.append([minv, maxv])
+            pass
+
+        else:
+
+            xserr = numpy.array(map(lambda x: x[0], zip(self.minimizer.Errors(), range(self.Npar))))
+
+        #return xs, xserr, self.functor(xs)
+        return xs, self.functor(xs)
+
+
+class ContourWorker(object):
     def __init__(self, function, minuit_values, minuit_args, minuit_param_1, minuit_param_2, name_to_position):
 
         self._minuit_values = minuit_values
@@ -703,7 +817,6 @@ class ContourWorker(object):
         # Update the values for the parameters with the best fit one
 
         for key, value in self._minuit_values.iteritems():
-
             minuit_args[key] = value
 
         # This is a likelihood
@@ -759,7 +872,6 @@ class ContourWorker(object):
         this_minuit_args[self.minuit_param_1] = value_1
 
         if self.minuit_param_2 is not None:
-
             this_minuit_args[self.minuit_param_2] = value_2
 
         # Fix the parameters under scrutiny
