@@ -19,6 +19,7 @@ __instrument_name = "HAWC"
 
 
 class HAWCLike(PluginPrototype):
+
     def __init__(self, name, maptree, response, n_transits=None, **kwargs):
 
         # This controls if the likeHAWC class should load the entire
@@ -68,7 +69,7 @@ class HAWCLike(PluginPrototype):
 
         # By default the fit of the CommonNorm is deactivated
 
-        self.deactivateCommonNorm()
+        self.deactivate_CommonNorm()
 
         # This is to keep track of whether the user defined a ROI or not
 
@@ -78,7 +79,7 @@ class HAWCLike(PluginPrototype):
 
         self.__setup()
 
-    def setROI(self, ra, dec, radius, fixedROI=False):
+    def set_ROI(self, ra, dec, radius, fixedROI=False):
 
         self.roi_ra = ra
         self.roi_dec = dec
@@ -142,7 +143,7 @@ class HAWCLike(PluginPrototype):
         self.__init__(name, maptree, response)
 
         if state['roi_ra'] is not None:
-            self.setROI(state['roi_ra'], state['roi_dec'], state['roi_radius'], state['fixedROI'])
+            self.set_ROI(state['roi_ra'], state['roi_dec'], state['roi_radius'], state['fixedROI'])
 
         self.set_active_measurements(state['minChannel'], state['maxChannel'])
 
@@ -220,6 +221,10 @@ class HAWCLike(PluginPrototype):
 
         self.nuisanceParameters['CommonNorm'].add_callback(self._CommonNormCallback)
 
+        # Update to start the computation of positions and energies inside LiFF
+
+        self.pymodel.update()
+
     def _CommonNormCallback(self, value):
 
         self.theLikeHAWC.SetCommonNorm(value)
@@ -230,11 +235,11 @@ class HAWCLike(PluginPrototype):
         '''
         return self.name
 
-    def activateCommonNorm(self):
+    def activate_CommonNorm(self):
 
         self.fitCommonNorm = True
 
-    def deactivateCommonNorm(self):
+    def deactivate_CommonNorm(self):
 
         self.fitCommonNorm = False
 
@@ -251,7 +256,7 @@ class HAWCLike(PluginPrototype):
 
         return logL
 
-    def calcTS(self):
+    def calc_TS(self):
 
         '''
         Return the value of the log-likelihood test statistic, defined as
@@ -260,7 +265,7 @@ class HAWCLike(PluginPrototype):
 
         self.pymodel.update()
 
-        TS = self.theLikeHAWC.calcTS(self.fitCommonNorm)
+        TS = self.theLikeHAWC.calc_TS(self.fitCommonNorm)
 
         return TS
 
@@ -353,10 +358,10 @@ class HAWCLike(PluginPrototype):
 
         return figs
 
-    def writeModelMap(self, fileName):
+    def write_model_map(self, fileName):
 
         self.theLikeHAWC.WriteModelMap(fileName)
 
-    def writeResidualMap(self, fileName):
+    def write_residual_map(self, fileName):
 
         self.theLikeHAWC.WriteResidualMap(fileName)
