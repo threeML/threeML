@@ -34,10 +34,6 @@ class FermiGBM_TTE_Like(FermiGBMLike):
 
         self.name = name
         self._polyorder = polyorder
-        self.ttefile=GBMTTEFile(ttefile)
-        #self._backgroundselections = bkgselections
-        self._backgroundexists = False
-        self._energyselectionexists = False
         # Check that all file exists
         notExistant = []
 
@@ -55,10 +51,12 @@ class FermiGBM_TTE_Like(FermiGBMLike):
 
             raise IOError("One or more input file do not exist!")
 
-        #self.phafile = OGIPPHA(phafile, filetype='observed')
-        #self.exposure = self.phafile.getExposure()
-        #self.bkgfile = OGIPPHA(bkgfile, filetype="background")
 
+        self.ttefile=GBMTTEFile(ttefile)
+        
+        self._backgroundexists = False
+        self._energyselectionexists = False
+        
 
         self.response = Response(rspfile)
 
