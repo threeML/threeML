@@ -12,6 +12,8 @@ from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.gammaln import logfactorial
 from threeML.plugins.ogip import OGIPPHA
 from threeML.plugins.FermiGBMLike import FermiGBMLike, Response
+from threeML.io.gbm_light_curve_plot import gbm_light_curve_plot
+
 from astromodels.parameter import Parameter
 
 __instrument_name = "Fermi GBM TTE (all detectors)"
@@ -221,7 +223,28 @@ class FermiGBM_TTE_Like(FermiGBMLike):
         # Since changing the background will alter the counts
         # We need to recalculate the source interval
         self.set_active_time_interval("%.5f-%.5f"%(self.tmin,self.tmax))
+
+
+
+    def view_lightcurve(self,start=-10,stop=20.,dt=1.):
+
+        binner = np.arange(start,stop+dt,dt)
+        cnts,bins = np.histogram(self.ttefile.events-self.ttefile.triggertime,bins=binner)
+        time_bins = np.array([ [bins[i],bins[i+1]]   for i in range(len(bins)-1)])
+
+        bkg=[]
+        for tb in time_bins:
+            tmpbkg = 0. # Maybe I can do this perenergy at some point
+            for poly in self._polynomials:
+                tmpbkg += poly.integral(tb[0],tb[1])/(dt)
                 
+            bkg.append(tmpbkg)
+        
+
+        
+        gbm_light_curve_plot(time_bins,cnts,bkg,dt,selection=[self.tmin,self.tmax])
+
+                        
     def _fitGlobalAndDetermineOptimumGrade(self,cnts,bins):
         #Fit the sum of all the channels to determine the optimal polynomial
         #grade
