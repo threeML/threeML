@@ -223,7 +223,7 @@ class HAWCLike(PluginPrototype):
 
         # Update to start the computation of positions and energies inside LiFF
 
-        self.pymodel.update()
+        self.theLikeHAWC.UpdateSources()
 
     def _CommonNormCallback(self, value):
 
