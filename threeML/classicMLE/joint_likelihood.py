@@ -620,6 +620,21 @@ class JointLikelihood(object):
 
         self.Minimizer = self._setup_minimizer(minimizer)
 
+    def restore_best_fit(self):
+        """
+        Restore the model to its best fit
+
+        :return: (none)
+        """
+
+        if self._minimizer:
+
+            self._minimizer._restore_best_fit()
+
+        else:
+
+            custom_warnings.warn("Cannot restore best fit, since fit has not been executed.")
+
     def _get_table_of_parameters(self, parameters):
 
         data = []
