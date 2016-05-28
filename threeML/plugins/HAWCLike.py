@@ -265,7 +265,7 @@ class HAWCLike(PluginPrototype):
 
         self.pymodel.update()
 
-        TS = self.theLikeHAWC.calc_TS(self.fitCommonNorm)
+        TS = self.theLikeHAWC.calcTS(self.fitCommonNorm)
 
         return TS
 
