@@ -359,6 +359,16 @@ class BayesianAnalysis(object):
 
         return self._sampler
 
+    def get_effective_free_parameters(self):
+        """
+        Calculates the effective number of free parameters from the posterior
+         -2.*(mean(posterior)-max(log. likelihood))
+        :return: Effective number of free parameters
+        """
+
+        return -2.*(np.mean(self._log_like_values) -np.max(self._log_like_values) ) #need to check math!
+    
+    
     def get_credible_intervals(self, probability=95):
         """
         Print and returns the (equal-tail) credible intervals for all free parameters in the model
