@@ -222,6 +222,9 @@ class BayesianAnalysis(object):
 
         return self.samples
 
+
+
+    
     def sample_multinest(self, n_live_points,chain_name= "chains/fit-" ,**keywords):
         """
         Sample the posterior with MULTINEST nested sampling (Feroz & Hobson)
@@ -292,7 +295,18 @@ class BayesianAnalysis(object):
 
 
         self._sampler = sampler
-        self._raw_samples = multinest_analyzerself.get_equal_weighted_posterior()[:,:-1]
+
+        # Need to transform log uniform samples
+        # back into proper units
+
+        tmp_samples = multinest_analyzer.get_equal_weighted_posterior()[:,:-1]
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+            if parameter.prior.name == "Log_uniform_prior":
+                tmp_samples[:,i] = np.power(10.,tmp_samples[:,i]) 
+        
+        self._raw_samples = tmp_samples
 
         self._build_samples_dictionary()
 
@@ -706,7 +720,7 @@ class BayesianAnalysis(object):
         Here, we construct the prior and log. likelihood for multinest on the unit cube
         '''
         def loglike(cube,ndim,params):
-            trail_values = np.array(cube[i] for i in range(ndim))
+            trial_values = np.array([cube[i] for i in range(ndim)])
             self._update_free_parameters()
 
             assert len(self._free_parameters) == len(trial_values), ("Something is wrong. Number of free parameters "
@@ -715,8 +729,10 @@ class BayesianAnalysis(object):
             for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
 
-
-                parameter.value = trial_values[i]
+                if parameter.prior.name == "Log_uniform_prior":
+                    parameter.value = np.power(10.,trial_values[i])
+                else:
+                    parameter.value = trial_values[i]
 
             try:
 
@@ -845,7 +861,7 @@ def _multinest_log_uniform_prior(cube,bottom,top): #spelling is bad!
 
 
     low = np.log10(bottom)
-    spread = np.log10(top)-log10(bottom)
+    spread = np.log10(top)-np.log10(bottom)
     par = cube*spread + low
     return par
 
@@ -853,7 +869,7 @@ def _multinest_uniform_prior(cube,bottom,top):
 
     low = float(bottom)
     spread = float(top-bottom)
-    par = par*spread + low
+    par = cube*spread + low
     return par
 
 
