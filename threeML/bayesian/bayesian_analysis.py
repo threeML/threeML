@@ -368,6 +368,91 @@ class BayesianAnalysis(object):
 
         return -2.*(np.mean(self._log_like_values) -np.max(self._log_like_values) ) #need to check math!
     
+
+    def get_highest_density_interval(self,probability=95):
+        """
+        Print and returns the (non-equal-tail) highest density credible intervals for all free parameters in the model
+
+        :param probability: the probability for this credible interval (default: 95, corresponding to 95%)
+        :return: a dictionary with the lower bound and upper bound of the credible intervals, as well as the median
+        """
+               # Gather the credible intervals (percentiles of the posterior)
+
+        credible_intervals = collections.OrderedDict()
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+            # Get the percentiles from the posterior samples
+
+            lower_bound,upper_bound = _hpd(self.samples[parameter_name],1-(float(probability)/100.))
+            meadian = np.meadian(self.samples[parameter_name])
+
+            # Save them in the dictionary
+
+            credible_intervals[parameter_name] = {'lower bound': lower_bound,
+                                                  'median': median,
+                                                  'upper bound': upper_bound}
+
+        # Print a table with the errors
+
+        data = []
+        name_length = 0
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+            # Format the value and the error with sensible significant
+            # numbers
+
+            lower_bound, median, upper_bound = [credible_intervals[parameter_name][key] for key in ('lower bound',
+                                                                                                    'median',
+                                                                                                    'upper bound')
+                                                ]
+
+            # Process the negative "error"
+
+            x = uncertainties.ufloat(median, abs(lower_bound - median))
+
+            # Split the uncertainty in number, negative error, and exponent (if any)
+
+            number, unc_lower_bound, exponent = get_uncertainty_tokens(x)
+
+            # Process the positive "error"
+
+            x = uncertainties.ufloat(median, abs(upper_bound - median))
+
+            # Split the uncertainty in number, positive error, and exponent (if any)
+
+            _, unc_upper_bound, _ = get_uncertainty_tokens(x)
+
+            if exponent is None:
+
+                # Number without exponent
+
+                pretty_string = "%s -%s +%s" % (number, unc_lower_bound, unc_upper_bound)
+
+            else:
+
+                # Number with exponent
+
+                pretty_string = "(%s -%s +%s)%s" % (number, unc_lower_bound, unc_upper_bound, exponent)
+
+            unit = self._free_parameters[parameter_name].unit
+
+            data.append([parameter_name, pretty_string, unit])
+
+            if len(parameter_name) > name_length:
+                name_length = len(parameter_name)
+
+        # Create and display the table
+
+        table = Table(rows=data,
+                      names=["Name", "Value", "Unit"],
+                      dtype=('S%i' % name_length, str, 'S15'))
+
+        display(table)
+
+        return credible_intervals
+
     
     def get_credible_intervals(self, probability=95):
         """
@@ -863,7 +948,64 @@ class BayesianAnalysis(object):
 
 
 
+### HDI calulations from
+def _calc_min_interval(x, alpha):
+    """Internal method to determine the minimum interval of a given width
+    Assumes that x is sorted numpy array.
+    """
 
+    n = len(x)
+    cred_mass = 1.0-alpha
+
+    interval_idx_inc = int(np.floor(cred_mass*n))
+    n_intervals = n - interval_idx_inc
+    interval_width = x[interval_idx_inc:] - x[:n_intervals]
+
+    if len(interval_width) == 0:
+        raise ValueError('Too few elements for interval calculation')
+
+    min_idx = np.argmin(interval_width)
+    hdi_min = x[min_idx]
+    hdi_max = x[min_idx+interval_idx_inc]
+    return hdi_min, hdi_max
+
+
+def _hpd(x, alpha=0.05):
+    """Calculate highest posterior density (HPD) of array for given alpha. 
+    The HPD is the minimum width Bayesian credible interval (BCI).
+    :Arguments:
+        x : Numpy array
+        An array containing MCMC samples
+        alpha : float
+        Desired probability of type I error (defaults to 0.05)
+    """
+
+    # Make a copy of trace
+    x = x.copy()
+    # For multivariate node
+    if x.ndim > 1:
+        # Transpose first, then sort
+        tx = np.transpose(x, list(range(x.ndim))[1:]+[0])
+        dims = np.shape(tx)
+        # Container list for intervals
+        intervals = np.resize(0.0, dims[:-1]+(2,))
+
+        for index in make_indices(dims[:-1]):
+            try:
+                index = tuple(index)
+            except TypeError:
+                pass
+
+            # Sort trace
+            sx = np.sort(tx[index])
+            # Append to list
+            intervals[index] = _calc_min_interval(sx, alpha)
+        # Transpose back before returning
+        return np.array(intervals)
+    else:
+        # Sort univariate node
+        sx = np.sort(x)
+        return np.array(_calc_min_interval(sx, alpha))
 
 
 # MULTINEST Prior transforms
