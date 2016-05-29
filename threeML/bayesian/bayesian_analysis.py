@@ -260,8 +260,12 @@ class BayesianAnalysis(object):
         
         print("\nSampling...\n")
 
-        if threeML_config['parallel']['use-parallel']:
-            pass
+        # Multinest must be run parallel via an external method
+        # see the demo in the examples folder!!
+
+        
+        #if threeML_config['parallel']['use-parallel']:
+        #    pass
         #     c = ParallelClient()
         #     view = c[:]
 
