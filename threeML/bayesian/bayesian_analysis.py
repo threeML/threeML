@@ -1,9 +1,12 @@
 import emcee
 import emcee.utils
-import numpy
+import pymultinest
+from pymultinest import Analyzer as MNAnalyzer
+import numpy as np
 import collections
 import re
 import math
+import os
 
 import matplotlib.pyplot as plt
 
@@ -167,7 +170,7 @@ class BayesianAnalysis(object):
 
         _ = sampling_procedure(pos, sampler, n_samples, rstate0=state)
 
-        acc = numpy.mean(sampler.acceptance_fraction)
+        acc = np.mean(sampler.acceptance_fraction)
 
         print("Mean acceptance fraction: %s" % acc)
 
@@ -191,7 +194,7 @@ class BayesianAnalysis(object):
 
         # Get one starting point for each temperature
 
-        p0 = numpy.empty((n_temps, n_walkers, n_dim))
+        p0 = np.empty((n_temps, n_walkers, n_dim))
 
         for i in range(n_temps):
             p0[i, :, :] = self._get_starting_points(n_walkers)
@@ -219,6 +222,85 @@ class BayesianAnalysis(object):
 
         return self.samples
 
+    def sample_multinest(self, n_live_points,chain_name= "chains/fit-" ,**keywords):
+        """
+        Sample the posterior with MULTINEST nested sampling (Feroz & Hobson)
+        """
+
+        
+        self._update_free_parameters()
+
+        n_dim = len(self._free_parameters.keys())
+
+
+        # MULTINEST has a convergence criteria and therefore, there is no way
+        # to determine progress
+        
+        sampling_procedure = sample_without_progress
+
+
+        # MULTINEST uses a different call signiture for
+        # sampling so we construct callbakcs
+        self._construct_multinest_posterior()
+
+        # We need to check if the MCMC
+        # chains will have a place on
+        # the disk to write and if not,
+        # create one
+        
+        mcmc_chains_out_dir = ""
+        tmp = chain_name.split('/')
+        for s in tmp[:-1]:
+            mcmc_chains_out_dir+=s+'/'
+        
+        if not os.path.exists(mcmc_chains_out_dir ): os.makedirs(mcmc_chains_out_dir)
+        
+        print("\nSampling...\n")
+
+        if threeML_config['parallel']['use-parallel']:
+            pass
+        #     c = ParallelClient()
+        #     view = c[:]
+
+        #     sampler = pymultinest.run(n_walkers, n_dim,
+        #                                     self._get_posterior,
+        #                                     pool=view)
+
+        #     # Sampling with progress in parallel is super-slow, so let's
+        #     # use the non-interactive one
+        #     sampling_procedure = sample_without_progress
+
+        else:
+
+            sampler = pymultinest.run(self._get_multinest_loglike,
+                                      self._get_multinest_prior,
+                                      n_dim,
+                                      n_dim,
+                                      outputfiles_basename=chain_name,
+                                      n_live_points=n_live_points,
+                                      **keywords)
+        
+        # Use PyMULTINEST analyzer to gather parameter info
+        multinest_analyzer = MNAnalyzer(n_params=n_dim,
+                                       outputfiles_basename=chain_name)
+
+        # Get the log. likelihood values from the chain
+        self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:,-1]
+        
+
+        
+
+
+        self._sampler = sampler
+        self._raw_samples = multinest_analyzerself.get_equal_weighted_posterior()[:,:-1]
+
+        self._build_samples_dictionary()
+
+        return self.samples
+
+
+
+    
     def _build_samples_dictionary(self):
         """
         Build the dictionary to access easily the samples by parameter
@@ -279,7 +361,7 @@ class BayesianAnalysis(object):
 
             # Get the percentiles from the posterior samples
 
-            lower_bound,median,upper_bound = numpy.percentile(self.samples[parameter_name],
+            lower_bound,median,upper_bound = np.percentile(self.samples[parameter_name],
                                                               (100-probability,50,probability))
 
             # Save them in the dictionary
@@ -470,8 +552,8 @@ class BayesianAnalysis(object):
 
                     break
 
-                this_averages.append(numpy.average(this_samples[idx1 : idx2]))
-                this_variances.append(numpy.std(this_samples[idx1 : idx2]))
+                this_averages.append(np.average(this_samples[idx1 : idx2]))
+                this_variances.append(np.std(this_samples[idx1 : idx2]))
 
             averages[parameter_name] = this_averages
 
@@ -484,10 +566,10 @@ class BayesianAnalysis(object):
 
             for i in range(n_subsets):
 
-                samples = numpy.random.choice(self.samples[parameter_name], n_samples)
+                samples = np.random.choice(self.samples[parameter_name], n_samples)
 
-                this_bootstrap_averages.append(numpy.average(samples))
-                this_bootstrap_variances.append(numpy.std(samples))
+                this_bootstrap_averages.append(np.average(samples))
+                this_bootstrap_variances.append(np.std(samples))
 
             bootstrap_averages[parameter_name] = this_bootstrap_averages
             bootstrap_variances[parameter_name] = this_bootstrap_variances
@@ -534,12 +616,12 @@ class BayesianAnalysis(object):
         :return: the optimal number of bins
         """
 
-        q25, q75 = numpy.percentile(data, [25.0, 75.0])
+        q25, q75 = np.percentile(data, [25.0, 75.0])
         iqr = abs(q75 - q25)
 
         binsize = 2 * iqr * pow(len(data), -1/3.0)
 
-        nbins = numpy.ceil((max(data)-min(data)) / binsize)
+        nbins = np.ceil((max(data)-min(data)) / binsize)
 
         return nbins
 
@@ -565,13 +647,12 @@ class BayesianAnalysis(object):
         log_prior = 0
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
             prior_value = parameter.prior(trial_values[i])
 
             if prior_value == 0:
                 # Outside allowed region of parameter space
 
-                return -numpy.inf
+                return -np.inf
 
             else:
 
@@ -591,7 +672,7 @@ class BayesianAnalysis(object):
 
             # Fit engine or sampler outside of allowed zone
 
-            return -numpy.inf
+            return -np.inf
 
         except:
 
@@ -601,21 +682,82 @@ class BayesianAnalysis(object):
 
         # Sum the values of the log-like
 
-        log_like = numpy.sum(log_like_values)
+        log_like = np.sum(log_like_values)
 
         self._log_like_values.append(log_like)
 
-        if not numpy.isfinite(log_like):
+        if not np.isfinite(log_like):
             # Issue warning
 
             custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values, LikelihoodIsInfinite)
 
-            return -numpy.inf
+            return -np.inf
 
         # print("Log like is %s, log_prior is %s, for trial values %s" % (log_like, log_prior,trial_values))
 
         return log_like + log_prior
 
+
+    def _construct_multinest_posterior(self):
+        '''
+        pymultinest becomes confused with the self pointer. We therefore ceate callbacks
+        that pymultinest can understand.
+
+        Here, we construct the prior and log. likelihood for multinest on the unit cube
+        '''
+        def loglike(cube,ndim,params):
+            trail_values = np.array(cube[i] for i in range(ndim))
+            self._update_free_parameters()
+
+            assert len(self._free_parameters) == len(trial_values), ("Something is wrong. Number of free parameters "
+                                                                 "do not match the number of trial values.")
+
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+
+
+                parameter.value = trial_values[i]
+
+            try:
+
+            # Loop over each dataset and get the likelihood values for each set
+
+                log_like_values = map(lambda dataset: dataset.get_log_like(), self.data_list.values())
+
+            except ModelAssertionViolation:
+
+            # Fit engine or sampler outside of allowed zone
+
+                return -np.inf
+
+            except:
+                
+                # We don't want to catch more serious issues
+
+                raise
+
+            # Sum the values of the log-like
+
+            log_like = np.sum(log_like_values)
+            return log_like
+
+        # connect the callback
+        self._get_multinest_loglike = loglike 
+
+        # Now construct the prior
+        # MULTINEST priors are defined on the unit cube
+        # and should return the value in the bounds... not the
+        # probability. Therefore, we must make some transforms
+        def prior(params,ndim,nparams):
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+                params[i] = _multinest_prior_dict[parameter.prior.name](params[i], # find out what type of prior
+                                                                        parameter.prior.lower_bound.value, #pass the upper
+                                                                        parameter.prior.upper_bound.value) #pass the lower
+        # connect the callback
+        self._get_multinest_prior = prior
+            
+
+    
     def _get_starting_points(self, n_walkers, variance=0.1):
 
         # Generate the starting points for the walkers by getting random
@@ -672,7 +814,7 @@ class BayesianAnalysis(object):
 
             # Fit engine or sampler outside of allowed zone
 
-            return -numpy.inf
+            return -np.inf
 
         except:
 
@@ -682,13 +824,38 @@ class BayesianAnalysis(object):
 
         # Sum the values of the log-like
 
-        log_like = numpy.sum(log_like_values)
+        log_like = np.sum(log_like_values)
 
-        if not numpy.isfinite(log_like):
+        if not np.isfinite(log_like):
             # Issue warning
 
             custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values, LikelihoodIsInfinite)
 
-            return -numpy.inf
+            return -np.inf
 
         return log_like
+
+
+
+
+
+
+# MULTINEST Prior transforms
+def _multinest_log_uniform_prior(cube,bottom,top): #spelling is bad!
+
+
+    low = np.log10(bottom)
+    spread = np.log10(top)-log10(bottom)
+    par = cube*spread + low
+    return par
+
+def _multinest_uniform_prior(cube,bottom,top):
+
+    low = float(bottom)
+    spread = float(top-bottom)
+    par = par*spread + low
+    return par
+
+
+_multinest_prior_dict={"Uniform_prior": _multinest_uniform_prior,
+                       "Log_uniform_prior": _multinest_log_uniform_prior}
