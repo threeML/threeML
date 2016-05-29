@@ -1,3 +1,4 @@
+__author__ = 'drjfunk'
 import collections
 import os
 import warnings
