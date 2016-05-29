@@ -385,7 +385,7 @@ class BayesianAnalysis(object):
             # Get the percentiles from the posterior samples
 
             lower_bound,upper_bound = _hpd(self.samples[parameter_name],1-(float(probability)/100.))
-            meadian = np.meadian(self.samples[parameter_name])
+            median = np.median(self.samples[parameter_name])
 
             # Save them in the dictionary
 
