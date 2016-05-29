@@ -69,7 +69,8 @@ setup(
         'dill',
         'iminuit',
         'astromodels',
-        'corner>=1.0.2'
+        'corner>=1.0.2',
+        #'pymultinest'   #GV: add if needed
     ])
 
 # Now print the final messages if there are any
