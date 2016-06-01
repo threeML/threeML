@@ -72,6 +72,14 @@ class BayesianAnalysis(object):
         :return:
         """
 
+        # Verify that all the free parameters have priors
+        for parameter_name, parameter in likelihood_model.free_parameters.iteritems():
+
+            if not parameter.has_prior():
+
+                raise RuntimeError("You need to define priors for all free parameters before instancing a "
+                                   "Bayesian analysis")
+
         # Process optional keyword parameters
 
         self.verbose = False
