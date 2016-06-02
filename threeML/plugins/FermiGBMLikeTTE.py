@@ -14,7 +14,7 @@ from threeML.plugins.ogip import OGIPPluginPGstat
 __instrument_name = "Fermi GBM TTE (all detectors)"
 
 
-class FermiGBM_TTE_Like(OGIPPluginPGstat, PluginPrototype):
+class FermiGBMLikeTTE(OGIPPluginPGstat, PluginPrototype):
 
     def __init__(self, name, ttefile, bkgselections, srcinterval, rspfile, polyorder=-1):
         """
