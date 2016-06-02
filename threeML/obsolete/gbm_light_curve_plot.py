@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from step_plot import step_plot
+from threeML.io.step_plot import step_plot
 
 def gbm_light_curve_plot(time_bins,cnts,bkg,width,selection):
 

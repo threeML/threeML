@@ -1,10 +1,22 @@
 import emcee
 import emcee.utils
-import pymultinest
-from pymultinest import Analyzer as MNAnalyzer
+
+try:
+
+    import pymultinest
+
+    from pymultinest import Analyzer as MNAnalyzer
+
+except:
+
+    has_pymultinest = False
+
+else:
+
+    has_pymultinest = True
+
 import numpy as np
 import collections
-import re
 import math
 import os
 
@@ -74,6 +86,14 @@ class BayesianAnalysis(object):
         :param kwargs: use 'verbose=True' for verbose operation
         :return:
         """
+
+        # Verify that all the free parameters have priors
+        for parameter_name, parameter in likelihood_model.free_parameters.iteritems():
+
+            if not parameter.has_prior():
+
+                raise RuntimeError("You need to define priors for all free parameters before instancing a "
+                                   "Bayesian analysis")
 
         # Process optional keyword parameters
 
@@ -230,7 +250,6 @@ class BayesianAnalysis(object):
         Sample the posterior with MULTINEST nested sampling (Feroz & Hobson)
         """
 
-        
         self._update_free_parameters()
 
         n_dim = len(self._free_parameters.keys())
@@ -264,7 +283,10 @@ class BayesianAnalysis(object):
         # see the demo in the examples folder!!
 
         
-        #if threeML_config['parallel']['use-parallel']:
+        if threeML_config['parallel']['use-parallel']:
+
+             raise RuntimeError("If you want to run multinest in paralell you need to use an ad-hoc method")
+
         #    pass
         #     c = ParallelClient()
         #     view = c[:]
@@ -810,51 +832,17 @@ class BayesianAnalysis(object):
 
         return log_like + log_prior
 
-
     def _construct_multinest_posterior(self):
-        '''
+        """
         pymultinest becomes confused with the self pointer. We therefore ceate callbacks
         that pymultinest can understand.
 
         Here, we construct the prior and log. likelihood for multinest on the unit cube
-        '''
-        def loglike(cube,ndim,params):
-            trial_values = np.array([cube[i] for i in range(ndim)])
-            self._update_free_parameters()
+        """
 
-            assert len(self._free_parameters) == len(trial_values), ("Something is wrong. Number of free parameters "
-                                                                 "do not match the number of trial values.")
+        def loglike(trial_values,ndim,params):
 
-            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
-
-                if parameter.prior.name == "Log_uniform_prior":
-                    parameter.value = np.power(10.,trial_values[i])
-                else:
-                    parameter.value = trial_values[i]
-
-            try:
-
-            # Loop over each dataset and get the likelihood values for each set
-
-                log_like_values = map(lambda dataset: dataset.get_log_like(), self.data_list.values())
-
-            except ModelAssertionViolation:
-
-            # Fit engine or sampler outside of allowed zone
-
-                return -np.inf
-
-            except:
-                
-                # We don't want to catch more serious issues
-
-                raise
-
-            # Sum the values of the log-like
-
-            log_like = np.sum(log_like_values)
-            return log_like
+            return self._log_like(trial_values)
 
         # connect the callback
         self._get_multinest_loglike = loglike 
@@ -863,15 +851,22 @@ class BayesianAnalysis(object):
         # MULTINEST priors are defined on the unit cube
         # and should return the value in the bounds... not the
         # probability. Therefore, we must make some transforms
+
         def prior(params,ndim,nparams):
+
             for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-                params[i] = _multinest_prior_dict[parameter.prior.name](params[i], # find out what type of prior
-                                                                        parameter.prior.lower_bound.value, #pass the upper
-                                                                        parameter.prior.upper_bound.value) #pass the lower
+
+                try:
+
+                    params[i] = parameter.prior.from_unit_cube(params[i])
+
+                except AttributeError:
+
+                    raise RuntimeError("The prior you are trying to use for parameter %s is "
+                                       "not compatible with multinest" % (parameter_name))
+
         # connect the callback
         self._get_multinest_prior = prior
-            
-
     
     def _get_starting_points(self, n_walkers, variance=0.1):
 
@@ -984,6 +979,10 @@ def _hpd(x, alpha=0.05):
         Desired probability of type I error (defaults to 0.05)
     """
 
+    # JM: remove this when you are done fixing
+
+    raise NotImplementedError("HPD not yet implemented")
+
     # Make a copy of trace
     x = x.copy()
     # For multivariate node
@@ -1010,24 +1009,3 @@ def _hpd(x, alpha=0.05):
         # Sort univariate node
         sx = np.sort(x)
         return np.array(_calc_min_interval(sx, alpha))
-
-
-# MULTINEST Prior transforms
-def _multinest_log_uniform_prior(cube,bottom,top): #spelling is bad!
-
-
-    low = np.log10(bottom)
-    spread = np.log10(top)-np.log10(bottom)
-    par = cube*spread + low
-    return par
-
-def _multinest_uniform_prior(cube,bottom,top):
-
-    low = float(bottom)
-    spread = float(top-bottom)
-    par = cube*spread + low
-    return par
-
-
-_multinest_prior_dict={"Uniform_prior": _multinest_uniform_prior,
-                       "Log_uniform_prior": _multinest_log_uniform_prior}

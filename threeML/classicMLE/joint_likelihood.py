@@ -1,6 +1,5 @@
 import collections
 import time
-import copy
 import numpy
 import scipy.optimize
 import scipy.stats
@@ -776,14 +775,22 @@ class JointLikelihood(object):
         sub = fig.add_subplot(111)
 
         # Show the contours with square axis
-        im = sub.imshow(cc,
-                        cmap=palette,
-                        extent=[b.min(), b.max(), a.min(), a.max()],
-                        aspect=(b.max() - b.min()) / (a.max() - a.min()),
-                        origin='lower',
-                        norm=BoundaryNorm(bounds, 256),
-                        interpolation='bicubic',
-                        vmax=(self._current_minimum + delta_chi2).max())
+
+        # NOTE: suppress the UnicodeWarning, which is due to a small problem in matplotlib
+
+        with custom_warnings.catch_warnings():
+
+            # Cause all warnings to always be triggered.
+            custom_warnings.simplefilter("ignore", UnicodeWarning)
+
+            im = sub.imshow(cc,
+                            cmap=palette,
+                            extent=[b.min(), b.max(), a.min(), a.max()],
+                            aspect=float(b.max() - b.min()) / (a.max() - a.min()),
+                            origin='lower',
+                            norm=BoundaryNorm(bounds, 256),
+                            interpolation='bicubic',
+                            vmax=(self._current_minimum + delta_chi2).max())
 
         # Plot the color bar with the sigmas
         cb = fig.colorbar(im, boundaries=bounds[:-1])
