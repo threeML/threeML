@@ -2,13 +2,16 @@ import os
 
 
 def file_existing_and_readable(filename):
-    if os.path.exists(filename):
+
+    sanitized_filename = sanitize_filename(filename)
+
+    if os.path.exists(sanitized_filename):
 
         # Try to open it
 
         try:
 
-            with open(filename):
+            with open(sanitized_filename):
 
                 pass
 
