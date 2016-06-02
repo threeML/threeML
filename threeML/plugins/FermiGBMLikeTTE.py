@@ -7,7 +7,7 @@ import astropy.io.fits as pyfits
 import numpy as np
 import scipy.integrate
 
-from threeML.obsolete.gbm_light_curve_plot import gbm_light_curve_plot
+from threeML.plugins.ogip import gbm_light_curve_plot
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.ogip import OGIPPluginPGstat
 
