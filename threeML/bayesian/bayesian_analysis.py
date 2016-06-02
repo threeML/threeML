@@ -1,8 +1,24 @@
 import emcee
 import emcee.utils
+
+try:
+
+    import pymultinest
+
+    from pymultinest import Analyzer as MNAnalyzer
+
+except:
+
+    has_pymultinest = False
+
+else:
+
+    has_pymultinest = True
+
 import numpy as np
 import collections
 import math
+import os
 
 import matplotlib.pyplot as plt
 
@@ -226,6 +242,105 @@ class BayesianAnalysis(object):
 
         return self.samples
 
+
+
+    
+    def sample_multinest(self, n_live_points,chain_name= "chains/fit-" ,**keywords):
+        """
+        Sample the posterior with MULTINEST nested sampling (Feroz & Hobson)
+        """
+
+        self._update_free_parameters()
+
+        n_dim = len(self._free_parameters.keys())
+
+
+        # MULTINEST has a convergence criteria and therefore, there is no way
+        # to determine progress
+        
+        sampling_procedure = sample_without_progress
+
+
+        # MULTINEST uses a different call signiture for
+        # sampling so we construct callbakcs
+        self._construct_multinest_posterior()
+
+        # We need to check if the MCMC
+        # chains will have a place on
+        # the disk to write and if not,
+        # create one
+        
+        mcmc_chains_out_dir = ""
+        tmp = chain_name.split('/')
+        for s in tmp[:-1]:
+            mcmc_chains_out_dir+=s+'/'
+        
+        if not os.path.exists(mcmc_chains_out_dir ): os.makedirs(mcmc_chains_out_dir)
+        
+        print("\nSampling...\n")
+
+        # Multinest must be run parallel via an external method
+        # see the demo in the examples folder!!
+
+        
+        if threeML_config['parallel']['use-parallel']:
+
+             raise RuntimeError("If you want to run multinest in paralell you need to use an ad-hoc method")
+
+        #    pass
+        #     c = ParallelClient()
+        #     view = c[:]
+
+        #     sampler = pymultinest.run(n_walkers, n_dim,
+        #                                     self._get_posterior,
+        #                                     pool=view)
+
+        #     # Sampling with progress in parallel is super-slow, so let's
+        #     # use the non-interactive one
+        #     sampling_procedure = sample_without_progress
+
+        else:
+
+            sampler = pymultinest.run(self._get_multinest_loglike,
+                                      self._get_multinest_prior,
+                                      n_dim,
+                                      n_dim,
+                                      outputfiles_basename=chain_name,
+                                      n_live_points=n_live_points,
+                                      **keywords)
+        
+        # Use PyMULTINEST analyzer to gather parameter info
+        multinest_analyzer = MNAnalyzer(n_params=n_dim,
+                                       outputfiles_basename=chain_name)
+
+        # Get the log. likelihood values from the chain
+        self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:,-1]
+        
+
+        
+
+
+        self._sampler = sampler
+
+        # Need to transform log uniform samples
+        # back into proper units
+
+        tmp_samples = multinest_analyzer.get_equal_weighted_posterior()[:,:-1]
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+            if parameter.prior.name == "Log_uniform_prior":
+                tmp_samples[:,i] = np.power(10.,tmp_samples[:,i]) 
+        
+        self._raw_samples = tmp_samples
+
+        self._build_samples_dictionary()
+
+        return self.samples
+
+
+
+    
     def _build_samples_dictionary(self):
         """
         Build the dictionary to access easily the samples by parameter
@@ -270,6 +385,101 @@ class BayesianAnalysis(object):
 
         return self._sampler
 
+    def get_effective_free_parameters(self):
+        """
+        Calculates the effective number of free parameters from the posterior
+         -2.*(mean(posterior)-max(log. likelihood))
+        :return: Effective number of free parameters
+        """
+
+        return -2.*(np.mean(self._log_like_values) -np.max(self._log_like_values) ) #need to check math!
+    
+
+    def get_highest_density_interval(self,probability=95):
+        """
+        Print and returns the (non-equal-tail) highest density credible intervals for all free parameters in the model
+
+        :param probability: the probability for this credible interval (default: 95, corresponding to 95%)
+        :return: a dictionary with the lower bound and upper bound of the credible intervals, as well as the median
+        """
+               # Gather the credible intervals (percentiles of the posterior)
+
+        credible_intervals = collections.OrderedDict()
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+            # Get the percentiles from the posterior samples
+
+            lower_bound,upper_bound = _hpd(self.samples[parameter_name],1-(float(probability)/100.))
+            median = np.median(self.samples[parameter_name])
+
+            # Save them in the dictionary
+
+            credible_intervals[parameter_name] = {'lower bound': lower_bound,
+                                                  'median': median,
+                                                  'upper bound': upper_bound}
+
+        # Print a table with the errors
+
+        data = []
+        name_length = 0
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+            # Format the value and the error with sensible significant
+            # numbers
+
+            lower_bound, median, upper_bound = [credible_intervals[parameter_name][key] for key in ('lower bound',
+                                                                                                    'median',
+                                                                                                    'upper bound')
+                                                ]
+
+            # Process the negative "error"
+
+            x = uncertainties.ufloat(median, abs(lower_bound - median))
+
+            # Split the uncertainty in number, negative error, and exponent (if any)
+
+            number, unc_lower_bound, exponent = get_uncertainty_tokens(x)
+
+            # Process the positive "error"
+
+            x = uncertainties.ufloat(median, abs(upper_bound - median))
+
+            # Split the uncertainty in number, positive error, and exponent (if any)
+
+            _, unc_upper_bound, _ = get_uncertainty_tokens(x)
+
+            if exponent is None:
+
+                # Number without exponent
+
+                pretty_string = "%s -%s +%s" % (number, unc_lower_bound, unc_upper_bound)
+
+            else:
+
+                # Number with exponent
+
+                pretty_string = "(%s -%s +%s)%s" % (number, unc_lower_bound, unc_upper_bound, exponent)
+
+            unit = self._free_parameters[parameter_name].unit
+
+            data.append([parameter_name, pretty_string, unit])
+
+            if len(parameter_name) > name_length:
+                name_length = len(parameter_name)
+
+        # Create and display the table
+
+        table = Table(rows=data,
+                      names=["Name", "Value", "Unit"],
+                      dtype=('S%i' % name_length, str, 'S15'))
+
+        display(table)
+
+        return credible_intervals
+
+    
     def get_credible_intervals(self, probability=95):
         """
         Print and returns the (equal-tail) credible intervals for all free parameters in the model
@@ -572,7 +782,6 @@ class BayesianAnalysis(object):
         log_prior = 0
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
             prior_value = parameter.prior(trial_values[i])
 
             if prior_value == 0:
@@ -623,6 +832,42 @@ class BayesianAnalysis(object):
 
         return log_like + log_prior
 
+    def _construct_multinest_posterior(self):
+        """
+        pymultinest becomes confused with the self pointer. We therefore ceate callbacks
+        that pymultinest can understand.
+
+        Here, we construct the prior and log. likelihood for multinest on the unit cube
+        """
+
+        def loglike(trial_values,ndim,params):
+
+            return self._log_like(trial_values)
+
+        # connect the callback
+        self._get_multinest_loglike = loglike 
+
+        # Now construct the prior
+        # MULTINEST priors are defined on the unit cube
+        # and should return the value in the bounds... not the
+        # probability. Therefore, we must make some transforms
+
+        def prior(params,ndim,nparams):
+
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+                try:
+
+                    params[i] = parameter.prior.from_unit_cube(params[i])
+
+                except AttributeError:
+
+                    raise RuntimeError("The prior you are trying to use for parameter %s is "
+                                       "not compatible with multinest" % (parameter_name))
+
+        # connect the callback
+        self._get_multinest_prior = prior
+    
     def _get_starting_points(self, n_walkers, variance=0.1):
 
         # Generate the starting points for the walkers by getting random
@@ -699,3 +944,68 @@ class BayesianAnalysis(object):
             return -np.inf
 
         return log_like
+
+
+
+### HDI calulations from
+def _calc_min_interval(x, alpha):
+    """Internal method to determine the minimum interval of a given width
+    Assumes that x is sorted numpy array.
+    """
+
+    n = len(x)
+    cred_mass = 1.0-alpha
+
+    interval_idx_inc = int(np.floor(cred_mass*n))
+    n_intervals = n - interval_idx_inc
+    interval_width = x[interval_idx_inc:] - x[:n_intervals]
+
+    if len(interval_width) == 0:
+        raise ValueError('Too few elements for interval calculation')
+
+    min_idx = np.argmin(interval_width)
+    hdi_min = x[min_idx]
+    hdi_max = x[min_idx+interval_idx_inc]
+    return hdi_min, hdi_max
+
+
+def _hpd(x, alpha=0.05):
+    """Calculate highest posterior density (HPD) of array for given alpha. 
+    The HPD is the minimum width Bayesian credible interval (BCI).
+    :Arguments:
+        x : Numpy array
+        An array containing MCMC samples
+        alpha : float
+        Desired probability of type I error (defaults to 0.05)
+    """
+
+    # JM: remove this when you are done fixing
+
+    raise NotImplementedError("HPD not yet implemented")
+
+    # Make a copy of trace
+    x = x.copy()
+    # For multivariate node
+    if x.ndim > 1:
+        # Transpose first, then sort
+        tx = np.transpose(x, list(range(x.ndim))[1:]+[0])
+        dims = np.shape(tx)
+        # Container list for intervals
+        intervals = np.resize(0.0, dims[:-1]+(2,))
+
+        for index in make_indices(dims[:-1]):
+            try:
+                index = tuple(index)
+            except TypeError:
+                pass
+
+            # Sort trace
+            sx = np.sort(tx[index])
+            # Append to list
+            intervals[index] = _calc_min_interval(sx, alpha)
+        # Transpose back before returning
+        return np.array(intervals)
+    else:
+        # Sort univariate node
+        sx = np.sort(x)
+        return np.array(_calc_min_interval(sx, alpha))
