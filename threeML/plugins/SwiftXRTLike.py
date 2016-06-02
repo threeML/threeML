@@ -3,8 +3,7 @@ from threeML.plugins.GenericOGIPLike import GenericOGIPLike
 __instrument_name = "Swift XRT"
 
 
+# At the moment this is just another name for the GenericOGIPLike spectrum
 class SwiftXRTLike(GenericOGIPLike):
 
-    def __init__(self, name, phafile, bkgfile, rspfile, arffile):
-
-        super(SwiftXRTLike, self).__init__(name, phafile, bkgfile, rspfile, arffile)
+    pass
