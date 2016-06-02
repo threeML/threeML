@@ -1,8 +1,7 @@
 import emcee
 import emcee.utils
-import numpy
+import numpy as np
 import collections
-import re
 import math
 
 import matplotlib.pyplot as plt
@@ -175,7 +174,7 @@ class BayesianAnalysis(object):
 
         _ = sampling_procedure(pos, sampler, n_samples, rstate0=state)
 
-        acc = numpy.mean(sampler.acceptance_fraction)
+        acc = np.mean(sampler.acceptance_fraction)
 
         print("Mean acceptance fraction: %s" % acc)
 
@@ -199,7 +198,7 @@ class BayesianAnalysis(object):
 
         # Get one starting point for each temperature
 
-        p0 = numpy.empty((n_temps, n_walkers, n_dim))
+        p0 = np.empty((n_temps, n_walkers, n_dim))
 
         for i in range(n_temps):
             p0[i, :, :] = self._get_starting_points(n_walkers)
@@ -287,7 +286,7 @@ class BayesianAnalysis(object):
 
             # Get the percentiles from the posterior samples
 
-            lower_bound,median,upper_bound = numpy.percentile(self.samples[parameter_name],
+            lower_bound,median,upper_bound = np.percentile(self.samples[parameter_name],
                                                               (100-probability,50,probability))
 
             # Save them in the dictionary
@@ -478,8 +477,8 @@ class BayesianAnalysis(object):
 
                     break
 
-                this_averages.append(numpy.average(this_samples[idx1 : idx2]))
-                this_variances.append(numpy.std(this_samples[idx1 : idx2]))
+                this_averages.append(np.average(this_samples[idx1 : idx2]))
+                this_variances.append(np.std(this_samples[idx1 : idx2]))
 
             averages[parameter_name] = this_averages
 
@@ -492,10 +491,10 @@ class BayesianAnalysis(object):
 
             for i in range(n_subsets):
 
-                samples = numpy.random.choice(self.samples[parameter_name], n_samples)
+                samples = np.random.choice(self.samples[parameter_name], n_samples)
 
-                this_bootstrap_averages.append(numpy.average(samples))
-                this_bootstrap_variances.append(numpy.std(samples))
+                this_bootstrap_averages.append(np.average(samples))
+                this_bootstrap_variances.append(np.std(samples))
 
             bootstrap_averages[parameter_name] = this_bootstrap_averages
             bootstrap_variances[parameter_name] = this_bootstrap_variances
@@ -542,12 +541,12 @@ class BayesianAnalysis(object):
         :return: the optimal number of bins
         """
 
-        q25, q75 = numpy.percentile(data, [25.0, 75.0])
+        q25, q75 = np.percentile(data, [25.0, 75.0])
         iqr = abs(q75 - q25)
 
         binsize = 2 * iqr * pow(len(data), -1/3.0)
 
-        nbins = numpy.ceil((max(data)-min(data)) / binsize)
+        nbins = np.ceil((max(data)-min(data)) / binsize)
 
         return nbins
 
@@ -579,7 +578,7 @@ class BayesianAnalysis(object):
             if prior_value == 0:
                 # Outside allowed region of parameter space
 
-                return -numpy.inf
+                return -np.inf
 
             else:
 
@@ -599,7 +598,7 @@ class BayesianAnalysis(object):
 
             # Fit engine or sampler outside of allowed zone
 
-            return -numpy.inf
+            return -np.inf
 
         except:
 
@@ -609,16 +608,16 @@ class BayesianAnalysis(object):
 
         # Sum the values of the log-like
 
-        log_like = numpy.sum(log_like_values)
+        log_like = np.sum(log_like_values)
 
         self._log_like_values.append(log_like)
 
-        if not numpy.isfinite(log_like):
+        if not np.isfinite(log_like):
             # Issue warning
 
             custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values, LikelihoodIsInfinite)
 
-            return -numpy.inf
+            return -np.inf
 
         # print("Log like is %s, log_prior is %s, for trial values %s" % (log_like, log_prior,trial_values))
 
@@ -680,7 +679,7 @@ class BayesianAnalysis(object):
 
             # Fit engine or sampler outside of allowed zone
 
-            return -numpy.inf
+            return -np.inf
 
         except:
 
@@ -690,13 +689,13 @@ class BayesianAnalysis(object):
 
         # Sum the values of the log-like
 
-        log_like = numpy.sum(log_like_values)
+        log_like = np.sum(log_like_values)
 
-        if not numpy.isfinite(log_like):
+        if not np.isfinite(log_like):
             # Issue warning
 
             custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values, LikelihoodIsInfinite)
 
-            return -numpy.inf
+            return -np.inf
 
         return log_like
