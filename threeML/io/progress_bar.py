@@ -1,6 +1,8 @@
 from __future__ import print_function
 
 import sys, time
+import datetime
+
 
 class ProgressBar:
     def __init__(self, iterations):
@@ -28,12 +30,35 @@ class ProgressBar:
     def increase(self):
         
         self.animate(self.lastIter + 1)
-    
+
+    def _check_remaining_time(self, delta_t):
+
+        # Seconds per iterations
+        s_per_iter = delta_t / float(self.lastIter)
+
+        # Seconds to go (estimate)
+        s_to_go = s_per_iter * (self.iterations - self.lastIter)
+
+        # I cast to int so it won't show decimal seconds
+
+        return str(datetime.timedelta(seconds=int(s_to_go)))
+
     def update_iteration(self, elapsed_iter):
+
+        delta_t = time.time() - self.startTime
+
         elapsed_iter = min(elapsed_iter, self.iterations)
-        self.__update_amount((elapsed_iter / float(self.iterations)) * 100.0)
-        self.prog_bar += '  %d of %s completed in %.1f s' % (elapsed_iter, self.iterations, time.time() - self.startTime)
-        #sys.stdout.flush()
+
+        if elapsed_iter < self.iterations:
+
+            self.__update_amount((elapsed_iter / float(self.iterations)) * 100.0)
+            self.prog_bar += '  %d of %s completed in %.1f s' % (elapsed_iter, self.iterations, delta_t)
+            self.prog_bar += ' (%s remaining)' % self._check_remaining_time(delta_t)
+
+        else:
+
+            self.__update_amount(100)
+            self.prog_bar += '  completed in %.1f s' % (time.time() - self.startTime)
 
     def __update_amount(self, new_amount):
         percent_done = min(int(round((new_amount / 100.0) * 100.0)), 100)
