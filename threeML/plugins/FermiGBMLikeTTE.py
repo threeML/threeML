@@ -79,9 +79,9 @@ class FermiGBMLikeTTE(OGIPPluginPGstat, PluginPrototype):
 
         self.tmin, self.tmax = self._parse_time_interval(arg)
 
-        warnings.warn("Proper exposure computation is not implemented yet")
 
-        exposure = self.tmax - self.tmin
+
+
 
         # First build the mas for the events in time
         timemask = np.logical_and(self.ttefile.events - self.ttefile.triggertime >= self.tmin,
@@ -106,6 +106,11 @@ class FermiGBMLikeTTE(OGIPPluginPGstat, PluginPrototype):
         counts = np.array(tmpcounts)
         bkgCounts = np.array(tmpbackground)
         bkgErr = np.array(tmpbackgrounderr)
+
+        # Calculate the exposure using the GBM dead time (Meegan et al. 2009)
+        totaldeadtime = self.ttefile.deadtime[timemask].sum()
+
+        exposure = (self.tmax - self.tmin) - totaldeadtime
 
         # Run through the proper checks on counts
         self._initialSetup(self.mask, counts, bkgCounts, exposure, bkgErr)
@@ -236,7 +241,7 @@ class FermiGBMLikeTTE(OGIPPluginPGstat, PluginPrototype):
                                                      self.ttefile.stopevents - self.ttefile.triggertime,
                                                      binwidth))
 
-            cnts = cnts / binwidth
+            cnts = cnts/binwidth
             # Find the mean time of the bins
             meantime = []
             for i in xrange(len(bins) - 1):
@@ -421,10 +426,10 @@ class GBMTTEFile(object):
 
         self._calculate_deattime()
 
-    @staticmethod
+
     def _calculate_deattime(self):
 
-        self.deadtime = np.zeros_like(self.pha)
+        self.deadtime = np.zeros_like(self.events)
         overflowmask =  self.pha == 128
 
         # Dead time for overflow (note, overflow sometimes changes)
@@ -432,7 +437,6 @@ class GBMTTEFile(object):
 
         # Normal dead time
         self.deadtime[~overflowmask] = 2.E-6 #s
-
 
 
 class BkgLogLikelihood(object):
