@@ -5,8 +5,6 @@ try:
 
     import pymultinest
 
-    from pymultinest import Analyzer as MNAnalyzer
-
 except:
 
     has_pymultinest = False
@@ -63,6 +61,7 @@ def sample_with_progress(p0, sampler, n_samples, **kwargs):
     # Make sure we show 100% completion
 
     progress.animate(n_samples)
+    progress.close()
 
     # Go to new line
 
@@ -175,6 +174,8 @@ class BayesianAnalysis(object):
 
         # Prepare the list of likelihood values
         self._log_like_values = []
+
+        # Sample the burn-in
         pos, prob, state = sampling_procedure(p0, sampler, burn_in)
 
         # Reset sampler
@@ -241,29 +242,26 @@ class BayesianAnalysis(object):
         self._build_samples_dictionary()
 
         return self.samples
-
-
-
     
     def sample_multinest(self, n_live_points,chain_name= "chains/fit-" ,**keywords):
         """
         Sample the posterior with MULTINEST nested sampling (Feroz & Hobson)
         """
 
+        assert has_pymultinest,"You don't have pymultinest installed, so you cannot run the Multinest sampler"
+
         self._update_free_parameters()
 
         n_dim = len(self._free_parameters.keys())
-
 
         # MULTINEST has a convergence criteria and therefore, there is no way
         # to determine progress
         
         sampling_procedure = sample_without_progress
 
-
         # MULTINEST uses a different call signiture for
         # sampling so we construct callbakcs
-        self._construct_multinest_posterior()
+        loglike, multinest_prior = self._construct_multinest_posterior()
 
         # We need to check if the MCMC
         # chains will have a place on
@@ -282,27 +280,17 @@ class BayesianAnalysis(object):
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
 
-        
+        # Reset the likelihood values
+        self._log_like_values = []
+
         if threeML_config['parallel']['use-parallel']:
 
              raise RuntimeError("If you want to run multinest in paralell you need to use an ad-hoc method")
 
-        #    pass
-        #     c = ParallelClient()
-        #     view = c[:]
-
-        #     sampler = pymultinest.run(n_walkers, n_dim,
-        #                                     self._get_posterior,
-        #                                     pool=view)
-
-        #     # Sampling with progress in parallel is super-slow, so let's
-        #     # use the non-interactive one
-        #     sampling_procedure = sample_without_progress
-
         else:
 
-            sampler = pymultinest.run(self._get_multinest_loglike,
-                                      self._get_multinest_prior,
+            sampler = pymultinest.run(loglike,
+                                      multinest_prior,
                                       n_dim,
                                       n_dim,
                                       outputfiles_basename=chain_name,
@@ -310,37 +298,20 @@ class BayesianAnalysis(object):
                                       **keywords)
         
         # Use PyMULTINEST analyzer to gather parameter info
-        multinest_analyzer = MNAnalyzer(n_params=n_dim,
-                                       outputfiles_basename=chain_name)
+        multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
+                                                          outputfiles_basename=chain_name)
 
         # Get the log. likelihood values from the chain
         self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:,-1]
-        
-
-        
-
 
         self._sampler = sampler
 
-        # Need to transform log uniform samples
-        # back into proper units
-
-        tmp_samples = multinest_analyzer.get_equal_weighted_posterior()[:,:-1]
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
-            if parameter.prior.name == "Log_uniform_prior":
-                tmp_samples[:,i] = np.power(10.,tmp_samples[:,i]) 
-        
-        self._raw_samples = tmp_samples
+        self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:,:-1]
 
         self._build_samples_dictionary()
 
         return self.samples
 
-
-
-    
     def _build_samples_dictionary(self):
         """
         Build the dictionary to access easily the samples by parameter
@@ -393,7 +364,6 @@ class BayesianAnalysis(object):
         """
 
         return -2.*(np.mean(self._log_like_values) -np.max(self._log_like_values) ) #need to check math!
-    
 
     def get_highest_density_interval(self,probability=95):
         """
@@ -479,12 +449,11 @@ class BayesianAnalysis(object):
 
         return credible_intervals
 
-    
-    def get_credible_intervals(self, probability=95):
+    def get_credible_intervals(self, probability=68):
         """
         Print and returns the (equal-tail) credible intervals for all free parameters in the model
 
-        :param probability: the probability for this credible interval (default: 95, corresponding to 95%)
+        :param probability: the probability for this credible interval (default: 68, corresponding to 68%)
         :return: a dictionary with the lower bound and upper bound of the credible intervals, as well as the median
         """
 
@@ -562,6 +531,7 @@ class BayesianAnalysis(object):
                       dtype=('S%i' % name_length, str, 'S15'))
 
         display(table)
+        print("\n(probability %s)" % probability)
 
         return credible_intervals
 
@@ -795,38 +765,7 @@ class BayesianAnalysis(object):
 
                 log_prior += math.log10(prior_value)
 
-        # Get the value of the log-likelihood for this parameters
-
-        try:
-
-            # Loop over each dataset and get the likelihood values for each set
-
-            log_like_values = map(lambda dataset: dataset.get_log_like(), self.data_list.values())
-
-        except ModelAssertionViolation:
-
-            # Fit engine or sampler outside of allowed zone
-
-            return -np.inf
-
-        except:
-
-            # We don't want to catch more serious issues
-
-            raise
-
-        # Sum the values of the log-like
-
-        log_like = np.sum(log_like_values)
-
-        self._log_like_values.append(log_like)
-
-        if not np.isfinite(log_like):
-            # Issue warning
-
-            custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values, LikelihoodIsInfinite)
-
-            return -np.inf
+        log_like = self._log_like(trial_values)
 
         # print("Log like is %s, log_prior is %s, for trial values %s" % (log_like, log_prior,trial_values))
 
@@ -840,12 +779,18 @@ class BayesianAnalysis(object):
         Here, we construct the prior and log. likelihood for multinest on the unit cube
         """
 
+        # First update the free parameters (in case the user changed them after the construction of the class)
+        self._update_free_parameters()
+
         def loglike(trial_values,ndim,params):
 
-            return self._log_like(trial_values)
+            # NOTE: the _log_like function DOES NOT assign trial_values to the parameters
 
-        # connect the callback
-        self._get_multinest_loglike = loglike 
+            for i, parameter in enumerate(self._free_parameters.values()):
+
+                parameter.value = trial_values[i]
+
+            return self._log_like(trial_values)
 
         # Now construct the prior
         # MULTINEST priors are defined on the unit cube
@@ -865,8 +810,13 @@ class BayesianAnalysis(object):
                     raise RuntimeError("The prior you are trying to use for parameter %s is "
                                        "not compatible with multinest" % (parameter_name))
 
-        # connect the callback
-        self._get_multinest_prior = prior
+        # Give a test run to the prior to check that it is working. If it crashes while multinest is going
+        # it will not stop multinest from running and generate thousands of exceptions (argh!)
+        n_dim = len(self._free_parameters)
+
+        _ = prior([0.5] * n_dim, n_dim, [])
+
+        return loglike, prior
     
     def _get_starting_points(self, n_walkers, variance=0.1):
 
@@ -901,16 +851,7 @@ class BayesianAnalysis(object):
         return logp
 
     def _log_like(self, trial_values):
-        """Compute the log-likelihood, used in the parallel tempering sampling"""
-
-        # Compute the log-likelihood
-
-        # Set the parameters to their trial values
-
-        for i, (src_name, param_name) in enumerate(self._free_parameters.keys()):
-            this_param = self._likelihood_model.parameters[src_name][param_name]
-
-            this_param.setValue(trial_values[i])
+        """Compute the log-likelihood"""
 
         # Get the value of the log-likelihood for this parameters
 
@@ -936,6 +877,8 @@ class BayesianAnalysis(object):
 
         log_like = np.sum(log_like_values)
 
+        self._log_like_values.append(log_like)
+
         if not np.isfinite(log_like):
             # Issue warning
 
@@ -944,8 +887,6 @@ class BayesianAnalysis(object):
             return -np.inf
 
         return log_like
-
-
 
 ### HDI calulations from
 def _calc_min_interval(x, alpha):
