@@ -31,7 +31,6 @@ from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_wa
 from threeML.io.rich_display import display
 from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
 
-
 from astromodels import ModelAssertionViolation
 
 
@@ -45,13 +44,12 @@ def sample_with_progress(p0, sampler, n_samples, **kwargs):
     pos, prob, state = [None, None, None]
 
     # This is only for producing the progress bar
-    progress_bar_iter = max(int(n_samples / 100),1)
+    progress_bar_iter = max(int(n_samples / 100), 1)
 
     for i, result in enumerate(sampler.sample(p0, iterations=n_samples, **kwargs)):
         # Show progress
 
         if i % progress_bar_iter == 0:
-
             progress.animate((i + 1))
 
         # Get the vectors with the results
@@ -74,7 +72,6 @@ def sample_without_progress(p0, sampler, n_samples, **kwargs):
 
 
 class BayesianAnalysis(object):
-
     def __init__(self, likelihood_model, data_list, **kwargs):
         """
         Bayesian analysis.
@@ -89,7 +86,6 @@ class BayesianAnalysis(object):
         for parameter_name, parameter in likelihood_model.free_parameters.iteritems():
 
             if not parameter.has_prior():
-
                 raise RuntimeError("You need to define priors for all free parameters before instancing a "
                                    "Bayesian analysis")
 
@@ -100,7 +96,6 @@ class BayesianAnalysis(object):
         for k, v in kwargs.iteritems():
 
             if k.lower() == "verbose":
-
                 self.verbose = bool(kwargs["verbose"])
 
         self._likelihood_model = likelihood_model
@@ -110,7 +105,6 @@ class BayesianAnalysis(object):
         # Make sure that the current model is used in all data sets
 
         for dataset in self.data_list.values():
-
             dataset.set_model(self._likelihood_model)
 
         # Init the samples to None
@@ -139,6 +133,12 @@ class BayesianAnalysis(object):
     def sample(self, n_walkers, burn_in, n_samples):
         """
         Sample the posterior with the Goodman & Weare's Affine Invariant Markov chain Monte Carlo
+        :param: n_walkers
+        :param: burn_in
+        :param: n_samples
+
+        :return: MCMC samples
+
         """
 
         self._update_free_parameters()
@@ -204,6 +204,14 @@ class BayesianAnalysis(object):
     def sample_parallel_tempering(self, n_temps, n_walkers, burn_in, n_samples):
         """
         Sample with parallel tempering
+
+        :param: n_temps
+        :param: n_walkers
+        :param: burn_in
+        :param: n_samples
+
+        :return: MCMC samples
+
         """
 
         free_parameters = self._likelihood_model.getFreeParameters()
@@ -241,13 +249,20 @@ class BayesianAnalysis(object):
         self._build_samples_dictionary()
 
         return self.samples
-    
-    def sample_multinest(self, n_live_points,chain_name= "chains/fit-" ,**keywords):
+
+    def sample_multinest(self, n_live_points, chain_name="chains/fit-", **kwargs):
         """
         Sample the posterior with MULTINEST nested sampling (Feroz & Hobson)
+
+        :param: n_live_points
+        :param: chain_names
+        :param: **kwargs (pyMULTINEST kwords)
+
+        :return: MCMC samples
+
         """
 
-        assert has_pymultinest,"You don't have pymultinest installed, so you cannot run the Multinest sampler"
+        assert has_pymultinest, "You don't have pymultinest installed, so you cannot run the Multinest sampler"
 
         self._update_free_parameters()
 
@@ -255,7 +270,7 @@ class BayesianAnalysis(object):
 
         # MULTINEST has a convergence criteria and therefore, there is no way
         # to determine progress
-        
+
         sampling_procedure = sample_without_progress
 
         # MULTINEST uses a different call signiture for
@@ -266,15 +281,18 @@ class BayesianAnalysis(object):
         # chains will have a place on
         # the disk to write and if not,
         # create one
-        
+
         mcmc_chains_out_dir = ""
         tmp = chain_name.split('/')
         for s in tmp[:-1]:
-            mcmc_chains_out_dir+=s+'/'
-        
-        if not os.path.exists(mcmc_chains_out_dir ): os.makedirs(mcmc_chains_out_dir)
-        
+            mcmc_chains_out_dir += s + '/'
+
+        if not os.path.exists(mcmc_chains_out_dir):
+            os.makedirs(mcmc_chains_out_dir)
+
         print("\nSampling...\n")
+        print("MULTINEST has its own convergence criteria... you will have to wait blindly for it to finish")
+        print("If INS is enabled, one can monitor the likelihood in the terminal for completion information")
 
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
@@ -284,7 +302,7 @@ class BayesianAnalysis(object):
 
         if threeML_config['parallel']['use-parallel']:
 
-             raise RuntimeError("If you want to run multinest in paralell you need to use an ad-hoc method")
+            raise RuntimeError("If you want to run multinest in paralell you need to use an ad-hoc method")
 
         else:
 
@@ -294,18 +312,18 @@ class BayesianAnalysis(object):
                                       n_dim,
                                       outputfiles_basename=chain_name,
                                       n_live_points=n_live_points,
-                                      **keywords)
-        
+                                      **kwargs)
+
         # Use PyMULTINEST analyzer to gather parameter info
         multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
                                                           outputfiles_basename=chain_name)
 
         # Get the log. likelihood values from the chain
-        self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:,-1]
+        self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
 
         self._sampler = sampler
 
-        self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:,:-1]
+        self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
 
         self._build_samples_dictionary()
 
@@ -321,10 +339,9 @@ class BayesianAnalysis(object):
         self._samples = collections.OrderedDict()
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
             # Add the samples for this parameter for this source
 
-            self._samples[parameter_name] = self._raw_samples[:,i]
+            self._samples[parameter_name] = self._raw_samples[:, i]
 
     @property
     def raw_samples(self):
@@ -362,24 +379,23 @@ class BayesianAnalysis(object):
         :return: Effective number of free parameters
         """
 
-        return -2.*(np.mean(self._log_like_values) -np.max(self._log_like_values) ) #need to check math!
+        return -2. * (np.mean(self._log_like_values) - np.max(self._log_like_values))  # need to check math!
 
-    def get_highest_density_interval(self,probability=95):
+    def get_highest_density_interval(self, probability=95):
         """
         Print and returns the (non-equal-tail) highest density credible intervals for all free parameters in the model
 
         :param probability: the probability for this credible interval (default: 95, corresponding to 95%)
         :return: a dictionary with the lower bound and upper bound of the credible intervals, as well as the median
         """
-               # Gather the credible intervals (percentiles of the posterior)
+        # Gather the credible intervals (percentiles of the posterior)
 
         credible_intervals = collections.OrderedDict()
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
             # Get the percentiles from the posterior samples
 
-            lower_bound,upper_bound = _hpd(self.samples[parameter_name],1-(float(probability)/100.))
+            lower_bound, upper_bound = self._hpd(self.samples[parameter_name], 1 - (float(probability) / 100.))
             median = np.median(self.samples[parameter_name])
 
             # Save them in the dictionary
@@ -461,11 +477,10 @@ class BayesianAnalysis(object):
         credible_intervals = collections.OrderedDict()
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
             # Get the percentiles from the posterior samples
 
-            lower_bound,median,upper_bound = np.percentile(self.samples[parameter_name],
-                                                              (100-probability,50,probability))
+            lower_bound, median, upper_bound = np.percentile(self.samples[parameter_name],
+                                                             (100 - probability, 50, probability))
 
             # Save them in the dictionary
 
@@ -552,7 +567,6 @@ class BayesianAnalysis(object):
             priors = []
 
             for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
                 short_name = parameter_name.split(".")[-1]
 
                 labels.append(short_name)
@@ -602,7 +616,7 @@ class BayesianAnalysis(object):
 
                 subplot.plot(self.samples[parameter_name][::thin])
 
-            subplot.set_ylabel(parameter_name.replace(".","\n"))
+            subplot.set_ylabel(parameter_name.replace(".", "\n"))
             subplot.set_xlabel("sample #")
 
             figures.append(figure)
@@ -649,15 +663,14 @@ class BayesianAnalysis(object):
 
             for i in range(n_subsets):
 
-                idx1 = i*stepsize
+                idx1 = i * stepsize
                 idx2 = idx1 + n_samples_in_each_subset
 
                 if idx2 > n_samples - 1:
-
                     break
 
-                this_averages.append(np.average(this_samples[idx1 : idx2]))
-                this_variances.append(np.std(this_samples[idx1 : idx2]))
+                this_averages.append(np.average(this_samples[idx1: idx2]))
+                this_variances.append(np.std(this_samples[idx1: idx2]))
 
             averages[parameter_name] = this_averages
 
@@ -669,7 +682,6 @@ class BayesianAnalysis(object):
             this_bootstrap_variances = []
 
             for i in range(n_subsets):
-
                 samples = np.random.choice(self.samples[parameter_name], n_samples)
 
                 this_bootstrap_averages.append(np.average(samples))
@@ -691,8 +703,7 @@ class BayesianAnalysis(object):
         figures = []
 
         for i, parameter_name in enumerate(self._free_parameters.keys()):
-
-            fig, subs = plt.subplots(1,2,sharey=True)
+            fig, subs = plt.subplots(1, 2, sharey=True)
 
             fig.suptitle(parameter_name)
 
@@ -723,9 +734,9 @@ class BayesianAnalysis(object):
         q25, q75 = np.percentile(data, [25.0, 75.0])
         iqr = abs(q75 - q25)
 
-        binsize = 2 * iqr * pow(len(data), -1/3.0)
+        binsize = 2 * iqr * pow(len(data), -1 / 3.0)
 
-        nbins = np.ceil((max(data)-min(data)) / binsize)
+        nbins = np.ceil((max(data) - min(data)) / binsize)
 
         return nbins
 
@@ -781,12 +792,11 @@ class BayesianAnalysis(object):
         # First update the free parameters (in case the user changed them after the construction of the class)
         self._update_free_parameters()
 
-        def loglike(trial_values,ndim,params):
+        def loglike(trial_values, ndim, params):
 
             # NOTE: the _log_like function DOES NOT assign trial_values to the parameters
 
             for i, parameter in enumerate(self._free_parameters.values()):
-
                 parameter.value = trial_values[i]
 
             return self._log_like(trial_values)
@@ -796,7 +806,7 @@ class BayesianAnalysis(object):
         # and should return the value in the bounds... not the
         # probability. Therefore, we must make some transforms
 
-        def prior(params,ndim,nparams):
+        def prior(params, ndim, nparams):
 
             for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
@@ -807,7 +817,7 @@ class BayesianAnalysis(object):
                 except AttributeError:
 
                     raise RuntimeError("The prior you are trying to use for parameter %s is "
-                                       "not compatible with multinest" % (parameter_name))
+                                       "not compatible with multinest" % parameter_name)
 
         # Give a test run to the prior to check that it is working. If it crashes while multinest is going
         # it will not stop multinest from running and generate thousands of exceptions (argh!)
@@ -816,7 +826,7 @@ class BayesianAnalysis(object):
         _ = prior([0.5] * n_dim, n_dim, [])
 
         return loglike, prior
-    
+
     def _get_starting_points(self, n_walkers, variance=0.1):
 
         # Generate the starting points for the walkers by getting random
@@ -828,8 +838,7 @@ class BayesianAnalysis(object):
         p0 = []
 
         for i in range(n_walkers):
-
-            this_p0 = map(lambda x:x.get_randomized_value(variance), self._free_parameters.values())
+            this_p0 = map(lambda x: x.get_randomized_value(variance), self._free_parameters.values())
 
             p0.append(this_p0)
 
@@ -887,65 +896,63 @@ class BayesianAnalysis(object):
 
         return log_like
 
-### HDI calulations from
-def _calc_min_interval(x, alpha):
-    """Internal method to determine the minimum interval of a given width
-    Assumes that x is sorted numpy array.
-    """
+    @staticmethod
+    def _calc_min_interval(x, alpha):
+        """
+        Internal method to determine the minimum interval of a given width
+        Assumes that x is sorted numpy array.
+        :argument: a: a numpy array containing samples
+        :argument: alpha: probability of type I error
 
-    n = len(x)
-    cred_mass = 1.0-alpha
+        :returns: list containing min and max HDI
 
-    interval_idx_inc = int(np.floor(cred_mass*n))
-    n_intervals = n - interval_idx_inc
-    interval_width = x[interval_idx_inc:] - x[:n_intervals]
+        """
 
-    if len(interval_width) == 0:
-        raise ValueError('Too few elements for interval calculation')
+        n = len(x)
+        cred_mass = 1.0 - alpha
 
-    min_idx = np.argmin(interval_width)
-    hdi_min = x[min_idx]
-    hdi_max = x[min_idx+interval_idx_inc]
-    return hdi_min, hdi_max
+        interval_idx_inc = int(np.floor(cred_mass * n))
+        n_intervals = n - interval_idx_inc
+        interval_width = x[interval_idx_inc:] - x[:n_intervals]
 
+        if len(interval_width) == 0:
+            raise ValueError('Too few elements for interval calculation')
 
-def _hpd(x, alpha=0.05):
-    """Calculate highest posterior density (HPD) of array for given alpha. 
-    The HPD is the minimum width Bayesian credible interval (BCI).
-    :Arguments:
+        min_idx = np.argmin(interval_width)
+        hdi_min = x[min_idx]
+        hdi_max = x[min_idx + interval_idx_inc]
+        return hdi_min, hdi_max
+
+    def _hpd(self, x, alpha=0.05):
+        """Calculate highest posterior density (HPD) of array for given alpha.
+        The HPD is the minimum width Bayesian credible interval (BCI).
+        :Arguments:
         x : Numpy array
         An array containing MCMC samples
         alpha : float
         Desired probability of type I error (defaults to 0.05)
-    """
+        """
 
-    # JM: remove this when you are done fixing
 
-    raise NotImplementedError("HPD not yet implemented")
+        # Currently only 1D available.
+        # future addition will fix this
 
-    # Make a copy of trace
-    x = x.copy()
-    # For multivariate node
-    if x.ndim > 1:
-        # Transpose first, then sort
-        tx = np.transpose(x, list(range(x.ndim))[1:]+[0])
-        dims = np.shape(tx)
-        # Container list for intervals
-        intervals = np.resize(0.0, dims[:-1]+(2,))
+        # Make a copy of trace
+        #x = x.copy()
+        # For multivariate node
+        #if x.ndim > 1:
+            # Transpose first, then sort
+        #    tx = np.transpose(x, list(range(x.ndim))[1:] + [0])
+        #    dims = np.shape(tx)
+            # Container list for intervals
+        #    intervals = np.resize(0.0, dims[:-1] + (2,))
 
-        for index in make_indices(dims[:-1]):
-            try:
-                index = tuple(index)
-            except TypeError:
-                pass
-
-            # Sort trace
-            sx = np.sort(tx[index])
+        #    sx = np.sort(tx[index])
             # Append to list
-            intervals[index] = _calc_min_interval(sx, alpha)
-        # Transpose back before returning
-        return np.array(intervals)
-    else:
-        # Sort univariate node
-        sx = np.sort(x)
-        return np.array(_calc_min_interval(sx, alpha))
+        #    intervals[index] = self._calc_min_interval(sx, alpha)
+            # Transpose back before returning
+        #    return np.array(intervals)
+        else:
+            # Sort univariate node
+            sx = np.sort(x)
+        return np.array(self._calc_min_interval(sx, alpha))
