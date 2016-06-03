@@ -61,7 +61,6 @@ def sample_with_progress(p0, sampler, n_samples, **kwargs):
     # Make sure we show 100% completion
 
     progress.animate(n_samples)
-    progress.close()
 
     # Go to new line
 
