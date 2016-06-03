@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 
 from setuptools import setup
 
@@ -9,11 +10,47 @@ execfile('threeML/version.py')
 
 # Now a global __version__ is available
 
+import imp
+
+# This dynamically loads a module and return it in a variable.
+# Will use it for check optional dependencies
+
+def import_module(module_name):
+
+    # Fast path: see if the module has already been imported.
+
+    try:
+
+        return sys.modules[module_name]
+
+    except KeyError:
+
+        pass
+
+    # If any of the following calls raises an exception,
+    # there's a problem we can't handle -- let the caller handle it.
+
+    fp, pathname, description = imp.find_module(module_name)
+
+    try:
+
+        return imp.load_module(module_name, fp, pathname, description)
+
+    except:
+
+        raise
+
+    finally:
+
+        # Since we may exit via an exception, close fp explicitly.
+
+        if fp:
+
+            fp.close()
+
 # This list will contain the messages to print just before the end of the setup
 # so that the user actually note them, instead of loosing them in the tons of
 # messages of the build process
-
-final_messages = ["REMEMBER: if you want to use C/C++ plugins (HAWC) you have to install also cthreeML"]
 
 setup(
 
@@ -70,14 +107,41 @@ setup(
         'iminuit',
         'astromodels',
         'corner>=1.0.2',
-        #'pymultinest'   #GV: add if needed
     ])
 
-# Now print the final messages if there are any
+# Check for optional dependencies
 
-if len(final_messages) > 0:
-    print("\n#############")
-    print("FINAL NOTES:")
-    print("#############")
+optional_dependencies = {'cthreeML': [False,'needed by HAWC plugin'],
+                         'pymultinest': [False, 'needed to use Multinest sampler for Bayesian analysis']}
 
-    print("\n".join(final_messages))
+for dep_name in optional_dependencies:
+    
+    try:
+        
+        import_module(dep_name)
+    
+    except ImportError:
+        
+        optional_dependencies[dep_name][0] = False
+    
+    else:
+        
+        optional_dependencies[dep_name][0] = True
+
+# Now print the final messages
+
+print("\n\n#############")
+print("FINAL NOTES:")
+print("#############\n\n")
+
+for dep_name in optional_dependencies:
+    
+    if optional_dependencies[dep_name][0]:
+        
+        status = 'available'
+    
+    else:
+        
+        status = '*NOT* available'
+    
+    print(" * %s is %s (%s)\n" % (dep_name, status, optional_dependencies[dep_name][1]))
