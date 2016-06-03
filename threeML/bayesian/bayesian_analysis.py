@@ -379,7 +379,7 @@ class BayesianAnalysis(object):
 
             # Get the percentiles from the posterior samples
 
-            lower_bound,upper_bound = _hpd(self.samples[parameter_name],1-(float(probability)/100.))
+            lower_bound,upper_bound = self._hpd(self.samples[parameter_name],1-(float(probability)/100.))
             median = np.median(self.samples[parameter_name])
 
             # Save them in the dictionary
@@ -887,65 +887,64 @@ class BayesianAnalysis(object):
 
         return log_like
 
-### HDI calulations from
-def _calc_min_interval(x, alpha):
-    """Internal method to determine the minimum interval of a given width
-    Assumes that x is sorted numpy array.
-    """
+    @staticmethod
+    def _calc_min_interval(x, alpha):
+        '''
+        Internal method to determine the minimum interval of a given width
+        Assumes that x is sorted numpy array.
+        :argument: a: a numpy array containing samples
+        :argument: alpha: probability of type I error
 
-    n = len(x)
-    cred_mass = 1.0-alpha
+        :returns: list containing min and max HDI
 
-    interval_idx_inc = int(np.floor(cred_mass*n))
-    n_intervals = n - interval_idx_inc
-    interval_width = x[interval_idx_inc:] - x[:n_intervals]
+        '''
 
-    if len(interval_width) == 0:
-        raise ValueError('Too few elements for interval calculation')
+        n = len(x)
+        cred_mass = 1.0-alpha
 
-    min_idx = np.argmin(interval_width)
-    hdi_min = x[min_idx]
-    hdi_max = x[min_idx+interval_idx_inc]
-    return hdi_min, hdi_max
+        interval_idx_inc = int(np.floor(cred_mass*n))
+        n_intervals = n - interval_idx_inc
+        interval_width = x[interval_idx_inc:] - x[:n_intervals]
+
+        if len(interval_width) == 0:
+            raise ValueError('Too few elements for interval calculation')
+
+        min_idx = np.argmin(interval_width)
+        hdi_min = x[min_idx]
+        hdi_max = x[min_idx+interval_idx_inc]
+        return hdi_min, hdi_max
 
 
-def _hpd(x, alpha=0.05):
-    """Calculate highest posterior density (HPD) of array for given alpha. 
-    The HPD is the minimum width Bayesian credible interval (BCI).
-    :Arguments:
+    def _hpd(self,x, alpha=0.05):
+        """Calculate highest posterior density (HPD) of array for given alpha.
+        The HPD is the minimum width Bayesian credible interval (BCI).
+        :Arguments:
         x : Numpy array
         An array containing MCMC samples
         alpha : float
         Desired probability of type I error (defaults to 0.05)
-    """
+        """
 
-    # JM: remove this when you are done fixing
+        # JM: remove this when you are done fixing
 
-    raise NotImplementedError("HPD not yet implemented")
+        #    raise NotImplementedError("HPD not yet implemented")
 
-    # Make a copy of trace
-    x = x.copy()
-    # For multivariate node
-    if x.ndim > 1:
-        # Transpose first, then sort
-        tx = np.transpose(x, list(range(x.ndim))[1:]+[0])
-        dims = np.shape(tx)
-        # Container list for intervals
-        intervals = np.resize(0.0, dims[:-1]+(2,))
+        # Make a copy of trace
+        x = x.copy()
+        # For multivariate node
+        if x.ndim > 1:
+            # Transpose first, then sort
+            tx = np.transpose(x, list(range(x.ndim))[1:]+[0])
+            dims = np.shape(tx)
+            # Container list for intervals
+            intervals = np.resize(0.0, dims[:-1]+(2,))
 
-        for index in make_indices(dims[:-1]):
-            try:
-                index = tuple(index)
-            except TypeError:
-                pass
-
-            # Sort trace
             sx = np.sort(tx[index])
             # Append to list
-            intervals[index] = _calc_min_interval(sx, alpha)
-        # Transpose back before returning
-        return np.array(intervals)
-    else:
-        # Sort univariate node
-        sx = np.sort(x)
-        return np.array(_calc_min_interval(sx, alpha))
+            intervals[index] = self._calc_min_interval(sx, alpha)
+            # Transpose back before returning
+            return np.array(intervals)
+        else:
+            # Sort univariate node
+            sx = np.sort(x)
+        return np.array(self._calc_min_interval(sx, alpha))
