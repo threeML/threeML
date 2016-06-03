@@ -402,6 +402,14 @@ class FermiGBMLikeTTE(OGIPPluginPGstat, PluginPrototype):
 
 class GBMTTEFile(object):
     def __init__(self, ttefile):
+        '''
+        A simple class for opening and easily accessing Fermi GBM
+        TTE Files.
+
+        :param ttefile: The filename of the TTE file to be stored
+
+        '''
+
         tte = pyfits.open(ttefile)
 
         self.events = tte['EVENTS'].data['TIME']
@@ -410,6 +418,21 @@ class GBMTTEFile(object):
         self.startevents = tte['PRIMARY'].header['TSTART']
         self.stopevents = tte['PRIMARY'].header['TSTOP']
         self.nchans = tte['EBOUNDS'].header['NAXIS2']
+
+        self._calculate_deattime()
+
+    @staticmethod
+    def _calculate_deattime(self):
+
+        self.deadtime = np.zeros_like(self.pha)
+        overflowmask =  self.pha == 128
+
+        # Dead time for overflow (note, overflow sometimes changes)
+        self.deadtime[overflowmask] = 10.E-6 #s
+
+        # Normal dead time
+        self.deadtime[~overflowmask] = 2.E-6 #s
+
 
 
 class BkgLogLikelihood(object):
