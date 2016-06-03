@@ -4,6 +4,8 @@ import glob
 import inspect
 import imp
 
+# Import the version
+from version import __version__
 
 # This dynamically loads a module and return it in a variable
 
