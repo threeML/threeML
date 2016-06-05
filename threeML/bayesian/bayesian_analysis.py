@@ -952,7 +952,7 @@ class BayesianAnalysis(object):
         #    intervals[index] = self._calc_min_interval(sx, alpha)
             # Transpose back before returning
         #    return np.array(intervals)
-        else:
+        #else:
             # Sort univariate node
-            sx = np.sort(x)
+        sx = np.sort(x)
         return np.array(self._calc_min_interval(sx, alpha))
