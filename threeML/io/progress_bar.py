@@ -52,7 +52,7 @@ class ProgressBar:
         if elapsed_iter < self.iterations:
 
             self.__update_amount((elapsed_iter / float(self.iterations)) * 100.0)
-            self.prog_bar += '  %d of %s completed in %.1f s' % (elapsed_iter, self.iterations, delta_t)
+            self.prog_bar += '  %d / %s in %.1f s' % (elapsed_iter, self.iterations, delta_t)
             self.prog_bar += ' (%s remaining)' % self._check_remaining_time(delta_t)
 
         else:

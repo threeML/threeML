@@ -762,6 +762,7 @@ class BayesianAnalysis(object):
         log_prior = 0
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
             prior_value = parameter.prior(trial_values[i])
 
             if prior_value == 0:
