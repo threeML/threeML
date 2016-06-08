@@ -8,7 +8,7 @@ from threeML.plugins.ogip import OGIPPHA, OGIPPluginCash
 __instrument_name = "All OGIP-compliant instruments"
 
 
-class GenericOGIPLike(PluginPrototype, OGIPPluginCash):
+class GenericOGIPLike(OGIPPluginCash, PluginPrototype):
 
     def __init__(self, name, phafile, bkgfile, rspfile, arffile=None):
         """
@@ -28,12 +28,9 @@ class GenericOGIPLike(PluginPrototype, OGIPPluginCash):
         mask = np.asarray(np.ones(self.phafile.getRates().shape), np.bool)
 
         # Get the counts for this spectrum
-        counts = (self.phafile.getRates()[self.mask] * self.exposure)
+        counts = (self.phafile.getRates() * exposure)
 
         # Get the background counts for this spectrum
-        bkgCounts = (self.bkgfile.getRates()[self.mask] * self.exposure)
+        bkgCounts = (self.bkgfile.getRates() * exposure)
 
-        # Get the error on the background counts
-        bkgErr = self.bkgfile.getRatesErrors()[self.mask] * self.exposure
-
-        self._initialSetup(mask, counts, bkgCounts, exposure, bkgErr)
+        self._initialSetup(mask, counts, bkgCounts, exposure)

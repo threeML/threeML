@@ -61,16 +61,13 @@ class OGIPPluginBase(object):
         self.mask = None
         self.exposure = None
 
-    def _initialSetup(self, mask, counts, bkgCounts, exposure, bkgErr=None):
+    def _initialSetup(self, mask, counts, bkgCounts, exposure, bkgErr):
 
         self.mask = mask
         self.counts = counts
         self.bkgCounts = bkgCounts
         self.exposure = exposure
-
-        if bkgErr is not None:
-
-            self.bkgErr = bkgErr
+        self.bkgErr = bkgErr
 
         # Check that counts is positive
         idx = (self.counts < 0)
@@ -98,7 +95,7 @@ class OGIPPluginBase(object):
             self.bkgCounts[idx] = 0
 
         # Check that errors are zeros when the bkg is zero
-        if np.any((self.bkgErr == 0) & (self.bkgCounts > 0)):
+        if (bkgErr is not None) and np.any((self.bkgErr == 0) & (self.bkgCounts > 0)):
             raise RuntimeError("The background error is zero but the background counts are not zero for some bins. "
                                "Data are corrupted.")
 
@@ -113,13 +110,13 @@ class OGIPPluginBase(object):
         self.counts_backup = np.array(self.counts, copy=True)
         self.bkgCounts_backup = np.array(self.bkgCounts, copy=True)
 
-        if self.bkgErr is not None:
+        if bkgErr is not None:
             self.bkgErr_backup = np.array(self.bkgErr, copy=True)
 
         self.counts = self.counts[self.mask]
         self.bkgCounts = self.bkgCounts[self.mask]
 
-        if self.bkgErr is not None:
+        if bkgErr is not None:
 
             self.bkgErr = self.bkgErr[self.mask]
 
@@ -140,11 +137,22 @@ class OGIPPluginBase(object):
         '''
         self.likelihoodModel = likelihoodModel
 
-        nPointSources = self.likelihoodModel.get_number_of_point_sources()
+        diffFlux, integral = self._get_diff_flux_and_integral()
 
         # This is a wrapper which iterates over all the point sources and get
         # the fluxes
-        # We assume there are no extended sources, since the GBM cannot handle them
+        # We assume there are no extended sources, since we cannot handle them here
+
+        assert self.likelihoodModel.get_number_of_extended_sources() == 0, "OGIP-like plugins do not support " \
+                                                                           "extended sources"
+
+
+
+        self.response.set_function(diffFlux, integral)
+
+    def _get_diff_flux_and_integral(self):
+
+        nPointSources = self.likelihoodModel.get_number_of_point_sources()
 
         def diffFlux(energies):
             fluxes = self.likelihoodModel.get_point_source_fluxes(0, energies)
@@ -164,13 +172,14 @@ class OGIPPluginBase(object):
         # than the size of the monte carlo interval.
 
         def integral(e1, e2):
+
             # Simpson's rule
 
             return (e2 - e1) / 6.0 * (diffFlux(e1)
                                       + 4 * diffFlux((e1 + e2) / 2.0)
                                       + diffFlux(e2))
 
-        self.response.set_function(diffFlux, integral)
+        return diffFlux, integral
 
     def get_name(self):
         '''
@@ -223,20 +232,26 @@ class OGIPPluginBase(object):
         # out the non-used channels during the logLike
 
         # Now build the new mask: values for which the mask is 0 will be masked
-        mask = np.zeros(self.mask.shape)
+        mask = np.zeros_like(self.counts_backup)
 
         for arg in args:
+
             ee = map(float, arg.replace(" ", "").split("-"))
             emin, emax = sorted(ee)
+
             idx1 = self.response.energy_to_channel(emin)
             idx2 = self.response.energy_to_channel(emax)
+
             mask[idx1:idx2 + 1] = True
 
         self.mask = np.array(mask, np.bool)
 
         self.counts = self.counts_backup[self.mask]
         self.bkgCounts = self.bkgCounts_backup[self.mask]
-        self.bkgErr = self.bkgErr_backup[self.mask]
+
+        if self.bkgErr is not None:
+
+            self.bkgErr = self.bkgErr_backup[self.mask]
 
         print("Now using %s channels out of %s" % (np.sum(self.mask),
                                                    self.mask.shape[0]
@@ -320,8 +335,40 @@ class OGIPPluginBase(object):
 
         self.nuisanceParameters['InterCalib'].fix()
 
+    def _chisq(self, modelCounts):
+
+        # for chisq we need sigma^2, but sigma = sqrt(counts), -> sigma^2 = counts
+        # If there are zero counts then the denominator is 0, so use the model
+        # variance instead
+
+        sanitized_variance = np.where(self.counts > 0, self.counts, modelCounts)
+        sanitized_variance = np.maximum(sanitized_variance, 1e-12)
+
+        # This not really chisq, but it's a Gaussian likelihood instead. That's why there is a -1/2
+        # in front of it. However, this like = -0.5 * chisq + const (we neglect the const)
+
+        log_likes = - 0.5 * (modelCounts - self.counts) ** 2 / sanitized_variance
+
+        return np.sum(log_likes)
+
+    def use_chisq(self):
+
+        self._backup_log_like = self._compute_log_like
+        self._compute_log_like = self._chisq
+
+    def restore_normal_statistic(self):
+
+        self._compute_log_like = self._backup_log_like
+
 
 class OGIPPluginPGstat(OGIPPluginBase):
+
+    # Override the _initialSetup method just to force the existance of bkgErr
+    def _initialSetup(self, mask, counts, bkgCounts, exposure, bkgErr):
+
+        assert bkgErr is not None, "You have to provide errors on the background to use PGstat"
+
+        super(OGIPPluginPGstat, self)._initialSetup(mask, counts, bkgCounts, exposure, bkgErr)
 
     def _compute_log_like(self, modelCounts):
         # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
@@ -364,12 +411,18 @@ class OGIPPluginPGstat(OGIPPluginBase):
 
 class OGIPPluginCash(OGIPPluginBase):
 
+    # Override the _initialSetup method just to force the non-existance of bkgErr
+    def _initialSetup(self, mask, counts, bkgCounts, exposure, bkgErr=None):
+
+        assert bkgErr is None, "You cannot use bkg. errors when using Cash statistic"
+
+        super(OGIPPluginCash, self)._initialSetup(mask, counts, bkgCounts, exposure, None)
+
     def _compute_log_like(self, modelCounts):
 
         log_likes = self.counts * np.log(modelCounts + 1e-100) - modelCounts - logfactorial(self.counts)
 
         return np.sum(log_likes)
-
 
 
 class OGIPPHA(object):
@@ -448,6 +501,8 @@ class OGIPPHA(object):
                 self.dataColumnName = "RATE"
                 self.exposure = header.get("EXPOSURE")
 
+                assert self.exposure is not None, "Exposure undefined in PHA file %s" % phafile
+
             else:
 
                 raise RuntimeError("This file does not contain a RATE nor a COUNTS column. "
@@ -522,7 +577,9 @@ class OGIPPHA(object):
                     self.rates = data.field(self.dataColumnName)[self.spectrumNumber - 1, :] / self.exposure
 
                     if (not self.poisserr):
+
                         self.ratesErrors = data.field("STAT_ERR")[self.spectrumNumber - 1, :] / self.exposure
+
 
                 if ("SYS_ERR" in data.columns.names):
 
@@ -560,6 +617,9 @@ class OGIPPHA(object):
         return self.rates
 
     def getRatesErrors(self):
+
+        assert self.poisserr == False, "Cannot request errors on rates for a Poisson spectrum"
+
         return self.ratesErrors
 
     def getSysErrors(self):
