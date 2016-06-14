@@ -268,9 +268,6 @@ class HAWCLike(PluginPrototype):
             ras = positions[:, 0]
             decs = positions[:, 1]
 
-            assert ras.flags.c_contiguous
-            assert decs.flags.c_contiguous
-            
             # Get the energies for this extended source
 
             cube = self.model.get_extended_source_fluxes(id, ras, decs, self._energies)
@@ -281,6 +278,18 @@ class HAWCLike(PluginPrototype):
             if not cube.flags.c_contiguous:
 
                 cube = np.array(cube, order='C')
+
+            if not ras.flags.c_contiguous:
+
+                ras = np.array(ras, order='C')
+
+            if not decs.flags.c_contiguous:
+
+                decs = np.array(decs, order='C')
+
+            assert ras.flags.c_contiguous
+            assert decs.flags.c_contiguous
+            assert cube.flags.c_contiguous
 
             # We need to multiply by 1000 because the cube is in "per keV" while
             # LiFF needs "per MeV"
