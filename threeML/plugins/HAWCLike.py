@@ -338,6 +338,8 @@ class HAWCLike(PluginPrototype):
 
         logL = self.get_log_like()
 
+        print logL
+
         self.nuisanceParameters['CommonNorm'].value = self.theLikeHAWC.CommonNorm()
 
         return logL
