@@ -270,7 +270,7 @@ class HAWCLike(PluginPrototype):
 
             # Get the energies for this extended source
 
-            cube = self.model.get_extended_source_fluxes(self, id, ras, decs, self._energies)
+            cube = self.model.get_extended_source_fluxes(id, ras, decs, self._energies)
 
             # We need to multiply by 1000 because the cube is in "per keV" while
             # LiFF needs "per MeV"
