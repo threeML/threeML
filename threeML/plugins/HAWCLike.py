@@ -263,18 +263,21 @@ class HAWCLike(PluginPrototype):
         for id in range(n_extended):
 
             # Get the positions for this extended source
-            positions = np.array(self.theLikeHAWC.GetPositions(id, False))
+            positions = np.array(self.theLikeHAWC.GetPositions(id, False), order='C')
 
             ras = positions[:, 0]
             decs = positions[:, 1]
 
+            assert ras.flags.c_contiguous
+            assert decs.flags.c_contiguous
+            
             # Get the energies for this extended source
 
             cube = self.model.get_extended_source_fluxes(id, ras, decs, self._energies)
 
             # Make sure that cube is in C order (and not fortran order), otherwise
             # the cache will silently fail!
-            
+
             if not cube.flags.c_contiguous:
 
                 cube = np.array(cube, order='C')
