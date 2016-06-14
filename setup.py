@@ -10,43 +10,24 @@ execfile('threeML/version.py')
 
 # Now a global __version__ is available
 
-import imp
-
 # This dynamically loads a module and return it in a variable.
 # Will use it for check optional dependencies
 
-def import_module(module_name):
+def is_module_available(module_name):
 
     # Fast path: see if the module has already been imported.
 
     try:
 
-        return sys.modules[module_name]
+        exec('import %s' % module_name)
 
-    except KeyError:
+    except ImportError:
 
-        pass
+        return False
 
-    # If any of the following calls raises an exception,
-    # there's a problem we can't handle -- let the caller handle it.
+    else:
 
-    fp, pathname, description = imp.find_module(module_name)
-
-    try:
-
-        return imp.load_module(module_name, fp, pathname, description)
-
-    except:
-
-        raise
-
-    finally:
-
-        # Since we may exit via an exception, close fp explicitly.
-
-        if fp:
-
-            fp.close()
+        return True
 
 # This list will contain the messages to print just before the end of the setup
 # so that the user actually note them, instead of loosing them in the tons of
@@ -118,7 +99,7 @@ for dep_name in optional_dependencies:
     
     try:
         
-        import_module(dep_name)
+        is_module_available(dep_name)
     
     except ImportError:
         
