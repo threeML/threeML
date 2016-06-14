@@ -3,9 +3,9 @@ import os
 import sys
 
 import matplotlib.pyplot as plt
-import numpy
+import numpy as np
 from astromodels import Parameter
-from cthreeML.pyModelInterface import pyToCppModelInterface
+from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 from hawc import liff_3ML
 from matplotlib import gridspec
 
@@ -160,15 +160,24 @@ class HAWCLike(PluginPrototype):
                              "instance")
 
     def set_model(self, likelihood_model_instance):
-        '''
+        """
         Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
-        '''
+        """
 
         # Instance the python - C++ bridge
 
         self.model = likelihood_model_instance
 
-        self.pymodel = pyToCppModelInterface(self.model)
+        self.pymodel = pyToCppModelInterfaceCache()
+
+        # Set boundaries for extended source
+        # NOTE: we assume that these boundaries do not change during the fit
+
+        for id in range(self.model.get_number_of_extended_sources()):
+
+            lon_min, lon_max, lat_min, lat_max = self.model.get_extended_source_boundaries(id)
+
+            self.pymodel.setExtSourceBoundaries(id, lon_min, lon_max, lat_min, lat_max)
 
         # Now init the HAWC LIFF software
 
@@ -225,6 +234,10 @@ class HAWCLike(PluginPrototype):
 
         self.theLikeHAWC.UpdateSources()
 
+        # Get the energies needed by LiFF (the same for all sources)
+
+        self._energies = self.theLikeHAWC.GetEnergies(False)
+
     def _CommonNormCallback(self, value):
 
         self.theLikeHAWC.SetCommonNorm(value)
@@ -243,6 +256,27 @@ class HAWCLike(PluginPrototype):
 
         self.fitCommonNorm = False
 
+    def _fill_model_cache(self):
+
+        n_extended = self.model.get_number_of_extended_sources()
+
+        for id in range(n_extended):
+
+            # Get the positions for this extended source
+            positions = np.array(self.theLikeHAWC.GetPositions(id, False))
+
+            ras = positions[:, 0]
+            decs = positions[:, 1]
+
+            # Get the energies for this extended source
+
+            cube = self.model.get_extended_source_fluxes(self, id, ras, decs, self._energies)
+
+            # We need to multiply by 1000 because the cube is in "per keV" while
+            # LiFF needs "per MeV"
+
+            self.pymodel.setExtSourceCube(id, cube * 1000.0, ras, decs)
+
     def get_log_like(self):
 
         '''
@@ -251,6 +285,8 @@ class HAWCLike(PluginPrototype):
         '''
 
         self.pymodel.update()
+
+        self._fill_model_cache()
 
         logL = self.theLikeHAWC.getLogLike(self.fitCommonNorm)
 
@@ -298,11 +334,11 @@ class HAWCLike(PluginPrototype):
         for srcid in range(nsrc):
             ra, dec = self.model.get_point_source_position(srcid)
 
-            model = numpy.array(self.theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
+            model = np.array(self.theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
 
-            signal = numpy.array(self.theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
+            signal = np.array(self.theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
 
-            bkg = numpy.array(self.theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
+            bkg = np.array(self.theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
 
             total = signal + bkg
 
@@ -313,9 +349,9 @@ class HAWCLike(PluginPrototype):
 
             sub = plt.subplot(gs[0])
 
-            nHitBins = numpy.arange(self.minChannel, self.maxChannel + 1)
+            nHitBins = np.arange(self.minChannel, self.maxChannel + 1)
 
-            sub.errorbar(nHitBins, total, yerr=numpy.sqrt(total),
+            sub.errorbar(nHitBins, total, yerr=np.sqrt(total),
                          capsize=0, color='black', label='Observation',
                          fmt='.')
 
@@ -334,7 +370,7 @@ class HAWCLike(PluginPrototype):
             sub1.axhline(0, linestyle='--')
 
             sub1.errorbar(nHitBins, resid,
-                          yerr=numpy.sqrt(total) / model,
+                          yerr=np.sqrt(total) / model,
                           capsize=0, fmt='.')
 
             sub.set_xlim([nHitBins.min() - 0.5, nHitBins.max() + 0.5])
