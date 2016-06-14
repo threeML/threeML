@@ -236,7 +236,7 @@ class HAWCLike(PluginPrototype):
 
         # Get the energies needed by LiFF (the same for all sources)
 
-        self._energies = self.theLikeHAWC.GetEnergies(False)
+        self._energies = np.array(self.theLikeHAWC.GetEnergies(False))
 
     def _CommonNormCallback(self, value):
 
@@ -271,6 +271,13 @@ class HAWCLike(PluginPrototype):
             # Get the energies for this extended source
 
             cube = self.model.get_extended_source_fluxes(id, ras, decs, self._energies)
+
+            # Make sure that cube is in C order (and not fortran order), otherwise
+            # the cache will silently fail!
+            
+            if not cube.flags.c_contiguous:
+
+                cube = np.array(cube, order='C')
 
             # We need to multiply by 1000 because the cube is in "per keV" while
             # LiFF needs "per MeV"
