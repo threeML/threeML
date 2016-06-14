@@ -284,7 +284,7 @@ class HAWCLike(PluginPrototype):
         parameters
         '''
 
-        self.pymodel.update()
+        self.pymodel.reset()
 
         self._fill_model_cache()
 
