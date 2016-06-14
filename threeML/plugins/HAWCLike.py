@@ -335,8 +335,8 @@ class HAWCLike(PluginPrototype):
     def inner_fit(self):
 
         self.theLikeHAWC.SetBackgroundNormFree(self.fitCommonNorm)
-        
-        logL = self.theLikeHAWC.getLogLike(self.fitCommonNorm)
+
+        logL = self.get_log_like()
 
         self.nuisanceParameters['CommonNorm'].value = self.theLikeHAWC.CommonNorm()
 
