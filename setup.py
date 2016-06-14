@@ -96,18 +96,8 @@ optional_dependencies = {'cthreeML': [False,'needed by HAWC plugin'],
                          'pymultinest': [False, 'needed to use Multinest sampler for Bayesian analysis']}
 
 for dep_name in optional_dependencies:
-    
-    try:
-        
-        is_module_available(dep_name)
-    
-    except ImportError:
-        
-        optional_dependencies[dep_name][0] = False
-    
-    else:
-        
-        optional_dependencies[dep_name][0] = True
+
+    optional_dependencies[dep_name][0] = is_module_available(dep_name)
 
 # Now print the final messages
 
