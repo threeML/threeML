@@ -272,7 +272,9 @@ class HAWCLike(PluginPrototype):
 
         # This is needed to update extended sources
 
-        self.theLikeHAWC.ResetSources(self.pymodel, self.nuisanceParameters['CommonNorm'].value)
+        # self.theLikeHAWC.ResetSources(self.pymodel, self.nuisanceParameters['CommonNorm'].value)
+
+        self.theLikeHAWC.UpdateSources()
 
         # Empty the cache
         # self.pymodel.reset()
