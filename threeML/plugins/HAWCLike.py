@@ -247,7 +247,7 @@ class HAWCLike(PluginPrototype):
 
         # Get the energies needed by LiFF (the same for all sources)
 
-        self._energies = np.array(self.theLikeHAWC.GetEnergies(False))
+        self._energies = np.array(self.theLikeHAWC.GetEnergies(False)) * 1e6
 
     def _CommonNormCallback(self, value):
 
