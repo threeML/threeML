@@ -333,7 +333,7 @@ class HAWCLike(PluginPrototype):
 
             self.pymodel.setPtsSourceSpectrum(id, this_spectrum)
 
-        self.theLikeHAWC.ResetSources()
+        self.theLikeHAWC.UpdateSources()
 
     def get_log_like(self):
 
