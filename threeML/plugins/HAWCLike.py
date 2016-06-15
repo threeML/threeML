@@ -324,7 +324,7 @@ class HAWCLike(PluginPrototype):
 
             assert this_spectrum.flags.c_contiguous
 
-            self.pymodel.setPtsSourceSpectrum(this_spectrum)
+            self.pymodel.setPtsSourceSpectrum(id, this_spectrum)
 
     def get_log_like(self):
 
