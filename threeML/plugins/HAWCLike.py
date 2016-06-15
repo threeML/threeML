@@ -179,6 +179,19 @@ class HAWCLike(PluginPrototype):
 
             self.pymodel.setExtSourceBoundaries(id, lon_min, lon_max, lat_min, lat_max)
 
+        # Set positions for point source
+        # NOTE: this should not change so much that the response is not valid anymore
+
+        n_point_sources = self.model.get_number_of_point_sources()
+
+        for id in range(n_point_sources):
+
+            this_spectrum = self.model.get_point_source_fluxes(id, self._energies)
+
+            this_ra, this_dec = self.model.get_point_source_position(id)
+
+            self.pymodel.setPtsSourcePosition(this_ra, this_dec)
+        
         # Now init the HAWC LIFF software
 
         try:
@@ -296,6 +309,24 @@ class HAWCLike(PluginPrototype):
             assert cube.flags.c_contiguous
 
             self.pymodel.setExtSourceCube(id, cube, ras, decs)
+
+        n_point_sources = self.model.get_number_of_point_sources()
+
+        for id in range(n_point_sources):
+
+            this_spectrum = self.model.get_point_source_fluxes(id, self._energies)
+
+            this_ra, this_dec = self.model.get_point_source_position(id)
+
+            self.pymodel.setPtsSourcePosition(this_ra, this_dec)
+
+            if not this_spectrum.flags.c_contiguous:
+
+                this_spectrum = np.array(this_spectrum, order='C')
+
+            assert this_spectrum.flags.c_contiguous
+
+            self.pymodel.setPtsSourceSpectrum(this_spectrum)
 
     def get_log_like(self):
 
