@@ -333,6 +333,8 @@ class HAWCLike(PluginPrototype):
 
             self.pymodel.setPtsSourceSpectrum(id, this_spectrum)
 
+        self.theLikeHAWC.ResetSources()
+
     def get_log_like(self):
 
         '''
@@ -372,7 +374,7 @@ class HAWCLike(PluginPrototype):
         self.theLikeHAWC.SetBackgroundNormFree(self.fitCommonNorm)
 
         logL = self.get_log_like()
-        
+
         self.nuisanceParameters['CommonNorm'].value = self.theLikeHAWC.CommonNorm()
 
         return logL
