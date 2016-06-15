@@ -285,8 +285,6 @@ class HAWCLike(PluginPrototype):
             ras = positions[:, 0]
             decs = positions[:, 1]
 
-            sys.stderr.write("Using %s positions for source %s" % (ras.shape[0], id))
-
             # Get the energies for this extended source
             # We need to multiply by 1000 because the cube is in "per keV" while
             # LiFF needs "per MeV"
@@ -374,9 +372,7 @@ class HAWCLike(PluginPrototype):
         self.theLikeHAWC.SetBackgroundNormFree(self.fitCommonNorm)
 
         logL = self.get_log_like()
-
-        print logL
-
+        
         self.nuisanceParameters['CommonNorm'].value = self.theLikeHAWC.CommonNorm()
 
         return logL
