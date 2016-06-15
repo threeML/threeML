@@ -246,6 +246,7 @@ class HAWCLike(PluginPrototype):
         self.theLikeHAWC.UpdateSources()
 
         # Get the energies needed by LiFF (the same for all sources)
+        # (note that the output is in MeV, while we need keV)
 
         self._energies = np.array(self.theLikeHAWC.GetEnergies(False)) * 1000.0
 
@@ -332,8 +333,6 @@ class HAWCLike(PluginPrototype):
             assert this_spectrum.flags.c_contiguous
 
             self.pymodel.setPtsSourceSpectrum(id, this_spectrum)
-
-        self.theLikeHAWC.UpdateSources()
 
     def get_log_like(self):
 
