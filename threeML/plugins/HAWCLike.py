@@ -270,8 +270,11 @@ class HAWCLike(PluginPrototype):
 
     def _fill_model_cache(self):
 
-        # Empty the cache
+        # This is needed to update extended sources
 
+        self.theLikeHAWC.ResetSources(self.pymodel, self.nuisanceParameters['CommonNorm'].value)
+
+        # Empty the cache
         # self.pymodel.reset()
 
         # Pre-compute all the model
@@ -333,10 +336,6 @@ class HAWCLike(PluginPrototype):
             assert this_spectrum.flags.c_contiguous
 
             self.pymodel.setPtsSourceSpectrum(id, this_spectrum)
-
-        # This is needed to update extended sources
-
-        self.theLikeHAWC.ResetSources(self.pymodel, self.nuisanceParameters['CommonNorm'].value)
 
     def get_log_like(self):
 
