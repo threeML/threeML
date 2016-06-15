@@ -268,6 +268,8 @@ class HAWCLike(PluginPrototype):
             ras = positions[:, 0]
             decs = positions[:, 1]
 
+            sys.stderr.write("Using %s positions for source %s" % (ras.shape[0], id))
+
             # Get the energies for this extended source
 
             cube = self.model.get_extended_source_fluxes(id, ras, decs, self._energies)
