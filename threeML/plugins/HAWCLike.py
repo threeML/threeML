@@ -186,12 +186,10 @@ class HAWCLike(PluginPrototype):
 
         for id in range(n_point_sources):
 
-            this_spectrum = self.model.get_point_source_fluxes(id, self._energies)
-
             this_ra, this_dec = self.model.get_point_source_position(id)
 
             self.pymodel.setPtsSourcePosition(this_ra, this_dec)
-        
+
         # Now init the HAWC LIFF software
 
         try:
