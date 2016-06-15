@@ -272,7 +272,7 @@ class HAWCLike(PluginPrototype):
 
         # Empty the cache
 
-        self.pymodel.reset()
+        # self.pymodel.reset()
 
         # Pre-compute all the model
 
