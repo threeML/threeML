@@ -269,6 +269,12 @@ class HAWCLike(PluginPrototype):
 
     def _fill_model_cache(self):
 
+        # Empty the cache
+
+        self.pymodel.reset()
+
+        # Pre-compute all the model
+
         n_extended = self.model.get_number_of_extended_sources()
 
         for id in range(n_extended):
@@ -312,7 +318,10 @@ class HAWCLike(PluginPrototype):
 
         for id in range(n_point_sources):
 
-            this_spectrum = self.model.get_point_source_fluxes(id, self._energies)
+            # The 1000.0 factor is due to the fact that this diff. flux here is in
+            # 1 / (kev cm2 s) while LiFF needs it in 1 / (MeV cm2 s)
+
+            this_spectrum = self.model.get_point_source_fluxes(id, self._energies) * 1000.0
 
             this_ra, this_dec = self.model.get_point_source_position(id)
 
@@ -333,8 +342,6 @@ class HAWCLike(PluginPrototype):
         parameters
         '''
 
-        self.pymodel.reset()
-
         self._fill_model_cache()
 
         logL = self.theLikeHAWC.getLogLike(self.fitCommonNorm)
@@ -348,7 +355,7 @@ class HAWCLike(PluginPrototype):
         2*[log(LL_model) - log(LL_bkg)]
         '''
 
-        self.pymodel.update()
+        self._fill_model_cache()
 
         TS = self.theLikeHAWC.calcTS(self.fitCommonNorm)
 
