@@ -334,6 +334,10 @@ class HAWCLike(PluginPrototype):
 
             self.pymodel.setPtsSourceSpectrum(id, this_spectrum)
 
+        # This is needed to update extended sources
+
+        self.theLikeHAWC.ResetSources(self.pymodel, self.nuisanceParameters['CommonNorm'].value)
+
     def get_log_like(self):
 
         '''
