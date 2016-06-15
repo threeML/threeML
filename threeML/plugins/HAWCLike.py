@@ -322,9 +322,9 @@ class HAWCLike(PluginPrototype):
 
             this_spectrum = self.model.get_point_source_fluxes(id, self._energies) * 1000.0
 
-            #this_ra, this_dec = self.model.get_point_source_position(id)
+            this_ra, this_dec = self.model.get_point_source_position(id)
 
-            #self.pymodel.setPtsSourcePosition(id, this_ra, this_dec)
+            self.pymodel.setPtsSourcePosition(id, this_ra, this_dec)
 
             if not this_spectrum.flags.c_contiguous:
 
