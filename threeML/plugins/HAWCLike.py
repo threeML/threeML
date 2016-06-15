@@ -273,8 +273,10 @@ class HAWCLike(PluginPrototype):
             # Get the energies for this extended source
             # We need to multiply by 1000 because the cube is in "per keV" while
             # LiFF needs "per MeV"
-            
+
             cube = self.model.get_extended_source_fluxes(id, ras, decs, self._energies) * 1000.0
+
+            import pdb;pdb.set_trace()
 
             # Make sure that cube is in C order (and not fortran order), otherwise
             # the cache will silently fail!
