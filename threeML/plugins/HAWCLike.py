@@ -276,8 +276,6 @@ class HAWCLike(PluginPrototype):
 
             cube = self.model.get_extended_source_fluxes(id, ras, decs, self._energies) * 1000.0
 
-            import pdb;pdb.set_trace()
-
             # Make sure that cube is in C order (and not fortran order), otherwise
             # the cache will silently fail!
 
