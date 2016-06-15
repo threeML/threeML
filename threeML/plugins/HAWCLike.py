@@ -316,7 +316,7 @@ class HAWCLike(PluginPrototype):
 
             this_ra, this_dec = self.model.get_point_source_position(id)
 
-            self.pymodel.setPtsSourcePosition(this_ra, this_dec)
+            self.pymodel.setPtsSourcePosition(id, this_ra, this_dec)
 
             if not this_spectrum.flags.c_contiguous:
 
