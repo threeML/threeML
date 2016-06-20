@@ -270,19 +270,19 @@ class HAWCLike(PluginPrototype):
 
     def _fill_model_cache(self):
 
-        # This is needed to update extended sources
-
         n_extended = self.model.get_number_of_extended_sources()
 
-        if n_extended > 0:
+        # This is needed to update extended sources
 
-            self.theLikeHAWC.ResetSources(self.pymodel, self.nuisanceParameters['CommonNorm'].value)
+        #if n_extended > 0:
+
+        #    self.theLikeHAWC.ResetSources(self.pymodel, self.nuisanceParameters['CommonNorm'].value)
 
         # Empty the cache
         # self.pymodel.reset()
 
         # Pre-compute all the model
-        
+
         for id in range(n_extended):
 
             # Get the positions for this extended source
