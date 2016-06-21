@@ -107,6 +107,33 @@ class JointLikelihood(object):
         """
         return self._minimizer
 
+    @property
+    def covariance_matrix(self):
+        """
+        :return: covariance matrix from the last fit
+        """
+        try:
+
+            return self._minimizer.covariance_matrix
+
+        except AttributeError:
+
+            raise RuntimeError("You need to run a fit before accessing the covariance matrix")
+
+    @property
+    def correlation_matrix(self):
+        """
+        :return: correlation matrix from the last fit
+        """
+
+        try:
+
+            return self._minimizer.correlation_matrix
+
+        except AttributeError:
+
+            raise RuntimeError("You need to run a fit before accessing the correlation matrix")
+
     def _update_free_parameters(self):
 
         """Update the dictionary of free parameters"""
