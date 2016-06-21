@@ -103,6 +103,8 @@ if has_parallel:
             :return:
             """
 
+            import pdb;pdb.set_trace()
+
             # Just a wrapper around the IPython Client class
             # forcing the use of dill for object serialization
             # (more robust, and allows for serialization of class
@@ -116,7 +118,7 @@ if has_parallel:
 
             # This will propagate the use_dill to all running
             # engines
-            self.direct_view().use_dill()
+            _ = self.direct_view().use_dill()
 
         def get_number_of_engines(self):
 

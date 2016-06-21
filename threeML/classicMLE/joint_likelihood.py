@@ -9,14 +9,19 @@ from matplotlib.colors import BoundaryNorm
 
 from threeML.io.rich_display import display
 import numpy as np
+import pandas as pd
+import uncertainties
+
 
 from threeML.minimizer import minimization
 from threeML.exceptions import custom_exceptions
-from threeML.io.table import Table
+from threeML.io.table import Table, NumericMatrix
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.io.progress_bar import ProgressBar
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
+from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
+
 
 from astromodels import ModelAssertionViolation
 
@@ -58,7 +63,9 @@ class JointLikelihood(object):
         # function
         self.ncalls = 0
 
-        self.set_minimizer('MINUIT')
+        # Pre-defined minimizer is Minuit
+
+        self.set_minimizer("MINUIT")
 
         # Initial set of free parameters
 
@@ -131,8 +138,8 @@ class JointLikelihood(object):
 
         # Instance the minimizer
 
-        self._minimizer = self.Minimizer(self.minus_log_like_profile,
-                                         self._free_parameters)
+        self._minimizer = self._get_minimizer(self.minus_log_like_profile,
+                                              self._free_parameters)
 
         # Perform the fit
 
@@ -148,11 +155,50 @@ class JointLikelihood(object):
 
         # Print results
 
+        # Get the results from the minimizer (a panda container)
+
+        fit_results = self._minimizer.fit_results
+
+        # Now produce an ad-hoc display. We don't use the pandas display methods because
+        # we want to display uncertainties with the right number of significant numbers
+
+        data = []
+
+        # Also store the maximum length to decide the length for the line
+
+        name_length = 0
+
+        for i, parameter_name in enumerate(fit_results.index.values):
+
+            value = fit_results.at[parameter_name, 'value']
+
+            error = fit_results.at[parameter_name, 'error']
+
+            # Format the value and the error with sensible significant
+            # numbers
+            x = uncertainties.ufloat(value, error)
+
+            # Add some space around the +/- sign
+
+            rep = x.__str__().replace("+/-", " +/- ")
+
+            data.append([i, parameter_name, rep, self._free_parameters[parameter_name].unit])
+
+            if len(parameter_name) > name_length:
+
+                name_length = len(parameter_name)
+
+        correlation_matrix_table = Table(rows=data,
+                      names=["#", "Name", "Best fit value", "Unit"],
+                      dtype=(str, 'S%i' % name_length, str, str))
+
         print("Best fit values:\n")
 
-        self._minimizer.print_fit_results()
+        display(correlation_matrix_table)
 
-        print("Nuisance parameters:\n")
+        print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
+
+        # Now display the nuisance parameters
 
         nuisance_parameters = collections.OrderedDict()
 
@@ -164,30 +210,32 @@ class JointLikelihood(object):
 
         nuisance_parameters_table = self._get_table_of_parameters(nuisance_parameters)
 
+        print("Nuisance parameters:\n")
+
         display(nuisance_parameters_table)
 
         print("\nCorrelation matrix:\n")
 
-        try:
+        correlation_matrix_table = NumericMatrix(self._minimizer.correlation_matrix)
 
-            self._minimizer.print_correlation_matrix()
+        for col in correlation_matrix_table.colnames:
 
-        except minimization.CannotComputeCovariance:
+            correlation_matrix_table[col].format = '2.2f'
 
-            print("\n(not available. Minimizer could not compute correlation matrix)\n\n")
+        display(correlation_matrix_table)
 
-        print("\nMinimum of -logLikelihood is: %s\n" % log_likelihood_minimum)
+        # Now collect the values for the likelihood for the various datasets
 
-        print("Contributions to the -logLikelihood at the minimum:\n")
+        # First restore best fit (to make sure we compute the likelihood at the right point)
+        self._minimizer.restore_best_fit()
 
         # Fill the dictionary with the values of the -log likelihood (total, and dataset by dataset)
 
         minus_log_likelihood_values = collections.OrderedDict()
 
-        minus_log_likelihood_values['total'] = log_likelihood_minimum
+        minus_log_likelihood_values['all'] = self._current_minimum
 
-        data = []
-        name_length = 0
+        total = 0
 
         for dataset in self._data_list.values():
 
@@ -195,27 +243,21 @@ class JointLikelihood(object):
 
             minus_log_likelihood_values[dataset.get_name()] = ml
 
-            name_length = max(name_length, len(dataset.get_name()) + 1)
-            data.append([dataset.get_name(), ml])
+            total += ml
 
-        log_like_values_table = Table(rows=data, names=["Detector", "-LogL"], dtype=('S%i' % name_length, float))
+        assert total == self._current_minimum, "Current minimum stored after fit and current do not correspond!"
 
-        log_like_values_table['-LogL'].format = '2.2f'
+        print("\nValues of -log(likelihood) at the minimum:\n")
 
-        display(log_like_values_table)
+        loglike_dataframe = pd.DataFrame(minus_log_likelihood_values.items(), columns=['instrument','-log(likelihood)'])
 
-        # Prepare the dictionary with the results
+        display(loglike_dataframe)
 
-        results = collections.OrderedDict()
-
-        results['parameters'] = xs
-        results['minusLogLike'] = minus_log_likelihood_values
-
-        return results
+        return fit_results, loglike_dataframe
 
     def get_errors(self):
         """
-        Compute the errors on the parameters using an accurate algorithm.
+        Compute the errors on the parameters using the profile likelihood method.
 
         :return: a dictionary containing the asymmetric errors for each parameter.
         """
@@ -224,7 +266,85 @@ class JointLikelihood(object):
 
         assert self._current_minimum is not None, "You have to run the .fit method before calling errors."
 
-        return self._minimizer.get_errors()
+        errors = self._minimizer.get_errors()
+
+        # Set the parameters back to the best fit value
+        self.restore_best_fit()
+
+        # Print a table with the errors
+
+        data = []
+        name_length = 0
+
+        for k, v in self._free_parameters.iteritems():
+
+            # Format the value and the error with sensible significant
+            # numbers
+
+            # Process the negative error
+
+            neg_error = abs(errors[k][0])
+
+            if np.isnan(neg_error):
+
+                x = uncertainties.ufloat(v.value, 0)
+
+            else:
+
+                x = uncertainties.ufloat(v.value, neg_error)
+
+            # Split the uncertainty in number, negative error, and exponent (if any)
+
+            num, uncm, exponent = get_uncertainty_tokens(x)
+
+            if np.isnan(neg_error):
+
+                uncm = np.nan
+
+            # Process the positive error
+
+            pos_error = abs(errors[k][1])
+
+            if np.isnan(pos_error):
+
+                x = uncertainties.ufloat(v.value, 0)
+
+            else:
+
+                x = uncertainties.ufloat(v.value, pos_error)
+
+            # Split the uncertainty in number, positive error, and exponent (if any)
+
+            _, uncp, _ = get_uncertainty_tokens(x)
+
+            if np.isnan(pos_error):
+
+                uncp = np.nan
+
+            if exponent is None:
+
+                # Number without exponent
+
+                pretty_string = "%s -%s +%s" % (num, uncm, uncp)
+
+            else:
+
+                # Number with exponent
+
+                pretty_string = "(%s -%s +%s)%s" % (num, uncm, uncp, exponent)
+
+            data.append([k, pretty_string, v.unit])
+
+            if len(k) > name_length:
+                name_length = len(k)
+
+        # Create and display the table
+
+        table = Table(rows=data,
+                      names=["Name", "Value", "Unit"],
+                      dtype=('S%i' % name_length, str, str))
+
+        display(table)
 
     def get_contours(self, param_1, param_1_minimum, param_1_maximum, param_1_n_steps,
                      param_2=None, param_2_minimum=None, param_2_maximum=None, param_2_n_steps=None,
@@ -284,7 +404,7 @@ class JointLikelihood(object):
 
         # Then restore the best fit
 
-        self._minimizer._restore_best_fit()
+        self._minimizer.restore_best_fit()
 
         # Check minimal assumptions about the procedure
 
@@ -380,8 +500,8 @@ class JointLikelihood(object):
 
                 backup_freeParameters = map(lambda x:x.value, self._likelihood_model.free_parameters.values())
 
-                this_minimizer = self.Minimizer(self.minus_log_like_profile,
-                                                self._free_parameters)
+                this_minimizer = self._get_minimizer(self.minus_log_like_profile,
+                                                     self._free_parameters)
 
                 this_p1min = pa[start_index * p1_split_steps]
                 this_p1max = pa[(start_index + 1) * p1_split_steps - 1]
@@ -591,33 +711,63 @@ class JointLikelihood(object):
 
         return summed_log_likelihood * (-1)
 
-    def _setup_minimizer(self, minimizer):
+    def set_minimizer(self, minimizer, algorithm=None):
+        """
+        Set the minimizer to be used, among those available. At the moment these are supported:
 
-        # At the moment we only have the Minuit minimizer
+        * ROOT
+        * MINUIT (which means iminuit, default)
+        * PYOPT
+
+        :param minimizer: the name of the new minimizer.
+        :param algorithm: (optional) for the PYOPT minimizer, specify the algorithm among those available. See a list at
+        http://www.pyopt.org/reference/optimizers.html . For the other minimizers this is ignored, if provided.
+        :return: (none)
+        """
 
         if minimizer.upper() == "MINUIT":
 
-            return minimization.MinuitMinimizer
+            self._minimizer_name = "MINUIT"
+            self._minimizer_algorithm = None
 
         elif minimizer.upper() == "ROOT":
 
-            return minimization.ROOTMinimizer
+            assert minimization.has_ROOT, "pyROOT not available on this system. Cannot use ROOT minimizer."
+
+            self._minimizer_name = "ROOT"
+            self._minimizer_algorithm = None
+
+        elif minimizer.upper() == "PYOPT":
+
+            assert minimization.has_pyOpt, "pyOpt not available on this system. Cannot use PYOPT minimizer."
+
+            assert algorithm is not None, "You have to provide an algorithm for the PYOPT minimizer. " \
+                                          "See http://www.pyopt.org/reference/optimizers.html"
+
+            self._minimizer_name = "PYOPT"
+
+            assert algorithm.upper() in minimization._pyopt_algorithms, "Provided algorithm not available. " \
+                                                                        "Available algorithms are: " \
+                                                                        "%s" % minimization._pyopt_algorithms.keys()
+            self._minimizer_algorithm = algorithm.upper()
 
         else:
 
             raise ValueError("Do not know minimizer %s" % minimizer)
 
-    def set_minimizer(self, minimizer):
-        """
-        Set the minimizer to be used, among those available.
+        # Get the type
 
-        NOTE: at the moment only MINUIT is supported
+        self._minimizer_type = minimization.get_minimizer(self._minimizer_name)
 
-        :param minimizer: the name of the new minimizer
-        :return: (none)
-        """
+    def _get_minimizer(self, *args, **kwargs):
 
-        self.Minimizer = self._setup_minimizer(minimizer)
+        minimizer_instance = self._minimizer_type(*args, **kwargs)
+
+        if self._minimizer_algorithm:
+
+            minimizer_instance.set_algorithm(self._minimizer_algorithm)
+
+        return minimizer_instance
 
     def restore_best_fit(self):
         """
@@ -628,7 +778,7 @@ class JointLikelihood(object):
 
         if self._minimizer:
 
-            self._minimizer._restore_best_fit()
+            self._minimizer.restore_best_fit()
 
         else:
 

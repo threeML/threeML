@@ -88,12 +88,15 @@ setup(
         'iminuit',
         'astromodels',
         'corner>=1.0.2',
+        'pandas'
     ])
 
 # Check for optional dependencies
 
 optional_dependencies = {'cthreeML': [False,'needed by HAWC plugin'],
-                         'pymultinest': [False, 'needed to use Multinest sampler for Bayesian analysis']}
+                         'pymultinest': [False, 'provides the Multinest sampler for Bayesian analysis'],
+                         'pyOpt': [False, 'provides more optimizers'],
+                         'ROOT': [False, 'provides the ROOT optimizer']}
 
 for dep_name in optional_dependencies:
 
@@ -101,9 +104,9 @@ for dep_name in optional_dependencies:
 
 # Now print the final messages
 
-print("\n\n#############")
-print("FINAL NOTES:")
-print("#############\n\n")
+print("\n\n##################")
+print("OPTIONAL FEATURES:")
+print("##################\n\n")
 
 for dep_name in optional_dependencies:
     

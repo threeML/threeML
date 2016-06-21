@@ -1,18 +1,21 @@
 import collections
 import math
-import time
 
-import numpy
-import uncertainties
+import numpy as np
+import pandas as pd
+import numdifftools as nd
 from iminuit import Minuit
 
+from astromodels import SettingOutOfBounds
+
 from threeML.io.progress_bar import ProgressBar
-from threeML.io.rich_display import display
-from threeML.io.table import Table, NumericMatrix
-from threeML.parallel.parallel_client import ParallelClient
-from threeML.utils.cartesian import cartesian
-from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
+import scipy.optimize
 from threeML.exceptions.custom_exceptions import custom_warnings
+
+# Set the warnings to be issued always for this module
+
+custom_warnings.simplefilter("always", RuntimeWarning)
+
 
 try:
 
@@ -26,17 +29,29 @@ else:
 
     has_ROOT = True
 
+try:
+
+    import pyOpt
+
+except ImportError:
+
+    has_pyOpt = False
+
+else:
+
+    has_pyOpt = True
+
 # Special constants
 FIT_FAILED = 1e12
 
 
 # Define a bunch of custom exceptions relevant for what is being accomplished here
 
-class CannotComputeCovariance(Exception):
+class CannotComputeCovariance(RuntimeWarning):
     pass
 
 
-class CannotComputeErrors(Exception):
+class CannotComputeErrors(RuntimeWarning):
     pass
 
 
@@ -48,7 +63,237 @@ class ParameterIsNotFree(Exception):
     pass
 
 
+class MinimizerNotAvailable(Exception):
+    pass
+
+
+class BetterMinimumDuringProfiling(RuntimeWarning):
+    pass
+
+# This will contain the available minimizers
+
+_minimizers = {}
+
+
+def get_minimizer(minimizer_type):
+    """
+    Return the requested minimizer *class* (not instance)
+
+    :param minimizer_type: MINUIT, ROOT, or PYOPT
+    :param minimizer_algorithm: algorithm (optional, use only for PYOPT)
+    :return: the class (i.e., the type) for the requested minimizer
+    """
+
+    try:
+
+        return _minimizers[minimizer_type]
+
+    except KeyError:
+
+        raise MinimizerNotAvailable("Minimizer %s is not available on your system" % minimizer_type)
+
+
+class FunctionWrapper(object):
+
+    def __init__(self, function, all_parameters, fixed_parameters):
+        """
+
+        :param function:
+        :param all_parameters:
+        :param fixed_parameters: list of fixed parameters
+        """
+        self._function = function
+
+        self._all_parameters = all_parameters
+
+        self._fixed_parameters_values = np.zeros(len(fixed_parameters))
+        self._fixed_parameters_names = fixed_parameters
+
+        self._indexes_of_fixed_par = np.zeros(len(self._all_parameters), bool)
+
+        for i, parameter_name in enumerate(self._fixed_parameters_names):
+
+            this_index = self._all_parameters.keys().index(parameter_name)
+
+            self._indexes_of_fixed_par[this_index] = True
+
+        self._all_values = np.zeros(len(self._all_parameters))
+
+    def set_fixed_values(self, new_fixed_values):
+
+        # A use [:] so there is an implicit check on the right size of new_fixed_values
+
+        self._fixed_parameters_values[:] = new_fixed_values
+
+    def __call__(self, *trial_values):
+
+        self._all_values[self._indexes_of_fixed_par] = self._fixed_parameters_values
+        self._all_values[~self._indexes_of_fixed_par] = trial_values
+
+        return self._function(*self._all_values)
+
+
+class ProfileLikelihood(object):
+
+    def __init__(self, minimizer_instance, fixed_parameters):
+
+        self._original_minimizer = minimizer_instance
+
+        self._fixed_parameters = fixed_parameters
+
+        assert len(self._fixed_parameters) <= 2, "Can handle only one or two fixed parameters"
+
+        # Get some info from the original minimizer
+
+        self._function = self._original_minimizer.function
+
+        self._all_parameters = self._original_minimizer.parameters
+
+        ftol = self._original_minimizer.ftol
+
+        # Create a copy of the dictionary of parameters
+
+        free_parameters = collections.OrderedDict(self._all_parameters)
+
+        # Remove the fixed ones
+
+        for parameter_name in fixed_parameters:
+
+            free_parameters.pop(parameter_name)
+
+        # Now compute how many free parameters we have
+
+        self._n_free_parameters = len(free_parameters)
+
+        if self._n_free_parameters > 0:
+
+            self._wrapper = FunctionWrapper(self._function,
+                                            self._all_parameters,
+                                            self._fixed_parameters)
+
+            # Create a copy of the optimizer with the new parameters (i.e., one or two
+            # parameters fixed to their current values)
+
+            self._optimizer = type(self._original_minimizer)(self._wrapper, free_parameters, ftol, verbosity=0)
+
+            if self._original_minimizer.algorithm_name is not None:
+
+                self._optimizer.set_algorithm(self._original_minimizer.algorithm_name)
+
+        else:
+
+            # Special case when there are no free parameters after fixing the requested ones
+            # There is no profiling necessary here
+
+            self._wrapper = None
+            self._optimizer = None
+
+    def step(self, steps1, steps2=None):
+
+        if steps2 is not None:
+
+            assert len(self._fixed_parameters) == 2, "Cannot step in 2d if you fix only one parameter"
+
+            # Find out if the user is giving flipped steps (i.e. param_1 is after param_2 in the
+            # parameters dictionary)
+
+            param_1_name = self._fixed_parameters[0]
+            param_1_idx = self._all_parameters.keys().index(param_1_name)
+
+            param_2_name = self._fixed_parameters[1]
+            param_2_idx = self._all_parameters.keys().index(param_2_name)
+
+            if param_1_idx > param_2_idx:
+
+                # Switch steps
+
+                swap = steps1
+                steps1 = steps2
+                steps2 = swap
+
+                results = self._step2d(steps1, steps2).T
+
+            else:
+
+                results = self._step2d(steps1, steps2)
+
+            return results
+
+        else:
+
+            assert len(self._fixed_parameters) == 1, "You cannot step in 1d if you fix 2 parameters"
+
+            return self._step1d(steps1)
+
+    def __call__(self, values):
+
+        self._wrapper.set_fixed_values(values)
+
+        _, this_log_like = self._optimizer.minimize(compute_covar=False)
+
+        return this_log_like
+
+    def _step1d(self, steps1):
+
+        log_likes = np.zeros_like(steps1)
+
+        p = ProgressBar(len(steps1))
+
+        for i, step in enumerate(steps1):
+
+            if self._n_free_parameters > 0:
+
+                # Profile out the free parameters
+
+                self._wrapper.set_fixed_values(step)
+
+                _, this_log_like = self._optimizer.minimize(compute_covar=False)
+
+            else:
+
+                # No free parameters, just compute the likelihood
+
+                this_log_like = self._function(step)
+
+            log_likes[i] = this_log_like
+
+            p.increase()
+
+        return log_likes
+
+    def _step2d(self, steps1, steps2):
+
+        log_likes = np.zeros((len(steps1), len(steps2)))
+
+        p = ProgressBar(len(steps1) * len(steps2))
+
+        for i, step1 in enumerate(steps1):
+
+            for j,step2 in enumerate(steps2):
+
+                if self._n_free_parameters > 0:
+
+                    # Profile out the free parameters
+
+                    self._wrapper.set_fixed_values([step1, step2])
+
+                    _, this_log_like = self._optimizer.minimize(compute_covar=False)
+
+                else:
+
+                    # No free parameters, just compute the likelihood
+
+                    this_log_like = self._function(step1, step2)
+
+                log_likes[i,j] = this_log_like
+
+                p.increase()
+
+        return log_likes
+
+
 class Minimizer(object):
+
     def __init__(self, function, parameters, ftol=1e-3, verbosity=1):
         """
 
@@ -66,8 +311,557 @@ class Minimizer(object):
         self.ftol = ftol
         self.verbosity = verbosity
 
+        self._setup()
+
+        self._fit_results = None
+        self._covariance_matrix = None
+        self._correlation_matrix = None
+
+        self._algorithm_name = None
+        self._m_log_like_minimum = None
+
+    def _setup(self):
+
+        raise NotImplementedError("You have to implement this.")
+
+    @property
+    def algorithm_name(self):
+
+        return self._algorithm_name
+
     def minimize(self):
         raise NotImplemented("This is the method of the base class. Must be implemented by the actual minimizer")
+
+    def set_algorithm(self, algorithm):
+
+        raise NotImplementedError("Must be implemented by the actual minimizer if it provides more than one algorithm")
+
+    def _store_fit_results(self, best_fit_values, m_log_like_minimum, covariance_matrix=None):
+
+        self._m_log_like_minimum = m_log_like_minimum
+
+        # Create a pandas DataFrame with the fit results
+
+        values = collections.OrderedDict()
+        errors = collections.OrderedDict()
+
+        for i in range(self.Npar):
+
+            name = self.parameters.keys()[i]
+
+            value = best_fit_values[i]
+
+            if covariance_matrix is not None:
+
+                element = covariance_matrix[i,i]
+
+                if element > 0:
+
+                    error = math.sqrt(covariance_matrix[i, i])
+
+                else:
+
+                    custom_warnings.warn("Negative element on diagonal of covariance matrix", CannotComputeErrors)
+
+                    error = np.nan
+
+            else:
+
+                error = np.nan
+
+            values[name] = value
+            errors[name] = error
+
+        data = collections.OrderedDict()
+        data['value'] = pd.Series(values)
+        data['error'] = pd.Series(errors)
+
+        self._fit_results = pd.DataFrame(data)
+        self._covariance_matrix = covariance_matrix
+
+        # Compute correlation matrix
+
+        self._correlation_matrix = np.zeros_like(self._covariance_matrix)
+
+        if covariance_matrix is not None:
+
+            for i in range(self.Npar):
+
+                variance_i = self._covariance_matrix[i,i]
+
+                for j in range(self.Npar):
+
+                    variance_j = self._covariance_matrix[j,j]
+
+                    if variance_i * variance_j > 0:
+
+                        self._correlation_matrix[i,j] = self._covariance_matrix[i,j] / (math.sqrt(variance_i * variance_j))
+
+                    else:
+
+                        # We already issued a warning about this, so let's quietly fail
+
+                        self._correlation_matrix[i, j] = np.nan
+
+    @property
+    def fit_results(self):
+
+        return self._fit_results
+
+    @property
+    def covariance_matrix(self):
+
+        return self._covariance_matrix
+
+    @property
+    def correlation_matrix(self):
+
+        return self._correlation_matrix
+
+    def restore_best_fit(self):
+        """
+        Reset all the parameters to their best fit value (from the last run fit)
+
+        :return: none
+        """
+
+        best_fit_values = self._fit_results['value'].values
+
+        for parameter_name, best_fit_value in zip(self.parameters.keys(), best_fit_values):
+
+            self.parameters[parameter_name].value = best_fit_value
+
+    def _compute_covariance_matrix(self, best_fit_values):
+        """
+        This function compute the approximate covariance matrix as the inverse of the Hessian matrix,
+        which is the matrix of second derivatives of the likelihood function with respect to
+        the parameters.
+
+        The sqrt of the diagonal of the result is an accurate estimate of the errors only if the
+        log.likelihood is parabolic in the neighborhood of the minimum.
+
+        Derivatives are computed numerically.
+
+        :return: the covariance matrix
+        """
+
+        # Define a wrapper because numdifftools expect the function to be f(x) with
+        # x a vector, while the likelihood function expect f(x1,x2,x3...)
+
+        wrapper = lambda x: self.function(*x)
+
+        # Decide a delta for the finite differentiation
+        # The algorithm implemented in numdifftools is robust with respect to the choice
+        # of delta, as long as we are not going beyond the boundaries (which would cause
+        # the procedure to fail)
+
+        deltas = np.zeros_like(best_fit_values)
+
+        for i, best_fit_val in enumerate(best_fit_values):
+
+            min_value, max_value = self.parameters.values()[i].bounds
+
+            if min_value is not None:
+
+                # Parameter with low bound
+
+                distance_to_min = best_fit_val - min_value
+
+            else:
+
+                # No defined minimum
+
+                distance_to_min = np.inf
+
+            if max_value is not None:
+
+                # Parameter with hi bound
+
+                distance_to_max = max_value - best_fit_val
+
+            else:
+
+                # No defined maximum
+
+                distance_to_max = np.inf
+
+            # Delta is the minimum between 3% of the value, and half of the minimum
+            # distance to either boundary
+
+            deltas[i] = min([0.03 * best_fit_val, distance_to_max / 2.0, distance_to_min / 2.0])
+
+        # Compute the Hessian matrix at best_fit_values
+
+        hessian_matrix_ = nd.Hessian(wrapper, deltas)(best_fit_values)
+
+        # Transform it to numpy matrix
+
+        hessian_matrix = np.array(hessian_matrix_)
+
+        # Invert it to get the covariance matrix
+
+        covariance_matrix = np.linalg.inv(hessian_matrix)
+
+        # Now check that the covariance matrix is semi-positive definite (it must be unless
+        # there have been numerical problems, which can happen when some parameter is unconstrained)
+
+        # The fastest way is to try and compute the Cholesky decomposition, which
+        # works only if the matrix is positive definite
+
+        try:
+
+            _ = np.linalg.cholesky(covariance_matrix)
+
+        except:
+
+            custom_warnings.warn("Covariance matrix is NOT semi-positive definite. Cannot estimate errors. This can "
+                                 "happen for many reasons, the most common being one or more unconstrained parameters",
+                                 CannotComputeCovariance)
+
+        return covariance_matrix
+
+    def _get_error(self, parameter_name, target_delta_log_like, sign=-1):
+
+        # Since the procedure might find a better minimum, we can repeat it
+        # up to a maximum of 10 times
+
+        repeats = 0
+
+        while repeats < 10:
+
+            # Let's start optimistic...
+
+            repeat = False
+
+            repeats += 1
+
+            self.restore_best_fit()
+
+            best_fit_value = self.parameters[parameter_name].value
+
+            if sign == -1:
+
+                extreme_allowed = self.parameters[parameter_name].min_value
+
+            else:
+
+                extreme_allowed = self.parameters[parameter_name].max_value
+
+            # If the parameter has no boundary in the direction we are sampling, put a hard limit on
+            # 10 times the current value (to avoid looping forever)
+
+            if extreme_allowed is None:
+
+                extreme_allowed = best_fit_value + sign * 10 * abs(best_fit_value)
+
+            # We need to look for a value for the parameter where the difference between the minimum of the
+            # log-likelihood and the likelihood for that value differs by more than target_delta_log_likelihood.
+            # This is needed by the root-finding procedure, which needs to know an interval where the biased likelihood
+            # function (see below) changes sign
+
+            trials = best_fit_value + sign * np.linspace(0.1, 0.9, 9) * abs(best_fit_value)
+
+            trials = np.append(trials, extreme_allowed)
+
+            # Make sure we don't go below the allowed minimum or above the allowed maximum
+
+            if sign == -1:
+
+                np.clip(trials, extreme_allowed, np.inf, trials)
+
+            else:
+
+                np.clip(trials, -np.inf, extreme_allowed, trials)
+
+            # There might be more than one value which was below the minimum (or above the maximum), so let's
+            # take only unique elements
+
+            trials = np.unique(trials)
+
+            trials.sort()
+
+            if sign == -1:
+
+                trials = trials[::-1]
+
+            # At this point we have a certain number of unique trials which always
+            # contain the allowed minimum (or maximum)
+
+            minimum_bound = None
+            maximum_bound = None
+
+            # Instance the profile likelihood function
+            pl = ProfileLikelihood(self, [parameter_name])
+
+            for i, trial in enumerate(trials):
+
+                this_log_like = pl([trial])
+
+                delta = this_log_like - self._m_log_like_minimum
+
+                if delta < -0.1:
+
+                    custom_warnings.warn("Found a better minimum (%.2f) for %s = %s during error "
+                                         "computation." % (this_log_like, parameter_name, trial),
+                                         BetterMinimumDuringProfiling)
+
+                    xs = map(lambda x:x.value, self.parameters.values())
+
+                    self._store_fit_results(xs, this_log_like, None)
+
+                    repeat = True
+
+                    break
+
+                if delta > target_delta_log_like:
+
+                    bound1 = trial
+
+                    if i > 0:
+
+                        bound2 = trials[i-1]
+
+                    else:
+
+                        bound2 = best_fit_value
+
+                    minimum_bound = min(bound1, bound2)
+                    maximum_bound = max(bound1, bound2)
+
+                    repeat = False
+
+                    break
+
+            if repeat:
+
+                # We found a better minimum, restart from scratch
+
+                custom_warnings.warn("Restarting search...", RuntimeWarning)
+
+                continue
+
+            if minimum_bound is None:
+
+                # Cannot find error in this direction (it's probably outside the allowed boundaries)
+                custom_warnings.warn("Cannot find lower boundary for parameter %s" % parameter_name, CannotComputeErrors)
+
+                error = np.nan
+                break
+
+            else:
+
+                # Define the "biased likelihood", since brenq only finds zeros of function
+
+                biased_likelihood = lambda x: pl(x) - self._m_log_like_minimum - target_delta_log_like
+
+                if sign == -1:
+
+                    precise_bound = scipy.optimize.brentq(biased_likelihood, minimum_bound,
+                                                          maximum_bound, xtol=1e-5, maxiter=1000)
+
+                else:
+
+                    precise_bound = scipy.optimize.brentq(biased_likelihood, minimum_bound,
+                                                          maximum_bound, xtol=1e-5, maxiter=1000)
+
+                error = precise_bound - best_fit_value
+
+                break
+
+        return error
+
+    def get_errors(self):
+        """
+        Compute asymmetric errors using the profile likelihood method (slow, but accurate).
+
+        :return: a list with asymmetric errors for each parameter
+        """
+
+        # TODO: options for other significance levels
+
+        target_delta_log_like = 0.5
+
+        self.restore_best_fit()
+
+        p = ProgressBar(2 * len(self.parameters))
+
+        errors = collections.OrderedDict()
+
+        for parameter_name in self.parameters:
+
+            negative_error = self._get_error(parameter_name, target_delta_log_like, -1)
+
+            p.increase()
+
+            positive_error = self._get_error(parameter_name, target_delta_log_like, +1)
+
+            p.increase()
+
+            errors[parameter_name] = (negative_error, positive_error)
+
+        return errors
+
+    def contours(self, param_1, param_1_minimum, param_1_maximum, param_1_n_steps,
+                         param_2=None, param_2_minimum=None, param_2_maximum=None, param_2_n_steps=None,
+                         progress=True, **options):
+
+            """
+            Generate confidence contours for the given parameters by stepping for the given number of steps between
+            the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to
+            generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d
+            contour of param_1 vs param_2
+
+            :param param_1: name of the first parameter
+            :param param_1_minimum: lower bound for the range for the first parameter
+            :param param_1_maximum: upper bound for the range for the first parameter
+            :param param_1_n_steps: number of steps for the first parameter
+            :param param_2: name of the second parameter
+            :param param_2_minimum: lower bound for the range for the second parameter
+            :param param_2_maximum: upper bound for the range for the second parameter
+            :param param_2_n_steps: number of steps for the second parameter
+            :param progress: (True or False) whether to display progress or not
+            :param log: by default the steps are taken linearly. With this optional parameter you can provide a tuple of
+            booleans which specify whether the steps are to be taken logarithmically. For example,
+            'log=(True,False)' specify that the steps for the first parameter are to be taken logarithmically, while they
+            are linear for the second parameter. If you are generating the profile for only one parameter, you can specify
+             'log=(True,)' or 'log=(False,)' (optional)
+            :param: parallel: whether to use or not parallel computation (default:False)
+            :return: a : an array corresponding to the steps for the first parameter
+                     b : an array corresponding to the steps for the second parameter (or None if stepping only in one
+                     direction)
+                     contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the
+                     corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to
+                     an array of size param_1_steps.
+            """
+
+            # Figure out if we are making a 1d or a 2d contour
+
+            if param_2 is None:
+
+                n_dimensions = 1
+                fixed_parameters = [param_1]
+
+            else:
+
+                n_dimensions = 2
+                fixed_parameters = [param_1, param_2]
+
+            # Check the options
+
+            p1log = False
+            p2log = False
+
+            if 'log' in options.keys():
+
+                assert len(options['log']) == n_dimensions, ("When specifying the 'log' option you have to provide a " +
+                                                             "boolean for each dimension you are stepping on.")
+
+                p1log = bool(options['log'][0])
+
+                if param_2 is not None:
+
+                    p2log = bool(options['log'][1])
+
+            # Generate the steps
+
+            if p1log:
+
+                param_1_steps = np.logspace(math.log10(param_1_minimum), math.log10(param_1_maximum),
+                                            param_1_n_steps)
+
+            else:
+
+                param_1_steps = np.linspace(param_1_minimum, param_1_maximum,
+                                            param_1_n_steps)
+
+            if n_dimensions == 2:
+
+                if p2log:
+
+                    param_2_steps = np.logspace(math.log10(param_2_minimum), math.log10(param_2_maximum),
+                                                param_2_n_steps)
+
+                else:
+
+                    param_2_steps = np.linspace(param_2_minimum, param_2_maximum,
+                                                param_2_n_steps)
+
+            else:
+
+                # Only one parameter to step through
+                # Put param_2_steps as nan so that the worker can realize that it does not have
+                # to step through it
+
+                param_2_steps = np.array([np.nan])
+
+            # Define the worker which will compute the value of the function at a given point in the grid
+
+            # Restore best fit
+
+            if self.fit_results is not None:
+
+                self.restore_best_fit()
+
+            else:
+
+                custom_warnings.warn("No best fit to restore before contours computation. "
+                                     "Perform the fit before running contours to remove this warnings.")
+
+            pr = ProfileLikelihood(self, fixed_parameters)
+
+            if n_dimensions == 1:
+
+                results = pr.step(param_1_steps)
+
+            else:
+
+                results = pr.step(param_1_steps, param_2_steps)
+
+            # Return results
+
+            return param_1_steps, param_2_steps, np.array(results).reshape((param_1_steps.shape[0],
+                                                                            param_2_steps.shape[0]))
+
+    # def print_fit_results(self):
+    #     """
+    #     Display the results of the last minimization.
+    #
+    #     :return: (none)
+    #     """
+    #
+    #     data = []
+    #
+    #     # Also store the maximum length to decide the length for the line
+    #
+    #     name_length = 0
+    #
+    #     for parameter_name in self._fit_results.index.values:
+    #
+    #         value = self._fit_results.at[parameter_name, 'value']
+    #
+    #         error = self._fit_results.at[parameter_name, 'error']
+    #
+    #         # Format the value and the error with sensible significant
+    #         # numbers
+    #         x = uncertainties.ufloat(value, error)
+    #
+    #         # Add some space around the +/- sign
+    #
+    #         rep = x.__str__().replace("+/-", " +/- ")
+    #
+    #         data.append([parameter_name, rep, self.parameters[parameter_name].unit])
+    #
+    #         if len(parameter_name) > name_length:
+    #
+    #             name_length = len(parameter_name)
+    #
+    #     table = Table(rows=data,
+    #                   names=["Name", "Best fit value", "Unit"],
+    #                   dtype=('S%i' % name_length, str, str))
+    #
+    #     display(table)
+    #
+    #     print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
 
 
 # This is a function to add a method to a class
@@ -81,14 +875,17 @@ def add_method(self, method, name=None):
 
 
 class MinuitMinimizer(Minimizer):
+
     # NOTE: this class is built to be able to work both with iMinuit and with a boost interface to SEAL
     # minuit, i.e., it does not rely on functionality that iMinuit provides which is not of the original
     # minuit. This makes the implementation a little bit more cumbersome, but more adaptable if we want
-    # to switch back to the SEAL minuit
+    # to switch back to the bare bone SEAL minuit
 
     def __init__(self, function, parameters, ftol=1e3, verbosity=0):
 
         super(MinuitMinimizer, self).__init__(function, parameters, ftol, verbosity)
+
+    def _setup(self):
 
         # Prepare the dictionary for the parameters which will be used by iminuit
 
@@ -102,7 +899,8 @@ class MinuitMinimizer(Minimizer):
         # units, and hence they are much faster to set and retrieve. These are indeed introduced by
         # astromodels to be used for computing-intensive situations like fitting
 
-        for k, par in parameters.iteritems():
+        for k, par in self.parameters.iteritems():
+
             current_name = self._parameter_name_to_minuit_name(k)
 
             variable_names_for_iminuit.append(current_name)
@@ -124,7 +922,7 @@ class MinuitMinimizer(Minimizer):
         # not chi square
         iminuit_init_parameters['errordef'] = 0.5
 
-        iminuit_init_parameters['print_level'] = verbosity
+        iminuit_init_parameters['print_level'] = self.verbosity
 
         # We need to make a function with the parameters as explicit
         # variables in the calling sequence, so that Minuit will be able
@@ -149,7 +947,7 @@ class MinuitMinimizer(Minimizer):
         # Finally we can instance the Minuit class
         self.minuit = Minuit(self._f, **iminuit_init_parameters)
 
-        self.minuit.tol = ftol  # ftol
+        self.minuit.tol = self.ftol  # ftol
 
         try:
 
@@ -165,25 +963,6 @@ class MinuitMinimizer(Minimizer):
 
         self._best_fit_parameters = None
         self._function_minimum_value = None
-
-    @property
-    def function_minimum_value(self):
-        """
-        Return the value of the function at the minimum, as found during minimize()
-
-        :return: value of the function at the minimum
-        """
-
-        return self._function_minimum_value
-
-    @property
-    def best_fit_parameters(self):
-        """
-        Return a dictionary with the best fit parameters of the last call to .minimize()
-
-        :return: dictionary of best fit parameters
-        """
-        return self._best_fit_parameters
 
     @staticmethod
     def _parameter_name_to_minuit_name(parameter):
@@ -207,9 +986,13 @@ class MinuitMinimizer(Minimizer):
 
         # Repeat Migrad up to trials times, until it converges
 
+        minimum = None
+
         for i in range(trials):
 
             self.minuit.migrad()
+
+            minimum = self.minuit.fval
 
             if self._migrad_has_converged():
 
@@ -221,25 +1004,29 @@ class MinuitMinimizer(Minimizer):
                 # Try again
                 continue
 
-    def _restore_best_fit(self):
+        return minimum
+
+    # Override this because minuit uses different names
+    def restore_best_fit(self):
         """
         Set the parameters back to their best fit value
 
         :return: none
         """
 
-        for k, par in self.parameters.iteritems():
+        super(MinuitMinimizer, self).restore_best_fit()
 
-            par.value = self.best_fit_parameters[k]
+        for k, par in self.parameters.iteritems():
 
             minuit_name = self._parameter_name_to_minuit_name(k)
 
             self.minuit.values[minuit_name] = par.value
 
-    def minimize(self):
+    def minimize(self, compute_covar=True):
         """
         Minimize the function using MIGRAD
 
+        :param compute_covar: whether to compute the covariance (and error estimates) or not
         :return: best_fit: a dictionary containing the parameters at their best fit values
                  function_minimum : the value for the function at the minimum
 
@@ -247,7 +1034,7 @@ class MinuitMinimizer(Minimizer):
                  to minimization.FIT_FAILED
         """
 
-        self._run_migrad(10)
+        minimum = self._run_migrad(10)
 
         if not self._migrad_has_converged():
 
@@ -257,143 +1044,148 @@ class MinuitMinimizer(Minimizer):
 
         else:
 
-            # Make a ordered dict for the results
+            # Get the best fit values
 
-            self._best_fit_parameters = collections.OrderedDict()
+            best_fit_values = []
 
             for k, par in self.parameters.iteritems():
 
                 minuit_name = self._parameter_name_to_minuit_name(k)
 
-                self._best_fit_parameters[k] = self.minuit.values[minuit_name]
+                best_fit_values.append(self.minuit.values[minuit_name])
 
-            self._function_minimum_value = self.minuit.fval
+            # Get covariance matrix
 
-            # NOTE: hesse must be called AFTER having stored the parameters because it
-            # will change the value of the parameters
+            if compute_covar:
 
-            self.minuit.hesse()
+                covariance = self._compute_covariance_matrix(best_fit_values)
 
-            # Restore parameters to their best fit after HESS has changed them
+            else:
 
-            self._restore_best_fit()
+                covariance = None
 
-            return self._best_fit_parameters, self._function_minimum_value
+            # Now store the results
 
-    def print_fit_results(self):
-        """
-        Display the results of the last minimization.
+            self._store_fit_results(best_fit_values, minimum, covariance)
 
-        :return: (none)
-        """
+            return best_fit_values, minimum
 
-        # Restore the best fit values, in case something has changed
-        self._restore_best_fit()
+    # def print_fit_results(self):
+    #     """
+    #     Display the results of the last minimization.
+    #
+    #     :return: (none)
+    #     """
+    #
+    #     # Restore the best fit values, in case something has changed
+    #     self._restore_best_fit()
+    #
+    #     # I do not use the print_param facility in iminuit because
+    #     # it does not work well with console output, since it fails
+    #     # to autoprobe that it is actually run in a console and uses
+    #     # the HTML backend instead
+    #
+    #     # Create a list of strings to print
+    #
+    #     data = []
+    #
+    #     # Also store the maximum length to decide the length for the line
+    #
+    #     name_length = 0
+    #
+    #     for k, v in self.parameters.iteritems():
+    #
+    #         minuit_name = self._parameter_name_to_minuit_name(k)
+    #
+    #         # Format the value and the error with sensible significant
+    #         # numbers
+    #         x = uncertainties.ufloat(v.value, self.minuit.errors[minuit_name])
+    #
+    #         # Add some space around the +/- sign
+    #
+    #         rep = x.__str__().replace("+/-", " +/- ")
+    #
+    #         data.append([k, rep, v.unit])
+    #
+    #         if len(k) > name_length:
+    #             name_length = len(k)
+    #
+    #     table = Table(rows=data,
+    #                   names=["Name", "Value", "Unit"],
+    #                   dtype=('S%i' % name_length, str, str))
+    #
+    #     display(table)
+    #
+    #     print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
 
-        # I do not use the print_param facility in iminuit because
-        # it does not work well with console output, since it fails
-        # to autoprobe that it is actually run in a console and uses
-        # the HTML backend instead
+    # Override the default _compute_covariance_matrix
 
-        # Create a list of strings to print
-
-        data = []
-
-        # Also store the maximum length to decide the length for the line
-
-        name_length = 0
-
-        for k, v in self.parameters.iteritems():
-
-            minuit_name = self._parameter_name_to_minuit_name(k)
-
-            # Format the value and the error with sensible significant
-            # numbers
-            x = uncertainties.ufloat(v.value, self.minuit.errors[minuit_name])
-
-            # Add some space around the +/- sign
-
-            rep = x.__str__().replace("+/-", " +/- ")
-
-            data.append([k, rep, v.unit])
-
-            if len(k) > name_length:
-                name_length = len(k)
-
-        table = Table(rows=data,
-                      names=["Name", "Value", "Unit"],
-                      dtype=('S%i' % name_length, str, str))
-
-        display(table)
-
-        print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
-
-    def print_correlation_matrix(self):
-        """
-        Display the current correlation matrix
-        :return: (none)
-        """
-
-        # Print a custom covariance matrix because iminuit does
-        # not guess correctly the frontend when 3ML is used
-        # from terminal
-
-        cov = self.minuit.covariance
-
-        if cov is None:
-            raise CannotComputeCovariance("Cannot compute covariance numerically. This usually means that there are " +
-                                          " unconstrained parameters. Fix those or reduce their allowed range, or " +
-                                          "use a simpler model.")
-
-        # Get list of parameters
-
-        keys = self.parameters.keys()
-
-        # Convert them to the format for iminuit
-
-        minuit_names = map(lambda k: self._parameter_name_to_minuit_name(k), keys)
-
-        # Accumulate rows and compute the maximum length of the names
-
-        data = []
-        length_of_names = 0
-
-        for key1, name1 in zip(keys, minuit_names):
-
-            if len(name1) > length_of_names:
-                length_of_names = len(name1)
-
-            this_row = []
-
-            for key2, name2 in zip(keys, minuit_names):
-                # Compute correlation between parameter key1 and key2
-
-                corr = cov[(name1, name2)] / (math.sqrt(cov[(name1, name1)]) * math.sqrt(cov[(name2, name2)]))
-
-                this_row.append(corr)
-
-            data.append(this_row)
-
-        # Prepare the dtypes for the matrix
-
-        dtypes = map(lambda x: float, minuit_names)
-
-        # Column names are the parameter names
-
-        cols = keys
-
-        # Finally generate the matrix with the names
-
-        table = NumericMatrix(rows=data,
-                              names=cols,
-                              dtype=dtypes)
-
-        # Customize the format to avoid too many digits
-
-        for col in table.colnames:
-            table[col].format = '2.2f'
-
-        display(table)
+    # def print_correlation_matrix(self):
+    #     """
+    #     Display the current correlation matrix
+    #     :return: (none)
+    #     """
+    #
+    #     # Print a custom covariance matrix because iminuit does
+    #     # not guess correctly the frontend when 3ML is used
+    #     # from terminal
+    #
+    #     cov = self.minuit.covariance
+    #
+    #     if cov is None:
+    #         raise CannotComputeCovariance("Cannot compute covariance numerically. This usually means that there are " +
+    #                                       " unconstrained parameters. Fix those or reduce their allowed range, or " +
+    #                                       "use a simpler model.")
+    #
+    #     # Get list of parameters
+    #
+    #     keys = self.parameters.keys()
+    #
+    #     # Convert them to the format for iminuit
+    #
+    #     minuit_names = map(lambda k: self._parameter_name_to_minuit_name(k), keys)
+    #
+    #     # Accumulate rows and compute the maximum length of the names
+    #
+    #     data = []
+    #     length_of_names = 0
+    #
+    #     for key1, name1 in zip(keys, minuit_names):
+    #
+    #         if len(name1) > length_of_names:
+    #             length_of_names = len(name1)
+    #
+    #         this_row = []
+    #
+    #         for key2, name2 in zip(keys, minuit_names):
+    #             # Compute correlation between parameter key1 and key2
+    #
+    #             corr = cov[(name1, name2)] / (math.sqrt(cov[(name1, name1)]) * math.sqrt(cov[(name2, name2)]))
+    #
+    #             this_row.append(corr)
+    #
+    #         data.append(this_row)
+    #
+    #     # Prepare the dtypes for the matrix
+    #
+    #     dtypes = map(lambda x: float, minuit_names)
+    #
+    #     # Column names are the parameter names
+    #
+    #     cols = keys
+    #
+    #     # Finally generate the matrix with the names
+    #
+    #     table = NumericMatrix(rows=data,
+    #                           names=cols,
+    #                           dtype=dtypes)
+    #
+    #     # Customize the format to avoid too many digits
+    #
+    #     for col in table.colnames:
+    #         table[col].format = '2.2f'
+    #
+    #     display(table)
 
     def get_errors(self):
         """
@@ -404,7 +1196,7 @@ class MinuitMinimizer(Minimizer):
         :return: a dictionary containing the asymmetric errors for each parameter.
         """
 
-        self._restore_best_fit()
+        self.restore_best_fit()
 
         if not self._migrad_has_converged():
             raise CannotComputeErrors("MIGRAD results not valid, cannot compute errors. Did you run the fit first ?")
@@ -425,296 +1217,185 @@ class MinuitMinimizer(Minimizer):
         #                       "user-defined model, you can also try to "
         #                       "reformulate your model with less correlated parameters.")
 
-        # Make a ordered dict for the results
+        # Make a list for the results
 
         errors = collections.OrderedDict()
 
         for k, par in self.parameters.iteritems():
+
             minuit_name = self._parameter_name_to_minuit_name(k)
 
-            errors[k] = (self.minuit.merrors[(minuit_name, -1)], self.minuit.merrors[(minuit_name, 1)])
+            minus_error = self.minuit.merrors[(minuit_name, -1)]
+            plus_error = self.minuit.merrors[(minuit_name, 1)]
 
-        # Set the parameters back to the best fit value
-        self._restore_best_fit()
-
-        # Print a table with the errors
-
-        data = []
-        name_length = 0
-
-        for k, v in self.parameters.iteritems():
-
-            # Format the value and the error with sensible significant
-            # numbers
-
-            # Process the negative error
-
-            x = uncertainties.ufloat(v.value, abs(errors[k][0]))
-
-            # Split the uncertainty in number, negative error, and exponent (if any)
-
-            num, uncm, exponent = get_uncertainty_tokens(x)
-
-            # Process the positive error
-
-            x = uncertainties.ufloat(v.value, abs(errors[k][1]))
-
-            # Split the uncertainty in number, positive error, and exponent (if any)
-
-            _, uncp, _ = get_uncertainty_tokens(x)
-
-            if exponent is None:
-
-                # Number without exponent
-
-                pretty_string = "%s -%s +%s" % (num, uncm, uncp)
-
-            else:
-
-                # Number with exponent
-
-                pretty_string = "(%s -%s +%s)%s" % (num, uncm, uncp, exponent)
-
-            data.append([k, pretty_string, v.unit])
-
-            if len(k) > name_length:
-                name_length = len(k)
-
-        # Create and display the table
-
-        table = Table(rows=data,
-                      names=["Name", "Value", "Unit"],
-                      dtype=('S%i' % name_length, str, str))
-
-        display(table)
+            errors[k] = ((minus_error,plus_error))
 
         return errors
 
-    def contours(self, param_1, param_1_minimum, param_1_maximum, param_1_n_steps,
-                 param_2=None, param_2_minimum=None, param_2_maximum=None, param_2_n_steps=None,
-                 progress=True, **options):
-        """
-        Generate confidence contours for the given parameters by stepping for the given number of steps between
-        the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to
-        generate the profile of the likelihood for parameter 1. Specify all parameters to obtain instead a 2d
-        contour of param_1 vs param_2
 
-        :param param_1: name of the first parameter
-        :param param_1_minimum: lower bound for the range for the first parameter
-        :param param_1_maximum: upper bound for the range for the first parameter
-        :param param_1_n_steps: number of steps for the first parameter
-        :param param_2: name of the second parameter
-        :param param_2_minimum: lower bound for the range for the second parameter
-        :param param_2_maximum: upper bound for the range for the second parameter
-        :param param_2_n_steps: number of steps for the second parameter
-        :param progress: (True or False) whether to display progress or not
-        :param log: by default the steps are taken linearly. With this optional parameter you can provide a tuple of
-        booleans which specify whether the steps are to be taken logarithmically. For example,
-        'log=(True,False)' specify that the steps for the first parameter are to be taken logarithmically, while they
-        are linear for the second parameter. If you are generating the profile for only one parameter, you can specify
-         'log=(True,)' or 'log=(False,)' (optional)
-        :param: parallel: whether to use or not parallel computation (default:False)
-        :return: a : an array corresponding to the steps for the first parameter
-                 b : an array corresponding to the steps for the second parameter (or None if stepping only in one
-                 direction)
-                 contour : a matrix of size param_1_steps x param_2_steps containing the value of the function at the
-                 corresponding points in the grid. If param_2_steps is None (only one parameter), then this reduces to
-                 an array of size param_1_steps.
-        """
+# Add Minuit to the available minimizers
+_minimizers["MINUIT"] = MinuitMinimizer
 
-        # Figure out if we are making a 1d or a 2d contour
 
-        if param_2 is None:
+if has_pyOpt:
 
-            n_dimensions = 1
+    class PyOptWrapper(object):
 
-        else:
+        # This is needed by pyopt
 
-            n_dimensions = 2
+        __name__ = "Likelihood"
 
-        # Check the options
+        def __init__(self, function, dimensions):
 
-        p1log = False
-        p2log = False
-        parallel = False
+            self._function = function
+            self._dimensions = dimensions
 
-        if 'log' in options.keys():
+        def __call__(self, x):
 
-            assert len(options['log']) == n_dimensions, ("When specifying the 'log' option you have to provide a " +
-                                                         "boolean for each dimension you are stepping on.")
+            new_args = map(lambda i: x[i], range(self._dimensions))
 
-            p1log = bool(options['log'][0])
+            try:
 
-            if param_2 is not None:
-                p2log = bool(options['log'][1])
+                f = self._function(*new_args)
 
-        if 'parallel' in options.keys():
-            parallel = bool(options['parallel'])
+            except SettingOutOfBounds:
 
-        # Generate the steps
+                f = FIT_FAILED
 
-        if p1log:
+            if f == FIT_FAILED:
 
-            param_1_steps = numpy.logspace(math.log10(param_1_minimum), math.log10(param_1_maximum),
-                                           param_1_n_steps)
+                # Likelihood gave nan or other problems, we are likely in a forbidden
+                # space
 
-        else:
-
-            param_1_steps = numpy.linspace(param_1_minimum, param_1_maximum,
-                                           param_1_n_steps)
-
-        if n_dimensions == 2:
-
-            if p2log:
-
-                param_2_steps = numpy.logspace(math.log10(param_2_minimum), math.log10(param_2_maximum),
-                                               param_2_n_steps)
+                fail = 1
 
             else:
 
-                param_2_steps = numpy.linspace(param_2_minimum, param_2_maximum,
-                                               param_2_n_steps)
+                # Likelihood computation successful
 
-        else:
+                fail = 0
 
-            # Only one parameter to step through
-            # Put param_2_steps as nan so that the worker can realize that it does not have
-            # to step through it
+            # The empty list is for the constraints vector. It is empty
+            # because this is a unconstrained problem, where unconstrained means
+            # there are no additional conditions on top of the boundaries for the
+            # parameters (if any)
 
-            param_2_steps = numpy.array([numpy.nan])
-
-        # Generate the grid
-
-        grid = cartesian([param_1_steps, param_2_steps])
-
-        # Define the worker which will compute the value of the function at a given point in the grid
-
-        # Restore best fit
-
-        if self._best_fit_parameters:
-
-            self._restore_best_fit()
-
-        else:
-
-            custom_warnings.warn("No best fit to restore before contours computation. "
-                                 "Perform the fit before running contours to remove this warnings.")
+            return f, [], fail
 
 
-        # Duplicate the options used for the original minimizer
+    def get_pyopt_available_algorithms():
+        """
+        Returns a dictionary with the name of the optimizers as key and the relative class as value
 
-        new_args = dict(self.minuit.fitarg)
+        :return: dictionary
+        """
 
-        # Get the minuit names for the parameters
+        optimizers = {}
 
-        minuit_param_1 = self._parameter_name_to_minuit_name(param_1)
+        for element_name in dir(pyOpt):
 
-        if param_2 is None:
+            element = eval("pyOpt.%s" % element_name)
 
-            minuit_param_2 = None
+            try:
 
-        else:
+                is_subclass = issubclass(element, pyOpt.Optimizer) and not element == pyOpt.Optimizer
 
-            minuit_param_2 = self._parameter_name_to_minuit_name(param_2)
+            except TypeError:
 
-        # Instance the worker
-
-        contour_worker = ContourWorker(self._f, self.minuit.values, new_args,
-                                       minuit_param_1, minuit_param_2,
-                                       self.name_to_position)
-
-        # We are finally ready to do the computation
-
-        # Serial and parallel computation are slightly different, so check whether we are in one case
-        # or the other
-
-        if not parallel:
-
-            # Serial computation
-
-            if progress:
-
-                # Computation with progress bar
-
-                progress_bar = ProgressBar(grid.shape[0])
-
-                # Define a wrapper which will increase the progress before as well as run the actual computation
-
-                def wrap(args):
-
-                    results = contour_worker(args)
-
-                    progress_bar.increase()
-
-                    return results
-
-                # Do the computation
-
-                results = map(wrap, grid)
+                continue
 
             else:
 
-                # Computation without the progress bar
+                if is_subclass:
 
-                results = map(contour_worker, grid)
+                    optimizers[element_name] = element
 
-        else:
+        return optimizers
 
-            # Parallel computation
+    _pyopt_algorithms = get_pyopt_available_algorithms()
 
-            # Connect to the engines
+    # Remove algorithms that do not work in our cases
+    # 'ALPSO', 'SLSQP', 'SOLVOPT' "ALGENCAN" NSGA2 ALHSO FILTERSD
 
-            client = ParallelClient(**options)
+    for alg in ['ALPSO', 'SLSQP', 'SOLVOPT', 'ALGENCAN', 'NSGA2', 'ALHSO', 'FILTERSD']:
 
-            # Get a balanced view of the engines
+        if alg in _pyopt_algorithms:
 
-            load_balance_view = client.load_balanced_view()
+            _pyopt_algorithms.pop(alg)
 
-            # Distribute the work among the engines and start it, but return immediately the control
-            # to the main thread
+    class PyOptMinimizer(Minimizer):
 
-            amr = load_balance_view.map_async(contour_worker, grid)
+        def __init__(self, function, parameters, ftol=1e-1, verbosity=10):
 
-            # print progress
-            n_points = grid.flatten().shape[0]
-            progress = ProgressBar(n_points)
+            super(PyOptMinimizer, self).__init__(function, parameters, ftol, verbosity)
 
-            # This loop will check from time to time the status of the computation, which is happening on
-            # different threads, and update the progress bar
+        def _setup(self):
 
-            while not amr.ready():
-                # Check and report the status of the computation every second
+            self.functor = PyOptWrapper(self.function, self.Npar)
 
-                time.sleep(1)
+            self._opt_problem = pyOpt.Optimization('Minimum of -log(likelihood)', self.functor)
 
-                # if (debug):
-                #     stdouts = amr.stdout
-                #
-                #     # clear_output doesn't do much in terminal environments
-                #     for stdout, stderr in zip(amr.stdout, amr.stderr):
-                #         if stdout:
-                #             print "%s" % (stdout[-1000:])
-                #         if stderr:
-                #             print "%s" % (stderr[-1000:])
-                #     sys.stdout.flush()
+            self._opt_problem.addObj('f')
 
-                progress.animate(amr.progress - 1)
+            # Add constraints for parameters
 
-            # If there have been problems, here is where they will be raised
+            for i, par in enumerate(self.parameters.values()):
 
-            results = amr.get()
+                if par.min_value is not None and par.max_value is not None:
 
-            # Always display 100% at the end
+                    self._opt_problem.addVar(par.name, 'c', value=par.value, lower=par.min_value, upper=par.max_value)
 
-            progress.animate(n_points)
+                elif par.min_value is not None and par.max_value is None:
 
-            # Add a new line after the progress bar
-            print("\n")
+                    # Lower limited
+                    self._opt_problem.addVar(par.name, 'c', value=par.value, lower=par.min_value, upper=np.inf)
 
-        # Return results
+                elif par.min_value is None and par.max_value is not None:
 
-        return param_1_steps, param_2_steps, numpy.array(results).reshape((param_1_steps.shape[0],
-                                                                           param_2_steps.shape[0]))
+                    # upper limited
+                    self._opt_problem.addVar(par.name, 'c', value=par.value, lower=-np.inf, upper=par.max_value)
+
+                else:
+
+                    # No limits
+                    self._opt_problem.addVar(par.name, 'c', value=par.value, lower=-np.inf, upper=np.inf)
+
+        def set_algorithm(self, algorithm_name):
+
+            assert algorithm_name in _pyopt_algorithms, "Optimizer %s is not part of pyOpt" % algorithm_name
+
+            # Create an instance of the provided optimizer
+
+            self._algorithm_name = algorithm_name
+
+            self._optimizer_instance = _pyopt_algorithms[algorithm_name]()
+
+        def minimize(self, compute_covar=True):
+
+            # Run optimization
+
+            fstr, xstr, inform = self._optimizer_instance(self._opt_problem)
+
+            # Transform to numpy.array
+
+            best_fit_values = np.array(xstr)
+
+            # Compute errors with the Hessian
+
+            if compute_covar:
+
+                covariance_matrix = self._compute_covariance_matrix(best_fit_values)
+
+            else:
+
+                covariance_matrix = None
+
+            self._store_fit_results(best_fit_values, fstr, covariance_matrix)
+
+            return best_fit_values, fstr
+
+
+    _minimizers["PYOPT"] = PyOptMinimizer
 
 
 if has_ROOT:
@@ -737,79 +1418,78 @@ if has_ROOT:
             return self.function(*new_args)
 
 
-class ROOTMinimizer(Minimizer):
+    class ROOTMinimizer(Minimizer):
 
-    def __init__(self, function, parameters, ftol=1e-1, verbosity=10):
+        def __init__(self, function, parameters, ftol=1e3, verbosity=1):
 
-        super(ROOTMinimizer, self).__init__(function, parameters, ftol, verbosity)
+            super(ROOTMinimizer, self).__init__(function, parameters, ftol, verbosity)
 
-        # Setup the minimizer algorithm
-        self.functor = FuncWrapper(self.function, self.Npar)
-        self.minimizer = ROOT.Math.Factory.CreateMinimizer("Minuit", "Minimize")
-        self.minimizer.Clear()
-        self.minimizer.SetMaxFunctionCalls(1000)
-        self.minimizer.SetTolerance(0.1)
-        self.minimizer.SetPrintLevel(self.verbosity)
-        # self.minimizer.SetStrategy(0)
+        def _setup(self):
 
-        self.minimizer.SetFunction(self.functor)
+            # Setup the minimizer algorithm
 
-        for i, par in enumerate(self.parameters.values()):
+            self.functor = FuncWrapper(self.function, self.Npar)
+            self.minimizer = ROOT.Math.Factory.CreateMinimizer("Minuit2", "Minimize")
+            self.minimizer.Clear()
+            self.minimizer.SetMaxFunctionCalls(1000)
+            self.minimizer.SetTolerance(0.1)
+            self.minimizer.SetPrintLevel(self.verbosity)
+            # self.minimizer.SetStrategy(0)
 
-            if par.min_value is not None and par.max_value is not None:
+            self.minimizer.SetFunction(self.functor)
 
-                self.minimizer.SetLimitedVariable(i, par.name, par.value,
-                                                  par.delta, par.min_value,
-                                                  par.max_value)
+            for i, par in enumerate(self.parameters.values()):
 
-            elif par.min_value is not None and par.max_value is None:
+                if par.min_value is not None and par.max_value is not None:
 
-                # Lower limited
-                self.minimizer.SetLowerLimitedVariable(i, par.name, par.value,
-                                                       par.delta, par.min_value)
+                    self.minimizer.SetLimitedVariable(i, par.name, par.value,
+                                                      par.delta, par.min_value,
+                                                      par.max_value)
 
-            elif par.min_value is None and par.max_value is not None:
+                elif par.min_value is not None and par.max_value is None:
 
-                # upper limited
-                self.minimizer.SetUpperLimitedVariable(i, par.name, par.value,
-                                                       par.delta, par.max_value)
+                    # Lower limited
+                    self.minimizer.SetLowerLimitedVariable(i, par.name, par.value,
+                                                           par.delta, par.min_value)
+
+                elif par.min_value is None and par.max_value is not None:
+
+                    # upper limited
+                    self.minimizer.SetUpperLimitedVariable(i, par.name, par.value,
+                                                           par.delta, par.max_value)
+
+                else:
+
+                    # No limits
+                    self.minimizer.SetVariable(i, par.name, par.value, par.delta)
+
+        def minimize(self, compute_covar=True):
+
+            self.minimizer.SetPrintLevel(int(self.verbosity))
+
+            self.minimizer.Minimize()
+
+            best_fit_values = np.array(map(lambda x: x[0], zip(self.minimizer.X(), range(self.Npar))))
+
+            if compute_covar:
+
+                covariance_matrix = self._compute_covariance_matrix(best_fit_values)
 
             else:
 
-                # No limits
-                self.minimizer.SetVariable(i, par.name, par.value, par.delta)
+                covariance_matrix = None
 
-    def minimize(self, minos=False):
+            minimum = self.functor(best_fit_values)
 
-        self.minimizer.SetPrintLevel(int(self.verbosity))
+            self._store_fit_results(best_fit_values, minimum, covariance_matrix)
 
-        self.minimizer.Minimize()
+            return best_fit_values, minimum
 
-        # This improves on the error computation
-        # self.minimizer.Hesse()
-
-        xs = numpy.array(map(lambda x: x[0], zip(self.minimizer.X(), range(self.Npar))))
-
-        if (minos):
-
-            # Get the errors
-            xserr = []
-            for i in range(xs.shape[0]):
-                minv = ROOT.Double(0)
-                maxv = ROOT.Double(0)
-                self.minimizer.GetMinosError(i, minv, maxv)
-                xserr.append([minv, maxv])
-            pass
-
-        else:
-
-            xserr = numpy.array(map(lambda x: x[0], zip(self.minimizer.Errors(), range(self.Npar))))
-
-        #return xs, xserr, self.functor(xs)
-        return xs, self.functor(xs)
+    _minimizers["ROOT"] = ROOTMinimizer
 
 
 class ContourWorker(object):
+
     def __init__(self, function, minuit_values, minuit_args, minuit_param_1, minuit_param_2, name_to_position):
 
         self._minuit_values = minuit_values
