@@ -447,8 +447,8 @@ class Minimizer(object):
         :return: the covariance matrix
         """
 
-        minima = map(lambda parameter:parameter.min_value, self.parameters)
-        maxima = map(lambda parameter: parameter.max_value, self.parameters)
+        minima = map(lambda parameter:parameter.min_value, self.parameters.values())
+        maxima = map(lambda parameter: parameter.max_value, self.parameters.values())
 
         try:
 
