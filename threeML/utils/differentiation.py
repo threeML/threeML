@@ -91,6 +91,6 @@ def get_hessian(function, point, minima, maxima):
 
     # Transform it to numpy matrix
 
-    hessian_matrix = np.array(hessian_matrix_) * (orders_of_magnitude**2)
+    hessian_matrix = np.array(hessian_matrix_)
 
-    return hessian_matrix
+    return hessian_matrix, orders_of_magnitude

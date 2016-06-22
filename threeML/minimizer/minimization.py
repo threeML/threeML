@@ -452,7 +452,7 @@ class Minimizer(object):
 
         try:
 
-            hessian_matrix = get_hessian(self.function, best_fit_values, minima, maxima)
+            hessian_matrix, scale = get_hessian(self.function, best_fit_values, minima, maxima)
 
         except ParameterOnBoundary:
 
@@ -483,7 +483,7 @@ class Minimizer(object):
                                  "happen for many reasons, the most common being one or more unconstrained parameters",
                                  CannotComputeCovariance)
 
-        return covariance_matrix
+        return covariance_matrix * scale**2
 
     def _get_error(self, parameter_name, target_delta_log_like, sign=-1):
 
