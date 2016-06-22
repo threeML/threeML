@@ -30,6 +30,8 @@ def get_hessian(function, point, minima, maxima):
     orders_of_magnitude = 10**np.ceil(np.log10(np.abs(point)))
 
     scaled_point = point / orders_of_magnitude
+    scaled_minima = minima / orders_of_magnitude
+    scaled_maxima = maxima / orders_of_magnitude
 
     def wrapper(x):
 
@@ -42,13 +44,13 @@ def get_hessian(function, point, minima, maxima):
     # of delta, as long as we are not going beyond the boundaries (which would cause
     # the procedure to fail)
 
-    deltas = np.zeros_like(point)
+    scaled_deltas = np.zeros_like(scaled_point)
 
     for i in range(n_dim):
 
         scaled_value = scaled_point[i]
 
-        scaled_min_value, scaled_max_value = (minima[i], maxima[i])
+        scaled_min_value, scaled_max_value = (scaled_minima[i], scaled_maxima[i])
 
         if scaled_value == scaled_min_value or scaled_value == scaled_max_value:
 
@@ -81,11 +83,11 @@ def get_hessian(function, point, minima, maxima):
         # Delta is the minimum between 3% of the value, and half of the minimum
         # distance to either boundary
 
-        deltas[i] = min([0.03 * scaled_point[i], distance_to_max / 2.0, distance_to_min / 2.0])
+        scaled_deltas[i] = min([0.03 * scaled_point[i], distance_to_max / 2.0, distance_to_min / 2.0])
 
     # Compute the Hessian matrix at best_fit_values
 
-    hessian_matrix_ = nd.Hessian(wrapper, deltas)(scaled_point)
+    hessian_matrix_ = nd.Hessian(wrapper, scaled_deltas)(scaled_point)
 
     # Transform it to numpy matrix
 
