@@ -10,7 +10,9 @@ from astromodels import SettingOutOfBounds
 
 from threeML.io.progress_bar import ProgressBar
 import scipy.optimize
+
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
 
 # Set the warnings to be issued always for this module
 
@@ -445,58 +447,21 @@ class Minimizer(object):
         :return: the covariance matrix
         """
 
-        # Define a wrapper because numdifftools expect the function to be f(x) with
-        # x a vector, while the likelihood function expect f(x1,x2,x3...)
+        minima = map(lambda parameter:parameter.min_value, self.parameters)
+        maxima = map(lambda parameter: parameter.max_value, self.parameters)
 
-        wrapper = lambda x: self.function(*x)
+        try:
 
-        # Decide a delta for the finite differentiation
-        # The algorithm implemented in numdifftools is robust with respect to the choice
-        # of delta, as long as we are not going beyond the boundaries (which would cause
-        # the procedure to fail)
+            hessian_matrix = get_hessian(self.function, best_fit_values, minima, maxima)
 
-        deltas = np.zeros_like(best_fit_values)
+        except ParameterOnBoundary:
 
-        for i, best_fit_val in enumerate(best_fit_values):
+            custom_warnings.warn("One or more of the parameters are at their boundaries. Cannot compute covariance and"
+                                 " errors", CannotComputeCovariance)
 
-            min_value, max_value = self.parameters.values()[i].bounds
+            n_dim = len(best_fit_values)
 
-            if min_value is not None:
-
-                # Parameter with low bound
-
-                distance_to_min = best_fit_val - min_value
-
-            else:
-
-                # No defined minimum
-
-                distance_to_min = np.inf
-
-            if max_value is not None:
-
-                # Parameter with hi bound
-
-                distance_to_max = max_value - best_fit_val
-
-            else:
-
-                # No defined maximum
-
-                distance_to_max = np.inf
-
-            # Delta is the minimum between 3% of the value, and half of the minimum
-            # distance to either boundary
-
-            deltas[i] = min([0.03 * best_fit_val, distance_to_max / 2.0, distance_to_min / 2.0])
-
-        # Compute the Hessian matrix at best_fit_values
-
-        hessian_matrix_ = nd.Hessian(wrapper, deltas)(best_fit_values)
-
-        # Transform it to numpy matrix
-
-        hessian_matrix = np.array(hessian_matrix_)
+            return np.zeros((n_dim,n_dim)) * np.nan
 
         # Invert it to get the covariance matrix
 
