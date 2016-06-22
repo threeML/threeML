@@ -426,6 +426,7 @@ class OGIPPluginCash(OGIPPluginBase):
 
 
 class OGIPPHA(object):
+
     def __init__(self, phafile, spectrumNumber=None, **kwargs):
 
         if '.root' not in phafile:
@@ -499,9 +500,8 @@ class OGIPPHA(object):
 
                 self.hasRates = True
                 self.dataColumnName = "RATE"
-                self.exposure = header.get("EXPOSURE")
 
-                assert self.exposure is not None, "Exposure undefined in PHA file %s" % phafile
+                #self.exposure = header.get("EXPOSURE")
 
             else:
 
@@ -539,6 +539,8 @@ class OGIPPHA(object):
                         # Check if there is a column with this name
 
                         if (keyname in data.columns.names):
+
+                            # This will set the exposure, among other things
 
                             self.__setattr__(internalName, data[keyname][self.spectrumNumber - 1])
 

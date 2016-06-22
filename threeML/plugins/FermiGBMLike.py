@@ -11,7 +11,7 @@ __instrument_name = "Fermi GBM (all detectors)"
 # In the future we might add functions to (for example) produce
 # background spectra and so on
 
-class FermiGBMLike(PluginPrototype, OGIPPluginPGstat):
+class FermiGBMLike(OGIPPluginPGstat, PluginPrototype):
 
     def __init__(self, name, phafile, bkgfile, rspfile, arffile=None):
         """
@@ -20,10 +20,11 @@ class FermiGBMLike(PluginPrototype, OGIPPluginPGstat):
         to load the second spectrum, second background spectrum and second response.
         """
 
-        OGIPPluginPGstat.__init__(self, name, rspfile, arffile=arffile, bkgfile=bkgfile, phafile=phafile)
+        OGIPPluginPGstat.__init__(self, name, rspfile, bkgfile=bkgfile, phafile=phafile)
 
         self.phafile = OGIPPHA(phafile, filetype='observed')
-        exposure = self.phafile.getExposure()
+        self.exposure = self.phafile.getExposure()
+
         self.bkgfile = OGIPPHA(bkgfile, filetype="background")
 
         # Start with an empty mask (the user will overwrite it using the
@@ -31,12 +32,12 @@ class FermiGBMLike(PluginPrototype, OGIPPluginPGstat):
         mask = np.asarray(np.ones(self.phafile.getRates().shape), np.bool)
 
         # Get the counts for this spectrum
-        counts = (self.phafile.getRates()[self.mask] * self.exposure)
+        counts = (self.phafile.getRates() * self.exposure)
 
         # Get the background counts for this spectrum
-        bkgCounts = (self.bkgfile.getRates()[self.mask] * self.exposure)
+        bkgCounts = (self.bkgfile.getRates() * self.exposure)
 
         # Get the error on the background counts
-        bkgErr = self.bkgfile.getRatesErrors()[self.mask] * self.exposure
+        bkgErr = self.bkgfile.getRatesErrors() * self.exposure
 
-        self._initialSetup(mask, counts, bkgCounts, exposure, bkgErr)
+        self._initialSetup(mask, counts, bkgCounts, self.exposure, bkgErr)
