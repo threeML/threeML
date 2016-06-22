@@ -22,8 +22,8 @@ def get_hessian(function, point, minima, maxima):
     except AttributeError:
 
         point = np.array(point, ndmin=1)
-        minima = np.array(minima, ndim=1)
-        maxima = np.array(maxima, ndim=1)
+        minima = np.array(minima, ndmin=1)
+        maxima = np.array(maxima, ndmin=1)
 
         n_dim = point.shape[0]
 
