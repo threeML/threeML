@@ -1403,7 +1403,7 @@ if has_ROOT:
             # Setup the minimizer algorithm
 
             self.functor = FuncWrapper(self.function, self.Npar)
-            self.minimizer = ROOT.Math.Factory.CreateMinimizer("Minuit2", "Minimize")
+            self.minimizer = ROOT.Math.Factory.CreateMinimizer("Minuit", "Minimize")
             self.minimizer.Clear()
             self.minimizer.SetMaxFunctionCalls(1000)
             self.minimizer.SetTolerance(0.1)
