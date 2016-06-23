@@ -1040,7 +1040,7 @@ class MinuitMinimizer(Minimizer):
 
         self.minuit.hesse()
 
-        covariance = np.array(self.minuit.matrix(correlation=False)0
+        covariance = np.array(self.minuit.matrix(correlation=False))
 
         return covariance
 
