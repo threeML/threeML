@@ -1,8 +1,14 @@
 import numdifftools as nd
 import numpy as np
 
+from astromodels import SettingOutOfBounds
+
 
 class ParameterOnBoundary(RuntimeError):
+    pass
+
+
+class CannotComputeHessian(RuntimeError):
     pass
 
 
@@ -38,7 +44,17 @@ def get_hessian(function, point, minima, maxima):
 
         scaled_back_x = x * orders_of_magnitude
 
-        return function(*scaled_back_x)
+        try:
+
+            result = function(*scaled_back_x)
+
+        except SettingOutOfBounds:
+
+            raise CannotComputeHessian("Cannot compute Hessian, parameter out of bound")
+
+        else:
+
+            return result
 
     # Decide a delta for the finite differentiation
     # The algorithm implemented in numdifftools is robust with respect to the choice
@@ -84,7 +100,7 @@ def get_hessian(function, point, minima, maxima):
         # Delta is the minimum between 3% of the value, and half of the minimum
         # distance to either boundary
 
-        scaled_deltas[i] = min([0.03 * scaled_point[i], distance_to_max / 2.0, distance_to_min / 2.0])
+        scaled_deltas[i] = min([0.03 * abs(scaled_point[i]), distance_to_max / 2.0, distance_to_min / 2.0])
 
     # Compute the Hessian matrix at best_fit_values
 
