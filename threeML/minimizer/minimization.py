@@ -846,7 +846,7 @@ class MinuitMinimizer(Minimizer):
     # minuit. This makes the implementation a little bit more cumbersome, but more adaptable if we want
     # to switch back to the bare bone SEAL minuit
 
-    def __init__(self, function, parameters, ftol=1e3, verbosity=0):
+    def __init__(self, function, parameters, ftol=1, verbosity=0):
 
         super(MinuitMinimizer, self).__init__(function, parameters, ftol, verbosity)
 
