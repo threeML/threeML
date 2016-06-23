@@ -215,13 +215,13 @@ class JointLikelihood(object):
 
                 name_length = len(parameter_name)
 
-        correlation_matrix_table = Table(rows=data,
+        best_fit_table = Table(rows=data,
                       names=["#", "Name", "Best fit value", "Unit"],
                       dtype=(str, 'S%i' % name_length, str, str))
 
         print("Best fit values:\n")
 
-        display(correlation_matrix_table)
+        display(best_fit_table)
 
         print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
 
@@ -243,13 +243,13 @@ class JointLikelihood(object):
 
         print("\nCorrelation matrix:\n")
 
-        correlation_matrix_table = NumericMatrix(self._minimizer.correlation_matrix)
+        best_fit_table = NumericMatrix(self._minimizer.correlation_matrix)
 
-        for col in correlation_matrix_table.colnames:
+        for col in best_fit_table.colnames:
 
-            correlation_matrix_table[col].format = '2.2f'
+            best_fit_table[col].format = '2.2f'
 
-        display(correlation_matrix_table)
+        display(best_fit_table)
 
         # Now collect the values for the likelihood for the various datasets
 

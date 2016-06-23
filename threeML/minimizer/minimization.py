@@ -1035,6 +1035,15 @@ class MinuitMinimizer(Minimizer):
 
             return best_fit_values, minimum
 
+    # Override the default _compute_covariance_matrix
+    def _compute_covariance_matrix(self, best_fit_values):
+
+        self.minuit.hesse()
+
+        covariance = self.minuit.matrix(correlation=False)
+
+        return covariance
+
     # def print_fit_results(self):
     #     """
     #     Display the results of the last minimization.

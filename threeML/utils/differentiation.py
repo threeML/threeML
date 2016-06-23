@@ -5,6 +5,7 @@ import numpy as np
 class ParameterOnBoundary(RuntimeError):
     pass
 
+
 def get_hessian(function, point, minima, maxima):
 
     # Define a wrapper because numdifftools expect the function to be f(x) with
