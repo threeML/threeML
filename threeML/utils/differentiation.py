@@ -87,10 +87,10 @@ def get_hessian(function, point, minima, maxima):
 
     # Compute the Hessian matrix at best_fit_values
 
-    hessian_matrix_ = nd.Hessian(wrapper, scaled_deltas)(scaled_point)
+    hessian_matrix_ = nd.Hessian(wrapper, scaled_deltas)(scaled_point) / orders_of_magnitude**2
 
     # Transform it to numpy matrix
 
     hessian_matrix = np.array(hessian_matrix_)
 
-    return hessian_matrix, orders_of_magnitude
+    return hessian_matrix
