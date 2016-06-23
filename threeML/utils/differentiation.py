@@ -50,7 +50,7 @@ def get_hessian(function, point, minima, maxima):
 
         except SettingOutOfBounds:
 
-            raise CannotComputeHessian("Cannot compute Hessian, parameter out of bound")
+            raise CannotComputeHessian("Cannot compute Hessian, parameters out of bounds at %s" % scaled_back_x)
 
         else:
 
