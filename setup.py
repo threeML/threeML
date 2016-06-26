@@ -86,7 +86,7 @@ setup(
         'pyyaml',
         'dill',
         'iminuit>=1.2',
-        'astromodels',
+        'astromodels>=0.2.1',
         'corner>=1.0.2',
         'pandas'
     ])
