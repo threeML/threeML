@@ -1,4 +1,6 @@
 import astropy.units as u
+from astropy.visualization import quantity_support
+
 import matplotlib.pyplot as plt
 import numpy as np
 from sympy import Function
@@ -20,6 +22,7 @@ class SpectralPlotter(object):
     """
 
     def __init__(self, analysis):
+        quantity_support()
 
         # Determine the type of analysis
 
@@ -27,8 +30,7 @@ class SpectralPlotter(object):
 
         self.analysis = analysis
 
-    def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False,
-                   xmin=10., xmax=1E4, plot_num=1):
+    def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4, plot_num=1, **kwargs):
         """
         Plot the model and the model contours for the selected sources.
 
@@ -45,6 +47,10 @@ class SpectralPlotter(object):
         if self._analysis_type == "mle":
             self._plot_mle(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num)
 
+        elif self._analysis_type == "bayesian":
+            self._plot_bayes(x_unit, y_unit,sources_to_plot, sum, xmin, xmax, plot_num, **kwargs)
+
+
     def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4,
                         plot_num=1):
         """
@@ -56,11 +62,95 @@ class SpectralPlotter(object):
         :param xmin:
         :param xmax:
         :param plot_num:
-        :return:
+
         """
 
         if self._analysis_type == "mle":
             self._plot_component_mle(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num)
+
+    def _plot_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4, plot_num=1, **kwargs):
+        """
+
+        :param x_unit:
+        :param y_unit:
+        :param sources_to_plot:
+        :param sum:
+        :param xmin:
+        :param xmax:
+        :param plot_num:
+        :param kwargs:
+        :return:
+        """
+
+        thin = 100
+        alpha = 0.05
+
+        for k,v in kwargs:
+
+            if(k.lower()=="thin"):
+                thin  = kwargs["thin"]
+            elif(k.lower()=="alpha"):
+                alpha = kwargs["thin"]
+
+        x_unit = u.Unit(x_unit)
+        y_unit = u.Unit(y_unit)
+
+        x_values = np.logspace(np.log10(xmin), np.log10(xmax), 400)
+
+
+        # Get the the number of samples
+        n_samples = self.analysis.raw_samples.shape[0]
+
+        fig = plt.figure(plot_num)
+        ax = fig.add_subplot(111)
+
+        # First see if we are plotting all the sources
+        if not sources_to_plot:  # Assuming plot all sources
+
+            sources_to_plot = self.analysis._likelihood_model.point_sources.keys()
+
+        color = np.linspace(0., 1., len(sources_to_plot))
+        color_itr = 0
+        for source in sources_to_plot:
+
+            # Get the spectrum first
+            call = self.analysis._likelihood_model.point_sources[source].spectrum.main
+            model = self.analysis._likelihood_model.point_sources[source].spectrum.main.shape
+
+            # Check the  type of function we want
+            spectrum_type = self._get_spectrum_type(y_unit)
+
+            # Set the x values to the proper unit
+            x_range = x_values * x_unit
+
+            # Retrieve the right flux function (phts, energy, vfv)
+            flux_function = self._get_flux_function(spectrum_type, model,y_unit)
+
+            # temporary list to store the propagated samples
+            tmp = []
+
+            # go through the thinned samples
+            for i in range(0, n_samples, thin):
+
+                # go through parameters
+                for par in self.analysis.samples.keys():
+                    mod_par = par.split('.')[-1]
+                    model.free_parameters[mod_par].value = self.analysis.samples[par][i]
+
+                # get the flux for the this sample
+                tmp.append(flux_function(x_range))
+
+            tmp = np.array(tmp).T
+
+            # pull the highest denisty posterior at the choosen alpha level
+            contours = np.array([self.analysis._hpd(mc, alpha=alpha) for mc in tmp])
+
+            ax.fill_between(x_range, contours[:, 0], contours[:, 1], color=plt.cm.Set1(color[color_itr]))
+
+            ax.set_xscale('log')
+            ax.set_yscale('log')
+
+            color_itr+=1
 
     def _plot_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False,
                   xmin=10., xmax=1E4, plot_num=1):
@@ -79,13 +169,15 @@ class SpectralPlotter(object):
         x_values = np.logspace(np.log10(xmin), np.log10(xmax), 300)
         errors = []
 
+        fig = plt.figure(plot_num)
+        ax = fig.add_subplot(111)
+
         # First see if we are plotting all the sources
         if not sources_to_plot:  # Assuming plot all sources
 
             sources_to_plot = self.analysis.likelihood_model.point_sources.keys()
 
         for source in sources_to_plot:
-
             # Get the spectrum first
             call = self.analysis.likelihood_model.point_sources[source].spectrum.main
             model = self.analysis.likelihood_model.point_sources[source].spectrum.main.shape
@@ -95,26 +187,7 @@ class SpectralPlotter(object):
 
             x_range = x_values * x_unit
 
-            if spectrum_type == "badunit":
-
-                print "The y_unit provided is invalid"
-                return
-
-            elif spectrum_type == "phtflux":
-
-                flux_function = lambda x: call(x).to(y_unit)
-
-                # y_val = call(x_range).to(y_unit)
-
-            elif spectrum_type == "eneflux":
-
-                flux_function = lambda x: (x * call(x)).to(y_unit)
-                # y_val = (x_range * call(x_range)).to(y_unit)
-
-            elif spectrum_type == "vfvflux":
-
-                flux_function = lambda x: (x ** 2 * call(x)).to(y_unit)
-                # y_val = (x_range**2 * call(x_range)).to(y_unit)
+            flux_function = self._get_flux_function(spectrum_type, model, y_unit)
 
             err = self._propagate_full(source, flux_function, x_range)
 
@@ -122,15 +195,27 @@ class SpectralPlotter(object):
 
             errors.append(err * y_unit)
 
-        fig = plt.figure(plot_num)
-        ax = fig.add_subplot(111)
-
         for y_val, err in zip(y_values, errors):
-            ax.loglog(x_range, y_val, color='#F4FA58')
-            ax.fill_between(x_range, y1=y_val - err, y2=y_val + err, color='#0080FF', alpha=.5)
+            ax.loglog(x_range,
+                      y_val,
+                      color='#F4FA58',
+                      lw=.6)
 
-    def _plot_component_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], percentiles=[0.32, 0.84],
-                            sum=True, xmin=10., xmax=1E4, plot_num=1):
+            up_y = y_val + err
+            down_y = y_val - err
+
+            ax.fill_between(x_range,
+                            down_y,
+                            up_y,
+                            facecolor='#0080FF',
+                            alpha=0.5,
+                            lw=0.)
+
+            ax.set_xscale('log')
+            ax.set_yscale('log')
+
+    def _plot_component_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=True, xmin=10.,
+                            xmax=1E4, plot_num=1):
 
         self.analysis.restore_best_fit()
 
@@ -163,31 +248,13 @@ class SpectralPlotter(object):
             # Check the type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
 
+
             x_range = x_values * x_unit
             y_vals_per_comp = []
             errors_per_comp = []
             for model in models:
-                if spectrum_type == "badunit":
 
-                    print "The y_unit provided is invalid"
-                    return
-
-                elif spectrum_type == "phtflux":
-
-                    flux_function = lambda x: model(x).to(y_unit)
-
-                    # y_val = call(x_range).to(y_unit)
-
-                elif spectrum_type == "eneflux":
-
-                    flux_function = lambda x: (x * model(x)).to(y_unit)
-                    # y_val = (x_range * call(x_range)).to(y_unit)
-
-                elif spectrum_type == "vfvflux":
-
-                    flux_function = lambda x: (x ** 2 * model(x)).to(y_unit)
-                    # y_val = (x_range**2 * call(x_range)).to(y_unit)
-
+                flux_function = self._get_flux_function(spectrum_type, model, y_unit)
                 err = self._propagate_full(source, flux_function, x_range)
 
                 y_vals_per_comp.append(flux_function(x_range))
@@ -202,7 +269,6 @@ class SpectralPlotter(object):
         for y_val_pc, err_pc in zip(y_values, errors):
 
             for y_val, err in zip(y_val_pc, err_pc):
-                print color_itr
                 pos_mask = np.logical_and(y_val > 0, err > 0)
 
                 ax.fill_between(x_range[pos_mask],
@@ -218,7 +284,8 @@ class SpectralPlotter(object):
                 ax.set_yscale('log')
                 color_itr += 1
 
-    def _derivative(self, f):
+    @staticmethod
+    def _derivative(f):
         def df(x):
             h = 0.1e-7
             return (f(x + h / 2) - f(x - h / 2)) / h
@@ -247,17 +314,43 @@ class SpectralPlotter(object):
 
                 first_derivatives.append(this_derivate(parameter_best_fit_value))
 
-            first_derivatives = array(first_derivatives)
+            first_derivatives = np.array(first_derivatives)
 
             tmp = first_derivatives.dot(self.analysis.covariance_matrix)
 
-            errors.append(sqrt(tmp.dot(first_derivatives)))
+            errors.append(np.sqrt(tmp.dot(first_derivatives)))
 
         return errors
 
-    def _get_spectrum_type(self, y_unit):
+    @staticmethod
+    def _get_flux_function(spectrum_type, model, y_unit):
+
+        if spectrum_type == "badunit":
+
+            print "The y_unit provided is invalid"
+            return
+
+        elif spectrum_type == "phtflux":
+
+            flux_function = lambda x: model(x).to(y_unit)
+
+
+        elif spectrum_type == "eneflux":
+
+            flux_function = lambda x: (x * model(x)).to(y_unit)
+
+
+        elif spectrum_type == "vfvflux":
+
+            flux_function = lambda x: (x ** 2 * model(x)).to(y_unit)
+
+        return flux_function
+
+    @staticmethod
+    def _get_spectrum_type(y_unit):
         """
         Determines the type of spectral denisty to plot
+        :rtype: flux function of correct units
         """
 
         pht_flux_unit = 1. / (u.keV * u.cm ** 2 * u.s)
