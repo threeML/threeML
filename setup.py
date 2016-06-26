@@ -88,7 +88,7 @@ setup(
         'iminuit',
         'astromodels',
         'corner>=1.0.2',
-        'pandas'
+        'pandas', 'sympy'
     ])
 
 # Check for optional dependencies
