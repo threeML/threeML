@@ -85,7 +85,7 @@ setup(
         'uncertainties',
         'pyyaml',
         'dill',
-        'iminuit',
+        'iminuit>=1.2',
         'astromodels',
         'corner>=1.0.2',
         'pandas'
