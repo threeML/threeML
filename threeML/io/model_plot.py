@@ -45,7 +45,8 @@ class SpectralPlotter(object):
         if self._analysis_type == "mle":
             self._plot_mle(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num)
 
-    def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[],sum=False, xmin=10., xmax=1E4, plot_num=1):
+    def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4,
+                        plot_num=1):
         """
         Plot the components of a fits and their assocaiated contours
         :param x_unit: str with astropy spectral density units
@@ -59,10 +60,9 @@ class SpectralPlotter(object):
         """
 
         if self._analysis_type == "mle":
-            self._plot_component_mle(x_unit,y_unit,sources_to_plot,sum,xmin,xmax,plot_num)
+            self._plot_component_mle(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num)
 
-
-    def _plot_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=True,
+    def _plot_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False,
                   xmin=10., xmax=1E4, plot_num=1):
 
         """
@@ -304,7 +304,6 @@ class SpectralPlotter(object):
         # the component functions to be referecenced
 
         for i, func in enumerate(composite_model.functions):
-
             # Need to replace all the strings correctly
             replicated_expression = replicated_expression.replace("%s{%d}" % (func.name, i + 1),
                                                                   "mod_solve[%d](x)" % i)
