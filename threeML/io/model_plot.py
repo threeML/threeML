@@ -30,7 +30,8 @@ class SpectralPlotter(object):
 
         self.analysis = analysis
 
-    def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4, plot_num=1, **kwargs):
+    def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4,
+                   plot_num=1, thin=100, alpha=0.05):
         """
         Plot the model and the model contours for the selected sources.
 
@@ -41,20 +42,21 @@ class SpectralPlotter(object):
         :param xmin:
         :param xmax:
         :param plot_num:
-        :return: None
+        :param: thin
+        :param: alpha
         """
 
         if self._analysis_type == "mle":
             self._plot_mle(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num)
 
         elif self._analysis_type == "bayesian":
-            self._plot_bayes(x_unit, y_unit,sources_to_plot, sum, xmin, xmax, plot_num, **kwargs)
-
+            self._plot_bayes(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num, thin, alpha)
 
     def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4,
-                        plot_num=1):
+                        plot_num=1, thin=100, alpha=0.05):
         """
-        Plot the components of a fits and their assocaiated contours
+        Plot the components of a fits and their associated contours
+
         :param x_unit: str with astropy spectral density units
         :param y_unit:
         :param sources_to_plot:
@@ -66,9 +68,15 @@ class SpectralPlotter(object):
         """
 
         if self._analysis_type == "mle":
+
             self._plot_component_mle(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num)
 
-    def _plot_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4, plot_num=1, **kwargs):
+        elif self._analysis_type == "bayesian":
+
+            self._plot_component_bayes(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num, thin, alpha)
+
+    def _plot_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4,
+                    plot_num=1, thin=100, alpha=0.05):
         """
 
         :param x_unit:
@@ -78,25 +86,14 @@ class SpectralPlotter(object):
         :param xmin:
         :param xmax:
         :param plot_num:
-        :param kwargs:
-        :return:
+        :param thin:
+        :param alpha:
         """
-
-        thin = 100
-        alpha = 0.05
-
-        for k,v in kwargs:
-
-            if(k.lower()=="thin"):
-                thin  = kwargs["thin"]
-            elif(k.lower()=="alpha"):
-                alpha = kwargs["thin"]
 
         x_unit = u.Unit(x_unit)
         y_unit = u.Unit(y_unit)
 
         x_values = np.logspace(np.log10(xmin), np.log10(xmax), 400)
-
 
         # Get the the number of samples
         n_samples = self.analysis.raw_samples.shape[0]
@@ -124,7 +121,7 @@ class SpectralPlotter(object):
             x_range = x_values * x_unit
 
             # Retrieve the right flux function (phts, energy, vfv)
-            flux_function = self._get_flux_function(spectrum_type, model,y_unit)
+            flux_function = self._get_flux_function(spectrum_type, model, y_unit)
 
             # temporary list to store the propagated samples
             tmp = []
@@ -145,12 +142,16 @@ class SpectralPlotter(object):
             # pull the highest denisty posterior at the choosen alpha level
             contours = np.array([self.analysis._hpd(mc, alpha=alpha) for mc in tmp])
 
-            ax.fill_between(x_range, contours[:, 0], contours[:, 1], color=plt.cm.Set1(color[color_itr]))
+            ax.fill_between(x_range,
+                            contours[:, 0]*y_unit,
+                            contours[:, 1]*y_unit,
+                            color=plt.cm.Set1(color[color_itr]),
+                            alpha=.6)
 
             ax.set_xscale('log')
             ax.set_yscale('log')
 
-            color_itr+=1
+            color_itr += 1
 
     def _plot_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False,
                   xmin=10., xmax=1E4, plot_num=1):
@@ -248,12 +249,10 @@ class SpectralPlotter(object):
             # Check the type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
 
-
             x_range = x_values * x_unit
             y_vals_per_comp = []
             errors_per_comp = []
             for model in models:
-
                 flux_function = self._get_flux_function(spectrum_type, model, y_unit)
                 err = self._propagate_full(source, flux_function, x_range)
 
@@ -282,6 +281,96 @@ class SpectralPlotter(object):
 
                 ax.set_xscale('log')
                 ax.set_yscale('log')
+                color_itr += 1
+
+    def _plot_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10.,
+                              xmax=1E4, plot_num=1, thin=100, alpha=0.05):
+        """
+
+        :param x_unit:
+        :param y_unit:
+        :param sources_to_plot:
+        :param sum:
+        :param xmin:
+        :param xmax:
+        :param plot_num:
+        :param thin:
+        :param: alpha
+        :return:
+        """
+
+        x_unit = u.Unit(x_unit)
+        y_unit = u.Unit(y_unit)
+
+        x_values = np.logspace(np.log10(xmin), np.log10(xmax), 400)
+
+        # Get the the number of samples
+        n_samples = self.analysis.raw_samples.shape[0]
+
+        fig = plt.figure(plot_num)
+        ax = fig.add_subplot(111)
+
+        # First see if we are plotting all the sources
+        if not sources_to_plot:  # Assuming plot all sources
+
+            sources_to_plot = self.analysis._likelihood_model.point_sources.keys()
+
+        # this is a kludge at the moment. Model number may vary!
+        num_models = len(
+            self.analysis._likelihood_model.point_sources[sources_to_plot[0]].spectrum.main.composite.functions)
+
+        color = np.linspace(0., 1., len(sources_to_plot) * num_models)
+        color_itr = 0
+        for source in sources_to_plot:
+
+            composite_model = self.analysis._likelihood_model.point_sources[source].spectrum.main.composite
+            models = self._solve_for_component_flux(composite_model)
+
+            # Check the type of function we want
+            spectrum_type = self._get_spectrum_type(y_unit)
+
+            x_range = x_values * x_unit
+            y_vals_per_comp = []
+            errors_per_comp = []
+            for model in models:
+
+                # Check the  type of function we want
+                spectrum_type = self._get_spectrum_type(y_unit)
+
+                # Set the x values to the proper unit
+                x_range = x_values * x_unit
+
+                # Retrieve the right flux function (phts, energy, vfv)
+                flux_function = self._get_flux_function(spectrum_type, model, y_unit)
+
+                # temporary list to store the propagated samples
+                tmp = []
+
+                # go through the thinned samples
+                for i in range(0, n_samples, thin):
+
+                    # go through parameters
+                    for par in self.analysis.samples.keys():
+                        mod_par = par.split('.')[-1]
+                        composite_model.free_parameters[mod_par].value = self.analysis.samples[par][i]
+
+                    # get the flux for the this sample
+                    tmp.append(flux_function(x_range))
+
+                tmp = np.array(tmp).T
+
+                # pull the highest denisty posterior at the choosen alpha level
+                contours = np.array([self.analysis._hpd(mc, alpha=alpha) for mc in tmp])
+
+                ax.fill_between(x_range,
+                                contours[:, 0]*y_unit,
+                                contours[:, 1]*y_unit,
+                                color=plt.cm.Set1(color[color_itr]),
+                                alpha=.6)
+
+                ax.set_xscale('log')
+                ax.set_yscale('log')
+
                 color_itr += 1
 
     @staticmethod
