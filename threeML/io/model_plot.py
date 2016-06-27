@@ -24,7 +24,13 @@ class SpectralPlotter(object):
     def __init__(self, analysis):
         quantity_support()
 
+
+        # looking at adding together multiple analysis This may be removed
+
         # Determine the type of analysis
+
+
+
 
         self._analysis_type = analysis._analysis_type
 
@@ -119,6 +125,11 @@ class SpectralPlotter(object):
             fit_cmap = plt.cm.Set1
 
         x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
+
+
+        # looping of all analysis provided:
+
+
 
         # Get the the number of samples
         n_samples = self.analysis.raw_samples.shape[0]
