@@ -32,7 +32,7 @@ class SpectralPlotter(object):
 
     def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
                    ene_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None,
-                   contour_cmap=None, **kwargs):
+                   contour_cmap=None, contour_alpha=0.6, **kwargs):
         """
         Plot the model and the model contours for the selected sources.
 
@@ -49,20 +49,23 @@ class SpectralPlotter(object):
         :param legend: (bool) include legend
         :param fit_cmap: a matplotlib color map for the fit
         :param contour_cmap: a matplotlib color map for the contours (MLE only)
+        :param contour_alpha: transparency of contours
         :param kwargs: keyword args
         """
 
         if self._analysis_type == "mle":
-            self._plot_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, legend, fit_cmap,
-                           contour_cmap, **kwargs)
+            self._plot_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, legend,
+                           fit_cmap,
+                           contour_cmap, contour_alpha, **kwargs)
 
         elif self._analysis_type == "bayesian":
             self._plot_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, thin,
-                             alpha, legend, fit_cmap, **kwargs)
+                             alpha, legend, fit_cmap, contour_alpha, **kwargs)
 
     def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
                         ene_max=1E4, num_ene=300,
-                        plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_cmap=None, **kwargs):
+                        plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_cmap=None,
+                        contour_alpha=0.6, **kwargs):
         """
         Plot the components of a fits and their associated contours
 
@@ -79,6 +82,7 @@ class SpectralPlotter(object):
         :param legend: (bool) include legend
         :param fit_cmap: a matplotlib color map for the fit
         :param contour_cmap: a matplotlib color map for the contours (MLE only)
+        :param contour_alpha: transparency of contours
         :param kwargs: keyword args
 
         """
@@ -87,16 +91,18 @@ class SpectralPlotter(object):
 
             self._plot_component_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num,
                                      legend,
-                                     fit_cmap, contour_cmap, **kwargs)
+                                     fit_cmap, contour_cmap, contour_alpha, **kwargs)
 
         elif self._analysis_type == "bayesian":
 
-            self._plot_component_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, thin,
-                                       alpha, legend, fit_cmap, **kwargs)
+            self._plot_component_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num,
+                                       thin,
+                                       alpha, legend, fit_cmap, contour_alpha, **kwargs)
 
     def _plot_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
                     ene_max=1E4,
-                    num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, **kwargs):
+                    num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_alpha=0.6,
+                    **kwargs):
         """
         Should not be called directly!
         """
@@ -170,7 +176,9 @@ class SpectralPlotter(object):
                                 contours[:, 0] * y_unit,
                                 contours[:, 1] * y_unit,
                                 color=fit_cmap(color[color_itr]),
-                                alpha=.6, label=source)
+                                alpha=contour_alpha,
+                                label=source,
+                                **kwargs)
 
                 ax.set_xscale('log')
                 ax.set_yscale('log')
@@ -186,13 +194,16 @@ class SpectralPlotter(object):
                             contours_summed[:, 0] * y_unit,
                             contours_summed[:, 1] * y_unit,
                             color=fit_cmap(color[color_itr]),
-                            alpha=.6, label=source)
+                            alpha=contour_alpha,
+                            label=source,
+                            **kwargs)
 
             ax.set_xscale('log')
             ax.set_yscale('log')
 
     def _plot_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False,
                   ene_min=10., ene_max=1E4, num_ene=300, plot_num=1, legend=True, fit_cmap=None, contour_cmap=None,
+                  contour_alpha=0.6,
                   **kwargs):
 
         """
@@ -248,8 +259,8 @@ class SpectralPlotter(object):
                 ax.loglog(x_range,
                           y_val,
                           color=fit_cmap(color[color_itr]),
-                          lw=.6,
-                          label=source)
+                          label=source,
+                          **kwargs)
 
                 up_y = y_val + err
                 down_y = y_val - err
@@ -258,8 +269,8 @@ class SpectralPlotter(object):
                                 down_y,
                                 up_y,
                                 facecolor=contour_cmap(color[color_itr]),
-                                alpha=0.5,
-                                lw=0.)
+                                alpha=contour_alpha,
+                                **kwargs)
 
                 ax.set_xscale('log')
                 ax.set_yscale('log')
@@ -285,14 +296,15 @@ class SpectralPlotter(object):
                             down_y,
                             up_y,
                             facecolor=contour_cmap(color[color_itr]),
-                            alpha=0.5,
-                            lw=0.)
+                            alpha=contour_alpha,
+                            **kwargs)
 
             ax.set_xscale('log')
             ax.set_yscale('log')
 
     def _plot_component_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
                             ene_max=1E4, num_ene=300, plot_num=1, legend=True, fit_cmap=None, contour_cmap=None,
+                            contour_alpha=0.6,
                             **kwargs):
 
         self.analysis.restore_best_fit()
@@ -361,12 +373,13 @@ class SpectralPlotter(object):
                                     y_val[pos_mask] - err[pos_mask],
                                     y_val[pos_mask] + err[pos_mask],
                                     color=contour_cmap(color[color_itr]),
-                                    alpha=.8)
+                                    alpha=contour_alpha)
 
                     ax.loglog(x_range[pos_mask],
                               y_val[pos_mask],
                               color=fit_cmap(color[color_itr]),
-                              lw=.8, label='%s:%s' % (source, name))
+                              label='%s:%s' % (source, name),
+                              **kwargs)
 
                     ax.set_xscale('log')
                     ax.set_yscale('log')
@@ -398,12 +411,13 @@ class SpectralPlotter(object):
                                 y_val[pos_mask] - err[pos_mask],
                                 y_val[pos_mask] + err[pos_mask],
                                 color=contour_cmap(color[color_itr]),
-                                alpha=.8)
+                                alpha=contour_alpha)
 
                 ax.loglog(x_range[pos_mask],
                           y_val[pos_mask],
                           color=fit_cmap(color[color_itr]),
-                          lw=.8, label='%s' % name)
+                          label='%s' % name,
+                          **kwargs)
 
                 ax.set_xscale('log')
                 ax.set_yscale('log')
@@ -412,7 +426,8 @@ class SpectralPlotter(object):
 
                 color_itr += 1
 
-    def _plot_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
+    def _plot_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False,
+                              ene_min=10.,
                               ene_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None,
                               **kwargs):
         """
@@ -506,7 +521,8 @@ class SpectralPlotter(object):
                                     contour[:, 1] * y_unit,
                                     color=fit_cmap(color[color_itr]),
                                     alpha=.6,
-                                    label='%s:%s' % (source, name))
+                                    label='%s:%s' % (source, name),
+                                    **kwargs)
 
                     ax.set_xscale('log')
                     ax.set_yscale('log')
@@ -536,7 +552,8 @@ class SpectralPlotter(object):
                                 contour[:, 1] * y_unit,
                                 color=fit_cmap(color[color_itr]),
                                 alpha=.6,
-                                label='%s' % (name))
+                                label='%s' % (name),
+                                **kwargs)
 
                 ax.set_xscale('log')
                 ax.set_yscale('log')
