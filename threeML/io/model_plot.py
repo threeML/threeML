@@ -380,6 +380,9 @@ class SpectralPlotter(object):
                     color_itr += 1
         elif sum:
 
+            color = np.linspace(0., 1., len(models))
+            color_itr = 0
+
             # There is an assumption that sources have the same models... may have to alter this!
             y_values_summed = np.array(y_values).sum(axis=0)*y_unit
             errors_summed   = np.array(errors)**2
@@ -416,15 +419,6 @@ class SpectralPlotter(object):
 
 
 
-
-
-
-
-
-
-
-
-
     def _plot_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, ene_min=10.,
                               ene_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None,
                               **kwargs):
@@ -456,8 +450,9 @@ class SpectralPlotter(object):
         num_models = len(
             self.analysis._likelihood_model.point_sources[sources_to_plot[0]].spectrum.main.composite.functions)
 
-        color = np.linspace(0., 1., len(sources_to_plot) * num_models)
-        color_itr = 0
+
+
+        all_contours = []
         for source in sources_to_plot:
 
             composite_model = self.analysis._likelihood_model.point_sources[source].spectrum.main.composite
@@ -467,8 +462,8 @@ class SpectralPlotter(object):
             spectrum_type = self._get_spectrum_type(y_unit)
 
             x_range = x_values * x_unit
-            y_vals_per_comp = []
-            errors_per_comp = []
+
+            contours_per_component = []
             for model in models:
 
                 # Check the  type of function we want
@@ -499,16 +494,67 @@ class SpectralPlotter(object):
                 # pull the highest denisty posterior at the choosen alpha level
                 contours = np.array([self.analysis._hpd(mc, alpha=alpha) for mc in tmp])
 
+                contours_per_component.append(contours)
+
+            all_contours.append(contours_per_component)
+
+        color = np.linspace(0., 1., len(sources_to_plot) * num_models)
+        color_itr = 0
+
+        if not sum:
+
+            for contour_pc, source in zip(all_contours,sources_to_plot):
+
+
+                model_names = [func.name for func in
+                               self.analysis._likelihood_model.point_sources[source].spectrum.main.composite.functions]
+
+
+                for contour,name in zip(contour_pc,model_names):
+
+                    ax.fill_between(x_range,
+                                    contour[:, 0] * y_unit,
+                                    contour[:, 1] * y_unit,
+                                    color=fit_cmap(color[color_itr]),
+                                    alpha=.6,
+                                    label='%s:%s'%(source,name))
+
+                    ax.set_xscale('log')
+                    ax.set_yscale('log')
+                    if legend:
+                        ax.legend(**kwargs)
+
+                    color_itr += 1
+
+
+
+        elif sum:
+
+            color = np.linspace(0., 1.,  num_models)
+            color_itr = 0
+            # Assumes all sources have the same model!
+            summed_contours = np.array(all_contours).sum(axis=0)
+
+            # This is a kludge that assumes all sources have the same model!
+            model_names = [func.name for func in
+                               self.analysis._likelihood_model.point_sources[sources_to_plot[0]].spectrum.main.composite.functions]
+
+            for contour, name in zip(summed_contours, model_names):
+
                 ax.fill_between(x_range,
-                                contours[:, 0] * y_unit,
-                                contours[:, 1] * y_unit,
-                                color=fit_cmap(color[color_itr]),
-                                alpha=.6)
+                                    contour[:, 0] * y_unit,
+                                    contour[:, 1] * y_unit,
+                                    color=fit_cmap(color[color_itr]),
+                                    alpha=.6,
+                                    label='%s'%(name))
 
-                ax.set_xscale('log')
-                ax.set_yscale('log')
+                    ax.set_xscale('log')
+                    ax.set_yscale('log')
+                    if legend:
+                        ax.legend(**kwargs)
 
-                color_itr += 1
+                    color_itr += 1
+
 
     @staticmethod
     def _derivative(f):
