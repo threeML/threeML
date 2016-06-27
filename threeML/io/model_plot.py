@@ -30,70 +30,75 @@ class SpectralPlotter(object):
 
         self.analysis = analysis
 
-    def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4,
-                   plot_num=1, thin=100, alpha=0.05):
+    def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, ene_min=10., ene_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_cmap=None , **kwargs):
         """
         Plot the model and the model contours for the selected sources.
 
-        :param x_unit:
-        :param y_unit:
-        :param sources_to_plot:
-        :param sum:
-        :param xmin:
-        :param xmax:
-        :param plot_num:
-        :param: thin
-        :param: alpha
+        :param x_unit: energy unit for x-axis
+        :param y_unit: spectral denisity unit for y-axis
+        :param sources_to_plot: list of str indicating which sources to plot
+        :param sum: (bool) sum sources
+        :param ene_min: minimum energy of x-axis
+        :param ene_max: maximum energy of x-axis
+        :param num_ene: number of energies to calculate
+        :param plot_num: figure number of plot
+        :param thin: thinning of bayesian samples (only for bayesian fits)
+        :param alpha: chance of type I error (only for bayesian fits)
+        :param legend: (bool) include legend
+        :param kwargs: keyword args
         """
 
         if self._analysis_type == "mle":
-            self._plot_mle(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num)
+            self._plot_mle(x_unit, y_unit, sources_to_plot, sum, ene_min, ene_max, num_ene, plot_num, legend, fit_cmap,contour_cmap, **kwargs)
 
         elif self._analysis_type == "bayesian":
-            self._plot_bayes(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num, thin, alpha)
+            self._plot_bayes(x_unit, y_unit, sources_to_plot, sum, ene_min, ene_max, num_ene, plot_num, thin, alpha. legend, fit_cmap, **kwargs)
 
-    def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4,
-                        plot_num=1, thin=100, alpha=0.05):
+    def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, ene_min=10., ene_max=1E4, num_ene=300,
+                        plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_cmap=None, **kwargs):
         """
         Plot the components of a fits and their associated contours
 
-        :param x_unit: str with astropy spectral density units
-        :param y_unit:
-        :param sources_to_plot:
-        :param sum:
-        :param xmin:
-        :param xmax:
-        :param plot_num:
+        :param x_unit: energy unit for x-axis
+        :param y_unit: spectral denisity unit for y-axis
+        :param sources_to_plot: list of str indicating which sources to plot
+        :param sum: (bool) sum sources
+        :param ene_min: minimum energy of x-axis
+        :param ene_max: maximum energy of x-axis
+        :param num_ene: number of energies to calculate
+        :param plot_num: figure number of plot
+        :param thin: thinning of bayesian samples (only for bayesian fits)
+        :param alpha: chance of type I error (only for bayesian fits)
+        :param legend: (bool) include legend
+        :param kwargs: keyword args
 
         """
 
         if self._analysis_type == "mle":
 
-            self._plot_component_mle(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num)
+            self._plot_component_mle(x_unit, y_unit, sources_to_plot, sum, ene_min, ene_max, num_ene, plot_num, legend, fit_cmap, contour_cmap, **kwargs)
 
         elif self._analysis_type == "bayesian":
 
-            self._plot_component_bayes(x_unit, y_unit, sources_to_plot, sum, xmin, xmax, plot_num, thin, alpha)
+            self._plot_component_bayes(x_unit, y_unit, sources_to_plot, sum, ene_min, ene_max, num_ene, plot_num, thin, alpha, legend, fit_cmap,  **kwargs)
 
-    def _plot_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10., xmax=1E4,
-                    plot_num=1, thin=100, alpha=0.05):
+    def _plot_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, ene_min=10., ene_max=1E4,
+        num_ene=300,    plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, **kwargs):
         """
-
-        :param x_unit:
-        :param y_unit:
-        :param sources_to_plot:
-        :param sum:
-        :param xmin:
-        :param xmax:
-        :param plot_num:
-        :param thin:
-        :param alpha:
+        Should not be called directly!
         """
 
         x_unit = u.Unit(x_unit)
         y_unit = u.Unit(y_unit)
 
-        x_values = np.logspace(np.log10(xmin), np.log10(xmax), 400)
+
+        if not fit_cmap:
+
+            fit_cmap=plt.cm.Set1
+
+
+
+        x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
 
         # Get the the number of samples
         n_samples = self.analysis.raw_samples.shape[0]
@@ -142,32 +147,46 @@ class SpectralPlotter(object):
             # pull the highest denisty posterior at the choosen alpha level
             contours = np.array([self.analysis._hpd(mc, alpha=alpha) for mc in tmp])
 
-            ax.fill_between(x_range,
-                            contours[:, 0]*y_unit,
-                            contours[:, 1]*y_unit,
-                            color=plt.cm.Set1(color[color_itr]),
-                            alpha=.6)
+            if not sum:
 
-            ax.set_xscale('log')
-            ax.set_yscale('log')
+                ax.fill_between(x_range,
+                contours[:, 0]*y_unit,
+                contours[:, 1]*y_unit,
+                color=fit_cmap(color[color_itr]),
+                alpha=.6,label=source)
+
+
+                ax.set_xscale('log')
+                ax.set_yscale('log')
+                if legend:
+                    ax.legend(**kwargs)
 
             color_itr += 1
 
     def _plot_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False,
-                  xmin=10., xmax=1E4, plot_num=1):
+                  ene_min=10., ene_max=1E4, num_ene=300, plot_num=1,legend=True, fit_cmap=None, contour_cmap=None, **kwargs):
 
         """
+        Should not be called directly!
 
-        :type sources_to_plot: object
         """
         self.analysis.restore_best_fit()
 
         x_unit = u.Unit(x_unit)
         y_unit = u.Unit(y_unit)
 
+        if not fit_cmap:
+
+            fit_cmap=plt.cm.Set1
+
+        if not contour_cmap:
+
+            contour_cmap=plt.cm.Set2
+
+
         # Initialize plotting arrays
         y_values = []
-        x_values = np.logspace(np.log10(xmin), np.log10(xmax), 300)
+        x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
         errors = []
 
         fig = plt.figure(plot_num)
@@ -196,36 +215,79 @@ class SpectralPlotter(object):
 
             errors.append(err * y_unit)
 
-        for y_val, err in zip(y_values, errors):
+        color = np.linspace(0., 1., len(sources_to_plot))
+        color_itr = 0
+        if not sum:
+            for y_val, err, source in zip(y_values, errors, sources_to_plot):
+                ax.loglog(x_range,
+                          y_val,
+                          color=fit_cmap(color[color_itr]),
+                          lw=.6,
+                          label = source)
+
+                up_y = y_val + err
+                down_y = y_val - err
+
+                ax.fill_between(x_range,
+                                down_y,
+                                up_y,
+                                facecolor=contour_cmap(color[color_itr]),
+                                alpha=0.5,
+                                lw=0.)
+
+                ax.set_xscale('log')
+                ax.set_yscale('log')
+                if legend:
+                    ax.legend(**kwargs)
+
+
+        elif sum:
+
+            y_values_summed = np.array(y_values).sum(axis=0)
+            errors_summed   = np.array(errors)
+            errors_summed   = np.sqrt((errors_summed**2).sum(axis=0))
+
             ax.loglog(x_range,
-                      y_val,
-                      color='#F4FA58',
+                      y_values_summed,
+                      color=fit_cmap(color[color_itr]),
                       lw=.6)
 
-            up_y = y_val + err
-            down_y = y_val - err
+            up_y = y_values_summed + errors_summed
+            down_y = y_values_summed - errors_summed
 
             ax.fill_between(x_range,
-                            down_y,
-                            up_y,
-                            facecolor='#0080FF',
-                            alpha=0.5,
-                            lw=0.)
+                                down_y,
+                                up_y,
+                                facecolor=contour_cmap(color[color_itr]),
+                                alpha=0.5,
+                                lw=0.)
 
             ax.set_xscale('log')
             ax.set_yscale('log')
 
-    def _plot_component_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=True, xmin=10.,
-                            xmax=1E4, plot_num=1):
+
+
+
+    def _plot_component_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, ene_min=10.,
+                            ene_max=1E4, num_ene=300, plot_num=1, legend=True, fit_cmap=None, contour_cmap=None, **kwargs):
 
         self.analysis.restore_best_fit()
 
         x_unit = u.Unit(x_unit)
         y_unit = u.Unit(y_unit)
 
+
+        if not fit_cmap:
+
+            fit_cmap=plt.cm.Set1
+
+        if not contour_cmap:
+
+            contour_cmap=plt.cm.Set2
+
         # Initialize plotting arrays
         y_values = []
-        x_values = np.logspace(np.log10(xmin), np.log10(xmax), 300)
+        x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
         errors = []
 
         fig = plt.figure(plot_num)
@@ -265,44 +327,48 @@ class SpectralPlotter(object):
 
         color = np.linspace(0., 1., len(sources_to_plot) * len(models))
         color_itr = 0
-        for y_val_pc, err_pc in zip(y_values, errors):
 
-            for y_val, err in zip(y_val_pc, err_pc):
-                pos_mask = np.logical_and(y_val > 0, err > 0)
+        if not sum:
+            for y_val_pc, err_pc, source in zip(y_values, errors, sources_to_plot):
 
-                ax.fill_between(x_range[pos_mask],
-                                y_val[pos_mask] - err[pos_mask],
-                                y_val[pos_mask] + err[pos_mask],
-                                color=plt.cm.Set3(color[color_itr]),
-                                alpha=.8)
+                model_names = [ func.name  for func in self.analysis.likelihood_model.point_sources[source].spectrum.main.composite.functions]
+                for y_val, err, name in zip(y_val_pc, err_pc,model_names):
+                    pos_mask = np.logical_and(y_val > 0, err > 0)
 
-                ax.loglog(x_range[pos_mask],
-                          y_val[pos_mask], color=plt.cm.Set1(color[color_itr]), lw=.8)
+                    ax.fill_between(x_range[pos_mask],
+                                    y_val[pos_mask] - err[pos_mask],
+                                    y_val[pos_mask] + err[pos_mask],
+                                    color=contour_cmap(color[color_itr]),
+                                    alpha=.8)
 
-                ax.set_xscale('log')
-                ax.set_yscale('log')
-                color_itr += 1
+                    ax.loglog(x_range[pos_mask],
+                              y_val[pos_mask],
+                              color=fit_cmap(color[color_itr]),
+                              lw=.8,label= "%s:%s"%(source,name))
 
-    def _plot_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, xmin=10.,
-                              xmax=1E4, plot_num=1, thin=100, alpha=0.05):
+                    ax.set_xscale('log')
+                    ax.set_yscale('log')
+                    if legend:
+                        ax.legend(**kwargs)
+
+                    color_itr += 1
+
+    def _plot_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, ene_min=10.,
+                              ene_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, **kwargs):
         """
+        Should not be called directly
 
-        :param x_unit:
-        :param y_unit:
-        :param sources_to_plot:
-        :param sum:
-        :param xmin:
-        :param xmax:
-        :param plot_num:
-        :param thin:
-        :param: alpha
-        :return:
         """
 
         x_unit = u.Unit(x_unit)
         y_unit = u.Unit(y_unit)
 
-        x_values = np.logspace(np.log10(xmin), np.log10(xmax), 400)
+        if not fit_cmap:
+
+            fit_cmap=plt.cm.Set1
+
+
+        x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
 
         # Get the the number of samples
         n_samples = self.analysis.raw_samples.shape[0]
@@ -365,7 +431,7 @@ class SpectralPlotter(object):
                 ax.fill_between(x_range,
                                 contours[:, 0]*y_unit,
                                 contours[:, 1]*y_unit,
-                                color=plt.cm.Set1(color[color_itr]),
+                                color=fit_cmap(color[color_itr]),
                                 alpha=.6)
 
                 ax.set_xscale('log')
