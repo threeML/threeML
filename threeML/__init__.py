@@ -170,6 +170,10 @@ def is_plugin_available(plugin):
 
         return False
 
+
+# Added by JM to import spectral plotting.
+from .io.model_plot import SpectralPlotter
+
 from .parallel.parallel_client import parallel_computation
 
 # Now read the configuration and make it available as threeML_config
