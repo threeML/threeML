@@ -1,4 +1,4 @@
-def step_plot(xbins,y,ax,color='b',lw=1.,ls='-',fill=False,fillAlpha=1.,**keywords):
+def step_plot(xbins,y,ax,color='b',lw=1.,ls='-',fill=False,fillAlpha=.6,fill_min=0,**keywords):
     '''
     Routine for plotting a in steps with the ability to fill the plot
     xbins is a 2D list of start and stop values.
@@ -13,7 +13,7 @@ def step_plot(xbins,y,ax,color='b',lw=1.,ls='-',fill=False,fillAlpha=1.,**keywor
         x.append(t[1])
         newy.append(v)
     if fill:
-        ax.fill_between(x,newy,0,color=color,linewidth=lw,linestyle=ls,alpha=fillAlpha)
+        ax.fill_between(x,newy,fill_min,color=color,linewidth=lw,linestyle=ls,alpha=fillAlpha)
     else:
         ax.plot(x,newy,color=color,linewidth=lw,linestyle=ls,**keywords)
     

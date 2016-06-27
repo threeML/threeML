@@ -287,9 +287,9 @@ class OGIPPluginBase(object):
         '''
         # First plot the counts
         _ = gbm_channel_plot(self.response.ebounds[:, 0], self.response.ebounds[:, 1], self.counts_backup,
-                             color='#377eb8', lw=2, alpha=1)
+                             color='#377eb8', lw=2, alpha=1, label="Total")
         ax = gbm_channel_plot(self.response.ebounds[:, 0], self.response.ebounds[:, 1], self.bkgCounts_backup,
-                              color='#e41a1c', alpha=.8)
+                              color='#e41a1c', alpha=.8, label="Background")
         # Now fade the non-used channels
         excluded_channel_plot(self.response.ebounds[:, 0], self.response.ebounds[:, 1], self.mask, self.counts_backup,
                               self.bkgCounts_backup, ax)
@@ -297,6 +297,7 @@ class OGIPPluginBase(object):
         ax.set_xlabel("Energy (keV)")
         ax.set_ylabel("Counts/keV")
         ax.set_xlim(left=self.response.ebounds[0, 0], right=self.response.ebounds[-1, 1])
+        ax.legend()
 
     def use_intercalibration_constant(self, factorLowBound=0.9, factorHiBound=1.1):
 
@@ -842,18 +843,26 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):
     fig = plt.figure(777)
     ax = fig.add_subplot(111)
 
-    maxCnts = max(cnts / width)
-    top = maxCnts + maxCnts * .2
-    minCnts = min(cnts[cnts > 0] / width)
-    bottom = minCnts - minCnts * .2
+    max_cnts = max(cnts / width)
+    top = max_cnts + max_cnts * .2
+    min_cnts = min(cnts[cnts > 0] / width)
+    bottom = min_cnts - min_cnts * .05
     mean_time = map(np.mean, time_bins)
 
-    step_plot(time_bins, cnts / width, ax, color='#8da0cb')
+    selection_mask = np.logical_and(time_bins[:,0] >= selection[0], time_bins[:,1] <= selection[1])
 
-    ax.plot(mean_time, bkg, '#66c2a5', lw=2.)
+    step_plot(time_bins, cnts / width, ax, color='#8da0cb',label="Light Curve")
+    step_plot(time_bins[selection_mask], cnts[selection_mask] / width, ax,
+              color='#fc8d62',
+              fill=True,
+              fill_min=min_cnts,label="Selection")
 
-    ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
+
+    ax.plot(mean_time, bkg, '#66c2a5', lw=2., label = "Background")
+
+    #ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
 
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Rate (cnts/s)")
     ax.set_ylim(bottom, top)
+    ax.legend()
