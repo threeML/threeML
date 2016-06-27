@@ -398,23 +398,23 @@ class SpectralPlotter(object):
 
                 pos_mask = np.logical_and(y_val > 0, err > 0)
 
-                    ax.fill_between(x_range[pos_mask],
-                                    y_val[pos_mask] - err[pos_mask],
-                                    y_val[pos_mask] + err[pos_mask],
-                                    color=contour_cmap(color[color_itr]),
-                                    alpha=.8)
+                ax.fill_between(x_range[pos_mask],
+                                y_val[pos_mask] - err[pos_mask],
+                                y_val[pos_mask] + err[pos_mask],
+                                color=contour_cmap(color[color_itr]),
+                                alpha=.8)
 
-                    ax.loglog(x_range[pos_mask],
-                              y_val[pos_mask],
-                              color=fit_cmap(color[color_itr]),
-                              lw=.8, label='%s' % name)
+                ax.loglog(x_range[pos_mask],
+                          y_val[pos_mask],
+                          color=fit_cmap(color[color_itr]),
+                          lw=.8, label='%s' % name)
 
-                    ax.set_xscale('log')
-                    ax.set_yscale('log')
-                    if legend:
-                        ax.legend(**kwargs)
+                ax.set_xscale('log')
+                ax.set_yscale('log')
+                if legend:
+                    ax.legend(**kwargs)
 
-                    color_itr += 1
+                color_itr += 1
 
 
 
