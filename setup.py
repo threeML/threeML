@@ -16,15 +16,24 @@ execfile('threeML/version.py')
 def is_module_available(module_name):
 
     # Fast path: see if the module has already been imported.
-
+    # Also check if the module is lower case named on some systems
     try:
 
         exec('import %s' % module_name)
 
     except ImportError:
 
-        return False
+        try:
+            
+            exec('import %s' % module_name.lower())
 
+        except ImportError:
+
+            return False
+
+        else:
+
+            return True
     else:
 
         return True
