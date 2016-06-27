@@ -85,8 +85,9 @@ class SpectralPlotter(object):
 
         if self._analysis_type == "mle":
 
-            return self._plot_component_mle(x_unit, y_unit, sources_to_plot, sum, ene_min, ene_max, num_ene, plot_num, legend,
-                                     fit_cmap, contour_cmap, **kwargs)
+            return self._plot_component_mle(x_unit, y_unit, sources_to_plot, sum, ene_min, ene_max, num_ene, plot_num,
+                                            legend,
+                                            fit_cmap, contour_cmap, **kwargs)
 
         elif self._analysis_type == "bayesian":
 
@@ -122,7 +123,6 @@ class SpectralPlotter(object):
 
         # container for contours
         all_contours = []
-
 
         for source in sources_to_plot:
 
@@ -164,8 +164,7 @@ class SpectralPlotter(object):
 
         if not sum:
 
-
-            for source, contours in zip(sources_to_plot,all_contours):
+            for source, contours in zip(sources_to_plot, all_contours):
 
                 ax.fill_between(x_range,
                                 contours[:, 0] * y_unit,
@@ -184,15 +183,13 @@ class SpectralPlotter(object):
 
             contours_summed = np.array(contours).sum(axis=0)
             ax.fill_between(x_range,
-                                contours_summed[:, 0] * y_unit,
-                                contours_summed[:, 1] * y_unit,
-                                color=fit_cmap(color[color_itr]),
-                                alpha=.6, label=source)
+                            contours_summed[:, 0] * y_unit,
+                            contours_summed[:, 1] * y_unit,
+                            color=fit_cmap(color[color_itr]),
+                            alpha=.6, label=source)
 
             ax.set_xscale('log')
             ax.set_yscale('log')
-
-
 
     def _plot_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False,
                   ene_min=10., ene_max=1E4, num_ene=300, plot_num=1, legend=True, fit_cmap=None, contour_cmap=None,
@@ -206,7 +203,6 @@ class SpectralPlotter(object):
 
         x_unit = u.Unit(x_unit)
         y_unit = u.Unit(y_unit)
-
 
         if not fit_cmap:
             fit_cmap = plt.cm.Set1
@@ -384,17 +380,17 @@ class SpectralPlotter(object):
             color_itr = 0
 
             # There is an assumption that sources have the same models... may have to alter this!
-            y_values_summed = np.array(y_values).sum(axis=0)*y_unit
-            errors_summed   = np.array(errors)**2
-            errors_summed   = np.sqrt(errors_summed.sum(axis=0))*y_unit
+            y_values_summed = np.array(y_values).sum(axis=0) * y_unit
+            errors_summed = np.array(errors) ** 2
+            errors_summed = np.sqrt(errors_summed.sum(axis=0)) * y_unit
 
             # This is a kludge assuming all sources have the same models
 
             model_names = [func.name for func in
-                               self.analysis.likelihood_model.point_sources[sources_to_plot[0]].spectrum.main.composite.functions]
+                           self.analysis.likelihood_model.point_sources[
+                               sources_to_plot[0]].spectrum.main.composite.functions]
 
-            for y_val, err, name in zip(y_values_summed,errors_summed, model_names):
-
+            for y_val, err, name in zip(y_values_summed, errors_summed, model_names):
 
                 pos_mask = np.logical_and(y_val > 0, err > 0)
 
@@ -415,9 +411,6 @@ class SpectralPlotter(object):
                     ax.legend(**kwargs)
 
                 color_itr += 1
-
-
-
 
     def _plot_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], sum=False, ene_min=10.,
                               ene_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None,
@@ -449,8 +442,6 @@ class SpectralPlotter(object):
         # this is a kludge at the moment. Model number may vary!
         num_models = len(
             self.analysis._likelihood_model.point_sources[sources_to_plot[0]].spectrum.main.composite.functions)
-
-
 
         all_contours = []
         for source in sources_to_plot:
@@ -503,21 +494,19 @@ class SpectralPlotter(object):
 
         if not sum:
 
-            for contour_pc, source in zip(all_contours,sources_to_plot):
-
+            for contour_pc, source in zip(all_contours, sources_to_plot):
 
                 model_names = [func.name for func in
                                self.analysis._likelihood_model.point_sources[source].spectrum.main.composite.functions]
 
-
-                for contour,name in zip(contour_pc,model_names):
+                for contour, name in zip(contour_pc, model_names):
 
                     ax.fill_between(x_range,
                                     contour[:, 0] * y_unit,
                                     contour[:, 1] * y_unit,
                                     color=fit_cmap(color[color_itr]),
                                     alpha=.6,
-                                    label='%s:%s'%(source,name))
+                                    label='%s:%s' % (source, name))
 
                     ax.set_xscale('log')
                     ax.set_yscale('log')
@@ -530,31 +519,31 @@ class SpectralPlotter(object):
 
         elif sum:
 
-            color = np.linspace(0., 1.,  num_models)
+            color = np.linspace(0., 1., num_models)
             color_itr = 0
             # Assumes all sources have the same model!
             summed_contours = np.array(all_contours).sum(axis=0)
 
             # This is a kludge that assumes all sources have the same model!
             model_names = [func.name for func in
-                               self.analysis._likelihood_model.point_sources[sources_to_plot[0]].spectrum.main.composite.functions]
+                           self.analysis._likelihood_model.point_sources[
+                               sources_to_plot[0]].spectrum.main.composite.functions]
 
             for contour, name in zip(summed_contours, model_names):
 
                 ax.fill_between(x_range,
-                                    contour[:, 0] * y_unit,
-                                    contour[:, 1] * y_unit,
-                                    color=fit_cmap(color[color_itr]),
-                                    alpha=.6,
-                                    label='%s'%(name))
+                                contour[:, 0] * y_unit,
+                                contour[:, 1] * y_unit,
+                                color=fit_cmap(color[color_itr]),
+                                alpha=.6,
+                                label='%s' % (name))
 
-                    ax.set_xscale('log')
-                    ax.set_yscale('log')
-                    if legend:
-                        ax.legend(**kwargs)
+                ax.set_xscale('log')
+                ax.set_yscale('log')
+                if legend:
+                    ax.legend(**kwargs)
 
-                    color_itr += 1
-
+                color_itr += 1
 
     @staticmethod
     def _derivative(f):
