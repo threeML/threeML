@@ -56,7 +56,7 @@ from .plugin_prototype import PluginPrototype
 try:
 
     # noinspection PyUnresolvedReferences
-    from cthreeML.pyModelInterface import pyToCppModelInterface
+    from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 
 except ImportError:
 
