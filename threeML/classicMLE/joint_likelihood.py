@@ -48,6 +48,8 @@ class JointLikelihood(object):
         :return:
         """
 
+        self._analysis_type = "mle"
+
         # Process optional keyword parameters
         self.verbose = verbose
 

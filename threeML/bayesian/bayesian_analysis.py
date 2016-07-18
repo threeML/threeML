@@ -82,6 +82,8 @@ class BayesianAnalysis(object):
         :return:
         """
 
+        self._analysis_type = "bayesian"
+
         # Verify that all the free parameters have priors
         for parameter_name, parameter in likelihood_model.free_parameters.iteritems():
 
