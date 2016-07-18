@@ -154,6 +154,10 @@ class FermiGBMLikeTTE(OGIPPluginPGstat, PluginPrototype):
 
             bkg.append(tmpbkg)
 
+
+
+
+
         gbm_light_curve_plot(time_bins, cnts, bkg, dt, selection=[self.tmin, self.tmax])
 
     def _fitGlobalAndDetermineOptimumGrade(self, cnts, bins):
