@@ -103,8 +103,6 @@ if has_parallel:
             :return:
             """
 
-            import pdb;pdb.set_trace()
-
             # Just a wrapper around the IPython Client class
             # forcing the use of dill for object serialization
             # (more robust, and allows for serialization of class
