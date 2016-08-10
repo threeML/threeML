@@ -151,9 +151,17 @@ if has_parallel:
                     if stdout:
 
                         # Find the progress bar (if any)
-                        progress_bar = re.findall('(\[[\*0-9\.\%\s]+\].+\n)', stdout)[-1]
+                        tokens = re.findall('(\[[\*0-9\.\%\s]+\].+\n)', stdout)
 
-                        print("%s" % progress_bar)
+                        if tokens is not None:
+
+                            progress_bar = tokens[-1]
+
+                            print("%s" % progress_bar)
+
+                        else:
+
+                            print("Engine is starting up")
 
                 sys.stdout.flush()
 
