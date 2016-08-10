@@ -97,10 +97,12 @@ def get_hessian(function, point, minima, maxima):
 
             distance_to_max = np.inf
 
-        # Delta is the minimum between 3% of the value, and half of the minimum
-        # distance to either boundary
+        # Delta is the minimum between 3% of the value, and 1/2.5 times the minimum
+        # distance to either boundary. 1/2 of that factor is due to the fact that numdifftools uses
+        # twice the delta to compute the differential, and the 0.5 is due to the fact that we don't want
+        # to go exactly equal to the boundary
 
-        scaled_deltas[i] = min([0.03 * abs(scaled_point[i]), distance_to_max / 2.0, distance_to_min / 2.0])
+        scaled_deltas[i] = min([0.03 * abs(scaled_point[i]), distance_to_max / 2.5, distance_to_min / 2.5])
 
     # Compute the Hessian matrix at best_fit_values
 
