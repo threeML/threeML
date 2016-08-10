@@ -151,9 +151,9 @@ if has_parallel:
                     if stdout:
 
                         # Find the progress bar (if any)
-                        tokens = re.findall('(\[[\*0-9\.\%\s]+\].+\n)', stdout)
+                        tokens = re.findall('(\[[\*0-9\.\%\s]+\].+\n)', stdout[-1000:])
 
-                        if tokens is not None:
+                        if len(tokens) > 0:
 
                             progress_bar = tokens[-1]
 
