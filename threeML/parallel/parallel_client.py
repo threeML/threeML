@@ -145,11 +145,11 @@ if has_parallel:
                 print "%.3fs elapsed" % ar.elapsed
                 print ""
 
-                for eid, stdout in zip(ar._targets, ar.stdout):
+                for stdout in ar.stdout:
 
                     if stdout:
 
-                        print "[ stdout %2i ]\n%s" % (eid, stdout[-truncate:])
+                        print("%s" % (stdout[-truncate:]))
 
                 sys.stdout.flush()
 
