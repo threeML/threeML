@@ -262,7 +262,7 @@ class JointLikelihood(object):
 
         minus_log_likelihood_values = collections.OrderedDict()
 
-        minus_log_likelihood_values['all'] = self._current_minimum
+        minus_log_likelihood_values['total'] = self._current_minimum
 
         total = 0
 
@@ -278,7 +278,13 @@ class JointLikelihood(object):
 
         print("\nValues of -log(likelihood) at the minimum:\n")
 
-        loglike_dataframe = pd.DataFrame(minus_log_likelihood_values.items(), columns=['instrument','-log(likelihood)'])
+        # Generate data frame and display it
+
+        logl_results = collections.OrderedDict()
+
+        logl_results['-log(likelihood)'] = pd.Series(minus_log_likelihood_values)
+
+        loglike_dataframe = pd.DataFrame(logl_results)
 
         display(loglike_dataframe)
 
@@ -754,6 +760,11 @@ class JointLikelihood(object):
         :return: (none)
         """
 
+        assert minimizer.upper() in minimization._minimizers, "Minimizer %s is not available on this system. Available " \
+                                                              "minimizers: " \
+                                                              "%s" % (minimizer,
+                                                                      ",".join(minimization._minimizers.keys()))
+
         if minimizer.upper() == "MINUIT":
 
             self._minimizer_name = "MINUIT"
@@ -761,14 +772,10 @@ class JointLikelihood(object):
 
         elif minimizer.upper() == "ROOT":
 
-            assert minimization.has_ROOT, "pyROOT not available on this system. Cannot use ROOT minimizer."
-
             self._minimizer_name = "ROOT"
             self._minimizer_algorithm = None
 
         elif minimizer.upper() == "PYOPT":
-
-            assert minimization.has_pyOpt, "pyOpt not available on this system. Cannot use PYOPT minimizer."
 
             assert algorithm is not None, "You have to provide an algorithm for the PYOPT minimizer. " \
                                           "See http://www.pyopt.org/reference/optimizers.html"
@@ -780,9 +787,15 @@ class JointLikelihood(object):
                                                                         "%s" % minimization._pyopt_algorithms.keys()
             self._minimizer_algorithm = algorithm.upper()
 
+        elif minimizer.upper() == "MULTINEST":
+
+            self._minimizer_name = "MULTINEST"
+            self._minimizer_algorithm = None
+
         else:
 
-            raise ValueError("Do not know minimizer %s" % minimizer)
+            raise ValueError("Do not know minimizer %s. "
+                             "Available minimizers are: %s" % (minimizer, ",".join(minimization._minimizers.keys())))
 
         # Get the type
 
