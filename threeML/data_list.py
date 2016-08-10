@@ -29,16 +29,16 @@ class DataList(object):
 
                 self._inner_dictionary[d.get_name()] = d
 
-    def __setitem__(self, key, value):
+    def insert(self, dataset):
 
         # Enforce the unique name
-        if key in self.keys():
+        if dataset.get_name() in self.keys():
 
             raise RuntimeError("You have to use unique names for data sets. %s already exists." % key)
 
         else:
 
-            self._inner_dictionary[key] = value
+            self._inner_dictionary[dataset.get_name()] = dataset
 
     def __getitem__(self, key):
 
