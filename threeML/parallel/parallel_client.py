@@ -155,9 +155,9 @@ if has_parallel:
 
                         if len(tokens) > 0:
 
-                            progress_bar = tokens[-1]
+                            last_progress_bar = tokens[-1].split("\r")[-2]
 
-                            print("%s" % progress_bar)
+                            print("%s" % last_progress_bar)
 
                         else:
 
