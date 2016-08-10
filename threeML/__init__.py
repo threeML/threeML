@@ -170,6 +170,8 @@ def is_plugin_available(plugin):
 
         return False
 
+# Import the joint likelihood set
+from .classicMLE.joint_likelihood_set import JointLikelihoodSet
 
 # Added by JM to import spectral plotting.
 from .io.model_plot import SpectralPlotter
