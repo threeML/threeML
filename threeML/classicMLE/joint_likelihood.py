@@ -566,7 +566,7 @@ class JointLikelihood(object):
 
             amr = lview.map_async(worker, range(n_engines))
 
-            client.wait_watching_stdout(amr, 1, 1000)
+            client.wait_watching_stdout(amr, 1, 1)
 
             # print progress
 
