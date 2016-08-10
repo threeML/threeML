@@ -33,6 +33,7 @@ import exceptions
 
 import sys
 import time
+import re
 from IPython.display import clear_output
 
 class NoParallelEnvironment(exceptions.UserWarning):
@@ -149,7 +150,10 @@ if has_parallel:
 
                     if stdout:
 
-                        print("%s" % (stdout[-truncate:]))
+                        # Find the progress bar (if any)
+                        progress_bar = re.findall('(\[[\*0-9\.\%\s]+\].+\n)', stdout)[-1]
+
+                        print("%s" % progress_bar)
 
                 sys.stdout.flush()
 
