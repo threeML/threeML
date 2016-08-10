@@ -3,10 +3,7 @@ import math
 
 import numpy as np
 import pandas as pd
-import numdifftools as nd
 from iminuit import Minuit
-
-from astromodels import SettingOutOfBounds
 
 from threeML.io.progress_bar import ProgressBar
 import scipy.optimize
@@ -18,30 +15,6 @@ from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
 
 custom_warnings.simplefilter("always", RuntimeWarning)
 
-
-try:
-
-    import ROOT
-
-except ImportError:
-
-    has_ROOT = False
-
-else:
-
-    has_ROOT = True
-
-try:
-
-    import pyOpt
-
-except ImportError:
-
-    has_pyOpt = False
-
-else:
-
-    has_pyOpt = True
 
 # Special constants
 FIT_FAILED = 1e12
@@ -133,6 +106,135 @@ class FunctionWrapper(object):
         self._all_values[~self._indexes_of_fixed_par] = trial_values
 
         return self._function(*self._all_values)
+
+
+class ContourWorker(object):
+
+    def __init__(self, function, minuit_values, minuit_args, minuit_param_1, minuit_param_2, name_to_position):
+
+        self._minuit_values = minuit_values
+
+        # Update the values for the parameters with the best fit one
+
+        for key, value in self._minuit_values.iteritems():
+            minuit_args[key] = value
+
+        # This is a likelihood
+        minuit_args['errordef'] = 0.5
+
+        # Disable printing by iminuit
+
+        minuit_args['print_level'] = 0
+
+        self._minuit_args = minuit_args
+
+        # Store the name of the parameters
+
+        self.minuit_param_1 = minuit_param_1
+        self.minuit_param_2 = minuit_param_2
+
+        # Store the function
+        self._function = function
+
+        # This is a dictionary which gives the ordinal place for a given parameter.
+        # It is used in the corner case where the function has only two parameters,
+        # to figure out which is the correct order
+
+        self.name_to_position = name_to_position
+
+    def _create_new_minuit_object(self, args):
+
+        # Now create the new minimizer
+
+        _contour_minuit = Minuit(self._function, **args)
+
+        _contour_minuit.tol = 100
+
+        return _contour_minuit
+
+    def __call__(self, args):
+
+        # Get the values for the parameters
+        # If we are stepping in only one direction, value_2 will be nan
+
+        value_1, value_2 = args
+
+        # NOTE: unfortunately iminuit does not allow to change the value of a fixed parameter after
+        # the creation of the Minuit class. Hence we need to create a new class each time,
+        # which sucks
+
+        # Create a copy of the init args for Minuit
+
+        this_minuit_args = dict(self._minuit_args)
+
+        # Now set the parameters under scrutiny to the current values
+
+        this_minuit_args[self.minuit_param_1] = value_1
+
+        if self.minuit_param_2 is not None:
+            this_minuit_args[self.minuit_param_2] = value_2
+
+        # Fix the parameters under scrutiny
+
+        for minuit_name in [self.minuit_param_1, self.minuit_param_2]:
+
+            if minuit_name is None:
+                # Only one parameter to analyze
+
+                continue
+
+            if minuit_name not in this_minuit_args.keys():
+
+                raise ParameterIsNotFree("Parameter %s is not a free parameter." % minuit_name)
+
+            else:
+
+                this_minuit_args['fix_%s' % minuit_name] = True
+
+        # Finally create a new minimizer
+        this_contour_minuit = self._create_new_minuit_object(this_minuit_args)
+
+        # Handle the corner case where there are no free parameters
+        # after fixing the two under scrutiny
+
+        if len(this_contour_minuit.list_of_vary_param()) == 0:
+
+            # All parameters are fixed, just return the likelihood function
+
+            if self.minuit_param_2 is None:
+
+                value = self._function(value_1)
+
+            else:
+
+                # This is needed because the user could specify the
+                # variables in a different order than what is specified in the calling sequence
+                # of f
+
+                this_variables = [0, 0]
+                this_variables[self.name_to_position[self.minuit_param_1]] = value_1
+                this_variables[self.name_to_position[self.minuit_param_2]] = value_2
+
+                value = self._function(*this_variables)
+
+            return value
+
+        try:
+
+            this_contour_minuit.migrad()
+
+        # In the following except I cannot catch specific exceptions because I don't exactly know which kind
+        # of exception migrad can raise...
+
+        except:
+
+            # In this context this is not such a big deal,
+            # because we might be so far from the minimum that
+            # the fit cannot converge
+
+            return FIT_FAILED
+
+        return this_contour_minuit.fval
 
 
 class ProfileLikelihood(object):
@@ -447,8 +549,28 @@ class Minimizer(object):
         :return: the covariance matrix
         """
 
-        minima = np.array(map(lambda parameter:parameter.min_value, self.parameters.values()))
-        maxima = np.array(map(lambda parameter: parameter.max_value, self.parameters.values()))
+        minima = map(lambda parameter:parameter.min_value, self.parameters.values())
+        maxima = map(lambda parameter: parameter.max_value, self.parameters.values())
+
+        # Check whether some of the minima or of the maxima are None. If they are, set them
+        # to a value 1000 times smaller or larger respectively than the best fit.
+        # An error of 3 orders of magnitude is not interesting in general, and this is the only
+        # way to be able to compute a derivative numerically
+
+        for i in range(len(minima)):
+
+            if minima[i] is None:
+
+                minima[i] = best_fit_values[i] / 1000.0
+
+            if maxima[i] is None:
+
+                maxima[i] = best_fit_values[i] * 1000.0
+
+        # Transform them in np.array
+
+        minima = np.array(minima)
+        maxima = np.array(maxima)
 
         try:
 
@@ -465,7 +587,17 @@ class Minimizer(object):
 
         # Invert it to get the covariance matrix
 
-        covariance_matrix = np.linalg.inv(hessian_matrix)
+        try:
+
+            covariance_matrix = np.linalg.inv(hessian_matrix)
+
+        except:
+
+            custom_warnings.warn("Cannot invert Hessian matrix, looks like the matrix is singluar")
+
+            n_dim = len(best_fit_values)
+
+            return np.zeros((n_dim, n_dim)) * np.nan
 
         # Now check that the covariance matrix is semi-positive definite (it must be unless
         # there have been numerical problems, which can happen when some parameter is unconstrained)
@@ -828,764 +960,59 @@ class Minimizer(object):
     #
     #     print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
 
+# Check which minimizers are available
 
-# This is a function to add a method to a class
-# We will need it in the MinuitMinimizer
+try:
 
-def add_method(self, method, name=None):
-    if name is None:
-        name = method.func_name
+    from threeML.minimizer.minuit_minimizer import MinuitMinimizer
 
-    setattr(self.__class__, name, method)
+except ImportError:
 
+    custom_warnings.warn("Minuit minimizer not available")
 
-class MinuitMinimizer(Minimizer):
+else:
 
-    # NOTE: this class is built to be able to work both with iMinuit and with a boost interface to SEAL
-    # minuit, i.e., it does not rely on functionality that iMinuit provides which is not of the original
-    # minuit. This makes the implementation a little bit more cumbersome, but more adaptable if we want
-    # to switch back to the bare bone SEAL minuit
+    _minimizers["MINUIT"] = MinuitMinimizer
 
-    def __init__(self, function, parameters, ftol=1, verbosity=0):
+try:
 
-        super(MinuitMinimizer, self).__init__(function, parameters, ftol, verbosity)
+    from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
 
-    def _setup(self):
+except ImportError:
 
-        # Prepare the dictionary for the parameters which will be used by iminuit
+    custom_warnings.warn("ROOT minimizer not available")
 
-        iminuit_init_parameters = {}
-
-        # List of variable names that will be used for iminuit.
-
-        variable_names_for_iminuit = []
-
-        # NOTE: we use the scaled_ versions of value, min_value and max_value because they don't have
-        # units, and hence they are much faster to set and retrieve. These are indeed introduced by
-        # astromodels to be used for computing-intensive situations like fitting
-
-        for k, par in self.parameters.iteritems():
-
-            current_name = self._parameter_name_to_minuit_name(k)
-
-            variable_names_for_iminuit.append(current_name)
-
-            # Initial value
-            iminuit_init_parameters['%s' % current_name] = par.value
-
-            # Initial delta
-            iminuit_init_parameters['error_%s' % current_name] = par.delta
-
-            # Limits
-            iminuit_init_parameters['limit_%s' % current_name] = (par.min_value, par.max_value)
-
-            # This is useless, since all parameters here are free,
-            # but do it anyway for clarity
-            iminuit_init_parameters['fix_%s' % current_name] = False
-
-        # This is to tell Minuit that we are dealing with likelihoods,
-        # not chi square
-        iminuit_init_parameters['errordef'] = 0.5
-
-        iminuit_init_parameters['print_level'] = self.verbosity
-
-        # We need to make a function with the parameters as explicit
-        # variables in the calling sequence, so that Minuit will be able
-        # to probe the parameter's names
-        var_spelled_out = ",".join(variable_names_for_iminuit)
-
-        # A dictionary to keep a way to convert from var. name to
-        # variable position in the function calling sequence
-        # (will use this in contours)
-
-        self.name_to_position = {k: i for i, k in enumerate(variable_names_for_iminuit)}
-
-        # Write and compile the code for such function
-
-        code = 'def _f(self, %s):\n  return self.function(%s)' % (var_spelled_out, var_spelled_out)
-        exec code
-
-        # Add the function just created as a method of the class
-        # so it will be able to use the 'self' pointer
-        add_method(self, _f, "_f")
-
-        # Finally we can instance the Minuit class
-        self.minuit = Minuit(self._f, **iminuit_init_parameters)
-
-        self.minuit.tol = self.ftol  # ftol
-
-        try:
-
-            self.minuit.up = 0.5  # This is a likelihood
-
-        except AttributeError:
-
-            # iMinuit uses errodef, not up
-
-            self.minuit.errordef = 0.5
-
-        self.minuit.strategy = 0  # More accurate
-
-        self._best_fit_parameters = None
-        self._function_minimum_value = None
-
-    @staticmethod
-    def _parameter_name_to_minuit_name(parameter):
-        """
-        Translate the name of the parameter to the format accepted by Minuit
-
-        :param parameter: the parameter name, of the form source.component.shape.parname
-        :return: a minuit-friendly name for the parameter, such as source_component_shape_parname
-        """
-
-        return parameter.replace(".", "_")
-
-    def _migrad_has_converged(self):
-
-        # In the MINUIT manual this is the condition for MIGRAD to have converged
-        # 0.002 * tolerance * UPERROR (which is 0.5 for likelihood)
-
-        return self.minuit.edm <= 0.002 * self.minuit.tol * 0.5
-
-    def _run_migrad(self, trials=10):
-
-        # Repeat Migrad up to trials times, until it converges
-
-        minimum = None
-
-        for i in range(trials):
-
-            self.minuit.migrad()
-
-            minimum = self.minuit.fval
-
-            if self._migrad_has_converged():
-
-                # Converged
-                break
-
-            else:
-
-                # Try again
-                continue
-
-        return minimum
-
-    # Override this because minuit uses different names
-    def restore_best_fit(self):
-        """
-        Set the parameters back to their best fit value
-
-        :return: none
-        """
-
-        super(MinuitMinimizer, self).restore_best_fit()
-
-        for k, par in self.parameters.iteritems():
-
-            minuit_name = self._parameter_name_to_minuit_name(k)
-
-            self.minuit.values[minuit_name] = par.value
-
-    def minimize(self, compute_covar=True):
-        """
-        Minimize the function using MIGRAD
-
-        :param compute_covar: whether to compute the covariance (and error estimates) or not
-        :return: best_fit: a dictionary containing the parameters at their best fit values
-                 function_minimum : the value for the function at the minimum
-
-                 NOTE: if the minimization fails, the dictionary will be empty and the function_minimum will be set
-                 to minimization.FIT_FAILED
-        """
-
-        minimum = self._run_migrad(10)
-
-        if not self._migrad_has_converged():
-
-            print("\nMIGRAD did not converge in 10 trials.")
-
-            return collections.OrderedDict(), FIT_FAILED
-
-        else:
-
-            # Get the best fit values
-
-            best_fit_values = []
-
-            for k, par in self.parameters.iteritems():
-
-                minuit_name = self._parameter_name_to_minuit_name(k)
-
-                best_fit_values.append(self.minuit.values[minuit_name])
-
-            # Get covariance matrix
-
-            if compute_covar:
-
-                covariance = self._compute_covariance_matrix(best_fit_values)
-
-            else:
-
-                covariance = None
-
-            # Now store the results
-
-            self._store_fit_results(best_fit_values, minimum, covariance)
-
-            return best_fit_values, minimum
-
-    # Override the default _compute_covariance_matrix
-    def _compute_covariance_matrix(self, best_fit_values):
-
-        self.minuit.hesse()
-
-        covariance = np.array(self.minuit.matrix(correlation=False))
-
-        return covariance
-
-    # def print_fit_results(self):
-    #     """
-    #     Display the results of the last minimization.
-    #
-    #     :return: (none)
-    #     """
-    #
-    #     # Restore the best fit values, in case something has changed
-    #     self._restore_best_fit()
-    #
-    #     # I do not use the print_param facility in iminuit because
-    #     # it does not work well with console output, since it fails
-    #     # to autoprobe that it is actually run in a console and uses
-    #     # the HTML backend instead
-    #
-    #     # Create a list of strings to print
-    #
-    #     data = []
-    #
-    #     # Also store the maximum length to decide the length for the line
-    #
-    #     name_length = 0
-    #
-    #     for k, v in self.parameters.iteritems():
-    #
-    #         minuit_name = self._parameter_name_to_minuit_name(k)
-    #
-    #         # Format the value and the error with sensible significant
-    #         # numbers
-    #         x = uncertainties.ufloat(v.value, self.minuit.errors[minuit_name])
-    #
-    #         # Add some space around the +/- sign
-    #
-    #         rep = x.__str__().replace("+/-", " +/- ")
-    #
-    #         data.append([k, rep, v.unit])
-    #
-    #         if len(k) > name_length:
-    #             name_length = len(k)
-    #
-    #     table = Table(rows=data,
-    #                   names=["Name", "Value", "Unit"],
-    #                   dtype=('S%i' % name_length, str, str))
-    #
-    #     display(table)
-    #
-    #     print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
-
-    # Override the default _compute_covariance_matrix
-
-    # def print_correlation_matrix(self):
-    #     """
-    #     Display the current correlation matrix
-    #     :return: (none)
-    #     """
-    #
-    #     # Print a custom covariance matrix because iminuit does
-    #     # not guess correctly the frontend when 3ML is used
-    #     # from terminal
-    #
-    #     cov = self.minuit.covariance
-    #
-    #     if cov is None:
-    #         raise CannotComputeCovariance("Cannot compute covariance numerically. This usually means that there are " +
-    #                                       " unconstrained parameters. Fix those or reduce their allowed range, or " +
-    #                                       "use a simpler model.")
-    #
-    #     # Get list of parameters
-    #
-    #     keys = self.parameters.keys()
-    #
-    #     # Convert them to the format for iminuit
-    #
-    #     minuit_names = map(lambda k: self._parameter_name_to_minuit_name(k), keys)
-    #
-    #     # Accumulate rows and compute the maximum length of the names
-    #
-    #     data = []
-    #     length_of_names = 0
-    #
-    #     for key1, name1 in zip(keys, minuit_names):
-    #
-    #         if len(name1) > length_of_names:
-    #             length_of_names = len(name1)
-    #
-    #         this_row = []
-    #
-    #         for key2, name2 in zip(keys, minuit_names):
-    #             # Compute correlation between parameter key1 and key2
-    #
-    #             corr = cov[(name1, name2)] / (math.sqrt(cov[(name1, name1)]) * math.sqrt(cov[(name2, name2)]))
-    #
-    #             this_row.append(corr)
-    #
-    #         data.append(this_row)
-    #
-    #     # Prepare the dtypes for the matrix
-    #
-    #     dtypes = map(lambda x: float, minuit_names)
-    #
-    #     # Column names are the parameter names
-    #
-    #     cols = keys
-    #
-    #     # Finally generate the matrix with the names
-    #
-    #     table = NumericMatrix(rows=data,
-    #                           names=cols,
-    #                           dtype=dtypes)
-    #
-    #     # Customize the format to avoid too many digits
-    #
-    #     for col in table.colnames:
-    #         table[col].format = '2.2f'
-    #
-    #     display(table)
-
-    def get_errors(self):
-        """
-        Compute asymmetric errors using MINOS (slow, but accurate) and print them.
-
-        NOTE: this should be called immediately after the minimize() method
-
-        :return: a dictionary containing the asymmetric errors for each parameter.
-        """
-
-        self.restore_best_fit()
-
-        if not self._migrad_has_converged():
-            raise CannotComputeErrors("MIGRAD results not valid, cannot compute errors. Did you run the fit first ?")
-
-        try:
-
-            self.minuit.minos()
-
-        except:
-
-            raise
-
-        # except:
-        #
-        #     raise MINOSFailed("MINOS has failed. This usually means that the fit is very difficult, for example "
-        #                       "because of high correlation between parameters. Check the correlation matrix printed"
-        #                       "in the fit step, and check contour plots with getContours(). If you are using a "
-        #                       "user-defined model, you can also try to "
-        #                       "reformulate your model with less correlated parameters.")
-
-        # Make a list for the results
-
-        errors = collections.OrderedDict()
-
-        for k, par in self.parameters.iteritems():
-
-            minuit_name = self._parameter_name_to_minuit_name(k)
-
-            minus_error = self.minuit.merrors[(minuit_name, -1)]
-            plus_error = self.minuit.merrors[(minuit_name, 1)]
-
-            errors[k] = ((minus_error,plus_error))
-
-        return errors
-
-
-# Add Minuit to the available minimizers
-_minimizers["MINUIT"] = MinuitMinimizer
-
-
-if has_pyOpt:
-
-    class PyOptWrapper(object):
-
-        # This is needed by pyopt
-
-        __name__ = "Likelihood"
-
-        def __init__(self, function, dimensions):
-
-            self._function = function
-            self._dimensions = dimensions
-
-        def __call__(self, x):
-
-            new_args = map(lambda i: x[i], range(self._dimensions))
-
-            try:
-
-                f = self._function(*new_args)
-
-            except SettingOutOfBounds:
-
-                f = FIT_FAILED
-
-            if f == FIT_FAILED:
-
-                # Likelihood gave nan or other problems, we are likely in a forbidden
-                # space
-
-                fail = 1
-
-            else:
-
-                # Likelihood computation successful
-
-                fail = 0
-
-            # The empty list is for the constraints vector. It is empty
-            # because this is a unconstrained problem, where unconstrained means
-            # there are no additional conditions on top of the boundaries for the
-            # parameters (if any)
-
-            return f, [], fail
-
-
-    def get_pyopt_available_algorithms():
-        """
-        Returns a dictionary with the name of the optimizers as key and the relative class as value
-
-        :return: dictionary
-        """
-
-        optimizers = {}
-
-        for element_name in dir(pyOpt):
-
-            element = eval("pyOpt.%s" % element_name)
-
-            try:
-
-                is_subclass = issubclass(element, pyOpt.Optimizer) and not element == pyOpt.Optimizer
-
-            except TypeError:
-
-                continue
-
-            else:
-
-                if is_subclass:
-
-                    optimizers[element_name] = element
-
-        return optimizers
-
-    _pyopt_algorithms = get_pyopt_available_algorithms()
-
-    # Remove algorithms that do not work in our cases
-    # 'ALPSO', 'SLSQP', 'SOLVOPT' "ALGENCAN" NSGA2 ALHSO FILTERSD
-
-    for alg in ['ALPSO', 'SLSQP', 'SOLVOPT', 'ALGENCAN', 'NSGA2', 'ALHSO', 'FILTERSD']:
-
-        if alg in _pyopt_algorithms:
-
-            _pyopt_algorithms.pop(alg)
-
-    class PyOptMinimizer(Minimizer):
-
-        def __init__(self, function, parameters, ftol=1e-1, verbosity=10):
-
-            super(PyOptMinimizer, self).__init__(function, parameters, ftol, verbosity)
-
-        def _setup(self):
-
-            self.functor = PyOptWrapper(self.function, self.Npar)
-
-            self._opt_problem = pyOpt.Optimization('Minimum of -log(likelihood)', self.functor)
-
-            self._opt_problem.addObj('f')
-
-            # Add constraints for parameters
-
-            for i, par in enumerate(self.parameters.values()):
-
-                if par.min_value is not None and par.max_value is not None:
-
-                    self._opt_problem.addVar(par.name, 'c', value=par.value, lower=par.min_value, upper=par.max_value)
-
-                elif par.min_value is not None and par.max_value is None:
-
-                    # Lower limited
-                    self._opt_problem.addVar(par.name, 'c', value=par.value, lower=par.min_value, upper=np.inf)
-
-                elif par.min_value is None and par.max_value is not None:
-
-                    # upper limited
-                    self._opt_problem.addVar(par.name, 'c', value=par.value, lower=-np.inf, upper=par.max_value)
-
-                else:
-
-                    # No limits
-                    self._opt_problem.addVar(par.name, 'c', value=par.value, lower=-np.inf, upper=np.inf)
-
-        def set_algorithm(self, algorithm_name):
-
-            assert algorithm_name in _pyopt_algorithms, "Optimizer %s is not part of pyOpt" % algorithm_name
-
-            # Create an instance of the provided optimizer
-
-            self._algorithm_name = algorithm_name
-
-            self._optimizer_instance = _pyopt_algorithms[algorithm_name]()
-
-        def minimize(self, compute_covar=True):
-
-            # Run optimization
-
-            fstr, xstr, inform = self._optimizer_instance(self._opt_problem)
-
-            # Transform to numpy.array
-
-            best_fit_values = np.array(xstr)
-
-            # Compute errors with the Hessian
-
-            if compute_covar:
-
-                covariance_matrix = self._compute_covariance_matrix(best_fit_values)
-
-            else:
-
-                covariance_matrix = None
-
-            self._store_fit_results(best_fit_values, fstr, covariance_matrix)
-
-            return best_fit_values, fstr
-
-
-    _minimizers["PYOPT"] = PyOptMinimizer
-
-
-if has_ROOT:
-
-    class FuncWrapper(ROOT.TPyMultiGenFunction):
-
-        def __init__(self, function, dimensions):
-
-            ROOT.TPyMultiGenFunction.__init__(self, self)
-            self.function = function
-            self.dimensions = int(dimensions)
-
-        def NDim(self):
-            return self.dimensions
-
-        def DoEval(self, args):
-
-            new_args = map(lambda i:args[i],range(self.dimensions))
-
-            return self.function(*new_args)
-
-
-    class ROOTMinimizer(Minimizer):
-
-        def __init__(self, function, parameters, ftol=1e3, verbosity=1):
-
-            super(ROOTMinimizer, self).__init__(function, parameters, ftol, verbosity)
-
-        def _setup(self):
-
-            # Setup the minimizer algorithm
-
-            self.functor = FuncWrapper(self.function, self.Npar)
-            self.minimizer = ROOT.Math.Factory.CreateMinimizer("Minuit", "Minimize")
-            self.minimizer.Clear()
-            self.minimizer.SetMaxFunctionCalls(1000)
-            self.minimizer.SetTolerance(0.1)
-            self.minimizer.SetPrintLevel(self.verbosity)
-            # self.minimizer.SetStrategy(0)
-
-            self.minimizer.SetFunction(self.functor)
-
-            for i, par in enumerate(self.parameters.values()):
-
-                if par.min_value is not None and par.max_value is not None:
-
-                    self.minimizer.SetLimitedVariable(i, par.name, par.value,
-                                                      par.delta, par.min_value,
-                                                      par.max_value)
-
-                elif par.min_value is not None and par.max_value is None:
-
-                    # Lower limited
-                    self.minimizer.SetLowerLimitedVariable(i, par.name, par.value,
-                                                           par.delta, par.min_value)
-
-                elif par.min_value is None and par.max_value is not None:
-
-                    # upper limited
-                    self.minimizer.SetUpperLimitedVariable(i, par.name, par.value,
-                                                           par.delta, par.max_value)
-
-                else:
-
-                    # No limits
-                    self.minimizer.SetVariable(i, par.name, par.value, par.delta)
-
-        def minimize(self, compute_covar=True):
-
-            self.minimizer.SetPrintLevel(int(self.verbosity))
-
-            self.minimizer.Minimize()
-
-            best_fit_values = np.array(map(lambda x: x[0], zip(self.minimizer.X(), range(self.Npar))))
-
-            if compute_covar:
-
-                covariance_matrix = self._compute_covariance_matrix(best_fit_values)
-
-            else:
-
-                covariance_matrix = None
-
-            minimum = self.functor(best_fit_values)
-
-            self._store_fit_results(best_fit_values, minimum, covariance_matrix)
-
-            return best_fit_values, minimum
+else:
 
     _minimizers["ROOT"] = ROOTMinimizer
 
+try:
 
-class ContourWorker(object):
+    from threeML.minimizer.pyOpt_minimizer import PyOptMinimizer, _pyopt_algorithms
 
-    def __init__(self, function, minuit_values, minuit_args, minuit_param_1, minuit_param_2, name_to_position):
+except ImportError:
 
-        self._minuit_values = minuit_values
+    custom_warnings.warn("pyOpt minimizer not available")
 
-        # Update the values for the parameters with the best fit one
+else:
 
-        for key, value in self._minuit_values.iteritems():
-            minuit_args[key] = value
+    _minimizers["PYOPT"] = PyOptMinimizer
 
-        # This is a likelihood
-        minuit_args['errordef'] = 0.5
+try:
 
-        # Disable printing by iminuit
+    from threeML.minimizer.multinest_minimizer import MultinestMinimizer
 
-        minuit_args['print_level'] = 0
+except ImportError:
 
-        self._minuit_args = minuit_args
+    custom_warnings.warn("Multinest minimizer not available")
 
-        # Store the name of the parameters
+else:
 
-        self.minuit_param_1 = minuit_param_1
-        self.minuit_param_2 = minuit_param_2
+    _minimizers["MULTINEST"] = MultinestMinimizer
 
-        # Store the function
-        self._function = function
 
-        # This is a dictionary which gives the ordinal place for a given parameter.
-        # It is used in the corner case where the function has only two parameters,
-        # to figure out which is the correct order
+# Check that we have at least one minimizer available
 
-        self.name_to_position = name_to_position
+if len(_minimizers) == 0:
 
-    def _create_new_minuit_object(self, args):
-
-        # Now create the new minimizer
-
-        _contour_minuit = Minuit(self._function, **args)
-
-        _contour_minuit.tol = 100
-
-        return _contour_minuit
-
-    def __call__(self, args):
-
-        # Get the values for the parameters
-        # If we are stepping in only one direction, value_2 will be nan
-
-        value_1, value_2 = args
-
-        # NOTE: unfortunately iminuit does not allow to change the value of a fixed parameter after
-        # the creation of the Minuit class. Hence we need to create a new class each time,
-        # which sucks
-
-        # Create a copy of the init args for Minuit
-
-        this_minuit_args = dict(self._minuit_args)
-
-        # Now set the parameters under scrutiny to the current values
-
-        this_minuit_args[self.minuit_param_1] = value_1
-
-        if self.minuit_param_2 is not None:
-            this_minuit_args[self.minuit_param_2] = value_2
-
-        # Fix the parameters under scrutiny
-
-        for minuit_name in [self.minuit_param_1, self.minuit_param_2]:
-
-            if minuit_name is None:
-                # Only one parameter to analyze
-
-                continue
-
-            if minuit_name not in this_minuit_args.keys():
-
-                raise ParameterIsNotFree("Parameter %s is not a free parameter." % minuit_name)
-
-            else:
-
-                this_minuit_args['fix_%s' % minuit_name] = True
-
-        # Finally create a new minimizer
-        this_contour_minuit = self._create_new_minuit_object(this_minuit_args)
-
-        # Handle the corner case where there are no free parameters
-        # after fixing the two under scrutiny
-
-        if len(this_contour_minuit.list_of_vary_param()) == 0:
-
-            # All parameters are fixed, just return the likelihood function
-
-            if self.minuit_param_2 is None:
-
-                value = self._function(value_1)
-
-            else:
-
-                # This is needed because the user could specify the
-                # variables in a different order than what is specified in the calling sequence
-                # of f
-
-                this_variables = [0, 0]
-                this_variables[self.name_to_position[self.minuit_param_1]] = value_1
-                this_variables[self.name_to_position[self.minuit_param_2]] = value_2
-
-                value = self._function(*this_variables)
-
-            return value
-
-        try:
-
-            this_contour_minuit.migrad()
-
-        # In the following except I cannot catch specific exceptions because I don't exactly know which kind
-        # of exception migrad can raise...
-
-        except:
-
-            # In this context this is not such a big deal,
-            # because we might be so far from the minimum that
-            # the fit cannot converge
-
-            return FIT_FAILED
-
-        return this_contour_minuit.fval
+    raise SystemError("You do not have any minimizer available! You need to install at least iminuit.")
