@@ -151,7 +151,7 @@ if has_parallel:
                     if stdout:
 
                         # Find the progress bar (if any)
-                        tokens = re.findall('(\[[^\r^\)]+[\r\)])', stdout[-1000:])
+                        tokens = re.findall('(\[[^\r^\)]+[\r\)]|\[.+completed.+\Z)', stdout[-1000:])
 
                         if len(tokens) > 0:
 
