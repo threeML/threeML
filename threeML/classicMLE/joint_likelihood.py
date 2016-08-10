@@ -546,7 +546,7 @@ class JointLikelihood(object):
                 aa, bb, ccc = this_minimizer.contours(param_1, this_p1min, this_p1max, p1_split_steps,
                                                       param_2, param_2_minimum, param_2_maximum,
                                                       param_2_n_steps,
-                                                      False, **options)
+                                                      progress=True, **options)
 
                 # Restore best fit values
 
@@ -566,34 +566,36 @@ class JointLikelihood(object):
 
             amr = lview.map_async(worker, range(n_engines))
 
+            client.wait_watching_stdout(amr, 1, 1000)
+
             # print progress
 
-            progress = ProgressBar(n_engines)
-
-            # This loop will check from time to time the status of the computation, which is happening on
-            # different threads, and update the progress bar
-
-            while not amr.ready():
-                # Check and report the status of the computation every second
-
-                time.sleep(1 + np.random.uniform(0, 1))
-
-                # if (debug):
-                #     stdouts = amr.stdout
-                #
-                #     # clear_output doesn't do much in terminal environments
-                #     for stdout, stderr in zip(amr.stdout, amr.stderr):
-                #         if stdout:
-                #             print "%s" % (stdout[-1000:])
-                #         if stderr:
-                #             print "%s" % (stderr[-1000:])
-                #     sys.stdout.flush()
-
-                progress.animate(amr.progress - 1)
-
-            # Always display 100% at the end
-
-            progress.animate(n_engines - 1)
+            # progress = ProgressBar(n_engines)
+            #
+            # # This loop will check from time to time the status of the computation, which is happening on
+            # # different threads, and update the progress bar
+            #
+            # while not amr.ready():
+            #     # Check and report the status of the computation every second
+            #
+            #     time.sleep(1 + np.random.uniform(0, 1))
+            #
+            #     # if (debug):
+            #     #     stdouts = amr.stdout
+            #     #
+            #     #     # clear_output doesn't do much in terminal environments
+            #     #     for stdout, stderr in zip(amr.stdout, amr.stderr):
+            #     #         if stdout:
+            #     #             print "%s" % (stdout[-1000:])
+            #     #         if stderr:
+            #     #             print "%s" % (stderr[-1000:])
+            #     #     sys.stdout.flush()
+            #
+            #     progress.animate(amr.progress - 1)
+            #
+            # # Always display 100% at the end
+            #
+            # progress.animate(n_engines - 1)
 
             # Add a new line after the progress bar
             print("\n")

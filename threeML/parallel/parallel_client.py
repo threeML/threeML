@@ -31,6 +31,10 @@ from threeML.config.config import threeML_config
 import warnings
 import exceptions
 
+import sys
+import time
+from IPython.display import clear_output
+
 class NoParallelEnvironment(exceptions.UserWarning):
     pass
 
@@ -121,6 +125,35 @@ if has_parallel:
         def get_number_of_engines(self):
 
             return len(self.direct_view())
+
+        @staticmethod
+        def wait_watching_stdout(ar, dt=1, truncate=1000):
+
+            while not ar.ready():
+
+                stdouts = ar.stdout
+
+                if not any(stdouts):
+
+                    continue
+
+                # clear_output doesn't do much in terminal environments
+
+                clear_output()
+
+                print '-' * 30
+                print "%.3fs elapsed" % ar.elapsed
+                print ""
+
+                for eid, stdout in zip(ar._targets, ar.stdout):
+
+                    if stdout:
+
+                        print "[ stdout %2i ]\n%s" % (eid, stdout[-truncate:])
+
+                sys.stdout.flush()
+
+                time.sleep(dt)
 
 else:
 
