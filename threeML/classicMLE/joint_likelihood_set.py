@@ -137,8 +137,6 @@ class JointLikelihoodSet(object):
                 print(repr(e))
                 print("\n\n")
 
-                raise
-
                 continue
 
             # Store the results in the data frame

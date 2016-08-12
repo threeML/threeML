@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from iminuit import Minuit
 
-from threeML.io.progress_bar import ProgressBar
+from threeML.io.progress_bar import progress_bar
 import scipy.optimize
 
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -341,45 +341,15 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros_like(steps1)
 
-        p = ProgressBar(len(steps1))
+        with progress_bar(len(steps1)) as p:
 
-        for i, step in enumerate(steps1):
-
-            if self._n_free_parameters > 0:
-
-                # Profile out the free parameters
-
-                self._wrapper.set_fixed_values(step)
-
-                _, this_log_like = self._optimizer.minimize(compute_covar=False)
-
-            else:
-
-                # No free parameters, just compute the likelihood
-
-                this_log_like = self._function(step)
-
-            log_likes[i] = this_log_like
-
-            p.increase()
-
-        return log_likes
-
-    def _step2d(self, steps1, steps2):
-
-        log_likes = np.zeros((len(steps1), len(steps2)))
-
-        p = ProgressBar(len(steps1) * len(steps2))
-
-        for i, step1 in enumerate(steps1):
-
-            for j,step2 in enumerate(steps2):
+            for i, step in enumerate(steps1):
 
                 if self._n_free_parameters > 0:
 
                     # Profile out the free parameters
 
-                    self._wrapper.set_fixed_values([step1, step2])
+                    self._wrapper.set_fixed_values(step)
 
                     _, this_log_like = self._optimizer.minimize(compute_covar=False)
 
@@ -387,11 +357,41 @@ class ProfileLikelihood(object):
 
                     # No free parameters, just compute the likelihood
 
-                    this_log_like = self._function(step1, step2)
+                    this_log_like = self._function(step)
 
-                log_likes[i,j] = this_log_like
+                log_likes[i] = this_log_like
 
                 p.increase()
+
+        return log_likes
+
+    def _step2d(self, steps1, steps2):
+
+        log_likes = np.zeros((len(steps1), len(steps2)))
+
+        with progress_bar(len(steps1) * len(steps2)) as p:
+
+            for i, step1 in enumerate(steps1):
+
+                for j,step2 in enumerate(steps2):
+
+                    if self._n_free_parameters > 0:
+
+                        # Profile out the free parameters
+
+                        self._wrapper.set_fixed_values([step1, step2])
+
+                        _, this_log_like = self._optimizer.minimize(compute_covar=False)
+
+                    else:
+
+                        # No free parameters, just compute the likelihood
+
+                        this_log_like = self._function(step1, step2)
+
+                    log_likes[i,j] = this_log_like
+
+                    p.increase()
 
         return log_likes
 
@@ -780,21 +780,21 @@ class Minimizer(object):
 
         self.restore_best_fit()
 
-        p = ProgressBar(2 * len(self.parameters))
-
         errors = collections.OrderedDict()
 
-        for parameter_name in self.parameters:
+        with progress_bar(2 * len(self.parameters)) as p:
 
-            negative_error = self._get_error(parameter_name, target_delta_log_like, -1)
+            for parameter_name in self.parameters:
 
-            p.increase()
+                negative_error = self._get_error(parameter_name, target_delta_log_like, -1)
 
-            positive_error = self._get_error(parameter_name, target_delta_log_like, +1)
+                p.increase()
 
-            p.increase()
+                positive_error = self._get_error(parameter_name, target_delta_log_like, +1)
 
-            errors[parameter_name] = (negative_error, positive_error)
+                p.increase()
+
+                errors[parameter_name] = (negative_error, positive_error)
 
         return errors
 

@@ -25,7 +25,7 @@ import uncertainties
 from threeML.io.table import Table
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
-from threeML.io.progress_bar import ProgressBar
+from threeML.io.progress_bar import progress_bar
 from corner import corner
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
 from threeML.io.rich_display import display
@@ -35,34 +35,26 @@ from astromodels import ModelAssertionViolation
 
 
 def sample_with_progress(p0, sampler, n_samples, **kwargs):
-    # Create progress bar
-
-    progress = ProgressBar(n_samples)
 
     # Loop collecting n_samples samples
 
     pos, prob, state = [None, None, None]
 
     # This is only for producing the progress bar
+
     progress_bar_iter = max(int(n_samples / 100), 1)
 
-    for i, result in enumerate(sampler.sample(p0, iterations=n_samples, **kwargs)):
-        # Show progress
+    with progress_bar(n_samples) as progress:
 
-        if i % progress_bar_iter == 0:
+        for i, result in enumerate(sampler.sample(p0, iterations=n_samples, **kwargs)):
+
+            # Show progress
+
             progress.animate((i + 1))
 
-        # Get the vectors with the results
+            # Get the vectors with the results
 
-        pos, prob, state = result
-
-    # Make sure we show 100% completion
-
-    progress.animate(n_samples)
-
-    # Go to new line
-
-    print("")
+            pos, prob, state = result
 
     return pos, prob, state
 

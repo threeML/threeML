@@ -17,7 +17,6 @@ from threeML.minimizer import minimization
 from threeML.exceptions import custom_exceptions
 from threeML.io.table import Table, NumericMatrix
 from threeML.parallel.parallel_client import ParallelClient
-from threeML.io.progress_bar import ProgressBar
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
 from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
@@ -566,7 +565,7 @@ class JointLikelihood(object):
 
             amr = lview.map_async(worker, range(n_engines))
 
-            client.wait_watching_stdout(amr, 1, 1)
+            client.wait_watching_progress(amr, 10)
 
             # print progress
 

@@ -3,9 +3,240 @@ from __future__ import print_function
 import sys, time
 import datetime
 
+from ipywidgets import FloatProgress, HTML, VBox
+from IPython.display import display
+from IPython.utils.traitlets import TraitError
 
-class ProgressBar:
+from contextlib import contextmanager
+
+
+class CannotGenerateHTMLBar(RuntimeError):
+    pass
+
+
+@contextmanager
+def progress_bar(iterations, width=50):
+
+    # Instance progress bar
+
+    try:
+
+        # Default is the HTML bar, which only works within a notebook
+
+        this_progress_bar = ProgressBarHTML(iterations, width)
+
+    except TraitError:
+
+        # Running in a terminal. Fall back to the ascii bar
+
+        this_progress_bar = ProgressBarAscii(iterations, width)
+
+    yield this_progress_bar
+
+    this_progress_bar.finish()
+
+
+def multiple_progress_bars(iterations, n, width=50, force_html=False):
+
+
+    # Instance n identical progress bars
+
+    try:
+
+        # Default is the HTML bar, which only works within a notebook
+
+        this_progress_bars = [ProgressBarHTML(iterations, width) for i in range(n)]
+
+    except TraitError:
+
+        if force_html:
+
+            raise CannotGenerateHTMLBar("force_html was set to True, but I couldn't generate an HTML bar")
+
+        # Running in a terminal. Fall back to the ascii bar
+
+        this_progress_bars = [ProgressBarAscii(iterations, width) for i in range(n)]
+
+    yield this_progress_bars
+
+    for this_progress_bar in this_progress_bars:
+
+        this_progress_bar.finish()
+
+
+
+class ProgressBarBase(object):
+
+    def __init__(self, iterations, width=50):
+
+        # Store the number of iterations
+
+        self._iterations = int(iterations)
+
+        # Store the width (in characters)
+
+        self._width = width
+
+        # Get the start time
+
+        self._start_time = time.time()
+
+        # Current iteration is zero
+        self._last_iteration = 0
+
+        # Setup
+
+        self._setup()
+
+    def _setup(self):
+
+        raise NotImplementedError("Need to override this")
+
+    def animate(self, iteration):
+
+        # We only update the progress bar if the progress has gone backward,
+        # or if the progress has increased by at least 1%. This is to avoid
+        # updating it too much, which would fill log files in text mode,
+        # or slow down the computation in HTML mode
+
+        this_percent = iteration / float(self._iterations) * 100.0
+
+        last_percent = self._last_iteration / float(self._iterations) * 100
+
+        if this_percent - last_percent < 0 or this_percent - last_percent > 1:
+
+            self._last_iteration = self._animate(iteration)
+
+        else:
+
+            return
+
+    def _animate(self, iteration):
+
+        raise NotImplementedError("Need to override this")
+
+    def increase(self):
+
+        self.animate(self._last_iteration + 1)
+
+    def finish(self):
+
+        self.animate(self._iterations)
+
+    def _check_remaining_time(self, current_iteration, delta_t):
+
+        if current_iteration == 0:
+
+            return '--:--'
+
+        # Seconds per iterations
+        s_per_iter = delta_t / float(current_iteration)
+
+        # Seconds to go (estimate)
+        s_to_go = s_per_iter * (self._iterations - current_iteration)
+
+        # I cast to int so it won't show decimal seconds
+
+        return str(datetime.timedelta(seconds=int(s_to_go)))
+
+    def _get_label(self, current_iteration):
+
+        delta_t = time.time() - self._start_time
+
+        elapsed_iter = min(current_iteration, self._iterations)
+
+        label_text = '%d / %s in %.1f s (%s remaining)' % (elapsed_iter, self._iterations,
+                                                           delta_t, self._check_remaining_time(current_iteration,
+                                                                                               delta_t))
+
+        return label_text
+
+
+class ProgressBarHTML(ProgressBarBase):
+
+    def _setup(self):
+
+        # Setup the widget, which is a bar between 0 and 100
+
+        self._bar = FloatProgress(min=0, max=100)
+
+        # Set explicitly the bar to 0
+
+        self._bar.value = 0
+
+        # Setup also an HTML label (which will contain the progress, the elapsed time and the foreseen
+        # completion time)
+
+        self._label = HTML()
+        self._vbox = VBox(children=[self._label, self._bar])
+
+        # Display everything
+
+        display(self._vbox)
+
+        self._animate(0)
+
+    def _animate(self, iteration):
+
+        current_label = self._get_label(iteration)
+
+        self._bar.value = float(iteration) / float(self._iterations) * 100
+
+        self._label.value = current_label
+
+        return iteration
+
+
+class ProgressBarAscii(ProgressBarBase):
+
+    def _setup(self):
+
+        self._fill_char = '*'
+
+        # Display an empty bar
+        self._animate(0)
+
+    def _animate(self, current_iteration):
+
+        current_bar = self._generate_bar(current_iteration)
+        current_label = self._get_label(current_iteration)
+
+        print('\r%s  %s' % (current_bar, current_label), end='')
+        sys.stdout.flush()
+
+        return current_iteration
+
+    def _generate_bar(self, current_iteration):
+
+        # Compute the percentage completed
+
+        elapsed_iter = min(current_iteration, self._iterations)
+
+        new_amount = (elapsed_iter / float(self._iterations)) * 100.0
+
+        percent_done = min(int(round((new_amount / 100.0) * 100.0)), 100)
+
+        # Generate the bar
+
+        all_full = self._width - 2
+
+        num_hashes = int(round((percent_done / 100.0) * all_full))
+
+        bar = '[' + self._fill_char * num_hashes + ' ' * (all_full - num_hashes) + ']'
+
+        # Now place the completed percentage in the middle of the bar
+
+        pct_place = (len(bar) // 2) - len(str(percent_done))
+        pct_string = '%d%%' % percent_done
+
+        bar = bar[0:pct_place] + (pct_string + bar[pct_place + len(pct_string):])
+
+        return bar
+
+class ProgressBarOld(object):
+
     def __init__(self, iterations):
+
         self.iterations = iterations
         self.prog_bar = '[]'
         self.fill_char = '*'
@@ -13,13 +244,12 @@ class ProgressBar:
         self.startTime = time.time()
         self.lastIter = 0
         self.__update_amount(0)
+        self._last_percent = None
 
     def animate(self, iter):
 
         try:
 
-            print('\r', self, end='')
-            sys.stdout.flush()
             self.lastIter = iter
             self.update_iteration(iter + 1)
 
@@ -51,17 +281,29 @@ class ProgressBar:
 
         if elapsed_iter < self.iterations:
 
-            self.__update_amount((elapsed_iter / float(self.iterations)) * 100.0)
-            self.prog_bar += '  %d / %s in %.1f s' % (elapsed_iter, self.iterations, delta_t)
-            self.prog_bar += ' (%s remaining)' % self._check_remaining_time(delta_t)
+            new_amount = (elapsed_iter / float(self.iterations)) * 100.0
+
+            percent_done = min(int(round((new_amount / 100.0) * 100.0)), 100)
+
+            if self._last_percent is None or percent_done > self._last_percent:
+
+                self.__update_amount(percent_done)
+
+                self.prog_bar += '  %d / %s in %.1f s' % (elapsed_iter, self.iterations, delta_t)
+                self.prog_bar += ' (%s remaining)' % self._check_remaining_time(delta_t)
+
+                self._last_percent = percent_done
+
+                print('\r', self, end='')
+                sys.stdout.flush()
 
         else:
 
             self.__update_amount(100)
             self.prog_bar += '  completed in %.1f s' % (time.time() - self.startTime)
 
-    def __update_amount(self, new_amount):
-        percent_done = min(int(round((new_amount / 100.0) * 100.0)), 100)
+    def __update_amount(self, percent_done):
+
         all_full = self.width - 2
         num_hashes = int(round((percent_done / 100.0) * all_full))
         self.prog_bar = '[' + self.fill_char * num_hashes + ' ' * (all_full - num_hashes) + ']'

@@ -26,6 +26,7 @@ else:
     has_parallel = True
 
 from threeML.config.config import threeML_config
+from threeML.io.progress_bar import progress_bar, multiple_progress_bars, CannotGenerateHTMLBar
 
 # Custom warning
 import warnings
@@ -34,7 +35,6 @@ import exceptions
 import sys
 import time
 import re
-from IPython.display import clear_output
 
 class NoParallelEnvironment(exceptions.UserWarning):
     pass
@@ -128,7 +128,7 @@ if has_parallel:
             return len(self.direct_view())
 
         @staticmethod
-        def wait_watching_stdout(ar, dt=1, truncate=1000):
+        def fetch_progress_from_progress_bars(ar):
 
             while not ar.ready():
 
@@ -140,13 +140,19 @@ if has_parallel:
 
                 # clear_output doesn't do much in terminal environments
 
-                clear_output()
+                #clear_output()
 
                 print '-' * 30
                 print "%.3fs elapsed" % ar.elapsed
                 print ""
 
+                percentage_completed_engines = []
+
                 for stdout in ar.stdout:
+
+                    # Default value is 0
+
+                    percentage_completed_engines.append(0)
 
                     if stdout:
 
@@ -157,15 +163,60 @@ if has_parallel:
 
                             last_progress_bar = tokens[-1]
 
-                            print("%s" % last_progress_bar)
+                            # Now extract the progress
+                            percentage_completed = re.match('\[[\*\s]+([0-9]*(\.[0-9]+)?)\s?%[\*\s]+',
+                                                            last_progress_bar)
 
-                        else:
+                            if percentage_completed is None:
 
-                            print("Engine is starting up")
+                                sys.stderr.write("\nCould not understand progress bar from engine: %s" %
+                                                 last_progress_bar)
 
-                sys.stdout.flush()
+                            else:
 
-                time.sleep(dt)
+                                percentage_completed_engines[-1] = float(percentage_completed.groups()[0])
+
+                yield percentage_completed_engines
+
+        def wait_watching_progress(self, ar, dt=5.0):
+            """
+            Report progress from the different engines
+
+            :param ar:
+            :param dt:
+            :return:
+            """
+
+            n_engines = self.get_number_of_engines()
+
+            try:
+
+                with multiple_progress_bars(iterations=100, n=n_engines) as bars:
+
+                    # We are in the notebook, display a report of all the engines
+
+                    for progress in self.fetch_progress_from_progress_bars(ar):
+
+                        for i in range(n_engines):
+
+                            bars[i].animate(progress[i])
+
+                        time.sleep(dt)
+
+            except CannotGenerateHTMLBar:
+
+                # Fall back to text progress and one bar
+
+                with progress_bar(100) as bar:
+
+                    for progress in self.fetch_progress_from_progress_bars(ar):
+
+                        global_progress = sum(progress) / float(n_engines)
+
+                        bar.animate(global_progress)
+
+                        time.sleep(dt)
+
 
 else:
 
