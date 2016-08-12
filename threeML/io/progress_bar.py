@@ -35,7 +35,7 @@ def progress_bar(iterations, width=50):
 
     this_progress_bar.finish()
 
-
+@contextmanager
 def multiple_progress_bars(iterations, n, width=50, force_html=False):
 
 
