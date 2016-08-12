@@ -89,7 +89,8 @@ setup(
         'astromodels>=0.2.1',
         'corner>=1.0.2',
         'pandas',
-        'sympy'
+        'sympy',
+        'ipywidgets'
     ])
 
 # Check for optional dependencies
