@@ -209,13 +209,13 @@ if has_parallel:
 
                 with progress_bar(100) as bar:
 
-                    for progress in self.fetch_progress_from_progress_bars(ar):
+                    progress = self.fetch_progress_from_progress_bars(ar)
 
-                        global_progress = sum(progress) / float(n_engines)
+                    global_progress = sum(progress) / float(n_engines)
 
-                        bar.animate(global_progress)
+                    bar.animate(global_progress)
 
-                        time.sleep(dt)
+                    time.sleep(dt)
 
 
 else:
