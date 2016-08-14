@@ -141,10 +141,10 @@ if has_parallel:
                 # clear_output doesn't do much in terminal environments
 
                 #clear_output()
-
-                print '-' * 30
-                print "%.3fs elapsed" % ar.elapsed
-                print ""
+                #
+                # print '-' * 30
+                # print "%.3fs elapsed" % ar.elapsed
+                # print ""
 
                 percentage_completed_engines = []
 
