@@ -3,6 +3,10 @@ from __future__ import print_function
 import sys, time
 import datetime
 
+# This is used for testing purposes
+
+test_ascii_only = False
+
 try:
 
     from ipywidgets import FloatProgress, HTML, VBox
@@ -13,7 +17,13 @@ except ImportError:
 
 else:
 
-    has_widgets = True
+    if test_ascii_only:
+
+        has_widgets = False
+    
+    else:
+
+        has_widgets = True
 
 from IPython.display import display
 
