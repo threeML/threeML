@@ -3,9 +3,19 @@ from __future__ import print_function
 import sys, time
 import datetime
 
-from ipywidgets import FloatProgress, HTML, VBox
+try:
+
+    from ipywidgets import FloatProgress, HTML, VBox
+
+except ImportError:
+
+    has_widgets = False
+
+else:
+
+    has_widgets = True
+
 from IPython.display import display
-from IPython.utils.traitlets import TraitError
 
 from contextlib import contextmanager
 
@@ -19,15 +29,23 @@ def progress_bar(iterations, width=50):
 
     # Instance progress bar
 
-    try:
+    if has_widgets:
 
-        # Default is the HTML bar, which only works within a notebook
+        try:
 
-        this_progress_bar = ProgressBarHTML(iterations, width)
+            # Default is the HTML bar, which only works within a notebook
 
-    except TraitError:
+            this_progress_bar = ProgressBarHTML(iterations, width)
 
-        # Running in a terminal. Fall back to the ascii bar
+        except:
+
+            # Running in a terminal. Fall back to the ascii bar
+
+            this_progress_bar = ProgressBarAscii(iterations, width)
+
+    else:
+
+        # No widgets available, fall back to ascii bar
 
         this_progress_bar = ProgressBarAscii(iterations, width)
 
@@ -35,25 +53,37 @@ def progress_bar(iterations, width=50):
 
     this_progress_bar.finish()
 
+
 @contextmanager
 def multiple_progress_bars(iterations, n, width=50, force_html=False):
 
 
     # Instance n identical progress bars
 
-    try:
+    if has_widgets:
 
-        # Default is the HTML bar, which only works within a notebook
+        try:
 
-        this_progress_bars = [ProgressBarHTML(iterations, width) for i in range(n)]
+            # Default is the HTML bar, which only works within a notebook
 
-    except TraitError:
+            this_progress_bars = [ProgressBarHTML(iterations, width) for i in range(n)]
+
+        except:
+
+            if force_html:
+
+                raise CannotGenerateHTMLBar("force_html was set to True, but I couldn't generate an HTML bar")
+
+            # Running in a terminal. Fall back to the ascii bar
+
+            this_progress_bars = [ProgressBarAscii(iterations, width) for i in range(n)]
+
+    else:
 
         if force_html:
-
             raise CannotGenerateHTMLBar("force_html was set to True, but I couldn't generate an HTML bar")
 
-        # Running in a terminal. Fall back to the ascii bar
+        # No widgets, use Ascii bars
 
         this_progress_bars = [ProgressBarAscii(iterations, width) for i in range(n)]
 
