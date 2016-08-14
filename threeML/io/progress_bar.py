@@ -20,7 +20,7 @@ else:
     if test_ascii_only:
 
         has_widgets = False
-    
+
     else:
 
         has_widgets = True
