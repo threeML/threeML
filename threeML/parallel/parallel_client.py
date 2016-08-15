@@ -187,7 +187,7 @@ if has_parallel:
             :return:
             """
 
-            n_engines = self.get_number_of_engines()
+            n_engines = len(ar.engine_id)
 
             try:
 
