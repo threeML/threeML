@@ -275,7 +275,7 @@ class JointLikelihood(object):
 
         assert total == self._current_minimum, "Current minimum stored after fit and current do not correspond!"
 
-        print("\nValues of -log(likelihood) at the minimum:\n")
+        #print("\nValues of -log(likelihood) at the minimum:\n")
 
         # Generate data frame and display it
 
@@ -285,7 +285,7 @@ class JointLikelihood(object):
 
         loglike_dataframe = pd.DataFrame(logl_results)
 
-        display(loglike_dataframe)
+        display(loglike_dataframe.style.set_table_styles(styles).set_caption("Values of -log(likelihood) at the minimum"))
 
         return fit_results, loglike_dataframe
 
@@ -1007,3 +1007,25 @@ class JointLikelihood(object):
         sub.set_ylabel(name1)
 
         return fig
+
+
+
+## Table Styles
+
+
+def hover(hover_color="#98DBFF"):
+    return dict(selector="tr:hover",
+                props=[("background-color", "%s" % hover_color)])
+
+
+styles = [
+    hover(),
+    dict(selector="th", props=[("font-size", "110%"),
+                               ("text-align", "center"),
+                               ('color', 'y'),
+                               ('background-color', '#FF8B76')]),
+    dict(selector="td", props=[("font-size", "100%"),
+                               ("text-align", "center"),
+                               ('color', 'k')
+                               ]),
+    dict(selector="caption", props=[("caption-side", "top")])]
