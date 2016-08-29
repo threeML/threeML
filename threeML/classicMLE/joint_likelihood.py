@@ -196,6 +196,8 @@ class JointLikelihood(object):
 
         name_length = 0
 
+
+
         for i, parameter_name in enumerate(fit_results.index.values):
 
             value = fit_results.at[parameter_name, 'value']
@@ -210,19 +212,30 @@ class JointLikelihood(object):
 
             rep = x.__str__().replace("+/-", " +/- ")
 
-            data.append([i, parameter_name, rep, self._free_parameters[parameter_name].unit])
+            data.append([parameter_name ,rep, self._free_parameters[parameter_name].unit])
+
+            #data.append([i, parameter_name, rep, self._free_parameters[parameter_name].unit])
 
             if len(parameter_name) > name_length:
 
                 name_length = len(parameter_name)
 
-        best_fit_table = Table(rows=data,
-                      names=["#", "Name", "Best fit value", "Unit"],
-                      dtype=(str, 'S%i' % name_length, str, str))
 
-        print("Best fit values:\n")
+        best_fit_table = pd.DataFrame(data,
+                                      columns=["Name","Best fit value", "Unit"])
 
-        display(best_fit_table)
+        #best_fit_table = Table(rows=data,
+        #              names=["#", "Name", "Best fit value", "Unit"],
+        #              dtype=(str, 'S%i' % name_length, str, str))
+
+
+
+
+
+
+       #print("Best fit values:\n")
+
+        display(best_fit_table.style.set_table_styles(styles).set_caption("Best Fit Values"))
 
         print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
 
