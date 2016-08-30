@@ -236,11 +236,17 @@ class JointLikelihood(object):
 
                 nuisance_parameters[(dataset.get_name(), pName)] = dataset.nuisanceParameters[pName]
 
-        nuisance_parameters_table = self._get_table_of_parameters(nuisance_parameters)
+        if len(nuisance_parameters) > 0:
 
-        print("Nuisance parameters:\n")
+            nuisance_parameters_table = self._get_table_of_parameters(nuisance_parameters)
 
-        display(nuisance_parameters_table)
+            print("Nuisance parameters:\n")
+
+            display(nuisance_parameters_table)
+
+        else:
+
+            print("(no nuisance parameters)")
 
         print("\nCorrelation matrix:\n")
 
@@ -446,8 +452,21 @@ class JointLikelihood(object):
 
         assert param_1_minimum < param_1_maximum, "Minimum larger than maximum for parameter 1"
 
-        if param_2 is not None:
-            assert param_2_minimum < param_2_maximum, "Minimum larger than maximum for parameter 2"
+        min1, max1 = self.likelihood_model[param_1].bounds
+
+        assert param_1_minimum >= min1, "Requested low range for parameter %s (%s) " \
+                                        "is below parameter minimum (%s)" % (param_1, param_1_minimum, min1)
+
+        assert param_1_maximum <= max1, "Requested hi range for parameter %s (%s) " \
+                                        "is above parameter maximum (%s)" % (param_1, param_1_maximum, max1)
+
+        min2, max2 = self.likelihood_model[param_2].bounds
+
+        assert param_2_minimum >= min2, "Requested low range for parameter %s (%s) " \
+                                        "is below parameter minimum (%s)" % (param_2, param_2_minimum, min2)
+
+        assert param_2_maximum <= max2, "Requested hi range for parameter %s (%s) " \
+                                        "is above parameter maximum (%s)" % (param_2, param_2_maximum, max2)
 
         # Check whether we are parallelizing or not
 
