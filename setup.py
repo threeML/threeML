@@ -42,6 +42,7 @@ setup(
               'threeML/bayesian',
               'threeML/minimizer',
               'threeML/plugins',
+              'threeML/plugins/OGIP',
               'threeML/classicMLE',
               'threeML/catalogs',
               'threeML/io',
