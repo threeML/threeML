@@ -28,7 +28,7 @@ from threeML.config.config import threeML_config
 from threeML.io.progress_bar import progress_bar
 from corner import corner
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
-from threeML.io.rich_display import display
+from threeML.io.rich_display import display, panda_table_styler
 from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
 
 from astromodels import ModelAssertionViolation
@@ -450,11 +450,16 @@ class BayesianAnalysis(object):
 
         # Create and display the table
 
-        table = Table(rows=data,
-                      names=["Name", "Value", "Unit"],
-                      dtype=('S%i' % name_length, str, 'S15'))
 
-        display(table)
+
+        table = pd.DataFrame(data,
+                                      columns=["Name","Value", "Unit"])
+
+
+
+
+        display(panda_table_styler(table, caption="Highest Density Intervals", color="#61FE7B"))
+
 
         return credible_intervals
 
@@ -534,11 +539,13 @@ class BayesianAnalysis(object):
 
         # Create and display the table
 
-        table = Table(rows=data,
-                      names=["Name", "Value", "Unit"],
-                      dtype=('S%i' % name_length, str, 'S15'))
 
-        display(table)
+        table = pd.DataFrame(data,
+                             columns=["Name", "Value", "Unit"])
+
+        display(panda_table_styler(table, caption="Credible Intervals", color="#61FE7B"))
+
+
         print("\n(probability %s)" % probability)
 
         return credible_intervals
