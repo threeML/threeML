@@ -165,9 +165,6 @@ class BayesianAnalysis(object):
 
         print("Running burn-in of %s samples...\n" % burn_in)
 
-        # Prepare the list of likelihood values
-        self._log_like_values = []
-
         # Sample the burn-in
         pos, prob, state = sampling_procedure(p0, sampler, burn_in)
 
@@ -179,17 +176,23 @@ class BayesianAnalysis(object):
 
         print("\nSampling...\n")
 
-        # Reset also the list of likelihood values
-        self._log_like_values = []
-
         _ = sampling_procedure(pos, sampler, n_samples, rstate0=state)
 
         acc = np.mean(sampler.acceptance_fraction)
 
-        print("Mean acceptance fraction: %s" % acc)
+        print("\nMean acceptance fraction: %s" % acc)
 
         self._sampler = sampler
         self._raw_samples = sampler.flatchain
+
+        # Compute the corresponding values of the likelihood
+
+        # First we need the prior
+        log_prior = map(lambda x:self._logp(x), self._raw_samples)
+
+        # Now we get the log posterior and we remove the log prior
+
+        self._log_like_values = sampler.flatlnprobability - log_prior
 
         self._build_samples_dictionary()
 
@@ -290,9 +293,6 @@ class BayesianAnalysis(object):
 
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
-
-        # Reset the likelihood values
-        self._log_like_values = []
 
         if threeML_config['parallel']['use-parallel']:
 
@@ -794,7 +794,16 @@ class BayesianAnalysis(object):
             for i, parameter in enumerate(self._free_parameters.values()):
                 parameter.value = trial_values[i]
 
-            return self._log_like(trial_values)
+            log_like = self._log_like(trial_values)
+
+            if self.verbose:
+
+                n_par = len(self._free_parameters)
+
+                print("Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
+                                                                 log_like))
+
+            return log_like
 
         # Now construct the prior
         # MULTINEST priors are defined on the unit cube
@@ -844,14 +853,24 @@ class BayesianAnalysis(object):
 
         # Compute the sum of the log-priors
 
-        logp = 0
+        log_prior = 0
 
-        for i, (src_name, param_name) in enumerate(self._free_parameters.keys()):
-            this_param = self._likelihood_model.parameters[src_name][param_name]
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
-            logp += this_param.prior(trial_values[i])
+            prior_value = parameter.prior(trial_values[i])
 
-        return logp
+            if prior_value == 0:
+                # Outside allowed region of parameter space
+
+                return -np.inf
+
+            else:
+
+                parameter.value = trial_values[i]
+
+                log_prior += math.log10(prior_value)
+
+        return log_prior
 
     def _log_like(self, trial_values):
         """Compute the log-likelihood"""
@@ -879,8 +898,6 @@ class BayesianAnalysis(object):
         # Sum the values of the log-like
 
         log_like = np.sum(log_like_values)
-
-        self._log_like_values.append(log_like)
 
         if not np.isfinite(log_like):
             # Issue warning
