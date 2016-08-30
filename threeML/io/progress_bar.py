@@ -124,6 +124,9 @@ class ProgressBarBase(object):
         # Current iteration is zero
         self._last_iteration = 0
 
+        # last printed percent
+        self._last_printed_percent = 0
+
         # Setup
 
         self._setup()
@@ -141,15 +144,15 @@ class ProgressBarBase(object):
 
         this_percent = iteration / float(self._iterations) * 100.0
 
-        last_percent = self._last_iteration / float(self._iterations) * 100
-
-        if this_percent - last_percent < 0 or this_percent - last_percent > 1:
+        if this_percent - self._last_printed_percent < 0 or (this_percent - self._last_printed_percent) >= 1:
 
             self._last_iteration = self._animate(iteration)
 
+            self._last_printed_percent = this_percent
+
         else:
 
-            return
+            self._last_iteration += 1
 
     def _animate(self, iteration):
 
