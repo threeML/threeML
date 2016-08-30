@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from matplotlib.colors import BoundaryNorm
 
-from threeML.io.rich_display import display
+from threeML.io.rich_display import display, panda_matrix_styler, panda_table_styler
 import numpy as np
 import pandas as pd
 import uncertainties
@@ -196,6 +196,8 @@ class JointLikelihood(object):
 
         name_length = 0
 
+
+
         for i, parameter_name in enumerate(fit_results.index.values):
 
             value = fit_results.at[parameter_name, 'value']
@@ -210,19 +212,22 @@ class JointLikelihood(object):
 
             rep = x.__str__().replace("+/-", " +/- ")
 
-            data.append([i, parameter_name, rep, self._free_parameters[parameter_name].unit])
+            data.append([parameter_name,rep, self._free_parameters[parameter_name].unit])
+
+            #data.append([i, parameter_name, rep, self._free_parameters[parameter_name].unit])
 
             if len(parameter_name) > name_length:
 
                 name_length = len(parameter_name)
 
-        best_fit_table = Table(rows=data,
-                      names=["#", "Name", "Best fit value", "Unit"],
-                      dtype=(str, 'S%i' % name_length, str, str))
 
-        print("Best fit values:\n")
+        best_fit_table = pd.DataFrame(data,
+                                      columns=["Name","Best fit value", "Unit"])
 
-        display(best_fit_table)
+
+
+
+        display(panda_table_styler(best_fit_table, caption="Best Fit Values", color="#61FE7B"))
 
         print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
 
@@ -238,19 +243,24 @@ class JointLikelihood(object):
 
         nuisance_parameters_table = self._get_table_of_parameters(nuisance_parameters)
 
-        print("Nuisance parameters:\n")
+        #print("Nuisance parameters:\n")
 
-        display(nuisance_parameters_table)
+        display(panda_table_styler(nuisance_parameters_table,caption="Nuisance parameters",color="#FF6331" ))    #.style.set_table_styles(styles).set_caption("Nuisance parameters"))
 
-        print("\nCorrelation matrix:\n")
+        #print("\nCorrelation matrix:\n")
 
         best_fit_table = NumericMatrix(self._minimizer.correlation_matrix)
 
-        for col in best_fit_table.colnames:
+        best_fit_table = pd.DataFrame(self._minimizer.correlation_matrix)
+                                      #index=,
+                                      #columns=)
 
-            best_fit_table[col].format = '2.2f'
+        #for col in best_fit_table.colnames:
 
-        display(best_fit_table)
+        #    best_fit_table[col].format = '2.2f'
+
+
+        display( panda_matrix_styler(best_fit_table,caption="Correlation matrix",cmap=cm.bwr,precision=2) )
 
         # Now collect the values for the likelihood for the various datasets
 
@@ -275,7 +285,7 @@ class JointLikelihood(object):
 
         assert total == self._current_minimum, "Current minimum stored after fit and current do not correspond!"
 
-        print("\nValues of -log(likelihood) at the minimum:\n")
+        #print("\nValues of -log(likelihood) at the minimum:\n")
 
         # Generate data frame and display it
 
@@ -285,7 +295,7 @@ class JointLikelihood(object):
 
         loglike_dataframe = pd.DataFrame(logl_results)
 
-        display(loglike_dataframe)
+        display(panda_table_styler(loglike_dataframe, caption="Values of -log(likelihood) at the minimum", color="#3286FF"))
 
         return fit_results, loglike_dataframe
 
@@ -374,11 +384,12 @@ class JointLikelihood(object):
 
         # Create and display the table
 
-        table = Table(rows=data,
-                      names=["Name", "Value", "Unit"],
-                      dtype=('S%i' % name_length, str, str))
+        table = pd.DataFrame(data,
+                                      columns=["Name", "Values", "Unit"])
 
-        display(table)
+        display(panda_table_styler(table, caption="Parameter Values", color="#61FE7B"))
+
+
 
     def get_contours(self, param_1, param_1_minimum, param_1_maximum, param_1_n_steps,
                      param_2=None, param_2_minimum=None, param_2_maximum=None, param_2_n_steps=None,
@@ -841,9 +852,11 @@ class JointLikelihood(object):
             if len(v.name) > max_length_of_name:
                 max_length_of_name = len(current_name)
 
-        table = Table(rows=data,
-                      names=["Name", "Value", "Unit"],
-                      dtype=('S%i' % max_length_of_name, str, 'S15'))
+        table = pd.DataFrame(data,columns=["Name", "Value", "Unit"])
+
+        #table = Table(rows=data,
+        #              names=["Name", "Value", "Unit"],
+        #              dtype=('S%i' % max_length_of_name, str, 'S15'))
 
         return table
 
@@ -1007,3 +1020,6 @@ class JointLikelihood(object):
         sub.set_ylabel(name1)
 
         return fig
+
+
+
