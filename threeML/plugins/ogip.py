@@ -24,13 +24,19 @@ requiredKeywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FIL
                                 "exposure:EXPOSURE,backfile:BACKFILE," +
                                 "corrfile:CORRFILE,corrscal:CORRSCAL,respfile:RESPFILE," +
                                 "ancrfile:ANCRFILE,hduclass:HDUCLASS," +
-                                "hduclas1:HDUCLAS1,hduvers:HDUVERS,poisserr:POISSERR," +
+                                "hduclas1:HDUCLAS1,poisserr:POISSERR," +
                                 "chantype:CHANTYPE,n_channels:DETCHANS").split(",")
+
+# hduvers:HDUVERS
+
 requiredKeywords['background'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
                                   "exposure:EXPOSURE," +
                                   "hduclass:HDUCLASS," +
-                                  "hduclas1:HDUCLAS1,hduvers:HDUVERS,poisserr:POISSERR," +
+                                  "hduclas1:HDUCLAS1,poisserr:POISSERR," +
                                   "chantype:CHANTYPE,n_channels:DETCHANS").split(",")
+
+# hduvers:HDUVERS
+
 mightBeColumns = {}
 mightBeColumns['observed'] = ("EXPOSURE,BACKFILE," +
                               "CORRFILE,CORRSCAL," +
@@ -653,6 +659,7 @@ class Response(object):
 
                 # GBM typical response
                 data = f['MATRIX', rspNumber].data
+                header = f['MATRIX', rspNumber].header
 
             except:
                 # Other detectors might use the SPECRESP MATRIX name instead
@@ -660,12 +667,13 @@ class Response(object):
                 # we have to fail if we cannot read the matrix
 
                 data = f['SPECRESP MATRIX', rspNumber].data
+                header = f['SPECRESP MATRIX', rspNumber].header
 
             # Sometimes .rsp files contains a weird format featuring variable-length
             # arrays. Historically those confuse pyfits quite a lot, so we ensure
             # to transform them into standard numpy matrices to avoid issues
 
-            self.matrix = variableToMatrix(data.field('MATRIX'))
+            self.matrix = self._read_matrix(data, header.get("DETCHANS"))
 
             self.ebounds = np.vstack([f['EBOUNDS'].data.field("E_MIN"),
                                       f['EBOUNDS'].data.field("E_MAX")]).T
@@ -707,6 +715,45 @@ class Response(object):
                 # Multiply ARF and RMF
 
                 self.matrix = self.matrix * arf
+
+    def _read_matrix(self, data, n_channels):
+
+        assert n_channels is not None, "Matrix is improperly formatted. No DETCHANS keyword."
+
+        rsp = np.zeros([data.shape[0], n_channels], float)
+
+        n_grp = data.field("N_GRP")
+        f_chan = data.field("F_CHAN")
+        n_chan = data.field("N_CHAN")
+
+        # In certain matrices where compression has not been used, n_grp, f_chan and n_chan are not array columns,
+        # but simple scalars. Expand then their dimensions so that we don't need to customize the code below
+
+        if n_grp.ndim == 1:
+
+            n_grp = np.expand_dims(n_grp, 1)
+
+        if f_chan.ndim == 1:
+
+            f_chan = np.expand_dims(f_chan, 1)
+
+        if n_chan.ndim == 1:
+
+            n_chan = np.expand_dims(n_chan, 1)
+
+        matrix = data.field("MATRIX")
+
+        for i, row in enumerate(data):
+
+            m_start = 0
+
+            for j in range(n_grp[i]):
+
+                rsp[i, f_chan[i][j]: f_chan[i][j] + n_chan[i][j]] = matrix[i][m_start:m_start + n_chan[i][j]]
+
+                m_start += n_chan[i][j]
+
+        return rsp.T
 
     def set_function(self, differentialFunction, integralFunction=None):
         '''
