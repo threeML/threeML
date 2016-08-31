@@ -13,6 +13,19 @@ else:
 
     has_pymultinest = True
 
+try:
+
+    import chainconsumer
+
+except:
+
+    has_chainconsumer = False
+
+else:
+
+    has_chainconsumer = True
+
+
 import numpy as np
 import collections
 import math
@@ -583,6 +596,53 @@ class BayesianAnalysis(object):
         else:
 
             raise RuntimeError("You have to run the sampler first, using the sample() method")
+
+    def corner_plot2(self,sigmas=[0,1,2,3],cloud=False,shade=True,shade_alpha=1.,parameters=None,**kwargs):
+        """
+        Corner plots using chain consumer which allows for sexier plotting of
+        marginals
+
+        Returns:
+            figure
+
+        """
+
+        if not has_chainconsumer:
+            RuntimeError("You must have chainconsumer installed to use this function")
+
+
+
+
+        if self.samples is not None:
+            assert len(self._free_parameters.keys()) == self.raw_samples[0].shape[0], ("Mismatch between sample"
+                                                                                       " dimensions and number of free"
+                                                                                       " parameters")
+
+        labels = []
+        priors = []
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+            short_name = parameter_name.split(".")[-1]
+
+            labels.append(short_name)
+
+            priors.append(self._likelihood_model.parameters[parameter_name].prior)
+
+
+        cc = chainconsumer.ChainConsumer()
+
+        cc.add_chain(self.raw_samples,parameters=labels)
+
+        cc.configure_contour(cloud=cloud,shade=shade,shade_alpha=shade_alpha,sigmas=sigmas)
+        cc.configure_general(**kwargs)
+        fig = cc.plot(parameters=parameters,figsize='PAGE')
+
+
+
+
+
+
+
 
     def plot_chains(self, thin=None):
         """
