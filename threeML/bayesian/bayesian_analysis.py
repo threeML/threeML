@@ -25,7 +25,6 @@ else:
 
     has_chainconsumer = True
 
-
 import numpy as np
 import collections
 import math
@@ -48,7 +47,6 @@ from astromodels import ModelAssertionViolation
 
 
 def sample_with_progress(p0, sampler, n_samples, **kwargs):
-
     # Loop collecting n_samples samples
 
     pos, prob, state = [None, None, None]
@@ -58,9 +56,7 @@ def sample_with_progress(p0, sampler, n_samples, **kwargs):
     progress_bar_iter = max(int(n_samples / 100), 1)
 
     with progress_bar(n_samples) as progress:
-
         for i, result in enumerate(sampler.sample(p0, iterations=n_samples, **kwargs)):
-
             # Show progress
 
             progress.animate((i + 1))
@@ -201,7 +197,7 @@ class BayesianAnalysis(object):
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
-        log_prior = map(lambda x:self._logp(x), self._raw_samples)
+        log_prior = map(lambda x: self._logp(x), self._raw_samples)
 
         # Now we get the log posterior and we remove the log prior
 
@@ -556,10 +552,13 @@ class BayesianAnalysis(object):
 
         return credible_intervals
 
-    def corner_plot(self, **kwargs):
+    def corner_plot(self, renamed_parameters=None, **kwargs):
         """
         Produce the corner plot showing the marginal distributions in one and two directions.
 
+        :param renamed_parameters: a python dictionary of parameters to rename.
+             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
+             {'old label': 'new label'}
         :param kwargs: arguments to be passed to the corner function
         :return: a matplotlib.figure instance
         """
@@ -580,6 +579,18 @@ class BayesianAnalysis(object):
 
                 priors.append(self._likelihood_model.parameters[parameter_name].prior)
 
+            # Rename the parameters if needed.
+
+            if renamed_parameters is not None:
+
+                for old_label, new_label in renamed_parameters.iteritems():
+
+                    for i, _ in enumerate(labels):
+
+                        if labels[i] == old_label:
+                            labels[i] = new_label
+
+
             # default arguments
             default_args = {'show_titles': True, 'title_fmt': ".2g", 'labels': labels,
                             'quantiles': [0.16, 0.50, 0.84]}
@@ -597,21 +608,30 @@ class BayesianAnalysis(object):
 
             raise RuntimeError("You have to run the sampler first, using the sample() method")
 
-    def corner_plot2(self,sigmas=[0,1,2,3],cloud=False,shade=True,shade_alpha=1.,parameters=None,**kwargs):
+    def corner_plot2(self, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1., parameters=None,
+                     renamed_parameters=None, **kwargs):
         """
-        Corner plots using chain consumer which allows for sexier plotting of
+        Corner plots using chainconsumer which allows for sexier plotting of
         marginals
 
+           Args:
+
+            sigmas: list of sigma levels to include. 0 must be included to avoid hole in contour
+            cloud: bool. Whether or not to plot MC points
+            shade: bool. Fill in the contours
+            shade_alpha: alpha level of contours
+            parameters: list of parameters to plot
+            renamed_parameters: a python dictionary of parameters to rename.
+             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
+             {'old label': 'new label'}
+            **kwargs: chainconsumer general keyword arguments
+
         Returns:
-            figure
 
         """
 
         if not has_chainconsumer:
             RuntimeError("You must have chainconsumer installed to use this function")
-
-
-
 
         if self.samples is not None:
             assert len(self._free_parameters.keys()) == self.raw_samples[0].shape[0], ("Mismatch between sample"
@@ -628,17 +648,47 @@ class BayesianAnalysis(object):
 
             priors.append(self._likelihood_model.parameters[parameter_name].prior)
 
+        # Rename the parameters if needed.
+
+        if renamed_parameters is not None:
+
+            for old_label, new_label in renamed_parameters.iteritems():
+
+                for i, _ in enumerate(labels):
+
+                    if labels[i] == old_label:
+                        labels[i] = new_label
+
 
         cc = chainconsumer.ChainConsumer()
 
-        cc.add_chain(self.raw_samples,parameters=labels)
+        cc.add_chain(self.raw_samples, parameters=labels)
 
-        cc.configure_contour(cloud=cloud,shade=shade,shade_alpha=shade_alpha,sigmas=sigmas)
+        cc.configure_contour(cloud=cloud, shade=shade, shade_alpha=shade_alpha, sigmas=sigmas)
         cc.configure_general(**kwargs)
-        fig = cc.plot(parameters=parameters,figsize='PAGE')
+        fig = cc.plot(parameters=parameters, figsize='PAGE')
 
     def compare_posterior(self, other_fit, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1.,
                           parameters=None, renamed_parameters=None, **kwargs):
+        """
+
+        Create a corner plot from two different bayesian fits which allow for co-plotting of parameters marginals.
+
+        Args:
+            other_fit: Another fitted BayesianAnalysis object to compare top the this analysis
+            sigmas: list of sigma levels to include. 0 must be included to avoid hole in contour
+            cloud: bool. Whether or not to plot MC points
+            shade: bool. Fill in the contours
+            shade_alpha: alpha level of contours
+            parameters: list of parameters to plot
+            renamed_parameters: a python dictionary of parameters to rename.
+             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
+             {'old label': 'new label'}
+            **kwargs: chainconsumer general keyword arguments
+
+        Returns:
+
+        """
 
         if not has_chainconsumer:
             RuntimeError("You must have chainconsumer installed to use this function")
@@ -653,12 +703,12 @@ class BayesianAnalysis(object):
 
         if other_fit.samples is not None:
             assert len(other_fit._free_parameters.keys()) == other_fit.raw_samples[0].shape[0], (
-            "Mismatch between sample"
+                "Mismatch between sample"
 
 
 
-            " dimensions and number of free"
-            " parameters")
+                " dimensions and number of free"
+                " parameters")
 
         labels = []
         priors = []
@@ -683,19 +733,18 @@ class BayesianAnalysis(object):
         # Rename any parameters so that they can be plotted together.
         # A dictionary is passed with keys = old label values = new label.
 
-
         if renamed_parameters is not None:
 
-            for old_lable, new_label in renamed_parameters.iteritems():
+            for old_label, new_label in renamed_parameters.iteritems():
 
                 for i, _ in enumerate(labels):
 
-                    if labels[i] == old_lable:
+                    if labels[i] == old_label:
                         labels[i] = new_label
 
                 for i, _ in enumerate(labels_other):
 
-                    if labels_other[i] == old_lable:
+                    if labels_other[i] == old_label:
                         labels_other[i] = new_label
 
         cc = chainconsumer.ChainConsumer()
@@ -709,10 +758,6 @@ class BayesianAnalysis(object):
         fig = cc.plot(parameters=parameters, figsize='PAGE')
 
         return fig
-
-
-
-
 
     def plot_chains(self, thin=None):
         """
@@ -927,7 +972,6 @@ class BayesianAnalysis(object):
             log_like = self._log_like(trial_values)
 
             if self.verbose:
-
                 n_par = len(self._free_parameters)
 
                 print("Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
@@ -1075,26 +1119,25 @@ class BayesianAnalysis(object):
         Desired probability of type I error (defaults to 0.05)
         """
 
-
         # Currently only 1D available.
         # future addition will fix this
 
         # Make a copy of trace
-        #x = x.copy()
+        # x = x.copy()
         # For multivariate node
-        #if x.ndim > 1:
-            # Transpose first, then sort
+        # if x.ndim > 1:
+        # Transpose first, then sort
         #    tx = np.transpose(x, list(range(x.ndim))[1:] + [0])
         #    dims = np.shape(tx)
-            # Container list for intervals
+        # Container list for intervals
         #    intervals = np.resize(0.0, dims[:-1] + (2,))
 
         #    sx = np.sort(tx[index])
-            # Append to list
+        # Append to list
         #    intervals[index] = self._calc_min_interval(sx, alpha)
-            # Transpose back before returning
+        # Transpose back before returning
         #    return np.array(intervals)
-        #else:
-            # Sort univariate node
+        # else:
+        # Sort univariate node
         sx = np.sort(x)
         return np.array(self._calc_min_interval(sx, alpha))
