@@ -608,8 +608,8 @@ class BayesianAnalysis(object):
 
             raise RuntimeError("You have to run the sampler first, using the sample() method")
 
-    def corner_plot2(self, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1., parameters=None,
-                     renamed_parameters=None, **kwargs):
+    def corner_plot_cc(self, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1., parameters=None,
+                       renamed_parameters=None, **kwargs):
         """
         Corner plots using chainconsumer which allows for sexier plotting of
         marginals
