@@ -637,8 +637,78 @@ class BayesianAnalysis(object):
         cc.configure_general(**kwargs)
         fig = cc.plot(parameters=parameters,figsize='PAGE')
 
+    def compare_posterior(self, other_fit, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1.,
+                          parameters=None, renamed_parameters=None, **kwargs):
+
+        if not has_chainconsumer:
+            RuntimeError("You must have chainconsumer installed to use this function")
+
+        if self.samples is not None:
+            assert len(self._free_parameters.keys()) == self.raw_samples[0].shape[0], ("Mismatch between sample"
 
 
+
+                                                                                       " dimensions and number of free"
+                                                                                       " parameters")
+
+        if other_fit.samples is not None:
+            assert len(other_fit._free_parameters.keys()) == other_fit.raw_samples[0].shape[0], (
+            "Mismatch between sample"
+
+
+
+            " dimensions and number of free"
+            " parameters")
+
+        labels = []
+        priors = []
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+            short_name = parameter_name.split(".")[-1]
+
+            labels.append(short_name)
+
+            priors.append(self._likelihood_model.parameters[parameter_name].prior)
+
+        labels_other = []
+        priors_other = []
+
+        for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.iteritems()):
+            short_name = parameter_name.split(".")[-1]
+
+            labels_other.append(short_name)
+
+            priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)
+
+        # Rename any parameters so that they can be plotted together.
+        # A dictionary is passed with keys = old label values = new label.
+
+
+        if renamed_parameters is not None:
+
+            for old_lable, new_label in renamed_parameters.iteritems():
+
+                for i, _ in enumerate(labels):
+
+                    if labels[i] == old_lable:
+                        labels[i] = new_label
+
+                for i, _ in enumerate(labels_other):
+
+                    if labels_other[i] == old_lable:
+                        labels_other[i] = new_label
+
+        cc = chainconsumer.ChainConsumer()
+
+        cc.add_chain(self.raw_samples, parameters=labels)
+
+        cc.add_chain(other_fit.raw_samples, parameters=labels_other)
+
+        cc.configure_contour(cloud=cloud, shade=shade, shade_alpha=shade_alpha, sigmas=sigmas)
+        cc.configure_general(**kwargs)
+        fig = cc.plot(parameters=parameters, figsize='PAGE')
+
+        return fig
 
 
 
