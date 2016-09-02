@@ -454,19 +454,27 @@ class JointLikelihood(object):
 
         min1, max1 = self.likelihood_model[param_1].bounds
 
-        assert param_1_minimum >= min1, "Requested low range for parameter %s (%s) " \
-                                        "is below parameter minimum (%s)" % (param_1, param_1_minimum, min1)
+        if min1 is not None:
 
-        assert param_1_maximum <= max1, "Requested hi range for parameter %s (%s) " \
-                                        "is above parameter maximum (%s)" % (param_1, param_1_maximum, max1)
+            assert param_1_minimum >= min1, "Requested low range for parameter %s (%s) " \
+                                            "is below parameter minimum (%s)" % (param_1, param_1_minimum, min1)
+
+        if max1 is not None:
+
+            assert param_1_maximum <= max1, "Requested hi range for parameter %s (%s) " \
+                                            "is above parameter maximum (%s)" % (param_1, param_1_maximum, max1)
 
         min2, max2 = self.likelihood_model[param_2].bounds
 
-        assert param_2_minimum >= min2, "Requested low range for parameter %s (%s) " \
-                                        "is below parameter minimum (%s)" % (param_2, param_2_minimum, min2)
+        if min2 is not None:
 
-        assert param_2_maximum <= max2, "Requested hi range for parameter %s (%s) " \
-                                        "is above parameter maximum (%s)" % (param_2, param_2_maximum, max2)
+            assert param_2_minimum >= min2, "Requested low range for parameter %s (%s) " \
+                                            "is below parameter minimum (%s)" % (param_2, param_2_minimum, min2)
+
+        if max2 is not None:
+
+            assert param_2_maximum <= max2, "Requested hi range for parameter %s (%s) " \
+                                            "is above parameter maximum (%s)" % (param_2, param_2_maximum, max2)
 
         # Check whether we are parallelizing or not
 
