@@ -609,7 +609,7 @@ class BayesianAnalysis(object):
             raise RuntimeError("You have to run the sampler first, using the sample() method")
 
     def corner_plot_cc(self, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1., parameters=None,
-                       renamed_parameters=None, **kwargs):
+                       renamed_parameters=None, figsize='PAGE', **kwargs):
         """
         Corner plots using chainconsumer which allows for sexier plotting of
         marginals
@@ -641,6 +641,7 @@ class BayesianAnalysis(object):
         labels = []
         priors = []
 
+
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
             short_name = parameter_name.split(".")[-1]
 
@@ -660,13 +661,18 @@ class BayesianAnalysis(object):
                         labels[i] = new_label
 
 
+
+        print labels
+
+
+
         cc = chainconsumer.ChainConsumer()
 
         cc.add_chain(self.raw_samples, parameters=labels)
 
         cc.configure_contour(cloud=cloud, shade=shade, shade_alpha=shade_alpha, sigmas=sigmas)
         cc.configure_general(**kwargs)
-        fig = cc.plot(parameters=parameters, figsize='PAGE')
+        fig = cc.plot(parameters=parameters, figsize=figsize)
 
     def compare_posterior(self, other_fit, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1.,
                           parameters=None, renamed_parameters=None, **kwargs):
