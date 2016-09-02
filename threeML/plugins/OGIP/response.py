@@ -111,7 +111,7 @@ class Response(object):
         # to add a +1 because of course the numbering of lists (data.columns.names) starts at 0
 
         f_chan_column_pos = data.columns.names.index("F_CHAN") + 1
-        tlmin_fchan = header.get("TLMIN%i" % f_chan_column_pos)
+        tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
 
         rsp = np.zeros([data.shape[0], n_channels], float)
 

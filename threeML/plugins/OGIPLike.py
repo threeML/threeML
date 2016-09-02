@@ -5,6 +5,7 @@ from threeML.io.file_utils import file_existing_and_readable
 from threeML.plugins.gammaln import logfactorial
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
+from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 
 import numpy as np
 
@@ -146,13 +147,30 @@ class OGIPLike(PluginPrototype):
                 self.observation_noise_model = 'poisson'
                 self.background_noise_model = 'poisson'
 
+                self._background_errors = None
+
+                assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
+
+                assert np.all(self._background_counts >= 0), "Error in background spectrum: negative counts!"
+
             else:
 
-                raise NotImplementedError("Poisson observation with Gaussian background is not yet implemented")
+                self.observation_noise_model = 'poisson'
+                self.background_noise_model = 'gaussian'
+
+                self._background_errors = self._bak.rate_errors * self._bak.exposure
+
+                idx = self._background_errors == 0
+
+                assert np.all(self._background_errors[idx] == self._background_counts[idx]), \
+                    "Error in background spectrum: if the error on the background is zero, " \
+                    "also the expected background must be zero"
+
+                assert np.all(self._background_counts >= 0), "Error in background spectrum: negative background!"
 
         else:
 
-            raise NotImplementedError("Gaussian observation is not yet implemented")
+            raise NotImplementedError("Gaussian observation is not yet supported")
 
         # Print the autoprobed noise models
 
@@ -230,7 +248,15 @@ class OGIPLike(PluginPrototype):
 
         model_counts = self._rsp.convolve()[self._mask] * self._pha.exposure
 
-        loglike = poisson_log_likelihood_ideal_bkg(observed_counts, bkg_counts, model_counts)
+        if self._rebinner is not None:
+
+            new_counts, new_model, new_bkg = self._rebinner.rebin(observed_counts, model_counts, bkg_counts)
+
+            loglike = poisson_observed_poisson_background(new_counts, new_bkg, new_model)
+
+        else:
+
+            loglike = poisson_observed_poisson_background(observed_counts, bkg_counts, model_counts)
 
         return loglike
 
@@ -269,6 +295,35 @@ class OGIPLike(PluginPrototype):
         #                                                             np.sum(new_bkg * scale_factor),
         #                                                             np.sum(new_model),
         #                                                             np.sum(new_counts)))
+
+        return loglike
+
+    def _loglike_poisson_obs_gaussian_bkg(self):
+
+        # Observed counts
+        observed_counts = self._observed_counts[self._mask]
+
+        # Model predicted counts
+        # In this likelihood the background becomes part of the model, which means that
+        # the uncertainty in the background is completely neglected
+
+        background_counts = self._background_counts[self._mask]
+
+        background_errors = self._background_errors[self._mask]
+
+        expected_model_counts = self._rsp.convolve()[self._mask] * self._pha.exposure
+
+        if self._rebinner is not None:
+
+            new_counts, new_model, new_bkg, new_bkg_err = self._rebinner.rebin(observed_counts, expected_model_counts,
+                                                                  background_counts, background_errors)
+
+            loglike = poisson_observed_gaussian_background(new_counts, new_bkg, new_bkg_err, new_model)
+
+        else:
+
+            loglike = poisson_observed_gaussian_background(observed_counts, background_counts,
+                                                           background_errors, expected_model_counts)
 
         return loglike
 
@@ -345,6 +400,10 @@ class OGIPLike(PluginPrototype):
             elif self._background_noise_model=='ideal':
 
                 loglike = self._loglike_poisson_obs_ideal_bkg()
+
+            elif self._background_noise_model=='gaussian':
+
+                loglike = self._loglike_poisson_obs_gaussian_bkg()
 
             else:
 

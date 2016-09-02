@@ -263,7 +263,7 @@ class PHA(object):
         :return: errors on the rates
         """
 
-        assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
+        assert self.is_poisson() == False, "Cannot request errors on rates for a Poisson spectrum"
 
         return self._rate_errors
 
