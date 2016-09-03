@@ -662,7 +662,12 @@ class BayesianAnalysis(object):
 
 
 
-        print labels
+        # Must remove underscores!
+
+        for i, val, in enumerate(labels):
+
+            labels[i] = val.replace('_',' ')
+
 
 
 
