@@ -92,7 +92,7 @@ setup(
         'pandas',
         'sympy',
         'ipywidgets',
-        'pytables'
+        'tables'
     ])
 
 # Check for optional dependencies
