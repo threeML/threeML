@@ -91,7 +91,8 @@ setup(
         'corner>=1.0.2',
         'pandas',
         'sympy',
-        'ipywidgets'
+        'ipywidgets',
+        'pytables'
     ])
 
 # Check for optional dependencies
