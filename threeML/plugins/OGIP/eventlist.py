@@ -7,6 +7,9 @@ import warnings
 import math
 import copy
 
+import pandas as pd
+
+from threeML.io.rich_display import display
 from pha import PHAContainer
 
 
@@ -120,28 +123,26 @@ class EventList(object):
                 time_mask = np.logical_or(time_mask, mask)
 
         tmp_counts = []  # Temporary list to hold the total counts per chan
+
+        for chan in range(self._first_channel, self._n_channels + self._first_channel):
+            channel_mask = self._energies == chan
+            counts_mask = np.logical_and(channel_mask, time_mask)
+            total_counts = len(self._arrival_times[counts_mask])
+
+            tmp_counts.append(total_counts)
+
+        self._counts = np.array(tmp_counts)
+
+        # self._is_poisson = True
+
+
+        tmp_counts = []
         tmp_err = []  # Temporary list to hold the err counts per chan
 
-        if not use_poly_fit:
-
-            for chan in range(self._first_channel, self._n_channels + self._first_channel):
-                channel_mask = self._energies == chan
-                counts_mask = np.logical_and(channel_mask, time_mask)
-                total_counts = len(self._arrival_times[counts_mask])
-
-                tmp_counts.append(total_counts)
-
-            self._counts = np.array(tmp_counts)
-
-            self._is_poisson = True
-
-
-
-
-        else:
+        if use_poly_fit:
 
             if not self._poly_fit_exists:
-                RuntimeError('A polynomial fit to the channels does not exist!')
+                raise RuntimeError('A polynomial fit to the channels does not exist!')
 
             for chan in range(self._first_channel, self._n_channels + self._first_channel):
 
@@ -157,11 +158,11 @@ class EventList(object):
 
                 tmp_err.append(np.sqrt(counts_err))
 
-            self._counts = np.array(tmp_counts)
+            self._poly_counts = np.array(tmp_counts)
 
-            self._count_err = np.array(tmp_err)
+            self._poly_count_err = np.array(tmp_err)
 
-            self._is_poisson = False
+            # self._is_poisson = False
 
         # Dead time correction
 
@@ -181,6 +182,8 @@ class EventList(object):
 
         self._tmin_list = tmin_list
         self._tmax_list = tmax_list
+
+        self._active_dead_time = total_dead_time
 
     @property
     def tmin_list(self):
@@ -246,7 +249,7 @@ class EventList(object):
 
             self.set_active_time_intervals(*tmp, use_poly_fit=True)
 
-    def get_pha_container(self):
+    def get_pha_container(self, use_poly=False):
         """
         Return a
 
@@ -257,23 +260,58 @@ class EventList(object):
         if not self._time_selection_exists:
             RuntimeError('No time selection exists! Cannot calculate rates')
 
-        if self._is_poisson:
-            rate_err = None
+        if use_poly:
+            is_poisson = False
+
+            rate_err = self._poly_count_err * self._exposure
+            rates = self._poly_counts * self._exposure
+
+
+
+
+
         else:
 
-            rate_err = self._count_err * self._exposure
+            is_poisson = True
 
-        rates = self._counts * (self._exposure)
+            rate_err = None
+            rates = self._counts * (self._exposure)
 
         pha = PHAContainer(rates=rates,
                            rate_errors=rate_err,
                            n_channels=self._n_channels,
                            exposure=self._exposure,
-                           is_poisson=self._is_poisson,
+                           is_poisson=is_poisson,
                            response_file=self._rsp_file
                            )
 
         return pha
+
+    def peek(self):
+        """
+        Examine the currently selected info as well other things.
+
+        Returns:
+
+        """
+
+        info_dict = {}
+
+        info_dict['Active Selections'] = zip(self._tmin_list, self._tmax_list)
+        info_dict['Active Deadtime'] = self._active_dead_time
+        info_dict['Active Exposure'] = self._exposure
+        info_dict['Total N. Events'] = len(self._arrival_times)
+        info_dict['Active Counts'] = self._counts.sum()
+        info_dict['Number of Channels'] = self._n_channels
+
+        if self._poly_fit_exists:
+            info_dict['Polynomial Selections'] = self._poly_time_selections
+            info_dict['Active Count Error'] = np.sqrt((self._poly_count_err ** 2).sum())
+            info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
+
+        info_df = pd.Series(info_dict)
+
+        display(info_df)
 
     def _fit_global_and_determine_optimum_grade(self, cnts, bins):
         # Fit the sum of all the channels to determine the optimal polynomial

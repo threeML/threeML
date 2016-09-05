@@ -78,7 +78,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         self._evt_list.set_active_time_intervals(*args)
 
-        self._observed_pha = self._evt_list.get_pha_container()
+        self._observed_pha = self._evt_list.get_pha_container(use_poly=False)
 
         self._active_interval = args
 
@@ -95,7 +95,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         # In theory this will automatically get the poly counts if a
         # time interval already exists
 
-        self._bkg_pha = self._evt_list.get_pha_container()
+        self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
 
     def view_lightcurve(self, start=-10, stop=20., dt=1.):
 
