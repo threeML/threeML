@@ -7,14 +7,19 @@ import astropy.io.fits as pyfits
 import numpy as np
 import scipy.integrate
 
-from threeML.plugins.ogip import gbm_light_curve_plot
+from OGIPLike import OGIPLike
 from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins.ogip import OGIPPluginPGstat
+# from ogip import OGIPPHA
+
+from threeML.plugins.ogip import gbm_light_curve_plot
+
+# from threeML.plugin_prototype import PluginPrototype
+#from threeML.plugins.ogip import OGIPPluginPGstat
 
 __instrument_name = "Fermi GBM TTE (all detectors)"
 
 
-class FermiGBMLikeTTE(OGIPPluginPGstat, PluginPrototype):
+class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
     def __init__(self, name, ttefile, bkgselections, srcinterval, rspfile, polyorder=-1):
         """
@@ -32,7 +37,7 @@ class FermiGBMLikeTTE(OGIPPluginPGstat, PluginPrototype):
 
         self.name = name
 
-        OGIPPluginPGstat.__init__(self, name, rspfile, ttefile=ttefile)
+        OGIPLike.__init__(self, name, rsp_file=rspfile)
 
         self._polyorder = polyorder
 
