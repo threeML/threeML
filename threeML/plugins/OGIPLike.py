@@ -2,12 +2,14 @@ from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import Response
 from threeML.io.file_utils import file_existing_and_readable
+from threeML.io.step_plot import step_plot
 from threeML.plugins.gammaln import logfactorial
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -118,7 +120,17 @@ class OGIPLike(PluginPrototype):
         # Now make sure response and background file exist (the ancillary file is not always present, and will be
         # treated separately
 
-        assert file_existing_and_readable(bak_file.split("{")[0]), "Background file %s not existing or not readable" % bak_file
+        try:
+            assert file_existing_and_readable(
+                bak_file.split("{")[0]), "Background file %s not existing or not readable" % bak_file
+        except(AttributeError):
+            try:
+                if bak_file.is_container:
+                    pass
+            except:
+                RuntimeError("Background file type is unrecognizeable")
+
+
         assert file_existing_and_readable(rsp_file.split("{")[0]), "Response file %s not existing or not readable" % rsp_file
 
         self._bak = PHA(bak_file, file_type='background')
@@ -212,6 +224,25 @@ class OGIPLike(PluginPrototype):
         self._mask = np.array(mask, np.bool)
 
         print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
+
+    def view_count_spectrum(self):
+        '''
+        View the count and background spectrum. Useful to check energy selections.
+
+        '''
+        # First plot the counts
+        _ = channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._observed_counts,
+                         color='#377eb8', lw=2, alpha=1, label="Total")
+        ax = channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._background_counts,
+                          color='#e41a1c', alpha=.8, label="Background")
+        # Now fade the non-used channels
+        excluded_channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._mask, self._observed_counts,
+                              self._background_counts, ax)
+
+        ax.set_xlabel("Energy (keV)")
+        ax.set_ylabel("Counts/keV")
+        ax.set_xlim(left=self._rsp.ebounds[0, 0], right=self._rsp.ebounds[-1, 1])
+        ax.legend()
 
     def _get_expected_background_counts_scaled(self):
         """
@@ -481,3 +512,55 @@ class OGIPLike(PluginPrototype):
                                       + differential_flux(e2))
 
         return differential_flux, integral
+
+
+def channel_plot(chan_min, chan_max, counts, **keywords):
+    chans = np.array(zip(chan_min, chan_max))
+    width = chan_max - chan_min
+    fig = plt.figure(666)
+    ax = fig.add_subplot(111)
+    step_plot(chans, counts / width, ax, **keywords)
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+
+    return ax
+
+
+def excluded_channel_plot(chan_min, chan_max, mask, counts, bkg, ax):
+    # Figure out the best limit
+    chans = np.array(zip(chan_min, chan_max))
+    width = chan_max - chan_min
+
+    top = max([max(bkg / width), max(counts / width)])
+    top = top + top * .5
+    bottom = min([min(bkg / width), min(counts / width)])
+    bottom = bottom - bottom * .2
+
+    # Find the contiguous regions
+    slices = slice_disjoint((~mask).nonzero()[0])
+
+    for region in slices:
+        ax.fill_between([chan_min[region[0]], chan_max[region[1]]],
+                        bottom,
+                        top,
+                        color='k',
+                        alpha=.5)
+
+    ax.set_ylim(bottom, top)
+
+
+def slice_disjoint(arr):
+    slices = []
+    startSlice = 0
+    counter = 0
+    for i in range(len(arr) - 1):
+        if arr[i + 1] > arr[i] + 1:
+            endSlice = arr[i]
+            slices.append([startSlice, endSlice])
+            startSlice = arr[i + 1]
+            counter += 1
+    if counter == 0:
+        return [[arr[0], arr[-1]]]
+    if endSlice != arr[-1]:
+        slices.append([startSlice, arr[-1]])
+    return slices

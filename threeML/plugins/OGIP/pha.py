@@ -44,20 +44,20 @@ class PHA(object):
 
     def __init__(self, phafile, spectrum_number=None, file_type='observed', ):
 
-        if isinstance(phafile, PHAContainer):
+        # This is kludge to check if it is PHAContainer bc isinstance sucks.
+        try:
+            if phafile.is_container:
+                self._init_from_pha_container(phafile, file_type)
 
-            self._init_from_pha_container(phafile, file_type)
+        except(AttributeError):
 
+            if '.root' not in phafile:
 
+                self._init_from_FITS(phafile, spectrum_number, file_type)
 
+            else:
 
-        elif '.root' not in phafile:
-
-            self._init_from_FITS(phafile, spectrum_number, file_type)
-
-        else:
-
-            self._init_from_ROOT()
+                self._init_from_ROOT()
 
     def _init_from_ROOT(self):
 
@@ -80,8 +80,7 @@ class PHA(object):
 
         self._typeII = False
 
-        raise RuntimeError("Keyword %s not found. File %s is not a proper PHA "
-                           "file" % (keyname, phafile))
+
 
         assert self._rates.shape[0] == self._gathered_keywords['detchans'], \
             "The lenght of RATES and the number of CHANNELS is not the same"
@@ -408,8 +407,14 @@ class PHAContainer(MutableMapping):
 
             if key == 'is_poisson':
                 self.dict[key] = True
+            elif key == 'scale_factor':
+                self.dict[key] = 1.
             else:
                 self.dict[key] = None
+
+        self.is_container = True
+
+
 
     def __setitem__(self, key, val):
         if key not in PHAContainer._allowed_keys:
@@ -457,7 +462,7 @@ class PHAContainer(MutableMapping):
     def setup_pha(self, pha):
 
         # Set the values
-        if self.dict['rates'] in None:
+        if self.dict['rates'] is None:
             RuntimeError('RATES is None. A valid PHA must contain rates!')
 
         for key, value in self.iter_values():
