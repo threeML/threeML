@@ -114,6 +114,10 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         gbm_light_curve_plot(time_bins, cnts, bkg, dt,
                              selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list))
 
+    def peek(self):
+
+        self._evt_list.peek()
+
 
 class GBMTTEFile(object):
     def __init__(self, ttefile):

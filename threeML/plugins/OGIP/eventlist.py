@@ -10,8 +10,8 @@ import copy
 import pandas as pd
 
 from threeML.io.rich_display import display
+from threeML.utils.stats_tools import li_and_ma
 from pha import PHAContainer
-
 
 
 class EventList(object):
@@ -22,8 +22,14 @@ class EventList(object):
 
 
         Args:
-            arrival_times:
-            energies:
+            n_channels: Number of detector channels
+            start_time: start time of the event list
+            stop_time: stop time of the event list
+            dead_time: an array of deadtime per event
+            first_channel: where detchans begin indexing
+            rsp_file: the response file corresponding to these events
+            arrival_times: list of event arrival times
+            energies: list of event energies or pha channels
             ra:
             dec:
         """
@@ -33,10 +39,9 @@ class EventList(object):
         self._n_channels = n_channels
         self._first_channel = first_channel
 
-
         assert self._arrival_times.shape[0] == self._energies.shape[
             0], "Arrival time (%d) and energies (%d) have different shapes" % (
-        self._arrival_times.shape[0], self._energies.shape[0])
+            self._arrival_times.shape[0], self._energies.shape[0])
 
         if dead_time is not None:
 
@@ -72,7 +77,6 @@ class EventList(object):
         self._time_selection_exists = False
         self._poly_fit_exists = False
 
-
     @staticmethod
     def _parse_time_interval(time_interval):
         # The following regular expression matches any two numbers, positive or negative,
@@ -83,13 +87,11 @@ class EventList(object):
         return map(float, tokens)
 
     def set_active_time_intervals(self, *args, **kwargs):
-        '''Set the time interval to be used during the analysis.
-        For now, only one interval can be selected. This may be
-        updated in the future to allow for self consistent time
-        resolved analysis.
+        '''Set the time interval(s) to be used during the analysis.
+
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
 
-        set_active_time_interval("0.0-10.0")
+        set_active_time_intervals("0.0-10.0")
 
         which will set the energy range 0-10. seconds.
         '''
@@ -218,12 +220,15 @@ class EventList(object):
         self._poly_order = value
 
     def set_polynomial_fit_interval(self, *time_intervals_spec):
-        '''Set the time interval to fit the background.
+        """Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
 
-        setBackgroundInterval("-10.0-0.0","10.-15.")
-        '''
+        set_polynomial_fit_interval("-10.0-0.0","10.-15.")
+
+        Args:
+            *time_intervals_spec:
+        """
 
         self._poly_time_selections = []
 
@@ -251,14 +256,17 @@ class EventList(object):
 
     def get_pha_container(self, use_poly=False):
         """
-        Return a
+        Return a PHAContainer that can be read by the PHA class
 
+
+        Args:
+            use_poly: (bool) choose to build from the polynomial fits
 
         Returns:
 
         """
         if not self._time_selection_exists:
-            RuntimeError('No time selection exists! Cannot calculate rates')
+            raise RuntimeError('No time selection exists! Cannot calculate rates')
 
         if use_poly:
             is_poisson = False
@@ -291,8 +299,6 @@ class EventList(object):
         """
         Examine the currently selected info as well other things.
 
-        Returns:
-
         """
 
         info_dict = {}
@@ -308,6 +314,10 @@ class EventList(object):
             info_dict['Polynomial Selections'] = self._poly_time_selections
             info_dict['Active Count Error'] = np.sqrt((self._poly_count_err ** 2).sum())
             info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
+
+            S = li_and_ma(self._counts.sum(), self._poly_counts.sum())
+
+            info_dict['Li and Ma Sigma'] = S
 
         info_df = pd.Series(info_dict)
 
