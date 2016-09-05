@@ -1,5 +1,6 @@
 import numpy as np
 from threeML.plugins.gammaln import logfactorial
+from math import log
 
 
 def regularized_log(vector):
@@ -74,3 +75,43 @@ def poisson_observed_poisson_background(observed_counts, background_counts, expo
     assert np.isfinite(ppstat).all()
 
     return np.sum(ppstat) * (-1)
+
+
+def poisson_observed_gaussian_background(observed_counts, background_counts, background_error, expected_model_counts):
+
+    # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
+    # observed counts. It is a profile likelihood.
+
+    MB = background_counts + expected_model_counts
+    s2 = background_error ** 2
+
+    b = 0.5 * (np.sqrt(MB ** 2 - 2 * s2 * (MB - 2 * observed_counts) + background_error ** 4)
+               + background_counts - expected_model_counts - s2)
+
+    # Now there are two branches: when the background is 0 we are in the normal situation of a pure
+    # Poisson likelihood, while when the background is not zero we use the profile likelihood
+
+    # NOTE: bkgErr can be 0 only when also bkgCounts = 0
+    # Also it is evident from the expression above that when bkgCounts = 0 and bkgErr=0 also b=0
+
+    # Let's do the branch with background > 0 first
+
+    idx = background_counts > 0
+
+    log_likes = np.empty_like(expected_model_counts)
+
+    log_likes[idx] = (-(b[idx] - background_counts[idx]) ** 2 / (2 * s2[idx])
+                      + observed_counts[idx] * np.log(b[idx] + expected_model_counts[idx])
+                      - b[idx] - expected_model_counts[idx] - logfactorial(observed_counts[idx])
+                      - 0.5 * log(2 * np.pi) - np.log(background_error[idx]))
+
+    # Let's do the other branch
+
+    nidx = ~idx
+
+    # the 1e-100 in the log is to avoid zero divisions
+    # This is the Poisson likelihood with no background
+    log_likes[nidx] = observed_counts[nidx] * np.log(expected_model_counts[nidx] + 1e-100) - \
+                      expected_model_counts[nidx] - logfactorial(observed_counts[nidx])
+
+    return np.sum(log_likes)

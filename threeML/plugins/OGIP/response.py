@@ -111,7 +111,14 @@ class Response(object):
         # to add a +1 because of course the numbering of lists (data.columns.names) starts at 0
 
         f_chan_column_pos = data.columns.names.index("F_CHAN") + 1
-        tlmin_fchan = header.get("TLMIN%i" % f_chan_column_pos)
+
+        try:
+            tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
+
+        except(KeyError):
+            warnings.warn('No TLMIN keyword found. This DRM is improper. Assuming TLMIN=1')
+            tlmin_fchan = 1
+
 
         rsp = np.zeros([data.shape[0], n_channels], float)
 
@@ -151,6 +158,18 @@ class Response(object):
                 m_start += n_chan[i][j]
 
         return rsp.T
+
+    @property
+    def ebounds(self):
+        return self._ebounds
+
+    @ebounds.setter
+    def ebounds(self, value):
+        raise RuntimeError('ebounds should not be altered manually, silly rabbit!')
+
+    @ebounds.getter
+    def ebounds(self):
+        return self._ebounds
 
     def set_function(self, differentialFunction, integralFunction=None):
         """

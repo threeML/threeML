@@ -904,30 +904,3 @@ def slice_disjoint(arr):
     return slices
 
 
-def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):
-    fig = plt.figure(777)
-    ax = fig.add_subplot(111)
-
-    max_cnts = max(cnts / width)
-    top = max_cnts + max_cnts * .2
-    min_cnts = min(cnts[cnts > 0] / width)
-    bottom = min_cnts - min_cnts * .05
-    mean_time = map(np.mean, time_bins)
-
-    selection_mask = np.logical_and(time_bins[:,0] >= selection[0], time_bins[:,1] <= selection[1])
-
-    step_plot(time_bins, cnts / width, ax, color='#8da0cb',label="Light Curve")
-    step_plot(time_bins[selection_mask], cnts[selection_mask] / width, ax,
-              color='#fc8d62',
-              fill=True,
-              fill_min=min_cnts,label="Selection")
-
-
-    ax.plot(mean_time, bkg, '#66c2a5', lw=2., label = "Background")
-
-    #ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
-
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("Rate (cnts/s)")
-    ax.set_ylim(bottom, top)
-    ax.legend()
