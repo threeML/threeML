@@ -194,6 +194,8 @@ class BayesianAnalysis(object):
 
         self._log_like_values = sampler.flatlnprobability - log_prior
 
+        self._log_probability_values = sampler.flatlnprobability
+
         self._build_samples_dictionary()
 
         return self.samples
@@ -319,6 +321,10 @@ class BayesianAnalysis(object):
 
         self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
 
+        log_prior = map(lambda x: self._log_prior(x), self._raw_samples)
+
+        self._log_probability_values = self._log_like_values + log_prior
+
         self._build_samples_dictionary()
 
         return self.samples
@@ -336,6 +342,17 @@ class BayesianAnalysis(object):
             # Add the samples for this parameter for this source
 
             self._samples[parameter_name] = self._raw_samples[:, i]
+
+    def log_probability(self, samples):
+
+        samples = np.atleast_2d(samples)
+
+        log_prob = map(lambda x: self._get_posterior(x), samples)
+
+        return log_prob
+
+
+
 
     @property
     def raw_samples(self):
@@ -365,6 +382,19 @@ class BayesianAnalysis(object):
         """
 
         return self._sampler
+
+    @property
+    def log_probability_values(self):
+        """
+
+        Access the log probability values from the sampler (ln P = ln like + ln prior)
+
+        Returns: the log probability of the model
+
+        """
+
+        return self._log_probability_values
+
 
     def get_effective_free_parameters(self):
         """

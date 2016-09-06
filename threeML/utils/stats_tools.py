@@ -31,11 +31,28 @@ def bic(log_like, n_parameters, n_data_points):
     val = -2. * log_like + n_parameters * np.log(n_data_points)
 
 
-def waic():
-    pass
+def waic(bayesian_trace):
+    log_prob = bayesian_trace.log_probability_values
+
+    np.sum()
 
 
-def dic():
-    mean_deviance = -2. * np.mean(log_prob_model)
+def dic(bayesian_trace):
+    """
+    The Deviance information criteria derived from MCMC traces
+    Read more:  dx.doi.org/10.1111/1467-9868.00353
 
-    deviance_at_mean
+    Args:
+        bayesian_trace: an instance of Bayesian Analysis
+
+    Returns:
+
+    """
+
+    mean_deviance = -2. * np.mean(bayesian_trace.log_probability_values)
+
+    mean_of_free_parameters = np.mean(bayesian_trace.raw_samples, axis=0)
+
+    deviance_at_mean = -2. * bayesian_trace.log_probability(mean_of_free_parameters)[0]
+
+    return 2 * mean_deviance - deviance_at_mean
