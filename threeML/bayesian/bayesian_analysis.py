@@ -188,7 +188,7 @@ class BayesianAnalysis(object):
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
-        log_prior = map(lambda x:self._logp(x), self._raw_samples)
+        log_prior = map(lambda x: self._log_prior(x), self._raw_samples)
 
         # Now we get the log posterior and we remove the log prior
 
@@ -215,7 +215,7 @@ class BayesianAnalysis(object):
 
         n_dim = len(free_parameters.keys())
 
-        sampler = emcee.PTSampler(n_temps, n_walkers, n_dim, self._log_like, self._logp)
+        sampler = emcee.PTSampler(n_temps, n_walkers, n_dim, self._log_like, self._log_prior)
 
         # Get one starting point for each temperature
 
@@ -848,7 +848,7 @@ class BayesianAnalysis(object):
 
         return p0
 
-    def _logp(self, trial_values):
+    def _log_prior(self, trial_values):
         """Compute the sum of log-priors, used in the parallel tempering sampling"""
 
         # Compute the sum of the log-priors
