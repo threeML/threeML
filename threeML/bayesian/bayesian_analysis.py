@@ -213,9 +213,9 @@ class BayesianAnalysis(object):
 
         """
 
-        free_parameters = self._likelihood_model.getFreeParameters()
+        self._update_free_parameters()
 
-        n_dim = len(free_parameters.keys())
+        n_dim = len(self._free_parameters.keys())
 
         sampler = emcee.PTSampler(n_temps, n_walkers, n_dim, self._log_like, self._log_prior)
 
@@ -242,6 +242,9 @@ class BayesianAnalysis(object):
         self._sampler = sampler
 
         # Now build the _samples dictionary
+
+        self._log10_evidence = sampler.thermodynamic_integration_log_evidence(fburnin=0.) / np.log(
+            10.)  # assuming burned in!
 
         self._raw_samples = sampler.flatchain.reshape(-1, sampler.flatchain.shape[-1])
 
@@ -327,6 +330,9 @@ class BayesianAnalysis(object):
 
         self._build_samples_dictionary()
 
+        s = multinest_analyzer.get_stats()
+        self._log10_evidence = s['global evidence'] / np.log(10.)
+
         return self.samples
 
     def _build_samples_dictionary(self):
@@ -395,6 +401,21 @@ class BayesianAnalysis(object):
 
         return self._log_probability_values
 
+    @property
+    def log10_evidence(self):
+
+        return self._log10_evidence
+
+    @log10_evidence.getter
+    def log10_evidence(self):
+
+        try:
+
+            return self._log10_evidence
+
+        except:
+
+            return None
 
     def get_effective_free_parameters(self):
         """
