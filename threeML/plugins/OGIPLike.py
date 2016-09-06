@@ -7,6 +7,7 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ide
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 
+
 import numpy as np
 
 __instrument_name = "All OGIP-compliant instruments"
@@ -447,6 +448,15 @@ class OGIPLike(PluginPrototype):
         differential_flux, integral = self._get_diff_flux_and_integral()
 
         self._rsp.set_function(differential_flux, integral)
+
+    def get_number_of_data_points(self):  # This should be made part of the plugin_protype
+        """
+
+        Returns: number of data points
+
+        """
+
+        return len(self._observed_counts[self._mask])
 
     def _get_diff_flux_and_integral(self):
 
