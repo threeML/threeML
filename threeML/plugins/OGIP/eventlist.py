@@ -271,8 +271,8 @@ class EventList(object):
         if use_poly:
             is_poisson = False
 
-            rate_err = self._poly_count_err * self._exposure
-            rates = self._poly_counts * self._exposure
+            rate_err = self._poly_count_err / self._exposure
+            rates = self._poly_counts / self._exposure
 
 
 
@@ -283,7 +283,7 @@ class EventList(object):
             is_poisson = True
 
             rate_err = None
-            rates = self._counts * (self._exposure)
+            rates = self._counts / (self._exposure)
 
         pha = PHAContainer(rates=rates,
                            rate_errors=rate_err,
