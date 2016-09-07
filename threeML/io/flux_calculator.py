@@ -38,76 +38,64 @@ class SpectralFlux(object):
 
         self.analysis = analysis
 
-    def model_flux(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
+    def model_flux(self, energy_unit='keV', flux_unit='erg/(cm2 keV s)', sources_to_calculate=[], summed=False,
+                   ene_min=10.,
                    ene_max=1E4, thin=100, alpha=0.05, **kwargs):
         """
         Plot the model and the model contours for the selected sources.
 
-        :param x_unit: energy unit for x-axis
-        :param y_unit: spectral density unit for y-axis
-        :param sources_to_plot: list of str indicating which sources to plot
+        :param energy_unit: energy unit for x-axis
+        :param flux_unit: spectral density unit for y-axis
+        :param sources_to_calculate: list of str indicating which sources to plot
         :param summed: (bool) sum sources
         :param ene_min: minimum energy of x-axis
         :param ene_max: maximum energy of x-axis
-        :param num_ene: number of energies to calculate
-        :param plot_num: figure number of plot
         :param thin: thinning of bayesian samples (only for bayesian fits)
         :param alpha: chance of type I error (only for bayesian fits)
-        :param legend: (bool) include legend
-        :param fit_cmap: a matplotlib color map for the fit
-        :param contour_cmap: a matplotlib color map for the contours (MLE only)
-        :param contour_alpha: transparency of contours
-        :param lw: linewidth for MLE plots
-        :param ls: linestyle for MLE plots
         :param kwargs: keyword args
         """
 
         if self._analysis_type == "mle":
 
-            val = self._flux_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, **kwargs)
+            val = self._flux_mle(energy_unit, flux_unit, sources_to_calculate, summed, ene_min, ene_max, **kwargs)
 
             return val
 
         elif self._analysis_type == "bayesian":
-            return self._flux_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, thin,
+            return self._flux_bayes(energy_unit, flux_unit, sources_to_calculate, summed, ene_min, ene_max, thin,
                                     alpha, **kwargs)
 
-    def component_flux(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
+    def component_flux(self, energy_unit='keV', flux_unit='erg/(cm2 keV s)', sources_to_calculate=[], summed=False,
+                       ene_min=10.,
                        ene_max=1E4, thin=100, **kwargs):
         """
         Plot the components of a fits and their associated contours
 
-        :param x_unit: energy unit for x-axis
-        :param y_unit: spectral density unit for y-axis
-        :param sources_to_plot: list of str indicating which sources to plot
+        :param energy_unit: energy unit for x-axis
+        :param flux_unit: spectral density unit for y-axis
+        :param sources_to_calculate: list of str indicating which sources to plot
         :param summed: (bool) sum sources
         :param ene_min: minimum energy of x-axis
         :param ene_max: maximum energy of x-axis
-        :param num_ene: number of energies to calculate
-        :param plot_num: figure number of plot
         :param thin: thinning of bayesian samples (only for bayesian fits)
         :param alpha: chance of type I error (only for bayesian fits)
-        :param legend: (bool) include legend
-        :param fit_cmap: a matplotlib color map for the fit
-        :param contour_cmap: a matplotlib color map for the contours (MLE only)
-        :param contour_alpha: transparency of contours
-        :param lw: linewidth for MLE plots
-        :param ls: linestyle for MLE plots
         :param kwargs: keyword args
 
         """
 
         if self._analysis_type == "mle":
 
-            return self._flux_component_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, **kwargs)
+            return self._flux_component_mle(energy_unit, flux_unit, sources_to_calculate, summed, ene_min, ene_max,
+                                            **kwargs)
 
         elif self._analysis_type == "bayesian":
 
-            return self._flux_component_bayes(y_unit, sources_to_plot, summed, ene_min, ene_max,
+            return self._flux_component_bayes(energy_unit, flux_unit, sources_to_calculate, summed, ene_min, ene_max,
                                               thin,
                                               **kwargs)
 
-    def _flux_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
+    def _flux_bayes(self, energy_unit='keV', flux_unit='erg/(cm2 keV s)', sources_to_calculate=[], summed=False,
+                    ene_min=10.,
                     ene_max=1E4,
                     thin=1, alpha=0.05,
                     **kwargs):
@@ -115,8 +103,8 @@ class SpectralFlux(object):
         Should not be called directly!
         """
 
-        y_unit = u.Unit(y_unit)
-        x_unit = u.Unit(x_unit)
+        flux_unit = u.Unit(flux_unit)
+        energy_unit = u.Unit(energy_unit)
 
         # looping of all analysis provided:
 
@@ -126,26 +114,26 @@ class SpectralFlux(object):
         n_samples = self.analysis.raw_samples.shape[0]
 
         # First see if we are plotting all the sources
-        if not sources_to_plot:  # Assuming plot all sources
+        if not sources_to_calculate:  # Assuming plot all sources
 
-            sources_to_plot = self.analysis._likelihood_model.point_sources.keys()
+            sources_to_calculate = self.analysis._likelihood_model.point_sources.keys()
 
         # container for contours
         all_fluxes = []
         all_means = []
         all_hpd = []
 
-        for source in sources_to_plot:
+        for source in sources_to_calculate:
 
             # Get the spectrum first
 
             model = self.analysis._likelihood_model.point_sources[source].spectrum.main.shape
 
             # Check the  type of function we want
-            spectrum_type = self._get_spectrum_type(y_unit)
+            spectrum_type = self._get_spectrum_type(flux_unit)
 
             # Retrieve the right flux function (phts, energy, vfv)
-            flux_function, conversion = self._get_flux_function(spectrum_type, model, x_unit, y_unit)
+            flux_function, conversion = self._get_flux_function(spectrum_type, model, energy_unit, flux_unit)
 
             # temporary list to store the propagated samples
             tmp = []
@@ -168,9 +156,9 @@ class SpectralFlux(object):
             hpd = self.analysis._hpd(tmp, alpha=alpha)
             mean_flux = np.mean(tmp)
 
-            all_hpd.append(hpd * y_unit * conversion)
+            all_hpd.append(hpd * flux_unit * conversion)
 
-            all_means.append(mean_flux * y_unit * conversion)
+            all_means.append(mean_flux * flux_unit * conversion)
 
             all_fluxes.append(tmp * conversion)
 
@@ -181,10 +169,10 @@ class SpectralFlux(object):
 
         if not summed:
 
-            flux_dict['Source'] = sources_to_plot
+            flux_dict['Source'] = sources_to_calculate
             flux_dict['Mean Flux'] = all_means
             flux_dict['HPD Flux'] = all_hpd
-            flux_dict['Flux Distribution'] = [x for x in (all_fluxes * y_unit)]
+            flux_dict['Flux Distribution'] = [x for x in (all_fluxes * flux_unit)]
 
             return pd.DataFrame(flux_dict)
 
@@ -194,13 +182,13 @@ class SpectralFlux(object):
 
             fluxes_summed = np.array(all_fluxes).sum(axis=0)
 
-            flux_dict['Mean Summed Flux'] = np.mean(fluxes_summed) * y_unit
-            flux_dict['HPD Summed Flux'] = self.analysis._hpd(fluxes_summed, alpha=alpha) * y_unit
-            flux_dict['Summed Flux Distribution'] = fluxes_summed * y_unit
+            flux_dict['Mean Summed Flux'] = np.mean(fluxes_summed) * flux_unit
+            flux_dict['HPD Summed Flux'] = self.analysis._hpd(fluxes_summed, alpha=alpha) * flux_unit
+            flux_dict['Summed Flux Distribution'] = fluxes_summed * flux_unit
 
             return pd.Series(flux_dict)
 
-    def _flux_mle(self, x_unit='keV', y_unit='erg/(cm2 s)', sources_to_plot=[], summed=False,
+    def _flux_mle(self, energy_unit='keV', flux_unit='erg/(cm2 s)', sources_to_calculate=[], summed=False,
                   ene_min=10., ene_max=1E4,
                   **kwargs):
 
@@ -210,8 +198,8 @@ class SpectralFlux(object):
         """
         self.analysis.restore_best_fit()
 
-        y_unit = u.Unit(y_unit)
-        x_unit = u.Unit(x_unit)
+        flux_unit = u.Unit(flux_unit)
+        energy_unit = u.Unit(energy_unit)
 
         # Initialize plotting arrays
         y_values = []
@@ -221,29 +209,29 @@ class SpectralFlux(object):
         flux_dict = {}
 
         # First see if we are plotting all the sources
-        if not sources_to_plot:  # Assuming plot all sources
+        if not sources_to_calculate:  # Assuming plot all sources
 
-            sources_to_plot = self.analysis.likelihood_model.point_sources.keys()
+            sources_to_calculate = self.analysis.likelihood_model.point_sources.keys()
 
-        for source in sources_to_plot:
+        for source in sources_to_calculate:
             # Get the spectrum first
 
             model = self.analysis.likelihood_model.point_sources[source].spectrum.main.shape
 
             # Check the  type of function we want
-            spectrum_type = self._get_spectrum_type(y_unit)
+            spectrum_type = self._get_spectrum_type(flux_unit)
 
-            flux_function, conversion = self._get_flux_function(spectrum_type, model, x_unit, y_unit)
+            flux_function, conversion = self._get_flux_function(spectrum_type, model, energy_unit, flux_unit)
 
             err = self._propagate_full(source, flux_function, ene_min, ene_max)
 
-            y_values.append(flux_function(ene_min, ene_max) * y_unit * conversion)
+            y_values.append(flux_function(ene_min, ene_max) * flux_unit * conversion)
 
-            errors.append(err * y_unit * conversion)
+            errors.append(err * flux_unit * conversion)
 
         if not summed:
 
-            flux_dict['Sources'] = sources_to_plot
+            flux_dict['Sources'] = sources_to_calculate
             flux_dict['Flux'] = y_values
             flux_dict['Error'] = errors
 
@@ -263,46 +251,47 @@ class SpectralFlux(object):
 
             return flux_df
 
-    def _flux_component_mle(self, x_unit='keV', y_unit='erg/(cm2  s)', sources_to_plot=[], summed=False, ene_min=10.,
+    def _flux_component_mle(self, energy_unit='keV', flux_unit='erg/(cm2  s)', sources_to_calculate=[], summed=False,
+                            ene_min=10.,
                             ene_max=1E4,
                             **kwargs):
 
         self.analysis.restore_best_fit()
 
-        x_unit = u.Unit(x_unit)
-        y_unit = u.Unit(y_unit)
+        energy_unit = u.Unit(energy_unit)
+        flux_unit = u.Unit(flux_unit)
 
         y_values = []
         errors = []
 
         # First see if we are plotting all the sources
-        if sources_to_plot == []:  # Assuming plot all sources
+        if sources_to_calculate == []:  # Assuming plot all sources
 
-            sources_to_plot = self.analysis.likelihood_model.point_sources.keys()
+            sources_to_calculate = self.analysis.likelihood_model.point_sources.keys()
 
         # if components == []: # Assuming plot all sources
 
         #    sources_to_plot = self.analysis.likelihood_model.point_sources.keys()
 
 
-        for source in sources_to_plot:
+        for source in sources_to_calculate:
 
             composite_model = self.analysis.likelihood_model.point_sources[source].spectrum.main.composite
             models = self._solve_for_component_flux(composite_model)
 
             # Check the type of function we want
-            spectrum_type = self._get_spectrum_type(y_unit)
+            spectrum_type = self._get_spectrum_type(flux_unit)
 
             y_vals_per_comp = []
             errors_per_comp = []
             for model in models:
-                flux_function, conversion = self._get_flux_function(spectrum_type, model, x_unit, y_unit)
+                flux_function, conversion = self._get_flux_function(spectrum_type, model, energy_unit, flux_unit)
 
                 err = self._propagate_full(source, flux_function, ene_min, ene_max)
 
-                y_vals_per_comp.append(flux_function(ene_min, ene_max) * y_unit * conversion)
+                y_vals_per_comp.append(flux_function(ene_min, ene_max) * flux_unit * conversion)
 
-                errors_per_comp.append(err * y_unit * conversion)
+                errors_per_comp.append(err * flux_unit * conversion)
 
             y_values.append(y_vals_per_comp)
             errors.append(errors_per_comp)
@@ -311,7 +300,7 @@ class SpectralFlux(object):
 
         if not summed:
 
-            for y_val_pc, err_pc, source in zip(y_values, errors, sources_to_plot):
+            for y_val_pc, err_pc, source in zip(y_values, errors, sources_to_calculate):
                 model_names = [func.name for func in
 
                                self.analysis.likelihood_model.point_sources[source].spectrum.main.composite.functions]
@@ -331,15 +320,15 @@ class SpectralFlux(object):
         elif summed:
 
             # There is an assumption that sources have the same models... may have to alter this!
-            y_values_summed = np.array(y_values).sum(axis=0) * y_unit
+            y_values_summed = np.array(y_values).sum(axis=0) * flux_unit
             errors_summed = np.array(errors) ** 2
-            errors_summed = np.sqrt(errors_summed.sum(axis=0)) * y_unit
+            errors_summed = np.sqrt(errors_summed.sum(axis=0)) * flux_unit
 
             # This is a kludge assuming all sources have the same models
 
             model_names = [func.name for func in
                            self.analysis.likelihood_model.point_sources[
-                               sources_to_plot[0]].spectrum.main.composite.functions]
+                               sources_to_calculate[0]].spectrum.main.composite.functions]
 
             flux_total_dict['Component'] = model_names
             flux_total_dict['Summed Flux'] = y_values_summed
@@ -347,52 +336,50 @@ class SpectralFlux(object):
 
             return pd.DataFrame(flux_total_dict)
 
-    def _flux_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False,
+    def _flux_component_bayes(self, energy_unit='keV', flux_unit='erg/(cm2  s)', sources_to_calculate=[], summed=False,
                               ene_min=10.,
-                              ene_max=1E4, thin=100,
+                              ene_max=1E4, thin=1, alpha=0.05,
                               **kwargs):
         """
         Should not be called directly
 
         """
 
-        x_unit = u.Unit(x_unit)
-        y_unit = u.Unit(y_unit)
+        energy_unit = u.Unit(energy_unit)
+        flux_unit = u.Unit(flux_unit)
 
         # Get the the number of samples
         n_samples = self.analysis.raw_samples.shape[0]
 
         # First see if we are plotting all the sources
-        if not sources_to_plot:  # Assuming plot all sources
+        if not sources_to_calculate:  # Assuming plot all sources
 
-            sources_to_plot = self.analysis._likelihood_model.point_sources.keys()
+            sources_to_calculate = self.analysis._likelihood_model.point_sources.keys()
 
         # this is a kludge at the moment. Model number may vary!
         num_models = len(
-            self.analysis._likelihood_model.point_sources[sources_to_plot[0]].spectrum.main.composite.functions)
+            self.analysis._likelihood_model.point_sources[sources_to_calculate[0]].spectrum.main.composite.functions)
 
-        all_contours = []
-        for source in sources_to_plot:
+        all_fluxes = []
+        all_means = []
+        all_hpd = []
+
+        for source in sources_to_calculate:
+
 
             composite_model = self.analysis._likelihood_model.point_sources[source].spectrum.main.composite
             models = self._solve_for_component_flux(composite_model)
 
             # Check the type of function we want
-            spectrum_type = self._get_spectrum_type(y_unit)
+            spectrum_type = self._get_spectrum_type(flux_unit)
 
-            x_range = x_values * x_unit
-
-            contours_per_component = []
+            fluxes_per_component = []
+            mean_per_component = []
+            hpd_per_component = []
             for model in models:
 
-                # Check the  type of function we want
-                spectrum_type = self._get_spectrum_type(y_unit)
-
-                # Set the x values to the proper unit
-                x_range = x_values * x_unit
-
                 # Retrieve the right flux function (phts, energy, vfv)
-                flux_function = self._get_flux_function(spectrum_type, model, y_unit)
+                flux_function, conversion = self._get_flux_function(spectrum_type, model, energy_unit, flux_unit)
 
                 # temporary list to store the propagated samples
                 tmp = []
@@ -406,72 +393,66 @@ class SpectralFlux(object):
                         composite_model.free_parameters[mod_par].value = self.analysis.samples[par][i]
 
                     # get the flux for the this sample
-                    tmp.append(flux_function(x_range))
+                    tmp.append(flux_function(ene_min, ene_max))
 
-                tmp = np.array(tmp).T
+                tmp = np.array(tmp)
 
                 # pull the highest denisty posterior at the choosen alpha level
-                contours = np.array([self.analysis._hpd(mc, alpha=alpha) for mc in tmp])
+                hpd_per_component.append(self.analysis._hpd(tmp, alpha=alpha) * conversion * flux_unit)
+                mean_per_component.append(np.mean(tmp) * conversion * flux_unit)
 
-                contours_per_component.append(contours)
+                fluxes_per_component.append(tmp * conversion)
 
-            all_contours.append(contours_per_component)
+            all_fluxes.append(fluxes_per_component)
+            all_hpd.append(hpd_per_component)
+            all_means.append(mean_per_component)
 
-        color = np.linspace(0., 1., len(sources_to_plot) * num_models)
-        color_itr = 0
+        all_fluxes = np.array(all_fluxes)
+
+        flux_total_dict = {}
 
         if not summed:
 
-            for contour_pc, source in zip(all_contours, sources_to_plot):
+            for flux_pc, mean_pc, hpd_pc, source in zip(all_fluxes, all_means, all_hpd, sources_to_calculate):
 
                 model_names = [func.name for func in
                                self.analysis._likelihood_model.point_sources[source].spectrum.main.composite.functions]
 
-                for contour, name in zip(contour_pc, model_names):
+                flux_dict = {}
+                flux_dict['Component'] = model_names
+                flux_dict['Mean Flux'] = mean_pc
+                flux_dict['HPD Flux'] = hpd_pc
+                flux_dict['Flux Distribution'] = [x for x in (flux_pc * flux_unit)]
 
-                    ax.fill_between(x_range,
-                                    contour[:, 0] * y_unit,
-                                    contour[:, 1] * y_unit,
-                                    color=fit_cmap(color[color_itr]),
-                                    alpha=contour_alpha,
-                                    label='%s:%s' % (source, name))
+                flux_total_dict[source] = pd.DataFrame(flux_dict)
 
-                    ax.set_xscale('log')
-                    ax.set_yscale('log')
-                    if legend:
-                        ax.legend(**kwargs)
-
-                    color_itr += 1
-
+            return flux_total_dict
 
 
         elif summed:
 
-            color = np.linspace(0., 1., num_models)
-            color_itr = 0
+
             # Assumes all sources have the same model!
-            summed_contours = np.array(all_contours).sum(axis=0)
+            summed_fluxes = np.array(all_fluxes).sum(axis=0)
 
             # This is a kludge that assumes all sources have the same model!
             model_names = [func.name for func in
                            self.analysis._likelihood_model.point_sources[
-                               sources_to_plot[0]].spectrum.main.composite.functions]
+                               sources_to_calculate[0]].spectrum.main.composite.functions]
 
-            for contour, name in zip(summed_contours, model_names):
+            means = map(np.mean, summed_fluxes) * flux_unit
 
-                ax.fill_between(x_range,
-                                contour[:, 0] * y_unit,
-                                contour[:, 1] * y_unit,
-                                color=fit_cmap(color[color_itr]),
-                                alpha=contour_alpha,
-                                label='%s' % (name))
+            hpd = map(lambda x: self.analysis._hpd(x, alpha) * flux_unit, summed_fluxes)
 
-                ax.set_xscale('log')
-                ax.set_yscale('log')
-                if legend:
-                    ax.legend(**kwargs)
+            flux_total_dict['Component'] = model_names
+            flux_total_dict['Mean Summed Flux'] = means
+            flux_total_dict['HPD Summed Flux'] = hpd
+            flux_total_dict['Summed Flux Distribution'] = summed_fluxes * flux_unit
 
-                color_itr += 1
+            return flux_total_dict
+
+
+
 
     @staticmethod
     def _derivative(f):
@@ -516,21 +497,21 @@ class SpectralFlux(object):
         return error
 
     @staticmethod
-    def _calculate_conversion(x_unit, y_unit, integrand):
+    def _calculate_conversion(energy_unit, flux_unit, integrand):
 
-        x = 1 * x_unit
+        x = 1 * energy_unit
 
         tmp = x * integrand(x)
-        conversion = tmp.unit.to(y_unit)
+        conversion = tmp.unit.to(flux_unit)
 
         return conversion
 
-    def _get_flux_function(self, spectrum_type, model, x_unit, y_unit):
+    def _get_flux_function(self, spectrum_type, model, energy_unit, flux_unit):
         """
         Returns the appropriate flux function based off input spectral units
         :param spectrum_type: str from _get_spectrum_type indicating the spectrum type to use
         :param model: a call to an astromodel function
-        :param y_unit: astropy unit
+        :param flux_unit: astropy unit
         :return: function that calls the correct flux type
         """
 
@@ -544,7 +525,7 @@ class SpectralFlux(object):
             def integrand(x):
                 return model(x)
 
-            conversion = self._calculate_conversion(x_unit, y_unit, integrand)
+            conversion = self._calculate_conversion(energy_unit, flux_unit, integrand)
 
             flux_function = lambda ene_min, ene_max: integrate.quad(integrand, ene_min, ene_max)[0]
 
@@ -554,7 +535,7 @@ class SpectralFlux(object):
             def integrand(x):
                 return x * model(x)
 
-            conversion = self._calculate_conversion(x_unit, y_unit, integrand)
+            conversion = self._calculate_conversion(energy_unit, flux_unit, integrand)
 
             flux_function = lambda ene_min, ene_max: integrate.quad(integrand, ene_min, ene_max)[0]
 
@@ -564,7 +545,7 @@ class SpectralFlux(object):
             def integrand(x):
                 return x * x * model(x)
 
-            conversion = self._calculate_conversion(x_unit, y_unit, integrand)
+            conversion = self._calculate_conversion(energy_unit, flux_unit, integrand)
 
             flux_function = lambda ene_min, ene_max: integrate.quad(integrand, ene_min, ene_max)[0]
 
