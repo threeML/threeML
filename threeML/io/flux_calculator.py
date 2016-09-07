@@ -31,9 +31,6 @@ class SpectralFlux(object):
 
         # Determine the type of analysis
 
-
-
-
         self._analysis_type = analysis._analysis_type
 
         self.analysis = analysis
@@ -366,7 +363,6 @@ class SpectralFlux(object):
 
         for source in sources_to_calculate:
 
-
             composite_model = self.analysis._likelihood_model.point_sources[source].spectrum.main.composite
             models = self._solve_for_component_flux(composite_model)
 
@@ -414,7 +410,6 @@ class SpectralFlux(object):
         if not summed:
 
             for flux_pc, mean_pc, hpd_pc, source in zip(all_fluxes, all_means, all_hpd, sources_to_calculate):
-
                 model_names = [func.name for func in
                                self.analysis._likelihood_model.point_sources[source].spectrum.main.composite.functions]
 
@@ -430,7 +425,6 @@ class SpectralFlux(object):
 
 
         elif summed:
-
 
             # Assumes all sources have the same model!
             summed_fluxes = np.array(all_fluxes).sum(axis=0)
@@ -450,9 +444,6 @@ class SpectralFlux(object):
             flux_total_dict['Summed Flux Distribution'] = summed_fluxes * flux_unit
 
             return flux_total_dict
-
-
-
 
     @staticmethod
     def _derivative(f):
@@ -494,12 +485,15 @@ class SpectralFlux(object):
 
         error = (np.sqrt(tmp.dot(first_derivatives)))
 
+        self.analysis.restore_best_fit()
+
         return error
 
     @staticmethod
     def _calculate_conversion(energy_unit, flux_unit, integrand):
 
         x = 1 * energy_unit
+
 
         tmp = x * integrand(x)
         conversion = tmp.unit.to(flux_unit)
@@ -515,12 +509,7 @@ class SpectralFlux(object):
         :return: function that calls the correct flux type
         """
 
-        if spectrum_type == "badunit":
-
-            print "The y_unit provided is invalid"
-            return
-
-        elif spectrum_type == "phtflux":
+        if spectrum_type == "phtflux":
 
             def integrand(x):
                 return model(x)
@@ -588,7 +577,7 @@ class SpectralFlux(object):
 
                 except:
 
-                    return "badunit"
+                    raise RuntimeError("The provided flux_unit is not valid!")
 
     def _solve_for_component_flux(self, composite_model):
         """
@@ -600,7 +589,6 @@ class SpectralFlux(object):
         :return: list of solved component flux functions
         """
 
-        base_expression = composite_model.expression
         replicated_expression = composite_model.expression
 
         num_models = len(composite_model.functions)
