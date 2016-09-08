@@ -228,7 +228,7 @@ class SpectralFlux(object):
 
         if not summed:
 
-            flux_dict['Sources'] = sources_to_calculate
+            flux_dict['Source'] = sources_to_calculate
             flux_dict['Flux'] = y_values
             flux_dict['Error'] = errors
 
