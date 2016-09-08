@@ -13,18 +13,18 @@ import pandas as pd
 
 
 class SpectralFlux(object):
-    """
-    This class handles plotting of spectral fits and their associated contours.
-
-    MLE fits are plotted with their contours computed by propagating the covariance
-    matrix through the function.
-
-    Bayesian fits are plotted with their marginal posteriors plotted through the function.
-
-    :param analysis: an MLE or bayesian analysis object
-    """
-
     def __init__(self, analysis):
+        """
+        Allows for computation of photon, energy and vFv fluxes in appropriate units
+        for either joint likelihood or bayesian analysis. Handles error propapation in either
+        scenario with either the fit covariance matrix or the bayesian chain.
+
+        Both the total and component fluxes can be calculated with numerical error propagation in
+        either case.
+
+        Args:
+            analysis: A joint likelihood or bayesian analysis
+        """
         quantity_support()
 
         # looking at adding together multiple analysis This may be removed
@@ -35,11 +35,11 @@ class SpectralFlux(object):
 
         self.analysis = analysis
 
-    def model_flux(self, energy_unit='keV', flux_unit='erg/(cm2 keV s)', sources_to_calculate=[], summed=False,
-                   ene_min=10.,
-                   ene_max=1E4, thin=100, alpha=0.05, **kwargs):
+    def model_flux(self, energy_unit='keV', flux_unit='erg/(cm2 keV s)', ene_min=10., ene_max=1E4,
+                   sources_to_calculate=[], summed=False,
+                   thin=100, alpha=0.05, **kwargs):
         """
-        Plot the model and the model contours for the selected sources.
+        Calculate the flux of the total model. The energy unit describes the unit of the input integration range
 
         :param energy_unit: energy unit for x-axis
         :param flux_unit: spectral density unit for y-axis
@@ -62,13 +62,13 @@ class SpectralFlux(object):
             return self._flux_bayes(energy_unit, flux_unit, sources_to_calculate, summed, ene_min, ene_max, thin,
                                     alpha, **kwargs)
 
-    def component_flux(self, energy_unit='keV', flux_unit='erg/(cm2 keV s)', sources_to_calculate=[], summed=False,
-                       ene_min=10.,
-                       ene_max=1E4, thin=100, **kwargs):
+    def component_flux(self, energy_unit='keV', flux_unit='erg/(cm2 keV s)', ene_min=10., ene_max=1E4,
+                       sources_to_calculate=[], summed=False,
+                       thin=100, **kwargs):
         """
-        Plot the components of a fits and their associated contours
+        Calculate the flux of the model components. The energy unit describes the unit of the input integration range
 
-        :param energy_unit: energy unit for x-axis
+        :param energy_unit: energy unit for integration range
         :param flux_unit: spectral density unit for y-axis
         :param sources_to_calculate: list of str indicating which sources to plot
         :param summed: (bool) sum sources
@@ -493,7 +493,6 @@ class SpectralFlux(object):
     def _calculate_conversion(energy_unit, flux_unit, integrand):
 
         x = 1 * energy_unit
-
 
         tmp = x * integrand(x)
         conversion = tmp.unit.to(flux_unit)
