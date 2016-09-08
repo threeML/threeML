@@ -184,7 +184,7 @@ class ModelComparison(object):
 
                 return self._stat_df
 
-            this_df = self._stat_df.sort_values(by=sort, ascending=ascend, inplace=False)
+            this_df = this_df.sort_values(by=sort, ascending=ascend, inplace=False)
 
             # for col in format_columns:
 
@@ -267,28 +267,43 @@ class ModelComparison(object):
             model_name = \
             [parameter_name.split('.')[-2] for (parameter_name, parameter) in analysis._free_parameters.iteritems()][0]
 
-            this_dic = dic(analysis)
-            # this_waic = waic(analysis)
+            if analysis.log_like_values is None:
+                stat_table['AIC'].append(None)
+                stat_table['BIC'].append(None)
+                stat_table['DIC'].append(None)
+                stat_table['log10 (Z)'].append(analysis.log10_evidence)
+                # stat_table['WAIC'].append(this_waic)
+                stat_table['-2 ln(like)'].append(None)
+                stat_table['N. Free Parameters'].append(n_free_params)
+                # stat_table['Eff. N. Free Parameters'].append(eff_n_params)
+                stat_table['dof'].append(dof)
+                stat_table['Model'].append(model_name)
 
-            # We will now compute the AIC/BIC/ etc. at the max of the posterior likelihood
+            else:
 
-            loglike = analysis.log_like_values.max()
 
-            this_aic = aic(loglike, n_free_params, n_data_points)
-            this_bic = bic(loglike, n_free_params, n_data_points)
+                this_dic = dic(analysis)
+                # this_waic = waic(analysis)
 
-            # Create the dataframe
+                # We will now compute the AIC/BIC/ etc. at the max of the posterior likelihood
 
-            stat_table['AIC'].append(this_aic)
-            stat_table['BIC'].append(this_bic)
-            stat_table['DIC'].append(this_dic)
-            stat_table['log10 (Z)'].append(analysis.log10_evidence)
-            # stat_table['WAIC'].append(this_waic)
-            stat_table['-2 ln(like)'].append(-2. * loglike)
-            stat_table['N. Free Parameters'].append(n_free_params)
-            #stat_table['Eff. N. Free Parameters'].append(eff_n_params)
-            stat_table['dof'].append(dof)
-            stat_table['Model'].append(model_name)
+                loglike = analysis.log_like_values.max()
+
+                this_aic = aic(loglike, n_free_params, n_data_points)
+                this_bic = bic(loglike, n_free_params, n_data_points)
+
+                # Create the dataframe
+
+                stat_table['AIC'].append(this_aic)
+                stat_table['BIC'].append(this_bic)
+                stat_table['DIC'].append(this_dic)
+                stat_table['log10 (Z)'].append(analysis.log10_evidence)
+                # stat_table['WAIC'].append(this_waic)
+                stat_table['-2 ln(like)'].append(-2. * loglike)
+                stat_table['N. Free Parameters'].append(n_free_params)
+                #stat_table['Eff. N. Free Parameters'].append(eff_n_params)
+                stat_table['dof'].append(dof)
+                stat_table['Model'].append(model_name)
 
         stat_df = pd.DataFrame(stat_table)
 
