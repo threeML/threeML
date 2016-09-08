@@ -116,7 +116,7 @@ class ModelComparison(object):
                              'DIC',
                              'log10 (Z)',
                              'N. Free Parameters',
-                             'Eff. N. Free Parameters',
+           #                  'Eff. N. Free Parameters',
                              'dof']
 
             min_stat = ['-2 ln(like)',
@@ -254,7 +254,7 @@ class ModelComparison(object):
         stat_table['-2 ln(like)'] = []
         stat_table['dof'] = []
         stat_table['N. Free Parameters'] = []
-        stat_table['Eff. N. Free Parameters'] = []
+        #stat_table['Eff. N. Free Parameters'] = []
         stat_table['Model'] = []
 
         for analysis in self._analysis_container:
@@ -262,7 +262,7 @@ class ModelComparison(object):
             n_free_params = len(analysis._free_parameters.values())  # should add a property
             dof = n_data_points - n_free_params
 
-            eff_n_params = analysis.get_effective_free_parameters()  # change this to local function later
+            #eff_n_params = analysis.get_effective_free_parameters()  # change this to local function later
 
             model_name = \
             [parameter_name.split('.')[-2] for (parameter_name, parameter) in analysis._free_parameters.iteritems()][0]
@@ -286,7 +286,7 @@ class ModelComparison(object):
             # stat_table['WAIC'].append(this_waic)
             stat_table['-2 ln(like)'].append(-2. * loglike)
             stat_table['N. Free Parameters'].append(n_free_params)
-            stat_table['Eff. N. Free Parameters'].append(eff_n_params)
+            #stat_table['Eff. N. Free Parameters'].append(eff_n_params)
             stat_table['dof'].append(dof)
             stat_table['Model'].append(model_name)
 

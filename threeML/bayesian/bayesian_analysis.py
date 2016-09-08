@@ -249,11 +249,6 @@ class BayesianAnalysis(object):
         # Now build the _samples dictionary
 
         # First we need the prior
-        log_prior = map(lambda x: self._log_prior(x), self._raw_samples)
-
-        # Now we get the log posterior and we remove the log prior
-
-        self._log_like_values = sampler.flatlnprobability - log_prior
 
 
         self._build_samples_dictionary()
