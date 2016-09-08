@@ -1,3 +1,4 @@
+
 # Author: J. Michael Burgess
 
 # Provides some universal statistical utilities and stats comparison tools
@@ -5,6 +6,17 @@
 import numpy as np
 import pandas as pd
 from threeML.io.rich_display import display
+
+
+
+def li_and_ma(total, background, alpha=1.):
+    """"Li and Ma (1983) signal to noise significance"""
+
+    a = total / (total + background)
+    b = background / (total + background)
+    S = np.sqrt(2) * np.sqrt((total * np.log(((1. + alpha) / alpha) * a) + background * np.log((1 + alpha) * b)))
+
+    return S
 
 
 def aic(log_like, n_parameters, n_data_points):
@@ -218,3 +230,6 @@ class ModelComparison(object):
         stat_df = pd.DataFrame(stat_table)
 
         return stat_df
+
+
+
