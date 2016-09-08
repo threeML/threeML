@@ -241,12 +241,20 @@ class BayesianAnalysis(object):
 
         self._sampler = sampler
 
-        # Now build the _samples dictionary
-
         self._log10_evidence = sampler.thermodynamic_integration_log_evidence(fburnin=0.) / np.log(
             10.)  # assuming burned in!
 
         self._raw_samples = sampler.flatchain.reshape(-1, sampler.flatchain.shape[-1])
+
+        # Now build the _samples dictionary
+
+        # First we need the prior
+        log_prior = map(lambda x: self._log_prior(x), self._raw_samples)
+
+        # Now we get the log posterior and we remove the log prior
+
+        self._log_like_values = sampler.flatlnprobability - log_prior
+
 
         self._build_samples_dictionary()
 

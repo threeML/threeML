@@ -6,7 +6,9 @@
 import numpy as np
 import pandas as pd
 from threeML.io.rich_display import display
+import copy
 
+import warnings
 
 
 def li_and_ma(total, background, alpha=1.):
@@ -63,7 +65,7 @@ def dic(bayesian_trace):
     Args:
         bayesian_trace: an instance of Bayesian Analysis
 
-    Returns:
+    Returns: deviance information criteria
 
     """
 
@@ -91,13 +93,17 @@ class ModelComparison(object):
             self._stat_df = self._compute_mle_statistics()
 
 
+
         elif self._analysis_type == 'bayesian':
 
             self._stat_df = self._compute_bayes_statistics()
 
-    def report(self, sort=None, precision=1):
+    def report(self, sort=None, normalized=True, precision=1):
 
         pd.options.display.float_format = ('{:.%df}' % (precision)).format
+
+        this_df = self._stat_df.copy()
+
 
         if self._analysis_type == 'bayesian':
 
@@ -113,6 +119,14 @@ class ModelComparison(object):
                              'Eff. N. Free Parameters',
                              'dof']
 
+            min_stat = ['-2 ln(like)',
+                        'AIC',
+                        'BIC',
+                        'DIC'
+                        ]
+
+            max_stat = ['log10 (Z)']
+
 
         else:
 
@@ -123,9 +137,54 @@ class ModelComparison(object):
                              'N. Free Parameters',
                              'dof']
 
+            min_stat = ['-2 ln(like)',
+                        'AIC',
+                        'BIC'
+                        ]
+
+            max_stat = []
+
+        if normalized:
+
+            # Normalize the statistics to the 'worst' fit.
+            # MLE type stats have lowest value as best
+            # while Bayesian evidence has highest as best
+
+            for key in min_stat:
+                this_df[key] = this_df[key] - this_df[key].max()
+
+            for key in max_stat:
+                this_df[key] = this_df[key].min() - this_df[key]
+
+
+
+
+
+
+
+
+
+
+
         if sort is not None:
 
-            this_df = self._stat_df.sort_values(by=sort, ascending=True, inplace=False)
+            if sort in min_stat:
+
+                ascend = True
+
+            elif sort in max_stat:
+
+                ascend = False
+
+            else:
+
+                warnings.warn('%s is not a valid statistic' % sort)
+
+                display(this_df[display_order])
+
+                return self._stat_df
+
+            this_df = self._stat_df.sort_values(by=sort, ascending=ascend, inplace=False)
 
             # for col in format_columns:
 
@@ -134,12 +193,16 @@ class ModelComparison(object):
 
             display(this_df[display_order])
 
+            return self._stat_df
+
         else:
 
             #   for col in format_columns:
             #      self._float_format(self._stat_df[col])
 
-            display(self._stat_df[display_order])
+            display(this_df[display_order])
+
+            return self._stat_df
 
         pd.reset_option('float_format')
 
