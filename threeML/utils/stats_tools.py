@@ -154,7 +154,7 @@ class ModelComparison(object):
                 this_df[key] = this_df[key] - this_df[key].max()
 
             for key in max_stat:
-                this_df[key] = this_df[key].min() - this_df[key]
+                this_df[key] = this_df[key] - this_df[key].max()
 
 
 
