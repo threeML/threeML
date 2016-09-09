@@ -22,7 +22,6 @@ class NotEnoughtCounts(RuntimeError):
 
 
 class Rebinner(object):
-
     def __init__(self, vector_to_rebin_on, min_counts):
 
         tot_counts = np.sum(vector_to_rebin_on)
@@ -72,19 +71,59 @@ class Rebinner(object):
 
             for low_bound, hi_bound in zip(self._edges[:-1], self._edges[1:]):
 
-                rebinned_vector.append(np.sum(vector[low_bound+1:hi_bound+1]))
+                rebinned_vector.append(np.sum(vector[low_bound + 1:hi_bound + 1]))
 
             # Vector might not contain counts, so we use a relative comparison
 
-            assert abs(np.sum(rebinned_vector) / np.sum(rebinned_vector) -1) < 1e-4
+            assert abs(np.sum(rebinned_vector) / np.sum(rebinned_vector) - 1) < 1e-4
 
             rebinned_vectors.append(np.array(rebinned_vector))
 
         return rebinned_vectors
 
+    def rebin_errors(self, *vectors):
+
+        rebinned_vectors = []
+
+        for vector in vectors:
+
+            rebinned_vector = []
+
+            for low_bound, hi_bound in zip(self._edges[:-1], self._edges[1:]):
+
+                rebinned_vector.append(np.sqrt(np.sum(vector[low_bound + 1:hi_bound + 1] ** 2)))
+
+            # Vector might not contain counts, so we use a relative comparison
+
+            assert abs(np.sum(rebinned_vector) / np.sum(rebinned_vector) - 1) < 1e-4
+
+            rebinned_vectors.append(np.array(rebinned_vector))
+
+        return rebinned_vectors
+
+    @property
+    def edges(self):
+
+        return self._edges
+
+    @edges.getter
+    def edges(self):
+
+        # return the low and high bins
+        return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
+
+    @edges.setter
+    def edges(self, val):
+
+        raise RuntimeError("Cannot manually set edges of rebinner!")
+
+
+class LikelihoodModelConverter(object):
+    def __init__(self, likelihood_model):
+        self._likelihood_model = likelihood_model
+
 
 class OGIPLike(PluginPrototype):
-
     def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None):
 
         self._name = str(name)
@@ -122,7 +161,7 @@ class OGIPLike(PluginPrototype):
 
         try:
             assert file_existing_and_readable(
-                bak_file.split("{")[0]), "Background file %s not existing or not readable" % bak_file
+                    bak_file.split("{")[0]), "Background file %s not existing or not readable" % bak_file
         except(AttributeError):
             try:
                 if bak_file.is_container:
@@ -130,8 +169,8 @@ class OGIPLike(PluginPrototype):
             except:
                 RuntimeError("Background file type is unrecognizeable")
 
-
-        assert file_existing_and_readable(rsp_file.split("{")[0]), "Response file %s not existing or not readable" % rsp_file
+        assert file_existing_and_readable(
+                rsp_file.split("{")[0]), "Response file %s not existing or not readable" % rsp_file
 
         self._bak = PHA(bak_file, file_type='background')
         self._rsp = Response(rsp_file, arf_file=arf_file)
@@ -320,7 +359,7 @@ class OGIPLike(PluginPrototype):
 
             loglike = poisson_observed_poisson_background(observed_counts, bkg_counts, scale_factor, model_counts)
 
-        #loglike = poisson_observed_poisson_background(observed_counts, bkg_counts, scale_factor, model_counts)
+        # loglike = poisson_observed_poisson_background(observed_counts, bkg_counts, scale_factor, model_counts)
 
         # print("predicted: %s (bkg: %s, model: %s), observed: %s" % (np.sum(new_model) + np.sum(new_bkg * scale_factor),
         #                                                             np.sum(new_bkg * scale_factor),
@@ -347,7 +386,7 @@ class OGIPLike(PluginPrototype):
         if self._rebinner is not None:
 
             new_counts, new_model, new_bkg, new_bkg_err = self._rebinner.rebin(observed_counts, expected_model_counts,
-                                                                  background_counts, background_errors)
+                                                                               background_counts, background_errors)
 
             loglike = poisson_observed_gaussian_background(new_counts, new_bkg, new_bkg_err, new_model)
 
@@ -385,7 +424,6 @@ class OGIPLike(PluginPrototype):
 
         self._rebinner = None
 
-
     def _set_background_noise_model(self, new_model):
 
         # Do not make differences between upper and lower cases
@@ -422,17 +460,17 @@ class OGIPLike(PluginPrototype):
 
     def get_log_like(self):
 
-        if self._observation_noise_model=='poisson':
+        if self._observation_noise_model == 'poisson':
 
-            if self._background_noise_model=='poisson':
+            if self._background_noise_model == 'poisson':
 
                 loglike = self._loglike_poisson_obs_poisson_bkg()
 
-            elif self._background_noise_model=='ideal':
+            elif self._background_noise_model == 'ideal':
 
                 loglike = self._loglike_poisson_obs_ideal_bkg()
 
-            elif self._background_noise_model=='gaussian':
+            elif self._background_noise_model == 'gaussian':
 
                 loglike = self._loglike_poisson_obs_gaussian_bkg()
 
@@ -512,6 +550,111 @@ class OGIPLike(PluginPrototype):
                                       + differential_flux(e2))
 
         return differential_flux, integral
+
+    def display(self, data_color='r'):
+        """
+
+        Dispaly the fitted model count spectrum
+
+        Returns:
+
+        """
+
+        fig = plt.figure(666)
+
+        ax = fig.add_subplot(111)
+
+        chans = self._rsp.ebounds[self._mask].T
+        chan_min, chan_max = chans
+
+        if self._observation_noise_model == 'poisson':
+
+            # Observed counts
+            observed_counts = self._observed_counts[self._mask]
+
+            if self._background_noise_model == 'poisson':
+
+                background_counts = self._background_counts[self._mask]
+
+
+            elif self._background_noise_model == 'ideal':
+
+                background_counts = self._scaled_background_counts[self._mask]
+
+            elif self._background_noise_model == 'gaussian':
+
+                background_counts = self._background_counts[self._mask]
+
+                background_errors = self._background_errors[self._mask]
+
+
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            raise NotImplementedError("Not yet implemented")
+
+        expected_model_counts = self._rsp.convolve()[self._mask] * self._pha.exposure
+
+        if self._rebinner is not None:
+
+            if self._background_noise_model == 'poisson' or self._background_noise_model == 'ideal':
+
+                counts, model, bkg, = self._rebinner.rebin(observed_counts, expected_model_counts, background_counts)
+
+            elif self._background_noise_model == 'gaussian':
+
+                counts, model, bkg, bkg_err = self._rebinner.rebin(observed_counts, expected_model_counts,
+                                                                   background_counts, background_errors)
+
+                # For the moment, I'm am not
+
+            # Now rebin the chans
+
+            lo, hi = self._rebinner.edges
+            chan_min = chan_min[lo]
+            chan_max = chan_max[hi]
+
+
+        else:
+
+            counts = observed_counts
+            bkg = background_counts
+            model = expected_model_counts
+
+        chan_width = chan_max - chan_min
+        mean_chan = np.mean([chan_min, chan_max], axis=0)
+
+        # for the moment I, I ma only considering background subtracted counts
+        # for this plot. However, it is probably not the best way to display things.
+        # I simply despise adding background to model counts!
+
+        src_counts = counts - bkg
+
+        positive_mask = src_counts >= 0.
+
+        ax.errorbar(mean_chan[positive_mask],
+                    src_counts[positive_mask] / chan_width[positive_mask],
+                    yerr=np.sqrt(src_counts[positive_mask] / chan_width[positive_mask]),
+                    fmt='.', color=data_color, label=self._name)
+
+        ax.loglog(mean_chan, model / chan_width, 'k-')
+
+        #                  color='#377eb8', lw=2, alpha=1, label="Total")
+        # ax = channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._background_counts,
+        #                   color='#e41a1c', alpha=.8, label="Background")
+        # # Now fade the non-used channels
+        # excluded_channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._mask, self._observed_counts,
+        #                       self._background_counts, ax)
+        #
+        ax.set_xlabel("Energy (keV)")
+        ax.set_ylabel("Counts/keV")
+
+        ax.set_xlim(left=self._rsp.ebounds[0, 0], right=self._rsp.ebounds[-1, 1])
+        ax.legend()
 
 
 def channel_plot(chan_min, chan_max, counts, **keywords):

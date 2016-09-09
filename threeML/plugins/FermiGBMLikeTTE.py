@@ -49,7 +49,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         # Start with an empty mask (the user will overwrite it using the
         # setActiveMeasurement method)
-        self.mask = np.asarray(np.ones(self.ttefile.nchans), np.bool)
+        self._mask = np.asarray(np.ones(self.ttefile.nchans), np.bool)
 
         # Fit the background and
         # Obtain the counts for the initial input interval
