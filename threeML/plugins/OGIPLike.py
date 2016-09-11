@@ -10,6 +10,9 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
+from matplotlib.ticker import MaxNLocator
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -551,43 +554,70 @@ class OGIPLike(PluginPrototype):
 
         return differential_flux, integral
 
-    def display(self, data_color='r'):
-        """
 
-        Dispaly the fitted model count spectrum
+def display_model_counts(*args, **kwargs):
+    """
 
-        Returns:
+    Display the fitted model count spectrum
 
-        """
+    Returns:
 
-        fig = plt.figure(666)
+    """
 
-        ax = fig.add_subplot(111)
+    try:
 
-        chans = self._rsp.ebounds[self._mask].T
+        min_rate = kwargs.pop('min_rate')
+
+    except:
+
+        min_rate = 1
+
+    fig = plt.figure(666)
+
+    # gs = gridspec.GridSpec(2, 1, height_ratios=[2, 1])
+
+    # gs.update(hspace=0)
+
+    ax = fig.add_subplot(111)
+    # ax = plt.subplot(gs[0])
+    divider = make_axes_locatable(ax)
+    ax1 = divider.append_axes('bottom', size=.75, pad=0., sharex=ax)
+
+    color = np.linspace(0., 1., len(args))
+    color_itr = 0
+
+    data_cmap = plt.cm.rainbow
+    model_cmap = plt.cm.nipy_spectral_r
+
+    for data in args:
+
+        chans = data._rsp.ebounds[data._mask].T
         chan_min, chan_max = chans
 
-        if self._observation_noise_model == 'poisson':
+        if data._observation_noise_model == 'poisson':
 
             # Observed counts
-            observed_counts = self._observed_counts[self._mask]
+            observed_counts = data._observed_counts[data._mask]
 
-            if self._background_noise_model == 'poisson':
+            cnt_err = np.sqrt(observed_counts)
 
-                background_counts = self._background_counts[self._mask]
+            if data._background_noise_model == 'poisson':
 
+                background_counts = data._background_counts[data._mask]
 
-            elif self._background_noise_model == 'ideal':
+                background_errors = np.sqrt(background_counts)
 
-                background_counts = self._scaled_background_counts[self._mask]
+            elif data._background_noise_model == 'ideal':
 
-            elif self._background_noise_model == 'gaussian':
+                background_counts = data._scaled_background_counts[data._mask]
 
-                background_counts = self._background_counts[self._mask]
+                background_errors = np.zeros_like(background_counts)
 
-                background_errors = self._background_errors[self._mask]
+            elif data._background_noise_model == 'gaussian':
 
+                background_counts = data._background_counts[data._mask]
 
+                background_errors = data._background_errors[data._mask]
 
             else:
 
@@ -597,72 +627,87 @@ class OGIPLike(PluginPrototype):
 
             raise NotImplementedError("Not yet implemented")
 
-        expected_model_counts = self._rsp.convolve()[self._mask] * self._pha.exposure
-
-        if self._rebinner is not None:
-
-            if self._background_noise_model == 'poisson' or self._background_noise_model == 'ideal':
-
-                counts, model, bkg, = self._rebinner.rebin(observed_counts, expected_model_counts, background_counts)
-
-            elif self._background_noise_model == 'gaussian':
-
-                counts, model, bkg, bkg_err = self._rebinner.rebin(observed_counts, expected_model_counts,
-                                                                   background_counts, background_errors)
-
-                # For the moment, I'm am not
-
-            # Now rebin the chans
-
-            lo, hi = self._rebinner.edges
-            chan_min = chan_min[lo]
-            chan_max = chan_max[hi]
-
-
-        else:
-
-            counts = observed_counts
-            bkg = background_counts
-            model = expected_model_counts
-
         chan_width = chan_max - chan_min
+
+        expected_model_rate = data._rsp.convolve()[data._mask] / chan_width  #* data._pha.exposure
+
+        src_rate = (observed_counts - background_counts) / (data._pha.exposure * chan_width)
+        src_rate_err = np.sqrt((cnt_err / (data._pha.exposure * chan_width)) ** 2 + (
+        background_errors / (data._pha.exposure * chan_width)) ** 2)
+
+        this_rebinner = Rebinner(src_rate, min_rate)
+
+        new_rate, new_model_rate = this_rebinner.rebin(src_rate, expected_model_rate)
+        new_err, = this_rebinner.rebin_errors(src_rate_err)
+
+        lo, hi = this_rebinner.edges
+        chan_min = chan_min[lo]
+        chan_max = chan_max[hi]
+
+
+
         mean_chan = np.mean([chan_min, chan_max], axis=0)
 
-        # for the moment I, I ma only considering background subtracted counts
-        # for this plot. However, it is probably not the best way to display things.
-        # I simply despise adding background to model counts!
+        ax.errorbar(mean_chan,
+                    new_rate,
+                    yerr=new_err,
+                    fmt='.',
+                    markersize=3,
+                    linestyle='',
+                    # elinewidth=.5,
+                    alpha=.9,
+                    capsize=0,
+                    label=data._name,
+                    color=data_cmap(color[color_itr]))
 
-        src_counts = counts - bkg
+        step_plot(np.asarray(zip(chan_min, chan_max)), new_model_rate,
+                  ax, alpha=.8,
+                  label='%s Model' % data._name, color=model_cmap(color[color_itr]))
 
-        positive_mask = src_counts >= 0.
+        # Residuals
+        # ax1 = fig.add_subplot(gs[1])
 
-        ax.errorbar(mean_chan[positive_mask],
-                    src_counts[positive_mask] / chan_width[positive_mask],
-                    yerr=np.sqrt(src_counts[positive_mask] / chan_width[positive_mask]),
-                    fmt='.', color=data_color, label=self._name)
+        residuals = (new_model_rate - new_rate) / new_model_rate
 
-        ax.loglog(mean_chan, model / chan_width, 'k-')
+        ax1.axhline(0, linestyle='--', color='k')
+        ax1.errorbar(mean_chan,
+                     residuals,
+                     yerr=new_err / new_model_rate,
+                     capsize=0,
+                     fmt='.',
+                     markersize=3,
+                     color=data_cmap(color[color_itr]))
 
-        #                  color='#377eb8', lw=2, alpha=1, label="Total")
-        # ax = channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._background_counts,
-        #                   color='#e41a1c', alpha=.8, label="Background")
-        # # Now fade the non-used channels
-        # excluded_channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._mask, self._observed_counts,
-        #                       self._background_counts, ax)
-        #
-        ax.set_xlabel("Energy (keV)")
-        ax.set_ylabel("Counts/keV")
+        color_itr += 1
 
-        ax.set_xlim(left=self._rsp.ebounds[0, 0], right=self._rsp.ebounds[-1, 1])
-        ax.legend()
+    ax.legend(fontsize='x-small')
+
+    # ax.set_xlabel("Energy (keV)")
+    ax.set_ylabel(r"Rate (counts s$^{-1}$ keV$^{-1}$)")
+
+    ax.set_xscale('log')
+    ax.set_yscale('log', nonposy='clip')
+
+    # ax.set_xlim(left=data._rsp.ebounds[0, 0], right=data._rsp.ebounds[-1, 1])
 
 
-def channel_plot(chan_min, chan_max, counts, **keywords):
+    ax1.set_xscale("log")
+
+    locator = MaxNLocator(prune='upper', nbins=5)
+    ax1.yaxis.set_major_locator(locator)
+
+    ax1.set_xlabel("Energy (MeV)")
+    ax1.set_ylabel("Residuals")
+
+    # ax.set_xticks([])
+
+
+def channel_plot(chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))
     width = chan_max - chan_min
     fig = plt.figure(666)
     ax = fig.add_subplot(111)
-    step_plot(chans, counts / width, ax, **keywords)
+    step_plot(chans, counts / width, ax, **kwargs)
     ax.set_xscale('log')
     ax.set_yscale('log')
 
