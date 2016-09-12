@@ -8,6 +8,8 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ide
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 
+from threeML.config.config import threeML_config
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
