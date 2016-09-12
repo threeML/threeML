@@ -230,10 +230,11 @@ class EventList(object):
             *time_intervals_spec:
         """
 
+
         self._poly_time_selections = []
 
-        for time_interval_spec in time_intervals_spec:
-            t1, t2 = self._parse_time_interval(time_interval_spec)
+        for time_interval in time_intervals_spec:
+            t1, t2 = self._parse_time_interval(time_interval)
 
             self._poly_time_selections.append((t1, t2))
 
@@ -429,6 +430,10 @@ class EventList(object):
         else:
 
             self.optimalPolGrade = self._poly_order
+
+            print "Best fit polynomial order:"
+            print "\t: %d" % self.optimalPolGrade
+
 
         polynomials = []
 
