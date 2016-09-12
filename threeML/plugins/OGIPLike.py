@@ -264,7 +264,7 @@ class OGIPLike(PluginPrototype):
         which will set the energy range 10-12.5 keV and 56-100 keV to be
         used in the analysis'''
 
-        # To implelemnt this we will use an array of boolean index,
+        # To implement this we will use an array of boolean index,
         # which will filter
         # out the non-used channels during the logLike
 
@@ -297,6 +297,7 @@ class OGIPLike(PluginPrototype):
 
             print("Previous rebinning Detecting. Now rebinning.")
             self._rebinner = Rebinner(self._background_counts[self._mask], self._rebinner.min_counts)
+            print("Using %s bins" % self._rebinner.n_bins)
 
     def view_count_spectrum(self):
         '''
