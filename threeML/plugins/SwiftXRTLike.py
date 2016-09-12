@@ -1,10 +1,10 @@
-from threeML.plugins.GenericOGIPLike import GenericOGIPLike
+from threeML.plugins.OGIPLike import OGIPLike
 
 __instrument_name = "Swift XRT"
 
 
 # At the moment this is just another name for the GenericOGIPLike spectrum
-class SwiftXRTLike(GenericOGIPLike):
+class SwiftXRTLike(OGIPLike):
 
     def _get_diff_flux_and_integral(self):
 
