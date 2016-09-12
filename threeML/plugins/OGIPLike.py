@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import copy
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -21,6 +22,10 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
 class NotEnoughtCounts(RuntimeError):
+    pass
+
+
+class PrivateMember(RuntimeError):
     pass
 
 
@@ -105,6 +110,23 @@ class Rebinner(object):
         return rebinned_vectors
 
     @property
+    def min_counts(self):
+
+        return self._min_counts
+
+    @min_counts.setter
+    def min_counts(self, val):
+
+        raise PrivateMember("Cannot manually set min_counts of rebinner!")
+
+    @min_counts.getter
+    def min_counts(self):
+
+        return self._min_counts
+
+
+
+    @property
     def edges(self):
 
         return self._edges
@@ -118,7 +140,7 @@ class Rebinner(object):
     @edges.setter
     def edges(self, val):
 
-        raise RuntimeError("Cannot manually set edges of rebinner!")
+        raise PrivateMember("Cannot manually set edges of rebinner!")
 
 
 class LikelihoodModelConverter(object):
@@ -265,7 +287,16 @@ class OGIPLike(PluginPrototype):
 
         self._mask = np.array(mask, np.bool)
 
+        # Check if the spectrum was rebinned on the background.
+
+
+
         print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
+
+        if self._rebinner is not None:
+
+            print("Previous rebinning Detecting. Now rebinning.")
+            self._rebinner = Rebinner(self._background_counts[self._mask], self._rebinner.min_counts)
 
     def view_count_spectrum(self):
         '''
@@ -277,12 +308,59 @@ class OGIPLike(PluginPrototype):
 
         # First plot the counts
 
+        chans = self._rsp.ebounds[self._mask].T
+        chan_min, chan_max = chans
 
+        # chan_width = chan_max - chan_min
 
+        if self._observation_noise_model == 'poisson':
 
-        _ = channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._observed_counts,
+            # Observed counts
+            observed_counts = copy.copy(self._observed_counts[self._mask])
+
+            cnt_err = np.sqrt(observed_counts)
+
+            if self._background_noise_model == 'poisson':
+
+                background_counts = copy.copy(self._background_counts[self._mask])
+
+                background_errors = np.sqrt(background_counts)
+
+            elif self._background_noise_model == 'ideal':
+
+                background_counts = copy.copy(self._scaled_background_counts[self._mask])
+
+                background_errors = np.zeros_like(background_counts)
+
+            elif self._background_noise_model == 'gaussian':
+
+                background_counts = copy.copy(self._background_counts[self._mask])
+
+                background_errors = copy.copy(self._background_errors[self._mask])
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            raise NotImplementedError("Not yet implemented")
+
+        if self._rebinner is not None:
+
+            observed_counts, background_counts = self._rebinner.rebin(observed_counts, background_counts)
+            cnt_err, background_errors = self._rebinner.rebin(cnt_err, background_errors)
+
+            lo, hi = self._rebinner.edges
+
+            chan_min = chan_min[lo]
+            chan_max = chan_max[hi]
+
+            # chan_width = chan_max -chan_min
+
+        _ = channel_plot(chan_min, chan_max, observed_counts,
                          color='#377eb8', lw=2, alpha=1, label="Total")
-        ax = channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._background_counts,
+        ax = channel_plot(chan_min, chan_max, background_counts,
                           color='#e41a1c', alpha=.8, label="Background")
         # Now fade the non-used channels
         excluded_channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._mask, self._observed_counts,
@@ -421,7 +499,7 @@ class OGIPLike(PluginPrototype):
         :return: none
         """
 
-        self._rebinner = Rebinner(self._background_counts, min_number_of_counts)
+        self._rebinner = Rebinner(self._background_counts[self._mask], min_number_of_counts)
 
         print("Using %s bins" % self._rebinner.n_bins)
 
