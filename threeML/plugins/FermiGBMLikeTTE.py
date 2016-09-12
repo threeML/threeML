@@ -19,7 +19,8 @@ __instrument_name = "Fermi GBM TTE (all detectors)"
 
 
 class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
-    def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, poly_order=-1):
+    def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
+                 poly_order=-1):
         """
         If the input files are TTE files. Background selections are specified as
         a comma separated string e.g. "-10-0,10-20"
@@ -38,6 +39,9 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         self._polyorder = poly_order
 
         self.ttefile = GBMTTEFile(tte_file)
+
+        if trigger_time is not None:
+            self.ttefile.set_trigger_time(trigger_time)
 
         self._evt_list = EventList(arrival_times=self.ttefile.events - self.ttefile.triggertime,
                                    energies=self.ttefile.pha,

@@ -230,7 +230,14 @@ class OGIPLike(PluginPrototype):
         View the count and background spectrum. Useful to check energy selections.
 
         '''
+
+        # adding the rebinner: j. michael.
+
         # First plot the counts
+
+
+
+
         _ = channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._observed_counts,
                          color='#377eb8', lw=2, alpha=1, label="Total")
         ax = channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._background_counts,
