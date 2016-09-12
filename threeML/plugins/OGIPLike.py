@@ -299,7 +299,7 @@ class OGIPLike(PluginPrototype):
             self._rebinner = Rebinner(self._background_counts[self._mask], self._rebinner.min_counts)
             print("Using %s bins" % self._rebinner.n_bins)
 
-    def view_count_spectrum(self):
+    def view_count_spectrum(self, plot_errors=True):
         '''
         View the count and background spectrum. Useful to check energy selections.
 
@@ -312,7 +312,7 @@ class OGIPLike(PluginPrototype):
         chans = self._rsp.ebounds[self._mask].T
         chan_min, chan_max = chans
 
-        # chan_width = chan_max - chan_min
+        chan_width = chan_max - chan_min
 
         if self._observation_noise_model == 'poisson':
 
@@ -357,18 +357,55 @@ class OGIPLike(PluginPrototype):
             chan_min = chan_min[lo]
             chan_max = chan_max[hi]
 
-            # chan_width = chan_max -chan_min
+            chan_width = chan_max - chan_min
+
+            # convert to rates
+
+        observed_counts /= self._pha.exposure
+        background_counts /= self._pha.exposure
+        cnt_err /= self._pha.exposure
+        background_errors /= self._pha.exposure
+
+
 
         _ = channel_plot(chan_min, chan_max, observed_counts,
-                         color='#377eb8', lw=2, alpha=1, label="Total")
+                         color='#377eb8', lw=1.5, alpha=1, label="Total")
         ax = channel_plot(chan_min, chan_max, background_counts,
                           color='#e41a1c', alpha=.8, label="Background")
         # Now fade the non-used channels
         excluded_channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._mask, self._observed_counts,
                               self._background_counts, ax)
 
+        mean_chan = np.mean([chan_min, chan_max], axis=0)
+
+        if plot_errors:
+            ax.errorbar(mean_chan,
+                        observed_counts / chan_width,
+                        yerr=cnt_err / chan_width,
+                        fmt='',
+                        # markersize=3,
+                        linestyle='',
+                        elinewidth=.7,
+                        alpha=.9,
+                        capsize=0,
+                        # label=data._name,
+                        color='#377eb8')
+
+            ax.errorbar(mean_chan,
+                        background_counts / chan_width,
+                        yerr=background_errors / chan_width,
+                        fmt='',
+                        # markersize=3,
+                        linestyle='',
+                        elinewidth=.7,
+                        alpha=.9,
+                        capsize=0,
+                        # label=data._name,
+                        color='#e41a1c')
+
+
         ax.set_xlabel("Energy (keV)")
-        ax.set_ylabel("Counts/keV")
+        ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
         ax.set_xlim(left=self._rsp.ebounds[0, 0], right=self._rsp.ebounds[-1, 1])
         ax.legend()
 
