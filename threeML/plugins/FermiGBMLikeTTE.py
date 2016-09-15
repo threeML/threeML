@@ -68,8 +68,15 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         # self.tmin, self.tmax = self._parse_time_interval(srcinterval)
 
+
+        self._startup = True  # This keeps things from being called twice!
+
         self.set_active_time_interval(*source_intervals.split(','))
         self.set_background_interval(*background_selections.split(','))
+
+        self._startup = False
+
+        self._rsp_file = rsp_file
 
         OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file)
 
@@ -91,6 +98,13 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         self._active_interval = args
 
+        if not self._startup:
+
+            OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
+                              rsp_file=self._rsp_file)
+
+
+
     def set_background_interval(self, *time_intervals_spec):
         '''Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
@@ -105,6 +119,16 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         # time interval already exists
 
         self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
+
+        if not self._startup:
+
+            OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
+                              rsp_file=self._rsp_file)
+
+
+
+
+
 
     def view_lightcurve(self, start=-10, stop=20., dt=1.):
 

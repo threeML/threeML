@@ -145,9 +145,6 @@ class Rebinner(object):
         raise PrivateMember("Cannot manually set edges of rebinner!")
 
 
-class LikelihoodModelConverter(object):
-    def __init__(self, likelihood_model):
-        self._likelihood_model = likelihood_model
 
 
 class OGIPLike(PluginPrototype):
@@ -364,9 +361,9 @@ class OGIPLike(PluginPrototype):
             # convert to rates
 
         observed_counts /= self._pha.exposure
-        background_counts /= self._pha.exposure
+        background_counts /= self._bak.exposure
         cnt_err /= self._pha.exposure
-        background_errors /= self._pha.exposure
+        background_errors /= self._bak.exposure
 
 
 
@@ -374,9 +371,6 @@ class OGIPLike(PluginPrototype):
                          color='#377eb8', lw=1.5, alpha=1, label="Total")
         ax = channel_plot(chan_min, chan_max, background_counts,
                           color='#e41a1c', alpha=.8, label="Background")
-        # Now fade the non-used channels
-        excluded_channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._mask, self._observed_counts,
-                              self._background_counts, ax)
 
         mean_chan = np.mean([chan_min, chan_max], axis=0)
 
@@ -404,6 +398,12 @@ class OGIPLike(PluginPrototype):
                         capsize=0,
                         # label=data._name,
                         color='#e41a1c')
+
+        # Now fade the non-used channels
+        excluded_channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._mask,
+                              self._observed_counts / self._pha.exposure,
+                              self._background_counts / self._bak.exposure, ax)
+
 
 
         ax.set_xlabel("Energy (keV)")
@@ -756,9 +756,11 @@ def display_model_counts(*args, **kwargs):
 
         expected_model_rate = data._rsp.convolve()[data._mask] / chan_width  #* data._pha.exposure
 
-        src_rate = (observed_counts - background_counts) / (data._pha.exposure * chan_width)
+        # I must fit this! the back exposure is wrong
+
+        src_rate = (observed_counts / data._pha.exposure - background_counts / data._bak.exposure) / (chan_width)
         src_rate_err = np.sqrt((cnt_err / (data._pha.exposure * chan_width)) ** 2 + (
-        background_errors / (data._pha.exposure * chan_width)) ** 2)
+            background_errors / (data._bak.exposure * chan_width)) ** 2)
 
         this_rebinner = Rebinner(src_rate, min_rate)
 

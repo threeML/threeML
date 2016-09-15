@@ -86,7 +86,7 @@ class EventList(object):
 
         return map(float, tokens)
 
-    def set_active_time_intervals(self, *args, **kwargs):
+    def set_active_time_intervals(self, *args):
         '''Set the time interval(s) to be used during the analysis.
 
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
@@ -98,10 +98,10 @@ class EventList(object):
 
         self._time_selection_exists = True
 
-        try:
-            use_poly_fit = kwargs.pop('use_poly_fit')
-        except(KeyError):
-            use_poly_fit = False
+        # try:
+        #     use_poly_fit = kwargs.pop('use_poly_fit')
+        # except(KeyError):
+        #     use_poly_fit = False
 
         tmin_list = []
         tmax_list = []
@@ -141,7 +141,7 @@ class EventList(object):
         tmp_counts = []
         tmp_err = []  # Temporary list to hold the err counts per chan
 
-        if use_poly_fit:
+        if self._poly_fit_exists:
 
             if not self._poly_fit_exists:
                 raise RuntimeError('A polynomial fit to the channels does not exist!')
