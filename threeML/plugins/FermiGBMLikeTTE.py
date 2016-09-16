@@ -71,6 +71,8 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         self._startup = True  # This keeps things from being called twice!
 
+        source_intervals = [interval.replace(' ', '') for interval in source_intervals.split(',')]  # test
+
         self.set_active_time_interval(*source_intervals.split(','))
         self.set_background_interval(*background_selections.split(','))
 
@@ -80,7 +82,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file)
 
-    def set_active_time_interval(self, *args):
+    def set_active_time_interval(self, *intervals):
         '''Set the time interval to be used during the analysis.
         For now, only one interval can be selected. This may be
         updated in the future to allow for self consistent time
@@ -92,20 +94,20 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         which will set the energy range 0-10. seconds.
         '''
 
-        self._evt_list.set_active_time_intervals(*args)
+        self._evt_list.set_active_time_intervals(*intervals)
 
         self._observed_pha = self._evt_list.get_pha_container(use_poly=False)
 
-        self._active_interval = args
+        self._active_interval = intervals
 
         if not self._startup:
+
+            self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
 
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file)
 
-
-
-    def set_background_interval(self, *time_intervals_spec):
+    def set_background_interval(self, *intervals):
         '''Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
@@ -113,7 +115,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         setBackgroundInterval("-10.0-0.0","10.-15.")
         '''
 
-        self._evt_list.set_polynomial_fit_interval(*time_intervals_spec)
+        self._evt_list.set_polynomial_fit_interval(*intervals)
 
         # In theory this will automatically get the poly counts if a
         # time interval already exists

@@ -253,7 +253,7 @@ class EventList(object):
             for tmin, tmax in zip(self._tmin_list, self._tmax_list):
                 tmp.append("%.5f-%.5f" % (tmin, tmax))
 
-            self.set_active_time_intervals(*tmp, use_poly_fit=True)
+            self.set_active_time_intervals(*tmp)
 
     def get_pha_container(self, use_poly=False):
         """

@@ -258,7 +258,7 @@ class OGIPLike(PluginPrototype):
         Use as many ranges as you need,
         specified as 'emin-emax'. Energies are in keV. Example:
 
-        setActiveMeasurements('10-12.5','56.0-100.0')
+        set_active_measurements('10-12.5','56.0-100.0')
 
         which will set the energy range 10-12.5 keV and 56-100 keV to be
         used in the analysis'''
