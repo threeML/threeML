@@ -3,10 +3,15 @@ __author__ = 'drjfunk'
 import astropy.io.fits as pyfits
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+import requests
+import re
+import warnings
 
 from OGIPLike import OGIPLike
 from threeML.plugin_prototype import PluginPrototype
 from OGIP.eventlist import EventList
+from threeML.io.rich_display import display
 
 from threeML.io.step_plot import step_plot
 
@@ -23,7 +28,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         One can choose a background polynomial order by hand (up to 4th order)
         or leave it as the default polyorder=-1 to decide by LRT test
-        
+
         FermiGBM_TTE_Like("GBM","glg_tte_n6_bn080916412.fit","-10-0,10-20","0-5","rspfile.rsp{2}")
         to load the second spectrum, second background spectrum and second response.
         """
@@ -116,6 +121,12 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
     def peek(self):
 
+        print 'Timing Info:'
+
+        self.ttefile.peek()
+
+        print "TTE File Info:"
+
         self._evt_list.peek()
 
 
@@ -133,12 +144,70 @@ class GBMTTEFile(object):
 
         self.events = tte['EVENTS'].data['TIME']
         self.pha = tte['EVENTS'].data['PHA']
-        self.triggertime = tte['PRIMARY'].header['TRIGTIME']
+
+        try:
+            self.triggertime = tte['PRIMARY'].header['TRIGTIME']
+
+
+        except:
+
+            # For continuous data
+            warnings.warn("There is no trigger time in the TTE file. Must me set manually or using MET relative times.")
+
+            self.triggertime = 0
+
         self.startevents = tte['PRIMARY'].header['TSTART']
         self.stopevents = tte['PRIMARY'].header['TSTOP']
+
+        self.utc_start = tte['PRIMARY'].header['DATE-OBS']
+        self.utc_stop = tte['PRIMARY'].header['DATE-END']
+
         self.nchans = tte['EBOUNDS'].header['NAXIS2']
 
         self._calculate_deattime()
+
+    def _compute_mission_times(self):
+
+        mission_dict = {}
+
+        if self.triggertime == 0:
+            return None
+
+        # Complements to Volodymyr Savchenko
+
+        xtime_url = "https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl"
+
+        pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
+
+        args = dict(
+            time_in_sf=self.triggertime,
+            timesys_in="u",
+            timesys_out="u",
+            apply_clock_offset="yes")
+
+        try:
+
+            content = requests.get(xtime_url, params=args).content
+
+            mission_info = re.findall(pattern, content, re.S)
+
+            mission_dict['UTC'] = mission_info[0][-1]
+            mission_dict[mission_info[7][1]] = mission_info[7][2]  # LIGO
+            mission_dict[mission_info[8][1]] = mission_info[8][2]  # NUSTAR
+            mission_dict[mission_info[12][1]] = mission_info[12][2]  # RXTE
+            mission_dict[mission_info[16][1]] = mission_info[16][2]  # SUZAKU
+            mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
+            mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
+
+        except:
+
+            return None
+
+        return mission_dict
+
+    def set_trigger_time(self, val):
+
+        self.triggertime = val
 
     def _calculate_deattime(self):
         self.deadtime = np.zeros_like(self.events)
@@ -149,6 +218,27 @@ class GBMTTEFile(object):
 
         # Normal dead time
         self.deadtime[~overflowmask] = 2.E-6  # s
+
+    def peek(self):
+
+        mission_dict = self._compute_mission_times()
+
+        fermi_dict = {}
+
+        fermi_dict['Fermi Trigger Time'] = self.triggertime
+        fermi_dict['Fermi MET OBS Start'] = self.startevents
+        fermi_dict['Fermi MET OBS Stop'] = self.stopevents
+        fermi_dict['Fermi UTC OBS Start'] = self.utc_start
+        fermi_dict['Fermi UTC OBS Stop'] = self.utc_stop
+
+        if mission_dict is not None:
+            mission_df = pd.Series(mission_dict)
+
+            display(mission_df)
+
+        fermi_df = pd.Series(fermi_dict)
+
+        display(fermi_df)
 
 
 def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):

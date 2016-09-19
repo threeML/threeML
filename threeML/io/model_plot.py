@@ -203,7 +203,7 @@ class SpectralPlotter(object):
 
         elif summed:
 
-            contours_summed = np.array(contours).sum(axis=0)
+            contours_summed = np.array(all_contours).sum(axis=0)
             ax.fill_between(x_range,
                             contours_summed[:, 0] * y_unit,
                             contours_summed[:, 1] * y_unit,
@@ -687,7 +687,7 @@ class SpectralPlotter(object):
 
                 except:
 
-                    return "badunit"
+                    raise RuntimeError("The y_unit provided is not a valid spectral quantity")
 
     def _solve_for_component_flux(self, composite_model):
         """
