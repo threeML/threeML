@@ -27,8 +27,6 @@ class NotEnoughtCounts(RuntimeError):
     pass
 
 
-class PrivateMember(RuntimeError):
-    pass
 
 
 class Rebinner(object):
@@ -92,6 +90,16 @@ class Rebinner(object):
         return rebinned_vectors
 
     def rebin_errors(self, *vectors):
+        """
+        Rebin errors by summing the squares
+
+        Args:
+            *vectors:
+
+        Returns:
+            array of rebinned errors
+
+        """
 
         rebinned_vectors = []
 
@@ -113,10 +121,11 @@ class Rebinner(object):
 
     def save_active_measurements(self, mask):
         """
-        Saves the set active measurements so that they can be restored if the binning is reset
+        Saves the set active measurements so that they can be restored if the binning is reset.
 
 
         Returns:
+            none
 
         """
 
@@ -267,14 +276,20 @@ class OGIPLike(PluginPrototype):
         print("- background: %s" % self.background_noise_model)
 
     def set_active_measurements(self, *args):
-        '''Set the measurements to be used during the analysis.
+        """
+        Set the measurements to be used during the analysis.
         Use as many ranges as you need,
         specified as 'emin-emax'. Energies are in keV. Example:
 
         set_active_measurements('10-12.5','56.0-100.0')
 
         which will set the energy range 10-12.5 keV and 56-100 keV to be
-        used in the analysis'''
+        used in the analysis
+
+        If working on data which has been rebinned, the selection will be
+        adjusted properly
+
+        """
 
         # To implement this we will use an array of boolean index,
         # which will filter
@@ -285,6 +300,8 @@ class OGIPLike(PluginPrototype):
 
 
 
+        # We will build the high res mask even if we are
+        # already rebinned so that it can be saved
 
         mask = np.zeros(self._pha.n_channels, dtype=bool)
 
@@ -308,6 +325,7 @@ class OGIPLike(PluginPrototype):
 
             print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
 
+        # If we are rebinned
 
         else:
 
@@ -330,6 +348,8 @@ class OGIPLike(PluginPrototype):
 
                 lo, hi = self._rebinner.edges
 
+                # find the nearest edge to the rebinned edges
+
                 idx1 = np.argmin(np.abs(lo - idx1))
                 idx2 = np.argmin(np.abs(hi - idx2))
 
@@ -340,25 +360,25 @@ class OGIPLike(PluginPrototype):
 
             self._mask = np.array(mask, np.bool)
 
-        # Check if the spectrum was rebinned on the background.
 
-
-
-
-
-            # if self._rebinner is not None:
-
-            #    print("Previous rebinning Detecting. Now rebinning.")
-            #    self._rebinner = Rebinner(self._background_counts[self._mask], self._rebinner.min_counts)
-            #    print("Using %s bins" % self._rebinner.n_bins)
 
     def view_count_spectrum(self, plot_errors=True):
-        '''
+        """
         View the count and background spectrum. Useful to check energy selections.
+        Args:
+            plot_errors: bool to choose error plotting
 
-        '''
+        Returns:
+            none
+
+        """
+
+
+
 
         # adding the rebinner: j. michael.
+
+        # In the future read colors from config file
 
         # First plot the counts
 
@@ -366,6 +386,8 @@ class OGIPLike(PluginPrototype):
         chan_min, chan_max = chans
 
         chan_width = chan_max - chan_min
+
+        # find out the type of observation
 
         if self._observation_noise_model == 'poisson':
 
@@ -400,6 +422,7 @@ class OGIPLike(PluginPrototype):
 
             raise NotImplementedError("Not yet implemented")
 
+        # Get the rebinned data if needed
         if self._rebinner is not None:
 
             observed_counts, background_counts = self._rebinner.rebin(observed_counts, background_counts)
@@ -419,14 +442,16 @@ class OGIPLike(PluginPrototype):
         cnt_err /= self._pha.exposure
         background_errors /= self._bak.exposure
 
-
-
+        # plot counts and background
         _ = channel_plot(chan_min, chan_max, observed_counts,
                          color='#377eb8', lw=1.5, alpha=1, label="Total")
         ax = channel_plot(chan_min, chan_max, background_counts,
                           color='#e41a1c', alpha=.8, label="Background")
 
         mean_chan = np.mean([chan_min, chan_max], axis=0)
+
+        # if asked, plot the errors
+
 
         if plot_errors:
             ax.errorbar(mean_chan,
@@ -662,7 +687,8 @@ class OGIPLike(PluginPrototype):
         """
 
         # Restore a selection of there was one!
-        self._mask = self._rebinner.saved_mask
+        if self._rebinner is not None:
+            self._mask = self._rebinner.saved_mask
 
         self._rebinner = None
 
