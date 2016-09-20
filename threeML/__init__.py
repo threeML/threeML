@@ -179,6 +179,8 @@ from .io.model_plot import SpectralPlotter
 # Added by JM to import flux calcuations.
 from .io.flux_calculator import SpectralFlux
 
+from .plugins.OGIPLike import display_model_counts  # experimental
+
 from .parallel.parallel_client import parallel_computation
 
 # Now read the configuration and make it available as threeML_config

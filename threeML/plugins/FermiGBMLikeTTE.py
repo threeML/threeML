@@ -19,7 +19,8 @@ __instrument_name = "Fermi GBM TTE (all detectors)"
 
 
 class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
-    def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, poly_order=-1):
+    def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
+                 poly_order=-1):
         """
         If the input files are TTE files. Background selections are specified as
         a comma separated string e.g. "-10-0,10-20"
@@ -39,6 +40,9 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         self.ttefile = GBMTTEFile(tte_file)
 
+        if trigger_time is not None:
+            self.ttefile.set_trigger_time(trigger_time)
+
         self._evt_list = EventList(arrival_times=self.ttefile.events - self.ttefile.triggertime,
                                    energies=self.ttefile.pha,
                                    n_channels=self.ttefile.nchans,
@@ -54,7 +58,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         # Start with an empty mask (the user will overwrite it using the
         # setActiveMeasurement method)
-        self.mask = np.asarray(np.ones(self.ttefile.nchans), np.bool)
+        self._mask = np.asarray(np.ones(self.ttefile.nchans), np.bool)
 
         # Fit the background and
         # Obtain the counts for the initial input interval
@@ -64,12 +68,22 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         # self.tmin, self.tmax = self._parse_time_interval(srcinterval)
 
-        self.set_active_time_interval(*source_intervals.split(','))
-        self.set_background_interval(*background_selections.split(','))
+
+        self._startup = True  # This keeps things from being called twice!
+
+        source_intervals = [interval.replace(' ', '') for interval in source_intervals.split(',')]
+        background_selections = [interval.replace(' ', '') for interval in background_selections.split(',')]
+
+        self.set_active_time_interval(*source_intervals)
+        self.set_background_interval(*background_selections)
+
+        self._startup = False
+
+        self._rsp_file = rsp_file
 
         OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file)
 
-    def set_active_time_interval(self, *args):
+    def set_active_time_interval(self, *intervals):
         '''Set the time interval to be used during the analysis.
         For now, only one interval can be selected. This may be
         updated in the future to allow for self consistent time
@@ -81,13 +95,20 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         which will set the energy range 0-10. seconds.
         '''
 
-        self._evt_list.set_active_time_intervals(*args)
+        self._evt_list.set_active_time_intervals(*intervals)
 
         self._observed_pha = self._evt_list.get_pha_container(use_poly=False)
 
-        self._active_interval = args
+        self._active_interval = intervals
 
-    def set_background_interval(self, *time_intervals_spec):
+        if not self._startup:
+
+            self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
+
+            OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
+                              rsp_file=self._rsp_file)
+
+    def set_background_interval(self, *intervals):
         '''Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
@@ -95,12 +116,22 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         setBackgroundInterval("-10.0-0.0","10.-15.")
         '''
 
-        self._evt_list.set_polynomial_fit_interval(*time_intervals_spec)
+        self._evt_list.set_polynomial_fit_interval(*intervals)
 
         # In theory this will automatically get the poly counts if a
         # time interval already exists
 
         self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
+
+        if not self._startup:
+
+            OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
+                              rsp_file=self._rsp_file)
+
+
+
+
+
 
     def view_lightcurve(self, start=-10, stop=20., dt=1.):
 

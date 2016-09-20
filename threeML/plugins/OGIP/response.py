@@ -3,6 +3,9 @@ import numpy as np
 import warnings
 
 
+class PrivateMember(RuntimeError):
+    pass
+
 class Response(object):
 
     def __init__(self, rsp_file, arf_file=None):
@@ -165,7 +168,7 @@ class Response(object):
 
     @ebounds.setter
     def ebounds(self, value):
-        raise RuntimeError('ebounds should not be altered manually, silly rabbit!')
+        raise PrivateMember('ebounds should not be altered manually, silly rabbit!')
 
     @ebounds.getter
     def ebounds(self):

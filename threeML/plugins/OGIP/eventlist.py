@@ -86,7 +86,7 @@ class EventList(object):
 
         return map(float, tokens)
 
-    def set_active_time_intervals(self, *args, **kwargs):
+    def set_active_time_intervals(self, *args):
         '''Set the time interval(s) to be used during the analysis.
 
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
@@ -98,10 +98,10 @@ class EventList(object):
 
         self._time_selection_exists = True
 
-        try:
-            use_poly_fit = kwargs.pop('use_poly_fit')
-        except(KeyError):
-            use_poly_fit = False
+        # try:
+        #     use_poly_fit = kwargs.pop('use_poly_fit')
+        # except(KeyError):
+        #     use_poly_fit = False
 
         tmin_list = []
         tmax_list = []
@@ -141,7 +141,7 @@ class EventList(object):
         tmp_counts = []
         tmp_err = []  # Temporary list to hold the err counts per chan
 
-        if use_poly_fit:
+        if self._poly_fit_exists:
 
             if not self._poly_fit_exists:
                 raise RuntimeError('A polynomial fit to the channels does not exist!')
@@ -230,10 +230,11 @@ class EventList(object):
             *time_intervals_spec:
         """
 
+
         self._poly_time_selections = []
 
-        for time_interval_spec in time_intervals_spec:
-            t1, t2 = self._parse_time_interval(time_interval_spec)
+        for time_interval in time_intervals_spec:
+            t1, t2 = self._parse_time_interval(time_interval)
 
             self._poly_time_selections.append((t1, t2))
 
@@ -252,7 +253,7 @@ class EventList(object):
             for tmin, tmax in zip(self._tmin_list, self._tmax_list):
                 tmp.append("%.5f-%.5f" % (tmin, tmax))
 
-            self.set_active_time_intervals(*tmp, use_poly_fit=True)
+            self.set_active_time_intervals(*tmp)
 
     def get_pha_container(self, use_poly=False):
         """
@@ -429,6 +430,10 @@ class EventList(object):
         else:
 
             self.optimalPolGrade = self._poly_order
+
+            print "Best fit polynomial order:"
+            print "\t: %d" % self.optimalPolGrade
+
 
         polynomials = []
 
