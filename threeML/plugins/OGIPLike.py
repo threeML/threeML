@@ -823,21 +823,32 @@ class OGIPLike(PluginPrototype):
 def display_model_counts(*args, **kwargs):
     """
 
-    Display the fitted model count spectrum
+    Display the fitted model count spectrum of one or more OGIP plugins
+
+
+
+    Args:
+        *args: OGIP plugins with a likelihood model assigned
+        **kwargs: min_rate the minimum rate to rebin on
 
     Returns:
 
     """
 
+    # see if the user entered their own rate
     try:
 
         min_rate = kwargs.pop('min_rate')
 
     except:
 
+        # otherwise set to 1
+
         min_rate = 1
 
     fig = plt.figure(666)
+
+    # cannot decide on the best way to go. Overplotting is an issue
 
     # gs = gridspec.GridSpec(2, 1, height_ratios=[2, 1])
 
@@ -848,16 +859,21 @@ def display_model_counts(*args, **kwargs):
     divider = make_axes_locatable(ax)
     ax1 = divider.append_axes('bottom', size=.75, pad=0., sharex=ax)
 
+    # iterators for color wheel
     color = np.linspace(0., 1., len(args))
     color_itr = 0
 
+    # perhaps adjust these
     data_cmap = plt.cm.rainbow
     model_cmap = plt.cm.nipy_spectral_r
 
+    # go thru the detectors
     for data in args:
 
         chans = data._rsp.ebounds[data._mask].T
         chan_min, chan_max = chans
+
+        # figure out the type of data
 
         if data._observation_noise_model == 'poisson':
 
@@ -894,19 +910,27 @@ def display_model_counts(*args, **kwargs):
 
         chan_width = chan_max - chan_min
 
+        # get the expected counts
         expected_model_rate = data._rsp.convolve()[data._mask] / chan_width  #* data._pha.exposure
 
-        # I must fit this! the back exposure is wrong
+        # calculate all the correct quantites
+
+        # since we compare to the model rate... background subtract but with proper propagation
 
         src_rate = (observed_counts / data._pha.exposure - background_counts / data._bak.exposure) / (chan_width)
+
         src_rate_err = np.sqrt((cnt_err / (data._pha.exposure * chan_width)) ** 2 + (
             background_errors / (data._bak.exposure * chan_width)) ** 2)
 
+        # rebin on the source rate
         this_rebinner = Rebinner(src_rate, min_rate)
+
+        # get the rebinned counts
 
         new_rate, new_model_rate = this_rebinner.rebin(src_rate, expected_model_rate)
         new_err, = this_rebinner.rebin_errors(src_rate_err)
 
+        # adjust channels
         lo, hi = this_rebinner.edges
         chan_min = chan_min[lo]
         chan_max = chan_max[hi]
@@ -934,6 +958,8 @@ def display_model_counts(*args, **kwargs):
         # Residuals
         # ax1 = fig.add_subplot(gs[1])
 
+
+        # is this the best way to do residuals?
         residuals = (new_model_rate - new_rate) / new_model_rate
 
         ax1.axhline(0, linestyle='--', color='k')
