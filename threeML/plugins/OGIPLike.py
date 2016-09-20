@@ -121,50 +121,24 @@ class Rebinner(object):
         """
 
         self._saved_mask = mask
-        self._saved_idx = np.array(slice_disjoint((mask).nonzero()[0]))
+        self._saved_idx = np.array(slice_disjoint((mask).nonzero()[0])).T
 
     @property
     def saved_mask(self):
 
         return self._saved_mask
 
-    @saved_mask.getter
-    def saved_mask(self):
 
-        return self._saved_mask
-
-    @saved_mask.setter
-    def saved_mask(self, val):
-
-        raise PrivateMember("Cannot manually set saved mask!")
 
     @property
     def saved_selection(self):
 
         return self._saved_idx
 
-    @saved_selection.setter
-    def saved_selection(self, val):
 
-        raise PrivateMember("Cannot manually set saved selections!")
-
-    @saved_selection.getter
-    def saved_selection(self):
-
-        return self._saved_idx.T
 
 
     @property
-    def min_counts(self):
-
-        return self._min_counts
-
-    @min_counts.setter
-    def min_counts(self, val):
-
-        raise PrivateMember("Cannot manually set min_counts of rebinner!")
-
-    @min_counts.getter
     def min_counts(self):
 
         return self._min_counts
@@ -182,10 +156,6 @@ class Rebinner(object):
         # return the low and high bins
         return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
 
-    @edges.setter
-    def edges(self, val):
-
-        raise PrivateMember("Cannot manually set edges of rebinner!")
 
 
 
