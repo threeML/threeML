@@ -442,7 +442,7 @@ class OGIPLike(PluginPrototype):
 
             chan_width = chan_max - chan_min
 
-            # convert to rates
+        # convert to rates, ugly, yes
 
         observed_counts /= self._pha.exposure
         background_counts /= self._bak.exposure
@@ -484,9 +484,11 @@ class OGIPLike(PluginPrototype):
                         color='#e41a1c')
 
         # Now fade the non-used channels
-        excluded_channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._mask,
-                              self._observed_counts / self._pha.exposure,
-                              self._background_counts / self._bak.exposure, ax)
+        if (~self._mask).sum() > 0:
+
+            excluded_channel_plot(chan_min, chan_max, self._mask,
+                                  observed_counts,
+                                  background_counts, ax)
 
 
 
@@ -1019,7 +1021,7 @@ def slice_disjoint(arr):
 
 
     slices = []
-    startSlice = 0
+    startSlice = arr[0]
     counter = 0
     for i in range(len(arr) - 1):
         if arr[i + 1] > arr[i] + 1:
