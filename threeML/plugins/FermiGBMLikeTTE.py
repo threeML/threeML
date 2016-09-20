@@ -71,10 +71,11 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         self._startup = True  # This keeps things from being called twice!
 
-        source_intervals = [interval.replace(' ', '') for interval in source_intervals.split(',')]  # test
+        source_intervals = [interval.replace(' ', '') for interval in source_intervals.split(',')]
+        background_selections = [interval.replace(' ', '') for interval in background_selections.split(',')]
 
-        self.set_active_time_interval(*source_intervals.split(','))
-        self.set_background_interval(*background_selections.split(','))
+        self.set_active_time_interval(*source_intervals)
+        self.set_background_interval(*background_selections)
 
         self._startup = False
 
