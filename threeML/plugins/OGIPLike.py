@@ -111,6 +111,49 @@ class Rebinner(object):
 
         return rebinned_vectors
 
+    def save_active_measurements(self, mask):
+        """
+        Saves the set active measurements so that they can be restored if the binning is reset
+
+
+        Returns:
+
+        """
+
+        self._saved_mask = mask
+        self._saved_idx = np.array(slice_disjoint((mask).nonzero()[0]))
+
+    @property
+    def saved_mask(self):
+
+        return self._saved_mask
+
+    @saved_mask.getter
+    def saved_mask(self):
+
+        return self._saved_mask
+
+    @saved_mask.setter
+    def saved_mask(self, val):
+
+        raise PrivateMember("Cannot manually set saved mask!")
+
+    @property
+    def saved_selection(self):
+
+        return self._saved_idx
+
+    @saved_selection.setter
+    def saved_selection(self, val):
+
+        raise PrivateMember("Cannot manually set saved selections!")
+
+    @saved_selection.getter
+    def saved_selection(self):
+
+        return self._saved_idx.T
+
+
     @property
     def min_counts(self):
 
@@ -269,9 +312,11 @@ class OGIPLike(PluginPrototype):
 
         # Now build the new mask: values for which the mask is 0 will be masked
 
-        mask = np.zeros(self._pha.n_channels, dtype=bool)
 
-        # Now parse the input ranges
+
+
+
+        mask = np.zeros(self._pha.n_channels, dtype=bool)
 
         for arg in args:
 
@@ -282,21 +327,60 @@ class OGIPLike(PluginPrototype):
             idx2 = self._rsp.energy_to_channel(emax)
 
             mask[idx1:idx2 + 1] = True
-            print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
 
-        self._mask = np.array(mask, np.bool)
+            if self._rebinner is None:
+
+                print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
+
+        if self._rebinner is None:
+
+            self._mask = np.array(mask, np.bool)
+
+            print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
+
+
+        else:
+
+            # Store this selection in case we want to restore it.
+            self._rebinner.save_active_measurements(mask)
+
+            mask = np.zeros(self._rebinner.n_bins, dtype=bool)
+
+        # Now parse the input ranges
+
+            for arg in args:
+
+                ee = map(float, arg.replace(" ", "").split("-"))
+                emin, emax = sorted(ee)
+
+                idx1 = self._rsp.energy_to_channel(emin)
+                idx2 = self._rsp.energy_to_channel(emax)
+
+                # Get the edges
+
+                lo, hi = self._rebinner.edges
+
+                idx1 = np.argmin(np.abs(lo - idx1))
+                idx2 = np.argmin(np.abs(hi - idx2))
+
+                mask[idx1:idx2 + 1] = True
+                print("Range %s translates to rebinned channels %s-%s" % (arg, idx1, idx2))
+
+            print("Now using %s rebinned channels out of %s" % (np.sum(self._mask), self._rebinner.n_bins))
+
+            self._mask = np.array(mask, np.bool)
 
         # Check if the spectrum was rebinned on the background.
 
 
 
-        print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
 
-        if self._rebinner is not None:
 
-            print("Previous rebinning Detecting. Now rebinning.")
-            self._rebinner = Rebinner(self._background_counts[self._mask], self._rebinner.min_counts)
-            print("Using %s bins" % self._rebinner.n_bins)
+            # if self._rebinner is not None:
+
+            #    print("Previous rebinning Detecting. Now rebinning.")
+            #    self._rebinner = Rebinner(self._background_counts[self._mask], self._rebinner.min_counts)
+            #    print("Using %s bins" % self._rebinner.n_bins)
 
     def view_count_spectrum(self, plot_errors=True):
         '''
@@ -308,7 +392,7 @@ class OGIPLike(PluginPrototype):
 
         # First plot the counts
 
-        chans = self._rsp.ebounds[self._mask].T
+        chans = self._rsp.ebounds.T
         chan_min, chan_max = chans
 
         chan_width = chan_max - chan_min
@@ -316,27 +400,27 @@ class OGIPLike(PluginPrototype):
         if self._observation_noise_model == 'poisson':
 
             # Observed counts
-            observed_counts = copy.copy(self._observed_counts[self._mask])
+            observed_counts = copy.copy(self._observed_counts)
 
             cnt_err = np.sqrt(observed_counts)
 
             if self._background_noise_model == 'poisson':
 
-                background_counts = copy.copy(self._background_counts[self._mask])
+                background_counts = copy.copy(self._background_counts)
 
                 background_errors = np.sqrt(background_counts)
 
             elif self._background_noise_model == 'ideal':
 
-                background_counts = copy.copy(self._scaled_background_counts[self._mask])
+                background_counts = copy.copy(self._scaled_background_counts)
 
                 background_errors = np.zeros_like(background_counts)
 
             elif self._background_noise_model == 'gaussian':
 
-                background_counts = copy.copy(self._background_counts[self._mask])
+                background_counts = copy.copy(self._background_counts)
 
-                background_errors = copy.copy(self._background_errors[self._mask])
+                background_errors = copy.copy(self._background_errors)
 
             else:
 
@@ -539,9 +623,64 @@ class OGIPLike(PluginPrototype):
         :return: none
         """
 
-        self._rebinner = Rebinner(self._background_counts[self._mask], min_number_of_counts)
+        # first we want to check if there was an old rebinner which will contain the original selections!
+        # the logic is that if rebinning is removed or non-existant, that the original resolution is the current
+        # mask. Otherwise, we want to keep track of the original rebin
+
+        old_rebinner = False
+
+        if self._rebinner is not None:
+
+            old_rebinner = True
+
+            # Extract the saved mask and the old index
+
+            saved_mask = self._rebinner.saved_mask
+
+        # Now let us rebin
+        self._rebinner = Rebinner(self._background_counts, min_number_of_counts)
 
         print("Using %s bins" % self._rebinner.n_bins)
+
+        # now we need to adjust the active measurements
+
+        # If there was an old rebinner
+
+        if old_rebinner:
+
+            # save those old selections
+            self._rebinner.save_active_measurements(saved_mask)
+
+        else:
+
+            # ok, this is a fresh rebin, so we save the current selections
+
+            self._rebinner.save_active_measurements(self._mask)
+
+        # now we are going to use the original resolution selections
+
+        lo_edges, hi_edges = self._rebinner.saved_selection
+
+        mask = np.zeros(self._rebinner.n_bins, dtype=bool)
+
+        for idx1, idx2 in zip(lo_edges, hi_edges):
+
+            # Get the edges
+
+            lo, hi = self._rebinner.edges
+
+            idx1 = np.argmin(np.abs(lo - idx1))
+            idx2 = np.argmin(np.abs(hi - idx2))
+
+            mask[idx1:idx2 + 1] = True
+
+        self._mask = mask
+
+
+
+
+
+
 
     def remove_rebinning(self):
         """
@@ -549,6 +688,9 @@ class OGIPLike(PluginPrototype):
 
         :return:
         """
+
+        # Restore a selection of there was one!
+        self._mask = self._rebinner.saved_mask
 
         self._rebinner = None
 
@@ -865,6 +1007,17 @@ def excluded_channel_plot(chan_min, chan_max, mask, counts, bkg, ax):
 
 
 def slice_disjoint(arr):
+    """
+    Returns an array of disjoint indicies.
+
+    Args:
+        arr:
+
+    Returns:
+
+    """
+
+
     slices = []
     startSlice = 0
     counter = 0
