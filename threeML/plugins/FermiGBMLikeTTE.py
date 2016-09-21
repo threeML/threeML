@@ -62,8 +62,6 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         # First get the initial tmin and tmax
 
-        # self.tmin, self.tmax = self._parse_time_interval(srcinterval)
-
 
         self._startup = True  # This keeps things from being called twice!
 
