@@ -56,10 +56,6 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         self._backgroundexists = False
         self._energyselectionexists = False
 
-        # Start with an empty mask (the user will overwrite it using the
-        # setActiveMeasurement method)
-        self._mask = np.asarray(np.ones(self.ttefile.nchans), np.bool)
-
         # Fit the background and
         # Obtain the counts for the initial input interval
         # which is embeded in the background call
