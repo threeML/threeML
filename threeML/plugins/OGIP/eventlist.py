@@ -219,7 +219,7 @@ class EventList(object):
 
         self._user_poly_order = value
 
-        if self._background_exists:
+        if self._poly_fit_exists:
 
             print('Refitting background with new polynomial order and existing selections')
             self._fit_background()
@@ -383,7 +383,7 @@ class EventList(object):
 
     def _fit_background(self):
 
-        self._background_exists = True
+        self._poly_fit_exists = True
         ## Separate everything by energy channel
 
         # Select all the events that are in the background regions
