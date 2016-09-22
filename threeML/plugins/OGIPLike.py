@@ -157,16 +157,8 @@ class Rebinner(object):
     @property
     def edges(self):
 
-        return self._edges
-
-    @edges.getter
-    def edges(self):
-
         # return the low and high bins
         return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
-
-
-
 
 
 class OGIPLike(PluginPrototype):
@@ -282,6 +274,7 @@ class OGIPLike(PluginPrototype):
         print("Auto-probed noise models:")
         print("- observation: %s" % self.observation_noise_model)
         print("- background: %s" % self.background_noise_model)
+        print()
 
     def set_active_measurements(self, *args):
         """

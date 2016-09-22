@@ -482,6 +482,18 @@ class EventList(object):
 
 
 def _fit_channel(channel, poly_mask, start_time, stop_time, energies, arrival_times, poly_selections, grade):
+    """ Fit each channel of the data. Function to allow parallel execution
+
+    Args:
+        channel:
+        poly_mask:
+        start_time:
+        stop_time:
+        energies:
+        arrival_times:
+        poly_selections:
+        grade:
+    """
     # index all events for this channel and select them
     channel_mask = energies == channel
 
@@ -527,6 +539,7 @@ def _fit_channel(channel, poly_mask, start_time, stop_time, energies, arrival_ti
 
 
 def _polyfit(x, y, grade):
+    """ funtion to fit a polynomial to event data. not a member to allow parallel computation """
     test = False
 
     # Check that we have enough counts to perform the fit, otherwise
