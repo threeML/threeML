@@ -13,6 +13,10 @@ from threeML.io.rich_display import display
 from threeML.utils.stats_tools import li_and_ma
 from pha import PHAContainer
 
+# testing
+import multiprocessing
+import joblib
+
 
 class EventList(object):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
@@ -451,13 +455,20 @@ class EventList(object):
 
             self._optimal_polynomial_grade = self._user_poly_order
 
-        polynomials = []
+        # Attempting a parallel execution
 
-        for chan in range(self._first_channel, self._n_channels + self._first_channel):
+        channels = range(self._first_channel, self._n_channels + self._first_channel)
+        num_cpus = multiprocessing.cpu_count()
+        polynomials = joblib.Parallel(n_jobs=num_cpus)(
+                joblib.delayed(self._fit_channel)(chan, poly_mask) for chan in channels)
 
-            this_polynomial, cstat = self._fit_channel(chan, poly_mask)
-
-            polynomials.append(this_polynomial)
+        # polynomials = []
+        #
+        # for chan in range(self._first_channel, self._n_channels + self._first_channel):
+        #
+        #     this_polynomial, cstat = self._fit_channel(chan, poly_mask)
+        #
+        #     polynomials.append(this_polynomial)
 
         self._polynomials = polynomials
 
