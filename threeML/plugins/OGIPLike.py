@@ -274,7 +274,7 @@ class OGIPLike(PluginPrototype):
         print("Auto-probed noise models:")
         print("- observation: %s" % self.observation_noise_model)
         print("- background: %s" % self.background_noise_model)
-        print()
+        print
 
     def set_active_measurements(self, *args):
         """

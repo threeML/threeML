@@ -449,6 +449,7 @@ class EventList(object):
                                                                                           mean_time[non_zero_mask])
 
             print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
+            print
 
 
         else:
