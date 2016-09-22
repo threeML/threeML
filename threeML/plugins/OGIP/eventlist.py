@@ -235,7 +235,6 @@ class EventList(object):
     poly_order = property(___get_poly_order, ___set_poly_order,
                           doc="Get or set the polynomial order")
 
-
     def set_polynomial_fit_interval(self, *time_intervals_spec):
         """Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
@@ -246,7 +245,6 @@ class EventList(object):
         Args:
             *time_intervals_spec:
         """
-
 
         self._poly_time_selections = []
 
@@ -336,7 +334,7 @@ class EventList(object):
 
             S = li_and_ma(self._counts.sum(), self._poly_counts.sum())
 
-            info_dict['Li and Ma Sigma'] = S
+            info_dict['Li and Ma Sigma'] = S  # not sure if li and ma applies here
 
         info_df = pd.Series(info_dict)
 
@@ -359,21 +357,21 @@ class EventList(object):
 
         # Fit all the polynomials
 
-        minGrade = 0
-        maxGrade = 4
-        logLikelihoods = []
+        min_grade = 0
+        max_grade = 4
+        log_likelihoods = []
 
-        for grade in range(minGrade, maxGrade + 1):
-            polynomial, logLike = self._polyfit(bins, cnts, grade)
+        for grade in range(min_grade, max_grade + 1):
+            polynomial, log_like = self._polyfit(bins, cnts, grade)
 
-            logLikelihoods.append(logLike)
+            log_likelihoods.append(log_like)
 
         # Found the best one
-        deltaLoglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(logLikelihoods[:-1], logLikelihoods[1:])))
+        deltaLoglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
 
         # print("\ndelta log-likelihoods:")
 
-        # for i in range(maxGrade):
+        # for i in range(max_grade):
         #    print("%s -> %s: delta Log-likelihood = %s" % (i, i + 1, deltaLoglike[i]))
 
         # print("")
@@ -406,44 +404,45 @@ class EventList(object):
         for bkgsel in self._poly_time_selections:
             all_bkg_masks.append(np.logical_and(self._arrival_times >= bkgsel[0],
                                                 self._arrival_times <= bkgsel[1]))
-        background_mask = all_bkg_masks[0]
+        poly_mask = all_bkg_masks[0]
 
         # If there are multiple masks:
         if len(all_bkg_masks) > 1:
             for mask in all_bkg_masks[1:]:
-                background_mask = np.logical_or(background_mask, mask)
+                poly_mask = np.logical_or(poly_mask, mask)
 
         # Now we will find the the best poly order unless the use specified one
         # The total cnts (over channels) is binned to 1 sec intervals
         if self._user_poly_order == -1:
-            totalbkgevents = self._arrival_times[background_mask]
-            binwidth = .1
+            totalbkgevents = self._arrival_times[poly_mask]
+            bin_width = .1
             cnts, bins = np.histogram(totalbkgevents,
                                       bins=np.arange(self._start_time,
                                                      self._stop_time,
-                                                     binwidth))
+                                                     bin_width))
 
-            cnts = cnts / binwidth
+            cnts = cnts / bin_width
             # Find the mean time of the bins
-            meantime = []
+            mean_time = []
             for i in xrange(len(bins) - 1):
                 m = np.mean((bins[i], bins[i + 1]))
-                meantime.append(m)
-            meantime = np.array(meantime)
+                mean_time.append(m)
+            mean_time = np.array(mean_time)
 
             # Remove bins with zero counts
-            allnonzeromask = []
+            all_non_zero_mask = []
+            
             for bkgsel in self._poly_time_selections:
-                allnonzeromask.append(np.logical_and(meantime >= bkgsel[0],
-                                                     meantime <= bkgsel[1]))
+                all_non_zero_mask.append(np.logical_and(mean_time >= bkgsel[0],
+                                                        mean_time <= bkgsel[1]))
 
-            nonzeromask = allnonzeromask[0]
-            if len(allnonzeromask) > 1:
-                for mask in allnonzeromask[1:]:
-                    nonzeromask = np.logical_or(mask, nonzeromask)
+            non_zero_mask = all_non_zero_mask[0]
+            if len(all_non_zero_mask) > 1:
+                for mask in all_non_zero_mask[1:]:
+                    non_zero_mask = np.logical_or(mask, non_zero_mask)
 
-            self._optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(cnts[nonzeromask],
-                                                                                          meantime[nonzeromask])
+            self._optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(cnts[non_zero_mask],
+                                                                                          mean_time[non_zero_mask])
 
             print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
 
@@ -452,72 +451,71 @@ class EventList(object):
 
             self._optimal_polynomial_grade = self._user_poly_order
 
-
-
-
         polynomials = []
 
         for chan in range(self._first_channel, self._n_channels + self._first_channel):
 
-            # index all events for this channel and select them
-            channel_mask = self._energies == chan
+            this_polynomial, cstat = self._fit_channel(chan, poly_mask)
 
-            # Mask background events and current channel
-            bkg_chan_mask = np.logical_and(background_mask, channel_mask)
-            # Select the masked events
-            currentevents = self._arrival_times[bkg_chan_mask]
-
-            binwidth = .1
-            cnts, bins = np.histogram(currentevents,
-                                      bins=np.arange(self._start_time,
-                                                     self._stop_time,
-                                                     binwidth))
-
-            cnts = cnts / binwidth
-
-            # Find the mean time of the bins
-            meantime = []
-            for i in xrange(len(bins) - 1):
-                m = np.mean((bins[i], bins[i + 1]))
-                meantime.append(m)
-            meantime = np.array(meantime)
-
-            # Remove bins with zero counts
-            allnonzeromask = []
-            for bkgsel in self._poly_time_selections:
-                allnonzeromask.append(np.logical_and(meantime >= bkgsel[0],
-                                                     meantime <= bkgsel[1]))
-
-            nonzeromask = allnonzeromask[0]
-            if len(allnonzeromask) > 1:
-                for mask in allnonzeromask[1:]:
-                    nonzeromask = np.logical_or(mask, nonzeromask)
-
-            # Finally, we fit the background and add the polynomial to a list
-            thispolynomial, cstat = self._fit_channel(cnts[nonzeromask], meantime[nonzeromask],
-                                                      self._optimal_polynomial_grade)
-            polynomials.append(thispolynomial)
+            polynomials.append(this_polynomial)
 
         self._polynomials = polynomials
 
-    def _fit_channel(self, cnts, bins, poly_grade):
+    def _fit_channel(self, channel, poly_mask):
 
-        Nintervals = len(bins)
+        # index all events for this channel and select them
+        channel_mask = self._energies == channel
+
+        # Mask background events and current channel
+        bkg_chan_mask = np.logical_and(poly_mask, channel_mask)
+        # Select the masked events
+        current_events = self._arrival_times[bkg_chan_mask]
+
+        bin_width = .1
+
+        cnts, bins = np.histogram(current_events,
+                                  bins=np.arange(self._start_time,
+                                                 self._stop_time,
+                                                 bin_width))
+
+        cnts = cnts / bin_width
+
+        # Find the mean time of the bins
+        meantime = []
+        for i in xrange(len(bins) - 1):
+            m = np.mean((bins[i], bins[i + 1]))
+            meantime.append(m)
+        meantime = np.array(meantime)
+
+        # Remove bins with zero counts
+        allnonzeromask = []
+        for bkgsel in self._poly_time_selections:
+            allnonzeromask.append(np.logical_and(meantime >= bkgsel[0],
+                                                 meantime <= bkgsel[1]))
+
+        nonzeromask = allnonzeromask[0]
+        if len(allnonzeromask) > 1:
+            for mask in allnonzeromask[1:]:
+                nonzeromask = np.logical_or(mask, nonzeromask)
+
+
+
         # Put data to fit in an x vector and y vector
+        polynomial, min_log_like = self._polyfit(meantime[nonzeromask],
+                                                 cnts[nonzeromask],
+                                                 self._optimal_polynomial_grade)
 
-        polynomial, minLogLike = self._polyfit(bins, cnts, poly_grade)
+        return polynomial, min_log_like
 
-        return polynomial, minLogLike
-
-    def _polyfit(self, x, y, poly_grade):
+    def _polyfit(self, x, y, grade):
 
         test = False
 
         # Check that we have enough counts to perform the fit, otherwise
         # return a "zero polynomial"
-        nonzeroMask = (y > 0)
-        Nnonzero = len(nonzeroMask.nonzero()[0])
-        if (Nnonzero == 0):
+        non_zero_mask = (y > 0)
+        n_non_zero = len(non_zero_mask.nonzero()[0])
+        if n_non_zero == 0:
             # No data, nothing to do!
             return Polynomial([0.0]), 0.0
         pass
@@ -526,53 +524,56 @@ class EventList(object):
         # with a least-square fit (with weight=1) using SVD (extremely robust):
         # (note that polyfit returns the coefficient starting from the maximum grade,
         # thus we need to reverse the order)
-        if (test):
+        if test:
             print("  Initial estimate with SVD..."),
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            initialGuess = np.polyfit(x, y, poly_grade)
-        pass
-        initialGuess = initialGuess[::-1]
-        if (test):
-            print("  done -> %s" % (initialGuess))
 
-        polynomial = Polynomial(initialGuess)
+            initial_guess = np.polyfit(x, y, grade)
+        pass
+        initial_guess = initial_guess[::-1]
+        if (test):
+            print("  done -> %s" % (initial_guess))
+
+        polynomial = Polynomial(initial_guess)
 
         # Check that the solution found is meaningful (i.e., definite positive
         # in the interval of interest)
         M = polynomial(x)
-        negativeMask = (M < 0)
-        if (len(negativeMask.nonzero()[0]) > 0):
+
+        negative_mask = (M < 0)
+
+        if len(negative_mask.nonzero()[0]) > 0:
             # Least square fit failed to converge to a meaningful solution
             # Reset the initialGuess to reasonable value
-            initialGuess[0] = np.mean(y)
+            initial_guess[0] = np.mean(y)
             meanx = np.mean(x)
-            initialGuess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initialGuess))
+            initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
 
         # Improve the solution using a logLikelihood statistic (Cash statistic)
-        logLikelihood = PolyLogLikelihood(x, y, polynomial)
+        log_likelihood = PolyLogLikelihood(x, y, polynomial)
 
         # Check that we have enough non-empty bins to fit this grade of polynomial,
         # otherwise lower the grade
-        dof = Nnonzero - (poly_grade + 1)
-        if (test):
+        dof = n_non_zero - (grade + 1)
+        if test:
             print("Effective dof: %s" % (dof))
-        if (dof <= 2):
+        if dof <= 2:
             # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-            while (dof < 2 and len(initialGuess) > 1):
-                initialGuess = initialGuess[:-1]
-                polynomial = Polynomial(initialGuess)
-                logLikelihood = PolyLogLikelihood(x, y, polynomial)
+            while (dof < 2 and len(initial_guess) > 1):
+                initial_guess = initial_guess[:-1]
+                polynomial = Polynomial(initial_guess)
+                log_likelihood = PolyLogLikelihood(x, y, polynomial)
             pass
         pass
 
         # Try to improve the fit with the log-likelihood
         # try:
         if (1 == 1):
-            finalEstimate = scipy.optimize.fmin(logLikelihood, initialGuess,
-                                                ftol=1E-5, xtol=1E-5,
-                                                maxiter=1e6, maxfun=1E6,
-                                                disp=False)
+            final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
+                                                 ftol=1E-5, xtol=1E-5,
+                                                 maxiter=1e6, maxfun=1E6,
+                                                 disp=False)
         # except:
         else:
             # We shouldn't get here!
@@ -580,19 +581,20 @@ class EventList(object):
         pass
 
         # Get the value for cstat at the minimum
-        minlogLikelihood = logLikelihood(finalEstimate)
+        min_log_likelihood = log_likelihood(final_estimate)
 
         # Update the polynomial with the fitted parameters,
         # and the relative covariance matrix
-        finalPolynomial = Polynomial(finalEstimate)
+        final_polynomial = Polynomial(final_estimate)
+
         try:
-            finalPolynomial.compute_covariance_matrix(logLikelihood.get_free_derivs)
+            final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
         except Exception:
             raise
         # if test is defined, compare the results with those obtained with ROOT
 
 
-        return finalPolynomial, minlogLikelihood
+        return final_polynomial, min_log_likelihood
 
 
 class PolyLogLikelihood(object):
@@ -806,7 +808,7 @@ class Polynomial(object):
         negativeElements = (np.matrix.diagonal(self.cov_matrix) < 0)
         if (len(negativeElements.nonzero()[0]) > 0):
             raise RuntimeError(
-                "Negative element in the diagonal of the covariance matrix. Try to reduce the polynomial grade.")
+                    "Negative element in the diagonal of the covariance matrix. Try to reduce the polynomial grade.")
 
     pass
 
