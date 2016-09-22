@@ -77,6 +77,28 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file)
 
+    def __set_poly_order(self, value):
+        """Background poly order setter """
+
+        self._evt_list.poly_order = value
+
+    def ___set_poly_order(self, value):
+        """ Indirect poly order setter """
+
+        self.__set_poly_order(value)
+
+    def __get_poly_order(self):
+        """ Get poly order """
+        return self._evt_list.poly_order
+
+    def ___get_poly_order(self):
+        """ Indirect poly order getter """
+
+        return self.__get_poly_order()
+
+    background_poly_order = property(___get_poly_order, ___set_poly_order,
+                                     doc="Get or set the background polynomial order")
+
     def set_active_time_interval(self, *intervals):
         '''Set the time interval to be used during the analysis.
         For now, only one interval can be selected. This may be
