@@ -36,7 +36,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         self.name = name
 
-        self._polyorder = poly_order
+        # self._poly_order = poly_order
 
         self.ttefile = GBMTTEFile(tte_file)
 
@@ -51,14 +51,14 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
                                    dead_time=self.ttefile.deadtime,
                                    first_channel=0)
 
-        self._evt_list.poly_order = self._polyorder
+        self._evt_list.poly_order = poly_order
 
         self._backgroundexists = False
         self._energyselectionexists = False
 
         # Fit the background and
         # Obtain the counts for the initial input interval
-        # which is embeded in the background call
+        # which is embedded in the background call
 
         # First get the initial tmin and tmax
 

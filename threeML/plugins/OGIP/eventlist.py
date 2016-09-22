@@ -197,21 +197,14 @@ class EventList(object):
 
     @property
     def polynomials(self):
-        return self._polynomials
-
-    @polynomials.getter
-    def polynomials(self):
+        """ Returns polynomial is they exist"""
         if self._poly_fit_exists:
             return self._polynomials
         else:
             RuntimeError('A polynomial fit has not been made.')
 
-    @property
-    def poly_order(self):
-        return self._optimal_polynomial_grade
-
-    @poly_order.setter
-    def poly_order(self, value):
+    def __set_poly_order(self, value):
+        """ Set poly order only in allowed range and redo fit """
 
         assert type(value) is int, "Polynomial order must be integer"
 
@@ -223,6 +216,24 @@ class EventList(object):
 
             print('Refitting background with new polynomial order and existing selections')
             self._fit_background()
+
+    def ___set_poly_order(self, value):
+        """ Indirect poly order setter """
+
+        self.__set_poly_order(value)
+
+    def __get_poly_order(self):
+        """ get the poly order """
+
+        return self._user_poly_order
+
+    def ___get_poly_order(self):
+        """ Indirect poly order getter """
+
+        return self.__get_poly_order()
+
+    poly_order = property(___get_poly_order, ___set_poly_order,
+                          doc="Get or set the polynomial order")
 
 
     def set_polynomial_fit_interval(self, *time_intervals_spec):
@@ -434,7 +445,7 @@ class EventList(object):
                                                                                           meantime[nonzeromask])
 
             print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
-            print "-%d\n" % self._optimal_polynomial_grade
+
 
         else:
 
