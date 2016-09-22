@@ -1,12 +1,12 @@
 __author__ = 'drjfunk'
 
-import astropy.io.fits as pyfits
+import astropy.io.fits as fits
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import requests
-import re
 import warnings
+import re
+import requests
 
 from OGIPLike import OGIPLike
 from threeML.plugin_prototype import PluginPrototype
@@ -36,37 +36,29 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         self.name = name
 
-        self._polyorder = poly_order
-
-        self.ttefile = GBMTTEFile(tte_file)
+        self._gbm_tte_file = GBMTTEFile(tte_file)
 
         if trigger_time is not None:
-            self.ttefile.set_trigger_time(trigger_time)
+            self._gbm_tte_file.set_trigger_time(trigger_time)
 
-        self._evt_list = EventList(arrival_times=self.ttefile.events - self.ttefile.triggertime,
-                                   energies=self.ttefile.pha,
-                                   n_channels=self.ttefile.nchans,
-                                   start_time=self.ttefile.startevents - self.ttefile.triggertime,
-                                   stop_time=self.ttefile.stopevents - self.ttefile.triggertime,
-                                   dead_time=self.ttefile.deadtime,
+        self._evt_list = EventList(arrival_times=self._gbm_tte_file._events - self._gbm_tte_file.triggertime,
+                                   energies=self._gbm_tte_file._pha,
+                                   n_channels=self._gbm_tte_file._n_channels,
+                                   start_time=self._gbm_tte_file._start_events - self._gbm_tte_file.triggertime,
+                                   stop_time=self._gbm_tte_file._stop_events - self._gbm_tte_file.triggertime,
+                                   dead_time=self._gbm_tte_file._deadtime,
                                    first_channel=0)
 
-        self._evt_list.poly_order = self._polyorder
+        self._evt_list.poly_order = poly_order
 
         self._backgroundexists = False
         self._energyselectionexists = False
 
-        # Start with an empty mask (the user will overwrite it using the
-        # setActiveMeasurement method)
-        self._mask = np.asarray(np.ones(self.ttefile.nchans), np.bool)
-
         # Fit the background and
         # Obtain the counts for the initial input interval
-        # which is embeded in the background call
+        # which is embedded in the background call
 
         # First get the initial tmin and tmax
-
-        # self.tmin, self.tmax = self._parse_time_interval(srcinterval)
 
 
         self._startup = True  # This keeps things from being called twice!
@@ -82,6 +74,28 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         self._rsp_file = rsp_file
 
         OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file)
+
+    def __set_poly_order(self, value):
+        """Background poly order setter """
+
+        self._evt_list.poly_order = value
+
+    def ___set_poly_order(self, value):
+        """ Indirect poly order setter """
+
+        self.__set_poly_order(value)
+
+    def __get_poly_order(self):
+        """ Get poly order """
+        return self._evt_list.poly_order
+
+    def ___get_poly_order(self):
+        """ Indirect poly order getter """
+
+        return self.__get_poly_order()
+
+    background_poly_order = property(___get_poly_order, ___set_poly_order,
+                                     doc="Get or set the background polynomial order")
 
     def set_active_time_interval(self, *intervals):
         '''Set the time interval to be used during the analysis.
@@ -136,7 +150,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
     def view_lightcurve(self, start=-10, stop=20., dt=1.):
 
         binner = np.arange(start, stop + dt, dt)
-        cnts, bins = np.histogram(self.ttefile.events - self.ttefile.triggertime, bins=binner)
+        cnts, bins = np.histogram(self._gbm_tte_file._events - self._gbm_tte_file.triggertime, bins=binner)
         time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
 
         bkg = []
@@ -152,13 +166,15 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
     def peek(self):
 
-        print 'Timing Info:'
-
-        self.ttefile.peek()
-
         print "TTE File Info:"
 
         self._evt_list.peek()
+
+        print 'Timing Info:'
+
+        self._gbm_tte_file.peek()
+
+
 
 
 class GBMTTEFile(object):
@@ -171,10 +187,10 @@ class GBMTTEFile(object):
 
         '''
 
-        tte = pyfits.open(ttefile)
+        tte = fits.open(ttefile)
 
-        self.events = tte['EVENTS'].data['TIME']
-        self.pha = tte['EVENTS'].data['PHA']
+        self._events = tte['EVENTS'].data['TIME']
+        self._pha = tte['EVENTS'].data['PHA']
 
         try:
             self.triggertime = tte['PRIMARY'].header['TRIGTIME']
@@ -187,15 +203,52 @@ class GBMTTEFile(object):
 
             self.triggertime = 0
 
-        self.startevents = tte['PRIMARY'].header['TSTART']
-        self.stopevents = tte['PRIMARY'].header['TSTOP']
+        self._start_events = tte['PRIMARY'].header['TSTART']
+        self._stop_events = tte['PRIMARY'].header['TSTOP']
 
-        self.utc_start = tte['PRIMARY'].header['DATE-OBS']
-        self.utc_stop = tte['PRIMARY'].header['DATE-END']
+        self._utc_start = tte['PRIMARY'].header['DATE-OBS']
+        self._utc_stop = tte['PRIMARY'].header['DATE-END']
 
-        self.nchans = tte['EBOUNDS'].header['NAXIS2']
+        self._n_channels = tte['EBOUNDS'].header['NAXIS2']
 
         self._calculate_deattime()
+
+    @property
+    def start_events(self):
+        return self._start_events
+
+    @property
+    def stop_events(self):
+        return self._stop_events
+
+    @property
+    def arrival_times(self):
+        return self._events
+
+    @property
+    def n_channels(self):
+        return self._n_channels
+
+    @property
+    def deadtime(self):
+        return self._deadtime
+
+    def _calculate_deattime(self):
+        """
+        Computes an array of deadtimes following the perscription of Meegan et al. (2009).
+
+        The array can be summed over to obtain the total dead time
+
+        """
+        self._deadtime = np.zeros_like(self._events)
+        overflow_mask = self._pha == self._n_channels  # specific to gbm! should work for CTTE
+
+        # From Meegan et al. (2009)
+        # Dead time for overflow (note, overflow sometimes changes)
+        self._deadtime[overflow_mask] = 10.E-6  # s
+
+        # Normal dead time
+        self._deadtime[~overflow_mask] = 2.E-6  # s
 
     def _compute_mission_times(self):
 
@@ -211,10 +264,10 @@ class GBMTTEFile(object):
         pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
 
         args = dict(
-            time_in_sf=self.triggertime,
-            timesys_in="u",
-            timesys_out="u",
-            apply_clock_offset="yes")
+                time_in_sf=self.triggertime,
+                timesys_in="u",
+                timesys_out="u",
+                apply_clock_offset="yes")
 
         try:
 
@@ -236,20 +289,6 @@ class GBMTTEFile(object):
 
         return mission_dict
 
-    def set_trigger_time(self, val):
-
-        self.triggertime = val
-
-    def _calculate_deattime(self):
-        self.deadtime = np.zeros_like(self.events)
-        overflowmask = self.pha == 128
-
-        # Dead time for overflow (note, overflow sometimes changes)
-        self.deadtime[overflowmask] = 10.E-6  # s
-
-        # Normal dead time
-        self.deadtime[~overflowmask] = 2.E-6  # s
-
     def peek(self):
 
         mission_dict = self._compute_mission_times()
@@ -257,10 +296,10 @@ class GBMTTEFile(object):
         fermi_dict = {}
 
         fermi_dict['Fermi Trigger Time'] = self.triggertime
-        fermi_dict['Fermi MET OBS Start'] = self.startevents
-        fermi_dict['Fermi MET OBS Stop'] = self.stopevents
-        fermi_dict['Fermi UTC OBS Start'] = self.utc_start
-        fermi_dict['Fermi UTC OBS Stop'] = self.utc_stop
+        fermi_dict['Fermi MET OBS Start'] = self._start_events
+        fermi_dict['Fermi MET OBS Stop'] = self._stop_events
+        fermi_dict['Fermi UTC OBS Start'] = self._utc_start
+        fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
         if mission_dict is not None:
             mission_df = pd.Series(mission_dict)

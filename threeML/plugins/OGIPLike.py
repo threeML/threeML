@@ -157,16 +157,8 @@ class Rebinner(object):
     @property
     def edges(self):
 
-        return self._edges
-
-    @edges.getter
-    def edges(self):
-
         # return the low and high bins
         return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
-
-
-
 
 
 class OGIPLike(PluginPrototype):
@@ -269,11 +261,20 @@ class OGIPLike(PluginPrototype):
 
             raise NotImplementedError("Gaussian observation is not yet supported")
 
+        # Initialize a mask that selects all the data
+
+        self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
+
+        print("Currently using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
+
         # Print the autoprobed noise models
+
+
 
         print("Auto-probed noise models:")
         print("- observation: %s" % self.observation_noise_model)
         print("- background: %s" % self.background_noise_model)
+        print
 
     def set_active_measurements(self, *args):
         """
