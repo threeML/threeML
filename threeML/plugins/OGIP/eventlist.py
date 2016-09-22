@@ -330,6 +330,7 @@ class EventList(object):
 
         if self._poly_fit_exists:
             info_dict['Polynomial Selections'] = self._poly_time_selections
+            info_dict['Polynomial Order'] = self._optimal_polynomial_grade
             info_dict['Active Count Error'] = np.sqrt((self._poly_count_err ** 2).sum())
             info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
 
