@@ -73,7 +73,7 @@ class EventList(object):
 
         self._rsp_file = rsp_file
 
-        self._poly_order = -1
+        self._user_poly_order = -1
         self._time_selection_exists = False
         self._poly_fit_exists = False
 
@@ -208,7 +208,7 @@ class EventList(object):
 
     @property
     def poly_order(self):
-        return self._poly_order
+        return self._optimal_polynomial_grade
 
     @poly_order.setter
     def poly_order(self, value):
@@ -217,7 +217,13 @@ class EventList(object):
 
         assert -1 <= value <= 4, "Polynomial order must be 0-4 or -1 to have it determined"
 
-        self._poly_order = value
+        self._user_poly_order = value
+
+        if self._background_exists:
+
+            print('Refitting background with new polynomial order and existing selections')
+            self._fit_background()
+
 
     def set_polynomial_fit_interval(self, *time_intervals_spec):
         """Set the time interval to fit the background.
@@ -377,7 +383,7 @@ class EventList(object):
 
     def _fit_background(self):
 
-        self._backgroundexists = True
+        self._background_exists = True
         ## Separate everything by energy channel
 
         # Select all the events that are in the background regions
@@ -397,9 +403,9 @@ class EventList(object):
 
         # Now we will find the the best poly order unless the use specified one
         # The total cnts (over channels) is binned to 1 sec intervals
-        if self._poly_order == -1:
+        if self._user_poly_order == -1:
             totalbkgevents = self._arrival_times[background_mask]
-            binwidth = 1.
+            binwidth = .1
             cnts, bins = np.histogram(totalbkgevents,
                                       bins=np.arange(self._start_time,
                                                      self._stop_time,
@@ -424,15 +430,17 @@ class EventList(object):
                 for mask in allnonzeromask[1:]:
                     nonzeromask = np.logical_or(mask, nonzeromask)
 
-            self.optimalPolGrade = self._fit_global_and_determine_optimum_grade(cnts[nonzeromask],
-                                                                                meantime[nonzeromask])
+            self._optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(cnts[nonzeromask],
+                                                                                          meantime[nonzeromask])
+
+            print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
+            print "-%d\n" % self._optimal_polynomial_grade
 
         else:
 
-            self.optimalPolGrade = self._poly_order
+            self._optimal_polynomial_grade = self._user_poly_order
 
-            print "Best fit polynomial order:"
-            print "\t: %d" % self.optimalPolGrade
+
 
 
         polynomials = []
@@ -447,7 +455,7 @@ class EventList(object):
             # Select the masked events
             currentevents = self._arrival_times[bkg_chan_mask]
 
-            binwidth = 1.
+            binwidth = .1
             cnts, bins = np.histogram(currentevents,
                                       bins=np.arange(self._start_time,
                                                      self._stop_time,
@@ -474,7 +482,8 @@ class EventList(object):
                     nonzeromask = np.logical_or(mask, nonzeromask)
 
             # Finally, we fit the background and add the polynomial to a list
-            thispolynomial, cstat = self._fit_channel(cnts[nonzeromask], meantime[nonzeromask], self.optimalPolGrade)
+            thispolynomial, cstat = self._fit_channel(cnts[nonzeromask], meantime[nonzeromask],
+                                                      self._optimal_polynomial_grade)
             polynomials.append(thispolynomial)
 
         self._polynomials = polynomials
