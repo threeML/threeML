@@ -11,12 +11,30 @@ import pandas as pd
 
 from threeML.io.rich_display import display
 from threeML.utils.stats_tools import li_and_ma
+
+from threeML.parallel.parallel_client import ParallelClient
+from threeML.config.config import threeML_config
+from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.progress_bar import progress_bar
+
 from pha import PHAContainer
 
 # testing
 import multiprocessing
 import joblib
 
+
+class ReducingNumberOfThreads(Warning):
+    pass
+
+
+class ReducingNumberOfSteps(Warning):
+    pass
+
+
+# find out how many splits we need to make
+def ceildiv(a, b):
+    return -(-a // b)
 
 class EventList(object):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
@@ -219,7 +237,7 @@ class EventList(object):
         if self._poly_fit_exists:
 
             print('Refitting background with new polynomial order and existing selections')
-            self._fit_background()
+            self._fit_polynomials()
 
     def ___set_poly_order(self, value):
         """ Indirect poly order setter """
@@ -260,7 +278,7 @@ class EventList(object):
         self._poly_time_selections = np.array(self._poly_time_selections)
 
         # Fit the events with the given intervals
-        self._fit_background()
+        self._fit_polynomials()
 
         # Since changing the poly fit will alter the counts
         # We need to recalculate the source interval
@@ -395,7 +413,7 @@ class EventList(object):
 
         return bestGrade
 
-    def _fit_background(self):
+    def _fit_polynomials(self):
 
         self._poly_fit_exists = True
         ## Separate everything by energy channel
@@ -458,25 +476,118 @@ class EventList(object):
 
         # Attempting a parallel execution
 
-        channels = range(self._first_channel, self._n_channels + self._first_channel)
-        num_cpus = multiprocessing.cpu_count()
-        polynomials = joblib.Parallel(n_jobs=num_cpus)(
-                joblib.delayed(_fit_channel)(chan,
-                                             poly_mask,
-                                             self._start_time,
-                                             self._stop_time,
-                                             self._energies,
-                                             self._arrival_times,
-                                             self._poly_time_selections,
-                                             self._optimal_polynomial_grade) for chan in channels)
+        # channels = range(self._first_channel, self._n_channels + self._first_channel)
+        # num_cpus = multiprocessing.cpu_count()
+        # polynomials = joblib.Parallel(n_jobs=num_cpus)(
+        #         joblib.delayed(_fit_channel)(chan,
+        #                                      poly_mask,
+        #                                      self._start_time,
+        #                                      self._stop_time,
+        #                                      self._energies,
+        #                                      self._arrival_times,
+        #                                      self._poly_time_selections,
+        #                                      self._optimal_polynomial_grade) for chan in channels)
 
-        # polynomials = []
-        #
-        # for chan in range(self._first_channel, self._n_channels + self._first_channel):
-        #
-        #     this_polynomial, cstat = self._fit_channel(chan, poly_mask)
-        #
-        #     polynomials.append(this_polynomial)
+
+
+        channels = range(self._first_channel, self._n_channels + self._first_channel)
+        # Check whether we are parallelizing or not
+
+
+
+        if not threeML_config['parallel']['use-parallel']:
+
+            polynomials = []
+
+            with progress_bar(self._n_channels) as p:
+                for chan in channels:
+
+                    this_polynomial = _fit_channel(chan,
+                                                   poly_mask,
+                                                   self._start_time,
+                                                   self._stop_time,
+                                                   self._energies,
+                                                   self._arrival_times,
+                                                   self._poly_time_selections,
+                                                   self._optimal_polynomial_grade)
+
+                    polynomials.append(this_polynomial)
+                    p.increase()
+
+
+        else:
+
+            # With parallel computation
+
+            # In order to distribute fairly the computation, the strategy is to parallelize the computation
+            # by assigning to the engines one "line" of the grid at the time
+
+            # Connect to the engines
+
+            client = ParallelClient()
+
+            # Get the number of engines
+
+            n_engines = client.get_number_of_engines()
+
+            if n_engines > self._n_channels:
+
+                n_engines = int(self._n_channels)
+
+                custom_warnings.warn(
+                    "The number of engines is larger than the number of channels. Using only %s engines."
+                    % n_engines, ReducingNumberOfThreads)
+
+                # Check if the number of steps is divisible by the number
+                # of threads, otherwise issue a warning and make it so
+
+            # Compute the number of splits, i.e., how many lines in the grid for each engine.
+            # (note that this is guaranteed to be an integer number after the previous checks)
+
+            chunksize = ceildiv(self._n_channels, n_engines)
+
+            def worker(start_index):
+
+                polynomials = []
+                channel_subset = channels[chunksize * start_index: chunksize * (start_index + 1)]
+
+                for chan in channel_subset:
+
+                    this_polynomial = _fit_channel(chan,
+                                                   poly_mask,
+                                                   self._start_time,
+                                                   self._stop_time,
+                                                   self._energies,
+                                                   self._arrival_times,
+                                                   self._poly_time_selections,
+                                                   self._optimal_polynomial_grade)
+
+                    polynomials.append(this_polynomial)
+
+                return polynomials
+
+            # Get a balanced view of the engines
+
+            lview = client.load_balanced_view()
+            # lview.block = True
+
+            # Distribute the work among the engines and start it, but return immediately the control
+            # to the main thread
+
+            amr = lview.map_async(worker, range(n_engines))
+
+            client.wait_watching_progress(amr, 10)
+
+            print("\n")
+
+            res = amr.get()
+
+            polynomials = []
+            for i in range(n_engines):
+
+                polynomials.extend(res[i])
+
+        # We are now ready to return the polynomials
 
 
         self._polynomials = polynomials
@@ -532,9 +643,9 @@ def _fit_channel(channel, poly_mask, start_time, stop_time, energies, arrival_ti
             non_zero_mask = np.logical_or(mask, non_zero_mask)
 
     # Put data to fit in an x vector and y vector
-    polynomial, min_log_like = _polyfit(mean_time[non_zero_mask],
-                                        cnts[non_zero_mask],
-                                        grade)
+    polynomial, _ = _polyfit(mean_time[non_zero_mask],
+                             cnts[non_zero_mask],
+                             grade)
 
     return polynomial
 
