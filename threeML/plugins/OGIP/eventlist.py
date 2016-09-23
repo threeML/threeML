@@ -576,7 +576,7 @@ class EventList(object):
 
             amr = lview.map_async(worker, range(n_engines))
 
-            client.wait_watching_progress(amr, 10)
+            #client.wait_watching_progress(amr, 10)
 
             print("\n")
 
