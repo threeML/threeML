@@ -224,6 +224,38 @@ class EventList(object):
         else:
             RuntimeError('A polynomial fit has not been made.')
 
+    def get_poly_info(self):
+        """
+        Return a pandas data frame with the polynomial coeffcients
+        Returns:
+            a DataFrame
+
+        """
+
+        if self._poly_fit_exists:
+
+            coeff = []
+
+            for poly in self._polynomials:
+                coeff.append(poly.coefficients)
+
+            df = pd.DataFrame(coeff)
+
+            return df
+
+
+
+
+
+
+        else:
+            RuntimeError('A polynomial fit has not been made.')
+
+
+
+
+
+
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
 
