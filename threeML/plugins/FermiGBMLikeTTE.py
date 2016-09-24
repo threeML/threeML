@@ -174,6 +174,19 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         self._gbm_tte_file.peek()
 
+    def get_background_parameters(self):
+        """
+        Returns a pandas DataFrame containing the background polynomial
+        coefficients for each cahnnel.
+
+        Returns:
+
+            background dataframe
+
+        """
+
+        return self._evt_list.get_poly_info()
+
 
 
 
