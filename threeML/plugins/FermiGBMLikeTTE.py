@@ -150,21 +150,56 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file)
 
+    def view_lightcurve(self, start=-10, stop=20., dt=1., energy_selection=None):
+
+        if energy_selection is not None:
+
+            energy_selection = [interval.replace(' ', '') for interval in energy_selection.split(',')]
+
+            valid_channels = []
+            mask = np.array([False] * self._evt_list.n_events)
+
+            for selection in energy_selection:
+
+                ee = map(float, selection.split("-"))
+
+                if len(ee) != 2:
+                    raise RuntimeError('Energy selection is not valid! Form: <low>-<high>.')
+
+                emin, emax = sorted(ee)
+
+                idx1 = self._rsp.energy_to_channel(emin)
+                idx2 = self._rsp.energy_to_channel(emax)
+
+                # Update the allowed channels
+                valid_channels.extend(range(idx1, idx2))
+
+                this_mask = np.logical_and(self._evt_list.energies >= idx1, self._evt_list.energies <= idx2)
+
+                np.logical_or(mask, this_mask, out=mask)
+
+        else:
+
+            mask = np.array([True] * self._evt_list.n_events)
+            valid_channels = range(self._gbm_tte_file.n_channels)
 
 
 
 
 
-    def view_lightcurve(self, start=-10, stop=20., dt=1.):
+
 
         binner = np.arange(start, stop + dt, dt)
-        cnts, bins = np.histogram(self._gbm_tte_file._events - self._gbm_tte_file.triggertime, bins=binner)
+        cnts, bins = np.histogram(self._gbm_tte_file.arrival_times[mask] - self._gbm_tte_file.triggertime, bins=binner)
         time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
 
         bkg = []
         for tb in time_bins:
             tmpbkg = 0.  # Maybe I can do this perenergy at some point
-            for poly in self._evt_list.polynomials:
+            for i in valid_channels:
+                poly = self._evt_list.polynomials[i]
+
+
                 tmpbkg += poly.integral(tb[0], tb[1]) / (dt)
 
             bkg.append(tmpbkg)

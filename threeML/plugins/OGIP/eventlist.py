@@ -209,6 +209,15 @@ class EventList(object):
         self._active_dead_time = total_dead_time
 
     @property
+    def n_events(self):
+
+        return self._arrival_times.shape[0]
+
+    @property
+    def energies(self):
+        return self._energies
+
+    @property
     def tmin_list(self):
         return self._tmin_list
 
