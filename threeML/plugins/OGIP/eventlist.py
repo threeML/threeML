@@ -226,7 +226,8 @@ class EventList(object):
 
     def get_poly_info(self):
         """
-        Return a pandas data frame with the polynomial coeffcients
+        Return a pandas panel frame with the polynomial coeffcients
+        and errors
         Returns:
             a DataFrame
 
@@ -235,13 +236,25 @@ class EventList(object):
         if self._poly_fit_exists:
 
             coeff = []
+            err = []
 
             for poly in self._polynomials:
                 coeff.append(poly.coefficients)
+                err.append(poly.error)
+            df_coeff = pd.DataFrame(coeff)
+            df_err = pd.DataFrame(err)
 
-            df = pd.DataFrame(coeff)
+            print('Coefficients')
 
-            return df
+            display(df_coeff)
+
+            print('Coefficient Error')
+
+            display(df_err)
+
+            pan = pd.Panel({'coefficents': df_coeff, 'error': df_err})
+
+            return pan
 
 
 
