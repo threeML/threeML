@@ -297,9 +297,7 @@ class EventList(object):
 
         return (tmax - tmin) - interval_deadtime.sum()
 
-
-
-    def set_polynomial_fit_interval(self, *time_intervals_spec):
+    def set_polynomial_fit_interval(self, *time_intervals, **options):
         """Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
@@ -307,12 +305,26 @@ class EventList(object):
         set_polynomial_fit_interval("-10.0-0.0","10.-15.")
 
         Args:
-            *time_intervals_spec:
+            *time_intervals:
         """
+
+        # Find out if we want to binned or unbinned.
+        # TODO: add the option to config fil
+        try:
+            unbinned = options.pop('unbinned')
+            assert type(unbinned) == bool, 'unbinned option must be True or False'
+        except(KeyError):
+
+            # assuming unbinned
+            # could use config file here
+            # unbinned = threeML_config['ogip']['use-unbinned-poly-fitting']
+
+            unbinned = True
+
 
         self._poly_time_selections = []
 
-        for time_interval in time_intervals_spec:
+        for time_interval in time_intervals:
             t1, t2 = self._parse_time_interval(time_interval)
 
             self._poly_time_selections.append((t1, t2))
@@ -320,7 +332,14 @@ class EventList(object):
         self._poly_time_selections = np.array(self._poly_time_selections)
 
         # Fit the events with the given intervals
-        self._fit_polynomials()
+        if unbinned:
+
+            self._unbinned_fit_polynomials()
+
+        else:
+
+            self._fit_polynomials()
+
 
         # Since changing the poly fit will alter the counts
         # We need to recalculate the source interval
@@ -404,6 +423,7 @@ class EventList(object):
 
         display(info_df)
 
+
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
         # Fit the sum of all the channels to determine the optimal polynomial
         # grade
@@ -455,6 +475,63 @@ class EventList(object):
 
         return best_grade
 
+    def _unbinned_fit_global_and_determine_optimum_grade(self, events, exposure):
+        # Fit the sum of all the channels to determine the optimal polynomial
+        # grade
+
+
+        # y                         = []
+        # for i in range(Nintervals):
+        #  y.append(np.sum(counts[i]))
+        # pass
+        # y                         = np.array(y)
+
+        # exposure                  = np.array(data.field("EXPOSURE"))
+
+        # print("\nLooking for optimal polynomial grade:")
+
+        # Fit all the polynomials
+
+        min_grade = 0
+        max_grade = 4
+        log_likelihoods = []
+
+        t_start = self._poly_time_selections[:, 0]
+        t_stop = self._poly_time_selections[:, 1]
+
+        for grade in range(min_grade, max_grade + 1):
+            polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure)
+
+            log_likelihoods.append(log_like)
+
+        # Found the best one
+        delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
+
+        # print("\ndelta log-likelihoods:")
+
+        # for i in range(max_grade):
+        #    print("%s -> %s: delta Log-likelihood = %s" % (i, i + 1, deltaLoglike[i]))
+
+        # print("")
+
+        delta_threshold = 9.0
+
+        mask = (delta_loglike >= delta_threshold)
+
+        if (len(mask.nonzero()[0]) == 0):
+
+            # best grade is zero!
+            best_grade = 0
+
+        else:
+
+            best_grade = mask.nonzero()[0][-1] + 1
+
+        return best_grade
+
+
+
+
     def _fit_polynomials(self):
 
         self._poly_fit_exists = True
@@ -495,9 +572,6 @@ class EventList(object):
 
         cnts, bins = np.histogram(total_poly_events,
                                   bins=these_bins)
-
-        # cnts = cnts / bin_width
-
 
 
 
@@ -570,7 +644,7 @@ class EventList(object):
                     cnts, bins = np.histogram(current_events,
                                               bins=these_bins)
 
-                    # cnts = cnts / bin_width
+
 
                     # Put data to fit in an x vector and y vector
 
@@ -667,7 +741,177 @@ class EventList(object):
 
         self._polynomials = polynomials
 
+    def _unbinned_fit_polynomials(self):
 
+        self._poly_fit_type = 'unbinned'
+
+        self._poly_fit_exists = True
+
+        # Select all the events that are in the background regions
+        # and make a mask
+
+        all_bkg_masks = []
+
+        total_duration = 0.
+
+        for selection in self._poly_time_selections:
+
+            total_duration += selection[1] - selection[0]
+
+            all_bkg_masks.append(np.logical_and(self._arrival_times >= selection[0],
+                                                self._arrival_times <= selection[1]))
+        poly_mask = all_bkg_masks[0]
+
+        # If there are multiple masks:
+        if len(all_bkg_masks) > 1:
+            for mask in all_bkg_masks[1:]:
+                poly_mask = np.logical_or(poly_mask, mask)
+
+        # Select the all the events in the poly selections
+        # We only need to do this once
+
+        total_poly_events = self._arrival_times[poly_mask]
+
+        # For the channel energies we will need to down select again.
+        # We can go ahead and do this to avoid repeated computations
+
+        total_poly_energies = self._energies[poly_mask]
+
+        poly_deadtime = self._dead_time[poly_mask].sum()
+
+        poly_exposure = total_duration - poly_deadtime
+
+        # Now we will find the the best poly order unless the use specified one
+        # The total cnts (over channels) is binned to .1 sec intervals
+
+        if self._user_poly_order == -1:
+
+            self._optimal_polynomial_grade = self._unbinned_fit_global_and_determine_optimum_grade(total_poly_events,
+                                                                                                   poly_exposure)
+
+            print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
+            print('\n')
+
+
+        else:
+
+            self._optimal_polynomial_grade = self._user_poly_order
+
+        channels = range(self._first_channel, self._n_channels + self._first_channel)
+
+        # Check whether we are parallelizing or not
+
+        t_start = self._poly_time_selections[:, 0]
+        t_stop = self._poly_time_selections[:, 1]
+
+        if not threeML_config['parallel']['use-parallel']:
+
+            polynomials = []
+
+            with progress_bar(self._n_channels) as p:
+                for channel in channels:
+
+                    channel_mask = total_poly_energies == channel
+
+                    # Mask background events and current channel
+                    # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+                    # Select the masked events
+
+                    current_events = total_poly_events[channel_mask]
+
+                    polynomial, _ = unbinned_polyfit(current_events,
+                                                     self._optimal_polynomial_grade,
+                                                     t_start,
+                                                     t_stop,
+                                                     poly_exposure)
+
+                    polynomials.append(polynomial)
+                    p.increase()
+
+
+        else:
+
+            # With parallel computation
+
+            # In order to distribute fairly the computation, the strategy is to parallelize the computation
+            # by assigning to the engines one "line" of the grid at the time
+
+            # Connect to the engines
+
+            client = ParallelClient()
+
+            # Get the number of engines
+
+            n_engines = client.get_number_of_engines()
+
+            if n_engines > self._n_channels:
+
+                n_engines = int(self._n_channels)
+
+                custom_warnings.warn(
+                        "The number of engines is larger than the number of channels. Using only %s engines."
+                        % n_engines, ReducingNumberOfThreads)
+
+            chunk_size = ceildiv(self._n_channels, n_engines)
+
+            # need to remove class ref
+            grade = self._optimal_polynomial_grade
+
+            def worker(start_index):
+
+                polynomials = []
+                channel_subset = channels[chunk_size * start_index: chunk_size * (start_index + 1)]
+
+                for channel in channel_subset:
+
+                    channel_mask = total_poly_energies == channel
+
+                    # Select the masked events
+
+                    current_events = total_poly_events[channel_mask]
+
+                    # now bin the selected channel counts
+
+                    cnts, _ = np.histogram(current_events, bins=these_bins)
+
+                    # cnts = cnts / bin_width
+
+                    # Put data to fit in an x vector and y vector
+
+                    polynomial, _ = polyfit(mean_time[non_zero_mask],
+                                            cnts[non_zero_mask],
+                                            grade,
+                                            exposure_per_bin[non_zero_mask])
+
+                    polynomials.append(polynomial)
+
+                return polynomials
+
+            # Get a balanced view of the engines
+
+            lview = client.load_balanced_view()
+            # lview.block = True
+
+            # Distribute the work among the engines and start it, but return immediately the control
+            # to the main thread
+
+            amr = lview.map_async(worker, range(n_engines))
+
+            # client.wait_watching_progress(amr, 10)
+
+            print("\n")
+
+            res = amr.get()
+
+            polynomials = []
+            for i in range(n_engines):
+
+                polynomials.extend(res[i])
+
+        # We are now ready to return the polynomials
+
+
+        self._polynomials = polynomials
 
 
 def intervals_overlap(tmin, tmax):

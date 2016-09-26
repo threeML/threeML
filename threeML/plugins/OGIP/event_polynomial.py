@@ -17,6 +17,11 @@ class Polynomial(object):
     def degree(self):
         return self._degree
 
+    @property
+    def error(self):
+
+        return np.sqrt(self._cov_matrix.diagonal())
+
     def __call__(self, x):
 
         result = 0
@@ -30,7 +35,7 @@ class Polynomial(object):
         output = "\n------------------------------------------------------------"
         output += '\n| {0:^10} | {1:^20} | {2:^20} |'.format("COEFF", "VALUE", "ERROR")
         output += "\n|-----------------------------------------------------------"
-        for i, parValue in enumerate(self.get_params()):
+        for i, parValue in enumerate(self.coefficients):
             output += '\n| {0:<10d} | {1:20.5g} | {2:20.5g} |'.format(i, parValue, math.sqrt(self._cov_matrix[i, i]))
         pass
         output += "\n------------------------------------------------------------"
@@ -226,9 +231,9 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure):
 
     # Check that we have enough non-empty bins to fit this grade of polynomial,
     # otherwise lower the grade
-    dof = n_non_zero - (grade + 1)
-    if test:
-        print("Effective dof: %s" % (dof))
+    # dof = n_non_zero - (grade + 1)
+    # if test:
+    #    print("Effective dof: %s" % (dof))
 
     # if dof <= 2:
     #     # Fit is poorly or ill-conditioned, have to reduce the number of parameters
@@ -392,19 +397,20 @@ class PolyLogLikelihood(object):
         # computer
 
         y_divided_M = np.zeros(len(self._counts))
+
         non_zero = (self._counts > 0)
         y_divided_M[non_zero] = self._counts[non_zero] / M[non_zero]
 
         for p in range(n_free):
-            this_model_derivativess, tinyMd = self._fix_precision(model_derivatives[p])
-            derivatives[p] = np.sum(this_model_derivativess * (1.0 - y_divided_M))
+            this_model_derivatives, tinyMd = self._fix_precision(model_derivatives[p])
+            derivatives[p] = np.sum(this_model_derivatives * (1.0 - y_divided_M))
 
         return derivatives
 
     pass
 
 
-pass
+
 
 
 class PolyUnbinnedLogLikelihood(object):
@@ -419,9 +425,9 @@ class PolyUnbinnedLogLikelihood(object):
         self._events = events
 
         self._model = model
-        self._parameters = model.get_params()
+        self._parameters = model.coefficients
         self._exposure = exposure
-        self._t_start = t_start
+        self._t_start = t_start  # list of starts
         self._t_stop = t_stop
 
     def _evaluate_logM(self, M):
@@ -441,7 +447,7 @@ class PolyUnbinnedLogLikelihood(object):
             logM = np.log(M)
         return logM
 
-    pass
+
 
     def __call__(self, parameters):
         """
@@ -455,17 +461,19 @@ class PolyUnbinnedLogLikelihood(object):
         """
 
         # Compute the values for the model given this set of parameters
-        self._model.set_params(parameters)
+        self._model.coefficients = parameters
 
         # Integrate the polynomial (or in the future, model) over the given interval
 
-        n_expected_counts = self._model.integral(self._t_start, self._t_stop)
+        n_expected_counts = 0.
+
+        for start, stop in zip(self._t_start, self._t_stop):
+            n_expected_counts += self._model.integral(start, stop)
 
         # Now evaluate the model at the event times and multiply by the exposure
 
         M = self._model(self._events) * self._exposure
 
-        # Mfixed, tiny = self._fix_precision(M)
 
         # Replace negative values for the model (impossible in the Poisson context)
         # with zero
@@ -475,17 +483,13 @@ class PolyUnbinnedLogLikelihood(object):
             M[negative_mask] = 0.0
 
         # Poisson loglikelihood statistic  is:
-        # logL = -Nexp + Sum ( M_i )
+        # logL = -Nexp + Sum ( log M_i )
 
         logM = self._evaluate_logM(M)
 
-        # d_times_logM = np.zeros(len(self.y))
-        # non_zero_mask = (self.y > 0)
-        # d_times_logM[non_zero_mask] = self.y[non_zero_mask] * logM[non_zero_mask]
-
         log_likelihood = -n_expected_counts + logM.sum()
 
-        return log_likelihood
+        return -log_likelihood
 
     def _fix_precision(self, v):
         """
@@ -500,7 +504,7 @@ class PolyUnbinnedLogLikelihood(object):
 
         return v, tiny
 
-    pass
+
 
     def get_free_derivs(self, parameters=None):
         """
@@ -508,17 +512,17 @@ class PolyUnbinnedLogLikelihood(object):
         defined one, if parameters=None)
         """
         # The derivative of the unbinned logLikelihood statistic respect to parameter p is:
-        # d logL / d theta_j = -(1/j) (t_f^2 t_0^2) + Sum( P(t_i, theta_k)^(-1) *t_i^j  )
+        # d logL / d theta_j = -(1/j+1) (t_f^(j+1) - t_0^(j+1)) + Sum( P(t_i, theta_k)^(-1) *t_i^j  )
 
 
         # Set the parameters, if a new set has been provided
         if (parameters is not None):
-            self._model.set_params(parameters)
+            self._model.coefficients = parameters
         pass
 
         M = self._model(self._events)  # * self._exposure
 
-        # M, tiny_m = self._fix_precision(M)
+        M, tiny_m = self._fix_precision(M)
 
         degrees = np.arange(self._model.degree + 1)
 
@@ -526,7 +530,13 @@ class PolyUnbinnedLogLikelihood(object):
 
             d_1 = degree + 1
 
-            return -(self._t_stop ** d_1 - self._t_start ** d_1) / d_1 + (1 / M * self._events ** degree).sum()
+            pre_factor = 0
+            for start, stop in zip(self._t_start, self._t_stop):
+                pre_factor += (stop ** d_1 - start ** d_1)
+
+            raised_events, _ = self._fix_precision(np.power(self._events, degree))
+
+            return -(raised_events / M).sum() + pre_factor / float(d_1)
 
         derivs = np.array([derivative_per_degree(degree) for degree in degrees])
 
@@ -611,7 +621,7 @@ def compute_covariance_matrix(grad, par, full_output=False,
                 break
             else:
                 step_size[i] = new_step
-        pass
+
 
         hess[i, :] = (g_up - g_dn) / (2 * di)  # central difference
 
