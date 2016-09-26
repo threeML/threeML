@@ -337,7 +337,7 @@ class EventList(object):
         """
 
         # Find out if we want to binned or unbinned.
-        # TODO: add the option to config fil
+        # TODO: add the option to config file
         try:
             unbinned = options.pop('unbinned')
             assert type(unbinned) == bool, 'unbinned option must be True or False'
@@ -699,6 +699,9 @@ class EventList(object):
 
             # Connect to the engines
 
+
+            raise NotImplementedError('Coming Soon!')
+
             client = ParallelClient()
 
             # Get the number of engines
@@ -861,6 +864,8 @@ class EventList(object):
 
 
         else:
+
+            raise NotImplementedError('Coming Soon!')
 
             # With parallel computation
 
