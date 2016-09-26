@@ -29,18 +29,7 @@ class Polynomial(object):
             result = result * x + coefficient
         return result
 
-    def __str__(self):
-        # This is call by the print() command
-        # Print results
-        output = "\n------------------------------------------------------------"
-        output += '\n| {0:^10} | {1:^20} | {2:^20} |'.format("COEFF", "VALUE", "ERROR")
-        output += "\n|-----------------------------------------------------------"
-        for i, parValue in enumerate(self.coefficients):
-            output += '\n| {0:<10d} | {1:20.5g} | {2:20.5g} |'.format(i, parValue, math.sqrt(self._cov_matrix[i, i]))
-        pass
-        output += "\n------------------------------------------------------------"
 
-        return output
 
     def get_number_free_parameters(self):
         return self._degree + 1

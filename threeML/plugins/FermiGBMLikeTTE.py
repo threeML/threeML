@@ -20,7 +20,7 @@ __instrument_name = "Fermi GBM TTE (all detectors)"
 
 class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
     def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
-                 poly_order=-1):
+                 poly_order=-1, unbinned=True):
         """
         If the input files are TTE files. Background selections are specified as
         a comma separated string e.g. "-10-0,10-20"
@@ -51,14 +51,14 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         self._evt_list.poly_order = poly_order
 
-        self._backgroundexists = False
-        self._energyselectionexists = False
+        self._background_exists = False
+        self._energyselection_exists = False
 
         # Fit the background and
         # Obtain the counts for the initial input interval
         # which is embedded in the background call
 
-        # First get the initial tmin and tmax
+
 
 
         self._startup = True  # This keeps things from being called twice!
@@ -67,7 +67,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         background_selections = [interval.replace(' ', '') for interval in background_selections.split(',')]
 
         self.set_active_time_interval(*source_intervals)
-        self.set_background_interval(*background_selections)
+        self.set_background_interval(*background_selections, unbinned=unbinned)
 
         self._startup = False
 
@@ -122,15 +122,23 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file)
 
-    def set_background_interval(self, *intervals):
-        '''Set the time interval to fit the background.
+    def set_background_interval(self, *intervals, **options):
+        """
+        Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
 
         setBackgroundInterval("-10.0-0.0","10.-15.")
-        '''
 
-        self._evt_list.set_polynomial_fit_interval(*intervals)
+        Args:
+            *intervals:
+            **options:
+
+        Returns:
+
+        """
+
+        self._evt_list.set_polynomial_fit_interval(*intervals, **options)
 
         # In theory this will automatically get the poly counts if a
         # time interval already exists
