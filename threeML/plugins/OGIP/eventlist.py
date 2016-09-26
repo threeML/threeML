@@ -524,7 +524,7 @@ class EventList(object):
         t_stop = self._poly_time_selections[:, 1]
 
         for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure)
+            polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude=1000)
 
             log_likelihoods.append(log_like)
 
@@ -766,8 +766,6 @@ class EventList(object):
         self._polynomials = polynomials
 
     def _unbinned_fit_polynomials(self):
-
-        self._poly_fit_type = 'unbinned'
 
         self._poly_fit_exists = True
 

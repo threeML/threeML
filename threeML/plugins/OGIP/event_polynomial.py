@@ -29,8 +29,6 @@ class Polynomial(object):
             result = result * x + coefficient
         return result
 
-
-
     def get_number_free_parameters(self):
         return self._degree + 1
 
@@ -186,52 +184,37 @@ def polyfit(x, y, grade, exposure):
     return final_polynomial, min_log_likelihood
 
 
-def unbinned_polyfit(events, grade, t_start, t_stop, exposure):
-    """ funtion to fit a polynomial to event data. not a member to allow parallel computation """
-    test = True
+def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude=1):
+    """
+    function to fit a polynomial to event data. not a member to allow parallel computation
+
+    """
+
+    # first do a simple amplitude fit
+
+    search_grid = np.logspace(-2, 4, 10)
 
     initial_guess = np.zeros(grade + 1)
 
-    # TODO: I should put a simple linear fit here first!
-
-    initial_guess[0] = 1.
-
     polynomial = Polynomial(initial_guess)
 
-    # Check that the solution found is meaningful (i.e., definite positive
-    # in the interval of interest)
-    M = polynomial(events)
-
-    negative_mask = (M < 0)
-
-    if len(negative_mask.nonzero()[0]) > 0:
-        # Least square fit failed to converge to a meaningful solution
-        # Reset the initialGuess to reasonable value
-        initial_guess[0] = np.mean(y)
-        meanx = np.mean(events)
-        initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
-
-    # Improve the solution using a logLikelihood statistic (Cash statistic)
     log_likelihood = PolyUnbinnedLogLikelihood(events,
                                                polynomial,
                                                t_start,
                                                t_stop,
                                                exposure)
 
-    # Check that we have enough non-empty bins to fit this grade of polynomial,
-    # otherwise lower the grade
-    # dof = n_non_zero - (grade + 1)
-    # if test:
-    #    print("Effective dof: %s" % (dof))
+    like_grid = []
+    for amp in search_grid:
 
-    # if dof <= 2:
-    #     # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-    #     while (dof < 2 and len(initial_guess) > 1):
-    #         initial_guess = initial_guess[:-1]
-    #         polynomial = Polynomial(initial_guess)
-    #         log_likelihood = PolyLogLikelihood(events, y, polynomial)
+        initial_guess[0] = amp
+        like_grid.append(log_likelihood(initial_guess))
 
-    # Try to improve the fit with the log-likelihood
+    initial_guess[0] = search_grid[np.argmin(like_grid)]
+
+    # Improve the solution
+
+
 
     final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
                                          ftol=1E-5, xtol=1E-5,
@@ -399,9 +382,6 @@ class PolyLogLikelihood(object):
     pass
 
 
-
-
-
 class PolyUnbinnedLogLikelihood(object):
     """
     Implements a Poisson likelihood (i.e., the Cash statistic). Mind that this is not
@@ -436,8 +416,6 @@ class PolyUnbinnedLogLikelihood(object):
             logM = np.log(M)
         return logM
 
-
-
     def __call__(self, parameters):
         """
           Evaluate the unbinned Poisson log likelihood
@@ -462,7 +440,6 @@ class PolyUnbinnedLogLikelihood(object):
         # Now evaluate the model at the event times and multiply by the exposure
 
         M = self._model(self._events) * self._exposure
-
 
         # Replace negative values for the model (impossible in the Poisson context)
         # with zero
@@ -492,8 +469,6 @@ class PolyUnbinnedLogLikelihood(object):
             v[zero_mask] = np.sign(v[zero_mask]) * tiny
 
         return v, tiny
-
-
 
     def get_free_derivs(self, parameters=None):
         """
@@ -610,7 +585,6 @@ def compute_covariance_matrix(grad, par, full_output=False,
                 break
             else:
                 step_size[i] = new_step
-
 
         hess[i, :] = (g_up - g_dn) / (2 * di)  # central difference
 
