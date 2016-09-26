@@ -281,7 +281,13 @@ class EventList(object):
         if self._poly_fit_exists:
 
             print('Refitting background with new polynomial order and existing selections')
-            self._fit_polynomials()
+            if self._unbinned:
+
+                self._unbinned_fit_polynomials()
+
+            else:
+
+                self._fit_polynomials()
 
     def ___set_poly_order(self, value):
         """ Indirect poly order setter """
@@ -347,9 +353,13 @@ class EventList(object):
         # Fit the events with the given intervals
         if unbinned:
 
+            self._unbinned = True  # keep track!
+
             self._unbinned_fit_polynomials()
 
         else:
+
+            self._unbinned = False
 
             self._fit_polynomials()
 
@@ -427,6 +437,7 @@ class EventList(object):
             info_dict['Polynomial Order'] = self._optimal_polynomial_grade
             info_dict['Active Count Error'] = np.sqrt((self._poly_count_err ** 2).sum())
             info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
+            info_dict['Unbinned Fit'] = self._unbinned
 
             S = li_and_ma(self._counts.sum(), self._poly_counts.sum())
 
