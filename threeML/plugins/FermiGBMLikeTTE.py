@@ -39,7 +39,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         self._gbm_tte_file = GBMTTEFile(tte_file)
 
         if trigger_time is not None:
-            self._gbm_tte_file.set_trigger_time(trigger_time)
+            self._gbm_tte_file.triggertime = trigger_time
 
         self._evt_list = EventList(arrival_times=self._gbm_tte_file._events - self._gbm_tte_file.triggertime,
                                    energies=self._gbm_tte_file._pha,
@@ -205,7 +205,10 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
             bkg.append(tmpbkg)
 
         gbm_light_curve_plot(time_bins, cnts, bkg, dt,
-                             selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list))
+                             selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list),
+                             bkg_selections=self._evt_list.poly_intervals)
+
+
 
     def peek(self):
 
@@ -367,7 +370,7 @@ class GBMTTEFile(object):
         display(fermi_df)
 
 
-def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):
+def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections):
     fig = plt.figure(777)
     ax = fig.add_subplot(111)
 
@@ -379,7 +382,10 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):
 
     all_masks = []
 
-    step_plot(time_bins, cnts / width, ax, color='#8da0cb', label="Light Curve")
+    # purple: #8da0cb
+
+    step_plot(time_bins, cnts / width, ax,
+              color='#8da0cb', label="Light Curve")
 
     for tmin, tmax in selection:
         tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
@@ -399,6 +405,31 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):
               fill=True,
               fill_min=min_cnts, label="Selection")
 
+
+
+
+    all_masks = []
+    for tmin, tmax in bkg_selections:
+        tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
+
+        all_masks.append(tmp_mask)
+
+    if len(all_masks) > 1:
+
+        for mask in all_masks[1:]:
+
+
+            step_plot(time_bins[mask], cnts[mask] / width, ax,
+                      color='#80b1d3',
+                      fill=True,
+                      fillAlpha=.4,
+                      fill_min=min_cnts)
+
+    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width, ax,
+              color='#80b1d3',
+              fill=True,
+              fill_min=min_cnts,fillAlpha=.4 ,label="Bkg. Selections")
+
     ax.plot(mean_time, bkg, '#66c2a5', lw=2., label="Background")
 
     # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
@@ -406,4 +437,5 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Rate (cnts/s)")
     ax.set_ylim(bottom, top)
+    ax.set_xlim(time_bins.min(),time_bins.max())
     ax.legend()

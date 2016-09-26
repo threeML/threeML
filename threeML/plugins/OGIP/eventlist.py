@@ -226,6 +226,10 @@ class EventList(object):
         return self._tmax_list
 
     @property
+    def poly_intervals(self):
+        return self._poly_time_selections
+
+    @property
     def polynomials(self):
         """ Returns polynomial is they exist"""
         if self._poly_fit_exists:
