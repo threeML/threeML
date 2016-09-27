@@ -6,7 +6,7 @@ import pymultinest
 from astromodels.functions.functions import Uniform_prior, Log_uniform_prior
 
 from threeML.minimizer.minimization import Minimizer
-
+from threeML.io.file_utils import temporary_directory
 
 class MultinestMinimizer(Minimizer):
 
@@ -102,43 +102,49 @@ class MultinestMinimizer(Minimizer):
         # the disk to write and if not,
         # create one
 
-        chain_name = "multinest_minimizer/fit-"
+        # chain_name = "multinest_minimizer/fit-"
+        #
+        # mcmc_chains_out_dir = ""
+        # tmp = chain_name.split('/')
+        # for s in tmp[:-1]:
+        #     mcmc_chains_out_dir += s + '/'
+        #
+        # if not os.path.exists(mcmc_chains_out_dir):
+        #
+        #     os.makedirs(mcmc_chains_out_dir)
 
-        mcmc_chains_out_dir = ""
-        tmp = chain_name.split('/')
-        for s in tmp[:-1]:
-            mcmc_chains_out_dir += s + '/'
+        with temporary_directory(prefix='multinest-', within_directory=os.getcwd()) as mcmc_chains_out_dir:
 
-        if not os.path.exists(mcmc_chains_out_dir):
-            os.makedirs(mcmc_chains_out_dir)
+            outputfiles_basename = os.path.join(mcmc_chains_out_dir,'fit-')
 
-        print("\nMultinest is exploring the parameter space...\n")
+            print("\nMultinest is exploring the parameter space...\n")
 
-        # Reset the likelihood values
-        self._log_like_values = []
+            # Reset the likelihood values
+            self._log_like_values = []
 
-        sampler = pymultinest.run(self._func_wrapper,
-                                  self._prior,
-                                  n_dim,
-                                  n_dim,
-                                  outputfiles_basename=chain_name,
-                                  n_live_points=n_dim * 10,
-                                  resume=False)
+            sampler = pymultinest.run(self._func_wrapper,
+                                      self._prior,
+                                      n_dim,
+                                      n_dim,
+                                      outputfiles_basename=outputfiles_basename,
+                                      n_live_points=n_dim * 10,
+                                      multimodal=True,
+                                      resume=False)
 
-        # Use PyMULTINEST analyzer to gather parameter info
-        multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
-                                                          outputfiles_basename=chain_name)
+            # Use PyMULTINEST analyzer to gather parameter info
+            multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
+                                                              outputfiles_basename=outputfiles_basename)
 
-        # Get the function value from the chain
-        func_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
+            # Get the function value from the chain
+            func_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
 
-        # Store the sample for further use (if needed)
+            # Store the sample for further use (if needed)
 
-        self._sampler = sampler
+            self._sampler = sampler
 
-        # Get the samples from the sampler
+            # Get the samples from the sampler
 
-        _raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
+            _raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
 
         # Find the minimum of the function (i.e. the maximum of func_wrapper)
 
