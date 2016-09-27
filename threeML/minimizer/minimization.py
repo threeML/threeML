@@ -549,6 +549,16 @@ class Minimizer(object):
         :return: the covariance matrix
         """
 
+        # Check that the best_fit_values are finite
+        if not np.all(np.isfinite(best_fit_values)):
+
+            custom_warnings.warn("Best fit is invalid (infinity or not-a-number in best fit values). Cannot compute "
+                                 "covariance.", CannotComputeCovariance)
+
+            n_dim = len(best_fit_values)
+
+            return np.zeros((n_dim, n_dim)) * np.nan
+
         minima = map(lambda parameter:parameter.min_value, self.parameters.values())
         maxima = map(lambda parameter: parameter.max_value, self.parameters.values())
 
