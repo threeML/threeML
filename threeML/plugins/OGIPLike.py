@@ -8,8 +8,14 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ide
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 
+from threeML.config.config import threeML_config
+
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import gridspec
+from matplotlib.ticker import MaxNLocator
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import copy
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -21,8 +27,9 @@ class NotEnoughtCounts(RuntimeError):
     pass
 
 
-class Rebinner(object):
 
+
+class Rebinner(object):
     def __init__(self, vector_to_rebin_on, min_counts):
 
         tot_counts = np.sum(vector_to_rebin_on)
@@ -72,19 +79,89 @@ class Rebinner(object):
 
             for low_bound, hi_bound in zip(self._edges[:-1], self._edges[1:]):
 
-                rebinned_vector.append(np.sum(vector[low_bound+1:hi_bound+1]))
+                rebinned_vector.append(np.sum(vector[low_bound + 1:hi_bound + 1]))
 
             # Vector might not contain counts, so we use a relative comparison
 
-            assert abs(np.sum(rebinned_vector) / np.sum(rebinned_vector) -1) < 1e-4
+            assert abs(np.sum(rebinned_vector) / np.sum(rebinned_vector) - 1) < 1e-4
 
             rebinned_vectors.append(np.array(rebinned_vector))
 
         return rebinned_vectors
 
+    def rebin_errors(self, *vectors):
+        """
+        Rebin errors by summing the squares
+
+        Args:
+            *vectors:
+
+        Returns:
+            array of rebinned errors
+
+        """
+
+        rebinned_vectors = []
+
+        for vector in vectors:
+
+            rebinned_vector = []
+
+            for low_bound, hi_bound in zip(self._edges[:-1], self._edges[1:]):
+
+                rebinned_vector.append(np.sqrt(np.sum(vector[low_bound + 1:hi_bound + 1] ** 2)))
+
+            # Vector might not contain counts, so we use a relative comparison
+
+            assert abs(np.sum(rebinned_vector) / np.sum(rebinned_vector) - 1) < 1e-4
+
+            rebinned_vectors.append(np.array(rebinned_vector))
+
+        return rebinned_vectors
+
+    def save_active_measurements(self, mask):
+        """
+        Saves the set active measurements so that they can be restored if the binning is reset.
+
+
+        Returns:
+            none
+
+        """
+
+        self._saved_mask = mask
+        self._saved_idx = np.array(slice_disjoint((mask).nonzero()[0])).T
+
+    @property
+    def saved_mask(self):
+
+        return self._saved_mask
+
+
+
+    @property
+    def saved_selection(self):
+
+        return self._saved_idx
+
+
+
+
+    @property
+    def min_counts(self):
+
+        return self._min_counts
+
+
+
+    @property
+    def edges(self):
+
+        # return the low and high bins
+        return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
+
 
 class OGIPLike(PluginPrototype):
-
     def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None):
 
         self._name = str(name)
@@ -122,7 +199,7 @@ class OGIPLike(PluginPrototype):
 
         try:
             assert file_existing_and_readable(
-                bak_file.split("{")[0]), "Background file %s not existing or not readable" % bak_file
+                    bak_file.split("{")[0]), "Background file %s not existing or not readable" % bak_file
         except(AttributeError):
             try:
                 if bak_file.is_container:
@@ -130,8 +207,8 @@ class OGIPLike(PluginPrototype):
             except:
                 RuntimeError("Background file type is unrecognizeable")
 
-
-        assert file_existing_and_readable(rsp_file.split("{")[0]), "Response file %s not existing or not readable" % rsp_file
+        assert file_existing_and_readable(
+                rsp_file.split("{")[0]), "Response file %s not existing or not readable" % rsp_file
 
         self._bak = PHA(bak_file, file_type='background')
         self._rsp = Response(rsp_file, arf_file=arf_file)
@@ -184,31 +261,50 @@ class OGIPLike(PluginPrototype):
 
             raise NotImplementedError("Gaussian observation is not yet supported")
 
+        # Initialize a mask that selects all the data
+
+        self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
+
+        print("Currently using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
+
         # Print the autoprobed noise models
+
+
 
         print("Auto-probed noise models:")
         print("- observation: %s" % self.observation_noise_model)
         print("- background: %s" % self.background_noise_model)
+        print
 
     def set_active_measurements(self, *args):
-        '''Set the measurements to be used during the analysis.
+        """
+        Set the measurements to be used during the analysis.
         Use as many ranges as you need,
         specified as 'emin-emax'. Energies are in keV. Example:
 
-        setActiveMeasurements('10-12.5','56.0-100.0')
+        set_active_measurements('10-12.5','56.0-100.0')
 
         which will set the energy range 10-12.5 keV and 56-100 keV to be
-        used in the analysis'''
+        used in the analysis
 
-        # To implelemnt this we will use an array of boolean index,
+        If working on data which has been rebinned, the selection will be
+        adjusted properly
+
+        """
+
+        # To implement this we will use an array of boolean index,
         # which will filter
         # out the non-used channels during the logLike
 
         # Now build the new mask: values for which the mask is 0 will be masked
 
-        mask = np.zeros(self._pha.n_channels, dtype=bool)
 
-        # Now parse the input ranges
+
+
+        # We will build the high res mask even if we are
+        # already rebinned so that it can be saved
+
+        mask = np.zeros(self._pha.n_channels, dtype=bool)
 
         for arg in args:
 
@@ -219,28 +315,181 @@ class OGIPLike(PluginPrototype):
             idx2 = self._rsp.energy_to_channel(emax)
 
             mask[idx1:idx2 + 1] = True
-            print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
 
-        self._mask = np.array(mask, np.bool)
+            if self._rebinner is None:
 
-        print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
+                print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
 
-    def view_count_spectrum(self):
-        '''
+        if self._rebinner is None:
+
+            self._mask = np.array(mask, np.bool)
+
+            print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
+
+        # If we are rebinned
+
+        else:
+
+            # Store this selection in case we want to restore it.
+            self._rebinner.save_active_measurements(mask)
+
+            mask = np.zeros(self._rebinner.n_bins, dtype=bool)
+
+        # Now parse the input ranges
+
+            for arg in args:
+
+                ee = map(float, arg.replace(" ", "").split("-"))
+                emin, emax = sorted(ee)
+
+                idx1 = self._rsp.energy_to_channel(emin)
+                idx2 = self._rsp.energy_to_channel(emax)
+
+                # Get the edges
+
+                lo, hi = self._rebinner.edges
+
+                # find the nearest edge to the rebinned edges
+
+                idx1 = np.argmin(np.abs(lo - idx1))
+                idx2 = np.argmin(np.abs(hi - idx2))
+
+                mask[idx1:idx2 + 1] = True
+                print("Range %s translates to rebinned channels %s-%s" % (arg, idx1, idx2))
+
+            print("Now using %s rebinned channels out of %s" % (np.sum(self._mask), self._rebinner.n_bins))
+
+            self._mask = np.array(mask, np.bool)
+
+
+
+    def view_count_spectrum(self, plot_errors=True):
+        """
         View the count and background spectrum. Useful to check energy selections.
+        Args:
+            plot_errors: bool to choose error plotting
 
-        '''
+        Returns:
+            none
+
+        """
+
+
+
+
+        # adding the rebinner: j. michael.
+
+        # In the future read colors from config file
+
         # First plot the counts
-        _ = channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._observed_counts,
-                         color='#377eb8', lw=2, alpha=1, label="Total")
-        ax = channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._background_counts,
+
+        chans = self._rsp.ebounds.T
+        chan_min, chan_max = chans
+
+        chan_width = chan_max - chan_min
+
+        # find out the type of observation
+
+        if self._observation_noise_model == 'poisson':
+
+            # Observed counts
+            observed_counts = copy.copy(self._observed_counts)
+
+            cnt_err = np.sqrt(observed_counts)
+
+            if self._background_noise_model == 'poisson':
+
+                background_counts = copy.copy(self._background_counts)
+
+                background_errors = np.sqrt(background_counts)
+
+            elif self._background_noise_model == 'ideal':
+
+                background_counts = copy.copy(self._scaled_background_counts)
+
+                background_errors = np.zeros_like(background_counts)
+
+            elif self._background_noise_model == 'gaussian':
+
+                background_counts = copy.copy(self._background_counts)
+
+                background_errors = copy.copy(self._background_errors)
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            raise NotImplementedError("Not yet implemented")
+
+        # Get the rebinned data if needed
+        if self._rebinner is not None:
+
+            observed_counts, background_counts = self._rebinner.rebin(observed_counts, background_counts)
+            cnt_err, background_errors = self._rebinner.rebin(cnt_err, background_errors)
+
+            lo, hi = self._rebinner.edges
+
+            chan_min = chan_min[lo]
+            chan_max = chan_max[hi]
+
+            chan_width = chan_max - chan_min
+
+        # convert to rates, ugly, yes
+
+        observed_counts /= self._pha.exposure
+        background_counts /= self._bak.exposure
+        cnt_err /= self._pha.exposure
+        background_errors /= self._bak.exposure
+
+        # plot counts and background
+        _ = channel_plot(chan_min, chan_max, observed_counts,
+                         color='#377eb8', lw=1.5, alpha=1, label="Total")
+        ax = channel_plot(chan_min, chan_max, background_counts,
                           color='#e41a1c', alpha=.8, label="Background")
+
+        mean_chan = np.mean([chan_min, chan_max], axis=0)
+
+        # if asked, plot the errors
+
+
+        if plot_errors:
+            ax.errorbar(mean_chan,
+                        observed_counts / chan_width,
+                        yerr=cnt_err / chan_width,
+                        fmt='',
+                        # markersize=3,
+                        linestyle='',
+                        elinewidth=.7,
+                        alpha=.9,
+                        capsize=0,
+                        # label=data._name,
+                        color='#377eb8')
+
+            ax.errorbar(mean_chan,
+                        background_counts / chan_width,
+                        yerr=background_errors / chan_width,
+                        fmt='',
+                        # markersize=3,
+                        linestyle='',
+                        elinewidth=.7,
+                        alpha=.9,
+                        capsize=0,
+                        # label=data._name,
+                        color='#e41a1c')
+
         # Now fade the non-used channels
-        excluded_channel_plot(self._rsp.ebounds[:, 0], self._rsp.ebounds[:, 1], self._mask, self._observed_counts,
-                              self._background_counts, ax)
+        if (~self._mask).sum() > 0:
+
+            excluded_channel_plot(chan_min, chan_max, self._mask,
+                                  observed_counts,
+                                  background_counts, ax)
+
+
 
         ax.set_xlabel("Energy (keV)")
-        ax.set_ylabel("Counts/keV")
+        ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
         ax.set_xlim(left=self._rsp.ebounds[0, 0], right=self._rsp.ebounds[-1, 1])
         ax.legend()
 
@@ -320,7 +569,7 @@ class OGIPLike(PluginPrototype):
 
             loglike = poisson_observed_poisson_background(observed_counts, bkg_counts, scale_factor, model_counts)
 
-        #loglike = poisson_observed_poisson_background(observed_counts, bkg_counts, scale_factor, model_counts)
+        # loglike = poisson_observed_poisson_background(observed_counts, bkg_counts, scale_factor, model_counts)
 
         # print("predicted: %s (bkg: %s, model: %s), observed: %s" % (np.sum(new_model) + np.sum(new_bkg * scale_factor),
         #                                                             np.sum(new_bkg * scale_factor),
@@ -347,7 +596,7 @@ class OGIPLike(PluginPrototype):
         if self._rebinner is not None:
 
             new_counts, new_model, new_bkg, new_bkg_err = self._rebinner.rebin(observed_counts, expected_model_counts,
-                                                                  background_counts, background_errors)
+                                                                               background_counts, background_errors)
 
             loglike = poisson_observed_gaussian_background(new_counts, new_bkg, new_bkg_err, new_model)
 
@@ -372,9 +621,64 @@ class OGIPLike(PluginPrototype):
         :return: none
         """
 
+        # first we want to check if there was an old rebinner which will contain the original selections!
+        # the logic is that if rebinning is removed or non-existant, that the original resolution is the current
+        # mask. Otherwise, we want to keep track of the original rebin
+
+        old_rebinner = False
+
+        if self._rebinner is not None:
+
+            old_rebinner = True
+
+            # Extract the saved mask and the old index
+
+            saved_mask = self._rebinner.saved_mask
+
+        # Now let us rebin
         self._rebinner = Rebinner(self._background_counts, min_number_of_counts)
 
         print("Using %s bins" % self._rebinner.n_bins)
+
+        # now we need to adjust the active measurements
+
+        # If there was an old rebinner
+
+        if old_rebinner:
+
+            # save those old selections
+            self._rebinner.save_active_measurements(saved_mask)
+
+        else:
+
+            # ok, this is a fresh rebin, so we save the current selections
+
+            self._rebinner.save_active_measurements(self._mask)
+
+        # now we are going to use the original resolution selections
+
+        lo_edges, hi_edges = self._rebinner.saved_selection
+
+        mask = np.zeros(self._rebinner.n_bins, dtype=bool)
+
+        for idx1, idx2 in zip(lo_edges, hi_edges):
+
+            # Get the edges
+
+            lo, hi = self._rebinner.edges
+
+            idx1 = np.argmin(np.abs(lo - idx1))
+            idx2 = np.argmin(np.abs(hi - idx2))
+
+            mask[idx1:idx2 + 1] = True
+
+        self._mask = mask
+
+
+
+
+
+
 
     def remove_rebinning(self):
         """
@@ -383,8 +687,11 @@ class OGIPLike(PluginPrototype):
         :return:
         """
 
-        self._rebinner = None
+        # Restore a selection of there was one!
+        if self._rebinner is not None:
+            self._mask = self._rebinner.saved_mask
 
+        self._rebinner = None
 
     def _set_background_noise_model(self, new_model):
 
@@ -422,17 +729,17 @@ class OGIPLike(PluginPrototype):
 
     def get_log_like(self):
 
-        if self._observation_noise_model=='poisson':
+        if self._observation_noise_model == 'poisson':
 
-            if self._background_noise_model=='poisson':
+            if self._background_noise_model == 'poisson':
 
                 loglike = self._loglike_poisson_obs_poisson_bkg()
 
-            elif self._background_noise_model=='ideal':
+            elif self._background_noise_model == 'ideal':
 
                 loglike = self._loglike_poisson_obs_ideal_bkg()
 
-            elif self._background_noise_model=='gaussian':
+            elif self._background_noise_model == 'gaussian':
 
                 loglike = self._loglike_poisson_obs_gaussian_bkg()
 
@@ -514,12 +821,187 @@ class OGIPLike(PluginPrototype):
         return differential_flux, integral
 
 
-def channel_plot(chan_min, chan_max, counts, **keywords):
+def display_model_counts(*args, **kwargs):
+    """
+
+    Display the fitted model count spectrum of one or more OGIP plugins
+
+
+
+    Args:
+        *args: OGIP plugins with a likelihood model assigned
+        **kwargs: min_rate the minimum rate to rebin on
+
+    Returns:
+
+    """
+
+    # see if the user entered their own rate
+    try:
+
+        min_rate = kwargs.pop('min_rate')
+
+    except:
+
+        # otherwise set to 1
+
+        min_rate = 1
+
+    fig = plt.figure(666)
+
+    # cannot decide on the best way to go. Overplotting is an issue
+
+    # gs = gridspec.GridSpec(2, 1, height_ratios=[2, 1])
+
+    # gs.update(hspace=0)
+
+    ax = fig.add_subplot(111)
+    # ax = plt.subplot(gs[0])
+    divider = make_axes_locatable(ax)
+    ax1 = divider.append_axes('bottom', size=.75, pad=0., sharex=ax)
+
+    # iterators for color wheel
+    color = np.linspace(0., 1., len(args))
+    color_itr = 0
+
+    # perhaps adjust these
+    data_cmap = plt.cm.rainbow
+    model_cmap = plt.cm.nipy_spectral_r
+
+    # go thru the detectors
+    for data in args:
+
+        chans = data._rsp.ebounds[data._mask].T
+        chan_min, chan_max = chans
+
+        # figure out the type of data
+
+        if data._observation_noise_model == 'poisson':
+
+            # Observed counts
+            observed_counts = data._observed_counts[data._mask]
+
+            cnt_err = np.sqrt(observed_counts)
+
+            if data._background_noise_model == 'poisson':
+
+                background_counts = data._background_counts[data._mask]
+
+                background_errors = np.sqrt(background_counts)
+
+            elif data._background_noise_model == 'ideal':
+
+                background_counts = data._scaled_background_counts[data._mask]
+
+                background_errors = np.zeros_like(background_counts)
+
+            elif data._background_noise_model == 'gaussian':
+
+                background_counts = data._background_counts[data._mask]
+
+                background_errors = data._background_errors[data._mask]
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            raise NotImplementedError("Not yet implemented")
+
+        chan_width = chan_max - chan_min
+
+        # get the expected counts
+        expected_model_rate = data._rsp.convolve()[data._mask] / chan_width  #* data._pha.exposure
+
+        # calculate all the correct quantites
+
+        # since we compare to the model rate... background subtract but with proper propagation
+
+        src_rate = (observed_counts / data._pha.exposure - background_counts / data._bak.exposure) / (chan_width)
+
+        src_rate_err = np.sqrt((cnt_err / (data._pha.exposure * chan_width)) ** 2 + (
+            background_errors / (data._bak.exposure * chan_width)) ** 2)
+
+        # rebin on the source rate
+        this_rebinner = Rebinner(src_rate, min_rate)
+
+        # get the rebinned counts
+
+        new_rate, new_model_rate = this_rebinner.rebin(src_rate, expected_model_rate)
+        new_err, = this_rebinner.rebin_errors(src_rate_err)
+
+        # adjust channels
+        lo, hi = this_rebinner.edges
+        chan_min = chan_min[lo]
+        chan_max = chan_max[hi]
+
+
+
+        mean_chan = np.mean([chan_min, chan_max], axis=0)
+
+        ax.errorbar(mean_chan,
+                    new_rate,
+                    yerr=new_err,
+                    fmt='.',
+                    markersize=3,
+                    linestyle='',
+                    # elinewidth=.5,
+                    alpha=.9,
+                    capsize=0,
+                    label=data._name,
+                    color=data_cmap(color[color_itr]))
+
+        step_plot(np.asarray(zip(chan_min, chan_max)), new_model_rate,
+                  ax, alpha=.8,
+                  label='%s Model' % data._name, color=model_cmap(color[color_itr]))
+
+        # Residuals
+        # ax1 = fig.add_subplot(gs[1])
+
+
+        # is this the best way to do residuals?
+        residuals = (new_model_rate - new_rate) / new_model_rate
+
+        ax1.axhline(0, linestyle='--', color='k')
+        ax1.errorbar(mean_chan,
+                     residuals,
+                     yerr=new_err / new_model_rate,
+                     capsize=0,
+                     fmt='.',
+                     markersize=3,
+                     color=data_cmap(color[color_itr]))
+
+        color_itr += 1
+
+    ax.legend(fontsize='x-small')
+
+    # ax.set_xlabel("Energy (keV)")
+    ax.set_ylabel(r"Rate (counts s$^{-1}$ keV$^{-1}$)")
+
+    ax.set_xscale('log')
+    ax.set_yscale('log', nonposy='clip')
+
+    # ax.set_xlim(left=data._rsp.ebounds[0, 0], right=data._rsp.ebounds[-1, 1])
+
+
+    ax1.set_xscale("log")
+
+    locator = MaxNLocator(prune='upper', nbins=5)
+    ax1.yaxis.set_major_locator(locator)
+
+    ax1.set_xlabel("Energy (MeV)")
+    ax1.set_ylabel("Residuals")
+
+    # ax.set_xticks([])
+
+
+def channel_plot(chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))
     width = chan_max - chan_min
     fig = plt.figure(666)
     ax = fig.add_subplot(111)
-    step_plot(chans, counts / width, ax, **keywords)
+    step_plot(chans, counts / width, ax, **kwargs)
     ax.set_xscale('log')
     ax.set_yscale('log')
 
@@ -550,8 +1032,19 @@ def excluded_channel_plot(chan_min, chan_max, mask, counts, bkg, ax):
 
 
 def slice_disjoint(arr):
+    """
+    Returns an array of disjoint indicies.
+
+    Args:
+        arr:
+
+    Returns:
+
+    """
+
+
     slices = []
-    startSlice = 0
+    startSlice = arr[0]
     counter = 0
     for i in range(len(arr) - 1):
         if arr[i + 1] > arr[i] + 1:

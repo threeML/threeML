@@ -428,7 +428,7 @@ class FermiLATLike(PluginPrototype):
         sub1.set_xscale("log")
 
         sub1.set_xlabel("Energy (MeV)")
-        sub1.set_ylabel("(Mo. - data) / mo.")
+        sub1.set_ylabel("(data - mo.) / mo.")
 
         sub.set_xticks([])
 
