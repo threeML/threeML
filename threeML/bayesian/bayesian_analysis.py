@@ -666,7 +666,9 @@ class BayesianAnalysis(object):
 
         for i, val, in enumerate(labels):
 
-            labels[i] = val.replace('_',' ')
+
+            if '$' not in labels[i]:
+                labels[i] = val.replace('_',' ')
 
 
 
@@ -757,6 +759,14 @@ class BayesianAnalysis(object):
 
                     if labels_other[i] == old_label:
                         labels_other[i] = new_label
+
+
+        # Must remove underscores!
+
+        for i, val, in enumerate(labels):
+
+            if '$' not in labels[i]:
+                labels[i] = val.replace('_', ' ')
 
         cc = chainconsumer.ChainConsumer()
 
