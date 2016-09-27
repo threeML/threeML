@@ -12,49 +12,19 @@ class CannotComputeHessian(RuntimeError):
     pass
 
 
-def get_hessian(function, point, minima, maxima):
+def _get_wrapper(function, point, minima, maxima):
 
-    # Define a wrapper because numdifftools expect the function to be f(x) with
-    # x a vector, while the likelihood function expect f(x1,x2,x3...)
+    point = np.array(point, ndmin=1, dtype=float)
+    minima = np.array(minima, ndmin=1, dtype=float)
+    maxima = np.array(maxima, ndmin=1, dtype=float)
 
-    # Also, compute the orders of magnitude of the parameters, which we will use to make the values used
-    # by numdifftools close to 1
+    n_dim = point.shape[0]
 
-    try:
-
-        n_dim = point.shape[0]
-        _ = minima.shape
-        _ = maxima.shape
-
-    except AttributeError:
-
-        point = np.array(point, ndmin=1)
-        minima = np.array(minima, ndmin=1)
-        maxima = np.array(maxima, ndmin=1)
-
-        n_dim = point.shape[0]
-
-    orders_of_magnitude = 10**np.ceil(np.log10(np.abs(point)))
+    orders_of_magnitude = 10**np.ceil(np.log10(np.abs(point))) # type: np.ndarray
 
     scaled_point = point / orders_of_magnitude
     scaled_minima = minima / orders_of_magnitude
     scaled_maxima = maxima / orders_of_magnitude
-
-    def wrapper(x):
-
-        scaled_back_x = x * orders_of_magnitude
-
-        try:
-
-            result = function(*scaled_back_x)
-
-        except SettingOutOfBounds:
-
-            raise CannotComputeHessian("Cannot compute Hessian, parameters out of bounds at %s" % scaled_back_x)
-
-        else:
-
-            return result
 
     # Decide a delta for the finite differentiation
     # The algorithm implemented in numdifftools is robust with respect to the choice
@@ -73,7 +43,7 @@ def get_hessian(function, point, minima, maxima):
 
             raise ParameterOnBoundary("Value for parameter number %s is on the boundary" % i)
 
-        if scaled_min_value is not None:
+        if not np.isnan(scaled_min_value):
 
             # Parameter with low bound
 
@@ -85,7 +55,7 @@ def get_hessian(function, point, minima, maxima):
 
             distance_to_min = np.inf
 
-        if scaled_max_value is not None:
+        if not np.isnan(scaled_max_value):
 
             # Parameter with hi bound
 
@@ -103,6 +73,48 @@ def get_hessian(function, point, minima, maxima):
         # to go exactly equal to the boundary
 
         scaled_deltas[i] = min([0.03 * abs(scaled_point[i]), distance_to_max / 2.5, distance_to_min / 2.5])
+
+    def wrapper(x):
+
+        scaled_back_x = x * orders_of_magnitude # type: np.ndarray
+
+        try:
+
+            result = function(*scaled_back_x)
+
+        except SettingOutOfBounds:
+
+            raise CannotComputeHessian("Cannot compute Hessian, parameters out of bounds at %s" % scaled_back_x)
+
+        else:
+
+            return result
+
+    return wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim
+
+
+def get_jacobian(function, point, minima, maxima):
+
+    wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(function, point, minima, maxima)
+
+    # Compute the Hessian matrix at best_fit_values
+
+    jacobian_vector = nd.Jacobian(wrapper, scaled_deltas)(scaled_point)
+
+    # Transform it to numpy matrix
+
+    jacobian_vector = np.array(jacobian_vector)
+
+    # Now correct back the Hessian for the scales
+
+    jacobian_vector /= orders_of_magnitude
+
+    return jacobian_vector
+
+
+def get_hessian(function, point, minima, maxima):
+
+    wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(function, point, minima, maxima)
 
     # Compute the Hessian matrix at best_fit_values
 
