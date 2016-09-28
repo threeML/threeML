@@ -1041,7 +1041,7 @@ def display_model_counts(*args, **kwargs):
 def channel_plot(chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))
     width = chan_max - chan_min
-    fig = plt.figure(666)
+    fig = plt.figure()
     ax = fig.add_subplot(111)
     step_plot(chans, counts / width, ax, **kwargs)
     ax.set_xscale('log')
@@ -1052,7 +1052,7 @@ def channel_plot(chan_min, chan_max, counts, **kwargs):
 
 def excluded_channel_plot(chan_min, chan_max, mask, counts, bkg, ax):
     # Figure out the best limit
-    chans = np.array(zip(chan_min, chan_max))
+
     width = chan_max - chan_min
 
     top = max([max(bkg / width), max(counts / width)])

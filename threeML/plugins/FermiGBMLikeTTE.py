@@ -369,8 +369,7 @@ class GBMTTEFile(object):
 
 
 def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections):
-    fig = plt.figure(777)
-    ax = fig.add_subplot(111)
+    fig, ax = plt.subplots()
 
     max_cnts = max(cnts / width)
     top = max_cnts + max_cnts * .2
