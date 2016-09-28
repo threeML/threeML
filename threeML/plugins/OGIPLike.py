@@ -159,10 +159,40 @@ class OGIPLike(PluginPrototype):
         self._name = str(name)
 
         # If the user didn't provide them, read the needed files from the keywords in the PHA file
+        # It is possible a user passed a PHAContainer from an EventList. In this case, this will fail
+        # resulting in an attribute error. We will check for this and if it fails, and then try to load the
+        # PHAContainer
 
-        pha_file = sanitize_filename(pha_file)
+        try:
 
-        self._pha = PHA(pha_file)
+            pha_file = sanitize_filename(pha_file)
+
+            self._pha = PHA(pha_file)
+
+        except(AttributeError):
+
+            try:
+
+                if pha_file.is_container:
+
+                    self._pha = PHA(pha_file)
+
+                else:
+
+                    raise RuntimeError("Should never arrive here. Your PHA file is improper")
+
+            except:
+
+                # Catch everything
+
+                raise RuntimeError("Your PHA file is invalid.")
+
+
+
+
+
+
+
 
         # Get the required background file, response and (if present) arf_file either from the
         # calling sequence or the file.
