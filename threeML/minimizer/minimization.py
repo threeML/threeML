@@ -978,7 +978,7 @@ try:
 
 except ImportError:
 
-    custom_warnings.warn("Minuit minimizer not available")
+    custom_warnings.warn("Minuit minimizer not available", ImportWarning)
 
 else:
 
@@ -990,7 +990,7 @@ try:
 
 except ImportError:
 
-    custom_warnings.warn("ROOT minimizer not available")
+    custom_warnings.warn("ROOT minimizer not available", ImportWarning)
 
 else:
 
@@ -1002,7 +1002,7 @@ try:
 
 except ImportError:
 
-    custom_warnings.warn("pyOpt minimizer not available")
+    custom_warnings.warn("pyOpt minimizer not available", ImportWarning)
 
 else:
 
@@ -1014,7 +1014,7 @@ try:
 
 except ImportError:
 
-    custom_warnings.warn("Multinest minimizer not available")
+    custom_warnings.warn("Multinest minimizer not available", ImportWarning)
 
 else:
 
