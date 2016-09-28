@@ -34,8 +34,6 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         to load the second spectrum, second background spectrum and second response.
         """
 
-        self.name = name
-
         self._gbm_tte_file = GBMTTEFile(tte_file)
 
         if trigger_time is not None:
