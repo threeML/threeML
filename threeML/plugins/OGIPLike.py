@@ -889,7 +889,7 @@ def display_model_counts(*args, **kwargs):
 
         min_rate = 1e-99
 
-    fig = plt.figure()
+    fig, ax = plt.subplots()
 
     # cannot decide on the best way to go. Overplotting is an issue
 
@@ -897,7 +897,7 @@ def display_model_counts(*args, **kwargs):
 
     # gs.update(hspace=0)
 
-    ax = fig.add_subplot(111)
+
     # ax = plt.subplot(gs[0])
     divider = make_axes_locatable(ax)
     ax1 = divider.append_axes('bottom', size=1.75, pad=0., sharex=ax)
