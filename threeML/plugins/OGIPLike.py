@@ -1041,8 +1041,8 @@ def display_model_counts(*args, **kwargs):
 def channel_plot(chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))
     width = chan_max - chan_min
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    fig, ax = plt.subplots()
+
     step_plot(chans, counts / width, ax, **kwargs)
     ax.set_xscale('log')
     ax.set_yscale('log')
