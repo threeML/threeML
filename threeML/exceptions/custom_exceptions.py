@@ -1,6 +1,5 @@
 import warnings as custom_warnings
 
-
 # Monkeypatch the print of warning so we can customize them
 
 def my_format_warning(message, category, *args):
@@ -15,25 +14,26 @@ def my_format_warning(message, category, *args):
 custom_warnings.formatwarning = my_format_warning
 
 
-class ForbiddenRegionOfParameterSpace(Warning):
+class ForbiddenRegionOfParameterSpace(RuntimeWarning):
 
     pass
 
 
-class CppInterfaceNotAvailable(Warning):
+class CppInterfaceNotAvailable(ImportWarning):
 
     pass
 
 
-class CannotImportPlugin(Warning):
+class CannotImportPlugin(ImportWarning):
 
     pass
 
 
-class LikelihoodIsInfinite(Warning):
+class LikelihoodIsInfinite(RuntimeWarning):
 
     pass
 
 
 class FitFailed(RuntimeError):
     pass
+
