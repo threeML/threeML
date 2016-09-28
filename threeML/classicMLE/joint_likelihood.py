@@ -38,6 +38,7 @@ class NotANumberInLikelihood(Warning):
 
 
 class JointLikelihood(object):
+
     def __init__(self, likelihood_model, data_list, verbose=False):
         """
         Implement a joint likelihood analysis.
