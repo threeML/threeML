@@ -159,10 +159,40 @@ class OGIPLike(PluginPrototype):
         self._name = str(name)
 
         # If the user didn't provide them, read the needed files from the keywords in the PHA file
+        # It is possible a user passed a PHAContainer from an EventList. In this case, this will fail
+        # resulting in an attribute error. We will check for this and if it fails, and then try to load the
+        # PHAContainer
 
-        pha_file = sanitize_filename(pha_file)
+        try:
 
-        self._pha = PHA(pha_file)
+            pha_file = sanitize_filename(pha_file)
+
+            self._pha = PHA(pha_file)
+
+        except(AttributeError):
+
+            try:
+
+                if pha_file.is_container:
+
+                    self._pha = PHA(pha_file)
+
+                else:
+
+                    raise RuntimeError("Should never arrive here. Your PHA file is improper")
+
+            except:
+
+                # Catch everything
+
+                raise RuntimeError("Your PHA file is invalid.")
+
+
+
+
+
+
+
 
         # Get the required background file, response and (if present) arf_file either from the
         # calling sequence or the file.
@@ -387,6 +417,8 @@ class OGIPLike(PluginPrototype):
 
         # First plot the counts
 
+        fig, ax = plt.subplots()
+
         chans = self._rsp.ebounds.T
         chan_min, chan_max = chans
 
@@ -447,10 +479,10 @@ class OGIPLike(PluginPrototype):
         background_errors /= self._bak.exposure
 
         # plot counts and background
-        _ = channel_plot(chan_min, chan_max, observed_counts,
-                         color='#377eb8', lw=1.5, alpha=1, label="Total")
-        ax = channel_plot(chan_min, chan_max, background_counts,
-                          color='#e41a1c', alpha=.8, label="Background")
+        channel_plot(ax, chan_min, chan_max, observed_counts,
+                     color='#377eb8', lw=1.5, alpha=1, label="Total")
+        channel_plot(ax, chan_min, chan_max, background_counts,
+                     color='#e41a1c', alpha=.8, label="Background")
 
         mean_chan = np.mean([chan_min, chan_max], axis=0)
 
@@ -484,9 +516,9 @@ class OGIPLike(PluginPrototype):
 
         # Now fade the non-used channels
         if (~self._mask).sum() > 0:
-            excluded_channel_plot(chan_min, chan_max, self._mask,
+            excluded_channel_plot(ax, chan_min, chan_max, self._mask,
                                   observed_counts,
-                                  background_counts, ax)
+                                  background_counts)
 
         ax.set_xlabel("Energy (keV)")
         ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
@@ -876,8 +908,6 @@ def display_model_counts(*args, **kwargs):
 
             min_rate = float(min_rate)
 
-            min_rates = [min_rate] * len(args)
-
         except TypeError:
 
             min_rates = list(min_rate)
@@ -1046,20 +1076,23 @@ def display_model_counts(*args, **kwargs):
     return fig
 
 
-def channel_plot(chan_min, chan_max, counts, **kwargs):
+def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
+
     chans = np.array(zip(chan_min, chan_max))
     width = chan_max - chan_min
+
     fig, ax = plt.subplots()
+
     step_plot(chans, counts / width, ax, **kwargs)
     ax.set_xscale('log')
     ax.set_yscale('log')
 
-    return ax
+    return fig
 
 
-def excluded_channel_plot(chan_min, chan_max, mask, counts, bkg, ax):
+def excluded_channel_plot(ax, chan_min, chan_max, mask, counts, bkg):
     # Figure out the best limit
-    chans = np.array(zip(chan_min, chan_max))
+
     width = chan_max - chan_min
 
     top = max([max(bkg / width), max(counts / width)])
