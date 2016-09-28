@@ -28,9 +28,6 @@ class SpectralPlotter(object):
 
         # Determine the type of analysis
 
-
-
-
         self._analysis_type = analysis._analysis_type
 
         self.analysis = analysis
@@ -135,8 +132,7 @@ class SpectralPlotter(object):
         # Get the the number of samples
         n_samples = self.analysis.raw_samples.shape[0]
 
-        fig = plt.figure(plot_num)
-        ax = fig.add_subplot(111)
+        fig, ax = plt.subplots()
 
         # First see if we are plotting all the sources
         if not sources_to_plot:  # Assuming plot all sources
@@ -242,8 +238,7 @@ class SpectralPlotter(object):
         x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
         errors = []
 
-        fig = plt.figure(plot_num)
-        ax = fig.add_subplot(111)
+        fig, ax = plt.subplots()
 
         # First see if we are plotting all the sources
         if not sources_to_plot:  # Assuming plot all sources
@@ -341,8 +336,7 @@ class SpectralPlotter(object):
         x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
         errors = []
 
-        fig = plt.figure(plot_num)
-        ax = fig.add_subplot(111)
+        fig, ax = plt.subplots()
 
         # First see if we are plotting all the sources
         if sources_to_plot == []:  # Assuming plot all sources
@@ -469,8 +463,7 @@ class SpectralPlotter(object):
         # Get the the number of samples
         n_samples = self.analysis.raw_samples.shape[0]
 
-        fig = plt.figure(plot_num)
-        ax = fig.add_subplot(111)
+        fig, ax = plt.subplots()
 
         # First see if we are plotting all the sources
         if not sources_to_plot:  # Assuming plot all sources
