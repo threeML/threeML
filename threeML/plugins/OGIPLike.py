@@ -1,21 +1,21 @@
-from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins.OGIP.pha import PHA
-from threeML.plugins.OGIP.response import Response
-from threeML.io.file_utils import file_existing_and_readable
-from threeML.io.step_plot import step_plot
-from threeML.plugins.gammaln import logfactorial
-from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
-from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
-
-from threeML.config.config import threeML_config
-
-import numpy as np
+import copy
+import collections
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
+import numpy as np
 from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-import copy
+
+from astromodels.parameter import Parameter
+from astromodels.utils.valid_variable import is_valid_variable_name
+
+from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
+from threeML.io.step_plot import step_plot
+from threeML.plugin_prototype import PluginPrototype
+from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
+from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
+from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
+from threeML.plugins.OGIP.pha import PHA
+from threeML.plugins.OGIP.response import Response
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -27,15 +27,12 @@ class NotEnoughtCounts(RuntimeError):
     pass
 
 
-
-
 class Rebinner(object):
     def __init__(self, vector_to_rebin_on, min_counts):
 
         tot_counts = np.sum(vector_to_rebin_on)
 
         if tot_counts < min_counts:
-
             raise NotEnoughtCounts("Vector contains %s counts, cannot rebin at %s counts per bin" % (tot_counts,
                                                                                                      min_counts))
 
@@ -47,7 +44,6 @@ class Rebinner(object):
             n += b
 
             if n >= min_counts:
-
                 self._edges.append(index)
 
                 n = 0
@@ -78,7 +74,6 @@ class Rebinner(object):
             rebinned_vector = []
 
             for low_bound, hi_bound in zip(self._edges[:-1], self._edges[1:]):
-
                 rebinned_vector.append(np.sum(vector[low_bound + 1:hi_bound + 1]))
 
             # Vector might not contain counts, so we use a relative comparison
@@ -108,7 +103,6 @@ class Rebinner(object):
             rebinned_vector = []
 
             for low_bound, hi_bound in zip(self._edges[:-1], self._edges[1:]):
-
                 rebinned_vector.append(np.sqrt(np.sum(vector[low_bound + 1:hi_bound + 1] ** 2)))
 
             # Vector might not contain counts, so we use a relative comparison
@@ -137,22 +131,15 @@ class Rebinner(object):
 
         return self._saved_mask
 
-
-
     @property
     def saved_selection(self):
 
         return self._saved_idx
 
-
-
-
     @property
     def min_counts(self):
 
         return self._min_counts
-
-
 
     @property
     def edges(self):
@@ -162,11 +149,18 @@ class Rebinner(object):
 
 
 class OGIPLike(PluginPrototype):
+
     def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None):
+
+        assert is_valid_variable_name(name), "Name %s is not a valid name for a plugin. You must use a name which is a " \
+                                             "valid python identifier: no spaces, no operators (+,-,/,*), it cannot " \
+                                             "start with a number, no special characters" % name
 
         self._name = str(name)
 
         # If the user didn't provide them, read the needed files from the keywords in the PHA file
+
+        pha_file = sanitize_filename(pha_file)
 
         self._pha = PHA(pha_file)
 
@@ -182,11 +176,15 @@ class OGIPLike(PluginPrototype):
 
             assert bak_file is not None, "No background file provided, and the PHA file does not contain one."
 
+            bak_file = sanitize_filename(bak_file)
+
         if rsp_file is None:
 
             rsp_file = self._pha.response_file
 
             assert rsp_file is not None, "No response file provided, and the PHA file does not contain one."
+
+            rsp_file = sanitize_filename(bak_file)
 
         if arf_file is None:
 
@@ -194,12 +192,16 @@ class OGIPLike(PluginPrototype):
 
             arf_file = self._pha.ancillary_file
 
+            if arf_file is not None:
+
+                arf_file = sanitize_filename(arf_file)
+
         # Now make sure response and background file exist (the ancillary file is not always present, and will be
         # treated separately
 
         try:
             assert file_existing_and_readable(
-                    bak_file.split("{")[0]), "Background file %s not existing or not readable" % bak_file
+                bak_file.split("{")[0]), "Background file %s not existing or not readable" % bak_file
         except(AttributeError):
             try:
                 if bak_file.is_container:
@@ -208,7 +210,7 @@ class OGIPLike(PluginPrototype):
                 RuntimeError("Background file type is unrecognizeable")
 
         assert file_existing_and_readable(
-                rsp_file.split("{")[0]), "Response file %s not existing or not readable" % rsp_file
+            rsp_file.split("{")[0]), "Response file %s not existing or not readable" % rsp_file
 
         self._bak = PHA(bak_file, file_type='background')
         self._rsp = Response(rsp_file, arf_file=arf_file)
@@ -269,12 +271,21 @@ class OGIPLike(PluginPrototype):
 
         # Print the autoprobed noise models
 
-
-
         print("Auto-probed noise models:")
         print("- observation: %s" % self.observation_noise_model)
         print("- background: %s" % self.background_noise_model)
-        print
+
+        # Now create the nuisance parameter for the effective area correction, which is fixed
+        # by default. This factor multiplies the model so that it can account for calibration uncertainties on the
+        # global effective area. By default it is limited to stay within 20%
+
+        self._nuisance_parameter = Parameter("cons_%s" % self._name, 1.0, min_value = 0.8, max_value = 1.2, delta=0.05,
+                                             free=False, desc="Effective area correction for %s" % self._name)
+
+        nuisance_parameters = collections.OrderedDict()
+        nuisance_parameters[self._nuisance_parameter.name] = self._nuisance_parameter
+
+        super(OGIPLike, self).__init__(name, nuisance_parameters)
 
     def set_active_measurements(self, *args):
         """
@@ -317,7 +328,6 @@ class OGIPLike(PluginPrototype):
             mask[idx1:idx2 + 1] = True
 
             if self._rebinner is None:
-
                 print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
 
         if self._rebinner is None:
@@ -335,10 +345,9 @@ class OGIPLike(PluginPrototype):
 
             mask = np.zeros(self._rebinner.n_bins, dtype=bool)
 
-        # Now parse the input ranges
+            # Now parse the input ranges
 
             for arg in args:
-
                 ee = map(float, arg.replace(" ", "").split("-"))
                 emin, emax = sorted(ee)
 
@@ -361,8 +370,6 @@ class OGIPLike(PluginPrototype):
 
             self._mask = np.array(mask, np.bool)
 
-
-
     def view_count_spectrum(self, plot_errors=True):
         """
         View the count and background spectrum. Useful to check energy selections.
@@ -373,9 +380,6 @@ class OGIPLike(PluginPrototype):
             none
 
         """
-
-
-
 
         # adding the rebinner: j. michael.
 
@@ -425,7 +429,6 @@ class OGIPLike(PluginPrototype):
 
         # Get the rebinned data if needed
         if self._rebinner is not None:
-
             observed_counts, background_counts = self._rebinner.rebin(observed_counts, background_counts)
             cnt_err, background_errors = self._rebinner.rebin(cnt_err, background_errors)
 
@@ -481,12 +484,9 @@ class OGIPLike(PluginPrototype):
 
         # Now fade the non-used channels
         if (~self._mask).sum() > 0:
-
             excluded_channel_plot(chan_min, chan_max, self._mask,
                                   observed_counts,
                                   background_counts, ax)
-
-
 
         ax.set_xlabel("Energy (keV)")
         ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
@@ -515,6 +515,47 @@ class OGIPLike(PluginPrototype):
 
         return bkg_counts
 
+    def get_folded_model(self):
+        """
+        The model folded by the current defined response. Note that it only returns the folded model for the
+        currently active channels/measurements
+
+        :return: array of folded model
+        """
+
+        return self._nuisance_parameter.value * self._rsp.convolve()[self._mask] * self._pha.exposure
+
+    def use_effective_area_correction(self, min_value=0.8, max_value=1.2):
+        """
+        Activate the use of the effective area correction, which is a multiplicative factor in front of the model which
+        might be used to mitigate the effect of intercalibration mismatch between different instruments.
+
+        NOTE: do not use this is you are using only one detector, as the multiplicative constant will be completely
+        degenerate with the normalization of the model.
+
+        NOTE2: always keep at least one multiplicative constant fixed to one (its default value), when using this
+        with other OGIPLike-type detectors
+
+        :param min_value: minimum allowed value (default: 0.8, corresponding to a 20% - effect)
+        :param max_value: maximum allowed value (default: 1.2, corresponding to a 20% + effect
+        :return:
+        """
+
+        self._nuisance_parameter.free = True
+        self._nuisance_parameter.bounds = (min_value, max_value)
+
+    def fix_effective_area_correction(self, value=1):
+        """
+        Fix the multiplicative factor (see use_effective_area_correction) to the provided value (default: 1)
+
+        :param value: new value (default: 1, i.e., no correction)
+        :return:
+        """
+
+        self._nuisance_parameter.value = value
+        self._nuisance_parameter.fix = True
+
+
     def _loglike_poisson_obs_ideal_bkg(self):
 
         # Observed counts
@@ -526,17 +567,17 @@ class OGIPLike(PluginPrototype):
 
         bkg_counts = self._scaled_background_counts[self._mask]
 
-        model_counts = self._rsp.convolve()[self._mask] * self._pha.exposure
+        model_counts = self.get_folded_model()
 
         if self._rebinner is not None:
 
             new_counts, new_model, new_bkg = self._rebinner.rebin(observed_counts, model_counts, bkg_counts)
 
-            loglike = poisson_observed_poisson_background(new_counts, new_bkg, new_model)
+            loglike = poisson_log_likelihood_ideal_bkg(new_counts, new_bkg, new_model)
 
         else:
 
-            loglike = poisson_observed_poisson_background(observed_counts, bkg_counts, model_counts)
+            loglike = poisson_log_likelihood_ideal_bkg(observed_counts, bkg_counts, model_counts)
 
         return loglike
 
@@ -555,7 +596,7 @@ class OGIPLike(PluginPrototype):
 
         scale_factor = self._pha.exposure / self._bak.exposure * self._pha.scale_factor / self._bak.scale_factor
 
-        model_counts = self._rsp.convolve()[self._mask] * self._pha.exposure
+        model_counts = self.get_folded_model()
 
         # if a rebinner is active, use it
 
@@ -568,13 +609,6 @@ class OGIPLike(PluginPrototype):
         else:
 
             loglike = poisson_observed_poisson_background(observed_counts, bkg_counts, scale_factor, model_counts)
-
-        # loglike = poisson_observed_poisson_background(observed_counts, bkg_counts, scale_factor, model_counts)
-
-        # print("predicted: %s (bkg: %s, model: %s), observed: %s" % (np.sum(new_model) + np.sum(new_bkg * scale_factor),
-        #                                                             np.sum(new_bkg * scale_factor),
-        #                                                             np.sum(new_model),
-        #                                                             np.sum(new_counts)))
 
         return loglike
 
@@ -591,7 +625,7 @@ class OGIPLike(PluginPrototype):
 
         background_errors = self._background_errors[self._mask]
 
-        expected_model_counts = self._rsp.convolve()[self._mask] * self._pha.exposure
+        expected_model_counts = self.get_folded_model()
 
         if self._rebinner is not None:
 
@@ -662,7 +696,6 @@ class OGIPLike(PluginPrototype):
         mask = np.zeros(self._rebinner.n_bins, dtype=bool)
 
         for idx1, idx2 in zip(lo_edges, hi_edges):
-
             # Get the edges
 
             lo, hi = self._rebinner.edges
@@ -673,12 +706,6 @@ class OGIPLike(PluginPrototype):
             mask[idx1:idx2 + 1] = True
 
         self._mask = mask
-
-
-
-
-
-
 
     def remove_rebinning(self):
         """
@@ -753,14 +780,6 @@ class OGIPLike(PluginPrototype):
 
         return loglike
 
-    def get_name(self):
-
-        return self._name
-
-    def get_nuisance_parameters(self):
-
-        return {}
-
     def inner_fit(self):
 
         return self.get_log_like()
@@ -793,12 +812,10 @@ class OGIPLike(PluginPrototype):
         # Make a function which will stack all point sources (OGIP do not support spatial dimension)
 
         def differential_flux(energies):
-
             fluxes = self._like_model.get_point_source_fluxes(0, energies)
 
             # If we have only one point source, this will never be executed
             for i in range(1, n_point_sources):
-
                 fluxes += self._like_model.get_point_source_fluxes(i, energies)
 
             return fluxes
@@ -826,14 +843,9 @@ def display_model_counts(*args, **kwargs):
 
     Display the fitted model count spectrum of one or more OGIP plugins
 
-
-
-    Args:
-        *args: OGIP plugins with a likelihood model assigned
-        **kwargs: min_rate the minimum rate to rebin on
-
-    Returns:
-
+    :param args: one or more instances of OGIP plugin
+    :param min_rate: (optional) rebin to keep this minimum rate in each channel (if possible)
+    :return: figure instance
     """
 
     # see if the user entered their own rate
@@ -843,11 +855,11 @@ def display_model_counts(*args, **kwargs):
 
     except:
 
-        # otherwise set to 1
+        # otherwise set to 1e-99 (i.e., no re-binning)
 
-        min_rate = 1
+        min_rate = 1e-99
 
-    fig = plt.figure(666)
+    fig = plt.figure()
 
     # cannot decide on the best way to go. Overplotting is an issue
 
@@ -858,7 +870,7 @@ def display_model_counts(*args, **kwargs):
     ax = fig.add_subplot(111)
     # ax = plt.subplot(gs[0])
     divider = make_axes_locatable(ax)
-    ax1 = divider.append_axes('bottom', size=.75, pad=0., sharex=ax)
+    ax1 = divider.append_axes('bottom', size=1.75, pad=0., sharex=ax)
 
     # iterators for color wheel
     color = np.linspace(0., 1., len(args))
@@ -869,7 +881,7 @@ def display_model_counts(*args, **kwargs):
     model_cmap = plt.cm.nipy_spectral_r
 
     # go thru the detectors
-    for data in args:
+    for data in args: # type: OGIPLike
 
         chans = data._rsp.ebounds[data._mask].T
         chan_min, chan_max = chans
@@ -912,7 +924,7 @@ def display_model_counts(*args, **kwargs):
         chan_width = chan_max - chan_min
 
         # get the expected counts
-        expected_model_rate = data._rsp.convolve()[data._mask] / chan_width  #* data._pha.exposure
+        expected_model_rate = data.get_folded_model() / chan_width / data._pha.exposure
 
         # calculate all the correct quantites
 
@@ -935,8 +947,6 @@ def display_model_counts(*args, **kwargs):
         lo, hi = this_rebinner.edges
         chan_min = chan_min[lo]
         chan_max = chan_max[hi]
-
-
 
         mean_chan = np.mean([chan_min, chan_max], axis=0)
 
@@ -995,6 +1005,8 @@ def display_model_counts(*args, **kwargs):
 
     # ax.set_xticks([])
 
+    return fig
+
 
 def channel_plot(chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))
@@ -1041,7 +1053,6 @@ def slice_disjoint(arr):
     Returns:
 
     """
-
 
     slices = []
     startSlice = arr[0]

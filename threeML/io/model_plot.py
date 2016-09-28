@@ -1,13 +1,13 @@
 import astropy.units as u
-from astropy.visualization import quantity_support
-
 import matplotlib.pyplot as plt
 import numpy as np
+from astropy.visualization import quantity_support
 from sympy import Function
 from sympy.abc import x
 from sympy.solvers import solve
 from sympy.utilities.lambdify import lambdify
 
+from threeML.utils.differentiation import get_jacobian
 
 class SpectralPlotter(object):
     """
@@ -23,7 +23,6 @@ class SpectralPlotter(object):
 
     def __init__(self, analysis):
         quantity_support()
-
 
         # looking at adding together multiple analysis This may be removed
 
@@ -62,15 +61,16 @@ class SpectralPlotter(object):
         """
 
         if self._analysis_type == "mle":
-            self._plot_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, legend,
-                           fit_cmap,
-                           contour_cmap, contour_alpha, lw, ls, **kwargs)
+            return self._plot_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, legend,
+                                  fit_cmap,
+                                  contour_cmap, contour_alpha, lw, ls, **kwargs)
 
         elif self._analysis_type == "bayesian":
-            self._plot_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, thin,
-                             alpha, legend, fit_cmap, contour_alpha, **kwargs)
 
-    def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
+            return self._plot_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, thin,
+                                    alpha, legend, fit_cmap, contour_alpha, **kwargs)
+
+    def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=(), summed=False, ene_min=10.,
                         ene_max=1E4, num_ene=300,
                         plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_cmap=None,
                         contour_alpha=0.6, lw=1., ls='-', **kwargs):
@@ -99,17 +99,19 @@ class SpectralPlotter(object):
 
         if self._analysis_type == "mle":
 
-            self._plot_component_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num,
-                                     legend,
-                                     fit_cmap, contour_cmap, contour_alpha, lw, ls, **kwargs)
+            return self._plot_component_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene,
+                                            plot_num,
+                                            legend,
+                                            fit_cmap, contour_cmap, contour_alpha, lw, ls, **kwargs)
 
         elif self._analysis_type == "bayesian":
 
-            self._plot_component_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num,
-                                       thin,
-                                       alpha, legend, fit_cmap, contour_alpha, **kwargs)
+            return self._plot_component_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene,
+                                              plot_num,
+                                              thin,
+                                              alpha, legend, fit_cmap, contour_alpha, **kwargs)
 
-    def _plot_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
+    def _plot_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=(), summed=False, ene_min=10.,
                     ene_max=1E4,
                     num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_alpha=0.6,
                     **kwargs):
@@ -125,7 +127,6 @@ class SpectralPlotter(object):
             fit_cmap = plt.cm.Set1
 
         x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
-
 
         # looping of all analysis provided:
 
@@ -213,6 +214,8 @@ class SpectralPlotter(object):
 
             ax.set_xscale('log')
             ax.set_yscale('log')
+
+        return fig
 
     def _plot_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False,
                   ene_min=10., ene_max=1E4, num_ene=300, plot_num=1, legend=True, fit_cmap=None, contour_cmap=None,
@@ -314,6 +317,8 @@ class SpectralPlotter(object):
 
             ax.set_xscale('log')
             ax.set_yscale('log')
+
+        return fig
 
     def _plot_component_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
                             ene_max=1E4, num_ene=300, plot_num=1, legend=True, fit_cmap=None, contour_cmap=None,
@@ -440,6 +445,8 @@ class SpectralPlotter(object):
                     ax.legend(**kwargs)
 
                 color_itr += 1
+
+        return fig
 
     def _plot_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False,
                               ene_min=10.,
@@ -576,40 +583,47 @@ class SpectralPlotter(object):
 
                 color_itr += 1
 
-    @staticmethod
-    def _derivative(f):
-        """
+        return fig
 
-        :param f: a function head
-        :return: second order numerical derivative of a function
-        """
-        def df(x):
-            h = 0.1e-7
-            return (f(x + h / 2) - f(x - h / 2)) / h
-
-        return df
+    # @staticmethod
+    # def _derivative(f):
+    #     """
+    #
+    #     :param f: a function head
+    #     :return: second order numerical derivative of a function
+    #     """
+    #
+    #     def df(x):
+    #         h = 0.1e-7
+    #         return (f(x + h / 2) - f(x - h / 2)) / h
+    #
+    #     return df
 
     def _propagate_full(self, source, flux_function, energy):
 
         errors = []
+
         model = self.analysis.likelihood_model.point_sources[source]
+
         for ene in energy:
 
             first_derivatives = []
 
             for par in model.spectrum.main.shape.free_parameters.keys():
+
                 self.analysis.restore_best_fit()
 
                 parameter_best_fit_value = model.spectrum.main.shape.free_parameters[par].value
+                min_value, max_value = model.spectrum.main.shape.free_parameters[par].bounds
 
                 def tmpflux(current_value):
                     model.spectrum.main.shape.free_parameters[par].value = current_value
 
                     return flux_function(ene).value
 
-                this_derivate = self._derivative(tmpflux)
+                this_derivate = get_jacobian(tmpflux, parameter_best_fit_value, min_value, max_value)[0][0]
 
-                first_derivatives.append(this_derivate(parameter_best_fit_value))
+                first_derivatives.append(this_derivate)
 
             first_derivatives = np.array(first_derivatives)
 

@@ -1,5 +1,4 @@
 import collections
-import time
 import numpy
 import scipy.optimize
 import scipy.stats
@@ -11,6 +10,7 @@ from threeML.io.rich_display import display
 import numpy as np
 import pandas as pd
 import uncertainties
+import astromodels.model
 
 
 from threeML.minimizer import minimization
@@ -21,8 +21,8 @@ from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
 from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
 
-
 from astromodels import ModelAssertionViolation
+
 
 class ReducingNumberOfThreads(Warning):
     pass
@@ -34,6 +34,7 @@ class ReducingNumberOfSteps(Warning):
 
 class NotANumberInLikelihood(Warning):
     pass
+
 
 
 class JointLikelihood(object):
@@ -52,13 +53,25 @@ class JointLikelihood(object):
         # Process optional keyword parameters
         self.verbose = verbose
 
-        self._likelihood_model = likelihood_model
+        self._likelihood_model = likelihood_model # type: astromodels.model.Model
 
         self._data_list = data_list
 
         for dataset in self._data_list.values():
 
             dataset.set_model(self._likelihood_model)
+
+            # Now get the nuisance parameters from the data and add them to the model
+
+            for parameter_name, parameter in dataset.nuisance_parameters.items():
+
+                # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
+                # of the same plugin will overwrite each other's nuisance parameters
+
+                assert dataset.name in parameter_name, "This is a bug of the plugin for %s: nuisance parameters " \
+                                                       "must contain the instance name" % type(dataset)
+
+                self._likelihood_model.add_external_parameter(parameter)
 
         # This is to keep track of the number of calls to the likelihood
         # function
@@ -217,36 +230,14 @@ class JointLikelihood(object):
                 name_length = len(parameter_name)
 
         best_fit_table = Table(rows=data,
-                      names=["#", "Name", "Best fit value", "Unit"],
-                      dtype=(str, 'S%i' % name_length, str, str))
+                               names=["#", "Name", "Best fit value", "Unit"],
+                               dtype=(str, 'S%i' % name_length, str, str))
 
         print("Best fit values:\n")
 
         display(best_fit_table)
 
         print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
-
-        # Now display the nuisance parameters
-
-        nuisance_parameters = collections.OrderedDict()
-
-        for dataset in self._data_list.values():
-
-            for pName in dataset.get_nuisance_parameters():
-
-                nuisance_parameters[(dataset.get_name(), pName)] = dataset.nuisanceParameters[pName]
-
-        if len(nuisance_parameters) > 0:
-
-            nuisance_parameters_table = self._get_table_of_parameters(nuisance_parameters)
-
-            print("Nuisance parameters:\n")
-
-            display(nuisance_parameters_table)
-
-        else:
-
-            print("(no nuisance parameters)")
 
         print("\nCorrelation matrix:\n")
 

@@ -3,10 +3,50 @@ Define the interface for a plugin class.
 """
 
 import abc
-
+from astromodels.utils.valid_variable import is_valid_variable_name
+import warnings
 
 class PluginPrototype(object):
+
     __metaclass__ = abc.ABCMeta
+
+    def __init__(self, name, nuisance_parameters):
+
+        assert is_valid_variable_name(name), "The name %s cannot be used as a name. You need to use a valid " \
+                                             "python identifier: no spaces, cannot start with numbers, cannot contain " \
+                                             "operators symbols such as -, +, *, /" % name
+
+        self._name = name
+        self._nuisance_parameters = nuisance_parameters
+
+    def get_name(self):
+
+        warnings.warn("Do not use get_name() for plugins, use the .name property", DeprecationWarning)
+
+        return self.name
+
+    @property
+    def name(self):
+        """
+        Returns the name of this instance
+
+        :return: a string (this is enforced to be a valid python identifier)
+        """
+        return self._name
+
+    @property
+    def nuisance_parameters(self):
+        """
+        Returns a dictionary containing the nuisance parameters for this dataset
+
+        :return: a dictionary
+        """
+
+        return self._nuisance_parameters
+
+    ######################################################################
+    # The following methods must be implemented by each plugin
+    ######################################################################
 
     @abc.abstractmethod
     def set_model(self, likelihood_model_instance):
@@ -16,25 +56,10 @@ class PluginPrototype(object):
         pass
 
     @abc.abstractmethod
-    def get_name(self):
-        """
-        Return a name for this data set (likely set during the constructor)
-        """
-        pass
-
-    @abc.abstractmethod
     def get_log_like(self):
         """
         Return the value of the log-likelihood with the current values for the
         parameters
-        """
-        pass
-
-    @abc.abstractmethod
-    def get_nuisance_parameters(self):
-        """
-        Return a list of nuisance parameters. Return an empty list if there
-        are no nuisance parameters
         """
         pass
 
