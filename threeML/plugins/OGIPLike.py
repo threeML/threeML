@@ -844,44 +844,79 @@ def display_model_counts(*args, **kwargs):
     Display the fitted model count spectrum of one or more OGIP plugins
 
     :param args: one or more instances of OGIP plugin
-    :param min_rate: (optional) rebin to keep this minimum rate in each channel (if possible)
+    :param min_rate: (optional) rebin to keep this minimum rate in each channel (if possible). If one number is
+    provided, the same minimum rate is used for each dataset, otherwise a list can be provided with the minimum rate
+    for each dataset
+    :param data_cmap: (optional) the color map used to extract automatically the colors for the data
+    :param model_cmap: (optional) the color map used to extract automatically the colors for the models
+    :param data_colors: (optional) a tuple or list with the color for each dataset
+    :param model_colors: (optional) a tuple or list with the color for each folded model
     :return: figure instance
     """
 
-    # see if the user entered their own rate
-    try:
+    # default settings
 
-        min_rate = kwargs.pop('min_rate')
+    min_rates = [1e-99] * len(args)
 
-    except:
-
-        # otherwise set to 1e-99 (i.e., no re-binning)
-
-        min_rate = 1e-99
-
-    fig = plt.figure()
-
-    # cannot decide on the best way to go. Overplotting is an issue
-
-    # gs = gridspec.GridSpec(2, 1, height_ratios=[2, 1])
-
-    # gs.update(hspace=0)
-
-    ax = fig.add_subplot(111)
-    # ax = plt.subplot(gs[0])
-    divider = make_axes_locatable(ax)
-    ax1 = divider.append_axes('bottom', size=1.75, pad=0., sharex=ax)
-
-    # iterators for color wheel
-    color = np.linspace(0., 1., len(args))
-    color_itr = 0
-
-    # perhaps adjust these
     data_cmap = plt.cm.rainbow
     model_cmap = plt.cm.nipy_spectral_r
 
+    # Default colors
+
+    data_colors = map(lambda x:data_cmap(x), np.linspace(0.0, 1.0, len(args)))
+    model_colors = map(lambda x:model_cmap(x), np.linspace(0.0, 1.0, len(args)))
+
+    if 'min_rate' in kwargs:
+
+        min_rate = kwargs.pop('min_rate')
+
+        # If min_rate is a floating point, use the same for all datasets, otherwise use the provided ones
+
+        try:
+
+            min_rate = float(min_rate)
+
+            min_rates = [min_rate] * len(args)
+
+        except TypeError:
+
+            min_rates = list(min_rate)
+
+            assert len(min_rates) >= len(args), "If you provide different minimum rates for each data set, you need" \
+                                                "to provide an iterable of the same length of the number of datasets"
+
+    if 'data_cmap' in kwargs:
+
+        data_cmap = kwargs.pop('data_cmap')
+        data_colors = map(lambda x: data_cmap(x), np.linspace(0.0, 1.0, len(args)))
+
+    if 'model_cmap' in kwargs:
+
+        model_cmap = kwargs.pop('model_cmap')
+        model_colors = map(lambda x: model_cmap(x), np.linspace(0.0, 1.0, len(args)))
+
+    if 'data_colors' in kwargs:
+
+        data_colors = kwargs.pop('data_colors')
+
+        assert len(data_colors) >= len(args), "You need to provide at least a number of data colors equal to the " \
+                                               "number of datasets"
+
+    if 'model_colors' in kwargs:
+
+        model_colors = kwargs.pop('model_colors')
+
+        assert len(model_colors) >= len(args), "You need to provide at least a number of model colors equal to the " \
+                                                "number of datasets"
+
+    fig, ax = plt.subplots()
+
+    divider = make_axes_locatable(ax)
+
+    ax1 = divider.append_axes('bottom', size=1.75, pad=0., sharex=ax)
+
     # go thru the detectors
-    for data in args: # type: OGIPLike
+    for data, data_color, model_color, min_rate in zip(args, data_colors, model_colors, min_rates):
 
         chans = data._rsp.ebounds[data._mask].T
         chan_min, chan_max = chans
@@ -930,10 +965,10 @@ def display_model_counts(*args, **kwargs):
 
         # since we compare to the model rate... background subtract but with proper propagation
 
-        src_rate = (observed_counts / data._pha.exposure - background_counts / data._bak.exposure) / (chan_width)
+        src_rate = (observed_counts / data._pha.exposure - background_counts / data._bak.exposure)
 
-        src_rate_err = np.sqrt((cnt_err / (data._pha.exposure * chan_width)) ** 2 + (
-            background_errors / (data._bak.exposure * chan_width)) ** 2)
+        src_rate_err = np.sqrt((cnt_err / (data._pha.exposure)) ** 2 + (
+            background_errors / (data._bak.exposure)) ** 2)
 
         # rebin on the source rate
         this_rebinner = Rebinner(src_rate, min_rate)
@@ -945,10 +980,15 @@ def display_model_counts(*args, **kwargs):
 
         # adjust channels
         lo, hi = this_rebinner.edges
-        chan_min = chan_min[lo]
-        chan_max = chan_max[hi]
+        new_chan_min = chan_min[lo]
+        new_chan_max = chan_max[hi]
+        new_chan_width = new_chan_max - new_chan_min
 
-        mean_chan = np.mean([chan_min, chan_max], axis=0)
+        # Now divide by the chan width
+        new_rate /= new_chan_width
+        new_err /= new_chan_width
+
+        mean_chan = np.mean([new_chan_min, new_chan_max], axis=0)
 
         ax.errorbar(mean_chan,
                     new_rate,
@@ -960,11 +1000,11 @@ def display_model_counts(*args, **kwargs):
                     alpha=.9,
                     capsize=0,
                     label=data._name,
-                    color=data_cmap(color[color_itr]))
+                    color=data_color)
 
-        step_plot(np.asarray(zip(chan_min, chan_max)), new_model_rate,
+        step_plot(np.asarray(zip(chan_min, chan_max)), expected_model_rate,
                   ax, alpha=.8,
-                  label='%s Model' % data._name, color=model_cmap(color[color_itr]))
+                  label='%s Model' % data._name, color=model_color)
 
         # Residuals
         # ax1 = fig.add_subplot(gs[1])
@@ -980,9 +1020,7 @@ def display_model_counts(*args, **kwargs):
                      capsize=0,
                      fmt='.',
                      markersize=3,
-                     color=data_cmap(color[color_itr]))
-
-        color_itr += 1
+                     color=data_color)
 
     ax.legend(fontsize='x-small')
 
@@ -1011,8 +1049,7 @@ def display_model_counts(*args, **kwargs):
 def channel_plot(chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))
     width = chan_max - chan_min
-    fig = plt.figure(666)
-    ax = fig.add_subplot(111)
+    fig, ax = plt.subplots()
     step_plot(chans, counts / width, ax, **kwargs)
     ax.set_xscale('log')
     ax.set_yscale('log')
