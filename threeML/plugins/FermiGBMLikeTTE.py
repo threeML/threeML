@@ -20,7 +20,7 @@ __instrument_name = "Fermi GBM TTE (all detectors)"
 
 class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
     def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
-                 poly_order=-1):
+                 poly_order=-1, unbinned=True):
         """
         If the input files are TTE files. Background selections are specified as
         a comma separated string e.g. "-10-0,10-20"
@@ -34,12 +34,10 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         to load the second spectrum, second background spectrum and second response.
         """
 
-        self.name = name
-
         self._gbm_tte_file = GBMTTEFile(tte_file)
 
         if trigger_time is not None:
-            self._gbm_tte_file.set_trigger_time(trigger_time)
+            self._gbm_tte_file.triggertime = trigger_time
 
         self._evt_list = EventList(arrival_times=self._gbm_tte_file._events - self._gbm_tte_file.triggertime,
                                    energies=self._gbm_tte_file._pha,
@@ -51,14 +49,14 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         self._evt_list.poly_order = poly_order
 
-        self._backgroundexists = False
-        self._energyselectionexists = False
+        self._background_exists = False
+        self._energyselection_exists = False
 
         # Fit the background and
         # Obtain the counts for the initial input interval
         # which is embedded in the background call
 
-        # First get the initial tmin and tmax
+
 
 
         self._startup = True  # This keeps things from being called twice!
@@ -67,7 +65,7 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         background_selections = [interval.replace(' ', '') for interval in background_selections.split(',')]
 
         self.set_active_time_interval(*source_intervals)
-        self.set_background_interval(*background_selections)
+        self.set_background_interval(*background_selections, unbinned=unbinned)
 
         self._startup = False
 
@@ -122,15 +120,23 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file)
 
-    def set_background_interval(self, *intervals):
-        '''Set the time interval to fit the background.
+    def set_background_interval(self, *intervals, **options):
+        """
+        Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
 
         setBackgroundInterval("-10.0-0.0","10.-15.")
-        '''
 
-        self._evt_list.set_polynomial_fit_interval(*intervals)
+        Args:
+            *intervals:
+            **options:
+
+        Returns:
+
+        """
+
+        self._evt_list.set_polynomial_fit_interval(*intervals, **options)
 
         # In theory this will automatically get the poly counts if a
         # time interval already exists
@@ -142,27 +148,65 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file)
 
+    def view_lightcurve(self, start=-10, stop=20., dt=1., energy_selection=None):
+
+        if energy_selection is not None:
+
+            energy_selection = [interval.replace(' ', '') for interval in energy_selection.split(',')]
+
+            valid_channels = []
+            mask = np.array([False] * self._evt_list.n_events)
+
+            for selection in energy_selection:
+
+                ee = map(float, selection.split("-"))
+
+                if len(ee) != 2:
+                    raise RuntimeError('Energy selection is not valid! Form: <low>-<high>.')
+
+                emin, emax = sorted(ee)
+
+                idx1 = self._rsp.energy_to_channel(emin)
+                idx2 = self._rsp.energy_to_channel(emax)
+
+                # Update the allowed channels
+                valid_channels.extend(range(idx1, idx2))
+
+                this_mask = np.logical_and(self._evt_list.energies >= idx1, self._evt_list.energies <= idx2)
+
+                np.logical_or(mask, this_mask, out=mask)
+
+        else:
+
+            mask = np.array([True] * self._evt_list.n_events)
+            valid_channels = range(self._gbm_tte_file.n_channels)
 
 
 
 
 
-    def view_lightcurve(self, start=-10, stop=20., dt=1.):
+
 
         binner = np.arange(start, stop + dt, dt)
-        cnts, bins = np.histogram(self._gbm_tte_file._events - self._gbm_tte_file.triggertime, bins=binner)
+        cnts, bins = np.histogram(self._gbm_tte_file.arrival_times[mask] - self._gbm_tte_file.triggertime, bins=binner)
         time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
 
         bkg = []
         for tb in time_bins:
             tmpbkg = 0.  # Maybe I can do this perenergy at some point
-            for poly in self._evt_list.polynomials:
+            for i in valid_channels:
+                poly = self._evt_list.polynomials[i]
+
+
                 tmpbkg += poly.integral(tb[0], tb[1]) / (dt)
 
             bkg.append(tmpbkg)
 
         gbm_light_curve_plot(time_bins, cnts, bkg, dt,
-                             selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list))
+                             selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list),
+                             bkg_selections=self._evt_list.poly_intervals)
+
+
 
     def peek(self):
 
@@ -173,6 +217,19 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         print 'Timing Info:'
 
         self._gbm_tte_file.peek()
+
+    def get_background_parameters(self):
+        """
+        Returns a pandas DataFrame containing the background polynomial
+        coefficients for each cahnnel.
+
+        Returns:
+
+            background dataframe
+
+        """
+
+        return self._evt_list.get_poly_info()
 
 
 
@@ -311,9 +368,8 @@ class GBMTTEFile(object):
         display(fermi_df)
 
 
-def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):
-    fig = plt.figure(777)
-    ax = fig.add_subplot(111)
+def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections):
+    fig, ax = plt.subplots()
 
     max_cnts = max(cnts / width)
     top = max_cnts + max_cnts * .2
@@ -323,7 +379,10 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):
 
     all_masks = []
 
-    step_plot(time_bins, cnts / width, ax, color='#8da0cb', label="Light Curve")
+    # purple: #8da0cb
+
+    step_plot(time_bins, cnts / width, ax,
+              color='#8da0cb', label="Light Curve")
 
     for tmin, tmax in selection:
         tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
@@ -343,6 +402,31 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):
               fill=True,
               fill_min=min_cnts, label="Selection")
 
+
+
+
+    all_masks = []
+    for tmin, tmax in bkg_selections:
+        tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
+
+        all_masks.append(tmp_mask)
+
+    if len(all_masks) > 1:
+
+        for mask in all_masks[1:]:
+
+
+            step_plot(time_bins[mask], cnts[mask] / width, ax,
+                      color='#80b1d3',
+                      fill=True,
+                      fillAlpha=.4,
+                      fill_min=min_cnts)
+
+    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width, ax,
+              color='#80b1d3',
+              fill=True,
+              fill_min=min_cnts,fillAlpha=.4 ,label="Bkg. Selections")
+
     ax.plot(mean_time, bkg, '#66c2a5', lw=2., label="Background")
 
     # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
@@ -350,4 +434,5 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection):
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Rate (cnts/s)")
     ax.set_ylim(bottom, top)
+    ax.set_xlim(time_bins.min(),time_bins.max())
     ax.legend()
