@@ -1,12 +1,11 @@
 # Creates a generic event list reader that can create PHA objects on the fly
 
 import numpy as np
-import scipy
-import re
-import warnings
-import math
-import copy
 
+import re
+
+import copy
+from threeML.minimizer import minimization
 import pandas as pd
 
 from threeML.io.rich_display import display
@@ -30,6 +29,10 @@ class ReducingNumberOfSteps(Warning):
     pass
 
 
+class OverLappingIntervals(RuntimeError):
+    pass
+
+
 # find out how many splits we need to make
 def ceildiv(a, b):
     return -(-a // b)
@@ -37,7 +40,7 @@ def ceildiv(a, b):
 
 class EventList(object):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None):
+                 first_channel=0, rsp_file=None, ra=None, dec=None, minimizer=None, algorithm=None):
         """
         Container for event style data which are tagged with time and energy/PHA.
 
@@ -94,6 +97,12 @@ class EventList(object):
 
         self._rsp_file = rsp_file
 
+        if minimizer is not None:
+            self.set_minimizer(minimizer, algorithm)
+
+        else:
+            self.set_minimizer("MINUIT")
+
         self._user_poly_order = -1
         self._time_selection_exists = False
         self._poly_fit_exists = False
@@ -138,7 +147,7 @@ class EventList(object):
             interval_masks.append(mask)
 
         if intervals_overlap(tmin_list, tmax_list):
-            raise RuntimeError('Provided intervals are overlapping and hence invalid')
+            raise OverLappingIntervals('Provided intervals are overlapping and hence invalid')
 
         time_mask = interval_masks[0]
         if len(interval_masks) > 1:
@@ -479,11 +488,11 @@ class EventList(object):
         # Fit all the polynomials
 
         min_grade = 0
-        max_grade = 4
+        max_grade = 3
         log_likelihoods = []
 
         for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = polyfit(bins, cnts, grade, exposure)
+            polynomial, log_like = polyfit(bins, cnts, grade, exposure, self._get_minimizer)
 
             log_likelihoods.append(log_like)
 
@@ -517,39 +526,21 @@ class EventList(object):
         # grade
 
 
-        # y                         = []
-        # for i in range(Nintervals):
-        #  y.append(np.sum(counts[i]))
-        # pass
-        # y                         = np.array(y)
-
-        # exposure                  = np.array(data.field("EXPOSURE"))
-
-        # print("\nLooking for optimal polynomial grade:")
-
-        # Fit all the polynomials
-
         min_grade = 0
-        max_grade = 4
+        max_grade = 3
         log_likelihoods = []
 
         t_start = self._poly_time_selections[:, 0]
         t_stop = self._poly_time_selections[:, 1]
 
         for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude=1000)
+            polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure, self._get_minimizer)
 
             log_likelihoods.append(log_like)
 
         # Found the best one
         delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
 
-        # print("\ndelta log-likelihoods:")
-
-        # for i in range(max_grade):
-        #    print("%s -> %s: delta Log-likelihood = %s" % (i, i + 1, deltaLoglike[i]))
-
-        # print("")
 
         delta_threshold = 9.0
 
@@ -566,8 +557,70 @@ class EventList(object):
 
         return best_grade
 
+    def set_minimizer(self, minimizer, algorithm=None):
+        """
+        Set the minimizer to be used, among those available. At the moment these are supported:
 
+        * ROOT
+        * MINUIT (which means iminuit, default)
+        * PYOPT
 
+        :param minimizer: the name of the new minimizer.
+        :param algorithm: (optional) for the PYOPT minimizer, specify the algorithm among those available. See a list at
+        http://www.pyopt.org/reference/optimizers.html . For the other minimizers this is ignored, if provided.
+        :return: (none)
+        """
+
+        assert minimizer.upper() in minimization._minimizers, "Minimizer %s is not available on this system. Available " \
+                                                              "minimizers: " \
+                                                              "%s" % (minimizer,
+                                                                      ",".join(minimization._minimizers.keys()))
+
+        if minimizer.upper() == "MINUIT":
+
+            self._minimizer_name = "MINUIT"
+            self._minimizer_algorithm = None
+
+        elif minimizer.upper() == "ROOT":
+
+            self._minimizer_name = "ROOT"
+            self._minimizer_algorithm = None
+
+        elif minimizer.upper() == "PYOPT":
+
+            assert algorithm is not None, "You have to provide an algorithm for the PYOPT minimizer. " \
+                                          "See http://www.pyopt.org/reference/optimizers.html"
+
+            self._minimizer_name = "PYOPT"
+
+            assert algorithm.upper() in minimization._pyopt_algorithms, "Provided algorithm not available. " \
+                                                                        "Available algorithms are: " \
+                                                                        "%s" % minimization._pyopt_algorithms.keys()
+            self._minimizer_algorithm = algorithm.upper()
+
+        elif minimizer.upper() == "MULTINEST":
+
+            self._minimizer_name = "MULTINEST"
+            self._minimizer_algorithm = None
+
+        else:
+
+            raise ValueError("Do not know minimizer %s. "
+                             "Available minimizers are: %s" % (minimizer, ",".join(minimization._minimizers.keys())))
+
+        # Get the type
+
+        self._minimizer_type = minimization.get_minimizer(self._minimizer_name)
+
+    def _get_minimizer(self, *args, **kwargs):
+
+        minimizer_instance = self._minimizer_type(*args, **kwargs)
+
+        if self._minimizer_algorithm:
+
+            minimizer_instance.set_algorithm(self._minimizer_algorithm)
+
+        return minimizer_instance
 
     def _fit_polynomials(self):
 
@@ -639,7 +692,7 @@ class EventList(object):
 
         # Now we will find the the best poly order unless the use specified one
         # The total cnts (over channels) is binned to .1 sec intervals
-        # TODO: make this unbinned!
+
         if self._user_poly_order == -1:
 
             self._optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(cnts[non_zero_mask],
@@ -688,7 +741,7 @@ class EventList(object):
                     polynomial, _ = polyfit(mean_time[non_zero_mask],
                                             cnts[non_zero_mask],
                                             self._optimal_polynomial_grade,
-                                            exposure_per_bin[non_zero_mask])
+                                            exposure_per_bin[non_zero_mask], self._get_minimizer)
 
                     polynomials.append(polynomial)
                     p.increase()
@@ -861,7 +914,8 @@ class EventList(object):
                                                      self._optimal_polynomial_grade,
                                                      t_start,
                                                      t_stop,
-                                                     poly_exposure)
+                                                     poly_exposure,
+                                                     self._get_minimizer)
 
                     polynomials.append(polynomial)
                     p.increase()
