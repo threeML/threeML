@@ -290,7 +290,7 @@ class OGIPLike(PluginPrototype):
 
             # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
 
-            self._current_background_errors = self._rebinner.rebin_errors(self._background_errors)
+            self._current_background_errors, = self._rebinner.rebin_errors(self._background_errors)
 
         print("Now using %s bins" % self._rebinner.n_bins)
 
@@ -340,7 +340,7 @@ class OGIPLike(PluginPrototype):
 
         if self._rebinner is not None:
 
-            folded_model = self._rebinner.rebin(self._rsp.convolve() * self._pha.exposure)
+            folded_model, = self._rebinner.rebin(self._rsp.convolve() * self._pha.exposure)
 
         else:
 
@@ -554,9 +554,9 @@ class OGIPLike(PluginPrototype):
         return self._pha.exposure
 
     @property
-    def energy_boundaries(self):
+    def energy_boundaries(self, mask=True):
         """
-        Energy boundaries of channels currently in use (in the original numbering, before rebinning)
+        Energy boundaries of channels currently in use (rebinned, if a rebinner is active)
 
         :return: (energy_min, energy_max)
         """
@@ -569,6 +569,12 @@ class OGIPLike(PluginPrototype):
             # Get the rebinned chans. NOTE: these are already masked
 
             energy_min, energy_max = self._rebinner.get_new_start_and_stop(energy_min, energy_max)
+
+        else:
+
+            # Apply the mask
+            energy_min = energy_min[self._mask]
+            energy_max = energy_max[self._mask]
 
         return energy_min, energy_max
 
@@ -588,10 +594,6 @@ class OGIPLike(PluginPrototype):
         # In the future read colors from config file
 
         # First plot the counts
-
-        energy_min, energy_max = self.energy_boundaries
-
-        energy_width = energy_max - energy_min
 
         # find out the type of observation
 
@@ -638,7 +640,14 @@ class OGIPLike(PluginPrototype):
         # Make the plots
         fig, ax = plt.subplots()
 
-        # plot counts and background
+        # Get the energy boundaries
+
+        energy_min, energy_max = self.energy_boundaries
+
+        energy_width = energy_max - energy_min
+
+        # plot counts and background for the currently selected data
+
         channel_plot(ax, energy_min, energy_max, observed_counts,
                      color='#377eb8', lw=1.5, alpha=1, label="Total")
         channel_plot(ax, energy_min, energy_max, background_counts,
@@ -673,12 +682,61 @@ class OGIPLike(PluginPrototype):
                         # label=data._name,
                         color='#e41a1c')
 
-        # Now fade the non-used channels
-        if (~self._mask).sum() > 0:
+        # Now plot and fade the non-used channels
+        non_used_mask = (~self._mask)
 
-            excluded_channel_plot(ax, energy_min, energy_max, self._mask,
-                                  observed_counts,
-                                  background_counts)
+        if non_used_mask.sum() > 0:
+
+            # Get un-rebinned versions of all arrays, so we can directly apply the mask
+            energy_min_unrebinned, energy_max_unrebinned = self._rsp.ebounds.T
+            energy_width_unrebinned = energy_max_unrebinned - energy_min_unrebinned
+            observed_rate_unrebinned = self._observed_counts / self.exposure
+            observed_rate_unrebinned_err = np.sqrt(self._observed_counts) / self.exposure
+            background_rate_unrebinned = self._background_counts / self.background_exposure
+            background_rate_unrebinned_err = np.sqrt(self._background_counts) / self.background_exposure
+
+            channel_plot(ax,
+                         energy_min_unrebinned[non_used_mask],
+                         energy_max_unrebinned[non_used_mask],
+                         observed_rate_unrebinned[non_used_mask],
+                         color='#377eb8', lw=1.5, alpha=1)
+
+            channel_plot(ax, energy_min_unrebinned[non_used_mask],
+                         energy_max_unrebinned[non_used_mask],
+                         background_rate_unrebinned[non_used_mask],
+                         color='#e41a1c', alpha=.8)
+
+            if plot_errors:
+
+                mean_chan_unrebinned = np.mean([energy_min_unrebinned, energy_max_unrebinned], axis=0)
+
+                ax.errorbar(mean_chan_unrebinned[non_used_mask],
+                            observed_rate_unrebinned[non_used_mask] / energy_width_unrebinned[non_used_mask],
+                            yerr=observed_rate_unrebinned_err[non_used_mask] / energy_width_unrebinned[non_used_mask],
+                            fmt='',
+                            # markersize=3,
+                            linestyle='',
+                            elinewidth=.7,
+                            alpha=.9,
+                            capsize=0,
+                            # label=data._name,
+                            color='#377eb8')
+
+                ax.errorbar(mean_chan_unrebinned[non_used_mask],
+                            background_rate_unrebinned[non_used_mask] / energy_width_unrebinned[non_used_mask],
+                            yerr=background_rate_unrebinned_err[non_used_mask] / energy_width_unrebinned[non_used_mask],
+                            fmt='',
+                            # markersize=3,
+                            linestyle='',
+                            elinewidth=.7,
+                            alpha=.9,
+                            capsize=0,
+                            # label=data._name,
+                            color='#e41a1c')
+
+            excluded_channel_plot(ax, energy_min_unrebinned, energy_max_unrebinned, self._mask,
+                                  observed_rate_unrebinned,
+                                  background_rate_unrebinned)
 
         ax.set_xlabel("Energy (keV)")
         ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
@@ -699,6 +757,7 @@ def display_model_counts(*args, **kwargs):
     :param model_cmap: (optional) the color map used to extract automatically the colors for the models
     :param data_colors: (optional) a tuple or list with the color for each dataset
     :param model_colors: (optional) a tuple or list with the color for each folded model
+    :param show_legend: (optional) if True (default), shows a legend
     :return: figure instance
     """
 
@@ -709,10 +768,19 @@ def display_model_counts(*args, **kwargs):
     data_cmap = plt.cm.rainbow
     model_cmap = plt.cm.nipy_spectral_r
 
+    # Legend is on by default
+    show_legend = True
+
     # Default colors
 
     data_colors = map(lambda x:data_cmap(x), np.linspace(0.0, 1.0, len(args)))
     model_colors = map(lambda x:model_cmap(x), np.linspace(0.0, 1.0, len(args)))
+
+    # Now override defaults according to the optional keywords, if present
+
+    if 'show_legend' in kwargs:
+
+        show_legend = bool(kwargs.pop('show_legend'))
 
     if 'min_rate' in kwargs:
 
@@ -755,11 +823,11 @@ def display_model_counts(*args, **kwargs):
         assert len(model_colors) >= len(args), "You need to provide at least a number of model colors equal to the " \
                                                 "number of datasets"
 
-    fig, ax = plt.subplots()
+    fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
 
-    divider = make_axes_locatable(ax)
+    #divider = make_axes_locatable(ax)
 
-    ax1 = divider.append_axes('bottom', size=1.75, pad=0., sharex=ax)
+    #ax1 = divider.append_axes('bottom', size=1.75, pad=0., sharex=ax)
 
     # go thru the detectors
     for data, data_color, model_color, min_rate in zip(args, data_colors, model_colors, min_rates):
@@ -870,25 +938,31 @@ def display_model_counts(*args, **kwargs):
                      markersize=3,
                      color=data_color)
 
-    ax.legend(fontsize='x-small')
+    if show_legend:
 
-    # ax.set_xlabel("Energy (keV)")
-    ax.set_ylabel(r"Rate (counts s$^{-1}$ keV$^{-1}$)")
+        ax.legend(fontsize='x-small', loc=0)
+
+    ax.set_ylabel("Background-subtracted rate\n(counts s$^{-1}$ keV$^{-1}$)")
 
     ax.set_xscale('log')
     ax.set_yscale('log', nonposy='clip')
-
-    # ax.set_xlim(left=data._rsp.ebounds[0, 0], right=data._rsp.ebounds[-1, 1])
 
     ax1.set_xscale("log")
 
     locator = MaxNLocator(prune='upper', nbins=5)
     ax1.yaxis.set_major_locator(locator)
 
-    ax1.set_xlabel("Energy (MeV)")
-    ax1.set_ylabel("Residuals")
+    ax1.set_xlabel("Energy\n(keV)")
+    ax1.set_ylabel("Residuals\n($\sigma$)")
 
-    # ax.set_xticks([])
+    # This takes care of making space for all labels around the figure
+
+    fig.tight_layout()
+
+    # Now remove the space between the two subplots
+    # NOTE: this must be placed *after* tight_layout, otherwise it will be ineffective
+
+    fig.subplots_adjust(hspace=0)
 
     return fig
 
