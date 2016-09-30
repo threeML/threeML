@@ -681,6 +681,9 @@ class BayesianAnalysis(object):
         cc.configure_general(**kwargs)
         fig = cc.plot(parameters=parameters, figsize=figsize)
 
+
+        return fig
+
     def compare_posterior(self, other_fit, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1.,
                           parameters=None, renamed_parameters=None, **kwargs):
         """
