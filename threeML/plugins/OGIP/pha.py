@@ -87,7 +87,6 @@ class PHA(object):
 
 
 
-
     def _init_from_FITS(self, phafile, spectrum_number, file_type='observed'):
 
         assert file_type.lower() in ['observed', 'background'], "Unrecognized filetype keyword value"
