@@ -792,12 +792,14 @@ def display_model_counts(*args, **kwargs):
 
             min_rate = float(min_rate)
 
+            min_rates = [min_rate]*len(args)
+
         except TypeError:
 
             min_rates = list(min_rate)
 
             assert len(min_rates) >= len(args), "If you provide different minimum rates for each data set, you need" \
-                                                "to provide an iterable of the same length of the number of datasets"
+                                                " to provide an iterable of the same length of the number of datasets"
 
     if 'data_cmap' in kwargs:
 
@@ -875,6 +877,7 @@ def display_model_counts(*args, **kwargs):
             raise NotImplementedError("Not yet implemented")
 
         chan_width = energy_max - energy_min
+
 
         # get the expected counts
         # NOTE: _rsp.convolve() returns already the rate (counts / s)
