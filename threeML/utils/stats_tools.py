@@ -222,7 +222,7 @@ class ModelComparison(object):
         stat_table['Model'] = []
 
         for analysis in self._analysis_container:
-            n_data_points = np.sum([data.get_number_of_data_points() for data in analysis.data_list.values()])
+            n_data_points = np.sum([data.n_data_points for data in analysis.data_list.values()])
             n_free_params = len(analysis._free_parameters.values())  # should add a property
             dof = n_data_points - n_free_params
             model_name = \
@@ -258,7 +258,7 @@ class ModelComparison(object):
         stat_table['Model'] = []
 
         for analysis in self._analysis_container:
-            n_data_points = np.sum([data.get_number_of_data_points() for data in analysis.data_list.values()])
+            n_data_points = np.sum([data.n_data_points for data in analysis.data_list.values()])
             n_free_params = len(analysis._free_parameters.values())  # should add a property
             dof = n_data_points - n_free_params
 
