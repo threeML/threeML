@@ -171,10 +171,15 @@ def is_plugin_available(plugin):
         return False
 
 # Import the joint likelihood set
-from .classicMLE.joint_likelihood_set import JointLikelihoodSet
+from .classicMLE.joint_likelihood_set import JointLikelihoodSet, JointLikelihoodSetAnalyzer
 
 # Added by JM to import spectral plotting.
 from .io.model_plot import SpectralPlotter
+
+# Added by JM to import flux calcuations.
+from .io.flux_calculator import SpectralFlux
+
+from .plugins.OGIPLike import display_model_counts  # experimental
 
 from .parallel.parallel_client import parallel_computation
 

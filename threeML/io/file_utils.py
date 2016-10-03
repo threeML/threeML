@@ -1,4 +1,8 @@
 import os
+from contextlib import contextmanager
+import tempfile
+import shutil
+from threeML.exceptions.custom_exceptions import custom_warnings
 
 
 def file_existing_and_readable(filename):
@@ -28,5 +32,42 @@ def file_existing_and_readable(filename):
         return False
 
 
-def sanitize_filename(filename):
-    return os.path.expandvars(os.path.expanduser(filename))
+def sanitize_filename(filename, abspath=False):
+
+    sanitized = os.path.expandvars(os.path.expanduser(filename))
+
+    if abspath:
+
+        return os.path.abspath(sanitized)
+
+    else:
+
+        return sanitized
+
+
+@contextmanager
+def temporary_directory(prefix='', within_directory=None):
+    """
+    This context manager creates a temporary directory in the most secure possible way (with no race condition), and
+    removes it at the end.
+
+    :param prefix: the directory name will start with this prefix, if specified
+    :param within_directory: create within a specific directory (assumed to exist). Otherwise, it will be created in the
+    default system temp directory (/tmp in unix)
+    :return: the absolute pathname of the provided directory
+    """
+
+    directory = tempfile.mkdtemp(prefix=prefix, dir=within_directory)
+
+    yield directory
+
+    try:
+
+        shutil.rmtree(directory)
+
+    except:
+
+        custom_warnings.warn("Couldn't remove temporary directory %s" % directory)
+
+
+
