@@ -69,7 +69,7 @@ class SpectralPlotter(object):
 
     def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=(), summed=False, ene_min=10.,
                         ene_max=1E4, num_ene=300,
-                        plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_cmap=None,
+                        thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_cmap=None,
                         contour_alpha=0.6, lw=1., ls='-', **kwargs):
         """
         Plot the components of a fits and their associated contours
@@ -81,7 +81,6 @@ class SpectralPlotter(object):
         :param ene_min: minimum energy of x-axis
         :param ene_max: maximum energy of x-axis
         :param num_ene: number of energies to calculate
-        :param plot_num: figure number of plot
         :param thin: thinning of bayesian samples (only for bayesian fits)
         :param alpha: chance of type I error (only for bayesian fits)
         :param legend: (bool) include legend
@@ -96,15 +95,13 @@ class SpectralPlotter(object):
 
         if self._analysis_type == "mle":
 
-            return self._plot_component_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene,
-                                            plot_num,
-                                            legend,
+            return self._plot_component_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, legend,
                                             fit_cmap, contour_cmap, contour_alpha, lw, ls, **kwargs)
 
         elif self._analysis_type == "bayesian":
 
             return self._plot_component_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene,
-                                              plot_num,
+
                                               thin,
                                               alpha, legend, fit_cmap, contour_alpha, **kwargs)
 
@@ -316,7 +313,7 @@ class SpectralPlotter(object):
         return fig
 
     def _plot_component_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
-                            ene_max=1E4, num_ene=300, plot_num=1, legend=True, fit_cmap=None, contour_cmap=None,
+                            ene_max=1E4, num_ene=300, legend=True, fit_cmap=None, contour_cmap=None,
                             contour_alpha=0.6, lw=1., ls='-',
                             **kwargs):
 
@@ -325,10 +322,10 @@ class SpectralPlotter(object):
         x_unit = u.Unit(x_unit)
         y_unit = u.Unit(y_unit)
 
-        if not fit_cmap:
+        if fit_cmap is None:
             fit_cmap = plt.cm.Set1
 
-        if not contour_cmap:
+        if contour_cmap is None:
             contour_cmap = plt.cm.Set2
 
         # Initialize plotting arrays
@@ -339,13 +336,14 @@ class SpectralPlotter(object):
         fig, ax = plt.subplots()
 
         # First see if we are plotting all the sources
-        if sources_to_plot == []:  # Assuming plot all sources
+        if not sources_to_plot:  # Assuming plot all sources
 
             sources_to_plot = self.analysis.likelihood_model.point_sources.keys()
 
         # if components == []: # Assuming plot all sources
 
         #    sources_to_plot = self.analysis.likelihood_model.point_sources.keys()
+
 
 
         for source in sources_to_plot:
@@ -369,6 +367,7 @@ class SpectralPlotter(object):
 
             y_values.append(y_vals_per_comp)
             errors.append(errors_per_comp)
+            print models
 
         color = np.linspace(0., 1., len(sources_to_plot) * len(models))
         color_itr = 0
@@ -444,7 +443,7 @@ class SpectralPlotter(object):
 
     def _plot_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False,
                               ene_min=10.,
-                              ene_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None,
+                              ene_max=1E4, num_ene=300, thin=100, alpha=0.05, legend=True, fit_cmap=None,
                               contour_alpha=0.6,
                               **kwargs):
         """
@@ -578,20 +577,6 @@ class SpectralPlotter(object):
 
         return fig
 
-    # @staticmethod
-    # def _derivative(f):
-    #     """
-    #
-    #     :param f: a function head
-    #     :return: second order numerical derivative of a function
-    #     """
-    #
-    #     def df(x):
-    #         h = 0.1e-7
-    #         return (f(x + h / 2) - f(x - h / 2)) / h
-    #
-    #     return df
-
     def _propagate_full(self, source, flux_function, energy):
 
         errors = []
@@ -706,7 +691,6 @@ class SpectralPlotter(object):
         :return: list of solved component flux functions
         """
 
-        base_expression = composite_model.expression
         replicated_expression = composite_model.expression
 
         num_models = len(composite_model.functions)
