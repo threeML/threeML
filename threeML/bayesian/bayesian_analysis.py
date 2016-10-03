@@ -188,11 +188,13 @@ class BayesianAnalysis(object):
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
-        log_prior = map(lambda x:self._logp(x), self._raw_samples)
+        log_prior = map(lambda x: self._log_prior(x), self._raw_samples)
 
         # Now we get the log posterior and we remove the log prior
 
         self._log_like_values = sampler.flatlnprobability - log_prior
+
+        self._log_probability_values = sampler.flatlnprobability
 
         self._build_samples_dictionary()
 
@@ -211,11 +213,11 @@ class BayesianAnalysis(object):
 
         """
 
-        free_parameters = self._likelihood_model.getFreeParameters()
+        self._update_free_parameters()
 
-        n_dim = len(free_parameters.keys())
+        n_dim = len(self._free_parameters.keys())
 
-        sampler = emcee.PTSampler(n_temps, n_walkers, n_dim, self._log_like, self._logp)
+        sampler = emcee.PTSampler(n_temps, n_walkers, n_dim, self._log_like, self._log_prior)
 
         # Get one starting point for each temperature
 
@@ -239,9 +241,15 @@ class BayesianAnalysis(object):
 
         self._sampler = sampler
 
-        # Now build the _samples dictionary
+        self._log10_evidence = sampler.thermodynamic_integration_log_evidence(fburnin=0.) / np.log(
+            10.)  # assuming burned in!
 
         self._raw_samples = sampler.flatchain.reshape(-1, sampler.flatchain.shape[-1])
+
+        # Now build the _samples dictionary
+
+        # First we need the prior
+
 
         self._build_samples_dictionary()
 
@@ -319,7 +327,14 @@ class BayesianAnalysis(object):
 
         self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
 
+        log_prior = map(lambda x: self._log_prior(x), self._raw_samples)
+
+        self._log_probability_values = self._log_like_values + log_prior
+
         self._build_samples_dictionary()
+
+        s = multinest_analyzer.get_stats()
+        self._log10_evidence = s['global evidence'] / np.log(10.)
 
         return self.samples
 
@@ -336,6 +351,17 @@ class BayesianAnalysis(object):
             # Add the samples for this parameter for this source
 
             self._samples[parameter_name] = self._raw_samples[:, i]
+
+    def log_probability(self, samples):
+
+        samples = np.atleast_2d(samples)
+
+        log_prob = map(lambda x: self._get_posterior(x), samples)
+
+        return log_prob
+
+
+
 
     @property
     def raw_samples(self):
@@ -365,6 +391,34 @@ class BayesianAnalysis(object):
         """
 
         return self._sampler
+
+    @property
+    def log_probability_values(self):
+        """
+
+        Access the log probability values from the sampler (ln P = ln like + ln prior)
+
+        Returns: the log probability of the model
+
+        """
+
+        return self._log_probability_values
+
+    @property
+    def log10_evidence(self):
+
+        return self._log10_evidence
+
+    @log10_evidence.getter
+    def log10_evidence(self):
+
+        try:
+
+            return self._log10_evidence
+
+        except:
+
+            return None
 
     def get_effective_free_parameters(self):
         """
@@ -848,7 +902,7 @@ class BayesianAnalysis(object):
 
         return p0
 
-    def _logp(self, trial_values):
+    def _log_prior(self, trial_values):
         """Compute the sum of log-priors, used in the parallel tempering sampling"""
 
         # Compute the sum of the log-priors
