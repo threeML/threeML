@@ -578,6 +578,20 @@ class OGIPLike(PluginPrototype):
 
         return energy_min, energy_max
 
+    @property
+    def n_data_points(self):
+
+        if self._rebinner is not None:
+
+            return self._rebinner.n_bins
+
+        else:
+
+            return int(self._mask.sum())
+
+
+
+
     def view_count_spectrum(self, plot_errors=True):
         """
         View the count and background spectrum. Useful to check energy selections.
