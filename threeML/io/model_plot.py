@@ -30,7 +30,7 @@ class SpectralPlotter(object):
 
         self._analysis_type = analysis._analysis_type
 
-        self.analysis = analysis
+        self._analysis = analysis
 
     def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
                    ene_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None,
@@ -127,14 +127,14 @@ class SpectralPlotter(object):
 
 
         # Get the the number of samples
-        n_samples = self.analysis.raw_samples.shape[0]
+        n_samples = self._analysis.raw_samples.shape[0]
 
         fig, ax = plt.subplots()
 
         # First see if we are plotting all the sources
         if not sources_to_plot:  # Assuming plot all sources
 
-            sources_to_plot = self.analysis._likelihood_model.point_sources.keys()
+            sources_to_plot = self._analysis._likelihood_model.point_sources.keys()
 
         # container for contours
         all_contours = []
@@ -142,8 +142,8 @@ class SpectralPlotter(object):
         for source in sources_to_plot:
 
             # Get the spectrum first
-            call = self.analysis._likelihood_model.point_sources[source].spectrum.main
-            model = self.analysis._likelihood_model.point_sources[source].spectrum.main.shape
+            call = self._analysis._likelihood_model.point_sources[source].spectrum.main
+            model = self._analysis._likelihood_model.point_sources[source].spectrum.main.shape
 
             # Check the  type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
@@ -161,9 +161,9 @@ class SpectralPlotter(object):
             for i in range(0, n_samples, thin):
 
                 # go through parameters
-                for par in self.analysis.samples.keys():
+                for par in self._analysis.samples.keys():
                     mod_par = par.split('.')[-1]
-                    model.free_parameters[mod_par].value = self.analysis.samples[par][i]
+                    model.free_parameters[mod_par].value = self._analysis.samples[par][i]
 
                 # get the flux for the this sample
                 tmp.append(flux_function(x_range))
@@ -171,7 +171,7 @@ class SpectralPlotter(object):
             tmp = np.array(tmp).T
 
             # pull the highest denisty posterior at the choosen alpha level
-            contours = np.array([self.analysis._hpd(mc, alpha=alpha) for mc in tmp])
+            contours = np.array([self._analysis._hpd(mc, alpha=alpha) for mc in tmp])
             all_contours.append(contours)
 
         color = np.linspace(0., 1., len(sources_to_plot))
@@ -219,7 +219,7 @@ class SpectralPlotter(object):
         Should not be called directly!
 
         """
-        self.analysis.restore_best_fit()
+        self._analysis.restore_best_fit()
 
         x_unit = u.Unit(x_unit)
         y_unit = u.Unit(y_unit)
@@ -240,12 +240,12 @@ class SpectralPlotter(object):
         # First see if we are plotting all the sources
         if not sources_to_plot:  # Assuming plot all sources
 
-            sources_to_plot = self.analysis.likelihood_model.point_sources.keys()
+            sources_to_plot = self._analysis.likelihood_model.point_sources.keys()
 
         for source in sources_to_plot:
             # Get the spectrum first
-            call = self.analysis.likelihood_model.point_sources[source].spectrum.main
-            model = self.analysis.likelihood_model.point_sources[source].spectrum.main.shape
+
+            model = self._analysis.likelihood_model.point_sources[source].spectrum.main.shape
 
             # Check the  type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
@@ -317,7 +317,7 @@ class SpectralPlotter(object):
                             contour_alpha=0.6, lw=1., ls='-',
                             **kwargs):
 
-        self.analysis.restore_best_fit()
+        self._analysis.restore_best_fit()
 
         x_unit = u.Unit(x_unit)
         y_unit = u.Unit(y_unit)
@@ -338,7 +338,7 @@ class SpectralPlotter(object):
         # First see if we are plotting all the sources
         if not sources_to_plot:  # Assuming plot all sources
 
-            sources_to_plot = self.analysis.likelihood_model.point_sources.keys()
+            sources_to_plot = self._analysis.likelihood_model.point_sources.keys()
 
         # if components == []: # Assuming plot all sources
 
@@ -348,7 +348,7 @@ class SpectralPlotter(object):
 
         for source in sources_to_plot:
 
-            composite_model = self.analysis.likelihood_model.point_sources[source].spectrum.main.composite
+            composite_model = self._analysis.likelihood_model.point_sources[source].spectrum.main.composite
             models = self._solve_for_component_flux(composite_model)
 
             # Check the type of function we want
@@ -367,16 +367,16 @@ class SpectralPlotter(object):
 
             y_values.append(y_vals_per_comp)
             errors.append(errors_per_comp)
-            print models
 
         color = np.linspace(0., 1., len(sources_to_plot) * len(models))
+
         color_itr = 0
 
         if not summed:
             for y_val_pc, err_pc, source in zip(y_values, errors, sources_to_plot):
 
                 model_names = [func.name for func in
-                               self.analysis.likelihood_model.point_sources[source].spectrum.main.composite.functions]
+                               self._analysis.likelihood_model.point_sources[source].spectrum.main.composite.functions]
                 for y_val, err, name in zip(y_val_pc, err_pc, model_names):
                     pos_mask = np.logical_and(y_val > 0, err > 0)
 
@@ -412,7 +412,7 @@ class SpectralPlotter(object):
             # This is a kludge assuming all sources have the same models
 
             model_names = [func.name for func in
-                           self.analysis.likelihood_model.point_sources[
+                           self._analysis.likelihood_model.point_sources[
                                sources_to_plot[0]].spectrum.main.composite.functions]
 
             for y_val, err, name in zip(y_values_summed, errors_summed, model_names):
@@ -460,23 +460,23 @@ class SpectralPlotter(object):
         x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
 
         # Get the the number of samples
-        n_samples = self.analysis.raw_samples.shape[0]
+        n_samples = self._analysis.raw_samples.shape[0]
 
         fig, ax = plt.subplots()
 
         # First see if we are plotting all the sources
         if not sources_to_plot:  # Assuming plot all sources
 
-            sources_to_plot = self.analysis._likelihood_model.point_sources.keys()
+            sources_to_plot = self._analysis._likelihood_model.point_sources.keys()
 
         # this is a kludge at the moment. Model number may vary!
         num_models = len(
-            self.analysis._likelihood_model.point_sources[sources_to_plot[0]].spectrum.main.composite.functions)
+                self._analysis._likelihood_model.point_sources[sources_to_plot[0]].spectrum.main.composite.functions)
 
         all_contours = []
         for source in sources_to_plot:
 
-            composite_model = self.analysis._likelihood_model.point_sources[source].spectrum.main.composite
+            composite_model = self._analysis._likelihood_model.point_sources[source].spectrum.main.composite
             models = self._solve_for_component_flux(composite_model)
 
             # Check the type of function we want
@@ -503,9 +503,9 @@ class SpectralPlotter(object):
                 for i in range(0, n_samples, thin):
 
                     # go through parameters
-                    for par in self.analysis.samples.keys():
+                    for par in self._analysis.samples.keys():
                         mod_par = par.split('.')[-1]
-                        composite_model.free_parameters[mod_par].value = self.analysis.samples[par][i]
+                        composite_model.free_parameters[mod_par].value = self._analysis.samples[par][i]
 
                     # get the flux for the this sample
                     tmp.append(flux_function(x_range))
@@ -513,7 +513,7 @@ class SpectralPlotter(object):
                 tmp = np.array(tmp).T
 
                 # pull the highest denisty posterior at the choosen alpha level
-                contours = np.array([self.analysis._hpd(mc, alpha=alpha) for mc in tmp])
+                contours = np.array([self._analysis._hpd(mc, alpha=alpha) for mc in tmp])
 
                 contours_per_component.append(contours)
 
@@ -527,7 +527,7 @@ class SpectralPlotter(object):
             for contour_pc, source in zip(all_contours, sources_to_plot):
 
                 model_names = [func.name for func in
-                               self.analysis._likelihood_model.point_sources[source].spectrum.main.composite.functions]
+                               self._analysis._likelihood_model.point_sources[source].spectrum.main.composite.functions]
 
                 for contour, name in zip(contour_pc, model_names):
 
@@ -556,7 +556,7 @@ class SpectralPlotter(object):
 
             # This is a kludge that assumes all sources have the same model!
             model_names = [func.name for func in
-                           self.analysis._likelihood_model.point_sources[
+                           self._analysis._likelihood_model.point_sources[
                                sources_to_plot[0]].spectrum.main.composite.functions]
 
             for contour, name in zip(summed_contours, model_names):
@@ -581,7 +581,21 @@ class SpectralPlotter(object):
 
         errors = []
 
-        model = self.analysis.likelihood_model.point_sources[source]
+        model = self._analysis.likelihood_model.point_sources[source]
+
+        # Check for nuisance parameters which have ZERO first derivatives w.r.t
+        # the photon model.
+
+        n_nuisance_parameters = 0
+
+        for data in self._analysis.data_list.values():
+
+            for npar in data.nuisance_parameters.values():
+
+                if npar.free:
+                    n_nuisance_parameters += 1
+
+        zero_first_derivatives = np.zeros(n_nuisance_parameters)
 
         for ene in energy:
 
@@ -589,7 +603,7 @@ class SpectralPlotter(object):
 
             for par in model.spectrum.main.shape.free_parameters.keys():
 
-                self.analysis.restore_best_fit()
+                self._analysis.restore_best_fit()
 
                 parameter_best_fit_value = model.spectrum.main.shape.free_parameters[par].value
                 min_value, max_value = model.spectrum.main.shape.free_parameters[par].bounds
@@ -603,9 +617,12 @@ class SpectralPlotter(object):
 
                 first_derivatives.append(this_derivate)
 
+            # add the nuisance parameter first derivatives at the end (does this assumption always hold?)
+            first_derivatives.extend(zero_first_derivatives)
+
             first_derivatives = np.array(first_derivatives)
 
-            tmp = first_derivatives.dot(self.analysis.covariance_matrix)
+            tmp = first_derivatives.dot(self._analysis.covariance_matrix)
 
             errors.append(np.sqrt(tmp.dot(first_derivatives)))
 
