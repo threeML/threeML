@@ -1,11 +1,11 @@
 __author__ = 'giacomov'
 
-from GenericOGIPLike import GenericOGIPLike
+from threeML.plugins.OGIPLike import OGIPLike
 
 __instrument_name = "VERITAS"
 
-class VERITASLike(GenericOGIPLike):
+class VERITASLike(OGIPLike):
 
     def __init__(self, name, udara_style_root_file):
 
-        super(VERITASLike, self).__init__(name, )
+        super(VERITASLike, self).__init__(name, {})
