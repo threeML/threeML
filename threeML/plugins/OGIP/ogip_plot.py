@@ -28,9 +28,6 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
 
     """
 
-    import inspect
-
-    print inspect.getmro(OGIPLike)
 
     # If the user supplies a subset of the data, we will use that
 
@@ -298,8 +295,6 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
 
             raise NotImplementedError("Not yet implemented")
 
-        # is this the best way to do residuals?
-        # residuals = (new_model_rate - new_rate) / new_model_rate
 
         ax1.axhline(0, linestyle='--', color='k')
         ax1.errorbar(mean_energy,

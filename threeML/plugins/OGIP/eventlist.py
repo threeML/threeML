@@ -9,7 +9,7 @@ from threeML.minimizer import minimization
 import pandas as pd
 
 from threeML.io.rich_display import display
-from threeML.utils.stats_tools import li_and_ma
+from threeML.utils.stats_tools import Significance
 
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
@@ -461,9 +461,12 @@ class EventList(object):
             info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
             info_dict['Unbinned Fit'] = self._unbinned
 
-            S = li_and_ma(self._counts.sum(), self._poly_counts.sum())
+            sig =Significance(self._counts.sum(), self._poly_counts.sum())
 
-            info_dict['Li and Ma Sigma'] = S  # not sure if li and ma applies here
+            bkg_sig = np.sqrt( (self._poly_count_err**2).sum())
+
+
+            info_dict['Li and Ma Sigma'] = sig.li_and_ma_equivalent_for_gaussian_background(bkg_sig)  # not sure if li and ma applies here
 
         info_df = pd.Series(info_dict)
 
