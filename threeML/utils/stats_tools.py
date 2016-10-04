@@ -38,10 +38,6 @@ def aic(log_like, n_parameters, n_data_points):
 def bic(log_like, n_parameters, n_data_points):
     """
     The Bayesian information criterion.
-
-
-    Returns:
-
     """
     val = -2. * log_like + n_parameters * np.log(n_data_points)
 
@@ -61,10 +57,10 @@ def dic(bayesian_trace):
     The Deviance information criteria derived from MCMC traces
     Read more:  dx.doi.org/10.1111/1467-9868.00353
 
-    Args:
-        bayesian_trace: an instance of Bayesian Analysis
 
-    Returns: deviance information criteria
+    :param bayesian_trace: an instance of Bayesian Analysis
+
+    :return: deviance information criteria
 
     """
 
@@ -98,6 +94,13 @@ class ModelComparison(object):
             self._stat_df = self._compute_bayes_statistics()
 
     def report(self, sort=None, normalized=True, precision=1):
+        """
+        Create a statistical report for multiple fits
+        :param sort: (optional) which statistic to sort (str)
+        :param normalized: (optional) normalize the stats to the best fit
+        :param precision: (optional) precision of the table
+        :return: stats DataFrame
+        """
 
         pd.options.display.float_format = ('{:.%df}' % (precision)).format
 
