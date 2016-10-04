@@ -581,44 +581,38 @@ class SpectralPlotter(object):
 
         errors = []
 
-        model = self._analysis.likelihood_model.point_sources[source]
+        # Moving from grabbing the spectrum, to grabbing the parameters from the minizer
 
-        # Check for nuisance parameters which have ZERO first derivatives w.r.t
-        # the photon model.
 
-        n_nuisance_parameters = 0
+        parameters = self._analysis.minimizer.parameters
 
-        for data in self._analysis.data_list.values():
+        # There is an assumption that free parameters are not fixed post-fit
+        # If this happens, the minimizer will have the wrong number of parameters
+        # for the cov matrix and fail. We will try to catch that.
 
-            for npar in data.nuisance_parameters.values():
 
-                if npar.free:
-                    n_nuisance_parameters += 1
-
-        zero_first_derivatives = np.zeros(n_nuisance_parameters)
 
         for ene in energy:
 
             first_derivatives = []
 
-            for par in model.spectrum.main.shape.free_parameters.keys():
+            for par in parameters.keys():
 
                 self._analysis.restore_best_fit()
 
-                parameter_best_fit_value = model.spectrum.main.shape.free_parameters[par].value
-                min_value, max_value = model.spectrum.main.shape.free_parameters[par].bounds
+                parameter_best_fit_value = parameters[par].value
+                min_value, max_value = parameters[par].bounds
 
                 def tmpflux(current_value):
-                    model.spectrum.main.shape.free_parameters[par].value = current_value
+
+                    parameters[par].value = current_value
 
                     return flux_function(ene).value
 
-                this_derivate = get_jacobian(tmpflux, parameter_best_fit_value, min_value, max_value)[0][0]
+                this_derivative = get_jacobian(tmpflux, parameter_best_fit_value, min_value, max_value)[0][0]
 
-                first_derivatives.append(this_derivate)
+                first_derivatives.append(this_derivative)
 
-            # add the nuisance parameter first derivatives at the end (does this assumption always hold?)
-            first_derivatives.extend(zero_first_derivatives)
 
             first_derivatives = np.array(first_derivatives)
 
