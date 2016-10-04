@@ -758,13 +758,10 @@ class Response(object):
                 # print len(matrix[i][m_start:m_start + n_chan[i][j]])
                 # print '-----------'
                 #
-                try:
 
-                    rsp[i, f_chan[i][j]: f_chan[i][j] + n_chan[i][j]] = matrix[i][m_start:m_start + n_chan[i][j]]
 
-                except(ValueError):
+                rsp[i, f_chan[i][j]: f_chan[i][j] + n_chan[i][j]] = matrix[i][m_start:m_start + n_chan[i][j]]
 
-                    rsp[i, f_chan[i][j] -1: f_chan[i][j]-1 + n_chan[i][j]] = matrix[i][m_start:m_start + n_chan[i][j]]
 
 
 

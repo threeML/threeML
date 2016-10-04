@@ -122,6 +122,10 @@ class BayesianAnalysis(object):
         self._update_free_parameters()
 
     @property
+    def analysis_type(self):
+        return self._analysis_type
+
+    @property
     def log_like_values(self):
         """
         Returns the value of the log_likelihood found by the bayesian sampler while sampling from the posterior. If
@@ -933,18 +937,15 @@ class BayesianAnalysis(object):
 
         return nbins
 
-    def restore_mean_fit(self):
+    def restore_median_fit(self):
         """
         Sets the model parameters to the mean of the marginal distributions
-
-        Returns:
-
         """
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
             # Add the samples for this parameter for this source
 
-            mean_par = np.mean(self._samples[parameter_name])
+            mean_par = np.median(self._samples[parameter_name])
             parameter.value = mean_par
 
 

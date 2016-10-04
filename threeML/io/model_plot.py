@@ -28,7 +28,7 @@ class SpectralPlotter(object):
 
         # Determine the type of analysis
 
-        self._analysis_type = analysis._analysis_type
+        self._analysis_type = analysis.analysis_type
 
         self._analysis = analysis
 

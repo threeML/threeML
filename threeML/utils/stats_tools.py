@@ -85,7 +85,7 @@ class ModelComparison(object):
         if (np.unique([a._analysis_type for a in analyses])).shape[0] > 1:
             raise RuntimeError("Only all Bayesian or all MLE analyses are allowed. Not a mixture!")
 
-        self._analysis_type = analyses[0]._analysis_type
+        self._analysis_type = analyses[0].analysis_type
 
         if self._analysis_type == 'mle':
 
