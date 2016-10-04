@@ -7,17 +7,18 @@ from astromodels.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
 from matplotlib.ticker import MaxNLocator
-import sys
+
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.step_plot import step_plot
+from threeML.utils.stats_tools import Significance
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import Response
-from threeML.utils.Binner import Rebinner
+from threeML.utils.binner import Rebinner
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -26,7 +27,13 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
 class OGIPLike(PluginPrototype):
-    def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None):
+
+
+    def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None, verbose=True):
+
+        # Just a toggle for verbosity
+        self._verbose = bool(verbose)
+
 
         assert is_valid_variable_name(name), "Name %s is not a valid name for a plugin. You must use a name which is " \
                                              "a valid python identifier: no spaces, no operators (+,-,/,*), " \
@@ -171,10 +178,11 @@ class OGIPLike(PluginPrototype):
         self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
 
         # Print the autoprobed noise models
+        if self._verbose:
 
-        print("Auto-probed noise models:")
-        print("- observation: %s" % self.observation_noise_model)
-        print("- background: %s" % self.background_noise_model)
+            print("Auto-probed noise models:")
+            print("- observation: %s" % self.observation_noise_model)
+            print("- background: %s" % self.background_noise_model)
 
         # Now create the nuisance parameter for the effective area correction, which is fixed
         # by default. This factor multiplies the model so that it can account for calibration uncertainties on the
@@ -237,9 +245,13 @@ class OGIPLike(PluginPrototype):
 
             self._mask[idx1:idx2 + 1] = True
 
-            print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
+            if self._verbose:
 
-        print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
+                print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
+
+        if self._verbose:
+
+            print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
 
         # Apply the mask
         self._apply_mask_to_original_vectors()
@@ -290,7 +302,9 @@ class OGIPLike(PluginPrototype):
 
             self._current_background_errors, = self._rebinner.rebin_errors(self._background_errors)
 
-        print("Now using %s bins" % self._rebinner.n_bins)
+        if self._verbose:
+
+            print("Now using %s bins" % self._rebinner.n_bins)
 
     def remove_rebinning(self):
         """
@@ -359,17 +373,25 @@ class OGIPLike(PluginPrototype):
 
         return loglike
 
+    @property
+    def scale_factor(self):
+        """
+        Ratio between the source and the background exposure and area
+
+        :return:
+        """
+
+        return self._pha.exposure / self._bak.exposure * self._pha.scale_factor / self._bak.scale_factor
+
     def _loglike_poisson_obs_poisson_bkg(self):
 
         # Scale factor between source and background spectrum
-
-        scale_factor = self._pha.exposure / self._bak.exposure * self._pha.scale_factor / self._bak.scale_factor
 
         model_counts = self.get_folded_model()
 
         loglike = poisson_observed_poisson_background(self._current_observed_counts,
                                                       self._current_background_counts,
-                                                      scale_factor,
+                                                      self.scale_factor,
                                                       model_counts)
 
         return loglike
@@ -751,6 +773,7 @@ class OGIPLike(PluginPrototype):
         ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
         ax.set_xlim(left=self._rsp.ebounds[0, 0], right=self._rsp.ebounds[-1, 1])
         ax.legend()
+
 
 
 

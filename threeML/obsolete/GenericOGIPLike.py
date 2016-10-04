@@ -1,9 +1,7 @@
-import warnings
-
 import numpy as np
 
+from threeML.obsolete.ogip import OGIPPHA, OGIPPluginCash
 from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins.ogip import OGIPPHA, OGIPPluginCash
 
 __instrument_name = "All OGIP-compliant instruments"
 

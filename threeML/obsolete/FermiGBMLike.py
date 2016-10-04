@@ -1,8 +1,8 @@
 import numpy as np
 
-from ogip import OGIPPluginPGstat
+from threeML.obsolete.ogip import OGIPPHA
+from threeML.obsolete.ogip import OGIPPluginPGstat
 from threeML.plugin_prototype import PluginPrototype
-from ogip import OGIPPHA
 
 
 __instrument_name = "Fermi GBM (all detectors)"
