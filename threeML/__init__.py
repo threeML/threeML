@@ -104,6 +104,8 @@ found_plugins = glob.glob(os.path.join(plugins_dir, "*.py"))
 
 found_plugins = filter(lambda x: x.find("__init__") < 0, found_plugins)
 
+
+
 _available_plugins = {}
 
 for i, plug in enumerate(found_plugins):
