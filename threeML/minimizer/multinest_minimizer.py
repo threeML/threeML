@@ -127,7 +127,7 @@ class MultinestMinimizer(Minimizer):
                                       n_dim,
                                       n_dim,
                                       outputfiles_basename=outputfiles_basename,
-                                      n_live_points=n_dim * 10,
+                                      n_live_points=max(100, n_dim * 20),
                                       multimodal=True,
                                       resume=False)
 
