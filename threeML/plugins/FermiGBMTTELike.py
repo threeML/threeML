@@ -20,7 +20,7 @@ __instrument_name = "Fermi GBM TTE (all detectors)"
 
 class FermiGBMTTELike(OGIPLike):
     def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
-                 poly_order=-1, unbinned=True):
+                 poly_order=-1, unbinned=True, verbose=True):
         """
         If the input files are TTE files. Background selections are specified as
         a comma separated string e.g. "-10-0,10-20"
@@ -71,7 +71,7 @@ class FermiGBMTTELike(OGIPLike):
 
         self._rsp_file = rsp_file
 
-        OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file)
+        OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file,verbose=verbose)
 
     def __set_poly_order(self, value):
         """Background poly order setter """

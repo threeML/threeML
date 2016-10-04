@@ -128,6 +128,7 @@ for i, plug in enumerate(found_plugins):
 
     for name, cls in classes:
 
+
         if not issubclass(cls, PluginPrototype):
 
             # This is not a plugin

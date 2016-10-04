@@ -9,7 +9,7 @@ from astromodels.utils.valid_variable import is_valid_variable_name
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.step_plot import step_plot
-from threeML.utils.stats_tools import Significance
+
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
