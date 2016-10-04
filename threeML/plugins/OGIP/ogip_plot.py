@@ -7,7 +7,7 @@ from threeML.utils.Binner import Rebinner
 from threeML.io.step_plot import step_plot
 
 
-def display_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
+def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
     """
 
     Display the fitted model count spectrum of one or more OGIP plugins
