@@ -618,19 +618,19 @@ class BayesianAnalysis(object):
         Corner plots using chainconsumer which allows for sexier plotting of
         marginals
 
-           Args:
 
-            sigmas: list of sigma levels to include. 0 must be included to avoid hole in contour
-            cloud: bool. Whether or not to plot MC points
-            shade: bool. Fill in the contours
-            shade_alpha: alpha level of contours
-            parameters: list of parameters to plot
-            renamed_parameters: a python dictionary of parameters to rename.
+
+        :param sigmas: list of sigma levels to include. 0 must be included to avoid hole in contour
+        :param cloud: bool. Whether or not to plot MC points
+        :param shade: bool. Fill in the contours
+        :param shade_alpha: alpha level of contours
+        :param parameters: list of parameters to plot
+        :param renamed_parameters: a python dictionary of parameters to rename.
              Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
              {'old label': 'new label'}
-            **kwargs: chainconsumer general keyword arguments
+        :param **kwargs: chainconsumer general keyword arguments
 
-        Returns:
+        :return fig:
 
         """
 
@@ -1128,8 +1128,8 @@ class BayesianAnalysis(object):
         """
         Internal method to determine the minimum interval of a given width
         Assumes that x is sorted numpy array.
-        :argument: a: a numpy array containing samples
-        :argument: alpha: probability of type I error
+        :param a: a numpy array containing samples
+        :param alpha: probability of type I error
 
         :returns: list containing min and max HDI
 
@@ -1153,11 +1153,9 @@ class BayesianAnalysis(object):
     def _hpd(self, x, alpha=0.05):
         """Calculate highest posterior density (HPD) of array for given alpha.
         The HPD is the minimum width Bayesian credible interval (BCI).
-        :Arguments:
-        x : Numpy array
-        An array containing MCMC samples
-        alpha : float
-        Desired probability of type I error (defaults to 0.05)
+
+        :param x: array containing MCMC samples
+        :param alpha : Desired probability of type I error (defaults to 0.05)
         """
 
         # Currently only 1D available.

@@ -96,7 +96,8 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
                                      doc="Get or set the background polynomial order")
 
     def set_active_time_interval(self, *intervals):
-        '''Set the time interval to be used during the analysis.
+        """
+        Set the time interval to be used during the analysis.
         For now, only one interval can be selected. This may be
         updated in the future to allow for self consistent time
         resolved analysis.
@@ -105,7 +106,10 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
         set_active_time_interval("0.0-10.0")
 
         which will set the energy range 0-10. seconds.
-        '''
+        :param intervals:
+        :return:
+        """
+
 
         self._evt_list.set_active_time_intervals(*intervals)
 
@@ -128,11 +132,11 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
         setBackgroundInterval("-10.0-0.0","10.-15.")
 
-        Args:
-            *intervals:
-            **options:
 
-        Returns:
+        :param *intervals:
+        :param **options:
+
+        :return: none
 
         """
 
@@ -149,6 +153,14 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
                               rsp_file=self._rsp_file)
 
     def view_lightcurve(self, start=-10, stop=20., dt=1., energy_selection=None):
+        """
+
+        :param start: start time to view
+        :param stop:  stop time to view
+        :param dt:  dt of the light curve
+        :param energy_selection: string containing energy interval
+        :return: fig
+        """
 
         if energy_selection is not None:
 
@@ -236,13 +248,14 @@ class FermiGBMLikeTTE(OGIPLike, PluginPrototype):
 
 class GBMTTEFile(object):
     def __init__(self, ttefile):
-        '''
+        """
+
         A simple class for opening and easily accessing Fermi GBM
         TTE Files.
 
         :param ttefile: The filename of the TTE file to be stored
 
-        '''
+        """
 
         tte = fits.open(ttefile)
 
@@ -347,6 +360,13 @@ class GBMTTEFile(object):
         return mission_dict
 
     def peek(self):
+        """
+        Examine the currently selected interval
+        If connected to the internet, will also look up info for other instruments to compare with
+        Fermi.
+
+        :return: none
+        """
 
         mission_dict = self._compute_mission_times()
 
