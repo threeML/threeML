@@ -182,9 +182,7 @@ from .io.flux_calculator import SpectralFlux
 # Added by JM to import Model comparison
 from .utils.stats_tools import ModelComparison
 
-
-
-from .plugins.OGIPLike import display_model_counts  # experimental
+from .plugins.OGIP.ogip_plot import display_ogip_model_counts
 
 from .parallel.parallel_client import parallel_computation
 
