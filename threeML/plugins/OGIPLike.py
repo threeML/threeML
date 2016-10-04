@@ -7,17 +7,17 @@ from astromodels.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
 from matplotlib.ticker import MaxNLocator
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.step_plot import step_plot
+from threeML.utils.stats_tools import Significance
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import Response
-from threeML.utils.Binner import Rebinner
+from threeML.utils.binner import Rebinner
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -28,7 +28,10 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 class OGIPLike(PluginPrototype):
 
-    def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None):
+    def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None, verbose=True):
+
+        # Just a toggle for verbosity
+        self._verbose = bool(verbose)
 
         assert is_valid_variable_name(name), "Name %s is not a valid name for a plugin. You must use a name which is " \
                                              "a valid python identifier: no spaces, no operators (+,-,/,*), " \
@@ -173,10 +176,11 @@ class OGIPLike(PluginPrototype):
         self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
 
         # Print the autoprobed noise models
+        if self._verbose:
 
-        print("Auto-probed noise models:")
-        print("- observation: %s" % self.observation_noise_model)
-        print("- background: %s" % self.background_noise_model)
+            print("Auto-probed noise models:")
+            print("- observation: %s" % self.observation_noise_model)
+            print("- background: %s" % self.background_noise_model)
 
         # Now create the nuisance parameter for the effective area correction, which is fixed
         # by default. This factor multiplies the model so that it can account for calibration uncertainties on the
@@ -239,9 +243,13 @@ class OGIPLike(PluginPrototype):
 
             self._mask[idx1:idx2 + 1] = True
 
-            print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
+            if self._verbose:
 
-        print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
+                print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
+
+        if self._verbose:
+
+            print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
 
         # Apply the mask
         self._apply_mask_to_original_vectors()
@@ -292,7 +300,9 @@ class OGIPLike(PluginPrototype):
 
             self._current_background_errors, = self._rebinner.rebin_errors(self._background_errors)
 
-        print("Now using %s bins" % self._rebinner.n_bins)
+        if self._verbose:
+
+            print("Now using %s bins" % self._rebinner.n_bins)
 
     def remove_rebinning(self):
         """
@@ -361,17 +371,25 @@ class OGIPLike(PluginPrototype):
 
         return loglike
 
+    @property
+    def scale_factor(self):
+        """
+        Ratio between the source and the background exposure and area
+
+        :return:
+        """
+
+        return self._pha.exposure / self._bak.exposure * self._pha.scale_factor / self._bak.scale_factor
+
     def _loglike_poisson_obs_poisson_bkg(self):
 
         # Scale factor between source and background spectrum
-
-        scale_factor = self._pha.exposure / self._bak.exposure * self._pha.scale_factor / self._bak.scale_factor
 
         model_counts = self.get_folded_model()
 
         loglike = poisson_observed_poisson_background(self._current_observed_counts,
                                                       self._current_background_counts,
-                                                      scale_factor,
+                                                      self.scale_factor,
                                                       model_counts)
 
         return loglike
@@ -758,6 +776,8 @@ def display_model_counts(*args, **kwargs):
     :param data_colors: (optional) a tuple or list with the color for each dataset
     :param model_colors: (optional) a tuple or list with the color for each folded model
     :param show_legend: (optional) if True (default), shows a legend
+    :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
+    with linear interpolation between each bin
     :return: figure instance
     """
 
@@ -776,11 +796,18 @@ def display_model_counts(*args, **kwargs):
     data_colors = map(lambda x:data_cmap(x), np.linspace(0.0, 1.0, len(args)))
     model_colors = map(lambda x:model_cmap(x), np.linspace(0.0, 1.0, len(args)))
 
+    # Default is to show the model with steps
+    step = True
+
     # Now override defaults according to the optional keywords, if present
 
     if 'show_legend' in kwargs:
 
         show_legend = bool(kwargs.pop('show_legend'))
+
+    if 'step' in kwargs:
+
+        step = bool(kwargs.pop('step'))
 
     if 'min_rate' in kwargs:
 
@@ -791,6 +818,8 @@ def display_model_counts(*args, **kwargs):
         try:
 
             min_rate = float(min_rate)
+
+            min_rates = [min_rate] * len(args)
 
         except TypeError:
 
@@ -823,7 +852,7 @@ def display_model_counts(*args, **kwargs):
         assert len(model_colors) >= len(args), "You need to provide at least a number of model colors equal to the " \
                                                 "number of datasets"
 
-    fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
+    fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [3, 1]})
 
     #divider = make_axes_locatable(ax)
 
@@ -883,7 +912,6 @@ def display_model_counts(*args, **kwargs):
         # calculate all the correct quantites
 
         # since we compare to the model rate... background subtract but with proper propagation
-
         src_rate = (observed_counts / data.exposure - background_counts / data.background_exposure)
 
         src_rate_err = np.sqrt((cnt_err / data.exposure) ** 2 +
@@ -917,22 +945,75 @@ def display_model_counts(*args, **kwargs):
                     label=data._name,
                     color=data_color)
 
-        step_plot(np.asarray(zip(energy_min[data._mask], energy_max[data._mask])),
-                  expected_model_rate[data._mask] / chan_width[data._mask],
-                  ax, alpha=.8,
-                  label='%s Model' % data._name, color=model_color)
+        if step:
+
+            step_plot(np.asarray(zip(new_energy_min, new_energy_max)),
+                      new_model_rate / new_chan_width,
+                      ax, alpha=.8,
+                      label='%s Model' % data._name, color=model_color)
+
+        else:
+
+            # We always plot the model un-rebinned here
+
+            # Mask the array so we don't plot the model where data have been excluded
+            #y = expected_model_rate / chan_width
+            y = np.ma.masked_where(~data._mask, expected_model_rate / chan_width)
+
+            x = np.mean([energy_min, energy_max], axis=0)
+
+            ax.plot(x, y, alpha=.8, label='%s Model' % data._name, color=model_color)
 
         # Residuals
-        # ax1 = fig.add_subplot(gs[1])
 
+        # we need to get the rebinned counts
+        rebinned_observed_counts, = this_rebinner.rebin(observed_counts)
+
+        # the rebinned counts expected from the model
+        rebinned_model_counts = new_model_rate * data.exposure
+
+        # and also the rebinned background
+
+        rebinned_background_counts, = this_rebinner.rebin(background_counts)
+        rebinned_background_errors, = this_rebinner.rebin_errors(background_errors)
+
+        significance_calc = Significance(rebinned_observed_counts,
+                                         rebinned_background_counts + rebinned_model_counts / data.scale_factor,
+                                         data.scale_factor)
+
+        # Divide the various cases
+
+        if data._observation_noise_model == 'poisson':
+
+            if data._background_noise_model == 'poisson':
+
+                # We use the Li-Ma formula to get the significance (sigma)
+
+                residuals = significance_calc.li_and_ma()
+
+            elif data._background_noise_model == 'ideal':
+
+                residuals = significance_calc.known_background()
+
+            elif data._background_noise_model == 'gaussian':
+
+                residuals = significance_calc.li_and_ma_equivalent_for_gaussian_background(rebinned_background_errors)
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            raise NotImplementedError("Not yet implemented")
 
         # is this the best way to do residuals?
-        residuals = (new_model_rate - new_rate) / new_model_rate
+        #residuals = (new_model_rate - new_rate) / new_model_rate
 
         ax1.axhline(0, linestyle='--', color='k')
         ax1.errorbar(mean_energy,
                      residuals,
-                     yerr=new_err / new_model_rate,
+                     yerr= np.ones_like(residuals),
                      capsize=0,
                      fmt='.',
                      markersize=3,
