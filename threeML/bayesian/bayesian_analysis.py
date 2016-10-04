@@ -933,6 +933,22 @@ class BayesianAnalysis(object):
 
         return nbins
 
+    def restore_mean_fit(self):
+        """
+        Sets the model parameters to the mean of the marginal distributions
+
+        Returns:
+
+        """
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+            # Add the samples for this parameter for this source
+
+            mean_par = np.mean(self._samples[parameter_name])
+            parameter.value = mean_par
+
+
+
     def _update_free_parameters(self):
         """
         Update the dictionary of the current free parameters
