@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib.ticker import MaxNLocator
 
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.utils.Binner import Rebinner
+from threeML.utils.binner import Rebinner
 from threeML.io.step_plot import step_plot
 from threeML.utils.stats_tools import Significance
 
