@@ -6,8 +6,6 @@ import numpy as np
 from astromodels.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
-from matplotlib.ticker import MaxNLocator
-
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.step_plot import step_plot

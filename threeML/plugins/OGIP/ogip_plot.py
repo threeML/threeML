@@ -5,7 +5,7 @@ from matplotlib.ticker import MaxNLocator
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.Binner import Rebinner
 from threeML.io.step_plot import step_plot
-
+from threeML.utils.stats_tools import Significance
 
 def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
     """
@@ -21,7 +21,10 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
     :param data_colors: (optional) a tuple or list with the color for each dataset
     :param model_colors: (optional) a tuple or list with the color for each folded model
     :param show_legend: (optional) if True (default), shows a legend
+    :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
+    with linear interpolation between each bin
     :return: figure instance
+
 
     """
 
@@ -60,6 +63,9 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
 
     # default settings
 
+    # Default is to show the model with steps
+    step = True
+
     min_rates = [min_rate] * len(data_keys)
 
     data_cmap = plt.cm.rainbow
@@ -79,6 +85,11 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
 
         show_legend = bool(kwargs.pop('show_legend'))
 
+    if 'step' in kwargs:
+
+        step = bool(kwargs.pop('step'))
+
+
     if 'min_rate' in kwargs:
 
         min_rate = kwargs.pop('min_rate')
@@ -88,6 +99,8 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
         try:
 
             min_rate = float(min_rate)
+
+            min_rates = [min_rate] * len(data_keys)
 
         except TypeError:
 
@@ -191,7 +204,6 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
         # calculate all the correct quantites
 
         # since we compare to the model rate... background subtract but with proper propagation
-
         src_rate = (observed_counts / data.exposure - background_counts / data.background_exposure)
 
         src_rate_err = np.sqrt((cnt_err / data.exposure) ** 2 +
@@ -224,22 +236,75 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
                     label=data._name,
                     color=data_color)
 
-        step_plot(np.asarray(zip(energy_min[data._mask], energy_max[data._mask])),
-                  expected_model_rate[data._mask] / chan_width[data._mask],
-                  ax, alpha=.8,
-                  label='%s Model' % data._name, color=model_color)
+        if step:
+
+            step_plot(np.asarray(zip(new_energy_min, new_energy_max)),
+                      new_model_rate / new_chan_width,
+                      ax, alpha=.8,
+                      label='%s Model' % data._name, color=model_color)
+
+        else:
+
+            # We always plot the model un-rebinned here
+
+            # Mask the array so we don't plot the model where data have been excluded
+            # y = expected_model_rate / chan_width
+            y = np.ma.masked_where(~data._mask, expected_model_rate / chan_width)
+
+            x = np.mean([energy_min, energy_max], axis=0)
+
+            ax.plot(x, y, alpha=.8, label='%s Model' % data._name, color=model_color)
 
         # Residuals
-        # ax1 = fig.add_subplot(gs[1])
 
+        # we need to get the rebinned counts
+        rebinned_observed_counts, = this_rebinner.rebin(observed_counts)
+
+        # the rebinned counts expected from the model
+        rebinned_model_counts = new_model_rate * data.exposure
+
+        # and also the rebinned background
+
+        rebinned_background_counts, = this_rebinner.rebin(background_counts)
+        rebinned_background_errors, = this_rebinner.rebin_errors(background_errors)
+
+        significance_calc = Significance(rebinned_observed_counts,
+                                         rebinned_background_counts + rebinned_model_counts / data.scale_factor,
+                                         data.scale_factor)
+
+        # Divide the various cases
+
+        if data._observation_noise_model == 'poisson':
+
+            if data._background_noise_model == 'poisson':
+
+                # We use the Li-Ma formula to get the significance (sigma)
+
+                residuals = significance_calc.li_and_ma()
+
+            elif data._background_noise_model == 'ideal':
+
+                residuals = significance_calc.known_background()
+
+            elif data._background_noise_model == 'gaussian':
+
+                residuals = significance_calc.li_and_ma_equivalent_for_gaussian_background(rebinned_background_errors)
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            raise NotImplementedError("Not yet implemented")
 
         # is this the best way to do residuals?
-        residuals = (new_model_rate - new_rate) / new_model_rate
+        # residuals = (new_model_rate - new_rate) / new_model_rate
 
         ax1.axhline(0, linestyle='--', color='k')
         ax1.errorbar(mean_energy,
                      residuals,
-                     yerr=new_err / new_model_rate,
+                     yerr=np.ones_like(residuals),
                      capsize=0,
                      fmt='.',
                      markersize=3,
