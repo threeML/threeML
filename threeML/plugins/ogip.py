@@ -720,6 +720,8 @@ class Response(object):
 
         assert n_channels is not None, "Matrix is improperly formatted. No DETCHANS keyword."
 
+
+
         rsp = np.zeros([data.shape[0], n_channels], float)
 
         n_grp = data.field("N_GRP")
@@ -748,8 +750,24 @@ class Response(object):
             m_start = 0
 
             for j in range(n_grp[i]):
+                # print '-----------'
+                # print f_chan[i][j]
+                # print n_chan[i][j]
+                #
+                # print len(rsp[i, f_chan[i][j]: f_chan[i][j] + n_chan[i][j]])
+                # print len(matrix[i][m_start:m_start + n_chan[i][j]])
+                # print '-----------'
+                #
+                try:
 
-                rsp[i, f_chan[i][j]: f_chan[i][j] + n_chan[i][j]] = matrix[i][m_start:m_start + n_chan[i][j]]
+                    rsp[i, f_chan[i][j]: f_chan[i][j] + n_chan[i][j]] = matrix[i][m_start:m_start + n_chan[i][j]]
+
+                except(ValueError):
+
+                    rsp[i, f_chan[i][j] -1: f_chan[i][j]-1 + n_chan[i][j]] = matrix[i][m_start:m_start + n_chan[i][j]]
+
+
+
 
                 m_start += n_chan[i][j]
 
