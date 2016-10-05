@@ -379,7 +379,7 @@ class OGIPLike(PluginPrototype):
                                                    self._current_scaled_background_counts,
                                                    model_counts)
 
-        return loglike
+        return np.sum(loglike)
 
     @property
     def scale_factor(self):
@@ -402,7 +402,7 @@ class OGIPLike(PluginPrototype):
                                                       self.scale_factor,
                                                       model_counts)
 
-        return loglike
+        return np.sum(loglike)
 
     def _loglike_poisson_obs_gaussian_bkg(self):
 
@@ -413,7 +413,7 @@ class OGIPLike(PluginPrototype):
                                                        self._current_background_errors,
                                                        expected_model_counts)
 
-        return loglike
+        return np.sum(loglike)
 
     def _set_background_noise_model(self, new_model):
 
