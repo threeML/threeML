@@ -494,7 +494,7 @@ class EventList(object):
         log_likelihoods = []
 
         for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = polyfit(bins, cnts, grade, exposure, self._get_minimizer)
+            polynomial, log_like = polyfit(bins, cnts, grade, exposure)
 
             log_likelihoods.append(log_like)
 
@@ -743,7 +743,7 @@ class EventList(object):
                     polynomial, _ = polyfit(mean_time[non_zero_mask],
                                             cnts[non_zero_mask],
                                             self._optimal_polynomial_grade,
-                                            exposure_per_bin[non_zero_mask], self._get_minimizer)
+                                            exposure_per_bin[non_zero_mask])
 
                     polynomials.append(polynomial)
                     p.increase()

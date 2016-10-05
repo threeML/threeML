@@ -9,7 +9,7 @@ import re
 import requests
 
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugin_prototype import PluginPrototype
+
 from OGIP.eventlist import EventList
 from threeML.io.rich_display import display
 
