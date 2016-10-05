@@ -149,6 +149,10 @@ class JointLikelihood(object):
 
             raise RuntimeError("You need to run a fit before accessing the correlation matrix")
 
+    @property
+    def analysis_type(self):
+        return self._analysis_type
+
     def _update_free_parameters(self):
 
         """Update the dictionary of free parameters"""

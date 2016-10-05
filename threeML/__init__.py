@@ -104,6 +104,8 @@ found_plugins = glob.glob(os.path.join(plugins_dir, "*.py"))
 
 found_plugins = filter(lambda x: x.find("__init__") < 0, found_plugins)
 
+
+
 _available_plugins = {}
 
 for i, plug in enumerate(found_plugins):
@@ -125,6 +127,7 @@ for i, plug in enumerate(found_plugins):
     classes = inspect.getmembers(thisPlugin, lambda x: inspect.isclass(x) and inspect.getmodule(x) == thisPlugin)
 
     for name, cls in classes:
+
 
         if not issubclass(cls, PluginPrototype):
 
@@ -179,7 +182,10 @@ from .io.model_plot import SpectralPlotter
 # Added by JM to import flux calcuations.
 from .io.flux_calculator import SpectralFlux
 
-from .plugins.OGIPLike import display_model_counts  # experimental
+# Added by JM to import Model comparison
+from .utils.stats_tools import ModelComparison
+
+from .plugins.OGIP.ogip_plot import display_ogip_model_counts
 
 from .parallel.parallel_client import parallel_computation
 

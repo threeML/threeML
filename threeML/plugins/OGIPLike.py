@@ -6,11 +6,10 @@ import numpy as np
 from astromodels.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
-from matplotlib.ticker import MaxNLocator
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.step_plot import step_plot
-from threeML.utils.stats_tools import Significance
+
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
@@ -25,13 +24,14 @@ __instrument_name = "All OGIP-compliant instruments"
 _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
-
 class OGIPLike(PluginPrototype):
+
 
     def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None, verbose=True):
 
         # Just a toggle for verbosity
         self._verbose = bool(verbose)
+
 
         assert is_valid_variable_name(name), "Name %s is not a valid name for a plugin. You must use a name which is " \
                                              "a valid python identifier: no spaces, no operators (+,-,/,*), " \
@@ -186,7 +186,7 @@ class OGIPLike(PluginPrototype):
         # by default. This factor multiplies the model so that it can account for calibration uncertainties on the
         # global effective area. By default it is limited to stay within 20%
 
-        self._nuisance_parameter = Parameter("cons_%s" % name, 1.0, min_value = 0.8, max_value = 1.2, delta=0.05,
+        self._nuisance_parameter = Parameter("cons_%s" % name, 1.0, min_value=0.8, max_value=1.2, delta=0.05,
                                              free=False, desc="Effective area correction for %s" % name)
 
         nuisance_parameters = collections.OrderedDict()
@@ -596,6 +596,17 @@ class OGIPLike(PluginPrototype):
 
         return energy_min, energy_max
 
+    @property
+    def n_data_points(self):
+
+        if self._rebinner is not None:
+
+            return self._rebinner.n_bins
+
+        else:
+
+            return int(self._mask.sum())
+
     def view_count_spectrum(self, plot_errors=True):
         """
         View the count and background spectrum. Useful to check energy selections.
@@ -762,294 +773,10 @@ class OGIPLike(PluginPrototype):
         ax.legend()
 
 
-def display_model_counts(*args, **kwargs):
-    """
 
-    Display the fitted model count spectrum of one or more OGIP plugins
-
-    :param args: one or more instances of OGIP plugin
-    :param min_rate: (optional) rebin to keep this minimum rate in each channel (if possible). If one number is
-    provided, the same minimum rate is used for each dataset, otherwise a list can be provided with the minimum rate
-    for each dataset
-    :param data_cmap: (optional) the color map used to extract automatically the colors for the data
-    :param model_cmap: (optional) the color map used to extract automatically the colors for the models
-    :param data_colors: (optional) a tuple or list with the color for each dataset
-    :param model_colors: (optional) a tuple or list with the color for each folded model
-    :param show_legend: (optional) if True (default), shows a legend
-    :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
-    with linear interpolation between each bin
-    :return: figure instance
-    """
-
-    # default settings
-
-    min_rates = [1e-99] * len(args)
-
-    data_cmap = plt.cm.rainbow
-    model_cmap = plt.cm.nipy_spectral_r
-
-    # Legend is on by default
-    show_legend = True
-
-    # Default colors
-
-    data_colors = map(lambda x:data_cmap(x), np.linspace(0.0, 1.0, len(args)))
-    model_colors = map(lambda x:model_cmap(x), np.linspace(0.0, 1.0, len(args)))
-
-    # Default is to show the model with steps
-    step = True
-
-    # Now override defaults according to the optional keywords, if present
-
-    if 'show_legend' in kwargs:
-
-        show_legend = bool(kwargs.pop('show_legend'))
-
-    if 'step' in kwargs:
-
-        step = bool(kwargs.pop('step'))
-
-    if 'min_rate' in kwargs:
-
-        min_rate = kwargs.pop('min_rate')
-
-        # If min_rate is a floating point, use the same for all datasets, otherwise use the provided ones
-
-        try:
-
-            min_rate = float(min_rate)
-
-            min_rates = [min_rate] * len(args)
-
-        except TypeError:
-
-            min_rates = list(min_rate)
-
-            assert len(min_rates) >= len(args), "If you provide different minimum rates for each data set, you need" \
-                                                "to provide an iterable of the same length of the number of datasets"
-
-    if 'data_cmap' in kwargs:
-
-        data_cmap = kwargs.pop('data_cmap')
-        data_colors = map(lambda x: data_cmap(x), np.linspace(0.0, 1.0, len(args)))
-
-    if 'model_cmap' in kwargs:
-
-        model_cmap = kwargs.pop('model_cmap')
-        model_colors = map(lambda x: model_cmap(x), np.linspace(0.0, 1.0, len(args)))
-
-    if 'data_colors' in kwargs:
-
-        data_colors = kwargs.pop('data_colors')
-
-        assert len(data_colors) >= len(args), "You need to provide at least a number of data colors equal to the " \
-                                               "number of datasets"
-
-    if 'model_colors' in kwargs:
-
-        model_colors = kwargs.pop('model_colors')
-
-        assert len(model_colors) >= len(args), "You need to provide at least a number of model colors equal to the " \
-                                                "number of datasets"
-
-    fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [3, 1]})
-
-    #divider = make_axes_locatable(ax)
-
-    #ax1 = divider.append_axes('bottom', size=1.75, pad=0., sharex=ax)
-
-    # go thru the detectors
-    for data, data_color, model_color, min_rate in zip(args, data_colors, model_colors, min_rates):
-
-        # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
-
-        energy_min, energy_max = data._rsp.ebounds.T
-
-        # figure out the type of data
-
-        if data._observation_noise_model == 'poisson':
-
-            # Observed counts
-            observed_counts = data._observed_counts
-
-            cnt_err = np.sqrt(observed_counts)
-
-            if data._background_noise_model == 'poisson':
-
-                background_counts = data._background_counts
-
-                # Gehrels weighting, a little bit better approximation when statistic is low
-                # (and inconsequential when statistic is high)
-
-                background_errors = 1 + np.sqrt(background_counts + 0.75)
-
-            elif data._background_noise_model == 'ideal':
-
-                background_counts = data._scaled_background_counts
-
-                background_errors = np.zeros_like(background_counts)
-
-            elif data._background_noise_model == 'gaussian':
-
-                background_counts = data._background_counts
-
-                background_errors = data._background_errors
-
-            else:
-
-                raise RuntimeError("This is a bug")
-
-        else:
-
-            raise NotImplementedError("Not yet implemented")
-
-        chan_width = energy_max - energy_min
-
-        # get the expected counts
-        # NOTE: _rsp.convolve() returns already the rate (counts / s)
-        expected_model_rate = data._nuisance_parameter.value * data._rsp.convolve() # * data.exposure  / data.exposure
-
-        # calculate all the correct quantites
-
-        # since we compare to the model rate... background subtract but with proper propagation
-        src_rate = (observed_counts / data.exposure - background_counts / data.background_exposure)
-
-        src_rate_err = np.sqrt((cnt_err / data.exposure) ** 2 +
-                               (background_errors / data.background_exposure) ** 2)
-
-        # rebin on the source rate
-        this_rebinner = Rebinner(src_rate, min_rate, data._mask)
-
-        # get the rebinned counts
-        new_rate, new_model_rate = this_rebinner.rebin(src_rate, expected_model_rate)
-        new_err, = this_rebinner.rebin_errors(src_rate_err)
-
-        # adjust channels
-        new_energy_min, new_energy_max = this_rebinner.get_new_start_and_stop(energy_min, energy_max)
-        new_chan_width = new_energy_max - new_energy_min
-
-
-        mean_energy = np.mean([new_energy_min, new_energy_max], axis=0)
-        delta_energy = new_energy_max - new_energy_min
-
-        ax.errorbar(mean_energy,
-                    new_rate / new_chan_width,
-                    yerr=new_err / new_chan_width,
-                    xerr=delta_energy/2.0,
-                    fmt='.',
-                    markersize=3,
-                    linestyle='',
-                    # elinewidth=.5,
-                    alpha=.9,
-                    capsize=0,
-                    label=data._name,
-                    color=data_color)
-
-        if step:
-
-            step_plot(np.asarray(zip(new_energy_min, new_energy_max)),
-                      new_model_rate / new_chan_width,
-                      ax, alpha=.8,
-                      label='%s Model' % data._name, color=model_color)
-
-        else:
-
-            # We always plot the model un-rebinned here
-
-            # Mask the array so we don't plot the model where data have been excluded
-            #y = expected_model_rate / chan_width
-            y = np.ma.masked_where(~data._mask, expected_model_rate / chan_width)
-
-            x = np.mean([energy_min, energy_max], axis=0)
-
-            ax.plot(x, y, alpha=.8, label='%s Model' % data._name, color=model_color)
-
-        # Residuals
-
-        # we need to get the rebinned counts
-        rebinned_observed_counts, = this_rebinner.rebin(observed_counts)
-
-        # the rebinned counts expected from the model
-        rebinned_model_counts = new_model_rate * data.exposure
-
-        # and also the rebinned background
-
-        rebinned_background_counts, = this_rebinner.rebin(background_counts)
-        rebinned_background_errors, = this_rebinner.rebin_errors(background_errors)
-
-        significance_calc = Significance(rebinned_observed_counts,
-                                         rebinned_background_counts + rebinned_model_counts / data.scale_factor,
-                                         data.scale_factor)
-
-        # Divide the various cases
-
-        if data._observation_noise_model == 'poisson':
-
-            if data._background_noise_model == 'poisson':
-
-                # We use the Li-Ma formula to get the significance (sigma)
-
-                residuals = significance_calc.li_and_ma()
-
-            elif data._background_noise_model == 'ideal':
-
-                residuals = significance_calc.known_background()
-
-            elif data._background_noise_model == 'gaussian':
-
-                residuals = significance_calc.li_and_ma_equivalent_for_gaussian_background(rebinned_background_errors)
-
-            else:
-
-                raise RuntimeError("This is a bug")
-
-        else:
-
-            raise NotImplementedError("Not yet implemented")
-
-        # is this the best way to do residuals?
-        #residuals = (new_model_rate - new_rate) / new_model_rate
-
-        ax1.axhline(0, linestyle='--', color='k')
-        ax1.errorbar(mean_energy,
-                     residuals,
-                     yerr= np.ones_like(residuals),
-                     capsize=0,
-                     fmt='.',
-                     markersize=3,
-                     color=data_color)
-
-    if show_legend:
-
-        ax.legend(fontsize='x-small', loc=0)
-
-    ax.set_ylabel("Background-subtracted rate\n(counts s$^{-1}$ keV$^{-1}$)")
-
-    ax.set_xscale('log')
-    ax.set_yscale('log', nonposy='clip')
-
-    ax1.set_xscale("log")
-
-    locator = MaxNLocator(prune='upper', nbins=5)
-    ax1.yaxis.set_major_locator(locator)
-
-    ax1.set_xlabel("Energy\n(keV)")
-    ax1.set_ylabel("Residuals\n($\sigma$)")
-
-    # This takes care of making space for all labels around the figure
-
-    fig.tight_layout()
-
-    # Now remove the space between the two subplots
-    # NOTE: this must be placed *after* tight_layout, otherwise it will be ineffective
-
-    fig.subplots_adjust(hspace=0)
-
-    return fig
 
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
-
     chans = np.array(zip(chan_min, chan_max))
     width = chan_max - chan_min
 
