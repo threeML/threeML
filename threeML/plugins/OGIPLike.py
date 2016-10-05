@@ -214,8 +214,9 @@ class OGIPLike(PluginPrototype):
         which will set the energy range 10-12.5 keV and 56-100 keV to be
         used in the analysis
 
-        If working on data which has been rebinned, the selection will be
-        adjusted properly
+        Use 'all' to select all measurements, as in:
+
+        set_active_measurements('all')
 
         """
 
@@ -233,22 +234,31 @@ class OGIPLike(PluginPrototype):
 
         self._mask = np.zeros(self._pha.n_channels, dtype=bool)
 
-        for arg in args:
+        if 'all' in args:
 
-            ee = map(float, arg.replace(" ", "").split("-"))
-            emin, emax = sorted(ee)
+            # Just make sure than no further selections have been made.
 
-            idx1 = self._rsp.energy_to_channel(emin)
-            idx2 = self._rsp.energy_to_channel(emax)
+            assert len(args) == 1, "If you specify 'all', you cannot specify more than one energy range."
 
-            self._mask[idx1:idx2 + 1] = True
+            # Convert the mask to all True (we use all channels)
+            self._mask[:] = True
 
-            if self._verbose:
+        else:
 
-                print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
+            for arg in args:
+
+                ee = map(float, arg.replace(" ", "").split("-"))
+                emin, emax = sorted(ee)
+
+                idx1 = self._rsp.energy_to_channel(emin)
+                idx2 = self._rsp.energy_to_channel(emax)
+
+                self._mask[idx1:idx2 + 1] = True
+
+                if self._verbose:
+                    print("Range %s translates to channels %s-%s" % (arg, idx1, idx2))
 
         if self._verbose:
-
             print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
 
         # Apply the mask
