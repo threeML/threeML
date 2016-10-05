@@ -103,6 +103,26 @@ class Response(object):
         self._differential_function = None
         self._integral_function = None
 
+        # Store the name of the file
+        self._rsp_file = rsp_file
+        self._arf_file = arf_file
+
+    @property
+    def rsp_filename(self):
+        """
+        Returns the name of the RSP/RMF file from which the response has been loaded
+        """
+
+        return self._rsp_file
+
+    @property
+    def arf_filename(self):
+        """
+        Returns the name of the ARF file (or None if there is none)
+        """
+
+        return self._arf_file
+
     def _read_matrix(self, data, header, column_name='MATRIX'):
 
         n_channels = header.get("DETCHANS")
