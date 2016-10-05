@@ -1,17 +1,15 @@
-# Author: J. Michael Burgess
-
 # Provides some universal statistical utilities and stats comparison tools
+
+from math import sqrt
 
 import numpy as np
 import pandas as pd
-from threeML.io.rich_display import display
-import warnings
-import scipy.stats
-from scipy.special import erfinv
 import scipy.interpolate
-from math import sqrt
+import scipy.stats
+import warnings
+from scipy.special import erfinv
 
-
+from threeML.io.rich_display import display
 
 
 def aic(log_like, n_parameters, n_data_points):
@@ -358,7 +356,6 @@ class PoissonResiduals(object):
         out = np.zeros_like(self.Non)
 
         if np.sum(idx) > 0:
-
             out[idx] = self._using_sf(self.Non[idx], self.expected[idx])
 
         if np.sum(~idx) > 0:
@@ -402,12 +399,12 @@ class PoissonResiduals(object):
         return out
 
 
-
 class Significance(object):
     """
     Implements equations in Li&Ma 1983
 
     """
+
     def __init__(self, Non, Noff, alpha=1):
 
         assert alpha > 0 and alpha <= 1
