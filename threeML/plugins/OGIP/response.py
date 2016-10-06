@@ -1,7 +1,7 @@
 import astropy.io.fits as pyfits
 import numpy as np
 import warnings
-
+from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 
 class PrivateMember(RuntimeError):
     pass
@@ -9,6 +9,13 @@ class PrivateMember(RuntimeError):
 class Response(object):
 
     def __init__(self, rsp_file, arf_file=None):
+
+        # Now make sure that the response file exist
+
+        rsp_file = sanitize_filename(rsp_file)
+
+        assert file_existing_and_readable(rsp_file.split("{")[0]), "Response file %s not existing or not " \
+                                                                   "readable" % rsp_file
 
         # Check if we are dealing with a .rsp2 file (containing more than
         # one response). This is checked by looking for the syntax
@@ -66,6 +73,11 @@ class Response(object):
             # Now let's see if we have a ARF, if yes, read it
 
             if arf_file is not None:
+
+                arf_file = sanitize_filename(arf_file)
+
+                assert file_existing_and_readable(arf_file.split("{")[0]), "Ancillary file %s not existing or not " \
+                                                                           "readable" % arf_file
 
                 with pyfits.open(arf_file) as f:
 
