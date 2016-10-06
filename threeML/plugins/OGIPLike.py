@@ -1,6 +1,6 @@
 import collections
 import copy
-
+from contextlib import contextmanager
 import matplotlib.pyplot as plt
 import numpy as np
 from astromodels.parameter import Parameter
@@ -52,20 +52,19 @@ class OGIPLike(PluginPrototype):
 
             bak_file = self._pha.background_file
 
-            assert bak_file is not None, "No background file provided, and the PHA file does not contain one."
+            assert bak_file is not None, "No background file provided, and the PHA file does not specify one."
+
+        # Get a PHA instance with the background
+
+        self._bak = self._get_pha_instance(bak_file, file_type='background')
+
+        # Now handle the response
 
         if rsp_file is None:
 
             rsp_file = self._pha.response_file
 
-            assert rsp_file is not None, "No response file provided, and the PHA file does not contain one."
-
-            rsp_file = sanitize_filename(rsp_file)
-
-        # Now make sure that the response file exist
-
-        assert file_existing_and_readable(rsp_file.split("{")[0]), "Response file %s not existing or not " \
-                                                                   "readable" % rsp_file
+            assert rsp_file is not None, "No response file provided, and the PHA file does not specify one."
 
         if arf_file is None:
 
@@ -73,22 +72,16 @@ class OGIPLike(PluginPrototype):
 
             arf_file = self._pha.ancillary_file
 
-        if arf_file is not None:
-
-            # Make sure it exists
-
-            arf_file = sanitize_filename(arf_file)
-
-            assert file_existing_and_readable(rsp_file.split("{")[0]), "Ancillary file %s not existing or not " \
-                                                                       "readable" % arf_file
-
-        # Get a PHA instance with the background
-
-        self._bak = self._get_pha_instance(bak_file, file_type='background')
-
         # Read in the response
 
-        self._rsp = Response(rsp_file, arf_file=arf_file)
+        if isinstance(rsp_file, str):
+
+            self._rsp = Response(rsp_file, arf_file=arf_file)
+
+        else:
+
+            # Assume a fully formed Response class
+            self._rsp = rsp_file
 
         # Make sure that data and background have the same number of channels
 
@@ -169,6 +162,9 @@ class OGIPLike(PluginPrototype):
         self._current_background_counts = self._background_counts
         self._current_scaled_background_counts = self._scaled_background_counts
         self._current_background_errors = self._back_counts_errors
+
+        # This will be used to keep track of how many syntethic datasets have been generated
+        self._n_synthetic_datasets = 0
 
     def _get_pha_instance(self, pha_file_or_container, *args, **kwargs):
 
@@ -269,7 +265,19 @@ class OGIPLike(PluginPrototype):
 
             self._current_background_errors = self._back_counts_errors[self._mask]
 
-    def randomize(self, new_name):
+    @contextmanager
+    def _without_mask_context_manager(self):
+
+        mask = self._mask
+
+        self.set_active_measurements("all")
+
+        yield
+
+        self._mask = mask
+        self._apply_mask_to_original_vectors()
+
+    def get_simulated_dataset(self, new_name=None):
         """
         Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
@@ -279,141 +287,172 @@ class OGIPLike(PluginPrototype):
 
         assert self._like_model is not None, "You need to set up a model before randomizing"
 
+        # Keep track of how many syntethic datasets we have generated
+
+        self._n_synthetic_datasets += 1
+
+        # Generate a name for the new dataset if needed
+        if new_name is None:
+
+            new_name = "%s_sim_%i" % (self.name, self._n_synthetic_datasets)
+
         # Generate randomized data depending on the different noise models
 
-        # Get the source model for all channels (that's why we don't use the .folded_model property)
+        # We remove the mask temporarily because we need the various elements for all channels. We will restore it
+        # at the end
 
-        source_model_counts = self._rsp.convolve() * self.exposure
+        original_mask = np.array(self._mask, copy=True)
 
-        # NOTE: we use the unmasked versions because we need to generate ALL data, so that the user can change
-        # selections afterwards
+        with self._without_mask_context_manager():
+            # Get the source model for all channels (that's why we don't use the .folded_model property)
 
-        if self._observation_noise_model == 'poisson':
+            source_model_counts = self._rsp.convolve() * self.exposure
 
-            # We need to generate Poisson variates from the model to get the signal, and from the background
-            # to get the new background
+            # NOTE: we use the unmasked versions because we need to generate ALL data, so that the user can change
+            # selections afterwards
 
-            # Now depending on the background noise model, generate randomized values for the background
+            if self._observation_noise_model == 'poisson':
 
-            if self._background_noise_model == 'poisson':
+                # We need to generate Poisson variates from the model to get the signal, and from the background
+                # to get the new background
 
-                # Since we use a profile likelihood, the background model is conditional on the source model, so let's
-                # get it from the likelihood function
-                _, background_model_counts = self._loglike_poisson_obs_poisson_bkg()
+                # Now depending on the background noise model, generate randomized values for the background
 
-                # Now randomize the expectations
+                if self._background_noise_model == 'poisson':
 
-                # Randomize expectations for the source
+                    # Since we use a profile likelihood, the background model is conditional on the source model, so let's
+                    # get it from the likelihood function
+                    _, background_model_counts = self._loglike_poisson_obs_poisson_bkg()
 
-                randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
-                randomized_source_rate = randomized_source_counts / self.exposure
+                    # Now randomize the expectations
 
-                # Randomize expectations for the background
+                    # Randomize expectations for the source
 
-                randomized_background_counts = np.random.poisson(background_model_counts)
-                randomized_background_rate = randomized_background_counts / self.background_exposure
+                    randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
+                    randomized_source_rate = randomized_source_counts / self.exposure
 
-                randomized_background_rate_err = None
+                    # Randomize expectations for the background
 
-            elif self._background_noise_model == 'ideal':
+                    randomized_background_counts = np.random.poisson(background_model_counts)
+                    randomized_background_rate = randomized_background_counts / self.background_exposure
 
-                # Randomize expectations for the source
+                    randomized_background_rate_err = None
 
-                randomized_source_counts = np.random.poisson(source_model_counts + self._background_counts)
-                randomized_source_rate = randomized_source_counts / self.exposure
+                elif self._background_noise_model == 'ideal':
 
-                # No randomization for the background in this case
+                    # Randomize expectations for the source
 
-                randomized_background_rate = self._background_counts / self.background_exposure
+                    randomized_source_counts = np.random.poisson(source_model_counts + self._background_counts)
+                    randomized_source_rate = randomized_source_counts / self.exposure
 
-                randomized_background_rate_err = None
+                    # No randomization for the background in this case
 
-            elif self._background_noise_model == 'gaussian':
+                    randomized_background_rate = self._background_counts / self.background_exposure
 
-                # Since we use a profile likelihood, the background model is conditional on the source model, so let's
-                # get it from the likelihood function
-                _, background_model_counts = self._loglike_poisson_obs_gaussian_bkg()
+                    randomized_background_rate_err = None
 
-                # Randomize expectations for the source
+                elif self._background_noise_model == 'gaussian':
 
-                randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
-                randomized_source_rate = randomized_source_counts / self.exposure
+                    # Since we use a profile likelihood, the background model is conditional on the source model, so let's
+                    # get it from the likelihood function
+                    _, background_model_counts = self._loglike_poisson_obs_gaussian_bkg()
 
-                # Now randomize the expectations.
+                    # Randomize expectations for the source
 
-                randomized_background_counts = np.random.normal(loc=background_model_counts,
-                                                                scale=self._back_counts_errors)
+                    randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
+                    randomized_source_rate = randomized_source_counts / self.exposure
 
-                # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+                    # Now randomize the expectations.
 
-                idx = (randomized_background_counts < 0)  # type: np.ndarray
+                    # We cannot generate variates with zero sigma. They variates from those channel will always be zero
+                    # This is a limitation of this whole idea. However, remember that by construction an error of zero
+                    # it is only allowed when the background counts are zero as well.
+                    idx = (self._back_counts_errors > 0)
 
-                negative_background_n = np.sum(idx)
+                    randomized_background_counts = np.zeros_like(background_model_counts)
 
-                if negative_background_n > 0:
+                    randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
+                                                                         scale=self._back_counts_errors[idx])
 
-                    custom_warnings.warn("Generated background has negative counts "
-                                         "in %i channels. Fixing them to zero" % (negative_background_n))
+                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
 
-                    randomized_background_counts[idx] = 0
+                    idx = (randomized_background_counts < 0)  # type: np.ndarray
 
-                # Now compute rates and errors
+                    negative_background_n = np.sum(idx)
 
-                randomized_background_rate = randomized_background_counts / self.background_exposure
+                    if negative_background_n > 0:
 
-                randomized_background_rate_err = copy.copy(self._back_counts_errors) / self.background_exposure
+                        custom_warnings.warn("Generated background has negative counts "
+                                             "in %i channels. Fixing them to zero" % (negative_background_n))
+
+                        randomized_background_counts[idx] = 0
+
+                    # Now compute rates and errors
+
+                    randomized_background_rate = randomized_background_counts / self.background_exposure
+
+                    randomized_background_rate_err = copy.copy(self._back_counts_errors) / self.background_exposure
+
+                else:
+
+                    raise RuntimeError("This is a bug")
 
             else:
 
-                raise RuntimeError("This is a bug")
+                raise NotImplementedError("Not yet implemented")
 
-        else:
+            n_channels = original_mask.shape[0]
 
-            raise NotImplementedError("Not yet implemented")
+            if self.observation_noise_model == 'poisson':
 
-        n_channels = self._mask.shape[0]
+                is_obs_poisson = True
 
-        if self.observation_noise_model == 'poisson':
+            else:
 
-            is_obs_poisson = True
+                is_obs_poisson = False
 
-        else:
+            pha = PHAContainer(rates=randomized_source_rate,
+                               n_channels=n_channels,
+                               exposure=self.exposure,
+                               is_poisson=is_obs_poisson,
+                               response_file=None,  # We will specify it later
+                               ancillary_file=None  # We will specify it later
+                               )
 
-            is_obs_poisson = False
+            if self.background_noise_model == 'poisson':
 
-        pha = PHAContainer(rates=randomized_source_rate,
-                           n_channels=n_channels,
-                           exposure=self.exposure,
-                           is_poisson=is_obs_poisson,
-                           response_file=self._rsp.rsp_filename,
-                           ancillary_file=self._rsp.arf_filename)
+                is_bkg_poisson = True
 
-        if self.background_noise_model == 'poisson':
+            else:
 
-            is_bkg_poisson = True
+                is_bkg_poisson = False
 
-        else:
+            bak = PHAContainer(rates=randomized_background_rate,
+                               rate_errors=randomized_background_rate_err,
+                               n_channels=n_channels,
+                               exposure=self.background_exposure,
+                               is_poisson=is_bkg_poisson,
+                               response_file=None,
+                               ancillary_file=None)
 
-            is_bkg_poisson = False
+            # Now create another instance of OGIPLike with the randomized data we just generated
 
-        bak = PHAContainer(rates=randomized_background_rate,
-                           rate_errors=randomized_background_rate_err,
-                           n_channels=n_channels,
-                           exposure=self.background_exposure,
-                           is_poisson=is_bkg_poisson,
-                           response_file=None,
-                           ancillary_file=None)
+            new_ogip_like = type(self)(new_name,
+                                       pha_file=pha,
+                                       bak_file=bak,
+                                       rsp_file=self._rsp,  # Use the currently loaded response so we don't need to
+                                                            # re-read from disk (way faster!)
+                                       arf_file=None,       # The ARF is None because if present has been already read in
+                                                            # the self._rsp class
+                                       verbose=self._verbose)
 
-        # Now create another instance of OGIPLike with the randomized data we just generated
+            # Apply the same selections as the current data set
+            new_ogip_like._mask = original_mask
+            new_ogip_like._apply_mask_to_original_vectors()
 
-        new_ogip_like = type(self)(new_name,
-                                   pha_file=pha,
-                                   bak_file=bak,
-                                   rsp_file=self._rsp.rsp_filename,
-                                   arf_file=self._rsp.arf_filename,
-                                   verbose=self._verbose)
+            # TODO: nuisance parameters
 
-        return new_ogip_like
+            return new_ogip_like
 
     def rebin_on_background(self, min_number_of_counts):
         """
