@@ -1,15 +1,26 @@
-import pandas as pd
+import logging
 
-from threeML import *
+#log = logging.getLogger(__name__)
+
+class hack(object):
+
+    def info(self, something):
+
+        pass
+
+    def error(self, something):
+
+        pass
+
+log = hack()
 
 from threeML.classicMLE.joint_likelihood import JointLikelihood
-
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
-
 from threeML.data_list import DataList
+from threeML.io.progress_bar import progress_bar
 from astromodels import Model
-
+import pandas as pd
 
 class JointLikelihoodSet(object):
 
@@ -96,9 +107,9 @@ class JointLikelihoodSet(object):
 
             # Print a message to divide one interval from another
 
-            print("\n\n\n==========================================")
-            print("JointLikelihoodSet: processing interval %s" % interval)
-            print("==========================================\n\n")
+            log.info("\n\n\n==========================================")
+            log.info("JointLikelihoodSet: processing interval %s" % interval)
+            log.info("==========================================\n\n")
 
             # Get the dataset for this interval
 
@@ -113,13 +124,13 @@ class JointLikelihoodSet(object):
 
                 if dataset not in this_data.keys():
 
-                    raise ValueError("The dataset %s is not contained in interval %s" % dataset)
+                    raise ValueError("The dataset %s is not contained in interval %s" % (dataset, interval))
 
             # Get the model for this interval
 
             this_model = self._model_getter(interval)
 
-            assert isinstance(this_model, Model), "The model_getter did not return a Model instace for " \
+            assert isinstance(this_model, Model), "The model_getter did not return a Model instance for " \
                                                   "interval %s" % interval
 
             # Instance the joint likelihood (this might generate more parameters, as plugins can add their nuisance
@@ -141,14 +152,14 @@ class JointLikelihoodSet(object):
 
             try:
 
-                model_results, logl_results = jl.fit()
+                model_results, logl_results = jl.fit(quiet=True, compute_covariance=False)
 
             except Exception as e:
 
-                print("\n\n**** FIT FAILED! ***")
-                print("Reason:")
-                print(repr(e))
-                print("\n\n")
+                log.error("\n\n**** FIT FAILED! ***")
+                log.error("Reason:")
+                log.error(repr(e))
+                log.error("\n\n")
 
                 if continue_on_failure:
 
@@ -164,14 +175,14 @@ class JointLikelihoodSet(object):
 
                 try:
 
-                    model_results, logl_results = jl.fit()
+                    model_results, logl_results = jl.fit(quiet=True, compute_covariance=False)
 
                 except Exception as e:
 
-                    print("\n\n**** SECONDARY FIT FAILED! ***")
-                    print("Reason:")
-                    print(repr(e))
-                    print("\n\n")
+                    log.error("\n\n**** SECONDARY FIT FAILED! ***")
+                    log.error("Reason:")
+                    log.error(repr(e))
+                    log.error("\n\n")
 
                     if continue_on_failure:
 
@@ -189,36 +200,47 @@ class JointLikelihoodSet(object):
 
             client = ParallelClient(**options_for_parallel_computation)
 
-            # Get a balanced view of the engines
+            amr = client.my_map(worker, xrange(self._n_iterations))
 
-            lview = client.load_balanced_view()
+            results = []
 
-            # Distribute the work among the engines and start it, but return immediately the control
-            # to the main thread
+            with progress_bar(self._n_iterations) as p:
 
-            amr = lview.map_async(worker, range(self._n_iterations))
+                for i, res in enumerate(amr):
 
-            client.wait_watching_progress(amr, 10)
+                    results.append(res)
 
-            # Add a new line after the progress bar
-            print("\n")
-
-            # Get the results. This will raise exceptions if something wrong happened during the computation.
-            # We don't catch it so that the user will be aware of that
-
-            results = amr.get()
+                    p.increase()
 
         else:
 
             # Serial computation
 
-            results = map(worker, range(self._n_iterations))
+            results = []
+
+            with progress_bar(self._n_iterations) as p:
+
+                for i in range(self._n_iterations):
+
+                    results.append(worker(i))
+
+                    p.increase()
 
         # Store the results in the data frame
 
         for interval, result in enumerate(results):
 
             model_results, logl_results = result
+
+            if model_results is None:
+
+                if continue_on_failure:
+
+                    continue
+
+                else:
+
+                    raise RuntimeError("Results from interval %s are None!" % interval)
 
             for parameter in self._parameter_names:
 
