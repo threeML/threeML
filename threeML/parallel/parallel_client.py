@@ -35,6 +35,8 @@ import exceptions
 import sys
 import time
 import re
+import math
+
 
 class NoParallelEnvironment(exceptions.UserWarning):
     pass
@@ -97,6 +99,7 @@ def parallel_computation(profile=None):
 
 
 if has_parallel:
+
     class ParallelClient(Client):
 
         def __init__(self, *args, **kwargs):
@@ -127,6 +130,46 @@ if has_parallel:
 
             return len(self.direct_view())
 
+        def interactive_map(self, worker, items_to_process):
+            """
+            Subdivide the work among the active engines, taking care of dividing it among them
+
+            :param worker: the function to be applied
+            :param items_to_process: the items to apply the function to
+            :return: a AsyncResult object
+            """
+
+            # Split the work evenly between the engines
+            n_total_engines = self.get_number_of_engines()
+
+            n_items = len(items_to_process)
+
+            # Get a load-balanced view with the appropriate number of engines
+
+            if n_items < n_total_engines:
+
+                warnings.warn("More engines than items to process")
+
+                # Limit the view to the needed engines
+
+                lview = self.load_balanced_view(range(n_items))
+
+                n_active_engines = n_items
+
+                chunk_size = 1
+
+            else:
+
+                # Use all engines
+
+                lview = self.load_balanced_view()
+
+                n_active_engines = n_total_engines
+
+                chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
+
+            return lview.imap(worker, items_to_process, chunksize=chunk_size, ordered=False)
+
         @staticmethod
         def fetch_progress_from_progress_bars(ar):
 
@@ -137,6 +180,8 @@ if has_parallel:
                 if not any(stdouts):
 
                     continue
+
+                print(stdouts)
 
                 # clear_output doesn't do much in terminal environments
 
@@ -156,8 +201,14 @@ if has_parallel:
 
                     if stdout:
 
+                        idx = stdout.find('[')
+
+                        if idx < 0:
+
+                            continue
+
                         # Find the progress bar (if any)
-                        tokens = re.findall('(\[[^\r^\)]+[\r\)]|\[.+completed.+\Z)', stdout[-1000:])
+                        tokens = re.findall('(\[[^\r^\)]+[\r\)]|\[.+completed.+\Z)', stdout[idx:][-1000:])
 
                         if len(tokens) > 0:
 
@@ -187,7 +238,9 @@ if has_parallel:
             :return:
             """
 
-            n_engines = len(ar.engine_id)
+            n_engines = self.get_number_of_engines()
+
+            print("Found %s engines" % n_engines)
 
             try:
 
@@ -196,6 +249,8 @@ if has_parallel:
                     # We are in the notebook, display a report of all the engines
 
                     for progress in self.fetch_progress_from_progress_bars(ar):
+
+                        sys.stderr.write("%s" % progress)
 
                         for i in range(n_engines):
 

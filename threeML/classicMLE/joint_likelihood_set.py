@@ -200,7 +200,7 @@ class JointLikelihoodSet(object):
 
             client = ParallelClient(**options_for_parallel_computation)
 
-            amr = client.my_map(worker, xrange(self._n_iterations))
+            amr = client.interactive_map(worker, xrange(self._n_iterations))
 
             results = []
 
