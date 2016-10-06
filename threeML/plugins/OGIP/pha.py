@@ -86,8 +86,6 @@ class PHA(object):
         assert self._rates.shape[0] == self._gathered_keywords['detchans'], \
             "The lenght of RATES and the number of CHANNELS is not the same"
 
-
-
     def _init_from_FITS(self, phafile, spectrum_number, file_type='observed'):
 
         assert file_type.lower() in ['observed', 'background'], "Unrecognized filetype keyword value"
