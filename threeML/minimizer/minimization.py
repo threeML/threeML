@@ -433,7 +433,7 @@ class Minimizer(object):
 
         return self._algorithm_name
 
-    def minimize(self):
+    def minimize(self, compute_covar=True):
         raise NotImplemented("This is the method of the base class. Must be implemented by the actual minimizer")
 
     def set_algorithm(self, algorithm):
