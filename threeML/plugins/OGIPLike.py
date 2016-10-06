@@ -9,7 +9,7 @@ from astromodels.utils.valid_variable import is_valid_variable_name
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.step_plot import step_plot
-
+from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
@@ -17,6 +17,7 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_b
 from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import Response
 from threeML.utils.binner import Rebinner
+from threeML.plugins.OGIP.pha import PHAContainer
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -37,34 +38,9 @@ class OGIPLike(PluginPrototype):
                                              "a valid python identifier: no spaces, no operators (+,-,/,*), " \
                                              "it cannot start with a number, no special characters" % name
 
-        # If the user didn't provide them, read the needed files from the keywords in the PHA file
-        # It is possible a user passed a PHAContainer from an EventList. In this case, this will fail
-        # resulting in an attribute error. We will check for this and if it fails, and then try to load the
-        # PHAContainer
+        # Read the pha file (or the PHAContainer instance)
 
-        try:
-
-            pha_file = sanitize_filename(pha_file)
-
-            self._pha = PHA(pha_file)
-
-        except(AttributeError):
-
-            try:
-
-                if pha_file.is_container:
-
-                    self._pha = PHA(pha_file)
-
-                else:
-
-                    raise RuntimeError("Should never arrive here. Your PHA file is improper")
-
-            except:
-
-                # Catch everything
-
-                raise RuntimeError("Your PHA file is invalid.")
+        self._pha = self._get_pha_instance(pha_file)  # type: PHA
 
         # Get the required background file, response and (if present) arf_file either from the
         # calling sequence or the file.
@@ -78,49 +54,40 @@ class OGIPLike(PluginPrototype):
 
             assert bak_file is not None, "No background file provided, and the PHA file does not contain one."
 
-            bak_file = sanitize_filename(bak_file)
-
         if rsp_file is None:
 
             rsp_file = self._pha.response_file
 
             assert rsp_file is not None, "No response file provided, and the PHA file does not contain one."
 
-            rsp_file = sanitize_filename(bak_file)
+            rsp_file = sanitize_filename(rsp_file)
 
-        if arf_file is None:
-
-            # Note that his could be None as well, if there is no ancillary file specified in the header
-
-            arf_file = self._pha.ancillary_file
-
-            if arf_file is not None:
-
-                arf_file = sanitize_filename(arf_file)
-
-        # Now make sure response and background file exist (the ancillary file is not always present, and will be
-        # treated separately)
-
-        try:
-
-            assert file_existing_and_readable(bak_file.split("{")[0]), "Background file %s not existing or not " \
-                                                                       "readable" % bak_file
-
-        except(AttributeError):
-
-            try:
-
-                if bak_file.is_container:
-                    pass
-
-            except:
-
-                RuntimeError("Background file type is unrecognizeable")
+        # Now make sure that the response file exist
 
         assert file_existing_and_readable(rsp_file.split("{")[0]), "Response file %s not existing or not " \
                                                                    "readable" % rsp_file
 
-        self._bak = PHA(bak_file, file_type='background')
+        if arf_file is None:
+
+            # Note that this could be None as well, if there is no ancillary file specified in the header
+
+            arf_file = self._pha.ancillary_file
+
+        if arf_file is not None:
+
+            # Make sure it exists
+
+            arf_file = sanitize_filename(arf_file)
+
+            assert file_existing_and_readable(rsp_file.split("{")[0]), "Ancillary file %s not existing or not " \
+                                                                       "readable" % arf_file
+
+        # Get a PHA instance with the background
+
+        self._bak = self._get_pha_instance(bak_file, file_type='background')
+
+        # Read in the response
+
         self._rsp = Response(rsp_file, arf_file=arf_file)
 
         # Make sure that data and background have the same number of channels
@@ -130,9 +97,9 @@ class OGIPLike(PluginPrototype):
 
         # Precomputed observed and background counts (for speed)
 
-        self._observed_counts = self._pha.rates * self._pha.exposure
-        self._background_counts = self._bak.rates * self._bak.exposure
-        self._scaled_background_counts = self._get_expected_background_counts_scaled()
+        self._observed_counts = self._pha.rates * self._pha.exposure  # type: np.ndarray
+        self._background_counts = self._bak.rates * self._bak.exposure  # type: np.ndarray
+        self._scaled_background_counts = self._get_expected_background_counts_scaled()  # type: np.ndarray
 
         # Init everything else to None
         self._like_model = None
@@ -146,7 +113,7 @@ class OGIPLike(PluginPrototype):
                 self.observation_noise_model = 'poisson'
                 self.background_noise_model = 'poisson'
 
-                self._background_errors = None
+                self._back_counts_errors = None
 
                 assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
 
@@ -157,11 +124,11 @@ class OGIPLike(PluginPrototype):
                 self.observation_noise_model = 'poisson'
                 self.background_noise_model = 'gaussian'
 
-                self._background_errors = self._bak.rate_errors * self._bak.exposure
+                self._back_counts_errors = self._bak.rate_errors * self._bak.exposure  # type: np.ndarray
 
-                idx = self._background_errors == 0
+                idx = (self._back_counts_errors == 0)  # type: np.ndarray
 
-                assert np.all(self._background_errors[idx] == self._background_counts[idx]), \
+                assert np.all(self._back_counts_errors[idx] == self._background_counts[idx]), \
                     "Error in background spectrum: if the error on the background is zero, " \
                     "also the expected background must be zero"
 
@@ -201,7 +168,33 @@ class OGIPLike(PluginPrototype):
         self._current_observed_counts = self._observed_counts
         self._current_background_counts = self._background_counts
         self._current_scaled_background_counts = self._scaled_background_counts
-        self._current_background_errors = self._background_errors
+        self._current_background_errors = self._back_counts_errors
+
+    def _get_pha_instance(self, pha_file_or_container, *args, **kwargs):
+
+        # If the user didn't provide them, read the needed files from the keywords in the PHA file
+        # It is possible a user passed a PHAContainer from an EventList. In this case, this will fail
+        # resulting in an attribute error. We will check for this and if it fails, and then try to load the
+        # PHAContainer
+
+        if isinstance(pha_file_or_container, str):
+
+            # This is supposed to be a filename
+
+            pha_file = sanitize_filename(pha_file_or_container)
+
+            assert file_existing_and_readable(pha_file.split("{")[0]), "File %s not existing or not " \
+                                                                       "readable" % pha_file
+
+            pha = PHA(pha_file, *args, **kwargs)
+
+        else:
+
+            # Assume this is a PHAContainer or a subclass (or some other object with the same interface)
+
+            pha = PHA(pha_file_or_container, *args, **kwargs)
+
+        return pha
 
     def set_active_measurements(self, *args):
         """
@@ -272,9 +265,155 @@ class OGIPLike(PluginPrototype):
         self._current_background_counts = self._background_counts[self._mask]
         self._current_scaled_background_counts = self._scaled_background_counts[self._mask]
 
-        if self._background_errors is not None:
+        if self._back_counts_errors is not None:
 
-            self._current_background_errors = self._background_errors[self._mask]
+            self._current_background_errors = self._back_counts_errors[self._mask]
+
+    def randomize(self, new_name):
+        """
+        Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
+        model, as well as from the background (depending on the respective noise models)
+
+        :return: an OGIPLike instance
+        """
+
+        assert self._like_model is not None, "You need to set up a model before randomizing"
+
+        # Generate randomized data depending on the different noise models
+
+        # Get the source model for all channels (that's why we don't use the .folded_model property)
+
+        source_model_counts = self._rsp.convolve() * self.exposure
+
+        # NOTE: we use the unmasked versions because we need to generate ALL data, so that the user can change
+        # selections afterwards
+
+        if self._observation_noise_model == 'poisson':
+
+            # We need to generate Poisson variates from the model to get the signal, and from the background
+            # to get the new background
+
+            # Now depending on the background noise model, generate randomized values for the background
+
+            if self._background_noise_model == 'poisson':
+
+                # Since we use a profile likelihood, the background model is conditional on the source model, so let's
+                # get it from the likelihood function
+                _, background_model_counts = self._loglike_poisson_obs_poisson_bkg()
+
+                # Now randomize the expectations
+
+                # Randomize expectations for the source
+
+                randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
+                randomized_source_rate = randomized_source_counts / self.exposure
+
+                # Randomize expectations for the background
+
+                randomized_background_counts = np.random.poisson(background_model_counts)
+                randomized_background_rate = randomized_background_counts / self.background_exposure
+
+                randomized_background_rate_err = None
+
+            elif self._background_noise_model == 'ideal':
+
+                # Randomize expectations for the source
+
+                randomized_source_counts = np.random.poisson(source_model_counts + self._background_counts)
+                randomized_source_rate = randomized_source_counts / self.exposure
+
+                # No randomization for the background in this case
+
+                randomized_background_rate = self._background_counts / self.background_exposure
+
+                randomized_background_rate_err = None
+
+            elif self._background_noise_model == 'gaussian':
+
+                # Since we use a profile likelihood, the background model is conditional on the source model, so let's
+                # get it from the likelihood function
+                _, background_model_counts = self._loglike_poisson_obs_gaussian_bkg()
+
+                # Randomize expectations for the source
+
+                randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
+                randomized_source_rate = randomized_source_counts / self.exposure
+
+                # Now randomize the expectations.
+
+                randomized_background_counts = np.random.normal(loc=background_model_counts,
+                                                                scale=self._back_counts_errors)
+
+                # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+
+                idx = (randomized_background_counts < 0)  # type: np.ndarray
+
+                negative_background_n = np.sum(idx)
+
+                if negative_background_n > 0:
+
+                    custom_warnings.warn("Generated background has negative counts "
+                                         "in %i channels. Fixing them to zero" % (negative_background_n))
+
+                    randomized_background_counts[idx] = 0
+
+                # Now compute rates and errors
+
+                randomized_background_rate = randomized_background_counts / self.background_exposure
+
+                randomized_background_rate_err = copy.copy(self._back_counts_errors) / self.background_exposure
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            raise NotImplementedError("Not yet implemented")
+
+        n_channels = self._mask.shape[0]
+
+        if self.observation_noise_model == 'poisson':
+
+            is_obs_poisson = True
+
+        else:
+
+            is_obs_poisson = False
+
+        pha = PHAContainer(rates=randomized_source_rate,
+                           n_channels=n_channels,
+                           exposure=self.exposure,
+                           is_poisson=is_obs_poisson,
+                           response_file=self._rsp.rsp_filename,
+                           ancillary_file=self._rsp.arf_filename)
+
+        if self.background_noise_model == 'poisson':
+
+            is_bkg_poisson = True
+
+        else:
+
+            is_bkg_poisson = False
+
+        bak = PHAContainer(rates=randomized_background_rate,
+                           rate_errors=randomized_background_rate_err,
+                           n_channels=n_channels,
+                           exposure=self.background_exposure,
+                           is_poisson=is_bkg_poisson,
+                           response_file=None,
+                           ancillary_file=None)
+
+        # Now create another instance of OGIPLike with the randomized data we just generated
+
+        new_ogip_like = type(self)(new_name,
+                                   pha_file=pha,
+                                   bak_file=bak,
+                                   rsp_file=self._rsp.rsp_filename,
+                                   arf_file=self._rsp.arf_filename,
+                                   verbose=self._verbose)
+
+        return new_ogip_like
 
     def rebin_on_background(self, min_number_of_counts):
         """
@@ -304,11 +443,11 @@ class OGIPLike(PluginPrototype):
                                                                         self._background_counts,
                                                                         self._scaled_background_counts)
 
-        if self._background_errors is not None:
+        if self._back_counts_errors is not None:
 
             # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
 
-            self._current_background_errors, = self._rebinner.rebin_errors(self._background_errors)
+            self._current_background_errors, = self._rebinner.rebin_errors(self._back_counts_errors)
 
         if self._verbose:
 
@@ -375,11 +514,11 @@ class OGIPLike(PluginPrototype):
 
         model_counts = self.get_folded_model()
 
-        loglike = poisson_log_likelihood_ideal_bkg(self._current_observed_counts,
-                                                   self._current_scaled_background_counts,
-                                                   model_counts)
+        loglike, _  = poisson_log_likelihood_ideal_bkg(self._current_observed_counts,
+                                                       self._current_scaled_background_counts,
+                                                       model_counts)
 
-        return np.sum(loglike)
+        return np.sum(loglike), None
 
     @property
     def scale_factor(self):
@@ -397,23 +536,23 @@ class OGIPLike(PluginPrototype):
 
         model_counts = self.get_folded_model()
 
-        loglike = poisson_observed_poisson_background(self._current_observed_counts,
-                                                      self._current_background_counts,
-                                                      self.scale_factor,
-                                                      model_counts)
+        loglike, bkg_model = poisson_observed_poisson_background(self._current_observed_counts,
+                                                                 self._current_background_counts,
+                                                                 self.scale_factor,
+                                                                 model_counts)
 
-        return np.sum(loglike)
+        return np.sum(loglike), bkg_model
 
     def _loglike_poisson_obs_gaussian_bkg(self):
 
         expected_model_counts = self.get_folded_model()
 
-        loglike = poisson_observed_gaussian_background(self._current_observed_counts,
-                                                       self._current_background_counts,
-                                                       self._current_background_errors,
-                                                       expected_model_counts)
+        loglike, bkg_model = poisson_observed_gaussian_background(self._current_observed_counts,
+                                                                  self._current_background_counts,
+                                                                  self._current_background_errors,
+                                                                  expected_model_counts)
 
-        return np.sum(loglike)
+        return np.sum(loglike), bkg_model
 
     def _set_background_noise_model(self, new_model):
 
@@ -455,15 +594,15 @@ class OGIPLike(PluginPrototype):
 
             if self._background_noise_model == 'poisson':
 
-                loglike = self._loglike_poisson_obs_poisson_bkg()
+                loglike, _ = self._loglike_poisson_obs_poisson_bkg()
 
             elif self._background_noise_model == 'ideal':
 
-                loglike = self._loglike_poisson_obs_ideal_bkg()
+                loglike, _ = self._loglike_poisson_obs_ideal_bkg()
 
             elif self._background_noise_model == 'gaussian':
 
-                loglike = self._loglike_poisson_obs_gaussian_bkg()
+                loglike, _ = self._loglike_poisson_obs_gaussian_bkg()
 
             else:
 

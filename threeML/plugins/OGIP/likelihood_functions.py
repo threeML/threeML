@@ -23,7 +23,7 @@ def poisson_log_likelihood_ideal_bkg(observed_counts, expected_bkg_counts, expec
     :param observed_counts:
     :param expected_bkg_counts:
     :param expected_model_counts:
-    :return:
+    :return: (log_like vector, background vector)
     """
 
     # Model predicted counts
@@ -35,10 +35,10 @@ def poisson_log_likelihood_ideal_bkg(observed_counts, expected_bkg_counts, expec
     log_likes = observed_counts * np.log(predicted_counts + 1e-100) - predicted_counts - \
                 logfactorial(observed_counts)
 
-    return log_likes
+    return log_likes, expected_bkg_counts
 
 
-def poisson_observed_poisson_background(observed_counts, background_counts, exposure_ratio, expected_model_counts):
+def poisson_observed_poisson_background_xs(observed_counts, background_counts, exposure_ratio, expected_model_counts):
     """
     Profile log-likelihood for the case when the observed counts are Poisson distributed, and the background counts
     are Poisson distributed as well (typical for X-ray analysis with aperture photometry). This has been derived
@@ -76,6 +76,30 @@ def poisson_observed_poisson_background(observed_counts, background_counts, expo
 
     return ppstat * (-1)
 
+def poisson_observed_poisson_background(observed_counts, background_counts, exposure_ratio, expected_model_counts):
+
+    # TODO: check this with simulations
+
+    # Just a name change to make writing formulas a little easier
+
+    alpha = exposure_ratio
+    b = background_counts
+    o = observed_counts
+    M = expected_model_counts
+
+    # Nuisance parameter for Poisson likelihood
+    # NOTE: B_mle is zero when b is zero!
+
+    sqr = np.sqrt(4 * (alpha + alpha ** 2) * b * M + ((alpha + 1) * M - alpha * (o + b)) ** 2)
+
+    B_mle = 1 / (2.0 * alpha * (1+alpha)) * (alpha * (o + b) - (alpha+1) * M + sqr)
+
+    # Profile likelihood
+
+    loglike = o * np.log(alpha*B_mle + M) + b*regularized_log(B_mle) - (alpha+1) * B_mle - M - \
+              logfactorial(b) - logfactorial(o)
+
+    return loglike, B_mle * alpha
 
 def poisson_observed_gaussian_background(observed_counts, background_counts, background_error, expected_model_counts):
 
@@ -83,10 +107,10 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
     # observed counts. It is a profile likelihood.
 
     MB = background_counts + expected_model_counts
-    s2 = background_error ** 2
+    s2 = background_error ** 2 # type: np.ndarray
 
     b = 0.5 * (np.sqrt(MB ** 2 - 2 * s2 * (MB - 2 * observed_counts) + background_error ** 4)
-               + background_counts - expected_model_counts - s2)
+               + background_counts - expected_model_counts - s2) # type: np.ndarray
 
     # Now there are two branches: when the background is 0 we are in the normal situation of a pure
     # Poisson likelihood, while when the background is not zero we use the profile likelihood
@@ -114,5 +138,5 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
     log_likes[nidx] = observed_counts[nidx] * np.log(expected_model_counts[nidx] + 1e-100) - \
                       expected_model_counts[nidx] - logfactorial(observed_counts[nidx])
 
-    return log_likes
+    return log_likes, b
 

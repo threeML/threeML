@@ -44,12 +44,7 @@ class PHA(object):
 
     def __init__(self, phafile, spectrum_number=None, file_type='observed', ):
 
-        # This is kludge to check if it is PHAContainer bc isinstance sucks.
-        try:
-            if phafile.is_container:
-                self._init_from_pha_container(phafile, file_type)
-
-        except(AttributeError):
+        if isinstance(phafile, str):
 
             if '.root' not in phafile:
 
@@ -58,6 +53,12 @@ class PHA(object):
             else:
 
                 self._init_from_ROOT()
+
+        else:
+
+            # Assume this is a PHAContainer or some other object with the same interface
+
+            self._init_from_pha_container(phafile, file_type)
 
     def _init_from_ROOT(self):
 
@@ -328,7 +329,7 @@ class PHA(object):
     def background_file(self):
         """
         Returns the background file definied in the header, or None if there is none defined
-
+p
         :return: a path to a file, or None
         """
 
@@ -396,6 +397,7 @@ class PHAContainer(MutableMapping):
             if key not in PHAContainer._allowed_keys:
 
                 kwargs.pop(key)
+
             else:
 
                 unset_keys.remove(key)
