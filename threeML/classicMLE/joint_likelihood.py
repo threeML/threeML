@@ -159,11 +159,12 @@ class JointLikelihood(object):
 
         self._free_parameters = self._likelihood_model.free_parameters
 
-    def fit(self):
+    def fit(self, quiet=False, compute_covariance=True):
         """
         Perform a fit of the current likelihood model on the datasets
 
-        :param pre_fit: (True or False) If True, perform a pre-fit with only normalizations free (experimental)
+        :param quiet: If True, print the results (default), otherwise do not print anything
+        :param compute_covariance:If True (default), compute and display the errors and the correlation matrix.
         :return: a dictionary with the results on the parameters, and the values of the likelihood at the minimum
                  for each dataset and the total one.
         """
@@ -189,7 +190,7 @@ class JointLikelihood(object):
 
         # Perform the fit
 
-        xs, log_likelihood_minimum = self._minimizer.minimize()
+        xs, log_likelihood_minimum = self._minimizer.minimize(compute_covar=compute_covariance)
 
         if log_likelihood_minimum == minimization.FIT_FAILED:
 
@@ -198,8 +199,6 @@ class JointLikelihood(object):
         # Store the current minimum for the -log likelihood
 
         self._current_minimum = float(log_likelihood_minimum)
-
-        # Print results
 
         # Get the results from the minimizer (a panda container)
 
@@ -238,21 +237,27 @@ class JointLikelihood(object):
                                names=["#", "Name", "Best fit value", "Unit"],
                                dtype=(str, 'S%i' % name_length, str, str))
 
-        print("Best fit values:\n")
+        if not quiet:
 
-        display(best_fit_table)
+            print("Best fit values:\n")
 
-        print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
+            display(best_fit_table)
 
-        print("\nCorrelation matrix:\n")
+            print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
 
-        best_fit_table = NumericMatrix(self._minimizer.correlation_matrix)
+        if compute_covariance:
 
-        for col in best_fit_table.colnames:
+            corr_matrix = NumericMatrix(self._minimizer.correlation_matrix)
 
-            best_fit_table[col].format = '2.2f'
+            for col in corr_matrix.colnames:
 
-        display(best_fit_table)
+                corr_matrix[col].format = '2.2f'
+
+            if not quiet:
+
+                print("\nCorrelation matrix:\n")
+
+                display(corr_matrix)
 
         # Now collect the values for the likelihood for the various datasets
 
@@ -277,9 +282,7 @@ class JointLikelihood(object):
 
         assert total == self._current_minimum, "Current minimum stored after fit and current do not correspond!"
 
-        print("\nValues of -log(likelihood) at the minimum:\n")
-
-        # Generate data frame and display it
+        # Generate data frame
 
         logl_results = collections.OrderedDict()
 
@@ -287,11 +290,15 @@ class JointLikelihood(object):
 
         loglike_dataframe = pd.DataFrame(logl_results)
 
-        display(loglike_dataframe)
+        if not quiet:
+
+            print("\nValues of -log(likelihood) at the minimum:\n")
+
+            display(loglike_dataframe)
 
         return fit_results, loglike_dataframe
 
-    def get_errors(self):
+    def get_errors(self, quiet=False):
         """
         Compute the errors on the parameters using the profile likelihood method.
 
@@ -380,7 +387,11 @@ class JointLikelihood(object):
                       names=["Name", "Value", "Unit"],
                       dtype=('S%i' % name_length, str, str))
 
-        display(table)
+        if not quiet:
+
+            display(table)
+
+        return table.to_pandas()
 
     def get_contours(self, param_1, param_1_minimum, param_1_maximum, param_1_n_steps,
                      param_2=None, param_2_minimum=None, param_2_maximum=None, param_2_n_steps=None,
@@ -836,6 +847,10 @@ class JointLikelihood(object):
             minimizer_instance.set_algorithm(self._minimizer_algorithm)
 
         return minimizer_instance
+
+    @property
+    def minimizer_in_use(self):
+        return self._minimizer_name, self._minimizer_algorithm
 
     def restore_best_fit(self):
         """
