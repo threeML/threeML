@@ -164,7 +164,7 @@ class ProgressBarBase(object):
 
     def finish(self):
 
-        self.animate(self._iterations)
+        self._animate(self._iterations)
 
     def _check_remaining_time(self, current_iteration, delta_t):
 
