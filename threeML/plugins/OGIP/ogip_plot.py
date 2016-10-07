@@ -7,7 +7,9 @@ from threeML.utils.binner import Rebinner
 from threeML.io.step_plot import step_plot
 from threeML.utils.stats_tools import Significance
 
-def display_ogip_model_counts(analysis, data=(), min_rate=1E-99, **kwargs):
+NO_REBIN = 1e-99
+
+def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
     """
 
     Display the fitted model count spectrum of one or more OGIP plugins
@@ -212,7 +214,17 @@ def display_ogip_model_counts(analysis, data=(), min_rate=1E-99, **kwargs):
                                (background_errors / data.background_exposure) ** 2)
 
         # rebin on the source rate
-        this_rebinner = Rebinner(src_rate, min_rate, data._mask)
+
+        # Create a rebinner if either a min_rate has been given, or if the current data set has no rebinned on its own
+
+        if (min_rate is not NO_REBIN) or (data._rebinner is None):
+
+            this_rebinner = Rebinner(src_rate, min_rate, data._mask)
+
+        else:
+
+            # Use the rebinner already in the data
+            this_rebinner = data._rebinner
 
         # get the rebinned counts
         new_rate, new_model_rate = this_rebinner.rebin(src_rate, expected_model_rate)
