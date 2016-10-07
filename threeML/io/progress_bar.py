@@ -107,7 +107,7 @@ def multiple_progress_bars(iterations, n, width=50, force_html=False):
 
 class ProgressBarBase(object):
 
-    def __init__(self, iterations, width=50):
+    def __init__(self, iterations, width):
 
         # Store the number of iterations
 
@@ -197,6 +197,10 @@ class ProgressBarBase(object):
 
 class ProgressBarHTML(ProgressBarBase):
 
+    def __init__(self, iterations, width=80):
+
+        super(ProgressBarHTML, self).__init__(iterations, width)
+
     def _setup(self):
 
         # Setup the widget, which is a bar between 0 and 100
@@ -231,6 +235,10 @@ class ProgressBarHTML(ProgressBarBase):
 
 
 class ProgressBarAscii(ProgressBarBase):
+
+    def __init__(self, iterations, width=30):
+
+        super(ProgressBarAscii, self).__init__(iterations, width)
 
     def _setup(self):
 
