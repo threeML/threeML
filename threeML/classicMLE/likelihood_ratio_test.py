@@ -19,8 +19,8 @@ class LikelihoodRatioTest(object):
         self._joint_likelihood_instance0.restore_best_fit()
         self._joint_likelihood_instance1.restore_best_fit()
 
-        self._reference_TS = self._joint_likelihood_instance0.current_minimum - \
-                             self._joint_likelihood_instance1.current_minimum
+        self._reference_TS = 2 * (self._joint_likelihood_instance0.current_minimum -
+                                  self._joint_likelihood_instance1.current_minimum)
 
         # Safety check that the user has provided the models in the right order
         assert self._reference_TS >= 0, "The reference TS is negative, either you specified the likelihood objects " \
