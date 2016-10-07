@@ -16,22 +16,49 @@ class JointLikelihoodSet(object):
     def __init__(self, data_getter, model_getter,
                  n_iterations, iteration_name='interval'):
 
+        # Store the data and model getter
+
         self._data_getter = data_getter
-        self._model_getter = model_getter
 
-        # Get the first model and get all free parameters from there
-        first_model = self._model_getter(0)
+        # Test it here, so we don't need to do it in the worker (which would slow down things)
+        data_test = self._data_getter(0)  # type: DataList
 
-        assert isinstance(first_model, Model), "The model_getter did not return a Model instance for " \
-                                                  "interval 0"
+        assert isinstance(data_test, DataList), "The data_getter should return a DataList instance"
 
-        first_data = self._data_getter(0)
+        # Now get the first model(s) and see whether there is one or more models
+        # Then, we make a wrapper if it returns only one model, so that we will not need to specialize
+        # the worker, as it will be able to assume that self._model_getter always returns a list of models
+        # (of maybe one element)
 
-        assert isinstance(first_data, DataList), "The data_getter did not return a DataList instance for " \
-                                                 "interval 0"
+        model_or_models = model_getter(0)
 
-        # Make a useless JointLikelihood object because the plugins could add their own nuisance parameters
-        _ = JointLikelihood(first_model, first_data)
+        try:
+
+            len(model_or_models)
+
+        except TypeError:
+
+            # Only one instance, let's check that it is actually a model
+
+            assert isinstance(model_or_models, Model), "The model getter function should return a model or a list of " \
+                                                       "models"
+
+            # Wrap the function so that self._model_getter will return a list of one element
+
+            self._model_getter = lambda id: [model_getter(id)]
+
+        else:
+
+            # More than one model
+
+            # Check that all models are instances of Model
+            for model in model_or_models:
+
+                assert isinstance(model, Model), "The model getter function should return a model or a list of models"
+
+            # No need for a wrapper in this case
+
+            self._model_getter = model_getter
 
         # Set up some attributes we will need
 
@@ -83,24 +110,51 @@ class JointLikelihoodSet(object):
 
         # Get the dataset for this interval
 
-        this_data = self._data_getter(interval)
-
-        assert isinstance(this_data, DataList), "The data_getter did not return a DataList instance for " \
-                                                "interval %s" % interval
+        this_data = self._data_getter(interval)  # type: DataList
 
         # Get the model for this interval
 
-        this_model = self._model_getter(interval)
+        this_models = self._model_getter(interval)
 
-        assert isinstance(this_model, Model), "The model_getter did not return a Model instance for " \
-                                              "interval %s" % interval
+        n_models = len(this_models)
 
-        # Instance the joint likelihood (this might generate more parameters, as plugins can add their nuisance
-        # parameters to the model)
+        # Fit all models and collect the results
 
-        jl = JointLikelihood(this_model, this_data)
+        parameters_frames = []
+        like_frames = []
 
-        return self._fitter(jl)
+        for this_model in this_models:
+
+            # Prepare a joint likelihood and fit it
+
+            jl = JointLikelihood(this_model, this_data)
+            this_parameter_frame, this_like_frame = self._fitter(jl)
+
+            # Append results
+
+            parameters_frames.append(this_parameter_frame)
+            like_frames.append(this_like_frame)
+
+        # Now merge the results in one data frame for the parameters and one for the likelihood
+        # values
+
+        if n_models > 1:
+
+            # Prepare the keys so that the first model will be indexed with model_0, the second model_1 and so on
+
+            keys = map(lambda x:"model_%i" % x, range(n_models))
+
+            # Concatenate all results in one frame for parameters and one for likelihood
+
+            frame_with_parameters = pd.concat(parameters_frames, keys=keys)
+            frame_with_like = pd.concat(like_frames, keys=keys)
+
+        else:
+
+            frame_with_parameters = parameters_frames[0]
+            frame_with_like = like_frames[0]
+
+        return frame_with_parameters, frame_with_like
 
     def _fitter(self, jl):
 
@@ -205,16 +259,10 @@ class JointLikelihoodSet(object):
 
         # Store the results in the data frames
 
-        frames = []
+        parameter_frames = pd.concat(map(lambda x:x[0], results), keys=range(self._n_iterations))
+        like_frames = pd.concat(map(lambda x:x[1], results), keys=range(self._n_iterations))
 
-        n_data_frames = len(results[0])
-
-        for i in range(n_data_frames):
-
-            this_frame = pd.concat(map(lambda x:x[i], results), keys=range(self._n_iterations))
-            frames.append(this_frame)
-
-        return frames
+        return parameter_frames, like_frames
 
 
 class JointLikelihoodSetTwoModels(JointLikelihoodSet):
