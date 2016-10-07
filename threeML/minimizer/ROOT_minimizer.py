@@ -24,7 +24,7 @@ class FuncWrapper(ROOT.TPyMultiGenFunction):
 
 class ROOTMinimizer(Minimizer):
 
-    def __init__(self, function, parameters, ftol=1e3, verbosity=1):
+    def __init__(self, function, parameters, ftol=1e3, verbosity=0):
 
         super(ROOTMinimizer, self).__init__(function, parameters, ftol, verbosity)
 
