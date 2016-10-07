@@ -1,18 +1,6 @@
 import logging
 
-#log = logging.getLogger(__name__)
-
-class hack(object):
-
-    def info(self, something):
-
-        pass
-
-    def error(self, something):
-
-        pass
-
-log = hack()
+log = logging.getLogger(__name__)
 
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.parallel.parallel_client import ParallelClient
@@ -59,6 +47,10 @@ class JointLikelihoodSet(object):
         self._2nd_minimizer = None
         self._2nd_algorithm = None
 
+        # By default, crash if a fit fails
+
+        self._continue_on_failure = False
+
     def set_minimizer(self, minimizer, algorithm=None):
 
         self._minimizer = minimizer
@@ -76,6 +68,95 @@ class JointLikelihoodSet(object):
 
         self._2nd_minimizer = minimizer
         self._2nd_algorithm = algorithm
+
+    def worker(self, interval):
+
+        # Print a message to divide one interval from another
+
+        log.info("\n\n\n==========================================")
+        log.info("JointLikelihoodSet: processing interval %s" % interval)
+        log.info("==========================================\n\n")
+
+        # Get the dataset for this interval
+
+        this_data = self._data_getter(interval)
+
+        assert isinstance(this_data, DataList), "The data_getter did not return a DataList instance for " \
+                                                "interval %s" % interval
+
+        # Enforce that the data list contains all data sets
+
+        for dataset in self._dataset_names:
+
+            if dataset not in this_data.keys():
+                raise ValueError("The dataset %s is not contained in interval %s" % (dataset, interval))
+
+        # Get the model for this interval
+
+        this_model = self._model_getter(interval)
+
+        assert isinstance(this_model, Model), "The model_getter did not return a Model instance for " \
+                                              "interval %s" % interval
+
+        # Instance the joint likelihood (this might generate more parameters, as plugins can add their nuisance
+        # parameters to the model)
+
+        jl = JointLikelihood(this_model, this_data)
+
+        # Enforce that the model contains all the required parameters
+
+        for parameter in self._parameter_names:
+
+            if parameter not in this_model.free_parameters:
+                raise ValueError("The parameter %s is not a free parameter of the model for "
+                                 "interval %s" % (parameter, interval))
+
+        # Set the minimizer
+        jl.set_minimizer(self._minimizer, self._algorithm)
+
+        try:
+
+            model_results, logl_results = jl.fit(quiet=True, compute_covariance=False)
+
+        except Exception as e:
+
+            log.error("\n\n**** FIT FAILED! ***")
+            log.error("Reason:")
+            log.error(repr(e))
+            log.error("\n\n")
+
+            if self._continue_on_failure:
+
+                return None, None
+
+            else:
+
+                raise
+
+        if self._2nd_minimizer is not None:
+
+            jl.set_minimizer(self._2nd_minimizer, self._2nd_algorithm)
+
+            try:
+
+                model_results, logl_results = jl.fit(quiet=True, compute_covariance=False)
+
+            except Exception as e:
+
+                log.error("\n\n**** SECONDARY FIT FAILED! ***")
+                log.error("Reason:")
+                log.error(repr(e))
+                log.error("\n\n")
+
+                if self._continue_on_failure:
+
+                    return None, None
+
+                else:
+
+                    raise
+
+        return model_results, logl_results
 
     def go(self, continue_on_failure=True, verbose=False, **options_for_parallel_computation):
 
@@ -101,98 +182,13 @@ class JointLikelihoodSet(object):
 
         like_data_frame = pd.DataFrame(index=multi_index_like, columns=['-log(likelihood)'])
 
+        if verbose:
+
+            log.setLevel(logging.INFO)
+
+        self._continue_on_failure = continue_on_failure
+
         # let's iterate, perform the fit and fill the data frame
-
-        def worker(interval):
-
-            # Print a message to divide one interval from another
-
-            log.info("\n\n\n==========================================")
-            log.info("JointLikelihoodSet: processing interval %s" % interval)
-            log.info("==========================================\n\n")
-
-            # Get the dataset for this interval
-
-            this_data = self._data_getter(interval)
-
-            assert isinstance(this_data, DataList), "The data_getter did not return a DataList instance for " \
-                                                    "interval %s" % interval
-
-            # Enforce that the data list contains all data sets
-
-            for dataset in self._dataset_names:
-
-                if dataset not in this_data.keys():
-
-                    raise ValueError("The dataset %s is not contained in interval %s" % (dataset, interval))
-
-            # Get the model for this interval
-
-            this_model = self._model_getter(interval)
-
-            assert isinstance(this_model, Model), "The model_getter did not return a Model instance for " \
-                                                  "interval %s" % interval
-
-            # Instance the joint likelihood (this might generate more parameters, as plugins can add their nuisance
-            # parameters to the model)
-
-            jl = JointLikelihood(this_model, this_data, verbose=verbose)
-
-            # Enforce that the model contains all the required parameters
-
-            for parameter in self._parameter_names:
-
-                if parameter not in this_model.free_parameters:
-
-                    raise ValueError("The parameter %s is not a free parameter of the model for "
-                                     "interval %s" % (parameter, interval))
-
-            # Set the minimizer
-            jl.set_minimizer(self._minimizer, self._algorithm)
-
-            try:
-
-                model_results, logl_results = jl.fit(quiet=True, compute_covariance=False)
-
-            except Exception as e:
-
-                log.error("\n\n**** FIT FAILED! ***")
-                log.error("Reason:")
-                log.error(repr(e))
-                log.error("\n\n")
-
-                if continue_on_failure:
-
-                    return None, None
-
-                else:
-
-                    raise
-
-            if self._2nd_minimizer is not None:
-
-                jl.set_minimizer(self._2nd_minimizer, self._2nd_algorithm)
-
-                try:
-
-                    model_results, logl_results = jl.fit(quiet=True, compute_covariance=False)
-
-                except Exception as e:
-
-                    log.error("\n\n**** SECONDARY FIT FAILED! ***")
-                    log.error("Reason:")
-                    log.error(repr(e))
-                    log.error("\n\n")
-
-                    if continue_on_failure:
-
-                        return None, None
-
-                    else:
-
-                        raise
-
-            return model_results, logl_results
 
         if threeML_config['parallel']['use-parallel']:
 
@@ -200,7 +196,7 @@ class JointLikelihoodSet(object):
 
             client = ParallelClient(**options_for_parallel_computation)
 
-            amr = client.interactive_map(worker, xrange(self._n_iterations))
+            amr = client.interactive_map(self.worker, range(self._n_iterations))
 
             results = []
 
@@ -223,7 +219,7 @@ class JointLikelihoodSet(object):
 
                 for i in range(self._n_iterations):
 
-                    results.append(worker(i))
+                    results.append(self.worker(i))
 
                     p.increase()
 
