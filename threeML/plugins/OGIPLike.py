@@ -161,7 +161,7 @@ class OGIPLike(PluginPrototype):
         self._current_observed_counts = self._observed_counts
         self._current_background_counts = self._background_counts
         self._current_scaled_background_counts = self._scaled_background_counts
-        self._current_background_errors = self._back_counts_errors
+        self._current_back_counts_errors = self._back_counts_errors
 
         # This will be used to keep track of how many syntethic datasets have been generated
         self._n_synthetic_datasets = 0
@@ -263,19 +263,40 @@ class OGIPLike(PluginPrototype):
 
         if self._back_counts_errors is not None:
 
-            self._current_background_errors = self._back_counts_errors[self._mask]
+            self._current_back_counts_errors = self._back_counts_errors[self._mask]
 
     @contextmanager
-    def _without_mask_context_manager(self):
+    def _without_mask_nor_rebinner(self):
+
+        # Store mask and rebinner for later use
 
         mask = self._mask
+        rebinner = self._rebinner
 
+        # Clean mask and rebinning
+
+        self.remove_rebinning()
         self.set_active_measurements("all")
+
+        # Execute whathever
 
         yield
 
+        # Restore mask and rebinner (if any)
+
         self._mask = mask
-        self._apply_mask_to_original_vectors()
+
+        if rebinner is not None:
+
+            # There was a rebinner, use it. Note that the rebinner applies the mask by itself
+
+            self._apply_rebinner(rebinner)
+
+        else:
+
+            # There was no rebinner, so we need to explicitly apply the mask
+
+            self._apply_mask_to_original_vectors()
 
     def get_simulated_dataset(self, new_name=None):
         """
@@ -303,7 +324,7 @@ class OGIPLike(PluginPrototype):
 
         original_mask = np.array(self._mask, copy=True)
 
-        with self._without_mask_context_manager():
+        with self._without_mask_nor_rebinner():
             # Get the source model for all channels (that's why we don't use the .folded_model property)
 
             source_model_counts = self._rsp.convolve() * self.exposure
@@ -471,7 +492,13 @@ class OGIPLike(PluginPrototype):
 
         # NOTE: the rebinner takes care of the mask already
 
-        self._rebinner = Rebinner(self._background_counts, min_number_of_counts, self._mask)
+        rebinner = Rebinner(self._background_counts, min_number_of_counts, self._mask)
+
+        self._apply_rebinner(rebinner)
+
+    def _apply_rebinner(self, rebinner):
+
+        self._rebinner = rebinner
 
         # Apply the rebinning to everything.
         # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
@@ -483,14 +510,13 @@ class OGIPLike(PluginPrototype):
                                                                         self._scaled_background_counts)
 
         if self._back_counts_errors is not None:
-
             # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
 
-            self._current_background_errors, = self._rebinner.rebin_errors(self._back_counts_errors)
+            self._current_back_counts_errors, = self._rebinner.rebin_errors(self._back_counts_errors)
 
         if self._verbose:
-
             print("Now using %s bins" % self._rebinner.n_bins)
+
 
     def remove_rebinning(self):
         """
@@ -588,7 +614,7 @@ class OGIPLike(PluginPrototype):
 
         loglike, bkg_model = poisson_observed_gaussian_background(self._current_observed_counts,
                                                                   self._current_background_counts,
-                                                                  self._current_background_errors,
+                                                                  self._current_back_counts_errors,
                                                                   expected_model_counts)
 
         return np.sum(loglike), bkg_model
@@ -837,7 +863,7 @@ class OGIPLike(PluginPrototype):
 
                 background_counts = copy.copy(self._current_background_counts)
 
-                background_errors = copy.copy(self._current_background_errors)
+                background_errors = copy.copy(self._current_back_counts_errors)
 
             else:
 
