@@ -7,7 +7,7 @@ from threeML.utils.binner import Rebinner
 from threeML.io.step_plot import step_plot
 from threeML.utils.stats_tools import Significance
 
-def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
+def display_ogip_model_counts(analysis, data=(), min_rate=1E-99, **kwargs):
     """
 
     Display the fitted model count spectrum of one or more OGIP plugins
@@ -28,7 +28,6 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
 
     """
 
-
     # If the user supplies a subset of the data, we will use that
 
     if not data:
@@ -42,6 +41,7 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
     # Now we want to make sure that we only grab OGIP plugins
 
     new_data_keys = []
+
     for key in data_keys:
 
         # Make sure it is a valid key
@@ -135,13 +135,18 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
     # Now we need to set the model back to the best or median fit depending
     # on the type of analysis
 
-    if analysis.analysis_type == 'mle':
+    # GV: I would leave this to the user: if he/she wants to see the best fit and she did something to the model
+    # between the fit and when this function is called, then he/she can restore manually the fit.
+    # This way it is possible to use this method even before a fit, for example to
+    # check if the chosen normalizations have anything to do with the data.
 
-        analysis.restore_best_fit()
-
-    else:
-
-        analysis.restore_median_fit()
+    # if analysis.analysis_type == 'mle':
+    #
+    #     analysis.restore_best_fit()
+    #
+    # else:
+    #
+    #     analysis.restore_median_fit()
 
     fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
 
@@ -182,7 +187,7 @@ def display_ogip_model_counts(analysis, data=[], min_rate=1E-99, **kwargs):
 
                 background_counts = data._background_counts
 
-                background_errors = data._background_errors
+                background_errors = data._back_counts_errors
 
             else:
 
