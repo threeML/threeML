@@ -5,7 +5,6 @@ import numpy as np
 import re
 
 import copy
-from threeML.minimizer import minimization
 import pandas as pd
 
 from threeML.io.rich_display import display
@@ -18,7 +17,7 @@ from threeML.io.progress_bar import progress_bar
 
 from event_polynomial import polyfit, unbinned_polyfit
 
-from pha import PHAContainer
+from threeML.plugins.OGIP.pha import PHAContainer
 
 
 class ReducingNumberOfThreads(Warning):
@@ -286,11 +285,6 @@ class EventList(object):
         else:
             RuntimeError('A polynomial fit has not been made.')
 
-
-
-
-
-
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
 
@@ -362,7 +356,6 @@ class EventList(object):
 
             unbinned = True
 
-
         self._poly_time_selections = []
 
         for time_interval in time_intervals:
@@ -384,7 +377,6 @@ class EventList(object):
             self._unbinned = False
 
             self._fit_polynomials()
-
 
         # Since changing the poly fit will alter the counts
         # We need to recalculate the source interval
@@ -461,41 +453,35 @@ class EventList(object):
             info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
             info_dict['Unbinned Fit'] = self._unbinned
 
-            sig =Significance(self._counts.sum(), self._poly_counts.sum())
+            sig = Significance(self._counts.sum(), self._poly_counts.sum())
 
-            bkg_sig = np.sqrt( (self._poly_count_err**2).sum())
+            bkg_sig = np.sqrt((self._poly_count_err ** 2).sum())
 
-
-            info_dict['Li and Ma Sigma'] = sig.li_and_ma_equivalent_for_gaussian_background(bkg_sig)  # not sure if li and ma applies here
+            # too provocative?
+            info_dict['Vianello Significance'] = sig.li_and_ma_equivalent_for_gaussian_background(bkg_sig)
 
         info_df = pd.Series(info_dict)
 
         display(info_df)
 
-
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
-        # Fit the sum of all the channels to determine the optimal polynomial
-        # grade
+        """
+        Provides the ability to find the optimum polynomial grade for *binned* counts by fitting the
+        total (all channels) to 0-4 order polynomials and then comparing them via a likelihood ratio test.
 
 
-        # y                         = []
-        # for i in range(Nintervals):
-        #  y.append(np.sum(counts[i]))
-        # pass
-        # y                         = np.array(y)
-
-        # exposure                  = np.array(data.field("EXPOSURE"))
-
-        # print("\nLooking for optimal polynomial grade:")
-
-        # Fit all the polynomials
+        :param cnts: counts per bin
+        :param bins: the bins used
+        :param exposure: exposure per bin
+        :return: polynomial grade
+        """
 
         min_grade = 0
-        max_grade = 3
+        max_grade = 4
         log_likelihoods = []
 
         for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = polyfit(bins, cnts, grade, exposure, self._get_minimizer)
+            polynomial, log_like = polyfit(bins, cnts, grade, exposure)
 
             log_likelihoods.append(log_like)
 
@@ -525,12 +511,22 @@ class EventList(object):
         return best_grade
 
     def _unbinned_fit_global_and_determine_optimum_grade(self, events, exposure):
+        """
+        Provides the ability to find the optimum polynomial grade for *unbinned* events by fitting the
+        total (all channels) to 0-4 order polynomials and then comparing them via a likelihood ratio test.
+
+
+        :param events: an event list
+        :param exposure: the exposure per event
+        :return: polynomial grade
+        """
+
         # Fit the sum of all the channels to determine the optimal polynomial
         # grade
 
 
         min_grade = 0
-        max_grade = 3
+        max_grade = 4
         log_likelihoods = []
 
         t_start = self._poly_time_selections[:, 0]
@@ -543,7 +539,6 @@ class EventList(object):
 
         # Found the best one
         delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
-
 
         delta_threshold = 9.0
 
@@ -560,72 +555,16 @@ class EventList(object):
 
         return best_grade
 
-    def set_minimizer(self, minimizer, algorithm=None):
-        """
-        Set the minimizer to be used, among those available. At the moment these are supported:
-
-        * ROOT
-        * MINUIT (which means iminuit, default)
-        * PYOPT
-
-        :param minimizer: the name of the new minimizer.
-        :param algorithm: (optional) for the PYOPT minimizer, specify the algorithm among those available. See a list at
-        http://www.pyopt.org/reference/optimizers.html . For the other minimizers this is ignored, if provided.
-        :return: (none)
-        """
-
-        assert minimizer.upper() in minimization._minimizers, "Minimizer %s is not available on this system. Available " \
-                                                              "minimizers: " \
-                                                              "%s" % (minimizer,
-                                                                      ",".join(minimization._minimizers.keys()))
-
-        if minimizer.upper() == "MINUIT":
-
-            self._minimizer_name = "MINUIT"
-            self._minimizer_algorithm = None
-
-        elif minimizer.upper() == "ROOT":
-
-            self._minimizer_name = "ROOT"
-            self._minimizer_algorithm = None
-
-        elif minimizer.upper() == "PYOPT":
-
-            assert algorithm is not None, "You have to provide an algorithm for the PYOPT minimizer. " \
-                                          "See http://www.pyopt.org/reference/optimizers.html"
-
-            self._minimizer_name = "PYOPT"
-
-            assert algorithm.upper() in minimization._pyopt_algorithms, "Provided algorithm not available. " \
-                                                                        "Available algorithms are: " \
-                                                                        "%s" % minimization._pyopt_algorithms.keys()
-            self._minimizer_algorithm = algorithm.upper()
-
-        elif minimizer.upper() == "MULTINEST":
-
-            self._minimizer_name = "MULTINEST"
-            self._minimizer_algorithm = None
-
-        else:
-
-            raise ValueError("Do not know minimizer %s. "
-                             "Available minimizers are: %s" % (minimizer, ",".join(minimization._minimizers.keys())))
-
-        # Get the type
-
-        self._minimizer_type = minimization.get_minimizer(self._minimizer_name)
-
-    def _get_minimizer(self, *args, **kwargs):
-
-        minimizer_instance = self._minimizer_type(*args, **kwargs)
-
-        if self._minimizer_algorithm:
-
-            minimizer_instance.set_algorithm(self._minimizer_algorithm)
-
-        return minimizer_instance
-
     def _fit_polynomials(self):
+        """
+
+        Binned fit to each channel. Sets the polynomial array that will be used to compute
+        counts over an interval
+
+
+
+        :return:
+        """
 
         self._poly_fit_exists = True
 
@@ -665,8 +604,6 @@ class EventList(object):
 
         cnts, bins = np.histogram(total_poly_events,
                                   bins=these_bins)
-
-
 
         # Find the mean time of the bins and calculate the exposure in each bin
         mean_time = []
@@ -737,14 +674,12 @@ class EventList(object):
                     cnts, bins = np.histogram(current_events,
                                               bins=these_bins)
 
-
-
                     # Put data to fit in an x vector and y vector
 
                     polynomial, _ = polyfit(mean_time[non_zero_mask],
                                             cnts[non_zero_mask],
                                             self._optimal_polynomial_grade,
-                                            exposure_per_bin[non_zero_mask], self._get_minimizer)
+                                            exposure_per_bin[non_zero_mask])
 
                     polynomials.append(polynomial)
                     p.increase()

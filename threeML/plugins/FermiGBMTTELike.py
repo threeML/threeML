@@ -9,7 +9,7 @@ import re
 import requests
 
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugin_prototype import PluginPrototype
+
 from OGIP.eventlist import EventList
 from threeML.io.rich_display import display
 
@@ -18,7 +18,7 @@ from threeML.io.step_plot import step_plot
 __instrument_name = "Fermi GBM TTE (all detectors)"
 
 
-class FermiGBMTTELike(OGIPLike, PluginPrototype):
+class FermiGBMTTELike(OGIPLike):
     def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
         """
