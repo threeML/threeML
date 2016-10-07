@@ -163,6 +163,8 @@ def is_plugin_available(plugin):
 
 # Import the joint likelihood set
 from .classicMLE.joint_likelihood_set import JointLikelihoodSet, JointLikelihoodSetAnalyzer
+from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
+from .classicMLE.goodness_of_fit import GoodnessOfFit
 
 # Added by JM to import spectral plotting.
 from .io.model_plot import SpectralPlotter
@@ -179,9 +181,6 @@ from .parallel.parallel_client import parallel_computation
 
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config
-
-# Finally import everything from astromodels
-from astromodels import *
 
 import astropy.units as u
 
@@ -214,3 +213,6 @@ for var in var_to_check:
 
         custom_warnings.warn("Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML" % var,
                              RuntimeWarning)
+
+# Finally import everything from astromodels
+from astromodels import *
