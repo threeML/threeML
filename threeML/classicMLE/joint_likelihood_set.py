@@ -10,6 +10,7 @@ from threeML.io.progress_bar import progress_bar
 from astromodels import Model
 import pandas as pd
 
+
 class JointLikelihoodSet(object):
 
     def __init__(self, data_getter, model_getter,
@@ -32,17 +33,20 @@ class JointLikelihoodSet(object):
         # Make a useless JointLikelihood object because the plugins could add their own nuisance parameters
         _ = JointLikelihood(first_model, first_data)
 
-        # Gather names of parameters and plugin instances
-
-        self._parameter_names = first_model.free_parameters.keys()
-        self._dataset_names = first_data.keys()
+        # Set up some attributes we will need
 
         self._n_iterations = n_iterations
 
+        # This is used only to print error messages
+
         self._iteration_name = iteration_name
+
+        # Default minimizer is minuit
 
         self._minimizer = 'minuit'
         self._algorithm = None
+
+        # by default there is no second minimizer
 
         self._2nd_minimizer = None
         self._2nd_algorithm = None
@@ -84,13 +88,6 @@ class JointLikelihoodSet(object):
         assert isinstance(this_data, DataList), "The data_getter did not return a DataList instance for " \
                                                 "interval %s" % interval
 
-        # Enforce that the data list contains all data sets
-
-        for dataset in self._dataset_names:
-
-            if dataset not in this_data.keys():
-                raise ValueError("The dataset %s is not contained in interval %s" % (dataset, interval))
-
         # Get the model for this interval
 
         this_model = self._model_getter(interval)
@@ -103,13 +100,9 @@ class JointLikelihoodSet(object):
 
         jl = JointLikelihood(this_model, this_data)
 
-        # Enforce that the model contains all the required parameters
+        return self._fitter(jl)
 
-        for parameter in self._parameter_names:
-
-            if parameter not in this_model.free_parameters:
-                raise ValueError("The parameter %s is not a free parameter of the model for "
-                                 "interval %s" % (parameter, interval))
+    def _fitter(self, jl):
 
         # Set the minimizer
         jl.set_minimizer(self._minimizer, self._algorithm)
@@ -127,7 +120,9 @@ class JointLikelihoodSet(object):
 
             if self._continue_on_failure:
 
-                return None, None
+                # Return empty data frame
+
+                return pd.DataFrame(), pd.DataFrame()
 
             else:
 
@@ -150,7 +145,9 @@ class JointLikelihoodSet(object):
 
                 if self._continue_on_failure:
 
-                    return None, None
+                    # Return empty data frame
+
+                    return pd.DataFrame(), pd.DataFrame()
 
                 else:
 
@@ -161,26 +158,6 @@ class JointLikelihoodSet(object):
     def go(self, continue_on_failure=True, verbose=False, **options_for_parallel_computation):
 
         # Generate the data frame which will contain all results
-
-        # First generate the multi-index
-
-        multi_index = pd.MultiIndex.from_product([range(self._n_iterations), self._parameter_names],
-                                                 names=[self._iteration_name, 'parameter'])
-
-        # Now the empty data frames
-
-        data_frame = pd.DataFrame(index=multi_index, columns=['value', 'error'])
-
-        # Now do the same for the likelihood dataframe
-
-        # Add the 'total' likelihood
-        likelihood_names = ['total']
-        likelihood_names.extend(self._dataset_names)
-
-        multi_index_like = pd.MultiIndex.from_product([range(self._n_iterations), likelihood_names],
-                                                      names=[self._iteration_name, 'dataset'])
-
-        like_data_frame = pd.DataFrame(index=multi_index_like, columns=['-log(likelihood)'])
 
         if verbose:
 
@@ -223,35 +200,26 @@ class JointLikelihoodSet(object):
 
                     p.increase()
 
-        # Store the results in the data frame
+        assert len(results) == self._n_iterations, "Something went wrong, I have %s results " \
+                                                   "for %s intervals" % (len(results), self._n_iterations)
 
-        for interval, result in enumerate(results):
+        # Store the results in the data frames
 
-            model_results, logl_results = result
+        frames = []
 
-            if model_results is None:
+        n_data_frames = len(results[0])
 
-                if continue_on_failure:
+        for i in range(n_data_frames):
 
-                    continue
+            this_frame = pd.concat(map(lambda x:x[i], results), keys=range(self._n_iterations))
+            frames.append(this_frame)
 
-                else:
+        return frames
 
-                    raise RuntimeError("Results from interval %s are None!" % interval)
 
-            for parameter in self._parameter_names:
+class JointLikelihoodSetTwoModels(JointLikelihoodSet):
 
-                data_frame['value'][interval][parameter] = model_results['value'][parameter]
-                data_frame['error'][interval][parameter] = model_results['error'][parameter]
-
-            # Now store the likelihood values in the likelihood data frame
-
-            for dataset in likelihood_names:
-
-                like_data_frame['-log(likelihood)'][interval][dataset] = logl_results['-log(likelihood)'][dataset]
-
-        return data_frame, like_data_frame
-
+    pass
 
 class JointLikelihoodSetAnalyzer(object):
     """
