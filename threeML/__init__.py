@@ -9,38 +9,21 @@ from version import __version__
 
 # This dynamically loads a module and return it in a variable
 
-def import_module(module_name):
-
-    # Fast path: see if the module has already been imported.
+def is_module_importable(module_full_path):
 
     try:
 
-        return sys.modules[module_name]
-
-    except KeyError:
-
-        pass
-
-    # If any of the following calls raises an exception,
-    # there's a problem we can't handle -- let the caller handle it.
-
-    fp, pathname, description = imp.find_module(module_name)
-
-    try:
-
-        return imp.load_module(module_name, fp, pathname, description)
+        _ = imp.load_source('__', module_full_path)
 
     except:
 
-        raise
+        return False
 
-    finally:
+    else:
 
-        # Since we may exit via an exception, close fp explicitly.
+        return True
 
-        if fp:
 
-            fp.close()
 
 # Import in the current namespace everything under the
 # models directory
@@ -97,51 +80,56 @@ for mod in modsToImport:
 # Now look for plugins
 
 plugins_dir = os.path.join(os.path.dirname(__file__), "plugins")
-sys.path.insert(1, plugins_dir)
+
 found_plugins = glob.glob(os.path.join(plugins_dir, "*.py"))
+
 
 # Filter out __init__
 
 found_plugins = filter(lambda x: x.find("__init__") < 0, found_plugins)
 
-
-
 _available_plugins = {}
 
-for i, plug in enumerate(found_plugins):
+for i, module_full_path in enumerate(found_plugins):
 
     # Loop over each candidates plugins
 
-    try:
-
-        thisPlugin = import_module(os.path.basename(".".join(plug.split(".")[:-1])))
-
-    except ImportError:
+    if not is_module_importable(module_full_path):
 
         custom_warnings.warn("Could not import plugin %s. Do you have the relative instrument software installed "
-                             "and configured?" % plug, custom_exceptions.CannotImportPlugin)
+                             "and configured?" % os.path.basename(module_full_path),
+                             custom_exceptions.CannotImportPlugin)
         continue
 
-    # Get the classes within this module
+    else:
 
-    classes = inspect.getmembers(thisPlugin, lambda x: inspect.isclass(x) and inspect.getmodule(x) == thisPlugin)
+        plugin_name = os.path.splitext(os.path.basename(module_full_path))[0]
 
-    for name, cls in classes:
+        # First get the instrument name
+        try:
 
+            exec("from threeML.plugins.%s import __instrument_name" % plugin_name)
 
-        if not issubclass(cls, PluginPrototype):
+        except ImportError:
 
-            # This is not a plugin
+            # This module does not contain a plugin, continue
+            continue
+
+        # Now import the plugin itself
+
+        import_command = "from threeML.plugins.%s import %s" % (plugin_name, plugin_name)
+
+        try:
+
+            exec(import_command)
+
+        except ImportError:
 
             pass
 
         else:
 
-            _available_plugins[thisPlugin.__instrument_name] = cls.__name__
-
-            # import it again in the uppermost namespace
-
-            exec ("from %s import %s" % (os.path.basename(thisPlugin.__name__), cls.__name__))
+            _available_plugins[__instrument_name] = plugin_name
 
 
 def get_available_plugins():
@@ -196,3 +184,33 @@ from .config.config import threeML_config
 from astromodels import *
 
 import astropy.units as u
+
+import os
+
+# Check that the number of threads is set to 1 for all multi-thread libraries
+# otherwise numpy operations will be way slower than what they could be, since
+# we never perform huge numpy operations, we instead perform many of them. In this
+# situation, opening threads introduces overhead with no performance gain. This solution
+# allows cores to be used for multi-cpu computation with the parallel client
+
+var_to_check = ['OMP_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS']
+
+for var in var_to_check:
+
+    num_threads = os.environ.get(var)
+
+    if num_threads is not None:
+
+        try:
+
+            num_threads = int(num_threads)
+
+        except ValueError:
+
+            custom_warnings.warn("Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
+                                 "for optimum performances." % var, RuntimeWarning)
+
+    else:
+
+        custom_warnings.warn("Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML" % var,
+                             RuntimeWarning)
