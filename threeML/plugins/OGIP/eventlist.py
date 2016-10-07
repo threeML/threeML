@@ -458,7 +458,7 @@ class EventList(object):
             bkg_sig = np.sqrt((self._poly_count_err ** 2).sum())
 
             # too provocative?
-            info_dict['Vianello Significance'] = sig.li_and_ma_equivalent_for_gaussian_background(bkg_sig)
+            info_dict['Significance'] = sig.li_and_ma_equivalent_for_gaussian_background(bkg_sig)
 
         info_df = pd.Series(info_dict)
 
