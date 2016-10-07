@@ -49,6 +49,11 @@ class LikelihoodRatioTest(object):
 
         for dataset in self._joint_likelihood_instance0.data_list.values():
 
+            # Make sure that the active likelihood model is the null hypothesis
+            # This is needed if the user has used the same DataList instance for both
+            # JointLikelihood instances
+            dataset.set_model(self._joint_likelihood_instance0.likelihood_model)
+
             new_data = dataset.get_simulated_dataset("%s_sim" % dataset.name)
 
             new_datas.append(new_data)
@@ -104,21 +109,3 @@ class LikelihoodRatioTest(object):
 
         return null_hyp_prob, TS, data_frame, like_data_frame
 
-        # # Compute goodness of fit
-        #
-        # gof = collections.OrderedDict()
-        #
-        # # Total
-        # idx = like_data_frame['-log(likelihood)'][:, "total"].values >= self._reference_like['total']  # type: np.ndarray
-        #
-        # gof['total'] = np.sum(idx) / float(n_iterations)
-        #
-        # for dataset in self._jl_instance.data_list.values():
-        #
-        #     sim_name = "%s_sim" % dataset.name
-        #
-        #     idx = (like_data_frame['-log(likelihood)'][:, sim_name].values >= self._reference_like[dataset.name])
-        #
-        #     gof[dataset.name] = np.sum(idx) / float(n_iterations)
-        #
-        # return gof, data_frame, like_data_frame
