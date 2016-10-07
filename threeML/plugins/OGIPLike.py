@@ -323,6 +323,7 @@ class OGIPLike(PluginPrototype):
         # at the end
 
         original_mask = np.array(self._mask, copy=True)
+        original_rebinner = self._rebinner
 
         with self._without_mask_nor_rebinner():
             # Get the source model for all channels (that's why we don't use the .folded_model property)
@@ -468,8 +469,16 @@ class OGIPLike(PluginPrototype):
                                        verbose=self._verbose)
 
             # Apply the same selections as the current data set
-            new_ogip_like._mask = original_mask
-            new_ogip_like._apply_mask_to_original_vectors()
+            if original_rebinner is not None:
+
+                # Apply rebinning, which also applies the mask
+                new_ogip_like._apply_rebinner(original_rebinner)
+
+            else:
+
+                # Only apply the mask
+                new_ogip_like._mask = original_mask
+                new_ogip_like._apply_mask_to_original_vectors()
 
             # TODO: nuisance parameters
 
