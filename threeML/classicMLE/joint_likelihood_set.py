@@ -212,6 +212,7 @@ class JointLikelihoodSet(object):
 
                     p.increase()
 
+
         else:
 
             # Serial computation
