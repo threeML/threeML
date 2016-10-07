@@ -437,13 +437,24 @@ class OGIPLike(PluginPrototype):
 
             # Now create another instance of OGIPLike with the randomized data we just generated
 
-            new_ogip_like = type(self)(new_name,
-                                       pha_file=pha,
-                                       bak_file=bak,
-                                       rsp_file=self._rsp,  # Use the currently loaded response so we don't need to
-                                                            # re-read from disk (way faster!)
-                                       arf_file=None,       # The ARF is None because if present has been already read in
-                                                            # the self._rsp class
+            # new_ogip_like = type(self)(new_name,
+            #                            pha_file=pha,
+            #                            bak_file=bak,
+            #                            rsp_file=self._rsp,  # Use the currently loaded response so we don't need to
+            #                                                 # re-read from disk (way faster!)
+            #                            arf_file=None,       # The ARF is None because if present has been already read in
+            #                                                 # the self._rsp class
+            #                            verbose=self._verbose)
+
+            # Switch to using a generic ogip like because the constructor for
+            # different instruments will vary.
+            new_ogip_like = OGIPLike(new_name,
+                                     pha_file=pha,
+                                     bak_file=bak,
+                                     rsp_file=self._rsp,  # Use the currently loaded response so we don't need to
+                                     # re-read from disk (way faster!)
+                                     arf_file=None,  # The ARF is None because if present has been already read in
+                                     # the self._rsp class
                                        verbose=self._verbose)
 
             # Apply the same selections as the current data set
