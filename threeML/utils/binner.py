@@ -1,5 +1,5 @@
 import numpy as np
-
+from threeML.utils.stats_tools import Significance
 
 class NotEnoughData(RuntimeError):
     pass
@@ -205,3 +205,86 @@ class Rebinner(object):
     #
     #     # return the low and high bins
     #     return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
+
+
+class TemporalBinner(object):
+    """
+    A class to provide binning of temporal light curves via various methods
+
+    """
+
+    def __init__(self, arrival_times):
+
+        self._arrival_times = arrival_times
+
+    @property
+    def bins(self):
+
+        return [self._starts, self._stops]
+
+    def text_bins(self):
+
+        txt_bins = []
+
+        for start, stop in zip(self._starts, self._stops):
+
+            txt_bins.append("%f-%f" % (start, stop))
+
+        return txt_bins
+
+    def bin_by_significance(self, background_getter, background_error_getter=None, sigma_level=10, min_counts=1):
+        """
+
+        Bin the data to a given significance level for a given background method and sigma
+        method
+
+        :param background_error_getter: 
+        :param min_counts: 
+        :param sigma_level:
+        :param background_getter:
+        :return:
+        """
+
+        self._starts = []
+
+        self._stops = []
+
+        total_counts = 0
+        current_start = self._arrival_times[0]
+
+        for i, time in enumerate(self._arrival_times):
+
+            total_counts += 1
+
+            if total_counts < min_counts:
+
+                continue
+
+            else:
+
+                # first use the background function to know the number of background counts
+                bkg = background_getter(current_start, time)
+
+                sig = Significance(total_counts, bkg)
+
+                if background_error_getter is not None:
+
+                    bkg_error = background_error_getter(current_start, time)
+
+                    sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)
+
+                else:
+
+                    sigma = sig.li_and_ma()
+
+                # now test if we have enough sigma
+
+                if sigma >= sigma_level:
+
+                    self._stops.append(time)
+
+                    self._starts.append(current_start)
+
+                    current_start = time
+
+                    total_counts = 0

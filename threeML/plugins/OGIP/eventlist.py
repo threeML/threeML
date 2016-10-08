@@ -127,11 +127,6 @@ class EventList(object):
 
         self._time_selection_exists = True
 
-        # try:
-        #     use_poly_fit = kwargs.pop('use_poly_fit')
-        # except(KeyError):
-        #     use_poly_fit = False
-
         tmin_list = []
         tmax_list = []
         interval_masks = []
