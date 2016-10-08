@@ -14,6 +14,7 @@ from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.progress_bar import progress_bar
+from threeML.utils.binner import TemporalBinner
 
 from event_polynomial import polyfit, unbinned_polyfit
 
@@ -39,22 +40,23 @@ def ceildiv(a, b):
 
 class EventList(object):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None, minimizer=None, algorithm=None):
+                 first_channel=0, rsp_file=None, ra=None, dec=None, algorithm=None):
         """
         Container for event style data which are tagged with time and energy/PHA.
 
 
-        Args:
-            n_channels: Number of detector channels
-            start_time: start time of the event list
-            stop_time: stop time of the event list
-            dead_time: an array of deadtime per event
-            first_channel: where detchans begin indexing
-            rsp_file: the response file corresponding to these events
-            arrival_times: list of event arrival times
-            energies: list of event energies or pha channels
-            ra:
-            dec:
+
+
+        :param  n_channels: Number of detector channels
+        :param  start_time: start time of the event list
+        :param  stop_time: stop time of the event list
+        :param  dead_time: an array of deadtime per event
+        :param  first_channel: where detchans begin indexing
+        :param  rsp_file: the response file corresponding to these events
+        :param  arrival_times: list of event arrival times
+        :param  energies: list of event energies or pha channels
+        :param  ra:
+        :param  dec:
         """
 
         self._arrival_times = np.asarray(arrival_times)
@@ -96,11 +98,6 @@ class EventList(object):
 
         self._rsp_file = rsp_file
 
-        if minimizer is not None:
-            self.set_minimizer(minimizer, algorithm)
-
-        else:
-            self.set_minimizer("MINUIT")
 
         self._user_poly_order = -1
         self._time_selection_exists = False
@@ -280,8 +277,10 @@ class EventList(object):
         else:
             RuntimeError('A polynomial fit has not been made.')
 
-    def total_poly_count(self, start, stop, mask=None):
+    def get_total_poly_count(self, start, stop, mask=None):
         """
+
+        Get the total poly counts
 
         :param start:
         :param stop:
@@ -292,14 +291,16 @@ class EventList(object):
 
         total_counts = 0
 
-        for p in self._polynomials[mask]:
+        for p in np.asarray(self._polynomials)[mask]:
 
             total_counts += p.integral(start, stop)
 
         return total_counts
 
-    def total_poly_error(self, start, stop, mask=None):
+    def get_total_poly_error(self, start, stop, mask=None):
         """
+
+        Get the total poly error
 
         :param start:
         :param stop:
@@ -310,14 +311,52 @@ class EventList(object):
 
         total_counts = 0
 
-        for p in self._polynomials[mask]:
+        for p in np.asarray(self._polynomials)[mask]:
 
             total_counts += p.integral_error(start, stop) ** 2
 
         return np.sqrt(total_counts)
 
+    def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
+        """
+
+        Bin the light curve by a given significance level
 
 
+        :param start:
+        :param stop:
+        :param sigma:
+        :param mask:
+        :return:
+        """
+
+        if mask is not None:
+
+            # create phas to check
+            phas = np.arange(self._first_channel, self._n_channels)[mask]
+
+            this_mask = np.zeros_like(self._arrival_times, dtype=np.bool)
+
+            for channel in phas:
+                this_mask = np.logical_or(this_mask, self._energies == channel)
+
+            events = self._arrival_times[this_mask]
+
+        else:
+
+            events = copy.copy(self._arrival_times)
+
+        events = events[np.logical_and(events <= stop, events >= start)]
+
+        self._temporal_binner = TemporalBinner(events)
+
+        tmp_bkg_getter = lambda a, b: self.get_total_poly_count(a, b, mask)
+        tmp_err_getter = lambda a, b: self.get_total_poly_error(a, b, mask)
+
+        self._temporal_binner.bin_by_significance(tmp_bkg_getter,
+                                                  background_error_getter=tmp_err_getter,
+                                                  sigma_level=sigma,
+                                                  min_counts=min_counts)
 
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
@@ -567,7 +606,7 @@ class EventList(object):
         t_stop = self._poly_time_selections[:, 1]
 
         for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure, self._get_minimizer)
+            polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure)
 
             log_likelihoods.append(log_like)
 
@@ -886,8 +925,7 @@ class EventList(object):
                                                      self._optimal_polynomial_grade,
                                                      t_start,
                                                      t_stop,
-                                                     poly_exposure,
-                                                     self._get_minimizer)
+                                                     poly_exposure)
 
                     polynomials.append(polynomial)
                     p.increase()

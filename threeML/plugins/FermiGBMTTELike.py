@@ -101,7 +101,7 @@ class FermiGBMTTELike(OGIPLike):
     background_poly_order = property(___get_poly_order, ___set_poly_order,
                                      doc="Get or set the background polynomial order")
 
-    def set_active_time_interval(self, *intervals, **options):
+    def set_active_time_interval(self, *intervals, **kwargs):
         """
         Set the time interval to be used during the analysis.
         For now, only one interval can be selected. This may be

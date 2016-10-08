@@ -271,13 +271,18 @@ class TemporalBinner(object):
 
                     bkg_error = background_error_getter(current_start, time)
 
-                    sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)
+                    sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
+
+
+
 
                 else:
 
-                    sigma = sig.li_and_ma()
+                    sigma = sig.li_and_ma()[0]
 
                 # now test if we have enough sigma
+
+
 
                 if sigma >= sigma_level:
 
