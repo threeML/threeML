@@ -39,6 +39,7 @@ def ceildiv(a, b):
 
 
 class EventList(object):
+
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
                  first_channel=0, rsp_file=None, ra=None, dec=None, algorithm=None):
         """
@@ -357,6 +358,22 @@ class EventList(object):
                                                   background_error_getter=tmp_err_getter,
                                                   sigma_level=sigma,
                                                   min_counts=min_counts)
+
+    def bin_by_constant(self, start, stop, dt=1):
+
+        events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
+
+        self._temporal_binner = TemporalBinner(events)
+        self._temporal_binner.bin_by_constanst(dt)
+
+    def bin_by_bayesian_blocks(self, start, stop, p0):
+
+        events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
+
+        self._temporal_binner = TemporalBinner(events)
+
+        self._temporal_binner.bin_by_bayesian_blocks(p0)
+
 
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
