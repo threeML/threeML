@@ -18,7 +18,12 @@ from threeML.io.step_plot import step_plot
 __instrument_name = "Fermi GBM TTE (all detectors)"
 
 
+class BinningMethodError(RuntimeError):
+    pass
+
+
 class FermiGBMTTELike(OGIPLike):
+
     def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
         """
@@ -150,9 +155,6 @@ class FermiGBMTTELike(OGIPLike):
 
             return new_ogip
 
-
-
-
     def set_background_interval(self, *intervals, **options):
         """
         Set the time interval to fit the background.
@@ -271,6 +273,78 @@ class FermiGBMTTELike(OGIPLike):
         """
 
         return self._evt_list.get_poly_info()
+
+    def create_time_bins(self, start, stop, method='constant', **options):
+        """
+
+        :param method: constant, significance, bayesblocks
+        :param dt: <constant method> delta time of the
+        :param sigma: <significance> sigma level of bins
+        :param min_counts: (optional) <significance> minimum number of counts per bin
+        :param p0: <bayesblocks> the chance probability of having the correct bin configuration.
+        :return:
+        """
+
+        if method == 'constant':
+
+            try:
+                dt = float(options.pop('dt'))
+
+            except(KeyError):
+
+                raise RuntimeError('constant bins requires the dt option set!')
+
+            tmp = np.arange(start, stop + dt, dt)
+
+            starts = tmp[:-1]
+            stops = tmp[1:]
+
+
+        elif method == 'significance':
+
+            try:
+
+                sigma = options.pop('sigma')
+
+            except(KeyError):
+
+                raise RuntimeError('significance bins require a sigma argument')
+
+            try:
+
+                min_counts = options.pop('min_counts')
+
+            except(KeyError):
+
+                min_counts = 10
+
+            self._evt_list.bin_by_significance(start, stop, sigma=sigma, min_counts=min_counts)
+
+
+        elif method == 'bayesblocks':
+
+            raise NotImplementedError('Bayesian Blocks is not implemented yet')
+
+            try:
+
+                p0 = options.pop('p0')
+
+            except(KeyError):
+
+                p0 = 0.1
+
+        else:
+
+            raise BinningMethodError('Only constant, significance, or bayesblock method argument accepted.')
+
+
+
+
+
+
+
+
+
 
 
 

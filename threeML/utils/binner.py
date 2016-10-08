@@ -222,6 +222,7 @@ class TemporalBinner(object):
 
         return [self._starts, self._stops]
 
+    @property
     def text_bins(self):
 
         txt_bins = []
@@ -293,3 +294,19 @@ class TemporalBinner(object):
                     current_start = time
 
                     total_counts = 0
+
+    def bin_by_constanst(self, dt):
+        """
+        Create bins with a constant dt
+
+        :param dt: temporal spacing of the bins
+        :return: None
+        """
+
+        tmp = np.arange(self._arrival_times[0], self._arrival_times[-1], dt)
+        self._starts = tmp
+        self._stops = tmp + dt
+
+    def bin_by_bayesian_blocks(self, p0):
+
+        raise NotImplementedError('Bayesian blocks is not implemented yet')
