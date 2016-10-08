@@ -101,6 +101,7 @@ def poisson_observed_poisson_background(observed_counts, background_counts, expo
 
     return loglike, B_mle * alpha
 
+
 def poisson_observed_gaussian_background(observed_counts, background_counts, background_error, expected_model_counts):
 
     # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
@@ -139,4 +140,3 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
                       expected_model_counts[nidx] - logfactorial(observed_counts[nidx])
 
     return log_likes, b
-
