@@ -280,6 +280,45 @@ class EventList(object):
         else:
             RuntimeError('A polynomial fit has not been made.')
 
+    def total_poly_count(self, start, stop, mask=None):
+        """
+
+        :param start:
+        :param stop:
+        :return:
+        """
+        if mask is None:
+            mask = np.ones_like(self._polynomials, dtype=np.bool)
+
+        total_counts = 0
+
+        for p in self._polynomials[mask]:
+
+            total_counts += p.integral(start, stop)
+
+        return total_counts
+
+    def total_poly_error(self, start, stop, mask=None):
+        """
+
+        :param start:
+        :param stop:
+        :return:
+        """
+        if mask is None:
+            mask = np.ones_like(self._polynomials, dtype=np.bool)
+
+        total_counts = 0
+
+        for p in self._polynomials[mask]:
+
+            total_counts += p.integral_error(start, stop) ** 2
+
+        return np.sqrt(total_counts)
+
+
+
+
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
 

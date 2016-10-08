@@ -67,7 +67,13 @@ class FermiGBMTTELike(OGIPLike):
         self.set_active_time_interval(*source_intervals)
         self.set_background_interval(*background_selections, unbinned=unbinned)
 
+        # Keeps track of if we are beginning
         self._startup = False
+
+        # Keep track of if there has been any temporal binning
+
+        self._temporally_binned = False
+
 
         self._rsp_file = rsp_file
 
@@ -95,7 +101,7 @@ class FermiGBMTTELike(OGIPLike):
     background_poly_order = property(___get_poly_order, ___set_poly_order,
                                      doc="Get or set the background polynomial order")
 
-    def set_active_time_interval(self, *intervals):
+    def set_active_time_interval(self, *intervals, **options):
         """
         Set the time interval to be used during the analysis.
         For now, only one interval can be selected. This may be
@@ -106,6 +112,7 @@ class FermiGBMTTELike(OGIPLike):
         set_active_time_interval("0.0-10.0")
 
         which will set the energy range 0-10. seconds.
+        :param options:
         :param intervals:
         :return:
         """
@@ -123,6 +130,28 @@ class FermiGBMTTELike(OGIPLike):
 
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file)
+
+        return_ogip = False
+
+        if 'return_ogip' in kwargs:
+
+            return_ogip = bool(kwargs.pop('return_ogip'))
+
+        if return_ogip:
+
+            # I really do not like this at the moment
+            # but I'm assuming there is only one interval selected
+            new_name = "%s_%s" % (self._name, intervals[0])
+
+            new_ogip = OGIPLike(new_name,
+                                pha_file=self._observed_pha,
+                                bak_file=self._bkg_pha,
+                                rsp_file=self._rsp_file)
+
+            return new_ogip
+
+
+
 
     def set_background_interval(self, *intervals, **options):
         """
