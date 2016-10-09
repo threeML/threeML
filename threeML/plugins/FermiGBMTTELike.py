@@ -227,7 +227,7 @@ class FermiGBMTTELike(OGIPLike):
         if use_binner:
 
             bin_start, bin_stop = self._evt_list.bins
-            bins = bin_start.tolist() + [bin_stop.tolist()[-1]]
+            bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
 
             # perhaps we want to look a little before or after the binner
             if start < bins[0]:
@@ -244,11 +244,6 @@ class FermiGBMTTELike(OGIPLike):
 
                 bins.extend(post_bins[1:])
 
-
-
-
-
-
         else:
 
             bins = np.arange(start, stop + dt, dt)
@@ -260,7 +255,7 @@ class FermiGBMTTELike(OGIPLike):
 
         bkg = []
         for j, tb in enumerate(time_bins):
-            tmpbkg = 0.  # Maybe I can do this perenergy at some point
+            tmpbkg = 0.
             for i in valid_channels:
                 poly = self._evt_list.polynomials[i]
 
@@ -319,12 +314,6 @@ class FermiGBMTTELike(OGIPLike):
 
         start, stop = ttelike.bins
         self.create_time_bins(start, stop, method='custom')
-
-
-
-
-
-
 
 
     def create_time_bins(self, start, stop, method='constant', **options):
