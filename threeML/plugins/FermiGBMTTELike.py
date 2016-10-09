@@ -327,7 +327,7 @@ class FermiGBMTTELike(OGIPLike):
 
                 raise RuntimeError('significance bins require a sigma argument')
 
-            if 'min_counts' in options
+            if 'min_counts' in options:
 
                 min_counts = options.pop('min_counts')
 
