@@ -222,7 +222,7 @@ class TemporalBinner(object):
     @property
     def bins(self):
 
-        return [self._starts, self._stops]
+        return [np.asarray(self._starts), np.asarray(self._stops)]
 
     @property
     def text_bins(self):
