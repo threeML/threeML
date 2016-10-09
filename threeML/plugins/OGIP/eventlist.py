@@ -328,7 +328,6 @@ class EventList(object):
 
             raise RuntimeError('This EventList has no binning specified')
 
-
     def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
         """
 

@@ -274,10 +274,22 @@ class FermiGBMTTELike(OGIPLike):
 
         return self._evt_list.get_poly_info()
 
+    @property
+    def bin_generator(self):
+
+        return self._evt_list.bins
+
+
+
     def create_time_bins(self, start, stop, method='constant', **options):
         """
 
+        Create time bins from start to stop with a given method (constant, siginificance, bayesblocks).
+        Each method has required keywords specified in the parameters. Once created, this can be used as
+        a JointlikelihoodSet generator, or as input for viewing the light curve.
+
         :param method: constant, significance, bayesblocks
+        :param use_energy_mask: (optional) use the energy mask when binning (default false)
         :param dt: <constant method> delta time of the
         :param sigma: <significance> sigma level of bins
         :param min_counts: (optional) <significance> minimum number of counts per bin
@@ -285,36 +297,41 @@ class FermiGBMTTELike(OGIPLike):
         :return:
         """
 
+        if 'use_map' in options:
+
+            use_map = options.pop('use_mask')
+
+        else:
+
+            use_map = False
+
         if method == 'constant':
 
-            try:
+            if 'dt' in options:
                 dt = float(options.pop('dt'))
 
-            except(KeyError):
+            else:
 
                 raise RuntimeError('constant bins requires the dt option set!')
 
-            tmp = np.arange(start, stop + dt, dt)
-
-            starts = tmp[:-1]
-            stops = tmp[1:]
+            self._evt_list.bin_by_constant(start, stop, dt)
 
 
         elif method == 'significance':
 
-            try:
+            if 'sigma' in options:
 
                 sigma = options.pop('sigma')
 
-            except(KeyError):
+            else:
 
                 raise RuntimeError('significance bins require a sigma argument')
 
-            try:
+            if 'min_counts' in options
 
                 min_counts = options.pop('min_counts')
 
-            except(KeyError):
+            else:
 
                 min_counts = 10
 
