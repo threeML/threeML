@@ -13,6 +13,7 @@ class Rebinner(object):
     through the mask will not be considered for the rebinning
 
     """
+
     def __init__(self, vector_to_rebin_on, min_value_per_bin, mask=None):
 
         # Basic check that it is possible to do what we have been requested to do
@@ -146,7 +147,7 @@ class Rebinner(object):
 
         rebinned_vectors = []
 
-        for vector in vectors: # type: np.ndarray[np.ndarray]
+        for vector in vectors:  # type: np.ndarray[np.ndarray]
 
             assert len(vector) == len(self._mask), "The vector to rebin must have the same number of elements of the" \
                                                    "original (not-rebinned) vector"
@@ -170,43 +171,43 @@ class Rebinner(object):
 
         for i, (low_bound, hi_bound) in enumerate(zip(self._starts, self._stops)):
             new_start[i] = old_start[low_bound]
-            new_stop[i] = old_stop[hi_bound-1]
+            new_stop[i] = old_stop[hi_bound - 1]
 
         return new_start, new_stop
 
-    # def save_active_measurements(self, mask):
-    #     """
-    #     Saves the set active measurements so that they can be restored if the binning is reset.
-    #
-    #
-    #     Returns:
-    #         none
-    #
-    #     """
-    #
-    #     self._saved_mask = mask
-    #     self._saved_idx = np.array(slice_disjoint((mask).nonzero()[0])).T
-    #
-    # @property
-    # def saved_mask(self):
-    #
-    #     return self._saved_mask
-    #
-    # @property
-    # def saved_selection(self):
-    #
-    #     return self._saved_idx
-    #
-    # @property
-    # def min_counts(self):
-    #
-    #     return self._min_value_per_bin
-    #
-    # @property
-    # def edges(self):
-    #
-    #     # return the low and high bins
-    #     return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
+        # def save_active_measurements(self, mask):
+        #     """
+        #     Saves the set active measurements so that they can be restored if the binning is reset.
+        #
+        #
+        #     Returns:
+        #         none
+        #
+        #     """
+        #
+        #     self._saved_mask = mask
+        #     self._saved_idx = np.array(slice_disjoint((mask).nonzero()[0])).T
+        #
+        # @property
+        # def saved_mask(self):
+        #
+        #     return self._saved_mask
+        #
+        # @property
+        # def saved_selection(self):
+        #
+        #     return self._saved_idx
+        #
+        # @property
+        # def min_counts(self):
+        #
+        #     return self._min_value_per_bin
+        #
+        # @property
+        # def edges(self):
+        #
+        #     # return the low and high bins
+        #     return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
 
 
 class TemporalBinner(object):

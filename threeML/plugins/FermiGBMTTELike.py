@@ -22,7 +22,6 @@ class BinningMethodError(RuntimeError):
 
 
 class FermiGBMTTELike(OGIPLike):
-
     def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
         """
@@ -78,10 +77,10 @@ class FermiGBMTTELike(OGIPLike):
 
         self._temporally_binned = False
 
-
         self._rsp_file = rsp_file
 
-        OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file,verbose=verbose)
+        OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file,
+                          verbose=verbose)
 
     def __set_poly_order(self, value):
         """Background poly order setter """
@@ -120,7 +119,6 @@ class FermiGBMTTELike(OGIPLike):
         :param intervals:
         :return:
         """
-
 
         self._evt_list.set_active_time_intervals(*intervals)
 
@@ -267,8 +265,6 @@ class FermiGBMTTELike(OGIPLike):
                              selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list),
                              bkg_selections=self._evt_list.poly_intervals)
 
-
-
     def peek(self):
 
         print "TTE File Info:"
@@ -314,7 +310,6 @@ class FermiGBMTTELike(OGIPLike):
 
         start, stop = ttelike.bins
         self.create_time_bins(start, stop, method='custom')
-
 
     def create_time_bins(self, start, stop, method='constant', **options):
         """
@@ -421,17 +416,6 @@ class FermiGBMTTELike(OGIPLike):
         else:
 
             raise BinningMethodError('Only constant, significance, bayesblock, or custom method argument accepted.')
-
-
-
-
-
-
-
-
-
-
-
 
 
 class GBMTTEFile(object):
@@ -610,9 +594,6 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
               fill=True,
               fill_min=min_cnts, label="Selection")
 
-
-
-
     all_masks = []
     for tmin, tmax in bkg_selections:
         tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
@@ -641,5 +622,5 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Rate (cnts/s)")
     ax.set_ylim(bottom, top)
-    ax.set_xlim(time_bins.min(),time_bins.max())
+    ax.set_xlim(time_bins.min(), time_bins.max())
     ax.legend()
