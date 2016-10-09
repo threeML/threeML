@@ -318,6 +318,17 @@ class EventList(object):
 
         return np.sqrt(total_counts)
 
+    @property
+    def bins(self):
+
+        if self._temporal_binner is not None:
+
+            return self._temporal_binner.text_bins
+        else:
+
+            raise RuntimeError('This EventList has no binning specified')
+
+
     def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
         """
 
