@@ -307,11 +307,13 @@ class FermiGBMTTELike(OGIPLike):
     def create_time_bins(self, start, stop, method='constant', **options):
         """
 
-        Create time bins from start to stop with a given method (constant, siginificance, bayesblocks).
+        Create time bins from start to stop with a given method (constant, siginificance, bayesblocks, custom).
         Each method has required keywords specified in the parameters. Once created, this can be used as
         a JointlikelihoodSet generator, or as input for viewing the light curve.
 
-        :param method: constant, significance, bayesblocks
+        :param start: start of the bins or array of start times for custom mode
+        :param stop: stop of the bins or array of stop times for custom mode
+        :param method: constant, significance, bayesblocks, custom
         :param use_energy_mask: (optional) use the energy mask when binning (default false)
         :param dt: <constant method> delta time of the
         :param sigma: <significance> sigma level of bins
@@ -383,9 +385,30 @@ class FermiGBMTTELike(OGIPLike):
 
                 p0 = 0.1
 
+        elif method == 'custom':
+
+            if type(start) is not list:
+
+                if type(start) is not np.ndarray:
+
+                    raise RuntimeError('start must be and array in custom mode')
+
+            if type(stop) is not list:
+
+                if type(stop) is not np.ndarray:
+
+                    raise RuntimeError('stop must be and array in custom mode')
+
+            assert len(start) == len(stop), 'must have equal number of start and stop times'
+
+            self._evt_list.bin_by_custom(start, stop)
+
+
+
+
         else:
 
-            raise BinningMethodError('Only constant, significance, or bayesblock method argument accepted.')
+            raise BinningMethodError('Only constant, significance, bayesblock, or custom method argument accepted.')
 
 
 

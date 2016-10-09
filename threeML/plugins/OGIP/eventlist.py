@@ -404,7 +404,7 @@ class EventList(object):
         :return:
         """
 
-        self._temporal_binner(self._arrival_times)
+        self._temporal_binner = TemporalBinner(self._arrival_times)
         self._temporal_binner.bin_by_custom(start, stop)
 
 
