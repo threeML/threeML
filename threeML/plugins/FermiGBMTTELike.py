@@ -298,9 +298,32 @@ class FermiGBMTTELike(OGIPLike):
         return self._evt_list.get_poly_info()
 
     @property
-    def bin_generator(self):
+    def text_bins(self):
+
+        return self._evt_list.text_bins
+
+    @property
+    def bins(self):
 
         return self._evt_list.bins
+
+    def read_bins(self, ttelike):
+        """
+
+        Read the temporal bins from another *binned* FermiGBMTTELike instance
+        and apply those bins to this instance
+
+        :param ttelike: *binned* FermiGBMTTELike instance
+        :return:
+        """
+
+        start, stop = ttelike.bins
+        self.create_time_bins(start, stop, method='custom')
+
+
+
+
+
 
 
 
