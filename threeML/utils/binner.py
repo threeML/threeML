@@ -239,12 +239,14 @@ class TemporalBinner(object):
         """
 
         Bin the data to a given significance level for a given background method and sigma
-        method
+        method. If a background error function is given then it is assumed that the error distribution
+        is gaussian. Otherwise, the error distribution is assumed to be Poisson.
 
-        :param background_error_getter: 
-        :param min_counts: 
-        :param sigma_level:
-        :param background_getter:
+        :param background_getter: function of a start and stop time that returns background counts
+        :param background_error_getter: function of a start and stop time that returns background count errors
+        :param sigma_level: the sigma level of the intervals
+        :param min_counts: the minimum counts per bin
+
         :return:
         """
 
@@ -313,5 +315,26 @@ class TemporalBinner(object):
         self._stops = tmp + dt
 
     def bin_by_bayesian_blocks(self, p0):
+        """
+
+        Bin using the Bayesian block algorithm of Scargle et al. 2013.
+
+
+        :param p0:
+        :return:
+        """
 
         raise NotImplementedError('Bayesian blocks is not implemented yet')
+
+    def bin_by_custom(self, start, stop):
+        """
+        Simplicity function to make custom bins. This form keeps introduction of
+        custom bins uniform for other binning methods
+
+        :param start: start times of the bins
+        :param stop:  stop times of the bins
+        :return:
+        """
+
+        self._starts = start
+        self._stops = stop

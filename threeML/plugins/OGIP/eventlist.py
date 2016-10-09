@@ -386,6 +386,20 @@ class EventList(object):
         self._temporal_binner = TemporalBinner(events)
         self._temporal_binner.bin_by_constanst(dt)
 
+    def bin_by_custom(self, start, stop):
+        """
+        Interface to temporal binner's custom bin mode
+
+
+        :param start: start times of the bins
+        :param stop:  stop times of the bins
+        :return:
+        """
+
+        self._temporal_binner(self._arrival_times)
+        self._temporal_binner.bin_by_custom(start, stop)
+
+
     def bin_by_bayesian_blocks(self, start, stop, p0):
 
         events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
