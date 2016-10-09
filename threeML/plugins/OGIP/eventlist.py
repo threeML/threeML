@@ -341,7 +341,7 @@ class EventList(object):
     def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
         """
 
-        Bin the light curve by a given significance level
+       Interface to the temporal binner's significance binning model
 
         :param start: start of the interval to bin on
         :param stop:  stop of the interval ot bin on
@@ -380,6 +380,14 @@ class EventList(object):
                                                   min_counts=min_counts)
 
     def bin_by_constant(self, start, stop, dt=1):
+        """
+        Interface to the temporal binner's constant binning mode
+
+        :param start: start time of the bins
+        :param stop: stop time of the bins
+        :param dt: temporal spacing of the bins
+        :return:
+        """
 
         events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
 
