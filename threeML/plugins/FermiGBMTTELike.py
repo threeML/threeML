@@ -297,13 +297,13 @@ class FermiGBMTTELike(OGIPLike):
         :return:
         """
 
-        if 'use_map' in options:
+        if 'use_energy_mask' in options:
 
-            use_map = options.pop('use_mask')
+            use_energy_mask = options.pop('use_energy_mask')
 
         else:
 
-            use_map = False
+            use_energy_mask = False
 
         if method == 'constant':
 
@@ -335,7 +335,7 @@ class FermiGBMTTELike(OGIPLike):
 
                 min_counts = 10
 
-            self._evt_list.bin_by_significance(start, stop, sigma=sigma, min_counts=min_counts)
+            self._evt_list.bin_by_significance(start, stop, sigma=sigma, min_counts=min_counts, mask=use_energy_mask)
 
 
         elif method == 'bayesblocks':
