@@ -1,5 +1,7 @@
 import numpy as np
 from threeML.utils.stats_tools import Significance
+from threeML.io.progress_bar import progress_bar
+
 
 class NotEnoughData(RuntimeError):
     pass
@@ -253,47 +255,50 @@ class TemporalBinner(object):
         total_counts = 0
         current_start = self._arrival_times[0]
 
-        for i, time in enumerate(self._arrival_times):
+        with progress_bar(len(self._arrival_times)) as p:
+            for i, time in enumerate(self._arrival_times):
 
-            total_counts += 1
+                total_counts += 1
 
-            if total_counts < min_counts:
+                if total_counts < min_counts:
 
-                continue
-
-            else:
-
-                # first use the background function to know the number of background counts
-                bkg = background_getter(current_start, time)
-
-                sig = Significance(total_counts, bkg)
-
-                if background_error_getter is not None:
-
-                    bkg_error = background_error_getter(current_start, time)
-
-                    sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
-
-
-
+                    continue
 
                 else:
 
-                    sigma = sig.li_and_ma()[0]
+                    # first use the background function to know the number of background counts
+                    bkg = background_getter(current_start, time)
 
-                # now test if we have enough sigma
+                    sig = Significance(total_counts, bkg)
+
+                    if background_error_getter is not None:
+
+                        bkg_error = background_error_getter(current_start, time)
+
+                        sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
 
 
 
-                if sigma >= sigma_level:
 
-                    self._stops.append(time)
+                    else:
 
-                    self._starts.append(current_start)
+                        sigma = sig.li_and_ma()[0]
 
-                    current_start = time
+                    # now test if we have enough sigma
 
-                    total_counts = 0
+
+
+                    if sigma >= sigma_level:
+
+                        self._stops.append(time)
+
+                        self._starts.append(current_start)
+
+                        current_start = time
+
+                        total_counts = 0
+
+                p.increase()
 
     def bin_by_constanst(self, dt):
         """

@@ -9,7 +9,6 @@ import re
 import requests
 
 from threeML.plugins.OGIPLike import OGIPLike
-
 from OGIP.eventlist import EventList
 from threeML.io.rich_display import display
 
@@ -359,7 +358,17 @@ class FermiGBMTTELike(OGIPLike):
 
                 min_counts = 10
 
-            self._evt_list.bin_by_significance(start, stop, sigma=sigma, min_counts=min_counts, mask=use_energy_mask)
+            # Should we was the data?f
+
+            if use_energy_mask:
+
+                mask = self._mask
+
+            else:
+
+                mask = None
+
+            self._evt_list.bin_by_significance(start, stop, sigma=sigma, min_counts=min_counts, mask=mask)
 
 
         elif method == 'bayesblocks':
