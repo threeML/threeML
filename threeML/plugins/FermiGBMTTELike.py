@@ -183,9 +183,10 @@ class FermiGBMTTELike(OGIPLike):
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file)
 
-    def view_lightcurve(self, start=-10, stop=20., dt=1., energy_selection=None):
+    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None):
         """
 
+        :param use_binner: use the bins created via a binner
         :param start: start time to view
         :param stop:  stop time to view
         :param dt:  dt of the light curve
@@ -224,28 +225,51 @@ class FermiGBMTTELike(OGIPLike):
             mask = np.array([True] * self._evt_list.n_events)
             valid_channels = range(self._gbm_tte_file.n_channels)
 
+        if use_binner:
+
+            bin_start, bin_stop = self._evt_list.bins
+            bins = bin_start.tolist() + [bin_stop.tolist()[-1]]
+
+            # perhaps we want to look a little before or after the binner
+            if start < bins[0]:
+
+                pre_bins = np.arange(start, bins[0], dt).tolist()[:-1]
+
+                pre_bins.extend(bins)
+
+                bins = pre_bins
+
+            if stop > bins[-1]:
+
+                post_bins = np.arange(bins[-1], stop, dt)
+
+                bins.extend(post_bins[1:])
 
 
 
 
 
 
-        binner = np.arange(start, stop + dt, dt)
-        cnts, bins = np.histogram(self._gbm_tte_file.arrival_times[mask] - self._gbm_tte_file.triggertime, bins=binner)
+        else:
+
+            bins = np.arange(start, stop + dt, dt)
+
+        cnts, bins = np.histogram(self._gbm_tte_file.arrival_times[mask] - self._gbm_tte_file.triggertime, bins=bins)
         time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
 
+        width = np.diff(bins)
+
         bkg = []
-        for tb in time_bins:
+        for j, tb in enumerate(time_bins):
             tmpbkg = 0.  # Maybe I can do this perenergy at some point
             for i in valid_channels:
                 poly = self._evt_list.polynomials[i]
 
-
-                tmpbkg += poly.integral(tb[0], tb[1]) / (dt)
+                tmpbkg += poly.integral(tb[0], tb[1]) / (width[j])
 
             bkg.append(tmpbkg)
 
-        gbm_light_curve_plot(time_bins, cnts, bkg, dt,
+        gbm_light_curve_plot(time_bins, cnts, bkg, width,
                              selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list),
                              bkg_selections=self._evt_list.poly_intervals)
 
@@ -532,12 +556,12 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
     if len(all_masks) > 1:
 
         for mask in all_masks[1:]:
-            step_plot(time_bins[mask], cnts[mask] / width, ax,
+            step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
                       color='#fc8d62',
                       fill=True,
                       fill_min=min_cnts)
 
-    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width, ax,
+    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
               color='#fc8d62',
               fill=True,
               fill_min=min_cnts, label="Selection")
@@ -555,17 +579,16 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
 
         for mask in all_masks[1:]:
 
-
-            step_plot(time_bins[mask], cnts[mask] / width, ax,
+            step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
                       color='#80b1d3',
                       fill=True,
                       fillAlpha=.4,
                       fill_min=min_cnts)
 
-    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width, ax,
+    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
               color='#80b1d3',
               fill=True,
-              fill_min=min_cnts,fillAlpha=.4 ,label="Bkg. Selections")
+              fill_min=min_cnts, fillAlpha=.4, label="Bkg. Selections")
 
     ax.plot(mean_time, bkg, '#66c2a5', lw=2., label="Background")
 

@@ -323,6 +323,16 @@ class EventList(object):
 
         if self._temporal_binner is not None:
 
+            return self._temporal_binner.bins
+        else:
+
+            raise RuntimeError('This EventList has no binning specified')
+
+    @property
+    def text_bins(self):
+
+        if self._temporal_binner is not None:
+
             return self._temporal_binner.text_bins
         else:
 
