@@ -90,8 +90,7 @@ setup(
         'astromodels>=0.2.1',
         'corner>=1.0.2',
         'pandas',
-        'sympy',
-        'ipywidgets'
+        'sympy'
     ])
 
 # Check for optional dependencies
@@ -99,7 +98,8 @@ setup(
 optional_dependencies = {'cthreeML': [False,'needed by HAWC plugin'],
                          'pymultinest': [False, 'provides the Multinest sampler for Bayesian analysis'],
                          'pyOpt': [False, 'provides more optimizers'],
-                         'ROOT': [False, 'provides the ROOT optimizer']}
+                         'ROOT': [False, 'provides the ROOT optimizer'],
+                         'ipywidgets': [False, 'provides widget for jypyter (like the HTML progress bar)']}
 
 for dep_name in optional_dependencies:
 
