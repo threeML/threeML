@@ -45,31 +45,43 @@ def progress_bar(iterations, width=None):
 
             if width is None:
 
-                width = 50
+                bar_width = 50
+
+            else:
+
+                bar_width = int(width)
 
                 # Default is the HTML bar, which only works within a notebook
 
-            this_progress_bar = ProgressBarHTML(iterations, width)
+            this_progress_bar = ProgressBarHTML(iterations, bar_width)
 
         except:
 
             if width is None:
 
-                width = 30
+                bar_width = 30
+
+            else:
+
+                bar_width = int(width)
 
             # Running in a terminal. Fall back to the ascii bar
 
-            this_progress_bar = ProgressBarAscii(iterations, width)
+            this_progress_bar = ProgressBarAscii(iterations, bar_width)
 
     else:
 
         if width is None:
-            
-            width = 30
+
+            bar_width = 30
+
+        else:
+
+            bar_width = int(width)
 
         # No widgets available, fall back to ascii bar
 
-        this_progress_bar = ProgressBarAscii(iterations, width)
+        this_progress_bar = ProgressBarAscii(iterations, bar_width)
 
     yield this_progress_bar
 
