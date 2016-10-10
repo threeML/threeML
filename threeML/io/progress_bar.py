@@ -35,7 +35,7 @@ class CannotGenerateHTMLBar(RuntimeError):
 
 
 @contextmanager
-def progress_bar(iterations, width=50):
+def progress_bar(iterations, width=None):
 
     # Instance progress bar
 
@@ -43,11 +43,19 @@ def progress_bar(iterations, width=50):
 
         try:
 
-            # Default is the HTML bar, which only works within a notebook
+            if width is None:
+
+                width = 50
+
+                # Default is the HTML bar, which only works within a notebook
 
             this_progress_bar = ProgressBarHTML(iterations, width)
 
         except:
+
+            if width is None:
+
+                width = 30
 
             # Running in a terminal. Fall back to the ascii bar
 
@@ -65,12 +73,16 @@ def progress_bar(iterations, width=50):
 
 
 @contextmanager
-def multiple_progress_bars(iterations, n, width=50, force_html=False):
+def multiple_progress_bars(iterations, n, width=None, force_html=False):
 
 
     # Instance n identical progress bars
 
     if has_widgets:
+
+        if width is None:
+
+            width = 50
 
         try:
 
@@ -89,6 +101,10 @@ def multiple_progress_bars(iterations, n, width=50, force_html=False):
             this_progress_bars = [ProgressBarAscii(iterations, width) for i in range(n)]
 
     else:
+
+        if width is None:
+            
+            width = 30
 
         if force_html:
             raise CannotGenerateHTMLBar("force_html was set to True, but I couldn't generate an HTML bar")
