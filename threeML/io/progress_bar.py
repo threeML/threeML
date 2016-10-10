@@ -63,6 +63,10 @@ def progress_bar(iterations, width=None):
 
     else:
 
+        if width is None:
+            
+            width = 30
+
         # No widgets available, fall back to ascii bar
 
         this_progress_bar = ProgressBarAscii(iterations, width)
@@ -103,7 +107,7 @@ def multiple_progress_bars(iterations, n, width=None, force_html=False):
     else:
 
         if width is None:
-            
+
             width = 30
 
         if force_html:
@@ -213,7 +217,7 @@ class ProgressBarBase(object):
 
 class ProgressBarHTML(ProgressBarBase):
 
-    def __init__(self, iterations, width=80):
+    def __init__(self, iterations, width):
 
         super(ProgressBarHTML, self).__init__(iterations, width)
 
@@ -252,7 +256,7 @@ class ProgressBarHTML(ProgressBarBase):
 
 class ProgressBarAscii(ProgressBarBase):
 
-    def __init__(self, iterations, width=30):
+    def __init__(self, iterations, width):
 
         super(ProgressBarAscii, self).__init__(iterations, width)
 
