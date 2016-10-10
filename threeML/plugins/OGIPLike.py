@@ -996,6 +996,11 @@ class OGIPLike(PluginPrototype):
         ax.legend()
 
 
+    def write_pha(self,file_name):
+
+        pass
+
+
 
 
 
