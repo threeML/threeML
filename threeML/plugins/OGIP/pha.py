@@ -485,3 +485,56 @@ class PHAContainer(MutableMapping):
 
     def __str__(self):
         return str(dict(self))
+
+
+class PHACreator(object):
+    def __init__(self, *ogiplike):
+        self._ogiplike = ogiplike
+
+        # The following lists corresponds to the different columns in the PHA/CSPEC
+        # formats, and they will be filled up by addSpectrum()
+
+        self._tstart = []
+        self._tstop = []
+        self._channel = []
+        self._rate = []
+        self._stat_err = []
+        self._sys_err = []
+        self._quality = []
+        self._grouping = []
+        self._exposure = []
+        self._backfile = []
+        self._respfile = []
+        self._ancrfile = []
+
+        # background containers
+
+        self._bak_tstart = []
+        self._bak_tstop = []
+        self._bak_channel = []
+        self._bak_rate = []
+        self._bak_stat_err = []
+        self._bak_sys_err = []
+        self._bak_quality = []
+        self._bak_grouping = []
+        self._bak_exposure = []
+        self._bak_backfile = []
+        self._bak_respfile = []
+        self._bak_ancrfile = []
+
+    def _append_opig(self, ogip):
+        """
+        Add an ogip instance's data into the data list
+
+        :param ogip:
+        :return:
+        """
+
+        # First check the total PHA
+        pass
+
+
+        # Now extract bak if existing
+
+    def write(self):
+        pass
