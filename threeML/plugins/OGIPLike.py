@@ -192,6 +192,19 @@ class OGIPLike(PluginPrototype):
 
         return pha
 
+    def get_pha_files(self):
+
+        info = {}
+
+        # we want to pass copies so that
+        # the user doesn't grab the instance
+        # and try to modify things. protection
+        info['pha'] = copy.copy(self._pha)
+        info['bak'] = copy.copy(self._bak)
+        info['rsp'] = copy.copy(self._rsp)
+
+        return info
+
     def set_active_measurements(self, *args):
         """
         Set the measurements to be used during the analysis.

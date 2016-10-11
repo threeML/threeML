@@ -487,7 +487,7 @@ class PHAContainer(MutableMapping):
         return str(dict(self))
 
 
-class PHACreator(object):
+class PHAWrite(object):
     def __init__(self, *ogiplike):
         self._ogiplike = ogiplike
 
@@ -530,8 +530,11 @@ class PHACreator(object):
         :return:
         """
 
+        # grab the ogip pha info
+        ogip.
+
         # First check the total PHA
-        pass
+
 
 
         # Now extract bak if existing
