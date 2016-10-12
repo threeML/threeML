@@ -39,7 +39,7 @@ def ceildiv(a, b):
 
 class EventList(object):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None, minimizer=None, algorithm=None):
+                 first_channel=0, rsp_file=None, ra=None, dec=None, algorithm=None):
         """
         Container for event style data which are tagged with time and energy/PHA.
 
@@ -96,11 +96,7 @@ class EventList(object):
 
         self._rsp_file = rsp_file
 
-        if minimizer is not None:
-            self.set_minimizer(minimizer, algorithm)
 
-        else:
-            self.set_minimizer("MINUIT")
 
         self._user_poly_order = -1
         self._time_selection_exists = False
@@ -533,7 +529,7 @@ class EventList(object):
         t_stop = self._poly_time_selections[:, 1]
 
         for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure, self._get_minimizer)
+            polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure)
 
             log_likelihoods.append(log_like)
 
@@ -852,8 +848,8 @@ class EventList(object):
                                                      self._optimal_polynomial_grade,
                                                      t_start,
                                                      t_stop,
-                                                     poly_exposure,
-                                                     self._get_minimizer)
+                                                     poly_exposure
+                                                     )
 
                     polynomials.append(polynomial)
                     p.increase()

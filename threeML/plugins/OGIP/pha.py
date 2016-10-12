@@ -531,9 +531,35 @@ class PHAWrite(object):
         """
 
         # grab the ogip pha info
-        ogip.
+        pha_info = ogip.get_pha_files()
 
         # First check the total PHA
+
+        # This may be overrided by the writeouts... must be careful
+        self._ancrfile.append(pha_info['pha'].ancillary_file)
+        self._backfile.append(pha_info['pha'].background_file)
+        self._respfile.append(pha_info['pha'].response_file)
+
+        self._rate.append(pha_info['pha'].rates)
+
+        if not pha_info['pha'].is_poisson():
+
+            self._stat_err.append(pha_info['pha'].rate_errors)
+
+        self._exposure.append(pha_info['pha'].exposure)
+
+        self._quality = None
+
+        self._channel = None
+
+
+
+    def _write_phaII(self):
+
+
+
+
+
 
 
 
