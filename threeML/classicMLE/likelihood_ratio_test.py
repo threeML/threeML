@@ -1,11 +1,11 @@
-import pandas as pd
 import numpy as np
-
-from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
-from threeML.classicMLE.joint_likelihood import JointLikelihood
-from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.data_list import DataList
+import pandas as pd
 from astromodels import clone_model
+
+from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
+from threeML.data_list import DataList
+from threeML.exceptions.custom_exceptions import custom_warnings
 
 
 class LikelihoodRatioTest(object):
@@ -23,10 +23,12 @@ class LikelihoodRatioTest(object):
                                   self._joint_likelihood_instance1.current_minimum)
 
         # Safety check that the user has provided the models in the right order
-        assert self._reference_TS >= 0, "The reference TS is negative, either you specified the likelihood objects " \
-                                        "in the wrong order, or the fit for the alternative hyp. has failed. Since the " \
-                                        "two hyp. are nested, by definition the more complex hypothesis must give a " \
-                                        "better or equal fit with respect to the null hypothesis."
+        if self._reference_TS < 0:
+
+            custom_warnings.warn("The reference TS is negative, either you specified the likelihood objects "
+                                 "in the wrong order, or the fit for the alternative hyp. has failed. Since the "
+                                 "two hyp. are nested, by definition the more complex hypothesis should give a "
+                                 "better or equal fit with respect to the null hypothesis.")
 
         # Check that the dataset is the same
 
