@@ -122,9 +122,11 @@ class Rebinner(object):
                 rebinned_vector.append(np.sum(vector_a[low_bound:hi_bound]))
 
             # Vector might not contain counts, so we use a relative comparison to check that we didn't miss
-            # anything
+            # anything.
+            # NOTE: we add 1e-100 because if both rebinned_vector and vector_a contains only 0, the check would
+            # fail when it shouldn't
 
-            assert abs(np.sum(rebinned_vector) / np.sum(vector_a[self._mask]) - 1) < 1e-4
+            assert abs( (np.sum(rebinned_vector) + 1e-100) / ( np.sum(vector_a[self._mask]) + 1e-100) - 1) < 1e-4
 
             rebinned_vectors.append(np.array(rebinned_vector))
 
