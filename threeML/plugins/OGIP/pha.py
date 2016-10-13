@@ -5,6 +5,7 @@ import warnings
 from collections import MutableMapping
 from copy import copy
 
+import pkg_resources
 
 _required_keywords = {}
 _required_keywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
@@ -80,8 +81,6 @@ class PHA(object):
         self._data_column_name = "RATE"
 
         self._typeII = False
-
-
 
         assert self._rates.shape[0] == self._gathered_keywords['detchans'], \
             "The lenght of RATES and the number of CHANNELS is not the same"
@@ -413,12 +412,10 @@ class PHAContainer(MutableMapping):
 
         self.is_container = True
 
-
-
     def __setitem__(self, key, val):
         if key not in PHAContainer._allowed_keys:
             raise KeyError(
-                'Valid keywords: "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file" ')
+                    'Valid keywords: "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file" ')
         self.dict[key] = val
 
     def __getitem__(self, key):
@@ -489,38 +486,53 @@ class PHAContainer(MutableMapping):
 
 class PHAWrite(object):
     def __init__(self, *ogiplike):
+
         self._ogiplike = ogiplike
+
+        self._n_spectra = len(ogiplike)
+
+
+
 
         # The following lists corresponds to the different columns in the PHA/CSPEC
         # formats, and they will be filled up by addSpectrum()
 
-        self._tstart = []
-        self._tstop = []
-        self._channel = []
-        self._rate = []
-        self._stat_err = []
-        self._sys_err = []
-        self._quality = []
-        self._grouping = []
-        self._exposure = []
-        self._backfile = []
-        self._respfile = []
-        self._ancrfile = []
+        self._tstart = {'pha': [], 'bak': []}
+        self._tstop = {'pha': [], 'bak': []}
+        self._channel = {'pha': [], 'bak': []}
+        self._rate = {'pha': [], 'bak': []}
+        self._stat_err = {'pha': [], 'bak': []}
+        self._sys_err = {'pha': [], 'bak': []}
+        self._quality = {'pha': [], 'bak': []}
+        self._grouping = {'pha': [], 'bak': []}
+        self._exposure = {'pha': [], 'bak': []}
+        self._backfile = {'pha': [], 'bak': []}
+        self._respfile = {'pha': [], 'bak': []}
+        self._ancrfile = {'pha': [], 'bak': []}
 
-        # background containers
+        # If the PHAs have existing background files
+        # then it is assumed that we will not need to write them
+        # out. THe most likely case is that the background file does not
+        # exist i.e. these are simulations are from EventList object
+        # Just one instance of no background file existing cause the write
+        self._write_bak_file = False
 
-        self._bak_tstart = []
-        self._bak_tstop = []
-        self._bak_channel = []
-        self._bak_rate = []
-        self._bak_stat_err = []
-        self._bak_sys_err = []
-        self._bak_quality = []
-        self._bak_grouping = []
-        self._bak_exposure = []
-        self._bak_backfile = []
-        self._bak_respfile = []
-        self._bak_ancrfile = []
+        # Assuming all entries will have one answer
+        self._is_poisson = {'pha': True, 'bak': True}
+
+        self._max_length_background_file_name = 0
+
+    def write(self, outfile_name):
+
+        self._outfile_name = outfile_name
+
+        for ogip in self._ogiplike:
+
+            self._append_opig(ogip)
+
+        self._write_phaII()
+
+
 
     def _append_opig(self, ogip):
         """
@@ -533,59 +545,204 @@ class PHAWrite(object):
         # grab the ogip pha info
         pha_info = ogip.get_pha_files()
 
-        # First check the total PHA
+        first_channel = pha_info['rsp'].first_channel
 
-        # This may be overrided by the writeouts... must be careful
-        self._ancrfile.append(pha_info['pha'].ancillary_file)
-        self._backfile.append(pha_info['pha'].background_file)
-        self._respfile.append(pha_info['pha'].response_file)
+        for key in ['pha', 'bak']:
 
-        self._rate.append(pha_info['pha'].rates)
+            if key == 'pha':
 
-        if not pha_info['pha'].is_poisson():
+                if pha_info[key].background_file is not None:
 
-            self._stat_err.append(pha_info['pha'].rate_errors)
+                    self._backfile[key].append(pha_info[key].background_file)
 
-        self._exposure.append(pha_info['pha'].exposure)
+                    if len(pha_info[key].background_file) > self._max_length_background_file_name:
+                        self._max_length_background_file_name = len(pha_info[key].background_file)
 
-        self._quality.append(ogip.ogip_quality)
-        self._grouping.append(ogip.ogip_grouping)
-        self._channel.append()
+                else:
 
-        # Now lets do the background
+                    self._backfile[key].append('%s_bak.pha' % self._outfile_name)
 
-        # This may be overrided by the writeouts... must be careful
-        self._bak_ancrfile.append(pha_info['bak'].ancillary_file)
-        self._bak_backfile.append(pha_info['bak'].background_file)
-        self._bak_respfile.append(pha_info['bak'].response_file)
+                    if len('%s_bak.pha' % self._outfile_name) > self._max_length_background_file_name:
+                        self._max_length_background_file_name = len('%s_bak.pha' % self._outfile_name)
 
-        self._bak_rate.append(pha_info['bak'].rates)
+                    # We want to write the bak file
 
-        if not pha_info['bak'].is_poisson():
+                    self._write_bak_file = True
 
-            self._bak_stat_err.append(pha_info['bak'].rate_errors)
+            self._ancrfile[key].append(pha_info[key].ancillary_file)
 
-        self._bak_exposure.append(pha_info['bak'].exposure)
+            self._respfile[key].append(pha_info[key].response_file)
 
-        self._bak_quality.append(ogip.ogip_quality)
-        self._bak_grouping.append(ogip.ogip_grouping)
-        # self._channel\
+            self._rate[key].append(pha_info[key].rates)
 
+            if not pha_info[key].is_poisson():
 
+                self._is_poisson[key] = pha_info[key].is_poisson()
+
+                self._stat_err[key].append(pha_info[key].rate_errors)
+
+            self._exposure[key].append(pha_info[key].exposure)
+            self._quality[key].append(ogip.ogip_quality)
+            self._grouping[key].append(ogip.ogip_grouping)
+            self._channel[key].append(np.arange(pha_info[key].n_channels, dtype=np.int8) + first_channel)
 
 
     def _write_phaII(self):
 
+        trigTime = None
+        clobber = False
+
+        # Assuming background and pha files have the same
+        # number of channels
+
+        n_channel = len(self._rate[0])
+
+        vector_format_D = "%sD" % (n_channel)
+        vector_format_I = "%sI" % (n_channel)
+
+        for key in ['pha', 'bak']:
+
+            if (trigTime != None):
+                # use trigTime as reference for TSTART
+                tstart_column = pyfits.Column(name='TSTART',
+                                              format='D',
+                                              array=np.array(self._tstart[key]),
+                                              unit="s",
+                                              bzero=trigTime)
+            else:
+                tstart_column = pyfits.Column(name='TSTART',
+                                              format='D',
+                                              array=np.array(self._tstart[key]),
+                                              unit="s")
+
+            t_elapse_column = pyfits.Column(name='TELAPSE',
+                                            format='D',
+                                            array=(np.array(self._tstop[key]) - np.array(self._tstart[key])),
+                                            unit="s")
+
+            spec_num_column = pyfits.Column(name='SPEC_NUM',
+                                            format='I',
+                                            array=range(1, len(self._n_spectra) + 1))
+
+            channel_column = pyfits.Column(name='CHANNEL',
+                                           format=vector_format_I,
+                                           array=np.array(self._channel[key]))
+
+            rate_column = pyfits.Column(name='RATE',
+                                        format=vector_format_D,
+                                        array=np.array(self.rate[key]),
+                                        unit="Counts/s")
+
+            if (self._is_poisson[key] == False):
+                stat_err_column = pyfits.Column(name='STAT_ERR',
+                                                format=vector_format_D,
+                                                array=np.array(self._stat_err[key]))
+
+                sys_err_column = pyfits.Column(name='SYS_ERR',
+                                               format=vector_format_D,
+                                               array=np.array(self._sys_err[key]))
+
+            quality_column = pyfits.Column(name='QUALITY',
+                                           format=vector_format_I,
+                                           array=np.array(self._quality[key]))
+
+            grouping_column = pyfits.Column(name='GROUPING',
+                                            format=vector_format_I,
+                                            array=np.array(self._grouping[key]))
+
+            exposure_column = pyfits.Column(name='EXPOSURE',
+                                            format='D',
+                                            array=np.array(self._exposure[key]),
+                                            unit="s")
+
+            backfile_column = pyfits.Column(name='BACKFILE',
+                                            format='%iA' % (self.maxlengthbackfile + 2),
+                                            array=np.array(self._backfile))
+
+            respfile_column = pyfits.Column(name='RESPFILE',
+                                            format='%iA' % (self.maxlengthrespfile + 2),
+                                            array=np.array(self._respfile[key]))
+
+            ancrfile_column = pyfits.Column(name='ANCRFILE',
+                                            format='%iA' % (self.maxlengthancrfile + 2),
+                                            array=np.array(self.ancrfile[key]))
+
+            if (self._is_poisson[key] == False):
+                column_defs = pyfits.ColDefs([tstart_column,
+                                              t_elapse_column,
+                                              spec_num_column,
+                                              channel_column,
+                                              rate_column,
+                                              stat_err_column,
+                                              sys_err_column,
+                                              quality_column,
+                                              grouping_column,
+                                              exposure_column,
+                                              backfile_column,
+                                              respfile_column,
+                                              ancrfile_column])
+
+
+            else:
+                # If POISSERR=True there is no need for stat_err and sys_err
+                column_defs = pyfits.ColDefs([tstart_column,
+                                              t_elapse_column,
+                                              spec_num_column,
+                                              channel_column,
+                                              rate_column,
+                                              quality_column,
+                                              grouping_column,
+                                              exposure_column,
+                                              backfile_column,
+                                              respfile_column,
+                                              ancrfile_column])
+
+            new_table = pyfits.new_table(column_defs)
+
+            # Add the keywords required by the OGIP standard:
+            # Set POISSERR=F because our errors are NOT poissonian!
+            # (anyway, neither Rmfit neither XSPEC actually uses the errors
+            # on the background spectrum, BUT rmfit ignores channel with STAT_ERR=0)
+            new_table.header.set('EXTNAME', 'SPECTRUM')
+            new_table.header.set('CORRSCAL', 1.0)
+            new_table.header.set('AREASCAL', 1.0)
+            new_table.header.set('BACKSCAL', 1.0)
+            new_table.header.set('HDUCLASS', 'OGIP')
+            new_table.header.set('HDUCLAS1', 'SPECTRUM')
+            new_table.header.set('HDUCLAS2', self.spectra[0].spectrumType)
+            new_table.header.set('HDUCLAS3', 'RATE')
+            new_table.header.set('HDUCLAS4', 'TYPE:II')
+            new_table.header.set('HDUVERS', '1.2.0')
+            new_table.header.set('TELESCOP', self.spectra[0].telescope)
+            new_table.header.set('INSTRUME', self.spectra[0].instrument)
+
+            if (self.spectra[0].filter != 'unknown'):
+                new_table.header.set('FILTER', self.spectra[0].filter)
+
+            new_table.header.set('CHANTYPE', self.spectra[0].chanType)
+            new_table.header.set('POISSERR', self.poisserr)
+            new_table.header.set('DETCHANS', len(self.channel[0]))
+            new_table.header.set('CREATOR', "3ML v.%s" % (pkg_resources.get_distribution("threeML").version),
+                                 "(G.Vianello, giacomov@slac.stanford.edu)")
+
+            for key, value in self.spectrumHeader.iteritems():
+                new_table.header.set(key, value)
+            pass
+
+            # Write to the required filename
+            new_table.writeto(filename, clobber=clobber)
+
+            # Reopen the file and add the primary keywords, if any
+            f = pyfits.open(filename, "update")
+            for key, value in self.primaryHeader.iteritems():
+                f[0].header.set(key, value)
+            pass
+            f.close()
+
+            if (self.ebounds != None):
+                pyfits.append(filename, self.ebounds.data, header=self.ebounds.header)
+            pass
+
         pass
-
-
-
-
-
-
-
 
         # Now extract bak if existing
-
-    def write(self):
-        pass
