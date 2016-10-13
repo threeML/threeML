@@ -548,9 +548,29 @@ class PHAWrite(object):
 
         self._exposure.append(pha_info['pha'].exposure)
 
-        self._quality = None
+        self._quality.append(ogip.ogip_quality)
+        self._grouping.append(ogip.ogip_grouping)
+        self._channel.append()
 
-        self._channel = None
+        # Now lets do the background
+
+        # This may be overrided by the writeouts... must be careful
+        self._bak_ancrfile.append(pha_info['bak'].ancillary_file)
+        self._bak_backfile.append(pha_info['bak'].background_file)
+        self._bak_respfile.append(pha_info['bak'].response_file)
+
+        self._bak_rate.append(pha_info['bak'].rates)
+
+        if not pha_info['bak'].is_poisson():
+
+            self._bak_stat_err.append(pha_info['bak'].rate_errors)
+
+        self._bak_exposure.append(pha_info['bak'].exposure)
+
+        self._bak_quality.append(ogip.ogip_quality)
+        self._bak_grouping.append(ogip.ogip_grouping)
+        # self._channel\
+
 
 
 

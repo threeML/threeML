@@ -860,6 +860,8 @@ class OGIPLike(PluginPrototype):
         quality = np.zeros_like(self._observed_counts)
         quality[~self._mask] = 5
 
+        return quality
+
 
 
     def view_count_spectrum(self, plot_errors=True):
@@ -1029,6 +1031,7 @@ class OGIPLike(PluginPrototype):
 
 
     def write_pha(self,file_name):
+        pass
 
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
