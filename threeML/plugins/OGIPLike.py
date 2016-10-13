@@ -843,6 +843,25 @@ class OGIPLike(PluginPrototype):
 
             return int(self._mask.sum())
 
+    @property
+    def ogip_grouping(self):
+
+        if self._rebinner is None:
+
+            return np.zeros_like(self._observed_counts)
+
+        else:
+
+            return self._rebinner.grouping
+
+    @property
+    def ogip_quality(self):
+
+        quality = np.zeros_like(self._observed_counts)
+        quality[~self._mask] = 5
+
+
+
     def view_count_spectrum(self, plot_errors=True):
         """
         View the count and background spectrum. Useful to check energy selections.
@@ -1010,11 +1029,6 @@ class OGIPLike(PluginPrototype):
 
 
     def write_pha(self,file_name):
-
-        pass
-
-
-
 
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
