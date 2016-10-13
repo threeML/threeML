@@ -38,10 +38,16 @@ class Rebinner(object):
 
         self._starts = []
         self._stops = []
+        self._grouping = np.zeros_like(vector_to_rebin_on)
+
         n = 0
         bin_open = False
 
+        n_grouped_bins = 0
+
         for index, b in enumerate(vector_to_rebin_on):
+
+
 
             if not mask[index]:
 
@@ -59,6 +65,17 @@ class Rebinner(object):
                     n = 0
                     bin_open = False
 
+                    # If we have grouped more than one bin
+
+                    if n_grouped_bins > 1:
+
+                        # group all these bins
+                        self._grouping[index - n_grouped_bins: index] = 1
+
+                    # reset the number of bins in this group
+
+                    n_grouped_bins = 0
+
             else:
 
                 # This element is included by the mask
@@ -74,6 +91,8 @@ class Rebinner(object):
 
                 n += b
 
+                n_grouped_bins += 1
+
                 # If we are beyond the requested value, close the bin
 
                 if n >= min_value_per_bin:
@@ -81,7 +100,25 @@ class Rebinner(object):
 
                     n = 0
 
+
+
+
+
+
+
+
                     bin_open = False
+
+                    # If we have grouped more than one bin
+
+                    if n_grouped_bins > 1:
+
+                        # group all these bins
+                        self._grouping[index - n_grouped_bins: index] = 1
+
+                    # reset the number of bins in this group
+
+                    n_grouped_bins = 0
 
         # At the end of the loop, see if we left a bin open, if we did, close it
 
@@ -102,6 +139,11 @@ class Rebinner(object):
         """
 
         return len(self._starts)
+
+    @property
+    def grouping(self):
+
+        return self._grouping
 
     def rebin(self, *vectors):
 
