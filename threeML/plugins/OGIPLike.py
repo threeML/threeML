@@ -17,7 +17,7 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_b
 from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import Response
 from threeML.utils.binner import Rebinner
-from threeML.plugins.OGIP.pha import PHAContainer
+from threeML.plugins.OGIP.pha import PHAContainer, PHAWrite
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -165,6 +165,9 @@ class OGIPLike(PluginPrototype):
 
         # This will be used to keep track of how many syntethic datasets have been generated
         self._n_synthetic_datasets = 0
+
+        self._tstart = None
+        self._tstop = None
 
     def _get_pha_instance(self, pha_file_or_container, *args, **kwargs):
 
@@ -617,6 +620,14 @@ class OGIPLike(PluginPrototype):
 
         return self._pha.exposure / self._bak.exposure * self._pha.scale_factor / self._bak.scale_factor
 
+    @property
+    def tstart(self):
+        return self._tstart
+
+    @property
+    def tstop(self):
+        return self._tstop
+
     def _loglike_poisson_obs_poisson_bkg(self):
 
         # Scale factor between source and background spectrum
@@ -863,7 +874,6 @@ class OGIPLike(PluginPrototype):
         return quality
 
 
-
     def view_count_spectrum(self, plot_errors=True):
         """
         View the count and background spectrum. Useful to check energy selections.
@@ -1031,8 +1041,16 @@ class OGIPLike(PluginPrototype):
 
 
     def write_pha(self,file_name):
-        pass
+        """
+        Create a pha file of the current pha selections
 
+
+        :param file_name: output file name (excluding extension)
+        :return: None
+        """
+
+        pha_writer = PHAWrite(self)
+        pha_writer.write(file_name)
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))
