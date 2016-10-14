@@ -1,4 +1,6 @@
 import numpy as np
+from threeML.utils.stats_tools import Significance
+from threeML.io.progress_bar import progress_bar
 
 
 class NotEnoughData(RuntimeError):
@@ -11,6 +13,7 @@ class Rebinner(object):
     through the mask will not be considered for the rebinning
 
     """
+
     def __init__(self, vector_to_rebin_on, min_value_per_bin, mask=None):
 
         # Basic check that it is possible to do what we have been requested to do
@@ -38,8 +41,12 @@ class Rebinner(object):
 
         self._starts = []
         self._stops = []
+        self._grouping = np.zeros_like(vector_to_rebin_on)
+
         n = 0
         bin_open = False
+
+        n_grouped_bins = 0
 
         for index, b in enumerate(vector_to_rebin_on):
 
@@ -59,6 +66,18 @@ class Rebinner(object):
                     n = 0
                     bin_open = False
 
+                    # If we have grouped more than one bin
+
+                    if n_grouped_bins > 1:
+
+                        # group all these bins
+                        self._grouping[index - n_grouped_bins + 1: index] = -1
+                        self._grouping[index] = 1
+
+                    # reset the number of bins in this group
+
+                    n_grouped_bins = 0
+
             else:
 
                 # This element is included by the mask
@@ -74,6 +93,8 @@ class Rebinner(object):
 
                 n += b
 
+                n_grouped_bins += 1
+
                 # If we are beyond the requested value, close the bin
 
                 if n >= min_value_per_bin:
@@ -82,6 +103,18 @@ class Rebinner(object):
                     n = 0
 
                     bin_open = False
+
+                    # If we have grouped more than one bin
+
+                    if n_grouped_bins > 1:
+
+                        # group all these bins
+                        self._grouping[index - n_grouped_bins + 1: index] = -1
+                        self._grouping[index] = 1
+
+                    # reset the number of bins in this group
+
+                    n_grouped_bins = 0
 
         # At the end of the loop, see if we left a bin open, if we did, close it
 
@@ -102,6 +135,11 @@ class Rebinner(object):
         """
 
         return len(self._starts)
+
+    @property
+    def grouping(self):
+
+        return self._grouping
 
     def rebin(self, *vectors):
 
@@ -126,7 +164,7 @@ class Rebinner(object):
             # NOTE: we add 1e-100 because if both rebinned_vector and vector_a contains only 0, the check would
             # fail when it shouldn't
 
-            assert abs( (np.sum(rebinned_vector) + 1e-100) / ( np.sum(vector_a[self._mask]) + 1e-100) - 1) < 1e-4
+            assert abs((np.sum(rebinned_vector) + 1e-100) / (np.sum(vector_a[self._mask]) + 1e-100) - 1) < 1e-4
 
             rebinned_vectors.append(np.array(rebinned_vector))
 
@@ -146,7 +184,7 @@ class Rebinner(object):
 
         rebinned_vectors = []
 
-        for vector in vectors: # type: np.ndarray[np.ndarray]
+        for vector in vectors:  # type: np.ndarray[np.ndarray]
 
             assert len(vector) == len(self._mask), "The vector to rebin must have the same number of elements of the" \
                                                    "original (not-rebinned) vector"
@@ -170,40 +208,173 @@ class Rebinner(object):
 
         for i, (low_bound, hi_bound) in enumerate(zip(self._starts, self._stops)):
             new_start[i] = old_start[low_bound]
-            new_stop[i] = old_stop[hi_bound-1]
+            new_stop[i] = old_stop[hi_bound - 1]
 
         return new_start, new_stop
 
-    # def save_active_measurements(self, mask):
-    #     """
-    #     Saves the set active measurements so that they can be restored if the binning is reset.
-    #
-    #
-    #     Returns:
-    #         none
-    #
-    #     """
-    #
-    #     self._saved_mask = mask
-    #     self._saved_idx = np.array(slice_disjoint((mask).nonzero()[0])).T
-    #
-    # @property
-    # def saved_mask(self):
-    #
-    #     return self._saved_mask
-    #
-    # @property
-    # def saved_selection(self):
-    #
-    #     return self._saved_idx
-    #
-    # @property
-    # def min_counts(self):
-    #
-    #     return self._min_value_per_bin
-    #
-    # @property
-    # def edges(self):
-    #
-    #     # return the low and high bins
-    #     return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
+        # def save_active_measurements(self, mask):
+        #     """
+        #     Saves the set active measurements so that they can be restored if the binning is reset.
+        #
+        #
+        #     Returns:
+        #         none
+        #
+        #     """
+        #
+        #     self._saved_mask = mask
+        #     self._saved_idx = np.array(slice_disjoint((mask).nonzero()[0])).T
+        #
+        # @property
+        # def saved_mask(self):
+        #
+        #     return self._saved_mask
+        #
+        # @property
+        # def saved_selection(self):
+        #
+        #     return self._saved_idx
+        #
+        # @property
+        # def min_counts(self):
+        #
+        #     return self._min_value_per_bin
+        #
+        # @property
+        # def edges(self):
+        #
+        #     # return the low and high bins
+        #     return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
+
+
+
+class TemporalBinner(object):
+    """
+    A class to provide binning of temporal light curves via various methods
+
+    """
+
+    def __init__(self, arrival_times):
+
+        self._arrival_times = arrival_times
+
+    @property
+    def bins(self):
+
+        return [np.asarray(self._starts), np.asarray(self._stops)]
+
+    @property
+    def text_bins(self):
+
+        txt_bins = []
+
+        for start, stop in zip(self._starts, self._stops):
+
+            txt_bins.append("%f-%f" % (start, stop))
+
+        return txt_bins
+
+    def bin_by_significance(self, background_getter, background_error_getter=None, sigma_level=10, min_counts=1):
+        """
+
+        Bin the data to a given significance level for a given background method and sigma
+        method. If a background error function is given then it is assumed that the error distribution
+        is gaussian. Otherwise, the error distribution is assumed to be Poisson.
+
+        :param background_getter: function of a start and stop time that returns background counts
+        :param background_error_getter: function of a start and stop time that returns background count errors
+        :param sigma_level: the sigma level of the intervals
+        :param min_counts: the minimum counts per bin
+
+        :return:
+        """
+
+        self._starts = []
+
+        self._stops = []
+
+        total_counts = 0
+        current_start = self._arrival_times[0]
+
+        with progress_bar(len(self._arrival_times)) as p:
+            for i, time in enumerate(self._arrival_times):
+
+                total_counts += 1
+
+                if total_counts < min_counts:
+
+                    continue
+
+                else:
+
+                    # first use the background function to know the number of background counts
+                    bkg = background_getter(current_start, time)
+
+                    sig = Significance(total_counts, bkg)
+
+                    if background_error_getter is not None:
+
+                        bkg_error = background_error_getter(current_start, time)
+
+                        sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
+
+
+
+
+                    else:
+
+                        sigma = sig.li_and_ma()[0]
+
+                    # now test if we have enough sigma
+
+
+
+                    if sigma >= sigma_level:
+
+                        self._stops.append(time)
+
+                        self._starts.append(current_start)
+
+                        current_start = time
+
+                        total_counts = 0
+
+                p.increase()
+
+    def bin_by_constanst(self, dt):
+        """
+        Create bins with a constant dt
+
+        :param dt: temporal spacing of the bins
+        :return: None
+        """
+
+        tmp = np.arange(self._arrival_times[0], self._arrival_times[-1], dt)
+        self._starts = tmp
+        self._stops = tmp + dt
+
+    def bin_by_bayesian_blocks(self, p0):
+        """
+
+        Bin using the Bayesian block algorithm of Scargle et al. 2013.
+
+
+        :param p0:
+        :return:
+        """
+
+        raise NotImplementedError('Bayesian blocks is not implemented yet')
+
+    def bin_by_custom(self, start, stop):
+        """
+        Simplicity function to make custom bins. This form keeps introduction of
+        custom bins uniform for other binning methods
+
+        :param start: start times of the bins
+        :param stop:  stop times of the bins
+        :return:
+        """
+
+        self._starts = start
+        self._stops = stop
+

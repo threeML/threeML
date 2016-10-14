@@ -17,7 +17,7 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_b
 from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import Response
 from threeML.utils.binner import Rebinner
-from threeML.plugins.OGIP.pha import PHAContainer
+from threeML.plugins.OGIP.pha import PHAContainer, PHAWrite
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -26,13 +26,10 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
 class OGIPLike(PluginPrototype):
-
-
-    def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None, verbose=True):
+    def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None, spectrum_number=None, verbose=True):
 
         # Just a toggle for verbosity
         self._verbose = bool(verbose)
-
 
         assert is_valid_variable_name(name), "Name %s is not a valid name for a plugin. You must use a name which is " \
                                              "a valid python identifier: no spaces, no operators (+,-,/,*), " \
@@ -40,7 +37,7 @@ class OGIPLike(PluginPrototype):
 
         # Read the pha file (or the PHAContainer instance)
 
-        self._pha = self._get_pha_instance(pha_file)  # type: PHA
+        self._pha = self._get_pha_instance(pha_file, spectrum_number=spectrum_number)  # type: PHA
 
         # Get the required background file, response and (if present) arf_file either from the
         # calling sequence or the file.
@@ -56,7 +53,7 @@ class OGIPLike(PluginPrototype):
 
         # Get a PHA instance with the background
 
-        self._bak = self._get_pha_instance(bak_file, file_type='background')
+        self._bak = self._get_pha_instance(bak_file, file_type='background', spectrum_number=spectrum_number)
 
         # Now handle the response
 
@@ -166,6 +163,9 @@ class OGIPLike(PluginPrototype):
         # This will be used to keep track of how many syntethic datasets have been generated
         self._n_synthetic_datasets = 0
 
+        self._tstart = None
+        self._tstop = None
+
     def _get_pha_instance(self, pha_file_or_container, *args, **kwargs):
 
         # If the user didn't provide them, read the needed files from the keywords in the PHA file
@@ -191,6 +191,19 @@ class OGIPLike(PluginPrototype):
             pha = PHA(pha_file_or_container, *args, **kwargs)
 
         return pha
+
+    def get_pha_files(self):
+
+        info = {}
+
+        # we want to pass copies so that
+        # the user doesn't grab the instance
+        # and try to modify things. protection
+        info['pha'] = copy.copy(self._pha)
+        info['bak'] = copy.copy(self._bak)
+        info['rsp'] = copy.copy(self._rsp)
+
+        return info
 
     def set_active_measurements(self, *args):
         """
@@ -526,7 +539,6 @@ class OGIPLike(PluginPrototype):
         if self._verbose:
             print("Now using %s bins" % self._rebinner.n_bins)
 
-
     def remove_rebinning(self):
         """
         Remove the rebinning scheme set with rebin_on_background.
@@ -588,9 +600,9 @@ class OGIPLike(PluginPrototype):
 
         model_counts = self.get_folded_model()
 
-        loglike, _  = poisson_log_likelihood_ideal_bkg(self._current_observed_counts,
-                                                       self._current_scaled_background_counts,
-                                                       model_counts)
+        loglike, _ = poisson_log_likelihood_ideal_bkg(self._current_observed_counts,
+                                                      self._current_scaled_background_counts,
+                                                      model_counts)
 
         return np.sum(loglike), None
 
@@ -603,6 +615,14 @@ class OGIPLike(PluginPrototype):
         """
 
         return self._pha.exposure / self._bak.exposure * self._pha.scale_factor / self._bak.scale_factor
+
+    @property
+    def tstart(self):
+        return self._tstart
+
+    @property
+    def tstop(self):
+        return self._tstop
 
     def _loglike_poisson_obs_poisson_bkg(self):
 
@@ -830,6 +850,25 @@ class OGIPLike(PluginPrototype):
 
             return int(self._mask.sum())
 
+    @property
+    def ogip_grouping(self):
+
+        if self._rebinner is None:
+
+            return np.zeros_like(self._observed_counts)
+
+        else:
+
+            return self._rebinner.grouping
+
+    @property
+    def ogip_quality(self):
+
+        quality = np.zeros_like(self._observed_counts)
+        quality[~self._mask] = 5
+
+        return quality
+
     def view_count_spectrum(self, plot_errors=True):
         """
         View the count and background spectrum. Useful to check energy selections.
@@ -995,8 +1034,18 @@ class OGIPLike(PluginPrototype):
         ax.set_xlim(left=self._rsp.ebounds[0, 0], right=self._rsp.ebounds[-1, 1])
         ax.legend()
 
+    def write_pha(self, file_name, overwrite=False):
+        """
+        Create a pha file of the current pha selections
 
 
+        :param file_name: output file name (excluding extension)
+        :return: None
+        """
+
+        pha_writer = PHAWrite(self)
+
+        pha_writer.write(file_name, overwrite=overwrite)
 
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
