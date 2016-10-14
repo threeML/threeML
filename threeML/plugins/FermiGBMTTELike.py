@@ -234,6 +234,20 @@ class FermiGBMTTELike(OGIPLike):
 
         self._gbm_tte_file.peek()
 
+    def write_pha_from_binner(self, file_name, overwrite=False):
+        """
+
+        :param file_name:
+        :param overwrite:
+        :return:
+        """
+
+        pass
+
+
+
+
+
     def get_background_parameters(self):
         """
         Returns a pandas DataFrame containing the background polynomial

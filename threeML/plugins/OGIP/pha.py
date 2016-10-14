@@ -309,7 +309,6 @@ class PHA(object):
         """
         return self._gathered_keywords['exposure']
 
-
     def _return_file(self, key):
 
         value = self._gathered_keywords[key]
@@ -491,7 +490,6 @@ class PHAWrite(object):
 
         self._n_spectra = len(ogiplike)
 
-
         # The following lists corresponds to the different columns in the PHA/CSPEC
         # formats, and they will be filled up by addSpectrum()
 
@@ -533,7 +531,6 @@ class PHAWrite(object):
 
         self._outfile_basename = outfile_name
 
-
         self._outfile_name = {'pha': '%s.pha' % outfile_name, 'bak': '%s_bak.pha' % outfile_name}
 
         for ogip in self._ogiplike:
@@ -541,8 +538,6 @@ class PHAWrite(object):
             self._append_opig(ogip)
 
         self._write_phaII(overwrite)
-
-
 
     def _append_opig(self, ogip):
         """
@@ -632,10 +627,6 @@ class PHAWrite(object):
             else:
 
                 self._sys_err[key].append(np.zeros_like(pha_info[key].rates, dtype=np.float32).tolist())
-
-
-
-
 
             self._exposure[key].append(pha_info[key].exposure)
             self._quality[key].append(ogip.ogip_quality.tolist())
@@ -748,8 +739,6 @@ class PHAWrite(object):
             backscale_column = fits.Column(name='BACKSCAL',
                                            format='D',
                                            array=np.array(self._backscal[key]))
-
-
 
             respfile_column = fits.Column(name='RESPFILE',
                                           format='%iA' % (self._max_length_resp_file_name + 2),

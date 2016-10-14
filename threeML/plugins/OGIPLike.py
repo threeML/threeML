@@ -31,7 +31,6 @@ class OGIPLike(PluginPrototype):
         # Just a toggle for verbosity
         self._verbose = bool(verbose)
 
-
         assert is_valid_variable_name(name), "Name %s is not a valid name for a plugin. You must use a name which is " \
                                              "a valid python identifier: no spaces, no operators (+,-,/,*), " \
                                              "it cannot start with a number, no special characters" % name
@@ -540,7 +539,6 @@ class OGIPLike(PluginPrototype):
         if self._verbose:
             print("Now using %s bins" % self._rebinner.n_bins)
 
-
     def remove_rebinning(self):
         """
         Remove the rebinning scheme set with rebin_on_background.
@@ -602,9 +600,9 @@ class OGIPLike(PluginPrototype):
 
         model_counts = self.get_folded_model()
 
-        loglike, _  = poisson_log_likelihood_ideal_bkg(self._current_observed_counts,
-                                                       self._current_scaled_background_counts,
-                                                       model_counts)
+        loglike, _ = poisson_log_likelihood_ideal_bkg(self._current_observed_counts,
+                                                      self._current_scaled_background_counts,
+                                                      model_counts)
 
         return np.sum(loglike), None
 
@@ -871,7 +869,6 @@ class OGIPLike(PluginPrototype):
 
         return quality
 
-
     def view_count_spectrum(self, plot_errors=True):
         """
         View the count and background spectrum. Useful to check energy selections.
@@ -1037,8 +1034,7 @@ class OGIPLike(PluginPrototype):
         ax.set_xlim(left=self._rsp.ebounds[0, 0], right=self._rsp.ebounds[-1, 1])
         ax.legend()
 
-
-    def write_pha(self,file_name):
+    def write_pha(self, file_name, overwrite=False):
         """
         Create a pha file of the current pha selections
 
@@ -1049,7 +1045,8 @@ class OGIPLike(PluginPrototype):
 
         pha_writer = PHAWrite(self)
 
-        pha_writer.write(file_name)
+        pha_writer.write(file_name, overwrite=overwrite)
+
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))
