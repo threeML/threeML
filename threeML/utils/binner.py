@@ -1,4 +1,6 @@
 import numpy as np
+from threeML.utils.stats_tools import Significance
+from threeML.io.progress_bar import progress_bar
 
 
 class NotEnoughData(RuntimeError):
@@ -243,3 +245,136 @@ class Rebinner(object):
         #
         #     # return the low and high bins
         #     return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
+
+
+
+class TemporalBinner(object):
+    """
+    A class to provide binning of temporal light curves via various methods
+
+    """
+
+    def __init__(self, arrival_times):
+
+        self._arrival_times = arrival_times
+
+    @property
+    def bins(self):
+
+        return [np.asarray(self._starts), np.asarray(self._stops)]
+
+    @property
+    def text_bins(self):
+
+        txt_bins = []
+
+        for start, stop in zip(self._starts, self._stops):
+
+            txt_bins.append("%f-%f" % (start, stop))
+
+        return txt_bins
+
+    def bin_by_significance(self, background_getter, background_error_getter=None, sigma_level=10, min_counts=1):
+        """
+
+        Bin the data to a given significance level for a given background method and sigma
+        method. If a background error function is given then it is assumed that the error distribution
+        is gaussian. Otherwise, the error distribution is assumed to be Poisson.
+
+        :param background_getter: function of a start and stop time that returns background counts
+        :param background_error_getter: function of a start and stop time that returns background count errors
+        :param sigma_level: the sigma level of the intervals
+        :param min_counts: the minimum counts per bin
+
+        :return:
+        """
+
+        self._starts = []
+
+        self._stops = []
+
+        total_counts = 0
+        current_start = self._arrival_times[0]
+
+        with progress_bar(len(self._arrival_times)) as p:
+            for i, time in enumerate(self._arrival_times):
+
+                total_counts += 1
+
+                if total_counts < min_counts:
+
+                    continue
+
+                else:
+
+                    # first use the background function to know the number of background counts
+                    bkg = background_getter(current_start, time)
+
+                    sig = Significance(total_counts, bkg)
+
+                    if background_error_getter is not None:
+
+                        bkg_error = background_error_getter(current_start, time)
+
+                        sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
+
+
+
+
+                    else:
+
+                        sigma = sig.li_and_ma()[0]
+
+                    # now test if we have enough sigma
+
+
+
+                    if sigma >= sigma_level:
+
+                        self._stops.append(time)
+
+                        self._starts.append(current_start)
+
+                        current_start = time
+
+                        total_counts = 0
+
+                p.increase()
+
+    def bin_by_constanst(self, dt):
+        """
+        Create bins with a constant dt
+
+        :param dt: temporal spacing of the bins
+        :return: None
+        """
+
+        tmp = np.arange(self._arrival_times[0], self._arrival_times[-1], dt)
+        self._starts = tmp
+        self._stops = tmp + dt
+
+    def bin_by_bayesian_blocks(self, p0):
+        """
+
+        Bin using the Bayesian block algorithm of Scargle et al. 2013.
+
+
+        :param p0:
+        :return:
+        """
+
+        raise NotImplementedError('Bayesian blocks is not implemented yet')
+
+    def bin_by_custom(self, start, stop):
+        """
+        Simplicity function to make custom bins. This form keeps introduction of
+        custom bins uniform for other binning methods
+
+        :param start: start times of the bins
+        :param stop:  stop times of the bins
+        :return:
+        """
+
+        self._starts = start
+        self._stops = stop
+

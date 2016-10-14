@@ -14,6 +14,7 @@ from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.progress_bar import progress_bar
+from threeML.utils.binner import TemporalBinner
 
 from event_polynomial import polyfit, unbinned_polyfit
 
@@ -44,17 +45,18 @@ class EventList(object):
         Container for event style data which are tagged with time and energy/PHA.
 
 
-        Args:
-            n_channels: Number of detector channels
-            start_time: start time of the event list
-            stop_time: stop time of the event list
-            dead_time: an array of deadtime per event
-            first_channel: where detchans begin indexing
-            rsp_file: the response file corresponding to these events
-            arrival_times: list of event arrival times
-            energies: list of event energies or pha channels
-            ra:
-            dec:
+
+
+        :param  n_channels: Number of detector channels
+        :param  start_time: start time of the event list
+        :param  stop_time: stop time of the event list
+        :param  dead_time: an array of deadtime per event
+        :param  first_channel: where detchans begin indexing
+        :param  rsp_file: the response file corresponding to these events
+        :param  arrival_times: list of event arrival times
+        :param  energies: list of event energies or pha channels
+        :param  ra:
+        :param  dec:
         """
 
         self._arrival_times = np.asarray(arrival_times)
@@ -95,7 +97,6 @@ class EventList(object):
             self._stop_time = stop_time
 
         self._rsp_file = rsp_file
-
 
 
         self._user_poly_order = -1
@@ -273,6 +274,143 @@ class EventList(object):
 
         else:
             RuntimeError('A polynomial fit has not been made.')
+
+    def get_total_poly_count(self, start, stop, mask=None):
+        """
+
+        Get the total poly counts
+
+        :param start:
+        :param stop:
+        :return:
+        """
+        if mask is None:
+            mask = np.ones_like(self._polynomials, dtype=np.bool)
+
+        total_counts = 0
+
+        for p in np.asarray(self._polynomials)[mask]:
+
+            total_counts += p.integral(start, stop)
+
+        return total_counts
+
+    def get_total_poly_error(self, start, stop, mask=None):
+        """
+
+        Get the total poly error
+
+        :param start:
+        :param stop:
+        :return:
+        """
+        if mask is None:
+            mask = np.ones_like(self._polynomials, dtype=np.bool)
+
+        total_counts = 0
+
+        for p in np.asarray(self._polynomials)[mask]:
+
+            total_counts += p.integral_error(start, stop) ** 2
+
+        return np.sqrt(total_counts)
+
+    @property
+    def bins(self):
+
+        if self._temporal_binner is not None:
+
+            return self._temporal_binner.bins
+        else:
+
+            raise RuntimeError('This EventList has no binning specified')
+
+    @property
+    def text_bins(self):
+
+        if self._temporal_binner is not None:
+
+            return self._temporal_binner.text_bins
+        else:
+
+            raise RuntimeError('This EventList has no binning specified')
+
+    def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
+        """
+
+       Interface to the temporal binner's significance binning model
+
+        :param start: start of the interval to bin on
+        :param stop:  stop of the interval ot bin on
+        :param sigma: sigma-level of the bins
+        :param mask: (bool) use the energy mask to decide on significance
+        :param min_counts:  minimum number of counts per bin
+        :return:
+        """
+
+        if mask is not None:
+
+            # create phas to check
+            phas = np.arange(self._first_channel, self._n_channels)[mask]
+
+            this_mask = np.zeros_like(self._arrival_times, dtype=np.bool)
+
+            for channel in phas:
+                this_mask = np.logical_or(this_mask, self._energies == channel)
+
+            events = self._arrival_times[this_mask]
+
+        else:
+
+            events = copy.copy(self._arrival_times)
+
+        events = events[np.logical_and(events <= stop, events >= start)]
+
+        self._temporal_binner = TemporalBinner(events)
+
+        tmp_bkg_getter = lambda a, b: self.get_total_poly_count(a, b, mask)
+        tmp_err_getter = lambda a, b: self.get_total_poly_error(a, b, mask)
+
+        self._temporal_binner.bin_by_significance(tmp_bkg_getter,
+                                                  background_error_getter=tmp_err_getter,
+                                                  sigma_level=sigma,
+                                                  min_counts=min_counts)
+
+    def bin_by_constant(self, start, stop, dt=1):
+        """
+        Interface to the temporal binner's constant binning mode
+
+        :param start: start time of the bins
+        :param stop: stop time of the bins
+        :param dt: temporal spacing of the bins
+        :return:
+        """
+
+        events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
+
+        self._temporal_binner = TemporalBinner(events)
+        self._temporal_binner.bin_by_constanst(dt)
+
+    def bin_by_custom(self, start, stop):
+        """
+        Interface to temporal binner's custom bin mode
+
+
+        :param start: start times of the bins
+        :param stop:  stop times of the bins
+        :return:
+        """
+
+        self._temporal_binner = TemporalBinner(self._arrival_times)
+        self._temporal_binner.bin_by_custom(start, stop)
+
+    def bin_by_bayesian_blocks(self, start, stop, p0):
+
+        events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
+
+        self._temporal_binner = TemporalBinner(events)
+
+        self._temporal_binner.bin_by_bayesian_blocks(p0)
 
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
@@ -841,8 +979,8 @@ class EventList(object):
                                                      self._optimal_polynomial_grade,
                                                      t_start,
                                                      t_stop,
-                                                     poly_exposure
-                                                     )
+                                                     poly_exposure)
+
 
                     polynomials.append(polynomial)
                     p.increase()

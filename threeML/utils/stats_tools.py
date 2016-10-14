@@ -426,7 +426,7 @@ class Significance(object):
         transform it in sigma.
 
         NOTE: this is reliable for expected counts >~10-15 if the significance is not very high. The higher the
-        expected counts, the more reliable the significance estimation. As rule of thum, you need at least 25 counts
+        expected counts, the more reliable the significance estimation. As rule of thumb, you need at least 25 counts
         to have reliable estimates up to 5 sigma.
 
         NOTE 2: if you use to compute residuals in units of sigma, you should not expected them to be symmetrically

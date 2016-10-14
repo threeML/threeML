@@ -9,13 +9,16 @@ import re
 import requests
 
 from threeML.plugins.OGIPLike import OGIPLike
-
 from OGIP.eventlist import EventList
 from threeML.io.rich_display import display
 
 from threeML.io.step_plot import step_plot
 
 __instrument_name = "Fermi GBM TTE (all detectors)"
+
+
+class BinningMethodError(RuntimeError):
+    pass
 
 
 class FermiGBMTTELike(OGIPLike):
@@ -68,11 +71,17 @@ class FermiGBMTTELike(OGIPLike):
         self.set_active_time_interval(*source_intervals)
         self.set_background_interval(*background_selections, unbinned=unbinned)
 
+        # Keeps track of if we are beginning
         self._startup = False
+
+        # Keep track of if there has been any temporal binning
+
+        self._temporally_binned = False
 
         self._rsp_file = rsp_file
 
-        OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file,verbose=verbose)
+        OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file,
+                          verbose=verbose)
 
     def __set_poly_order(self, value):
         """Background poly order setter """
@@ -96,7 +105,7 @@ class FermiGBMTTELike(OGIPLike):
     background_poly_order = property(___get_poly_order, ___set_poly_order,
                                      doc="Get or set the background polynomial order")
 
-    def set_active_time_interval(self, *intervals):
+    def set_active_time_interval(self, *intervals, **kwargs):
         """
         Set the time interval to be used during the analysis.
         For now, only one interval can be selected. This may be
@@ -107,10 +116,10 @@ class FermiGBMTTELike(OGIPLike):
         set_active_time_interval("0.0-10.0")
 
         which will set the energy range 0-10. seconds.
+        :param options:
         :param intervals:
         :return:
         """
-
 
         self._evt_list.set_active_time_intervals(*intervals)
 
@@ -125,8 +134,29 @@ class FermiGBMTTELike(OGIPLike):
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file)
 
+
         self._tstart = min(self._evt_list.tmin_list)
         self._tstop = max(self._evt_list.tmax_list)
+
+        return_ogip = False
+
+        if 'return_ogip' in kwargs:
+
+            return_ogip = bool(kwargs.pop('return_ogip'))
+
+        if return_ogip:
+
+            # I really do not like this at the moment
+            # but I'm assuming there is only one interval selected
+            new_name = "%s_%s" % (self._name, intervals[0])
+
+            new_ogip = OGIPLike(new_name,
+                                pha_file=self._observed_pha,
+                                bak_file=self._bkg_pha,
+                                rsp_file=self._rsp_file)
+
+            return new_ogip
+
 
     def set_background_interval(self, *intervals, **options):
         """
@@ -156,9 +186,10 @@ class FermiGBMTTELike(OGIPLike):
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file)
 
-    def view_lightcurve(self, start=-10, stop=20., dt=1., energy_selection=None):
+    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None):
         """
 
+        :param use_binner: use the bins created via a binner
         :param start: start time to view
         :param stop:  stop time to view
         :param dt:  dt of the light curve
@@ -197,32 +228,48 @@ class FermiGBMTTELike(OGIPLike):
             mask = np.array([True] * self._evt_list.n_events)
             valid_channels = range(self._gbm_tte_file.n_channels)
 
+        if use_binner:
 
+            bin_start, bin_stop = self._evt_list.bins
+            bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
 
+            # perhaps we want to look a little before or after the binner
+            if start < bins[0]:
 
+                pre_bins = np.arange(start, bins[0], dt).tolist()[:-1]
 
+                pre_bins.extend(bins)
 
+                bins = pre_bins
 
-        binner = np.arange(start, stop + dt, dt)
-        cnts, bins = np.histogram(self._gbm_tte_file.arrival_times[mask] - self._gbm_tte_file.triggertime, bins=binner)
+            if stop > bins[-1]:
+
+                post_bins = np.arange(bins[-1], stop, dt)
+
+                bins.extend(post_bins[1:])
+
+        else:
+
+            bins = np.arange(start, stop + dt, dt)
+
+        cnts, bins = np.histogram(self._gbm_tte_file.arrival_times[mask] - self._gbm_tte_file.triggertime, bins=bins)
         time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
 
+        width = np.diff(bins)
+
         bkg = []
-        for tb in time_bins:
-            tmpbkg = 0.  # Maybe I can do this perenergy at some point
+        for j, tb in enumerate(time_bins):
+            tmpbkg = 0.
             for i in valid_channels:
                 poly = self._evt_list.polynomials[i]
 
-
-                tmpbkg += poly.integral(tb[0], tb[1]) / (dt)
+                tmpbkg += poly.integral(tb[0], tb[1]) / (width[j])
 
             bkg.append(tmpbkg)
 
-        gbm_light_curve_plot(time_bins, cnts, bkg, dt,
+        gbm_light_curve_plot(time_bins, cnts, bkg, width,
                              selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list),
                              bkg_selections=self._evt_list.poly_intervals)
-
-
 
     def peek(self):
 
@@ -261,7 +308,134 @@ class FermiGBMTTELike(OGIPLike):
 
         return self._evt_list.get_poly_info()
 
+    @property
+    def text_bins(self):
 
+        return self._evt_list.text_bins
+
+    @property
+    def bins(self):
+
+        return self._evt_list.bins
+
+    def read_bins(self, ttelike):
+        """
+
+        Read the temporal bins from another *binned* FermiGBMTTELike instance
+        and apply those bins to this instance
+
+        :param ttelike: *binned* FermiGBMTTELike instance
+        :return:
+        """
+
+        start, stop = ttelike.bins
+        self.create_time_bins(start, stop, method='custom')
+
+    def create_time_bins(self, start, stop, method='constant', **options):
+        """
+
+        Create time bins from start to stop with a given method (constant, siginificance, bayesblocks, custom).
+        Each method has required keywords specified in the parameters. Once created, this can be used as
+        a JointlikelihoodSet generator, or as input for viewing the light curve.
+
+        :param start: start of the bins or array of start times for custom mode
+        :param stop: stop of the bins or array of stop times for custom mode
+        :param method: constant, significance, bayesblocks, custom
+        :param use_energy_mask: (optional) use the energy mask when binning (default false)
+        :param dt: <constant method> delta time of the
+        :param sigma: <significance> sigma level of bins
+        :param min_counts: (optional) <significance> minimum number of counts per bin
+        :param p0: <bayesblocks> the chance probability of having the correct bin configuration.
+        :return:
+        """
+
+        if 'use_energy_mask' in options:
+
+            use_energy_mask = options.pop('use_energy_mask')
+
+        else:
+
+            use_energy_mask = False
+
+        if method == 'constant':
+
+            if 'dt' in options:
+                dt = float(options.pop('dt'))
+
+            else:
+
+                raise RuntimeError('constant bins requires the dt option set!')
+
+            self._evt_list.bin_by_constant(start, stop, dt)
+
+
+        elif method == 'significance':
+
+            if 'sigma' in options:
+
+                sigma = options.pop('sigma')
+
+            else:
+
+                raise RuntimeError('significance bins require a sigma argument')
+
+            if 'min_counts' in options:
+
+                min_counts = options.pop('min_counts')
+
+            else:
+
+                min_counts = 10
+
+            # Should we was the data?f
+
+            if use_energy_mask:
+
+                mask = self._mask
+
+            else:
+
+                mask = None
+
+            self._evt_list.bin_by_significance(start, stop, sigma=sigma, min_counts=min_counts, mask=mask)
+
+
+        elif method == 'bayesblocks':
+
+            raise NotImplementedError('Bayesian Blocks is not implemented yet')
+
+            try:
+
+                p0 = options.pop('p0')
+
+            except(KeyError):
+
+                p0 = 0.1
+
+        elif method == 'custom':
+
+            if type(start) is not list:
+
+                if type(start) is not np.ndarray:
+
+                    raise RuntimeError('start must be and array in custom mode')
+
+            if type(stop) is not list:
+
+                if type(stop) is not np.ndarray:
+
+                    raise RuntimeError('stop must be and array in custom mode')
+
+            assert len(start) == len(stop), 'must have equal number of start and stop times'
+
+            self._evt_list.bin_by_custom(start, stop)
+
+
+
+
+        else:
+
+            raise BinningMethodError('Only constant, significance, bayesblock, or custom method argument accepted.')
 
 
 class GBMTTEFile(object):
@@ -430,18 +604,15 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
     if len(all_masks) > 1:
 
         for mask in all_masks[1:]:
-            step_plot(time_bins[mask], cnts[mask] / width, ax,
+            step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
                       color='#fc8d62',
                       fill=True,
                       fill_min=min_cnts)
 
-    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width, ax,
+    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
               color='#fc8d62',
               fill=True,
               fill_min=min_cnts, label="Selection")
-
-
-
 
     all_masks = []
     for tmin, tmax in bkg_selections:
@@ -453,17 +624,16 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
 
         for mask in all_masks[1:]:
 
-
-            step_plot(time_bins[mask], cnts[mask] / width, ax,
+            step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
                       color='#80b1d3',
                       fill=True,
                       fillAlpha=.4,
                       fill_min=min_cnts)
 
-    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width, ax,
+    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
               color='#80b1d3',
               fill=True,
-              fill_min=min_cnts,fillAlpha=.4 ,label="Bkg. Selections")
+              fill_min=min_cnts, fillAlpha=.4, label="Bkg. Selections")
 
     ax.plot(mean_time, bkg, '#66c2a5', lw=2., label="Background")
 
@@ -472,5 +642,5 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
     ax.set_xlabel("Time (s)")
     ax.set_ylabel("Rate (cnts/s)")
     ax.set_ylim(bottom, top)
-    ax.set_xlim(time_bins.min(),time_bins.max())
+    ax.set_xlim(time_bins.min(), time_bins.max())
     ax.legend()
