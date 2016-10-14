@@ -7,12 +7,14 @@ import pandas as pd
 import warnings
 import re
 import requests
+import copy
 
 from threeML.plugins.OGIPLike import OGIPLike
 from OGIP.eventlist import EventList
 from threeML.io.rich_display import display
 
 from threeML.io.step_plot import step_plot
+from threeML.plugins.OGIP.pha import PHAWrite
 
 __instrument_name = "Fermi GBM TTE (all detectors)"
 
@@ -22,6 +24,7 @@ class BinningMethodError(RuntimeError):
 
 
 class FermiGBMTTELike(OGIPLike):
+
     def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
         """
@@ -289,7 +292,34 @@ class FermiGBMTTELike(OGIPLike):
         :return:
         """
 
-        pass
+        # save the original interval if there is one
+        old_interval = copy.copy(self._active_interval)
+
+        ogip_list = []
+
+        # create copies of the OGIP plugins with the
+        # time interval saved.
+
+        for interval in self.text_bins:
+
+            self.set_active_time_interval(interval)
+
+            ogip_list.append(copy.copy(self))
+
+        # write out the PHAII file
+
+        pha_writer = PHAWrite(*ogip_list)
+
+        pha_writer.write(file_name, overwrite=overwrite)
+
+        # restore the old interval
+
+        self.set_active_time_interval(old_interval)
+
+
+
+
+
 
 
 
