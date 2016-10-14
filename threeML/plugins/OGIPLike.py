@@ -26,9 +26,7 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
 class OGIPLike(PluginPrototype):
-
-
-    def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None, verbose=True):
+    def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None, spectrum_number=None, verbose=True):
 
         # Just a toggle for verbosity
         self._verbose = bool(verbose)
@@ -40,7 +38,7 @@ class OGIPLike(PluginPrototype):
 
         # Read the pha file (or the PHAContainer instance)
 
-        self._pha = self._get_pha_instance(pha_file)  # type: PHA
+        self._pha = self._get_pha_instance(pha_file, spectrum_number=spectrum_number)  # type: PHA
 
         # Get the required background file, response and (if present) arf_file either from the
         # calling sequence or the file.
@@ -56,7 +54,7 @@ class OGIPLike(PluginPrototype):
 
         # Get a PHA instance with the background
 
-        self._bak = self._get_pha_instance(bak_file, file_type='background')
+        self._bak = self._get_pha_instance(bak_file, file_type='background', spectrum_number=spectrum_number)
 
         # Now handle the response
 
@@ -1050,6 +1048,7 @@ class OGIPLike(PluginPrototype):
         """
 
         pha_writer = PHAWrite(self)
+
         pha_writer.write(file_name)
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):

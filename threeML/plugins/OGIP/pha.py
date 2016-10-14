@@ -520,14 +520,18 @@ class PHAWrite(object):
         self._is_poisson = {'pha': True, 'bak': True}
 
         self._max_length_background_file_name = 0
+        self._max_length_resp_file_name = 0
+        self._max_length_anc_file_name = 0
 
-    def write(self, outfile_name):
+        self._pseudo_time = 0.
+
+    def write(self, outfile_name, overwrite=True):
 
         if outfile_name[-4:].lower() == '.pha':
 
             outfile_name = outfile_name[-4:]
 
-        # self._outfile_basename = outfile_name
+        self._outfile_basename = outfile_name
 
 
         self._outfile_name = {'pha': '%s.pha' % outfile_name, 'bak': '%s_bak.pha' % outfile_name}
@@ -536,7 +540,7 @@ class PHAWrite(object):
 
             self._append_opig(ogip)
 
-        self._write_phaII()
+        self._write_phaII(overwrite)
 
 
 
@@ -575,11 +579,38 @@ class PHAWrite(object):
 
                     self._write_bak_file = True
 
-            self._ancrfile[key].append(pha_info[key].ancillary_file)
+            if pha_info[key].ancillary_file is not None:
 
-            self._respfile[key].append(pha_info[key].response_file)
+                self._ancrfile[key].append(pha_info[key].ancillary_file)
 
-            self._rate[key].append(pha_info[key].rates)
+                if len(pha_info[key].ancillary_file) > self._max_length_anc_file_name:
+                    self._max_length_anc_file_name = len(pha_info[key].ancillary_file)
+
+
+
+            else:
+
+                # There is no ancillary file, so we need to flag it.
+                # There is again an assumption that this is constant
+                # across spectra.
+
+                self._has_ancillary_file = False
+
+            if pha_info['rsp'].rsp_filename is not None:
+
+                self._respfile[key].append(pha_info['rsp'].rsp_filename)
+
+                if len(pha_info['rsp'].rsp_filename) > self._max_length_resp_file_name:
+                    self._max_length_resp_file_name = len(pha_info['rsp'].rsp_filename)
+
+            else:
+
+                # This will be reached in the case that a response was generated from a plugin
+                # e.g. if we want to use weighted DRMs from GBM. We do not handle this just yet.
+
+                NotImplementedError("In the future this indicates that we need to generate an RSP file.")
+
+            self._rate[key].append(pha_info[key].rates.tolist())
 
             self._backscal[key].append(pha_info[key].scale_factor)
 
@@ -587,16 +618,54 @@ class PHAWrite(object):
 
                 self._is_poisson[key] = pha_info[key].is_poisson()
 
-                self._stat_err[key].append(pha_info[key].rate_errors)
+                self._stat_err[key].append(pha_info[key].rate_errors.tolist())
 
-            self._sys_err[key].append(pha_info[key].sys_error)
+            # If there is systematic error, we add it
+            # otherwise create an array of zeros as XSPEC
+            # simply adds systematic in quadrature to statistical
+            # error.
+
+            if pha_info[key].sys_errors.tolist() is not None:  # It returns an array which does not work!
+
+                self._sys_err[key].append(pha_info[key].sys_errors.tolist())
+
+            else:
+
+                self._sys_err[key].append(np.zeros_like(pha_info[key].rates, dtype=np.float32).tolist())
+
+
+
+
+
             self._exposure[key].append(pha_info[key].exposure)
-            self._quality[key].append(ogip.ogip_quality)
-            self._grouping[key].append(ogip.ogip_grouping)
+            self._quality[key].append(ogip.ogip_quality.tolist())
+            self._grouping[key].append(ogip.ogip_grouping.tolist())
             self._channel[key].append(np.arange(pha_info[key].n_channels, dtype=np.int8) + first_channel)
 
+            if ogip.tstart is not None:
 
-    def _write_phaII(self):
+                self._tstart[key].append(ogip.tstart)
+
+                if ogip.tstop is not None:
+
+                    self._tstop[key].append(ogip.tstop)
+
+                else:
+
+                    RuntimeError('OGIP TSTART is a number but TSTOP is None. This is a bug.')
+
+            # We will assume that the exposure is the true DT
+            # and assign starts and stops accordingly. This means
+            # we most likely are dealing with a simulation.
+            else:
+
+                self._tstart[key].append(self._pseudo_time)
+
+                self._pseudo_time += pha_info[key].exposure
+
+                self._tstop[key].append(self._pseudo_time)
+
+    def _write_phaII(self, overwrite):
 
         trigTime = None
         clobber = False
@@ -604,7 +673,7 @@ class PHAWrite(object):
         # Assuming background and pha files have the same
         # number of channels
 
-        n_channel = len(self._rate[0])
+        n_channel = len(self._rate['pha'][0])
 
         vector_format_D = "%sD" % (n_channel)
         vector_format_I = "%sI" % (n_channel)
@@ -621,7 +690,8 @@ class PHAWrite(object):
 
         for key in keys:
 
-            if (trigTime != None):
+            if trigTime is not None:
+
                 # use trigTime as reference for TSTART
                 tstart_column = fits.Column(name='TSTART',
                                             format='D',
@@ -629,6 +699,7 @@ class PHAWrite(object):
                                             unit="s",
                                             bzero=trigTime)
             else:
+
                 tstart_column = fits.Column(name='TSTART',
                                             format='D',
                                             array=np.array(self._tstart[key]),
@@ -636,12 +707,12 @@ class PHAWrite(object):
 
             t_elapse_column = fits.Column(name='TELAPSE',
                                           format='D',
-                                          array=(np.array(self._tstop[key]) - np.array(self._tstart[key])),
+                                          array=np.array(self._tstop[key]) - np.array(self._tstart[key]),
                                           unit="s")
 
             spec_num_column = fits.Column(name='SPEC_NUM',
                                           format='I',
-                                          array=range(1, len(self._n_spectra) + 1))
+                                          array=np.arange(1, self._n_spectra + 1, dtype=np.int8))
 
             channel_column = fits.Column(name='CHANNEL',
                                          format=vector_format_I,
@@ -649,7 +720,7 @@ class PHAWrite(object):
 
             rate_column = fits.Column(name='RATE',
                                       format=vector_format_D,
-                                      array=np.array(self.rate[key]),
+                                      array=np.array(self._rate[key]),
                                       unit="Counts/s")
 
             if (self._is_poisson[key] == False):
@@ -678,51 +749,56 @@ class PHAWrite(object):
                                            format='D',
                                            array=np.array(self._backscal[key]))
 
-            backfile_column = fits.Column(name='BACKFILE',
-                                          format='%iA' % (self.maxlengthbackfile + 2),
-                                          array=np.array(self._backfile))
+
 
             respfile_column = fits.Column(name='RESPFILE',
-                                          format='%iA' % (self.maxlengthrespfile + 2),
+                                          format='%iA' % (self._max_length_resp_file_name + 2),
                                           array=np.array(self._respfile[key]))
 
-            ancrfile_column = fits.Column(name='ANCRFILE',
-                                          format='%iA' % (self.maxlengthancrfile + 2),
-                                          array=np.array(self.ancrfile[key]))
+            # There are the base columns.
+            # We will append to them as needed
+            # by the type of data.
+
+            use_columns = [tstart_column,
+                           t_elapse_column,
+                           spec_num_column,
+                           channel_column,
+                           rate_column,
+                           quality_column,
+                           grouping_column,
+                           exposure_column,
+                           backscale_column,
+                           respfile_column]
+
+            # Insert an ancillary file if needed
+
+            if self._has_ancillary_file:
+
+                ancrfile_column = fits.Column(name='ANCRFILE',
+                                              format='%iA' % (self._max_length_anc_file_name + 2),
+                                              array=np.array(self._ancrfile[key]))
+
+                use_columns.append(ancrfile_column)
+
+            if key == 'pha':
+
+                backfile_column = fits.Column(name='BACKFILE',
+                                              format='%iA' % (self._max_length_background_file_name + 2),
+                                              array=np.array(self._backfile[key]))
+
+                use_columns.append(backfile_column)
+
+            # Insert the stat and sys columns if not Poisson
+            # errors
 
             if (self._is_poisson[key] == False):
-                column_defs = fits.ColDefs([tstart_column,
-                                            t_elapse_column,
-                                            spec_num_column,
-                                            channel_column,
-                                            rate_column,
-                                            stat_err_column,
-                                            sys_err_column,
-                                            quality_column,
-                                            grouping_column,
-                                            exposure_column,
-                                            backscale_column,
-                                            backfile_column,
-                                            respfile_column,
-                                            ancrfile_column])
 
+                use_columns.insert(5, stat_err_column)
+                use_columns.insert(6, sys_err_column)
 
-            else:
-                # If POISSERR=True there is no need for stat_err and sys_err
-                column_defs = fits.ColDefs([tstart_column,
-                                            t_elapse_column,
-                                            spec_num_column,
-                                            channel_column,
-                                            rate_column,
-                                            quality_column,
-                                            grouping_column,
-                                            exposure_column,
-                                            backscale_column,
-                                            backfile_column,
-                                            respfile_column,
-                                            ancrfile_column])
+            column_defs = fits.ColDefs(use_columns)
 
-            new_table = fits.new_table(column_defs)
+            new_table = fits.BinTableHDU.from_columns(column_defs)
 
             # Add the keywords required by the OGIP standard:
 
@@ -741,21 +817,21 @@ class PHAWrite(object):
             new_table.header.set('HDUCLAS3', 'RATE')
             new_table.header.set('HDUCLAS4', 'TYPE:II')
             new_table.header.set('HDUVERS', '1.2.0')
-            new_table.header.set('TELESCOP', self.spectra[0].telescope)
+            new_table.header.set('TELESCOP', 'GLAST')  # Modify this
             new_table.header.set('INSTRUME', self._ogiplike[0].name)  # assuming all have the same name
 
-            # if (self.spectra[0].filter != 'unknown'):
-            #    new_table.header.set('FILTER', self.spectra[0].filter)
+            # TODO: check with GV what this is
+            new_table.header.set('FILTER', 'none')
 
             new_table.header.set('CHANTYPE', 'PHA')
             new_table.header.set('POISSERR', self._is_poisson[key])
-            new_table.header.set('DETCHANS', len(self._channel[key]))
+            new_table.header.set('DETCHANS', len(self._channel[key][0]))
             new_table.header.set('CREATOR', "3ML v.%s" % (pkg_resources.get_distribution("threeML").version),
                                  "(G.Vianello, giacomov@slac.stanford.edu)")
 
             # Write to the required filename
 
-            new_table.writeto(self._outfile_name[key], clobber=clobber)
+            new_table.writeto(self._outfile_name[key], clobber=overwrite)
 
 
             # Reopen the file and add the primary keywords, if any

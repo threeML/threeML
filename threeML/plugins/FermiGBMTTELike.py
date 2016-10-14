@@ -45,7 +45,8 @@ class FermiGBMTTELike(OGIPLike):
                                    start_time=self._gbm_tte_file._start_events - self._gbm_tte_file.triggertime,
                                    stop_time=self._gbm_tte_file._stop_events - self._gbm_tte_file.triggertime,
                                    dead_time=self._gbm_tte_file._deadtime,
-                                   first_channel=0)
+                                   first_channel=0,
+                                   rsp_file=rsp_file)
 
         self._evt_list.poly_order = poly_order
 
@@ -123,6 +124,9 @@ class FermiGBMTTELike(OGIPLike):
 
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file)
+
+        self._tstart = min(self._evt_list.tmin_list)
+        self._tstop = max(self._evt_list.tmax_list)
 
     def set_background_interval(self, *intervals, **options):
         """

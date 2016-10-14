@@ -123,11 +123,6 @@ class EventList(object):
 
         self._time_selection_exists = True
 
-        # try:
-        #     use_poly_fit = kwargs.pop('use_poly_fit')
-        # except(KeyError):
-        #     use_poly_fit = False
-
         tmin_list = []
         tmax_list = []
         interval_masks = []
@@ -159,8 +154,6 @@ class EventList(object):
             tmp_counts.append(total_counts)
 
         self._counts = np.array(tmp_counts)
-
-        # self._is_poisson = True
 
 
         tmp_counts = []

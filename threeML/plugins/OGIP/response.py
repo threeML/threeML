@@ -3,8 +3,6 @@ import numpy as np
 import warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 
-class PrivateMember(RuntimeError):
-    pass
 
 class Response(object):
 
