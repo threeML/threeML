@@ -135,6 +135,12 @@ class Response(object):
 
     @property
     def first_channel(self):
+        """
+        The first channel of the channel array. Correpsonds to
+        TLMIN keyword in FITS files
+
+        :return: first channel
+        """
         return int(self._first_channel)
 
     def _read_matrix(self, data, header, column_name='MATRIX'):
