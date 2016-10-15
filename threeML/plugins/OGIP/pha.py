@@ -524,6 +524,15 @@ class PHAWrite(object):
         self._pseudo_time = 0.
 
     def write(self, outfile_name, overwrite=True):
+        """
+        Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines
+        if BAK files should be generated.
+
+
+        :param outfile_name: string (excluding .pha) of the PHA to write
+        :param overwrite: (optional) bool to overwrite existing file
+        :return:
+        """
 
         if outfile_name[-4:].lower() == '.pha':
 
@@ -647,7 +656,7 @@ class PHAWrite(object):
 
             # We will assume that the exposure is the true DT
             # and assign starts and stops accordingly. This means
-            # we most likely are dealing with a simulation.
+            # we are most likely are dealing with a simulation.
             else:
 
                 self._tstart[key].append(self._pseudo_time)
@@ -658,11 +667,15 @@ class PHAWrite(object):
 
     def _write_phaII(self, overwrite):
 
+        # Fix this later... if needed.
         trigTime = None
-        clobber = False
 
         # Assuming background and pha files have the same
         # number of channels
+
+
+        assert len(self._rate['pha'][0]) == len(
+                self._rate['bak'][0]), "PHA and BAK files do not have the same number of channels. Something is wrong."
 
         n_channel = len(self._rate['pha'][0])
 
