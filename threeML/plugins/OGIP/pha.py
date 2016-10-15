@@ -485,6 +485,15 @@ class PHAContainer(MutableMapping):
 
 class PHAWrite(object):
     def __init__(self, *ogiplike):
+        """
+        This class handles writing of PHA files from OGIPLike style plugins. It takes an arbitrary number of plugins as
+        input. While OGIPLike provides a write_pha method, it is only for writing the given instance to disk. The class
+         in general can be used to save an entire series of OGIPLikes to PHAs which can be used for time-resolved style
+         plugins. An example implentation is given in FermiGBMTTELike.
+
+
+        :param ogiplike: OGIPLike plugin(s) to be written to disk
+        """
 
         self._ogiplike = ogiplike
 
