@@ -83,6 +83,8 @@ class FermiGBMTTELike(OGIPLike):
 
         self._rsp_file = rsp_file
 
+        self._verbose = verbose
+
         OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file,
                           verbose=verbose)
 
@@ -134,8 +136,11 @@ class FermiGBMTTELike(OGIPLike):
 
             self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
 
-            OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
-                              rsp_file=self._rsp_file)
+            OGIPLike.__init__(self, self.name,
+                              pha_file=self._observed_pha,
+                              bak_file=self._bkg_pha,
+                              rsp_file=self._rsp_file,
+                              verbose=self._verbose)
 
 
         self._tstart = min(self._evt_list.tmin_list)
@@ -156,7 +161,8 @@ class FermiGBMTTELike(OGIPLike):
             new_ogip = OGIPLike(new_name,
                                 pha_file=self._observed_pha,
                                 bak_file=self._bkg_pha,
-                                rsp_file=self._rsp_file)
+                                rsp_file=self._rsp_file,
+                                verbose=self._verbose)
 
             return new_ogip
 
@@ -187,7 +193,7 @@ class FermiGBMTTELike(OGIPLike):
         if not self._startup:
 
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
-                              rsp_file=self._rsp_file)
+                              rsp_file=self._rsp_file, verbose=self._verbose)
 
     def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None):
         """
@@ -294,6 +300,9 @@ class FermiGBMTTELike(OGIPLike):
 
         # save the original interval if there is one
         old_interval = copy.copy(self._active_interval)
+        old_verbose = copy.copy(self._verbose)
+
+        self._verbose = False
 
         ogip_list = []
 
@@ -314,13 +323,9 @@ class FermiGBMTTELike(OGIPLike):
 
         # restore the old interval
 
-        self.set_active_time_interval(old_interval)
+        self.set_active_time_interval(*old_interval)
 
-
-
-
-
-
+        self._verbose = old_verbose
 
 
 

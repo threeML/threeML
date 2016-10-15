@@ -847,11 +847,3 @@ class PHAWrite(object):
 
             # Reopen the file and add the primary keywords, if any
 
-# f = pyfits.open(filename, "update")
-#            for key, value in self.primaryHeader.iteritems():
-#                f[0].header.set(key, value)
-#            pass
-#            f.close()
-
-#            if (self.ebounds != None):
-#                pyfits.append(filename, self.ebounds.data, header=self.ebounds.header)
