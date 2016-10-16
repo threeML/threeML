@@ -359,6 +359,24 @@ p
             """
         return self._return_file('ancrfile')
 
+    @property
+    def mission(self):
+        """
+        Returns the name of the mission used to make the observation
+        :return: a string or None
+        """
+
+        return self._gathered_keywords['mission']
+
+    @property
+    def instrument(self):
+        """
+        Returns the name of the instrument used to make the observation
+        :return: a string of None
+        """
+
+        return self._gathered_keywords['instrument']
+
     def is_poisson(self):
         """
         Returns whether the spectrum has Poisson errors or not
