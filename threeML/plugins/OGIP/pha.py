@@ -532,6 +532,8 @@ class PHAWrite(object):
 
         self._pseudo_time = 0.
 
+        self._spec_iterartor = 1
+
     def write(self, outfile_name, overwrite=True):
         """
         Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines
@@ -583,10 +585,12 @@ class PHAWrite(object):
 
                 else:
 
-                    self._backfile[key].append('%s_bak.pha' % self._outfile_basename)
+                    self._backfile[key].append('%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
 
-                    if len('%s_bak.pha' % self._outfile_basename) > self._max_length_background_file_name:
-                        self._max_length_background_file_name = len('%s_bak.pha' % self._outfile_basename)
+                    if len('%s_bak.pha{%d}' % (
+                    self._outfile_basename, self._spec_iterartor)) > self._max_length_background_file_name:
+                        self._max_length_background_file_name = len(
+                            '%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
 
                     # We want to write the bak file
 
@@ -673,6 +677,8 @@ class PHAWrite(object):
                 self._pseudo_time += pha_info[key].exposure
 
                 self._tstop[key].append(self._pseudo_time)
+
+            self._spec_iterartor += 1
 
     def _write_phaII(self, overwrite):
 
