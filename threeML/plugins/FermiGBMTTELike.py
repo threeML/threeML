@@ -52,7 +52,8 @@ class FermiGBMTTELike(OGIPLike):
                                    stop_time=self._gbm_tte_file._stop_events - self._gbm_tte_file.triggertime,
                                    dead_time=self._gbm_tte_file._deadtime,
                                    first_channel=0,
-                                   rsp_file=rsp_file)
+                                   rsp_file=rsp_file, instrument=self._gbm_tte_file.det_name,
+                                   mission=self._gbm_tte_file.mission)
 
         self._evt_list.poly_order = poly_order
 
@@ -508,6 +509,10 @@ class GBMTTEFile(object):
 
         self._n_channels = tte['EBOUNDS'].header['NAXIS2']
 
+        self._det_name = "%s_%s" % (tte['PRIMARY'].header['INSTRUME'], tte['PRIMARY'].header['DETNAM'])
+
+        self._telescope = tte['PRIMARY'].header['TELESCOP']
+
         self._calculate_deattime()
 
     @property
@@ -525,6 +530,24 @@ class GBMTTEFile(object):
     @property
     def n_channels(self):
         return self._n_channels
+
+    @property
+    def mission(self):
+        """
+        Return the name of the mission
+        :return:
+        """
+        return self._telescope
+
+    @property
+    def det_name(self):
+        """
+        Return the name of the instrument and detector
+
+        :return:
+        """
+
+        return self._det_name
 
     @property
     def deadtime(self):

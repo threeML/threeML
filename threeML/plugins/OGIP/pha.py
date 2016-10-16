@@ -388,9 +388,9 @@ p
 
 
 class PHAContainer(MutableMapping):
-    _allowed_keys = "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file".split()
+    _allowed_keys = "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file instrument mission".split()
 
-    _gathered_keywords = "n_channels exposure scale_factor is_poisson background_file response_file ancillary_file".split()
+    _gathered_keywords = "n_channels exposure scale_factor is_poisson background_file response_file ancillary_file mission instrument".split()
 
     def accept(self, key):
         # Only accept items with interger key and string value
@@ -432,7 +432,7 @@ class PHAContainer(MutableMapping):
     def __setitem__(self, key, val):
         if key not in PHAContainer._allowed_keys:
             raise KeyError(
-                    'Valid keywords: "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file" ')
+                    'Valid keywords: "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file mission instrument" ')
         self.dict[key] = val
 
     def __getitem__(self, key):
@@ -465,7 +465,8 @@ class PHAContainer(MutableMapping):
         tmp = {}
 
         key_lookup = dict(zip(PHAContainer._gathered_keywords,
-                              ['detchans', 'exposure', 'backscal', 'poisserr', 'backfile', 'respfile', 'ancrfile']))
+                              ['detchans', 'exposure', 'backscal', 'poisserr', 'backfile', 'respfile', 'ancrfile',
+                               'mission', 'instrument']))
 
         for key in PHAContainer._gathered_keywords:
             tmp[key_lookup[key]] = self.dict[key]

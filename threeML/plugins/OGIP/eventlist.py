@@ -40,7 +40,7 @@ def ceildiv(a, b):
 
 class EventList(object):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None, algorithm=None):
+                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None):
         """
         Container for event style data which are tagged with time and energy/PHA.
 
@@ -95,6 +95,18 @@ class EventList(object):
         else:
 
             self._stop_time = stop_time
+
+        if instrument is None:
+
+            custom_warnings.warn('No instrument name is given. Setting to UNKNOWN')
+
+            self._instrument = "UNKNOWN"
+
+        if mission is None:
+
+            custom_warnings.warn('No mission name is given. Setting to UNKNOWN')
+
+            self._mission = "UNKNOWN"
 
         self._rsp_file = rsp_file
 
@@ -553,8 +565,9 @@ class EventList(object):
                            n_channels=self._n_channels,
                            exposure=self._exposure,
                            is_poisson=is_poisson,
-                           response_file=self._rsp_file
-                           )
+                           response_file=self._rsp_file,
+                           mission=self._mission,
+                           instrument=self._instrument)
 
         return pha
 
