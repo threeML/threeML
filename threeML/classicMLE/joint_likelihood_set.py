@@ -12,7 +12,6 @@ import pandas as pd
 
 
 class JointLikelihoodSet(object):
-
     def __init__(self, data_getter, model_getter,
                  n_iterations, iteration_name='interval'):
 
@@ -142,7 +141,7 @@ class JointLikelihoodSet(object):
 
             # Prepare the keys so that the first model will be indexed with model_0, the second model_1 and so on
 
-            keys = map(lambda x:"model_%i" % x, range(n_models))
+            keys = map(lambda x: "model_%i" % x, range(n_models))
 
             # Concatenate all results in one frame for parameters and one for likelihood
 
@@ -259,15 +258,15 @@ class JointLikelihoodSet(object):
 
         # Store the results in the data frames
 
-        parameter_frames = pd.concat(map(lambda x:x[0], results), keys=range(self._n_iterations))
-        like_frames = pd.concat(map(lambda x:x[1], results), keys=range(self._n_iterations))
+        parameter_frames = pd.concat(map(lambda x: x[0], results), keys=range(self._n_iterations))
+        like_frames = pd.concat(map(lambda x: x[1], results), keys=range(self._n_iterations))
 
         return parameter_frames, like_frames
 
 
 class JointLikelihoodSetTwoModels(JointLikelihoodSet):
-
     pass
+
 
 class JointLikelihoodSetAnalyzer(object):
     """
