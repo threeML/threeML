@@ -134,6 +134,8 @@ class LikelihoodRatioTest(object):
     def _process_saved_data(self):
         """
 
+        Saves data sets for each plugin to PHAs for OGIP data.
+
 
         :return:
         """
