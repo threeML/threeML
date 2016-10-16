@@ -363,8 +363,12 @@ p
     def mission(self):
         """
         Returns the name of the mission used to make the observation
-        :return: a string or None
+        :return: a string
         """
+
+        if self._gathered_keywords['mission'] is None:
+
+            return 'UNKNOWN'
 
         return self._gathered_keywords['mission']
 
@@ -372,8 +376,12 @@ p
     def instrument(self):
         """
         Returns the name of the instrument used to make the observation
-        :return: a string of None
+        :return: a string
         """
+
+        if self._gathered_keywords['instrument'] is None:
+
+            return 'UNKNOWN'
 
         return self._gathered_keywords['instrument']
 
@@ -597,8 +605,7 @@ class PHAWrite(object):
 
             if key == 'pha':
 
-                self._instrumeent[key] = pha_info[key].instrument
-                self._mission[key] = pha_info[key].mission
+
 
                 if pha_info[key].background_file is not None:
 
@@ -679,6 +686,9 @@ class PHAWrite(object):
             self._grouping[key].append(ogip.ogip_grouping.tolist())
             self._channel[key].append(np.arange(pha_info[key].n_channels, dtype=np.int8) + first_channel)
 
+            self._instrument[key] = pha_info[key].instrument
+            self._mission[key] = pha_info[key].mission
+
             if ogip.tstart is not None:
 
                 self._tstart[key].append(ogip.tstart)
@@ -717,10 +727,12 @@ class PHAWrite(object):
                 self._rate['bak'][0]), "PHA and BAK files do not have the same number of channels. Something is wrong."
 
         assert self._instrument['pha'] == self._instrument[
-            'bak'], "Instrument for PHA and BAK are not the same. Something is wrong with the files. "
+            'bak'], "Instrument for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. " % (
+            self._instrument['pha'], self._instrument['bak'])
 
         assert self._mission['pha'] == self._mission[
-            'bak'], "Mission for PHA and BAK are not the same. Something is wrong with the files. "
+            'bak'], "Mission for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. " % (
+            self._mission['pha'], self._mission['bak'])
 
         n_channel = len(self._rate['pha'][0])
 

@@ -102,11 +102,19 @@ class EventList(object):
 
             self._instrument = "UNKNOWN"
 
+        else:
+
+            self._instrument = instrument
+
         if mission is None:
 
             custom_warnings.warn('No mission name is given. Setting to UNKNOWN')
 
             self._mission = "UNKNOWN"
+
+        else:
+
+            self._mission = mission
 
         self._rsp_file = rsp_file
 
