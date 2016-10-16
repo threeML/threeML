@@ -534,6 +534,8 @@ class PHAWrite(object):
         self._backfile = {'pha': [], 'bak': []}
         self._respfile = {'pha': [], 'bak': []}
         self._ancrfile = {'pha': [], 'bak': []}
+        self._mission = {'pha': [], 'bak': []}
+        self._instrument = {'pha': [], 'bak': []}
 
         # If the PHAs have existing background files
         # then it is assumed that we will not need to write them
@@ -595,6 +597,9 @@ class PHAWrite(object):
 
             if key == 'pha':
 
+                self._instrumeent[key] = pha_info[key].instrument
+                self._mission[key] = pha_info[key].mission
+
                 if pha_info[key].background_file is not None:
 
                     self._backfile[key].append(pha_info[key].background_file)
@@ -607,9 +612,9 @@ class PHAWrite(object):
                     self._backfile[key].append('%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
 
                     if len('%s_bak.pha{%d}' % (
-                    self._outfile_basename, self._spec_iterartor)) > self._max_length_background_file_name:
+                            self._outfile_basename, self._spec_iterartor)) > self._max_length_background_file_name:
                         self._max_length_background_file_name = len(
-                            '%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
+                                '%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
 
                     # We want to write the bak file
 
@@ -710,6 +715,12 @@ class PHAWrite(object):
 
         assert len(self._rate['pha'][0]) == len(
                 self._rate['bak'][0]), "PHA and BAK files do not have the same number of channels. Something is wrong."
+
+        assert self._instrument['pha'] == self._instrument[
+            'bak'], "Instrument for PHA and BAK are not the same. Something is wrong with the files. "
+
+        assert self._mission['pha'] == self._mission[
+            'bak'], "Mission for PHA and BAK are not the same. Something is wrong with the files. "
 
         n_channel = len(self._rate['pha'][0])
 
@@ -853,8 +864,8 @@ class PHAWrite(object):
             new_table.header.set('HDUCLAS3', 'RATE')
             new_table.header.set('HDUCLAS4', 'TYPE:II')
             new_table.header.set('HDUVERS', '1.2.0')
-            new_table.header.set('TELESCOP', 'GLAST')  # Modify this
-            new_table.header.set('INSTRUME', self._ogiplike[0].name)  # assuming all have the same name
+            new_table.header.set('TELESCOP', self._mission[key])  # Modify this
+            new_table.header.set('INSTRUME', self._instrument[key])  # assuming all have the same name
 
             # TODO: check with GV what this is
             new_table.header.set('FILTER', 'none')
@@ -871,4 +882,3 @@ class PHAWrite(object):
 
 
             # Reopen the file and add the primary keywords, if any
-
