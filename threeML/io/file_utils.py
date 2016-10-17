@@ -71,3 +71,13 @@ def temporary_directory(prefix='', within_directory=None):
 
 
 
+@contextmanager
+def within_directory(directory):
+
+    current_dir = os.getcwd()
+
+    os.chdir(directory)
+
+    yield
+
+    os.chdir(current_dir)
