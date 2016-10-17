@@ -6,11 +6,22 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import warnings
 import re
-import requests
+
+try:
+
+    import requests
+
+except ImportError:
+
+    has_requests = False
+
+else:
+
+    has_requests = True
 
 from threeML.plugins.OGIPLike import OGIPLike
 
-from OGIP.eventlist import EventList
+from threeML.plugins.OGIP.eventlist import EventList
 from threeML.io.rich_display import display
 
 from threeML.io.step_plot import step_plot
@@ -339,21 +350,32 @@ class GBMTTEFile(object):
                 timesys_out="u",
                 apply_clock_offset="yes")
 
-        try:
+        if has_requests:
 
-            content = requests.get(xtime_url, params=args).content
+            try:
 
-            mission_info = re.findall(pattern, content, re.S)
+                content = requests.get(xtime_url, params=args).content
 
-            mission_dict['UTC'] = mission_info[0][-1]
-            mission_dict[mission_info[7][1]] = mission_info[7][2]  # LIGO
-            mission_dict[mission_info[8][1]] = mission_info[8][2]  # NUSTAR
-            mission_dict[mission_info[12][1]] = mission_info[12][2]  # RXTE
-            mission_dict[mission_info[16][1]] = mission_info[16][2]  # SUZAKU
-            mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
-            mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
+                mission_info = re.findall(pattern, content, re.S)
 
-        except:
+                mission_dict['UTC'] = mission_info[0][-1]
+                mission_dict[mission_info[7][1]] = mission_info[7][2]  # LIGO
+                mission_dict[mission_info[8][1]] = mission_info[8][2]  # NUSTAR
+                mission_dict[mission_info[12][1]] = mission_info[12][2]  # RXTE
+                mission_dict[mission_info[16][1]] = mission_info[16][2]  # SUZAKU
+                mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
+                mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
+
+            except:
+
+                warnings.warn("You do not have the requests library, cannot get time system from Heasarc "
+                              "at this point.")
+
+                return None
+
+        else:
+
+            warnings.warn("You do not have the requests library, cannot get time system from Heasarc at this point.")
 
             return None
 
