@@ -65,8 +65,14 @@ class Response(object):
             self._ebounds = np.vstack([f['EBOUNDS'].data.field("E_MIN"),
                                        f['EBOUNDS'].data.field("E_MAX")]).T
 
+            self._ebounds = self._ebounds.astype(float)
+
+
+
             self._mc_channels = np.vstack([data.field("ENERG_LO"),
                                            data.field("ENERG_HI")]).T
+
+            self._mc_channels = self._mc_channels.astype(float)
 
             # Now let's see if we have a ARF, if yes, read it
 
@@ -206,15 +212,15 @@ class Response(object):
 
     @property
     def ebounds(self):
+        """
+
+        Returns the ebounds of the RSP.
+
+        :return:
+        """
         return self._ebounds
 
-    @ebounds.setter
-    def ebounds(self, value):
-        raise PrivateMember('ebounds should not be altered manually, silly rabbit!')
 
-    @ebounds.getter
-    def ebounds(self):
-        return self._ebounds
 
     def set_function(self, differentialFunction, integralFunction=None):
         """
