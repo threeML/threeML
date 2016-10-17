@@ -5,6 +5,8 @@ from astromodels import clone_model
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
 from threeML.data_list import DataList
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins.OGIP.pha import PHAWrite
 from threeML.exceptions.custom_exceptions import custom_warnings
 
 
@@ -43,6 +45,10 @@ class LikelihoodRatioTest(object):
                                  "sets are not exactly the same. We will use the data loaded as part of the null "
                                  "hypothesis JointLikelihood object", RuntimeWarning)
 
+        # For saving pha files
+        self._save_pha = False
+        self._data_container = []
+
     def get_simulated_data(self, id):
 
         # Generate a new data set for each plugin contained in the data list
@@ -62,6 +68,10 @@ class LikelihoodRatioTest(object):
 
         new_data_list = DataList(*new_datas)
 
+        if self._save_pha:
+
+            self._data_container.append(new_data_list)
+
         return new_data_list
 
     def get_models(self, id):
@@ -74,7 +84,7 @@ class LikelihoodRatioTest(object):
 
         return new_model0, new_model1
 
-    def by_mc(self, n_iterations=1000, continue_on_failure=False):
+    def by_mc(self, n_iterations=1000, continue_on_failure=False, save_pha=False):
         """
         Compute the Likelihood Ratio Test by generating Monte Carlo datasets and fitting the current models on them.
         The fraction of synthetic datasets which have a value for the TS larger or equal to the observed one gives
@@ -83,8 +93,13 @@ class LikelihoodRatioTest(object):
 
         :param n_iterations: number of MC iterations to perform (default: 1000)
         :param continue_of_failure: whether to continue in the case a fit fails (False by default)
+        :param save_pha: Saves pha files for reading into XSPEC as a cross check.
+         Currently only supports OGIP data. This can become slow! (False by default)
         :return: tuple (null. hyp. probability, frame with all results, frame with all likelihood values)
         """
+
+        self._save_pha = save_pha
+
 
         # Create the joint likelihood set
         jl_set = JointLikelihoodSet(self.get_simulated_data, self.get_models, n_iterations, iteration_name='simulation')
@@ -109,5 +124,40 @@ class LikelihoodRatioTest(object):
 
         null_hyp_prob = np.sum(idx) / float(n_iterations)
 
+        # Save the sims to phas if requested
+        if self._save_pha:
+
+            self._process_saved_data()
+
         return null_hyp_prob, TS, data_frame, like_data_frame
 
+    def _process_saved_data(self):
+        """
+
+        Saves data sets for each plugin to PHAs for OGIP data.
+
+
+        :return:
+        """
+
+        for plugin in self._data_container[0].values():
+
+            assert isinstance(plugin, OGIPLike), 'Saving simulations is only supported for OGIP plugins currently'
+
+        # The first entry is always a test by the JL Set class.
+        # so we do not use it
+
+
+        for key in self._data_container[0].keys():
+
+            per_plugin_list = []
+
+            for data in self._data_container[1:]:
+
+                per_plugin_list.append(data[key])
+
+            # Now write them
+
+            pha_writer = PHAWrite(*per_plugin_list)
+
+            pha_writer.write("%s" % key, overwrite=True)
