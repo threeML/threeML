@@ -6,11 +6,23 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import warnings
 import re
-import requests
+
+try:
+
+    import requests
+
+except ImportError:
+
+    has_requests = False
+
+else:
+
+    has_requests = True
+
 import copy
 
 from threeML.plugins.OGIPLike import OGIPLike
-from OGIP.eventlist import EventList
+from threeML.plugins.OGIP.eventlist import EventList
 from threeML.io.rich_display import display
 
 from threeML.io.step_plot import step_plot
@@ -52,7 +64,8 @@ class FermiGBMTTELike(OGIPLike):
                                    stop_time=self._gbm_tte_file._stop_events - self._gbm_tte_file.triggertime,
                                    dead_time=self._gbm_tte_file._deadtime,
                                    first_channel=0,
-                                   rsp_file=rsp_file)
+                                   rsp_file=rsp_file, instrument=self._gbm_tte_file.det_name,
+                                   mission=self._gbm_tte_file.mission)
 
         self._evt_list.poly_order = poly_order
 
@@ -82,6 +95,8 @@ class FermiGBMTTELike(OGIPLike):
         self._temporally_binned = False
 
         self._rsp_file = rsp_file
+
+        self._verbose = verbose
 
         OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file,
                           verbose=verbose)
@@ -134,8 +149,11 @@ class FermiGBMTTELike(OGIPLike):
 
             self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
 
-            OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
-                              rsp_file=self._rsp_file)
+            OGIPLike.__init__(self, self.name,
+                              pha_file=self._observed_pha,
+                              bak_file=self._bkg_pha,
+                              rsp_file=self._rsp_file,
+                              verbose=self._verbose)
 
 
         self._tstart = min(self._evt_list.tmin_list)
@@ -156,7 +174,8 @@ class FermiGBMTTELike(OGIPLike):
             new_ogip = OGIPLike(new_name,
                                 pha_file=self._observed_pha,
                                 bak_file=self._bkg_pha,
-                                rsp_file=self._rsp_file)
+                                rsp_file=self._rsp_file,
+                                verbose=self._verbose)
 
             return new_ogip
 
@@ -187,7 +206,7 @@ class FermiGBMTTELike(OGIPLike):
         if not self._startup:
 
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
-                              rsp_file=self._rsp_file)
+                              rsp_file=self._rsp_file, verbose=self._verbose)
 
     def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None):
         """
@@ -294,6 +313,9 @@ class FermiGBMTTELike(OGIPLike):
 
         # save the original interval if there is one
         old_interval = copy.copy(self._active_interval)
+        old_verbose = copy.copy(self._verbose)
+
+        self._verbose = False
 
         ogip_list = []
 
@@ -314,13 +336,9 @@ class FermiGBMTTELike(OGIPLike):
 
         # restore the old interval
 
-        self.set_active_time_interval(old_interval)
+        self.set_active_time_interval(*old_interval)
 
-
-
-
-
-
+        self._verbose = old_verbose
 
 
 
@@ -503,6 +521,10 @@ class GBMTTEFile(object):
 
         self._n_channels = tte['EBOUNDS'].header['NAXIS2']
 
+        self._det_name = "%s_%s" % (tte['PRIMARY'].header['INSTRUME'], tte['PRIMARY'].header['DETNAM'])
+
+        self._telescope = tte['PRIMARY'].header['TELESCOP']
+
         self._calculate_deattime()
 
     @property
@@ -520,6 +542,24 @@ class GBMTTEFile(object):
     @property
     def n_channels(self):
         return self._n_channels
+
+    @property
+    def mission(self):
+        """
+        Return the name of the mission
+        :return:
+        """
+        return self._telescope
+
+    @property
+    def det_name(self):
+        """
+        Return the name of the instrument and detector
+
+        :return:
+        """
+
+        return self._det_name
 
     @property
     def deadtime(self):
@@ -561,21 +601,32 @@ class GBMTTEFile(object):
                 timesys_out="u",
                 apply_clock_offset="yes")
 
-        try:
+        if has_requests:
 
-            content = requests.get(xtime_url, params=args).content
+            try:
 
-            mission_info = re.findall(pattern, content, re.S)
+                content = requests.get(xtime_url, params=args).content
 
-            mission_dict['UTC'] = mission_info[0][-1]
-            mission_dict[mission_info[7][1]] = mission_info[7][2]  # LIGO
-            mission_dict[mission_info[8][1]] = mission_info[8][2]  # NUSTAR
-            mission_dict[mission_info[12][1]] = mission_info[12][2]  # RXTE
-            mission_dict[mission_info[16][1]] = mission_info[16][2]  # SUZAKU
-            mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
-            mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
+                mission_info = re.findall(pattern, content, re.S)
 
-        except:
+                mission_dict['UTC'] = mission_info[0][-1]
+                mission_dict[mission_info[7][1]] = mission_info[7][2]  # LIGO
+                mission_dict[mission_info[8][1]] = mission_info[8][2]  # NUSTAR
+                mission_dict[mission_info[12][1]] = mission_info[12][2]  # RXTE
+                mission_dict[mission_info[16][1]] = mission_info[16][2]  # SUZAKU
+                mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
+                mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
+
+            except:
+
+                warnings.warn("You do not have the requests library, cannot get time system from Heasarc "
+                              "at this point.")
+
+                return None
+
+        else:
+
+            warnings.warn("You do not have the requests library, cannot get time system from Heasarc at this point.")
 
             return None
 

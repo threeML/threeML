@@ -135,6 +135,12 @@ class Response(object):
 
     @property
     def first_channel(self):
+        """
+        The first channel of the channel array. Correpsonds to
+        TLMIN keyword in FITS files
+
+        :return: first channel
+        """
         return int(self._first_channel)
 
     def _read_matrix(self, data, header, column_name='MATRIX'):
@@ -153,7 +159,7 @@ class Response(object):
             tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
 
         except(KeyError):
-            warnings.warn('No TLMIN keyword found. This DRM is does not follow OGIP standards. Assuming TLMIN=1')
+            warnings.warn('No TLMIN keyword found. This DRM does not follow OGIP standards. Assuming TLMIN=1')
             tlmin_fchan = 1
 
         # Store the first channel as a property
