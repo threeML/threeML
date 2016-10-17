@@ -52,6 +52,8 @@ class SpectralFlux(object):
         :param kwargs: keyword args
         """
 
+        # TODO: use pandas concat to make tables nicer. look at jointlikelihood set
+
         if self._analysis_type == "mle":
 
             val = self._flux_mle(energy_unit, flux_unit, sources_to_calculate, summed, ene_min, ene_max, **kwargs)

@@ -3,8 +3,6 @@ import numpy as np
 import warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 
-class PrivateMember(RuntimeError):
-    pass
 
 class Response(object):
 
@@ -135,6 +133,16 @@ class Response(object):
 
         return self._arf_file
 
+    @property
+    def first_channel(self):
+        """
+        The first channel of the channel array. Correpsonds to
+        TLMIN keyword in FITS files
+
+        :return: first channel
+        """
+        return int(self._first_channel)
+
     def _read_matrix(self, data, header, column_name='MATRIX'):
 
         n_channels = header.get("DETCHANS")
@@ -151,9 +159,11 @@ class Response(object):
             tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
 
         except(KeyError):
-            warnings.warn('No TLMIN keyword found. This DRM is improper. Assuming TLMIN=1')
+            warnings.warn('No TLMIN keyword found. This DRM does not follow OGIP standards. Assuming TLMIN=1')
             tlmin_fchan = 1
 
+        # Store the first channel as a property
+        self._first_channel = tlmin_fchan
 
         rsp = np.zeros([data.shape[0], n_channels], float)
 
