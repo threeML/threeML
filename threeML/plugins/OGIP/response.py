@@ -257,3 +257,27 @@ class Response(object):
             return self._ebounds[:, 1].shape[0]
 
         return idx
+
+    def plot_matrix(self):
+
+        fig, ax = plt.subplots()
+
+        image = self._matrix.T
+
+        x = self._ebounds
+
+        y = self.e_reco.data[[0, -1]].value
+        return x[0], x[1], y[0], y[1]
+
+        ax.imshow(image, extent=self._extent(), **kwargs)
+        if show_energy is not None:
+            ener_val = Quantity(show_energy).to(self.reco_energy.unit).value
+            ax.hlines(ener_val, 0, 200200, linestyles='dashed')
+
+        ax.set_xlabel('True energy (TeV)')
+        ax.set_ylabel('Reco energy (TeV)')
+
+        ax.set_xscale('log')
+        ax.set_yscale('log')
+
+        return ax
