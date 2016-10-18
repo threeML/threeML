@@ -2,7 +2,8 @@ import astropy.io.fits as pyfits
 import numpy as np
 import warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
-
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
 
 class Response(object):
 
@@ -276,20 +277,34 @@ class Response(object):
 
         image = self._matrix.T
 
-        x = self._ebounds
-
-        y = self.e_reco.data[[0, -1]].value
-        return x[0], x[1], y[0], y[1]
-
-        ax.imshow(image, extent=self._extent(), **kwargs)
-        if show_energy is not None:
-            ener_val = Quantity(show_energy).to(self.reco_energy.unit).value
-            ax.hlines(ener_val, 0, 200200, linestyles='dashed')
-
-        ax.set_xlabel('True energy (TeV)')
-        ax.set_ylabel('Reco energy (TeV)')
-
         ax.set_xscale('log')
         ax.set_yscale('log')
 
-        return ax
+        idx1 = 0
+        idx2 = 0
+
+        # Some times the lower edges may be zero, so we skip them
+
+        if self._mc_channels[0, 0] == 0:
+
+            idx1 = 1
+
+        if self._ebounds[0, 0] == 0:
+
+            idx2 = 1
+
+        ax.imshow(image[idx1:, idx2:], extent=(self._mc_channels[idx1, 0],
+                                               self._mc_channels[-1, 1],
+                                               self._ebounds[idx2, 0],
+                                               self._ebounds[-1, 1]),
+                  aspect=1.5,
+                  cmap=cm.BrBG_r)
+
+        # if show_energy is not None:
+        #    ener_val = Quantity(show_energy).to(self.reco_energy.unit).value
+        #    ax.hlines(ener_val, 0, 200200, linestyles='dashed')
+
+        ax.set_ylabel('True energy (keV)')
+        ax.set_xlabel('Reco energy (keV)')
+
+        return fig
