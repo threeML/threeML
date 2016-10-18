@@ -450,15 +450,15 @@ class FermiGBMTTELike(OGIPLike):
 
         elif method == 'bayesblocks':
 
-            raise NotImplementedError('Bayesian Blocks is not implemented yet')
-
-            try:
+            if 'p0' in options:
 
                 p0 = options.pop('p0')
 
-            except(KeyError):
+            else:
 
                 p0 = 0.1
+
+            self._evt_list.bin_by_bayesian_blocks(start, stop, p0)
 
         elif method == 'custom':
 

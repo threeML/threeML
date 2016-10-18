@@ -477,35 +477,39 @@ class TemporalBinner(object):
         numexpr.set_num_threads(1)
         numexpr.set_vml_num_threads(1)
 
-        for R in range(N):
-            br = block_length[R + 1]
-            T_k = block_length[:R + 1] - br
+        with progress_bar(N) as prg:
+            for R in range(N):
 
-            # N_k: number of elements in each block
-            # This expression has been simplified for the case of
-            # unbinned events (i.e., one element in each block)
-            # It was:
-            # N_k = cumsum(x[:R + 1][::-1])[::-1]
-            # Now it is:
-            N_k = arange(R + 1, 0, -1)
+                br = block_length[R + 1]
+                T_k = block_length[:R + 1] - br
 
-            # Evaluate fitness function
-            # This is the slowest part, which I'm speeding up by using
-            # numexpr. It provides a ~40% gain in execution speed.
+                # N_k: number of elements in each block
+                # This expression has been simplified for the case of
+                # unbinned events (i.e., one element in each block)
+                # It was:
+                # N_k = cumsum(x[:R + 1][::-1])[::-1]
+                # Now it is:
+                N_k = arange(R + 1, 0, -1)
 
-            fit_vec = numexpr_evaluate('''N_k * log(N_k/ T_k) ''',
-                                       optimization='aggressive')
+                # Evaluate fitness function
+                # This is the slowest part, which I'm speeding up by using
+                # numexpr. It provides a ~40% gain in execution speed.
 
-            p = priors[R]
+                fit_vec = numexpr_evaluate('''N_k * log(N_k/ T_k) ''',
+                                           optimization='aggressive')
 
-            A_R = fit_vec - p
+                p = priors[R]
 
-            A_R[1:] += best[:R]
+                A_R = fit_vec - p
 
-            i_max = argmax(A_R)
+                A_R[1:] += best[:R]
 
-            last[R] = i_max
-            best[R] = A_R[i_max]
+                i_max = argmax(A_R)
+
+                last[R] = i_max
+                best[R] = A_R[i_max]
+
+                prg.increase()
 
         numexpr.set_vml_accuracy_mode(old_accuracy)
 
@@ -530,10 +534,10 @@ class TemporalBinner(object):
         if bkg_integral_distribution is not None:
             final_edges = map(lambda x: lookup_table[x], edg)
         else:
-            finalEdges = edg
+            final_edges = edg
 
-        self._starts = np.asarray(finalEdges)[:-1]
-        self._starts = np.asarray(finalEdges)[1:]
+        self._starts = np.asarray(final_edges)[:-1]
+        self._stops = np.asarray(final_edges)[1:]
 
         # return np.asarray(finalEdges)
 
