@@ -205,21 +205,63 @@ class OGIPLike(PluginPrototype):
 
         return info
 
-    def set_active_measurements(self, *args):
+    def set_active_measurements(self, *args, **kwargs):
         """
-        Set the measurements to be used during the analysis.
-        Use as many ranges as you need,
-        specified as 'emin-emax'. Energies are in keV. Example:
+        Set the measurements to be used during the analysis. Use as many ranges as you need, and you can specify
+        either energies or channels to be used.
+
+        NOTE to Xspec users: while XSpec uses integers and floats to distinguish between energies and channels
+        specifications, 3ML does not, as it would be error-prone when writing scripts. Read the following documentation
+        to know how to achieve the same functionality.
+
+        * Energy selections:
+
+        They are specified as 'emin-emax'. Energies are in keV. Example:
 
         set_active_measurements('10-12.5','56.0-100.0')
 
         which will set the energy range 10-12.5 keV and 56-100 keV to be
-        used in the analysis
+        used in the analysis. Note that there is no difference in saying 10 or 10.0.
+
+        * Channel selections:
+
+        They are specified as 'c[channel min]-c[channel max]'. Example:
+
+        set_active_measurements('c10-c12','c56-c100')
+
+        This will set channels 10-12 and 56-100 as active channels to be used in the analysis
+
+        * Mixed channel and energy selections:
+
+        You can also specify mixed energy/channel selections, for example to go from 0.2 keV to channel 20 and from
+        channel 50 to 10 keV:
+
+        set_active_measurements('0.2-c10','c50-10')
+
+        * Use all measurements (i.e., reset to initial state):
 
         Use 'all' to select all measurements, as in:
 
         set_active_measurements('all')
 
+        * Exclude measurements:
+
+        Excluding measurements work as selecting measurements, but with the "exclude" keyword set to True. To exclude
+        between channel 10 and 20 keV and 50 keV to channel 120 do:
+
+        set_active_measurements("c10-20", "50-c120", exclude=True)
+
+        * Select and exclude:
+
+        Call this method more than once if you need to select and exclude. For example, to select between 0.2 keV and
+        channel 10, but exclude channel 30-50 and energy , do:
+
+        set_active_measurements("0.2-c10")
+        set_active_measurements("c30-c50", exclude=True)
+
+        :param args:
+        :param exclude: (True or False) exclude instead of select the provide channels
+        :return:
         """
 
         # To implement this we will use an array of boolean index,
