@@ -65,8 +65,14 @@ class Response(object):
             self._ebounds = np.vstack([f['EBOUNDS'].data.field("E_MIN"),
                                        f['EBOUNDS'].data.field("E_MAX")]).T
 
+            self._ebounds = self._ebounds.astype(float)
+
+
+
             self._mc_channels = np.vstack([data.field("ENERG_LO"),
                                            data.field("ENERG_HI")]).T
+
+            self._mc_channels = self._mc_channels.astype(float)
 
             # Now let's see if we have a ARF, if yes, read it
 
@@ -135,6 +141,12 @@ class Response(object):
 
     @property
     def first_channel(self):
+        """
+        The first channel of the channel array. Correpsonds to
+        TLMIN keyword in FITS files
+
+        :return: first channel
+        """
         return int(self._first_channel)
 
     def _read_matrix(self, data, header, column_name='MATRIX'):
@@ -153,7 +165,7 @@ class Response(object):
             tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
 
         except(KeyError):
-            warnings.warn('No TLMIN keyword found. This DRM is does not follow OGIP standards. Assuming TLMIN=1')
+            warnings.warn('No TLMIN keyword found. This DRM does not follow OGIP standards. Assuming TLMIN=1')
             tlmin_fchan = 1
 
         # Store the first channel as a property
@@ -200,15 +212,15 @@ class Response(object):
 
     @property
     def ebounds(self):
+        """
+
+        Returns the ebounds of the RSP.
+
+        :return:
+        """
         return self._ebounds
 
-    @ebounds.setter
-    def ebounds(self, value):
-        raise PrivateMember('ebounds should not be altered manually, silly rabbit!')
 
-    @ebounds.getter
-    def ebounds(self):
-        return self._ebounds
 
     def set_function(self, differentialFunction, integralFunction=None):
         """

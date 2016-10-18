@@ -359,6 +359,32 @@ p
             """
         return self._return_file('ancrfile')
 
+    @property
+    def mission(self):
+        """
+        Returns the name of the mission used to make the observation
+        :return: a string
+        """
+
+        if self._gathered_keywords['mission'] is None:
+
+            return 'UNKNOWN'
+
+        return self._gathered_keywords['mission']
+
+    @property
+    def instrument(self):
+        """
+        Returns the name of the instrument used to make the observation
+        :return: a string
+        """
+
+        if self._gathered_keywords['instrument'] is None:
+
+            return 'UNKNOWN'
+
+        return self._gathered_keywords['instrument']
+
     def is_poisson(self):
         """
         Returns whether the spectrum has Poisson errors or not
@@ -370,9 +396,9 @@ p
 
 
 class PHAContainer(MutableMapping):
-    _allowed_keys = "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file".split()
+    _allowed_keys = "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file instrument mission".split()
 
-    _gathered_keywords = "n_channels exposure scale_factor is_poisson background_file response_file ancillary_file".split()
+    _gathered_keywords = "n_channels exposure scale_factor is_poisson background_file response_file ancillary_file mission instrument".split()
 
     def accept(self, key):
         # Only accept items with interger key and string value
@@ -414,7 +440,7 @@ class PHAContainer(MutableMapping):
     def __setitem__(self, key, val):
         if key not in PHAContainer._allowed_keys:
             raise KeyError(
-                    'Valid keywords: "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file" ')
+                    'Valid keywords: "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file mission instrument" ')
         self.dict[key] = val
 
     def __getitem__(self, key):
@@ -447,7 +473,8 @@ class PHAContainer(MutableMapping):
         tmp = {}
 
         key_lookup = dict(zip(PHAContainer._gathered_keywords,
-                              ['detchans', 'exposure', 'backscal', 'poisserr', 'backfile', 'respfile', 'ancrfile']))
+                              ['detchans', 'exposure', 'backscal', 'poisserr', 'backfile', 'respfile', 'ancrfile',
+                               'mission', 'instrument']))
 
         for key in PHAContainer._gathered_keywords:
             tmp[key_lookup[key]] = self.dict[key]
@@ -485,6 +512,15 @@ class PHAContainer(MutableMapping):
 
 class PHAWrite(object):
     def __init__(self, *ogiplike):
+        """
+        This class handles writing of PHA files from OGIPLike style plugins. It takes an arbitrary number of plugins as
+        input. While OGIPLike provides a write_pha method, it is only for writing the given instance to disk. The class
+         in general can be used to save an entire series of OGIPLikes to PHAs which can be used for time-resolved style
+         plugins. An example implentation is given in FermiGBMTTELike.
+
+
+        :param ogiplike: OGIPLike plugin(s) to be written to disk
+        """
 
         self._ogiplike = ogiplike
 
@@ -506,6 +542,8 @@ class PHAWrite(object):
         self._backfile = {'pha': [], 'bak': []}
         self._respfile = {'pha': [], 'bak': []}
         self._ancrfile = {'pha': [], 'bak': []}
+        self._mission = {'pha': [], 'bak': []}
+        self._instrument = {'pha': [], 'bak': []}
 
         # If the PHAs have existing background files
         # then it is assumed that we will not need to write them
@@ -523,7 +561,18 @@ class PHAWrite(object):
 
         self._pseudo_time = 0.
 
+        self._spec_iterartor = 1
+
     def write(self, outfile_name, overwrite=True):
+        """
+        Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines
+        if BAK files should be generated.
+
+
+        :param outfile_name: string (excluding .pha) of the PHA to write
+        :param overwrite: (optional) bool to overwrite existing file
+        :return:
+        """
 
         if outfile_name[-4:].lower() == '.pha':
 
@@ -556,6 +605,8 @@ class PHAWrite(object):
 
             if key == 'pha':
 
+
+
                 if pha_info[key].background_file is not None:
 
                     self._backfile[key].append(pha_info[key].background_file)
@@ -565,10 +616,12 @@ class PHAWrite(object):
 
                 else:
 
-                    self._backfile[key].append('%s_bak.pha' % self._outfile_basename)
+                    self._backfile[key].append('%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
 
-                    if len('%s_bak.pha' % self._outfile_basename) > self._max_length_background_file_name:
-                        self._max_length_background_file_name = len('%s_bak.pha' % self._outfile_basename)
+                    if len('%s_bak.pha{%d}' % (
+                            self._outfile_basename, self._spec_iterartor)) > self._max_length_background_file_name:
+                        self._max_length_background_file_name = len(
+                                '%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
 
                     # We want to write the bak file
 
@@ -633,6 +686,9 @@ class PHAWrite(object):
             self._grouping[key].append(ogip.ogip_grouping.tolist())
             self._channel[key].append(np.arange(pha_info[key].n_channels, dtype=np.int8) + first_channel)
 
+            self._instrument[key] = pha_info[key].instrument
+            self._mission[key] = pha_info[key].mission
+
             if ogip.tstart is not None:
 
                 self._tstart[key].append(ogip.tstart)
@@ -647,7 +703,7 @@ class PHAWrite(object):
 
             # We will assume that the exposure is the true DT
             # and assign starts and stops accordingly. This means
-            # we most likely are dealing with a simulation.
+            # we are most likely are dealing with a simulation.
             else:
 
                 self._tstart[key].append(self._pseudo_time)
@@ -656,13 +712,27 @@ class PHAWrite(object):
 
                 self._tstop[key].append(self._pseudo_time)
 
+            self._spec_iterartor += 1
+
     def _write_phaII(self, overwrite):
 
+        # Fix this later... if needed.
         trigTime = None
-        clobber = False
 
         # Assuming background and pha files have the same
         # number of channels
+
+
+        assert len(self._rate['pha'][0]) == len(
+                self._rate['bak'][0]), "PHA and BAK files do not have the same number of channels. Something is wrong."
+
+        assert self._instrument['pha'] == self._instrument[
+            'bak'], "Instrument for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. " % (
+            self._instrument['pha'], self._instrument['bak'])
+
+        assert self._mission['pha'] == self._mission[
+            'bak'], "Mission for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. " % (
+            self._mission['pha'], self._mission['bak'])
 
         n_channel = len(self._rate['pha'][0])
 
@@ -806,8 +876,8 @@ class PHAWrite(object):
             new_table.header.set('HDUCLAS3', 'RATE')
             new_table.header.set('HDUCLAS4', 'TYPE:II')
             new_table.header.set('HDUVERS', '1.2.0')
-            new_table.header.set('TELESCOP', 'GLAST')  # Modify this
-            new_table.header.set('INSTRUME', self._ogiplike[0].name)  # assuming all have the same name
+            new_table.header.set('TELESCOP', self._mission[key])  # Modify this
+            new_table.header.set('INSTRUME', self._instrument[key])  # assuming all have the same name
 
             # TODO: check with GV what this is
             new_table.header.set('FILTER', 'none')
@@ -824,12 +894,3 @@ class PHAWrite(object):
 
 
             # Reopen the file and add the primary keywords, if any
-
-# f = pyfits.open(filename, "update")
-#            for key, value in self.primaryHeader.iteritems():
-#                f[0].header.set(key, value)
-#            pass
-#            f.close()
-
-#            if (self.ebounds != None):
-#                pyfits.append(filename, self.ebounds.data, header=self.ebounds.header)

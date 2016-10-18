@@ -11,14 +11,17 @@ class SwiftXRTLike(OGIPLike):
         # In the XRT response matrix there are many many channels, so we can
         # use a very crude formula for the integral. This is why we override this
 
-        nPointSources = self.likelihoodModel.get_number_of_point_sources()
+        n_point_sources = self._like_model.get_number_of_point_sources()
 
-        def diffFlux(energies):
-            fluxes = self.likelihoodModel.get_point_source_fluxes(0, energies)
+        # Make a function which will stack all point sources (OGIP do not support spatial dimension)
+
+        def differential_flux(energies):
+
+            fluxes = self._like_model.get_point_source_fluxes(0, energies)
 
             # If we have only one point source, this will never be executed
-            for i in range(1, nPointSources):
-                fluxes += self.likelihoodModel.get_point_source_fluxes(i, energies)
+            for i in range(1, n_point_sources):
+                fluxes += self._like_model.get_point_source_fluxes(i, energies)
 
             return fluxes
 
@@ -34,6 +37,6 @@ class SwiftXRTLike(OGIPLike):
 
             avg = (e2 + e1) / 2.0
 
-            return diffFlux(avg) * (e2 - e1)
+            return differential_flux(avg) * (e2 - e1)
 
-        return diffFlux, integral
+        return differential_flux, integral
