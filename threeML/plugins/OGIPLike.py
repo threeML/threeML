@@ -138,8 +138,7 @@ class OGIPLike(PluginPrototype):
         self._native_quality = self._pha.quality
 
         # self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
-        self._mask = self._native_quality == 0
-
+        self._mask = self._quality_to_mask()
 
         # Print the autoprobed noise models
         if self._verbose:
@@ -253,6 +252,11 @@ class OGIPLike(PluginPrototype):
 
         set_active_measurements('all')
 
+        Use 'reset' to return to native PHA quality from file, as in:
+
+        set_active_measurements('reset')
+
+
         * Exclude measurements:
 
         Excluding measurements work as selecting measurements, but with the "exclude" keyword set to the energies and/or
@@ -267,9 +271,21 @@ class OGIPLike(PluginPrototype):
 
         set_active_measurements("0.2-c10",exclude=["c30-c50"])
 
+        * Using native PHA qaulity:
+
+        To simply add or exclude channels from the native PHA, one can use the use_quailty
+        option:
+
+        set_active_measurements("0.2-c10",exclude=["c30-c50"], use_quality=True)
+
+        This translates to including the channels from 0.2 keV - channel 10, exluding channels
+        30-50 and any channels flagged BAD in the PHA file will also be excluded.
+
+
 
         :param args:
-        :param exclude: exclude the provided channel/energy ranges
+        :param exclude: (list) exclude the provided channel/energy ranges
+        :param use_quality: (bool) use the native quality on the PHA file (default=False)
         :return:
         """
 
@@ -285,7 +301,29 @@ class OGIPLike(PluginPrototype):
         assert self._rebinner is None, "You cannot select active measurements if you have a rebinning active. " \
                                        "Remove it first with remove_rebinning"
 
-        self._mask = np.zeros(self._pha.n_channels, dtype=bool)
+        if 'use_quality' in kwargs:
+
+            use_quality = kwargs.pop('use_quality')
+
+        else:
+
+            use_quality = False
+
+        if use_quality:
+
+            # Start with quality mask. This means that channels
+            # marked good by quality will be used unless exluded in the arguments
+            # and channels marked bad by quality will be excluded unless included
+            # by the arguments
+
+            self._mask = self._quality_to_mask()
+
+        else:
+
+            # otherwise, we will start out with all channels deselected
+            # and turn the on/off by the arguments
+
+            self._mask = np.zeros(self._pha.n_channels, dtype=bool)
 
         if 'all' in args:
 
@@ -295,6 +333,16 @@ class OGIPLike(PluginPrototype):
 
             # Convert the mask to all True (we use all channels)
             self._mask[:] = True
+
+
+
+        elif 'reset' in args:
+
+            # Convert the to native PHA masking specified in quality
+
+            assert len(args) == 1, "If you specify 'reset', you cannot specify more than one energy range."
+
+            self._mask = self._quality_to_mask()
 
 
 
@@ -383,6 +431,28 @@ class OGIPLike(PluginPrototype):
 
         # Apply the mask
         self._apply_mask_to_original_vectors()
+
+        # if the user did not specify use_quality, they may have selected channels which
+        # are marked BAD in the native PHA file. We want to warn them in this case only (or maybe in all cases?)
+
+        if not use_quality:
+
+            number_of_native_good_channels = sum(self._quality_to_mask())
+            number_of_user_good_channels = sum(self._mask)
+
+            if number_of_user_good_channels > number_of_native_good_channels:
+
+                # we have more good channels than specified in the PHA file
+                pass
+
+    def _quality_to_mask(self):
+        """
+        Convert the quality array to a channel mask
+
+        :return: boolean array channel maske
+        """
+
+        return self._native_quality == 0
 
     def _apply_mask_to_original_vectors(self):
 
