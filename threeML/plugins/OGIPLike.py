@@ -138,10 +138,9 @@ class OGIPLike(PluginPrototype):
         self._native_quality = self._pha.quality
 
         assert len(self._native_quality) == len(
-            self._observed_counts), "The PHA quality column and rates column are not the same size."
+                self._observed_counts), "The PHA quality column and rates column are not the same size."
 
         self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
-
 
         # Print the autoprobed noise models
         if self._verbose:
@@ -371,7 +370,7 @@ class OGIPLike(PluginPrototype):
                     if s[0].lower() == 'c':
 
                         assert int(s[1:]) <= self._pha.n_channels, "%s is larger than the number of channels: %d" % (
-                        s, self._pha.n_channels)
+                            s, self._pha.n_channels)
                         idx[i] = int(s[1:])
 
                     else:
@@ -384,11 +383,6 @@ class OGIPLike(PluginPrototype):
 
                 # we do the opposite of the exclude command!
                 self._mask[idx[0]:idx[1] + 1] = True
-
-
-
-
-
 
                 if self._verbose:
                     print("Range %s translates to channels %s-%s" % (arg, idx[0], idx[1]))
@@ -431,9 +425,6 @@ class OGIPLike(PluginPrototype):
                 if self._verbose:
                     print("Range %s translates to excluding channels %s-%s" % (arg, idx[0], idx[1]))
 
-
-
-
         if self._verbose:
             print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
 
@@ -470,13 +461,6 @@ class OGIPLike(PluginPrototype):
 
                         custom_warnings.warn("channel:%d" % i)
 
-
-
-
-
-
-
-
     def _quality_to_mask(self):
         """
         Convert the quality array to a channel mask.
@@ -497,7 +481,6 @@ class OGIPLike(PluginPrototype):
         """
 
         return self._native_quality <= 2
-
 
     def _apply_mask_to_original_vectors(self):
 
@@ -1105,25 +1088,21 @@ class OGIPLike(PluginPrototype):
         """
 
         quality = np.zeros_like(self._observed_counts)
-        quality[~self._mask] = 5
+        quality[~self._mask] = 2
 
         return quality
 
-    def view_count_spectrum(self, plot_errors=True):
+    def view_count_spectrum(self, plot_errors=True, show_bad_channels=True):
         """
         View the count and background spectrum. Useful to check energy selections.
-        Args:
-            plot_errors: bool to choose error plotting
-
-        Returns:
-            none
-
+        :param plot_errors: plot errors on the counts
+        :param show_bad_channels: (bool) show which channels are bad in the native PHA quality
+        :return:
         """
 
         if sum(self._mask) == 0:
 
             raise RuntimeError("There are no active channels selected to plot!")
-
 
         # adding the rebinner: j. michael.
 
@@ -1270,9 +1249,12 @@ class OGIPLike(PluginPrototype):
                             # label=data._name,
                             color='#e41a1c')
 
-            excluded_channel_plot(ax, energy_min_unrebinned, energy_max_unrebinned, self._mask,
+            excluded_channel_plot(ax, energy_min_unrebinned, energy_max_unrebinned,
                                   observed_rate_unrebinned,
-                                  background_rate_unrebinned)
+                                  background_rate_unrebinned,
+                                  self._mask,
+                                  self._quality_bad_to_mask(),
+                                  show_bad_channels)
 
         ax.set_xlabel("Energy (keV)")
         ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
@@ -1304,7 +1286,7 @@ def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     return ax
 
 
-def excluded_channel_plot(ax, chan_min, chan_max, mask, counts, bkg):
+def excluded_channel_plot(ax, chan_min, chan_max, counts, bkg, mask, bad_mask, show_bad_channels):
     # Figure out the best limit
 
     width = chan_max - chan_min
@@ -1314,7 +1296,7 @@ def excluded_channel_plot(ax, chan_min, chan_max, mask, counts, bkg):
     bottom = min([min(bkg / width), min(counts / width)])
     bottom = bottom - bottom * .2
 
-    # Find the contiguous regions
+    # Find the contiguous regions that are deselected
     slices = slice_disjoint((~mask).nonzero()[0])
 
     for region in slices:
@@ -1323,6 +1305,20 @@ def excluded_channel_plot(ax, chan_min, chan_max, mask, counts, bkg):
                         top,
                         color='k',
                         alpha=.5)
+
+    if show_bad_channels and sum(bad_mask) < len(bad_mask):
+
+        # Find the contiguous regions that are deselected
+        slices = slice_disjoint((~bad_mask).nonzero()[0])
+
+        for region in slices:
+            ax.fill_between([chan_min[region[0]], chan_max[region[1]]],
+                            bottom,
+                            top,
+                            color='none',
+                            edgecolor='limegreen',
+                            hatch='/',
+                            alpha=1.)
 
     ax.set_ylim(bottom, top)
 
