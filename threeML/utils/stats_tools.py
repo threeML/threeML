@@ -70,8 +70,9 @@ class ModelComparison(object):
         self._analysis_container = analyses
 
         # First make sure that it is all bayesian or all MLE
-        if (np.unique([a._analysis_type for a in analyses])).shape[0] > 1:
-            raise RuntimeError("Only all Bayesian or all MLE analyses are allowed. Not a mixture!")
+        assert (np.unique([a._analysis_type for a in analyses])).shape[
+                   0] == 0, "Only all Bayesian or all MLE analyses are allowed. Not a mixture!"
+
 
         self._analysis_type = analyses[0].analysis_type
 
