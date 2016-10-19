@@ -60,7 +60,7 @@ def dic(bayesian_trace):
 
     mean_of_free_parameters = np.mean(bayesian_trace.raw_samples, axis=0)
 
-    deviance_at_mean = -2. * bayesian_trace.get_posterior(mean_of_free_parameters)[0]
+    deviance_at_mean = -2. * bayesian_trace.get_posterior(mean_of_free_parameters)
 
     return 2 * mean_deviance - deviance_at_mean
 
