@@ -60,7 +60,7 @@ def dic(bayesian_trace):
 
     mean_of_free_parameters = np.mean(bayesian_trace.raw_samples, axis=0)
 
-    deviance_at_mean = -2. * bayesian_trace.log_probability(mean_of_free_parameters)[0]
+    deviance_at_mean = -2. * bayesian_trace.get_posterior(mean_of_free_parameters)[0]
 
     return 2 * mean_deviance - deviance_at_mean
 
@@ -70,8 +70,8 @@ class ModelComparison(object):
         self._analysis_container = analyses
 
         # First make sure that it is all bayesian or all MLE
-        assert (np.unique([a._analysis_type for a in analyses])).shape[
-                   0] == 0, "Only all Bayesian or all MLE analyses are allowed. Not a mixture!"
+        assert (np.unique([a.analysis_type for a in analyses])).shape[
+                   0] == 1, "Only all Bayesian or all MLE analyses are allowed. Not a mixture!"
 
 
         self._analysis_type = analyses[0].analysis_type

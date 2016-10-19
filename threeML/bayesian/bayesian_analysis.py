@@ -1004,7 +1004,7 @@ class BayesianAnalysis(object):
 
         self._free_parameters = self._likelihood_model.free_parameters
 
-    def _get_posterior(self, trial_values):
+    def get_posterior(self, trial_values):
         """Compute the posterior for the normal sampler"""
 
         # Assign this trial values to the parameters and
