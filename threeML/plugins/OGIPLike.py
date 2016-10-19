@@ -137,8 +137,11 @@ class OGIPLike(PluginPrototype):
 
         self._native_quality = self._pha.quality
 
-        # self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
-        self._mask = self._quality_to_mask()
+        assert len(self._native_quality) == len(
+            self._observed_counts), "The PHA quality column and rates column are not the same size."
+
+        self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
+
 
         # Print the autoprobed noise models
         if self._verbose:
@@ -173,6 +176,11 @@ class OGIPLike(PluginPrototype):
 
         self._tstart = None
         self._tstop = None
+
+        # set the mask to the native quality
+        self._mask = self._quality_to_mask()
+        # Apply the mask
+        self._apply_mask_to_original_vectors()
 
     def _get_pha_instance(self, pha_file_or_container, *args, **kwargs):
 
@@ -1088,6 +1096,13 @@ class OGIPLike(PluginPrototype):
 
     @property
     def ogip_quality(self):
+        """
+        The quality of the current mask, not of the native quality
+        of the PHA file
+
+
+        :return:
+        """
 
         quality = np.zeros_like(self._observed_counts)
         quality[~self._mask] = 5
