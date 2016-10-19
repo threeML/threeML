@@ -186,7 +186,7 @@ class BayesianAnalysis(object):
             view = c[:]
 
             sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                            self._get_posterior,
+                                            self.get_posterior,
                                             pool=view)
 
             # Sampling with progress in parallel is super-slow, so let's
@@ -196,7 +196,7 @@ class BayesianAnalysis(object):
         else:
 
             sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                            self._get_posterior)
+                                            self.get_posterior)
 
         print("Running burn-in of %s samples...\n" % burn_in)
 
@@ -368,7 +368,7 @@ class BayesianAnalysis(object):
 
         # now get the log probability
 
-        self._log_probability_values = self._get_posterior(self._raw_samples)
+        self._log_probability_values = self.get_posterior(self._raw_samples)
 
         self._build_samples_dictionary()
 
