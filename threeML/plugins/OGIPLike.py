@@ -128,9 +128,18 @@ class OGIPLike(PluginPrototype):
 
             raise NotImplementedError("Gaussian observation is not yet supported")
 
-        # Initialize a mask that selects all the data
+        # Initialize a mask that selects all the data.
+        # We will initially use the quality mask for the PHA file
+        # and set any quality greater than 0 to False. We want to save
+        # the native quality so that we can warn the user if they decide to
+        # select channels that were flagged as bad.
 
-        self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
+
+        self._native_quality = self._pha.quality
+
+        # self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
+        self._mask = self._native_quality == 0
+
 
         # Print the autoprobed noise models
         if self._verbose:
