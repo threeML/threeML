@@ -433,26 +433,63 @@ class OGIPLike(PluginPrototype):
         self._apply_mask_to_original_vectors()
 
         # if the user did not specify use_quality, they may have selected channels which
-        # are marked BAD in the native PHA file. We want to warn them in this case only (or maybe in all cases?)
+        # are marked BAD (5) in the native PHA file. We want to warn them in this case only (or maybe in all cases?)
 
         if not use_quality:
 
-            number_of_native_good_channels = sum(self._quality_to_mask())
+            number_of_native_good_channels = sum(self._quality_bad_to_mask())
             number_of_user_good_channels = sum(self._mask)
 
             if number_of_user_good_channels > number_of_native_good_channels:
 
                 # we have more good channels than specified in the PHA file
-                pass
+                # so we need to figure out which channels these are where excluded
+
+                deselected_channels = []
+                for i in xrange(self._pha.n_channels):
+
+                    if not self._quality_bad_to_mask()[i] and self._mask[i]:
+
+                        deselected_channels.append(i)
+
+                custom_warnings.warn("You have opted to use channels which are flagged BAD in the PHA file.")
+
+                if self._verbose:
+
+                    custom_warnings.warn("These channels are:")
+
+                    for i in deselected_channels:
+
+                        custom_warnings.warn("channel:%d" % i)
+
+
+
+
+
+
+
 
     def _quality_to_mask(self):
         """
-        Convert the quality array to a channel mask
+        Convert the quality array to a channel mask.
+        Any channel with quality greater than 0
+
 
         :return: boolean array channel maske
         """
 
         return self._native_quality == 0
+
+    def _quality_bad_to_mask(self):
+        """
+        Convert the quality array to a channel mask
+        for channels marked 5
+
+        :return: boolean array channel maske
+        """
+
+        return self._native_quality <= 2
+
 
     def _apply_mask_to_original_vectors(self):
 
