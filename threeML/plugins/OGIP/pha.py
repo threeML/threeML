@@ -469,7 +469,7 @@ p
 
 
 class PHAContainer(MutableMapping):
-    _allowed_keys = "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file instrument mission".split()
+    _allowed_keys = "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file instrument mission quality".split()
 
     _gathered_keywords = "n_channels exposure scale_factor is_poisson background_file response_file ancillary_file mission instrument".split()
 
