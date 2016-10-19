@@ -256,7 +256,7 @@ class ModelComparison(object):
                 stat_table['AIC'].append(None)
                 stat_table['BIC'].append(None)
                 stat_table['DIC'].append(None)
-                stat_table['log10 (Z)'].append(analysis.log10_evidence)
+                stat_table['log10 (Z)'].append(analysis.log_marginal_likelihood)
                 # stat_table['WAIC'].append(this_waic)
                 stat_table['-2 ln(like)'].append(None)
                 stat_table['N. Free Parameters'].append(n_free_params)
@@ -266,7 +266,14 @@ class ModelComparison(object):
 
             else:
 
-                this_dic = dic(analysis)
+                if analysis.log_probability_values is not None:
+
+                    this_dic = dic(analysis)
+
+                else:
+
+                    this_dic = None
+
                 # this_waic = waic(analysis)
 
                 # We will now compute the AIC/BIC/ etc. at the max of the posterior likelihood
@@ -281,7 +288,7 @@ class ModelComparison(object):
                 stat_table['AIC'].append(this_aic)
                 stat_table['BIC'].append(this_bic)
                 stat_table['DIC'].append(this_dic)
-                stat_table['log10 (Z)'].append(analysis.log10_evidence)
+                stat_table['log10 (Z)'].append(analysis.log_marginal_likelihood)
                 # stat_table['WAIC'].append(this_waic)
                 stat_table['-2 ln(like)'].append(-2. * loglike)
                 stat_table['N. Free Parameters'].append(n_free_params)
