@@ -397,7 +397,7 @@ class TemporalBinner(object):
             t = np.array(bkg_integral_distribution(self._arrival_times))
 
             # Now compute the start and stop time in the new system
-            tstart = bkg_integral_distribution(t_stop)
+            tstart = bkg_integral_distribution(t_start)
             tstop = bkg_integral_distribution(t_stop)
         else:
             t = self._arrival_times
