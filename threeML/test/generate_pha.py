@@ -2,7 +2,10 @@ from threeML import *
 
 
 
-data_dir = os.path.join('../examples/gbm','bn080916009')
+__this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
+
+
+data_dir = os.path.join(__this_dir__, '../../examples/gbm','bn080916009')
 
 src_selection = "0.-10."
 

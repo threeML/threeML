@@ -16,7 +16,9 @@ from astromodels.sources.extended_source import ExtendedSource
 
 from threeML.io.file_utils import within_directory
 
-__example_dir = 'examples'
+__this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
+
+__example_dir = os.path.join(__this_dir__,'../../examples')
 
 
 class AnalysisBuilder(object):

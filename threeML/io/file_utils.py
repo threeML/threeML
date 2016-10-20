@@ -76,7 +76,16 @@ def within_directory(directory):
 
     current_dir = os.getcwd()
 
-    os.chdir(directory)
+    if not os.path.exists(directory):
+
+        raise IOError("Directory %s does not exists!" % os.path.abspath(directory))
+
+    try:
+        os.chdir(directory)
+
+    except OSError:
+
+        raise IOError("Cannot access %s" % os.path.abspath(directory))
 
     yield
 

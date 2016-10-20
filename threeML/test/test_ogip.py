@@ -11,12 +11,14 @@ from threeML.plugins.OGIP.response import Response
 from threeML.io.file_utils import within_directory
 
 
+__this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
+
 def get_path(file):
     return os.path.join(os.path.dirname(__file__), file)
 
 
 def test_loading_a_generic_pha_file():
-    with within_directory('test'):
+    with within_directory(__this_dir__):
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
 
         pha_info = ogip.get_pha_files()
@@ -36,7 +38,7 @@ def test_loading_a_generic_pha_file():
 
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
-    with within_directory('test'):
+    with within_directory(__this_dir__):
 
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
 
@@ -97,7 +99,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
 
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
-    with within_directory('test'):
+    with within_directory(__this_dir__):
         ogip = OGIPLike('test_ogip', pha_file='test.pha', spectrum_number=1)
 
         pha_info = ogip.get_pha_files()
@@ -156,7 +158,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
 
 
 def test_ogip_energy_selection():
-    with within_directory('test'):
+    with within_directory(__this_dir__):
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
 
         # assert sum(ogip._mask) == sum(ogip._quality_to_mask())
@@ -209,7 +211,7 @@ def test_ogip_energy_selection():
 
 
 def test_ogip_rebinner():
-    with within_directory('test'):
+    with within_directory(__this_dir__):
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
 
         n_data_points = 128
