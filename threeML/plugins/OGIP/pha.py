@@ -125,6 +125,40 @@ class PHA(object):
                 if header.get("CORRFILE").upper().strip() != "NONE":
                     raise RuntimeError("CORRFILE is not yet supported")
 
+            # See if there is there is a QUALITY==0 in the header
+
+            if "QUALITY" in header:
+
+                self._has_quality_column = False
+
+                if header["QUALITY"] == 0:
+
+                    self._is_all_data_good = True
+
+                else:
+
+                    self._is_all_data_good = False
+
+
+            else:
+
+                if "QUALITY" in data.columns.names:
+
+                    self._has_quality_column = True
+
+                    self._is_all_data_good = False
+
+                else:
+
+                    self._has_quality_column = False
+
+                    self._is_all_data_good = True
+
+                    warnings.warn(
+                        'Could not find QUALITY in columns or header of PHA file. This is not a valid OGIP file. Assuming QUALITY =0 (good)')
+
+
+
             # Determine if this file contains COUNTS or RATES
 
             if "COUNTS" in data.columns.names:
@@ -236,6 +270,21 @@ class PHA(object):
 
                     self._sys_errors = np.zeros(self._rates.shape)
 
+                if self._has_quality_column:
+
+                    self._quality = data.field("QUALITY")[self._spectrum_number - 1, :]
+
+                else:
+
+                    if self._is_all_data_good:
+
+                        self._quality = np.zeros_like(self._rates, dtype=int)
+
+                    else:
+
+                        self._quality = np.zeros_like(self._rates, dtype=int) + 5
+
+
 
             elif self._typeII == False:
 
@@ -261,6 +310,20 @@ class PHA(object):
                 else:
 
                     self._sys_errors = np.zeros(self._rates.shape)
+
+                if self._has_quality_column:
+
+                    self._quality = data.field("QUALITY")
+
+                else:
+
+                    if self._is_all_data_good:
+
+                        self._quality = np.zeros_like(self._rates, dtype=int)
+
+                    else:
+
+                        self._quality = np.zeros_like(self._rates, dtype=int) + 5
 
         # Now that we have read it, some safety checks
 
@@ -394,9 +457,19 @@ p
 
         return self._gathered_keywords['poisserr']
 
+    @property
+    def quality(self):
+        """
+        Return the native quality of the PHA file
+        :return:
+        """
+
+        return self._quality
+
+
 
 class PHAContainer(MutableMapping):
-    _allowed_keys = "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file instrument mission".split()
+    _allowed_keys = "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file instrument mission quality".split()
 
     _gathered_keywords = "n_channels exposure scale_factor is_poisson background_file response_file ancillary_file mission instrument".split()
 

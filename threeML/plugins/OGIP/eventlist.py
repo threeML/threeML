@@ -588,7 +588,8 @@ class EventList(object):
                            is_poisson=is_poisson,
                            response_file=self._rsp_file,
                            mission=self._mission,
-                           instrument=self._instrument)
+                           instrument=self._instrument,
+                           quality=np.zeros_like(rates, dtype=int))  # default quality to all good
 
         return pha
 

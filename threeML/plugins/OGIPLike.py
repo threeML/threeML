@@ -128,7 +128,17 @@ class OGIPLike(PluginPrototype):
 
             raise NotImplementedError("Gaussian observation is not yet supported")
 
-        # Initialize a mask that selects all the data
+        # Initialize a mask that selects all the data.
+        # We will initially use the quality mask for the PHA file
+        # and set any quality greater than 0 to False. We want to save
+        # the native quality so that we can warn the user if they decide to
+        # select channels that were flagged as bad.
+
+
+        self._native_quality = self._pha.quality
+
+        assert len(self._native_quality) == len(
+                self._observed_counts), "The PHA quality column and rates column are not the same size."
 
         self._mask = np.asarray(np.ones(self._pha.n_channels), np.bool)
 
@@ -165,6 +175,11 @@ class OGIPLike(PluginPrototype):
 
         self._tstart = None
         self._tstop = None
+
+        # set the mask to the native quality
+        self._mask = self._quality_to_mask()
+        # Apply the mask
+        self._apply_mask_to_original_vectors()
 
     def _get_pha_instance(self, pha_file_or_container, *args, **kwargs):
 
@@ -244,6 +259,11 @@ class OGIPLike(PluginPrototype):
 
         set_active_measurements('all')
 
+        Use 'reset' to return to native PHA quality from file, as in:
+
+        set_active_measurements('reset')
+
+
         * Exclude measurements:
 
         Excluding measurements work as selecting measurements, but with the "exclude" keyword set to the energies and/or
@@ -258,9 +278,21 @@ class OGIPLike(PluginPrototype):
 
         set_active_measurements("0.2-c10",exclude=["c30-c50"])
 
+        * Using native PHA qaulity:
+
+        To simply add or exclude channels from the native PHA, one can use the use_quailty
+        option:
+
+        set_active_measurements("0.2-c10",exclude=["c30-c50"], use_quality=True)
+
+        This translates to including the channels from 0.2 keV - channel 10, exluding channels
+        30-50 and any channels flagged BAD in the PHA file will also be excluded.
+
+
 
         :param args:
-        :param exclude: exclude the provided channel/energy ranges
+        :param exclude: (list) exclude the provided channel/energy ranges
+        :param use_quality: (bool) use the native quality on the PHA file (default=False)
         :return:
         """
 
@@ -276,7 +308,29 @@ class OGIPLike(PluginPrototype):
         assert self._rebinner is None, "You cannot select active measurements if you have a rebinning active. " \
                                        "Remove it first with remove_rebinning"
 
-        self._mask = np.zeros(self._pha.n_channels, dtype=bool)
+        if 'use_quality' in kwargs:
+
+            use_quality = kwargs.pop('use_quality')
+
+        else:
+
+            use_quality = False
+
+        if use_quality:
+
+            # Start with quality mask. This means that channels
+            # marked good by quality will be used unless exluded in the arguments
+            # and channels marked bad by quality will be excluded unless included
+            # by the arguments
+
+            self._mask = self._quality_to_mask()
+
+        else:
+
+            # otherwise, we will start out with all channels deselected
+            # and turn the on/off by the arguments
+
+            self._mask = np.zeros(self._pha.n_channels, dtype=bool)
 
         if 'all' in args:
 
@@ -286,6 +340,16 @@ class OGIPLike(PluginPrototype):
 
             # Convert the mask to all True (we use all channels)
             self._mask[:] = True
+
+
+
+        elif 'reset' in args:
+
+            # Convert the to native PHA masking specified in quality
+
+            assert len(args) == 1, "If you specify 'reset', you cannot specify more than one energy range."
+
+            self._mask = self._quality_to_mask()
 
 
 
@@ -306,7 +370,7 @@ class OGIPLike(PluginPrototype):
                     if s[0].lower() == 'c':
 
                         assert int(s[1:]) <= self._pha.n_channels, "%s is larger than the number of channels: %d" % (
-                        s, self._pha.n_channels)
+                            s, self._pha.n_channels)
                         idx[i] = int(s[1:])
 
                     else:
@@ -319,11 +383,6 @@ class OGIPLike(PluginPrototype):
 
                 # we do the opposite of the exclude command!
                 self._mask[idx[0]:idx[1] + 1] = True
-
-
-
-
-
 
                 if self._verbose:
                     print("Range %s translates to channels %s-%s" % (arg, idx[0], idx[1]))
@@ -366,14 +425,62 @@ class OGIPLike(PluginPrototype):
                 if self._verbose:
                     print("Range %s translates to excluding channels %s-%s" % (arg, idx[0], idx[1]))
 
-
-
-
         if self._verbose:
             print("Now using %s channels out of %s" % (np.sum(self._mask), self._pha.n_channels))
 
         # Apply the mask
         self._apply_mask_to_original_vectors()
+
+        # if the user did not specify use_quality, they may have selected channels which
+        # are marked BAD (5) in the native PHA file. We want to warn them in this case only (or maybe in all cases?)
+
+        if not use_quality:
+
+            number_of_native_good_channels = sum(self._quality_bad_to_mask())
+            number_of_user_good_channels = sum(self._mask)
+
+            if number_of_user_good_channels > number_of_native_good_channels:
+
+                # we have more good channels than specified in the PHA file
+                # so we need to figure out which channels these are where excluded
+
+                deselected_channels = []
+                for i in xrange(self._pha.n_channels):
+
+                    if not self._quality_bad_to_mask()[i] and self._mask[i]:
+
+                        deselected_channels.append(i)
+
+                custom_warnings.warn("You have opted to use channels which are flagged BAD in the PHA file.")
+
+                if self._verbose:
+
+                    custom_warnings.warn("These channels are:")
+
+                    for i in deselected_channels:
+
+                        custom_warnings.warn("channel:%d" % i)
+
+    def _quality_to_mask(self):
+        """
+        Convert the quality array to a channel mask.
+        Any channel with quality greater than 0
+
+
+        :return: boolean array channel maske
+        """
+
+        return self._native_quality == 0
+
+    def _quality_bad_to_mask(self):
+        """
+        Convert the quality array to a channel mask
+        for channels marked 5
+
+        :return: boolean array channel maske
+        """
+
+        return self._native_quality <= 2
 
     def _apply_mask_to_original_vectors(self):
 
@@ -972,27 +1079,30 @@ class OGIPLike(PluginPrototype):
 
     @property
     def ogip_quality(self):
+        """
+        The quality of the current mask, not of the native quality
+        of the PHA file
+
+
+        :return:
+        """
 
         quality = np.zeros_like(self._observed_counts)
-        quality[~self._mask] = 5
+        quality[~self._mask] = 2
 
         return quality
 
-    def view_count_spectrum(self, plot_errors=True):
+    def view_count_spectrum(self, plot_errors=True, show_bad_channels=True):
         """
         View the count and background spectrum. Useful to check energy selections.
-        Args:
-            plot_errors: bool to choose error plotting
-
-        Returns:
-            none
-
+        :param plot_errors: plot errors on the counts
+        :param show_bad_channels: (bool) show which channels are bad in the native PHA quality
+        :return:
         """
 
         if sum(self._mask) == 0:
 
             raise RuntimeError("There are no active channels selected to plot!")
-
 
         # adding the rebinner: j. michael.
 
@@ -1139,9 +1249,12 @@ class OGIPLike(PluginPrototype):
                             # label=data._name,
                             color='#e41a1c')
 
-            excluded_channel_plot(ax, energy_min_unrebinned, energy_max_unrebinned, self._mask,
+            excluded_channel_plot(ax, energy_min_unrebinned, energy_max_unrebinned,
                                   observed_rate_unrebinned,
-                                  background_rate_unrebinned)
+                                  background_rate_unrebinned,
+                                  self._mask,
+                                  self._quality_bad_to_mask(),
+                                  show_bad_channels)
 
         ax.set_xlabel("Energy (keV)")
         ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
@@ -1176,7 +1289,7 @@ def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     return ax
 
 
-def excluded_channel_plot(ax, chan_min, chan_max, mask, counts, bkg):
+def excluded_channel_plot(ax, chan_min, chan_max, counts, bkg, mask, bad_mask, show_bad_channels):
     # Figure out the best limit
 
     width = chan_max - chan_min
@@ -1186,7 +1299,7 @@ def excluded_channel_plot(ax, chan_min, chan_max, mask, counts, bkg):
     bottom = min([min(bkg / width), min(counts / width)])
     bottom = bottom - bottom * .2
 
-    # Find the contiguous regions
+    # Find the contiguous regions that are deselected
     slices = slice_disjoint((~mask).nonzero()[0])
 
     for region in slices:
@@ -1195,6 +1308,20 @@ def excluded_channel_plot(ax, chan_min, chan_max, mask, counts, bkg):
                         top,
                         color='k',
                         alpha=.5)
+
+    if show_bad_channels and sum(bad_mask) < len(bad_mask):
+
+        # Find the contiguous regions that are deselected
+        slices = slice_disjoint((~bad_mask).nonzero()[0])
+
+        for region in slices:
+            ax.fill_between([chan_min[region[0]], chan_max[region[1]]],
+                            bottom,
+                            top,
+                            color='none',
+                            edgecolor='limegreen',
+                            hatch='/',
+                            alpha=1.)
 
     ax.set_ylim(bottom, top)
 
