@@ -1274,6 +1274,9 @@ class OGIPLike(PluginPrototype):
 
         pha_writer.write(file_name, overwrite=overwrite)
 
+    def display_rsp(self):
+
+        self._rsp.plot_matrix()
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))

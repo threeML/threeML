@@ -144,11 +144,3 @@ def test_gbm_tte_joint_likelihood_fitting():
 
             assert jl.minimizer is not None
             assert jl.ncalls != 1
-
-
-
-
-
-
-
-
