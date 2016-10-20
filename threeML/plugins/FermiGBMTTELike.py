@@ -69,9 +69,6 @@ class FermiGBMTTELike(OGIPLike):
 
         self._evt_list.poly_order = poly_order
 
-        self._background_exists = False
-        self._energyselection_exists = False
-
         # Fit the background and
         # Obtain the counts for the initial input interval
         # which is embedded in the background call
@@ -92,7 +89,7 @@ class FermiGBMTTELike(OGIPLike):
 
         # Keep track of if there has been any temporal binning
 
-        self._temporally_binned = False
+        # self._temporally_binned = False
 
         self._rsp_file = rsp_file
 
@@ -435,7 +432,7 @@ class FermiGBMTTELike(OGIPLike):
 
                 min_counts = 10
 
-            # Should we was the data?f
+            # should we mask the data
 
             if use_energy_mask:
 
