@@ -161,26 +161,32 @@ def test_ogip_energy_selection():
 
         # assert sum(ogip._mask) == sum(ogip._quality_to_mask())
 
+
+        # Test that  selecting a subset reduces the number of data points
         ogip.set_active_measurements("10-30")
 
         assert sum(ogip._mask) == ogip.n_data_points
         assert sum(ogip._mask) < 128
 
+        # Test selecting all channels
         ogip.set_active_measurements("all")
 
         assert sum(ogip._mask) == ogip.n_data_points
         assert sum(ogip._mask) == 128
 
+        # Test channel setting
         ogip.set_active_measurements(exclude=['c0-c1'])
 
         assert sum(ogip._mask) == ogip.n_data_points
         assert sum(ogip._mask) == 126
 
+        # Test mixed ene/chan setting
         ogip.set_active_measurements(exclude=['0-c1'])
 
         assert sum(ogip._mask) == ogip.n_data_points
         assert sum(ogip._mask) == 126
 
+        # Test that energies cannot be input backwards
         with pytest.raises(AssertionError):
             ogip.set_active_measurements("50-30")
 
