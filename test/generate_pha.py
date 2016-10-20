@@ -15,5 +15,7 @@ nai3 = FermiGBMTTELike('NAI3',
                          src_selection,
                          rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v07.rsp"),poly_order=0)
 
+nai3.set_active_measurements("10-900")
+
 
 nai3.write_pha('test',overwrite=True)

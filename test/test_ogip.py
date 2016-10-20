@@ -153,3 +153,72 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
         assert pha_info['bak'].scale_factor == 1.0
 
         assert isinstance(pha_info['rsp'], Response)
+
+
+def test_ogip_energy_selection():
+    with within_directory('test'):
+        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+
+        # assert sum(ogip._mask) == sum(ogip._quality_to_mask())
+
+        ogip.set_active_measurements("10-30")
+
+        assert sum(ogip._mask) == ogip.n_data_points
+        assert sum(ogip._mask) < 128
+
+        ogip.set_active_measurements("all")
+
+        assert sum(ogip._mask) == ogip.n_data_points
+        assert sum(ogip._mask) == 128
+
+        ogip.set_active_measurements(exclude=['c0-c1'])
+
+        assert sum(ogip._mask) == ogip.n_data_points
+        assert sum(ogip._mask) == 126
+
+        ogip.set_active_measurements(exclude=['0-c1'])
+
+        assert sum(ogip._mask) == ogip.n_data_points
+        assert sum(ogip._mask) == 126
+
+        with pytest.raises(AssertionError):
+            ogip.set_active_measurements("50-30")
+
+        with pytest.raises(AssertionError):
+            ogip.set_active_measurements("c20-c10")
+
+        with pytest.raises(AssertionError):
+            ogip.set_active_measurements("c100-0")
+
+        with pytest.raises(AssertionError):
+            ogip.set_active_measurements("c1-c200")
+
+        with pytest.raises(AssertionError):
+            ogip.set_active_measurements("10-c200")
+
+
+            # ogip.set_active_measurements('reset')
+            # assert sum(ogip._mask) == sum(ogip._quality_to_mask())
+
+
+def test_ogip_rebinner():
+    with within_directory('test'):
+        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+
+        n_data_points = 128
+        ogip.set_active_measurements("all")
+
+        assert ogip.n_data_points == n_data_points
+
+        ogip.rebin_on_background(min_number_of_counts=100)
+
+        assert ogip.n_data_points < 128
+
+        with pytest.raises(AssertionError):
+            ogip.set_active_measurements('all')
+
+        ogip.remove_rebinning()
+
+        assert ogip._rebinner is None
+
+        assert ogip.n_data_points == n_data_points
