@@ -162,7 +162,7 @@ def test_ogip_energy_selection():
     with within_directory(__this_dir__):
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
 
-        # assert sum(ogip._mask) == sum(ogip._quality_to_mask())
+        assert sum(ogip._mask) == sum(ogip._quality_to_mask())
 
 
         # Test that  selecting a subset reduces the number of data points
@@ -206,9 +206,9 @@ def test_ogip_energy_selection():
             ogip.set_active_measurements("10-c200")
 
 
-            # ogip.set_active_measurements('reset')
+        ogip.set_active_measurements('reset')
 
-            # assert sum(ogip._mask) == sum(ogip._quality_to_mask())
+        assert sum(ogip._mask) == sum(ogip._quality_to_mask())
 
 
 def test_ogip_rebinner():
