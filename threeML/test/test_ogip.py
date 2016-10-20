@@ -24,7 +24,7 @@ def test_loading_a_generic_pha_file():
         pha_info = ogip.get_pha_files()
 
         assert ogip.name == 'test_ogip'
-        assert ogip.n_data_points == 128
+        assert ogip.n_data_points == sum(ogip._mask)
         assert sum(ogip._mask) == ogip.n_data_points
         assert ogip.tstart is None
         assert ogip.tstop is None
@@ -41,7 +41,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
     with within_directory(__this_dir__):
 
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
-
+        ogip.set_active_measurements('all')
         pha_info = ogip.get_pha_files()
 
         for key in ['pha', 'bak']:
@@ -63,7 +63,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
 
         assert sum(pha_info['pha'].sys_errors == np.zeros_like(pha_info['pha'].rates)) == pha_info['bak'].n_channels
 
-        assert pha_info['pha'].response_file == '../examples/gbm/bn080916009/glg_cspec_n3_bn080916009_v07.rsp'
+        assert pha_info['pha'].response_file == 'glg_cspec_n3_bn080916009_v07.rsp'
         assert pha_info['pha'].scale_factor == 1.0
 
         # Test that we cannot get a bak file
@@ -101,6 +101,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
     with within_directory(__this_dir__):
         ogip = OGIPLike('test_ogip', pha_file='test.pha', spectrum_number=1)
+        ogip.set_active_measurements('all')
 
         pha_info = ogip.get_pha_files()
 
@@ -122,7 +123,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
             _ = pha_info['pha'].rate_errors
 
         assert sum(pha_info['pha'].sys_errors == np.zeros_like(pha_info['pha'].rates)) == pha_info['bak'].n_channels
-        assert pha_info['pha'].response_file == '../examples/gbm/bn080916009/glg_cspec_n3_bn080916009_v07.rsp'
+        assert pha_info['pha'].response_file == 'glg_cspec_n3_bn080916009_v07.rsp'
         assert pha_info['pha'].scale_factor == 1.0
 
         # Test that we cannot get a bak file
@@ -161,7 +162,7 @@ def test_ogip_energy_selection():
     with within_directory(__this_dir__):
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
 
-        # assert sum(ogip._mask) == sum(ogip._quality_to_mask())
+        assert sum(ogip._mask) == sum(ogip._quality_to_mask())
 
 
         # Test that  selecting a subset reduces the number of data points
@@ -205,9 +206,9 @@ def test_ogip_energy_selection():
             ogip.set_active_measurements("10-c200")
 
 
-            # ogip.set_active_measurements('reset')
+        ogip.set_active_measurements('reset')
 
-            # assert sum(ogip._mask) == sum(ogip._quality_to_mask())
+        assert sum(ogip._mask) == sum(ogip._quality_to_mask())
 
 
 def test_ogip_rebinner():
