@@ -198,6 +198,7 @@ def test_ogip_energy_selection():
 
 
             # ogip.set_active_measurements('reset')
+
             # assert sum(ogip._mask) == sum(ogip._quality_to_mask())
 
 
