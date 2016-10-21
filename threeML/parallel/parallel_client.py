@@ -168,7 +168,7 @@ if has_parallel:
 
                 chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
 
-            return lview.imap(worker, items_to_process, chunksize=chunk_size, ordered=False)
+            return lview.imap(worker, items_to_process, chunksize=chunk_size, ordered=True)
 
         @staticmethod
         def fetch_progress_from_progress_bars(ar):
