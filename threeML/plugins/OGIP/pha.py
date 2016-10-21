@@ -374,15 +374,13 @@ class PHA(object):
 
     def _return_file(self, key):
 
-        value = self._gathered_keywords[key]
+        if key in self._gathered_keywords:
 
-        if value is None or value.upper() == 'NONE':
-
-            return None
+            return self._gathered_keywords[key]
 
         else:
 
-            return value
+            return None
 
     @property
     def background_file(self):
@@ -647,9 +645,10 @@ class PHAWrite(object):
         :return:
         """
 
-        if outfile_name[-4:].lower() == '.pha':
+        # Remove the .pha extension if any
+        if os.path.splitext(outfile_name)[-1].lower() == '.pha':
 
-            outfile_name = outfile_name[-4:]
+            outfile_name = os.path.splitext(outfile_name)[0]
 
         self._outfile_basename = outfile_name
 
