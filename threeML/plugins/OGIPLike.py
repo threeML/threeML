@@ -667,7 +667,8 @@ class OGIPLike(PluginPrototype):
                                exposure=self.exposure,
                                is_poisson=is_obs_poisson,
                                response_file=None,  # We will specify it later
-                               ancillary_file=None  # We will specify it later
+                               ancillary_file=None,  # We will specify it later
+                               quality=self._native_quality
                                )
 
             if self.background_noise_model == 'poisson':
@@ -684,7 +685,9 @@ class OGIPLike(PluginPrototype):
                                exposure=self.background_exposure,
                                is_poisson=is_bkg_poisson,
                                response_file=None,
-                               ancillary_file=None)
+                               ancillary_file=None,
+                               quality=self._native_quality
+                               )
 
             # Now create another instance of OGIPLike with the randomized data we just generated
 

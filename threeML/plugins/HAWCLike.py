@@ -452,9 +452,9 @@ class HAWCLike(PluginPrototype):
 
         return figs
 
-    def write_model_map(self, fileName):
+    def write_model_map(self, fileName, poisson=False):
 
-        self.theLikeHAWC.WriteModelMap(fileName)
+        self.theLikeHAWC.WriteModelMap(fileName, poisson)
 
     def write_residual_map(self, fileName):
 
