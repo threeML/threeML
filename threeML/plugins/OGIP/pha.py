@@ -757,8 +757,7 @@ class PHAWrite(object):
             self._exposure[key].append(pha_info[key].exposure)
             self._quality[key].append(ogip.ogip_quality.tolist())
             self._grouping[key].append(ogip.ogip_grouping.tolist())
-            self._channel[key].append(np.arange(pha_info[key].n_channels, dtype=np.int8) + first_channel)
-
+            self._channel[key].append(np.arange(pha_info[key].n_channels, dtype=np.int32) + first_channel)
             self._instrument[key] = pha_info[key].instrument
             self._mission[key] = pha_info[key].mission
 
