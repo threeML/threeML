@@ -6,12 +6,62 @@ __author__ = 'drjfunk'
 
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.OGIP.pha import PHA
+from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.plugins.OGIP.response import Response
+from threeML.data_list import DataList
+from astromodels.model import Model
+from astromodels.functions.functions import Powerlaw, Exponential_cutoff
+from astromodels.sources.point_source import PointSource
+
 
 from threeML.io.file_utils import within_directory
 
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
+
+
+class AnalysisBuilder(object):
+    def __init__(self, plugin):
+
+        self._plugin = plugin
+
+        self._shapes = {}
+        self._shapes['normal'] = Powerlaw()
+        self._shapes['add'] = Powerlaw() + Powerlaw()
+        self._shapes['mult'] = Powerlaw() * Exponential_cutoff()
+        self._shapes['crazy'] = Exponential_cutoff() * (Powerlaw() + Powerlaw())
+
+    @property
+    def keys(self):
+
+        return self._shapes.keys()
+
+    def build_point_source_jl(self):
+
+        data_list = DataList(self._plugin)
+
+        jls = {}
+
+        for key in self._shapes.keys():
+            ps = PointSource('test', 0, 0, spectral_shape=self._shapes[key])
+            model = Model(ps)
+            jls[key] = JointLikelihood(model, data_list)
+
+        return jls
+
+    def build_point_source_bayes(self):
+
+        data_list = DataList(self._plugin)
+
+        jls = {}
+
+        for key in self._shapes.keys():
+            ps = PointSource('test', 0, 0, spectral_shape=self._shapes[key])
+            model = Model(ps)
+            jls[key] = JointLikelihood(model, data_list)
+
+        return jls
+
 
 def get_path(file):
     return os.path.join(os.path.dirname(__file__), file)
@@ -232,3 +282,57 @@ def test_ogip_rebinner():
         assert ogip._rebinner is None
 
         assert ogip.n_data_points == n_data_points
+
+
+def test_simulating_data_sets():
+    with within_directory(__this_dir__):
+
+        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+
+        n_data_points = 128
+        ogip.set_active_measurements("all")
+
+        ab = AnalysisBuilder(ogip)
+        ab.build_point_source_jl()
+
+        assert ogip._n_synthetic_datasets == 0
+
+        new_ogip = ogip.get_simulated_dataset('sim')
+
+        assert new_ogip.name == 'sim'
+        assert ogip._n_synthetic_datasets == 1
+        assert new_ogip.n_data_points == n_data_points
+
+        assert new_ogip.n_data_points == sum(new_ogip._mask)
+        assert sum(new_ogip._mask) == new_ogip.n_data_points
+        assert new_ogip.tstart is None
+        assert new_ogip.tstop is None
+        assert 'cons_sim' in new_ogip.nuisance_parameters
+        assert new_ogip.nuisance_parameters['cons_sim'].fix == True
+        assert new_ogip.nuisance_parameters['cons_sim'].free == False
+
+        pha_info = new_ogip.get_pha_files()
+
+        assert 'pha' in pha_info
+        assert 'bak' in pha_info
+        assert 'rsp' in pha_info
+
+        del ogip
+        del new_ogip
+
+        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+
+        ab = AnalysisBuilder(ogip)
+        ab.build_point_source_jl()
+
+        # Now check that generationing a lot of data sets works
+
+        sim_data_sets = [ogip.get_simulated_dataset('sim%d' % i) for i in range(100)]
+
+        assert len(sim_data_sets) == ogip._n_synthetic_datasets
+
+        for i, ds in enumerate(sim_data_sets):
+
+            assert ds.name == "sim%d" % i
+            assert sum(ds._mask) == sum(ogip._mask)
+            assert ds._rebinner is None
