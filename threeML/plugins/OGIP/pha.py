@@ -155,9 +155,7 @@ class PHA(object):
                     self._is_all_data_good = True
 
                     warnings.warn(
-                        'Could not find QUALITY in columns or header of PHA file. This is not a valid OGIP file. Assuming QUALITY =0 (good)')
-
-
+                            'Could not find QUALITY in columns or header of PHA file. This is not a valid OGIP file. Assuming QUALITY =0 (good)')
 
             # Determine if this file contains COUNTS or RATES
 
@@ -467,7 +465,6 @@ p
         return self._quality
 
 
-
 class PHAContainer(MutableMapping):
     _allowed_keys = "rates rate_errors n_channels sys_errors exposure is_poisson background_file scale_factor response_file ancillary_file instrument mission quality".split()
 
@@ -665,8 +662,8 @@ class PHAWrite(object):
         """
         Add an ogip instance's data into the data list
 
-        :param ogip:
-        :return:
+        :param ogip: and OGIPLike instance
+        :return: None
         """
 
         # grab the ogip pha info
@@ -677,8 +674,6 @@ class PHAWrite(object):
         for key in ['pha', 'bak']:
 
             if key == 'pha':
-
-
 
                 if pha_info[key].background_file is not None:
 
@@ -712,10 +707,11 @@ class PHAWrite(object):
             else:
 
                 # There is no ancillary file, so we need to flag it.
-                # There is again an assumption that this is constant
-                # across spectra.
 
-                self._has_ancillary_file = False
+                self._ancrfile[key].append('none')
+
+                if 4 > self._max_length_anc_file_name:
+                    self._max_length_anc_file_name = 4
 
             if pha_info['rsp'].rsp_filename is not None:
 
@@ -845,7 +841,7 @@ class PHAWrite(object):
 
             spec_num_column = fits.Column(name='SPEC_NUM',
                                           format='I',
-                                          array=np.arange(1, self._n_spectra + 1, dtype=np.int8))
+                                          array=np.arange(1, self._n_spectra + 1, dtype=np.int32))
 
             channel_column = fits.Column(name='CHANNEL',
                                          format=vector_format_I,
@@ -886,6 +882,10 @@ class PHAWrite(object):
                                           format='%iA' % (self._max_length_resp_file_name + 2),
                                           array=np.array(self._respfile[key]))
 
+            ancrfile_column = fits.Column(name='ANCRFILE',
+                                          format='%iA' % (self._max_length_anc_file_name + 2),
+                                          array=np.array(self._ancrfile[key]))
+
             # There are the base columns.
             # We will append to them as needed
             # by the type of data.
@@ -899,17 +899,9 @@ class PHAWrite(object):
                            grouping_column,
                            exposure_column,
                            backscale_column,
-                           respfile_column]
+                           respfile_column,
+                           ancrfile_column]
 
-            # Insert an ancillary file if needed
-
-            if self._has_ancillary_file:
-
-                ancrfile_column = fits.Column(name='ANCRFILE',
-                                              format='%iA' % (self._max_length_anc_file_name + 2),
-                                              array=np.array(self._ancrfile[key]))
-
-                use_columns.append(ancrfile_column)
 
             if key == 'pha':
 
@@ -932,9 +924,6 @@ class PHAWrite(object):
             new_table = fits.BinTableHDU.from_columns(column_defs)
 
             # Add the keywords required by the OGIP standard:
-
-            # (anyway, neither Rmfit neither XSPEC actually uses the errors
-            # on the background spectrum, BUT rmfit ignores channel with STAT_ERR=0)
             new_table.header.set('EXTNAME', 'SPECTRUM')
 
             # TODO: add corrscal once implemented
@@ -963,6 +952,3 @@ class PHAWrite(object):
             # Write to the required filename
 
             new_table.writeto(self._outfile_name[key], clobber=overwrite)
-
-
-            # Reopen the file and add the primary keywords, if any
