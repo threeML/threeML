@@ -20,5 +20,19 @@ nai3 = FermiGBMTTELike('NAI3',
 
 nai3.set_active_measurements("10-900")
 
+pl = Powerlaw()
 
-nai3.write_pha('test',overwrite=True)
+ps = PointSource('test', 0, 0, spectral_shape=pl)
+
+model = Model(ps)
+
+dl = DataList(nai3)
+
+jl = JointLikelihood(data_list=dl, likelihood_model=model)
+
+pl.K = 1E2
+pl.index = -2
+
+sim_data = nai3.get_simulated_dataset('sim')
+
+sim_data.write_pha('test', overwrite=True)

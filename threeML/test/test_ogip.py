@@ -9,9 +9,11 @@ from threeML.plugins.OGIP.pha import PHA
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.plugins.OGIP.response import Response
 from threeML.data_list import DataList
+from threeML.classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from astromodels.model import Model
-from astromodels.functions.functions import Powerlaw, Exponential_cutoff
+from astromodels.functions.functions import Powerlaw, Exponential_cutoff, Cutoff_powerlaw
 from astromodels.sources.point_source import PointSource
+
 
 
 from threeML.io.file_utils import within_directory
@@ -27,7 +29,8 @@ class AnalysisBuilder(object):
 
         self._shapes = {}
         self._shapes['normal'] = Powerlaw()
-        self._shapes['add'] = Powerlaw() + Powerlaw()
+        self._shapes['cpl'] = Cutoff_powerlaw()
+        self._shapes['add'] = Powerlaw() + Cutoff_powerlaw
         self._shapes['mult'] = Powerlaw() * Exponential_cutoff()
         self._shapes['crazy'] = Exponential_cutoff() * (Powerlaw() + Powerlaw())
 
@@ -63,8 +66,6 @@ class AnalysisBuilder(object):
         return jls
 
 
-def get_path(file):
-    return os.path.join(os.path.dirname(__file__), file)
 
 
 def test_loading_a_generic_pha_file():
@@ -113,7 +114,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
 
         assert sum(pha_info['pha'].sys_errors == np.zeros_like(pha_info['pha'].rates)) == pha_info['bak'].n_channels
 
-        assert pha_info['pha'].response_file == 'glg_cspec_n3_bn080916009_v07.rsp'
+        assert pha_info['pha'].response_file.split('/')[-1] == 'glg_cspec_n3_bn080916009_v07.rsp'
         assert pha_info['pha'].scale_factor == 1.0
 
         # Test that we cannot get a bak file
@@ -173,7 +174,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
             _ = pha_info['pha'].rate_errors
 
         assert sum(pha_info['pha'].sys_errors == np.zeros_like(pha_info['pha'].rates)) == pha_info['bak'].n_channels
-        assert pha_info['pha'].response_file == 'glg_cspec_n3_bn080916009_v07.rsp'
+        assert pha_info['pha'].response_file.split('/')[-1] == 'glg_cspec_n3_bn080916009_v07.rsp'
         assert pha_info['pha'].scale_factor == 1.0
 
         # Test that we cannot get a bak file
@@ -336,3 +337,26 @@ def test_simulating_data_sets():
             assert ds.name == "sim%d" % i
             assert sum(ds._mask) == sum(ogip._mask)
             assert ds._rebinner is None
+
+
+def test_likelihood_ratio_test():
+    with within_directory(__this_dir__):
+
+        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+
+        ogip.set_active_measurements("all")
+
+        ab = AnalysisBuilder(ogip)
+        ab.build_point_source_jl()
+
+        jls = ab.build_point_source_jl()
+
+        for key in ['normal', 'cpl']:
+
+            jl = jls[key]
+
+            res, _ = jl.fit(compute_covariance=False)
+
+    lrt = LikelihoodRatioTest(jls['normal'], jls['cpl'])
+
+    null_hyp_prob, TS, data_frame, like_data_frame = lrt.by_mc(n_iterations=50, continue_on_failure=True)

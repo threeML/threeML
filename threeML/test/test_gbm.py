@@ -14,21 +14,17 @@ from astromodels.sources.point_source import PointSource
 from astromodels.sources.extended_source import ExtendedSource
 from astromodels.functions.functions import Log_uniform_prior, Uniform_prior
 
-
 from threeML.io.file_utils import within_directory
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
-__example_dir = os.path.join(__this_dir__,'../../examples')
+__example_dir = os.path.join(__this_dir__, '../../examples')
 
 
 class AnalysisBuilder(object):
-
-    def __init__(self,plugin):
+    def __init__(self, plugin):
 
         self._plugin = plugin
-
-
 
         self._shapes = {}
         self._shapes['normal'] = Powerlaw()
@@ -71,22 +67,16 @@ class AnalysisBuilder(object):
         self._shapes[key].K_3.prior = Log_uniform_prior(lower_bound=1e-10, upper_bound=1e2)
         self._shapes[key].index_3.set_uninformative_prior(Uniform_prior)
 
-
-
     def build_point_source_jl(self):
 
-
-
-
         data_list = DataList(self._plugin)
-
 
         jls = {}
 
         for key in self._shapes.keys():
-            ps = PointSource('test',0,0,spectral_shape=self._shapes[key])
+            ps = PointSource('test', 0, 0, spectral_shape=self._shapes[key])
             model = Model(ps)
-            jls[key] = JointLikelihood(model,data_list)
+            jls[key] = JointLikelihood(model, data_list)
 
         return jls
 
@@ -103,11 +93,6 @@ class AnalysisBuilder(object):
             bayes[key] = BayesianAnalysis(model, data_list)
 
         return bayes
-
-
-
-
-
 
 
 def test_gbm_tte_constructor():
@@ -150,18 +135,16 @@ def test_gbm_tte_joint_likelihood_fitting():
 
             jl = jls[key]
 
-
-            assert jl.analysis_type=='mle'
+            assert jl.analysis_type == 'mle'
 
             # no COV yet
             with pytest.raises(RuntimeError):
 
-                _=jl.covariance_matrix
+                _ = jl.covariance_matrix
 
             with pytest.raises(RuntimeError):
 
-                _=jl.correlation_matrix
-
+                _ = jl.correlation_matrix
 
             assert jl.current_minimum is None
             assert jl.minimizer_in_use == ('MINUIT', None)
@@ -169,9 +152,7 @@ def test_gbm_tte_joint_likelihood_fitting():
             assert jl.ncalls == 0
             assert jl.verbose == False
 
-
-
-            res,_ = jl.fit()
+            res, _ = jl.fit()
 
             assert jl.current_minimum is not None
 
