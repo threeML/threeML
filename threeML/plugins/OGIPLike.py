@@ -1078,7 +1078,7 @@ class OGIPLike(PluginPrototype):
 
         if self._rebinner is None:
 
-            return np.zeros_like(self._observed_counts)
+            return np.ones_like(self._observed_counts)
 
         else:
 
