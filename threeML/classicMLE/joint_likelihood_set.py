@@ -226,17 +226,19 @@ class JointLikelihoodSet(object):
 
             client = ParallelClient(**options_for_parallel_computation)
 
-            amr = client.interactive_map(self.worker, range(self._n_iterations))
+            # amr = client.interactive_map(self.worker, range(self._n_iterations))
+            #
+            # results = []
+            #
+            # with progress_bar(self._n_iterations) as p:
+            #
+            #     for i, res in enumerate(amr):
+            #
+            #         results.append(res)
+            #
+            #         p.increase()
 
-            results = []
-
-            with progress_bar(self._n_iterations) as p:
-
-                for i, res in enumerate(amr):
-
-                    results.append(res)
-
-                    p.increase()
+            results = client.execute_with_progress_bar(self.worker, range(self._n_iterations))
 
 
         else:

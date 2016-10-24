@@ -77,7 +77,7 @@ class Response(object):
 
             # Now let's see if we have a ARF, if yes, read it
 
-            if arf_file is not None:
+            if arf_file is not None and (arf_file.upper() != "NONE"):
 
                 arf_file = sanitize_filename(arf_file)
 
