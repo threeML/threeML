@@ -100,7 +100,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
             assert isinstance(pha_info[key], PHA)
 
         assert pha_info['pha'].background_file == 'test_bak.pha{1}'
-        assert pha_info['pha'].ancillary_file is None
+        assert pha_info['pha'].ancillary_file == 'NONE'
         assert pha_info['pha'].instrument == 'GBM_NAI_03'
         assert pha_info['pha'].mission == 'GLAST'
         assert pha_info['pha'].is_poisson() == True
@@ -117,20 +117,28 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
         assert pha_info['pha'].response_file.split('/')[-1] == 'glg_cspec_n3_bn080916009_v07.rsp'
         assert pha_info['pha'].scale_factor == 1.0
 
+        assert pha_info['bak'].background_file is None
+
         # Test that we cannot get a bak file
-
-        with pytest.raises(KeyError):
-
-            _ = pha_info['bak'].background_file
+        #
+        #
+        # with pytest.raises(KeyError):
+        #
+        #     _ = pha_info['bak'].background_file
 
         # Test that we cannot get a anc file
-        with pytest.raises(KeyError):
-
-            _ = pha_info['bak'].ancillary_file
+        # with pytest.raises(KeyError):
+        #
+        #     _ = pha_info['bak'].ancillary_file
 
             # Test that we cannot get a RSP file
-            with pytest.raises(KeyError):
-                _ = pha_info['bak'].response_file
+
+        assert pha_info['bak'].response_file is None
+
+        assert pha_info['bak'].ancillary_file is None
+
+        # with pytest.raises(AttributeError):
+        #      _ = pha_info['bak'].response_file
 
         assert pha_info['bak'].instrument == 'GBM_NAI_03'
         assert pha_info['bak'].mission == 'GLAST'
@@ -161,7 +169,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
             assert isinstance(pha_info[key], PHA)
 
         assert pha_info['pha'].background_file == 'test_bak.pha{1}'
-        assert pha_info['pha'].ancillary_file is None
+        assert pha_info['pha'].ancillary_file == 'NONE'
         assert pha_info['pha'].instrument == 'GBM_NAI_03'
         assert pha_info['pha'].mission == 'GLAST'
         assert pha_info['pha'].is_poisson() == True
@@ -177,20 +185,26 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
         assert pha_info['pha'].response_file.split('/')[-1] == 'glg_cspec_n3_bn080916009_v07.rsp'
         assert pha_info['pha'].scale_factor == 1.0
 
+        assert pha_info['bak'].background_file is None
+
         # Test that we cannot get a bak file
-
-        with pytest.raises(KeyError):
-
-            _ = pha_info['bak'].background_file
-
+        #
+        # with pytest.raises(KeyError):
+        #
+        #     _ = pha_info['bak'].background_file
+        #
         # Test that we cannot get a anc file
-        with pytest.raises(KeyError):
+        # with pytest.raises(KeyError):
+        #
+        #     _ = pha_info['bak'].ancillary_file
 
-            _ = pha_info['bak'].ancillary_file
+        assert pha_info['bak'].response_file is None
 
-            # Test that we cannot get a RSP file
-            with pytest.raises(KeyError):
-                _ = pha_info['bak'].response_file
+        assert pha_info['bak'].ancillary_file is None
+
+        # # Test that we cannot get a RSP file
+        # with pytest.raises(AttributeError):
+        #      _ = pha_info['bak'].response_file
 
         assert pha_info['bak'].instrument == 'GBM_NAI_03'
         assert pha_info['bak'].mission == 'GLAST'
