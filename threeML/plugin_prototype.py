@@ -17,6 +17,11 @@ class PluginPrototype(object):
                                              "operators symbols such as -, +, *, /" % name
 
         self._name = name
+
+        # This is just to make sure that the plugin is legal
+
+        assert isinstance(nuisance_parameters, dict)
+
         self._nuisance_parameters = nuisance_parameters
 
     def get_name(self):
