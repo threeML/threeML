@@ -875,7 +875,7 @@ class JointLikelihood(object):
 
     @property
     def minimizer_in_use(self):
-        return self._minimizer_name, self._minimizer_algorithm
+        return self._minimizer_name, self._minimizer_algorithm, self._minimizer_callback
 
     def restore_best_fit(self):
         """
