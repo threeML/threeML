@@ -61,7 +61,7 @@ def get_minimizer(minimizer_type):
 
     try:
 
-        return _minimizers[minimizer_type]
+        return _minimizers[minimizer_type.upper()]
 
     except KeyError:
 
@@ -409,11 +409,11 @@ class Minimizer(object):
         :return:
         """
 
-        self.function = function
-        self.parameters = parameters
-        self.Npar = len(self.parameters.keys())
-        self.ftol = ftol
-        self.verbosity = verbosity
+        self._function = function
+        self._parameters = parameters
+        self._Npar = len(self.parameters.keys())
+        self._ftol = ftol
+        self._verbosity = verbosity
 
         self._setup()
 
@@ -423,6 +423,31 @@ class Minimizer(object):
 
         self._algorithm_name = None
         self._m_log_like_minimum = None
+
+    @property
+    def function(self):
+
+        return self._function
+
+    @property
+    def parameters(self):
+
+        return self._parameters
+
+    @property
+    def Npar(self):
+
+        return self._Npar
+
+    @property
+    def ftol(self):
+
+        return self._ftol
+
+    @property
+    def verbosity(self):
+
+        return self._verbosity
 
     def _setup(self):
 
@@ -1020,9 +1045,13 @@ else:
 
     _minimizers["MULTINEST"] = MultinestMinimizer
 
-
 # Check that we have at least one minimizer available
 
 if len(_minimizers) == 0:
 
     raise SystemError("You do not have any minimizer available! You need to install at least iminuit.")
+
+# Add the GRID minimizer here since it needs at least one other minimizer
+
+from threeML.minimizer.grid_minimizer import GridMinimizer
+_minimizers["GRID"] = GridMinimizer
