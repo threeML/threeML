@@ -90,7 +90,11 @@ class JointLikelihood(object):
 
         self._current_minimum = None
 
+        # Null setup for minimizer
+
         self._minimizer = None
+
+        self._minimizer_callback = None
 
     @property
     def likelihood_model(self):
@@ -783,7 +787,7 @@ class JointLikelihood(object):
 
         return summed_log_likelihood * (-1)
 
-    def set_minimizer(self, minimizer, algorithm=None):
+    def set_minimizer(self, minimizer, algorithm=None, callback=None):
         """
         Set the minimizer to be used, among those available. At the moment these are supported:
 
@@ -794,6 +798,9 @@ class JointLikelihood(object):
         :param minimizer: the name of the new minimizer.
         :param algorithm: (optional) for the PYOPT minimizer, specify the algorithm among those available. See a list at
         http://www.pyopt.org/reference/optimizers.html . For the other minimizers this is ignored, if provided.
+        :param callback: (optional) a function which receives the minimizer instance as argument, which perform further
+        setup before the minimizer is used for the fit. This is for example needed for the GRID minimizer to setup the
+        grid
         :return: (none)
         """
 
@@ -829,6 +836,11 @@ class JointLikelihood(object):
             self._minimizer_name = "MULTINEST"
             self._minimizer_algorithm = None
 
+        elif minimizer.upper() == "GRID":
+
+            self._minimizer_name = "GRID"
+            self._minimizer_algorithm = None
+
         else:
 
             raise ValueError("Do not know minimizer %s. "
@@ -838,13 +850,26 @@ class JointLikelihood(object):
 
         self._minimizer_type = minimization.get_minimizer(self._minimizer_name)
 
+        # Set the callback (default is None)
+        self._minimizer_callback = callback
+
     def _get_minimizer(self, *args, **kwargs):
 
+        # Get an instance of the minimizer
+
         minimizer_instance = self._minimizer_type(*args, **kwargs)
+
+        # Set up the algorithm, if appropriate
 
         if self._minimizer_algorithm:
 
             minimizer_instance.set_algorithm(self._minimizer_algorithm)
+
+        # Call the callback if one is set
+
+        if self._minimizer_callback is not None:
+
+            self._minimizer_callback(minimizer_instance, self._likelihood_model)
 
         return minimizer_instance
 
