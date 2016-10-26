@@ -95,7 +95,7 @@ class LikelihoodRatioTest(object):
         :param continue_of_failure: whether to continue in the case a fit fails (False by default)
         :param save_pha: Saves pha files for reading into XSPEC as a cross check.
          Currently only supports OGIP data. This can become slow! (False by default)
-        :return: tuple (null. hyp. probability, frame with all results, frame with all likelihood values)
+        :return: tuple (null. hyp. probability, TSs, frame with all results, frame with all likelihood values)
         """
 
         self._save_pha = save_pha
