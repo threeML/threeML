@@ -71,6 +71,7 @@ class JointLikelihoodSet(object):
 
         self._minimizer = 'minuit'
         self._algorithm = None
+        self._callback = None
 
         # by default there is no second minimizer
 
@@ -81,10 +82,11 @@ class JointLikelihoodSet(object):
 
         self._continue_on_failure = False
 
-    def set_minimizer(self, minimizer, algorithm=None):
+    def set_minimizer(self, minimizer, algorithm=None, callback=None):
 
         self._minimizer = minimizer
         self._algorithm = algorithm
+        self._callback = callback
 
     def set_secondary_minimizer(self, minimizer, algorithm=None):
         """
@@ -158,7 +160,7 @@ class JointLikelihoodSet(object):
     def _fitter(self, jl):
 
         # Set the minimizer
-        jl.set_minimizer(self._minimizer, self._algorithm)
+        jl.set_minimizer(self._minimizer, self._algorithm, callback=self._callback)
 
         try:
 

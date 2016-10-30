@@ -95,7 +95,7 @@ class LikelihoodRatioTest(object):
         :param continue_of_failure: whether to continue in the case a fit fails (False by default)
         :param save_pha: Saves pha files for reading into XSPEC as a cross check.
          Currently only supports OGIP data. This can become slow! (False by default)
-        :return: tuple (null. hyp. probability, frame with all results, frame with all likelihood values)
+        :return: tuple (null. hyp. probability, TSs, frame with all results, frame with all likelihood values)
         """
 
         self._save_pha = save_pha
@@ -106,8 +106,8 @@ class LikelihoodRatioTest(object):
 
         # Use the same minimizer as in the first joint likelihood object
 
-        minimizer_name, algorithm = self._joint_likelihood_instance0.minimizer_in_use
-        jl_set.set_minimizer(minimizer_name, algorithm)
+        minimizer_name, algorithm, callback = self._joint_likelihood_instance0.minimizer_in_use
+        jl_set.set_minimizer(minimizer_name, algorithm, callback=callback)
 
         # Run the set
         data_frame, like_data_frame = jl_set.go(continue_on_failure=continue_on_failure)
