@@ -130,12 +130,14 @@ if has_parallel:
 
             return len(self.direct_view())
 
-        def interactive_map(self, worker, items_to_process):
+        def interactive_map(self, worker, items_to_process, ordered=True):
             """
             Subdivide the work among the active engines, taking care of dividing it among them
 
             :param worker: the function to be applied
             :param items_to_process: the items to apply the function to
+            :param ordered: whether to keep the order of output (default: True). Using False can be much faster, but
+            you need to have a way to re-estabilish the order if you care about it, after the fact.
             :return: a AsyncResult object
             """
 
@@ -168,7 +170,34 @@ if has_parallel:
 
                 chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
 
-            return lview.imap(worker, items_to_process, chunksize=chunk_size, ordered=False)
+            return lview.imap(worker, items_to_process, chunksize=chunk_size, ordered=ordered)
+
+        def execute_with_progress_bar(self, worker, items):
+
+            # Let's make a wrapper which will allow us to recover the order
+            def wrapper(x):
+
+                (id, item) = x
+
+                return (id, worker(item))
+
+            items_wrapped = [(i, item) for i, item in enumerate(items)]
+
+            amr = self.interactive_map(wrapper, items_wrapped, ordered=False)
+
+            results = []
+
+            n_iterations = len(items)
+
+            with progress_bar(n_iterations) as p:
+
+                for i, res in enumerate(amr):
+                    results.append(res)
+
+                    p.increase()
+
+            # Reorder the list according to the id
+            return map(lambda x:x[1], sorted(results, key=lambda x:x[0]))
 
         @staticmethod
         def fetch_progress_from_progress_bars(ar):

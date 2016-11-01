@@ -335,6 +335,8 @@ class EventList(object):
 
         return np.sqrt(total_counts)
 
+
+
     @property
     def bins(self):
 
@@ -424,13 +426,24 @@ class EventList(object):
         self._temporal_binner = TemporalBinner(self._arrival_times)
         self._temporal_binner.bin_by_custom(start, stop)
 
-    def bin_by_bayesian_blocks(self, start, stop, p0):
+    def bin_by_bayesian_blocks(self, start, stop, p0, use_background=False):
 
         events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
 
         self._temporal_binner = TemporalBinner(events)
 
-        self._temporal_binner.bin_by_bayesian_blocks(p0)
+
+        if use_background:
+
+            integral_background = lambda t:self.get_total_poly_count(start,t)
+
+            self._temporal_binner.bin_by_bayesian_blocks(p0,bkg_integral_distribution=integral_background)
+
+        else:
+
+            self._temporal_binner.bin_by_bayesian_blocks(p0)
+
+
 
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
@@ -575,7 +588,8 @@ class EventList(object):
                            is_poisson=is_poisson,
                            response_file=self._rsp_file,
                            mission=self._mission,
-                           instrument=self._instrument)
+                           instrument=self._instrument,
+                           quality=np.zeros_like(rates, dtype=int))  # default quality to all good
 
         return pha
 

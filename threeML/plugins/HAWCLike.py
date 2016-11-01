@@ -27,31 +27,29 @@ class HAWCLike(PluginPrototype):
         # Default is the latter, which is way faster. LIFF will decide
         # autonomously which ROI to use depending on the source model
 
-        self.fullsky = False
+        self._fullsky = False
 
         if 'fullsky' in kwargs.keys():
-            self.fullsky = bool(kwargs['fullsky'])
-
-        self.name = str(name)
+            self._fullsky = bool(kwargs['fullsky'])
 
         # Sanitize files in input (expand variables and so on)
 
-        self.maptree = os.path.abspath(sanitize_filename(maptree))
+        self._maptree = os.path.abspath(sanitize_filename(maptree))
 
-        self.response = os.path.abspath(sanitize_filename(response))
+        self._response = os.path.abspath(sanitize_filename(response))
 
         # Check that they exists and can be read
 
-        if not file_existing_and_readable(self.maptree):
+        if not file_existing_and_readable(self._maptree):
             raise IOError("MapTree %s does not exist or is not readable" % maptree)
 
-        if not file_existing_and_readable(self.response):
+        if not file_existing_and_readable(self._response):
             raise IOError("Response %s does not exist or is not readable" % response)
 
         # Post-pone the creation of the LIFF instance to when
         # we have the likelihood model
 
-        self.instanced = False
+        self._instanced = False
 
         # Number of transits
         if n_transits is not None:
@@ -64,8 +62,8 @@ class HAWCLike(PluginPrototype):
 
             # Default value for minChannel and maxChannel
 
-        self.minChannel = int(defaultMinChannel)
-        self.maxChannel = int(defaultMaxChannel)
+        self._min_channel = int(defaultMinChannel)
+        self._max_channel = int(defaultMaxChannel)
 
         # By default the fit of the CommonNorm is deactivated
 
@@ -73,32 +71,27 @@ class HAWCLike(PluginPrototype):
 
         # This is to keep track of whether the user defined a ROI or not
 
-        self.roi_ra = None
-
-        # Further setup
-
-        self.__setup()
-
-    def set_ROI(self, ra, dec, radius, fixedROI=False):
-
-        self.roi_ra = ra
-        self.roi_dec = dec
-
-        self.roi_radius = radius
-
-        self.fixedROI = fixedROI
-
-    def __setup(self):
-
-        # I put this here so I can use it both from the __init__ both from
-        # the __setstate__ methods
+        self._roi_ra = None
 
         # Create the dictionary of nuisance parameters
 
-        self.nuisanceParameters = collections.OrderedDict()
-        self.nuisanceParameters['CommonNorm'] = Parameter("CommonNorm", 1.0, min_value=0.5, max_value=1.5,
-                                                          delta=0.01)
-        self.nuisanceParameters['CommonNorm'].fix = True
+        self._nuisance_parameters = collections.OrderedDict()
+
+        param_name = "%s_ComNorm" % name
+
+        self._nuisance_parameters[param_name] = Parameter(param_name, 1.0, min_value=0.5, max_value=1.5, delta=0.01)
+        self._nuisance_parameters[param_name].fix = True
+
+        super(HAWCLike, self).__init__(name, self._nuisance_parameters)
+
+    def set_ROI(self, ra, dec, radius, fixed_ROI=False):
+
+        self._roi_ra = ra
+        self._roi_dec = dec
+
+        self._roi_radius = radius
+
+        self._fixed_ROI = fixed_ROI
 
     def __getstate__(self):
 
@@ -112,18 +105,18 @@ class HAWCLike(PluginPrototype):
         d = {}
 
         d['name'] = self.name
-        d['maptree'] = self.maptree
-        d['response'] = self.response
-        d['model'] = self.model
+        d['maptree'] = self._maptree
+        d['response'] = self._response
+        d['model'] = self._model
         d['n_transits'] = self._n_transits
-        d['minChannel'] = self.minChannel
-        d['maxChannel'] = self.maxChannel
+        d['minChannel'] = self._min_channel
+        d['maxChannel'] = self._max_channel
 
-        d['roi_ra'] = self.roi_ra
+        d['roi_ra'] = self._roi_ra
 
-        if self.roi_ra is not None:
-            d['roi_dec'] = self.roi_dec
-            d['roi_radius'] = self.roi_radius
+        if self._roi_ra is not None:
+            d['roi_dec'] = self._roi_dec
+            d['roi_radius'] = self._roi_radius
 
         return d
 
@@ -151,10 +144,10 @@ class HAWCLike(PluginPrototype):
 
     def set_active_measurements(self, minChannel, maxChannel):
 
-        self.minChannel = int(minChannel)
-        self.maxChannel = int(maxChannel)
+        self._min_channel = int(minChannel)
+        self._max_channel = int(maxChannel)
 
-        if self.instanced:
+        if self._instanced:
             sys.stderr.write("Since the plugins was already used before, the change in active measurements" +
                              "will not be effective until you create a new JointLikelihood or Bayesian" +
                              "instance")
@@ -166,29 +159,29 @@ class HAWCLike(PluginPrototype):
 
         # Instance the python - C++ bridge
 
-        self.model = likelihood_model_instance
+        self._model = likelihood_model_instance
 
-        self.pymodel = pyToCppModelInterfaceCache()
+        self._pymodel = pyToCppModelInterfaceCache()
 
         # Set boundaries for extended source
         # NOTE: we assume that these boundaries do not change during the fit
 
-        for id in range(self.model.get_number_of_extended_sources()):
+        for id in range(self._model.get_number_of_extended_sources()):
 
-            lon_min, lon_max, lat_min, lat_max = self.model.get_extended_source_boundaries(id)
+            lon_min, lon_max, lat_min, lat_max = self._model.get_extended_source_boundaries(id)
 
-            self.pymodel.setExtSourceBoundaries(id, lon_min, lon_max, lat_min, lat_max)
+            self._pymodel.setExtSourceBoundaries(id, lon_min, lon_max, lat_min, lat_max)
 
         # Set positions for point source
         # NOTE: this should not change so much that the response is not valid anymore
 
-        n_point_sources = self.model.get_number_of_point_sources()
+        n_point_sources = self._model.get_number_of_point_sources()
 
         for id in range(n_point_sources):
 
-            this_ra, this_dec = self.model.get_point_source_position(id)
+            this_ra, this_dec = self._model.get_point_source_position(id)
 
-            self.pymodel.setPtsSourcePosition(id, this_ra, this_dec)
+            self._pymodel.setPtsSourcePosition(id, this_ra, this_dec)
 
         # Now init the HAWC LIFF software
 
@@ -199,30 +192,30 @@ class HAWCLike(PluginPrototype):
 
             if self._n_transits is None:
 
-                self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree,
-                                                     self.response,
-                                                     self.pymodel,
-                                                     self.minChannel,
-                                                     self.maxChannel,
-                                                     self.fullsky)
+                self._theLikeHAWC = liff_3ML.LikeHAWC(self._maptree,
+                                                      self._response,
+                                                      self._pymodel,
+                                                      self._min_channel,
+                                                      self._max_channel,
+                                                      self._fullsky)
 
             else:
 
-                self.theLikeHAWC = liff_3ML.LikeHAWC(self.maptree,
-                                                     self._n_transits,
-                                                     self.response,
-                                                     self.pymodel,
-                                                     self.minChannel,
-                                                     self.maxChannel,
-                                                     self.fullsky)
+                self._theLikeHAWC = liff_3ML.LikeHAWC(self._maptree,
+                                                      self._n_transits,
+                                                      self._response,
+                                                      self._pymodel,
+                                                      self._min_channel,
+                                                      self._max_channel,
+                                                      self._fullsky)
 
 
 
-            if self.roi_ra is None and self.fullsky:
+            if self._roi_ra is None and self._fullsky:
                 raise RuntimeError("You have to define a ROI with the setROI method")
 
-            if self.roi_ra is not None and self.fullsky:
-                self.theLikeHAWC.SetROI(self.roi_ra, self.roi_dec, self.roi_radius, self.fixedROI)
+            if self._roi_ra is not None and self._fullsky:
+                self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._roi_radius, self._fixed_ROI)
 
         except:
 
@@ -233,32 +226,26 @@ class HAWCLike(PluginPrototype):
 
         else:
 
-            self.instanced = True
+            self._instanced = True
 
         # Now set a callback in the CommonNorm parameter, so that if the user or the fit
         # engine or the Bayesian sampler change the CommonNorm value, the change will be
         # propagated to the LikeHAWC instance
 
-        self.nuisanceParameters['CommonNorm'].add_callback(self._CommonNormCallback)
+        self._nuisance_parameters.values()[0].add_callback(self._CommonNormCallback)
 
         # Update to start the computation of positions and energies inside LiFF
 
-        self.theLikeHAWC.UpdateSources()
+        self._theLikeHAWC.UpdateSources()
 
         # Get the energies needed by LiFF (the same for all sources)
         # (note that the output is in MeV, while we need keV)
 
-        self._energies = np.array(self.theLikeHAWC.GetEnergies(False)) * 1000.0
+        self._energies = np.array(self._theLikeHAWC.GetEnergies(False)) * 1000.0
 
     def _CommonNormCallback(self, value):
 
-        self.theLikeHAWC.SetCommonNorm(value)
-
-    def get_name(self):
-        '''
-        Return a name for this dataset (likely set during the constructor)
-        '''
-        return self.name
+        self._theLikeHAWC.SetCommonNorm(value)
 
     def activate_CommonNorm(self):
 
@@ -270,23 +257,14 @@ class HAWCLike(PluginPrototype):
 
     def _fill_model_cache(self):
 
-        n_extended = self.model.get_number_of_extended_sources()
-
-        # This is needed to update extended sources
-
-        #if n_extended > 0:
-
-        #    self.theLikeHAWC.ResetSources(self.pymodel, self.nuisanceParameters['CommonNorm'].value)
-
-        # Empty the cache
-        # self.pymodel.reset()
+        n_extended = self._model.get_number_of_extended_sources()
 
         # Pre-compute all the model
 
         for id in range(n_extended):
 
             # Get the positions for this extended source
-            positions = np.array(self.theLikeHAWC.GetPositions(id, False), order='C')
+            positions = np.array(self._theLikeHAWC.GetPositions(id, False), order='C')
 
             ras = positions[:, 0]
             decs = positions[:, 1]
@@ -295,7 +273,7 @@ class HAWCLike(PluginPrototype):
             # We need to multiply by 1000 because the cube is in "per keV" while
             # LiFF needs "per MeV"
 
-            cube = self.model.get_extended_source_fluxes(id, ras, decs, self._energies) * 1000.0
+            cube = self._model.get_extended_source_fluxes(id, ras, decs, self._energies) * 1000.0
 
             # Make sure that cube is in C order (and not fortran order), otherwise
             # the cache will silently fail!
@@ -316,20 +294,20 @@ class HAWCLike(PluginPrototype):
             assert decs.flags.c_contiguous
             assert cube.flags.c_contiguous
 
-            self.pymodel.setExtSourceCube(id, cube, ras, decs)
+            self._pymodel.setExtSourceCube(id, cube, ras, decs)
 
-        n_point_sources = self.model.get_number_of_point_sources()
+        n_point_sources = self._model.get_number_of_point_sources()
 
         for id in range(n_point_sources):
 
             # The 1000.0 factor is due to the fact that this diff. flux here is in
             # 1 / (kev cm2 s) while LiFF needs it in 1 / (MeV cm2 s)
 
-            this_spectrum = self.model.get_point_source_fluxes(id, self._energies) * 1000.0
+            this_spectrum = self._model.get_point_source_fluxes(id, self._energies) * 1000.0
 
-            this_ra, this_dec = self.model.get_point_source_position(id)
+            this_ra, this_dec = self._model.get_point_source_position(id)
 
-            self.pymodel.setPtsSourcePosition(id, this_ra, this_dec)
+            self._pymodel.setPtsSourcePosition(id, this_ra, this_dec)
 
             if not this_spectrum.flags.c_contiguous:
 
@@ -337,7 +315,7 @@ class HAWCLike(PluginPrototype):
 
             assert this_spectrum.flags.c_contiguous
 
-            self.pymodel.setPtsSourceSpectrum(id, this_spectrum)
+            self._pymodel.setPtsSourceSpectrum(id, this_spectrum)
 
     def get_log_like(self):
 
@@ -348,7 +326,7 @@ class HAWCLike(PluginPrototype):
 
         self._fill_model_cache()
 
-        logL = self.theLikeHAWC.getLogLike(self.fitCommonNorm)
+        logL = self._theLikeHAWC.getLogLike(self.fitCommonNorm)
 
         return logL
 
@@ -361,7 +339,7 @@ class HAWCLike(PluginPrototype):
 
         self._fill_model_cache()
 
-        TS = self.theLikeHAWC.calcTS(self.fitCommonNorm)
+        TS = self._theLikeHAWC.calcTS(self.fitCommonNorm)
 
         return TS
 
@@ -371,15 +349,15 @@ class HAWCLike(PluginPrototype):
         are no nuisance parameters
         '''
 
-        return self.nuisanceParameters.keys()
+        return self._nuisance_parameters.keys()
 
     def inner_fit(self):
 
-        self.theLikeHAWC.SetBackgroundNormFree(self.fitCommonNorm)
+        self._theLikeHAWC.SetBackgroundNormFree(self.fitCommonNorm)
 
         logL = self.get_log_like()
 
-        self.nuisanceParameters['CommonNorm'].value = self.theLikeHAWC.CommonNorm()
+        self._nuisance_parameters.values()[0].value = self._theLikeHAWC.CommonNorm()
 
         return logL
 
@@ -387,16 +365,16 @@ class HAWCLike(PluginPrototype):
 
         figs = []
 
-        nsrc = self.model.get_number_of_point_sources()
+        nsrc = self._model.get_number_of_point_sources()
 
         for srcid in range(nsrc):
-            ra, dec = self.model.get_point_source_position(srcid)
+            ra, dec = self._model.get_point_source_position(srcid)
 
-            model = np.array(self.theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
+            model = np.array(self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
 
-            signal = np.array(self.theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
+            signal = np.array(self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
 
-            bkg = np.array(self.theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
+            bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
 
             total = signal + bkg
 
@@ -407,7 +385,7 @@ class HAWCLike(PluginPrototype):
 
             sub = plt.subplot(gs[0])
 
-            nHitBins = np.arange(self.minChannel, self.maxChannel + 1)
+            nHitBins = np.arange(self._min_channel, self._max_channel + 1)
 
             sub.errorbar(nHitBins, total, yerr=np.sqrt(total),
                          capsize=0, color='black', label='Observation',
@@ -452,10 +430,10 @@ class HAWCLike(PluginPrototype):
 
         return figs
 
-    def write_model_map(self, fileName):
+    def write_model_map(self, fileName, poisson=False):
 
-        self.theLikeHAWC.WriteModelMap(fileName)
+        self._theLikeHAWC.WriteModelMap(fileName, poisson)
 
     def write_residual_map(self, fileName):
 
-        self.theLikeHAWC.WriteResidualMap(fileName)
+        self._theLikeHAWC.WriteResidualMap(fileName)

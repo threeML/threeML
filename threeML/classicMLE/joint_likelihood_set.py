@@ -71,6 +71,7 @@ class JointLikelihoodSet(object):
 
         self._minimizer = 'minuit'
         self._algorithm = None
+        self._callback = None
 
         # by default there is no second minimizer
 
@@ -81,10 +82,11 @@ class JointLikelihoodSet(object):
 
         self._continue_on_failure = False
 
-    def set_minimizer(self, minimizer, algorithm=None):
+    def set_minimizer(self, minimizer, algorithm=None, callback=None):
 
         self._minimizer = minimizer
         self._algorithm = algorithm
+        self._callback = callback
 
     def set_secondary_minimizer(self, minimizer, algorithm=None):
         """
@@ -158,7 +160,7 @@ class JointLikelihoodSet(object):
     def _fitter(self, jl):
 
         # Set the minimizer
-        jl.set_minimizer(self._minimizer, self._algorithm)
+        jl.set_minimizer(self._minimizer, self._algorithm, callback=self._callback)
 
         try:
 
@@ -226,17 +228,19 @@ class JointLikelihoodSet(object):
 
             client = ParallelClient(**options_for_parallel_computation)
 
-            amr = client.interactive_map(self.worker, range(self._n_iterations))
+            # amr = client.interactive_map(self.worker, range(self._n_iterations))
+            #
+            # results = []
+            #
+            # with progress_bar(self._n_iterations) as p:
+            #
+            #     for i, res in enumerate(amr):
+            #
+            #         results.append(res)
+            #
+            #         p.increase()
 
-            results = []
-
-            with progress_bar(self._n_iterations) as p:
-
-                for i, res in enumerate(amr):
-
-                    results.append(res)
-
-                    p.increase()
+            results = client.execute_with_progress_bar(self.worker, range(self._n_iterations))
 
 
         else:
