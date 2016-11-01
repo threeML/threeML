@@ -103,12 +103,6 @@ class JointLikelihoodSet(object):
 
     def worker(self, interval):
 
-        # Print a message to divide one interval from another
-
-        log.info("\n\n\n==========================================")
-        log.info("JointLikelihoodSet: processing interval %s" % interval)
-        log.info("==========================================\n\n")
-
         # Get the dataset for this interval
 
         this_data = self._data_getter(interval)  # type: DataList
