@@ -7,6 +7,7 @@ from astromodels.functions.functions import Uniform_prior, Log_uniform_prior
 
 from threeML.minimizer.minimization import Minimizer
 from threeML.io.file_utils import temporary_directory
+from threeML.io.suppress_stdout import suppress_stdout
 
 class MultinestMinimizer(Minimizer):
 
@@ -117,7 +118,7 @@ class MultinestMinimizer(Minimizer):
 
             outputfiles_basename = os.path.join(mcmc_chains_out_dir,'fit-')
 
-            print("\nMultinest is exploring the parameter space...\n")
+            # print("\nMultinest is exploring the parameter space...\n")
 
             # Reset the likelihood values
             self._log_like_values = []
@@ -132,8 +133,13 @@ class MultinestMinimizer(Minimizer):
                                       resume=False)
 
             # Use PyMULTINEST analyzer to gather parameter info
-            multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
-                                                              outputfiles_basename=outputfiles_basename)
+
+            # NOTE: I encapsulate this to avoid the output in the constructor of Analyzer
+
+            with suppress_stdout():
+
+                multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
+                                                                  outputfiles_basename=outputfiles_basename)
 
             # Get the function value from the chain
             func_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
