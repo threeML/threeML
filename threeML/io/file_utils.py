@@ -2,6 +2,7 @@ import os
 from contextlib import contextmanager
 import tempfile
 import shutil
+import uuid
 from threeML.exceptions.custom_exceptions import custom_warnings
 
 
@@ -44,6 +45,15 @@ def sanitize_filename(filename, abspath=False):
 
         return sanitized
 
+
+def get_random_unique_name():
+    """
+    Returns a name which is random and (with extremely high probability) unique
+
+    :return: random file name
+    """
+
+    return str(uuid.uuid4().hex)
 
 @contextmanager
 def temporary_directory(prefix='', within_directory=None):
