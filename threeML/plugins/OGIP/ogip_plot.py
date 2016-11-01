@@ -234,13 +234,43 @@ def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
         new_energy_min, new_energy_max = this_rebinner.get_new_start_and_stop(energy_min, energy_max)
         new_chan_width = new_energy_max - new_energy_min
 
-        mean_energy = np.mean([new_energy_min, new_energy_max], axis=0)
-        delta_energy = new_energy_max - new_energy_min
+        # mean_energy = np.mean([new_energy_min, new_energy_max], axis=0)
+
+        # For each bin find the weighted average of the channel center
+        mean_energy = []
+        delta_energy = [[],[]]
+        mean_energy_unrebinned = (energy_max + energy_min)/2.0
+
+        for e_min, e_max in zip(new_energy_min, new_energy_max):
+
+            # Find all channels in this rebinned bin
+            idx = (mean_energy_unrebinned >= e_min) & (mean_energy_unrebinned <= e_max)
+
+            # Find the rates for these channels
+            r = src_rate[idx]
+
+            if r.max() == 0:
+
+                # All empty, cannot weight
+                this_mean_energy = (e_min + e_max) / 2.0
+
+            else:
+
+                # Do the weighted average of the mean energies
+                weights = r / np.sum(r)
+
+                this_mean_energy = np.average(mean_energy_unrebinned[idx], weights=weights)
+
+            # Compute "errors" for X (which aren't really errors, just to mark the size of the bin)
+
+            delta_energy[0].append(this_mean_energy - e_min)
+            delta_energy[1].append(e_max - this_mean_energy)
+            mean_energy.append(this_mean_energy)
 
         ax.errorbar(mean_energy,
                     new_rate / new_chan_width,
                     yerr=new_err / new_chan_width,
-                    xerr=delta_energy / 2.0,
+                    xerr=delta_energy,
                     fmt='.',
                     markersize=3,
                     linestyle='',
