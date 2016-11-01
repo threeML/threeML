@@ -63,6 +63,9 @@ class JointLikelihood(object):
             dataset.set_model(self._likelihood_model)
 
             # Now get the nuisance parameters from the data and add them to the model
+            # NOTE: it is important that this is *after* the setting of the model, as some
+            # plugins might need to adjust the number of nuisance parameters depending on the
+            # likelihood model
 
             for parameter_name, parameter in dataset.nuisance_parameters.items():
 
