@@ -14,7 +14,7 @@ class GridMinimizer(Minimizer):
 
     def __init__(self, function, parameters, ftol=1e3, verbosity=1):
 
-        self._miminizer = None
+        self._minimizer = None
         self._grid = collections.OrderedDict()
 
         # Keep a copy of the original values for the parameters
