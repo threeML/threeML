@@ -1,23 +1,30 @@
+import numpy
+import collections
+import uuid
+import os
+
 import UnbinnedAnalysis
 import BinnedAnalysis
 import pyLikelihood as pyLike
-import numpy
 from GtBurst import LikelihoodComponent
 from GtBurst import FuncFactory
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
 from threeML.plugin_prototype import PluginPrototype
+from threeML.io.file_utils import get_random_unique_name
 from astromodels import Parameter
 from threeML.plugins.gammaln import logfactorial
+from threeML.io.suppress_stdout import suppress_stdout
 
 __instrument_name = "Fermi LAT (standard classes)"
 
 
 class myPointSource(LikelihoodComponent.GenericSource):
-    def __init__(self, source, name):
+    def __init__(self, source, name, temp_file):
         self.source = source
         self.source.name = name
+        self.temp_file = temp_file
 
 
 class LikelihoodModelConverter(object):
@@ -41,11 +48,16 @@ class LikelihoodModelConverter(object):
         # on the disk
 
         allSourcesForPyLike = []
+        temp_files = []
 
         nPtsrc = self.likelihoodModel.get_number_of_point_sources()
 
         for ip in range(nPtsrc):
-            allSourcesForPyLike.append(self._makeFileSpectrum(ip))
+
+            this_src = self._makeFileSpectrum(ip)
+
+            allSourcesForPyLike.append(this_src)
+            temp_files.append(this_src.temp_file)
 
         # Now the same for extended sources
 
@@ -62,8 +74,11 @@ class LikelihoodModelConverter(object):
 
         allSourcesForPyLike.append(iso)
 
+        # Get a temporary filename which is guaranteed to be unique
+        self._unique_filename = get_random_unique_name()
+
         gal = LikelihoodComponent.GalaxyAndExtragalacticDiffuse(
-            self.irfs, ra, dec, 2.5 * roi)
+            self.irfs, ra, dec, 2.5 * roi, cutout_name=self._unique_filename)
         gal.source.spectrum.Value.max = 1.5
         gal.source.spectrum.Value.min = 0.5
         gal.source.spectrum.setAttributes()
@@ -76,6 +91,8 @@ class LikelihoodModelConverter(object):
         xml.addSources(*allSourcesForPyLike)
         xml.writeXML(xmlfile)
 
+        return temp_files
+
     def _makeFileSpectrum(self, ip):
 
         name = self.likelihoodModel.get_point_source_name(ip)
@@ -83,7 +100,7 @@ class LikelihoodModelConverter(object):
         values = self.likelihoodModel.get_point_source_fluxes(ip,
                                                               self.energiesKeV)
 
-        tempName = "__%s.txt" % name
+        tempName = "__%s_%s.txt" % (name, get_random_unique_name())
 
         with open(tempName, "w+") as f:
             for e, v in zip(self.energiesKeV, values):
@@ -126,13 +143,17 @@ class LikelihoodModelConverter(object):
         src.spatialModel.setAttributes()
         src.setAttributes()
 
-        return myPointSource(src, name)
+        return myPointSource(src, name, tempName)
 
 
 class FermiLATLike(PluginPrototype):
+
     def __init__(self, name, eventFile, ft2File, livetimeCube, kind, *args):
 
-        self.name = name
+        # Initially the nuisance parameters dict is empty, as we don't know yet
+        # the likelihood model. They will be updated in set_model
+
+        super(FermiLATLike, self).__init__(name, {})
 
         # Read the ROI cut
         cc = pyLike.RoiCuts()
@@ -203,14 +224,17 @@ class FermiLATLike(PluginPrototype):
         Set the model to be used in the joint minimization.
         Must be a LikelihoodModel instance.
         '''
-        self.lmc = LikelihoodModelConverter(likelihoodModel,
-                                            self.irf)
 
-        self.lmc.setFileSpectrumEnergies(self.emin, self.emax, self.Nenergies)
+        with suppress_stdout():
 
-        xmlFile = '__xmlFile.xml'
+            self.lmc = LikelihoodModelConverter(likelihoodModel,
+                                                self.irf)
 
-        self.lmc.writeXml(xmlFile, self.ra, self.dec, self.rad)
+            self.lmc.setFileSpectrumEnergies(self.emin, self.emax, self.Nenergies)
+
+            xmlFile = '%s.xml' % get_random_unique_name()
+
+            temp_files = self.lmc.writeXml(xmlFile, self.ra, self.dec, self.rad)
 
         if (self.kind == "BINNED"):
             self.like = BinnedAnalysis.BinnedAnalysis(self.obs,
@@ -229,8 +253,19 @@ class FermiLATLike(PluginPrototype):
         # in the XML file will be chanded if needed
         dumb = self.get_log_like()
 
+        # Since now the Galactic template is in RAM, we can remove the temporary file
+        os.remove(self.lmc._unique_filename)
+        os.remove(xmlFile)
+
+        # Delete temporary spectral files
+        for temp_file in temp_files:
+
+            os.remove(temp_file)
+
         # Build the list of the nuisance parameters
-        self._setNuisanceParameters()
+        new_nuisance_parameters = self._setNuisanceParameters()
+
+        self.update_nuisance_parameters(new_nuisance_parameters)
 
     pass
 
@@ -245,6 +280,10 @@ class FermiLATLike(PluginPrototype):
     def setInnerMinimization(self, s):
 
         self.innerMinimization = bool(s)
+
+        for parameter in self.nuisance_parameters:
+
+            self.nuisance_parameters[parameter].free = self.innerMinimization
 
     def inner_fit(self):
         '''
@@ -444,53 +483,55 @@ class FermiLATLike(PluginPrototype):
             thisNamesV = pyLike.StringVector()
             thisSrc = self.like.logLike.getSource(srcName)
             thisSrc.spectrum().getFreeParamNames(thisNamesV)
-            thisNames = map(lambda x: "%s-%s" % (srcName, x), thisNamesV)
+            thisNames = map(lambda x: "%s_%s" % (srcName, x), thisNamesV)
             freeParamNames.extend(thisNames)
         pass
 
-        self.nuisanceParameters = {}
+        nuisanceParameters = collections.OrderedDict()
 
         for name in freeParamNames:
+
             value = self.getNuisanceParameterValue(name)
             bounds = self.getNuisanceParameterBounds(name)
             delta = self.getNuisanceParameterDelta(name)
-            self.nuisanceParameters[name] = Parameter(name, value, min_value=bounds[0],
-                                                      max_value=bounds[1], delta=delta)
-        pass
 
-    pass
+            nuisanceParameters["%s_%s" % (self.name, name)] = Parameter("%s_%s" % (self.name, name),
+                                                                        value,
+                                                                        min_value=bounds[0],
+                                                                        max_value=bounds[1],
+                                                                        delta=delta)
 
-    def get_nuisance_parameters(self):
-        '''
-        Return a list of nuisance parameters. Return an empty list if there
-        are no nuisance parameters
-        '''
-        return self.nuisanceParameters
+            nuisanceParameters["%s_%s" % (self.name, name)].free = self.innerMinimization
+
+            # Prepare a callback which will set the parameter value in the pyLikelihood object if it gets
+            # changed
+            def this_callback(parameter):
+
+                _, src, pname = parameter.name.split("_")
+
+                try:
+
+                    self.like.model[src].funcs['Spectrum'].getParam(pname).setValue(parameter.value)
+
+                except:
+
+                    import pdb;pdb.set_trace()
+
+            nuisanceParameters["%s_%s" % (self.name, name)].add_callback(this_callback)
+
+        return nuisanceParameters
 
     def getNuisanceParameterValue(self, paramName):
-        src, pname = paramName.split("-")
+        src, pname = paramName.split("_")
         return self.like.model[src].funcs['Spectrum'].getParam(pname).getValue()
 
-    pass
 
     def getNuisanceParameterBounds(self, paramName):
-        src, pname = paramName.split("-")
+        src, pname = paramName.split("_")
         return list(self.like.model[src].funcs['Spectrum'].getParam(pname).getBounds())
 
-    pass
-
     def getNuisanceParameterDelta(self, paramName):
-        src, pname = paramName.split("-")
+        src, pname = paramName.split("_")
         value = self.like.model[src].funcs['Spectrum'].getParam(pname).getValue()
         return value / 100.0
 
-    pass
-
-    def setNuisanceParameterValue(self, paramName, value):
-        src, pname = paramName.split("-")
-        self.like.model[src].funcs['Spectrum'].getParam(pname).setValue(value)
-
-    pass
-
-
-pass
