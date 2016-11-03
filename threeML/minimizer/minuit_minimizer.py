@@ -349,6 +349,7 @@ class MinuitMinimizer(Minimizer):
         self.restore_best_fit()
 
         if not self._migrad_has_converged():
+            
             raise CannotComputeErrors("MIGRAD results not valid, cannot compute errors. Did you run the fit first ?")
 
         try:
