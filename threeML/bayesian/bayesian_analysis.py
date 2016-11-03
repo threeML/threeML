@@ -137,6 +137,28 @@ class BayesianAnalysis(object):
         """
         return self._log_like_values
 
+    @property
+    def log_probability_values(self):
+        """
+        Returns the value of the log_probability (posterior) found by the bayesian sampler while sampling from the posterior. If
+        you need to find the values of the parameters which generated a given value of the log. likelihood, remember
+        that the samples accessible through the property .raw_samples are ordered in the same way as the vector
+        returned by this method.
+
+        :return: a vector of log probabilty values
+        """
+
+        return self._log_probability_values
+
+    @property
+    def log_marginal_likelihood(self):
+        """
+        Return the log marginal likelihood (evidence) if computed
+        :return:
+        """
+
+        return self._marginal_likelihood
+
     def sample(self, n_walkers, burn_in, n_samples):
         """
         Sample the posterior with the Goodman & Weare's Affine Invariant Markov chain Monte Carlo
@@ -164,7 +186,7 @@ class BayesianAnalysis(object):
             view = c[:]
 
             sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                            self._get_posterior,
+                                            self.get_posterior,
                                             pool=view)
 
             # Sampling with progress in parallel is super-slow, so let's
@@ -174,7 +196,7 @@ class BayesianAnalysis(object):
         else:
 
             sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                            self._get_posterior)
+                                            self.get_posterior)
 
         print("Running burn-in of %s samples...\n" % burn_in)
 
@@ -201,11 +223,17 @@ class BayesianAnalysis(object):
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
-        log_prior = map(lambda x: self._logp(x), self._raw_samples)
+        log_prior = map(lambda x: self._log_prior(x), self._raw_samples)
 
         # Now we get the log posterior and we remove the log prior
 
         self._log_like_values = sampler.flatlnprobability - log_prior
+
+        # we also want to store the log probability
+
+        self._log_probability_values = sampler.flatlnprobability
+
+        self._marginal_likelihood = None
 
         self._build_samples_dictionary()
 
@@ -228,7 +256,7 @@ class BayesianAnalysis(object):
 
         n_dim = len(free_parameters.keys())
 
-        sampler = emcee.PTSampler(n_temps, n_walkers, n_dim, self._log_like, self._logp)
+        sampler = emcee.PTSampler(n_temps, n_walkers, n_dim, self._log_like, self._log_prior)
 
         # Get one starting point for each temperature
 
@@ -255,6 +283,12 @@ class BayesianAnalysis(object):
         # Now build the _samples dictionary
 
         self._raw_samples = sampler.flatchain.reshape(-1, sampler.flatchain.shape[-1])
+
+        self._log_probability_values = None
+
+        self._log_like_values = None
+
+        self._marginal_likelihood = None
 
         self._build_samples_dictionary()
 
@@ -332,7 +366,19 @@ class BayesianAnalysis(object):
 
         self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
 
+        # now get the log probability
+
+        self._log_probability_values = self.get_posterior(self._raw_samples)
+
         self._build_samples_dictionary()
+
+        # now get the marginal likelihood
+
+        self._marginal_likelihood = multinest_analyzer.get_stats()['global evidence'] / np.log(10.)
+
+
+
+
 
         return self.samples
 
@@ -958,7 +1004,7 @@ class BayesianAnalysis(object):
 
         self._free_parameters = self._likelihood_model.free_parameters
 
-    def _get_posterior(self, trial_values):
+    def get_posterior(self, trial_values):
         """Compute the posterior for the normal sampler"""
 
         # Assign this trial values to the parameters and
@@ -1063,7 +1109,7 @@ class BayesianAnalysis(object):
 
         return p0
 
-    def _logp(self, trial_values):
+    def _log_prior(self, trial_values):
         """Compute the sum of log-priors, used in the parallel tempering sampling"""
 
         # Compute the sum of the log-priors

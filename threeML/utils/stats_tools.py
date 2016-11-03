@@ -60,7 +60,7 @@ def dic(bayesian_trace):
 
     mean_of_free_parameters = np.mean(bayesian_trace.raw_samples, axis=0)
 
-    deviance_at_mean = -2. * bayesian_trace.log_probability(mean_of_free_parameters)[0]
+    deviance_at_mean = -2. * bayesian_trace.get_posterior(mean_of_free_parameters)
 
     return 2 * mean_deviance - deviance_at_mean
 
@@ -70,8 +70,9 @@ class ModelComparison(object):
         self._analysis_container = analyses
 
         # First make sure that it is all bayesian or all MLE
-        if (np.unique([a._analysis_type for a in analyses])).shape[0] > 1:
-            raise RuntimeError("Only all Bayesian or all MLE analyses are allowed. Not a mixture!")
+        assert (np.unique([a.analysis_type for a in analyses])).shape[
+                   0] == 1, "Only all Bayesian or all MLE analyses are allowed. Not a mixture!"
+
 
         self._analysis_type = analyses[0].analysis_type
 
@@ -256,7 +257,7 @@ class ModelComparison(object):
                 stat_table['AIC'].append(None)
                 stat_table['BIC'].append(None)
                 stat_table['DIC'].append(None)
-                stat_table['log10 (Z)'].append(analysis.log10_evidence)
+                stat_table['log10 (Z)'].append(analysis.log_marginal_likelihood)
                 # stat_table['WAIC'].append(this_waic)
                 stat_table['-2 ln(like)'].append(None)
                 stat_table['N. Free Parameters'].append(n_free_params)
@@ -266,7 +267,14 @@ class ModelComparison(object):
 
             else:
 
-                this_dic = dic(analysis)
+                if analysis.log_probability_values is not None:
+
+                    this_dic = dic(analysis)
+
+                else:
+
+                    this_dic = None
+
                 # this_waic = waic(analysis)
 
                 # We will now compute the AIC/BIC/ etc. at the max of the posterior likelihood
@@ -281,7 +289,7 @@ class ModelComparison(object):
                 stat_table['AIC'].append(this_aic)
                 stat_table['BIC'].append(this_bic)
                 stat_table['DIC'].append(this_dic)
-                stat_table['log10 (Z)'].append(analysis.log10_evidence)
+                stat_table['log10 (Z)'].append(analysis.log_marginal_likelihood)
                 # stat_table['WAIC'].append(this_waic)
                 stat_table['-2 ln(like)'].append(-2. * loglike)
                 stat_table['N. Free Parameters'].append(n_free_params)
