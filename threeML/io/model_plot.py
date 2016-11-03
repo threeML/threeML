@@ -32,7 +32,7 @@ class SpectralPlotter(object):
 
         self._analysis = analysis
 
-    def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
+    def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=(), summed=False, ene_min=10.,
                    ene_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None,
                    contour_cmap=None, contour_alpha=0.6, lw=1., ls='-', **kwargs):
         """
