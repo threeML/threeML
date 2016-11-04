@@ -42,8 +42,6 @@ class ROOTMinimizer(Minimizer):
 
         self.minimizer.SetFunction(self.functor)
 
-        import pdb;pdb.set_trace()
-
         for i, par in enumerate(self.parameters.values()):
 
             if par.min_value is not None and par.max_value is not None:
