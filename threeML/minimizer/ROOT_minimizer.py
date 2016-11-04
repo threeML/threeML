@@ -42,30 +42,32 @@ class ROOTMinimizer(Minimizer):
 
         self.minimizer.SetFunction(self.functor)
 
+        import pdb;pdb.set_trace()
+
         for i, par in enumerate(self.parameters.values()):
 
             if par.min_value is not None and par.max_value is not None:
 
-                self.minimizer.SetLimitedVariable(i, par.name, par.value,
+                self.minimizer.SetLimitedVariable(i, par.path, par.value,
                                                   par.delta, par.min_value,
                                                   par.max_value)
 
             elif par.min_value is not None and par.max_value is None:
 
                 # Lower limited
-                self.minimizer.SetLowerLimitedVariable(i, par.name, par.value,
+                self.minimizer.SetLowerLimitedVariable(i, par.path, par.value,
                                                        par.delta, par.min_value)
 
             elif par.min_value is None and par.max_value is not None:
 
                 # upper limited
-                self.minimizer.SetUpperLimitedVariable(i, par.name, par.value,
+                self.minimizer.SetUpperLimitedVariable(i, par.path, par.value,
                                                        par.delta, par.max_value)
 
             else:
 
                 # No limits
-                self.minimizer.SetVariable(i, par.name, par.value, par.delta)
+                self.minimizer.SetVariable(i, par.path, par.value, par.delta)
 
     def minimize(self, compute_covar=True):
 
