@@ -12,6 +12,7 @@ import pandas as pd
 
 
 class JointLikelihoodSet(object):
+
     def __init__(self, data_getter, model_getter,
                  n_iterations, iteration_name='interval'):
 
