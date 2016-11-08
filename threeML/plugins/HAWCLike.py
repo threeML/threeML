@@ -243,9 +243,9 @@ class HAWCLike(PluginPrototype):
 
         self._energies = np.array(self._theLikeHAWC.GetEnergies(False)) * 1000.0
 
-    def _CommonNormCallback(self, value):
+    def _CommonNormCallback(self, commonNorm_parameter):
 
-        self._theLikeHAWC.SetCommonNorm(value)
+        self._theLikeHAWC.SetCommonNorm(commonNorm_parameter.value)
 
     def activate_CommonNorm(self):
 
