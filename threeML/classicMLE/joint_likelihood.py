@@ -181,95 +181,109 @@ class JointLikelihood(object):
 
         self._update_free_parameters()
 
-        # Now check and fix if needed all the deltas of the parameters
-        # to 20% of their value (otherwise the fit will be super-slow)
+        # Check if we have free parameters, otherwise simply return the value of the log like
+        if len(self._free_parameters) == 0:
 
-        for k, v in self._free_parameters.iteritems():
+            custom_warnings.warn("There is no free parameter in the current model", RuntimeWarning)
 
-            if abs(v.delta) < abs(v.value) * 0.2:
+            # Generate an empty data frame, which will be returned
 
-                v.delta = abs(v.value) * 0.2
+            fit_results = pd.DataFrame.from_dict({})
 
-        # Instance the minimizer
+            # Store the "minimum", which is just the current value
+            self._current_minimum = float(self.minus_log_like_profile([]))
 
-        self._minimizer = self._get_minimizer(self.minus_log_like_profile,
-                                              self._free_parameters)
+        else:
 
-        # Perform the fit
+            # Now check and fix if needed all the deltas of the parameters
+            # to 20% of their value (otherwise the fit will be super-slow)
 
-        xs, log_likelihood_minimum = self._minimizer.minimize(compute_covar=compute_covariance)
+            for k, v in self._free_parameters.iteritems():
 
-        if log_likelihood_minimum == minimization.FIT_FAILED:
+                if abs(v.delta) < abs(v.value) * 0.2:
 
-            raise FitFailed("The fit failed to converge.")
+                    v.delta = abs(v.value) * 0.2
 
-        # Store the current minimum for the -log likelihood
+            # Instance the minimizer
 
-        self._current_minimum = float(log_likelihood_minimum)
+            self._minimizer = self._get_minimizer(self.minus_log_like_profile,
+                                                  self._free_parameters)
 
-        # Get the results from the minimizer (a panda container)
+            # Perform the fit
 
-        fit_results = self._minimizer.fit_results
+            xs, log_likelihood_minimum = self._minimizer.minimize(compute_covar=compute_covariance)
 
-        # Now produce an ad-hoc display. We don't use the pandas display methods because
-        # we want to display uncertainties with the right number of significant numbers
+            if log_likelihood_minimum == minimization.FIT_FAILED:
 
-        data = []
+                raise FitFailed("The fit failed to converge.")
 
-        # Also store the maximum length to decide the length for the line
+            # Store the current minimum for the -log likelihood
 
-        name_length = 0
+            self._current_minimum = float(log_likelihood_minimum)
 
-        for i, parameter_name in enumerate(fit_results.index.values):
+            # Get the results from the minimizer (a panda container)
 
-            value = fit_results.at[parameter_name, 'value']
+            fit_results = self._minimizer.fit_results
 
-            error = fit_results.at[parameter_name, 'error']
+            # Now produce an ad-hoc display. We don't use the pandas display methods because
+            # we want to display uncertainties with the right number of significant numbers
 
-            # Format the value and the error with sensible significant
-            # numbers
-            x = uncertainties.ufloat(value, error)
+            data = []
 
-            # Add some space around the +/- sign
+            # Also store the maximum length to decide the length for the line
 
-            rep = x.__str__().replace("+/-", " +/- ")
+            name_length = 0
 
-            data.append([i, parameter_name, rep, self._free_parameters[parameter_name].unit])
+            for i, parameter_name in enumerate(fit_results.index.values):
 
-            if len(parameter_name) > name_length:
+                value = fit_results.at[parameter_name, 'value']
 
-                name_length = len(parameter_name)
+                error = fit_results.at[parameter_name, 'error']
 
-        best_fit_table = Table(rows=data,
-                               names=["#", "Name", "Best fit value", "Unit"],
-                               dtype=(str, 'S%i' % name_length, str, str))
+                # Format the value and the error with sensible significant
+                # numbers
+                x = uncertainties.ufloat(value, error)
 
-        if not quiet:
+                # Add some space around the +/- sign
 
-            print("Best fit values:\n")
+                rep = x.__str__().replace("+/-", " +/- ")
 
-            display(best_fit_table)
+                data.append([i, parameter_name, rep, self._free_parameters[parameter_name].unit])
 
-            print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
+                if len(parameter_name) > name_length:
 
-        if compute_covariance:
+                    name_length = len(parameter_name)
 
-            corr_matrix = NumericMatrix(self._minimizer.correlation_matrix)
-
-            for col in corr_matrix.colnames:
-
-                corr_matrix[col].format = '2.2f'
+            best_fit_table = Table(rows=data,
+                                   names=["#", "Name", "Best fit value", "Unit"],
+                                   dtype=(str, 'S%i' % name_length, str, str))
 
             if not quiet:
 
-                print("\nCorrelation matrix:\n")
+                print("Best fit values:\n")
 
-                display(corr_matrix)
+                display(best_fit_table)
 
-        # Now collect the values for the likelihood for the various datasets
+                print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
 
-        # First restore best fit (to make sure we compute the likelihood at the right point)
-        self._minimizer.restore_best_fit()
+            if compute_covariance:
+
+                corr_matrix = NumericMatrix(self._minimizer.correlation_matrix)
+
+                for col in corr_matrix.colnames:
+
+                    corr_matrix[col].format = '2.2f'
+
+                if not quiet:
+
+                    print("\nCorrelation matrix:\n")
+
+                    display(corr_matrix)
+
+            # Now collect the values for the likelihood for the various datasets
+
+            # First restore best fit (to make sure we compute the likelihood at the right point)
+            self._minimizer.restore_best_fit()
 
         # Fill the dictionary with the values of the -log likelihood (total, and dataset by dataset)
 
