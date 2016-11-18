@@ -210,16 +210,6 @@ if has_parallel:
 
                     continue
 
-                print(stdouts)
-
-                # clear_output doesn't do much in terminal environments
-
-                #clear_output()
-                #
-                # print '-' * 30
-                # print "%.3fs elapsed" % ar.elapsed
-                # print ""
-
                 percentage_completed_engines = []
 
                 for stdout in ar.stdout:
@@ -278,8 +268,6 @@ if has_parallel:
                     # We are in the notebook, display a report of all the engines
 
                     for progress in self.fetch_progress_from_progress_bars(ar):
-
-                        sys.stderr.write("%s" % progress)
 
                         for i in range(n_engines):
 
