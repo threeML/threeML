@@ -13,8 +13,7 @@ import pandas as pd
 
 class JointLikelihoodSet(object):
 
-    def __init__(self, data_getter, model_getter,
-                 n_iterations, iteration_name='interval'):
+    def __init__(self, data_getter, model_getter, n_iterations, iteration_name='interval'):
 
         # Store the data and model getter
 
@@ -52,9 +51,9 @@ class JointLikelihoodSet(object):
             # More than one model
 
             # Check that all models are instances of Model
-            for model in model_or_models:
+            for this_model in model_or_models:
 
-                assert isinstance(model, Model), "The model getter function should return a model or a list of models"
+                assert isinstance(this_model, Model), "The model getter function should return a model or a list of models"
 
             # No need for a wrapper in this case
 
