@@ -82,6 +82,11 @@ class JointLikelihoodSet(object):
 
         self._continue_on_failure = False
 
+        # By default do not compute the covariance matrix
+
+        self._compute_covariance = False
+
+
     def set_minimizer(self, minimizer, algorithm=None, callback=None):
 
         self._minimizer = minimizer
@@ -158,7 +163,7 @@ class JointLikelihoodSet(object):
 
         try:
 
-            model_results, logl_results = jl.fit(quiet=True, compute_covariance=False)
+            model_results, logl_results = jl.fit(quiet=True, compute_covariance=self._compute_covariance)
 
         except Exception as e:
 
@@ -183,7 +188,7 @@ class JointLikelihoodSet(object):
 
             try:
 
-                model_results, logl_results = jl.fit(quiet=True, compute_covariance=False)
+                model_results, logl_results = jl.fit(quiet=True, compute_covariance=self._compute_covariance)
 
             except Exception as e:
 
@@ -204,7 +209,7 @@ class JointLikelihoodSet(object):
 
         return model_results, logl_results
 
-    def go(self, continue_on_failure=True, verbose=False, **options_for_parallel_computation):
+    def go(self, continue_on_failure=True, compute_covariance=False, verbose=False, **options_for_parallel_computation):
 
         # Generate the data frame which will contain all results
 
@@ -213,6 +218,8 @@ class JointLikelihoodSet(object):
             log.setLevel(logging.INFO)
 
         self._continue_on_failure = continue_on_failure
+
+        self._compute_covariance = compute_covariance
 
         # let's iterate, perform the fit and fill the data frame
 
