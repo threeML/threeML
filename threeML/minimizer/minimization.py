@@ -30,10 +30,6 @@ class CannotComputeErrors(RuntimeWarning):
     pass
 
 
-class MINOSFailed(Exception):
-    pass
-
-
 class ParameterIsNotFree(Exception):
     pass
 

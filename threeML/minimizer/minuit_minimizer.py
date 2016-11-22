@@ -5,6 +5,10 @@ import collections
 import numpy as np
 
 
+class MINOSFailed(Exception):
+    pass
+
+
 # This is a function to add a method to a class
 # We will need it in the MinuitMinimizer
 
@@ -220,123 +224,6 @@ class MinuitMinimizer(Minimizer):
 
         return covariance
 
-    # def print_fit_results(self):
-    #     """
-    #     Display the results of the last minimization.
-    #
-    #     :return: (none)
-    #     """
-    #
-    #     # Restore the best fit values, in case something has changed
-    #     self._restore_best_fit()
-    #
-    #     # I do not use the print_param facility in iminuit because
-    #     # it does not work well with console output, since it fails
-    #     # to autoprobe that it is actually run in a console and uses
-    #     # the HTML backend instead
-    #
-    #     # Create a list of strings to print
-    #
-    #     data = []
-    #
-    #     # Also store the maximum length to decide the length for the line
-    #
-    #     name_length = 0
-    #
-    #     for k, v in self.parameters.iteritems():
-    #
-    #         minuit_name = self._parameter_name_to_minuit_name(k)
-    #
-    #         # Format the value and the error with sensible significant
-    #         # numbers
-    #         x = uncertainties.ufloat(v.value, self.minuit.errors[minuit_name])
-    #
-    #         # Add some space around the +/- sign
-    #
-    #         rep = x.__str__().replace("+/-", " +/- ")
-    #
-    #         data.append([k, rep, v.unit])
-    #
-    #         if len(k) > name_length:
-    #             name_length = len(k)
-    #
-    #     table = Table(rows=data,
-    #                   names=["Name", "Value", "Unit"],
-    #                   dtype=('S%i' % name_length, str, str))
-    #
-    #     display(table)
-    #
-    #     print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
-
-    # Override the default _compute_covariance_matrix
-
-    # def print_correlation_matrix(self):
-    #     """
-    #     Display the current correlation matrix
-    #     :return: (none)
-    #     """
-    #
-    #     # Print a custom covariance matrix because iminuit does
-    #     # not guess correctly the frontend when 3ML is used
-    #     # from terminal
-    #
-    #     cov = self.minuit.covariance
-    #
-    #     if cov is None:
-    #         raise CannotComputeCovariance("Cannot compute covariance numerically. This usually means that there are " +
-    #                                       " unconstrained parameters. Fix those or reduce their allowed range, or " +
-    #                                       "use a simpler model.")
-    #
-    #     # Get list of parameters
-    #
-    #     keys = self.parameters.keys()
-    #
-    #     # Convert them to the format for iminuit
-    #
-    #     minuit_names = map(lambda k: self._parameter_name_to_minuit_name(k), keys)
-    #
-    #     # Accumulate rows and compute the maximum length of the names
-    #
-    #     data = []
-    #     length_of_names = 0
-    #
-    #     for key1, name1 in zip(keys, minuit_names):
-    #
-    #         if len(name1) > length_of_names:
-    #             length_of_names = len(name1)
-    #
-    #         this_row = []
-    #
-    #         for key2, name2 in zip(keys, minuit_names):
-    #             # Compute correlation between parameter key1 and key2
-    #
-    #             corr = cov[(name1, name2)] / (math.sqrt(cov[(name1, name1)]) * math.sqrt(cov[(name2, name2)]))
-    #
-    #             this_row.append(corr)
-    #
-    #         data.append(this_row)
-    #
-    #     # Prepare the dtypes for the matrix
-    #
-    #     dtypes = map(lambda x: float, minuit_names)
-    #
-    #     # Column names are the parameter names
-    #
-    #     cols = keys
-    #
-    #     # Finally generate the matrix with the names
-    #
-    #     table = NumericMatrix(rows=data,
-    #                           names=cols,
-    #                           dtype=dtypes)
-    #
-    #     # Customize the format to avoid too many digits
-    #
-    #     for col in table.colnames:
-    #         table[col].format = '2.2f'
-    #
-    #     display(table)
-
     def get_errors(self):
         """
         Compute asymmetric errors using MINOS (slow, but accurate) and print them.
@@ -358,15 +245,15 @@ class MinuitMinimizer(Minimizer):
 
         except:
 
-            raise
-
-        # except:
-        #
-        #     raise MINOSFailed("MINOS has failed. This usually means that the fit is very difficult, for example "
-        #                       "because of high correlation between parameters. Check the correlation matrix printed"
-        #                       "in the fit step, and check contour plots with getContours(). If you are using a "
-        #                       "user-defined model, you can also try to "
-        #                       "reformulate your model with less correlated parameters.")
+            raise MINOSFailed("MINOS has failed. This is not necessarily a problem if:\n\n"
+                              "* There are unconstrained parameters (the error is undefined). This is usually signaled "
+                              "by an approximated error, printed after the fit, larger than the best fit value\n\n"
+                              "* The fit is very difficult, because of high correlation between parameters. This is "
+                              "signaled by values close to 1.0 or -1.0 in the correlation matrix printed after the "
+                              "fit step.\n\n"
+                              "In this cases you can check the contour plots with get_contours(). If you are using a "
+                              "user-defined model, you can also try to reformulate your model with less correlated "
+                              "parameters.")
 
         # Make a list for the results
 
