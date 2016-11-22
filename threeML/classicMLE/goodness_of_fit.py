@@ -17,6 +17,9 @@ class GoodnessOfFit(object):
 
         self._reference_like = like_data_frame['-log(likelihood)']
 
+        # Store best model
+        self._best_fit_model = clone_model(self._jl_instance.likelihood_model)
+
     def get_simulated_data(self, id):
 
         # Generate a new data set for each plugin contained in the data list
@@ -24,6 +27,10 @@ class GoodnessOfFit(object):
         new_datas = []
 
         for dataset in self._jl_instance.data_list.values():
+
+            # Make sure we start from the best fit model
+
+            dataset.set_model(self._best_fit_model)
 
             new_data = dataset.get_simulated_dataset("%s_sim" % dataset.name)
 
@@ -38,7 +45,7 @@ class GoodnessOfFit(object):
         # Make a copy of the best fit model, so that we don't touch the original model during the fit, and we
         # also always restart from the best fit (instead of the last iteration)
 
-        new_model = clone_model(self._jl_instance.likelihood_model)
+        new_model = clone_model(self._best_fit_model)
 
         return new_model
 
