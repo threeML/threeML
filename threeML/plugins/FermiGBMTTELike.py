@@ -38,7 +38,6 @@ class BinningMethodError(RuntimeError):
 
 
 class FermiGBMTTELike(OGIPLike):
-
     def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
         """
@@ -154,7 +153,6 @@ class FermiGBMTTELike(OGIPLike):
                               rsp_file=self._rsp_file,
                               verbose=self._verbose)
 
-
         self._tstart = min(self._evt_list.tmin_list)
         self._tstop = max(self._evt_list.tmax_list)
 
@@ -177,7 +175,6 @@ class FermiGBMTTELike(OGIPLike):
                                 verbose=self._verbose)
 
             return new_ogip
-
 
     def set_background_interval(self, *intervals, **options):
         """
@@ -338,9 +335,6 @@ class FermiGBMTTELike(OGIPLike):
         self.set_active_time_interval(*old_interval)
 
         self._verbose = old_verbose
-
-
-
 
     def get_background_parameters(self):
         """
