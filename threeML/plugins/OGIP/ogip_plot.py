@@ -7,6 +7,8 @@ from threeML.utils.binner import Rebinner
 from threeML.io.step_plot import step_plot
 from threeML.utils.stats_tools import Significance
 
+from threeML.config.config import threeML_config
+
 NO_REBIN = 1e-99
 
 def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
@@ -18,8 +20,8 @@ def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
     :param min_rate: (optional) rebin to keep this minimum rate in each channel (if possible). If one number is
     provided, the same minimum rate is used for each dataset, otherwise a list can be provided with the minimum rate
     for each dataset
-    :param data_cmap: (optional) the color map used to extract automatically the colors for the data
-    :param model_cmap: (optional) the color map used to extract automatically the colors for the models
+    :param data_cmap: (str) (optional) the color map used to extract automatically the colors for the data
+    :param model_cmap: (str) (optional) the color map used to extract automatically the colors for the models
     :param data_colors: (optional) a tuple or list with the color for each dataset
     :param model_colors: (optional) a tuple or list with the color for each folded model
     :param show_legend: (optional) if True (default), shows a legend
@@ -67,8 +69,8 @@ def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
 
     min_rates = [min_rate] * len(data_keys)
 
-    data_cmap = plt.cm.rainbow
-    model_cmap = plt.cm.nipy_spectral_r
+    data_cmap = plt.get_cmap(threeML_config['ogip']['data plot cmap'])  # plt.cm.rainbow
+    model_cmap = plt.get_cmap(threeML_config['ogip']['model plot cmap'])  # plt.cm.nipy_spectral_r
 
     # Legend is on by default
     show_legend = True
@@ -111,7 +113,7 @@ def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
 
     if 'data_cmap' in kwargs:
 
-        data_cmap = kwargs.pop('data_cmap')
+        data_cmap = plt.get_cmap(kwargs.pop('data_cmap'))
         data_colors = map(lambda x: data_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
 
     if 'model_cmap' in kwargs:
