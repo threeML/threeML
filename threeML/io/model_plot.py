@@ -178,10 +178,6 @@ class SpectralPlotter(object):
             # Check the  type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
 
-
-
-
-
             # Retrieve the right flux function (phts, energy, vfv)
             flux_function = self._get_flux_function(spectrum_type, model, y_unit)
 
@@ -310,8 +306,6 @@ class SpectralPlotter(object):
             # Check the  type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
 
-
-
             flux_function = self._get_flux_function(spectrum_type, model, y_unit)
 
             err = self._propagate_full(flux_function, x_range)
@@ -432,9 +426,6 @@ class SpectralPlotter(object):
             # Check the type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
 
-
-
-
             y_vals_per_comp = []
             errors_per_comp = []
             for model in models:
@@ -458,7 +449,6 @@ class SpectralPlotter(object):
         if self._convert_to_frequency:
 
             x_range = (x_range / constants.h).to(x_unit)
-
 
         if not summed:
             for y_val_pc, err_pc, source in zip(y_values, errors, sources_to_plot):
@@ -582,7 +572,6 @@ class SpectralPlotter(object):
             composite_model = self._analysis._likelihood_model.point_sources[source].spectrum.main.composite
             models = self._solve_for_component_flux(composite_model)
 
-
             contours_per_component = []
             for model in models:
 
@@ -632,8 +621,6 @@ class SpectralPlotter(object):
         if self._convert_to_frequency:
 
             x_range = (x_range / constants.h).to(x_unit)
-
-
 
         if not summed:
 
