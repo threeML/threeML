@@ -254,7 +254,7 @@ class SpectralPlotter(object):
 
             flux_function = self._get_flux_function(spectrum_type, model, y_unit)
 
-            err = self._propagate_full(source, flux_function, x_range)
+            err = self._propagate_full(flux_function, x_range)
 
             y_values.append(flux_function(x_range))
 
@@ -359,7 +359,7 @@ class SpectralPlotter(object):
             errors_per_comp = []
             for model in models:
                 flux_function = self._get_flux_function(spectrum_type, model, y_unit)
-                err = self._propagate_full(source, flux_function, x_range)
+                err = self._propagate_full(flux_function, x_range)
 
                 y_vals_per_comp.append(flux_function(x_range))
 
@@ -585,10 +585,6 @@ class SpectralPlotter(object):
 
 
         parameters = self._analysis.minimizer.parameters
-
-        # There is an assumption that free parameters are not fixed post-fit
-        # If this happens, the minimizer will have the wrong number of parameters
-        # for the cov matrix and fail. We will try to catch that.
 
 
 
