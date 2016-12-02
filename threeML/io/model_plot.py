@@ -7,6 +7,8 @@ from sympy.abc import x
 from sympy.solvers import solve
 from sympy.utilities.lambdify import lambdify
 
+from threeML.io.progress_bar import progress_bar
+
 from threeML.utils.differentiation import get_jacobian
 
 class SpectralPlotter(object):
@@ -578,6 +580,13 @@ class SpectralPlotter(object):
         return fig
 
     def _propagate_full(self, flux_function, energy):
+        """
+        This function performs error propagation of the fits to fluxes
+
+        :param flux_function: the function to propagate into
+        :param energy: The energies at which to evaluate the function
+        :return:
+        """
 
         errors = []
 
@@ -588,48 +597,49 @@ class SpectralPlotter(object):
         # We will compute the error at each energy interval
         # so that we can plot the spread as a function of energy
 
-        for ene in energy:
+        with progress_bar(len(energy)) as p:
+            for ene in energy:
 
-            first_derivatives = []
+                first_derivatives = []
 
-            # Now loop through each parameter and free it while
-            # holding the others constant. This is the normal (pun intended)
-            # error propagation formula.
+                # Now loop through each parameter and free it while
+                # holding the others constant. This is the normal (pun intended)
+                # error propagation formula.
 
-            for par in parameters.keys():
+                for par in parameters.keys():
 
-                # go back to the best fit
+                    # go back to the best fit
 
-                self._analysis.restore_best_fit()
+                    self._analysis.restore_best_fit()
 
-                parameter_best_fit_value = parameters[par].value
-                min_value, max_value = parameters[par].bounds
+                    parameter_best_fit_value = parameters[par].value
+                    min_value, max_value = parameters[par].bounds
 
-                # Create a temporary flux function to take a
-                # derivative w.r.t. the free parameter
+                    # Create a temporary flux function to take a
+                    # derivative w.r.t. the free parameter
 
-                def tmpflux(current_value):
+                    def tmpflux(current_value):
 
-                    parameters[par].value = current_value
+                        parameters[par].value = current_value
 
-                    return flux_function(ene).value
+                        return flux_function(ene).value
 
-                # get the first derivatives and append them for some
-                # linear algebra
+                    # get the first derivatives and append them for some
+                    # linear algebra
 
-                this_derivative = get_jacobian(tmpflux, parameter_best_fit_value, min_value, max_value)[0][0]
+                    this_derivative = get_jacobian(tmpflux, parameter_best_fit_value, min_value, max_value)[0][0]
 
-                first_derivatives.append(this_derivative)
+                    first_derivatives.append(this_derivative)
 
+                first_derivatives = np.array(first_derivatives)
 
+                # Now we take the inner product with the covariance matrix
 
-            first_derivatives = np.array(first_derivatives)
+                tmp = first_derivatives.dot(self._analysis.covariance_matrix)
 
-            # Now we take the inner product with the covariance matrix
+                errors.append(np.sqrt(tmp.dot(first_derivatives)))
 
-            tmp = first_derivatives.dot(self._analysis.covariance_matrix)
-
-            errors.append(np.sqrt(tmp.dot(first_derivatives)))
+                p.increase()
 
         return errors
 
