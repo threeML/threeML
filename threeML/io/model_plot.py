@@ -577,7 +577,7 @@ class SpectralPlotter(object):
 
         return fig
 
-    def _propagate_full(self, source, flux_function, energy):
+    def _propagate_full(self, flux_function, energy):
 
         errors = []
 
