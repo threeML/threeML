@@ -40,7 +40,7 @@ class SpectralPlotter(object):
         """
         Plot the model and the model contours for the selected sources.
 
-        :param x_unit: energy unit for x-axis
+        :param x_unit: energy/frequency unit for x-axis
         :param y_unit: spectral density unit for y-axis
         :param sources_to_plot: list of str indicating which sources to plot
         :param summed: (bool) sum sources
@@ -58,6 +58,9 @@ class SpectralPlotter(object):
         :param ls: linestyle for MLE plots
         :param kwargs: keyword args
         """
+
+        # First we need to check if the x_unit is an energy or frequency
+
 
         if self._analysis_type == "mle":
             return self._plot_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, legend,
@@ -116,6 +119,7 @@ class SpectralPlotter(object):
         """
 
         x_unit = u.Unit(x_unit)
+
         y_unit = u.Unit(y_unit)
 
         # Set the default color map if none is provided
@@ -654,6 +658,47 @@ class SpectralPlotter(object):
                 p.increase()
 
         return errors
+
+    def _x_unit_checker(self, x_unit):
+        """
+        Checks if the x unit is in energy or frequency
+
+        :param x_unit: astropy unit string
+        :return:
+        """
+
+        x_unit = u.Unit(x_unit)
+
+        # First we check if the units are energy
+        try:
+
+            x_unit.to('keV')
+
+        except(u.UnitConversionError):
+
+            # now we see if they are frequency
+
+            try:
+
+                x_unit.to('Hz')
+
+            except(u.UnitConversionError):
+
+                raise RuntimeWarning("x unit is not energy or frequency")
+
+            # Ok, we found a frequency. that means we will do the calculation in eV and then
+            # convert back at the end
+
+            self._convert_to_frequency = True
+
+        # well, this is an energy. we do not have to convert at all
+
+        self._convert_to_frequency = False
+
+
+
+
+
 
     @staticmethod
     def _get_flux_function(spectrum_type, model, y_unit):
