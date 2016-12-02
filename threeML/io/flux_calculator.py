@@ -451,18 +451,29 @@ class SpectralFlux(object):
 
     def _propagate_full(self, flux_function, ene_min, ene_max):
 
+        # Get the parameters from the minimizer
+
         parameters = self._analysis.minimizer.parameters
 
-
+        # We will store the first derivatives @ the best fit values
         first_derivatives = []
 
+        # Now loop through each parameter and free it while
+        # holding the others constant. This is the normal (pun intended)
+        # error propagation formula.
         for par in parameters.keys():
+
+            # go back to the best fit
+
             self._analysis.restore_best_fit()
 
+
             parameter_best_fit_value = parameters[par].value
+
             min_value, max_value = parameters[par].bounds
 
-            # parameter_best_fit_value = model.spectrum.main.shape.free_parameters[par].value
+            # Create a temporary flux function to take a
+            # derivative w.r.t. the free parameter
 
             def tmpflux(current_value):
 
@@ -470,16 +481,22 @@ class SpectralFlux(object):
 
                 return flux_function(ene_min, ene_max)
 
+            # get the first derivatives and append them for some
+            # linear algebra
+
             this_derivative = get_jacobian(tmpflux, parameter_best_fit_value, min_value, max_value)[0][0]
 
             first_derivatives.append(this_derivative)
 
         first_derivatives = np.array(first_derivatives)
 
+        # Now we take the inner product with the covariance matrix
+
         tmp = first_derivatives.dot(self._analysis.covariance_matrix)
 
         error = (np.sqrt(tmp.dot(first_derivatives)))
 
+        # make sure to restore the best fit to the analysis
         self._analysis.restore_best_fit()
 
         return error
