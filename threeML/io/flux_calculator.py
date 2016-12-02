@@ -8,6 +8,7 @@ from sympy.abc import x
 from sympy.solvers import solve
 from sympy.utilities.lambdify import lambdify
 import scipy.integrate as integrate
+import collections
 
 import pandas as pd
 
@@ -161,8 +162,7 @@ class SpectralFlux(object):
 
             all_fluxes.append(tmp * conversion)
 
-        dist_dict = {}
-        flux_dict = {}
+        flux_dict = collections.OrderedDict()
 
         all_fluxes = np.array(all_fluxes)
 
@@ -205,7 +205,7 @@ class SpectralFlux(object):
 
         errors = []
 
-        flux_dict = {}
+        flux_dict = collections.OrderedDict()
 
         # First see if we are plotting all the sources
         if not sources_to_calculate:  # Assuming plot all sources
@@ -295,7 +295,7 @@ class SpectralFlux(object):
             y_values.append(y_vals_per_comp)
             errors.append(errors_per_comp)
 
-        flux_total_dict = {}
+        flux_total_dict = collections.OrderedDict()
 
         if not summed:
 
@@ -304,7 +304,7 @@ class SpectralFlux(object):
 
                                self.analysis.likelihood_model.point_sources[source].spectrum.main.composite.functions]
 
-                flux_dict = {}
+                flux_dict = collections.OrderedDict()
 
                 flux_dict['Component'] = model_names
                 flux_dict['Flux'] = y_val_pc
@@ -407,7 +407,7 @@ class SpectralFlux(object):
 
         all_fluxes = np.array(all_fluxes)
 
-        flux_total_dict = {}
+        flux_total_dict = collections.OrderedDict()
 
         if not summed:
 
@@ -415,7 +415,7 @@ class SpectralFlux(object):
                 model_names = [func.name for func in
                                self.analysis._likelihood_model.point_sources[source].spectrum.main.composite.functions]
 
-                flux_dict = {}
+                flux_dict = collections.OrderedDict()
                 flux_dict['Component'] = model_names
                 flux_dict['Mean Flux'] = mean_pc
                 flux_dict['HPD Flux'] = hpd_pc
