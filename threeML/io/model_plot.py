@@ -160,15 +160,22 @@ class SpectralPlotter(object):
             tmp = []
 
             # go through the thinned samples
-            for i in range(0, n_samples, thin):
 
-                # go through parameters
-                for par in self._analysis.samples.keys():
-                    mod_par = par.split('.')[-1]
-                    model.free_parameters[mod_par].value = self._analysis.samples[par][i]
+            itr = range(0, n_samples, thin)
 
-                # get the flux for the this sample
-                tmp.append(flux_function(x_range))
+            with progress_bar(len(itr)) as p:
+
+                for i in itr:
+
+                    # go through parameters
+                    for par in self._analysis.samples.keys():
+                        mod_par = par.split('.')[-1]
+                        model.free_parameters[mod_par].value = self._analysis.samples[par][i]
+
+                    # get the flux for the this sample
+                    tmp.append(flux_function(x_range))
+
+                    p.increase()
 
             tmp = np.array(tmp).T
 
@@ -482,7 +489,7 @@ class SpectralPlotter(object):
             models = self._solve_for_component_flux(composite_model)
 
             # Check the type of function we want
-            spectrum_type = self._get_spectrum_type(y_unit)
+            # spectrum_type = self._get_spectrum_type(y_unit)
 
             x_range = x_values * x_unit
 
@@ -502,15 +509,20 @@ class SpectralPlotter(object):
                 tmp = []
 
                 # go through the thinned samples
-                for i in range(0, n_samples, thin):
 
-                    # go through parameters
-                    for par in self._analysis.samples.keys():
-                        mod_par = par.split('.')[-1]
-                        composite_model.free_parameters[mod_par].value = self._analysis.samples[par][i]
+                itr = range(0, n_samples, thin)
+                with progress_bar(len(itr)) as p:
+                    for i in itr:
 
-                    # get the flux for the this sample
-                    tmp.append(flux_function(x_range))
+                        # go through parameters
+                        for par in self._analysis.samples.keys():
+                            mod_par = par.split('.')[-1]
+                            composite_model.free_parameters[mod_par].value = self._analysis.samples[par][i]
+
+                        # get the flux for the this sample
+                        tmp.append(flux_function(x_range))
+
+                        p.increase()
 
                 tmp = np.array(tmp).T
 
