@@ -12,6 +12,11 @@ from threeML.io.progress_bar import progress_bar
 
 from threeML.utils.differentiation import get_jacobian
 
+
+class InvalidUnitError(RuntimeError):
+    pass
+
+
 class SpectralPlotter(object):
     """
     This class handles plotting of spectral fits and their associated contours.
@@ -100,6 +105,8 @@ class SpectralPlotter(object):
 
         """
 
+        self._x_unit_checker(x_unit)
+
         if self._analysis_type == "mle":
 
             return self._plot_component_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, legend,
@@ -147,6 +154,21 @@ class SpectralPlotter(object):
         # container for contours
         all_contours = []
 
+        if self._convert_to_frequency:
+
+            # we are going to plot in frequency, but
+            # the functions take energy.
+
+            x_range = (x_values * x_unit * constants.h).cgs
+
+
+
+            # we will later divide by h to convert back
+
+        else:
+
+            x_range = x_values * x_unit
+
         for source in sources_to_plot:
 
             # Get the spectrum first
@@ -156,20 +178,9 @@ class SpectralPlotter(object):
             # Check the  type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
 
-            # Set the x values to the proper unit
 
-            if self._convert_to_frequency:
 
-                # we are going to plot in frequency, but
-                # the functions take energy.
 
-                x_range = x_values * x_unit * constants.h
-
-                # we will later divide by h to convert back
-
-            else:
-
-                x_range = x_values * x_unit
 
             # Retrieve the right flux function (phts, energy, vfv)
             flux_function = self._get_flux_function(spectrum_type, model, y_unit)
@@ -203,6 +214,13 @@ class SpectralPlotter(object):
 
         color = np.linspace(0., 1., len(sources_to_plot))
         color_itr = 0
+
+        # Ok, now everything is computed and we can convert back to
+        # the x values to to frequency is need
+
+        if self._convert_to_frequency:
+
+            x_range = (x_range / constants.h).to(x_unit)
 
         if not summed:
 
@@ -264,6 +282,21 @@ class SpectralPlotter(object):
 
         fig, ax = plt.subplots()
 
+        if self._convert_to_frequency:
+
+            # we are going to plot in frequency, but
+            # the functions take energy.
+
+            x_range = (x_values * x_unit * constants.h).cgs
+
+
+
+            # we will later divide by h to convert back
+
+        else:
+
+            x_range = x_values * x_unit
+
         # First see if we are plotting all the sources
         if not sources_to_plot:  # Assuming plot all sources
 
@@ -277,7 +310,7 @@ class SpectralPlotter(object):
             # Check the  type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
 
-            x_range = x_values * x_unit
+
 
             flux_function = self._get_flux_function(spectrum_type, model, y_unit)
 
@@ -289,6 +322,14 @@ class SpectralPlotter(object):
 
         color = np.linspace(0., 1., len(sources_to_plot))
         color_itr = 0
+
+        # Ok, now everything is computed and we can convert back to
+        # the x values to to frequency is need
+
+        if self._convert_to_frequency:
+
+            x_range = (x_range / constants.h).to(x_unit)
+
         if not summed:
             for y_val, err, source in zip(y_values, errors, sources_to_plot):
                 ax.loglog(x_range,
@@ -358,6 +399,22 @@ class SpectralPlotter(object):
         # Initialize plotting arrays
         y_values = []
         x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
+
+        if self._convert_to_frequency:
+
+            # we are going to plot in frequency, but
+            # the functions take energy.
+
+            x_range = (x_values * x_unit * constants.h).cgs
+
+
+
+            # we will later divide by h to convert back
+
+        else:
+
+            x_range = x_values * x_unit
+
         errors = []
 
         fig, ax = plt.subplots()
@@ -367,12 +424,6 @@ class SpectralPlotter(object):
 
             sources_to_plot = self._analysis.likelihood_model.point_sources.keys()
 
-        # if components == []: # Assuming plot all sources
-
-        #    sources_to_plot = self.analysis.likelihood_model.point_sources.keys()
-
-
-
         for source in sources_to_plot:
 
             composite_model = self._analysis.likelihood_model.point_sources[source].spectrum.main.composite
@@ -381,18 +432,6 @@ class SpectralPlotter(object):
             # Check the type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
 
-            if self._convert_to_frequency:
-
-                # we are going to plot in frequency, but
-                # the functions take energy.
-
-                x_range = x_values * x_unit * constants.h
-
-                # we will later divide by h to convert back
-
-            else:
-
-                x_range = x_values * x_unit
 
 
 
@@ -412,6 +451,14 @@ class SpectralPlotter(object):
         color = np.linspace(0., 1., len(sources_to_plot) * len(models))
 
         color_itr = 0
+
+        # Ok, now everything is computed and we can convert back to
+        # the x values to to frequency is need
+
+        if self._convert_to_frequency:
+
+            x_range = (x_range / constants.h).to(x_unit)
+
 
         if not summed:
             for y_val_pc, err_pc, source in zip(y_values, errors, sources_to_plot):
@@ -500,6 +547,21 @@ class SpectralPlotter(object):
 
         x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
 
+        if self._convert_to_frequency:
+
+            # we are going to plot in frequency, but
+            # the functions take energy.
+
+            x_range = (x_values * x_unit * constants.h).cgs
+
+
+
+            # we will later divide by h to convert back
+
+        else:
+
+            x_range = x_values * x_unit
+
         # Get the the number of samples
         n_samples = self._analysis.raw_samples.shape[0]
 
@@ -520,10 +582,6 @@ class SpectralPlotter(object):
             composite_model = self._analysis._likelihood_model.point_sources[source].spectrum.main.composite
             models = self._solve_for_component_flux(composite_model)
 
-            # Check the type of function we want
-            # spectrum_type = self._get_spectrum_type(y_unit)
-
-            x_range = x_values * x_unit
 
             contours_per_component = []
             for model in models:
@@ -532,7 +590,7 @@ class SpectralPlotter(object):
                 spectrum_type = self._get_spectrum_type(y_unit)
 
                 # Set the x values to the proper unit
-                x_range = x_values * x_unit
+
 
                 # Retrieve the right flux function (phts, energy, vfv)
                 flux_function = self._get_flux_function(spectrum_type, model, y_unit)
@@ -567,6 +625,15 @@ class SpectralPlotter(object):
 
         color = np.linspace(0., 1., len(sources_to_plot) * num_models)
         color_itr = 0
+
+        # Ok, now everything is computed and we can convert back to
+        # the x values to to frequency is need
+
+        if self._convert_to_frequency:
+
+            x_range = (x_range / constants.h).to(x_unit)
+
+
 
         if not summed:
 
@@ -702,6 +769,10 @@ class SpectralPlotter(object):
 
             x_unit.to('keV')
 
+            # well, this is an energy. we do not have to convert at all
+
+            self._convert_to_frequency = False
+
         except(u.UnitConversionError):
 
             # now we see if they are frequency
@@ -710,23 +781,16 @@ class SpectralPlotter(object):
 
                 x_unit.to('Hz')
 
+                # Ok, we found a frequency. that means we will do the calculation in eV and then
+                # convert back at the end
+
+
+
+                self._convert_to_frequency = True
+
             except(u.UnitConversionError):
 
-                raise RuntimeWarning("x unit is not energy or frequency")
-
-            # Ok, we found a frequency. that means we will do the calculation in eV and then
-            # convert back at the end
-
-            self._convert_to_frequency = True
-
-        # well, this is an energy. we do not have to convert at all
-
-        self._convert_to_frequency = False
-
-
-
-
-
+                raise InvalidUnitError("x unit is not energy or frequency")
 
     @staticmethod
     def _get_flux_function(spectrum_type, model, y_unit):
@@ -740,7 +804,7 @@ class SpectralPlotter(object):
 
         if spectrum_type == "badunit":
 
-            print "The y_unit provided is invalid"
+            raise InvalidUnitError("The y_unit provided is invalid")
             return
 
         elif spectrum_type == "phtflux":
