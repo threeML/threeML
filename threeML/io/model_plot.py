@@ -1,4 +1,5 @@
 import astropy.units as u
+import astropy.constants as constants
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy.visualization import quantity_support
@@ -61,6 +62,7 @@ class SpectralPlotter(object):
 
         # First we need to check if the x_unit is an energy or frequency
 
+        self._x_unit_checker(x_unit)
 
         if self._analysis_type == "mle":
             return self._plot_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, legend,
@@ -155,7 +157,19 @@ class SpectralPlotter(object):
             spectrum_type = self._get_spectrum_type(y_unit)
 
             # Set the x values to the proper unit
-            x_range = x_values * x_unit
+
+            if self._convert_to_frequency:
+
+                # we are going to plot in frequency, but
+                # the functions take energy.
+
+                x_range = x_values * x_unit * constants.h
+
+                # we will later divide by h to convert back
+
+            else:
+
+                x_range = x_values * x_unit
 
             # Retrieve the right flux function (phts, energy, vfv)
             flux_function = self._get_flux_function(spectrum_type, model, y_unit)
@@ -367,7 +381,21 @@ class SpectralPlotter(object):
             # Check the type of function we want
             spectrum_type = self._get_spectrum_type(y_unit)
 
-            x_range = x_values * x_unit
+            if self._convert_to_frequency:
+
+                # we are going to plot in frequency, but
+                # the functions take energy.
+
+                x_range = x_values * x_unit * constants.h
+
+                # we will later divide by h to convert back
+
+            else:
+
+                x_range = x_values * x_unit
+
+
+
             y_vals_per_comp = []
             errors_per_comp = []
             for model in models:
