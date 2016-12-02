@@ -581,23 +581,32 @@ class SpectralPlotter(object):
 
         errors = []
 
-        # Moving from grabbing the spectrum, to grabbing the parameters from the minizer
-
+        # Get the parameters from the minimizer
 
         parameters = self._analysis.minimizer.parameters
 
-
+        # We will compute the error at each energy interval
+        # so that we can plot the spread as a function of energy
 
         for ene in energy:
 
             first_derivatives = []
 
+            # Now loop through each parameter and free it while
+            # holding the others constant. This is the normal (pun intended)
+            # error propagation formula.
+
             for par in parameters.keys():
+
+                # go back to the best fit
 
                 self._analysis.restore_best_fit()
 
                 parameter_best_fit_value = parameters[par].value
                 min_value, max_value = parameters[par].bounds
+
+                # Create a temporary flux function to take a
+                # derivative w.r.t. the free parameter
 
                 def tmpflux(current_value):
 
@@ -605,12 +614,18 @@ class SpectralPlotter(object):
 
                     return flux_function(ene).value
 
+                # get the first derivatives and append them for some
+                # linear algebra
+
                 this_derivative = get_jacobian(tmpflux, parameter_best_fit_value, min_value, max_value)[0][0]
 
                 first_derivatives.append(this_derivative)
 
 
+
             first_derivatives = np.array(first_derivatives)
+
+            # Now we take the inner product with the covariance matrix
 
             tmp = first_derivatives.dot(self._analysis.covariance_matrix)
 
