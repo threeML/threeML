@@ -40,8 +40,8 @@ class SpectralPlotter(object):
 
         self._analysis = analysis
 
-    def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=(), summed=False, ene_min=10.,
-                   ene_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None,
+    def plot_model(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=(), summed=False, x_min=10.,
+                   x_max=1E4, num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None,
                    contour_cmap=None, contour_alpha=0.6, lw=1., ls='-', **kwargs):
         """
         Plot the model and the model contours for the selected sources.
@@ -50,8 +50,8 @@ class SpectralPlotter(object):
         :param y_unit: spectral density unit for y-axis
         :param sources_to_plot: list of str indicating which sources to plot
         :param summed: (bool) sum sources
-        :param ene_min: minimum energy of x-axis
-        :param ene_max: maximum energy of x-axis
+        :param x_min: minimum energy of x-axis
+        :param x_max: maximum energy of x-axis
         :param num_ene: number of energies to calculate
         :param plot_num: figure number of plot
         :param thin: thinning of bayesian samples (only for bayesian fits)
@@ -70,17 +70,17 @@ class SpectralPlotter(object):
         self._x_unit_checker(x_unit)
 
         if self._analysis_type == "mle":
-            return self._plot_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, legend,
+            return self._plot_mle(x_unit, y_unit, sources_to_plot, summed, x_min, x_max, num_ene, plot_num, legend,
                                   fit_cmap,
                                   contour_cmap, contour_alpha, lw, ls, **kwargs)
 
         elif self._analysis_type == "bayesian":
 
-            return self._plot_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, plot_num, thin,
+            return self._plot_bayes(x_unit, y_unit, sources_to_plot, summed, x_min, x_max, num_ene, plot_num, thin,
                                     alpha, legend, fit_cmap, contour_alpha, **kwargs)
 
-    def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=(), summed=False, ene_min=10.,
-                        ene_max=1E4, num_ene=300,
+    def plot_components(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=(), summed=False, x_min=10.,
+                        x_max=1E4, num_ene=300,
                         thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_cmap=None,
                         contour_alpha=0.6, lw=1., ls='-', **kwargs):
         """
@@ -90,8 +90,8 @@ class SpectralPlotter(object):
         :param y_unit: spectral density unit for y-axis
         :param sources_to_plot: list of str indicating which sources to plot
         :param summed: (bool) sum sources
-        :param ene_min: minimum energy of x-axis
-        :param ene_max: maximum energy of x-axis
+        :param x_min: minimum energy of x-axis
+        :param x_max: maximum energy of x-axis
         :param num_ene: number of energies to calculate
         :param thin: thinning of bayesian samples (only for bayesian fits)
         :param alpha: chance of type I error (only for bayesian fits)
@@ -109,18 +109,18 @@ class SpectralPlotter(object):
 
         if self._analysis_type == "mle":
 
-            return self._plot_component_mle(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene, legend,
+            return self._plot_component_mle(x_unit, y_unit, sources_to_plot, summed, x_min, x_max, num_ene, legend,
                                             fit_cmap, contour_cmap, contour_alpha, lw, ls, **kwargs)
 
         elif self._analysis_type == "bayesian":
 
-            return self._plot_component_bayes(x_unit, y_unit, sources_to_plot, summed, ene_min, ene_max, num_ene,
+            return self._plot_component_bayes(x_unit, y_unit, sources_to_plot, summed, x_min, x_max, num_ene,
 
                                               thin,
                                               alpha, legend, fit_cmap, contour_alpha, **kwargs)
 
-    def _plot_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=(), summed=False, ene_min=10.,
-                    ene_max=1E4,
+    def _plot_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=(), summed=False, x_min=10.,
+                    x_max=1E4,
                     num_ene=300, plot_num=1, thin=100, alpha=0.05, legend=True, fit_cmap=None, contour_alpha=0.6,
                     **kwargs):
         """
@@ -135,7 +135,7 @@ class SpectralPlotter(object):
         if not fit_cmap:
             fit_cmap = plt.cm.Set1
 
-        x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
+        x_values = np.logspace(np.log10(x_min), np.log10(x_max), num_ene)
 
         # looping of all analysis provided:
 
@@ -256,7 +256,7 @@ class SpectralPlotter(object):
         return fig
 
     def _plot_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False,
-                  ene_min=10., ene_max=1E4, num_ene=300, plot_num=1, legend=True, fit_cmap=None, contour_cmap=None,
+                  x_min=10., x_max=1E4, num_ene=300, plot_num=1, legend=True, fit_cmap=None, contour_cmap=None,
                   contour_alpha=0.6, lw=1., ls='-',
                   **kwargs):
 
@@ -277,7 +277,7 @@ class SpectralPlotter(object):
 
         # Initialize plotting arrays
         y_values = []
-        x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
+        x_values = np.logspace(np.log10(x_min), np.log10(x_max), num_ene)
         errors = []
 
         fig, ax = plt.subplots()
@@ -380,8 +380,8 @@ class SpectralPlotter(object):
 
         return fig
 
-    def _plot_component_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, ene_min=10.,
-                            ene_max=1E4, num_ene=300, legend=True, fit_cmap=None, contour_cmap=None,
+    def _plot_component_mle(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False, x_min=10.,
+                            x_max=1E4, num_ene=300, legend=True, fit_cmap=None, contour_cmap=None,
                             contour_alpha=0.6, lw=1., ls='-',
                             **kwargs):
 
@@ -398,7 +398,7 @@ class SpectralPlotter(object):
 
         # Initialize plotting arrays
         y_values = []
-        x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
+        x_values = np.logspace(np.log10(x_min), np.log10(x_max), num_ene)
 
         if self._convert_to_frequency:
 
@@ -530,8 +530,8 @@ class SpectralPlotter(object):
         return fig
 
     def _plot_component_bayes(self, x_unit='keV', y_unit='erg/(cm2 keV s)', sources_to_plot=[], summed=False,
-                              ene_min=10.,
-                              ene_max=1E4, num_ene=300, thin=100, alpha=0.05, legend=True, fit_cmap=None,
+                              x_min=10.,
+                              x_max=1E4, num_ene=300, thin=100, alpha=0.05, legend=True, fit_cmap=None,
                               contour_alpha=0.6,
                               **kwargs):
         """
@@ -545,7 +545,7 @@ class SpectralPlotter(object):
         if not fit_cmap:
             fit_cmap = plt.cm.Set1
 
-        x_values = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
+        x_values = np.logspace(np.log10(x_min), np.log10(x_max), num_ene)
 
         if self._convert_to_frequency:
 
