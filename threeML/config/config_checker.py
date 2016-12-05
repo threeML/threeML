@@ -1,10 +1,11 @@
 __author__ = 'drJfunk'
 
-from threeML.config.config import threeML_config
+# from threeML.config.config import threeML_config
 import matplotlib.colors as colors
+import matplotlib.pyplot as plt
 
 
-class ConfigFileError(RuntimeError):
+class ConfigFileWarning(RuntimeWarning):
     pass
 
 
@@ -16,22 +17,39 @@ _color_keys = [['ogip', 'counts color'],
                ['gbm', 'background selection color']
                ]
 
-_cmap_keys = [['ogip', 'data plot cmap'], ]
+_cmap_keys = [['ogip', 'data plot cmap'],
+              ['ogip', 'model plot cmap'],
+              ]
 
 
-def is_matplotlib_cmap():
-    test = True
+def is_matplotlib_cmap(cmap):
+    try:
 
-    return test
+        plt.get_cmap(cmap)
 
-
-def is_matplotlib_color():
-    test = True
-
-    return test
+        return True
 
 
-def check_configuration():
+    except:
+
+        return False
+
+
+def is_matplotlib_color(color):
+    color_converter = colors.ColorConverter()
+
+    try:
+
+        color_converter.to_rgb(color)
+
+        return True
+
+    except(ValueError):
+
+        return False
+
+
+def check_configuration(threeML_config):
     """
     A routine to make sure that user specified configurations
     are indeed valid.
@@ -41,13 +59,16 @@ def check_configuration():
 
     for key in _color_keys:
 
-        color_converter = colors.ColorConverter()
+        color_to_try = threeML_config[key[0]][key[1]]
 
-        try:
-            color_to_try = threeML_config[key[0]][key[1]]
+        if not is_matplotlib_color(color_to_try):
 
-            color_converter.to_rgb(color_to_try)
+            raise ConfigFileWarning("The key: %s of %s is not a valid color string" % (key[0], key[1]))
 
-        except(ValueError):
+    for key in _cmap_keys:
 
-            raise ConfigFileError("The key: %s of %s is not a valid color string" % (key[0], key[1]))
+        cmap_to_try = threeML_config[key[0]][key[1]]
+
+        if not is_matplotlib_cmap(cmap_to_try):
+
+            raise ConfigFileWarning("The key: %s of %s is not a valid cmap string" % (key[0], key[1]))
