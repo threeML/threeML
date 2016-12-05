@@ -29,7 +29,10 @@ _color_keys = [['ogip', 'counts color'],
 
 _cmap_keys = [['ogip', 'data plot cmap'],
               ['ogip', 'model plot cmap'],
-              ['mle', 'contour cmap']
+              ['mle', 'contour cmap'],
+              ['model plot', 'fit cmap'],
+              ['model plot', 'bayes cmap'],
+              ['model plot', 'contour cmap']
               ]
 
 # _parallel_keys = [['parallel', 'IPython profile name'],
