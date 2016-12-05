@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.exceptions import custom_exceptions
 
+# Note! These must bne updated as new configuration variables
+# are introduced!
+
 
 _color_keys = [['ogip', 'counts color'],
                ['ogip', 'background color'],
