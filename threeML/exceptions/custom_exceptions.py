@@ -37,3 +37,6 @@ class LikelihoodIsInfinite(RuntimeWarning):
 class FitFailed(RuntimeError):
     pass
 
+
+class ConfigurationFileCorrupt(RuntimeWarning):
+    pass
