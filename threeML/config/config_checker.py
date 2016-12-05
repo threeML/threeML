@@ -20,15 +20,20 @@ _cmap_keys = [['ogip', 'data plot cmap'],
               ['ogip', 'model plot cmap'],
               ]
 
-_parallel_keys = [['parallel', 'IPython profile name'],
-                  ['parallel', 'use-parallel']]
+# _parallel_keys = [['parallel', 'IPython profile name'],
+#                   ['parallel', 'use-parallel']]
+
+
+_bool_keys = [['parallel', 'use-parallel']]
+
+_string_keys = [['parallel', 'IPython profile name']]
 
 # This stores all the keys that MUST be in the configuration file
 
 _required_keys = {}
 
 # build a dictionary of the keys
-for element in [_parallel_keys, _color_keys, _cmap_keys]:
+for element in [_bool_keys, _string_keys, _color_keys, _cmap_keys]:
 
     for key_pair in element:
 
@@ -63,6 +68,15 @@ def is_matplotlib_color(color):
     except(ValueError):
 
         return False
+
+
+def is_bool(var):
+    return type(var) == bool
+
+
+def is_string(var):
+    return type(var) == str
+
 
 
 def check_configuration(threeML_config, path):
@@ -101,6 +115,15 @@ def check_configuration(threeML_config, path):
             custom_warnings.warn("Configuration is missing %s. Read from %s" % (top_level, path),
                                  custom_exceptions.ConfigurationFileCorrupt)
 
+    # If the required keys are missing, then there is no
+    # point seeing if they are ok... so we just return the
+    # corruption error for now
+
+    if not configuration_is_ok:
+
+        return configuration_is_ok
+
+
     # Now we check if the values of the keys are valid
 
 
@@ -129,5 +152,36 @@ def check_configuration(threeML_config, path):
             custom_warnings.warn(
                     "The key: %s of %s is not a valid cmap string. Read from %s" % (key[0], key[1], path),
                     custom_exceptions.ConfigurationFileCorrupt)
+
+    for key in _bool_keys:
+
+        key_to_try = threeML_config[key[0]][key[1]]
+
+        if not is_bool(key_to_try):
+
+            configuration_is_ok = False
+
+            custom_warnings.warn(
+                    "The key: %s of %s is not a bool. Read from %s" % (key[0], key[1], path),
+                    custom_exceptions.ConfigurationFileCorrupt)
+
+    for key in _string_keys:
+
+        key_to_try = threeML_config[key[0]][key[1]]
+
+        if not is_string(key_to_try):
+
+            configuration_is_ok = False
+
+            custom_warnings.warn(
+                    "The key: %s of %s is not a str. Read from %s" % (key[0], key[1], path),
+                    custom_exceptions.ConfigurationFileCorrupt)
+
+
+
+
+
+
+
 
     return configuration_is_ok
