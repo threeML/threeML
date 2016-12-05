@@ -17,7 +17,11 @@ _color_keys = [['ogip', 'counts color'],
                ['mle', 'contour background'],
                ['mle', 'contour level 1'],
                ['mle', 'contour level 2'],
-               ['mle', 'contour level 3']
+               ['mle', 'contour level 3'],
+               ['mle', 'profile color'],
+               ['mle', 'profile level 1'],
+               ['mle', 'profile level 2'],
+               ['mle', 'profile level 3']
                ]
 
 _cmap_keys = [['ogip', 'data plot cmap'],

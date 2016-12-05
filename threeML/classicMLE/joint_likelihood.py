@@ -969,14 +969,16 @@ class JointLikelihood(object):
         # (fit failed)
         idx = (cc == minimization.FIT_FAILED)
 
-        sub.plot(a[~idx], cc[~idx], lw=2)
+        sub.plot(a[~idx], cc[~idx], lw=2, color=threeML_config['mle']['profile color'])
 
         # Now plot the failed fits as "x"
 
         sub.plot(a[idx], [cc.min()] * a[idx].shape[0], 'x', c='red', markersize=2)
 
         # Decide colors
-        colors = ['blue', 'cyan', 'red']
+        colors = [threeML_config['mle']['profile level 1'],
+                  threeML_config['mle']['profile level 2'],
+                  threeML_config['mle']['profile level 3']]
 
         for s, d, c in zip(sigmas, delta_chi2, colors):
             sub.axhline(self._current_minimum + d, linestyle='--',
