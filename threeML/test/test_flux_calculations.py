@@ -4,6 +4,8 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.io.flux_calculator import InvalidUnitError
 
 
+# TODO: add tests for area corrections
+
 def test_mle_flux_calculations():
     # In[2]:
 
