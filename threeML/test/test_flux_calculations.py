@@ -1,7 +1,7 @@
 import pytest
 from threeML import *
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.io.model_plot import InvalidUnitError
+from threeML.io.flux_calculator import InvalidUnitError
 
 
 def test_mle_flux_calculations():
@@ -53,4 +53,6 @@ def test_mle_flux_calculations():
 
     fit_results, like_frame = jl.fit()
 
-    fc = SpectralFlux(jl)
+    flux = SpectralFlux(jl)
+
+    res = flux.model_flux(flux_unit='erg/(s cm2)', energy_unit='keV', ene_min=10, ene_max=40000)
