@@ -13,11 +13,16 @@ _color_keys = [['ogip', 'counts color'],
                ['gbm', 'lightcurve color'],
                ['gbm', 'selection color'],
                ['gbm', 'background color'],
-               ['gbm', 'background selection color']
+               ['gbm', 'background selection color'],
+               ['mle', 'contour background'],
+               ['mle', 'contour level 1'],
+               ['mle', 'contour level 2'],
+               ['mle', 'contour level 3']
                ]
 
 _cmap_keys = [['ogip', 'data plot cmap'],
               ['ogip', 'model plot cmap'],
+              ['mle', 'contour cmap']
               ]
 
 # _parallel_keys = [['parallel', 'IPython profile name'],

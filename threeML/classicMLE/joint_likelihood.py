@@ -1041,10 +1041,10 @@ class JointLikelihood(object):
         bounds.append(cc.max())
 
         # Define the color palette
-        palette = cm.Pastel1
-        palette.set_over('white')
-        palette.set_under('white')
-        palette.set_bad('white')
+        palette = plt.get_cmap(threeML_config['mle']['contour cmap'])  # cm.Pastel1
+        palette.set_over(threeML_config['mle']['contour background'])
+        palette.set_under(threeML_config['mle']['contour background'])
+        palette.set_bad(threeML_config['mle']['contour background'])
 
         fig = plt.figure()
         sub = fig.add_subplot(111)
@@ -1081,7 +1081,9 @@ class JointLikelihood(object):
             t.set_verticalalignment('baseline')
 
         # Draw the line contours
-        sub.contour(b, a, cc, self._current_minimum + delta_chi2)
+        sub.contour(b, a, cc, self._current_minimum + delta_chi2,
+                    colors=(threeML_config['mle']['contour level 1'], threeML_config['mle']['contour level 2'],
+                            threeML_config['mle']['contour level 3']))
 
         # Set the axes labels
 
