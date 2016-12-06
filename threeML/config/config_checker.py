@@ -72,11 +72,11 @@ def is_matplotlib_cmap(cmap):
 
 
 def is_matplotlib_color(color):
-    color_converter = colors.ColorConverter()
+    # color_converter = colors.ColorConverter()
 
     try:
 
-        color_converter.to_rgb(color)
+        colors.is_color_like(color)
 
         return True
 
