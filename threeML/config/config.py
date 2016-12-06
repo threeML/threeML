@@ -108,6 +108,48 @@ class Config( object ):
         
         return yaml.dump( self._configuration, default_flow_style=False )
 
+    def restore_default_configuration(self):
+        """
+        Restore the default configuration
+
+        :return:
+
+        """
+
+        distribution = pkg_resources.get_distribution("threeML")
+        distribution_path = os.path.join(distribution.location, 'threeML/config')
+
+        thisFilename = os.path.join(distribution_path, 'threeML_config.yml')
+
+        if os.path.exists(thisFilename):
+
+            with open(thisFilename) as f:
+
+                configuration = yaml.safe_load(f)
+
+                # Test if the distribution configuration
+
+                if check_configuration(configuration, f):
+
+                    self._configuration = configuration
+
+                    print("Default configuration read from %s" % (thisFilename))
+
+                else:
+
+                    print('Default configuration is corrupted')
+
+    def restore_user_configuration(self):
+        """
+        Restore the user configuration if it exists.
+
+
+        :return:
+        """
+
+        self.__init__()
+
+
 
 # Now read the config file, so it will be available as Config.c
 threeML_config = Config()
