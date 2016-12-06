@@ -6,15 +6,19 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.binner import Rebinner
 from threeML.io.step_plot import step_plot
 from threeML.utils.stats_tools import Significance
+from threeML.exceptions.custom_exceptions import custom_warnings
 
 from threeML.config.config import threeML_config
 
 NO_REBIN = 1e-99
 
-def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
+def display_ogip_model_counts(analysis, data=(), **kwargs):
     """
 
     Display the fitted model count spectrum of one or more OGIP plugins
+
+    NOTE: all parameters passed as keyword arguments that are not in the list below, will be passed as keyword arguments
+    to the plt.subplots() constructor. So for example, you can specify the size of the figure using figsize = (20,10)
 
     :param args: one or more instances of OGIP plugin
     :param min_rate: (optional) rebin to keep this minimum rate in each channel (if possible). If one number is
@@ -55,6 +59,11 @@ def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
 
                 new_data_keys.append(key)
 
+            else:
+
+                custom_warnings.warn("Dataset %s is not of the OGIP kind. Cannot be plotted by "
+                                     "display_ogip_model_counts" % key)
+
     if not new_data_keys:
 
         RuntimeError(
@@ -66,8 +75,6 @@ def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
 
     # Default is to show the model with steps
     step = True
-
-    min_rates = [min_rate] * len(data_keys)
 
     data_cmap = plt.get_cmap(threeML_config['ogip']['data plot cmap'])  # plt.cm.rainbow
     model_cmap = plt.get_cmap(threeML_config['ogip']['model plot cmap'])  # plt.cm.nipy_spectral_r
@@ -111,6 +118,12 @@ def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
                     data_keys), "If you provide different minimum rates for each data set, you need" \
                                 "to provide an iterable of the same length of the number of datasets"
 
+    else:
+
+        # This is the default (no rebinning)
+
+        min_rates = [NO_REBIN] * len(data_keys)
+
     if 'data_cmap' in kwargs:
 
         data_cmap = plt.get_cmap(kwargs.pop('data_cmap'))
@@ -152,7 +165,7 @@ def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
     #
     #     analysis.restore_median_fit()
 
-    fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
+    fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
     # go thru the detectors
     for key, data_color, model_color, min_rate in zip(data_keys, data_colors, model_colors, min_rates):
@@ -358,7 +371,7 @@ def display_ogip_model_counts(analysis, data=(), min_rate=NO_REBIN, **kwargs):
 
         ax.legend(fontsize='x-small', loc=0)
 
-    ax.set_ylabel("Background-subtracted rate\n(counts s$^{-1}$ keV$^{-1}$)")
+    ax.set_ylabel("Net rate\n(counts s$^{-1}$ keV$^{-1}$)")
 
     ax.set_xscale('log')
     ax.set_yscale('log', nonposy='clip')
