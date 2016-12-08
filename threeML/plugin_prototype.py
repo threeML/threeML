@@ -18,7 +18,7 @@ def set_external_property(method):
     """
 
     @functools.wraps(method)
-    def setter(instance):
+    def wrapper(instance, *args, **kwargs):
 
         if instance._external_properties:
 
@@ -26,7 +26,9 @@ def set_external_property(method):
 
                 property.value = value
 
-    return setter
+        return method(instance, *args, **kwargs)
+
+    return wrapper
 
 
 
