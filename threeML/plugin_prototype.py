@@ -5,6 +5,33 @@ Define the interface for a plugin class.
 import abc
 from astromodels.utils.valid_variable import is_valid_variable_name
 import warnings
+import functools
+
+
+def set_external_property(method):
+    """
+    Sets external property values if they exist
+
+
+    :param method:
+    :return:
+    """
+
+    @functools.wraps(method)
+    def setter(instance):
+
+        if instance._external_properties:
+
+            for property, value in instance._external_properties:
+
+                property.value = value
+
+    return setter
+
+
+
+
+
 
 class PluginPrototype(object):
 
@@ -23,6 +50,9 @@ class PluginPrototype(object):
         assert isinstance(nuisance_parameters, dict)
 
         self._nuisance_parameters = nuisance_parameters
+
+        # These are the external properties (time, polarization, etc.)
+        self._external_properties = []
 
     def get_name(self):
 
