@@ -114,3 +114,13 @@ class PluginPrototype(object):
         logLike value.
         """
         pass
+
+    def external_property(self, property, value):
+        """
+        Set external/auxiliary properties and their value
+        :param property: an astromodels auxiliary variable
+        :param value: the value of the auxiliary variable for this plugin
+        :return:
+        """
+
+        self._external_properties.append((property, value))
