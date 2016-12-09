@@ -665,6 +665,53 @@ class GBMTTEFile(object):
 
         display(fermi_df)
 
+    def get_ogip_from_binner(self):
+        """
+
+        Returns a list of ogip_instances corresponding to the
+        time intervals created by the binner.
+
+        :return: list of ogip instances for each time interval
+        """
+
+        # save the original interval if there is one
+        old_interval = copy.copy(self._active_interval)
+        old_verbose = copy.copy(self._verbose)
+
+        self._verbose = False
+
+        ogip_list = []
+
+        # create copies of the OGIP plugins with the
+        # time interval saved.
+
+
+
+        for i, interval in enumerate(self.text_bins):
+
+            self.set_active_time_interval(interval)
+
+            new_ogip = copy.copy(self)  # type: OGIPLike
+
+            # Give it a new name
+
+            new_ogip._name = self._name + "_%d" % i
+
+            ogip_list.append(new_ogip)
+
+        # write out the PHAII file
+
+
+
+        # restore the old interval
+
+        self.set_active_time_interval(*old_interval)
+
+        self._verbose = old_verbose
+
+        return ogip_list
+
+
 
 def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections):
     fig, ax = plt.subplots()
