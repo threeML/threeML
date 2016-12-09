@@ -97,9 +97,9 @@ def step_generator(intervals, parameter):
 
             i = i + 1
 
-            func.free_parameters['k_%d' % i].value = initial_value
-            func.free_parameters['k_%d' % i].min_value = parameter_min
-            func.free_parameters['k_%d' % i].max_value = parameter_max
+            func.free_parameters['value_%d' % i].value = initial_value
+            func.free_parameters['value_%d' % i].min_value = parameter_min
+            func.free_parameters['value_%d' % i].max_value = parameter_max
 
             func.parameters['zero_point_%d' % i].value = interval
 
