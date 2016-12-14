@@ -26,6 +26,7 @@ install:
   # Download and install latest version of astromodels
   - pip install git+https://github.com/giacomov/astromodels.git
   - pip install .
+  - python -c "from threeML.config.config import Config; print(Config()._configuration['parallel'].keys())"
 
 script:
   # Your test script goes here
