@@ -18,6 +18,7 @@ from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import Response
 from threeML.utils.binner import Rebinner
 from threeML.plugins.OGIP.pha import PHAContainer, PHAWrite
+from threeML.config.config import threeML_config
 
 
 __instrument_name = "All OGIP-compliant instruments"
@@ -1174,6 +1175,7 @@ class OGIPLike(PluginPrototype):
 
         channel_plot(ax, energy_min, energy_max, observed_counts,
                      color='#377eb8', lw=1.5, alpha=1, label="Total")
+
         channel_plot(ax, energy_min, energy_max, background_counts,
                      color='#e41a1c', alpha=.8, label="Background")
 
@@ -1223,12 +1225,12 @@ class OGIPLike(PluginPrototype):
                          energy_min_unrebinned[non_used_mask],
                          energy_max_unrebinned[non_used_mask],
                          observed_rate_unrebinned[non_used_mask],
-                         color='#377eb8', lw=1.5, alpha=1)
+                         color=threeML_config['ogip']['counts color'], lw=1.5, alpha=1)
 
             channel_plot(ax, energy_min_unrebinned[non_used_mask],
                          energy_max_unrebinned[non_used_mask],
                          background_rate_unrebinned[non_used_mask],
-                         color='#e41a1c', alpha=.8)
+                         color=threeML_config['ogip']['background color'], alpha=.8)
 
             if plot_errors:
 
@@ -1244,7 +1246,7 @@ class OGIPLike(PluginPrototype):
                             alpha=.9,
                             capsize=0,
                             # label=data._name,
-                            color='#377eb8')
+                            color=threeML_config['ogip']['counts color'])
 
                 ax.errorbar(mean_chan_unrebinned[non_used_mask],
                             background_rate_unrebinned[non_used_mask] / energy_width_unrebinned[non_used_mask],
@@ -1256,7 +1258,7 @@ class OGIPLike(PluginPrototype):
                             alpha=.9,
                             capsize=0,
                             # label=data._name,
-                            color='#e41a1c')
+                            color=threeML_config['ogip']['background color'])
 
             excluded_channel_plot(ax, energy_min_unrebinned, energy_max_unrebinned,
                                   observed_rate_unrebinned,

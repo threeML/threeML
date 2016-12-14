@@ -269,9 +269,6 @@ class JointLikelihoodSet(object):
         return parameter_frames, like_frames
 
 
-class JointLikelihoodSetTwoModels(JointLikelihoodSet):
-    pass
-
 
 class JointLikelihoodSetAnalyzer(object):
     """

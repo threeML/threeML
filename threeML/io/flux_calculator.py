@@ -8,8 +8,15 @@ from sympy.abc import x
 from sympy.solvers import solve
 from sympy.utilities.lambdify import lambdify
 import scipy.integrate as integrate
+import collections
 
 import pandas as pd
+
+from threeML.utils.differentiation import get_jacobian
+
+
+class InvalidUnitError(RuntimeError):
+    pass
 
 
 class SpectralFlux(object):
@@ -33,7 +40,7 @@ class SpectralFlux(object):
 
         self._analysis_type = analysis._analysis_type
 
-        self.analysis = analysis
+        self._analysis = analysis
 
     def model_flux(self, energy_unit='keV', flux_unit='erg/(cm2 keV s)', ene_min=10., ene_max=1E4,
                    sources_to_calculate=[], summed=False,
@@ -110,12 +117,12 @@ class SpectralFlux(object):
 
 
         # Get the the number of samples
-        n_samples = self.analysis.raw_samples.shape[0]
+        n_samples = self._analysis.raw_samples.shape[0]
 
         # First see if we are plotting all the sources
         if not sources_to_calculate:  # Assuming plot all sources
 
-            sources_to_calculate = self.analysis._likelihood_model.point_sources.keys()
+            sources_to_calculate = self._analysis._likelihood_model.point_sources.keys()
 
         # container for contours
         all_fluxes = []
@@ -126,7 +133,7 @@ class SpectralFlux(object):
 
             # Get the spectrum first
 
-            model = self.analysis._likelihood_model.point_sources[source].spectrum.main.shape
+            model = self._analysis._likelihood_model.point_sources[source].spectrum.main.shape
 
             # Check the  type of function we want
             spectrum_type = self._get_spectrum_type(flux_unit)
@@ -141,9 +148,9 @@ class SpectralFlux(object):
             for i in range(0, n_samples, thin):
 
                 # go through parameters
-                for par in self.analysis.samples.keys():
+                for par in self._analysis.samples.keys():
                     mod_par = par.split('.')[-1]
-                    model.free_parameters[mod_par].value = self.analysis.samples[par][i]
+                    model.free_parameters[mod_par].value = self._analysis.samples[par][i]
 
                 # get the flux for the this sample
                 tmp.append(flux_function(ene_min, ene_max))
@@ -152,7 +159,7 @@ class SpectralFlux(object):
 
             # pull the highest density posterior at the chosen alpha level
 
-            hpd = self.analysis._hpd(tmp, alpha=alpha)
+            hpd = self._analysis._hpd(tmp, alpha=alpha)
             mean_flux = np.mean(tmp)
 
             all_hpd.append(hpd * flux_unit * conversion)
@@ -161,8 +168,7 @@ class SpectralFlux(object):
 
             all_fluxes.append(tmp * conversion)
 
-        dist_dict = {}
-        flux_dict = {}
+        flux_dict = collections.OrderedDict()
 
         all_fluxes = np.array(all_fluxes)
 
@@ -182,7 +188,7 @@ class SpectralFlux(object):
             fluxes_summed = np.array(all_fluxes).sum(axis=0)
 
             flux_dict['Mean Summed Flux'] = np.mean(fluxes_summed) * flux_unit
-            flux_dict['HPD Summed Flux'] = self.analysis._hpd(fluxes_summed, alpha=alpha) * flux_unit
+            flux_dict['HPD Summed Flux'] = self._analysis._hpd(fluxes_summed, alpha=alpha) * flux_unit
             flux_dict['Summed Flux Distribution'] = fluxes_summed * flux_unit
 
             return pd.Series(flux_dict)
@@ -195,7 +201,7 @@ class SpectralFlux(object):
         Should not be called directly!
 
         """
-        self.analysis.restore_best_fit()
+        self._analysis.restore_best_fit()
 
         flux_unit = u.Unit(flux_unit)
         energy_unit = u.Unit(energy_unit)
@@ -205,24 +211,24 @@ class SpectralFlux(object):
 
         errors = []
 
-        flux_dict = {}
+        flux_dict = collections.OrderedDict()
 
         # First see if we are plotting all the sources
         if not sources_to_calculate:  # Assuming plot all sources
 
-            sources_to_calculate = self.analysis.likelihood_model.point_sources.keys()
+            sources_to_calculate = self._analysis.likelihood_model.point_sources.keys()
 
         for source in sources_to_calculate:
             # Get the spectrum first
 
-            model = self.analysis.likelihood_model.point_sources[source].spectrum.main.shape
+            model = self._analysis.likelihood_model.point_sources[source].spectrum.main.shape
 
             # Check the  type of function we want
             spectrum_type = self._get_spectrum_type(flux_unit)
 
             flux_function, conversion = self._get_flux_function(spectrum_type, model, energy_unit, flux_unit)
 
-            err = self._propagate_full(source, flux_function, ene_min, ene_max)
+            err = self._propagate_full(flux_function, ene_min, ene_max)
 
             y_values.append(flux_function(ene_min, ene_max) * flux_unit * conversion)
 
@@ -255,7 +261,7 @@ class SpectralFlux(object):
                             ene_max=1E4,
                             **kwargs):
 
-        self.analysis.restore_best_fit()
+        self._analysis.restore_best_fit()
 
         energy_unit = u.Unit(energy_unit)
         flux_unit = u.Unit(flux_unit)
@@ -266,7 +272,7 @@ class SpectralFlux(object):
         # First see if we are plotting all the sources
         if sources_to_calculate == []:  # Assuming plot all sources
 
-            sources_to_calculate = self.analysis.likelihood_model.point_sources.keys()
+            sources_to_calculate = self._analysis.likelihood_model.point_sources.keys()
 
         # if components == []: # Assuming plot all sources
 
@@ -275,7 +281,7 @@ class SpectralFlux(object):
 
         for source in sources_to_calculate:
 
-            composite_model = self.analysis.likelihood_model.point_sources[source].spectrum.main.composite
+            composite_model = self._analysis.likelihood_model.point_sources[source].spectrum.main.composite
             models = self._solve_for_component_flux(composite_model)
 
             # Check the type of function we want
@@ -286,7 +292,7 @@ class SpectralFlux(object):
             for model in models:
                 flux_function, conversion = self._get_flux_function(spectrum_type, model, energy_unit, flux_unit)
 
-                err = self._propagate_full(source, flux_function, ene_min, ene_max)
+                err = self._propagate_full(flux_function, ene_min, ene_max)
 
                 y_vals_per_comp.append(flux_function(ene_min, ene_max) * flux_unit * conversion)
 
@@ -295,16 +301,16 @@ class SpectralFlux(object):
             y_values.append(y_vals_per_comp)
             errors.append(errors_per_comp)
 
-        flux_total_dict = {}
+        flux_total_dict = collections.OrderedDict()
 
         if not summed:
 
             for y_val_pc, err_pc, source in zip(y_values, errors, sources_to_calculate):
                 model_names = [func.name for func in
 
-                               self.analysis.likelihood_model.point_sources[source].spectrum.main.composite.functions]
+                               self._analysis.likelihood_model.point_sources[source].spectrum.main.composite.functions]
 
-                flux_dict = {}
+                flux_dict = collections.OrderedDict()
 
                 flux_dict['Component'] = model_names
                 flux_dict['Flux'] = y_val_pc
@@ -326,7 +332,7 @@ class SpectralFlux(object):
             # This is a kludge assuming all sources have the same models
 
             model_names = [func.name for func in
-                           self.analysis.likelihood_model.point_sources[
+                           self._analysis.likelihood_model.point_sources[
                                sources_to_calculate[0]].spectrum.main.composite.functions]
 
             flux_total_dict['Component'] = model_names
@@ -348,16 +354,17 @@ class SpectralFlux(object):
         flux_unit = u.Unit(flux_unit)
 
         # Get the the number of samples
-        n_samples = self.analysis.raw_samples.shape[0]
+        n_samples = self._analysis.raw_samples.shape[0]
 
         # First see if we are plotting all the sources
         if not sources_to_calculate:  # Assuming plot all sources
 
-            sources_to_calculate = self.analysis._likelihood_model.point_sources.keys()
+            sources_to_calculate = self._analysis._likelihood_model.point_sources.keys()
 
         # this is a kludge at the moment. Model number may vary!
         num_models = len(
-            self.analysis._likelihood_model.point_sources[sources_to_calculate[0]].spectrum.main.composite.functions)
+                self._analysis._likelihood_model.point_sources[
+                    sources_to_calculate[0]].spectrum.main.composite.functions)
 
         all_fluxes = []
         all_means = []
@@ -365,7 +372,7 @@ class SpectralFlux(object):
 
         for source in sources_to_calculate:
 
-            composite_model = self.analysis._likelihood_model.point_sources[source].spectrum.main.composite
+            composite_model = self._analysis._likelihood_model.point_sources[source].spectrum.main.composite
             models = self._solve_for_component_flux(composite_model)
 
             # Check the type of function we want
@@ -386,9 +393,9 @@ class SpectralFlux(object):
                 for i in range(0, n_samples, thin):
 
                     # go through parameters
-                    for par in self.analysis.samples.keys():
+                    for par in self._analysis.samples.keys():
                         mod_par = par.split('.')[-1]
-                        composite_model.free_parameters[mod_par].value = self.analysis.samples[par][i]
+                        composite_model.free_parameters[mod_par].value = self._analysis.samples[par][i]
 
                     # get the flux for the this sample
                     tmp.append(flux_function(ene_min, ene_max))
@@ -396,7 +403,7 @@ class SpectralFlux(object):
                 tmp = np.array(tmp)
 
                 # pull the highest denisty posterior at the choosen alpha level
-                hpd_per_component.append(self.analysis._hpd(tmp, alpha=alpha) * conversion * flux_unit)
+                hpd_per_component.append(self._analysis._hpd(tmp, alpha=alpha) * conversion * flux_unit)
                 mean_per_component.append(np.mean(tmp) * conversion * flux_unit)
 
                 fluxes_per_component.append(tmp * conversion)
@@ -407,15 +414,15 @@ class SpectralFlux(object):
 
         all_fluxes = np.array(all_fluxes)
 
-        flux_total_dict = {}
+        flux_total_dict = collections.OrderedDict()
 
         if not summed:
 
             for flux_pc, mean_pc, hpd_pc, source in zip(all_fluxes, all_means, all_hpd, sources_to_calculate):
                 model_names = [func.name for func in
-                               self.analysis._likelihood_model.point_sources[source].spectrum.main.composite.functions]
+                               self._analysis._likelihood_model.point_sources[source].spectrum.main.composite.functions]
 
-                flux_dict = {}
+                flux_dict = collections.OrderedDict()
                 flux_dict['Component'] = model_names
                 flux_dict['Mean Flux'] = mean_pc
                 flux_dict['HPD Flux'] = hpd_pc
@@ -433,12 +440,12 @@ class SpectralFlux(object):
 
             # This is a kludge that assumes all sources have the same model!
             model_names = [func.name for func in
-                           self.analysis._likelihood_model.point_sources[
+                           self._analysis._likelihood_model.point_sources[
                                sources_to_calculate[0]].spectrum.main.composite.functions]
 
             means = map(np.mean, summed_fluxes) * flux_unit
 
-            hpd = map(lambda x: self.analysis._hpd(x, alpha) * flux_unit, summed_fluxes)
+            hpd = map(lambda x: self._analysis._hpd(x, alpha) * flux_unit, summed_fluxes)
 
             flux_total_dict['Component'] = model_names
             flux_total_dict['Mean Summed Flux'] = means
@@ -447,47 +454,55 @@ class SpectralFlux(object):
 
             return flux_total_dict
 
-    @staticmethod
-    def _derivative(f):
-        """
-        :param f: a function head
-        :return: second order numerical derivative of a function
-        """
+    def _propagate_full(self, flux_function, ene_min, ene_max):
 
-        def df(x):
-            h = 1.e-7
+        # Get the parameters from the minimizer
 
-            return (f(x + h) - f(x - h)) / (2 * h)
+        parameters = self._analysis.minimizer.parameters
 
-        return df
-
-    def _propagate_full(self, source, flux_function, ene_min, ene_max):
-
-        model = self.analysis.likelihood_model.point_sources[source]
-
+        # We will store the first derivatives @ the best fit values
         first_derivatives = []
 
-        for par in model.spectrum.main.shape.free_parameters.keys():
-            self.analysis.restore_best_fit()
+        # Now loop through each parameter and free it while
+        # holding the others constant. This is the normal (pun intended)
+        # error propagation formula.
+        for par in parameters.keys():
 
-            parameter_best_fit_value = model.spectrum.main.shape.free_parameters[par].value
+            # go back to the best fit
+
+            self._analysis.restore_best_fit()
+
+
+            parameter_best_fit_value = parameters[par].value
+
+            min_value, max_value = parameters[par].bounds
+
+            # Create a temporary flux function to take a
+            # derivative w.r.t. the free parameter
 
             def tmpflux(current_value):
-                model.spectrum.main.shape.free_parameters[par].value = current_value
+
+                parameters[par].value = current_value
 
                 return flux_function(ene_min, ene_max)
 
-            this_derivate = self._derivative(tmpflux)
+            # get the first derivatives and append them for some
+            # linear algebra
 
-            first_derivatives.append(this_derivate(parameter_best_fit_value))
+            this_derivative = get_jacobian(tmpflux, parameter_best_fit_value, min_value, max_value)[0][0]
+
+            first_derivatives.append(this_derivative)
 
         first_derivatives = np.array(first_derivatives)
 
-        tmp = first_derivatives.dot(self.analysis.covariance_matrix)
+        # Now we take the inner product with the covariance matrix
+
+        tmp = first_derivatives.dot(self._analysis.covariance_matrix)
 
         error = (np.sqrt(tmp.dot(first_derivatives)))
 
-        self.analysis.restore_best_fit()
+        # make sure to restore the best fit to the analysis
+        self._analysis.restore_best_fit()
 
         return error
 
@@ -578,7 +593,7 @@ class SpectralFlux(object):
 
                 except:
 
-                    raise RuntimeError("The provided flux_unit is not valid!")
+                    raise InvalidUnitError("The provided flux_unit is not valid!")
 
     def _solve_for_component_flux(self, composite_model):
         """
