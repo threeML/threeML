@@ -42,13 +42,13 @@ class Config(object):
 
             # This needs to be here for the _check_configuration to work
 
-            self._default_configuration = configuration
+            self._default_configuration = None
 
             # Test the default configuration
 
             try:
 
-                self._check_configuration(configuration, default_configuration_path)
+                self._default_configuration = self._check_configuration(configuration, default_configuration_path)
 
             except:
 
@@ -72,7 +72,7 @@ class Config(object):
 
                 try:
 
-                    self._check_configuration(configuration, user_config_path)
+                    self._configuration = self._check_configuration(configuration, user_config_path)
 
                 except ConfigurationFileCorrupt:
 
@@ -95,7 +95,6 @@ class Config(object):
 
                 else:
 
-                    self._configuration = configuration
                     self._filename = user_config_path
 
                     print("Configuration read from %s" % (user_config_path))
@@ -251,8 +250,10 @@ class Config(object):
         """
 
         # First check that the provided configuration has the same structure of the default configuration
+        # (if a default configuration has been loaded)
 
-        if not self._check_same_structure(config_dict, self._default_configuration):
+        if (self._default_configuration is not None) and \
+                (not self._check_same_structure(config_dict, self._default_configuration)):
 
             # It does not, so of course is not valid (no need to check further)
 
@@ -260,6 +261,11 @@ class Config(object):
                                            "one." % config_path)
 
         else:
+
+            # This will contain a copy of the configuration where all the element_types have been removed
+            # (so that a key "background (color)" in the config_dict become simply "background" in the new
+            # one
+            new_configuration = {}
 
             # Make a dictionary of known checkers and what they apply to
             known_checkers = {'color': (self.is_matplotlib_color, 'a matplotlib color (name or html hex value)'),
@@ -273,7 +279,6 @@ class Config(object):
 
             for key, value in self._traverse_dict(config_dict):
 
-                print("%s -> %s" %(key, value))
                 # Each key is in the form "element_name (element_type)", for example "background (color)"
 
                 try:
@@ -299,8 +304,11 @@ class Config(object):
                     raise ConfigurationFileCorrupt("Cannot understand element type %s for "
                                        "key %s in config file %s" % (element_type, key, config_path))
 
+                # If we are here everything is fine
+                new_configuration[element_name] = value
+
             # If we are here it means that all checks were successful
-            return True
+            return new_configuration
 
 
 # Now read the config file, so it will be available as Config.c
