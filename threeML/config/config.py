@@ -108,7 +108,7 @@ class Config(object):
                                  "You might want to copy it to %s to customize it and avoid this warning."
                                  % (self._default_path, user_config_path))
 
-            self._configuration = self._default_configuration_raw
+            self._configuration = self._check_configuration(self._default_configuration_raw, self._default_path)
             self._filename = self._default_path
 
     def __getitem__(self, key):
