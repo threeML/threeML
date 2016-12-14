@@ -852,7 +852,7 @@ class SpectralPlotter(object):
 
                 except:
 
-                    raise RuntimeError("The y_unit provided is not a valid spectral quantity")
+                    raise InvalidUnitError("The y_unit provided is not a valid spectral quantity")
 
     def _solve_for_component_flux(self, composite_model):
         """

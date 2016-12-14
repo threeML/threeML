@@ -14,6 +14,11 @@ import pandas as pd
 
 from threeML.utils.differentiation import get_jacobian
 
+
+class InvalidUnitError(RuntimeError):
+    pass
+
+
 class SpectralFlux(object):
     def __init__(self, analysis):
         """
@@ -588,7 +593,7 @@ class SpectralFlux(object):
 
                 except:
 
-                    raise RuntimeError("The provided flux_unit is not valid!")
+                    raise InvalidUnitError("The provided flux_unit is not valid!")
 
     def _solve_for_component_flux(self, composite_model):
         """
