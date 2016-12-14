@@ -29,8 +29,10 @@ install:
   - python -c "from threeML.config.config import Config; print(Config()._configuration['parallel'].keys())"
 
 script:
-  # Your test script goes here
-  - py.test -s --cache-clear
+  # Set to non-interactive backend for matplotlib
+  - export MPLBACKEND='Agg'
+  # Run tests
+  - py.test --cache-clear
 
 # Calculate coverage
 #after_success:
