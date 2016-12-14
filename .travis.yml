@@ -22,9 +22,10 @@ install:
   # Replace dep1 dep2 ... with your dependencies
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION ipython pytest numpy scipy matplotlib pandas astropy numexpr hdf5 pytables pyyaml dill iminuit sympy
   - source activate test-environment
-  - pip install emcee uncertainties
+  - pip install emcee uncertainties corner ipyparallel
   # Download and install latest version of astromodels
   - pip install git+https://github.com/giacomov/astromodels.git
+  - pip install .
 
 script:
   # Your test script goes here
