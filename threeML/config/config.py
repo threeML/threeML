@@ -285,10 +285,6 @@ class Config(object):
                     raise ConfigurationFileCorrupt("Cannot parse element '%s' in configuration file %s" %(key,
                                                                                                           config_path))
 
-                if element_name == 'counts':
-
-                    import pdb;pdb.set_trace()
-
                 if element_type in known_checkers:
 
                     checker, descr = known_checkers[element_type]
