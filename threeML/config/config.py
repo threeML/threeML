@@ -42,13 +42,13 @@ class Config(object):
 
             # This needs to be here for the _check_configuration to work
 
-            self._default_configuration = None
+            self._default_configuration_raw = configuration
 
             # Test the default configuration
 
             try:
 
-                self._default_configuration = self._check_configuration(configuration, default_configuration_path)
+                self._check_configuration(configuration, default_configuration_path)
 
             except:
 
@@ -93,6 +93,9 @@ class Config(object):
                     # Copy the default configuration
                     shutil.copy2(self._default_path, user_config_path)
 
+                    self._configuration = self._check_configuration(self._default_configuration_raw, self._default_path)
+                    self._filename = self._default_path
+
                 else:
 
                     self._filename = user_config_path
@@ -105,7 +108,7 @@ class Config(object):
                                  "You might want to copy it to %s to customize it and avoid this warning."
                                  % (self._default_path, user_config_path))
 
-            self._configuration = self._default_configuration
+            self._configuration = self._default_configuration_raw
             self._filename = self._default_path
 
     def __getitem__(self, key):
@@ -121,44 +124,6 @@ class Config(object):
     def __repr__(self):
 
         return yaml.dump(self._configuration, default_flow_style=False)
-
-    def restore_default_configuration(self):
-        """
-        Restore the default configuration
-
-        :return:
-
-        """
-
-        thisFilename = get_path_of_default_configuration()
-
-        if os.path.exists(thisFilename):
-
-            with open(thisFilename) as f:
-
-                configuration = yaml.safe_load(f)
-
-                # Test if the distribution configuration
-
-                if self._check_configuration(configuration, f):
-
-                    self._configuration = configuration
-
-                    print("Default configuration read from %s" % (thisFilename))
-
-                else:
-
-                    raise ConfigurationFileCorrupt('Default configuration is corrupted')
-
-    def restore_user_configuration(self):
-        """
-        Restore the user configuration if it exists.
-
-
-        :return:
-        """
-
-        self.__init__()
 
     @staticmethod
     def is_matplotlib_cmap(cmap):
@@ -252,8 +217,8 @@ class Config(object):
         # First check that the provided configuration has the same structure of the default configuration
         # (if a default configuration has been loaded)
 
-        if (self._default_configuration is not None) and \
-                (not self._check_same_structure(config_dict, self._default_configuration)):
+        if (self._default_configuration_raw is not None) and \
+                (not self._check_same_structure(config_dict, self._default_configuration_raw)):
 
             # It does not, so of course is not valid (no need to check further)
 
@@ -261,11 +226,6 @@ class Config(object):
                                            "one." % config_path)
 
         else:
-
-            # This will contain a copy of the configuration where all the element_types have been removed
-            # (so that a key "background (color)" in the config_dict become simply "background" in the new
-            # one
-            new_configuration = {}
 
             # Make a dictionary of known checkers and what they apply to
             known_checkers = {'color': (self.is_matplotlib_color, 'a matplotlib color (name or html hex value)'),
@@ -304,11 +264,27 @@ class Config(object):
                     raise ConfigurationFileCorrupt("Cannot understand element type %s for "
                                        "key %s in config file %s" % (element_type, key, config_path))
 
-                # If we are here everything is fine
-                new_configuration[element_name] = value
-
             # If we are here it means that all checks were successful
-            return new_configuration
+            # Return the new configuration, where all types are stripped out
+            return self._get_copy_with_no_types(config_dict)
+
+    @staticmethod
+    def _remove_type(d):
+
+        return dict(map(lambda (key, value): (key.split("(")[0].rstrip(), value), d.items()))
+
+    def _get_copy_with_no_types(self, multilevelDict):
+
+        new = self._remove_type(multilevelDict)
+
+        for key, value in new.items():
+
+            if isinstance(value, dict):
+
+                new[key] = self._get_copy_with_no_types(value)
+
+        return new
+
 
 
 # Now read the config file, so it will be available as Config.c

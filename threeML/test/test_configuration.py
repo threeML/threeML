@@ -1,22 +1,9 @@
-from threeML.config.config_checker import check_configuration
-import pkg_resources
-import yaml
-import os
+from threeML.config.config import Config
 
 
 def test_default_configuration():
-    # check that the built in configuration file is not corrupt
-    # i.e. that it has the right keys and the keys make sense
 
-    distribution = pkg_resources.get_distribution("threeML")
-    distribution_path = os.path.join(distribution.location, 'threeML/config')
+    # We just need to instance the Config class, as it contains in itself the check for a valid
+    # default configuration file (it will raise an exception if the file is not valid)
 
-    thisFilename = os.path.join(distribution_path, 'threeML_config.yml')
-
-    if os.path.exists(thisFilename):
-
-        with open(thisFilename) as f:
-
-            configuration = yaml.safe_load(f)
-
-            assert check_configuration(configuration, f) == True
+    c = Config()
