@@ -25,11 +25,10 @@ install:
   - pip install emcee uncertainties
   # Download and install latest version of astromodels
   - pip install git+https://github.com/giacomov/astromodels.git
-  - python setup.py install
 
 script:
   # Your test script goes here
-  - py.test
+  - py.test -s --cache-clear
 
 # Calculate coverage
 #after_success:
