@@ -7,7 +7,7 @@ def fallback_display(x):
 
 try:
 
-    from IPython.core.display import display
+    from IPython.display import display
 
 except ImportError:
 
