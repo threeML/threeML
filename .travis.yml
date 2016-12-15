@@ -38,8 +38,8 @@ script:
   - export MPLBACKEND='Agg'
   # Run tests
 
-  - py.test --cov-report= --cov=threeML #threeML/test
-
+  #- py.test --cov-report= --cov=threeML #threeML/test
+  - coverage run --source=setup.py test
 
 
 # Calculate coverage
