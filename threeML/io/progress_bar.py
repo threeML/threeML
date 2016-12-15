@@ -25,7 +25,7 @@ else:
 
         has_widgets = True
 
-from IPython.display import display
+from threeML.io.rich_display import display
 
 from contextlib import contextmanager
 
