@@ -37,7 +37,8 @@ script:
   # Set to non-interactive backend for matplotlib
   - export MPLBACKEND='Agg'
   # Run tests
-  - py.test --cov-report= --cov=threeML #threeML/test
+  - coverage run --source=threeML setup.py test
+  #- py.test --cov-report= --cov=threeML #threeML/test
 
 
 
