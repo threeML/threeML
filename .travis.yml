@@ -2,6 +2,11 @@ language: python
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
   - "2.7"
+
+before_install:
+    - pip install pytest pytest-cov
+    - pip install coveralls
+
 install:
   - sudo apt-get update
   # We do this conditionally because it saves us some downloading if the
