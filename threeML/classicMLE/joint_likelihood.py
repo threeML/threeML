@@ -15,7 +15,7 @@ import astromodels.model
 
 from threeML.minimizer import minimization
 from threeML.exceptions import custom_exceptions
-from threeML.io.table import Table, NumericMatrix
+from threeML.io.table import Table, NumericMatrix, long_path_formatter
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
@@ -256,7 +256,10 @@ class JointLikelihood(object):
 
             best_fit_table = Table(rows=data,
                                    names=["#", "Name", "Best fit value", "Unit"],
-                                   dtype=(str, 'S%i' % name_length, str, str))
+                                   dtype=(str, 'S%i' % name_length, str, str)).to_pandas()
+
+            # Apply name formatter so long paths are shorten
+            best_fit_table['Name'] = best_fit_table['Name'].map(lambda x:long_path_formatter(x, 40))
 
             if not quiet:
 
