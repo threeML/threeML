@@ -133,7 +133,7 @@ setup(
         'sympy'
     ],
 
-        tests_require=['pytest'],
+        tests_require=['pytest', 'pytest-cov'],
         cmdclass={'test': PyTest})
 
 # Check for optional dependencies
