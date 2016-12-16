@@ -13,15 +13,19 @@ BSD-3
 # Try-before-install
 You can try 3ML without installing or downloading anything on your computer. 
 
-Thanks to mybinder.org, we provide a test environment that you can access from your web
-browser. In it you can navigate to the examples directory and run some of the basic
-examples. 
+Thanks to [mybinder.org](mybinder.org), we provide a notebook environment that you can access from your 
+web browser. With it you can run some of the basic examples and experiment on your own 
+using sample datasets available in the ```examples``` directory.
 
-Simply enter the "examples" directory then click
-on the basic_test.ipynb notebook.
+Simply enter the ```examples``` directory then click on the basic_test.ipynb notebook, 
+or create your own.
 
 If you are new or need a refresher on how to use the jupyter notebook, see 
 [[here](https://nbviewer.jupyter.org/github/ipython/ipython/blob/3.x/examples/Notebook/Notebook%20Basics.ipynb)].
+
+> NOTE: the test environment does not provide all functionalities. For example, 
+MULTINEST, Xspec models and parallel computation are not supported, and only the default
+minimizer ([iminuit](https://github.com/iminuit/iminuit)) is available.
 
 To start, click here: 
 
