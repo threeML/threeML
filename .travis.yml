@@ -58,5 +58,7 @@ before_install:
 - docker ps -a
 
 script:
-- docker run --rm -it giacomov/hawc-docker /bin/bash --login -c 'source ~/.bashrc && python -c "import hawc" && cd /home/hawc/ && git clone https://github.com/giacomov/3ML.git && cd 3ML && pip install . && pip install git+https://github.com/giacomov/astromodels.git git+https://github.com/giacomov/cthreeML.git pytest && export MPLBACKEND='Agg' && python -m pytest'
+- docker run --rm -it giacomov/hawc-docker /bin/bash --login -c 'source ~/.bashrc && python -c "import hawc" && cd /home/hawc/ && git clone https://github.com/giacomov/3ML.git && cd 3ML && pip install . && pip install git+https://github.com/giacomov/astromodels.git git+https://github.com/giacomov/cthreeML.git pytest && export MPLBACKEND='Agg' && coverage run --source=threeML setup.py test'
 
+after_success:
+  - coveralls #--config_file .coveragerc
