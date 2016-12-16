@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/giacomov/3ML.svg?branch=master)](https://travis-ci.org/giacomov/3ML)
 [![Coverage Status](https://coveralls.io/repos/github/giacomov/3ML/badge.svg?branch=master)](https://coveralls.io/github/giacomov/3ML?branch=master)
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/giacomov/3ml)
+[![Code Climate](https://codeclimate.com/github/giacomov/3ML/badges/gpa.svg)](https://codeclimate.com/github/giacomov/3ML)
+[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 # The Multi-Mission Maximum Likelihood framework (3ML)
 
 A framework for multi-wavelength analysis for astronomy/astrophysics. See the [3ML website](https://threeml.stanford.edu) 
