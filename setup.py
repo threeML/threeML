@@ -17,7 +17,7 @@ class PyTest(TestCommand):
             '--verbose',
             '--ignore=build',
             '--cov={0}'.format(self.test_package_name),
-            '--cov-report=',
+            '--cov-report=term',
             # '--pep8',
         ]
         extra_args = os.environ.get('PYTEST_EXTRA_ARGS')
@@ -30,7 +30,15 @@ class PyTest(TestCommand):
         # import here, cause outside the eggs aren't loaded
         import pytest
         errno = pytest.main(self.test_args)
+        self.handle_exit()
+
         sys.exit(errno)
+
+    @staticmethod
+    def handle_exit():
+        import atexit
+
+        atexit._run_exitfuncs()
 
 
 
