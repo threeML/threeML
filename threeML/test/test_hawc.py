@@ -6,19 +6,20 @@ try:
 
     from threeML.plugins.HAWCLike import HAWCLike
 
-except(ImportError):
+except ImportError:
 
-    pass
+    has_HAWC = False
 
+else:
 
-
+    has_HAWC = True
 
 
 from threeML.io.file_utils import sanitize_filename
 
 # This defines a decorator which can be applied to single tests to
 # skip them if the condition is not met
-skip_if_hawc_is_not_available = pytest.mark.skipif(os.environ.get('HAWC_3ML_TEST_DATA_DIR') is None,
+skip_if_hawc_is_not_available = pytest.mark.skipif((os.environ.get('HAWC_3ML_TEST_DATA_DIR') is None) or (not has_HAWC),
                                                    reason="HAWC test data are not available")
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
