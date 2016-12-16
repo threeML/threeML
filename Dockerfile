@@ -2,6 +2,8 @@ FROM andrewosh/binder-base
 
 MAINTAINER Giacomo Vianello <giacomov@stanford.edu>
 
+USER root
+
 RUN apt-get update
 
 RUN pip install -I --upgrade setuptools
