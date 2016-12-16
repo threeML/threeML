@@ -5,43 +5,6 @@ import sys
 
 from setuptools import setup
 
-from setuptools.command.test import test as TestCommand
-
-
-class PyTest(TestCommand):
-    test_package_name = 'threeML'
-
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        _test_args = [
-            '--verbose',
-            '--ignore=build',
-            '--cov={0}'.format(self.test_package_name),
-            '--cov-report=term',
-            # '--pep8',
-        ]
-        extra_args = os.environ.get('PYTEST_EXTRA_ARGS')
-        if extra_args is not None:
-            _test_args.extend(extra_args.split())
-        self.test_args = _test_args
-        self.test_suite = True
-
-    def run_tests(self):
-        # import here, cause outside the eggs aren't loaded
-        import pytest
-        errno = pytest.main(self.test_args)
-        self.handle_exit()
-
-        sys.exit(errno)
-
-    @staticmethod
-    def handle_exit():
-        import atexit
-
-        atexit._run_exitfuncs()
-
-
-
 # Get the version number
 execfile('threeML/version.py')
 
@@ -131,10 +94,7 @@ setup(
         'corner>=1.0.2',
         'pandas',
         'sympy'
-    ],
-
-        tests_require=['pytest', 'pytest-cov'],
-        cmdclass={'test': PyTest})
+    ])
 
 # Check for optional dependencies
 
