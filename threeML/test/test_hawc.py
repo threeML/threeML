@@ -2,7 +2,18 @@ import pytest
 
 from threeML import *
 
-from threeML.plugins.HAWCLike import HAWCLike
+try:
+
+    from threeML.plugins.HAWCLike import HAWCLike
+
+except(ImportError):
+
+    pass
+
+
+
+
+
 from threeML.io.file_utils import sanitize_filename
 
 # This defines a decorator which can be applied to single tests to
