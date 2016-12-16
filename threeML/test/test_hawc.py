@@ -8,6 +8,7 @@ try:
 
 except ImportError:
 
+<<<<<<< HEAD
     has_HAWC = False
 
 else:
@@ -15,6 +16,8 @@ else:
     has_HAWC = True
 
 
+=======
+>>>>>>> fd49c34c574c9c3935893e582536db0cc7a2fe16
 from threeML.io.file_utils import sanitize_filename
 
 # This defines a decorator which can be applied to single tests to

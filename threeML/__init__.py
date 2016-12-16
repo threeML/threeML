@@ -177,6 +177,9 @@ from .utils.stats_tools import ModelComparison
 
 from .plugins.OGIP.ogip_plot import display_ogip_model_counts
 
+# Added by JM. step generator for time-resolved fits
+from .utils.step_parameter_generator import step_generator
+
 from .parallel.parallel_client import parallel_computation
 
 # Now read the configuration and make it available as threeML_config
