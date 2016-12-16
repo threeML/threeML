@@ -11,5 +11,7 @@
 #    /usr/bin/Xvfb :99 -screen 0 1280x1024x24 &
 #fi
 
+export MPLBACKEND='Agg'
+
 python -m pytest -vv --cov=threeML # --cov-config=fermipy/tests/coveragerc --durations=30
 #status=$?
