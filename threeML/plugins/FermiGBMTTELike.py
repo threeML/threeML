@@ -486,6 +486,49 @@ class FermiGBMTTELike(OGIPLike):
 
             raise BinningMethodError('Only constant, significance, bayesblock, or custom method argument accepted.')
 
+    def get_ogip_from_binner(self):
+        """
+
+        Returns a list of ogip_instances corresponding to the
+        time intervals created by the binner.
+
+        :return: list of ogip instances for each time interval
+        """
+
+        # save the original interval if there is one
+        old_interval = copy.copy(self._active_interval)
+        old_verbose = copy.copy(self._verbose)
+
+        self._verbose = False
+
+        ogip_list = []
+
+        # create copies of the OGIP plugins with the
+        # time interval saved.
+
+
+
+        for i, interval in enumerate(self.text_bins):
+
+            self.set_active_time_interval(interval)
+
+            new_name = "%s_%d" % (self._name, i)
+
+            new_ogip = OGIPLike(new_name,
+                                pha_file=self._observed_pha,
+                                bak_file=self._bkg_pha,
+                                rsp_file=self._rsp_file,
+                                verbose=self._verbose)
+
+            ogip_list.append(new_ogip)
+
+        # restore the old interval
+
+        self.set_active_time_interval(*old_interval)
+
+        self._verbose = old_verbose
+
+        return ogip_list
 
 class GBMTTEFile(object):
     def __init__(self, ttefile):
@@ -660,6 +703,9 @@ class GBMTTEFile(object):
         fermi_df = pd.Series(fermi_dict)
 
         display(fermi_df)
+
+
+
 
 
 def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections):

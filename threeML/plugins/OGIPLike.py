@@ -10,7 +10,7 @@ from astromodels.utils.valid_variable import is_valid_variable_name
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.step_plot import step_plot
 from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.plugin_prototype import PluginPrototype
+from threeML.plugin_prototype import PluginPrototype, set_external_property
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
@@ -19,6 +19,7 @@ from threeML.plugins.OGIP.response import Response
 from threeML.utils.binner import Rebinner
 from threeML.plugins.OGIP.pha import PHAContainer, PHAWrite
 from threeML.config.config import threeML_config
+
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -906,6 +907,7 @@ class OGIPLike(PluginPrototype):
     observation_noise_model = property(_get_observation_noise_model, _set_observation_noise_model,
                                        doc="Sets/gets the noise model for the background spectrum")
 
+    @set_external_property
     def get_log_like(self):
 
         if self._observation_noise_model == 'poisson':
