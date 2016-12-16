@@ -17,7 +17,7 @@ class PyTest(TestCommand):
             '--verbose',
             '--ignore=build',
             '--cov={0}'.format(self.test_package_name),
-            '--cov-report=term-missing',
+            '--cov-report=',
             # '--pep8',
         ]
         extra_args = os.environ.get('PYTEST_EXTRA_ARGS')
