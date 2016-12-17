@@ -225,11 +225,3 @@ def test_OGIP_plotting():
 
     with pytest.raises(NotEnoughData):
         _ = display_ogip_model_counts(jl, min_rate=1E8)
-
-        # test that we cannot set invalid units
-
-        # with pytest.raises(InvalidUnitError):
-        #     sp.plot_model(x_unit='m', num_ene=10)
-        #
-        # with pytest.raises(InvalidUnitError):
-        #     sp.plot_model(y_unit='m', num_ene=10)
