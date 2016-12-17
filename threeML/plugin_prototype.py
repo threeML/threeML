@@ -5,6 +5,35 @@ Define the interface for a plugin class.
 import abc
 from astromodels.utils.valid_variable import is_valid_variable_name
 import warnings
+import functools
+
+
+def set_external_property(method):
+    """
+    Sets external property values if they exist
+
+
+    :param method:
+    :return:
+    """
+
+    @functools.wraps(method)
+    def wrapper(instance, *args, **kwargs):
+
+        if instance._external_properties:
+
+            for property, value in instance._external_properties:
+
+                property.value = value
+
+        return method(instance, *args, **kwargs)
+
+    return wrapper
+
+
+
+
+
 
 class PluginPrototype(object):
 
@@ -23,6 +52,9 @@ class PluginPrototype(object):
         assert isinstance(nuisance_parameters, dict)
 
         self._nuisance_parameters = nuisance_parameters
+
+        # These are the external properties (time, polarization, etc.)
+        self._external_properties = []
 
     def get_name(self):
 
@@ -84,3 +116,13 @@ class PluginPrototype(object):
         logLike value.
         """
         pass
+
+    def external_property(self, property, value):
+        """
+        Set external/auxiliary properties and their value
+        :param property: an astromodels auxiliary variable
+        :param value: the value of the auxiliary variable for this plugin
+        :return:
+        """
+
+        self._external_properties.append((property, value))

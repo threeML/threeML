@@ -5,55 +5,103 @@ parallel:
   #to "default" if you didn't configure any other
   #profile
   
-  IPython profile name: default
+  IPython profile name (name): default
   
   #Set this to True if you want to always execute
   #computation in parallel, without the use of the
   # "with parallel_computation:" construct. To False
   #otherwise (default: False)
   
-  use-parallel: False
+  use-parallel (switch): False
 
 ogip:
 
   # The default color map for the data to use when
   # plotting post-fit OGIP counts plots
 
-  data plot cmap: rainbow
+  data plot cmap (cmap): rainbow
 
   # The default color map for the model to use when
   # plotting post-fit OGIP counts plots
 
-  model plot cmap: gnuplot
+  model plot cmap (cmap): gnuplot
 
   # The default color for total counts in the OGIP
   # counts plot
 
-  counts color: '#377eb8'
+  counts color (color): '#377eb8'
 
   # The default color for background  in the OGIP
   # counts plot
 
-  background color: '#e41a1c'
+  background color (color): '#e41a1c'
 
 gbm:
 
   # The default color for the Fermi GBM
   # light curve plot
 
-  lightcurve color: '#8da0cb'
+  lightcurve color (color): '#8da0cb'
 
   # The default color for the data selection
   # in Fermi GBM the light curve plot
 
-  selection color: '#fc8d62'
+  selection color (color): '#fc8d62'
 
   # The default color for the background
   # in Fermi GBM the light curve plot
 
-  background color: '#66c2a5'
+  background color (color): '#66c2a5'
 
   # The default color for the background
   # selection in Fermi GBM the light curve plot
 
-  background selection color: '#80b1d3'
+  background selection color (color): '#80b1d3'
+
+mle:
+
+  # Colors for MLE contours and profiles
+
+  # The cmap for filling the contour
+  contour cmap (cmap): Pastel1
+
+  # the contour background
+  contour background (color): white
+
+  # The 1,2,3 sigma dividers for the contour
+  contour level 1 (color): '#76E36C'
+
+  contour level 2 (color): '#FF5239'
+
+  contour level 3 (color): '#64CAFE'
+
+
+  # The color of the profile line
+
+  profile color (color): 'k'
+
+
+  # The 1,2,3 sigma dividers for the profile
+  profile level 1 (color): 'blue'
+
+  profile level 2 (color): 'cyan'
+
+  profile level 3 (color): 'red'
+
+
+model plot:
+
+
+  # The color map for MLE best fit lines per component
+
+  fit cmap (cmap): Set1
+
+  # The color map for MLE contour regions
+
+  contour cmap (cmap): Set2
+
+  # The color map of bayes regions per component
+
+  bayes cmap (cmap): Set1
+
+

@@ -11,6 +11,8 @@ from sympy.utilities.lambdify import lambdify
 from threeML.io.progress_bar import progress_bar
 
 from threeML.utils.differentiation import get_jacobian
+from threeML.config.config import threeML_config
+
 
 
 class InvalidUnitError(RuntimeError):
@@ -133,7 +135,9 @@ class SpectralPlotter(object):
 
         # Set the default color map if none is provided
         if not fit_cmap:
-            fit_cmap = plt.cm.Set1
+
+            fit_cmap = plt.get_cmap(threeML_config['model plot']['bayes cmap'])
+
 
         x_values = np.logspace(np.log10(x_min), np.log10(x_max), num_ene)
 
@@ -265,11 +269,11 @@ class SpectralPlotter(object):
         x_unit = u.Unit(x_unit)
         y_unit = u.Unit(y_unit)
 
-        if not fit_cmap:
-            fit_cmap = plt.cm.Set1
+        if fit_cmap is None:
+            fit_cmap = plt.get_cmap(threeML_config['model plot']['fit cmap'])
 
-        if not contour_cmap:
-            contour_cmap = plt.cm.Set2
+        if contour_cmap is None:
+            contour_cmap = plt.get_cmap(threeML_config['model plot']['contour cmap'])
 
         # Initialize plotting arrays
         y_values = []
@@ -385,10 +389,10 @@ class SpectralPlotter(object):
         y_unit = u.Unit(y_unit)
 
         if fit_cmap is None:
-            fit_cmap = plt.cm.Set1
+            fit_cmap = plt.get_cmap(threeML_config['model plot']['fit cmap'])
 
         if contour_cmap is None:
-            contour_cmap = plt.cm.Set2
+            contour_cmap = plt.get_cmap(threeML_config['model plot']['contour cmap'])
 
         # Initialize plotting arrays
         y_values = []
@@ -533,7 +537,8 @@ class SpectralPlotter(object):
         y_unit = u.Unit(y_unit)
 
         if not fit_cmap:
-            fit_cmap = plt.cm.Set1
+
+            fit_cmap = plt.get_cmap(threeML_config['model plot']['bayes cmap'])
 
         x_values = np.logspace(np.log10(x_min), np.log10(x_max), num_ene)
 

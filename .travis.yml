@@ -1,0 +1,16 @@
+sudo: required
+
+language: python
+
+services:
+  - docker
+
+before_install:
+ - docker pull giacomov/hawc-docker
+ - docker ps -a
+
+
+script:
+ - docker run --rm -it giacomov/hawc-docker /bin/bash --login -c 'source ~/.bashrc && python -c "import hawc" && cd /home/hawc/ && git clone https://github.com/giacomov/3ML.git && cd 3ML && pip install . && pip install git+https://github.com/giacomov/astromodels.git git+https://github.com/giacomov/cthreeML.git pytest pytest-cov coveralls && export MPLBACKEND='Agg' && python -m pytest -vv --cov=threeML && /home/hawc/.local/bin/coveralls'
+#after_success:
+# - coveralls #--config_file .coveragerc
