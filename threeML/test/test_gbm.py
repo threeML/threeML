@@ -4,7 +4,7 @@ import os
 
 __author__ = 'drjfunk'
 
-from threeML.plugins.FermiGBMTTELike import FermiGBMTTELike
+from threeML.plugins.FermiGBMTTELike import FermiGBMTTELike, BinningMethodError
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
@@ -19,6 +19,44 @@ from threeML.io.file_utils import within_directory
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
 __example_dir = os.path.join(__this_dir__, '../../examples')
+
+
+def is_within_tolerance(truth, value, relative_tolerance=0.01):
+    assert truth != 0
+
+    if abs((truth - value) / truth) <= relative_tolerance:
+
+        return True
+
+    else:
+
+        return False
+
+
+def examine_bins(bins, real_start, real_stop, expected_number_of_bins):
+    assert len(bins) == 2
+
+    starts, stops = bins
+
+    # check that the start and stop make sense
+
+    assert np.round(starts[0], decimals=3) >= real_start
+    assert np.round(stops[-1], decimals=3) <= real_stop
+
+    # test bin ordering
+
+    for x, y in zip(starts, stops):
+
+        assert x < y
+
+    # test bin length
+
+    assert len(starts) == expected_number_of_bins
+    assert len(stops) == expected_number_of_bins
+
+
+
+
 
 
 class AnalysisBuilder(object):
@@ -113,6 +151,78 @@ def test_gbm_tte_constructor():
         assert nai3._startup == False
         assert nai3._verbose == True
         assert nai3.background_noise_model == 'gaussian'
+
+
+def test_gbm_binning():
+    with within_directory(__example_dir):
+        data_dir = os.path.join('gbm', 'bn080916009')
+
+        src_selection = "0.-10."
+
+        nai3 = FermiGBMTTELike('NAI3',
+                               os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
+                               "-10-0, 100-150",
+                               src_selection,
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v07.rsp"), poly_order=-1)
+
+        # should not have bins yet
+
+
+
+        with pytest.raises(AttributeError):
+            nai3.bins
+
+        with pytest.raises(AttributeError):
+            nai3.text_bins
+
+        # First catch the errors
+
+
+        # This is without specifying the correct options name
+
+
+
+
+
+        with pytest.raises(RuntimeError):
+            nai3.create_time_bins(start=0, stop=10, method='constant')
+
+        with pytest.raises(RuntimeError):
+            nai3.create_time_bins(start=0, stop=10, method='significance')
+
+        with pytest.raises(RuntimeError):
+            nai3.create_time_bins(start=0, stop=10, method='constant', p0=.1)
+
+        with pytest.raises(RuntimeError):
+            nai3.create_time_bins(start=0, stop=10, method='significance', dt=1)
+
+        # now incorrect options
+
+        with pytest.raises(RuntimeError):
+            nai3.create_time_bins(start=0, stop=10, method='not_a_method')
+
+        # Now test values
+
+
+
+        nai3.create_time_bins(start=0, stop=10, method='constant', dt=1)
+
+        assert len(nai3.text_bins) == 10
+
+        examine_bins(nai3.bins, 0, 10, 10)
+
+        nai3.create_time_bins(start=0, stop=10, method='bayesblocks', p0=.1)
+
+        examine_bins(nai3.bins, 0, 10, 9)
+
+        nai3.create_time_bins(start=0, stop=10, method='significance', sigma=10)
+
+        examine_bins(nai3.bins, 0, 10, 91)
+
+
+
+
+
 
 
 def test_gbm_tte_joint_likelihood_fitting():
