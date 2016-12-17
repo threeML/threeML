@@ -283,7 +283,7 @@ class EventList(object):
 
             display(df_err)
 
-            pan = pd.Panel({'coefficents': df_coeff, 'error': df_err})
+            pan = pd.Panel({'coefficients': df_coeff, 'error': df_err})
 
             return pan
 
