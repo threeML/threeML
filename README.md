@@ -46,6 +46,7 @@ Remove any previous installation you might have with:
 then:
 
 ```bash
+> pip install numpy scipy ipython
 > pip install git+https://github.com/giacomov/3ML.git 
 > pip install git+https://github.com/giacomov/astromodels.git
 ```
