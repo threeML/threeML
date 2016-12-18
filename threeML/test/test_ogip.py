@@ -377,6 +377,4 @@ def test_likelihood_ratio_test():
 
 
 def test_xrt():
-
-
-    
+    pass
