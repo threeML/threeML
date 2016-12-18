@@ -152,6 +152,22 @@ def test_gbm_tte_constructor():
         assert nai3._verbose == True
         assert nai3.background_noise_model == 'gaussian'
 
+        nai3.view_lightcurve()
+
+        nai3.view_lightcurve(energy_selection="8-30")
+
+        nai3.background_poly_order = 2
+
+        nai3.background_poly_order = -1
+
+        nai3.set_active_measurements("8-30")
+
+        nai3.set_active_time_interval("0-10")
+
+        nai3.set_background_interval("-15-0", "100-150")
+
+        nai3.set_background_interval("-15-0", "100-150", unbinned=False)
+
 
 def test_gbm_binning():
     with within_directory(__example_dir):
