@@ -301,6 +301,18 @@ def test_ogip_rebinner():
 
         assert ogip.n_data_points == n_data_points
 
+        ogip.view_count_spectrum()
+
+
+def test_various_effective_area():
+    with within_directory(__this_dir__):
+        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+
+        ogip.use_effective_area_correction()
+
+        ogip.fix_effective_area_correction(
+
+        )
 
 def test_simulating_data_sets():
     with within_directory(__this_dir__):

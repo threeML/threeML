@@ -27,7 +27,7 @@ def test_a_basic_analysis_from_start_to_finish():
     #950 keV, where the calibration is uncertain)
     NaI6.set_active_measurements( "10.0-30.0", "40.0-950.0" )
 
-
+    NaI6.display_rsp()
 
     #This declares which data we want to use. In our case, all that we have already created.
 

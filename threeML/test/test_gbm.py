@@ -235,6 +235,14 @@ def test_gbm_binning():
 
         examine_bins(nai3.bins, 0, 10, 91)
 
+        nai3.view_lightcurve(use_binner=True)
+
+        nai3.write_pha_from_binner("test_binner", overwrite=True)
+
+        ogips = nai3.get_ogip_from_binner()
+
+
+
 
 def test_gbm_tte_joint_likelihood_fitting():
     with within_directory(__example_dir):
