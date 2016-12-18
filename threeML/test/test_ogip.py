@@ -374,3 +374,9 @@ def test_likelihood_ratio_test():
     lrt = LikelihoodRatioTest(jls['normal'], jls['cpl'])
 
     null_hyp_prob, TS, data_frame, like_data_frame = lrt.by_mc(n_iterations=50, continue_on_failure=True)
+
+
+def test_xrt():
+
+
+    
