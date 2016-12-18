@@ -2,7 +2,7 @@ import pytest
 
 from threeML import *
 from threeML.utils.stats_tools import PoissonResiduals, Significance
-
+from threeML.utils.cartesian import cartesian
 def test_step_generator_setup():
     ra, dec = 0, 0
     name = "test"
@@ -61,3 +61,7 @@ def test_poisson_classes():
     res = sig.known_background()
     res = sig.li_and_ma()
     res = sig.li_and_ma_equivalent_for_gaussian_background(1)
+
+
+def test_cartesian():
+    cart = cartesian(([1, 2, 3], [1, 2, 3]))
