@@ -4,6 +4,8 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.io.flux_calculator import InvalidUnitError
 
 
+# TODO: add tests for area corrections
+
 def test_mle_flux_calculations():
     # In[2]:
 
@@ -59,7 +61,7 @@ def test_mle_flux_calculations():
 
     res = flux.model_flux(flux_unit='1/(s cm2)', energy_unit='keV', ene_min=10, ene_max=40000)
 
-    res = flux.model_flux(flux_unit='erg2/(s cm2)', energy_unit='keV', ene_min=10, ene_max=40000)
+    res = flux.model_flux(flux_unit='erg2/(s cm2)', energy_unit='MeV', ene_min=10, ene_max=40000)
 
     with pytest.raises(InvalidUnitError):
         res = flux.model_flux(flux_unit='erg2/(cm2)', energy_unit='keV', ene_min=10, ene_max=40000)

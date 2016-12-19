@@ -13,6 +13,8 @@ from threeML.classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from astromodels.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff, Cutoff_powerlaw
 from astromodels.sources.point_source import PointSource
+from threeML.plugins.SwiftXRTLike import SwiftXRTLike
+from threeML.plugins.OGIP.likelihood_functions import *
 
 
 
@@ -20,6 +22,7 @@ from threeML.io.file_utils import within_directory
 
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
+__example_dir = os.path.join(__this_dir__, '../../examples')
 
 
 class AnalysisBuilder(object):
@@ -298,6 +301,18 @@ def test_ogip_rebinner():
 
         assert ogip.n_data_points == n_data_points
 
+        ogip.view_count_spectrum()
+
+
+def test_various_effective_area():
+    with within_directory(__this_dir__):
+        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+
+        ogip.use_effective_area_correction()
+
+        ogip.fix_effective_area_correction(
+
+        )
 
 def test_simulating_data_sets():
     with within_directory(__this_dir__):
@@ -374,3 +389,83 @@ def test_likelihood_ratio_test():
     lrt = LikelihoodRatioTest(jls['normal'], jls['cpl'])
 
     null_hyp_prob, TS, data_frame, like_data_frame = lrt.by_mc(n_iterations=50, continue_on_failure=True)
+
+
+def test_xrt():
+    with within_directory(__example_dir):
+        trigger = "GRB110731A"
+        dec = -28.546
+        ra = 280.52
+        xrt_dir = 'xrt'
+        xrt = SwiftXRTLike("XRT", pha_file=os.path.join(xrt_dir, "xrt_src.pha"),
+                           bak_file=os.path.join(xrt_dir, "xrt_bkg.pha"),
+                           rsp_file=os.path.join(xrt_dir, "xrt.rmf"),
+                           arf_file=os.path.join(xrt_dir, "xrt.arf"))
+
+        spectral_model = Powerlaw()
+
+        ptsrc = PointSource(trigger, ra, dec, spectral_shape=spectral_model)
+        model = Model(ptsrc)
+
+        data = DataList(xrt)
+
+        jl = JointLikelihood(model, data, verbose=False)
+
+
+def test_pha_write():
+    with within_directory(__this_dir__):
+
+        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+
+        ogip.write_pha('test_write', overwrite=True)
+
+        written_ogip = OGIPLike('write_ogip', pha_file='test_write.pha{1}')
+
+        pha_info = written_ogip.get_pha_files()
+
+        for key in ['pha', 'bak']:
+
+            assert isinstance(pha_info[key], PHA)
+
+        assert pha_info['pha'].background_file == 'test_bak.pha{1}'
+        assert pha_info['pha'].ancillary_file == 'NONE'
+        assert pha_info['pha'].instrument == 'GBM_NAI_03'
+        assert pha_info['pha'].mission == 'GLAST'
+        assert pha_info['pha'].is_poisson() == True
+        assert pha_info['pha'].n_channels == len(pha_info['pha'].rates)
+
+
+def test_likelihood_functions():
+    obs_cnts = np.array([10])
+    obs_bkg = np.array([5])
+    bkg_err = np.array([1])
+    exp_cnts = np.array([5])
+    exp_bkg = np.array([5])
+    ratio = 1
+
+    test = poisson_log_likelihood_ideal_bkg(observed_counts=obs_cnts,
+                                            expected_bkg_counts=exp_bkg,
+                                            expected_model_counts=exp_bkg)
+
+    assert test == (-2.0785616431350551, 5)
+
+    test = poisson_observed_poisson_background(observed_counts=obs_cnts,
+                                               background_counts=obs_bkg,
+                                               exposure_ratio=ratio,
+                                               expected_model_counts=exp_cnts)
+
+    assert test == (-3.8188638237465984, 5.0)
+
+    test = poisson_observed_poisson_background_xs(observed_counts=obs_cnts,
+                                                  background_counts=obs_bkg,
+                                                  exposure_ratio=ratio,
+                                                  expected_model_counts=exp_cnts)
+
+    assert test == -0.
+
+    test = poisson_observed_gaussian_background(observed_counts=obs_cnts,
+                                                background_counts=obs_bkg,
+                                                background_error=bkg_err,
+                                                expected_model_counts=exp_cnts)
+
+    assert test == (-2, 5.0)
