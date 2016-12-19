@@ -180,8 +180,15 @@ class EventListLike(OGIPLike):
         :return: none
 
         """
+        if 'unbinned' in options:
 
-        self._evt_list.set_polynomial_fit_interval(*intervals, **options)
+            unbinned = options.pop('unbinned')
+        else:
+
+            unbinned =self._default_unbinned
+
+
+        self._evt_list.set_polynomial_fit_interval(*intervals, unbinned=unbinned)
 
         # In theory this will automatically get the poly counts if a
         # time interval already exists

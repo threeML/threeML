@@ -38,10 +38,12 @@ def examine_bins(bins, real_start, real_stop, expected_number_of_bins):
 
     starts, stops = bins
 
+
+
     # check that the start and stop make sense
 
-    assert np.round(starts[0], decimals=3) >= real_start
-    assert np.round(stops[-1], decimals=3) <= real_stop
+    assert np.round(starts[0], decimals=0) >= real_start
+    assert np.round(stops[-1], decimals=0) <= real_stop
 
     # test bin ordering
 
@@ -150,24 +152,24 @@ def test_gbm_lle_constructor():
 
         nai3.view_lightcurve()
 
-        nai3.view_lightcurve(energy_selection="8-30")
+        nai3.view_lightcurve(energy_selection="500000-100000")
 
         nai3.background_poly_order = 2
 
         nai3.background_poly_order = -1
 
-        nai3.set_active_measurements("8-30")
+        nai3.set_active_measurements("50000-1000000")
 
         nai3.set_active_time_interval("0-10")
 
-        nai3.set_background_interval("-15-0", "100-150")
+        nai3.set_background_interval("-150-0", "100-250")
 
-        nai3.set_background_interval("-15-0", "100-150", unbinned=False)
+        #nai3.set_background_interval("-15-0", "100-150", unbinned=False)
 
 
 def test_lle_binning():
     with within_directory(__example_dir):
-        data_dir = os.path.join('gbm', 'bn080916009')
+        data_dir = 'lat'
 
         src_selection = "0.-10."
 
@@ -224,11 +226,11 @@ def test_lle_binning():
 
         nai3.create_time_bins(start=0, stop=10, method='bayesblocks', p0=.1)
 
-        examine_bins(nai3.bins, 0, 10, 9)
+        examine_bins(nai3.bins, 0, 10, 6)
 
         nai3.create_time_bins(start=0, stop=10, method='significance', sigma=10)
 
-        examine_bins(nai3.bins, 0, 10, 91)
+        examine_bins(nai3.bins, 0, 10, 31)
 
         nai3.view_lightcurve(use_binner=True)
 
@@ -239,15 +241,17 @@ def test_lle_binning():
 
 def test_gbm_lle_joint_likelihood_fitting():
     with within_directory(__example_dir):
-        data_dir = os.path.join('gbm', 'bn080916009')
+        data_dir = 'lat'
 
-        src_selection = "0.-10."
+        src_selection = "0.-70."
 
         nai3 = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
                                os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
                                "-100-0, 100-200",
                                src_selection,
                                rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
+
+        nai3.set_active_measurements("50000-100000")
 
         ab = AnalysisBuilder(nai3)
 
@@ -284,7 +288,7 @@ def test_gbm_lle_joint_likelihood_fitting():
 
 def test_gbm_lle_bayesian_fitting():
     with within_directory(__example_dir):
-        data_dir = os.path.join('gbm', 'bn080916009')
+        data_dir = 'lat'
 
         src_selection = "0.-10."
 
@@ -293,6 +297,8 @@ def test_gbm_lle_bayesian_fitting():
                                "-100-0, 100-200",
                                src_selection,
                                rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
+
+
 
         ab = AnalysisBuilder(nai3)
         ab.set_priors()
@@ -324,17 +330,4 @@ def test_gbm_lle_bayesian_fitting():
             assert bb.raw_samples.shape == (n_samples, 2)
 
 
-
-
-            # assert bb.current_minimum is None
-            # assert jl.minimizer_in_use == ('MINUIT', None)
-            # assert jl.minimizer is None
-            # assert jl.ncalls == 0
-            # assert jl.verbose == False
-
-            # res, _ = jl.fit()
-
-            # assert jl.current_minimum is not None
-
-            # assert jl.minimizer is not None
             # assert jl.ncalls != 1

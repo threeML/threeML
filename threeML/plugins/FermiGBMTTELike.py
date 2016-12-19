@@ -59,6 +59,8 @@ class FermiGBMTTELike(EventListLike):
 
         """
 
+        self._default_unbinned = unbinned
+
         # Load the relevant information from the TTE file
 
         self._gbm_tte_file = GBMTTEFile(tte_file)

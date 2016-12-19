@@ -393,10 +393,11 @@ class EventList(object):
 
         # Find out if we want to binned or unbinned.
         # TODO: add the option to config file
-        try:
+        if 'unbinned' in options:
             unbinned = options.pop('unbinned')
             assert type(unbinned) == bool, 'unbinned option must be True or False'
-        except(KeyError):
+
+        else:
 
             # assuming unbinned
             # could use config file here

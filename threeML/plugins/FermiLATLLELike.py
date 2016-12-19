@@ -65,6 +65,9 @@ class FermiLATLLELike(EventListLike):
 
         """
 
+
+        self._default_unbinned = unbinned
+
         self._lat_lle_file = LLEFile(lle_file, ft2_file, rsp_file)
 
         if trigger_time is not None:
