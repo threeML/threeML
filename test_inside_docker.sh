@@ -55,8 +55,7 @@ echo " Executing tests and coveralls"
 echo "##########################################################"
 
 # Execute tests
-#python -m pytest -vv --cov=threeML
-python -m pytest --ignore=threeML_env
+python -m pytest --ignore=threeML_env -vv --cov=threeML
 
 echo "##########################################################"
 echo " Executing coveralls"
