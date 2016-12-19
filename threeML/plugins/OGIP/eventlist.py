@@ -488,8 +488,32 @@ class EventList(object):
 
         """
 
-        raise RuntimeError("Must be implemeneted in subclass")
+        info_dict = {}
 
+        info_dict['Active Selections'] = zip(self._tmin_list, self._tmax_list)
+        info_dict['Active Deadtime'] = self._active_dead_time
+        info_dict['Active Exposure'] = self._exposure
+        info_dict['Total N. Events'] = len(self._arrival_times)
+        info_dict['Active Counts'] = self._counts.sum()
+        info_dict['Number of Channels'] = self._n_channels
+
+        if self._poly_fit_exists:
+            info_dict['Polynomial Selections'] = self._poly_time_selections
+            info_dict['Polynomial Order'] = self._optimal_polynomial_grade
+            info_dict['Active Count Error'] = np.sqrt((self._poly_count_err ** 2).sum())
+            info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
+            info_dict['Unbinned Fit'] = self._unbinned
+
+            sig = Significance(self._counts.sum(), self._poly_counts.sum())
+
+            bkg_sig = np.sqrt((self._poly_count_err ** 2).sum())
+
+            # too provocative?
+            info_dict['Significance'] = sig.li_and_ma_equivalent_for_gaussian_background(bkg_sig)
+
+        info_df = pd.Series(info_dict)
+
+        display(info_df)
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
         """
         Provides the ability to find the optimum polynomial grade for *binned* counts by fitting the
@@ -1114,45 +1138,13 @@ class EventListWithDeadTime(EventList):
             total_dead_time = 0.
 
         self._exposure = exposure - total_dead_time
-        self._total_dead_time = total_dead_time
+        # self._total_dead_time = total_dead_time
 
         self._tmin_list = tmin_list
         self._tmax_list = tmax_list
 
         self._active_dead_time = total_dead_time
 
-    def peek(self):
-        """
-        Examine the currently selected info as well other things.
-
-        """
-
-        info_dict = {}
-
-        info_dict['Active Selections'] = zip(self._tmin_list, self._tmax_list)
-        info_dict['Active Deadtime'] = self._active_dead_time
-        info_dict['Active Exposure'] = self._exposure
-        info_dict['Total N. Events'] = len(self._arrival_times)
-        info_dict['Active Counts'] = self._counts.sum()
-        info_dict['Number of Channels'] = self._n_channels
-
-        if self._poly_fit_exists:
-            info_dict['Polynomial Selections'] = self._poly_time_selections
-            info_dict['Polynomial Order'] = self._optimal_polynomial_grade
-            info_dict['Active Count Error'] = np.sqrt((self._poly_count_err ** 2).sum())
-            info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
-            info_dict['Unbinned Fit'] = self._unbinned
-
-            sig = Significance(self._counts.sum(), self._poly_counts.sum())
-
-            bkg_sig = np.sqrt((self._poly_count_err ** 2).sum())
-
-            # too provocative?
-            info_dict['Significance'] = sig.li_and_ma_equivalent_for_gaussian_background(bkg_sig)
-
-        info_df = pd.Series(info_dict)
-
-        display(info_df)
 
 
 class EventListWithLiveTime(EventList):
@@ -1197,16 +1189,78 @@ class EventListWithLiveTime(EventList):
         EventList.__init__(arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file, ra, dec,
                            mission, instrument)
 
-    def _livetime_correction(self, bin_center):
+    def _exposure_over_interval(self, tmin, tmax):
+        """
 
-        # Find the last tstart <= bin_center
+        :param tmin:
+        :param tmax:
+        :return:
+        """
 
-        idx = np.searchsorted(self._live_time_starts, bin_center) - 1
+        # First see if the interval is completely contained inside a
+        # livetime interval. In this case we only compute that.
 
-        # Get the livetime for this bin
-        this_livetime = self._livetime[idx]
 
-        return this_livetime
+
+
+        inside_idx = np.logical_and(self._live_time_starts < tmin, tmax < self._live_time_stops)
+
+        # see if it contains elements
+
+        if self._live_time[inside_idx]:
+
+            # we want to take a fraction of the live time covered
+            dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
+
+            fraction = (tmax - tmin) / dt
+
+            total_livetime = self._live_time[inside_idx] * fraction
+
+        else:
+
+            # First we get the live time of bins that are fully contained in the given interval
+
+            full_inclusion_idx = np.logical_and(tmin <= self._live_time_starts, tmax >= self._live_time_stops)
+
+            full_inclusion_livetime = self._live_time[full_inclusion_idx].sum()
+
+            # Now we get the fractional parts on the left and right
+
+            # Get the fractional part of the left bin
+
+            left_remainder_idx = np.logical_and(tmin <= self._live_time_stops, self._live_time_starts <= tmin)
+
+            dt = self._live_time_stops[left_remainder_idx] - self._live_time_starts[left_remainder_idx]
+
+            # we want the distance to the stop of this bin
+
+            distance_from_next_bin = self._live_time_stops[left_remainder_idx] - tmin
+
+            fraction = distance_from_next_bin / dt
+
+            left_fractional_livetime = self._live_time[left_remainder_idx] * fraction
+
+            # Get the fractional part of the right bin
+
+            right_remainder_idx = np.logical_and(self._live_time_starts <= tmax, tmax <= self._live_time_stops)
+
+            dt = self._live_time_stops[right_remainder_idx] - self._live_time_starts[right_remainder_idx]
+
+            # we want the distance from the last full bin
+
+            distance_from_next_bin = tmax - self._live_time_starts[right_remainder_idx]
+
+            fraction = distance_from_next_bin / dt
+
+            right_fractional_livetime = self._live_time[right_remainder_idx] * fraction
+
+            # sum up all the live time
+
+            total_livetime = full_inclusion_livetime + left_fractional_livetime + right_fractional_livetime
+
+        # the sum at the end converts all the arrays to floats
+
+        return total_livetime.sum()
 
     def set_active_time_intervals(self, *args):
         '''Set the time interval(s) to be used during the analysis.
@@ -1278,21 +1332,26 @@ class EventListWithLiveTime(EventList):
 
             self._poly_count_err = np.array(tmp_err)
 
-            # self._is_poisson = False
+
 
         # Live time correction
 
         exposure = 0.
+        total_real_time = 0.
         for tmin, tmax in zip(tmin_list, tmax_list):
-            exposure += tmax - tmin
 
-        self._exposure = exposure - total_dead_time
-        self._total_dead_time = total_dead_time
+            total_real_time += tmax - tmin
+            exposure += self._exposure_over_interval(tmin, tmax)
+
+        # In this case the exposure is the total live time
+
+        self._exposure = exposure
+        self._active_dead_time = total_real_time - exposure
+
 
         self._tmin_list = tmin_list
         self._tmax_list = tmax_list
 
-        self._active_dead_time = total_dead_time
 
 
 def intervals_overlap(tmin, tmax):
