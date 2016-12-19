@@ -40,16 +40,7 @@ class EventListLike(OGIPLike):
     def __init__(self, name, event_list, background_selections, source_intervals, rsp_file,
                  poly_order=-1, unbinned=True, verbose=True):
         """
-        If the input files are TTE files. Background selections are specified as
-        a comma separated string e.g. "-10-0,10-20"
-
-        Initial source selection is input as a string e.g. "0-5"
-
-        One can choose a background polynomial order by hand (up to 4th order)
-        or leave it as the default polyorder=-1 to decide by LRT test
-
-        FermiGBM_TTE_Like("GBM","glg_tte_n6_bn080916412.fit","-10-0,10-20","0-5","rspfile.rsp{2}")
-        to load the second spectrum, second background spectrum and second response.
+        Generic EventListLike that should be inherited
         """
 
         self._evt_list = event_list

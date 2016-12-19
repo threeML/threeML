@@ -43,7 +43,7 @@ class FermiGBMTTELike(EventListLike):
                  poly_order=-1, unbinned=True, verbose=True):
         """
         A plugin to natively bin, view, and handle Fermi GBM TTE data.
-        An LLE event file and FT2 (1 sec) are required as well as the associated response
+        A TTE event file are required as well as the associated response
 
 
 
@@ -54,6 +54,16 @@ class FermiGBMTTELike(EventListLike):
 
         One can choose a background polynomial order by hand (up to 4th order)
         or leave it as the default polyorder=-1 to decide by LRT test
+
+        :param name: name for your choosing
+        :param tte_file: GBM tte event file
+        :param background_selections: comma sep. background intervals as string
+        :param source_intervals: comma sep. source intervals as string
+        :param rsp_file: Associated TTE CSPEC response file
+        :param trigger_time: trigger time if needed
+        :param poly_order: 0-4 or -1 for auto
+        :param unbinned: unbinned likelihood fit (bool)
+        :param verbose: verbose (bool)
 
 
 

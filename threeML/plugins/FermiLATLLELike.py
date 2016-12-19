@@ -51,16 +51,16 @@ class FermiLATLLELike(EventListLike):
         One can choose a background polynomial order by hand (up to 4th order)
         or leave it as the default polyorder=-1 to decide by LRT test
 
-        :param name:
-        :param lle_file:
-        :param ft2_file:
-        :param background_selections:
-        :param source_intervals:
-        :param rsp_file:
-        :param trigger_time:
-        :param poly_order:
-        :param unbinned:
-        :param verbose:
+        :param name: name of the plugin
+        :param lle_file: lle event file
+        :param ft2_file: fermi FT2 file
+        :param background_selections: comma sep. background intervals as string
+        :param source_intervals: comma sep. source intervals as string
+        :param rsp_file: lle response file
+        :param trigger_time: trigger time if needed
+        :param poly_order: 0-4 or -1 for auto
+        :param unbinned: unbinned likelihood fit (bool)
+        :param verbose: verbose (bool)
 
 
         """
