@@ -1,6 +1,5 @@
 __author__ = 'grburgess'
 
-import astropy.io.fits as fits
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -21,8 +20,7 @@ else:
 
 import copy
 
-# from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.EventListLike import EventListLike
+from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
 from threeML.io.rich_display import display
 
@@ -31,15 +29,15 @@ from threeML.plugins.OGIP.pha import PHAWrite
 
 from threeML.config.config import threeML_config
 
-__instrument_name = "Fermi GBM TTE (all detectors)"
+__instrument_name = "Generic EventList data"
 
 
 class BinningMethodError(RuntimeError):
     pass
 
 
-class FermiGBMTTELike(EventListLike):
-    def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
+class EventListLike(OGIPLike):
+    def __init__(self, name, event_list, background_selections, source_intervals, rsp_file,
                  poly_order=-1, unbinned=True, verbose=True):
         """
         If the input files are TTE files. Background selections are specified as
@@ -54,20 +52,7 @@ class FermiGBMTTELike(EventListLike):
         to load the second spectrum, second background spectrum and second response.
         """
 
-        self._gbm_tte_file = GBMTTEFile(tte_file)
-
-        if trigger_time is not None:
-            self._gbm_tte_file.triggertime = trigger_time
-
-        self._evt_list = EventListWithDeadTime(arrival_times=self._gbm_tte_file._events - self._gbm_tte_file.triggertime,
-                                   energies=self._gbm_tte_file._pha,
-                                   n_channels=self._gbm_tte_file._n_channels,
-                                   start_time=self._gbm_tte_file._start_events - self._gbm_tte_file.triggertime,
-                                   stop_time=self._gbm_tte_file._stop_events - self._gbm_tte_file.triggertime,
-                                   dead_time=self._gbm_tte_file._deadtime,
-                                   first_channel=0,
-                                   rsp_file=rsp_file, instrument=self._gbm_tte_file.det_name,
-                                   mission=self._gbm_tte_file.mission)
+        self._evt_list = event_list
 
         self._evt_list.poly_order = poly_order
 
@@ -530,246 +515,3 @@ class FermiGBMTTELike(EventListLike):
         self._verbose = old_verbose
 
         return ogip_list
-
-class GBMTTEFile(object):
-    def __init__(self, ttefile):
-        """
-
-        A simple class for opening and easily accessing Fermi GBM
-        TTE Files.
-
-        :param ttefile: The filename of the TTE file to be stored
-
-        """
-
-        tte = fits.open(ttefile)
-
-        self._events = tte['EVENTS'].data['TIME']
-        self._pha = tte['EVENTS'].data['PHA']
-
-        try:
-            self.triggertime = tte['PRIMARY'].header['TRIGTIME']
-
-
-        except:
-
-            # For continuous data
-            warnings.warn("There is no trigger time in the TTE file. Must me set manually or using MET relative times.")
-
-            self.triggertime = 0
-
-        self._start_events = tte['PRIMARY'].header['TSTART']
-        self._stop_events = tte['PRIMARY'].header['TSTOP']
-
-        self._utc_start = tte['PRIMARY'].header['DATE-OBS']
-        self._utc_stop = tte['PRIMARY'].header['DATE-END']
-
-        self._n_channels = tte['EBOUNDS'].header['NAXIS2']
-
-        self._det_name = "%s_%s" % (tte['PRIMARY'].header['INSTRUME'], tte['PRIMARY'].header['DETNAM'])
-
-        self._telescope = tte['PRIMARY'].header['TELESCOP']
-
-        self._calculate_deattime()
-
-    @property
-    def start_events(self):
-        return self._start_events
-
-    @property
-    def stop_events(self):
-        return self._stop_events
-
-    @property
-    def arrival_times(self):
-        return self._events
-
-    @property
-    def n_channels(self):
-        return self._n_channels
-
-    @property
-    def mission(self):
-        """
-        Return the name of the mission
-        :return:
-        """
-        return self._telescope
-
-    @property
-    def det_name(self):
-        """
-        Return the name of the instrument and detector
-
-        :return:
-        """
-
-        return self._det_name
-
-    @property
-    def deadtime(self):
-        return self._deadtime
-
-    def _calculate_deattime(self):
-        """
-        Computes an array of deadtimes following the perscription of Meegan et al. (2009).
-
-        The array can be summed over to obtain the total dead time
-
-        """
-        self._deadtime = np.zeros_like(self._events)
-        overflow_mask = self._pha == self._n_channels  # specific to gbm! should work for CTTE
-
-        # From Meegan et al. (2009)
-        # Dead time for overflow (note, overflow sometimes changes)
-        self._deadtime[overflow_mask] = 10.E-6  # s
-
-        # Normal dead time
-        self._deadtime[~overflow_mask] = 2.E-6  # s
-
-    def _compute_mission_times(self):
-
-        mission_dict = {}
-
-        if self.triggertime == 0:
-            return None
-
-        # Complements to Volodymyr Savchenko
-
-        xtime_url = "https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl"
-
-        pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
-
-        args = dict(
-                time_in_sf=self.triggertime,
-                timesys_in="u",
-                timesys_out="u",
-                apply_clock_offset="yes")
-
-        if has_requests:
-
-            try:
-
-                content = requests.get(xtime_url, params=args).content
-
-                mission_info = re.findall(pattern, content, re.S)
-
-                mission_dict['UTC'] = mission_info[0][-1]
-                mission_dict[mission_info[7][1]] = mission_info[7][2]  # LIGO
-                mission_dict[mission_info[8][1]] = mission_info[8][2]  # NUSTAR
-                mission_dict[mission_info[12][1]] = mission_info[12][2]  # RXTE
-                mission_dict[mission_info[16][1]] = mission_info[16][2]  # SUZAKU
-                mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
-                mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
-
-            except:
-
-                warnings.warn("You do not have the requests library, cannot get time system from Heasarc "
-                              "at this point.")
-
-                return None
-
-        else:
-
-            warnings.warn("You do not have the requests library, cannot get time system from Heasarc at this point.")
-
-            return None
-
-        return mission_dict
-
-    def peek(self):
-        """
-        Examine the currently selected interval
-        If connected to the internet, will also look up info for other instruments to compare with
-        Fermi.
-
-        :return: none
-        """
-
-        mission_dict = self._compute_mission_times()
-
-        fermi_dict = {}
-
-        fermi_dict['Fermi Trigger Time'] = self.triggertime
-        fermi_dict['Fermi MET OBS Start'] = self._start_events
-        fermi_dict['Fermi MET OBS Stop'] = self._stop_events
-        fermi_dict['Fermi UTC OBS Start'] = self._utc_start
-        fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
-
-        if mission_dict is not None:
-            mission_df = pd.Series(mission_dict)
-
-            display(mission_df)
-
-        fermi_df = pd.Series(fermi_dict)
-
-        display(fermi_df)
-
-
-
-
-
-def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections):
-    fig, ax = plt.subplots()
-
-    max_cnts = max(cnts / width)
-    top = max_cnts + max_cnts * .2
-    min_cnts = min(cnts[cnts > 0] / width)
-    bottom = min_cnts - min_cnts * .05
-    mean_time = map(np.mean, time_bins)
-
-    all_masks = []
-
-    # purple: #8da0cb
-
-    step_plot(time_bins, cnts / width, ax,
-              color=threeML_config['gbm']['lightcurve color'], label="Light Curve")
-
-    for tmin, tmax in selection:
-        tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
-
-        all_masks.append(tmp_mask)
-
-    if len(all_masks) > 1:
-
-        for mask in all_masks[1:]:
-            step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
-                      color=threeML_config['gbm']['selection color'],
-                      fill=True,
-                      fill_min=min_cnts)
-
-    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
-              color=threeML_config['gbm']['selection color'],
-              fill=True,
-              fill_min=min_cnts, label="Selection")
-
-    all_masks = []
-    for tmin, tmax in bkg_selections:
-        tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
-
-        all_masks.append(tmp_mask)
-
-    if len(all_masks) > 1:
-
-        for mask in all_masks[1:]:
-
-            step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
-                      color=threeML_config['gbm']['background selection color'],
-                      fill=True,
-                      fillAlpha=.4,
-                      fill_min=min_cnts)
-
-    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
-              color=threeML_config['gbm']['background selection color'],
-              fill=True,
-              fill_min=min_cnts, fillAlpha=.4, label="Bkg. Selections")
-
-    ax.plot(mean_time, bkg, threeML_config['gbm']['background color'], lw=2., label="Background")
-
-    # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
-
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("Rate (cnts/s)")
-    ax.set_ylim(bottom, top)
-    ax.set_xlim(time_bins.min(), time_bins.max())
-    ax.legend()
