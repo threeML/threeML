@@ -488,9 +488,15 @@ class EventList(object):
 
         mask = np.logical_and(self._arrival_times >= tmin, self._arrival_times <= tmax)
 
-        interval_deadtime = self._dead_time[mask]
+        if self._dead_time is not None:
 
-        return (tmax - tmin) - interval_deadtime.sum()
+            interval_deadtime = (self._dead_time[mask]).sum()
+
+        else:
+
+            interval_deadtime = 0
+
+        return (tmax - tmin) - interval_deadtime
 
     def set_polynomial_fit_interval(self, *time_intervals, **options):
         """Set the time interval to fit the background.
@@ -1106,6 +1112,10 @@ class EventList(object):
 
 
         self._polynomials = polynomials
+
+
+class EventListWithLiveTimeFraction(EventList):
+    pass
 
 
 def intervals_overlap(tmin, tmax):
