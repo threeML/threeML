@@ -11,7 +11,7 @@ echo "##########################################################"
 echo " Setting up environment"
 echo "##########################################################"
 
-source ~/.bashrc
+source /home/hawc/.bashrc
 
 # Test if we can import the hawc module (otherwise everything else is futile)
 python -c "import hawc"
