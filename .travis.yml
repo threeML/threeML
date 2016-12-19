@@ -12,6 +12,6 @@ before_install:
 
 
 script:
- - docker run --rm -it -v $TRAVIS_BUILD_DIR:/home/hawc/workdir giacomov/hawc-docker /bin/bash --login -c "cd ~/workdir && source test_inside_docker.sh"
+ - docker run --rm -it -u `id -u` -v $TRAVIS_BUILD_DIR:/home/hawc/workdir giacomov/hawc-docker /bin/bash --login -c "cd ~/workdir && source test_inside_docker.sh"
 #after_success:
 # - coveralls #--config_file .coveragerc
