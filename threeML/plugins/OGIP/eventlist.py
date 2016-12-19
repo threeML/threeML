@@ -50,7 +50,6 @@ class EventList(object):
         :param  n_channels: Number of detector channels
         :param  start_time: start time of the event list
         :param  stop_time: stop time of the event list
-        :param  dead_time: an array of deadtime per event
         :param  first_channel: where detchans begin indexing
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
@@ -647,7 +646,7 @@ class EventList(object):
         # so that we are not fitting zero counts. It will be used in the channel calculations
         # as well
 
-        bin_width = .1  # seconds
+        bin_width = 1.  # seconds
         these_bins = np.arange(self._start_time,
                                self._stop_time,
                                bin_width)
@@ -833,9 +832,13 @@ class EventList(object):
 
         total_duration = 0.
 
+        poly_exposure = 0
+
         for selection in self._poly_time_selections:
 
             total_duration += selection[1] - selection[0]
+
+            poly_exposure += self._exposure_over_interval(selection[0], selection[1])
 
             all_bkg_masks.append(np.logical_and(self._arrival_times >= selection[0],
                                                 self._arrival_times <= selection[1]))
@@ -856,15 +859,15 @@ class EventList(object):
 
         total_poly_energies = self._energies[poly_mask]
 
-        if self._dead_time is not None:
-
-            poly_deadtime = self._dead_time[poly_mask].sum()
-
-        else:
-
-            poly_deadtime = 0
-
-        poly_exposure = total_duration - poly_deadtime
+        # if self._dead_time is not None:
+        #
+        #     poly_deadtime = self._dead_time[poly_mask].sum()
+        #
+        # else:
+        #
+        #     poly_deadtime = 0
+        #
+        # poly_exposure = total_duration - poly_deadtime
 
         # Now we will find the the best poly order unless the use specified one
         # The total cnts (over channels) is binned to .1 sec intervals

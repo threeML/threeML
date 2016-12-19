@@ -192,11 +192,20 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
 
     # first do a simple amplitude fit
 
+
+
     search_grid = np.logspace(-2, 4, 10)
 
     initial_guess = np.zeros(grade + 1)
 
     polynomial = Polynomial(initial_guess)
+
+    # if there are no events then return nothing
+    if len(events) == 0:
+
+        print "here"
+
+        return polynomial, 0
 
     log_likelihood = PolyUnbinnedLogLikelihood(events,
                                                polynomial,

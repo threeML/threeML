@@ -36,7 +36,7 @@ class BinningMethodError(RuntimeError):
 
 class FermiLATLLELike(EventListLike):
     def __init__(self, name, lle_file, ft2_file, background_selections, source_intervals, rsp_file, trigger_time=None,
-                 poly_order=-1, unbinned=True, verbose=True):
+                 poly_order=-1, unbinned=False, verbose=True):
         """
         A plugin to natively bin, view, and handle Fermi LAT LLE data.
         An LLE event file and FT2 (1 sec) are required as well as the associated response
@@ -74,9 +74,12 @@ class FermiLATLLELike(EventListLike):
             arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.triggertime,
             energies=self._lat_lle_file.energies,
             n_channels=self._lat_lle_file.n_channels,
+                live_time=self._lat_lle_file.livetime,
+                live_time_starts=self._lat_lle_file.livetime_start,
+                live_time_stops=self._lat_lle_file.livetime_stop,
             start_time=self._lat_lle_file._start_events - self._lat_lle_file.triggertime,
             stop_time=self._lat_lle_file._stop_events - self._lat_lle_file.triggertime,
-            first_channel=0,
+                first_channel=1,
             rsp_file=rsp_file,
             instrument=self._lat_lle_file.instrument,
             mission=self._lat_lle_file.mission)
@@ -195,20 +198,20 @@ class LLEFile(object):
 
         with fits.open(rsp_file) as rsp_:
 
-            data = rsp_['EBOUNDS']
+            data = rsp_['EBOUNDS'].data
 
             self._emin = data.E_MIN
             self._emax = data.E_MAX
             self._channels = data.CHANNEL
 
-        self._bin_energies_into_pha()
+
 
         with fits.open(lle_file) as ft1_:
 
             data = ft1_['EVENTS'].data
 
             self._events = data.TIME  # - trigger_time
-            self._energy = data.ENERGY
+            self._energy = data.ENERGY * 1E3  # keV
 
             self._start_events = ft1_['PRIMARY'].header['TSTART']
             self._stop_events = ft1_['PRIMARY'].header['TSTOP']
@@ -228,6 +231,8 @@ class LLEFile(object):
                         "There is no trigger time in the LLE file. Must me set manually or using MET relative times.")
 
                 self.triggertime = 0
+
+        self._bin_energies_into_pha()
 
         with fits.open(ft2_file) as ft2_:
 
