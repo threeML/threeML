@@ -87,6 +87,16 @@ class PluginPrototype(object):
 
         self._nuisance_parameters = new_nuisance_parameters
 
+    def external_property(self, property, value):
+        """
+        Set external/auxiliary properties and their value
+        :param property: an astromodels auxiliary variable
+        :param value: the value of the auxiliary variable for this plugin
+        :return:
+        """
+
+        self._external_properties.append((property, value))
+
     ######################################################################
     # The following methods must be implemented by each plugin
     ######################################################################
@@ -116,13 +126,3 @@ class PluginPrototype(object):
         logLike value.
         """
         pass
-
-    def external_property(self, property, value):
-        """
-        Set external/auxiliary properties and their value
-        :param property: an astromodels auxiliary variable
-        :param value: the value of the auxiliary variable for this plugin
-        :return:
-        """
-
-        self._external_properties.append((property, value))
