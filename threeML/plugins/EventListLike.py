@@ -194,99 +194,10 @@ class EventListLike(OGIPLike):
                               rsp_file=self._rsp_file, verbose=self._verbose)
 
     def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None):
-        """
+        """ stub """
 
-        :param use_binner: use the bins created via a binner
-        :param start: start time to view
-        :param stop:  stop time to view
-        :param dt:  dt of the light curve
-        :param energy_selection: string containing energy interval
-        :return: fig
-        """
+        raise RuntimeError('must be implemented in subclass')
 
-        if energy_selection is not None:
-
-            energy_selection = [interval.replace(' ', '') for interval in energy_selection.split(',')]
-
-            valid_channels = []
-            mask = np.array([False] * self._evt_list.n_events)
-
-            for selection in energy_selection:
-
-                ee = map(float, selection.split("-"))
-
-                if len(ee) != 2:
-                    raise RuntimeError('Energy selection is not valid! Form: <low>-<high>.')
-
-                emin, emax = sorted(ee)
-
-                idx1 = self._rsp.energy_to_channel(emin)
-                idx2 = self._rsp.energy_to_channel(emax)
-
-                # Update the allowed channels
-                valid_channels.extend(range(idx1, idx2))
-
-                this_mask = np.logical_and(self._evt_list.energies >= idx1, self._evt_list.energies <= idx2)
-
-                np.logical_or(mask, this_mask, out=mask)
-
-        else:
-
-            mask = np.array([True] * self._evt_list.n_events)
-            valid_channels = range(self._gbm_tte_file.n_channels)
-
-        if use_binner:
-
-            bin_start, bin_stop = self._evt_list.bins
-            bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
-
-            # perhaps we want to look a little before or after the binner
-            if start < bins[0]:
-
-                pre_bins = np.arange(start, bins[0], dt).tolist()[:-1]
-
-                pre_bins.extend(bins)
-
-                bins = pre_bins
-
-            if stop > bins[-1]:
-
-                post_bins = np.arange(bins[-1], stop, dt)
-
-                bins.extend(post_bins[1:])
-
-        else:
-
-            bins = np.arange(start, stop + dt, dt)
-
-        cnts, bins = np.histogram(self._gbm_tte_file.arrival_times[mask] - self._gbm_tte_file.triggertime, bins=bins)
-        time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
-
-        width = np.diff(bins)
-
-        bkg = []
-        for j, tb in enumerate(time_bins):
-            tmpbkg = 0.
-            for i in valid_channels:
-                poly = self._evt_list.polynomials[i]
-
-                tmpbkg += poly.integral(tb[0], tb[1]) / (width[j])
-
-            bkg.append(tmpbkg)
-
-        gbm_light_curve_plot(time_bins, cnts, bkg, width,
-                             selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list),
-                             bkg_selections=self._evt_list.poly_intervals)
-
-    def peek(self):
-
-        print "TTE File Info:"
-
-        self._evt_list.peek()
-
-        print 'Timing Info:'
-
-        self._gbm_tte_file.peek()
 
     def write_pha_from_binner(self, file_name, overwrite=False):
         """
