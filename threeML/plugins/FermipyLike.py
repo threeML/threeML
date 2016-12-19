@@ -270,7 +270,7 @@ class FermipyLike(PluginPrototype):
 
             raise
 
-        return value - logfactorial(self.like.total_nobs())
+        return value - logfactorial(self._gta.like.total_nobs())
 
     def inner_fit(self):
         """
