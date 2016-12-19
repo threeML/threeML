@@ -1022,6 +1022,10 @@ class EventListWithDeadTime(EventList):
         :param  dec:
         """
 
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file,
+                           ra, dec,
+                           mission, instrument)
+
         if dead_time is not None:
 
             self._dead_time = np.asarray(dead_time)
@@ -1034,8 +1038,7 @@ class EventListWithDeadTime(EventList):
 
             self._dead_time = None
 
-        EventList.__init__(arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file, ra, dec,
-                           mission, instrument)
+
 
     def _exposure_over_interval(self, tmin, tmax):
         """ calculate the exposure over a given interval  """
@@ -1174,6 +1177,10 @@ class EventListWithLiveTime(EventList):
         :param  dec:
         """
 
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file,
+                           ra, dec,
+                           mission, instrument)
+
         assert len(live_time) == len(
                 live_time_starts), "Live time fraction (%d) and live time start (%d) have different shapes" % (
             len(live_time), len(live_time_starts))
@@ -1185,9 +1192,6 @@ class EventListWithLiveTime(EventList):
         self._live_time = np.asarray(live_time)
         self._live_time_starts = np.asarray(live_time_starts)
         self._live_time_stops = np.asarray(live_time_stops)
-
-        EventList.__init__(arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file, ra, dec,
-                           mission, instrument)
 
     def _exposure_over_interval(self, tmin, tmax):
         """
