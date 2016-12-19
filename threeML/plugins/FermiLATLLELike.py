@@ -174,11 +174,11 @@ class FermiLATLLELike(EventListLike):
 
     def peek(self):
 
-        print "TTE File Info:"
+        print("LLE File Info:")
 
         self._evt_list.peek()
 
-        print 'Timing Info:'
+        print('Timing Info:')
 
         self._lat_lle_file.peek()
 
