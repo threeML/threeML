@@ -374,7 +374,7 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
 
     max_cnts = max(cnts / width)
     top = max_cnts + max_cnts * .2
-    min_cnts = min(cnts[cnts > 0] / width)
+    min_cnts = min(cnts[cnts > 0] / width[cnts > 0])
     bottom = min_cnts - min_cnts * .05
     mean_time = map(np.mean, time_bins)
 
