@@ -4,7 +4,7 @@ import os
 
 __author__ = 'grburgess'
 
-from threeML.plugins.FermiGBMTTELike import FermiGBMTTELike, BinningMethodError
+from threeML.plugins.FermiLATLLELike import FermiLATLLELike, BinningMethodError
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
@@ -53,10 +53,6 @@ def examine_bins(bins, real_start, real_stop, expected_number_of_bins):
 
     assert len(starts) == expected_number_of_bins
     assert len(stops) == expected_number_of_bins
-
-
-
-
 
 
 class AnalysisBuilder(object):
@@ -133,19 +129,19 @@ class AnalysisBuilder(object):
         return bayes
 
 
-def test_gbm_tte_constructor():
+def test_gbm_lle_constructor():
     with within_directory(__example_dir):
-        data_dir = os.path.join('gbm', 'bn080916009')
+        data_dir = 'lat'
 
         src_selection = "0.-10."
 
-        nai3 = FermiGBMTTELike('NAI3',
-                               os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
-                               "-10-0, 100-150",
+        nai3 = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+                               os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                               "-100-0, 100-200",
                                src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v07.rsp"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
 
-        assert nai3.name == 'NAI3'
+        assert nai3.name == 'lle'
 
         assert nai3._active_interval == ('0.-10.',)
         assert nai3._startup == False
@@ -169,18 +165,17 @@ def test_gbm_tte_constructor():
         nai3.set_background_interval("-15-0", "100-150", unbinned=False)
 
 
-def test_gbm_binning():
+def test_lle_binning():
     with within_directory(__example_dir):
         data_dir = os.path.join('gbm', 'bn080916009')
 
         src_selection = "0.-10."
 
-        nai3 = FermiGBMTTELike('NAI3',
-                               os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
-                               "-10-0, 100-150",
+        nai3 = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+                               os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                               "-100-0, 100-200",
                                src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v07.rsp"), poly_order=-1)
-
+                               rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
         # should not have bins yet
 
 
@@ -242,19 +237,17 @@ def test_gbm_binning():
         ogips = nai3.get_ogip_from_binner()
 
 
-
-
-def test_gbm_tte_joint_likelihood_fitting():
+def test_gbm_lle_joint_likelihood_fitting():
     with within_directory(__example_dir):
         data_dir = os.path.join('gbm', 'bn080916009')
 
         src_selection = "0.-10."
 
-        nai3 = FermiGBMTTELike('NAI3',
-                               os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
-                               "-10-0, 100-150",
+        nai3 = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+                               os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                               "-100-0, 100-200",
                                src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v07.rsp"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
 
         ab = AnalysisBuilder(nai3)
 
@@ -289,17 +282,17 @@ def test_gbm_tte_joint_likelihood_fitting():
             assert jl.ncalls != 1
 
 
-def test_gbm_tte_bayesian_fitting():
+def test_gbm_lle_bayesian_fitting():
     with within_directory(__example_dir):
         data_dir = os.path.join('gbm', 'bn080916009')
 
         src_selection = "0.-10."
 
-        nai3 = FermiGBMTTELike('NAI3',
-                               os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
-                               "-10-0, 100-150",
+        nai3 = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+                               os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                               "-100-0, 100-200",
                                src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v07.rsp"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
 
         ab = AnalysisBuilder(nai3)
         ab.set_priors()
