@@ -148,8 +148,7 @@ def polyfit(x, y, grade, exposure):
     # Check that we have enough non-empty bins to fit this grade of polynomial,
     # otherwise lower the grade
     dof = n_non_zero - (grade + 1)
-    if test:
-        print("Effective dof: %s" % (dof))
+
 
     if dof <= 2:
         # Fit is poorly or ill-conditioned, have to reduce the number of parameters
@@ -191,48 +190,63 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
     """
 
     # first do a simple amplitude fit
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+
+
+        search_grid = np.logspace(-2, 4, 10)
+
+        initial_guess = np.zeros(grade + 1)
+
+        polynomial = Polynomial(initial_guess)
+
+        # if there are no events then return nothing
 
 
 
-    search_grid = np.logspace(-2, 4, 10)
-
-    initial_guess = np.zeros(grade + 1)
-
-    polynomial = Polynomial(initial_guess)
-
-    # if there are no events then return nothing
-    if len(events) == 0:
-
-        print "here"
-
-        return polynomial, 0
-
-    log_likelihood = PolyUnbinnedLogLikelihood(events,
-                                               polynomial,
-                                               t_start,
-                                               t_stop,
-                                               exposure)
-
-    like_grid = []
-    for amp in search_grid:
-
-        initial_guess[0] = amp
-        like_grid.append(log_likelihood(initial_guess))
-
-    initial_guess[0] = search_grid[np.argmin(like_grid)]
-
-    # Improve the solution
+        if len(events) == 0:
 
 
 
-    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
-                                         ftol=1E-5, xtol=1E-5,
-                                         maxiter=1e6, maxfun=1E6,
-                                         disp=False)
+            return Polynomial([0]), 0
 
-    # Get the value for cstat at the minimum
+        log_likelihood = PolyUnbinnedLogLikelihood(events,
+                                                   polynomial,
+                                                   t_start,
+                                                   t_stop,
+                                                   exposure)
 
-    min_log_likelihood = log_likelihood(final_estimate)
+        like_grid = []
+        for amp in search_grid:
+
+            initial_guess[0] = amp
+            like_grid.append(log_likelihood(initial_guess))
+
+        initial_guess[0] = search_grid[np.argmin(like_grid)]
+
+        # Improve the solution
+        dof = len(events) - (grade + 1)
+
+        if dof <= 2:
+            # Fit is poorly or ill-conditioned, have to reduce the number of parameters
+            while (dof < 1 and len(initial_guess) > 1):
+                initial_guess = initial_guess[:-1]
+                polynomial = Polynomial(initial_guess)
+                log_likelihood = PolyUnbinnedLogLikelihood(events,
+                                                           polynomial,
+                                                           t_start,
+                                                           t_stop,
+                                                           exposure)
+
+
+        final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
+                                             ftol=1E-5, xtol=1E-5,
+                                             maxiter=1e6, maxfun=1E6,
+                                             disp=False)
+
+        # Get the value for cstat at the minimum
+
+        min_log_likelihood = log_likelihood(final_estimate)
 
     # Update the polynomial with the fitted parameters,
     # and the relative covariance matrix
@@ -588,7 +602,7 @@ def compute_covariance_matrix(grad, par, full_output=False,
             delta_f = (g_up - g_dn)[i]
 
             converged, new_step = revised_step(delta_f, di, i)
-            # print 'Parameter %d -- Iteration %d -- Step size: %.2e -- delta: %.2e'%(i,j,di,delta_f)
+
 
             if converged:
                 break

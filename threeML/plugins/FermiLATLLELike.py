@@ -70,19 +70,18 @@ class FermiLATLLELike(EventListLike):
         if trigger_time is not None:
             self._lat_lle_file.triggertime = trigger_time
 
-        event_list = EventListWithLiveTime(
-            arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.triggertime,
-            energies=self._lat_lle_file.energies,
-            n_channels=self._lat_lle_file.n_channels,
-                live_time=self._lat_lle_file.livetime,
-                live_time_starts=self._lat_lle_file.livetime_start,
-                live_time_stops=self._lat_lle_file.livetime_stop,
-            start_time=self._lat_lle_file._start_events - self._lat_lle_file.triggertime,
-            stop_time=self._lat_lle_file._stop_events - self._lat_lle_file.triggertime,
-                first_channel=1,
-            rsp_file=rsp_file,
-            instrument=self._lat_lle_file.instrument,
-            mission=self._lat_lle_file.mission)
+        event_list = EventListWithLiveTime(arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.triggertime,
+                                           energies=self._lat_lle_file.energies,
+                                           n_channels=self._lat_lle_file.n_channels,
+                                           live_time=self._lat_lle_file.livetime,
+                                           live_time_starts=self._lat_lle_file.livetime_start - self._lat_lle_file.triggertime,
+                                           live_time_stops=self._lat_lle_file.livetime_stop - self._lat_lle_file.triggertime,
+                                           start_time=self._lat_lle_file._start_events - self._lat_lle_file.triggertime,
+                                           stop_time=self._lat_lle_file._stop_events - self._lat_lle_file.triggertime,
+                                           first_channel=1,
+                                           rsp_file=rsp_file,
+                                           instrument=self._lat_lle_file.instrument,
+                                           mission=self._lat_lle_file.mission)
 
         EventListLike.__init__(self, name, event_list, background_selections, source_intervals, rsp_file,
                                poly_order, unbinned, verbose)
@@ -284,6 +283,12 @@ class LLEFile(object):
 
             self._pha[idx] = channel
 
+
+        # There are some events outside of the energy bounds. We will dump those
+
+
+        self._filter_idx = self._pha > 0
+
         self._n_channels = len(self._channels)
 
     @property
@@ -296,11 +301,11 @@ class LLEFile(object):
 
     @property
     def arrival_times(self):
-        return self._events
+        return self._events[self._filter_idx]
 
     @property
     def energies(self):
-        return self._pha
+        return self._pha[self._filter_idx]
 
     @property
     def n_channels(self):

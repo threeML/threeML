@@ -1199,9 +1199,9 @@ class EventListWithLiveTime(EventList):
     def _exposure_over_interval(self, tmin, tmax):
         """
 
-        :param tmin:
-        :param tmax:
-        :return:
+        :param tmin: start time of interval
+        :param tmax: stop time of interval
+        :return: exposure
         """
 
         # First see if the interval is completely contained inside a
@@ -1215,6 +1215,8 @@ class EventListWithLiveTime(EventList):
         # see if it contains elements
 
         if self._live_time[inside_idx]:
+
+
 
             # we want to take a fraction of the live time covered
             dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
@@ -1230,6 +1232,8 @@ class EventListWithLiveTime(EventList):
             full_inclusion_idx = np.logical_and(tmin <= self._live_time_starts, tmax >= self._live_time_stops)
 
             full_inclusion_livetime = self._live_time[full_inclusion_idx].sum()
+
+
 
             # Now we get the fractional parts on the left and right
 
@@ -1321,12 +1325,15 @@ class EventListWithLiveTime(EventList):
             if not self._poly_fit_exists:
                 raise RuntimeError('A polynomial fit to the channels does not exist!')
 
-            for chan in range(self._first_channel, self._n_channels + self._first_channel):
+            #for chan in range(self._first_channel, self._n_channels + self._first_channel):
+            for chan in range(self._n_channels ):
 
                 total_counts = 0
                 counts_err = 0
 
                 for tmin, tmax in zip(tmin_list, tmax_list):
+
+
                     # Now integrate the appropriate background polynomial
                     total_counts += self._polynomials[chan].integral(tmin, tmax)
                     counts_err += (self._polynomials[chan].integral_error(tmin, tmax)) ** 2

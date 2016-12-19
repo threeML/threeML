@@ -82,6 +82,9 @@ class EventListLike(OGIPLike):
 
         self._verbose = verbose
 
+
+
+
         OGIPLike.__init__(self, name, pha_file=self._observed_pha, bak_file=self._bkg_pha, rsp_file=rsp_file,
                           verbose=verbose)
 
