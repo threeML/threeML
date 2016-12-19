@@ -149,7 +149,6 @@ def polyfit(x, y, grade, exposure):
     # otherwise lower the grade
     dof = n_non_zero - (grade + 1)
 
-
     if dof <= 2:
         # Fit is poorly or ill-conditioned, have to reduce the number of parameters
         while (dof < 2 and len(initial_guess) > 1):
@@ -193,7 +192,6 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
 
-
         search_grid = np.logspace(-2, 4, 10)
 
         initial_guess = np.zeros(grade + 1)
@@ -205,8 +203,6 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
 
 
         if len(events) == 0:
-
-
 
             return Polynomial([0]), 0
 
@@ -237,7 +233,6 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
                                                            t_start,
                                                            t_stop,
                                                            exposure)
-
 
         final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
                                              ftol=1E-5, xtol=1E-5,
@@ -602,7 +597,6 @@ def compute_covariance_matrix(grad, par, full_output=False,
             delta_f = (g_up - g_dn)[i]
 
             converged, new_step = revised_step(delta_f, di, i)
-
 
             if converged:
                 break

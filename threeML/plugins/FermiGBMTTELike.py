@@ -42,7 +42,12 @@ class FermiGBMTTELike(EventListLike):
     def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
         """
-        If the input files are TTE files. Background selections are specified as
+        A plugin to natively bin, view, and handle Fermi GBM TTE data.
+        An LLE event file and FT2 (1 sec) are required as well as the associated response
+
+
+
+        Background selections are specified as
         a comma separated string e.g. "-10-0,10-20"
 
         Initial source selection is input as a string e.g. "0-5"
@@ -50,18 +55,24 @@ class FermiGBMTTELike(EventListLike):
         One can choose a background polynomial order by hand (up to 4th order)
         or leave it as the default polyorder=-1 to decide by LRT test
 
-        FermiGBM_TTE_Like("GBM","glg_tte_n6_bn080916412.fit","-10-0,10-20","0-5","rspfile.rsp{2}")
-        to load the second spectrum, second background spectrum and second response.
+
+
         """
 
+        # Load the relevant information from the TTE file
+
         self._gbm_tte_file = GBMTTEFile(tte_file)
+
+        # Set a trigger time if one has not been set
 
         if trigger_time is not None:
             self._gbm_tte_file.triggertime = trigger_time
 
+        # Create the the event list
+
         event_list = EventListWithDeadTime(
             arrival_times=self._gbm_tte_file.arrival_times - self._gbm_tte_file.triggertime,
-            energies=self._gbm_tte_file.pha,
+                energies=self._gbm_tte_file.energies,
             n_channels=self._gbm_tte_file.n_channels,
             start_time=self._gbm_tte_file.start_events - self._gbm_tte_file.triggertime,
             stop_time=self._gbm_tte_file.stop_events - self._gbm_tte_file.triggertime,
@@ -69,6 +80,8 @@ class FermiGBMTTELike(EventListLike):
                                    first_channel=0,
                                    rsp_file=rsp_file, instrument=self._gbm_tte_file.det_name,
                                    mission=self._gbm_tte_file.mission)
+
+        # pass to the super class
 
         EventListLike.__init__(self, name, event_list, background_selections, source_intervals, rsp_file,
                                poly_order, unbinned, verbose)

@@ -70,18 +70,19 @@ class FermiLATLLELike(EventListLike):
         if trigger_time is not None:
             self._lat_lle_file.triggertime = trigger_time
 
-        event_list = EventListWithLiveTime(arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.triggertime,
-                                           energies=self._lat_lle_file.energies,
-                                           n_channels=self._lat_lle_file.n_channels,
-                                           live_time=self._lat_lle_file.livetime,
-                                           live_time_starts=self._lat_lle_file.livetime_start - self._lat_lle_file.triggertime,
-                                           live_time_stops=self._lat_lle_file.livetime_stop - self._lat_lle_file.triggertime,
-                                           start_time=self._lat_lle_file._start_events - self._lat_lle_file.triggertime,
-                                           stop_time=self._lat_lle_file._stop_events - self._lat_lle_file.triggertime,
-                                           first_channel=1,
-                                           rsp_file=rsp_file,
-                                           instrument=self._lat_lle_file.instrument,
-                                           mission=self._lat_lle_file.mission)
+        event_list = EventListWithLiveTime(
+                arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.triggertime,
+                energies=self._lat_lle_file.energies,
+                n_channels=self._lat_lle_file.n_channels,
+                live_time=self._lat_lle_file.livetime,
+                live_time_starts=self._lat_lle_file.livetime_start - self._lat_lle_file.triggertime,
+                live_time_stops=self._lat_lle_file.livetime_stop - self._lat_lle_file.triggertime,
+                start_time=self._lat_lle_file._start_events - self._lat_lle_file.triggertime,
+                stop_time=self._lat_lle_file._stop_events - self._lat_lle_file.triggertime,
+                first_channel=1,
+                rsp_file=rsp_file,
+                instrument=self._lat_lle_file.instrument,
+                mission=self._lat_lle_file.mission)
 
         EventListLike.__init__(self, name, event_list, background_selections, source_intervals, rsp_file,
                                poly_order, unbinned, verbose)
@@ -167,7 +168,7 @@ class FermiLATLLELike(EventListLike):
 
             bkg.append(tmpbkg)
 
-        gbm_light_curve_plot(time_bins, cnts, bkg, width,
+        lle_light_curve_plot(time_bins, cnts, bkg, width,
                              selection=zip(self._evt_list.tmin_list, self._evt_list.tmax_list),
                              bkg_selections=self._evt_list.poly_intervals)
 
@@ -202,8 +203,6 @@ class LLEFile(object):
             self._emin = data.E_MIN
             self._emax = data.E_MAX
             self._channels = data.CHANNEL
-
-
 
         with fits.open(lle_file) as ft1_:
 
@@ -283,7 +282,6 @@ class LLEFile(object):
 
             self._pha[idx] = channel
 
-
         # There are some events outside of the energy bounds. We will dump those
 
 
@@ -342,7 +340,7 @@ class LLEFile(object):
         return self._tstop
 
 
-def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections):
+def lle_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections):
     fig, ax = plt.subplots()
 
     max_cnts = max(cnts / width)
@@ -356,7 +354,7 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
     # purple: #8da0cb
 
     step_plot(time_bins, cnts / width, ax,
-              color=threeML_config['gbm']['lightcurve color'], label="Light Curve")
+              color=threeML_config['lle']['lightcurve color'], label="Light Curve")
 
     for tmin, tmax in selection:
         tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
@@ -367,12 +365,12 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
 
         for mask in all_masks[1:]:
             step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
-                      color=threeML_config['gbm']['selection color'],
+                      color=threeML_config['lle']['selection color'],
                       fill=True,
                       fill_min=min_cnts)
 
     step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
-              color=threeML_config['gbm']['selection color'],
+              color=threeML_config['lle']['selection color'],
               fill=True,
               fill_min=min_cnts, label="Selection")
 
@@ -387,17 +385,17 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
         for mask in all_masks[1:]:
 
             step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
-                      color=threeML_config['gbm']['background selection color'],
+                      color=threeML_config['lle']['background selection color'],
                       fill=True,
                       fillAlpha=.4,
                       fill_min=min_cnts)
 
     step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
-              color=threeML_config['gbm']['background selection color'],
+              color=threeML_config['lle']['background selection color'],
               fill=True,
               fill_min=min_cnts, fillAlpha=.4, label="Bkg. Selections")
 
-    ax.plot(mean_time, bkg, threeML_config['gbm']['background color'], lw=2., label="Background")
+    ax.plot(mean_time, bkg, threeML_config['lle']['background color'], lw=2., label="Background")
 
     # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
 
