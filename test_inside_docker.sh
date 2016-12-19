@@ -3,7 +3,6 @@
 # This ensure that the script will exit if any command fails
 set -e
 
-
 # THIS IS ASSUMED TO BE RUNNING IN THE DIRECTORY WHERE THE CODE HAS BEEN CHECKED OUT
 
 # Setup environment
@@ -16,6 +15,24 @@ source /home/hawc/.bashrc
 # Test if we can import the hawc module (otherwise everything else is futile)
 python -c "import hawc"
 
+echo "##########################################################"
+echo " Creating python virtual environment"
+echo "##########################################################"
+virtualenv threeML_env
+source threeML_env/bin/activate
+
+echo "##########################################################"
+echo " Installing numpy, pytest, pytest-cov and coveralls"
+echo "##########################################################"
+
+pip install numpy pytest pytest-cov coveralls
+
+echo "##########################################################"
+echo " Installing astromodels"
+echo "##########################################################"
+
+# Install the head of astromodels and the head of cthreeML, as well as py.test and coveralls
+pip install git+https://github.com/giacomov/astromodels.git
 
 echo "##########################################################"
 echo " Installing 3ML"
@@ -25,18 +42,10 @@ echo "##########################################################"
 pip install .
 
 echo "##########################################################"
-echo " Installing astromodels and cthreeML"
+echo " Installing cthreeML"
 echo "##########################################################"
 
-# Install the head of astromodels and the head of cthreeML, as well as py.test and coveralls
-pip install git+https://github.com/giacomov/astromodels.git
 pip install git+https://github.com/giacomov/cthreeML.git
-
-echo "##########################################################"
-echo " Installing pytest, pytest-cov and coveralls"
-echo "##########################################################"
-
-pip install pytest pytest-cov coveralls
 
 # Make the matplotlib backend non-interactive (otherwise all tests regarging plotting will fail)
 export MPLBACKEND='Agg'
@@ -46,11 +55,12 @@ echo " Executing tests and coveralls"
 echo "##########################################################"
 
 # Execute tests
-python -m pytest -vv --cov=threeML
+#python -m pytest -vv --cov=threeML
+python -m pytest --ignore=threeML_env
 
 echo "##########################################################"
 echo " Executing coveralls"
 echo "##########################################################"
 
 # Execute the coverage analysis
-/home/hawc/.local/bin/coveralls
+coveralls
