@@ -1,5 +1,5 @@
 import numpy as np
-import scipy
+import scipy.optimize as opt
 import warnings
 import math
 
@@ -158,10 +158,9 @@ def polyfit(x, y, grade, exposure):
 
     # Try to improve the fit with the log-likelihood
 
-    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
-                                         ftol=1E-5, xtol=1E-5,
-                                         maxiter=1e6, maxfun=1E6,
-                                         disp=False)
+    options = {'ftol': 1E-5, 'xtol': 1E-5, 'maxiter': 1e6, 'maxfun': 1E6, 'disp': False}
+
+    final_estimate = opt.minimize(log_likelihood, initial_guess, method='Powell', options=options)
 
     # Get the value for cstat at the minimum
 
@@ -234,10 +233,10 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
                                                            t_stop,
                                                            exposure)
 
-        final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
-                                             ftol=1E-5, xtol=1E-5,
-                                             maxiter=1e6, maxfun=1E6,
-                                             disp=False)
+        options = {'ftol': 1E-5, 'xtol': 1E-5, 'maxiter': 1e6, 'maxfun': 1E6, 'disp': False}
+
+        final_estimate = opt.minimize(log_likelihood, initial_guess, method='Powell', options=options)
+
 
         # Get the value for cstat at the minimum
 
