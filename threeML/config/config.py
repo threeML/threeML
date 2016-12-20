@@ -5,11 +5,18 @@ import pkg_resources
 import yaml
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
+from collections import OrderedDict
 
 from threeML.exceptions.custom_exceptions import custom_warnings, ConfigurationFileCorrupt
 
 
 _config_file_name = 'threeML_config.yml'
+
+# Scipy optimizers
+# adds the ability for safe load to import dictionaries
+_optimize_methods = ('Nelder-Mead',"Powell","CG","BFGS","Newton-CG","L-BFGS-B","TNC","COBYLA","SLSQP","dogleg","trust-ncg")
+
+
 
 
 def get_path_of_default_configuration():
@@ -22,6 +29,11 @@ def get_path_of_default_configuration():
 class Config(object):
 
     def __init__(self):
+
+
+        # how deep into the tree we have gone
+        #self._recursion_level = 0
+
 
         # Read first the default configuration file
         default_configuration_path = get_path_of_default_configuration()
@@ -160,6 +172,26 @@ class Config(object):
 
         return type(var) == str
 
+    @staticmethod
+    def is_optimizer(method):
+
+        if method in _optimize_methods:
+
+            return True
+
+        else:
+
+            return False
+
+    @staticmethod
+    def is_number(val):
+
+        return type(val) == int or type(val) == float
+
+    @staticmethod
+    def is_dict(var):
+        return isinstance(var, OrderedDict)
+
     def _subs_values_with_none(self, d):
         """
         This remove all values from d and all nested dictionaries of d, substituing all values with None
@@ -191,6 +223,7 @@ class Config(object):
         return self._subs_values_with_none(d1) == self._subs_values_with_none(d2)
 
     def _traverse_dict(self, d):
+
 
         for key in d:
 
@@ -232,7 +265,11 @@ class Config(object):
                               'cmap': (self.is_matplotlib_cmap, 'a matplotlib color map (available: %s)' %
                                        ", ".join(plt.colormaps())),
                               'name': (self.is_string, "a valid name (string)"),
-                              'switch': (self.is_bool, "one of yes, no, True, False")}
+                              'switch': (self.is_bool, "one of yes, no, True, False"),
+                              'optimizer': (self.is_optimizer, "one of scipy.optimize minimization methods (available: %s)"
+                                            %", ".join(_optimize_methods)),
+                              'number': (self.is_number, "an int or float")
+                              }
 
             # Now that we know that the provided configuration have the right structure, let's check that
             # each value is of the proper type

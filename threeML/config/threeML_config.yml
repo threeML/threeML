@@ -142,8 +142,30 @@ event list:
 
    unbinned fit method (optimizer): "Nelder-Mead"
 
+   # options for the unbinned fit method.
+   # see: https://docs.scipy.org/doc/scipy-0.18.1/reference/optimize.html
+
+   unbinned fit options (dict):
+
+       ftol (number): !!float 1E-5
+       xtol (number): !!float 1E-5
+       maxiter (number): !!float 1E6
+       maxfun (number): !!float 1E6
+       disp (switch): False
+
    # The scipy.optimize method to be used when
    # performing an binned polynomial fit to
    # an event list
 
    binned fit method (optimizer): "Powell"
+
+
+   # options for the binned fit method.
+   # see: https://docs.scipy.org/doc/scipy-0.18.1/reference/optimize.html
+   binned fit options (dict):
+
+       ftol (number): !!float 1E-5
+       xtol (number): !!float 1E-5
+       maxiter (number): !!float 1E6
+       disp (switch): False
+

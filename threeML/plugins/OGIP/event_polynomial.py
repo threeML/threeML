@@ -3,8 +3,7 @@ import scipy.optimize as opt
 import warnings
 import math
 
-_unbinned_fit_method = 'Nelder-Mead'
-_binned_fit_method = 'Powell'
+from threeML.config.config import threeML_config
 
 
 
@@ -162,9 +161,9 @@ def polyfit(x, y, grade, exposure):
 
     # Try to improve the fit with the log-likelihood
 
-    options = {'ftol': 1E-5, 'xtol': 1E-5, 'maxiter': 1e6, 'maxfun': 1E6, 'disp': False}
 
-    final_estimate = opt.minimize(log_likelihood, initial_guess, method=_binned_fit_method, options=options)['x']
+
+    final_estimate = opt.minimize(log_likelihood, initial_guess, method=threeML_config['event list']['binned fit method'], options=threeML_config['event list']['binned fit options'])['x']
     final_estimate = np.atleast_1d(final_estimate)
 
     # Get the value for cstat at the minimum
@@ -240,9 +239,9 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
 
                 print 'got in here'
 
-        options = {'ftol': 1E-5, 'xtol': 1E-5, 'maxiter': 1e6, 'maxfun': 1E6, 'disp': False}
 
-        final_estimate = opt.minimize(log_likelihood, initial_guess, method=_unbinned_fit_method, options=options)['x']
+
+        final_estimate = opt.minimize(log_likelihood, initial_guess, method=threeML_config['event list']['unbinned fit method'], options=threeML_config['event list']['unbinned fit options'])['x']
 
         final_estimate = np.atleast_1d(final_estimate)
         # print
