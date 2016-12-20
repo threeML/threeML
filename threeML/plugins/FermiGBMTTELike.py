@@ -212,7 +212,7 @@ class GBMTTEFile(object):
         self._pha = tte['EVENTS'].data['PHA']
 
         try:
-            self.triggertime = tte['PRIMARY'].header['TRIGTIME']
+            self._trigger_time = tte['PRIMARY'].header['TRIGTIME']
 
 
         except:
@@ -220,7 +220,7 @@ class GBMTTEFile(object):
             # For continuous data
             warnings.warn("There is no trigger time in the TTE file. Must be set manually or using MET relative times.")
 
-            self.trigger_time = 0
+            self._trigger_time = 0
 
         self._start_events = tte['PRIMARY'].header['TSTART']
         self._stop_events = tte['PRIMARY'].header['TSTOP']
@@ -239,13 +239,15 @@ class GBMTTEFile(object):
     @property
     def trigger_time(self):
 
-        return self.trigger_time
+        return self._trigger_time
 
     @trigger_time.setter
     def trigger_time(self, val):
 
         assert self._start_events <= val <= self._stop_events, "Trigger time must be within the interval (%f,%f)" % (
             self._start_events, self._stop_events)
+
+        self._trigger_time = val
 
     @property
     def tstart(self):
@@ -320,7 +322,7 @@ class GBMTTEFile(object):
         pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
 
         args = dict(
-                time_in_sf=self.trigger_time,
+                time_in_sf=self._trigger_time,
                 timesys_in="u",
                 timesys_out="u",
                 apply_clock_offset="yes")
@@ -369,7 +371,7 @@ class GBMTTEFile(object):
 
         fermi_dict = {}
 
-        fermi_dict['Fermi Trigger Time'] = self.trigger_time
+        fermi_dict['Fermi Trigger Time'] = self._trigger_time
         fermi_dict['Fermi MET OBS Start'] = self._start_events
         fermi_dict['Fermi MET OBS Stop'] = self._stop_events
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
