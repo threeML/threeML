@@ -292,7 +292,7 @@ class LLEFile(object):
 
         return self.trigger_time
 
-    @property.setter
+    @trigger_time.setter
     def trigger_time(self, val):
 
         assert self._start_events <= val <= self._stop_events, "Trigger time must be within the interval (%f,%f)" % (

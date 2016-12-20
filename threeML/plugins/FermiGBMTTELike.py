@@ -237,6 +237,17 @@ class GBMTTEFile(object):
         self._calculate_deattime()
 
     @property
+    def trigger_time(self):
+
+        return self.trigger_time
+
+    @trigger_time.setter
+    def trigger_time(self, val):
+
+        assert self._start_events <= val <= self._stop_events, "Trigger time must be within the interval (%f,%f)" % (
+            self._start_events, self._stop_events)
+
+    @property
     def tstart(self):
         return self._start_events
 
