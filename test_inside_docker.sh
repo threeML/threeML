@@ -69,4 +69,4 @@ echo " Executing codecov"
 echo "##########################################################"
 
 # Execute the coverage analysis
-codecov
+codecov -t 96594ad1-4ad3-4355-b177-dcb163cfc128
