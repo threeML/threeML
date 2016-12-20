@@ -5,8 +5,7 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 # The Multi-Mission Maximum Likelihood framework (3ML)
 
-A framework for multi-wavelength analysis for astronomy/astrophysics. See the [3ML website](https://threeml.stanford.edu) 
-
+A framework for multi-wavelength analysis for astronomy/astrophysics.
 
 # License
 
