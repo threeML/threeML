@@ -114,11 +114,6 @@ def _get_fermipy_instance(configuration, likelihood_model):
         this_log_energies, _flux = gta.get_source_dnde(point_source.name)
         this_energies_keV = 10 ** this_log_energies * 1e3  # fermipy energies are in GeV, we need keV
 
-        if point_source.name == 'M31':
-
-            _my_flux = point_source(this_energies_keV) * 1000.0
-            assert np.allclose(_flux, _my_flux)
-
         if energies_keV is None:
 
             energies_keV = this_energies_keV

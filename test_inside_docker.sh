@@ -25,7 +25,7 @@ echo "##########################################################"
 echo " Installing numpy, pytest, pytest-cov and coveralls"
 echo "##########################################################"
 
-pip install numpy pytest pytest-cov coveralls
+pip install numpy pytest pytest-cov coveralls codecov
 
 echo "##########################################################"
 echo " Installing astromodels"
@@ -63,3 +63,10 @@ echo "##########################################################"
 
 # Execute the coverage analysis
 coveralls
+
+echo "##########################################################"
+echo " Executing codecov"
+echo "##########################################################"
+
+# Execute the coverage analysis
+codecov -t 96594ad1-4ad3-4355-b177-dcb163cfc128
