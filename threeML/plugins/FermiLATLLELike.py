@@ -69,7 +69,7 @@ class FermiLATLLELike(EventListLike):
                 live_time_stops=self._lat_lle_file.livetime_stop - self._lat_lle_file.trigger_time,
                 start_time=self._lat_lle_file.tstart - self._lat_lle_file.trigger_time,
                 stop_time=self._lat_lle_file.tstop - self._lat_lle_file.trigger_time,
-                first_channel=1,
+                first_channel=0,
                 rsp_file=rsp_file,
                 instrument=self._lat_lle_file.instrument,
                 mission=self._lat_lle_file.mission)
