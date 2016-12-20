@@ -252,17 +252,13 @@ class LLEFile(object):
 
             ft2_bin_size = 30.0  # s
 
-        # Now we just need the live time fraction for the righ interval
-
-        livetime = ft2_livetime  # / (ft2_tstop - ft2_tstart)
-
         # Keep only the needed entries (plus a padding)
         idx = (ft2_tstart >= self._start_events - 10 * ft2_bin_size) & (
             ft2_tstop <= self._stop_events + 10 * ft2_bin_size)
 
         self._tstart = ft2_tstart[idx]
         self._tstop = ft2_tstop[idx]
-        self._livetime = livetime[idx]
+        self._livetime = ft2_livetime[idx]
 
         # Now sort all vectors
         idx = np.argsort(self._tstart)
@@ -279,13 +275,10 @@ class LLEFile(object):
         :return:
         """
 
-        self._pha = np.zeros_like(self._energy, dtype=int)
+        edges = np.append(self._emin, self._emax[-1])
 
-        for emin, emax, channel in zip(self._emin, self._emax, self._channels):
+        self._pha = np.digitize(self._energy, edges)
 
-            idx = np.logical_and(emin <= self._energy, self._energy < emax)
-
-            self._pha[idx] = channel
 
         # There are some events outside of the energy bounds. We will dump those
 
@@ -295,11 +288,11 @@ class LLEFile(object):
         self._n_channels = len(self._channels)
 
     @property
-    def start_events(self):
+    def tstart(self):
         return self._start_events
 
     @property
-    def stop_events(self):
+    def tstop(self):
         return self._stop_events
 
     @property
