@@ -68,13 +68,14 @@ class FermiGBMTTELike(EventListLike):
         event_list = EventListWithDeadTime(
                 arrival_times=self._gbm_tte_file.arrival_times - self._gbm_tte_file.trigger_time,
                 energies=self._gbm_tte_file.energies,
-            n_channels=self._gbm_tte_file.n_channels,
+                n_channels=self._gbm_tte_file.n_channels,
                 start_time=self._gbm_tte_file.tstart - self._gbm_tte_file.trigger_time,
                 stop_time=self._gbm_tte_file.tstop - self._gbm_tte_file.trigger_time,
-            dead_time=self._gbm_tte_file.deadtime,
-                                   first_channel=0,
-                                   rsp_file=rsp_file, instrument=self._gbm_tte_file.det_name,
-                                   mission=self._gbm_tte_file.mission)
+                dead_time=self._gbm_tte_file.deadtime,
+                first_channel=1,
+                rsp_file=rsp_file,
+                instrument=self._gbm_tte_file.det_name,
+                mission=self._gbm_tte_file.mission)
 
         # pass to the super class
 

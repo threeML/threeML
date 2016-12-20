@@ -3,6 +3,10 @@ import scipy.optimize as opt
 import warnings
 import math
 
+_unbinned_fit_method = 'Nelder-Mead'
+_binned_fit_method = 'Powell'
+
+
 
 class Polynomial(object):
     def __init__(self, coefficients):
@@ -160,7 +164,8 @@ def polyfit(x, y, grade, exposure):
 
     options = {'ftol': 1E-5, 'xtol': 1E-5, 'maxiter': 1e6, 'maxfun': 1E6, 'disp': False}
 
-    final_estimate = opt.minimize(log_likelihood, initial_guess, method='Powell', options=options)
+    final_estimate = opt.minimize(log_likelihood, initial_guess, method=_binned_fit_method, options=options)['x']
+    final_estimate = np.atleast_1d(final_estimate)
 
     # Get the value for cstat at the minimum
 
@@ -233,10 +238,15 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
                                                            t_stop,
                                                            exposure)
 
+                print 'got in here'
+
         options = {'ftol': 1E-5, 'xtol': 1E-5, 'maxiter': 1e6, 'maxfun': 1E6, 'disp': False}
 
-        final_estimate = opt.minimize(log_likelihood, initial_guess, method='Powell', options=options)
+        final_estimate = opt.minimize(log_likelihood, initial_guess, method=_unbinned_fit_method, options=options)['x']
 
+        final_estimate = np.atleast_1d(final_estimate)
+        # print
+        # print final_estimate
 
         # Get the value for cstat at the minimum
 

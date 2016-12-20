@@ -1111,7 +1111,7 @@ class EventListWithDeadTime(EventList):
             if not self._poly_fit_exists:
                 raise RuntimeError('A polynomial fit to the channels does not exist!')
 
-            for chan in range(self._first_channel, self._n_channels + self._first_channel):
+            for chan in range(self._n_channels):
 
                 total_counts = 0
                 counts_err = 0
