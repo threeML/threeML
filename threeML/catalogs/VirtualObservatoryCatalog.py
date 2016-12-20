@@ -12,7 +12,7 @@ class VirtualObservatoryCatalog(object):
         self.catalog = VOSCatalog.create(name, url, description=description)
 
         self._last_query_results = None
-    
+
     def query(self, ra, dec, radius):
         """
         Searches for sources in a cone of given radius and center
@@ -70,7 +70,7 @@ class VirtualObservatoryCatalog(object):
         return self._dec
 
     def apply_format(self, table):
-        
+
         raise NotImplementedError("You have to override this!")
 
     def get_model(self):

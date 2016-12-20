@@ -50,7 +50,6 @@ threefgl_types = {
 
 
 def _sanitize_3fgl_name(fgl_name):
-
     swap = fgl_name.replace(" ", "_").replace("+", "p").replace("-", "m").replace(".", "d")
 
     if swap[0] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
@@ -124,7 +123,6 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
 
 class ModelFrom3FGL(Model):
-
     def __init__(self, ra_center, dec_center, *sources):
 
         self._ra_center = float(ra_center)
@@ -179,7 +177,7 @@ class LATSourceCatalog(VirtualObservatoryCatalog):
         
         super(LATSourceCatalog, self).__init__('fermilpsc', 
                            'http://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermilpsc&',
-                           'Fermi/LAT source catalog')        
+                                               'Fermi/LAT source catalog')
 
     def apply_format(self, table):
         
@@ -232,4 +230,3 @@ class LATSourceCatalog(VirtualObservatoryCatalog):
             sources.append(this_source)
 
         return ModelFrom3FGL(self.ra_center, self.dec_center, *sources)
- 

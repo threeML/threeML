@@ -222,9 +222,9 @@ class GBMTTEFile(object):
         except:
 
             # For continuous data
-            warnings.warn("There is no trigger time in the TTE file. Must me set manually or using MET relative times.")
+            warnings.warn("There is no trigger time in the TTE file. Must be set manually or using MET relative times.")
 
-            self.triggertime = 0
+            self.trigger_time = 0
 
         self._start_events = tte['PRIMARY'].header['TSTART']
         self._stop_events = tte['PRIMARY'].header['TSTOP']
@@ -303,7 +303,7 @@ class GBMTTEFile(object):
 
         mission_dict = {}
 
-        if self.triggertime == 0:
+        if self.trigger_time == 0:
             return None
 
         # Complements to Volodymyr Savchenko
@@ -313,7 +313,7 @@ class GBMTTEFile(object):
         pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
 
         args = dict(
-                time_in_sf=self.triggertime,
+                time_in_sf=self.trigger_time,
                 timesys_in="u",
                 timesys_out="u",
                 apply_clock_offset="yes")
@@ -362,7 +362,7 @@ class GBMTTEFile(object):
 
         fermi_dict = {}
 
-        fermi_dict['Fermi Trigger Time'] = self.triggertime
+        fermi_dict['Fermi Trigger Time'] = self.trigger_time
         fermi_dict['Fermi MET OBS Start'] = self._start_events
         fermi_dict['Fermi MET OBS Stop'] = self._stop_events
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start

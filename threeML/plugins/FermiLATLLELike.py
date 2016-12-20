@@ -71,17 +71,17 @@ class FermiLATLLELike(EventListLike):
         self._lat_lle_file = LLEFile(lle_file, ft2_file, rsp_file)
 
         if trigger_time is not None:
-            self._lat_lle_file.triggertime = trigger_time
+            self._lat_lle_file.trigger_time = trigger_time
 
         event_list = EventListWithLiveTime(
-                arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.triggertime,
+                arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.trigger_time,
                 energies=self._lat_lle_file.energies,
                 n_channels=self._lat_lle_file.n_channels,
                 live_time=self._lat_lle_file.livetime,
-                live_time_starts=self._lat_lle_file.livetime_start - self._lat_lle_file.triggertime,
-                live_time_stops=self._lat_lle_file.livetime_stop - self._lat_lle_file.triggertime,
-                start_time=self._lat_lle_file._start_events - self._lat_lle_file.triggertime,
-                stop_time=self._lat_lle_file._stop_events - self._lat_lle_file.triggertime,
+                live_time_starts=self._lat_lle_file.livetime_start - self._lat_lle_file.trigger_time,
+                live_time_stops=self._lat_lle_file.livetime_stop - self._lat_lle_file.trigger_time,
+                start_time=self._lat_lle_file._start_events - self._lat_lle_file.trigger_time,
+                stop_time=self._lat_lle_file._stop_events - self._lat_lle_file.trigger_time,
                 first_channel=1,
                 rsp_file=rsp_file,
                 instrument=self._lat_lle_file.instrument,
@@ -156,7 +156,7 @@ class FermiLATLLELike(EventListLike):
 
             bins = np.arange(start, stop + dt, dt)
 
-        cnts, bins = np.histogram(self._lat_lle_file.arrival_times[mask] - self._lat_lle_file.triggertime, bins=bins)
+        cnts, bins = np.histogram(self._lat_lle_file.arrival_times[mask] - self._lat_lle_file.trigger_time, bins=bins)
         time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
 
         width = np.diff(bins)
@@ -222,16 +222,16 @@ class LLEFile(object):
             self._telescope = ft1_['PRIMARY'].header['TELESCOP'] + "_LLE"
 
             try:
-                self.triggertime = ft1_['EVENTS'].header['TRIGTIME']
+                self.trigger_time = ft1_['EVENTS'].header['TRIGTIME']
 
 
             except:
 
                 # For whatever reason
                 warnings.warn(
-                        "There is no trigger time in the LLE file. Must me set manually or using MET relative times.")
+                        "There is no trigger time in the LLE file. Must be set manually or using MET relative times.")
 
-                self.triggertime = 0
+                self.trigger_time = 0
 
         self._bin_energies_into_pha()
 
@@ -346,7 +346,7 @@ class LLEFile(object):
 
         mission_dict = {}
 
-        if self.triggertime == 0:
+        if self.trigger_time == 0:
             return None
 
         # Complements to Volodymyr Savchenko
@@ -356,7 +356,7 @@ class LLEFile(object):
         pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
 
         args = dict(
-                time_in_sf=self.triggertime,
+                time_in_sf=self.trigger_time,
                 timesys_in="u",
                 timesys_out="u",
                 apply_clock_offset="yes")
@@ -405,7 +405,7 @@ class LLEFile(object):
 
         fermi_dict = {}
 
-        fermi_dict['Fermi Trigger Time'] = self.triggertime
+        fermi_dict['Fermi Trigger Time'] = self.trigger_time
         fermi_dict['Fermi MET OBS Start'] = self._start_events
         fermi_dict['Fermi MET OBS Stop'] = self._stop_events
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start

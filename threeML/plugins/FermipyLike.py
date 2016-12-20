@@ -70,7 +70,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
     # point sources
     for point_source in likelihood_model.point_sources.values():  # type: astromodels.PointSource
 
-        this_source = {'Index' : 2.56233, 'Scale' : 572.78, 'Prefactor' : 2.4090e-12}
+        this_source = {'Index': 2.56233, 'Scale': 572.78, 'Prefactor': 2.4090e-12}
         this_source['name'] = point_source.name
         this_source['ra'] = point_source.position.ra.value
         this_source['dec'] = point_source.position.dec.value
@@ -112,7 +112,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
 
         # Get the energies at which to evaluate this source
         this_log_energies, _flux = gta.get_source_dnde(point_source.name)
-        this_energies_keV = 10**this_log_energies * 1e3  # fermipy energies are in GeV, we need keV
+        this_energies_keV = 10 ** this_log_energies * 1e3  # fermipy energies are in GeV, we need keV
 
         if point_source.name == 'M31':
 
@@ -129,8 +129,8 @@ def _get_fermipy_instance(configuration, likelihood_model):
 
             assert np.all(energies_keV == this_energies_keV)
 
-        dnde = point_source(energies_keV) # ph / (cm2 s keV)
-        dnde_per_MeV = dnde * 1000.0 # ph / (cm2 s MeV)
+        dnde = point_source(energies_keV)  # ph / (cm2 s keV)
+        dnde_per_MeV = dnde * 1000.0  # ph / (cm2 s MeV)
         gta.set_source_dnde(point_source.name, dnde_per_MeV, False)
 
     # Same for extended source
@@ -198,7 +198,7 @@ class FermipyLike(PluginPrototype):
         # Save all output in a directory with a unique name, so multiple instances of
         # this plugin will be able to coexist
 
-        self._unique_id = "__%s" % self.name # get_random_unique_name()
+        self._unique_id = "__%s" % self.name  # get_random_unique_name()
 
         self._configuration['fileio'] = {'outdir': self._unique_id}
 
@@ -247,7 +247,7 @@ class FermipyLike(PluginPrototype):
         for point_source in self._likelihood_model.point_sources.values():  # type: astromodels.PointSource
 
             # Now set the spectrum of this source to the right one
-            dnde = point_source(self._pts_energies) # ph / (cm2 s keV)
+            dnde = point_source(self._pts_energies)  # ph / (cm2 s keV)
             dnde_MeV = dnde * 1000.0  # ph / (cm2 s MeV)
 
             # NOTE: I use update_source=False because it makes things 100x faster and I verified that
@@ -279,7 +279,7 @@ class FermipyLike(PluginPrototype):
 
             raise
 
-        return value #- logfactorial(self._gta.like.total_nobs())
+        return value  # - logfactorial(self._gta.like.total_nobs())
 
     def inner_fit(self):
         """
