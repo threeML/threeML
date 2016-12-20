@@ -228,7 +228,7 @@ class JointLikelihood(object):
             # Now produce an ad-hoc display. We don't use the pandas display methods because
             # we want to display uncertainties with the right number of significant numbers
 
-            data = []
+            data = {'Best fit value':{}, 'Unit': {}}
 
             # Also store the maximum length to decide the length for the line
 
@@ -248,18 +248,14 @@ class JointLikelihood(object):
 
                 rep = x.__str__().replace("+/-", " +/- ")
 
-                data.append([i, parameter_name, rep, self._free_parameters[parameter_name].unit])
+                # Apply name formatter so long paths are shorten
+                this_shortened_name = long_path_formatter(parameter_name, 40)
 
-                if len(parameter_name) > name_length:
+                data['Best fit value'][this_shortened_name] = rep
+                data['Unit'][this_shortened_name] = self._free_parameters[parameter_name].unit
 
-                    name_length = len(parameter_name)
 
-            best_fit_table = Table(rows=data,
-                                   names=["#", "Name", "Best fit value", "Unit"],
-                                   dtype=(str, 'S%i' % name_length, str, str)).to_pandas()
-
-            # Apply name formatter so long paths are shorten
-            best_fit_table['Name'] = best_fit_table['Name'].map(lambda x:long_path_formatter(x, 40))
+            best_fit_table = pd.DataFrame.from_dict(data)
 
             if not quiet:
 
