@@ -82,8 +82,8 @@ class FermiGBMTTELike(EventListLike):
             arrival_times=self._gbm_tte_file.arrival_times - self._gbm_tte_file.triggertime,
                 energies=self._gbm_tte_file.energies,
             n_channels=self._gbm_tte_file.n_channels,
-            start_time=self._gbm_tte_file.start_events - self._gbm_tte_file.triggertime,
-            stop_time=self._gbm_tte_file.stop_events - self._gbm_tte_file.triggertime,
+                start_time=self._gbm_tte_file.tstart - self._gbm_tte_file.triggertime,
+                stop_time=self._gbm_tte_file.tstop - self._gbm_tte_file.triggertime,
             dead_time=self._gbm_tte_file.deadtime,
                                    first_channel=0,
                                    rsp_file=rsp_file, instrument=self._gbm_tte_file.det_name,
@@ -237,11 +237,11 @@ class GBMTTEFile(object):
         self._calculate_deattime()
 
     @property
-    def start_events(self):
+    def tstart(self):
         return self._start_events
 
     @property
-    def stop_events(self):
+    def tstop(self):
         return self._stop_events
 
     @property
