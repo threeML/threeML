@@ -288,6 +288,18 @@ class LLEFile(object):
         self._n_channels = len(self._channels)
 
     @property
+    def trigger_time(self):
+
+        return self.trigger_time
+
+    @property.setter
+    def trigger_time(self, val):
+
+        assert self._start_events <= val <= self._stop_events, "Trigger time must be within the interval (%f,%f)" % (
+        self._start_events, self._stop_events)
+
+
+    @property
     def tstart(self):
         return self._start_events
 
