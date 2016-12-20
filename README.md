@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/giacomov/3ML.svg?branch=master)](https://travis-ci.org/giacomov/3ML)
+[![codecov](https://codecov.io/gh/giacomov/3ML/branch/master/graph/badge.svg)](https://codecov.io/gh/giacomov/3ML)
 [![Coverage Status](https://coveralls.io/repos/github/giacomov/3ML/badge.svg?branch=master)](https://coveralls.io/github/giacomov/3ML?branch=master)
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/giacomov/3ml)
 [![Code Climate](https://codeclimate.com/github/giacomov/3ML/badges/gpa.svg)](https://codeclimate.com/github/giacomov/3ML)
