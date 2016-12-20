@@ -5,23 +5,12 @@ import numpy as np
 
 import pandas as pd
 import warnings
-import re
 
-try:
-
-    import requests
-
-except ImportError:
-
-    has_requests = False
-
-else:
-
-    has_requests = True
 
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithLiveTime
 from threeML.io.rich_display import display
+from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
 
 from threeML.io.plugin_plots import fermi_light_curve_plot
 
@@ -224,7 +213,7 @@ class LLEFile(object):
             self._telescope = ft1_['PRIMARY'].header['TELESCOP'] + "_LLE"
 
             try:
-                self.trigger_time = ft1_['EVENTS'].header['TRIGTIME']
+                self._trigger_time = ft1_['EVENTS'].header['TRIGTIME']
 
 
             except:
@@ -233,7 +222,7 @@ class LLEFile(object):
                 warnings.warn(
                         "There is no trigger time in the LLE file. Must be set manually or using MET relative times.")
 
-                self.trigger_time = 0
+                self._trigger_time = 0
 
         self._bin_energies_into_pha()
 
@@ -290,7 +279,7 @@ class LLEFile(object):
     @property
     def trigger_time(self):
 
-        return self.trigger_time
+        return self._trigger_time
 
     @trigger_time.setter
     def trigger_time(self, val):
@@ -298,6 +287,7 @@ class LLEFile(object):
         assert self._start_events <= val <= self._stop_events, "Trigger time must be within the interval (%f,%f)" % (
         self._start_events, self._stop_events)
 
+        self._trigger_time = val
 
     @property
     def tstart(self):
@@ -349,55 +339,7 @@ class LLEFile(object):
     def livetime_stop(self):
         return self._tstop
 
-    def _compute_mission_times(self):
 
-        mission_dict = {}
-
-        if self.trigger_time == 0:
-            return None
-
-        # Complements to Volodymyr Savchenko
-
-        xtime_url = "https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/xTime/xTime.pl"
-
-        pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
-
-        args = dict(
-                time_in_sf=self.trigger_time,
-                timesys_in="u",
-                timesys_out="u",
-                apply_clock_offset="yes")
-
-        if has_requests:
-
-            try:
-
-                content = requests.get(xtime_url, params=args).content
-
-                mission_info = re.findall(pattern, content, re.S)
-
-                mission_dict['UTC'] = mission_info[0][-1]
-                mission_dict[mission_info[7][1]] = mission_info[7][2]  # LIGO
-                mission_dict[mission_info[8][1]] = mission_info[8][2]  # NUSTAR
-                mission_dict[mission_info[12][1]] = mission_info[12][2]  # RXTE
-                mission_dict[mission_info[16][1]] = mission_info[16][2]  # SUZAKU
-                mission_dict[mission_info[20][1]] = mission_info[20][2]  # SWIFT
-                mission_dict[mission_info[24][1]] = mission_info[24][2]  # CHANDRA
-
-            except:
-
-                warnings.warn("You do not have the requests library, cannot get time system from Heasarc "
-                              "at this point.")
-
-                return None
-
-        else:
-
-            warnings.warn("You do not have the requests library, cannot get time system from Heasarc at this point.")
-
-            return None
-
-        return mission_dict
 
     def peek(self):
         """
@@ -408,7 +350,7 @@ class LLEFile(object):
         :return: none
         """
 
-        mission_dict = self._compute_mission_times()
+        mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
         fermi_dict = {}
 

@@ -2,28 +2,15 @@ __author__ = 'grburgess'
 
 import astropy.io.fits as fits
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 import warnings
-import re
 
-try:
-
-    import requests
-
-except ImportError:
-
-    has_requests = False
-
-else:
-
-    has_requests = True
 
 
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
 from threeML.io.rich_display import display
-
+from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
 from threeML.io.plugin_plots import fermi_light_curve_plot
 
 
@@ -366,8 +353,8 @@ class GBMTTEFile(object):
 
         :return: none
         """
+        mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
-        mission_dict = self._compute_mission_times()
 
         fermi_dict = {}
 
