@@ -19,31 +19,27 @@ else:
 
     has_requests = True
 
-# import copy
-
-# from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.EventListLike import EventListLike
-from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
+from threeML.plugins.OGIP.eventlist import EventListWithLiveTime
 from threeML.io.rich_display import display
 
 from threeML.io.step_plot import step_plot
-#from threeML.plugins.OGIP.pha import PHAWrite
 
 from threeML.config.config import threeML_config
 
-__instrument_name = "Fermi GBM TTE (all detectors)"
+__instrument_name = "Fermi LAT LLE"
 
 
 class BinningMethodError(RuntimeError):
     pass
 
 
-class FermiGBMTTELike(EventListLike):
-    def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
-                 poly_order=-1, unbinned=True, verbose=True):
+class FermiLATLLELike(EventListLike):
+    def __init__(self, name, lle_file, ft2_file, background_selections, source_intervals, rsp_file, trigger_time=None,
+                 poly_order=-1, unbinned=False, verbose=True):
         """
-        A plugin to natively bin, view, and handle Fermi GBM TTE data.
-        A TTE event file are required as well as the associated response
+        A plugin to natively bin, view, and handle Fermi LAT LLE data.
+        An LLE event file and FT2 (1 sec) are required as well as the associated response
 
 
 
@@ -55,51 +51,44 @@ class FermiGBMTTELike(EventListLike):
         One can choose a background polynomial order by hand (up to 4th order)
         or leave it as the default polyorder=-1 to decide by LRT test
 
-        :param name: name for your choosing
-        :param tte_file: GBM tte event file
+        :param name: name of the plugin
+        :param lle_file: lle event file
+        :param ft2_file: fermi FT2 file
         :param background_selections: comma sep. background intervals as string
         :param source_intervals: comma sep. source intervals as string
-        :param rsp_file: Associated TTE CSPEC response file
+        :param rsp_file: lle response file
         :param trigger_time: trigger time if needed
         :param poly_order: 0-4 or -1 for auto
         :param unbinned: unbinned likelihood fit (bool)
         :param verbose: verbose (bool)
 
 
-
         """
+
 
         self._default_unbinned = unbinned
 
-        # Load the relevant information from the TTE file
-
-        self._gbm_tte_file = GBMTTEFile(tte_file)
-
-        # Set a trigger time if one has not been set
+        self._lat_lle_file = LLEFile(lle_file, ft2_file, rsp_file)
 
         if trigger_time is not None:
-            self._gbm_tte_file.triggertime = trigger_time
+            self._lat_lle_file.triggertime = trigger_time
 
-        # Create the the event list
-
-        event_list = EventListWithDeadTime(
-            arrival_times=self._gbm_tte_file.arrival_times - self._gbm_tte_file.triggertime,
-                energies=self._gbm_tte_file.energies,
-            n_channels=self._gbm_tte_file.n_channels,
-            start_time=self._gbm_tte_file.start_events - self._gbm_tte_file.triggertime,
-            stop_time=self._gbm_tte_file.stop_events - self._gbm_tte_file.triggertime,
-            dead_time=self._gbm_tte_file.deadtime,
-                                   first_channel=0,
-                                   rsp_file=rsp_file, instrument=self._gbm_tte_file.det_name,
-                                   mission=self._gbm_tte_file.mission)
-
-        # pass to the super class
+        event_list = EventListWithLiveTime(
+                arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.triggertime,
+                energies=self._lat_lle_file.energies,
+                n_channels=self._lat_lle_file.n_channels,
+                live_time=self._lat_lle_file.livetime,
+                live_time_starts=self._lat_lle_file.livetime_start - self._lat_lle_file.triggertime,
+                live_time_stops=self._lat_lle_file.livetime_stop - self._lat_lle_file.triggertime,
+                start_time=self._lat_lle_file._start_events - self._lat_lle_file.triggertime,
+                stop_time=self._lat_lle_file._stop_events - self._lat_lle_file.triggertime,
+                first_channel=1,
+                rsp_file=rsp_file,
+                instrument=self._lat_lle_file.instrument,
+                mission=self._lat_lle_file.mission)
 
         EventListLike.__init__(self, name, event_list, background_selections, source_intervals, rsp_file,
                                poly_order, unbinned, verbose)
-
-
-
 
     def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None):
         """
@@ -141,7 +130,7 @@ class FermiGBMTTELike(EventListLike):
         else:
 
             mask = np.array([True] * self._evt_list.n_events)
-            valid_channels = range(self._gbm_tte_file.n_channels)
+            valid_channels = range(self._lat_lle_file.n_channels)
 
         if use_binner:
 
@@ -167,7 +156,7 @@ class FermiGBMTTELike(EventListLike):
 
             bins = np.arange(start, stop + dt, dt)
 
-        cnts, bins = np.histogram(self._gbm_tte_file.arrival_times[mask] - self._gbm_tte_file.triggertime, bins=bins)
+        cnts, bins = np.histogram(self._lat_lle_file.arrival_times[mask] - self._lat_lle_file.triggertime, bins=bins)
         time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
 
         width = np.diff(bins)
@@ -182,63 +171,126 @@ class FermiGBMTTELike(EventListLike):
 
             bkg.append(tmpbkg)
 
-        gbm_light_curve_plot(time_bins, cnts, bkg, width,
-                             selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list),
+        lle_light_curve_plot(time_bins, cnts, bkg, width,
+                             selection=zip(self._evt_list.tmin_list, self._evt_list.tmax_list),
                              bkg_selections=self._evt_list.poly_intervals)
 
     def peek(self):
 
-        print "TTE File Info:"
+        print("LLE File Info:")
 
         self._evt_list.peek()
 
-        print 'Timing Info:'
+        print('Timing Info:')
 
-        self._gbm_tte_file.peek()
-
-
+        self._lat_lle_file.peek()
 
 
-class GBMTTEFile(object):
-    def __init__(self, ttefile):
+class LLEFile(object):
+    def __init__(self, lle_file, ft2_file, rsp_file):
+        """
+        Class to read the LLE and FT2 files
+
+        Inspired heavily by G. Vianello
+
+
+
+        :param lle_file:
+        :param ft2_file:
         """
 
-        A simple class for opening and easily accessing Fermi GBM
-        TTE Files.
+        with fits.open(rsp_file) as rsp_:
 
-        :param ttefile: The filename of the TTE file to be stored
+            data = rsp_['EBOUNDS'].data
 
+            self._emin = data.E_MIN
+            self._emax = data.E_MAX
+            self._channels = data.CHANNEL
+
+        with fits.open(lle_file) as ft1_:
+
+            data = ft1_['EVENTS'].data
+
+            self._events = data.TIME  # - trigger_time
+            self._energy = data.ENERGY * 1E3  # keV
+
+            self._start_events = ft1_['PRIMARY'].header['TSTART']
+            self._stop_events = ft1_['PRIMARY'].header['TSTOP']
+            self._utc_start = ft1_['PRIMARY'].header['DATE-OBS']
+            self._utc_stop = ft1_['PRIMARY'].header['DATE-END']
+            self._instrument = ft1_['PRIMARY'].header['INSTRUME']
+            self._telescope = ft1_['PRIMARY'].header['TELESCOP'] + "_LLE"
+
+            try:
+                self.triggertime = ft1_['EVENTS'].header['TRIGTIME']
+
+
+            except:
+
+                # For whatever reason
+                warnings.warn(
+                        "There is no trigger time in the LLE file. Must me set manually or using MET relative times.")
+
+                self.triggertime = 0
+
+        self._bin_energies_into_pha()
+
+        with fits.open(ft2_file) as ft2_:
+
+            ft2_tstart = ft2_['SC_DATA'].data.field("START")  # - trigger_time
+            ft2_tstop = ft2_['SC_DATA'].data.field("STOP")  # - trigger_time
+            ft2_livetime = ft2_['SC_DATA'].data.field("LIVETIME")
+
+        ft2_bin_size = 1.0  # seconds
+
+        if not np.all(ft2_livetime <= 1.0):
+
+            warnings.warn("You are using a 30s FT2 file. You should use a 1s Ft2 file otherwise the livetime "
+                          "correction will not be accurate!")
+
+            ft2_bin_size = 30.0  # s
+
+        # Now we just need the live time fraction for the righ interval
+
+        livetime = ft2_livetime  # / (ft2_tstop - ft2_tstart)
+
+        # Keep only the needed entries (plus a padding)
+        idx = (ft2_tstart >= self._start_events - 10 * ft2_bin_size) & (
+            ft2_tstop <= self._stop_events + 10 * ft2_bin_size)
+
+        self._tstart = ft2_tstart[idx]
+        self._tstop = ft2_tstop[idx]
+        self._livetime = livetime[idx]
+
+        # Now sort all vectors
+        idx = np.argsort(self._tstart)
+
+        self._tstart = self._tstart[idx]
+        self._tstop = self._tstop[idx]
+        self._livetime = self._livetime[idx]
+
+    def _bin_energies_into_pha(self):
         """
 
-        tte = fits.open(ttefile)
+        bins the LLE data into PHA channels
 
-        self._events = tte['EVENTS'].data['TIME']
-        self._pha = tte['EVENTS'].data['PHA']
+        :return:
+        """
 
-        try:
-            self.triggertime = tte['PRIMARY'].header['TRIGTIME']
+        self._pha = np.zeros_like(self._energy, dtype=int)
+
+        for emin, emax, channel in zip(self._emin, self._emax, self._channels):
+
+            idx = np.logical_and(emin <= self._energy, self._energy < emax)
+
+            self._pha[idx] = channel
+
+        # There are some events outside of the energy bounds. We will dump those
 
 
-        except:
+        self._filter_idx = self._pha > 0
 
-            # For continuous data
-            warnings.warn("There is no trigger time in the TTE file. Must me set manually or using MET relative times.")
-
-            self.triggertime = 0
-
-        self._start_events = tte['PRIMARY'].header['TSTART']
-        self._stop_events = tte['PRIMARY'].header['TSTOP']
-
-        self._utc_start = tte['PRIMARY'].header['DATE-OBS']
-        self._utc_stop = tte['PRIMARY'].header['DATE-END']
-
-        self._n_channels = tte['EBOUNDS'].header['NAXIS2']
-
-        self._det_name = "%s_%s" % (tte['PRIMARY'].header['INSTRUME'], tte['PRIMARY'].header['DETNAM'])
-
-        self._telescope = tte['PRIMARY'].header['TELESCOP']
-
-        self._calculate_deattime()
+        self._n_channels = len(self._channels)
 
     @property
     def start_events(self):
@@ -250,15 +302,15 @@ class GBMTTEFile(object):
 
     @property
     def arrival_times(self):
-        return self._events
+        return self._events[self._filter_idx]
+
+    @property
+    def energies(self):
+        return self._pha[self._filter_idx]
 
     @property
     def n_channels(self):
         return self._n_channels
-
-    @property
-    def energies(self):
-        return self._pha
 
     @property
     def mission(self):
@@ -266,38 +318,29 @@ class GBMTTEFile(object):
         Return the name of the mission
         :return:
         """
-        return self._telescope
+        return self._instrument
 
     @property
-    def det_name(self):
+    def instrument(self):
         """
         Return the name of the instrument and detector
 
         :return:
         """
 
-        return self._det_name
+        return self._telescope
 
     @property
-    def deadtime(self):
-        return self._deadtime
+    def livetime(self):
+        return self._livetime
 
-    def _calculate_deattime(self):
-        """
-        Computes an array of deadtimes following the perscription of Meegan et al. (2009).
+    @property
+    def livetime_start(self):
+        return self._tstart
 
-        The array can be summed over to obtain the total dead time
-
-        """
-        self._deadtime = np.zeros_like(self._events)
-        overflow_mask = self._pha == self._n_channels  # specific to gbm! should work for CTTE
-
-        # From Meegan et al. (2009)
-        # Dead time for overflow (note, overflow sometimes changes)
-        self._deadtime[overflow_mask] = 10.E-6  # s
-
-        # Normal dead time
-        self._deadtime[~overflow_mask] = 2.E-6  # s
+    @property
+    def livetime_stop(self):
+        return self._tstop
 
     def _compute_mission_times(self):
 
@@ -378,10 +421,7 @@ class GBMTTEFile(object):
         display(fermi_df)
 
 
-
-
-
-def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections):
+def lle_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections):
     fig, ax = plt.subplots()
 
     max_cnts = max(cnts / width)
@@ -395,7 +435,7 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
     # purple: #8da0cb
 
     step_plot(time_bins, cnts / width, ax,
-              color=threeML_config['gbm']['lightcurve color'], label="Light Curve")
+              color=threeML_config['lle']['lightcurve color'], label="Light Curve")
 
     for tmin, tmax in selection:
         tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
@@ -406,12 +446,12 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
 
         for mask in all_masks[1:]:
             step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
-                      color=threeML_config['gbm']['selection color'],
+                      color=threeML_config['lle']['selection color'],
                       fill=True,
                       fill_min=min_cnts)
 
     step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
-              color=threeML_config['gbm']['selection color'],
+              color=threeML_config['lle']['selection color'],
               fill=True,
               fill_min=min_cnts, label="Selection")
 
@@ -426,17 +466,17 @@ def gbm_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections)
         for mask in all_masks[1:]:
 
             step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
-                      color=threeML_config['gbm']['background selection color'],
+                      color=threeML_config['lle']['background selection color'],
                       fill=True,
                       fillAlpha=.4,
                       fill_min=min_cnts)
 
     step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
-              color=threeML_config['gbm']['background selection color'],
+              color=threeML_config['lle']['background selection color'],
               fill=True,
               fill_min=min_cnts, fillAlpha=.4, label="Bkg. Selections")
 
-    ax.plot(mean_time, bkg, threeML_config['gbm']['background color'], lw=2., label="Background")
+    ax.plot(mean_time, bkg, threeML_config['lle']['background color'], lw=2., label="Background")
 
     # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
 

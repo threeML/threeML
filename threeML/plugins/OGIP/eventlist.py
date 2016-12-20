@@ -39,7 +39,7 @@ def ceildiv(a, b):
 
 
 class EventList(object):
-    def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
+    def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None,
                  first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None):
         """
         Container for event style data which are tagged with time and energy/PHA.
@@ -50,7 +50,6 @@ class EventList(object):
         :param  n_channels: Number of detector channels
         :param  start_time: start time of the event list
         :param  stop_time: stop time of the event list
-        :param  dead_time: an array of deadtime per event
         :param  first_channel: where detchans begin indexing
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
@@ -67,18 +66,6 @@ class EventList(object):
         assert self._arrival_times.shape[0] == self._energies.shape[
             0], "Arrival time (%d) and energies (%d) have different shapes" % (
             self._arrival_times.shape[0], self._energies.shape[0])
-
-        if dead_time is not None:
-
-            self._dead_time = np.asarray(dead_time)
-
-            assert self._arrival_times.shape[0] == self._dead_time.shape[
-                0], "Arrival time (%d) and Dead Time (%d) have different shapes" % (
-                self._arrival_times.shape[0], self._dead_time.shape[0])
-
-        else:
-
-            self._dead_time = None
 
         if start_time is None:
 
@@ -118,7 +105,6 @@ class EventList(object):
 
         self._rsp_file = rsp_file
 
-
         self._user_poly_order = -1
         self._time_selection_exists = False
         self._poly_fit_exists = False
@@ -133,98 +119,8 @@ class EventList(object):
         return map(float, tokens)
 
     def set_active_time_intervals(self, *args):
-        '''Set the time interval(s) to be used during the analysis.
 
-        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
-
-        set_active_time_intervals("0.0-10.0")
-
-        which will set the energy range 0-10. seconds.
-        '''
-
-        self._time_selection_exists = True
-
-        tmin_list = []
-        tmax_list = []
-        interval_masks = []
-
-        for arg in args:
-            tmin, tmax = self._parse_time_interval(arg)
-            mask = np.logical_and(self._arrival_times >= tmin,
-                                  self._arrival_times <= tmax)
-
-            tmin_list.append(tmin)
-            tmax_list.append(tmax)
-            interval_masks.append(mask)
-
-        if intervals_overlap(tmin_list, tmax_list):
-            raise OverLappingIntervals('Provided intervals are overlapping and hence invalid')
-
-        time_mask = interval_masks[0]
-        if len(interval_masks) > 1:
-            for mask in interval_masks[1:]:
-                time_mask = np.logical_or(time_mask, mask)
-
-        tmp_counts = []  # Temporary list to hold the total counts per chan
-
-        for chan in range(self._first_channel, self._n_channels + self._first_channel):
-            channel_mask = self._energies == chan
-            counts_mask = np.logical_and(channel_mask, time_mask)
-            total_counts = len(self._arrival_times[counts_mask])
-
-            tmp_counts.append(total_counts)
-
-        self._counts = np.array(tmp_counts)
-
-
-        tmp_counts = []
-        tmp_err = []  # Temporary list to hold the err counts per chan
-
-        if self._poly_fit_exists:
-
-            if not self._poly_fit_exists:
-                raise RuntimeError('A polynomial fit to the channels does not exist!')
-
-            for chan in range(self._first_channel, self._n_channels + self._first_channel):
-
-                total_counts = 0
-                counts_err = 0
-
-                for tmin, tmax in zip(tmin_list, tmax_list):
-                    # Now integrate the appropriate background polynomial
-                    total_counts += self._polynomials[chan].integral(tmin, tmax)
-                    counts_err += (self._polynomials[chan].integral_error(tmin, tmax)) ** 2
-
-                tmp_counts.append(total_counts)
-
-                tmp_err.append(np.sqrt(counts_err))
-
-            self._poly_counts = np.array(tmp_counts)
-
-            self._poly_count_err = np.array(tmp_err)
-
-            # self._is_poisson = False
-
-        # Dead time correction
-
-        exposure = 0.
-        for tmin, tmax in zip(tmin_list, tmax_list):
-            exposure += tmax - tmin
-
-        if self._dead_time is not None:
-
-            total_dead_time = self._dead_time[time_mask].sum()
-        else:
-
-            total_dead_time = 0.
-
-        self._exposure = exposure - total_dead_time
-        self._total_dead_time = total_dead_time
-
-        self._tmin_list = tmin_list
-        self._tmax_list = tmax_list
-
-        self._active_dead_time = total_dead_time
+        raise RuntimeError("Must be implemented in subclass")
 
     @property
     def n_events(self):
@@ -335,8 +231,6 @@ class EventList(object):
 
         return np.sqrt(total_counts)
 
-
-
     @property
     def bins(self):
 
@@ -432,18 +326,15 @@ class EventList(object):
 
         self._temporal_binner = TemporalBinner(events)
 
-
         if use_background:
 
-            integral_background = lambda t:self.get_total_poly_count(start,t)
+            integral_background = lambda t: self.get_total_poly_count(start, t)
 
-            self._temporal_binner.bin_by_bayesian_blocks(p0,bkg_integral_distribution=integral_background)
+            self._temporal_binner.bin_by_bayesian_blocks(p0, bkg_integral_distribution=integral_background)
 
         else:
 
             self._temporal_binner.bin_by_bayesian_blocks(p0)
-
-
 
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
@@ -486,11 +377,8 @@ class EventList(object):
     def _exposure_over_interval(self, tmin, tmax):
         """ calculate the exposure over a given interval  """
 
-        mask = np.logical_and(self._arrival_times >= tmin, self._arrival_times <= tmax)
+        raise RuntimeError("Must be implemented in sub class")
 
-        interval_deadtime = self._dead_time[mask]
-
-        return (tmax - tmin) - interval_deadtime.sum()
 
     def set_polynomial_fit_interval(self, *time_intervals, **options):
         """Set the time interval to fit the background.
@@ -505,10 +393,11 @@ class EventList(object):
 
         # Find out if we want to binned or unbinned.
         # TODO: add the option to config file
-        try:
+        if 'unbinned' in options:
             unbinned = options.pop('unbinned')
             assert type(unbinned) == bool, 'unbinned option must be True or False'
-        except(KeyError):
+
+        else:
 
             # assuming unbinned
             # could use config file here
@@ -625,7 +514,6 @@ class EventList(object):
         info_df = pd.Series(info_dict)
 
         display(info_df)
-
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
         """
         Provides the ability to find the optimum polynomial grade for *binned* counts by fitting the
@@ -759,7 +647,7 @@ class EventList(object):
         # so that we are not fitting zero counts. It will be used in the channel calculations
         # as well
 
-        bin_width = .1  # seconds
+        bin_width = 1.  # seconds
         these_bins = np.arange(self._start_time,
                                self._stop_time,
                                bin_width)
@@ -945,9 +833,13 @@ class EventList(object):
 
         total_duration = 0.
 
+        poly_exposure = 0
+
         for selection in self._poly_time_selections:
 
             total_duration += selection[1] - selection[0]
+
+            poly_exposure += self._exposure_over_interval(selection[0], selection[1])
 
             all_bkg_masks.append(np.logical_and(self._arrival_times >= selection[0],
                                                 self._arrival_times <= selection[1]))
@@ -968,9 +860,15 @@ class EventList(object):
 
         total_poly_energies = self._energies[poly_mask]
 
-        poly_deadtime = self._dead_time[poly_mask].sum()
-
-        poly_exposure = total_duration - poly_deadtime
+        # if self._dead_time is not None:
+        #
+        #     poly_deadtime = self._dead_time[poly_mask].sum()
+        #
+        # else:
+        #
+        #     poly_deadtime = 0
+        #
+        # poly_exposure = total_duration - poly_deadtime
 
         # Now we will find the the best poly order unless the use specified one
         # The total cnts (over channels) is binned to .1 sec intervals
@@ -1015,7 +913,6 @@ class EventList(object):
                                                      t_start,
                                                      t_stop,
                                                      poly_exposure)
-
 
                     polynomials.append(polynomial)
                     p.increase()
@@ -1106,6 +1003,370 @@ class EventList(object):
 
 
         self._polynomials = polynomials
+
+
+class EventListWithDeadTime(EventList):
+    def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
+                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None):
+        """
+        Container for event style data which are tagged with time and energy/PHA.
+
+
+
+
+        :param  n_channels: Number of detector channels
+        :param  start_time: start time of the event list
+        :param  stop_time: stop time of the event list
+        :param  dead_time: an array of deadtime per event
+        :param  first_channel: where detchans begin indexing
+        :param  rsp_file: the response file corresponding to these events
+        :param  arrival_times: list of event arrival times
+        :param  energies: list of event energies or pha channels
+        :param  ra:
+        :param  dec:
+        """
+
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file,
+                           ra, dec,
+                           mission, instrument)
+
+        if dead_time is not None:
+
+            self._dead_time = np.asarray(dead_time)
+
+            assert self._arrival_times.shape[0] == self._dead_time.shape[
+                0], "Arrival time (%d) and Dead Time (%d) have different shapes" % (
+                self._arrival_times.shape[0], self._dead_time.shape[0])
+
+        else:
+
+            self._dead_time = None
+
+
+
+    def _exposure_over_interval(self, tmin, tmax):
+        """ calculate the exposure over a given interval  """
+
+        mask = np.logical_and(self._arrival_times >= tmin, self._arrival_times <= tmax)
+
+        if self._dead_time is not None:
+
+            interval_deadtime = (self._dead_time[mask]).sum()
+
+        else:
+
+            interval_deadtime = 0
+
+        return (tmax - tmin) - interval_deadtime
+
+    def set_active_time_intervals(self, *args):
+        '''Set the time interval(s) to be used during the analysis.
+
+        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
+
+        set_active_time_intervals("0.0-10.0")
+
+        which will set the energy range 0-10. seconds.
+        '''
+
+        self._time_selection_exists = True
+
+        tmin_list = []
+        tmax_list = []
+        interval_masks = []
+
+        for arg in args:
+            tmin, tmax = self._parse_time_interval(arg)
+            mask = np.logical_and(self._arrival_times >= tmin,
+                                  self._arrival_times <= tmax)
+
+            tmin_list.append(tmin)
+            tmax_list.append(tmax)
+            interval_masks.append(mask)
+
+        if intervals_overlap(tmin_list, tmax_list):
+            raise OverLappingIntervals('Provided intervals are overlapping and hence invalid')
+
+        time_mask = interval_masks[0]
+        if len(interval_masks) > 1:
+            for mask in interval_masks[1:]:
+                time_mask = np.logical_or(time_mask, mask)
+
+        tmp_counts = []  # Temporary list to hold the total counts per chan
+
+        for chan in range(self._first_channel, self._n_channels + self._first_channel):
+            channel_mask = self._energies == chan
+            counts_mask = np.logical_and(channel_mask, time_mask)
+            total_counts = len(self._arrival_times[counts_mask])
+
+            tmp_counts.append(total_counts)
+
+        self._counts = np.array(tmp_counts)
+
+        tmp_counts = []
+        tmp_err = []  # Temporary list to hold the err counts per chan
+
+        if self._poly_fit_exists:
+
+            if not self._poly_fit_exists:
+                raise RuntimeError('A polynomial fit to the channels does not exist!')
+
+            for chan in range(self._first_channel, self._n_channels + self._first_channel):
+
+                total_counts = 0
+                counts_err = 0
+
+                for tmin, tmax in zip(tmin_list, tmax_list):
+                    # Now integrate the appropriate background polynomial
+                    total_counts += self._polynomials[chan].integral(tmin, tmax)
+                    counts_err += (self._polynomials[chan].integral_error(tmin, tmax)) ** 2
+
+                tmp_counts.append(total_counts)
+
+                tmp_err.append(np.sqrt(counts_err))
+
+            self._poly_counts = np.array(tmp_counts)
+
+            self._poly_count_err = np.array(tmp_err)
+
+            # self._is_poisson = False
+
+        # Dead time correction
+
+        exposure = 0.
+        for tmin, tmax in zip(tmin_list, tmax_list):
+            exposure += tmax - tmin
+
+        if self._dead_time is not None:
+
+            total_dead_time = self._dead_time[time_mask].sum()
+        else:
+
+            total_dead_time = 0.
+
+        self._exposure = exposure - total_dead_time
+        # self._total_dead_time = total_dead_time
+
+        self._tmin_list = tmin_list
+        self._tmax_list = tmax_list
+
+        self._active_dead_time = total_dead_time
+
+
+
+class EventListWithLiveTime(EventList):
+    def __init__(self, arrival_times, energies, n_channels, live_time, live_time_starts, live_time_stops,
+                 start_time=None, stop_time=None,
+                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None):
+        """
+        Container for event style data which are tagged with time and energy/PHA.
+
+
+
+        :param  arrival_times: list of event arrival times
+        :param  energies: list of event energies or pha channels
+        :param live_time: array of livetime fractions
+        :param live_time_starts: start of livetime fraction bins
+        :param live_time_stops:  stop of livetime fraction bins
+        :param mission:
+        :param instrument:
+        :param  n_channels: Number of detector channels
+        :param  start_time: start time of the event list
+        :param  stop_time: stop time of the event list
+        :param  first_channel: where detchans begin indexing
+        :param  rsp_file: the response file corresponding to these events
+
+
+        :param  ra:
+        :param  dec:
+        """
+
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file,
+                           ra, dec,
+                           mission, instrument)
+
+        assert len(live_time) == len(
+                live_time_starts), "Live time fraction (%d) and live time start (%d) have different shapes" % (
+            len(live_time), len(live_time_starts))
+
+        assert len(live_time) == len(
+                live_time_stops), "Live time fraction (%d) and live time stop (%d) have different shapes" % (
+            len(live_time), len(live_time_stops))
+
+        self._live_time = np.asarray(live_time)
+        self._live_time_starts = np.asarray(live_time_starts)
+        self._live_time_stops = np.asarray(live_time_stops)
+
+    def _exposure_over_interval(self, tmin, tmax):
+        """
+
+        :param tmin: start time of interval
+        :param tmax: stop time of interval
+        :return: exposure
+        """
+
+        # First see if the interval is completely contained inside a
+        # livetime interval. In this case we only compute that.
+
+
+
+
+        inside_idx = np.logical_and(self._live_time_starts < tmin, tmax < self._live_time_stops)
+
+        # see if it contains elements
+
+        if self._live_time[inside_idx]:
+
+
+
+            # we want to take a fraction of the live time covered
+            dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
+
+            fraction = (tmax - tmin) / dt
+
+            total_livetime = self._live_time[inside_idx] * fraction
+
+        else:
+
+            # First we get the live time of bins that are fully contained in the given interval
+
+            full_inclusion_idx = np.logical_and(tmin <= self._live_time_starts, tmax >= self._live_time_stops)
+
+            full_inclusion_livetime = self._live_time[full_inclusion_idx].sum()
+
+
+
+            # Now we get the fractional parts on the left and right
+
+            # Get the fractional part of the left bin
+
+            left_remainder_idx = np.logical_and(tmin <= self._live_time_stops, self._live_time_starts <= tmin)
+
+            dt = self._live_time_stops[left_remainder_idx] - self._live_time_starts[left_remainder_idx]
+
+            # we want the distance to the stop of this bin
+
+            distance_from_next_bin = self._live_time_stops[left_remainder_idx] - tmin
+
+            fraction = distance_from_next_bin / dt
+
+            left_fractional_livetime = self._live_time[left_remainder_idx] * fraction
+
+            # Get the fractional part of the right bin
+
+            right_remainder_idx = np.logical_and(self._live_time_starts <= tmax, tmax <= self._live_time_stops)
+
+            dt = self._live_time_stops[right_remainder_idx] - self._live_time_starts[right_remainder_idx]
+
+            # we want the distance from the last full bin
+
+            distance_from_next_bin = tmax - self._live_time_starts[right_remainder_idx]
+
+            fraction = distance_from_next_bin / dt
+
+            right_fractional_livetime = self._live_time[right_remainder_idx] * fraction
+
+            # sum up all the live time
+
+            total_livetime = full_inclusion_livetime + left_fractional_livetime + right_fractional_livetime
+
+        # the sum at the end converts all the arrays to floats
+
+        return total_livetime.sum()
+
+    def set_active_time_intervals(self, *args):
+        '''Set the time interval(s) to be used during the analysis.
+
+        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
+
+        set_active_time_intervals("0.0-10.0")
+
+        which will set the energy range 0-10. seconds.
+        '''
+
+        self._time_selection_exists = True
+
+        tmin_list = []
+        tmax_list = []
+        interval_masks = []
+
+        for arg in args:
+            tmin, tmax = self._parse_time_interval(arg)
+            mask = np.logical_and(self._arrival_times >= tmin,
+                                  self._arrival_times <= tmax)
+
+            tmin_list.append(tmin)
+            tmax_list.append(tmax)
+            interval_masks.append(mask)
+
+        if intervals_overlap(tmin_list, tmax_list):
+            raise OverLappingIntervals('Provided intervals are overlapping and hence invalid')
+
+        time_mask = interval_masks[0]
+        if len(interval_masks) > 1:
+            for mask in interval_masks[1:]:
+                time_mask = np.logical_or(time_mask, mask)
+
+        tmp_counts = []  # Temporary list to hold the total counts per chan
+
+        for chan in range(self._first_channel, self._n_channels + self._first_channel):
+            channel_mask = self._energies == chan
+            counts_mask = np.logical_and(channel_mask, time_mask)
+            total_counts = len(self._arrival_times[counts_mask])
+
+            tmp_counts.append(total_counts)
+
+        self._counts = np.array(tmp_counts)
+
+        tmp_counts = []
+        tmp_err = []  # Temporary list to hold the err counts per chan
+
+        if self._poly_fit_exists:
+
+            if not self._poly_fit_exists:
+                raise RuntimeError('A polynomial fit to the channels does not exist!')
+
+            #for chan in range(self._first_channel, self._n_channels + self._first_channel):
+            for chan in range(self._n_channels ):
+
+                total_counts = 0
+                counts_err = 0
+
+                for tmin, tmax in zip(tmin_list, tmax_list):
+
+
+                    # Now integrate the appropriate background polynomial
+                    total_counts += self._polynomials[chan].integral(tmin, tmax)
+                    counts_err += (self._polynomials[chan].integral_error(tmin, tmax)) ** 2
+
+                tmp_counts.append(total_counts)
+
+                tmp_err.append(np.sqrt(counts_err))
+
+            self._poly_counts = np.array(tmp_counts)
+
+            self._poly_count_err = np.array(tmp_err)
+
+
+
+        # Live time correction
+
+        exposure = 0.
+        total_real_time = 0.
+        for tmin, tmax in zip(tmin_list, tmax_list):
+
+            total_real_time += tmax - tmin
+            exposure += self._exposure_over_interval(tmin, tmax)
+
+        # In this case the exposure is the total live time
+
+        self._exposure = exposure
+        self._active_dead_time = total_real_time - exposure
+
+
+        self._tmin_list = tmin_list
+        self._tmax_list = tmax_list
+
 
 
 def intervals_overlap(tmin, tmax):
