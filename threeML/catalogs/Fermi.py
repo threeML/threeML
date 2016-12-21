@@ -1,17 +1,18 @@
 import numpy
+from VirtualObservatoryCatalog import VirtualObservatoryCatalog
+
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
 
-from VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.config.config import threeML_config
 
-
-class GBMBurstCatalog(VirtualObservatoryCatalog):
+class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
     def __init__(self):
 
-        super(GBMBurstCatalog, self).__init__('fermigbrst',
-                                              'http://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermigbrst&',
+        super(FermiGBMBurstCatalog, self).__init__('fermigbrst',
+                                                   threeML_config['catalogs']['Fermi']['GBM burst catalog'],
                                               'Fermi/GBM burst catalog')
 
     def apply_format(self, table):
@@ -175,11 +176,11 @@ class ModelFrom3FGL(Model):
                         src.spectrum.main.parameters[par].free = free
 
 
-class LATSourceCatalog(VirtualObservatoryCatalog):
+class FermiLATSourceCatalog(VirtualObservatoryCatalog):
     def __init__(self):
 
-        super(LATSourceCatalog, self).__init__('fermilpsc',
-                                               'http://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermilpsc&',
+        super(FermiLATSourceCatalog, self).__init__('fermilpsc',
+                                                    threeML_config['catalogs']['Fermi']['LAT FGL'],
                                                'Fermi/LAT source catalog')
 
     def apply_format(self, table):
