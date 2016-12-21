@@ -1208,8 +1208,9 @@ class EventListWithLiveTime(EventList):
         # First see if the interval is completely contained inside a
         # livetime interval. In this case we only compute that.
 
-
-
+        # Note that this is explicitly on the open boundary of the
+        # intervals because the closed boundary is covered in the
+        # next step
 
         inside_idx = np.logical_and(self._live_time_starts < tmin, tmax < self._live_time_stops)
 
@@ -1218,8 +1219,8 @@ class EventListWithLiveTime(EventList):
         if self._live_time[inside_idx]:
 
 
-
             # we want to take a fraction of the live time covered
+
             dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
 
             fraction = (tmax - tmin) / dt
@@ -1229,12 +1230,12 @@ class EventListWithLiveTime(EventList):
         else:
 
             # First we get the live time of bins that are fully contained in the given interval
+            # We now go for the closed interval because it is possible to have overlap with other intervals
+            # when a closed interval exists... but not when there is only an open interval
 
             full_inclusion_idx = np.logical_and(tmin <= self._live_time_starts, tmax >= self._live_time_stops)
 
             full_inclusion_livetime = self._live_time[full_inclusion_idx].sum()
-
-
 
             # Now we get the fractional parts on the left and right
 

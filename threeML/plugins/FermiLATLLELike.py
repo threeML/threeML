@@ -205,12 +205,14 @@ class LLEFile(object):
             self._events = data.TIME  # - trigger_time
             self._energy = data.ENERGY * 1E3  # keV
 
-            self._start_events = ft1_['PRIMARY'].header['TSTART']
-            self._stop_events = ft1_['PRIMARY'].header['TSTOP']
+            self._tstart = ft1_['PRIMARY'].header['TSTART']
+            self._tstop = ft1_['PRIMARY'].header['TSTOP']
             self._utc_start = ft1_['PRIMARY'].header['DATE-OBS']
             self._utc_stop = ft1_['PRIMARY'].header['DATE-END']
             self._instrument = ft1_['PRIMARY'].header['INSTRUME']
             self._telescope = ft1_['PRIMARY'].header['TELESCOP'] + "_LLE"
+            self._gti_start = ft1_['GTI'].data['START']
+            self._gti_stop = ft1_['GTI'].data['STOP']
 
             try:
                 self._trigger_time = ft1_['EVENTS'].header['TRIGTIME']
@@ -224,7 +226,13 @@ class LLEFile(object):
 
                 self._trigger_time = 0
 
+        # bin the energies into PHA channels
+        # and filter out over/underflow
         self._bin_energies_into_pha()
+
+        # filter events outside of GTIs
+
+        self._apply_gti_to_events()
 
         with fits.open(ft2_file) as ft2_:
 
@@ -242,19 +250,109 @@ class LLEFile(object):
             ft2_bin_size = 30.0  # s
 
         # Keep only the needed entries (plus a padding)
-        idx = (ft2_tstart >= self._start_events - 10 * ft2_bin_size) & (
-            ft2_tstop <= self._stop_events + 10 * ft2_bin_size)
+        idx = (ft2_tstart >= self._tstart - 10 * ft2_bin_size) & (
+            ft2_tstop <= self._tstop + 10 * ft2_bin_size)
 
-        self._tstart = ft2_tstart[idx]
-        self._tstop = ft2_tstop[idx]
+        self._ft2_tstart = ft2_tstart[idx]
+        self._ft2_tstop = ft2_tstop[idx]
         self._livetime = ft2_livetime[idx]
 
-        # Now sort all vectors
-        idx = np.argsort(self._tstart)
+        # now filter the livetime by GTI
 
-        self._tstart = self._tstart[idx]
-        self._tstop = self._tstop[idx]
+        self._apply_gti_to_live_time()
+
+
+
+
+
+        # Now sort all vectors
+        idx = np.argsort(self._ft2_tstart)
+
+        self._ft2_tstart = self._ft2_tstart[idx]
+        self._ft2_tstop = self._ft2_tstop[idx]
         self._livetime = self._livetime[idx]
+
+    def _apply_gti_to_live_time(self):
+        """
+        This function applies the GTIs to the live time intervals
+
+        It will remove any livetime interval not falling within the
+        boundaries of a GTI. The FT2 bins are assumed to have the same
+        boundaries as the GTI.
+
+        Events falling outside the GTI boundaries are already removed.
+
+        :return: none
+        """
+
+        # First negate all FT2 entries
+
+        filter_idx = np.zeros_like(self._livetime, dtype=bool)
+
+        # now loop through each GTI interval
+
+        for start, stop in zip(self._gti_start, self._gti_stop):
+
+            # create an index of all the FT2 bins falling within this interval
+
+            tmp_idx = np.logical_and(start <= self._ft2_tstart, self._ft2_tstop <= stop)
+
+            # add them to the already selected idx
+            filter_idx = np.logical_or(filter_idx, tmp_idx)
+
+        # Now filter the whole list
+        self._ft2_tstart = self._ft2_tstart[filter_idx]
+        self._ft2_tstop = self._ft2_tstop[filter_idx]
+        self._livetime = self._livetime[filter_idx]
+
+    def _apply_gti_to_events(self):
+        """
+
+        This created a filter index for events falling outside of the
+        GTI. It must be run after the events are binned in energy because
+        a filter is set up in that function for events that have energies
+        outside the EBOUNDS of the DRM
+
+        :return: none
+        """
+
+        # initial filter
+        filter_idx = np.zeros_like(self._events, dtype=bool)
+
+        # loop throught the GTI intervals
+        for start, stop in zip(self._gti_start, self._gti_stop):
+
+            # capture all the events within that interval
+            tmp_idx = np.logical_and(start <= self._events, self._events <= stop)
+
+            # combine with the already selected events
+            filter_idx = np.logical_or(filter_idx, tmp_idx)
+
+        # filter from the energy selection
+        self._filter_idx = np.logical_and(self._filter_idx, filter_idx)
+
+    def is_in_gti(self, time):
+        """
+
+        Checks if a time falls within
+        a GTI
+
+        :param time: time in MET
+        :return: bool
+        """
+
+        in_gti = False
+
+        for start, stop in zip(self._gti_start, self._gti_stop):
+
+            if (start <= time) and (time <= stop):
+
+                in_gti = True
+
+        return in_gti
+
+
+
 
     def _bin_energies_into_pha(self):
         """
@@ -278,31 +376,42 @@ class LLEFile(object):
 
     @property
     def trigger_time(self):
-
+        """
+        Gets the trigger time in MET
+        :return: trigger time in MET
+        """
         return self._trigger_time
 
     @trigger_time.setter
     def trigger_time(self, val):
 
-        assert self._start_events <= val <= self._stop_events, "Trigger time must be within the interval (%f,%f)" % (
-        self._start_events, self._stop_events)
+        assert self._tstart <= val <= self._tstop, "Trigger time must be within the interval (%f,%f)" % (
+            self._tstart, self._tstop)
 
         self._trigger_time = val
 
     @property
     def tstart(self):
-        return self._start_events
+        return self._tstart
 
     @property
     def tstop(self):
-        return self._stop_events
+        return self._tstop
 
     @property
     def arrival_times(self):
+        """
+        The GTI/energy filtered arrival times in MET
+        :return:
+        """
         return self._events[self._filter_idx]
 
     @property
     def energies(self):
+        """
+        The GTI/energy filtered pha energies
+        :return:
+        """
         return self._pha[self._filter_idx]
 
     @property
@@ -333,11 +442,11 @@ class LLEFile(object):
 
     @property
     def livetime_start(self):
-        return self._tstart
+        return self._ft2_tstart
 
     @property
     def livetime_stop(self):
-        return self._tstop
+        return self._ft2_tstop
 
 
 
@@ -355,8 +464,8 @@ class LLEFile(object):
         fermi_dict = {}
 
         fermi_dict['Fermi Trigger Time'] = self.trigger_time
-        fermi_dict['Fermi MET OBS Start'] = self._start_events
-        fermi_dict['Fermi MET OBS Stop'] = self._stop_events
+        fermi_dict['Fermi MET OBS Start'] = self._tstart
+        fermi_dict['Fermi MET OBS Stop'] = self._tstop
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
         fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
