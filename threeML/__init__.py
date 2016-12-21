@@ -182,12 +182,20 @@ from .utils.step_parameter_generator import step_generator
 
 from .parallel.parallel_client import parallel_computation
 
+# Import catalogs
+from threeML.catalogs import *
+
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config
 
 import astropy.units as u
 
 import os
+
+if is_plugin_available("FermipyLike"):
+
+    # Import the LAT data downloader
+    from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
 
 # Check that the number of threads is set to 1 for all multi-thread libraries
 # otherwise numpy operations will be way slower than what they could be, since
