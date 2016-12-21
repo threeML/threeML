@@ -40,7 +40,7 @@ def ceildiv(a, b):
 
 class EventList(object):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None):
+                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         Container for event style data which are tagged with time and energy/PHA.
 
@@ -58,6 +58,7 @@ class EventList(object):
         :param  dec:
         """
 
+        self._verbose = verbose
         self._arrival_times = np.asarray(arrival_times)
         self._energies = np.asarray(energies)
         self._n_channels = n_channels
@@ -108,6 +109,9 @@ class EventList(object):
         self._user_poly_order = -1
         self._time_selection_exists = False
         self._poly_fit_exists = False
+
+        self._fit_method_info = {"bin type": None, 'fit method': None}
+
 
     @staticmethod
     def _parse_time_interval(time_interval):
@@ -431,6 +435,13 @@ class EventList(object):
         # We need to recalculate the source interval
 
         self._poly_fit_exists = True
+
+        if self._verbose:
+            print("%s %d-order polynomial fit with the %s method" % (
+            self._fit_method_info['bin type'], self._optimal_polynomial_grade, self._fit_method_info['fit method']))
+            print('\n')
+
+
         if self._time_selection_exists:
 
             tmp = []
@@ -502,7 +513,8 @@ class EventList(object):
             info_dict['Polynomial Order'] = self._optimal_polynomial_grade
             info_dict['Active Count Error'] = np.sqrt((self._poly_count_err ** 2).sum())
             info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
-            info_dict['Unbinned Fit'] = self._unbinned
+            info_dict['Poly fit type'] = self._fit_method_info['bin type']
+            info_dict['Poly fit method'] = self._fit_method_info['fit method']
 
             sig = Significance(self._counts.sum(), self._poly_counts.sum())
 
@@ -514,6 +526,7 @@ class EventList(object):
         info_df = pd.Series(info_dict)
 
         display(info_df)
+
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
         """
         Provides the ability to find the optimum polynomial grade for *binned* counts by fitting the
@@ -618,6 +631,9 @@ class EventList(object):
 
         self._poly_fit_exists = True
 
+        self._fit_method_info['bin type'] = 'Binned'
+        self._fit_method_info['fit method'] = threeML_config['event list']['binned fit method']
+
         # Select all the events that are in the background regions
         # and make a mask
 
@@ -689,9 +705,9 @@ class EventList(object):
                                                                                           mean_time[non_zero_mask],
                                                                                           exposure_per_bin[
                                                                                               non_zero_mask])
-
-            print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
-            print('\n')
+            if self._verbose:
+                print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
+                print('\n')
 
 
         else:
@@ -826,6 +842,12 @@ class EventList(object):
 
         self._poly_fit_exists = True
 
+        # inform the type of fit we have
+        self._fit_method_info['bin type'] = 'Unbinned'
+        self._fit_method_info['fit method'] = threeML_config['event list']['unbinned fit method']
+
+
+
         # Select all the events that are in the background regions
         # and make a mask
 
@@ -877,9 +899,9 @@ class EventList(object):
 
             self._optimal_polynomial_grade = self._unbinned_fit_global_and_determine_optimum_grade(total_poly_events,
                                                                                                    poly_exposure)
-
-            print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
-            print('\n')
+            if self._verbose:
+                print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
+                print('\n')
 
 
         else:
@@ -1007,7 +1029,7 @@ class EventList(object):
 
 class EventListWithDeadTime(EventList):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None):
+                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         Container for event style data which are tagged with time and energy/PHA.
 
@@ -1028,7 +1050,7 @@ class EventListWithDeadTime(EventList):
 
         EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file,
                            ra, dec,
-                           mission, instrument)
+                           mission, instrument, verbose)
 
         if dead_time is not None:
 
@@ -1157,7 +1179,7 @@ class EventListWithDeadTime(EventList):
 class EventListWithLiveTime(EventList):
     def __init__(self, arrival_times, energies, n_channels, live_time, live_time_starts, live_time_stops,
                  start_time=None, stop_time=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None):
+                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         Container for event style data which are tagged with time and energy/PHA.
 
@@ -1183,7 +1205,7 @@ class EventListWithLiveTime(EventList):
 
         EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file,
                            ra, dec,
-                           mission, instrument)
+                           mission, instrument, verbose)
 
         assert len(live_time) == len(
                 live_time_starts), "Live time fraction (%d) and live time start (%d) have different shapes" % (

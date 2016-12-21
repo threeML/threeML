@@ -72,7 +72,8 @@ class FermiLATLLELike(EventListLike):
                 first_channel=1,
                 rsp_file=rsp_file,
                 instrument=self._lat_lle_file.instrument,
-                mission=self._lat_lle_file.mission)
+                mission=self._lat_lle_file.mission,
+                verbose=verbose)
 
         EventListLike.__init__(self, name, event_list, background_selections, source_intervals, rsp_file,
                                poly_order, unbinned, verbose)

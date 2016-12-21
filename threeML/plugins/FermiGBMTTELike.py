@@ -75,7 +75,8 @@ class FermiGBMTTELike(EventListLike):
                 first_channel=1,
                 rsp_file=rsp_file,
                 instrument=self._gbm_tte_file.det_name,
-                mission=self._gbm_tte_file.mission)
+                mission=self._gbm_tte_file.mission,
+                verbose=verbose)
 
         # pass to the super class
 
