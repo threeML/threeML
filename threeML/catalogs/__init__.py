@@ -1,1 +1,1 @@
-from Fermi import GBMBurstCatalog, LATSourceCatalog
+from Fermi import FermiGBMBurstCatalog, FermiLATSourceCatalog
