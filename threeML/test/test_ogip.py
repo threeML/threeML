@@ -283,8 +283,6 @@ def test_ogip_rebinner():
     with within_directory(__this_dir__):
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
 
-        assert ogip._simulation_storage is None
-
         n_data_points = 128
         ogip.set_active_measurements("all")
 
@@ -305,7 +303,7 @@ def test_ogip_rebinner():
 
         ogip.view_count_spectrum()
 
-        ogip.simulated_parameters
+
 
 
 def test_various_effective_area():
@@ -323,6 +321,9 @@ def test_simulating_data_sets():
 
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
 
+        with pytest.raises(AssertionError):
+            _ = ogip.simulation_storage
+
         n_data_points = 128
         ogip.set_active_measurements("all")
 
@@ -332,6 +333,8 @@ def test_simulating_data_sets():
         assert ogip._n_synthetic_datasets == 0
 
         new_ogip = ogip.get_simulated_dataset('sim')
+
+        new_ogip.simulated_parameters
 
         assert new_ogip.name == 'sim'
         assert ogip._n_synthetic_datasets == 1
