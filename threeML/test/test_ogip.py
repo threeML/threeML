@@ -283,6 +283,8 @@ def test_ogip_rebinner():
     with within_directory(__this_dir__):
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
 
+        assert ogip._simulation_storage is None
+
         n_data_points = 128
         ogip.set_active_measurements("all")
 
@@ -302,6 +304,8 @@ def test_ogip_rebinner():
         assert ogip.n_data_points == n_data_points
 
         ogip.view_count_spectrum()
+
+        ogip.simulated_parameters
 
 
 def test_various_effective_area():
