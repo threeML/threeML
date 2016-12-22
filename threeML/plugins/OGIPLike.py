@@ -178,6 +178,9 @@ class OGIPLike(PluginPrototype):
         self._tstart = None
         self._tstop = None
 
+        # This is so far not a simulated data set
+        self._simulation_storage = None
+
         # set the mask to the native quality
         self._mask = self._quality_to_mask()
         # Apply the mask
@@ -718,9 +721,34 @@ class OGIPLike(PluginPrototype):
                 new_ogip_like._mask = original_mask
                 new_ogip_like._apply_mask_to_original_vectors()
 
+            # We want to store the simulated parameters so that the user
+            # can recall them
+
+            new_ogip_like._simulation_storage = copy.deepcopy(self._like_model)
+
+            # GV: It is probably safe to assume that there will be only one point source
+            # if you can think of a more clever way to do this let me know
+
+
+
+
+
+
+
             # TODO: nuisance parameters
 
             return new_ogip_like
+
+    @property
+    def simulated_parameters(self):
+        """
+        Return the simulated dataset parameters
+        :return: a likelihood model copy
+        """
+
+        assert self._simulation_storage is not None, "This is not a simulated data set"
+
+        return self._simulation_storage
 
     def rebin_on_background(self, min_number_of_counts):
         """
