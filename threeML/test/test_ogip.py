@@ -322,7 +322,7 @@ def test_simulating_data_sets():
         ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
 
         with pytest.raises(AssertionError):
-            _ = ogip.simulation_storage
+            _ = ogip.simulated_parameters
 
         n_data_points = 128
         ogip.set_active_measurements("all")
