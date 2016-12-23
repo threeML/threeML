@@ -10,7 +10,7 @@ from threeML.io.rich_display import display
 import numpy as np
 import pandas as pd
 import uncertainties
-import astromodels.model
+import astromodels.core.model
 
 
 from threeML.minimizer import minimization
@@ -54,7 +54,7 @@ class JointLikelihood(object):
         # Process optional keyword parameters
         self.verbose = verbose
 
-        self._likelihood_model = likelihood_model # type: astromodels.model.Model
+        self._likelihood_model = likelihood_model # type: astromodels.core.model.Model
 
         self._data_list = data_list
 
