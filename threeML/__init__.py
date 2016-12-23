@@ -178,7 +178,7 @@ from .io.flux_calculator import SpectralFlux
 # Added by JM to import Model comparison
 from .utils.stats_tools import ModelComparison
 
-from .plugins.OGIP.ogip_plot import display_ogip_model_counts
+from .io.plugin_plots import display_ogip_model_counts
 
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator

@@ -12,6 +12,12 @@ from threeML.io.package_data import get_path_of_data_file
 
 _config_file_name = 'threeML_config.yml'
 
+# Scipy optimizers
+# adds the ability for safe load to import dictionaries
+_optimize_methods = ('Nelder-Mead',"Powell","CG","BFGS","Newton-CG","L-BFGS-B","TNC","COBYLA","SLSQP","dogleg","trust-ncg")
+
+
+
 
 class Config(object):
 
@@ -198,6 +204,24 @@ class Config(object):
 
                 return True
 
+    @staticmethod
+    def is_optimizer(method):
+
+        if method in _optimize_methods:
+
+            return True
+
+        else:
+
+            return False
+
+    @staticmethod
+    def is_number(val):
+
+        return type(val) == int or type(val) == float
+
+
+
     def _subs_values_with_none(self, d):
         """
         This remove all values from d and all nested dictionaries of d, substituing all values with None
@@ -266,13 +290,18 @@ class Config(object):
         else:
 
             # Make a dictionary of known checkers and what they apply to
-            known_checkers = {'color': (self.is_matplotlib_color, 'a matplotlib color (name or html hex value)'),
-                              'cmap': (self.is_matplotlib_cmap, 'a matplotlib color map (available: %s)' %
+            known_checkers = {'color'    : (self.is_matplotlib_color, 'a matplotlib color (name or html hex value)'),
+                              'cmap'     : (self.is_matplotlib_cmap, 'a matplotlib color map (available: %s)' %
                                        ", ".join(plt.colormaps())),
-                              'name': (self.is_string, "a valid name (string)"),
-                              'switch': (self.is_bool, "one of yes, no, True, False"),
-                              'ftp url': (self.is_ftp_url, "a valid FTP URL"),
-                              'http url': (self.is_http_url, "a valid HTTP(S) URL")}
+                              'name'     : (self.is_string, "a valid name (string)"),
+                              'switch'   : (self.is_bool, "one of yes, no, True, False"),
+                              'ftp url'  : (self.is_ftp_url, "a valid FTP URL"),
+                              'http url' : (self.is_http_url, "a valid HTTP(S) URL"),
+
+                              'optimizer': (self.is_optimizer, "one of scipy.optimize minimization methods (available: %s)"
+                                            %", ".join(_optimize_methods)),
+                              'number'   : (self.is_number, "an int or float")
+                              }
 
             # Now that we know that the provided configuration have the right structure, let's check that
             # each value is of the proper type

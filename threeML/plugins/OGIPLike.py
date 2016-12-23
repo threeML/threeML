@@ -91,6 +91,7 @@ class OGIPLike(PluginPrototype):
 
         self._observed_counts = self._pha.rates * self._pha.exposure  # type: np.ndarray
         self._background_counts = self._bak.rates * self._bak.exposure  # type: np.ndarray
+
         self._scaled_background_counts = self._get_expected_background_counts_scaled()  # type: np.ndarray
 
         # Init everything else to None
@@ -123,6 +124,7 @@ class OGIPLike(PluginPrototype):
                 assert np.all(self._back_counts_errors[idx] == self._background_counts[idx]), \
                     "Error in background spectrum: if the error on the background is zero, " \
                     "also the expected background must be zero"
+
 
                 assert np.all(self._background_counts >= 0), "Error in background spectrum: negative background!"
 

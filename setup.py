@@ -78,7 +78,7 @@ setup(
     #             ('threeML/config', ["threeML/config/threeML_config.yml"])
     #             ],
 
-    package_data={'threeML': ['data/*'],},
+        package_data={'threeML': ['data/*'], },
     include_package_data=True,
 
     install_requires=[
