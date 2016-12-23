@@ -3,7 +3,7 @@ import copy
 from contextlib import contextmanager
 import matplotlib.pyplot as plt
 import numpy as np
-from astromodels.parameter import Parameter
+from astromodels.core.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
 

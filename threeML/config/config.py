@@ -3,20 +3,14 @@ import shutil
 import re
 import pkg_resources
 import yaml
+import urlparse
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 
 from threeML.exceptions.custom_exceptions import custom_warnings, ConfigurationFileCorrupt
-
+from threeML.io.package_data import get_path_of_data_file
 
 _config_file_name = 'threeML_config.yml'
-
-
-def get_path_of_default_configuration():
-
-    file_path = pkg_resources.resource_filename("threeML", 'config/%s' % _config_file_name)
-
-    return file_path
 
 
 class Config(object):
@@ -24,7 +18,7 @@ class Config(object):
     def __init__(self):
 
         # Read first the default configuration file
-        default_configuration_path = get_path_of_default_configuration()
+        default_configuration_path = get_path_of_data_file(_config_file_name)
 
         assert os.path.exists(default_configuration_path), \
             "Default configuration %s does not exist. Re-install 3ML" % default_configuration_path
@@ -160,6 +154,50 @@ class Config(object):
 
         return type(var) == str
 
+    @staticmethod
+    def is_ftp_url(var):
+
+        try:
+
+            tokens = urlparse.urlparse(var)
+
+        except:
+
+            # This is very rare, as almost anything is a valid URL
+            return False
+
+        else:
+
+            if tokens.scheme != 'ftp' or tokens.netloc == '':
+
+                return False
+
+            else:
+
+                return True
+
+    @staticmethod
+    def is_http_url(var):
+
+        try:
+
+            tokens = urlparse.urlparse(var)
+
+        except:
+
+            # This is very rare, as almost anything is a valid URL
+            return False
+
+        else:
+
+            if (tokens.scheme != 'http' and tokens.scheme != 'https') or tokens.netloc == '':
+
+                return False
+
+            else:
+
+                return True
+
     def _subs_values_with_none(self, d):
         """
         This remove all values from d and all nested dictionaries of d, substituing all values with None
@@ -232,7 +270,9 @@ class Config(object):
                               'cmap': (self.is_matplotlib_cmap, 'a matplotlib color map (available: %s)' %
                                        ", ".join(plt.colormaps())),
                               'name': (self.is_string, "a valid name (string)"),
-                              'switch': (self.is_bool, "one of yes, no, True, False")}
+                              'switch': (self.is_bool, "one of yes, no, True, False"),
+                              'ftp url': (self.is_ftp_url, "a valid FTP URL"),
+                              'http url': (self.is_http_url, "a valid HTTP(S) URL")}
 
             # Now that we know that the provided configuration have the right structure, let's check that
             # each value is of the proper type

@@ -43,6 +43,7 @@ setup(
               'threeML/minimizer',
               'threeML/plugins',
               'threeML/plugins/OGIP',
+              'threeML/plugins/Fermi_LAT',
               'threeML/classicMLE',
               'threeML/catalogs',
               'threeML/io',
@@ -77,7 +78,7 @@ setup(
     #             ('threeML/config', ["threeML/config/threeML_config.yml"])
     #             ],
 
-    package_data={'threeML': ['config/*.yml'],},
+    package_data={'threeML': ['data/*'],},
     include_package_data=True,
 
     install_requires=[
@@ -93,7 +94,8 @@ setup(
         'astromodels>=0.2.1',
         'corner>=1.0.2',
         'pandas',
-        'sympy'
+        'sympy',
+        'html2text'
     ])
 
 # Check for optional dependencies
