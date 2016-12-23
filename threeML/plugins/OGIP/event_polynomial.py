@@ -93,14 +93,6 @@ class Polynomial(object):
     def get_number_free_parameters(self):
         return self._degree + 1
 
-    def get_free_derivs(self, x):
-        n_par = self._degree + 1
-        freeDerivs = []
-
-        for i in range(n_par):
-            freeDerivs.append(map(lambda xx: pow(xx, i), x))
-        pass
-        return np.array(freeDerivs)
 
     def compute_covariance_matrix(self, function, best_fit_parameters):
 
