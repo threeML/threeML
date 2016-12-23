@@ -85,6 +85,12 @@ class Polynomial(object):
         return result
 
     def compute_covariance_matrix(self, function, best_fit_parameters):
+        """
+        Compute the covariance matrix of this fit
+        :param function: the loglike for the fit
+        :param best_fit_parameters: the best fit parameters
+        :return:
+        """
 
         minima = np.zeros_like(best_fit_parameters) - 100
         maxima = np.zeros_like(best_fit_parameters) + 100
@@ -179,45 +185,35 @@ class PolyLogLikelihood(object):
         self._exposure = exposure
 
         def cov_call(*parameters):
-            """
-              Evaluate the unbinned Poisson log likelihood
-
-            Args:
-                parameters:
-
-            Returns:
-
-            """
-            # print parameters
-            # Compute the values for the model given this set of parameters
             self._model.coefficients = parameters
-
-            # Integrate the polynomial (or in the future, model) over the given interval
-
-            n_expected_counts = 0.
-
-            for start, stop in zip(self._t_start, self._t_stop):
-                n_expected_counts += self._model.integral(start, stop)
-
-            # Now evaluate the model at the event times and multiply by the exposure
-
-            M = self._model(self._events) * self._exposure
+            M = self._model(self._bin_centers) * self._exposure
+            M_fixed, tiny = self._fix_precision(M)
 
             # Replace negative values for the model (impossible in the Poisson context)
             # with zero
-            negative_mask = (M < 0)
 
+            negative_mask = (M < 0)
             if (len(negative_mask.nonzero()[0]) > 0):
                 M[negative_mask] = 0.0
 
-            # Poisson loglikelihood statistic  is:
-            # logL = -Nexp + Sum ( log M_i )
+            # Poisson loglikelihood statistic (Cash) is:
+            # L = Sum ( M_i - D_i * log(M_i))
 
             logM = self._evaluate_logM(M)
 
-            log_likelihood = -n_expected_counts + logM.sum()
+            # Evaluate v_i = D_i * log(M_i): if D_i = 0 then the product is zero
+            # whatever value has log(M_i). Thus, initialize the whole vector v = {v_i}
+            # to zero, then overwrite the elements corresponding to D_i > 0
 
-            return -log_likelihood
+            d_times_logM = np.zeros(len(self._counts))
+
+            non_zero_mask = (self._counts > 0)
+
+            d_times_logM[non_zero_mask] = self._counts[non_zero_mask] * logM[non_zero_mask]
+
+            log_likelihood = np.sum(M_fixed - d_times_logM)
+
+            return log_likelihood
 
         self.cov_call = cov_call
 
