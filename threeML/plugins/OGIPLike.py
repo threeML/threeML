@@ -6,6 +6,7 @@ import numpy as np
 from astromodels.core.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
+from astromodels import clone_model
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.step_plot import step_plot
@@ -724,7 +725,7 @@ class OGIPLike(PluginPrototype):
             # We want to store the simulated parameters so that the user
             # can recall them
 
-            new_ogip_like._simulation_storage = copy.deepcopy(self._like_model)
+            new_ogip_like._simulation_storage = clone_model(self._like_model)
 
             # GV: It is probably safe to assume that there will be only one point source
             # if you can think of a more clever way to do this let me know
