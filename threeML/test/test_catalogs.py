@@ -1,8 +1,13 @@
 import pytest
 
 from threeML import *
+from threeML.io.network import internet_connection_is_active
+
+skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
+                                                       reason="No active internet connection")
 
 
+@skip_if_internet_is_not_available
 def test_GBM_catalog():
 
     gbm_catalog = FermiGBMBurstCatalog()
@@ -15,6 +20,7 @@ def test_GBM_catalog():
     gbm_catalog.search_around_source('Crab', 5.0)
 
 
+@skip_if_internet_is_not_available
 def test_LAT_catalog():
 
     lat_catalog = FermiLATSourceCatalog()

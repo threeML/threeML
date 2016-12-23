@@ -5,10 +5,14 @@ import socket
 import time
 import urllib
 import os
+import glob
+
+import astropy.io.fits as pyfits
 
 from threeML.io.file_utils import sanitize_filename
 from threeML.config.config import threeML_config
 from threeML.io.download_from_ftp import download_files_from_directory_ftp
+from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 
 
 class DivParser(HTMLParser.HTMLParser):
@@ -57,6 +61,10 @@ class DivParser(HTMLParser.HTMLParser):
         if self.recording:
 
             self.data.append(data)
+
+
+# Keyword name to store the unique ID for the download
+_uid_fits_keyword = 'QUERYUID'
 
 
 def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Photon', destination_directory="."):
@@ -114,28 +122,85 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     # Save parameters for the query in a dictionary
 
-    parameters = {}
-    parameters['coordfield'] = "%s,%s" % (ra, dec)
-    parameters['coordsystem'] = "J2000"
-    parameters['shapefield'] = "%s" % radius
-    parameters['timefield'] = "%s,%s" % (tstart, tstop)
-    parameters['timetype'] = "%s" % time_type
-    parameters['energyfield'] = "30,1000000"  # Download everything, we will chose later
-    parameters['photonOrExtendedOrNone'] = data_type
-    parameters['destination'] = 'query'
-    parameters['spacecraft'] = 'checked'
+    query_parameters = {}
+    query_parameters['coordfield'] = "%.4f,%.4f" % (ra, dec)
+    query_parameters['coordsystem'] = "J2000"
+    query_parameters['shapefield'] = "%s" % radius
+    query_parameters['timefield'] = "%s,%s" % (tstart, tstop)
+    query_parameters['timetype'] = "%s" % time_type
+    query_parameters['energyfield'] = "30,1000000"  # Download everything, we will chose later
+    query_parameters['photonOrExtendedOrNone'] = data_type
+    query_parameters['destination'] = 'query'
+    query_parameters['spacecraft'] = 'checked'
+
+    # Compute a unique ID for this query
+    query_unique_id = get_unique_deterministic_tag(str(query_parameters))
+
+    # Look if there are FT1 and FT2 files in the output directory matching this unique ID
+
+    ft1s = glob.glob(os.path.join(destination_directory, "*PH??.fits"))
+    ft2s = glob.glob(os.path.join(destination_directory, "*SC??.fits"))
+
+    # Loop over all ft1s and see if there is any matching the uid
+
+    prev_downloaded_ft1 = None
+    prev_downloaded_ft2 = None
+
+    for ft1 in ft1s:
+
+        with pyfits.open(ft1) as f:
+
+            this_query_uid = f[0].header.get(_uid_fits_keyword)
+
+            if this_query_uid == query_unique_id:
+
+                # Found one!
+
+                prev_downloaded_ft1 = ft1
+
+                break
+
+    if prev_downloaded_ft1 is not None:
+
+        for ft2 in ft2s:
+
+            with pyfits.open(ft2) as f:
+
+                this_query_uid = f[0].header.get(_uid_fits_keyword)
+
+                if this_query_uid == query_unique_id:
+                    # Found one!
+
+                    prev_downloaded_ft2 = ft2
+
+                    break
+
+    else:
+
+        # No need to look any further, if there is no FT1 file there shouldn't be any FT2 file either
+        pass
+
+    # If we have both FT1 and FT2 matching the ID, we do not need to download anymore
+    if prev_downloaded_ft1 is not None and prev_downloaded_ft2 is not None:
+
+        print("Existing event file %s and Spacecraft file %s correspond to the same selection. "
+              "We assume you did not tamper with them, so we will return those instead of downloading them again. "
+              "If you want to download them again, remove them from the outdir" %(prev_downloaded_ft1,
+                                                                                  prev_downloaded_ft2))
+
+        return [prev_downloaded_ft1, prev_downloaded_ft2]
 
     # Print them out
 
     print("Query parameters:")
 
-    for k, v in parameters.items():
+    for k, v in query_parameters.items():
 
         print("%30s = %s" % (k, v))
 
     # POST encoding
 
-    postData = urllib.urlencode(parameters)
+    postData = urllib.urlencode(query_parameters)
     temporaryFileName = "__temp_query_result.html"
 
     # Remove temp file if present
@@ -330,5 +395,14 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         # The FT2 is first, flip them
         downloaded_files = downloaded_files[::-1]
+
+    # Finally, open the FITS file and write the unique key for this query, so that the download will not be
+    # repeated if not necessary
+
+    for fits_file in downloaded_files:
+
+        with pyfits.open(fits_file, mode='update') as f:
+
+            f[0].header.set(_uid_fits_keyword, query_unique_id)
 
     return downloaded_files

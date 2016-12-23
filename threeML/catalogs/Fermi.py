@@ -106,6 +106,21 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
     elif spectrum_type == 'PLExpCutoff':
 
+        this_spectrum = Cutoff_powerlaw()
+
+        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+
+        this_spectrum.index = float(catalog_entry['spectral_index']) * -1
+        this_spectrum.index.fix = fix
+        this_spectrum.piv = float(catalog_entry['pivot_energy']) * u.MeV
+        this_spectrum.K = float(catalog_entry['flux_density']) / (u.cm ** 2 * u.s * u.MeV)
+        this_spectrum.K.fix = fix
+        this_spectrum.K.bounds = (this_spectrum.K.value / 1000.0, this_spectrum.K.value * 1000)
+        this_spectrum.xc = float(catalog_entry['cutoff']) * u.MeV
+        this_spectrum.xc.fix = fix
+
+    elif spectrum_type == 'PLSuperExpCutoff':
+
         this_spectrum = Super_cutoff_powerlaw()
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
@@ -173,6 +188,7 @@ class ModelFrom3FGL(Model):
                 else:
 
                     for par in src.spectrum.main.parameters:
+
                         src.spectrum.main.parameters[par].free = free
 
 

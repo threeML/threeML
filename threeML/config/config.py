@@ -8,16 +8,9 @@ import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 
 from threeML.exceptions.custom_exceptions import custom_warnings, ConfigurationFileCorrupt
-
+from threeML.io.package_data import get_path_of_data_file
 
 _config_file_name = 'threeML_config.yml'
-
-
-def get_path_of_default_configuration():
-
-    file_path = pkg_resources.resource_filename("threeML", 'config/%s' % _config_file_name)
-
-    return file_path
 
 
 class Config(object):
@@ -25,7 +18,7 @@ class Config(object):
     def __init__(self):
 
         # Read first the default configuration file
-        default_configuration_path = get_path_of_default_configuration()
+        default_configuration_path = get_path_of_data_file(_config_file_name)
 
         assert os.path.exists(default_configuration_path), \
             "Default configuration %s does not exist. Re-install 3ML" % default_configuration_path

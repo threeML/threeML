@@ -7,6 +7,9 @@ import imp
 # Import the version
 from version import __version__
 
+# Import everything from astromodels
+from astromodels import *
+
 # This dynamically loads a module and return it in a variable
 
 def is_module_importable(module_full_path):
@@ -224,6 +227,3 @@ for var in var_to_check:
 
         custom_warnings.warn("Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML" % var,
                              RuntimeWarning)
-
-# Finally import everything from astromodels
-from astromodels import *
