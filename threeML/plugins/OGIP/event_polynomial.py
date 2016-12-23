@@ -113,14 +113,9 @@ class Polynomial(object):
     def integral(self, xmin, xmax):
         """ 
         Evaluate the integral of the polynomial between xmin and xmax
+
         """
 
-        # integral_coeff = [0]
-        #
-        # integral_coeff.extend(map(lambda i: self.coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
-        #
-        # integral_polynomial = Polynomial(integral_coeff)
-        #
         return self._integral_polynomial(xmax) - self._integral_polynomial(xmin)
 
     def _eval_basis(self, x):
@@ -133,18 +128,8 @@ class Polynomial(object):
 
 
         c = self._eval_basis(xmax) - self._eval_basis(xmin)
-
-        # Compute the error on the integral
-        err2 = 0.0
-
-        n_par = self._degree + 1
-
-        for i in range(n_par):
-            s = 0.0
-            for j in range(n_par):
-                s += self._cov_matrix[i, j] * c[j]
-
-            err2 += c[i] * s
+        tmp = c.dot(self._cov_matrix)
+        err2 = tmp.dot(c)
 
         return math.sqrt(err2)
 
