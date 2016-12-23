@@ -38,18 +38,20 @@ class Polynomial(object):
         numexpr.set_num_threads(1)
         numexpr.set_vml_num_threads(1)
 
-
-
-
-
-
     @property
     def degree(self):
+        """
+        the polynomial degree
+        :return:
+        """
         return self._degree
 
     @property
     def error(self):
-
+        """
+        the error on the polynomial coefficients
+        :return:
+        """
         return np.sqrt(self._cov_matrix.diagonal())
 
     def __get_coefficient(self):
@@ -102,16 +104,9 @@ class Polynomial(object):
 
     def compute_covariance_matrix(self, function, best_fit_parameters):
 
-        minima = np.zeros_like(best_fit_parameters)
-        maxima = np.zeros_like(best_fit_parameters)
+        minima = np.zeros_like(best_fit_parameters) - 100
+        maxima = np.zeros_like(best_fit_parameters) + 100
 
-        for i in range(len(best_fit_parameters)):
-
-            minima[i] = -100.  # best_fit_parameters[i] / 1000.0
-
-            maxima[i] = 100.  # best_fit_parameters[i] * 1000.0
-
-        print best_fit_parameters
 
         try:
 
@@ -136,7 +131,6 @@ class Polynomial(object):
 
         except:
 
-            print "OUCH"
 
             custom_warnings.warn("Cannot invert Hessian matrix, looks like the matrix is singluar")
 
