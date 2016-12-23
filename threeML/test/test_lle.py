@@ -8,7 +8,7 @@ from threeML.plugins.FermiLATLLELike import FermiLATLLELike, BinningMethodError
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
-from astromodels.model import Model
+from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
 from astromodels.sources.point_source import PointSource
 from astromodels.sources.extended_source import ExtendedSource
