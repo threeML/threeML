@@ -10,6 +10,7 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 class CannotComputeCovariance(RuntimeWarning):
     pass
 
+
 class Polynomial(object):
     def __init__(self, coefficients, is_integral=False):
 
@@ -22,7 +23,6 @@ class Polynomial(object):
         self._degree = len(coefficients) - 1
 
         self._i_plus_1 = np.array(range(1, self._degree + 1 + 1), dtype=float)
-
 
         # we can fix some things for speed
         # we only need to set the coeff for the
@@ -90,15 +90,10 @@ class Polynomial(object):
             result = result * x + coefficient
         return result
 
-    def get_number_free_parameters(self):
-        return self._degree + 1
-
-
     def compute_covariance_matrix(self, function, best_fit_parameters):
 
         minima = np.zeros_like(best_fit_parameters) - 100
         maxima = np.zeros_like(best_fit_parameters) + 100
-
 
         try:
 
@@ -122,7 +117,6 @@ class Polynomial(object):
             self._cov_matrix = covariance_matrix
 
         except:
-
 
             custom_warnings.warn("Cannot invert Hessian matrix, looks like the matrix is singluar")
 
@@ -160,7 +154,6 @@ class Polynomial(object):
     def _eval_basis(self, x):
 
         return (1. / self._i_plus_1) * np.power(x, self._i_plus_1)
-
 
     def integral_error(self, xmin, xmax):
         """
@@ -336,6 +329,49 @@ class PolyLogLikelihood(object):
         self._parameters = model.coefficients
         self._exposure = exposure
 
+        def cov_call(*parameters):
+            """
+              Evaluate the unbinned Poisson log likelihood
+
+            Args:
+                parameters:
+
+            Returns:
+
+            """
+            # print parameters
+            # Compute the values for the model given this set of parameters
+            self._model.coefficients = parameters
+
+            # Integrate the polynomial (or in the future, model) over the given interval
+
+            n_expected_counts = 0.
+
+            for start, stop in zip(self._t_start, self._t_stop):
+                n_expected_counts += self._model.integral(start, stop)
+
+            # Now evaluate the model at the event times and multiply by the exposure
+
+            M = self._model(self._events) * self._exposure
+
+            # Replace negative values for the model (impossible in the Poisson context)
+            # with zero
+            negative_mask = (M < 0)
+
+            if (len(negative_mask.nonzero()[0]) > 0):
+                M[negative_mask] = 0.0
+
+            # Poisson loglikelihood statistic  is:
+            # logL = -Nexp + Sum ( log M_i )
+
+            logM = self._evaluate_logM(M)
+
+            log_likelihood = -n_expected_counts + logM.sum()
+
+            return -log_likelihood
+
+        self.cov_call = cov_call
+
     def _evaluate_logM(self, M):
         # Evaluate the logarithm with protection for negative or small
         # numbers, using a smooth linear extrapolation (better than just a sharp
@@ -356,8 +392,6 @@ class PolyLogLikelihood(object):
             logM = np.log(M)
 
         return logM
-
-    pass
 
     def __call__(self, parameters):
         """
@@ -409,54 +443,6 @@ class PolyLogLikelihood(object):
             v[zero_mask] = np.sign(v[zero_mask]) * tiny
 
         return v, tiny
-
-    pass
-
-    def get_free_derivs(self, parameters=None):
-        """
-        Return the gradient of the logLikelihood for a given set of parameters (or the current
-        defined one, if parameters=None)
-        """
-        # The derivative of the logLikelihood statistic respect to parameter p is:
-        # dC / dp = Sum [ (dM/dp)_i - D_i/M_i (dM/dp)_i]
-
-        # Get the number of parameters and initialize the gradient to 0
-        n_free = self._model.get_number_free_parameters()
-
-        derivatives = np.zeros(n_free)
-
-        # Set the parameters, if a new set has been provided
-
-        if parameters is not None:
-            self._model.coefficients = parameters
-
-        # Get the gradient of the model respect to the parameters
-
-        model_derivatives = self._model.get_free_derivs(self._bin_centers) * self._exposure
-
-        # Get the model
-
-        M = self._model(self._bin_centers) * self._exposure
-
-        M, tiny_M = self._fix_precision(M)
-
-        # Compute y_divided_M = y/M: inizialize y_divided_M to zero
-        # and then overwrite the elements for which y > 0. This is to avoid
-        # possible underflow and overflow due to the finite precision of the
-        # computer
-
-        y_divided_M = np.zeros(len(self._counts))
-
-        non_zero = (self._counts > 0)
-        y_divided_M[non_zero] = self._counts[non_zero] / M[non_zero]
-
-        for p in range(n_free):
-            this_model_derivatives, tinyMd = self._fix_precision(model_derivatives[p])
-            derivatives[p] = np.sum(this_model_derivatives * (1.0 - y_divided_M))
-
-        return derivatives
-
-    pass
 
 
 class PolyUnbinnedLogLikelihood(object):
@@ -519,7 +505,6 @@ class PolyUnbinnedLogLikelihood(object):
 
         self.cov_call = cov_call
 
-
     def _evaluate_logM(self, M):
         # Evaluate the logarithm with protection for negative or small
         # numbers, using a smooth linear extrapolation (better than just a sharp
@@ -536,8 +521,6 @@ class PolyUnbinnedLogLikelihood(object):
         else:
             logM = np.log(M)
         return logM
-
-
 
     def __call__(self, parameters):
         """
@@ -592,41 +575,3 @@ class PolyUnbinnedLogLikelihood(object):
             v[zero_mask] = np.sign(v[zero_mask]) * tiny
 
         return v, tiny
-
-    def get_free_derivs(self, parameters=None):
-        """
-        Return the gradient of the logLikelihood for a given set of parameters (or the current
-        defined one, if parameters=None)
-        """
-        # The derivative of the unbinned logLikelihood statistic respect to parameter p is:
-        # d logL / d theta_j = -(1/j+1) (t_f^(j+1) - t_0^(j+1)) + Sum( P(t_i, theta_k)^(-1) *t_i^j  )
-
-
-        # Set the parameters, if a new set has been provided
-        if (parameters is not None):
-            self._model.coefficients = parameters
-        pass
-
-        M = self._model(self._events)  # * self._exposure
-
-        M, tiny_m = self._fix_precision(M)
-
-        degrees = np.arange(self._model.degree + 1)
-
-        def derivative_per_degree(degree):
-
-            d_1 = degree + 1
-
-            pre_factor = 0
-            for start, stop in zip(self._t_start, self._t_stop):
-                pre_factor += (stop ** d_1 - start ** d_1)
-
-            raised_events, _ = self._fix_precision(np.power(self._events, degree))
-
-            return -(raised_events / M).sum() + pre_factor / float(d_1)
-
-        derivs = np.array([derivative_per_degree(degree) for degree in degrees])
-
-        return derivs
-
-
