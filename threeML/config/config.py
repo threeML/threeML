@@ -3,22 +3,40 @@ import shutil
 import re
 import pkg_resources
 import yaml
-import urlparse
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
+from collections import OrderedDict
 
 from threeML.exceptions.custom_exceptions import custom_warnings, ConfigurationFileCorrupt
-from threeML.io.package_data import get_path_of_data_file
+
 
 _config_file_name = 'threeML_config.yml'
+
+# Scipy optimizers
+# adds the ability for safe load to import dictionaries
+_optimize_methods = ('Nelder-Mead',"Powell","CG","BFGS","Newton-CG","L-BFGS-B","TNC","COBYLA","SLSQP","dogleg","trust-ncg")
+
+
+
+
+def get_path_of_default_configuration():
+
+    file_path = pkg_resources.resource_filename("threeML", 'config/%s' % _config_file_name)
+
+    return file_path
 
 
 class Config(object):
 
     def __init__(self):
 
+
+        # how deep into the tree we have gone
+        #self._recursion_level = 0
+
+
         # Read first the default configuration file
-        default_configuration_path = get_path_of_data_file(_config_file_name)
+        default_configuration_path = get_path_of_default_configuration()
 
         assert os.path.exists(default_configuration_path), \
             "Default configuration %s does not exist. Re-install 3ML" % default_configuration_path
@@ -155,48 +173,24 @@ class Config(object):
         return type(var) == str
 
     @staticmethod
-    def is_ftp_url(var):
+    def is_optimizer(method):
 
-        try:
+        if method in _optimize_methods:
 
-            tokens = urlparse.urlparse(var)
-
-        except:
-
-            # This is very rare, as almost anything is a valid URL
-            return False
+            return True
 
         else:
 
-            if tokens.scheme != 'ftp' or tokens.netloc == '':
-
-                return False
-
-            else:
-
-                return True
+            return False
 
     @staticmethod
-    def is_http_url(var):
+    def is_number(val):
 
-        try:
+        return type(val) == int or type(val) == float
 
-            tokens = urlparse.urlparse(var)
-
-        except:
-
-            # This is very rare, as almost anything is a valid URL
-            return False
-
-        else:
-
-            if (tokens.scheme != 'http' and tokens.scheme != 'https') or tokens.netloc == '':
-
-                return False
-
-            else:
-
-                return True
+    @staticmethod
+    def is_dict(var):
+        return isinstance(var, OrderedDict)
 
     def _subs_values_with_none(self, d):
         """
@@ -229,6 +223,7 @@ class Config(object):
         return self._subs_values_with_none(d1) == self._subs_values_with_none(d2)
 
     def _traverse_dict(self, d):
+
 
         for key in d:
 
@@ -271,8 +266,10 @@ class Config(object):
                                        ", ".join(plt.colormaps())),
                               'name': (self.is_string, "a valid name (string)"),
                               'switch': (self.is_bool, "one of yes, no, True, False"),
-                              'ftp url': (self.is_ftp_url, "a valid FTP URL"),
-                              'http url': (self.is_http_url, "a valid HTTP(S) URL")}
+                              'optimizer': (self.is_optimizer, "one of scipy.optimize minimization methods (available: %s)"
+                                            %", ".join(_optimize_methods)),
+                              'number': (self.is_number, "an int or float")
+                              }
 
             # Now that we know that the provided configuration have the right structure, let's check that
             # each value is of the proper type

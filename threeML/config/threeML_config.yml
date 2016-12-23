@@ -58,6 +58,34 @@ gbm:
 
   background selection color (color): '#80b1d3'
 
+lle:
+
+  background unbinned (switch) : False
+
+
+  # The default color for the Fermi LAT LLE
+  # light curve plot
+
+
+
+  lightcurve color (color): '#8da0cb'
+
+  # The default color for the data selection
+  # in Fermi LAT LLE the light curve plot
+
+  selection color (color): '#fc8d62'
+
+  # The default color for the background
+  # in Fermi LAT LLE the light curve plot
+
+  background color (color): '#66c2a5'
+
+  # The default color for the background
+  # selection in Fermi LAT LLE the light curve plot
+
+  background selection color (color): '#80b1d3'
+
+
 mle:
 
   # Colors for MLE contours and profiles
@@ -104,18 +132,40 @@ model plot:
 
   bayes cmap (cmap): Set1
 
-LAT:
+event list:
 
-  # URL for the FTP website used to download LAT data
-  public FTP location (ftp url): ftp://legacy.gsfc.nasa.gov/fermi/data
+   # methods for dealing with event lists
 
-  # URL for the public LAT Data Server entry point
-  query form (http url): http://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi
+   # The scipy.optimize method to be used when
+   # performing an unbinned polynomial fit to
+   # an event list
+
+   unbinned fit method (optimizer): "Nelder-Mead"
+
+   # options for the unbinned fit method.
+   # see: https://docs.scipy.org/doc/scipy-0.18.1/reference/optimize.html
+
+   unbinned fit options (dict):
+
+       ftol (number): !!float 1E-5
+       xtol (number): !!float 1E-5
+       maxiter (number): !!float 1E6
+       maxfun (number): !!float 1E6
+       disp (switch): False
+
+   # The scipy.optimize method to be used when
+   # performing an binned polynomial fit to
+   # an event list
+
+   binned fit method (optimizer): "Powell"
 
 
-catalogs :
+   # options for the binned fit method.
+   # see: https://docs.scipy.org/doc/scipy-0.18.1/reference/optimize.html
+   binned fit options (dict):
 
-  Fermi :
+       ftol (number): !!float 1E-5
+       xtol (number): !!float 1E-5
+       maxiter (number): !!float 1E6
+       disp (switch): False
 
-    LAT FGL (http url) : http://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermilpsc&
-    GBM burst catalog (http url) : http://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermigbrst&

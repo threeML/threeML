@@ -10,7 +10,7 @@ from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.plugins.OGIP.response import Response
 from threeML.data_list import DataList
 from threeML.classicMLE.likelihood_ratio_test import LikelihoodRatioTest
-from astromodels.core.model import Model
+from astromodels.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff, Cutoff_powerlaw
 from astromodels.sources.point_source import PointSource
 from threeML.plugins.SwiftXRTLike import SwiftXRTLike

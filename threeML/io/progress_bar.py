@@ -289,12 +289,6 @@ class ProgressBarAscii(ProgressBarBase):
 
         return current_iteration
 
-    def finish(self):
-
-        super(ProgressBarAscii, self).finish()
-
-        sys.stdout.write("\n")
-
     def _generate_bar(self, current_iteration):
 
         # Compute the percentage completed
