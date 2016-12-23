@@ -231,9 +231,9 @@ def test_gbm_binning():
 
         examine_bins(nai3.bins, 0, 10, 9)
 
-        nai3.create_time_bins(start=0, stop=10, method='significance', sigma=10)
+        nai3.create_time_bins(start=0, stop=10, method='significance', sigma=40)
 
-        examine_bins(nai3.bins, 0, 10, 91)
+        examine_bins(nai3.bins, 0, 10, 4)
 
         nai3.view_lightcurve(use_binner=True)
 
