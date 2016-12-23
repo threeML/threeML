@@ -723,18 +723,9 @@ class OGIPLike(PluginPrototype):
                 new_ogip_like._apply_mask_to_original_vectors()
 
             # We want to store the simulated parameters so that the user
-            # can recall them
+            # can recall them later
 
             new_ogip_like._simulation_storage = clone_model(self._like_model)
-
-            # GV: It is probably safe to assume that there will be only one point source
-            # if you can think of a more clever way to do this let me know
-
-
-
-
-
-
 
             # TODO: nuisance parameters
 
