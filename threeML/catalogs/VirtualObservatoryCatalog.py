@@ -3,6 +3,7 @@ from astromodels import *
 from astropy.vo.client.vos_catalog import VOSCatalog
 from astropy.vo.client import conesearch
 from astropy.vo.client.exceptions import VOSError
+from astropy.coordinates.name_resolve import get_icrs_coordinates
 
 
 class VirtualObservatoryCatalog(object):
@@ -13,7 +14,24 @@ class VirtualObservatoryCatalog(object):
 
         self._last_query_results = None
 
-    def query(self, ra, dec, radius):
+    def search_around_source(self, source_name, radius):
+        """
+        Search for sources around the named source. The coordinates of the provided source are resolved using the
+        astropy.coordinates.name_resolve facility.
+
+        :param source_name: name of the source, like "Crab"
+        :param radius: radius of the search, in degrees
+        :return: (ra, dec, table), where ra,dec are the coordinates of the source as resolved by astropy, and table is
+        a table with the list of sources
+        """
+
+        sky_coord = get_icrs_coordinates(source_name)
+
+        ra, dec = (sky_coord.fk5.ra.value, sky_coord.fk5.dec.value)
+
+        return ra, dec, self.cone_search(ra, dec, radius)
+
+    def cone_search(self, ra, dec, radius):
         """
         Searches for sources in a cone of given radius and center
 
@@ -70,7 +88,7 @@ class VirtualObservatoryCatalog(object):
         return self._dec
 
     def apply_format(self, table):
-
+        
         raise NotImplementedError("You have to override this!")
 
     def get_model(self):

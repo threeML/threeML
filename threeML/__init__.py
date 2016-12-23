@@ -7,6 +7,9 @@ import imp
 # Import the version
 from version import __version__
 
+# Import everything from astromodels
+from astromodels import *
+
 # This dynamically loads a module and return it in a variable
 
 def is_module_importable(module_full_path):
@@ -182,12 +185,23 @@ from .utils.step_parameter_generator import step_generator
 
 from .parallel.parallel_client import parallel_computation
 
+# Import catalogs
+from threeML.catalogs import *
+
+# Import LAT downloader
+from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config
 
 import astropy.units as u
 
 import os
+
+if is_plugin_available("FermipyLike"):
+
+    # Import the LAT data downloader
+    from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
 
 # Check that the number of threads is set to 1 for all multi-thread libraries
 # otherwise numpy operations will be way slower than what they could be, since
@@ -216,6 +230,3 @@ for var in var_to_check:
 
         custom_warnings.warn("Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML" % var,
                              RuntimeWarning)
-
-# Finally import everything from astromodels
-from astromodels import *
