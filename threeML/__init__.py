@@ -188,6 +188,9 @@ from .parallel.parallel_client import parallel_computation
 # Import catalogs
 from threeML.catalogs import *
 
+# Import LAT downloader
+from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config
 

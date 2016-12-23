@@ -1,18 +1,20 @@
 import pytest
 
 from threeML import *
-from threeML.plugins.FermipyLike import FermipyLike
 from threeML.io.network import internet_connection_is_active
 
 skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
                                                        reason="No active internet connection")
 
-skip_if_fermipy_is_not_available = pytest.mark.skipif(not is_plugin_available("FermipyLike"))
+skip_if_fermipy_is_not_available = pytest.mark.skipif(not is_plugin_available("FermipyLike"),
+                                                      reason="No LAT environment installed")
 
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
 def test_FermipyLike():
+
+    from threeML.plugins.FermipyLike import FermipyLike
 
     # Crab coordinates
 
