@@ -1,8 +1,6 @@
 import numpy as np
 import scipy
 import warnings
-import math
-import numexpr
 from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
 from threeML.exceptions.custom_exceptions import custom_warnings
 
@@ -33,10 +31,6 @@ class Polynomial(object):
             integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
 
             self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
-
-        oldaccuracy = numexpr.set_vml_accuracy_mode('low')
-        numexpr.set_num_threads(1)
-        numexpr.set_vml_num_threads(1)
 
     @property
     def degree(self):
@@ -168,151 +162,6 @@ class Polynomial(object):
         err2 = tmp.dot(c)
 
         return np.sqrt(err2)
-
-
-def polyfit(x, y, grade, exposure):
-    """
-    function to fit a polynomial to event data. not a member to allow parallel computation
-    """
-
-    test = False
-
-    # Check that we have enough counts to perform the fit, otherwise
-    # return a "zero polynomial"
-    non_zero_mask = (y > 0)
-    n_non_zero = len(non_zero_mask.nonzero()[0])
-    if n_non_zero == 0:
-        # No data, nothing to do!
-        return Polynomial([0.0]), 0.0
-
-    # Compute an initial guess for the polynomial parameters,
-    # with a least-square fit (with weight=1) using SVD (extremely robust):
-    # (note that polyfit returns the coefficient starting from the maximum grade,
-    # thus we need to reverse the order)
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-
-        initial_guess = np.polyfit(x, y, grade)
-
-    initial_guess = initial_guess[::-1]
-
-    polynomial = Polynomial(initial_guess)
-
-    # Check that the solution found is meaningful (i.e., definite positive
-    # in the interval of interest)
-    M = polynomial(x)
-
-    negative_mask = (M < 0)
-
-    if len(negative_mask.nonzero()[0]) > 0:
-        # Least square fit failed to converge to a meaningful solution
-        # Reset the initialGuess to reasonable value
-        initial_guess[0] = np.mean(y)
-        meanx = np.mean(x)
-        initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
-
-    # Improve the solution using a logLikelihood statistic (Cash statistic)
-    log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
-
-    # Check that we have enough non-empty bins to fit this grade of polynomial,
-    # otherwise lower the grade
-    dof = n_non_zero - (grade + 1)
-    if test:
-        print("Effective dof: %s" % (dof))
-
-    if dof <= 2:
-        # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-        while (dof < 2 and len(initial_guess) > 1):
-            initial_guess = initial_guess[:-1]
-            polynomial = Polynomial(initial_guess)
-            log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
-
-    # Try to improve the fit with the log-likelihood
-
-    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
-                                         ftol=1E-5, xtol=1E-5,
-                                         maxiter=1e6, maxfun=1E6,
-                                         disp=False)
-
-    # Get the value for cstat at the minimum
-
-    min_log_likelihood = log_likelihood(final_estimate)
-
-    # Update the polynomial with the fitted parameters,
-    # and the relative covariance matrix
-
-    final_polynomial = Polynomial(final_estimate)
-
-    try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
-    except Exception:
-        raise
-    # if test is defined, compare the results with those obtained with ROOT
-
-
-    return final_polynomial, min_log_likelihood
-
-
-def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude=1):
-    """
-    function to fit a polynomial to event data. not a member to allow parallel computation
-
-    """
-
-    # first do a simple amplitude fit
-
-    search_grid = np.logspace(-2, 4, 10)
-
-    initial_guess = np.zeros(grade + 1)
-
-    polynomial = Polynomial(initial_guess)
-
-    log_likelihood = PolyUnbinnedLogLikelihood(events,
-                                               polynomial,
-                                               t_start,
-                                               t_stop,
-                                               exposure)
-
-    like_grid = []
-    for amp in search_grid:
-
-        initial_guess[0] = amp
-        like_grid.append(log_likelihood(initial_guess))
-
-    initial_guess[0] = search_grid[np.argmin(like_grid)]
-
-    # Improve the solution
-
-
-
-    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
-                                         ftol=1E-5, xtol=1E-5,
-                                         maxiter=1e6, maxfun=1E6,
-                                         disp=False)
-
-    # Get the value for cstat at the minimum
-
-    min_log_likelihood = log_likelihood(final_estimate)
-
-    # Update the polynomial with the fitted parameters,
-    # and the relative covariance matrix
-
-    final_polynomial = Polynomial(final_estimate)
-
-    try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
-    except Exception:
-        raise
-    # if test is defined, compare the results with those obtained with ROOT
-
-
-    return final_polynomial, min_log_likelihood
-
-
-##
-## The log likelihoods for binned and unbinned fits
-##
 
 class PolyLogLikelihood(object):
     """
@@ -575,3 +424,143 @@ class PolyUnbinnedLogLikelihood(object):
             v[zero_mask] = np.sign(v[zero_mask]) * tiny
 
         return v, tiny
+
+
+def polyfit(x, y, grade, exposure):
+    """
+    function to fit a polynomial to event data. not a member to allow parallel computation
+    """
+
+    test = False
+
+    # Check that we have enough counts to perform the fit, otherwise
+    # return a "zero polynomial"
+    non_zero_mask = (y > 0)
+    n_non_zero = len(non_zero_mask.nonzero()[0])
+    if n_non_zero == 0:
+        # No data, nothing to do!
+        return Polynomial([0.0]), 0.0
+
+    # Compute an initial guess for the polynomial parameters,
+    # with a least-square fit (with weight=1) using SVD (extremely robust):
+    # (note that polyfit returns the coefficient starting from the maximum grade,
+    # thus we need to reverse the order)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+
+        initial_guess = np.polyfit(x, y, grade)
+
+    initial_guess = initial_guess[::-1]
+
+    polynomial = Polynomial(initial_guess)
+
+    # Check that the solution found is meaningful (i.e., definite positive
+    # in the interval of interest)
+    M = polynomial(x)
+
+    negative_mask = (M < 0)
+
+    if len(negative_mask.nonzero()[0]) > 0:
+        # Least square fit failed to converge to a meaningful solution
+        # Reset the initialGuess to reasonable value
+        initial_guess[0] = np.mean(y)
+        meanx = np.mean(x)
+        initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
+
+    # Improve the solution using a logLikelihood statistic (Cash statistic)
+    log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
+
+    # Check that we have enough non-empty bins to fit this grade of polynomial,
+    # otherwise lower the grade
+    dof = n_non_zero - (grade + 1)
+    if test:
+        print("Effective dof: %s" % (dof))
+
+    if dof <= 2:
+        # Fit is poorly or ill-conditioned, have to reduce the number of parameters
+        while (dof < 2 and len(initial_guess) > 1):
+            initial_guess = initial_guess[:-1]
+            polynomial = Polynomial(initial_guess)
+            log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
+
+    # Try to improve the fit with the log-likelihood
+
+    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
+                                         ftol=1E-5, xtol=1E-5,
+                                         maxiter=1e6, maxfun=1E6,
+                                         disp=False)
+
+    # Get the value for cstat at the minimum
+
+    min_log_likelihood = log_likelihood(final_estimate)
+
+    # Update the polynomial with the fitted parameters,
+    # and the relative covariance matrix
+
+    final_polynomial = Polynomial(final_estimate)
+
+    try:
+        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
+    except Exception:
+        raise
+    # if test is defined, compare the results with those obtained with ROOT
+
+
+    return final_polynomial, min_log_likelihood
+
+
+def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude=1):
+    """
+    function to fit a polynomial to event data. not a member to allow parallel computation
+
+    """
+
+    # first do a simple amplitude fit
+
+    search_grid = np.logspace(-2, 4, 10)
+
+    initial_guess = np.zeros(grade + 1)
+
+    polynomial = Polynomial(initial_guess)
+
+    log_likelihood = PolyUnbinnedLogLikelihood(events,
+                                               polynomial,
+                                               t_start,
+                                               t_stop,
+                                               exposure)
+
+    like_grid = []
+    for amp in search_grid:
+
+        initial_guess[0] = amp
+        like_grid.append(log_likelihood(initial_guess))
+
+    initial_guess[0] = search_grid[np.argmin(like_grid)]
+
+    # Improve the solution
+
+
+
+    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
+                                         ftol=1E-5, xtol=1E-5,
+                                         maxiter=1e6, maxfun=1E6,
+                                         disp=False)
+
+    # Get the value for cstat at the minimum
+
+    min_log_likelihood = log_likelihood(final_estimate)
+
+    # Update the polynomial with the fitted parameters,
+    # and the relative covariance matrix
+
+    final_polynomial = Polynomial(final_estimate)
+
+    try:
+        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
+    except Exception:
+        raise
+    # if test is defined, compare the results with those obtained with ROOT
+
+
+    return final_polynomial, min_log_likelihood
