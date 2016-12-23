@@ -124,8 +124,12 @@ class Polynomial(object):
 
 
     def integral_error(self, xmin, xmax):
-        # Based on http://root.cern.ch/root/html/tutorials/fit/ErrorIntegral.C.html
-
+        """
+        computes the integral error of an interval
+        :param xmin: start of the interval
+        :param xmax: stop of the interval
+        :return: interval error
+        """
 
         c = self._eval_basis(xmax) - self._eval_basis(xmin)
         tmp = c.dot(self._cov_matrix)
