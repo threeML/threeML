@@ -9,7 +9,6 @@ skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_i
 
 @skip_if_internet_is_not_available
 def test_GBM_catalog():
-
     gbm_catalog = FermiGBMBurstCatalog()
 
     _ = gbm_catalog.cone_search(0.0, 0.0, 5.0)
@@ -22,7 +21,6 @@ def test_GBM_catalog():
 
 @skip_if_internet_is_not_available
 def test_LAT_catalog():
-
     lat_catalog = FermiLATSourceCatalog()
 
     ra, dec, table1 = lat_catalog.search_around_source('Crab', 1.0)

@@ -7,16 +7,15 @@ from astromodels.utils.angular_distance import angular_distance
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 
+
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
     def __init__(self):
-
         super(FermiGBMBurstCatalog, self).__init__('fermigbrst',
                                                    threeML_config['catalogs']['Fermi']['GBM burst catalog'],
-                                              'Fermi/GBM burst catalog')
+                                                   'Fermi/GBM burst catalog')
 
     def apply_format(self, table):
-
         new_table = table['name',
                           'ra', 'dec',
                           'trigger_time',
@@ -31,28 +30,28 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 #########
 
 threefgl_types = {
-    'agn': 'other non-blazar active galaxy',
-    'bcu': 'active galaxy of uncertain type',
-    'bin': 'binary',
-    'bll': 'BL Lac type of blazar',
-    'css': 'compact steep spectrum quasar',
-    'fsrq': 'FSRQ type of blazar',
-    'gal': 'normal galaxy (or part)',
-    'glc': 'globular cluster',
-    'hmb': 'high-mass binary',
+    'agn'  : 'other non-blazar active galaxy',
+    'bcu'  : 'active galaxy of uncertain type',
+    'bin'  : 'binary',
+    'bll'  : 'BL Lac type of blazar',
+    'css'  : 'compact steep spectrum quasar',
+    'fsrq' : 'FSRQ type of blazar',
+    'gal'  : 'normal galaxy (or part)',
+    'glc'  : 'globular cluster',
+    'hmb'  : 'high-mass binary',
     'nlsy1': 'narrow line Seyfert 1',
-    'nov': 'nova',
-    'PSR': 'pulsar, identified by pulsations',
-    'psr': 'pulsar, no pulsations seen in LAT yet',
-    'pwn': 'pulsar wind nebula',
-    'rdg': 'radio galaxy',
-    'sbg': 'starburst galaxy',
-    'sey': 'Seyfert galaxy',
-    'sfr': 'star-forming region',
-    'snr': 'supernova remnant',
-    'spp': 'special case - potential association with SNR or PWN',
-    'ssrq': 'soft spectrum radio quasar',
-    '': 'unknown'
+    'nov'  : 'nova',
+    'PSR'  : 'pulsar, identified by pulsations',
+    'psr'  : 'pulsar, no pulsations seen in LAT yet',
+    'pwn'  : 'pulsar wind nebula',
+    'rdg'  : 'radio galaxy',
+    'sbg'  : 'starburst galaxy',
+    'sey'  : 'Seyfert galaxy',
+    'sfr'  : 'star-forming region',
+    'snr'  : 'supernova remnant',
+    'spp'  : 'special case - potential association with SNR or PWN',
+    'ssrq' : 'soft spectrum radio quasar',
+    ''     : 'unknown'
 }
 
 
@@ -244,11 +243,11 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
                 if this_name == "Crab":
 
-                    if name[-1]=='i':
+                    if name[-1] == 'i':
 
                         this_name = "Crab_IC"
 
-                    elif name[-1]=="s":
+                    elif name[-1] == "s":
 
                         this_name = "Crab_synch"
 

@@ -290,17 +290,17 @@ class Config(object):
         else:
 
             # Make a dictionary of known checkers and what they apply to
-            known_checkers = {'color': (self.is_matplotlib_color, 'a matplotlib color (name or html hex value)'),
-                              'cmap': (self.is_matplotlib_cmap, 'a matplotlib color map (available: %s)' %
+            known_checkers = {'color'    : (self.is_matplotlib_color, 'a matplotlib color (name or html hex value)'),
+                              'cmap'     : (self.is_matplotlib_cmap, 'a matplotlib color map (available: %s)' %
                                        ", ".join(plt.colormaps())),
-                              'name': (self.is_string, "a valid name (string)"),
-                              'switch': (self.is_bool, "one of yes, no, True, False"),
-                              'ftp url': (self.is_ftp_url, "a valid FTP URL"),
-                              'http url': (self.is_http_url, "a valid HTTP(S) URL"),
+                              'name'     : (self.is_string, "a valid name (string)"),
+                              'switch'   : (self.is_bool, "one of yes, no, True, False"),
+                              'ftp url'  : (self.is_ftp_url, "a valid FTP URL"),
+                              'http url' : (self.is_http_url, "a valid HTTP(S) URL"),
 
                               'optimizer': (self.is_optimizer, "one of scipy.optimize minimization methods (available: %s)"
                                             %", ".join(_optimize_methods)),
-                              'number': (self.is_number, "an int or float")
+                              'number'   : (self.is_number, "an int or float")
                               }
 
             # Now that we know that the provided configuration have the right structure, let's check that

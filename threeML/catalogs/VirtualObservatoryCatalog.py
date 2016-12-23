@@ -88,7 +88,7 @@ class VirtualObservatoryCatalog(object):
         return self._dec
 
     def apply_format(self, table):
-        
+
         raise NotImplementedError("You have to override this!")
 
     def get_model(self):

@@ -54,7 +54,7 @@ class JointLikelihood(object):
         # Process optional keyword parameters
         self.verbose = verbose
 
-        self._likelihood_model = likelihood_model # type: astromodels.core.model.Model
+        self._likelihood_model = likelihood_model  # type: astromodels.core.model.Model
 
         self._data_list = data_list
 

@@ -10,7 +10,6 @@ skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_i
 
 @skip_if_internet_is_not_available
 def test_download_LAT_data():
-
     # Crab
     ra = 83.6331
     dec = 22.0199

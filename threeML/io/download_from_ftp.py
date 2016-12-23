@@ -7,7 +7,6 @@ from threeML.io.progress_bar import progress_bar
 
 
 def download_file_from_ftp(ftp_url, destination_directory):
-
     assert ftp_url[-1] != "/", "A URL for a file cannot end in / (received: %s)" % ftp_url
 
     tokens = ftp_url.split("/")
@@ -18,7 +17,6 @@ def download_file_from_ftp(ftp_url, destination_directory):
 
 
 def download_files_from_directory_ftp(ftp_url, destination_directory, filenames=None, namefilter=None):
-
     # Parse url
     tokens = urlparse.urlparse(ftp_url)
     serverAddress = tokens.netloc
