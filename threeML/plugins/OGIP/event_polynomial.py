@@ -5,13 +5,35 @@ import math
 
 
 class Polynomial(object):
-    def __init__(self, coefficients):
+    def __init__(self, coefficients, is_integral=False):
 
-        self.coefficients = coefficients
+        """
+
+        :param coefficients: array of poly coefficients
+        :param is_integral: if this polynomial is an
+        """
+        self._coefficients = coefficients
         self._degree = len(coefficients) - 1
+
+        self._i_plus_1 = np.array(range(1, self._degree + 1 + 1), 'd')
 
         # Build an empty covariance matrix
         self._cov_matrix = np.zeros([self._degree + 1, self._degree + 1])
+
+        # we can fix some things for speed
+        # we only need to set the coeff for the
+        # integral polynomial
+        if not is_integral:
+            integral_coeff = [0]
+
+            integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+
+            self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
+
+
+
+
+
 
     @property
     def degree(self):
@@ -22,10 +44,39 @@ class Polynomial(object):
 
         return np.sqrt(self._cov_matrix.diagonal())
 
+    def __get_coefficient(self):
+        """ gets the coefficients"""
+
+        return self._coefficients
+
+    def ___get_coefficient(self):
+        """ Indirect coefficient getter """
+
+        return self.__get_coefficient()
+
+    def __set_coefficient(self, val):
+        """ sets the coefficients"""
+
+        self._coefficients = val
+
+        integral_coeff = [0]
+
+        integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+
+        self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
+
+    def ___set_coefficient(self, val):
+        """ Indirect coefficient setter """
+
+        return self.__set_coefficient(val)
+
+    coefficients = property(___get_coefficient, ___set_coefficient,
+                            doc="""Gets or sets the coefficients of the polynomial.""")
+
     def __call__(self, x):
 
         result = 0
-        for coefficient in self.coefficients[::-1]:
+        for coefficient in self._coefficients[::-1]:
             result = result * x + coefficient
         return result
 
@@ -45,7 +96,7 @@ class Polynomial(object):
 
     def compute_covariance_matrix(self, statistic_gradient):
 
-        self._cov_matrix = compute_covariance_matrix(statistic_gradient, self.coefficients)
+        self._cov_matrix = compute_covariance_matrix(statistic_gradient, self._coefficients)
 
         # Check that the covariance matrix is positive-defined
 
@@ -64,25 +115,24 @@ class Polynomial(object):
         Evaluate the integral of the polynomial between xmin and xmax
         """
 
-        integral_coeff = [0]
+        # integral_coeff = [0]
+        #
+        # integral_coeff.extend(map(lambda i: self.coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+        #
+        # integral_polynomial = Polynomial(integral_coeff)
+        #
+        return self._integral_polynomial(xmax) - self._integral_polynomial(xmin)
 
-        integral_coeff.extend(map(lambda i: self.coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+    def _eval_basis(self, x):
 
-        integral_polynomial = Polynomial(integral_coeff)
+        return (1. / self._i_plus_1) * np.power(x, self._i_plus_1)
 
-        return integral_polynomial(xmax) - integral_polynomial(xmin)
 
     def integral_error(self, xmin, xmax):
         # Based on http://root.cern.ch/root/html/tutorials/fit/ErrorIntegral.C.html
 
 
-        # Set the weights
-        i_plus_1 = np.array(range(1, self._degree + 1 + 1), 'd')
-
-        def eval_basis(x):
-            return (1 / i_plus_1) * pow(x, i_plus_1)
-
-        c = eval_basis(xmax) - eval_basis(xmin)
+        c = self._eval_basis(xmax) - self._eval_basis(xmin)
 
         # Compute the error on the integral
         err2 = 0.0
@@ -100,7 +150,10 @@ class Polynomial(object):
 
 
 def polyfit(x, y, grade, exposure):
-    """ funtion to fit a polynomial to event data. not a member to allow parallel computation """
+    """
+    function to fit a polynomial to event data. not a member to allow parallel computation
+    """
+
     test = False
 
     # Check that we have enough counts to perform the fit, otherwise
@@ -115,17 +168,13 @@ def polyfit(x, y, grade, exposure):
     # with a least-square fit (with weight=1) using SVD (extremely robust):
     # (note that polyfit returns the coefficient starting from the maximum grade,
     # thus we need to reverse the order)
-    if test:
-        print("  Initial estimate with SVD..."),
+
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
 
         initial_guess = np.polyfit(x, y, grade)
 
     initial_guess = initial_guess[::-1]
-
-    if (test):
-        print("  done -> %s" % (initial_guess))
 
     polynomial = Polynomial(initial_guess)
 

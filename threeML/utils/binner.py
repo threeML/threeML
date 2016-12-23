@@ -313,6 +313,7 @@ class TemporalBinner(object):
         self._stops = []
 
         # Switching to a fast search
+        # Idea inspired by Damien Begue
 
         # these factors change the time steps
         # in the fast search. should experiment
