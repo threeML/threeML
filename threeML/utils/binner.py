@@ -351,6 +351,11 @@ class TemporalBinner(object):
 
         end_fast_search = False
 
+        # resolve once for functions used in the loop
+        searchsorted = np.searchsorted
+
+
+
         # this is the main loop
         # as long as we have not reached the end of the interval
         # the loop will run
@@ -386,7 +391,7 @@ class TemporalBinner(object):
                         if decreased_interval:
 
                             # mark where we are in the list
-                            start_idx = np.searchsorted(self._arrival_times, current_stop)
+                            start_idx = searchsorted(self._arrival_times, current_stop)
 
                             # end the fast search
                             end_fast_search = True
@@ -398,7 +403,7 @@ class TemporalBinner(object):
                             if (current_stop + time_step * increase_factor) >= self._arrival_times[-1]:
 
                                 # mark where we are in the interval
-                                start_idx = np.searchsorted(self._arrival_times, current_stop)
+                                start_idx = searchsorted(self._arrival_times, current_stop)
 
                                 # then we also want to go ahead and get out of the fast search
                                 end_fast_search = True

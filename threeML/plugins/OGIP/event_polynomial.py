@@ -2,7 +2,13 @@ import numpy as np
 import scipy
 import warnings
 import math
+import numexpr
+from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
+from threeML.exceptions.custom_exceptions import custom_warnings
 
+
+class CannotComputeCovariance(RuntimeWarning):
+    pass
 
 class Polynomial(object):
     def __init__(self, coefficients, is_integral=False):
@@ -15,7 +21,7 @@ class Polynomial(object):
         self._coefficients = coefficients
         self._degree = len(coefficients) - 1
 
-        self._i_plus_1 = np.array(range(1, self._degree + 1 + 1), 'd')
+        self._i_plus_1 = np.array(range(1, self._degree + 1 + 1), dtype=float)
 
         # Build an empty covariance matrix
         self._cov_matrix = np.zeros([self._degree + 1, self._degree + 1])
@@ -29,6 +35,10 @@ class Polynomial(object):
             integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
 
             self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
+
+        oldaccuracy = numexpr.set_vml_accuracy_mode('low')
+        numexpr.set_num_threads(1)
+        numexpr.set_vml_num_threads(1)
 
 
 
@@ -92,19 +102,64 @@ class Polynomial(object):
         pass
         return np.array(freeDerivs)
 
-    pass
+    def compute_covariance_matrix(self, function, best_fit_parameters):
 
-    def compute_covariance_matrix(self, statistic_gradient):
+        minima = np.zeros_like(best_fit_parameters)
+        maxima = np.zeros_like(best_fit_parameters)
 
-        self._cov_matrix = compute_covariance_matrix(statistic_gradient, self._coefficients)
+        for i in range(len(best_fit_parameters)):
 
-        # Check that the covariance matrix is positive-defined
+            minima[i] = -100.  # best_fit_parameters[i] / 1000.0
 
-        negative_elements = (np.matrix.diagonal(self._cov_matrix) < 0)
+            maxima[i] = 100.  # best_fit_parameters[i] * 1000.0
 
-        if (len(negative_elements.nonzero()[0]) > 0):
-            raise RuntimeError(
-                    "Negative element in the diagonal of the covariance matrix. Try to reduce the polynomial grade.")
+        print best_fit_parameters
+
+        try:
+
+            hessian_matrix = get_hessian(function, best_fit_parameters, minima, maxima)
+
+        except ParameterOnBoundary:
+
+            custom_warnings.warn("One or more of the parameters are at their boundaries. Cannot compute covariance and"
+                                 " errors", CannotComputeCovariance)
+
+            n_dim = len(best_fit_parameters)
+
+            self._cov_matrix = np.zeros((n_dim, n_dim)) * np.nan
+
+        # Invert it to get the covariance matrix
+
+        try:
+
+            covariance_matrix = np.linalg.inv(hessian_matrix)
+
+            self._cov_matrix = covariance_matrix
+
+        except:
+
+            print "OUCH"
+
+            custom_warnings.warn("Cannot invert Hessian matrix, looks like the matrix is singluar")
+
+            n_dim = len(best_fit_parameters)
+
+            self._cov_matrix = np.zeros((n_dim, n_dim)) * np.nan
+
+
+
+
+
+
+            # self._cov_matrix = compute_covariance_matrix(statistic_gradient, self._coefficients)
+            #
+            # # Check that the covariance matrix is positive-defined
+            #
+            # negative_elements = (np.matrix.diagonal(self._cov_matrix) < 0)
+            #
+            # if (len(negative_elements.nonzero()[0]) > 0):
+            #     raise RuntimeError(
+            #             "Negative element in the diagonal of the covariance matrix. Try to reduce the polynomial grade.")
 
     @property
     def covariance_matrix(self):
@@ -135,7 +190,7 @@ class Polynomial(object):
         tmp = c.dot(self._cov_matrix)
         err2 = tmp.dot(c)
 
-        return math.sqrt(err2)
+        return np.sqrt(err2)
 
 
 def polyfit(x, y, grade, exposure):
@@ -213,7 +268,7 @@ def polyfit(x, y, grade, exposure):
     final_polynomial = Polynomial(final_estimate)
 
     try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
+        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
     except Exception:
         raise
     # if test is defined, compare the results with those obtained with ROOT
@@ -269,7 +324,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
     final_polynomial = Polynomial(final_estimate)
 
     try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
+        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
     except Exception:
         raise
     # if test is defined, compare the results with those obtained with ROOT
@@ -437,6 +492,50 @@ class PolyUnbinnedLogLikelihood(object):
         self._t_start = t_start  # list of starts
         self._t_stop = t_stop
 
+        def cov_call(*parameters):
+            """
+              Evaluate the unbinned Poisson log likelihood
+
+            Args:
+                parameters:
+
+            Returns:
+
+            """
+            # print parameters
+            # Compute the values for the model given this set of parameters
+            self._model.coefficients = parameters
+
+            # Integrate the polynomial (or in the future, model) over the given interval
+
+            n_expected_counts = 0.
+
+            for start, stop in zip(self._t_start, self._t_stop):
+                n_expected_counts += self._model.integral(start, stop)
+
+            # Now evaluate the model at the event times and multiply by the exposure
+
+            M = self._model(self._events) * self._exposure
+
+            # Replace negative values for the model (impossible in the Poisson context)
+            # with zero
+            negative_mask = (M < 0)
+
+            if (len(negative_mask.nonzero()[0]) > 0):
+                M[negative_mask] = 0.0
+
+            # Poisson loglikelihood statistic  is:
+            # logL = -Nexp + Sum ( log M_i )
+
+            logM = self._evaluate_logM(M)
+
+            log_likelihood = -n_expected_counts + logM.sum()
+
+            return -log_likelihood
+
+        self.cov_call = cov_call
+
+
     def _evaluate_logM(self, M):
         # Evaluate the logarithm with protection for negative or small
         # numbers, using a smooth linear extrapolation (better than just a sharp
@@ -453,6 +552,8 @@ class PolyUnbinnedLogLikelihood(object):
         else:
             logM = np.log(M)
         return logM
+
+
 
     def __call__(self, parameters):
         """
@@ -545,7 +646,7 @@ class PolyUnbinnedLogLikelihood(object):
         return derivs
 
 
-def compute_covariance_matrix(grad, par, full_output=False,
+def compute_covariance_matrix_old(grad, par, full_output=False,
                               init_step=0.01, min_step=1e-12, max_step=1, max_iters=50,
                               target=0.1, min_func=1e-7, max_func=4):
     """Perform finite differences on the _analytic_ gradient provided by user to calculate hessian/covariance matrix.
