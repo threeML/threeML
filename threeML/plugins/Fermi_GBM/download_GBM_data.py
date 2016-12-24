@@ -1,190 +1,240 @@
-import HTMLParser
-import html2text
-import re
-import socket
-import time
-import urllib
-import os
-import glob
-
-import astropy.io.fits as pyfits
-
 from threeML.io.file_utils import sanitize_filename
 from threeML.config.config import threeML_config
 from threeML.io.download_from_ftp import download_files_from_directory_ftp
-from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
+
 
 from __future__ import print_function
+
 import ftplib
-import sys, time
-import datetime
+import glob
+import os
+import numpy as np
+from collections import OrderedDict
 
 
-class GetGBMData(object):
-    def __init__(self, trigger=None, daily=None):
+def download_GBM_data_trigger(trigger, detectors=None, destination_directory='.'):
+    """
+    Download the latest GBM TTE and RSP files from the HEASARC server. Will get the
+    latest files and prefer RSP2s over RSPs. If the files already exist in your destination
+    directory, they will be skipped in the download process. The output dictionary can be used
+    as input to the FermiGMBTTELike class.
 
-        self.ftp = ftplib.FTP('legacy.gsfc.nasa.gov', 'anonymous', 'crap@gmail.com')
+    example usage: download_GBM_data_trigger('080916009', detectors=['n0','na','b0'], destination_directory='.')
 
-        if trigger is not None:
+    :param trigger: trigger number (str) with no leading letter e.g. '080916009'
+    :param detectors: list of detectors, default is all detectors
+    :param destination_directory: download directory
+    :return: a dictionary with information about the download
+    """
 
-            self._type = 'triggered'
+    # first we will go and see what files are available
 
-            year = '20' + trigger[:2]
-            self._directory = 'fermi/data/gbm/triggers/' + year + '/bn' + trigger + '/current'
+    ftp = ftplib.FTP('legacy.gsfc.nasa.gov', 'anonymous', '')
 
-        elif daily is not None:
+    # assert
+    year = '20%s' % trigger[:2]
+    directory = 'gbm/triggers/%s/bn%s/current' % (year, trigger)
 
-            self._type = 'daily'
+    allowed_detectors = ['n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7', 'n8', 'n9', 'na', 'nb', 'b0', 'b1']
 
-            date = daily.split('/')
+    if detectors is None:
 
-            self._directory = 'fermi/data/gbm/daily/20' + date[2] + '/' + date[0] + '/' + date[1] + '/current'
+        detectors = allowed_detectors
 
+    else:
 
-        else:
+        assert type(detectors) == list
 
-            print("You did something wrong!")
-            return
+        for detector in detectors:
 
-        try:
-            self.ftp.cwd(self._directory)
-        except ftplib.error_perm:
-            print(self._directory)
-            print("Awww snap! This data entry does not exist at the FSSC. Exiting!\n")
-            self.ftp.quit()
-            return
+            assert detector in allowed_detectors
 
-        self._file_list = self.ftp.nlst()
+    directory_ = 'fermi/data/%s' % directory
 
-        self._detectors = ['n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6', 'n7', 'n8', 'n9', 'na', 'nb', 'b0', 'b1']
+    try:
+        ftp.cwd(directory_)
+    except ftplib.error_perm:
 
-        self._where = ''
+        ftp.quit()
+        raise RuntimeError("Awww snap! This data entry does not exist at the FSSC. Exiting!\n")
 
-    def select_detectors(self, *dets):
-        self._detectors = dets
+    file_list = ftp.nlst()
 
-        self._num_dets = len(dets)
+    # kill this quick or urllib will get confused
+    ftp.quit()
 
-    def set_destination(self, destination):
+    del ftp
 
-        self._where = destination
+    # collect the rsp and tte files from the ftp list
 
-    def _get(self, items):
+    rsp_to_get = []
 
-        # n_items = len(items)
-        #
-        # progress = ProgressBar(n_items)
-        #
-        # progress_bar_iter = max(int(n_items / 100), 1)
+    for filename in file_list:
+        for det in detectors:
+            if filename.find(".rsp") >= 0 and filename.find("cspec") >= 0 and filename.find(det + '_') >= 0:
+                rsp_to_get.append(filename)
 
-        for i, item in enumerate(items):
+    tte_to_get = []
 
-            if i % progress_bar_iter == 0:
-                progress.animate((i + 1))
+    for filename in file_list:
+        for det in detectors:
+            if filename.find("tte") >= 0 and filename.find(det + '_') >= 0:
+                tte_to_get.append(filename)
 
-            self.ftp.retrbinary('RETR ' + item, open(self._where + item, 'wb').write)
+    # lets make sure we get the latests versions of the files
+    # prefer RSP2s
 
-        progress.animate(n_items)
+    rsp_to_get_latest = _get_latest_verison(rsp_to_get)
 
-    def get_rsp_cspec(self):
+    tte_to_get_latest = _get_latest_verison(tte_to_get)
 
-        to_get = []
+    assert len(tte_to_get_latest) == len(
+            rsp_to_get_latest), 'The file list should be the same length. Something went wrong. Contact grburgess'
 
-        for i in self._file_list:
-            for j in self._detectors:
-                if ".rsp" in i and "cspec" in i and j + '_' in i:
-                    to_get.append(i)
-        self._get(to_get)
+    # reorder the file names to match the detectors
 
-    def get_rsp_ctime(self):
+    tmp_rsp = []
+    tmp_tte = []
 
-        to_get = []
+    for det in detectors:
 
-        for i in self._file_list:
-            for j in self._detectors:
-                if ".rsp" in i and "ctime" in i and j + '_' in i:
-                    to_get.append(i)
-        self._get(to_get)
+        for rsp in rsp_to_get_latest:
 
-    def get_ctime(self):
+            if rsp.find('_%s_' % det) >= 0:
 
-        to_get = []
+                tmp_rsp.append(rsp)
 
-        for i in self._file_list:
-            for j in self._detectors:
-                if "ctime" in i and j + '_' in i and 'rsp' not in i:
-                    to_get.append(i)
-        self._get(to_get)
+        for tte in tte_to_get_latest:
 
-    def get_cspec(self):
+            if tte.find('_%s_' % det) >= 0:
 
-        to_get = []
+                tmp_tte.append(tte)
 
-        for i in self._file_list:
-            for j in self._detectors:
-                if "cspec" in i and j + '_' in i and 'rsp' not in i:
-                    to_get.append(i)
+    tte_to_get_latest = np.array(tmp_tte)
+    rsp_to_get_latest = np.array(tmp_rsp)
 
-        self._get(to_get)
+    # now see if we have already downloaded these files
+    tte_filter = np.ones_like(tte_to_get_latest, dtype=bool)
+    rsp_filter = np.ones_like(rsp_to_get_latest, dtype=bool)
 
-    def get_trigdat(self):
+    for i, rsp in enumerate(rsp_to_get_latest):
 
-        to_get = []
+        test = glob.glob(os.path.join(destination_directory, rsp))
 
-        for i in self._file_list:
-            if "trigdat" in i:
-                to_get.append(i)
+        if test:
 
-        self._get(to_get)
+            rsp_filter[i] = 0
 
-    def get_tte(self):
+            print('%s already downloaded into %s -> skipping' % (rsp, destination_directory))
 
-        to_get = []
+    for i, tte in enumerate(tte_to_get_latest):
 
-        for i in self._file_list:
-            for j in self._detectors:
-                if "tte" in i and j + '_' in i:
-                    to_get.append(i)
+        test = glob.glob(os.path.join(destination_directory, tte))
 
-        self._get(to_get)
+        if test:
 
-    def get_tcat(self):
+            tte_filter[i] = 0
 
-        to_get = []
+            print('%s already downloaded into %s -> skipping' % (tte, destination_directory))
 
-        for i in self._file_list:
-            if "tcat" in i:
-                to_get.append(i)
+    # now download the files
 
-        self._get(to_get)
+    remote_path = "%s/%s/" % (threeML_config['LAT']['public FTP location'], directory)
 
-    def get_plots(self):
+    retrival = np.append(rsp_to_get_latest[rsp_filter], tte_to_get_latest[tte_filter])
 
-        to_get = []
+    if len(retrival) > 0:
 
-        for i in self._file_list:
-            if ".gif" in i or ".pdf" in i:
-                to_get.append(i)
+        print("\nDownloading TTE and RSP files...")
 
-        self._get(to_get)
+        downloaded_files = download_files_from_directory_ftp(remote_path,
+                                                             sanitize_filename(destination_directory),
+                                                             filenames=retrival)
 
-    def get_poshist(self):
+        rsp_files = downloaded_files[:len(rsp_to_get_latest[rsp_filter])]
+        tte_files = downloaded_files[len(tte_to_get_latest[tte_filter]):]
 
-        to_get = []
+    else:
 
-        for i in self._file_list:
-            if "poshist" in i:
-                to_get.append(i)
+        rsp_files = []
+        tte_files = []
 
-        self._get(to_get)
+    download_info = {}
 
-    def get_spechist(self, det='g'):
+    detectors = np.array(detectors)
 
-        to_get = []
+    for detector in detectors:
 
-        for i in self._file_list:
-            for j in det:
-                if "spechist" in i and '_' + j + '_' in i:
-                    to_get.append(i)
+        download_info[detector] = {}
 
-        self._get(to_get)
+    # firrt handle the rsp/tte from the DL'ed detectors
+    for detector, rsp in zip(detectors[rsp_filter], rsp_files):
+
+        download_info[detector]['rsp'] = rsp
+
+    for detector, tte in zip(detectors[tte_filter], tte_files):
+
+        download_info[detector]['tte'] = tte
+
+    # now handle the skipped files
+
+    for detector, rsp in zip(detectors[~rsp_filter], rsp_to_get_latest[~rsp_filter]):
+
+        download_info[detector]['rsp'] = os.path.join(destination_directory, rsp)
+
+    for detector, tte in zip(detectors[~tte_filter], tte_to_get_latest[~tte_filter]):
+
+        download_info[detector]['tte'] = os.path.join(destination_directory, tte)
+
+    return download_info
+
+
+def _get_latest_verison(filenames):
+    # make a dict of the pre version number file names
+    # that have version numbers as values
+
+    files = OrderedDict()
+    extentions = OrderedDict()
+    vn_as_string = OrderedDict()
+
+    for fn in filenames:
+
+        fn_stub, vn_stub = fn.split('_v')
+
+        vn_string, ext = vn_stub.split('.')
+
+        vn = 0
+        for i in vn_string:
+            vn += int(i)
+
+        files.setdefault(fn_stub, []).append(vn)
+        extentions.setdefault(fn_stub, []).append(ext)
+        vn_as_string.setdefault(fn_stub, []).append(vn_string)
+
+    # favor RSP2 file
+
+    final_file_names = []
+
+    for key in files.keys():
+
+        # first we favor RSP2
+
+        ext = np.array(extentions[key])
+
+        idx = ext == 'rsp2'
+
+        if idx.sum() == 0:
+
+            idx = np.ones_like(ext, dtype=bool)
+
+        ext = ext[idx]
+        vn = np.array(files[key])[idx]
+        vn_string = np.array(vn_as_string[key])[idx]
+
+        max_vn = np.argmax(vn)
+
+        latest_version = "%s_v%s.%s" % (key, vn_string[max_vn], ext[max_vn])
+
+        final_file_names.append(latest_version)
+
+    return final_file_names
