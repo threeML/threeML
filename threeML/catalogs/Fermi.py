@@ -20,6 +20,8 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         self._available_models = ('band', 'compt', 'pl', 'sbpl')
 
+        self._grabbed_all_data = False
+
     def apply_format(self, table):
 
         new_table = table['name',
@@ -33,6 +35,79 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         new_table['dec'].format = '5.3f'
 
         return new_table.group_by('Search_Offset')
+
+    def search_trigger_name(self, *trigger_names):
+        """
+        Find the information on the given trigger names.
+        First run will be slow. Subsequent runs are very fast
+
+        :param trigger_names:
+        :return:
+        """
+
+        # If we have not downloaded the entire table
+        # then we must do so.
+
+        if not self._grabbed_all_data:
+
+            self._all_table = self.cone_search(0, 0, 360)
+
+            self._completed_table = self._last_query_results
+
+            self._grabbed_all_data = True
+
+        n_entries = self._completed_table.shape[0]
+
+        idx = np.zeros(n_entries, dtype=bool)
+
+        for name in trigger_names:
+
+            condition = self._completed_table.trigger_name == name
+
+            idx = np.logical_or(idx, condition)
+
+        self._last_query_results = self._completed_table[idx]
+
+        return self._all_table[np.asarray(idx)]
+
+    def search_t90(self, t90_greater=None, t90_less=None):
+
+        if t90_greater is None and t90_less is None:
+
+            RuntimeError("You must specify an entry")
+
+        if not self._grabbed_all_data:
+
+            self._all_table = self.cone_search(0, 0, 360)
+
+            self._completed_table = self._last_query_results
+
+            self._grabbed_all_data = True
+
+        n_entries = self._completed_table.shape[0]
+
+        # Create a dummy index first
+
+        idx = np.ones(n_entries, dtype=bool)
+
+        # find the entries greater
+        if t90_greater is not None:
+
+            idx_tmp = self._completed_table.t90 >= t90_greater
+
+            idx = np.logical_and(idx, idx_tmp)
+
+        # find the entries less
+        if t90_less is not None:
+
+            idx_tmp = self._completed_table.t90 <= t90_less
+
+            idx = np.logical_and(idx, idx_tmp)
+
+        # save this look up
+        self._last_query_results = self._completed_table[idx]
+
+        return self._all_table[np.asarray(idx)]
 
     def get_detector_information(self):
         """
