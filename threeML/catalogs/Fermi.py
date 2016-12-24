@@ -611,3 +611,23 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
             sources.append(this_source)
 
         return ModelFrom3FGL(self.ra_center, self.dec_center, *sources)
+
+
+class FermiLLECatalog(VirtualObservatoryCatalog):
+    def __init__(self):
+        super(FermiGBMBurstCatalog, self).__init__('fermille',
+                                                   threeML_config['catalogs']['Fermi']['Fermi LLE catalog'],
+                                                   'Fermi/LLEcatalog')
+
+    def apply_format(self, table):
+        new_table = table['name',
+                          'ra', 'dec',
+                          'trigger_time',
+                          'trigger_type',
+                          'Search_Offset',
+        ]
+
+        new_table['ra'].format = '5.3f'
+        new_table['dec'].format = '5.3f'
+
+        return new_table.group_by('Search_Offset')
