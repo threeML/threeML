@@ -615,9 +615,9 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
 class FermiLLECatalog(VirtualObservatoryCatalog):
     def __init__(self):
-        super(FermiGBMBurstCatalog, self).__init__('fermille',
-                                                   threeML_config['catalogs']['Fermi']['Fermi LLE catalog'],
-                                                   'Fermi/LLEcatalog')
+        super(FermiLLECatalog, self).__init__('fermille',
+                                              threeML_config['catalogs']['Fermi']['LLE catalog'],
+                                              'Fermi/LLE catalog')
 
     def apply_format(self, table):
         new_table = table['name',
