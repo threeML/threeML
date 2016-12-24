@@ -7,25 +7,369 @@ from astromodels.utils.angular_distance import angular_distance
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 
-class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
+class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self):
 
         super(FermiGBMBurstCatalog, self).__init__('fermigbrst',
                                                    threeML_config['catalogs']['Fermi']['GBM burst catalog'],
-                                              'Fermi/GBM burst catalog')
+                                                   'Fermi/GBM burst catalog')
+
+        self._gbm_detector_lookup = np.array(['n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6',
+                                              'n7', 'n8', 'n9', 'na', 'nb', 'b0', 'b1'])
+
+        self._available_models = ('band', 'compt', 'pl', 'sbpl')
 
     def apply_format(self, table):
 
         new_table = table['name',
                           'ra', 'dec',
                           'trigger_time',
-                          'Search_Offset']
+                          't90',
+                          'Search_Offset',
+        ]
 
         new_table['ra'].format = '5.3f'
         new_table['dec'].format = '5.3f'
 
         return new_table.group_by('Search_Offset')
+
+    def get_detector_information(self):
+        """
+        Return the detectors used for spectral analysis as well as their background
+        intervals. Peak flux and fluence intervals are also returned
+
+        :return: detector information dictionary
+        """
+
+        assert self._last_query_results is not None, "You have to run a query before getting detector information"
+
+        # Loop over the table and build a source for each entry
+        sources = {}
+
+        for name, row in self._last_query_results.T.iteritems():
+
+            # First we want to get the the detectors used in the SCAT file
+
+            idx = np.array(map(int, row['scat_detector_mask']), dtype=bool)
+            detector_selection = self._gbm_detector_lookup[idx]
+
+            # Now we want to know the background intervals
+
+            lo_start = row['back_interval_low_start']
+            lo_stop = row['back_interval_low_stop']
+            hi_start = row['back_interval_high_start']
+            hi_stop = row['back_interval_high_stop']
+
+            # the GBM plugin accepts these as strings
+
+            pre_bkg = "%f-%f" % (lo_start, lo_stop)
+            post_bkg = "%f-%f" % (hi_start, hi_stop)
+            full_bkg = "%s,%s" % (pre_bkg, post_bkg)
+
+            background_dict = {'pre': pre_bkg, 'post': post_bkg, 'full': full_bkg}
+
+            # now we want the fluence interval and peak flux intervals
+
+            # first the fluence
+
+            start_flu = row['t90_start']
+            stop_flu = row['t90_start'] + row['t90']
+
+            interval_fluence = "%f-%f" % (start_flu, stop_flu)
+
+            # peak flux
+
+            start_pk = row['pflx_spectrum_start']
+            stop_pk = row['pflx_spectrum_stop']
+
+            interval_pk = "%f-%f" % (start_pk, stop_pk)
+
+            # build the dictionary
+            spectrum_dict = {'fluence': interval_fluence, 'peak': interval_pk}
+
+            trigger = row['trigger_name']
+
+            sources[name] = {'source': spectrum_dict, 'background': background_dict, 'trigger': trigger}
+
+        return sources
+
+    def get_duration_information(self):
+        """
+        Return the T90 and T50 information
+
+        :return: duration dictionary
+        """
+
+        assert self._last_query_results is not None, "You have to run a query before getting detector information"
+
+        # Loop over the table and build a source for each entry
+        sources = {}
+
+        for name, row in self._last_query_results.T.iteritems():
+
+            # T90
+            start_t90 = row['t90_start']
+            t90 = row['t90']
+            t90_err = row['t90_error']
+
+            # T50
+            start_t50 = row['t50_start']
+            t50 = row['t50']
+            t50_err = row['t50_error']
+
+            sources[name] = {'T90': {'value': t90, 'err': t90_err, 'start': start_t90},
+                             'T50': {'value': t50, 'err': t50_err, 'start': start_t50}}
+
+        return sources
+
+    def get_model(self, model='band', interval='fluence'):
+        """
+        Return the fitted model from the Fermi GBM catalog in 3ML Model form.
+        You can choose band, compt, pl, or sbpl models corresponding to the models
+        fitted in the GBM catalog. The interval for the fit can be the 'fluence' or
+        'peak' interval
+
+        :param model: one of 'band' (default), 'compt', 'pl', 'sbpl'
+        :param interval: 'peak' or 'fluence' (default)
+        :return: a dictionary of 3ML likelihood models that can be fitted
+        """
+
+        # check the model name and the interval selection
+        model = model.lower()
+
+        assert model in self._available_models, 'model is not in catalog. available choices are %s' % (', ').join(
+                self._available_models)
+
+        available_intervals = {'fluence': 'flnc', 'peak': 'plfx'}
+
+        assert interval in available_intervals.keys(), 'interval not recognized. choices are %s' % (
+            ' ,'.join(available_intervals.keys()))
+
+        sources = {}
+        lh_model = None
+
+        for name, row in self._last_query_results.T.iteritems():
+
+            ra = row['ra']
+            dec = row['dec']
+
+            # get the proper 3ML model
+
+            if model == 'band':
+
+                lh_model = self._build_band(name, ra, dec, row, available_intervals[interval])
+
+            if model == 'compt':
+
+                lh_model = self._build_cpl(name, ra, dec, row, available_intervals[interval])
+
+            if model == 'pl':
+
+                lh_model = self._build_powerlaw(name, ra, dec, row, available_intervals[interval])
+
+            if model == 'sbpl':
+
+                lh_model = self._build_sbpl(name, ra, dec, row, available_intervals[interval])
+
+            # the assertion above should never let us get here
+            if lh_model is None:
+
+                raise RuntimeError("We should never get here. This is a bug")
+
+            # return the model
+
+            sources[name] = lh_model
+
+        return sources
+
+    @staticmethod
+    def _build_band(name, ra, dec, row, interval):
+        """
+        builds a band function from the Fermi GBM catalog
+
+        :param name: GRB name
+        :param ra: GRB ra
+        :param dec: GRB de
+        :param row: VO table row
+        :param interval: interval type for parameters
+        :return: 3ML likelihood model
+        """
+
+        # construct the primary string
+
+        primary_string = "%s_band_" % interval
+
+        # get the parameters
+        epeak = row[primary_string + 'epeak']
+        alpha = row[primary_string + 'alpha']
+        beta = row[primary_string + 'beta']
+        amp = row[primary_string + 'ampl']
+
+        band = Band()
+
+        band.K = amp
+        band.xp = epeak
+
+        # The GBM catalog has some extreme alpha values
+
+        if alpha < band.alpha.min_value:
+
+            band.alpha.min_value = alpha
+
+        if alpha > band.alpha.max_value:
+
+            band.alpha.max_value = alpha
+
+        band.alpha = alpha
+
+        # The GBM catalog has some extreme beta values
+
+        if beta < band.beta.min_value:
+
+            band.beta.min_value = beta
+
+        if beta > band.beta.max_value:
+
+            band.beta.max_value = beta
+
+        band.beta = beta
+
+        # build the model
+        ps = PointSource(name, ra, dec, spectral_shape=band)
+
+        model = Model(ps)
+
+        return model
+
+    @staticmethod
+    def _build_cpl(name, ra, dec, row, interval):
+        """
+        builds a cpl function from the Fermi GBM catalog
+
+        :param name: GRB name
+        :param ra: GRB ra
+        :param dec: GRB de
+        :param row: VO table row
+        :param interval: interval type for parameters
+        :return: 3ML likelihood model
+        """
+
+        # need to correct epeak
+        primary_string = "%s_comp_" % interval
+
+        epeak = row[primary_string + 'epeak']
+        index = row[primary_string + 'index']
+        pivot = row[primary_string + 'pivot']
+        amp = row[primary_string + 'ampl']
+
+        cpl = Cutoff_powerlaw()
+
+        cpl.K = amp
+        cpl.xc = epeak / (2 - index)
+        cpl.piv = pivot
+        cpl.index = index
+
+        ps = PointSource(name, ra, dec, spectral_shape=cpl)
+
+        model = Model(ps)
+
+        return model
+
+    @staticmethod
+    def _build_powerlaw(name, ra, dec, row, interval):
+        """
+        builds a pl function from the Fermi GBM catalog
+
+        :param name: GRB name
+        :param ra: GRB ra
+        :param dec: GRB de
+        :param row: VO table row
+        :param interval: interval type for parameters
+        :return: 3ML likelihood model
+        """
+
+        primary_string = "%s_plaw_" % interval
+
+        index = row[primary_string + 'index']
+        pivot = row[primary_string + 'pivot']
+        amp = row[primary_string + 'ampl']
+
+        pl = Powerlaw()
+
+        pl.K = amp
+        pl.piv = pivot
+        pl.index = index
+
+        ps = PointSource(name, ra, dec, spectral_shape=pl)
+
+        model = Model(ps)
+
+        return model
+
+    @staticmethod
+    def _build_sbpl(name, ra, dec, row, interval):
+        """
+        builds a sbpl function from the Fermi GBM catalog
+
+        :param name: GRB name
+        :param ra: GRB ra
+        :param dec: GRB de
+        :param row: VO table row
+        :param interval: interval type for parameters
+        :return: 3ML likelihood model
+        """
+
+        primary_string = "%s_sbpl_" % interval
+
+        alpha = row[primary_string + 'indx1']
+        beta = row[primary_string + 'indx2']
+        amp = row[primary_string + 'ampl']
+        break_scale = row[primary_string + 'brksc']
+        break_energy = row[primary_string + 'brken']
+        pivot = row[primary_string + 'pivot']
+
+        sbpl = SmoothlyBrokenPowerLaw()
+
+        sbpl.K = amp
+        sbpl.pivot = pivot
+
+        # The GBM catalog has some extreme alpha values
+
+        if alpha < sbpl.alpha.min_value:
+
+            sbpl.alpha.min_value = alpha
+
+        if alpha > sbpl.alpha.max_value:
+
+            sbpl.alpha.max_value = alpha
+
+        sbpl.alpha = alpha
+
+        # The GBM catalog has some extreme beta values
+
+        if beta < sbpl.beta.min_value:
+
+            sbpl.beta.min_value = beta
+
+        if beta > sbpl.beta.max_value:
+
+            sbpl.beta.max_value = beta
+
+        sbpl.beta = beta
+        sbpl.break_scale = break_scale
+        sbpl.break_energy = break_energy
+
+        sbpl.break_scale.free = True
+
+        ps = PointSource(name, ra, dec, spectral_shape=sbpl)
+
+        model = Model(ps)
+
+        return model
+
+
+
 
 
 #########
