@@ -19,6 +19,16 @@ def test_GBM_catalog():
 
     gbm_catalog.search_around_source('Crab', 5.0)
 
+    _ = gbm_catalog.search_t90(t90_greater=2.)
+    _ = gbm_catalog.search_t90(t90_less=2.)
+    _ = gbm_catalog.search_t90(t90_greater=2., t90_less=10)
+
+    with pytest.raises(RuntimeError):
+        _ = gbm_catalog.search_t90()
+
+    _ = gbm_catalog.search_trigger_name('bn080916009')
+
+
 
 @skip_if_internet_is_not_available
 def test_LAT_catalog():

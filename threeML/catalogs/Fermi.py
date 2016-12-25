@@ -8,6 +8,10 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 
 
+class InvalidTrigger(RuntimeError):
+    pass
+
+
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self):
 
@@ -41,12 +45,43 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         Find the information on the given trigger names.
         First run will be slow. Subsequent runs are very fast
 
-        :param trigger_names:
+        :param trigger_names: trigger numbers (str) e.g. '080916009' or 'bn080916009' or 'GRB080916009'
         :return:
         """
 
         # If we have not downloaded the entire table
         # then we must do so.
+
+        # check the trigger names
+
+        _valid_trigger_args = ['080916008', 'bn080916009', 'GRB080916009']
+
+        for trigger in trigger_names:
+
+            test = trigger.split('bn')
+
+            assert len(test) == 2, "The trigger %s is not valid. Must be in the form %s" % (test,
+                                                                                            ', or '.join(
+                                                                                                _valid_trigger_args))
+
+            trigger = test[-1]
+
+            assert len(trigger) == 9, "The trigger %s is not valid. Must be in the form %s" % (trigger,
+                                                                                               ', or '.join(
+                                                                                                   _valid_trigger_args))
+
+            for trial in trigger:
+
+                try:
+
+                    int(trial)
+
+                except(ValueError):
+
+                    raise InvalidTrigger(
+                            "The trigger %s is not valid. Must be in the form %s" % (trigger,
+                                                                                     ', or '.join(_valid_trigger_args)))
+
 
         if not self._grabbed_all_data:
 
@@ -694,6 +729,8 @@ class FermiLLECatalog(VirtualObservatoryCatalog):
                                               threeML_config['catalogs']['Fermi']['LLE catalog'],
                                               'Fermi/LLE catalog')
 
+        self._grabbed_all_data = False
+
     def apply_format(self, table):
         new_table = table['name',
                           'ra', 'dec',
@@ -706,3 +743,67 @@ class FermiLLECatalog(VirtualObservatoryCatalog):
         new_table['dec'].format = '5.3f'
 
         return new_table.group_by('Search_Offset')
+
+    def search_trigger_name(self, *trigger_names):
+        """
+        Find the information on the given trigger names.
+        First run will be slow. Subsequent runs are very fast
+
+        :param trigger_names: trigger numbers (str) e.g. '080916009' or 'bn080916009' or 'GRB080916009'
+        :return:
+        """
+
+        # If we have not downloaded the entire table
+        # then we must do so.
+
+        # check the trigger names
+
+        _valid_trigger_args = ['080916008', 'bn080916009', 'GRB080916009']
+
+        for trigger in trigger_names:
+
+            test = trigger.split('bn')
+
+            assert len(test) == 2, "The trigger %s is not valid. Must be in the form %s" % (test,
+                                                                                            ', or '.join(
+                                                                                                    _valid_trigger_args))
+
+            trigger = test[-1]
+
+            assert len(trigger) == 9, "The trigger %s is not valid. Must be in the form %s" % (trigger,
+                                                                                               ', or '.join(
+                                                                                                       _valid_trigger_args))
+
+            for trial in trigger:
+
+                try:
+
+                    int(trial)
+
+                except(ValueError):
+
+                    raise InvalidTrigger(
+                            "The trigger %s is not valid. Must be in the form %s" % (trigger,
+                                                                                     ', or '.join(_valid_trigger_args)))
+
+        if not self._grabbed_all_data:
+
+            self._all_table = self.cone_search(0, 0, 360)
+
+            self._completed_table = self._last_query_results
+
+            self._grabbed_all_data = True
+
+        n_entries = self._completed_table.shape[0]
+
+        idx = np.zeros(n_entries, dtype=bool)
+
+        for name in trigger_names:
+
+            condition = self._completed_table.trigger_name == name
+
+            idx = np.logical_or(idx, condition)
+
+        self._last_query_results = self._completed_table[idx]
+
+        return self._all_table[np.asarray(idx)]

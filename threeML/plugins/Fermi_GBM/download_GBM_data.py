@@ -26,7 +26,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
     example usage: download_GBM_trigger_data('080916009', detectors=['n0','na','b0'], destination_directory='.')
 
-    :param trigger: trigger number (str) with no leading letter e.g. '080916009'
+    :param trigger: trigger number (str) e.g. '080916009' or 'bn080916009' or 'GRB080916009'
     :param detectors: list of detectors, default is all detectors
     :param destination_directory: download directory
     :return: a dictionary with information about the download
