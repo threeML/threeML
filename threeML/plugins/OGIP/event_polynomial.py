@@ -1,59 +1,143 @@
 import numpy as np
 import scipy
 import warnings
-import math
+from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
+from threeML.exceptions.custom_exceptions import custom_warnings
+
+
+class CannotComputeCovariance(RuntimeWarning):
+    pass
 
 
 class Polynomial(object):
-    def __init__(self, coefficients):
+    def __init__(self, coefficients, is_integral=False):
 
-        self.coefficients = coefficients
+        """
+
+        :param coefficients: array of poly coefficients
+        :param is_integral: if this polynomial is an
+        """
+        self._coefficients = coefficients
         self._degree = len(coefficients) - 1
 
-        # Build an empty covariance matrix
-        self._cov_matrix = np.zeros([self._degree + 1, self._degree + 1])
+        self._i_plus_1 = np.array(range(1, self._degree + 1 + 1), dtype=float)
+
+        # we can fix some things for speed
+        # we only need to set the coeff for the
+        # integral polynomial
+        if not is_integral:
+            integral_coeff = [0]
+
+            integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+
+            self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
 
     @property
     def degree(self):
+        """
+        the polynomial degree
+        :return:
+        """
         return self._degree
 
     @property
     def error(self):
-
+        """
+        the error on the polynomial coefficients
+        :return:
+        """
         return np.sqrt(self._cov_matrix.diagonal())
+
+    def __get_coefficient(self):
+        """ gets the coefficients"""
+
+        return self._coefficients
+
+    def ___get_coefficient(self):
+        """ Indirect coefficient getter """
+
+        return self.__get_coefficient()
+
+    def __set_coefficient(self, val):
+        """ sets the coefficients"""
+
+        self._coefficients = val
+
+        integral_coeff = [0]
+
+        integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+
+        self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
+
+    def ___set_coefficient(self, val):
+        """ Indirect coefficient setter """
+
+        return self.__set_coefficient(val)
+
+    coefficients = property(___get_coefficient, ___set_coefficient,
+                            doc="""Gets or sets the coefficients of the polynomial.""")
 
     def __call__(self, x):
 
         result = 0
-        for coefficient in self.coefficients[::-1]:
+        for coefficient in self._coefficients[::-1]:
             result = result * x + coefficient
         return result
 
-    def get_number_free_parameters(self):
-        return self._degree + 1
+    def compute_covariance_matrix(self, function, best_fit_parameters):
+        """
+        Compute the covariance matrix of this fit
+        :param function: the loglike for the fit
+        :param best_fit_parameters: the best fit parameters
+        :return:
+        """
 
-    def get_free_derivs(self, x):
-        n_par = self._degree + 1
-        freeDerivs = []
+        minima = np.zeros_like(best_fit_parameters) - 100
+        maxima = np.zeros_like(best_fit_parameters) + 100
 
-        for i in range(n_par):
-            freeDerivs.append(map(lambda xx: pow(xx, i), x))
-        pass
-        return np.array(freeDerivs)
+        try:
 
-    pass
+            hessian_matrix = get_hessian(function, best_fit_parameters, minima, maxima)
 
-    def compute_covariance_matrix(self, statistic_gradient):
+        except ParameterOnBoundary:
 
-        self._cov_matrix = compute_covariance_matrix(statistic_gradient, self.coefficients)
+            custom_warnings.warn("One or more of the parameters are at their boundaries. Cannot compute covariance and"
+                                 " errors", CannotComputeCovariance)
 
-        # Check that the covariance matrix is positive-defined
+            n_dim = len(best_fit_parameters)
 
-        negative_elements = (np.matrix.diagonal(self._cov_matrix) < 0)
+            self._cov_matrix = np.zeros((n_dim, n_dim)) * np.nan
 
-        if (len(negative_elements.nonzero()[0]) > 0):
-            raise RuntimeError(
-                    "Negative element in the diagonal of the covariance matrix. Try to reduce the polynomial grade.")
+        # Invert it to get the covariance matrix
+
+        try:
+
+            covariance_matrix = np.linalg.inv(hessian_matrix)
+
+            self._cov_matrix = covariance_matrix
+
+        except:
+
+            custom_warnings.warn("Cannot invert Hessian matrix, looks like the matrix is singluar")
+
+            n_dim = len(best_fit_parameters)
+
+            self._cov_matrix = np.zeros((n_dim, n_dim)) * np.nan
+
+
+
+
+
+
+            # self._cov_matrix = compute_covariance_matrix(statistic_gradient, self._coefficients)
+            #
+            # # Check that the covariance matrix is positive-defined
+            #
+            # negative_elements = (np.matrix.diagonal(self._cov_matrix) < 0)
+            #
+            # if (len(negative_elements.nonzero()[0]) > 0):
+            #     raise RuntimeError(
+            #             "Negative element in the diagonal of the covariance matrix. Try to reduce the polynomial grade.")
 
     @property
     def covariance_matrix(self):
@@ -62,187 +146,28 @@ class Polynomial(object):
     def integral(self, xmin, xmax):
         """ 
         Evaluate the integral of the polynomial between xmin and xmax
+
         """
 
-        integral_coeff = [0]
+        return self._integral_polynomial(xmax) - self._integral_polynomial(xmin)
 
-        integral_coeff.extend(map(lambda i: self.coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+    def _eval_basis(self, x):
 
-        integral_polynomial = Polynomial(integral_coeff)
-
-        return integral_polynomial(xmax) - integral_polynomial(xmin)
+        return (1. / self._i_plus_1) * np.power(x, self._i_plus_1)
 
     def integral_error(self, xmin, xmax):
-        # Based on http://root.cern.ch/root/html/tutorials/fit/ErrorIntegral.C.html
+        """
+        computes the integral error of an interval
+        :param xmin: start of the interval
+        :param xmax: stop of the interval
+        :return: interval error
+        """
 
+        c = self._eval_basis(xmax) - self._eval_basis(xmin)
+        tmp = c.dot(self._cov_matrix)
+        err2 = tmp.dot(c)
 
-        # Set the weights
-        i_plus_1 = np.array(range(1, self._degree + 1 + 1), 'd')
-
-        def eval_basis(x):
-            return (1 / i_plus_1) * pow(x, i_plus_1)
-
-        c = eval_basis(xmax) - eval_basis(xmin)
-
-        # Compute the error on the integral
-        err2 = 0.0
-
-        n_par = self._degree + 1
-
-        for i in range(n_par):
-            s = 0.0
-            for j in range(n_par):
-                s += self._cov_matrix[i, j] * c[j]
-
-            err2 += c[i] * s
-
-        return math.sqrt(err2)
-
-
-def polyfit(x, y, grade, exposure):
-    """ funtion to fit a polynomial to event data. not a member to allow parallel computation """
-    test = False
-
-    # Check that we have enough counts to perform the fit, otherwise
-    # return a "zero polynomial"
-    non_zero_mask = (y > 0)
-    n_non_zero = len(non_zero_mask.nonzero()[0])
-    if n_non_zero == 0:
-        # No data, nothing to do!
-        return Polynomial([0.0]), 0.0
-
-    # Compute an initial guess for the polynomial parameters,
-    # with a least-square fit (with weight=1) using SVD (extremely robust):
-    # (note that polyfit returns the coefficient starting from the maximum grade,
-    # thus we need to reverse the order)
-    if test:
-        print("  Initial estimate with SVD..."),
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-
-        initial_guess = np.polyfit(x, y, grade)
-
-    initial_guess = initial_guess[::-1]
-
-    if (test):
-        print("  done -> %s" % (initial_guess))
-
-    polynomial = Polynomial(initial_guess)
-
-    # Check that the solution found is meaningful (i.e., definite positive
-    # in the interval of interest)
-    M = polynomial(x)
-
-    negative_mask = (M < 0)
-
-    if len(negative_mask.nonzero()[0]) > 0:
-        # Least square fit failed to converge to a meaningful solution
-        # Reset the initialGuess to reasonable value
-        initial_guess[0] = np.mean(y)
-        meanx = np.mean(x)
-        initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
-
-    # Improve the solution using a logLikelihood statistic (Cash statistic)
-    log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
-
-    # Check that we have enough non-empty bins to fit this grade of polynomial,
-    # otherwise lower the grade
-    dof = n_non_zero - (grade + 1)
-    if test:
-        print("Effective dof: %s" % (dof))
-
-    if dof <= 2:
-        # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-        while (dof < 2 and len(initial_guess) > 1):
-            initial_guess = initial_guess[:-1]
-            polynomial = Polynomial(initial_guess)
-            log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
-
-    # Try to improve the fit with the log-likelihood
-
-    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
-                                         ftol=1E-5, xtol=1E-5,
-                                         maxiter=1e6, maxfun=1E6,
-                                         disp=False)
-
-    # Get the value for cstat at the minimum
-
-    min_log_likelihood = log_likelihood(final_estimate)
-
-    # Update the polynomial with the fitted parameters,
-    # and the relative covariance matrix
-
-    final_polynomial = Polynomial(final_estimate)
-
-    try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
-    except Exception:
-        raise
-    # if test is defined, compare the results with those obtained with ROOT
-
-
-    return final_polynomial, min_log_likelihood
-
-
-def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude=1):
-    """
-    function to fit a polynomial to event data. not a member to allow parallel computation
-
-    """
-
-    # first do a simple amplitude fit
-
-    search_grid = np.logspace(-2, 4, 10)
-
-    initial_guess = np.zeros(grade + 1)
-
-    polynomial = Polynomial(initial_guess)
-
-    log_likelihood = PolyUnbinnedLogLikelihood(events,
-                                               polynomial,
-                                               t_start,
-                                               t_stop,
-                                               exposure)
-
-    like_grid = []
-    for amp in search_grid:
-
-        initial_guess[0] = amp
-        like_grid.append(log_likelihood(initial_guess))
-
-    initial_guess[0] = search_grid[np.argmin(like_grid)]
-
-    # Improve the solution
-
-
-
-    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
-                                         ftol=1E-5, xtol=1E-5,
-                                         maxiter=1e6, maxfun=1E6,
-                                         disp=False)
-
-    # Get the value for cstat at the minimum
-
-    min_log_likelihood = log_likelihood(final_estimate)
-
-    # Update the polynomial with the fitted parameters,
-    # and the relative covariance matrix
-
-    final_polynomial = Polynomial(final_estimate)
-
-    try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
-    except Exception:
-        raise
-    # if test is defined, compare the results with those obtained with ROOT
-
-
-    return final_polynomial, min_log_likelihood
-
-
-##
-## The log likelihoods for binned and unbinned fits
-##
+        return np.sqrt(err2)
 
 class PolyLogLikelihood(object):
     """
@@ -258,6 +183,39 @@ class PolyLogLikelihood(object):
         self._model = model
         self._parameters = model.coefficients
         self._exposure = exposure
+
+        def cov_call(*parameters):
+            self._model.coefficients = parameters
+            M = self._model(self._bin_centers) * self._exposure
+            M_fixed, tiny = self._fix_precision(M)
+
+            # Replace negative values for the model (impossible in the Poisson context)
+            # with zero
+
+            negative_mask = (M < 0)
+            if (len(negative_mask.nonzero()[0]) > 0):
+                M[negative_mask] = 0.0
+
+            # Poisson loglikelihood statistic (Cash) is:
+            # L = Sum ( M_i - D_i * log(M_i))
+
+            logM = self._evaluate_logM(M)
+
+            # Evaluate v_i = D_i * log(M_i): if D_i = 0 then the product is zero
+            # whatever value has log(M_i). Thus, initialize the whole vector v = {v_i}
+            # to zero, then overwrite the elements corresponding to D_i > 0
+
+            d_times_logM = np.zeros(len(self._counts))
+
+            non_zero_mask = (self._counts > 0)
+
+            d_times_logM[non_zero_mask] = self._counts[non_zero_mask] * logM[non_zero_mask]
+
+            log_likelihood = np.sum(M_fixed - d_times_logM)
+
+            return log_likelihood
+
+        self.cov_call = cov_call
 
     def _evaluate_logM(self, M):
         # Evaluate the logarithm with protection for negative or small
@@ -279,8 +237,6 @@ class PolyLogLikelihood(object):
             logM = np.log(M)
 
         return logM
-
-    pass
 
     def __call__(self, parameters):
         """
@@ -333,54 +289,6 @@ class PolyLogLikelihood(object):
 
         return v, tiny
 
-    pass
-
-    def get_free_derivs(self, parameters=None):
-        """
-        Return the gradient of the logLikelihood for a given set of parameters (or the current
-        defined one, if parameters=None)
-        """
-        # The derivative of the logLikelihood statistic respect to parameter p is:
-        # dC / dp = Sum [ (dM/dp)_i - D_i/M_i (dM/dp)_i]
-
-        # Get the number of parameters and initialize the gradient to 0
-        n_free = self._model.get_number_free_parameters()
-
-        derivatives = np.zeros(n_free)
-
-        # Set the parameters, if a new set has been provided
-
-        if parameters is not None:
-            self._model.coefficients = parameters
-
-        # Get the gradient of the model respect to the parameters
-
-        model_derivatives = self._model.get_free_derivs(self._bin_centers) * self._exposure
-
-        # Get the model
-
-        M = self._model(self._bin_centers) * self._exposure
-
-        M, tiny_M = self._fix_precision(M)
-
-        # Compute y_divided_M = y/M: inizialize y_divided_M to zero
-        # and then overwrite the elements for which y > 0. This is to avoid
-        # possible underflow and overflow due to the finite precision of the
-        # computer
-
-        y_divided_M = np.zeros(len(self._counts))
-
-        non_zero = (self._counts > 0)
-        y_divided_M[non_zero] = self._counts[non_zero] / M[non_zero]
-
-        for p in range(n_free):
-            this_model_derivatives, tinyMd = self._fix_precision(model_derivatives[p])
-            derivatives[p] = np.sum(this_model_derivatives * (1.0 - y_divided_M))
-
-        return derivatives
-
-    pass
-
 
 class PolyUnbinnedLogLikelihood(object):
     """
@@ -398,6 +306,49 @@ class PolyUnbinnedLogLikelihood(object):
         self._exposure = exposure
         self._t_start = t_start  # list of starts
         self._t_stop = t_stop
+
+        def cov_call(*parameters):
+            """
+              Evaluate the unbinned Poisson log likelihood
+
+            Args:
+                parameters:
+
+            Returns:
+
+            """
+            # print parameters
+            # Compute the values for the model given this set of parameters
+            self._model.coefficients = parameters
+
+            # Integrate the polynomial (or in the future, model) over the given interval
+
+            n_expected_counts = 0.
+
+            for start, stop in zip(self._t_start, self._t_stop):
+                n_expected_counts += self._model.integral(start, stop)
+
+            # Now evaluate the model at the event times and multiply by the exposure
+
+            M = self._model(self._events) * self._exposure
+
+            # Replace negative values for the model (impossible in the Poisson context)
+            # with zero
+            negative_mask = (M < 0)
+
+            if (len(negative_mask.nonzero()[0]) > 0):
+                M[negative_mask] = 0.0
+
+            # Poisson loglikelihood statistic  is:
+            # logL = -Nexp + Sum ( log M_i )
+
+            logM = self._evaluate_logM(M)
+
+            log_likelihood = -n_expected_counts + logM.sum()
+
+            return -log_likelihood
+
+        self.cov_call = cov_call
 
     def _evaluate_logM(self, M):
         # Evaluate the logarithm with protection for negative or small
@@ -470,132 +421,142 @@ class PolyUnbinnedLogLikelihood(object):
 
         return v, tiny
 
-    def get_free_derivs(self, parameters=None):
-        """
-        Return the gradient of the logLikelihood for a given set of parameters (or the current
-        defined one, if parameters=None)
-        """
-        # The derivative of the unbinned logLikelihood statistic respect to parameter p is:
-        # d logL / d theta_j = -(1/j+1) (t_f^(j+1) - t_0^(j+1)) + Sum( P(t_i, theta_k)^(-1) *t_i^j  )
 
-
-        # Set the parameters, if a new set has been provided
-        if (parameters is not None):
-            self._model.coefficients = parameters
-        pass
-
-        M = self._model(self._events)  # * self._exposure
-
-        M, tiny_m = self._fix_precision(M)
-
-        degrees = np.arange(self._model.degree + 1)
-
-        def derivative_per_degree(degree):
-
-            d_1 = degree + 1
-
-            pre_factor = 0
-            for start, stop in zip(self._t_start, self._t_stop):
-                pre_factor += (stop ** d_1 - start ** d_1)
-
-            raised_events, _ = self._fix_precision(np.power(self._events, degree))
-
-            return -(raised_events / M).sum() + pre_factor / float(d_1)
-
-        derivs = np.array([derivative_per_degree(degree) for degree in degrees])
-
-        return derivs
-
-
-def compute_covariance_matrix(grad, par, full_output=False,
-                              init_step=0.01, min_step=1e-12, max_step=1, max_iters=50,
-                              target=0.1, min_func=1e-7, max_func=4):
-    """Perform finite differences on the _analytic_ gradient provided by user to calculate hessian/covariance matrix.
-
-    Positional args:
-        grad                : a function to return a gradient
-        par                 : vector of parameters (should be function minimum for covariance matrix calculation)
-
-    Keyword args:
-
-        full_output [False] : if True, return information about convergence, else just the covariance matrix
-        init_step   [1e-3]  : initial step size (0.04 ~ 10% in log10 space); can be a scalar or vector
-        min_step    [1e-6]  : the minimum step size to take in parameter space
-        max_step    [1]     : the maximum step size to take in parameter sapce
-        max_iters   [5]     : maximum number of iterations to attempt to converge on a good step size
-        target      [0.5]   : the target change in the function value for step size
-        min_func    [1e-4]  : the minimum allowable change in (abs) function value to accept for convergence
-        max_func    [4]     : the maximum allowable change in (abs) function value to accept for convergence
+def polyfit(x, y, grade, exposure):
+    """
+    function to fit a polynomial to event data. not a member to allow parallel computation
     """
 
-    nparams = len(par)
-    step_size = np.ones(nparams) * init_step
-    step_size = np.maximum(step_size, min_step * 1.1)
-    step_size = np.minimum(step_size, max_step * 0.9)
-    hess = np.zeros([nparams, nparams])
-    min_flags = np.asarray([False] * nparams)
-    max_flags = np.asarray([False] * nparams)
+    test = False
 
-    def revised_step(delta_f, current_step, index):
-        if (current_step == max_step):
-            max_flags[i] = True
-            return True, 0
+    # Check that we have enough counts to perform the fit, otherwise
+    # return a "zero polynomial"
+    non_zero_mask = (y > 0)
+    n_non_zero = len(non_zero_mask.nonzero()[0])
+    if n_non_zero == 0:
+        # No data, nothing to do!
+        return Polynomial([0.0]), 0.0
 
-        elif (current_step == min_step):
-            min_flags[i] = True
-            return True, 0
+    # Compute an initial guess for the polynomial parameters,
+    # with a least-square fit (with weight=1) using SVD (extremely robust):
+    # (note that polyfit returns the coefficient starting from the maximum grade,
+    # thus we need to reverse the order)
 
-        else:
-            adf = abs(delta_f)
-            if adf < 1e-8:
-                # need to address a step size that results in a likelihood change that's too
-                # small compared to precision
-                pass
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
 
-            if (adf < min_func) or (adf > max_func):
-                new_step = current_step / (adf / target)
-                new_step = min(new_step, max_step)
-                new_step = max(new_step, min_step)
-                return False, new_step
-            else:
-                return True, 0
+        initial_guess = np.polyfit(x, y, grade)
 
-    iters = np.zeros(nparams)
-    for i in xrange(nparams):
-        converged = False
+    initial_guess = initial_guess[::-1]
 
-        for j in xrange(max_iters):
-            iters[i] += 1
+    polynomial = Polynomial(initial_guess)
 
-            di = step_size[i]
-            par[i] += di
-            g_up = grad(par)
+    # Check that the solution found is meaningful (i.e., definite positive
+    # in the interval of interest)
+    M = polynomial(x)
 
-            par[i] -= 2 * di
-            g_dn = grad(par)
+    negative_mask = (M < 0)
 
-            par[i] += di
+    if len(negative_mask.nonzero()[0]) > 0:
+        # Least square fit failed to converge to a meaningful solution
+        # Reset the initialGuess to reasonable value
+        initial_guess[0] = np.mean(y)
+        meanx = np.mean(x)
+        initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
 
-            delta_f = (g_up - g_dn)[i]
+    # Improve the solution using a logLikelihood statistic (Cash statistic)
+    log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
 
-            converged, new_step = revised_step(delta_f, di, i)
-            # print 'Parameter %d -- Iteration %d -- Step size: %.2e -- delta: %.2e'%(i,j,di,delta_f)
+    # Check that we have enough non-empty bins to fit this grade of polynomial,
+    # otherwise lower the grade
+    dof = n_non_zero - (grade + 1)
+    if test:
+        print("Effective dof: %s" % (dof))
 
-            if converged:
-                break
-            else:
-                step_size[i] = new_step
+    if dof <= 2:
+        # Fit is poorly or ill-conditioned, have to reduce the number of parameters
+        while (dof < 2 and len(initial_guess) > 1):
+            initial_guess = initial_guess[:-1]
+            polynomial = Polynomial(initial_guess)
+            log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
 
-        hess[i, :] = (g_up - g_dn) / (2 * di)  # central difference
+    # Try to improve the fit with the log-likelihood
 
-        if not converged:
-            print 'Warning: step size for parameter %d (%.2g) did not result in convergence.' % (i, di)
+    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
+                                         ftol=1E-5, xtol=1E-5,
+                                         maxiter=1e6, maxfun=1E6,
+                                         disp=False)
+
+    # Get the value for cstat at the minimum
+
+    min_log_likelihood = log_likelihood(final_estimate)
+
+    # Update the polynomial with the fitted parameters,
+    # and the relative covariance matrix
+
+    final_polynomial = Polynomial(final_estimate)
+
     try:
-        cov = np.linalg.inv(hess)
-    except:
-        print 'Error inverting hessian.'
-        raise Exception('Error inverting hessian')
-    if full_output:
-        return cov, hess, step_size, iters, min_flags, max_flags
-    else:
-        return cov
+        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
+    except Exception:
+        raise
+    # if test is defined, compare the results with those obtained with ROOT
+
+
+    return final_polynomial, min_log_likelihood
+
+
+def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude=1):
+    """
+    function to fit a polynomial to event data. not a member to allow parallel computation
+
+    """
+
+    # first do a simple amplitude fit
+
+    search_grid = np.logspace(-2, 4, 10)
+
+    initial_guess = np.zeros(grade + 1)
+
+    polynomial = Polynomial(initial_guess)
+
+    log_likelihood = PolyUnbinnedLogLikelihood(events,
+                                               polynomial,
+                                               t_start,
+                                               t_stop,
+                                               exposure)
+
+    like_grid = []
+    for amp in search_grid:
+
+        initial_guess[0] = amp
+        like_grid.append(log_likelihood(initial_guess))
+
+    initial_guess[0] = search_grid[np.argmin(like_grid)]
+
+    # Improve the solution
+
+
+
+    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
+                                         ftol=1E-5, xtol=1E-5,
+                                         maxiter=1e6, maxfun=1E6,
+                                         disp=False)
+
+    # Get the value for cstat at the minimum
+
+    min_log_likelihood = log_likelihood(final_estimate)
+
+    # Update the polynomial with the fitted parameters,
+    # and the relative covariance matrix
+
+    final_polynomial = Polynomial(final_estimate)
+
+    try:
+        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
+    except Exception:
+        raise
+    # if test is defined, compare the results with those obtained with ROOT
+
+
+    return final_polynomial, min_log_likelihood
