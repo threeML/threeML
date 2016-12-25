@@ -191,6 +191,65 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         return self._all_table[np.asarray(idx)].group_by('trigger_time')
 
+    def search_energy_flux(self, flux_greater=None, flux_less=None, model='band', interval='peak'):
+        """
+        Search for GRBs via the energy flux (erg/s/cm2) of a given catalog model for agiven interval:
+        peak or fluence.
+
+        :param flux_greater: find fluxes greater than this value
+        :param flux_less: find fluxes less than this value
+        :param model: spectral model from which flux is derived
+        :param interval: interval of flux: peak or fluence
+        :return: table of results
+        """
+
+        assert flux_greater is not None or flux_less is not None, 'You must specify either the greater or less argument'
+
+        assert interval in ['fluence', 'peak'], 'interval must be either peak or fluence'
+
+        # check the model name and the interval selection
+        model = model.lower()
+
+        assert model in self._available_models, 'model is not in catalog. available choices are %s' % (', ').join(
+                self._available_models)
+
+        interval_dict = {'peak': 'plfx', 'fluence': 'flnc'}
+
+        flux_string = "%s_%s_ergflx" % (interval_dict[interval], model)
+
+        if not self._grabbed_all_data:
+
+            self._all_table = self.cone_search(0, 0, 360)
+
+            self._completed_table = self._last_query_results
+
+            self._grabbed_all_data = True
+
+        n_entries = self._completed_table.shape[0]
+
+        # Create a dummy index first
+
+        idx = np.ones(n_entries, dtype=bool)
+
+        # find the entries greater
+        if flux_greater is not None:
+
+            idx_tmp = self._completed_table[flux_string] >= flux_greater
+
+            idx = np.logical_and(idx, idx_tmp)
+
+        # find the entries less
+        if flux_less is not None:
+
+            idx_tmp = self._completed_table.t90 <= flux_less
+
+            idx = np.logical_and(idx, idx_tmp)
+
+        # save this look up
+        self._last_query_results = self._completed_table[idx]
+
+        return self._all_table[np.asarray(idx)].group_by('trigger_time')
+
     def search_utc(self, utc_start, utc_stop):
         """
         Search for triggers in a range of UTC values. UTC time must be specified
