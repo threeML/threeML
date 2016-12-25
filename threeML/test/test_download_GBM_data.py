@@ -4,32 +4,10 @@ import pytest
 from threeML import *
 from threeML.io.network import internet_connection_is_active
 
-from threeML.plugins.Fermi_LAT.download_LLE_data import InvalidTrigger, TriggerDoesNotExist
-
+from threeML.plugins.Fermi_GBM.download_GBM_data import InvalidTrigger, TriggerDoesNotExist
 
 skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
                                                        reason="No active internet connection")
-
-
-@skip_if_internet_is_not_available
-def test_download_LAT_data():
-
-    # Crab
-    ra = 83.6331
-    dec = 22.0199
-    tstart = '2010-01-01 00:00:00'
-    tstop = '2010-01-02 00:00:00'
-
-    temp_dir = '_download_temp'
-
-    ft1, ft2 = download_LAT_data(ra, dec, 20.0,
-                                 tstart, tstop, time_type='Gregorian',
-                                 destination_directory=temp_dir)
-
-    assert os.path.exists(ft1)
-    assert os.path.exists(ft2)
-
-    shutil.rmtree(temp_dir)
 
 
 @skip_if_internet_is_not_available
@@ -37,15 +15,18 @@ def test_download_LLE_data():
     # test good trigger names
     good_triggers = ['080916009', 'bn080916009', 'GRB080916009']
 
+    which_detector = 'n1'
+
     for i, trigger in enumerate(good_triggers):
 
         temp_dir = '_download_temp'
 
-        dl_info = download_LLE_trigger_data(trigger=trigger,
+        dl_info = download_GBM_trigger_data(trigger=trigger,
+                                            detectors=[which_detector],
                                             destination_directory=temp_dir)
 
-        assert os.path.exists(dl_info['rsp'])
-        assert os.path.exists(dl_info['lle'])
+        assert os.path.exists(dl_info[which_detector]['rsp'])
+        assert os.path.exists(dl_info[which_detector]['tte'])
 
         # we can rely on the non-repeat download to go fast
 
@@ -56,20 +37,34 @@ def test_download_LLE_data():
 
     with pytest.raises(AssertionError):
 
-        download_LLE_trigger_data(trigger='blah080916009',
+        download_GBM_trigger_data(trigger='blah080916009',
                                   destination_directory=temp_dir)
 
     with pytest.raises(AssertionError):
 
-        download_LLE_trigger_data(trigger=80916009,
+        download_GBM_trigger_data(trigger=80916009,
                                   destination_directory=temp_dir)
 
     with pytest.raises(InvalidTrigger):
 
-        download_LLE_trigger_data(trigger='bn08a916009',
+        download_GBM_trigger_data(trigger='bn08a916009',
                                   destination_directory=temp_dir)
 
     with pytest.raises(TriggerDoesNotExist):
 
-        download_LLE_trigger_data(trigger='080916008',
+        download_GBM_trigger_data(trigger='080916008',
+                                  destination_directory=temp_dir)
+
+    # now test that bad detectors block us
+
+    with pytest.raises(AssertionError):
+
+        download_GBM_trigger_data(trigger='080916009',
+                                  detectors='n1',
+                                  destination_directory=temp_dir)
+
+    with pytest.raises(AssertionError):
+
+        download_GBM_trigger_data(trigger='080916009',
+                                  detectors=['not_a_detector'],
                                   destination_directory=temp_dir)

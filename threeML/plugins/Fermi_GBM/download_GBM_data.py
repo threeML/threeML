@@ -101,9 +101,9 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     try:
         ftp.cwd(directory_)
     except ftplib.error_perm:
-
         ftp.quit()
 
+        raise TriggerDoesNotExist("Trigger %s does not exist at the FSSC." % trigger)
 
     file_list = ftp.nlst()
 
