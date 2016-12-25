@@ -81,7 +81,7 @@ def download_GBM_data_trigger(trigger, detectors=None, destination_directory='.'
             if filename.find("tte") >= 0 and filename.find(det + '_') >= 0:
                 tte_to_get.append(filename)
 
-    # lets make sure we get the latests versions of the files
+    # lets make sure we get the latest versions of the files
     # prefer RSP2s
 
     rsp_to_get_latest = _get_latest_verison(rsp_to_get)
@@ -92,6 +92,7 @@ def download_GBM_data_trigger(trigger, detectors=None, destination_directory='.'
             rsp_to_get_latest), 'The file list should be the same length. Something went wrong. Contact grburgess'
 
     # reorder the file names to match the detectors
+    # the dictionary keys cause them to get out of order
 
     tmp_rsp = []
     tmp_tte = []
@@ -190,32 +191,50 @@ def download_GBM_data_trigger(trigger, detectors=None, destination_directory='.'
 
 
 def _get_latest_verison(filenames):
-    # make a dict of the pre version number file names
-    # that have version numbers as values
+    """
+    returns the list with only the highest version numbers selected
 
-    files = OrderedDict()
+    :param filenames: list of GBM data files
+    :return:
+    """
+
+    # this holds the version number
+    vn = OrderedDict()
+
+    # this holds the extensions
     extentions = OrderedDict()
+
+    # this holds the vn string
     vn_as_string = OrderedDict()
 
     for fn in filenames:
 
+        # get the first part of the file
         fn_stub, vn_stub = fn.split('_v')
 
+        # split the vn string and extension
         vn_string, ext = vn_stub.split('.')
 
+        # convert the vn to a number
         vn = 0
         for i in vn_string:
             vn += int(i)
 
-        files.setdefault(fn_stub, []).append(vn)
+        # build the dictionaries where keys
+        # are the non-unique file name
+        # and values are extensions and vn
+
+        vn.setdefault(fn_stub, []).append(vn)
         extentions.setdefault(fn_stub, []).append(ext)
         vn_as_string.setdefault(fn_stub, []).append(vn_string)
 
-    # favor RSP2 file
+
 
     final_file_names = []
 
-    for key in files.keys():
+    # Now we we go through and make selections
+
+    for key in vn.keys():
 
         # first we favor RSP2
 
@@ -223,16 +242,21 @@ def _get_latest_verison(filenames):
 
         idx = ext == 'rsp2'
 
+        # if there are no rsp2 in the files
         if idx.sum() == 0:
 
+            # we can select on all
             idx = np.ones_like(ext, dtype=bool)
 
+
         ext = ext[idx]
-        vn = np.array(files[key])[idx]
+        vn = np.array(vn[key])[idx]
         vn_string = np.array(vn_as_string[key])[idx]
 
+        # get the latest version
         max_vn = np.argmax(vn)
 
+        # create the file name
         latest_version = "%s_v%s.%s" % (key, vn_string[max_vn], ext[max_vn])
 
         final_file_names.append(latest_version)
