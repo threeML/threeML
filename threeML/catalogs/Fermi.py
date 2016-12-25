@@ -1,5 +1,6 @@
 import numpy
 from VirtualObservatoryCatalog import VirtualObservatoryCatalog
+from astropy.time import Time
 
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
@@ -159,6 +160,52 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         self._last_query_results = self._completed_table[idx]
 
         return self._all_table[np.asarray(idx)]
+
+    def search_mjd(self, mjd_start, mjd_stop):
+        """
+        search for triggers in a range of MJD
+
+        :param mjd_start: start of MJD range
+        :param mjd_stop:  stop of MJD range
+        :return: table of results
+        """
+
+        assert mjd_start < mjd_stop, "start must come before stop"
+
+        if not self._grabbed_all_data:
+
+            self._all_table = self.cone_search(0, 0, 360)
+
+            self._completed_table = self._last_query_results
+
+            self._grabbed_all_data = True
+
+        n_entries = self._completed_table.shape[0]
+
+        idx = np.logical_and(mjd_start <= self._completed_table.trigger_time,
+                             self._completed_table.trigger_time <= mjd_stop)
+
+        # save this look up
+        self._last_query_results = self._completed_table[idx]
+
+        return self._all_table[np.asarray(idx)]
+
+    def search_utc(self, utc_start, utc_stop):
+        """
+        Search for triggers in a range of UTC values. UTC time must be specified
+         in the as follows '1999-01-01T00:00:00.123456789' '2010-01-01T00:00:00'
+        :param utc_start: start of UTC interval
+        :param utc_stop: stop of UTC interval
+        :return:
+        """
+
+        # use astropy to read the UTC format
+        utc_start, utc_stop = Time([utc_start, utc_stop], format='isot', scale='utc')
+
+        # convert the UTC format to MJD and use the MJD search
+        return self.search_mjd(utc_start.mjd, utc_stop.mjd)
+
+
 
     def get_detector_information(self):
         """
@@ -830,3 +877,47 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
         self._last_query_results = self._completed_table[idx]
 
         return self._all_table[np.asarray(idx)]
+
+    def search_mjd(self, mjd_start, mjd_stop):
+        """
+        search for triggers in a range of MJD
+
+        :param mjd_start: start of MJD range
+        :param mjd_stop:  stop of MJD range
+        :return: table of results
+        """
+
+        assert mjd_start < mjd_stop, "start must come before stop"
+
+        if not self._grabbed_all_data:
+
+            self._all_table = self.cone_search(0, 0, 360)
+
+            self._completed_table = self._last_query_results
+
+            self._grabbed_all_data = True
+
+        n_entries = self._completed_table.shape[0]
+
+        idx = np.logical_and(mjd_start <= self._completed_table.trigger_time,
+                             self._completed_table.trigger_time <= mjd_stop)
+
+        # save this look up
+        self._last_query_results = self._completed_table[idx]
+
+        return self._all_table[np.asarray(idx)]
+
+    def search_utc(self, utc_start, utc_stop):
+        """
+        Search for triggers in a range of UTC values. UTC time must be specified
+         in the as follows '1999-01-01T00:00:00.123456789' '2010-01-01T00:00:00'
+        :param utc_start: start of UTC interval
+        :param utc_stop: stop of UTC interval
+        :return:
+        """
+
+        # use astropy to read the UTC format
+        utc_start, utc_stop = Time([utc_start, utc_stop], format='isot', scale='utc')
+
+        # convert the UTC format to MJD and use the MJD search
+        return self.search_mjd(utc_start.mjd, utc_stop.mjd)
