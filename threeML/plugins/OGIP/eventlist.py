@@ -414,6 +414,14 @@ class EventList(object):
         for time_interval in time_intervals:
             t1, t2 = self._parse_time_interval(time_interval)
 
+            if t1 < self._start_time:
+
+                t1 = self._start_time
+
+            if t2 > self._stop_time:
+
+                t2 = self._start_time
+
             self._poly_time_selections.append((t1, t2))
 
         self._poly_time_selections = np.array(self._poly_time_selections)
