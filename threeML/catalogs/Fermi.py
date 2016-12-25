@@ -27,7 +27,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         self._gbm_detector_lookup = np.array(['n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6',
                                               'n7', 'n8', 'n9', 'na', 'nb', 'b0', 'b1'])
 
-        self._available_models = ('band', 'compt', 'pl', 'sbpl')
+        self._available_models = ('band', 'comp', 'plaw', 'sbpl')
 
         self._grabbed_all_data = False
 
@@ -292,11 +292,11 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             ep: vFv energy peak
             alpha: alpha index
             beta: beta index
-        compt:
+        comp:
             k: normalization
             ep: vFv energy peak
             index: power low index
-        pl:
+        plaw:
             k: normalization
             index: power law index
         sbpl:
@@ -331,11 +331,11 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             'ep'   : 'epeak',
             'alpha': 'alpha',
             'beta' : 'beta'},
-            'compt'         : {
+            'comp'          : {
                 'k'    : 'ampl',
                 'ep'   : 'epeak',
                 'index': 'index'},
-            'pl'            : {
+            'plaw'          : {
                 'k'    : 'ampl',
                 'index': 'index'},
             'sbpl'          : {
@@ -489,11 +489,11 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def get_model(self, model='band', interval='fluence'):
         """
         Return the fitted model from the Fermi GBM catalog in 3ML Model form.
-        You can choose band, compt, pl, or sbpl models corresponding to the models
+        You can choose band, comp, plaw, or sbpl models corresponding to the models
         fitted in the GBM catalog. The interval for the fit can be the 'fluence' or
         'peak' interval
 
-        :param model: one of 'band' (default), 'compt', 'pl', 'sbpl'
+        :param model: one of 'band' (default), 'comp', 'plaw', 'sbpl'
         :param interval: 'peak' or 'fluence' (default)
         :return: a dictionary of 3ML likelihood models that can be fitted
         """
@@ -523,11 +523,11 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
                 lh_model = self._build_band(name, ra, dec, row, available_intervals[interval])
 
-            if model == 'compt':
+            if model == 'comp':
 
                 lh_model = self._build_cpl(name, ra, dec, row, available_intervals[interval])
 
-            if model == 'pl':
+            if model == 'plaw':
 
                 lh_model = self._build_powerlaw(name, ra, dec, row, available_intervals[interval])
 
@@ -570,6 +570,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         amp = row[primary_string + 'ampl']
 
         band = Band()
+
+        if amp < 0.:
+            amp = 0.
 
         band.K = amp
 
@@ -635,6 +638,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         cpl = Cutoff_powerlaw()
 
+        if amp < 0.:
+            amp = 0.
+
         cpl.K = amp
 
         if ecut < cpl.xc.min_value:
@@ -682,6 +688,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         pl = Powerlaw()
 
+        if amp < 0.:
+            amp = 0.
+
         pl.K = amp
         pl.piv = pivot
         pl.index = index
@@ -715,6 +724,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         pivot = row[primary_string + 'pivot']
 
         sbpl = SmoothlyBrokenPowerLaw()
+
+        if amp < 0.:
+            amp = 0.
 
         sbpl.K = amp
         sbpl.pivot = pivot
