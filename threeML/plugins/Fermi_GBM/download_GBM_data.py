@@ -89,7 +89,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
     else:
 
-        assert type(detectors) == list, 'detectors must be input as a list'
+        assert type(detectors) == list or type(detectors) == np.ndarray, 'detectors must be input as a list'
 
         for detector in detectors:
 
