@@ -39,7 +39,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         new_table['ra'].format = '5.3f'
         new_table['dec'].format = '5.3f'
 
-        return new_table.group_by('Search_Offset')
+        return new_table.group_by('trigger_time')
 
     def search_trigger_name(self, *trigger_names):
         """
@@ -806,7 +806,7 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
         new_table['ra'].format = '5.3f'
         new_table['dec'].format = '5.3f'
 
-        return new_table.group_by('Search_Offset')
+        return new_table.group_by('trigger_time')
 
     def search_trigger_name(self, *trigger_names):
         """
