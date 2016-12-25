@@ -44,6 +44,7 @@ setup(
               'threeML/plugins',
               'threeML/plugins/OGIP',
               'threeML/plugins/Fermi_LAT',
+              'threeML/plugins/Fermi_GBM',
               'threeML/classicMLE',
               'threeML/catalogs',
               'threeML/io',
