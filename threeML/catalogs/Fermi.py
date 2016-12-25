@@ -39,7 +39,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         new_table['ra'].format = '5.3f'
         new_table['dec'].format = '5.3f'
 
-        return new_table.group_by('trigger_time')
+        return new_table.group_by('Search_Offset')
 
     def search_trigger_name(self, *trigger_names):
         """
@@ -108,7 +108,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         self._last_query_results = self._completed_table[idx]
 
-        return self._all_table[np.asarray(idx)]
+        return self._all_table[np.asarray(idx)].group_by('trigger_time')
 
     def search_t90(self, t90_greater=None, t90_less=None):
         """
@@ -159,7 +159,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # save this look up
         self._last_query_results = self._completed_table[idx]
 
-        return self._all_table[np.asarray(idx)]
+        return self._all_table[np.asarray(idx)].group_by('trigger_time')
 
     def search_mjd(self, mjd_start, mjd_stop):
         """
@@ -188,7 +188,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # save this look up
         self._last_query_results = self._completed_table[idx]
 
-        return self._all_table[np.asarray(idx)]
+        return self._all_table[np.asarray(idx)].group_by('trigger_time')
 
     def search_utc(self, utc_start, utc_stop):
         """
@@ -382,6 +382,15 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         band = Band()
 
         band.K = amp
+
+        if epeak < band.xp.min_value:
+
+            band.xp.min_value = epeak
+
+        if epeak > band.xp.max_value:
+
+            band.xp.max_value = epeak
+
         band.xp = epeak
 
         # The GBM catalog has some extreme alpha values
@@ -428,7 +437,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         :return: 3ML likelihood model
         """
 
-        # need to correct epeak
+
         primary_string = "%s_comp_" % interval
 
         epeak = row[primary_string + 'epeak']
@@ -436,11 +445,34 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         pivot = row[primary_string + 'pivot']
         amp = row[primary_string + 'ampl']
 
+        # need to correct epeak to e cut
+        ecut = epeak / (2 - index)
+
         cpl = Cutoff_powerlaw()
 
         cpl.K = amp
-        cpl.xc = epeak / (2 - index)
+
+        if ecut < cpl.xc.min_value:
+
+            cpl.xc.min_value = ecut
+
+        if ecut > cpl.xc.max_value:
+
+            cpl.xc.max_value = ecut
+
+        cpl.xc = ecut
+
+
         cpl.piv = pivot
+
+        if index < cpl.index.min_value:
+
+            cpl.index.min_value = index
+
+        if index > cpl.index.max_value:
+
+            cpl.index.max_value = index
+
         cpl.index = index
 
         ps = PointSource(name, ra, dec, spectral_shape=cpl)
@@ -508,6 +540,16 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         sbpl.pivot = pivot
 
         # The GBM catalog has some extreme alpha values
+
+        if break_energy < sbpl.break_energy.min_value:
+
+            sbpl.break_energy.min_value = break_energy
+
+        if break_energy > sbpl.break_energy.max_value:
+
+            sbpl.break_energy.max_value = break_energy
+
+        sbpl.break_energy = break_energy
 
         if alpha < sbpl.alpha.min_value:
 
@@ -806,7 +848,7 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
         new_table['ra'].format = '5.3f'
         new_table['dec'].format = '5.3f'
 
-        return new_table.group_by('trigger_time')
+        return new_table.group_by('Search_Offset')
 
     def search_trigger_name(self, *trigger_names):
         """
@@ -876,7 +918,7 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
 
         self._last_query_results = self._completed_table[idx]
 
-        return self._all_table[np.asarray(idx)]
+        return self._all_table[np.asarray(idx)].group_by('trigger_time')
 
     def search_mjd(self, mjd_start, mjd_stop):
         """
@@ -905,7 +947,7 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
         # save this look up
         self._last_query_results = self._completed_table[idx]
 
-        return self._all_table[np.asarray(idx)]
+        return self._all_table[np.asarray(idx)].group_by('trigger_time')
 
     def search_utc(self, utc_start, utc_stop):
         """
