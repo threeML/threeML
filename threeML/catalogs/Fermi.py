@@ -162,6 +162,65 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         return self._all_table[np.asarray(idx)].group_by('trigger_time')
 
+    def search_energy_flux(self, flux_greater=None, flux_less=None, model='band', interval='peak'):
+        """
+        Search for GRBs via the energy flux (erg/s/cm2) of a given catalog model for agiven interval:
+        peak or fluence.
+
+        :param flux_greater: find fluxes greater than this value
+        :param flux_less: find fluxes less than this value
+        :param model: spectral model from which flux is derived
+        :param interval: interval of flux: peak or fluence
+        :return: table of results
+        """
+
+        assert flux_greater is not None or flux_less is not None, 'You must specify either the greater or less argument'
+
+        assert interval in ['fluence', 'peak'], 'interval must be either peak or fluence'
+
+        # check the model name and the interval selection
+        model = model.lower()
+
+        assert model in self._available_models, 'model is not in catalog. available choices are %s' % (', ').join(
+                self._available_models)
+
+        interval_dict = {'peak': 'pflx', 'fluence': 'flnc'}
+
+        flux_string = "%s_%s_ergflux" % (interval_dict[interval], model)
+
+        if not self._grabbed_all_data:
+
+            self._all_table = self.cone_search(0, 0, 360)
+
+            self._completed_table = self._last_query_results
+
+            self._grabbed_all_data = True
+
+        n_entries = self._completed_table.shape[0]
+
+        # Create a dummy index first
+
+        idx = np.ones(n_entries, dtype=bool)
+
+        # find the entries greater
+        if flux_greater is not None:
+
+            idx_tmp = self._completed_table[flux_string] >= flux_greater
+
+            idx = np.logical_and(idx, idx_tmp)
+
+        # find the entries less
+        if flux_less is not None:
+
+            idx_tmp = self._completed_table[flux_string] <= flux_less
+
+            idx = np.logical_and(idx, idx_tmp)
+
+        # save this look up
+        self._last_query_results = self._completed_table[idx]
+
+        return self._all_table[np.asarray(idx)].group_by('trigger_time')
+
     def search_mjd(self, mjd_start, mjd_stop):
         """
         search for triggers in a range of MJD
@@ -191,65 +250,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         return self._all_table[np.asarray(idx)].group_by('trigger_time')
 
-    def search_energy_flux(self, flux_greater=None, flux_less=None, model='band', interval='peak'):
-        """
-        Search for GRBs via the energy flux (erg/s/cm2) of a given catalog model for agiven interval:
-        peak or fluence.
-
-        :param flux_greater: find fluxes greater than this value
-        :param flux_less: find fluxes less than this value
-        :param model: spectral model from which flux is derived
-        :param interval: interval of flux: peak or fluence
-        :return: table of results
-        """
-
-        assert flux_greater is not None or flux_less is not None, 'You must specify either the greater or less argument'
-
-        assert interval in ['fluence', 'peak'], 'interval must be either peak or fluence'
-
-        # check the model name and the interval selection
-        model = model.lower()
-
-        assert model in self._available_models, 'model is not in catalog. available choices are %s' % (', ').join(
-                self._available_models)
-
-        interval_dict = {'peak': 'plfx', 'fluence': 'flnc'}
-
-        flux_string = "%s_%s_ergflx" % (interval_dict[interval], model)
-
-        if not self._grabbed_all_data:
-
-            self._all_table = self.cone_search(0, 0, 360)
-
-            self._completed_table = self._last_query_results
-
-            self._grabbed_all_data = True
-
-        n_entries = self._completed_table.shape[0]
-
-        # Create a dummy index first
-
-        idx = np.ones(n_entries, dtype=bool)
-
-        # find the entries greater
-        if flux_greater is not None:
-
-            idx_tmp = self._completed_table[flux_string] >= flux_greater
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        # find the entries less
-        if flux_less is not None:
-
-            idx_tmp = self._completed_table.t90 <= flux_less
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        # save this look up
-        self._last_query_results = self._completed_table[idx]
-
-        return self._all_table[np.asarray(idx)].group_by('trigger_time')
-
     def search_utc(self, utc_start, utc_stop):
         """
         Search for triggers in a range of UTC values. UTC time must be specified
@@ -272,10 +272,125 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # convert the UTC format to MJD and use the MJD search
         return self.search_mjd(utc_start.mjd, utc_stop.mjd)
 
+    def search_model_parameters(self, model='band', parameter='epeak', parameter_greater=None, parameter_less=None,
+                                interval='peak'):
+        """
+        Search on a given model parameter within the defined limits.
+
+
+        Example:
+
+        search_model_parameters(self,model='band',parameters='ep',parameter_greater=10,parameter_less=300, interval='peak')
+
+        will return GRBs with a peak flux epeak between 10-300 keV.
+
+
+        The models and their parameters are:
+
+        band:
+            k: normalization
+            ep: vFv energy peak
+            alpha: alpha index
+            beta: beta index
+        compt:
+            k: normalization
+            ep: vFv energy peak
+            index: power low index
+        pl:
+            k: normalization
+            index: power law index
+        sbpl:
+            k: normalization
+            energy_break: break energy
+            energy_scale: energy scaling
+            alpha: alpha index
+            beta: beta index
+
+        :param model:
+        :param parameter:
+        :param parameter_greater:
+        :param parameter_less:
+        :param interval:
+        :return:
+        """
+
+        assert parameter_greater is not None or parameter_less is not None, 'You must specify either the greater or less argument'
+
+        assert interval in ['fluence', 'peak'], 'interval must be either peak or fluence'
+
+        # check the model name and the interval selection
+        model = model.lower()
+
+        assert model in self._available_models, 'model is not in catalog. available choices are %s' % (', ').join(
+                self._available_models)
+
+        interval_dict = {'peak': 'pflx', 'fluence': 'flnc'}
+
+        param_dict = {'band': {
+            'k'    : 'ampl',
+            'ep'   : 'epeak',
+            'alpha': 'alpha',
+            'beta' : 'beta'},
+            'compt'         : {
+                'k'    : 'ampl',
+                'ep'   : 'epeak',
+                'index': 'index'},
+            'pl'            : {
+                'k'    : 'ampl',
+                'index': 'index'},
+            'sbpl'          : {
+                'k'           : 'ampl',
+                'energy_break': 'brken',
+                'energy_scale': 'brksc',
+                'alpha'       : 'indx1',
+                'beta'        : 'indx2'}}
+
+        assert parameter in param_dict[model].keys(), "parameter %s is not in %s" % (
+        parameter, ' ,'.join(param_dict[model].keys()))
+
+        search_string = '%s_%s_%s' % (interval_dict[interval], model, param_dict[model][parameter])
+
+        if not self._grabbed_all_data:
+
+            self._all_table = self.cone_search(0, 0, 360)
+
+            self._completed_table = self._last_query_results
+
+            self._grabbed_all_data = True
+
+        n_entries = self._completed_table.shape[0]
+
+        # Create a dummy index first
+
+        idx = np.ones(n_entries, dtype=bool)
+
+        # find the entries greater
+        if parameter_greater is not None:
+
+            idx_tmp = self._completed_table[search_string] >= parameter_greater
+
+            idx = np.logical_and(idx, idx_tmp)
+
+        # find the entries less
+        if parameter_less is not None:
+
+            idx_tmp = self._completed_table[search_string] <= parameter_less
+
+            idx = np.logical_and(idx, idx_tmp)
+
+        # save this look up
+        self._last_query_results = self._completed_table[idx]
+
+        return self._all_table[np.asarray(idx)].group_by('trigger_time')
+
+
+
+
+
     def get_detector_information(self):
         """
         Return the detectors used for spectral analysis as well as their background
-        intervals. Peak flux and fluence intervals are also returned
+        intervals. Peak flux and fluence intervals are also returned as well as best fit models
 
         :return: detector information dictionary
         """
@@ -328,8 +443,17 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             trigger = row['trigger_name']
 
+            # get the best fit model in the fluence and peak intervals
+
+            best_fit_peak = row['pflx_best_fitting_model'].split('_')[-1]
+
+            best_fit_fluence = row['flnc_best_fitting_model'].split('_')[-1]
+
+            best_dict = {'fluence': best_fit_fluence, 'peak': best_fit_peak}
+
             sources[name] = {'source'   : spectrum_dict, 'background': background_dict, 'trigger': trigger,
-                             'detectors': detector_selection}
+                             'detectors': detector_selection, 'best fit model': best_dict}
+
 
         return sources
 
