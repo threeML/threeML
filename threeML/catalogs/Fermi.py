@@ -13,6 +13,10 @@ class InvalidTrigger(RuntimeError):
     pass
 
 
+class InvalidUTC(RuntimeError):
+    pass
+
+
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self):
 
@@ -67,13 +71,13 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             assert len(test) == 2, "The trigger %s is not valid. Must be in the form %s" % (test,
                                                                                             ', or '.join(
-                                                                                                _valid_trigger_args))
+                                                                                                    _valid_trigger_args))
 
             trigger = test[-1]
 
             assert len(trigger) == 9, "The trigger %s is not valid. Must be in the form %s" % (trigger,
                                                                                                ', or '.join(
-                                                                                                   _valid_trigger_args))
+                                                                                                       _valid_trigger_args))
 
             for trial in trigger:
 
@@ -86,7 +90,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
                     raise InvalidTrigger(
                             "The trigger %s is not valid. Must be in the form %s" % (trigger,
                                                                                      ', or '.join(_valid_trigger_args)))
-
 
         if not self._grabbed_all_data:
 
@@ -125,8 +128,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         """
 
         assert t90_greater is not None or t90_less is not None, 'You must specify either the greater or less argument'
-
-
 
         if not self._grabbed_all_data:
 
@@ -200,12 +201,17 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         """
 
         # use astropy to read the UTC format
-        utc_start, utc_stop = Time([utc_start, utc_stop], format='isot', scale='utc')
+        try:
+            utc_start, utc_stop = Time([utc_start, utc_stop], format='isot', scale='utc')
+
+        except(ValueError):
+
+            raise InvalidUTC(
+                    "one of %s, %s is not a valid UTC string. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
+                        utc_start, utc_stop))
 
         # convert the UTC format to MJD and use the MJD search
         return self.search_mjd(utc_start.mjd, utc_stop.mjd)
-
-
 
     def get_detector_information(self):
         """
@@ -314,7 +320,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         assert model in self._available_models, 'model is not in catalog. available choices are %s' % (', ').join(
                 self._available_models)
 
-        available_intervals = {'fluence': 'flnc', 'peak': 'plfx'}
+        available_intervals = {'fluence': 'flnc', 'peak': 'pflx'}
 
         assert interval in available_intervals.keys(), 'interval not recognized. choices are %s' % (
             ' ,'.join(available_intervals.keys()))
@@ -381,7 +387,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         band = Band()
 
-
         band.K = amp
 
         if epeak < band.xp.min_value:
@@ -434,7 +439,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         :return: 3ML likelihood model
         """
 
-
         primary_string = "%s_comp_" % interval
 
         epeak = row[primary_string + 'epeak']
@@ -454,7 +458,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             cpl.xc.min_value = ecut
 
         cpl.xc = ecut
-
 
         cpl.piv = pivot
 
@@ -572,34 +575,31 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         return model
 
 
-
-
-
 #########
 
 threefgl_types = {
-    'agn': 'other non-blazar active galaxy',
-    'bcu': 'active galaxy of uncertain type',
-    'bin': 'binary',
-    'bll': 'BL Lac type of blazar',
-    'css': 'compact steep spectrum quasar',
-    'fsrq': 'FSRQ type of blazar',
-    'gal': 'normal galaxy (or part)',
-    'glc': 'globular cluster',
-    'hmb': 'high-mass binary',
+    'agn'  : 'other non-blazar active galaxy',
+    'bcu'  : 'active galaxy of uncertain type',
+    'bin'  : 'binary',
+    'bll'  : 'BL Lac type of blazar',
+    'css'  : 'compact steep spectrum quasar',
+    'fsrq' : 'FSRQ type of blazar',
+    'gal'  : 'normal galaxy (or part)',
+    'glc'  : 'globular cluster',
+    'hmb'  : 'high-mass binary',
     'nlsy1': 'narrow line Seyfert 1',
-    'nov': 'nova',
-    'PSR': 'pulsar, identified by pulsations',
-    'psr': 'pulsar, no pulsations seen in LAT yet',
-    'pwn': 'pulsar wind nebula',
-    'rdg': 'radio galaxy',
-    'sbg': 'starburst galaxy',
-    'sey': 'Seyfert galaxy',
-    'sfr': 'star-forming region',
-    'snr': 'supernova remnant',
-    'spp': 'special case - potential association with SNR or PWN',
-    'ssrq': 'soft spectrum radio quasar',
-    '': 'unknown'
+    'nov'  : 'nova',
+    'PSR'  : 'pulsar, identified by pulsations',
+    'psr'  : 'pulsar, no pulsations seen in LAT yet',
+    'pwn'  : 'pulsar wind nebula',
+    'rdg'  : 'radio galaxy',
+    'sbg'  : 'starburst galaxy',
+    'sey'  : 'Seyfert galaxy',
+    'sfr'  : 'star-forming region',
+    'snr'  : 'supernova remnant',
+    'spp'  : 'special case - potential association with SNR or PWN',
+    'ssrq' : 'soft spectrum radio quasar',
+    ''     : 'unknown'
 }
 
 
@@ -744,7 +744,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
         super(FermiLATSourceCatalog, self).__init__('fermilpsc',
                                                     threeML_config['catalogs']['Fermi']['LAT FGL'],
-                                               'Fermi/LAT source catalog')
+                                                    'Fermi/LAT source catalog')
 
     def apply_format(self, table):
 
@@ -791,11 +791,11 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
                 if this_name == "Crab":
 
-                    if name[-1]=='i':
+                    if name[-1] == 'i':
 
                         this_name = "Crab_IC"
 
-                    elif name[-1]=="s":
+                    elif name[-1] == "s":
 
                         this_name = "Crab_synch"
 
@@ -820,10 +820,9 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self):
         super(FermiLLEBurstCatalog, self).__init__('fermille',
                                                    threeML_config['catalogs']['Fermi']['LLE catalog'],
-                                              'Fermi/LLE catalog')
+                                                   'Fermi/LLE catalog')
 
         self._grabbed_all_data = False
-
 
     def apply_format(self, table):
         new_table = table['name',
@@ -853,8 +852,6 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
         # check the trigger names
 
         _valid_trigger_args = ['bn080916009']
-
-
 
         for trigger in trigger_names:
 
@@ -947,7 +944,15 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
         """
 
         # use astropy to read the UTC format
-        utc_start, utc_stop = Time([utc_start, utc_stop], format='isot', scale='utc')
+
+        try:
+            utc_start, utc_stop = Time([utc_start, utc_stop], format='isot', scale='utc')
+
+        except(ValueError):
+
+            raise InvalidUTC(
+                    "one of %s, %s are not a valid UTC strings. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
+                        utc_start, utc_stop))
 
         # convert the UTC format to MJD and use the MJD search
         return self.search_mjd(utc_start.mjd, utc_stop.mjd)

@@ -5,7 +5,7 @@ from threeML.io.network import internet_connection_is_active
 
 skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
                                                        reason="No active internet connection")
-from threeML.catalogs.Fermi import InvalidTrigger
+from threeML.catalogs.Fermi import InvalidTrigger, InvalidUTC
 
 @skip_if_internet_is_not_available
 def test_GBM_catalog():
@@ -18,6 +18,26 @@ def test_GBM_catalog():
     assert gbm_catalog.dec_center == 0.0
 
     gbm_catalog.search_around_source('Crab', 5.0)
+
+    # test model building
+
+    models = ['band', 'compt', 'pl', 'sbpl']
+    intervals = ['peak', 'fluence']
+
+    for models in models:
+        for interval in intervals:
+            _ = gbm_catalog.get_model(model=models, interval=interval)
+
+    # test model building assertions
+
+    with pytest.raises(AssertionError):
+
+        _ = gbm_catalog.get_model(model='not_a_model')
+
+    with pytest.raises(AssertionError):
+
+        _ = gbm_catalog.get_model(interval='not_an_interval')
+
 
     _ = gbm_catalog.search_t90(t90_greater=2.)
     _ = gbm_catalog.search_t90(t90_less=2.)
@@ -42,6 +62,26 @@ def test_GBM_catalog():
 
     with pytest.raises(InvalidTrigger):
         _ = gbm_catalog.search_trigger_name('bn08a916009')
+
+    # test time searches
+
+    # UTC search includes MJD search
+    utc_start = '2008-01-01T00:00:00.123456789'
+    utc_stop = '2009-01-01T00:00:00.123456789'
+
+    _ = gbm_catalog.search_utc(utc_start=utc_start, utc_stop=utc_stop)
+
+    # make sure we cannot search reversed intervals
+    with pytest.raises(AssertionError):
+
+        _ = gbm_catalog.search_utc(utc_start=utc_stop, utc_stop=utc_start)
+
+    # make sure that non UTC values throw a bug
+
+    with pytest.raises(InvalidUTC):
+
+        _ = gbm_catalog.search_utc(utc_start='123', utc_stop='123')
+
 
 
 
@@ -87,3 +127,20 @@ def test_LLE_catalog():
 
     with pytest.raises(InvalidTrigger):
         _ = lle_catalog.search_trigger_name('bn08a916009')
+
+        # test time searches
+
+        # UTC search includes MJD search
+        utc_start = '2008-01-01T00:00:00.123456789'
+        utc_stop = '2009-01-01T00:00:00.123456789'
+
+        _ = lle_catalog.search_utc(utc_start=utc_start, utc_stop=utc_stop)
+
+        # make sure we cannot search reversed intervals
+        with pytest.raises(AssertionError):
+            _ = lle_catalog.search_utc(utc_start=utc_stop, utc_stop=utc_start)
+
+        # make sure that non UTC values throw a bug
+
+        with pytest.raises(InvalidUTC):
+            _ = lle_catalog.search_utc(utc_start='123', utc_stop='123')
