@@ -269,7 +269,8 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             trigger = row['trigger_name']
 
-            sources[name] = {'source': spectrum_dict, 'background': background_dict, 'trigger': trigger}
+            sources[name] = {'source'   : spectrum_dict, 'background': background_dict, 'trigger': trigger,
+                             'detectors': detector_selection}
 
         return sources
 
