@@ -1,1 +1,1 @@
-from Fermi import FermiGBMBurstCatalog, FermiLATSourceCatalog
+from Fermi import FermiGBMBurstCatalog, FermiLATSourceCatalog, FermiLLEBurstCatalog

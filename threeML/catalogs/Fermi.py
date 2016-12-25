@@ -58,6 +58,10 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         for trigger in trigger_names:
 
+            assert type(trigger) == str, "The trigger %s is not valid. Must be in the form %s" % (trigger,
+                                                                                                  ', or '.join(
+                                                                                                          _valid_trigger_args))
+
             test = trigger.split('bn')
 
             assert len(test) == 2, "The trigger %s is not valid. Must be in the form %s" % (test,
@@ -106,10 +110,22 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         return self._all_table[np.asarray(idx)]
 
     def search_t90(self, t90_greater=None, t90_less=None):
+        """
+        search for GBM GRBs by their T90 values.
 
-        if t90_greater is None and t90_less is None:
+        Example:
+            T90s >= 2 -> search_t90(t90_greater=2)
+            T90s <= 10 -> search_t90(t90_less=10)
+            2 <= T90s <= 10 search_t90(t90_greater, t90_less=10)
 
-            RuntimeError("You must specify an entry")
+        :param t90_greater: value for T90s greater
+        :param t90_less: value for T90s less
+        :return:
+        """
+
+        assert t90_greater is not None or t90_less is not None, 'You must specify either the greater or less argument'
+
+
 
         if not self._grabbed_all_data:
 
@@ -723,13 +739,14 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         return ModelFrom3FGL(self.ra_center, self.dec_center, *sources)
 
 
-class FermiLLECatalog(VirtualObservatoryCatalog):
+class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self):
-        super(FermiLLECatalog, self).__init__('fermille',
-                                              threeML_config['catalogs']['Fermi']['LLE catalog'],
+        super(FermiLLEBurstCatalog, self).__init__('fermille',
+                                                   threeML_config['catalogs']['Fermi']['LLE catalog'],
                                               'Fermi/LLE catalog')
 
         self._grabbed_all_data = False
+
 
     def apply_format(self, table):
         new_table = table['name',
@@ -758,9 +775,15 @@ class FermiLLECatalog(VirtualObservatoryCatalog):
 
         # check the trigger names
 
-        _valid_trigger_args = ['080916008', 'bn080916009', 'GRB080916009']
+        _valid_trigger_args = ['bn080916009']
+
+
 
         for trigger in trigger_names:
+
+            assert type(trigger) == str, "The trigger %s is not valid. Must be in the form %s" % (trigger,
+                                                                                                  ', or '.join(
+                                                                                                          _valid_trigger_args))
 
             test = trigger.split('bn')
 
