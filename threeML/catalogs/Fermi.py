@@ -381,15 +381,12 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         band = Band()
 
+
         band.K = amp
 
         if epeak < band.xp.min_value:
 
             band.xp.min_value = epeak
-
-        if epeak > band.xp.max_value:
-
-            band.xp.max_value = epeak
 
         band.xp = epeak
 
@@ -399,7 +396,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             band.alpha.min_value = alpha
 
-        if alpha > band.alpha.max_value:
+        elif alpha > band.alpha.max_value:
 
             band.alpha.max_value = alpha
 
@@ -411,7 +408,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             band.beta.min_value = beta
 
-        if beta > band.beta.max_value:
+        elif beta > band.beta.max_value:
 
             band.beta.max_value = beta
 
@@ -456,10 +453,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             cpl.xc.min_value = ecut
 
-        if ecut > cpl.xc.max_value:
-
-            cpl.xc.max_value = ecut
-
         cpl.xc = ecut
 
 
@@ -469,7 +462,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             cpl.index.min_value = index
 
-        if index > cpl.index.max_value:
+        elif index > cpl.index.max_value:
 
             cpl.index.max_value = index
 
@@ -545,17 +538,13 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             sbpl.break_energy.min_value = break_energy
 
-        if break_energy > sbpl.break_energy.max_value:
-
-            sbpl.break_energy.max_value = break_energy
-
         sbpl.break_energy = break_energy
 
         if alpha < sbpl.alpha.min_value:
 
             sbpl.alpha.min_value = alpha
 
-        if alpha > sbpl.alpha.max_value:
+        elif alpha > sbpl.alpha.max_value:
 
             sbpl.alpha.max_value = alpha
 
@@ -567,13 +556,12 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             sbpl.beta.min_value = beta
 
-        if beta > sbpl.beta.max_value:
+        elif beta > sbpl.beta.max_value:
 
             sbpl.beta.max_value = beta
 
         sbpl.beta = beta
         sbpl.break_scale = break_scale
-        sbpl.break_energy = break_energy
 
         sbpl.break_scale.free = True
 
