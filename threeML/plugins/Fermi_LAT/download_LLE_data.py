@@ -64,6 +64,14 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
             raise InvalidTrigger(
                     "The trigger argument is not valid. Must be in the form %s" % (', or '.join(_valid_trigger_args)))
 
+    # create output directory if it does not exists
+    destination_directory = sanitize_filename(destination_directory, abspath=True)
+
+    if not os.path.exists(destination_directory):
+
+        os.makedirs(destination_directory)
+
+
     # open and FTP to look at the data
     ftp = ftplib.FTP('legacy.gsfc.nasa.gov', 'anonymous', '')
 

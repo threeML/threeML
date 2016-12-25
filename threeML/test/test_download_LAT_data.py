@@ -4,6 +4,9 @@ import pytest
 from threeML import *
 from threeML.io.network import internet_connection_is_active
 
+from threeML.plugins.Fermi_LAT.download_LLE_data import InvalidTrigger, TriggerDoesNotExist
+
+
 skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
                                                        reason="No active internet connection")
 
@@ -27,3 +30,47 @@ def test_download_LAT_data():
     assert os.path.exists(ft2)
 
     shutil.rmtree(temp_dir)
+
+
+@skip_if_internet_is_not_available
+def test_download_LLE_data():
+    # test good trigger names
+    good_triggers = ['080916009', 'bn080916009', 'GRB080916009']
+
+    for i, trigger in enumerate(good_triggers):
+
+        temp_dir = '_download_temp'
+
+        dl_info = download_LLE_trigger_data(trigger=trigger,
+                                            destination_directory=temp_dir)
+
+        assert os.path.exists(dl_info['rsp'])
+        assert os.path.exists(dl_info['lle'])
+
+        # we can rely on the non-repeat download to go fast
+        print i
+
+        if i == len(good_triggers) - 1:
+            shutil.rmtree(temp_dir)
+
+    # Now test that bad names block us
+
+    with pytest.raises(AssertionError):
+
+        download_LLE_trigger_data(trigger='blah080916009',
+                                  destination_directory=temp_dir)
+
+    with pytest.raises(AssertionError):
+
+        download_LLE_trigger_data(trigger=80916009,
+                                  destination_directory=temp_dir)
+
+    with pytest.raises(InvalidTrigger):
+
+        download_LLE_trigger_data(trigger='bn08a916009',
+                                  destination_directory=temp_dir)
+
+    with pytest.raises(TriggerDoesNotExist):
+
+        download_LLE_trigger_data(trigger='080916008',
+                                  destination_directory=temp_dir)
