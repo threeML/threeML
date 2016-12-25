@@ -6,6 +6,7 @@ import numpy as np
 from astromodels.core.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
+from astromodels import clone_model
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.step_plot import step_plot
@@ -177,6 +178,9 @@ class OGIPLike(PluginPrototype):
 
         self._tstart = None
         self._tstop = None
+
+        # This is so far not a simulated data set
+        self._simulation_storage = None
 
         # set the mask to the native quality
         self._mask = self._quality_to_mask()
@@ -718,9 +722,25 @@ class OGIPLike(PluginPrototype):
                 new_ogip_like._mask = original_mask
                 new_ogip_like._apply_mask_to_original_vectors()
 
+            # We want to store the simulated parameters so that the user
+            # can recall them later
+
+            new_ogip_like._simulation_storage = clone_model(self._like_model)
+
             # TODO: nuisance parameters
 
             return new_ogip_like
+
+    @property
+    def simulated_parameters(self):
+        """
+        Return the simulated dataset parameters
+        :return: a likelihood model copy
+        """
+
+        assert self._simulation_storage is not None, "This is not a simulated data set"
+
+        return self._simulation_storage
 
     def rebin_on_background(self, min_number_of_counts):
         """
