@@ -237,7 +237,6 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
                                                            t_stop,
                                                            exposure)
 
-                print 'got in here'
 
 
 
