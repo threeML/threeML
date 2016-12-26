@@ -102,167 +102,6 @@ class Polynomial(object):
         return math.sqrt(err2)
 
 
-def polyfit(x, y, grade, exposure):
-    """ funtion to fit a polynomial to event data. not a member to allow parallel computation """
-    test = False
-
-    # Check that we have enough counts to perform the fit, otherwise
-    # return a "zero polynomial"
-    non_zero_mask = (y > 0)
-    n_non_zero = len(non_zero_mask.nonzero()[0])
-    if n_non_zero == 0:
-        # No data, nothing to do!
-        return Polynomial([0.0]), 0.0
-
-    # Compute an initial guess for the polynomial parameters,
-    # with a least-square fit (with weight=1) using SVD (extremely robust):
-    # (note that polyfit returns the coefficient starting from the maximum grade,
-    # thus we need to reverse the order)
-    if test:
-        print("  Initial estimate with SVD..."),
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-
-        initial_guess = np.polyfit(x, y, grade)
-
-    initial_guess = initial_guess[::-1]
-
-    if (test):
-        print("  done -> %s" % (initial_guess))
-
-    polynomial = Polynomial(initial_guess)
-
-    # Check that the solution found is meaningful (i.e., definite positive
-    # in the interval of interest)
-    M = polynomial(x)
-
-    negative_mask = (M < 0)
-
-    if len(negative_mask.nonzero()[0]) > 0:
-        # Least square fit failed to converge to a meaningful solution
-        # Reset the initialGuess to reasonable value
-        initial_guess[0] = np.mean(y)
-        meanx = np.mean(x)
-        initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
-
-    # Improve the solution using a logLikelihood statistic (Cash statistic)
-    log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
-
-    # Check that we have enough non-empty bins to fit this grade of polynomial,
-    # otherwise lower the grade
-    dof = n_non_zero - (grade + 1)
-
-    if dof <= 2:
-        # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-        while (dof < 2 and len(initial_guess) > 1):
-            initial_guess = initial_guess[:-1]
-            polynomial = Polynomial(initial_guess)
-            log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
-
-    # Try to improve the fit with the log-likelihood
-
-
-
-    final_estimate = opt.minimize(log_likelihood, initial_guess, method=threeML_config['event list']['binned fit method'], options=threeML_config['event list']['binned fit options'])['x']
-    final_estimate = np.atleast_1d(final_estimate)
-
-    # Get the value for cstat at the minimum
-
-    min_log_likelihood = log_likelihood(final_estimate)
-
-    # Update the polynomial with the fitted parameters,
-    # and the relative covariance matrix
-
-    final_polynomial = Polynomial(final_estimate)
-
-    try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
-    except Exception:
-        raise
-    # if test is defined, compare the results with those obtained with ROOT
-
-
-    return final_polynomial, min_log_likelihood
-
-
-def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude=1):
-    """
-    function to fit a polynomial to event data. not a member to allow parallel computation
-
-    """
-
-    # first do a simple amplitude fit
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-
-        search_grid = np.logspace(-2, 4, 10)
-
-        initial_guess = np.zeros(grade + 1)
-
-        polynomial = Polynomial(initial_guess)
-
-        # if there are no events then return nothing
-
-
-
-        if len(events) == 0:
-
-            return Polynomial([0]), 0
-
-        log_likelihood = PolyUnbinnedLogLikelihood(events,
-                                                   polynomial,
-                                                   t_start,
-                                                   t_stop,
-                                                   exposure)
-
-        like_grid = []
-        for amp in search_grid:
-
-            initial_guess[0] = amp
-            like_grid.append(log_likelihood(initial_guess))
-
-        initial_guess[0] = search_grid[np.argmin(like_grid)]
-
-        # Improve the solution
-        dof = len(events) - (grade + 1)
-
-        if dof <= 2:
-            # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-            while (dof < 1 and len(initial_guess) > 1):
-                initial_guess = initial_guess[:-1]
-                polynomial = Polynomial(initial_guess)
-                log_likelihood = PolyUnbinnedLogLikelihood(events,
-                                                           polynomial,
-                                                           t_start,
-                                                           t_stop,
-                                                           exposure)
-
-
-
-
-        final_estimate = opt.minimize(log_likelihood, initial_guess, method=threeML_config['event list']['unbinned fit method'], options=threeML_config['event list']['unbinned fit options'])['x']
-
-        final_estimate = np.atleast_1d(final_estimate)
-        # print
-        # print final_estimate
-
-        # Get the value for cstat at the minimum
-
-        min_log_likelihood = log_likelihood(final_estimate)
-
-    # Update the polynomial with the fitted parameters,
-    # and the relative covariance matrix
-
-    final_polynomial = Polynomial(final_estimate)
-
-    try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
-    except Exception:
-        raise
-    # if test is defined, compare the results with those obtained with ROOT
-
-
-    return final_polynomial, min_log_likelihood
 
 
 ##
@@ -532,94 +371,165 @@ class PolyUnbinnedLogLikelihood(object):
         return derivs
 
 
-def compute_covariance_matrix(grad, par, full_output=False,
-                              init_step=0.01, min_step=1e-12, max_step=1, max_iters=50,
-                              target=0.1, min_func=1e-7, max_func=4):
-    """Perform finite differences on the _analytic_ gradient provided by user to calculate hessian/covariance matrix.
+def polyfit(x, y, grade, exposure):
+    """ funtion to fit a polynomial to event data. not a member to allow parallel computation """
+    test = False
 
-    Positional args:
-        grad                : a function to return a gradient
-        par                 : vector of parameters (should be function minimum for covariance matrix calculation)
+    # Check that we have enough counts to perform the fit, otherwise
+    # return a "zero polynomial"
+    non_zero_mask = (y > 0)
+    n_non_zero = len(non_zero_mask.nonzero()[0])
+    if n_non_zero == 0:
+        # No data, nothing to do!
+        return Polynomial([0.0]), 0.0
 
-    Keyword args:
+    # Compute an initial guess for the polynomial parameters,
+    # with a least-square fit (with weight=1) using SVD (extremely robust):
+    # (note that polyfit returns the coefficient starting from the maximum grade,
+    # thus we need to reverse the order)
+    if test:
+        print("  Initial estimate with SVD..."),
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
 
-        full_output [False] : if True, return information about convergence, else just the covariance matrix
-        init_step   [1e-3]  : initial step size (0.04 ~ 10% in log10 space); can be a scalar or vector
-        min_step    [1e-6]  : the minimum step size to take in parameter space
-        max_step    [1]     : the maximum step size to take in parameter sapce
-        max_iters   [5]     : maximum number of iterations to attempt to converge on a good step size
-        target      [0.5]   : the target change in the function value for step size
-        min_func    [1e-4]  : the minimum allowable change in (abs) function value to accept for convergence
-        max_func    [4]     : the maximum allowable change in (abs) function value to accept for convergence
+        initial_guess = np.polyfit(x, y, grade)
+
+    initial_guess = initial_guess[::-1]
+
+    if (test):
+        print("  done -> %s" % (initial_guess))
+
+    polynomial = Polynomial(initial_guess)
+
+    # Check that the solution found is meaningful (i.e., definite positive
+    # in the interval of interest)
+    M = polynomial(x)
+
+    negative_mask = (M < 0)
+
+    if len(negative_mask.nonzero()[0]) > 0:
+        # Least square fit failed to converge to a meaningful solution
+        # Reset the initialGuess to reasonable value
+        initial_guess[0] = np.mean(y)
+        meanx = np.mean(x)
+        initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
+
+    # Improve the solution using a logLikelihood statistic (Cash statistic)
+    log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
+
+    # Check that we have enough non-empty bins to fit this grade of polynomial,
+    # otherwise lower the grade
+    dof = n_non_zero - (grade + 1)
+
+    if dof <= 2:
+        # Fit is poorly or ill-conditioned, have to reduce the number of parameters
+        while (dof < 2 and len(initial_guess) > 1):
+            initial_guess = initial_guess[:-1]
+            polynomial = Polynomial(initial_guess)
+            log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
+
+    # Try to improve the fit with the log-likelihood
+
+
+
+    final_estimate = \
+    opt.minimize(log_likelihood, initial_guess, method=threeML_config['event list']['binned fit method'],
+                 options=threeML_config['event list']['binned fit options'])['x']
+    final_estimate = np.atleast_1d(final_estimate)
+
+    # Get the value for cstat at the minimum
+
+    min_log_likelihood = log_likelihood(final_estimate)
+
+    # Update the polynomial with the fitted parameters,
+    # and the relative covariance matrix
+
+    final_polynomial = Polynomial(final_estimate)
+
+    try:
+        final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
+    except Exception:
+        raise
+    # if test is defined, compare the results with those obtained with ROOT
+
+
+    return final_polynomial, min_log_likelihood
+
+
+def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude=1):
+    """
+    function to fit a polynomial to event data. not a member to allow parallel computation
+
     """
 
-    nparams = len(par)
-    step_size = np.ones(nparams) * init_step
-    step_size = np.maximum(step_size, min_step * 1.1)
-    step_size = np.minimum(step_size, max_step * 0.9)
-    hess = np.zeros([nparams, nparams])
-    min_flags = np.asarray([False] * nparams)
-    max_flags = np.asarray([False] * nparams)
+    # first do a simple amplitude fit
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
 
-    def revised_step(delta_f, current_step, index):
-        if (current_step == max_step):
-            max_flags[i] = True
-            return True, 0
+        search_grid = np.logspace(-2, 4, 10)
 
-        elif (current_step == min_step):
-            min_flags[i] = True
-            return True, 0
+        initial_guess = np.zeros(grade + 1)
 
-        else:
-            adf = abs(delta_f)
-            if adf < 1e-8:
-                # need to address a step size that results in a likelihood change that's too
-                # small compared to precision
-                pass
+        polynomial = Polynomial(initial_guess)
 
-            if (adf < min_func) or (adf > max_func):
-                new_step = current_step / (adf / target)
-                new_step = min(new_step, max_step)
-                new_step = max(new_step, min_step)
-                return False, new_step
-            else:
-                return True, 0
+        # if there are no events then return nothing
 
-    iters = np.zeros(nparams)
-    for i in xrange(nparams):
-        converged = False
 
-        for j in xrange(max_iters):
-            iters[i] += 1
 
-            di = step_size[i]
-            par[i] += di
-            g_up = grad(par)
+        if len(events) == 0:
 
-            par[i] -= 2 * di
-            g_dn = grad(par)
+            return Polynomial([0]), 0
 
-            par[i] += di
+        log_likelihood = PolyUnbinnedLogLikelihood(events,
+                                                   polynomial,
+                                                   t_start,
+                                                   t_stop,
+                                                   exposure)
 
-            delta_f = (g_up - g_dn)[i]
+        like_grid = []
+        for amp in search_grid:
 
-            converged, new_step = revised_step(delta_f, di, i)
+            initial_guess[0] = amp
+            like_grid.append(log_likelihood(initial_guess))
 
-            if converged:
-                break
-            else:
-                step_size[i] = new_step
+        initial_guess[0] = search_grid[np.argmin(like_grid)]
 
-        hess[i, :] = (g_up - g_dn) / (2 * di)  # central difference
+        # Improve the solution
+        dof = len(events) - (grade + 1)
 
-        if not converged:
-            print 'Warning: step size for parameter %d (%.2g) did not result in convergence.' % (i, di)
+        if dof <= 2:
+            # Fit is poorly or ill-conditioned, have to reduce the number of parameters
+            while (dof < 1 and len(initial_guess) > 1):
+                initial_guess = initial_guess[:-1]
+                polynomial = Polynomial(initial_guess)
+                log_likelihood = PolyUnbinnedLogLikelihood(events,
+                                                           polynomial,
+                                                           t_start,
+                                                           t_stop,
+                                                           exposure)
+
+        final_estimate = \
+        opt.minimize(log_likelihood, initial_guess, method=threeML_config['event list']['unbinned fit method'],
+                     options=threeML_config['event list']['unbinned fit options'])['x']
+
+        final_estimate = np.atleast_1d(final_estimate)
+        # print
+        # print final_estimate
+
+        # Get the value for cstat at the minimum
+
+        min_log_likelihood = log_likelihood(final_estimate)
+
+    # Update the polynomial with the fitted parameters,
+    # and the relative covariance matrix
+
+    final_polynomial = Polynomial(final_estimate)
+
     try:
-        cov = np.linalg.inv(hess)
-    except:
-        print 'Error inverting hessian.'
-        raise Exception('Error inverting hessian')
-    if full_output:
-        return cov, hess, step_size, iters, min_flags, max_flags
-    else:
-        return cov
+        final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
+    except Exception:
+        raise
+    # if test is defined, compare the results with those obtained with ROOT
+
+
+    return final_polynomial, min_log_likelihood
