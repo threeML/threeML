@@ -137,7 +137,6 @@ def test_LAT_catalog():
     assert lat_catalog.dec_center == dec
 
 
-
 @skip_if_internet_is_not_available
 def test_LLE_catalog():
     lle_catalog = FermiLLEBurstCatalog()

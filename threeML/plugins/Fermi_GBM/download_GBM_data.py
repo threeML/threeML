@@ -74,7 +74,6 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
         os.makedirs(destination_directory)
 
-
     # open and FTP to look at the data
     ftp = ftplib.FTP('legacy.gsfc.nasa.gov', 'anonymous', '')
 

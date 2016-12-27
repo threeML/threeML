@@ -71,7 +71,6 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
 
         os.makedirs(destination_directory)
 
-
     # open and FTP to look at the data
     ftp = ftplib.FTP('legacy.gsfc.nasa.gov', 'anonymous', '')
 

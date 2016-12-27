@@ -7,6 +7,7 @@ from astromodels.utils.angular_distance import angular_distance
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 
+
 class InvalidTrigger(RuntimeError):
     pass
 
@@ -343,7 +344,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
                 'beta'        : 'indx2'}}
 
         assert parameter in param_dict[model].keys(), "parameter %s is not in %s" % (
-        parameter, ' ,'.join(param_dict[model].keys()))
+            parameter, ' ,'.join(param_dict[model].keys()))
 
         search_string = '%s_%s_%s' % (interval_dict[interval], model, param_dict[model][parameter])
 
@@ -379,10 +380,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         self._last_query_results = self._completed_table[idx]
 
         return self._all_table[np.asarray(idx)].group_by('trigger_time')
-
-
-
-
 
     def get_detector_information(self):
         """
@@ -450,7 +447,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             sources[name] = {'source'   : spectrum_dict, 'background': background_dict, 'trigger': trigger,
                              'detectors': detector_selection, 'best fit model': best_dict}
-
 
         return sources
 
