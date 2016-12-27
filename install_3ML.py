@@ -145,7 +145,7 @@ if __name__ == "__main__":
 
     if not choice:
 
-        sys.exit(0)
+        sys.exit(-2)
 
 
     # First make sure pip is installed
@@ -156,14 +156,30 @@ if __name__ == "__main__":
     except subprocess.CalledProcessError:
 
         message = "Could not execute 'pip --version'. Likely you do not have pip installed. " \
-                  "Please install pip first, then re-run this script. " \
-                  "Follow instructions at https://pip.pypa.io/en/stable/installing/"
+                  "Please install pip first, then re-run this script. Use your package manager (preferred), or " \
+                  "follow instructions at https://pip.pypa.io/en/stable/installing/"
 
         fatal_error(message)
 
     else:
 
         discovery_message("Found pip with this version string: %s" % pip_version_string)
+
+    # Then make sure git is installed
+    try:
+
+        git_version_string = subprocess.check_output("git --version", shell=True)
+
+    except subprocess.CalledProcessError:
+
+        message = "Could not execute 'git --version'. Likely you do not have git installed. " \
+                  "Use your package manager to install git first, then re-run this script."
+
+        fatal_error(message)
+
+    else:
+
+        discovery_message("Found git with this version string: %s" % git_version_string)
 
     # Check that virtualenv is installed, otherwise try to install it
     try:
