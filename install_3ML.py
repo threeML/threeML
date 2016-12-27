@@ -228,10 +228,10 @@ if __name__ == "__main__":
 
         f.write("#/bin/bash\n")
         f.write("source %s/bin/activate\n" % env_path)
-        f.write("pip install numpy scipy matplotlib iminuit --upgrade\n")
-        f.write("pip install -vv git+https://github.com/giacomov/3ML.git --upgrade\n")
-        f.write("pip install -vv git+https://github.com/giacomov/astromodels.git --upgrade\n")
-        f.write("pip install -vv git+https://github.com/giacomov/cthreeML.git || "
+        f.write("pip install numpy scipy matplotlib iminuit astropy --upgrade\n")
+        f.write("pip install git+https://github.com/giacomov/3ML.git --upgrade\n")
+        f.write("pip install git+https://github.com/giacomov/astromodels.git --upgrade\n")
+        f.write("pip install git+https://github.com/giacomov/cthreeML.git || "
                 "echo '\n\nNOTE: could not install chtreeML. Probably boost python is not available' \n")
 
     # Execute script
