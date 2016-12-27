@@ -6,7 +6,9 @@ from astromodels.utils.angular_distance import angular_distance
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
+from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 
+import astropy.time as astro_time
 
 class InvalidTrigger(RuntimeError):
     pass
@@ -17,8 +19,14 @@ class InvalidUTC(RuntimeError):
 
 
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
+    def __init__(self, update=False):
+        """
+        The Fermi GBM GRB catalog. Search for GRBs  by trigger
+        number, location, spectral parameters, T90, and date range.
 
-    def __init__(self):
+        :param update: force update the XML VO table
+        """
+
         super(FermiGBMBurstCatalog, self).__init__('fermigbrst',
                                                    threeML_config['catalogs']['Fermi']['GBM burst catalog'],
                                                    'Fermi/GBM burst catalog')
@@ -28,32 +36,32 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         self._available_models = ('band', 'comp', 'plaw', 'sbpl')
 
-        self._grabbed_all_data = False
+        self._vo_dataframe, self._all_table = get_heasarc_table_as_pandas('fermigbrst',
+                                                                          update=update,
+                                                                          cache_time_days=1.)
+
+
 
     def apply_format(self, table):
         new_table = table['name',
                           'ra', 'dec',
                           'trigger_time',
                           't90',
-                          'Search_Offset',
+
         ]
 
         new_table['ra'].format = '5.3f'
         new_table['dec'].format = '5.3f'
 
-        return new_table.group_by('Search_Offset')
+        return new_table.group_by('trigger_time')
 
     def search_trigger_name(self, *trigger_names):
         """
         Find the information on the given trigger names.
-        First run will be slow. Subsequent runs are very fast
 
         :param trigger_names: trigger numbers (str) e.g. '080916009' or 'bn080916009' or 'GRB080916009'
         :return:
         """
-
-        # If we have not downloaded the entire table
-        # then we must do so.
 
         # check the trigger names
 
@@ -89,27 +97,21 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
                             "The trigger %s is not valid. Must be in the form %s" % (trigger,
                                                                                      ', or '.join(_valid_trigger_args)))
 
-        if not self._grabbed_all_data:
-
-            self._all_table = self.cone_search(0, 0, 360)
-
-            self._completed_table = self._last_query_results
-
-            self._grabbed_all_data = True
-
-        n_entries = self._completed_table.shape[0]
+        n_entries = self._vo_dataframe.shape[0]
 
         idx = np.zeros(n_entries, dtype=bool)
 
         for name in trigger_names:
 
-            condition = self._completed_table.trigger_name == name
+            condition = self._vo_dataframe.trigger_name == name
 
             idx = np.logical_or(idx, condition)
 
-        self._last_query_results = self._completed_table[idx]
+        self._last_query_results = self._vo_dataframe[idx]
 
-        return self._all_table[np.asarray(idx)].group_by('trigger_time')
+        table = self.apply_format(self._all_table[np.asarray(idx)])
+
+        return table
 
     def search_t90(self, t90_greater=None, t90_less=None):
         """
@@ -127,15 +129,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         assert t90_greater is not None or t90_less is not None, 'You must specify either the greater or less argument'
 
-        if not self._grabbed_all_data:
-
-            self._all_table = self.cone_search(0, 0, 360)
-
-            self._completed_table = self._last_query_results
-
-            self._grabbed_all_data = True
-
-        n_entries = self._completed_table.shape[0]
+        n_entries = self._vo_dataframe.shape[0]
 
         # Create a dummy index first
 
@@ -144,21 +138,20 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # find the entries greater
         if t90_greater is not None:
 
-            idx_tmp = self._completed_table.t90 >= t90_greater
+            idx_tmp = self._vo_dataframe.t90 >= t90_greater
 
             idx = np.logical_and(idx, idx_tmp)
 
         # find the entries less
         if t90_less is not None:
 
-            idx_tmp = self._completed_table.t90 <= t90_less
+            idx_tmp = self._vo_dataframe.t90 <= t90_less
 
             idx = np.logical_and(idx, idx_tmp)
 
-        # save this look up
-        self._last_query_results = self._completed_table[idx]
+        table = self.apply_format(self._all_table[np.asarray(idx)])
 
-        return self._all_table[np.asarray(idx)].group_by('trigger_time')
+        return table
 
     def search_energy_flux(self, flux_greater=None, flux_less=None, model='band', interval='peak'):
         """
@@ -186,15 +179,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         flux_string = "%s_%s_ergflux" % (interval_dict[interval], model)
 
-        if not self._grabbed_all_data:
-
-            self._all_table = self.cone_search(0, 0, 360)
-
-            self._completed_table = self._last_query_results
-
-            self._grabbed_all_data = True
-
-        n_entries = self._completed_table.shape[0]
+        n_entries = self._vo_dataframe.shape[0]
 
         # Create a dummy index first
 
@@ -203,21 +188,20 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # find the entries greater
         if flux_greater is not None:
 
-            idx_tmp = self._completed_table[flux_string] >= flux_greater
+            idx_tmp = self._vo_dataframe[flux_string] >= flux_greater
 
             idx = np.logical_and(idx, idx_tmp)
 
         # find the entries less
         if flux_less is not None:
 
-            idx_tmp = self._completed_table[flux_string] <= flux_less
+            idx_tmp = self._vo_dataframe[flux_string] <= flux_less
 
             idx = np.logical_and(idx, idx_tmp)
 
-        # save this look up
-        self._last_query_results = self._completed_table[idx]
+        table = self.apply_format(self._all_table[np.asarray(idx)])
 
-        return self._all_table[np.asarray(idx)].group_by('trigger_time')
+        return table
 
     def search_mjd(self, mjd_start, mjd_stop):
         """
@@ -230,23 +214,12 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         assert mjd_start < mjd_stop, "start must come before stop"
 
-        if not self._grabbed_all_data:
+        idx = np.logical_and(mjd_start <= self._vo_dataframe.trigger_time,
+                             self._vo_dataframe.trigger_time <= mjd_stop)
 
-            self._all_table = self.cone_search(0, 0, 360)
+        table = self.apply_format(self._all_table[np.asarray(idx)])
 
-            self._completed_table = self._last_query_results
-
-            self._grabbed_all_data = True
-
-        n_entries = self._completed_table.shape[0]
-
-        idx = np.logical_and(mjd_start <= self._completed_table.trigger_time,
-                             self._completed_table.trigger_time <= mjd_stop)
-
-        # save this look up
-        self._last_query_results = self._completed_table[idx]
-
-        return self._all_table[np.asarray(idx)].group_by('trigger_time')
+        return table
 
     def search_utc(self, utc_start, utc_stop):
         """
@@ -259,7 +232,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         # use astropy to read the UTC format
         try:
-            utc_start, utc_stop = Time([utc_start, utc_stop], format='isot', scale='utc')
+            utc_start, utc_stop = astro_time.Time([utc_start, utc_stop], format='isot', scale='utc')
 
         except(ValueError):
 
@@ -348,15 +321,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         search_string = '%s_%s_%s' % (interval_dict[interval], model, param_dict[model][parameter])
 
-        if not self._grabbed_all_data:
-
-            self._all_table = self.cone_search(0, 0, 360)
-
-            self._completed_table = self._last_query_results
-
-            self._grabbed_all_data = True
-
-        n_entries = self._completed_table.shape[0]
+        n_entries = self._vo_dataframe.shape[0]
 
         # Create a dummy index first
 
@@ -365,21 +330,19 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # find the entries greater
         if parameter_greater is not None:
 
-            idx_tmp = self._completed_table[search_string] >= parameter_greater
+            idx_tmp = self._vo_dataframe[search_string] >= parameter_greater
 
             idx = np.logical_and(idx, idx_tmp)
 
         # find the entries less
         if parameter_less is not None:
 
-            idx_tmp = self._completed_table[search_string] <= parameter_less
+            idx_tmp = self._vo_dataframe[search_string] <= parameter_less
 
             idx = np.logical_and(idx, idx_tmp)
+        table = self.apply_format(self._all_table[np.asarray(idx)])
 
-        # save this look up
-        self._last_query_results = self._completed_table[idx]
-
-        return self._all_table[np.asarray(idx)].group_by('trigger_time')
+        return table
 
     def get_detector_information(self):
         """
@@ -1006,37 +969,41 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
 
 class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
-    def __init__(self):
+    def __init__(self, update=False):
+        """
+        The Fermi LAT Low-Energy (LLE) trigger catalog. Search for GRBs and solar flares by trigger
+        number, location, trigger type and date range.
+
+        :param update: force update the XML VO table
+        """
         super(FermiLLEBurstCatalog, self).__init__('fermille',
                                                    threeML_config['catalogs']['Fermi']['LLE catalog'],
                                                    'Fermi/LLE catalog')
 
-        self._grabbed_all_data = False
+        self._vo_dataframe, self._all_table = get_heasarc_table_as_pandas('fermille',
+                                                                          update=update,
+                                                                          cache_time_days=5.)
+
 
     def apply_format(self, table):
         new_table = table['name',
                           'ra', 'dec',
                           'trigger_time',
-                          'trigger_type',
-                          'Search_Offset',
+                          'trigger_type'
         ]
 
         new_table['ra'].format = '5.3f'
         new_table['dec'].format = '5.3f'
 
-        return new_table.group_by('Search_Offset')
+        return new_table.group_by('trigger_time')
 
     def search_trigger_name(self, *trigger_names):
         """
         Find the information on the given trigger names.
-        First run will be slow. Subsequent runs are very fast
 
         :param trigger_names: trigger numbers (str) e.g. '080916009' or 'bn080916009' or 'GRB080916009'
         :return:
         """
-
-        # If we have not downloaded the entire table
-        # then we must do so.
 
         # check the trigger names
 
@@ -1072,27 +1039,41 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
                             "The trigger %s is not valid. Must be in the form %s" % (trigger,
                                                                                      ', or '.join(_valid_trigger_args)))
 
-        if not self._grabbed_all_data:
-
-            self._all_table = self.cone_search(0, 0, 360)
-
-            self._completed_table = self._last_query_results
-
-            self._grabbed_all_data = True
-
-        n_entries = self._completed_table.shape[0]
+        n_entries = self._vo_dataframe.shape[0]
 
         idx = np.zeros(n_entries, dtype=bool)
 
         for name in trigger_names:
 
-            condition = self._completed_table.trigger_name == name
+            condition = self._vo_dataframe.trigger_name == name
 
             idx = np.logical_or(idx, condition)
 
-        self._last_query_results = self._completed_table[idx]
+        self._last_query_results = self._vo_dataframe[idx]
 
-        return self._all_table[np.asarray(idx)].group_by('trigger_time')
+        table = self.apply_format(self._all_table[np.asarray(idx)])
+
+        return table
+
+    def search_trigger_type(self, trigger_type='GRB'):
+        """
+        Search for trigger types. Either GRB, or solar flare.
+
+        :param trigger_type:
+        :return: table of results
+        """
+        trigger_type = trigger_type.upper()
+
+        assert trigger_type in ['GRB', 'SFLARE'], "Type must be GRB or SFLARE"
+
+        idx = self._vo_dataframe.trigger_type == trigger_type
+
+        table = self.apply_format(self._all_table[np.asarray(idx)])
+
+        # save this look up
+        self._last_query_results = self._vo_dataframe[idx]
+
+        return table
 
     def search_mjd(self, mjd_start, mjd_stop):
         """
@@ -1105,23 +1086,17 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
 
         assert mjd_start < mjd_stop, "start must come before stop"
 
-        if not self._grabbed_all_data:
+        idx = np.logical_and(mjd_start <= self._vo_dataframe.trigger_time,
+                             self._vo_dataframe.trigger_time <= mjd_stop)
 
-            self._all_table = self.cone_search(0, 0, 360)
+        table = self.apply_format(self._all_table[np.asarray(idx)])
 
-            self._completed_table = self._last_query_results
 
-            self._grabbed_all_data = True
-
-        n_entries = self._completed_table.shape[0]
-
-        idx = np.logical_and(mjd_start <= self._completed_table.trigger_time,
-                             self._completed_table.trigger_time <= mjd_stop)
 
         # save this look up
-        self._last_query_results = self._completed_table[idx]
+        self._last_query_results = self._vo_dataframe[idx]
 
-        return self._all_table[np.asarray(idx)].group_by('trigger_time')
+        return table
 
     def search_utc(self, utc_start, utc_stop):
         """
@@ -1135,7 +1110,7 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
         # use astropy to read the UTC format
 
         try:
-            utc_start, utc_stop = Time([utc_start, utc_stop], format='isot', scale='utc')
+            utc_start, utc_stop = astro_time.Time([utc_start, utc_stop], format='isot', scale='utc')
 
         except(ValueError):
 

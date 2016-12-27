@@ -1,4 +1,4 @@
-from threeML.io.file_utils import sanitize_filename
+from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make, file_existing_and_readable
 from threeML.config.config import threeML_config
 from threeML.io.download_from_ftp import download_files_from_directory_ftp
 
@@ -70,9 +70,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     # create output directory if it does not exists
     destination_directory = sanitize_filename(destination_directory, abspath=True)
 
-    if not os.path.exists(destination_directory):
-
-        os.makedirs(destination_directory)
+    if_directory_not_existing_then_make(destination_directory)
 
     # open and FTP to look at the data
     ftp = ftplib.FTP('legacy.gsfc.nasa.gov', 'anonymous', '')
@@ -166,9 +164,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
     for i, rsp in enumerate(rsp_to_get_latest):
 
-        test = glob.glob(os.path.join(destination_directory, rsp))
-
-        if test:
+        if file_existing_and_readable(os.path.join(destination_directory, rsp)):
 
             rsp_filter[i] = 0
 
@@ -176,9 +172,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
     for i, tte in enumerate(tte_to_get_latest):
 
-        test = glob.glob(os.path.join(destination_directory, tte))
-
-        if test:
+        if file_existing_and_readable(os.path.join(destination_directory, tte)):
 
             tte_filter[i] = 0
 

@@ -46,6 +46,18 @@ def sanitize_filename(filename, abspath=False):
         return sanitized
 
 
+def if_directory_not_existing_then_make(directory):
+    """
+    If the given directory does not exists, then make it
+
+    :param directory: directory to check or make
+    :return: None
+    """
+
+    if not os.path.exists(directory):
+
+        os.makedirs(directory)
+
 def get_random_unique_name():
     """
     Returns a name which is random and (with extremely high probability) unique

@@ -1,4 +1,4 @@
-from threeML.io.file_utils import sanitize_filename
+from threeML.io.file_utils import sanitize_filename, file_existing_and_readable
 from threeML.config.config import threeML_config
 from threeML.io.download_from_ftp import download_files_from_directory_ftp
 
@@ -107,6 +107,12 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
         if filename.find("gll_lle") >= 0 and filename.find('.fit') >= 0:
             lle_to_get.append(filename)
 
+    ft2_to_get = []
+
+    for filename in file_list:
+        if filename.find("gll_pt") >= 0 and filename.find('.fit') >= 0:
+            lle_to_get.append(filename)
+
     # lets make sure we get the latest versions of the files
     # prefer RSP2s
 
@@ -114,15 +120,19 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
 
     lle_to_get_latest = np.array(_get_latest_verison(lle_to_get))
 
+    ft2_to_get_latest = np.array(_get_latest_verison(ft2_to_get))
+
+
+
     # now see if we have already downloaded these files
     lle_filter = np.ones_like(lle_to_get_latest, dtype=bool)
     rsp_filter = np.ones_like(rsp_to_get_latest, dtype=bool)
+    ft2_filter = np.ones_like(ft2_to_get_latest, dtype=bool)
+
 
     for i, rsp in enumerate(rsp_to_get_latest):
 
-        test = glob.glob(os.path.join(destination_directory, rsp))
-
-        if test:
+        if file_existing_and_readable(os.path.join(destination_directory, rsp)):
 
             rsp_filter[i] = 0
 
@@ -130,35 +140,44 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
 
     for i, lle in enumerate(lle_to_get_latest):
 
-        test = glob.glob(os.path.join(destination_directory, lle))
-
-        if test:
+        if file_existing_and_readable(os.path.join(destination_directory, lle)):
 
             lle_filter[i] = 0
 
             print('%s already downloaded into %s -> skipping' % (lle, destination_directory))
+
+    for i, ft2 in enumerate(ft2_to_get_latest):
+
+        if file_existing_and_readable(os.path.join(destination_directory, ft2)):
+
+            ft2_filter[i] = 0
+
+            print('%s already downloaded into %s -> skipping' % (ft2, destination_directory))
 
     # now download the files
 
     remote_path = "%s/%s/" % (threeML_config['LAT']['public FTP location'], directory)
 
     retrieval = np.append(rsp_to_get_latest[rsp_filter], lle_to_get_latest[lle_filter])
+    retrieval = np.append(retrieval, ft2_to_get_latest[ft2_filter])
 
     if len(retrieval) > 0:
 
-        print("\nDownloading LLE and RSP files...")
+        print("\nDownloading LLE, RSP and FT2 files...")
 
         downloaded_files = download_files_from_directory_ftp(remote_path,
                                                              sanitize_filename(destination_directory),
                                                              filenames=retrieval)
 
         rsp_files = downloaded_files[:len(rsp_to_get_latest[rsp_filter])]
+        ft2_files = downloaded_files[len(rsp_to_get_latest[rsp_filter]):len(ft2_to_get_latest[ft2_filter])]
         lle_files = downloaded_files[len(lle_to_get_latest[lle_filter]):]
 
     else:
 
         rsp_files = []
         lle_files = []
+        ft2_files = []
 
     download_info = {}
 
@@ -177,6 +196,14 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
     else:
 
         download_info['lle'] = os.path.join(destination_directory, lle_to_get_latest[~lle_filter][0])
+
+    if ft2_files:
+
+        download_info['ft2'] = ft2_files[0]
+
+    else:
+
+        download_info['ft2'] = os.path.join(destination_directory, ft2_to_get_latest[~ft2_filter][0])
 
     return download_info
 
