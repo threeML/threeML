@@ -188,8 +188,14 @@ from .parallel.parallel_client import parallel_computation
 # Import catalogs
 from threeML.catalogs import *
 
+# Import GBM  downloader
+from threeML.plugins.Fermi_GBM.download_GBM_data import download_GBM_trigger_data
+
 # Import LAT downloader
 from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+
+# Import LLE downloader
+from threeML.plugins.Fermi_LAT.download_LLE_data import download_LLE_trigger_data
 
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config

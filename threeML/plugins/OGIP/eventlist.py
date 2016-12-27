@@ -890,16 +890,6 @@ class EventList(object):
 
         total_poly_energies = self._energies[poly_mask]
 
-        # if self._dead_time is not None:
-        #
-        #     poly_deadtime = self._dead_time[poly_mask].sum()
-        #
-        # else:
-        #
-        #     poly_deadtime = 0
-        #
-        # poly_exposure = total_duration - poly_deadtime
-
         # Now we will find the the best poly order unless the use specified one
         # The total cnts (over channels) is binned to .1 sec intervals
 
