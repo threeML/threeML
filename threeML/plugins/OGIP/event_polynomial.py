@@ -1,62 +1,135 @@
 import numpy as np
 import scipy.optimize as opt
 import warnings
-import math
+from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
+from threeML.exceptions.custom_exceptions import custom_warnings
+
+
+class CannotComputeCovariance(RuntimeWarning):
+    pass
 
 from threeML.config.config import threeML_config
 
 
 
 class Polynomial(object):
-    def __init__(self, coefficients):
+    def __init__(self, coefficients, is_integral=False):
 
-        self.coefficients = coefficients
+        """
+
+        :param coefficients: array of poly coefficients
+        :param is_integral: if this polynomial is an
+        """
+        self._coefficients = coefficients
         self._degree = len(coefficients) - 1
 
-        # Build an empty covariance matrix
-        self._cov_matrix = np.zeros([self._degree + 1, self._degree + 1])
+        self._i_plus_1 = np.array(range(1, self._degree + 1 + 1), dtype=float)
+
+        self._cov_matrix = np.zeros((self._degree + 1, self._degree + 1))
+
+        # we can fix some things for speed
+        # we only need to set the coeff for the
+        # integral polynomial
+        if not is_integral:
+            integral_coeff = [0]
+
+            integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+
+            self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
 
     @property
     def degree(self):
+        """
+        the polynomial degree
+        :return:
+        """
         return self._degree
 
     @property
     def error(self):
-
+        """
+        the error on the polynomial coefficients
+        :return:
+        """
         return np.sqrt(self._cov_matrix.diagonal())
+
+    def __get_coefficient(self):
+        """ gets the coefficients"""
+
+        return self._coefficients
+
+    def ___get_coefficient(self):
+        """ Indirect coefficient getter """
+
+        return self.__get_coefficient()
+
+    def __set_coefficient(self, val):
+        """ sets the coefficients"""
+
+        self._coefficients = val
+
+        integral_coeff = [0]
+
+        integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+
+        self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
+
+    def ___set_coefficient(self, val):
+        """ Indirect coefficient setter """
+
+        return self.__set_coefficient(val)
+
+    coefficients = property(___get_coefficient, ___set_coefficient,
+                            doc="""Gets or sets the coefficients of the polynomial.""")
 
     def __call__(self, x):
 
         result = 0
-        for coefficient in self.coefficients[::-1]:
+        for coefficient in self._coefficients[::-1]:
             result = result * x + coefficient
         return result
 
-    def get_number_free_parameters(self):
-        return self._degree + 1
+    def compute_covariance_matrix(self, function, best_fit_parameters):
+        """
+        Compute the covariance matrix of this fit
+        :param function: the loglike for the fit
+        :param best_fit_parameters: the best fit parameters
+        :return:
+        """
 
-    def get_free_derivs(self, x):
-        n_par = self._degree + 1
-        freeDerivs = []
+        minima = np.zeros_like(best_fit_parameters) - 100
+        maxima = np.zeros_like(best_fit_parameters) + 100
 
-        for i in range(n_par):
-            freeDerivs.append(map(lambda xx: pow(xx, i), x))
-        pass
-        return np.array(freeDerivs)
+        try:
 
-    pass
+            hessian_matrix = get_hessian(function, best_fit_parameters, minima, maxima)
 
-    def compute_covariance_matrix(self, statistic_gradient):
+        except ParameterOnBoundary:
 
-        self._cov_matrix = compute_covariance_matrix(statistic_gradient, self.coefficients)
+            custom_warnings.warn("One or more of the parameters are at their boundaries. Cannot compute covariance and"
+                                 " errors", CannotComputeCovariance)
 
-        # Check that the covariance matrix is positive-defined
+            n_dim = len(best_fit_parameters)
 
-        negative_elements = (np.matrix.diagonal(self._cov_matrix) < 0)
+            self._cov_matrix = np.zeros((n_dim, n_dim)) * np.nan
 
-        if (len(negative_elements.nonzero()[0]) > 0):
-            raise RuntimeError(
-                    "Negative element in the diagonal of the covariance matrix. Try to reduce the polynomial grade.")
+        # Invert it to get the covariance matrix
+
+        try:
+
+            covariance_matrix = np.linalg.inv(hessian_matrix)
+
+            self._cov_matrix = covariance_matrix
+
+
+
+        except:
+
+            custom_warnings.warn("Cannot invert Hessian matrix, looks like the matrix is singluar")
+
+            n_dim = len(best_fit_parameters)
+
+            self._cov_matrix = np.zeros((n_dim, n_dim)) * np.nan
 
     @property
     def covariance_matrix(self):
@@ -65,48 +138,27 @@ class Polynomial(object):
     def integral(self, xmin, xmax):
         """ 
         Evaluate the integral of the polynomial between xmin and xmax
+
         """
 
-        integral_coeff = [0]
+        return self._integral_polynomial(xmax) - self._integral_polynomial(xmin)
 
-        integral_coeff.extend(map(lambda i: self.coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+    def _eval_basis(self, x):
 
-        integral_polynomial = Polynomial(integral_coeff)
-
-        return integral_polynomial(xmax) - integral_polynomial(xmin)
+        return (1. / self._i_plus_1) * np.power(x, self._i_plus_1)
 
     def integral_error(self, xmin, xmax):
-        # Based on http://root.cern.ch/root/html/tutorials/fit/ErrorIntegral.C.html
+        """
+        computes the integral error of an interval
+        :param xmin: start of the interval
+        :param xmax: stop of the interval
+        :return: interval error
+        """
+        c = self._eval_basis(xmax) - self._eval_basis(xmin)
+        tmp = c.dot(self._cov_matrix)
+        err2 = tmp.dot(c)
 
-
-        # Set the weights
-        i_plus_1 = np.array(range(1, self._degree + 1 + 1), 'd')
-
-        def eval_basis(x):
-            return (1 / i_plus_1) * pow(x, i_plus_1)
-
-        c = eval_basis(xmax) - eval_basis(xmin)
-
-        # Compute the error on the integral
-        err2 = 0.0
-
-        n_par = self._degree + 1
-
-        for i in range(n_par):
-            s = 0.0
-            for j in range(n_par):
-                s += self._cov_matrix[i, j] * c[j]
-
-            err2 += c[i] * s
-
-        return math.sqrt(err2)
-
-
-
-
-##
-## The log likelihoods for binned and unbinned fits
-##
+        return np.sqrt(err2)
 
 class PolyLogLikelihood(object):
     """
@@ -122,6 +174,39 @@ class PolyLogLikelihood(object):
         self._model = model
         self._parameters = model.coefficients
         self._exposure = exposure
+
+        def cov_call(*parameters):
+            self._model.coefficients = parameters
+            M = self._model(self._bin_centers) * self._exposure
+            M_fixed, tiny = self._fix_precision(M)
+
+            # Replace negative values for the model (impossible in the Poisson context)
+            # with zero
+
+            negative_mask = (M < 0)
+            if (len(negative_mask.nonzero()[0]) > 0):
+                M[negative_mask] = 0.0
+
+            # Poisson loglikelihood statistic (Cash) is:
+            # L = Sum ( M_i - D_i * log(M_i))
+
+            logM = self._evaluate_logM(M)
+
+            # Evaluate v_i = D_i * log(M_i): if D_i = 0 then the product is zero
+            # whatever value has log(M_i). Thus, initialize the whole vector v = {v_i}
+            # to zero, then overwrite the elements corresponding to D_i > 0
+
+            d_times_logM = np.zeros(len(self._counts))
+
+            non_zero_mask = (self._counts > 0)
+
+            d_times_logM[non_zero_mask] = self._counts[non_zero_mask] * logM[non_zero_mask]
+
+            log_likelihood = np.sum(M_fixed - d_times_logM)
+
+            return log_likelihood
+
+        self.cov_call = cov_call
 
     def _evaluate_logM(self, M):
         # Evaluate the logarithm with protection for negative or small
@@ -143,8 +228,6 @@ class PolyLogLikelihood(object):
             logM = np.log(M)
 
         return logM
-
-    pass
 
     def __call__(self, parameters):
         """
@@ -197,54 +280,6 @@ class PolyLogLikelihood(object):
 
         return v, tiny
 
-    pass
-
-    def get_free_derivs(self, parameters=None):
-        """
-        Return the gradient of the logLikelihood for a given set of parameters (or the current
-        defined one, if parameters=None)
-        """
-        # The derivative of the logLikelihood statistic respect to parameter p is:
-        # dC / dp = Sum [ (dM/dp)_i - D_i/M_i (dM/dp)_i]
-
-        # Get the number of parameters and initialize the gradient to 0
-        n_free = self._model.get_number_free_parameters()
-
-        derivatives = np.zeros(n_free)
-
-        # Set the parameters, if a new set has been provided
-
-        if parameters is not None:
-            self._model.coefficients = parameters
-
-        # Get the gradient of the model respect to the parameters
-
-        model_derivatives = self._model.get_free_derivs(self._bin_centers) * self._exposure
-
-        # Get the model
-
-        M = self._model(self._bin_centers) * self._exposure
-
-        M, tiny_M = self._fix_precision(M)
-
-        # Compute y_divided_M = y/M: inizialize y_divided_M to zero
-        # and then overwrite the elements for which y > 0. This is to avoid
-        # possible underflow and overflow due to the finite precision of the
-        # computer
-
-        y_divided_M = np.zeros(len(self._counts))
-
-        non_zero = (self._counts > 0)
-        y_divided_M[non_zero] = self._counts[non_zero] / M[non_zero]
-
-        for p in range(n_free):
-            this_model_derivatives, tinyMd = self._fix_precision(model_derivatives[p])
-            derivatives[p] = np.sum(this_model_derivatives * (1.0 - y_divided_M))
-
-        return derivatives
-
-    pass
-
 
 class PolyUnbinnedLogLikelihood(object):
     """
@@ -262,6 +297,40 @@ class PolyUnbinnedLogLikelihood(object):
         self._exposure = exposure
         self._t_start = t_start  # list of starts
         self._t_stop = t_stop
+
+        def cov_call(*parameters):
+
+            # Compute the values for the model given this set of parameters
+            self._model.coefficients = parameters
+
+            # Integrate the polynomial (or in the future, model) over the given interval
+
+            n_expected_counts = 0.
+
+            for start, stop in zip(self._t_start, self._t_stop):
+                n_expected_counts += self._model.integral(start, stop)
+
+            # Now evaluate the model at the event times and multiply by the exposure
+
+            M = self._model(self._events) * self._exposure
+
+            # Replace negative values for the model (impossible in the Poisson context)
+            # with zero
+            negative_mask = (M < 0)
+
+            if (len(negative_mask.nonzero()[0]) > 0):
+                M[negative_mask] = 0.0
+
+            # Poisson loglikelihood statistic  is:
+            # logL = -Nexp + Sum ( log M_i )
+
+            logM = self._evaluate_logM(M)
+
+            log_likelihood = -n_expected_counts + logM.sum()
+
+            return -log_likelihood
+
+        self.cov_call = cov_call
 
     def _evaluate_logM(self, M):
         # Evaluate the logarithm with protection for negative or small
@@ -282,12 +351,6 @@ class PolyUnbinnedLogLikelihood(object):
 
     def __call__(self, parameters):
         """
-          Evaluate the unbinned Poisson log likelihood
-
-        Args:
-            parameters:
-
-        Returns:
 
         """
 
@@ -334,46 +397,10 @@ class PolyUnbinnedLogLikelihood(object):
 
         return v, tiny
 
-    def get_free_derivs(self, parameters=None):
-        """
-        Return the gradient of the logLikelihood for a given set of parameters (or the current
-        defined one, if parameters=None)
-        """
-        # The derivative of the unbinned logLikelihood statistic respect to parameter p is:
-        # d logL / d theta_j = -(1/j+1) (t_f^(j+1) - t_0^(j+1)) + Sum( P(t_i, theta_k)^(-1) *t_i^j  )
-
-
-        # Set the parameters, if a new set has been provided
-        if (parameters is not None):
-            self._model.coefficients = parameters
-        pass
-
-        M = self._model(self._events)  # * self._exposure
-
-        M, tiny_m = self._fix_precision(M)
-
-        degrees = np.arange(self._model.degree + 1)
-
-        def derivative_per_degree(degree):
-
-            d_1 = degree + 1
-
-            pre_factor = 0
-            for start, stop in zip(self._t_start, self._t_stop):
-                pre_factor += (stop ** d_1 - start ** d_1)
-
-            raised_events, _ = self._fix_precision(np.power(self._events, degree))
-
-            return -(raised_events / M).sum() + pre_factor / float(d_1)
-
-        derivs = np.array([derivative_per_degree(degree) for degree in degrees])
-
-        return derivs
 
 
 def polyfit(x, y, grade, exposure):
     """ funtion to fit a polynomial to event data. not a member to allow parallel computation """
-    test = False
 
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
@@ -387,17 +414,13 @@ def polyfit(x, y, grade, exposure):
     # with a least-square fit (with weight=1) using SVD (extremely robust):
     # (note that polyfit returns the coefficient starting from the maximum grade,
     # thus we need to reverse the order)
-    if test:
-        print("  Initial estimate with SVD..."),
+
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
 
         initial_guess = np.polyfit(x, y, grade)
 
     initial_guess = initial_guess[::-1]
-
-    if (test):
-        print("  done -> %s" % (initial_guess))
 
     polynomial = Polynomial(initial_guess)
 
@@ -446,11 +469,7 @@ def polyfit(x, y, grade, exposure):
 
     final_polynomial = Polynomial(final_estimate)
 
-    try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
-    except Exception:
-        raise
-    # if test is defined, compare the results with those obtained with ROOT
+    final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
 
 
     return final_polynomial, min_log_likelihood
@@ -513,10 +532,6 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
                      options=threeML_config['event list']['unbinned fit options'])['x']
 
         final_estimate = np.atleast_1d(final_estimate)
-        # print
-        # print final_estimate
-
-        # Get the value for cstat at the minimum
 
         min_log_likelihood = log_likelihood(final_estimate)
 
@@ -525,11 +540,9 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
 
     final_polynomial = Polynomial(final_estimate)
 
-    try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.get_free_derivs)
-    except Exception:
-        raise
-    # if test is defined, compare the results with those obtained with ROOT
+    final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
+
+
 
 
     return final_polynomial, min_log_likelihood

@@ -190,9 +190,9 @@ class ProgressBarBase(object):
 
         raise NotImplementedError("Need to override this")
 
-    def increase(self):
+    def increase(self, n_steps=1):
 
-        self.animate(self._last_iteration + 1)
+        self.animate(self._last_iteration + n_steps)
 
     def finish(self):
 

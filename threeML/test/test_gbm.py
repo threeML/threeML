@@ -231,9 +231,9 @@ def test_gbm_binning():
 
         examine_bins(nai3.bins, 0, 10, 9)
 
-        nai3.create_time_bins(start=0, stop=10, method='significance', sigma=10)
+        nai3.create_time_bins(start=0, stop=10, method='significance', sigma=40)
 
-        examine_bins(nai3.bins, 0, 10, 92)
+        examine_bins(nai3.bins, 0, 10, 4)
 
         nai3.view_lightcurve(use_binner=True)
 
@@ -331,17 +331,3 @@ def test_gbm_tte_bayesian_fitting():
             assert bb.raw_samples.shape == (n_samples, 2)
 
 
-
-
-            # assert bb.current_minimum is None
-            # assert jl.minimizer_in_use == ('MINUIT', None)
-            # assert jl.minimizer is None
-            # assert jl.ncalls == 0
-            # assert jl.verbose == False
-
-            # res, _ = jl.fit()
-
-            # assert jl.current_minimum is not None
-
-            # assert jl.minimizer is not None
-            # assert jl.ncalls != 1
