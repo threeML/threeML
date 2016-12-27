@@ -354,8 +354,6 @@ class TemporalBinner(object):
         # resolve once for functions used in the loop
         searchsorted = np.searchsorted
 
-
-
         # this is the main loop
         # as long as we have not reached the end of the interval
         # the loop will run
