@@ -111,7 +111,7 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
 
     for filename in file_list:
         if filename.find("gll_pt") >= 0 and filename.find('.fit') >= 0:
-            lle_to_get.append(filename)
+            ft2_to_get.append(filename)
 
     # lets make sure we get the latest versions of the files
     # prefer RSP2s
