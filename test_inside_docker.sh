@@ -54,6 +54,16 @@ echo "##########################################################"
 
 pip install git+https://github.com/giacomov/cthreeML.git
 
+echo "##########################################################"
+echo " Setting up HAWC data path and try import HAWC plugin"
+echo "##########################################################"
+
+export HAWC_3ML_TEST_DATA_DIR=/hawc_test_data
+
+# Try to import the HAWC plugin
+python -c "from threeML.plugins.HAWCLike import HAWCLike"
+python -c "import os; print(os.environ['HAWC_3ML_TEST_DATA_DIR'])"
+
 # Make the matplotlib backend non-interactive (otherwise all tests regarging plotting will fail)
 export MPLBACKEND='Agg'
 
