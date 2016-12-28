@@ -168,10 +168,10 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
         downloaded_files = download_files_from_directory_ftp(remote_path,
                                                              sanitize_filename(destination_directory),
                                                              filenames=retrieval)
-
+        print downloaded_files
         rsp_files = downloaded_files[:len(rsp_to_get_latest[rsp_filter])]
-        ft2_files = downloaded_files[len(rsp_to_get_latest[rsp_filter]):len(ft2_to_get_latest[ft2_filter])]
-        lle_files = downloaded_files[len(lle_to_get_latest[lle_filter]):]
+        lle_files = downloaded_files[len(rsp_to_get_latest[rsp_filter]):len(ft2_to_get_latest[ft2_filter])]
+        ft2_files = downloaded_files[len(ft2_to_get_latest[ft2_filter]):]
 
         print rsp_files
         print ft2_files
