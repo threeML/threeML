@@ -8,6 +8,8 @@ set -e
 adduser --system --home /home/user --shell /bin/bash --uid $user_id user --disabled-password
 exec sudo -i -u user /bin/bash << EOF
 
+set -e
+
 cd /home/user
 
 # Setup environment
