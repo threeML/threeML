@@ -3,14 +3,19 @@
 # This ensure that the script will exit if any command fails
 set -e
 
-# THIS IS ASSUMED TO BE RUNNING IN THE DIRECTORY WHERE THE CODE HAS BEEN CHECKED OUT
+# I am running as root, first let's create a new user and become that
+# The user_id env. variable must be specified on the docker command line using -e user_id=`id -u`
+adduser --system --home /home/user --shell /bin/bash --uid $user_id user --disabled-password
+exec sudo -i -u user /bin/bash << EOF
+
+cd /home/user
 
 # Setup environment
 echo "##########################################################"
 echo " Setting up environment"
 echo "##########################################################"
 
-source /home/hawc/.bashrc
+source /hawc_software/config_hawc.sh
 
 # Test if we can import the hawc module (otherwise everything else is futile)
 python -c "import hawc"
@@ -38,6 +43,8 @@ echo "##########################################################"
 echo " Installing 3ML"
 echo "##########################################################"
 
+cd /travis_build_dir
+
 # Install 3ML (current checked out version)
 pip install .
 
@@ -57,16 +64,11 @@ echo "##########################################################"
 # Execute tests
 python -m pytest --ignore=threeML_env -vv --cov=threeML
 
-echo "##########################################################"
-echo " Executing coveralls"
-echo "##########################################################"
 
-# Execute the coverage analysis
-coveralls
-
-echo "##########################################################"
-echo " Executing codecov"
-echo "##########################################################"
-
-# Execute the coverage analysis
+#echo "##########################################################"
+#echo " Executing codecov"
+#echo "##########################################################"
+#
+## Execute the coverage analysis
 codecov -t 96594ad1-4ad3-4355-b177-dcb163cfc128
+EOF

@@ -6,12 +6,11 @@ services:
   - docker
 
 before_install:
+ - pip install codecov
  - docker pull giacomov/hawc-docker
  - docker ps -a
  - ls $TRAVIS_BUILD_DIR
 
 
 script:
- - docker run --rm -it -u `id -u` -v $TRAVIS_BUILD_DIR:/home/hawc/workdir giacomov/hawc-docker /bin/bash --login -c "cd /home/hawc/workdir && export HOME=`pwd` && source test_inside_docker.sh"
-#after_success:
-# - coveralls #--config_file .coveragerc
+ - docker run --rm -it -e user_id=`id -u` -v $TRAVIS_BUILD_DIR:/travis_build_dir giacomov/hawc-docker /bin/bash -c "source /travis_build_dir/test_inside_docker.sh"
