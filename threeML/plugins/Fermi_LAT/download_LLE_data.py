@@ -173,6 +173,10 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
         ft2_files = downloaded_files[len(rsp_to_get_latest[rsp_filter]):len(ft2_to_get_latest[ft2_filter])]
         lle_files = downloaded_files[len(lle_to_get_latest[lle_filter]):]
 
+        print rsp_files
+        print ft2_files
+        print lle_files
+
     else:
 
         rsp_files = []
