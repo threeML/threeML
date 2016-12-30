@@ -1,15 +1,21 @@
-import numpy
+import numpy as np
+import pandas as pd
+import re
+import urllib2
+
 from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
-
-from astromodels import *
-from astromodels.utils.angular_distance import angular_distance
-
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
+from threeML.io.rich_display import display
+
+# from astromodels import *
+# from astromodels.utils.angular_distance import angular_distance
 
 import astropy.time as astro_time
 
+
+_gcn_match = re.compile("\d{4}GCN\D?\.*(\d*)\.*\d\D")
 
 class InvalidTrigger(RuntimeError):
     pass
@@ -23,7 +29,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
         """
         The Swift GRB catalog. Search for GRBs  by trigger
-        number, location, spectral parameters, T90, and date range.
+        number, location,  T90, and date range.
 
         :param update: force update the XML VO table
         """
@@ -35,7 +41,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         self._vo_dataframe, self._all_table = get_heasarc_table_as_pandas('swiftgrb',
                                                                           update=update,
                                                                           cache_time_days=1.)
-
+        # collect all the instruments also seeing the GRBs
         self._build_other_obs_instruments()
 
     def apply_format(self, table):
@@ -59,13 +65,18 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         return new_table.group_by('trigger_time')
 
     def _build_other_obs_instruments(self):
+        """
+        builds a list of all the other instruments that observed Swift GRBs
 
-        obs_inst_ = map(numpy.unique, [np.asarray(self._vo_dataframe.other_obs),
-                                       np.asarray(self._vo_dataframe.other_obs2),
-                                       np.asarray(self._vo_dataframe.other_obs3),
-                                       np.asarray(self._vo_dataframe.other_obs4)])
+        :return:
+        """
 
-        self._other_observings_instruments = filter(lambda x: x != '', np.unique(numpy.concatenate(obs_inst_)))
+        obs_inst_ = map(np.unique, [np.asarray(self._vo_dataframe.other_obs),
+                                    np.asarray(self._vo_dataframe.other_obs2),
+                                    np.asarray(self._vo_dataframe.other_obs3),
+                                    np.asarray(self._vo_dataframe.other_obs4)])
+
+        self._other_observings_instruments = filter(lambda x: x != '', np.unique(np.concatenate(obs_inst_)))
 
     @property
     def other_observing_instruments(self):
@@ -86,15 +97,15 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         valid_names = []
 
+        # use regex to enforce trigger name style
         for trigger in trigger_names:
-
             assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
                                                                                      ', or '.join(
-                                                                                             _valid_trigger_args))
+                                                                                         _valid_trigger_args))
 
             trigger = trigger.upper()
 
-            search = re.search('(GRB|grb)? ?(\d{6}[a-zA-Z]?)', trigger)
+            search = re.search("(GRB|grb)? ?(\d{6}[a-zA-Z]?)", trigger)
 
             assert search is not None, assert_string
 
@@ -106,8 +117,9 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         idx = np.zeros(n_entries, dtype=bool)
 
-        for name in valid_names:
+        # search through the index for the requested triggers
 
+        for name in valid_names:
             name = name.upper()
 
             condition = self._vo_dataframe.index == name
@@ -144,14 +156,12 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         # find the entries greater
         if t90_greater is not None:
-
             idx_tmp = self._vo_dataframe.bat_t90 >= t90_greater
 
             idx = np.logical_and(idx, idx_tmp)
 
         # find the entries less
         if t90_less is not None:
-
             idx_tmp = self._vo_dataframe.bat_t90 <= t90_less
 
             idx = np.logical_and(idx, idx_tmp)
@@ -170,6 +180,9 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         """
 
         assert mjd_start < mjd_stop, "start must come before stop"
+
+        # the table lists things in UTC by default,
+        # so we convert back to MJD which is easily searchable
 
         time = astro_time.Time(self._vo_dataframe.trigger_time, format='isot', scale='utc')
 
@@ -200,16 +213,20 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         except(ValueError):
 
             raise InvalidUTC(
-                    "one of %s, %s is not a valid UTC string. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
-                        utc_start, utc_stop))
+                "one of %s, %s is not a valid UTC string. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
+                    utc_start, utc_stop))
 
         # convert the UTC format to MJD and use the MJD search
         return self.search_mjd(utc_start.mjd, utc_stop.mjd)
 
     def search_other_observing_instruments(self, instrument):
         """
-        Return GRBs also observed by the requested intrument
+        search for observations that were also seen by the requested instrument.
+        to see what instruments are available, use the .other_observing_instruments call
 
+
+        :param instrument: another instrument
+        :return:
         """
 
         assert instrument in self._other_observings_instruments, "Other instrument choices include %s" % (
@@ -217,6 +234,8 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         idx = np.zeros(self._vo_dataframe.shape[0])
 
+        # the swift table has four columns of instruments
+        # we scroll through them
         for obs in range(1, 5):
 
             if obs == 1:
@@ -239,8 +258,13 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
     @staticmethod
     def _get_fermiGBM_trigger_number_from_gcn(gcn_url):
         """
-        Parses the Fermi-GBM gcn to obtain the trigger number
+        this is a custom function that parses GBM GCNs to find the burst number
+        that can later be used to download GBM data. It contains a lot of regex statements
+        to handle the variability in the GCNs
 
+
+        :param gcn_url: url to gbm gcn
+        :return:
         """
 
         data = urllib2.urlopen(gcn_url)
@@ -261,21 +285,21 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
                 try:
 
                     trigger_number = re.search("trigger *\d* *, *trigcat *(\d{9}|\d{6}\.\d{3})", string).group(
-                            1).replace('.', '')
+                        1).replace('.', '')
 
                 except(AttributeError):
 
                     try:
 
                         trigger_number = re.search("trigger *.* */ *\D{0,3}(\d{9}|\d{6}\.\d{3})", string).group(
-                                1).replace('.', '')
+                            1).replace('.', '')
 
                     except(AttributeError):
 
                         try:
 
                             trigger_number = re.search("Trigger number*.* */ *GRB *(\d{9}|\d{6}\.\d{3})", string).group(
-                                    1).replace('.', '')
+                                1).replace('.', '')
 
                         except(AttributeError):
 
@@ -285,13 +309,13 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
     def get_other_observation_information(self):
         """
-        Return the detectors used for spectral analysis as well as their background
-        intervals. Peak flux and fluence intervals are also returned as well as best fit models
+        returns a structured pandas table containing the other observing instruments, their GCNs and if obtainable,
+        their trigger numbers/ data identifiers. Currently, the trigger number is only obtained for Fermi-GBM.
 
-        :return: detector information dictionary
+        :return:
         """
 
-        assert self._last_query_results is not None, "You have to run a query before getting detector information"
+        assert self._last_query_results is not None, "You have to run a query before getting observing information"
 
         # Loop over the table and build a source for each entry
         sources = {}
@@ -327,8 +351,10 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
                     observed = False
 
                 if observed:
+                    gcn_number =  _gcn_match.search(row[obs_ref]).group(1)
 
-                    gcn_number = filter(lambda x: x != '', row[obs_ref].split('.'))[1]
+                    # gcn_number = filter(lambda x: x != '', row[obs_ref].split('.'))[1]
+
 
                     gcn = "https://gcn.gsfc.nasa.gov/gcn3/%s.gcn3" % gcn_number
 
@@ -352,20 +378,18 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         Return the detectors used for spectral analysis as well as their background
         intervals. Peak flux and fluence intervals are also returned as well as best fit models
 
-        :return: detector information dictionary
+        :return: observing information dataframe indexed by source
         """
 
-        assert self._last_query_results is not None, "You have to run a query before getting detector information"
+        assert self._last_query_results is not None, "You have to run a query before getting observing information"
 
-        # Loop over the table and build a source for each entry
         sources = {}
 
         for name, row in self._last_query_results.T.iteritems():
 
-            # First we want to get the the detectors used in the SCAT file
-
             obs_instrument = {}
 
+            # loop over the observation indices
             for obs in range(1, 5):
 
                 if obs == 1:
@@ -380,6 +404,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
                 obs = row[obs_base]
 
+                # this means that nothing in this column saw the grb
                 if obs == '':
 
                     observed = False
@@ -391,16 +416,19 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
                 if observed:
 
-                    gcn_number = filter(lambda x: x != '', row[obs_ref].split('.'))[1]
+                    # if we saw it then lets get the GCN
+                    gcn_number = _gcn_match.search(row[obs_ref]).group(1)
+                    # gcn_number = filter(lambda x: x != '', row[obs_ref].split('.'))[1]
 
+                    # make the URL
                     gcn = "https://gcn.gsfc.nasa.gov/gcn3/%s.gcn3" % gcn_number
 
-                    # just for Fermi GBM. can be expanded
+                    # just for Fermi GBM, lets get the trigger number
 
+                    # TODO: add more instruments
                     if obs == 'Fermi-GBM':
 
                         info = {'GCN': gcn, 'trigger number': self._get_fermiGBM_trigger_number_from_gcn(gcn)}
-
 
                     else:
 
@@ -410,6 +438,9 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
             sources[name] = obs_instrument
 
+        # build the data frame
         sources = pd.concat(map(pd.DataFrame, sources.values()), keys=sources.keys())
+
+        display(sources)
 
         return sources
