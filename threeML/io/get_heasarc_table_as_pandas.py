@@ -5,6 +5,7 @@ import datetime
 import astropy.io.votable as votable
 from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make, file_existing_and_readable
 import warnings
+import yaml
 
 
 def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_days=1):
@@ -35,7 +36,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     if_directory_not_existing_then_make(cache_directory)
 
-    cache_file = os.path.join(cache_directory, '.%s_cache' % heasarc_table_name)
+    cache_file = os.path.join(cache_directory, '%s_cache.yml' % heasarc_table_name)
 
     cache_file_sanatized = sanitize_filename(cache_file)
 
@@ -60,11 +61,13 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
             # the cache file is two lines. The first is a datetime string that
             # specifies the last time the XML file was obtained
 
-            cached_time = astro_time.Time(datetime.datetime(*map(int, cache.readline().split('-'))))
+            yaml_cache = yaml.safe_load(cache)
+
+            cached_time = astro_time.Time(datetime.datetime(*map(int, yaml_cache['last save'].split('-'))))
 
             # the second line how many seconds to keep the file around
 
-            cache_valid_for = float(cache.readline())
+            cache_valid_for = float(yaml_cache['cache time'])
 
             # now we will compare it to the current time in UTC
             current_time = astro_time.Time(datetime.datetime.utcnow(), scale='utc')
@@ -98,13 +101,17 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
         with open(cache_file_sanatized, 'w') as cache:
 
+            yaml_dict = {}
+
             current_time = astro_time.Time(datetime.datetime.utcnow(), scale='utc')
 
-            cache.write(current_time.datetime.strftime('%Y-%m-%d-%H-%M-%S'))
+            yaml_dict['last save'] = current_time.datetime.strftime('%Y-%m-%d-%H-%M-%S')
 
             seconds_in_day = 86400.
 
-            cache.write("\n%f" % (seconds_in_day * cache_time_days))
+            yaml_dict['cache time'] = seconds_in_day * cache_time_days
+
+            yaml.dump(yaml_dict, stream=cache, default_flow_style=False)
 
     # use astropy routines read the votable
     with warnings.catch_warnings():
