@@ -44,7 +44,7 @@ def test_loading_xrt():
 
 def test_loading_gbm():
 
-    print gbm_data
+
 
     with within_directory(__example_dir):
 
