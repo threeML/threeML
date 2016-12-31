@@ -4,14 +4,14 @@ import os
 
 __author__ = 'grburgess'
 
-from threeML.plugins.FermiGBMTTELike import FermiGBMTTELike, BinningMethodError
+from threeML.plugins.FermiGBMTTELike import FermiGBMTTELike
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
 from astromodels.sources.point_source import PointSource
-from astromodels.sources.extended_source import ExtendedSource
+from threeML.plugins.Fermi_GBM.download_GBM_data import download_GBM_trigger_data, cleanup_downloaded_GBM_data
 from astromodels.functions.functions import Log_uniform_prior, Uniform_prior
 
 from threeML.io.file_utils import within_directory
@@ -20,6 +20,12 @@ __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
 __example_dir = os.path.join(__this_dir__, '../../examples')
 
+
+
+
+# download the data needed for the test
+
+gbm_data = download_GBM_trigger_data('bn080916009',detectors=['n3'],destination_directory=os.path.join(__example_dir,'gbm','bn080916009'),compress_tte=True)
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
@@ -134,6 +140,11 @@ class AnalysisBuilder(object):
 
 
 def test_gbm_tte_constructor():
+
+
+
+
+
     with within_directory(__example_dir):
         data_dir = os.path.join('gbm', 'bn080916009')
 
@@ -143,7 +154,7 @@ def test_gbm_tte_constructor():
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
                                "-10-0, 100-150",
                                src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v07.rsp"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=-1)
 
         assert nai3.name == 'NAI3'
 
@@ -179,7 +190,7 @@ def test_gbm_binning():
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
                                "-10-0, 100-150",
                                src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v07.rsp"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=-1)
 
         # should not have bins yet
 
@@ -254,7 +265,7 @@ def test_gbm_tte_joint_likelihood_fitting():
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
                                "-10-0, 100-150",
                                src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v07.rsp"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=-1)
 
         ab = AnalysisBuilder(nai3)
 
@@ -299,7 +310,7 @@ def test_gbm_tte_bayesian_fitting():
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
                                "-10-0, 100-150",
                                src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v07.rsp"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=-1)
 
         ab = AnalysisBuilder(nai3)
         ab.set_priors()
@@ -329,5 +340,8 @@ def test_gbm_tte_bayesian_fitting():
             # assert len(bb.log_probability_values) == n_samples
 
             assert bb.raw_samples.shape == (n_samples, 2)
+
+        # clean up
+        cleanup_downloaded_GBM_data(gbm_data)
 
 
