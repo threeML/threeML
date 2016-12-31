@@ -261,3 +261,17 @@ def _get_latest_verison(filenames):
         final_file_names.append(latest_version)
 
     return final_file_names
+
+def cleanup_downloaded_LLE_data(detector_information_dict):
+    """
+    deletes data downloaded with download_LLE_trigger_data.
+    :param detector_information_dict: the return dictionary from download_LLE_trigger_data
+    """
+
+    for data_file in detector_information_dict.values():
+
+        print("Removing: %s"%data_file)
+
+        os.remove(data_file)
+
+        print('\n')
