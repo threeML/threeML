@@ -1,7 +1,7 @@
 from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make, file_existing_and_readable
 from threeML.config.config import threeML_config
 from threeML.io.download_from_ftp import download_files_from_directory_ftp
-from threeML.exceptions.custom_exceptions import InvalidTrigger, TriggerDoesNotExist
+from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
 
 import ftplib
 import gzip

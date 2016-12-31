@@ -3,8 +3,7 @@ import pytest
 
 from threeML import *
 from threeML.io.network import internet_connection_is_active
-
-from threeML.plugins.Fermi_GBM.download_GBM_data import InvalidTrigger, TriggerDoesNotExist
+from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
 
 skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
                                                        reason="No active internet connection")
@@ -45,7 +44,7 @@ def test_download_LLE_data():
         download_GBM_trigger_data(trigger=80916009,
                                   destination_directory=temp_dir)
 
-    with pytest.raises(InvalidTrigger):
+    with pytest.raises(AssertionError):
 
         download_GBM_trigger_data(trigger='bn08a916009',
                                   destination_directory=temp_dir)

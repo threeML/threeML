@@ -3,8 +3,8 @@ import pytest
 
 from threeML import *
 from threeML.io.network import internet_connection_is_active
+from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
 
-from threeML.plugins.Fermi_LAT.download_LLE_data import InvalidTrigger, TriggerDoesNotExist
 
 
 skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
@@ -63,7 +63,7 @@ def test_download_LLE_data():
         download_LLE_trigger_data(trigger=80916009,
                                   destination_directory=temp_dir)
 
-    with pytest.raises(InvalidTrigger):
+    with pytest.raises(AssertionError):
 
         download_LLE_trigger_data(trigger='bn08a916009',
                                   destination_directory=temp_dir)

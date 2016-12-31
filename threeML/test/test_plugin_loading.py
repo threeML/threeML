@@ -8,12 +8,13 @@ from threeML.io.file_utils import within_directory
 
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
-
+__example_dir =  '../../examples/'
 
 #
 # These tests simply check that the plugins with no instrumental software dependnece, i.e.,
 # those plugins which should be immediately available to the user
 #
+download_GBM_trigger_data(os.path.join(__example_dir,'gbm','bn080916009'))
 
 def test_loading_ogip():
 
@@ -25,7 +26,7 @@ def test_loading_ogip():
 
 def test_loading_xrt():
 
-    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../examples/'))
+    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__),__example_dir))
 
 
 
@@ -40,7 +41,7 @@ def test_loading_xrt():
 
 
 def test_loading_gbm():
-    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../examples/'))
+    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), __example_dir))
 
     with within_directory(datadir):
         data_dir = os.path.join('gbm', 'bn080916009')
@@ -59,7 +60,7 @@ def test_loading_gbm():
 
 
 
-
+    cleanup_downloaded_GBM_data(gbm_data)
 
 
 
