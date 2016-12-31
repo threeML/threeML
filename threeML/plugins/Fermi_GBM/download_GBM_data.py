@@ -47,7 +47,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
     assert search.group(2) is not None, assert_string
 
-    trigger = "bn%s" % search.group(2)
+    trigger = search.group(2)
 
 
 

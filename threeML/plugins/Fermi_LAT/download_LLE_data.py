@@ -45,7 +45,7 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
 
     assert search.group(2) is not None, assert_string
 
-    trigger = "bn%s" % search.group(2)
+    trigger = search.group(2)
 
     # create output directory if it does not exists
     destination_directory = sanitize_filename(destination_directory, abspath=True)
