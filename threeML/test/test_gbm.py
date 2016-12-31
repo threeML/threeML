@@ -341,7 +341,8 @@ def test_gbm_tte_bayesian_fitting():
 
             assert bb.raw_samples.shape == (n_samples, 2)
 
-        # clean up
-        cleanup_downloaded_GBM_data(gbm_data)
+    # clean up
+
+    cleanup_downloaded_GBM_data(gbm_data)
 
 

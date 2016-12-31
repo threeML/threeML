@@ -4,14 +4,15 @@ import os
 
 __author__ = 'grburgess'
 
-from threeML.plugins.FermiLATLLELike import FermiLATLLELike, BinningMethodError
+from threeML.plugins.FermiLATLLELike import FermiLATLLELike
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
+from threeML.plugins.Fermi_LAT.download_LLE_data import download_LLE_trigger_data, cleanup_downloaded_LLE_data
 from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
 from astromodels.sources.point_source import PointSource
-from astromodels.sources.extended_source import ExtendedSource
+
 from astromodels.functions.functions import Log_uniform_prior, Uniform_prior
 
 from threeML.io.file_utils import within_directory
@@ -20,6 +21,8 @@ __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
 __example_dir = os.path.join(__this_dir__, '../../examples')
 
+# get the data needed
+lle_data = download_LLE_trigger_data('bn080916009',destination_directory=os.path.join(__example_dir,'lat'))
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
@@ -286,7 +289,7 @@ def test_gbm_lle_joint_likelihood_fitting():
             # assert jl.ncalls != 1
 
 
-def test_gbm_lle_bayesian_fitting():
+def test_lle_bayesian_fitting():
     with within_directory(__example_dir):
         data_dir = 'lat'
 
@@ -331,3 +334,8 @@ def test_gbm_lle_bayesian_fitting():
 
 
             # assert jl.ncalls != 1
+    cleanup_downloaded_LLE_data(lle_data)
+
+# clean up
+
+#
