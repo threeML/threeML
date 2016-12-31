@@ -11,7 +11,7 @@ from collections import OrderedDict
 
 
 
-_trigger_name_match=re.compile("^(bn|grb?) ?(\d{9})$")
+_trigger_name_match=re.compile("^(bn|grb?)? ?(\d{9})$")
 _file_type_match = re.compile('gll_(\D{2,5})_bn\d{9}_v\d{2}\.\D{3}')
 _valid_file_type = ['cspec','pt','lle']
 
@@ -29,7 +29,7 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
     :return: a dictionary with information about the download
     """
 
-    _valid_trigger_args = ['080916008', 'bn080916009', 'GRB080916009']
+    _valid_trigger_args = ['080916009', 'bn080916009', 'GRB080916009']
 
     assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
                                                                              ', or '.join(

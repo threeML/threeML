@@ -10,7 +10,7 @@ skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_i
 
 
 @skip_if_internet_is_not_available
-def test_download_LLE_data():
+def test_download_GBM_data():
     # test good trigger names
     good_triggers = ['080916009', 'bn080916009', 'GRB080916009']
 

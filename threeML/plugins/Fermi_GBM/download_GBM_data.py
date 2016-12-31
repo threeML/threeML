@@ -11,7 +11,7 @@ import numpy as np
 from collections import OrderedDict
 import re
 
-_trigger_name_match=re.compile("^(bn|grb?) ?(\d{9})$")
+_trigger_name_match=re.compile("^(bn|grb?)? ?(\d{9})$")
 
 def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.', compress_tte=True):
     """
@@ -31,7 +31,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
     # Let's doctor up the input just in case the user tried something strange
 
-    _valid_trigger_args = ['080916008', 'bn080916009', 'GRB080916009']
+    _valid_trigger_args = ['080916009', 'bn080916009', 'GRB080916009']
 
     assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
                                                                              ', or '.join(
