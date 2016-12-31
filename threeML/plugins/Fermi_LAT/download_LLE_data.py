@@ -274,4 +274,4 @@ def cleanup_downloaded_LLE_data(detector_information_dict):
 
         os.remove(data_file)
 
-        print('\n')
+    print('\n')

@@ -317,7 +317,7 @@ def cleanup_downloaded_GBM_data(detector_information_dict):
     for detector in detector_information_dict.keys():
 
         # for each detector, remove the data file
-        for data_file in detector_information_dict[detector]:
+        for data_file in detector_information_dict[detector].values():
             print("Removing: %s" % data_file)
 
             os.remove(data_file)
