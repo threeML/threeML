@@ -44,6 +44,7 @@ def test_loading_xrt():
 
 def test_loading_gbm():
 
+    print gbm_data
 
     with within_directory(__example_dir):
 
@@ -55,7 +56,7 @@ def test_loading_gbm():
         # We start out with a bad background interval to demonstrate a few features
 
         nai3 = FermiGBMTTELike('NAI3',
-                               os.path.join(data_dir, "glg_tte_n3_bn080916009_v00.fit.gz"),
+                               os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
                                "-10-0, 100-200",
                                src_selection,
                                rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=2)
