@@ -1,4 +1,5 @@
 import numpy
+import re
 from VirtualObservatoryCatalog import VirtualObservatoryCatalog
 
 from astromodels import *
@@ -17,6 +18,7 @@ class InvalidTrigger(RuntimeError):
 class InvalidUTC(RuntimeError):
     pass
 
+_trigger_name_match=re.compile("(bn|grb?) ?(\d{9})")
 
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
@@ -67,41 +69,30 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         _valid_trigger_args = ['080916008', 'bn080916009', 'GRB080916009']
 
+        valid_names=[]
+
         for trigger in trigger_names:
 
-            assert type(trigger) == str, "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                                                  ', or '.join(
-                                                                                                          _valid_trigger_args))
+            assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
+                                                                                     ', or '.join(
+                                                                                         _valid_trigger_args))
 
-            test = trigger.split('bn')
+            trigger = trigger.lower()
 
-            assert len(test) == 2, "The trigger %s is not valid. Must be in the form %s" % (test,
-                                                                                            ', or '.join(
-                                                                                                    _valid_trigger_args))
+            search = _trigger_name_match.match(trigger)
 
-            trigger = test[-1]
+            assert search is not None, assert_string
 
-            assert len(trigger) == 9, "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                                               ', or '.join(
-                                                                                                       _valid_trigger_args))
+            assert search.group(2) is not None, assert_string
 
-            for trial in trigger:
+            valid_names.append("bn%s" % search.group(2))
 
-                try:
-
-                    int(trial)
-
-                except(ValueError):
-
-                    raise InvalidTrigger(
-                            "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                                     ', or '.join(_valid_trigger_args)))
 
         n_entries = self._vo_dataframe.shape[0]
 
         idx = np.zeros(n_entries, dtype=bool)
 
-        for name in trigger_names:
+        for name in valid_names:
 
             condition = self._vo_dataframe.trigger_name == name
 
@@ -1009,41 +1000,28 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
 
         _valid_trigger_args = ['bn080916009']
 
+        valid_names = []
+
         for trigger in trigger_names:
+            assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
+                                                                                     ', or '.join(
+                                                                                         _valid_trigger_args))
 
-            assert type(trigger) == str, "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                                                  ', or '.join(
-                                                                                                          _valid_trigger_args))
+            trigger = trigger.lower()
 
-            test = trigger.split('bn')
+            search = _trigger_name_match.match(trigger)
 
-            assert len(test) == 2, "The trigger %s is not valid. Must be in the form %s" % (test,
-                                                                                            ', or '.join(
-                                                                                                    _valid_trigger_args))
+            assert search is not None, assert_string
 
-            trigger = test[-1]
+            assert search.group(2) is not None, assert_string
 
-            assert len(trigger) == 9, "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                                               ', or '.join(
-                                                                                                       _valid_trigger_args))
-
-            for trial in trigger:
-
-                try:
-
-                    int(trial)
-
-                except(ValueError):
-
-                    raise InvalidTrigger(
-                            "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                                     ', or '.join(_valid_trigger_args)))
+            valid_names.append("bn%s" % search.group(2))
 
         n_entries = self._vo_dataframe.shape[0]
 
         idx = np.zeros(n_entries, dtype=bool)
 
-        for name in trigger_names:
+        for name in valid_names:
 
             condition = self._vo_dataframe.trigger_name == name
 

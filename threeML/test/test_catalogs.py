@@ -9,7 +9,8 @@ from threeML.catalogs.Fermi import InvalidTrigger, InvalidUTC
 
 
 @skip_if_internet_is_not_available
-def test_GBM_catalog():
+def test_gbm_catalog():
+
     gbm_catalog = FermiGBMBurstCatalog()
 
     _ = gbm_catalog.cone_search(0.0, 0.0, 5.0)
@@ -181,3 +182,60 @@ def test_LLE_catalog():
 
         with pytest.raises(InvalidUTC):
             _ = lle_catalog.search_utc(utc_start='123', utc_stop='123')
+
+
+
+
+def test_swift_catalog():
+
+    swift_catalog = SwiftGRBCatalog()
+
+    _ = swift_catalog.cone_search(0.0, 0.0, 15.0)
+
+    _ = swift_catalog.get_other_instrument_information()
+
+    _ = swift_catalog.get_other_observation_information()
+
+    assert swift_catalog.ra_center == 0.0
+    assert swift_catalog.dec_center == 0.0
+
+    _ = swift_catalog.search_t90(t90_greater=2.)
+    _ = swift_catalog.search_t90(t90_less=2.)
+    _ = swift_catalog.search_t90(t90_greater=2., t90_less=10)
+
+    with pytest.raises(AssertionError):
+        _ = swift_catalog.search_t90()
+
+    _ = swift_catalog.search_trigger_name('GRB 081010')
+    _ = swift_catalog.search_trigger_name('GRB 081010A')
+    _ = swift_catalog.search_trigger_name('GRB081010')
+
+    # test for invalid trigger names
+
+    with pytest.raises(AssertionError):
+        _ = swift_catalog.search_trigger_name('080916009')
+
+        # UTC search includes MJD search
+        utc_start = '2008-01-01T00:00:00.123456789'
+        utc_stop = '2009-01-01T00:00:00.123456789'
+
+        _ = swift_catalog.search_utc(utc_start=utc_start, utc_stop=utc_stop)
+
+        # make sure we cannot search reversed intervals
+        with pytest.raises(AssertionError):
+            _ = swift_catalog.search_utc(utc_start=utc_stop, utc_stop=utc_start)
+
+        # make sure that non UTC values throw a bug
+
+        with pytest.raises(InvalidUTC):
+            _ = swift_catalog.search_utc(utc_start='123', utc_stop='123')
+
+    for mission in swift_catalog.other_observing_instruments:
+
+        _ = swift_catalog.search_other_observing_instruments(mission)
+
+    with pytest.raises(AssertionError):
+
+        _ = swift_catalog.search_other_observing_instruments('not_a_mission')
+
+

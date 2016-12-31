@@ -16,6 +16,7 @@ import astropy.time as astro_time
 
 
 _gcn_match = re.compile("\d{4}GCN\D?\.*(\d*)\.*\d\D")
+_trigger_name_match = re.compile("(GRB|grb)? ?(\d{6}[a-zA-Z]?)")
 
 class InvalidTrigger(RuntimeError):
     pass
@@ -105,7 +106,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
             trigger = trigger.upper()
 
-            search = re.search("(GRB|grb)? ?(\d{6}[a-zA-Z]?)", trigger)
+            search = _trigger_name_match.match(trigger)
 
             assert search is not None, assert_string
 
@@ -184,7 +185,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         # the table lists things in UTC by default,
         # so we convert back to MJD which is easily searchable
 
-        time = astro_time.Time(self._vo_dataframe.trigger_time, format='isot', scale='utc')
+        time = astro_time.Time(np.array(self._vo_dataframe.trigger_time).tolist(), format='isot', scale='utc')
 
         table_mjd = time.mjd
 
@@ -307,6 +308,39 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         return trigger_number
 
+    def search_redshift(self, z_greater=None, z_less=None):
+        """
+        search on redshift range
+
+        :param z_greater: values greater than this will be returned
+        :param z_less: values less than this will be returned
+        :return: grb table
+        """
+
+        assert z_greater is not None or z_less is not None, 'You must specify either the greater or less argument'
+
+        idx = np.isfinite(self._vo_dataframe.redshift)
+
+        # find the entries greater
+        if z_greater is not None:
+            idx_tmp = self._vo_dataframe.redshift >= z_greater
+
+            idx = np.logical_and(idx, idx_tmp)
+
+        # find the entries less
+        if z_less is not None:
+            idx_tmp = self._vo_dataframe.redshift <= z_less
+
+            idx = np.logical_and(idx, idx_tmp)
+
+        self._last_query_results = self._vo_dataframe[idx]
+
+        table = self.apply_format(self._all_table[np.asarray(idx)])
+
+        return table
+
+
+
     def get_other_observation_information(self):
         """
         returns a structured pandas table containing the other observing instruments, their GCNs and if obtainable,
@@ -329,7 +363,6 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
             for obs in ['xrt', 'uvot', 'bat', 'opt', 'radio']:
 
                 obs_detection = "%s_detection" % obs
-                print obs_detection
 
                 if obs in ['xrt', 'uvot', 'bat']:
 
@@ -351,14 +384,13 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
                     observed = False
 
                 if observed:
-                    gcn_number =  _gcn_match.search(row[obs_ref]).group(1)
 
-                    # gcn_number = filter(lambda x: x != '', row[obs_ref].split('.'))[1]
+                    reference = self._parse_redshift_reference(row[obs_ref])
 
 
-                    gcn = "https://gcn.gsfc.nasa.gov/gcn3/%s.gcn3" % gcn_number
+                    #gcn = "https://gcn.gsfc.nasa.gov/gcn3/%s.gcn3" % gcn_number
 
-                    info = {'GCN': gcn, 'observed': detect}
+                    info = {'reference': reference, 'observed': detect}
 
 
                 else:
@@ -444,3 +476,43 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         display(sources)
 
         return sources
+
+    def get_redshift(self):
+        """
+        Get the redshift and redshift type from the searched sources
+
+
+        :return:
+        """
+
+        assert self._last_query_results is not None, "You have to run a query before getting observing information"
+
+        redshift_df = (self._last_query_results.loc[:,['redshift','redshift_err','redshift_type','redshift_ref']]).copy(deep=True)
+
+        redshift_df = redshift_df.rename(columns={"redshift": "z", "redshift_err": "z err",'redshift_type': 'z type','redshift_ref':'reference'})
+
+        redshift_df['reference'] = redshift_df['reference'].apply(self._parse_redshift_reference)
+
+        return redshift_df
+
+
+    @staticmethod
+    def _parse_redshift_reference(reference):
+
+        if 'GCN' in reference:
+            gcn_number = _gcn_match.search(reference).group(1)
+
+            url = "https://gcn.gsfc.nasa.gov/gcn3/%s.gcn3" % gcn_number
+
+        else:
+
+            url =  "http://adsabs.harvard.edu/abs/%s" % reference
+
+
+        return url
+
+
+
+
+
+

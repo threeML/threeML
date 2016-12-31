@@ -3,7 +3,8 @@ from threeML.config.config import threeML_config
 from threeML.io.download_from_ftp import download_files_from_directory_ftp
 
 import ftplib
-import glob
+import gzip
+import shutil
 import os
 import numpy as np
 from collections import OrderedDict
@@ -17,7 +18,7 @@ class TriggerDoesNotExist(RuntimeError):
     pass
 
 
-def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'):
+def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.', compress_tte=True):
     """
     Download the latest GBM TTE and RSP files from the HEASARC server. Will get the
     latest file version and prefer RSP2s over RSPs. If the files already exist in your destination
@@ -29,6 +30,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     :param trigger: trigger number (str) e.g. '080916009' or 'bn080916009' or 'GRB080916009'
     :param detectors: list of detectors, default is all detectors
     :param destination_directory: download directory
+    :param compress_tte: compress the TTE files via gzip (default True)
     :return: a dictionary with information about the download
     """
 
@@ -43,14 +45,12 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     test = trigger.lower().split('bn')
     # if they did, we will grab the proper part
     if len(test) == 2:
-
         trigger = test[-1]
 
     # if there is the 'GRB' on the front:
     test = trigger.lower().split('grb')
     # if they did, we will grab the proper part
     if len(test) == 2:
-
         trigger = test[-1]
 
     assert len(trigger) == 9, "The trigger argument is not valid. Must be in the form %s" % (
@@ -65,7 +65,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
         except(ValueError):
 
             raise InvalidTrigger(
-                    "The trigger argument is not valid. Must be in the form %s" % (', or '.join(_valid_trigger_args)))
+                "The trigger argument is not valid. Must be in the form %s" % (', or '.join(_valid_trigger_args)))
 
     # create output directory if it does not exists
     destination_directory = sanitize_filename(destination_directory, abspath=True)
@@ -89,7 +89,6 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
         assert type(detectors) == list or type(detectors) == np.ndarray, 'detectors must be input as a list'
 
         for detector in detectors:
-
             assert detector in allowed_detectors, '%s is not a valid GBM detector. Allowed choices %s' % (
                 detector, ' ,'.join(allowed_detectors))
 
@@ -133,7 +132,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     tte_to_get_latest = _get_latest_verison(tte_to_get)
 
     assert len(tte_to_get_latest) == len(
-            rsp_to_get_latest), 'The file list should be the same length. Something went wrong. Contact grburgess'
+        rsp_to_get_latest), 'The file list should be the same length. Something went wrong. Contact grburgess'
 
     # reorder the file names to match the detectors
     # the dictionary keys cause them to get out of order
@@ -146,13 +145,11 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
         for rsp in rsp_to_get_latest:
 
             if rsp.find('_%s_' % det) >= 0:
-
                 tmp_rsp.append(rsp)
 
         for tte in tte_to_get_latest:
 
             if tte.find('_%s_' % det) >= 0:
-
                 tmp_tte.append(tte)
 
     tte_to_get_latest = np.array(tmp_tte)
@@ -160,12 +157,12 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
     # now see if we have already downloaded these files
     tte_filter = np.ones_like(tte_to_get_latest, dtype=bool)
+    is_tte_compressed = np.zeros_like(tte_to_get_latest, dtype=bool)
     rsp_filter = np.ones_like(rsp_to_get_latest, dtype=bool)
 
     for i, rsp in enumerate(rsp_to_get_latest):
 
         if file_existing_and_readable(os.path.join(destination_directory, rsp)):
-
             rsp_filter[i] = 0
 
             print('%s already downloaded into %s -> skipping' % (rsp, destination_directory))
@@ -177,6 +174,15 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
             tte_filter[i] = 0
 
             print('%s already downloaded into %s -> skipping' % (tte, destination_directory))
+
+
+        # now check for compressed version
+        elif file_existing_and_readable(os.path.join(destination_directory, "%s.gz" % tte)):
+
+            tte_filter[i] = 0
+            is_tte_compressed[i] = 1
+
+            print('%s already downloaded into %s -> skipping' % ("%s.gz" % tte, destination_directory))
 
     # now download the files
 
@@ -205,27 +211,45 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     detectors = np.array(detectors)
 
     for detector in detectors:
-
         download_info[detector] = {}
 
-    # firrt handle the rsp/tte from the DL'ed detectors
+    # first handle the rsp/tte from the DL'ed detectors
     for detector, rsp in zip(detectors[rsp_filter], rsp_files):
-
         download_info[detector]['rsp'] = rsp
 
     for detector, tte in zip(detectors[tte_filter], tte_files):
 
-        download_info[detector]['tte'] = tte
+        if compress_tte:
+
+            tte_gz = "%s.gz" % tte
+
+            with open(tte, 'rb') as f_in, gzip.open(tte_gz, 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+
+            os.remove(tte)
+
+            download_info[detector]['tte'] = tte_gz
+
+
+        else:
+
+            download_info[detector]['tte'] = tte
 
     # now handle the skipped files
 
     for detector, rsp in zip(detectors[~rsp_filter], rsp_to_get_latest[~rsp_filter]):
-
         download_info[detector]['rsp'] = os.path.join(destination_directory, rsp)
 
-    for detector, tte in zip(detectors[~tte_filter], tte_to_get_latest[~tte_filter]):
+    for detector, tte, is_tte_compressed in zip(detectors[~tte_filter], tte_to_get_latest[~tte_filter],
+                                                is_tte_compressed[~tte_filter]):
 
-        download_info[detector]['tte'] = os.path.join(destination_directory, tte)
+        if is_tte_compressed:
+
+            download_info[detector]['tte'] = os.path.join(destination_directory, "%s.gz" % tte)
+
+        else:
+
+            download_info[detector]['tte'] = os.path.join(destination_directory, tte)
 
     return download_info
 
@@ -282,7 +306,6 @@ def _get_latest_verison(filenames):
 
         # if there are no rsp2 in the files
         if idx.sum() == 0:
-
             # we can select on all
             idx = np.ones_like(ext, dtype=bool)
 

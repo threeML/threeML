@@ -3,7 +3,7 @@ from threeML.config.config import threeML_config
 from threeML.io.download_from_ftp import download_files_from_directory_ftp
 
 import ftplib
-import glob
+import re
 import os
 import numpy as np
 from collections import OrderedDict
@@ -16,6 +16,10 @@ class InvalidTrigger(RuntimeError):
 class TriggerDoesNotExist(RuntimeError):
     pass
 
+
+
+_file_type_match = re.compile('gll_(\D{2,5})_bn\d{9}_v\d{2}\.\D{3}')
+_valid_file_type = ['cspec','pt','lle']
 
 def download_LLE_trigger_data(trigger, destination_directory='.'):
     """
@@ -124,91 +128,99 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
 
 
 
-    # now see if we have already downloaded these files
-    lle_filter = np.ones_like(lle_to_get_latest, dtype=bool)
-    rsp_filter = np.ones_like(rsp_to_get_latest, dtype=bool)
-    ft2_filter = np.ones_like(ft2_to_get_latest, dtype=bool)
+    files_to_download =[]
+    files_existing = []
 
 
     for i, rsp in enumerate(rsp_to_get_latest):
 
         if file_existing_and_readable(os.path.join(destination_directory, rsp)):
 
-            rsp_filter[i] = 0
+            files_existing.append(rsp)
 
             print('%s already downloaded into %s -> skipping' % (rsp, destination_directory))
+
+        else:
+
+            files_to_download.append(rsp)
 
     for i, lle in enumerate(lle_to_get_latest):
 
         if file_existing_and_readable(os.path.join(destination_directory, lle)):
 
-            lle_filter[i] = 0
+            files_existing.append(lle)
 
             print('%s already downloaded into %s -> skipping' % (lle, destination_directory))
+
+        else:
+
+            files_to_download.append(lle)
 
     for i, ft2 in enumerate(ft2_to_get_latest):
 
         if file_existing_and_readable(os.path.join(destination_directory, ft2)):
 
-            ft2_filter[i] = 0
+            files_existing.append(ft2)
 
             print('%s already downloaded into %s -> skipping' % (ft2, destination_directory))
+
+        else:
+
+            files_to_download.append(ft2)
 
     # now download the files
 
     remote_path = "%s/%s/" % (threeML_config['LAT']['public FTP location'], directory)
 
-    retrieval = np.append(rsp_to_get_latest[rsp_filter], lle_to_get_latest[lle_filter])
-    retrieval = np.append(retrieval, ft2_to_get_latest[ft2_filter])
+    download_info = {}
 
-    if len(retrieval) > 0:
+    file_lookup = {'lle':'lle','pt':'ft2','cspec':'rsp'}
+
+    if len(files_to_download) > 0:
 
         print("\nDownloading LLE, RSP and FT2 files...")
 
         downloaded_files = download_files_from_directory_ftp(remote_path,
                                                              sanitize_filename(destination_directory),
-                                                             filenames=retrieval)
+                                                             filenames=files_to_download)
 
-        rsp_files = downloaded_files[:len(rsp_to_get_latest[rsp_filter])]
-        lle_files = downloaded_files[len(rsp_to_get_latest[rsp_filter]):len(rsp_to_get_latest[rsp_filter]) + len(
-                ft2_to_get_latest[ft2_filter])]
-        ft2_files = downloaded_files[len(rsp_to_get_latest[rsp_filter]) + len(ft2_to_get_latest[ft2_filter]):]
+        # rsp_files = downloaded_files[:len(rsp_to_get_latest[rsp_filter])]
+        # lle_files = downloaded_files[len(rsp_to_get_latest[rsp_filter]):len(rsp_to_get_latest[rsp_filter]) + len(
+        #         ft2_to_get_latest[ft2_filter])]
+        # ft2_files = downloaded_files[len(rsp_to_get_latest[rsp_filter]) + len(ft2_to_get_latest[ft2_filter]):]
 
-        print rsp_files
-        print ft2_files
-        print lle_files
 
-    else:
 
-        rsp_files = []
-        lle_files = []
-        ft2_files = []
 
-    download_info = {}
+        for download in downloaded_files:
 
-    if rsp_files:
+            file_type = _file_type_match.match(download.split("/")[-1]).group(1)
 
-        download_info['rsp'] = rsp_files[0]
+            assert file_type in _valid_file_type, "Something went wrong %s is not an LLE, RSP, or FT2 file" % download.split("/")[-1] #pragma: no cover
 
-    else:
+            download_info[file_lookup[file_type]] = download
 
-        download_info['rsp'] = os.path.join(destination_directory, rsp_to_get_latest[~rsp_filter][0])
 
-    if lle_files:
 
-        download_info['lle'] = lle_files[0]
 
-    else:
 
-        download_info['lle'] = os.path.join(destination_directory, lle_to_get_latest[~lle_filter][0])
 
-    if ft2_files:
 
-        download_info['ft2'] = ft2_files[0]
 
-    else:
 
-        download_info['ft2'] = os.path.join(destination_directory, ft2_to_get_latest[~ft2_filter][0])
+    for downloaded in files_existing:
+
+        file_type = _file_type_match.match(downloaded).group(1)
+
+        assert file_type in _valid_file_type, "Something went wrong %s is not an LLE, RSP, or FT2 file" % download # pragma: no cover
+
+        download_info[file_lookup[file_type]]= os.path.join(destination_directory, downloaded)
+
+
+
+
+
+
 
     return download_info
 
