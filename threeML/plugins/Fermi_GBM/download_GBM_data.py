@@ -1,6 +1,7 @@
 from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make, file_existing_and_readable
 from threeML.config.config import threeML_config
 from threeML.io.download_from_ftp import download_files_from_directory_ftp
+from threeML.exceptions.custom_exceptions import InvalidTrigger, TriggerDoesNotExist
 
 import ftplib
 import gzip
@@ -8,15 +9,9 @@ import shutil
 import os
 import numpy as np
 from collections import OrderedDict
+import re
 
-
-class InvalidTrigger(RuntimeError):
-    pass
-
-
-class TriggerDoesNotExist(RuntimeError):
-    pass
-
+_trigger_name_match=re.compile("^(bn|grb?) ?(\d{9})$")
 
 def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.', compress_tte=True):
     """
@@ -38,34 +33,23 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
     _valid_trigger_args = ['080916008', 'bn080916009', 'GRB080916009']
 
-    assert type(trigger) == str, "The trigger argument must be a string. Must be in the form %s" % (
-        ', or '.join(_valid_trigger_args))
+    assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
+                                                                             ', or '.join(
+                                                                                 _valid_trigger_args))
 
-    # if there is the 'bn' on the front:
-    test = trigger.lower().split('bn')
-    # if they did, we will grab the proper part
-    if len(test) == 2:
-        trigger = test[-1]
+    assert type(trigger) == str, "triggers must be strings"
 
-    # if there is the 'GRB' on the front:
-    test = trigger.lower().split('grb')
-    # if they did, we will grab the proper part
-    if len(test) == 2:
-        trigger = test[-1]
+    trigger = trigger.lower()
 
-    assert len(trigger) == 9, "The trigger argument is not valid. Must be in the form %s" % (
-        ', or '.join(_valid_trigger_args))
+    search = _trigger_name_match.match(trigger)
 
-    for trial in trigger:
+    assert search is not None, assert_string
 
-        try:
+    assert search.group(2) is not None, assert_string
 
-            int(trial)
+    trigger = "bn%s" % search.group(2)
 
-        except(ValueError):
 
-            raise InvalidTrigger(
-                "The trigger argument is not valid. Must be in the form %s" % (', or '.join(_valid_trigger_args)))
 
     # create output directory if it does not exists
     destination_directory = sanitize_filename(destination_directory, abspath=True)

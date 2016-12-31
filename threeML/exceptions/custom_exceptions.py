@@ -18,6 +18,13 @@ def my_format_warning(message, category, *args):
 custom_warnings.formatwarning = my_format_warning
 
 
+class InvalidTrigger(RuntimeError):
+    pass
+
+
+class TriggerDoesNotExist(RuntimeError):
+    pass
+
 
 class InvalidUTC(RuntimeError):
 
