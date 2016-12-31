@@ -5,20 +5,16 @@ from VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
 
-from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.exceptions.custom_exceptions import custom_warnings, InvalidUTC
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 
 import astropy.time as astro_time
 
-class InvalidTrigger(RuntimeError):
-    pass
 
 
-class InvalidUTC(RuntimeError):
-    pass
 
-_trigger_name_match=re.compile("(bn|grb?) ?(\d{9})")
+_trigger_name_match=re.compile("^(bn|grb?) ?(\d{9})$")
 
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
@@ -76,6 +72,8 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
                                                                                      ', or '.join(
                                                                                          _valid_trigger_args))
+
+            assert type(trigger) == str, "triggers must be strings"
 
             trigger = trigger.lower()
 
@@ -1002,10 +1000,14 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
 
         valid_names = []
 
+
+
         for trigger in trigger_names:
             assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
                                                                                      ', or '.join(
-                                                                                         _valid_trigger_args))
+                                                                                     _valid_trigger_args))
+
+            assert type(trigger) == str, "triggers must be strings"
 
             trigger = trigger.lower()
 

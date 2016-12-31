@@ -4,26 +4,17 @@ import re
 import urllib2
 
 from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
-from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.exceptions.custom_exceptions import InvalidUTC
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.rich_display import display
 
-# from astromodels import *
-# from astromodels.utils.angular_distance import angular_distance
-
 import astropy.time as astro_time
 
 
-_gcn_match = re.compile("\d{4}GCN\D?\.*(\d*)\.*\d\D")
-_trigger_name_match = re.compile("(GRB|grb)? ?(\d{6}[a-zA-Z]?)")
+_gcn_match = re.compile("^\d{4}GCN\D?\.*(\d*)\.*\d\D$")
+_trigger_name_match = re.compile("^(GRB|grb)? ?(\d{6}[a-zA-Z]?)$")
 
-class InvalidTrigger(RuntimeError):
-    pass
-
-
-class InvalidUTC(RuntimeError):
-    pass
 
 
 class SwiftGRBCatalog(VirtualObservatoryCatalog):
@@ -103,6 +94,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
             assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
                                                                                      ', or '.join(
                                                                                          _valid_trigger_args))
+            assert type(trigger) == str, "triggers must be strings"
 
             trigger = trigger.upper()
 

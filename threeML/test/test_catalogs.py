@@ -5,7 +5,8 @@ from threeML.io.network import internet_connection_is_active
 
 skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
                                                        reason="No active internet connection")
-from threeML.catalogs.Fermi import InvalidTrigger, InvalidUTC
+
+from threeML.exceptions.custom_exceptions import InvalidUTC
 
 
 @skip_if_internet_is_not_available
@@ -101,7 +102,7 @@ def test_gbm_catalog():
     with pytest.raises(AssertionError):
         _ = gbm_catalog.search_trigger_name(80916009)
 
-    with pytest.raises(InvalidTrigger):
+    with pytest.raises(AssertionError):
         _ = gbm_catalog.search_trigger_name('bn08a916009')
 
     # test time searches
@@ -155,15 +156,12 @@ def test_LLE_catalog():
 
 
     with pytest.raises(AssertionError):
-        _ = lle_catalog.search_trigger_name('080916009')
-
-    with pytest.raises(AssertionError):
         _ = lle_catalog.search_trigger_name('blah080916009')
 
     with pytest.raises(AssertionError):
         _ = lle_catalog.search_trigger_name(80916009)
 
-    with pytest.raises(InvalidTrigger):
+    with pytest.raises(AssertionError):
         _ = lle_catalog.search_trigger_name('bn08a916009')
 
         # test time searches
@@ -185,7 +183,7 @@ def test_LLE_catalog():
 
 
 
-
+@skip_if_internet_is_not_available
 def test_swift_catalog():
 
     swift_catalog = SwiftGRBCatalog()
@@ -206,29 +204,36 @@ def test_swift_catalog():
     with pytest.raises(AssertionError):
         _ = swift_catalog.search_t90()
 
-    _ = swift_catalog.search_trigger_name('GRB 081010')
-    _ = swift_catalog.search_trigger_name('GRB 081010A')
-    _ = swift_catalog.search_trigger_name('GRB081010')
+    _ = swift_catalog.search_redshift(z_greater=2.)
+    _ = swift_catalog.search_redshift(z_less=2.)
+    _ = swift_catalog.search_redshift(z_greater=2., z_less=10)
+
+    with pytest.raises(AssertionError):
+        _ = swift_catalog.search_redshift()
+
+    _ = swift_catalog.search_trigger_name('GRB 050525A')
+    _ = swift_catalog.search_trigger_name('GRB050525A')
+
 
     # test for invalid trigger names
 
     with pytest.raises(AssertionError):
-        _ = swift_catalog.search_trigger_name('080916009')
+        _ = swift_catalog.search_trigger_name('GRB080916009')
 
-        # UTC search includes MJD search
-        utc_start = '2008-01-01T00:00:00.123456789'
-        utc_stop = '2009-01-01T00:00:00.123456789'
+    # UTC search includes MJD search
+    utc_start = '2008-01-01T00:00:00.123456789'
+    utc_stop = '2009-01-01T00:00:00.123456789'
 
-        _ = swift_catalog.search_utc(utc_start=utc_start, utc_stop=utc_stop)
+    _ = swift_catalog.search_utc(utc_start=utc_start, utc_stop=utc_stop)
 
-        # make sure we cannot search reversed intervals
-        with pytest.raises(AssertionError):
-            _ = swift_catalog.search_utc(utc_start=utc_stop, utc_stop=utc_start)
+    # make sure we cannot search reversed intervals
+    with pytest.raises(AssertionError):
+        _ = swift_catalog.search_utc(utc_start=utc_stop, utc_stop=utc_start)
 
-        # make sure that non UTC values throw a bug
+    # make sure that non UTC values throw a bug
 
-        with pytest.raises(InvalidUTC):
-            _ = swift_catalog.search_utc(utc_start='123', utc_stop='123')
+    with pytest.raises(InvalidUTC):
+        _ = swift_catalog.search_utc(utc_start='123', utc_stop='123')
 
     for mission in swift_catalog.other_observing_instruments:
 
@@ -237,5 +242,18 @@ def test_swift_catalog():
     with pytest.raises(AssertionError):
 
         _ = swift_catalog.search_other_observing_instruments('not_a_mission')
+
+
+    _ = swift_catalog.search_redshift(z_greater=6)
+
+    _ = swift_catalog.get_other_instrument_information()
+
+    _ = swift_catalog.get_other_observation_information()
+
+    _ = swift_catalog.get_redshift()
+
+    with pytest.raises(AssertionError):
+
+        _ = swift_catalog.search_redshift()
 
 

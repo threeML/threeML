@@ -18,6 +18,11 @@ def my_format_warning(message, category, *args):
 custom_warnings.formatwarning = my_format_warning
 
 
+
+class InvalidUTC(RuntimeError):
+
+    pass
+
 class ForbiddenRegionOfParameterSpace(RuntimeWarning):
 
     pass
