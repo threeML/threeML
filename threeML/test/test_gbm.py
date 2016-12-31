@@ -181,6 +181,7 @@ def test_gbm_tte_constructor():
 
 
 def test_gbm_binning():
+
     with within_directory(__example_dir):
         data_dir = os.path.join('gbm', 'bn080916009')
 

@@ -11,7 +11,7 @@ __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
 
 #
-# These tests simply check that the plugins with no instrumental software dependnece, i.e.,
+# These tests simply check that the plugins with no instrumental software dependence, i.e.,
 # those plugins which should be immediately available to the user
 #
 __example_dir = os.path.join(__this_dir__, '../../examples')
@@ -46,6 +46,8 @@ def test_loading_gbm():
 
 
     with within_directory(__example_dir):
+
+
         data_dir = os.path.join('gbm', 'bn080916009')
 
         src_selection = "0.-10."
