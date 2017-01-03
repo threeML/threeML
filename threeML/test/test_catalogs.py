@@ -64,7 +64,7 @@ def test_LAT_catalog():
 def test_LLE_catalog():
     lle_catalog = FermiLLEBurstCatalog()
 
-    _ = lle_catalog.cone_search(0.0, 0.0, 30.0)
+    _ = lle_catalog.cone_search(0.0, 0.0, 300.0)
 
     assert lle_catalog.ra_center == 0.0
     assert lle_catalog.dec_center == 0.0
