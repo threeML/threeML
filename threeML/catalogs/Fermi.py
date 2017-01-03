@@ -681,7 +681,7 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
         self._update = update
 
         super(FermiLLEBurstCatalog, self).__init__('fermille',
-                                                   threeML_config['catalogs']['Fermi-LAT']['LLE catalog'],
+                                                   threeML_config['catalogs']['Fermi']['LLE catalog'],
                                                    'Fermi-LAT/LLE catalog')
 
     def apply_format(self, table):

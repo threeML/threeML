@@ -207,7 +207,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
             if file_existing_and_readable(os.path.join(destination_directory, "%s.gz" % tte)):
 
-                continue
+                download_info[detector]['tte'] = os.path.join(destination_directory, "%s.gz" % tte)
 
             else:
                 if verbose:
@@ -219,7 +219,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
 
                 os.remove(os.path.join(destination_directory, tte))
 
-            download_info[detector]['tte'] = os.path.join(destination_directory, "%s.gz" % tte)
+                download_info[detector]['tte'] = os.path.join(destination_directory, "%s.gz" % tte)
 
         else:
 
