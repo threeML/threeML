@@ -4,7 +4,7 @@ import re
 import urllib2
 
 from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
-from threeML.exceptions.custom_exceptions import InvalidUTC
+from threeML.exceptions.custom_exceptions import custom_warnings, InvalidUTC
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.rich_display import display
@@ -13,9 +13,7 @@ import astropy.time as astro_time
 
 
 _gcn_match = re.compile("^\d{4}GCN\D?\.*(\d*)\.*\d\D$")
-_trigger_name_match = re.compile("^(GRB|grb)? ?(\d{6}[a-zA-Z]?)$")
-
-
+_trigger_name_match = re.compile("^GRB \d{6}[A-Z]$")
 
 class SwiftGRBCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
@@ -26,13 +24,13 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         :param update: force update the XML VO table
         """
 
+        self._update = update
+
         super(SwiftGRBCatalog, self).__init__('swiftgrb',
                                               threeML_config['catalogs']['Swift']['Swift GRB catalog'],
                                               'Swift GRB catalog')
 
-        self._vo_dataframe, self._all_table = get_heasarc_table_as_pandas('swiftgrb',
-                                                                          update=update,
-                                                                          cache_time_days=1.)
+
         # collect all the instruments also seeing the GRBs
         self._build_other_obs_instruments()
 
@@ -56,6 +54,32 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         return new_table.group_by('trigger_time')
 
+    def _get_vo_table_from_source(self):
+
+        self._vo_dataframe = get_heasarc_table_as_pandas('swiftgrb',
+                                                         update=self._update,
+                                                         cache_time_days=1.)
+
+    def _source_is_valid(self, source):
+
+        warn_string = "The trigger %s is not valid. Must be in the form GRB080916009" % source
+
+        match = _trigger_name_match.match(source)
+
+        if match is None:
+
+            custom_warnings.warn(warn_string)
+
+            answer = False
+
+        else:
+
+            answer = True
+
+        return answer
+
+
+
     def _build_other_obs_instruments(self):
         """
         builds a list of all the other instruments that observed Swift GRBs
@@ -75,144 +99,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         return self._other_observings_instruments
 
-    def search_trigger_name(self, *trigger_names):
-        """
-        Find the information on the given trigger names.
-
-        :param trigger_names: trigger numbers (str) e.g. 'GRB 080810', 'GRB 080810A', 'grb 080810a'
-        :return:
-        """
-
-        # check the trigger names
-
-        _valid_trigger_args = ['GRB 080810', 'GRB 080810A', 'grb 080810a']
-
-        valid_names = []
-
-        # use regex to enforce trigger name style
-        for trigger in trigger_names:
-            assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                                     ', or '.join(
-                                                                                         _valid_trigger_args))
-            assert type(trigger) == str, "triggers must be strings"
-
-            trigger = trigger.upper()
-
-            search = _trigger_name_match.match(trigger)
-
-            assert search is not None, assert_string
-
-            assert search.group(2) is not None, assert_string
-
-            valid_names.append("GRB %s" % search.group(2))
-
-        n_entries = self._vo_dataframe.shape[0]
-
-        idx = np.zeros(n_entries, dtype=bool)
-
-        # search through the index for the requested triggers
-
-        for name in valid_names:
-            name = name.upper()
-
-            condition = self._vo_dataframe.index == name
-
-            idx = np.logical_or(idx, condition)
-
-        self._last_query_results = self._vo_dataframe[idx]
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        return table
-
-    def search_t90(self, t90_greater=None, t90_less=None):
-        """
-        search for GBM GRBs by their T90 values.
-
-        Example:
-            T90s >= 2 -> search_t90(t90_greater=2)
-            T90s <= 10 -> search_t90(t90_less=10)
-            2 <= T90s <= 10 search_t90(t90_greater, t90_less=10)
-
-        :param t90_greater: value for T90s greater
-        :param t90_less: value for T90s less
-        :return:
-        """
-
-        assert t90_greater is not None or t90_less is not None, 'You must specify either the greater or less argument'
-
-        n_entries = self._vo_dataframe.shape[0]
-
-        # Create a dummy index first
-
-        idx = np.ones(n_entries, dtype=bool)
-
-        # find the entries greater
-        if t90_greater is not None:
-            idx_tmp = self._vo_dataframe.bat_t90 >= t90_greater
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        # find the entries less
-        if t90_less is not None:
-            idx_tmp = self._vo_dataframe.bat_t90 <= t90_less
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        return table
-
-    def search_mjd(self, mjd_start, mjd_stop):
-        """
-        search for triggers in a range of MJD
-
-        :param mjd_start: start of MJD range
-        :param mjd_stop:  stop of MJD range
-        :return: table of results
-        """
-
-        assert mjd_start < mjd_stop, "start must come before stop"
-
-        # the table lists things in UTC by default,
-        # so we convert back to MJD which is easily searchable
-
-        time = astro_time.Time(np.array(self._vo_dataframe.trigger_time).tolist(), format='isot', scale='utc')
-
-        table_mjd = time.mjd
-
-        idx = np.logical_and(mjd_start <= table_mjd,
-                             table_mjd <= mjd_stop)
-
-        self._last_query_results = self._vo_dataframe[idx]
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        return table
-
-    def search_utc(self, utc_start, utc_stop):
-        """
-        Search for triggers in a range of UTC values. UTC time must be specified
-         in the as follows '1999-01-01T00:00:00.123456789' '2010-01-01T00:00:00'
-        :param utc_start: start of UTC interval
-        :param utc_stop: stop of UTC interval
-        :return:
-        """
-
-        # use astropy to read the UTC format
-        try:
-            utc_start, utc_stop = astro_time.Time([utc_start, utc_stop], format='isot', scale='utc')
-
-        except(ValueError):
-
-            raise InvalidUTC(
-                "one of %s, %s is not a valid UTC string. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
-                    utc_start, utc_stop))
-
-        # convert the UTC format to MJD and use the MJD search
-        return self.search_mjd(utc_start.mjd, utc_stop.mjd)
-
-    def search_other_observing_instruments(self, instrument):
+    def query_other_observing_instruments(self, instrument):
         """
         search for observations that were also seen by the requested instrument.
         to see what instruments are available, use the .other_observing_instruments call
@@ -300,43 +187,11 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         return trigger_number
 
-    def search_redshift(self, z_greater=None, z_less=None):
-        """
-        search on redshift range
-
-        :param z_greater: values greater than this will be returned
-        :param z_less: values less than this will be returned
-        :return: grb table
-        """
-
-        assert z_greater is not None or z_less is not None, 'You must specify either the greater or less argument'
-
-        idx = np.isfinite(self._vo_dataframe.redshift)
-
-        # find the entries greater
-        if z_greater is not None:
-            idx_tmp = self._vo_dataframe.redshift >= z_greater
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        # find the entries less
-        if z_less is not None:
-            idx_tmp = self._vo_dataframe.redshift <= z_less
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        self._last_query_results = self._vo_dataframe[idx]
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        return table
-
-
 
     def get_other_observation_information(self):
         """
         returns a structured pandas table containing the other observing instruments, their GCNs and if obtainable,
-        their trigger numbers/ data identifiers. Currently, the trigger number is only obtained for Fermi-GBM.
+        their trigger numbers/ data identifiers. Currently, the trigger number is only obtained for Fermi-LAT-GBM.
 
         :return:
         """
@@ -450,7 +305,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
                     # just for Fermi GBM, lets get the trigger number
 
                     # TODO: add more instruments
-                    if obs == 'Fermi-GBM':
+                    if obs == 'Fermi-LAT-GBM':
 
                         info = {'GCN': gcn, 'trigger number': self._get_fermiGBM_trigger_number_from_gcn(gcn)}
 
@@ -491,7 +346,11 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
     @staticmethod
     def _parse_redshift_reference(reference):
 
-        if 'GCN' in reference:
+        if reference == '':
+
+            url = None
+
+        elif 'GCN' in reference:
             gcn_number = _gcn_match.search(reference).group(1)
 
             url = "https://gcn.gsfc.nasa.gov/gcn3/%s.gcn3" % gcn_number

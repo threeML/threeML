@@ -9,36 +9,61 @@ from threeML.exceptions.custom_exceptions import custom_warnings, InvalidUTC
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 
-import astropy.time as astro_time
 
 
+_trigger_name_match = re.compile("^GRB\d{9}$")
 
 
-_trigger_name_match=re.compile("^(bn|grb?) ?(\d{9})$")
+def _gbm_and_lle_valid_source_check(source):
+    """
+    checks if source name is valid for both GBM and LLE data
+
+    :param source: source name
+    :return: bool
+    """
+
+    warn_string = "The trigger %s is not valid. Must be in the form GRB080916009" % source
+
+    match = _trigger_name_match.match(source)
+
+    if match is None:
+
+        custom_warnings.warn(warn_string)
+
+        answer = False
+
+    else:
+
+        answer = True
+
+    return answer
+
 
 class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
         """
-        The Fermi GBM GRB catalog. Search for GRBs  by trigger
+        The Fermi-LAT GBM GRB catalog. Search for GRBs  by trigger
         number, location, spectral parameters, T90, and date range.
 
         :param update: force update the XML VO table
         """
 
+        self._update = update
+
         super(FermiGBMBurstCatalog, self).__init__('fermigbrst',
-                                                   threeML_config['catalogs']['Fermi']['GBM burst catalog'],
-                                                   'Fermi/GBM burst catalog')
+                                                   threeML_config['catalogs']['Fermi-LAT']['GBM burst catalog'],
+                                                   'Fermi-LAT/GBM burst catalog')
 
         self._gbm_detector_lookup = np.array(['n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6',
                                               'n7', 'n8', 'n9', 'na', 'nb', 'b0', 'b1'])
 
         self._available_models = ('band', 'comp', 'plaw', 'sbpl')
 
-        self._vo_dataframe, self._all_table = get_heasarc_table_as_pandas('fermigbrst',
-                                                                          update=update,
-                                                                          cache_time_days=1.)
+    def _get_vo_table_from_source(self):
 
-
+        self._vo_dataframe = get_heasarc_table_as_pandas('fermigbrst',
+                                                         update=self._update,
+                                                         cache_time_days=1.)
 
     def apply_format(self, table):
         new_table = table['name',
@@ -53,144 +78,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         return new_table.group_by('trigger_time')
 
-    def search_trigger_name(self, *trigger_names):
-        """
-        Find the information on the given trigger names.
+    def _source_is_valid(self, source):
 
-        :param trigger_names: trigger numbers (str) e.g. '080916009' or 'bn080916009' or 'GRB080916009'
-        :return:
-        """
-
-        # check the trigger names
-
-        _valid_trigger_args = ['080916008', 'bn080916009', 'GRB080916009']
-
-        valid_names=[]
-
-        for trigger in trigger_names:
-
-            assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                                     ', or '.join(
-                                                                                         _valid_trigger_args))
-
-            assert type(trigger) == str, "triggers must be strings"
-
-            trigger = trigger.lower()
-
-            search = _trigger_name_match.match(trigger)
-
-            assert search is not None, assert_string
-
-            assert search.group(2) is not None, assert_string
-
-            valid_names.append("bn%s" % search.group(2))
-
-
-        n_entries = self._vo_dataframe.shape[0]
-
-        idx = np.zeros(n_entries, dtype=bool)
-
-        for name in valid_names:
-
-            condition = self._vo_dataframe.trigger_name == name
-
-            idx = np.logical_or(idx, condition)
-
-        self._last_query_results = self._vo_dataframe[idx]
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        return table
-
-    def search_t90(self, t90_greater=None, t90_less=None):
-        """
-        search for GBM GRBs by their T90 values.
-
-        Example:
-            T90s >= 2 -> search_t90(t90_greater=2)
-            T90s <= 10 -> search_t90(t90_less=10)
-            2 <= T90s <= 10 search_t90(t90_greater, t90_less=10)
-
-        :param t90_greater: value for T90s greater
-        :param t90_less: value for T90s less
-        :return:
-        """
-
-        assert t90_greater is not None or t90_less is not None, 'You must specify either the greater or less argument'
-
-        n_entries = self._vo_dataframe.shape[0]
-
-        # Create a dummy index first
-
-        idx = np.ones(n_entries, dtype=bool)
-
-        # find the entries greater
-        if t90_greater is not None:
-
-            idx_tmp = self._vo_dataframe.t90 >= t90_greater
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        # find the entries less
-        if t90_less is not None:
-
-            idx_tmp = self._vo_dataframe.t90 <= t90_less
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        return table
-
-    def search_energy_flux(self, flux_greater=None, flux_less=None, model='band', interval='peak'):
-        """
-        Search for GRBs via the energy flux (erg/s/cm2) of a given catalog model for agiven interval:
-        peak or fluence.
-
-        :param flux_greater: find fluxes greater than this value
-        :param flux_less: find fluxes less than this value
-        :param model: spectral model from which flux is derived
-        :param interval: interval of flux: peak or fluence
-        :return: table of results
-        """
-
-        assert flux_greater is not None or flux_less is not None, 'You must specify either the greater or less argument'
-
-        assert interval in ['fluence', 'peak'], 'interval must be either peak or fluence'
-
-        # check the model name and the interval selection
-        model = model.lower()
-
-        assert model in self._available_models, 'model is not in catalog. available choices are %s' % (', ').join(
-                self._available_models)
-
-        interval_dict = {'peak': 'pflx', 'fluence': 'flnc'}
-
-        flux_string = "%s_%s_ergflux" % (interval_dict[interval], model)
-
-        n_entries = self._vo_dataframe.shape[0]
-
-        # Create a dummy index first
-
-        idx = np.ones(n_entries, dtype=bool)
-
-        # find the entries greater
-        if flux_greater is not None:
-
-            idx_tmp = self._vo_dataframe[flux_string] >= flux_greater
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        # find the entries less
-        if flux_less is not None:
-
-            idx_tmp = self._vo_dataframe[flux_string] <= flux_less
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        return table
+        return _gbm_and_lle_valid_source_check(source)
 
     def search_mjd(self, mjd_start, mjd_stop):
         """
@@ -226,112 +116,11 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         except(ValueError):
 
             raise InvalidUTC(
-                    "one of %s, %s is not a valid UTC string. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
-                        utc_start, utc_stop))
+                "one of %s, %s is not a valid UTC string. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
+                    utc_start, utc_stop))
 
         # convert the UTC format to MJD and use the MJD search
         return self.search_mjd(utc_start.mjd, utc_stop.mjd)
-
-    def search_model_parameters(self, model='band', parameter='epeak', parameter_greater=None, parameter_less=None,
-                                interval='peak'):
-        """
-        Search on a given model parameter within the defined limits.
-
-
-        Example:
-
-        search_model_parameters(self,model='band',parameters='ep',parameter_greater=10,parameter_less=300, interval='peak')
-
-        will return GRBs with a peak flux epeak between 10-300 keV.
-
-
-        The models and their parameters are:
-
-        band:
-            k: normalization
-            ep: vFv energy peak
-            alpha: alpha index
-            beta: beta index
-        comp:
-            k: normalization
-            ep: vFv energy peak
-            index: power low index
-        plaw:
-            k: normalization
-            index: power law index
-        sbpl:
-            k: normalization
-            energy_break: break energy
-            energy_scale: energy scaling
-            alpha: alpha index
-            beta: beta index
-
-        :param model:
-        :param parameter:
-        :param parameter_greater:
-        :param parameter_less:
-        :param interval:
-        :return:
-        """
-
-        assert parameter_greater is not None or parameter_less is not None, 'You must specify either the greater or less argument'
-
-        assert interval in ['fluence', 'peak'], 'interval must be either peak or fluence'
-
-        # check the model name and the interval selection
-        model = model.lower()
-
-        assert model in self._available_models, 'model is not in catalog. available choices are %s' % (', ').join(
-                self._available_models)
-
-        interval_dict = {'peak': 'pflx', 'fluence': 'flnc'}
-
-        param_dict = {'band': {
-            'k'    : 'ampl',
-            'ep'   : 'epeak',
-            'alpha': 'alpha',
-            'beta' : 'beta'},
-            'comp'          : {
-                'k'    : 'ampl',
-                'ep'   : 'epeak',
-                'index': 'index'},
-            'plaw'          : {
-                'k'    : 'ampl',
-                'index': 'index'},
-            'sbpl'          : {
-                'k'           : 'ampl',
-                'energy_break': 'brken',
-                'energy_scale': 'brksc',
-                'alpha'       : 'indx1',
-                'beta'        : 'indx2'}}
-
-        assert parameter in param_dict[model].keys(), "parameter %s is not in %s" % (
-            parameter, ' ,'.join(param_dict[model].keys()))
-
-        search_string = '%s_%s_%s' % (interval_dict[interval], model, param_dict[model][parameter])
-
-        n_entries = self._vo_dataframe.shape[0]
-
-        # Create a dummy index first
-
-        idx = np.ones(n_entries, dtype=bool)
-
-        # find the entries greater
-        if parameter_greater is not None:
-
-            idx_tmp = self._vo_dataframe[search_string] >= parameter_greater
-
-            idx = np.logical_and(idx, idx_tmp)
-
-        # find the entries less
-        if parameter_less is not None:
-
-            idx_tmp = self._vo_dataframe[search_string] <= parameter_less
-
-            idx = np.logical_and(idx, idx_tmp)
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        return table
 
     def get_detector_information(self):
         """
@@ -347,7 +136,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         sources = {}
 
         for name, row in self._last_query_results.T.iteritems():
-
             # First we want to get the the detectors used in the SCAT file
 
             idx = np.array(map(int, row['scat_detector_mask']), dtype=bool)
@@ -397,43 +185,14 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             best_dict = {'fluence': best_fit_fluence, 'peak': best_fit_peak}
 
-            sources[name] = {'source'   : spectrum_dict, 'background': background_dict, 'trigger': trigger,
+            sources[name] = {'source': spectrum_dict, 'background': background_dict, 'trigger': trigger,
                              'detectors': detector_selection, 'best fit model': best_dict}
-
-        return sources
-
-    def get_duration_information(self):
-        """
-        Return the T90 and T50 information
-
-        :return: duration dictionary
-        """
-
-        assert self._last_query_results is not None, "You have to run a query before getting detector information"
-
-        # Loop over the table and build a source for each entry
-        sources = {}
-
-        for name, row in self._last_query_results.T.iteritems():
-
-            # T90
-            start_t90 = row['t90_start']
-            t90 = row['t90']
-            t90_err = row['t90_error']
-
-            # T50
-            start_t50 = row['t50_start']
-            t50 = row['t50']
-            t50_err = row['t50_error']
-
-            sources[name] = {'T90': {'value': t90, 'err': t90_err, 'start': start_t90},
-                             'T50': {'value': t50, 'err': t50_err, 'start': start_t50}}
 
         return sources
 
     def get_model(self, model='band', interval='fluence'):
         """
-        Return the fitted model from the Fermi GBM catalog in 3ML Model form.
+        Return the fitted model from the Fermi-LAT GBM catalog in 3ML Model form.
         You can choose band, comp, plaw, or sbpl models corresponding to the models
         fitted in the GBM catalog. The interval for the fit can be the 'fluence' or
         'peak' interval
@@ -447,7 +206,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         model = model.lower()
 
         assert model in self._available_models, 'model is not in catalog. available choices are %s' % (', ').join(
-                self._available_models)
+            self._available_models)
 
         available_intervals = {'fluence': 'flnc', 'peak': 'pflx'}
 
@@ -465,24 +224,19 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             # get the proper 3ML model
 
             if model == 'band':
-
                 lh_model = self._build_band(name, ra, dec, row, available_intervals[interval])
 
             if model == 'comp':
-
                 lh_model = self._build_cpl(name, ra, dec, row, available_intervals[interval])
 
             if model == 'plaw':
-
                 lh_model = self._build_powerlaw(name, ra, dec, row, available_intervals[interval])
 
             if model == 'sbpl':
-
                 lh_model = self._build_sbpl(name, ra, dec, row, available_intervals[interval])
 
             # the assertion above should never let us get here
             if lh_model is None:
-
                 raise RuntimeError("We should never get here. This is a bug")
 
             # return the model
@@ -494,7 +248,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     @staticmethod
     def _build_band(name, ra, dec, row, interval):
         """
-        builds a band function from the Fermi GBM catalog
+        builds a band function from the Fermi-LAT GBM catalog
 
         :param name: GRB name
         :param ra: GRB ra
@@ -522,7 +276,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         band.K = amp
 
         if epeak < band.xp.min_value:
-
             band.xp.min_value = epeak
 
         band.xp = epeak
@@ -561,7 +314,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     @staticmethod
     def _build_cpl(name, ra, dec, row, interval):
         """
-        builds a cpl function from the Fermi GBM catalog
+        builds a cpl function from the Fermi-LAT GBM catalog
 
         :param name: GRB name
         :param ra: GRB ra
@@ -589,7 +342,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         cpl.K = amp
 
         if ecut < cpl.xc.min_value:
-
             cpl.xc.min_value = ecut
 
         cpl.xc = ecut
@@ -615,7 +367,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     @staticmethod
     def _build_powerlaw(name, ra, dec, row, interval):
         """
-        builds a pl function from the Fermi GBM catalog
+        builds a pl function from the Fermi-LAT GBM catalog
 
         :param name: GRB name
         :param ra: GRB ra
@@ -649,7 +401,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
     @staticmethod
     def _build_sbpl(name, ra, dec, row, interval):
         """
-        builds a sbpl function from the Fermi GBM catalog
+        builds a sbpl function from the Fermi-LAT GBM catalog
 
         :param name: GRB name
         :param ra: GRB ra
@@ -679,7 +431,6 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # The GBM catalog has some extreme alpha values
 
         if break_energy < sbpl.break_energy.min_value:
-
             sbpl.break_energy.min_value = break_energy
 
         sbpl.break_energy = break_energy
@@ -719,28 +470,28 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 #########
 
 threefgl_types = {
-    'agn'  : 'other non-blazar active galaxy',
-    'bcu'  : 'active galaxy of uncertain type',
-    'bin'  : 'binary',
-    'bll'  : 'BL Lac type of blazar',
-    'css'  : 'compact steep spectrum quasar',
-    'fsrq' : 'FSRQ type of blazar',
-    'gal'  : 'normal galaxy (or part)',
-    'glc'  : 'globular cluster',
-    'hmb'  : 'high-mass binary',
+    'agn': 'other non-blazar active galaxy',
+    'bcu': 'active galaxy of uncertain type',
+    'bin': 'binary',
+    'bll': 'BL Lac type of blazar',
+    'css': 'compact steep spectrum quasar',
+    'fsrq': 'FSRQ type of blazar',
+    'gal': 'normal galaxy (or part)',
+    'glc': 'globular cluster',
+    'hmb': 'high-mass binary',
     'nlsy1': 'narrow line Seyfert 1',
-    'nov'  : 'nova',
-    'PSR'  : 'pulsar, identified by pulsations',
-    'psr'  : 'pulsar, no pulsations seen in LAT yet',
-    'pwn'  : 'pulsar wind nebula',
-    'rdg'  : 'radio galaxy',
-    'sbg'  : 'starburst galaxy',
-    'sey'  : 'Seyfert galaxy',
-    'sfr'  : 'star-forming region',
-    'snr'  : 'supernova remnant',
-    'spp'  : 'special case - potential association with SNR or PWN',
-    'ssrq' : 'soft spectrum radio quasar',
-    ''     : 'unknown'
+    'nov': 'nova',
+    'PSR': 'pulsar, identified by pulsations',
+    'psr': 'pulsar, no pulsations seen in LAT yet',
+    'pwn': 'pulsar wind nebula',
+    'rdg': 'radio galaxy',
+    'sbg': 'starburst galaxy',
+    'sey': 'Seyfert galaxy',
+    'sfr': 'star-forming region',
+    'snr': 'supernova remnant',
+    'spp': 'special case - potential association with SNR or PWN',
+    'ssrq': 'soft spectrum radio quasar',
+    '': 'unknown'
 }
 
 
@@ -876,7 +627,6 @@ class ModelFrom3FGL(Model):
                 else:
 
                     for par in src.spectrum.main.parameters:
-
                         src.spectrum.main.parameters[par].free = free
 
 
@@ -884,8 +634,8 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
     def __init__(self):
 
         super(FermiLATSourceCatalog, self).__init__('fermilpsc',
-                                                    threeML_config['catalogs']['Fermi']['LAT FGL'],
-                                                    'Fermi/LAT source catalog')
+                                                    threeML_config['catalogs']['Fermi-LAT']['LAT FGL'],
+                                                    'Fermi-LAT/LAT source catalog')
 
     def apply_format(self, table):
 
@@ -960,19 +710,17 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
     def __init__(self, update=False):
         """
-        The Fermi LAT Low-Energy (LLE) trigger catalog. Search for GRBs and solar flares by trigger
+        The Fermi-LAT LAT Low-Energy (LLE) trigger catalog. Search for GRBs and solar flares by trigger
         number, location, trigger type and date range.
 
         :param update: force update the XML VO table
         """
+
+        self._update = update
+
         super(FermiLLEBurstCatalog, self).__init__('fermille',
-                                                   threeML_config['catalogs']['Fermi']['LLE catalog'],
-                                                   'Fermi/LLE catalog')
-
-        self._vo_dataframe, self._all_table = get_heasarc_table_as_pandas('fermille',
-                                                                          update=update,
-                                                                          cache_time_days=5.)
-
+                                                   threeML_config['catalogs']['Fermi-LAT']['LLE catalog'],
+                                                   'Fermi-LAT/LLE catalog')
 
     def apply_format(self, table):
         new_table = table['name',
@@ -986,74 +734,15 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
 
         return new_table.group_by('trigger_time')
 
-    def search_trigger_name(self, *trigger_names):
-        """
-        Find the information on the given trigger names.
+    def _get_vo_table_from_source(self):
 
-        :param trigger_names: trigger numbers (str) e.g. '080916009' or 'bn080916009' or 'GRB080916009'
-        :return:
-        """
+        self._vo_dataframe = get_heasarc_table_as_pandas('fermille',
+                                                         update=self._update,
+                                                         cache_time_days=5.)
 
-        # check the trigger names
+    def _source_is_valid(self, source):
 
-        _valid_trigger_args = ['bn080916009']
-
-        valid_names = []
-
-
-
-        for trigger in trigger_names:
-            assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                                     ', or '.join(
-                                                                                     _valid_trigger_args))
-
-            assert type(trigger) == str, "triggers must be strings"
-
-            trigger = trigger.lower()
-
-            search = _trigger_name_match.match(trigger)
-
-            assert search is not None, assert_string
-
-            assert search.group(2) is not None, assert_string
-
-            valid_names.append("bn%s" % search.group(2))
-
-        n_entries = self._vo_dataframe.shape[0]
-
-        idx = np.zeros(n_entries, dtype=bool)
-
-        for name in valid_names:
-
-            condition = self._vo_dataframe.trigger_name == name
-
-            idx = np.logical_or(idx, condition)
-
-        self._last_query_results = self._vo_dataframe[idx]
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        return table
-
-    def search_trigger_type(self, trigger_type='GRB'):
-        """
-        Search for trigger types. Either GRB, or solar flare.
-
-        :param trigger_type:
-        :return: table of results
-        """
-        trigger_type = trigger_type.upper()
-
-        assert trigger_type in ['GRB', 'SFLARE'], "Type must be GRB or SFLARE"
-
-        idx = self._vo_dataframe.trigger_type == trigger_type
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        # save this look up
-        self._last_query_results = self._vo_dataframe[idx]
-
-        return table
+        return _gbm_and_lle_valid_source_check(source)
 
     def search_mjd(self, mjd_start, mjd_stop):
         """
@@ -1070,8 +759,6 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
                              self._vo_dataframe.trigger_time <= mjd_stop)
 
         table = self.apply_format(self._all_table[np.asarray(idx)])
-
-
 
         # save this look up
         self._last_query_results = self._vo_dataframe[idx]
@@ -1095,8 +782,8 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
         except(ValueError):
 
             raise InvalidUTC(
-                    "one of %s, %s are not a valid UTC strings. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
-                        utc_start, utc_stop))
+                "one of %s, %s are not a valid UTC strings. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
+                    utc_start, utc_stop))
 
         # convert the UTC format to MJD and use the MJD search
         return self.search_mjd(utc_start.mjd, utc_stop.mjd)
