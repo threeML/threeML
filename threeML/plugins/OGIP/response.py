@@ -5,119 +5,25 @@ from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 
-class Response(object):
 
-    def __init__(self, rsp_file, arf_file=None):
+class GenericResponse(object):
+    def __init__(self, matrix, ebounds, mc_channels, rsp_file=None, arf_file=None):
 
         # Now make sure that the response file exist
 
-        rsp_file = sanitize_filename(rsp_file)
 
-        assert file_existing_and_readable(rsp_file.split("{")[0]), "Response file %s not existing or not " \
-                                                                   "readable" % rsp_file
+        self._matrix = matrix
 
-        # Check if we are dealing with a .rsp2 file (containing more than
-        # one response). This is checked by looking for the syntax
-        # [responseFile]{[responseNumber]}
+        self._ebounds = ebounds
 
-        if '{' in rsp_file:
+        self._mc_channels = mc_channels
 
-            tokens = rsp_file.split("{")
-            rsp_file = tokens[0]
-            rsp_number = int(tokens[-1].split('}')[0].replace(" ", ""))
+        self._rsp_file = rsp_file
 
-        else:
+        self._arf_file = arf_file
 
-            rsp_number = 1
-
-        # Read the response
-        with pyfits.open(rsp_file) as f:
-
-            try:
-
-                # This is usually when the response file contains only the energy dispersion
-
-                data = f['MATRIX', rsp_number].data
-                header = f['MATRIX', rsp_number].header
-
-                if arf_file is None:
-
-                    warnings.warn("The response is in an extension called MATRIX, which usually means you also "
-                                  "need an ancillary file (ARF) which you didn't provide. You should refer to the "
-                                  "documentation  of the instrument and make sure you don't need an ARF.")
-
-            except:
-
-                # Other detectors might use the SPECRESP MATRIX name instead, usually when the response has been
-                # already convoluted with the effective area
-
-                # Note that here we are not catching any exception, because
-                # we have to fail if we cannot read the matrix
-
-                data = f['SPECRESP MATRIX', rsp_number].data
-                header = f['SPECRESP MATRIX', rsp_number].header
-
-            # Sometimes .rsp files contains a weird format featuring variable-length
-            # arrays. Historically those confuse pyfits quite a lot, so we ensure
-            # to transform them into standard numpy matrices to avoid issues
-
-            self._matrix = self._read_matrix(data, header)
-
-            self._ebounds = np.vstack([f['EBOUNDS'].data.field("E_MIN"),
-                                       f['EBOUNDS'].data.field("E_MAX")]).T
-
-            self._ebounds = self._ebounds.astype(float)
-
-
-
-            self._mc_channels = np.vstack([data.field("ENERG_LO"),
-                                           data.field("ENERG_HI")]).T
-
-            self._mc_channels = self._mc_channels.astype(float)
-
-            # Now let's see if we have a ARF, if yes, read it
-
-            if arf_file is not None and (arf_file.upper() != "NONE"):
-
-                arf_file = sanitize_filename(arf_file)
-
-                assert file_existing_and_readable(arf_file.split("{")[0]), "Ancillary file %s not existing or not " \
-                                                                           "readable" % arf_file
-
-                with pyfits.open(arf_file) as f:
-
-                    data = f['SPECRESP'].data
-
-                arf = data.field('SPECRESP')
-
-                # Check that arf and rmf have same dimensions
-
-                if arf.shape[0] != self._matrix.shape[1]:
-
-                    raise IOError("The ARF and the RMF file does not have the same number of channels")
-
-                # Check that the ENERG_LO and ENERG_HI for the RMF and the ARF
-                # are the same
-
-                arf_mc_channels = np.vstack([data.field("ENERG_LO"),
-                                             data.field("ENERG_HI")]).T
-
-                # Declare the mc channels different if they differ by more than
-                # 1%
-
-                idx = (self._mc_channels > 0)
-
-                diff = (self._mc_channels[idx] - arf_mc_channels[idx]) / self._mc_channels[idx]
-
-                if diff.max() > 0.01:
-                    raise IOError("The ARF and the RMF have one or more MC channels which differ by more than 1%")
-
-                # Multiply ARF and RMF
-
-                self._matrix = self._matrix * arf
-
-        # Init everything else to none
         self._differential_function = None
+
         self._integral_function = None
 
         # Store the name of the file
@@ -149,6 +55,36 @@ class Response(object):
         :return: first channel
         """
         return int(self._first_channel)
+
+    def _read_ebounds(self, ebounds_extension):
+        """
+        reads the ebounds from an OGIP response
+
+        :param ebounds_extension: an RSP ebounds extension
+        :return:
+        """
+
+        ebounds = np.vstack([ebounds_extension.data.field("E_MIN"),
+                             ebounds_extension.data.field("E_MAX")]).T
+
+        ebounds = ebounds.astype(float)
+
+        return ebounds
+
+    def _read_mc_channels(self, data):
+        """
+        reads the mc_channels from an OGIP response
+
+        :param data: data from a RSP MATRIX
+        :return:
+        """
+
+        mc_channels = np.vstack([data.field("ENERG_LO"),
+                                 data.field("ENERG_HI")]).T
+
+        mc_channels = mc_channels.astype(float)
+
+        return mc_channels
 
     def _read_matrix(self, data, header, column_name='MATRIX'):
 
@@ -186,15 +122,12 @@ class Response(object):
         # but simple scalars. Expand then their dimensions so that we don't need to customize the code below
 
         if n_grp.ndim == 1:
-
             n_grp = np.expand_dims(n_grp, 1)
 
         if f_chan.ndim == 1:
-
             f_chan = np.expand_dims(f_chan, 1)
 
         if n_chan.ndim == 1:
-
             n_chan = np.expand_dims(n_chan, 1)
 
         matrix = data.field(column_name)
@@ -204,12 +137,59 @@ class Response(object):
             m_start = 0
 
             for j in range(n_grp[i]):
-
                 rsp[i, f_chan[i][j]: f_chan[i][j] + n_chan[i][j]] = matrix[i][m_start:m_start + n_chan[i][j]]
 
                 m_start += n_chan[i][j]
 
         return rsp.T
+
+    def _read_arf_file(self, arf_file, current_matrix, current_mc_channels):
+        """
+        read an arf file and apply it to the current_matrix
+
+        :param arf_file:
+        :param current_matrix:
+        :param current_mc_channels:
+        :return:
+        """
+
+        arf_file = sanitize_filename(arf_file)
+
+        assert file_existing_and_readable(arf_file.split("{")[0]), "Ancillary file %s not existing or not " \
+                                                                   "readable" % arf_file
+
+        with pyfits.open(arf_file) as f:
+
+            data = f['SPECRESP'].data
+
+        arf = data.field('SPECRESP')
+
+        # Check that arf and rmf have same dimensions
+
+        if arf.shape[0] != current_matrix.shape[1]:
+            raise IOError("The ARF and the RMF file does not have the same number of channels")
+
+        # Check that the ENERG_LO and ENERG_HI for the RMF and the ARF
+        # are the same
+
+        arf_mc_channels = np.vstack([data.field("ENERG_LO"),
+                                     data.field("ENERG_HI")]).T
+
+        # Declare the mc channels different if they differ by more than
+        # 1%
+
+        idx = (current_mc_channels > 0)
+
+        diff = (current_mc_channels[idx] - arf_mc_channels[idx]) / current_mc_channels[idx]
+
+        if diff.max() > 0.01:
+            raise IOError("The ARF and the RMF have one or more MC channels which differ by more than 1%")
+
+        # Multiply ARF and RMF
+
+        matrix = current_matrix * arf
+
+        return matrix
 
     @property
     def ebounds(self):
@@ -220,8 +200,6 @@ class Response(object):
         :return:
         """
         return self._ebounds
-
-
 
     def set_function(self, differentialFunction, integralFunction=None):
         """
@@ -286,11 +264,9 @@ class Response(object):
         # Some times the lower edges may be zero, so we skip them
 
         if self._mc_channels[0, 0] == 0:
-
             idx1 = 1
 
         if self._ebounds[0, 0] == 0:
-
             idx2 = 1
 
         ax.imshow(image[idx1:, idx2:], extent=(self._mc_channels[idx1, 0],
@@ -308,3 +284,81 @@ class Response(object):
         ax.set_xlabel('Reco energy (keV)')
 
         return fig
+
+
+class Response(GenericResponse):
+    def __init__(self, rsp_file, arf_file=None):
+
+        # Now make sure that the response file exist
+
+        rsp_file = sanitize_filename(rsp_file)
+
+        assert file_existing_and_readable(rsp_file.split("{")[0]), "Response file %s not existing or not " \
+                                                                   "readable" % rsp_file
+
+        # Check if we are dealing with a .rsp2 file (containing more than
+        # one response). This is checked by looking for the syntax
+        # [responseFile]{[responseNumber]}
+
+        if '{' in rsp_file:
+
+            tokens = rsp_file.split("{")
+            rsp_file = tokens[0]
+            rsp_number = int(tokens[-1].split('}')[0].replace(" ", ""))
+
+        else:
+
+            rsp_number = 1
+
+        # Read the response
+        with pyfits.open(rsp_file) as f:
+
+            try:
+
+                # This is usually when the response file contains only the energy dispersion
+
+                data = f['MATRIX', rsp_number].data
+                header = f['MATRIX', rsp_number].header
+
+                if arf_file is None:
+                    warnings.warn("The response is in an extension called MATRIX, which usually means you also "
+                                  "need an ancillary file (ARF) which you didn't provide. You should refer to the "
+                                  "documentation  of the instrument and make sure you don't need an ARF.")
+
+            except:
+
+                # Other detectors might use the SPECRESP MATRIX name instead, usually when the response has been
+                # already convoluted with the effective area
+
+                # Note that here we are not catching any exception, because
+                # we have to fail if we cannot read the matrix
+
+                data = f['SPECRESP MATRIX', rsp_number].data
+                header = f['SPECRESP MATRIX', rsp_number].header
+
+            # Sometimes .rsp files contains a weird format featuring variable-length
+            # arrays. Historically those confuse pyfits quite a lot, so we ensure
+            # to transform them into standard numpy matrices to avoid issues
+
+            matrix = self._read_matrix(data, header)
+
+            ebounds = self._read_ebounds(f['EBOUNDS'])
+
+            mc_channels = self._read_mc_channels(data)
+
+            # Now let's see if we have a ARF, if yes, read it
+
+            if arf_file is not None and (arf_file.upper() != "NONE"):
+                matrix = self._read_arf_file(arf_file, matrix, mc_channels)
+
+        super(Response, self).__init__(self,
+                                       matrix=matrix,
+                                       ebounds=ebounds,
+                                       mc_channels=mc_channels,
+                                       rsp_file=rsp_file,
+                                       arf_file=arf_file)
+
+
+class WeightedResponse(GenericResponse):
+    def _init_(self, rsp_file, arf_file=None):
+        pass
