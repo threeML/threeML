@@ -126,4 +126,4 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     del vo_table
 
-    return pandas_df, table
+    return pandas_df

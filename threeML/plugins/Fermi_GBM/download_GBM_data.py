@@ -13,7 +13,8 @@ import re
 
 _trigger_name_match=re.compile("^(bn|grb?)? ?(\d{9})$")
 
-def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.', compress_tte=True):
+
+def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.', compress_tte=True, verbose=True):
     """
     Download the latest GBM TTE and RSP files from the HEASARC server. Will get the
     latest file version and prefer RSP2s over RSPs. If the files already exist in your destination
@@ -48,8 +49,6 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     assert search.group(2) is not None, assert_string
 
     trigger = search.group(2)
-
-
 
     # create output directory if it does not exists
     destination_directory = sanitize_filename(destination_directory, abspath=True)
@@ -149,15 +148,16 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
         if file_existing_and_readable(os.path.join(destination_directory, rsp)):
             rsp_filter[i] = 0
 
-            print('%s already downloaded into %s -> skipping' % (rsp, destination_directory))
+            if verbose:
+                print('Skipping: %s exists in %s' % (rsp, destination_directory))
 
     for i, tte in enumerate(tte_to_get_latest):
 
         if file_existing_and_readable(os.path.join(destination_directory, tte)):
 
             tte_filter[i] = 0
-
-            print('%s already downloaded into %s -> skipping' % (tte, destination_directory))
+            if verbose:
+                print('Skipping: %s exists in %s' % (tte, destination_directory))
 
 
         # now check for compressed version
@@ -166,7 +166,8 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
             tte_filter[i] = 0
             is_tte_compressed[i] = 1
 
-            print('%s already downloaded into %s -> skipping' % ("%s.gz" % tte, destination_directory))
+            if verbose:
+                print('Skipping: %s exists in %s' % ("%s.gz" % tte, destination_directory))
 
     # now download the files
 
@@ -175,15 +176,15 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     retrival = np.append(rsp_to_get_latest[rsp_filter], tte_to_get_latest[tte_filter])
 
     if len(retrival) > 0:
+        if verbose:
+            print("\nDownloading TTE and RSP files...\n")
 
-        print("\nDownloading TTE and RSP files...")
+        _ = download_files_from_directory_ftp(remote_path,
+                                              sanitize_filename(destination_directory),
+                                              filenames=retrival)
 
-        downloaded_files = download_files_from_directory_ftp(remote_path,
-                                                             sanitize_filename(destination_directory),
-                                                             filenames=retrival)
-
-        rsp_files = downloaded_files[:len(rsp_to_get_latest[rsp_filter])]
-        tte_files = downloaded_files[len(tte_to_get_latest[tte_filter]):]
+        # rsp_files = downloaded_files[:len(rsp_to_get_latest[rsp_filter])]
+        # tte_files = downloaded_files[len(tte_to_get_latest[tte_filter]):]
 
     else:
 
@@ -197,37 +198,26 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     for detector in detectors:
         download_info[detector] = {}
 
-    # first handle the rsp/tte from the DL'ed detectors
-    for detector, rsp in zip(detectors[rsp_filter], rsp_files):
-        download_info[detector]['rsp'] = rsp
+    for detector, rsp in zip(detectors, rsp_to_get_latest):
+        download_info[detector]['rsp'] = os.path.join(destination_directory, rsp)
 
-    for detector, tte in zip(detectors[tte_filter], tte_files):
+    for detector, tte in zip(detectors, tte_to_get_latest):
 
         if compress_tte:
 
-            tte_gz = "%s.gz" % tte
+            if file_existing_and_readable(os.path.join(destination_directory, "%s.gz" % tte)):
 
-            with open(tte, 'rb') as f_in, gzip.open(tte_gz, 'wb') as f_out:
-                shutil.copyfileobj(f_in, f_out)
+                continue
 
-            os.remove(tte)
+            else:
+                if verbose:
+                    print("Compressing: %s" % tte)
 
-            download_info[detector]['tte'] = tte_gz
+                with open(os.path.join(destination_directory, tte), 'rb') as f_in, gzip.open(
+                        os.path.join(destination_directory, "%s.gz" % tte), 'wb') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
 
-
-        else:
-
-            download_info[detector]['tte'] = tte
-
-    # now handle the skipped files
-
-    for detector, rsp in zip(detectors[~rsp_filter], rsp_to_get_latest[~rsp_filter]):
-        download_info[detector]['rsp'] = os.path.join(destination_directory, rsp)
-
-    for detector, tte, is_tte_compressed in zip(detectors[~tte_filter], tte_to_get_latest[~tte_filter],
-                                                is_tte_compressed[~tte_filter]):
-
-        if is_tte_compressed:
+                os.remove(os.path.join(destination_directory, tte))
 
             download_info[detector]['tte'] = os.path.join(destination_directory, "%s.gz" % tte)
 

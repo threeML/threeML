@@ -51,7 +51,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         self._update = update
 
         super(FermiGBMBurstCatalog, self).__init__('fermigbrst',
-                                                   threeML_config['catalogs']['Fermi-LAT']['GBM burst catalog'],
+                                                   threeML_config['catalogs']['Fermi']['GBM burst catalog'],
                                                    'Fermi-LAT/GBM burst catalog')
 
         self._gbm_detector_lookup = np.array(['n0', 'n1', 'n2', 'n3', 'n4', 'n5', 'n6',
@@ -82,45 +82,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         return _gbm_and_lle_valid_source_check(source)
 
-    def search_mjd(self, mjd_start, mjd_stop):
-        """
-        search for triggers in a range of MJD
 
-        :param mjd_start: start of MJD range
-        :param mjd_stop:  stop of MJD range
-        :return: table of results
-        """
-
-        assert mjd_start < mjd_stop, "start must come before stop"
-
-        idx = np.logical_and(mjd_start <= self._vo_dataframe.trigger_time,
-                             self._vo_dataframe.trigger_time <= mjd_stop)
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        return table
-
-    def search_utc(self, utc_start, utc_stop):
-        """
-        Search for triggers in a range of UTC values. UTC time must be specified
-         in the as follows '1999-01-01T00:00:00.123456789' '2010-01-01T00:00:00'
-        :param utc_start: start of UTC interval
-        :param utc_stop: stop of UTC interval
-        :return:
-        """
-
-        # use astropy to read the UTC format
-        try:
-            utc_start, utc_stop = astro_time.Time([utc_start, utc_stop], format='isot', scale='utc')
-
-        except(ValueError):
-
-            raise InvalidUTC(
-                "one of %s, %s is not a valid UTC string. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
-                    utc_start, utc_stop))
-
-        # convert the UTC format to MJD and use the MJD search
-        return self.search_mjd(utc_start.mjd, utc_stop.mjd)
 
     def get_detector_information(self):
         """
@@ -634,7 +596,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
     def __init__(self):
 
         super(FermiLATSourceCatalog, self).__init__('fermilpsc',
-                                                    threeML_config['catalogs']['Fermi-LAT']['LAT FGL'],
+                                                    threeML_config['catalogs']['Fermi']['LAT FGL'],
                                                     'Fermi-LAT/LAT source catalog')
 
     def apply_format(self, table):
@@ -743,47 +705,3 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
     def _source_is_valid(self, source):
 
         return _gbm_and_lle_valid_source_check(source)
-
-    def search_mjd(self, mjd_start, mjd_stop):
-        """
-        search for triggers in a range of MJD
-
-        :param mjd_start: start of MJD range
-        :param mjd_stop:  stop of MJD range
-        :return: table of results
-        """
-
-        assert mjd_start < mjd_stop, "start must come before stop"
-
-        idx = np.logical_and(mjd_start <= self._vo_dataframe.trigger_time,
-                             self._vo_dataframe.trigger_time <= mjd_stop)
-
-        table = self.apply_format(self._all_table[np.asarray(idx)])
-
-        # save this look up
-        self._last_query_results = self._vo_dataframe[idx]
-
-        return table
-
-    def search_utc(self, utc_start, utc_stop):
-        """
-        Search for triggers in a range of UTC values. UTC time must be specified
-         in the as follows '1999-01-01T00:00:00.123456789' '2010-01-01T00:00:00'
-        :param utc_start: start of UTC interval
-        :param utc_stop: stop of UTC interval
-        :return:
-        """
-
-        # use astropy to read the UTC format
-
-        try:
-            utc_start, utc_stop = astro_time.Time([utc_start, utc_stop], format='isot', scale='utc')
-
-        except(ValueError):
-
-            raise InvalidUTC(
-                "one of %s, %s are not a valid UTC strings. Exmaple: '1999-01-01T00:00:00.123456789' or '2010-01-01T00:00:00'" % (
-                    utc_start, utc_stop))
-
-        # convert the UTC format to MJD and use the MJD search
-        return self.search_mjd(utc_start.mjd, utc_stop.mjd)

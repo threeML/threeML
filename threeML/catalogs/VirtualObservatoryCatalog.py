@@ -150,21 +150,27 @@ class VirtualObservatoryCatalog(object):
 
 
 
+        if valid_sources:
 
-        query_string = ' | '.join(map(lambda x: '(index == "%s")' % x, valid_sources))
+            query_string = ' | '.join(map(lambda x: '(index == "%s")' % x, valid_sources))
 
-        query_results = self._vo_dataframe.query(query_string)
+            query_results = self._vo_dataframe.query(query_string)
 
-        table = astro_table.Table.from_pandas(query_results)
+            table = astro_table.Table.from_pandas(query_results)
 
-        name_column = astro_table.Column(name='name', data=query_results.index)
-        table.add_column(name_column, index=0)
+            name_column = astro_table.Column(name='name', data=query_results.index)
+            table.add_column(name_column, index=0)
 
-        out = self.apply_format(table)
+            out = self.apply_format(table)
 
-        self._last_query_results = query_results
+            self._last_query_results = query_results
 
-        return out
+            return out
+
+
+        else:
+
+            RuntimeError("There were not valid sources in your search")
 
     def query_time(self, query):
 
