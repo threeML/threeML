@@ -6,7 +6,7 @@ import urllib2
 import astropy.table as astro_table
 
 from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
-from threeML.exceptions.custom_exceptions import custom_warnings, InvalidUTC
+from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 from threeML.io.rich_display import display

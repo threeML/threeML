@@ -5,13 +5,15 @@ from VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
 
-from threeML.exceptions.custom_exceptions import custom_warnings, InvalidUTC
+from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
 
 
 
 _trigger_name_match = re.compile("^GRB\d{9}$")
+_3FGL_name_match = re.compile("^3FGL J\d{4}.\d(\+|-)\d{4}\D?$")
+
 
 
 def _gbm_and_lle_valid_source_check(source):
@@ -593,11 +595,43 @@ class ModelFrom3FGL(Model):
 
 
 class FermiLATSourceCatalog(VirtualObservatoryCatalog):
-    def __init__(self):
+    def __init__(self, update=False):
+
+        self._update = update
 
         super(FermiLATSourceCatalog, self).__init__('fermilpsc',
                                                     threeML_config['catalogs']['Fermi']['LAT FGL'],
                                                     'Fermi-LAT/LAT source catalog')
+
+    def _get_vo_table_from_source(self):
+
+        self._vo_dataframe = get_heasarc_table_as_pandas('fermilpsc',
+                                                         update=self._update,
+                                                         cache_time_days=10.)
+
+    def _source_is_valid(self, source):
+        """
+        checks if source name is valid for the 3FGL catalog
+
+        :param source: source name
+        :return: bool
+        """
+
+        warn_string = "The trigger %s is not valid. Must be in the form '3FGL J0000.0+0000'" % source
+
+        match = _3FGL_name_match.match(source)
+
+        if match is None:
+
+            custom_warnings.warn(warn_string)
+
+            answer = False
+
+        else:
+
+            answer = True
+
+        return answer
 
     def apply_format(self, table):
 
@@ -612,14 +646,30 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
         table['source_type'] = numpy.array(map(translate, table['source_type']))
 
-        new_table = table['name',
-                          'source_type',
-                          'ra', 'dec',
-                          'assoc_name_1',
-                          'tevcat_assoc',
-                          'Search_Offset']
+        try:
 
-        return new_table.group_by('Search_Offset')
+            new_table = table['name',
+                              'source_type',
+                              'ra', 'dec',
+                              'assoc_name_1',
+                              'tevcat_assoc',
+                              'Search_Offset']
+
+
+
+            return new_table.group_by('Search_Offset')
+
+        # we may have not done a cone search!
+        except(ValueError):
+
+            new_table = table['name',
+                              'source_type',
+                              'ra', 'dec',
+                              'assoc_name_1',
+                              'tevcat_assoc']
+
+            return new_table.group_by('name')
+
 
     def get_model(self, use_association_name=True):
 
