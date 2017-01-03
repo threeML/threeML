@@ -15,7 +15,7 @@ _trigger_name_match=re.compile("^(bn|grb?)? ?(\d{9})$")
 _file_type_match = re.compile('gll_(\D{2,5})_bn\d{9}_v\d{2}\.\D{3}')
 _valid_file_type = ['cspec','pt','lle']
 
-def download_LLE_trigger_data(trigger, destination_directory='.'):
+def download_LLE_trigger_data(trigger, destination_directory='.',verbose=True):
     """
     Download the latest Fermi LAT LLE and RSP files from the HEASARC server. Will get the
     latest file versions. If the files already exist in your destination
@@ -117,7 +117,7 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
 
             files_existing.append(rsp)
 
-            print('%s already downloaded into %s -> skipping' % (rsp, destination_directory))
+            print('Skipping: %s exists in %s' % (rsp, destination_directory))
 
         else:
 
@@ -129,7 +129,7 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
 
             files_existing.append(lle)
 
-            print('%s already downloaded into %s -> skipping' % (lle, destination_directory))
+            print('Skipping: %s exists in %s' % (lle, destination_directory))
 
         else:
 
@@ -141,7 +141,7 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
 
             files_existing.append(ft2)
 
-            print('%s already downloaded into %s -> skipping' % (ft2, destination_directory))
+            print('Skipping: %s exists in %s' % (ft2, destination_directory))
 
         else:
 
@@ -157,7 +157,8 @@ def download_LLE_trigger_data(trigger, destination_directory='.'):
 
     if len(files_to_download) > 0:
 
-        print("\nDownloading LLE, RSP and FT2 files...")
+        if verbose:
+            print("\nDownloading LLE, RSP and FT2 files...")
 
         downloaded_files = download_files_from_directory_ftp(remote_path,
                                                              sanitize_filename(destination_directory),
