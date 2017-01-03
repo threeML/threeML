@@ -179,27 +179,14 @@ class VirtualObservatoryCatalog(object):
 
 
 
-
-    @property
-    def variables(self):
-        """
-        Obtain the searchable table variables
-        :return:
-        """
-
-        pass
-
     @property
     def result(self):
         """
         return a searchable pandas dataframe of results from the last query.
-
-
         :return:
         """
 
-        return self._last_query_results
-
+        return self._last_query_results.copy(deep=True)
 
 
 
