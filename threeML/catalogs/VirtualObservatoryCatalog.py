@@ -172,9 +172,6 @@ class VirtualObservatoryCatalog(object):
 
             RuntimeError("There were not valid sources in your search")
 
-    def query_time(self, query):
-
-        pass
 
     def _source_is_valid(self, source):
 
