@@ -99,11 +99,11 @@ def download_LLE_trigger_data(trigger, destination_directory='.',verbose=True):
     # lets make sure we get the latest versions of the files
     # prefer RSP2s
 
-    rsp_to_get_latest = np.array(_get_latest_verison(rsp_to_get))
+    rsp_to_get_latest = np.array(_get_latest_version(rsp_to_get))
 
-    lle_to_get_latest = np.array(_get_latest_verison(lle_to_get))
+    lle_to_get_latest = np.array(_get_latest_version(lle_to_get))
 
-    ft2_to_get_latest = np.array(_get_latest_verison(ft2_to_get))
+    ft2_to_get_latest = np.array(_get_latest_version(ft2_to_get))
 
 
 
@@ -205,7 +205,7 @@ def download_LLE_trigger_data(trigger, destination_directory='.',verbose=True):
     return download_info
 
 
-def _get_latest_verison(filenames):
+def _get_latest_version(filenames):
     """
     returns the list with only the highest version numbers selected
 

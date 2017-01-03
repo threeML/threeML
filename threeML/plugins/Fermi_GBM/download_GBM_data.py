@@ -110,9 +110,9 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     # lets make sure we get the latest versions of the files
     # prefer RSP2s
 
-    rsp_to_get_latest = _get_latest_verison(rsp_to_get)
+    rsp_to_get_latest = _get_latest_version(rsp_to_get)
 
-    tte_to_get_latest = _get_latest_verison(tte_to_get)
+    tte_to_get_latest = _get_latest_version(tte_to_get)
 
     assert len(tte_to_get_latest) == len(
         rsp_to_get_latest), 'The file list should be the same length. Something went wrong. Contact grburgess'
@@ -228,7 +228,7 @@ def download_GBM_trigger_data(trigger, detectors=None, destination_directory='.'
     return download_info
 
 
-def _get_latest_verison(filenames):
+def _get_latest_version(filenames):
     """
     returns the list with only the highest version numbers selected
 
