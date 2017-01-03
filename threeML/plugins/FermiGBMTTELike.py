@@ -11,7 +11,7 @@ from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
 from threeML.io.rich_display import display
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
-from threeML.io.plugin_plots import fermi_light_curve_plot
+from threeML.io.plugin_plots import binned_light_curve_plot
 
 
 __instrument_name = "Fermi GBM TTE (all detectors)"
@@ -167,9 +167,9 @@ class FermiGBMTTELike(EventListLike):
 
             bkg.append(tmpbkg)
 
-        fermi_light_curve_plot(time_bins, cnts, bkg, width,
-                               selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list),
-                               bkg_selections=self._evt_list.poly_intervals, instrument='gbm')
+        binned_light_curve_plot(time_bins, cnts, bkg, width,
+                                selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list),
+                                bkg_selections=self._evt_list.poly_intervals, instrument='gbm')
 
     def peek(self):
 

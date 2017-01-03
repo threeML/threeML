@@ -22,7 +22,7 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 
 # Fermi specific plots
 
-def fermi_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections, instrument):
+def binned_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections, instrument):
     fig, ax = plt.subplots()
 
     max_cnts = max(cnts / width)

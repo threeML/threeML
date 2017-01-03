@@ -3,6 +3,8 @@ import pandas as pd
 import re
 import urllib2
 
+import astropy.table as astro_table
+
 from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
 from threeML.exceptions.custom_exceptions import custom_warnings, InvalidUTC
 from threeML.config.config import threeML_config
@@ -99,41 +101,44 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         return self._other_observings_instruments
 
-    def query_other_observing_instruments(self, instrument):
+    def query_other_observing_instruments(self, *instruments):
         """
         search for observations that were also seen by the requested instrument.
         to see what instruments are available, use the .other_observing_instruments call
 
 
-        :param instrument: another instrument
+        :param instruments: other instruments
         :return:
         """
 
-        assert instrument in self._other_observings_instruments, "Other instrument choices include %s" % (
-            ' ,'.join(self._other_observings_instruments))
+        all_queries = []
 
-        idx = np.zeros(self._vo_dataframe.shape[0])
+        for instrument in instruments:
 
-        # the swift table has four columns of instruments
-        # we scroll through them
-        for obs in range(1, 5):
+            assert instrument in self._other_observings_instruments, "Other instrument choices include %s" % (
+                ' ,'.join(self._other_observings_instruments))
 
-            if obs == 1:
-                obs_base = "other_obs"
 
-            else:
 
-                obs_base = "other_obs%d" % obs
+            query_string = ' other_obs == "%s" | other_obs2 == "%s" |other_obs3 == "%s" |other_obs4 == "%s"' %tuple([instrument]*4)
 
-            tmp_idx_ = self._vo_dataframe[obs_base] == instrument
+            result = self._vo_dataframe.query(query_string)
 
-            idx = np.logical_or(tmp_idx_, idx)
+            all_queries.append(result)
 
-        self._last_query_results = self._vo_dataframe[idx]
+            query_results = pd.concat(all_queries)
 
-        table = self.apply_format(self._all_table[np.asarray(idx)])
+            table = astro_table.Table.from_pandas(query_results)
 
-        return table
+            name_column = astro_table.Column(name='name', data=query_results.index)
+            table.add_column(name_column, index=0)
+
+            out = self.apply_format(table)
+
+            self._last_query_results = query_results
+
+
+        return out
 
     @staticmethod
     def _get_fermiGBM_trigger_number_from_gcn(gcn_url):
