@@ -9,9 +9,23 @@ import re
 
 class GenericResponse(object):
     def __init__(self, matrix, ebounds, mc_channels, rsp_file=None, arf_file=None):
+        """
 
-        # Now make sure that the response file exist
+        Generic response class that accepts a full matrix, ebounds in vstack form
+        the mc channels in vstack form, an options rsp file and arf file.
 
+        Therefore, an OGIP style RSP from a file is not required if the matrix,
+        ebounds, and mc channels exist.
+
+
+        :param matrix: an N_CHANS X N_ENERGIES response matrix
+        :param ebounds: the energy bounds of the channles
+        :param mc_channels: the energy channels
+        :param rsp_file: file the rsp was possibly read from
+        :param arf_file: an optional arf file
+        """
+
+        # we simply store all the variables to the class
 
         self._matrix = matrix
 
@@ -368,21 +382,37 @@ class Response(GenericResponse):
 class WeightedResponse(GenericResponse):
     def _init_(self, rsp_file, trigger_time, count_getter, exposure_getter, arf_file=None):
         """
+        A weighted response function that recalculates the response from a series of
+        responses based of the time intervals to be analyzed. Supports multiple, disjoint
+        time intervals.
 
-        :param rsp_file:
-        :param trigger_time:
-        :param arf_file:
+        The class is initialized, but no response is generated until rsp.set_interval(*intervals)
+        is called.
+
+        Currently, ARFs are not supported.
+
+
+        :param rsp_file: the RSP2 style file
+        :param trigger_time: the trigger time of the event
+        :param count_getter: a function to get counts between intervals: f(tmin,tmax)
+        :param exposure_getter: a function to get exposure between intervals: f(tmin,tmax)
+        :param arf_file: optional arf (not supported yet!)
         :return:
         """
+
+        # lock the count and exposure functions to the
+        # object
 
         self._count_getter = count_getter
         self._exposure_getter = exposure_getter
 
+        # make the rsp file proper
         rsp_file = sanitize_filename(rsp_file)
 
+        # really, there should be no braces
         assert file_existing_and_readable(rsp_file.split("{")[0]), "Response file %s not existing or not " \
                                                                    "readable" % rsp_file
-
+        # lock the trigger time
         self._trigger_time = trigger_time
 
         # Read the response
@@ -394,7 +424,11 @@ class WeightedResponse(GenericResponse):
 
             matrices = []
 
+            # try either option of matrix
+
             try:
+
+                # we will read all the matrices and save them
 
                 for rsp_number in range(1, self._n_responses + 1):
                     # This is usually when the response file contains only the energy dispersion
@@ -411,8 +445,8 @@ class WeightedResponse(GenericResponse):
                     header_start = header["TSTART"]
                     header_stop = header["TSTOP"]
 
-                    self._matrix_start[rsp_number - 1] = header_start
-                    self._matrix_stop[rsp_number - 1] = header_stop
+                    self._matrix_start[rsp_number - 1] = header_start - trigger_time
+                    self._matrix_stop[rsp_number - 1] = header_stop - trigger_time
 
                 if arf_file is None:
                     warnings.warn("The response is in an extension called MATRIX, which usually means you also "
@@ -427,6 +461,8 @@ class WeightedResponse(GenericResponse):
                 # Note that here we are not catching any exception, because
                 # we have to fail if we cannot read the matrix
 
+
+                # we will read all the matrices and save them
                 for rsp_number in range(1, self._n_responses + 1):
                     # This is usually when the response file contains only the energy dispersion
 
@@ -442,14 +478,16 @@ class WeightedResponse(GenericResponse):
                     header_start = header["TSTART"]
                     header_stop = header["TSTOP"]
 
-                    self._matrix_start[rsp_number - 1] = header_start
-                    self._matrix_stop[rsp_number - 1] = header_stop
+                    self._matrix_start[rsp_number - 1] = header_start - trigger_time
+                    self._matrix_stop[rsp_number - 1] = header_stop - trigger_time
+
+            # read the ebounds and mc channels
 
             ebounds = self._read_ebounds(f['EBOUNDS'])
 
             mc_channels = self._read_mc_channels(data)
 
-            # Now let's see if we have a ARF, if yes, read it
+            # currently, a weighted ARF is not supported
 
             if arf_file is not None and (arf_file.upper() != "NONE"):
                 raise NotImplementedError('WeightedResponse does not yet support ARFs')
@@ -457,11 +495,20 @@ class WeightedResponse(GenericResponse):
                 # matrix = self._read_arf_file(arf_file, matrix, mc_channels)
 
             self._matrices = np.array(matrices)
+
+            # reshape the matrix to be N_RSP X N_CHANS X N_ENRG
             self._matrices.reshape((self._n_responses, matrices[0].shape[0], matrices[0].shape[1]))
 
-            # Sometimes .rsp files contains a weird format featuring variable-length
-            # arrays. Historically those confuse pyfits quite a lot, so we ensure
-            # to transform them into standard numpy matrices to avoid issues
+            # we are not going to call the GeneralResponse constructor just yet
+            # the weighted RSP is generated when a time section is made.
+            # Therefore, we will save the ebounds, mc_channels, rsp_file
+            # and arf_file to the object and pass them (redundantly) to
+            # the constructor only when a selection is made
+
+            self._ebounds = ebounds
+            self._mc_channels = mc_channels
+            self._rsp_file = rsp_file
+            self._arf_file = arf_file
 
     def _weight_response(self):
         """
@@ -478,22 +525,38 @@ class WeightedResponse(GenericResponse):
 
         covered by: |m1 |           m2             | m3|
         """
+
+        # we use a list of bools to select matrices that need to be summed
         matrices_to_use = np.zeros(self._n_responses, dtype=bool)
+
+        # lists of the true starts and stops
+        # for all matrices used
 
         all_rsp_stops = []
         all_rsp_starts = []
 
-        weight = []
+        # loop through all the intervals selected
 
         for start, stop in zip(self._tstarts, self._tstops):
 
-            previous_rsp_stop = None  # initialize to nothing
+            # initialize to nothing
+            previous_rsp_stop = None
+
+            # we need to find the first response for EACH time interval
+            is_first_response = True
+
+            # now we loop through the matrices
+            # and log which ones are need and
+            # what their boundaries are
 
             for rsp_start, rsp_stop, rsp_number in zip(self._matrix_start, self._matrix_stop, range(self._n_responses)):
 
-                if rsp_number == 0:
-                    # this first and last matrix
+                if is_first_response:
+
+                    # this first  matrix
+
                     if rsp_number == self._n_responses - 1:
+
                         # this is the first and last matrix
 
                         this_rsp_start = rsp_start
@@ -505,7 +568,10 @@ class WeightedResponse(GenericResponse):
                         this_rsp_start = rsp_start
                         this_rsp_stop = 0.5 * (rsp_start + rsp_stop)  # midpoint
 
+                        is_first_response = False
+
                 elif rsp_number == self._n_responses - 1:
+
                     # this is the last matrix
 
                     this_rsp_start = previous_rsp_stop
@@ -517,21 +583,29 @@ class WeightedResponse(GenericResponse):
                     this_rsp_start = previous_rsp_stop
                     this_rsp_stop = 0.5 * (rsp_start + rsp_stop)  # midpoint
 
+                # log where we stopped on this iteration
+
                 previous_rsp_stop = this_rsp_stop
 
                 if (start <= this_rsp_stop and this_rsp_start <= stop):
+
                     # Found a matrix covering a part of the interval:
                     # adding it to the list
 
-                    matrices_to_use[rsp_number] = 1
+                    matrices_to_use[rsp_number] = True
 
                     # Get the "true" start time of the time sub-interval covered by this matrix
+
                     true_rsp_start = max(this_rsp_start, start)
 
                     # Get the "true" stop time of the time sub-interval covered by this matrix
+
                     if rsp_number == self._n_responses - 1:
+
                         # Since there are no matrices after this one, this has to cover until the end of the interval
+
                         if this_rsp_stop < stop:
+
                             # the matrix interval has ended before the required interval
                             # so we are going to extend the validity of the matrix interval
                             # out to the end of the interval
@@ -546,69 +620,112 @@ class WeightedResponse(GenericResponse):
 
                         true_rsp_stop = min(this_rsp_stop, stop)
 
-                all_rsp_starts.append(true_rsp_start)
-                all_rsp_stops.append(true_rsp_stop)
+                    # Ok, save also the boundaries this round
+
+                    all_rsp_starts.append(true_rsp_start)
+
+                    all_rsp_stops.append(true_rsp_stop)
 
                 if stop <= this_rsp_stop:
                     # we're done with this interval
+                    # so lets save time
+
                     break
 
-            # weight = []
+        # Now we have logged all the matrices and boundaries needed for EACH interval
+        # we need to figure out the weighting. Since multiple intervals are possible,
+        # we use the total counts and exposure over all intervals rather than the individual
+        # intervals as was done previously. We also use the exposure, rather than just the interval
+        # so that dead time is accounted for.
 
-            if matrices_to_use.sum() > 0:
+        # initialize the weighting
 
-                this_number_of_counts = self._count_getter(start, stop)
+        weight = []
 
-                if this_number_of_counts <= 0:
+        n_summable_matrices = matrices_to_use.sum()
 
-                    # we will weight by exposure instead
-                    if sum(weight) == 0:
+        assert n_summable_matrices > 0, "There were no matrices in the interval requested. This is a bug" # pragma: no cover
 
-                        for idx, matrix in enumerate(self._matrices[matrices_to_use]):
-                            this_weight = (all_rsp_stops[idx] - all_rsp_starts[idx]) / self._exposure_getter(start,
-                                                                                                             stop)
+        if n_summable_matrices > 1:
 
-                            weight.append(this_weight)
+            assert n_summable_matrices == len(
+                all_rsp_starts), 'This is a bug. We have %d matrices to use but only %d intervals found' % (
+            n_summable_matrices, len(all_rsp_starts)) # pragma: no cover
 
-                else:
+            # we have more than one matrix
+
+            if self._total_counts_this_selection <= 0:
+
+                # we will weight by exposure instead
+
+                if sum(weight) == 0:
 
                     for idx, matrix in enumerate(self._matrices[matrices_to_use]):
+                        rsp_interval_exposure = self._exposure_getter(all_rsp_stops[idx], all_rsp_starts[idx])
 
-                        this_rsp_start = all_rsp_starts[idx]
-                        this_rsp_stop = all_rsp_stops[idx]
-
-                        rsp_interval_counts = self._count_getter(this_rsp_start, this_rsp_stop)
-
-                        if rsp_interval_counts > 0:
-
-                            this_weight = float(rsp_interval_counts) / float(this_number_of_counts)
-
-                        else:
-
-                            this_weight = 0.
+                        this_weight = rsp_interval_exposure / self._total_exposure_this_selection
 
                         weight.append(this_weight)
 
-                if sum(weight) != 1.:
-                    # we will need to redistribute the weight over the RSP based off exposure
-
-                    leftover_weight = 1. - sum(weight)
-
-                    for idx, matrix in enumerate(self._matrices[matrices_to_use]):
-                        this_exposure_weight = (all_rsp_stops[idx] - all_rsp_starts[idx]) / self._exposure_getter(start,
-                                                                                                                  stop)
-                        weight[idx] += this_exposure_weight * leftover_weight
-
-
             else:
-                # we only have one matrix
-                weight = [1]
 
-            weight = np.array(weight)
-            assert weight.shape[0] == self._matrices[matrices_to_use].shape[
-                0], "The weights disagree with the matrices... this is a bug"
 
-            weighted_matrix = np.multiply(weight, self._matrices[matrices_to_use]).sum()
+                for idx, matrix in enumerate(self._matrices[matrices_to_use]):
+
+                    this_rsp_start = all_rsp_starts[idx]
+
+                    this_rsp_stop = all_rsp_stops[idx]
+
+                    # find out how many counts we have in the RSP boundaries
+
+                    rsp_interval_counts = self._count_getter(this_rsp_start, this_rsp_stop)
+
+                    if rsp_interval_counts > 0:
+
+                        this_weight = float(rsp_interval_counts) / float(self._total_counts_this_selection)
+
+                    else:
+
+                        this_weight = 0.
+
+                    weight.append(this_weight)
+
+            if sum(weight) != 1.:
+
+                # we will need to redistribute the weight over the RSP based off exposure
+
+                leftover_weight = 1. - sum(weight)
+
+                for idx, matrix in enumerate(self._matrices[matrices_to_use]):
+
+                    rsp_interval_exposure = self._exposure_getter(all_rsp_stops[idx], all_rsp_starts[idx])
+
+                    this_exposure_weight = rsp_interval_exposure / self._total_exposure_this_selection
+
+                    weight[idx] += this_exposure_weight * leftover_weight
+
+
+        else:
+
+            # we only have one matrix
+
+            weight = [1]
+
+        weight = np.array(weight)
+
+        assert weight.shape[0] == self._matrices[matrices_to_use].shape[
+            0], "The weights disagree with the matrices... this is a bug"
+
+
+        # save these variables for plotting information about the weighting
+
+        self._true_rsp_intervals = np.vstack((all_rsp_starts,all_rsp_stops))
+        self._weight = weight
+        self._use_matrices = matrices_to_use
+
+        weighted_matrix = np.multiply(weight, self._matrices[matrices_to_use]).sum()
+
+        return weighted_matrix
 
     @staticmethod
     def _parse_time_interval(time_interval):
@@ -624,7 +741,11 @@ class WeightedResponse(GenericResponse):
         self._tstarts = []
         self._tstops = []
 
+        # intialize the total counts and exposure over all intervals
         self._total_counts_this_selection = 0
+        self._total_exposure_this_selection = 0
+
+        # build a list of intervals
 
         for interval in intervals:
             tmin, tmax = self._parse_time_interval(interval)
@@ -632,4 +753,35 @@ class WeightedResponse(GenericResponse):
             self._tstarts.append(tmin)
             self._tstops.append(tmax)
 
+            # add up the counts and exposure
             self._total_counts_this_selection += self._count_getter(tmin, tmax)
+            self._total_exposure_this_selection += self._exposure_getter(tmin, tmax)
+
+        # now we can weight the matrix
+        weighted_matrix = self._weight_response()
+
+        # call the constructor
+
+        super(WeightedResponse, self).__init__(self,
+                                               matrix=weighted_matrix,
+                                               ebounds=self._ebounds,
+                                               mc_channels=self._mc_channels,
+                                               rsp_file=self._rsp_file,
+                                               arf_file=self._arf_file)
+
+    def display_response_weighting(self):
+
+        fig, ax = plt.subplot()
+
+
+        # plot the time intervals
+
+        ax.hlines(min(self._weight),self._tstarts,self._tstops,color='red',label='selected intervals')
+        ax.hlines(np.median(self._weight), self._true_rsp_intervals[0], self._true_rsp_intervals[1], color='green', label='true rsp intervals')
+        ax.hlines(max(self._weight), self._matrix_start, self._matrix_stop, color='blue', label='rsp header intervals')
+
+        mean_true_rsp_time = np.mean(self._true_rsp_intervals.T,axis=1)
+
+        ax.plot(mean_true_rsp_time,self._weight,'+k', label='weight')
+
+
