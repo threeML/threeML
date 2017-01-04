@@ -378,10 +378,33 @@ class EventList(object):
     poly_order = property(___get_poly_order, ___set_poly_order,
                           doc="Get or set the polynomial order")
 
-    def _exposure_over_interval(self, tmin, tmax):
+    def exposure_over_interval(self, tmin, tmax):
         """ calculate the exposure over a given interval  """
 
         raise RuntimeError("Must be implemented in sub class")
+
+    def counts_over_interval(self, start, stop):
+        """
+        return the number of counts in the selected interval
+        :param start: start of interval
+        :param stop:  stop of interval
+        :return:
+        """
+
+        # this will be a boolean list and the sum will be the
+        # number of events
+
+        return self._select_events(start,stop).sum()
+
+    def _select_events(self, start, stop):
+        """
+        return an index of the selected events
+        :param start:
+        :param stop:
+        :return:
+        """
+
+        return np.logical_and(start<= self._arrival_times, self._arrival_times <= stop)
 
 
     def set_polynomial_fit_interval(self, *time_intervals, **options):
@@ -686,7 +709,7 @@ class EventList(object):
             m = np.mean((bins[i], bins[i + 1]))
             mean_time.append(m)
 
-            exposure_per_bin.append(self._exposure_over_interval(bins[i], bins[i + 1]))
+            exposure_per_bin.append(self.exposure_over_interval(bins[i], bins[i + 1]))
 
         mean_time = np.array(mean_time)
 
@@ -869,7 +892,7 @@ class EventList(object):
 
             total_duration += selection[1] - selection[0]
 
-            poly_exposure += self._exposure_over_interval(selection[0], selection[1])
+            poly_exposure += self.exposure_over_interval(selection[0], selection[1])
 
             all_bkg_masks.append(np.logical_and(self._arrival_times >= selection[0],
                                                 self._arrival_times <= selection[1]))
@@ -1064,10 +1087,10 @@ class EventListWithDeadTime(EventList):
 
 
 
-    def _exposure_over_interval(self, tmin, tmax):
+    def exposure_over_interval(self, tmin, tmax):
         """ calculate the exposure over a given interval  """
 
-        mask = np.logical_and(self._arrival_times >= tmin, self._arrival_times <= tmax)
+        mask = self._select_events(tmin, tmax)
 
         if self._dead_time is not None:
 
@@ -1217,7 +1240,7 @@ class EventListWithLiveTime(EventList):
         self._live_time_starts = np.asarray(live_time_starts)
         self._live_time_stops = np.asarray(live_time_stops)
 
-    def _exposure_over_interval(self, tmin, tmax):
+    def exposure_over_interval(self, tmin, tmax):
         """
 
         :param tmin: start time of interval
@@ -1377,7 +1400,7 @@ class EventListWithLiveTime(EventList):
         for tmin, tmax in zip(tmin_list, tmax_list):
 
             total_real_time += tmax - tmin
-            exposure += self._exposure_over_interval(tmin, tmax)
+            exposure += self.exposure_over_interval(tmin, tmax)
 
         # In this case the exposure is the total live time
 
