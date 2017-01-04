@@ -371,8 +371,7 @@ class Response(GenericResponse):
             if arf_file is not None and (arf_file.upper() != "NONE"):
                 matrix = self._read_arf_file(arf_file, matrix, mc_channels)
 
-        super(Response, self).__init__(self,
-                                       matrix=matrix,
+        super(Response, self).__init__(matrix=matrix,
                                        ebounds=ebounds,
                                        mc_channels=mc_channels,
                                        rsp_file=rsp_file,
@@ -762,8 +761,7 @@ class WeightedResponse(GenericResponse):
 
         # call the constructor
 
-        super(WeightedResponse, self).__init__(self,
-                                               matrix=weighted_matrix,
+        super(WeightedResponse, self).__init__(matrix=weighted_matrix,
                                                ebounds=self._ebounds,
                                                mc_channels=self._mc_channels,
                                                rsp_file=self._rsp_file,
