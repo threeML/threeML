@@ -4,6 +4,7 @@ import warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import re
 
 
 class GenericResponse(object):
@@ -288,6 +289,11 @@ class GenericResponse(object):
 
 class Response(GenericResponse):
     def __init__(self, rsp_file, arf_file=None):
+        """
+
+        :param rsp_file:
+        :param arf_file:
+        """
 
         # Now make sure that the response file exist
 
@@ -360,5 +366,270 @@ class Response(GenericResponse):
 
 
 class WeightedResponse(GenericResponse):
-    def _init_(self, rsp_file, arf_file=None):
-        pass
+    def _init_(self, rsp_file, trigger_time, count_getter, exposure_getter, arf_file=None):
+        """
+
+        :param rsp_file:
+        :param trigger_time:
+        :param arf_file:
+        :return:
+        """
+
+        self._count_getter = count_getter
+        self._exposure_getter = exposure_getter
+
+        rsp_file = sanitize_filename(rsp_file)
+
+        assert file_existing_and_readable(rsp_file.split("{")[0]), "Response file %s not existing or not " \
+                                                                   "readable" % rsp_file
+
+        self._trigger_time = trigger_time
+
+        # Read the response
+        with pyfits.open(rsp_file) as f:
+
+            self._n_responses = f['PRIMARY'].header['DRM_NUM']
+            self._matrix_start = np.zeros(self._n_responses)
+            self._matrix_stop = np.zeros(self._n_responses)
+
+            matrices = []
+
+            try:
+
+                for rsp_number in range(1, self._n_responses + 1):
+                    # This is usually when the response file contains only the energy dispersion
+
+                    data = f['MATRIX', rsp_number].data
+                    header = f['MATRIX', rsp_number].header
+
+                    matrix = self._read_matrix(data, header)
+
+                    matrices.append(matrix)
+
+                    # Find the start and stop time of the interval covered
+                    # by this response matrix
+                    header_start = header["TSTART"]
+                    header_stop = header["TSTOP"]
+
+                    self._matrix_start[rsp_number - 1] = header_start
+                    self._matrix_stop[rsp_number - 1] = header_stop
+
+                if arf_file is None:
+                    warnings.warn("The response is in an extension called MATRIX, which usually means you also "
+                                  "need an ancillary file (ARF) which you didn't provide. You should refer to the "
+                                  "documentation  of the instrument and make sure you don't need an ARF.")
+
+            except:
+
+                # Other detectors might use the SPECRESP MATRIX name instead, usually when the response has been
+                # already convoluted with the effective area
+
+                # Note that here we are not catching any exception, because
+                # we have to fail if we cannot read the matrix
+
+                for rsp_number in range(1, self._n_responses + 1):
+                    # This is usually when the response file contains only the energy dispersion
+
+                    data = f['SPECRESP MATRIX', rsp_number].data
+                    header = f['SPECRESP MATRIX', rsp_number].header
+
+                    matrix = self._read_matrix(data, header)
+
+                    matrices.append(matrix)
+
+                    # Find the start and stop time of the interval covered
+                    # by this response matrix
+                    header_start = header["TSTART"]
+                    header_stop = header["TSTOP"]
+
+                    self._matrix_start[rsp_number - 1] = header_start
+                    self._matrix_stop[rsp_number - 1] = header_stop
+
+            ebounds = self._read_ebounds(f['EBOUNDS'])
+
+            mc_channels = self._read_mc_channels(data)
+
+            # Now let's see if we have a ARF, if yes, read it
+
+            if arf_file is not None and (arf_file.upper() != "NONE"):
+                raise NotImplementedError('WeightedResponse does not yet support ARFs')
+
+                # matrix = self._read_arf_file(arf_file, matrix, mc_channels)
+
+            self._matrices = np.array(matrices)
+            self._matrices.reshape((self._n_responses, matrices[0].shape[0], matrices[0].shape[1]))
+
+            # Sometimes .rsp files contains a weird format featuring variable-length
+            # arrays. Historically those confuse pyfits quite a lot, so we ensure
+            # to transform them into standard numpy matrices to avoid issues
+
+    def _weight_response(self):
+        """
+        The matrix cover the period going from the middle point between its start
+        time and the start time of the previous matrix (or its start time if it is the
+        first matrix of the file), and the middle point between its start time and its
+        stop time (that is equal to the start time of the next one):
+
+                  tstart                             tstop
+                    |==================================|
+        |--------------x---------------|-----------x-----------|----------x--..
+        rspStart1    rspStop1=    headerStart2  rspStop2= headerStart3  rspStop3
+                    rspStart2                  rspStart3
+
+        covered by: |m1 |           m2             | m3|
+        """
+        matrices_to_use = np.zeros(self._n_responses, dtype=bool)
+
+        all_rsp_stops = []
+        all_rsp_starts = []
+
+        weight = []
+
+        for start, stop in zip(self._tstarts, self._tstops):
+
+            previous_rsp_stop = None  # initialize to nothing
+
+            for rsp_start, rsp_stop, rsp_number in zip(self._matrix_start, self._matrix_stop, range(self._n_responses)):
+
+                if rsp_number == 0:
+                    # this first and last matrix
+                    if rsp_number == self._n_responses - 1:
+                        # this is the first and last matrix
+
+                        this_rsp_start = rsp_start
+
+                        this_rsp_stop = rsp_stop
+
+                    else:
+
+                        this_rsp_start = rsp_start
+                        this_rsp_stop = 0.5 * (rsp_start + rsp_stop)  # midpoint
+
+                elif rsp_number == self._n_responses - 1:
+                    # this is the last matrix
+
+                    this_rsp_start = previous_rsp_stop
+                    this_rsp_stop = rsp_stop
+
+                else:
+                    # we have more to go
+
+                    this_rsp_start = previous_rsp_stop
+                    this_rsp_stop = 0.5 * (rsp_start + rsp_stop)  # midpoint
+
+                previous_rsp_stop = this_rsp_stop
+
+                if (start <= this_rsp_stop and this_rsp_start <= stop):
+                    # Found a matrix covering a part of the interval:
+                    # adding it to the list:
+
+                    matrices_to_use[rsp_number] = 1
+
+                    # Get the "true" start time of the time sub-interval covered by this matrix
+                    true_rsp_start = max(this_rsp_start, start)
+
+                    # Get the "true" stop time of the time sub-interval covered by this matrix
+                    if rsp_number == self._n_responses - 1:
+                        # Since there are no matrices after this one, this has to cover until the end of the interval
+                        if this_rsp_stop < stop:
+                            # the matrix interval has ended before the required interval
+                            # so we are going to extend the validity of the matrix interval
+                            # out to the end of the interval
+
+                            true_rsp_stop = stop
+
+                        else:
+                            # should we instead use the this_rsp_stop... need to ask
+                            true_rsp_stop = stop  #### Seems there is a bug here
+
+                    else:
+
+                        true_rsp_stop = min(this_rsp_stop, stop)
+
+                all_rsp_starts.append(true_rsp_start)
+                all_rsp_stops.append(true_rsp_stop)
+
+                if stop <= this_rsp_stop:
+                    # we're done with this interval
+                    break
+
+            # weight = []
+
+            if matrices_to_use.sum() > 0:
+
+                this_number_of_counts = self._count_getter(start, stop)
+
+                if this_number_of_counts <= 0:
+
+                    # we will weight by exposure instead
+                    if sum(weight) == 0:
+
+                        for idx, matrix in enumerate(self._matrices[matrices_to_use]):
+                            this_weight = (all_rsp_stops[idx] - all_rsp_starts[idx]) / self._exposure_getter(start,
+                                                                                                             stop)
+
+                            weight.append(this_weight)
+
+                else:
+
+                    for idx, matrix in enumerate(self._matrices[matrices_to_use]):
+
+                        this_rsp_start = all_rsp_starts[idx]
+                        this_rsp_stop = all_rsp_stops[idx]
+
+                        rsp_interval_counts = self._count_getter(this_rsp_start, this_rsp_stop)
+
+                        if rsp_interval_counts > 0:
+
+                            this_weight = float(rsp_interval_counts) / float(this_number_of_counts)
+
+                        else:
+
+                            this_weight = 0.
+
+                        weight.append(this_weight)
+
+                if sum(weight) != 1.:
+                    # we will need to redistribute the weight over the RSP based off exposure
+
+                    leftover_weight = 1. - sum(weight)
+
+                    for idx, matrix in enumerate(self._matrices[matrices_to_use]):
+                        this_exposure_weight = (all_rsp_stops[idx] - all_rsp_starts[idx]) / self._exposure_getter(start,
+                                                                                                                  stop)
+                        weight[idx] += this_exposure_weight * leftover_weight
+
+
+            else:
+                # we only have one matrix
+                weight = [1]
+
+            weight = np.array(weight)
+            assert weight.shape[0] == self._matrices[matrices_to_use].shape[
+                0], "The weights disagree with the matrices... this is a bug"
+
+            weighted_matrix = np.multiply(weight, self._matrices[matrices_to_use]).sum()
+
+    @staticmethod
+    def _parse_time_interval(time_interval):
+        # The following regular expression matches any two numbers, positive or negative,
+        # like "-10 --5","-10 - -5", "-10-5", "5-10" and so on
+
+        tokens = re.match('(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)', time_interval).groups()
+
+        return map(float, tokens)
+
+    def set_time_interval(self, *intervals):
+
+        self._tstarts = []
+        self._tstops = []
+
+        self._total_counts_this_selection = 0
+
+        for interval in intervals:
+            tmin, tmax = self._parse_time_interval(interval)
+
+            self._tstarts.append(tmin)
+            self._tstops.append(tmax)
+
+            self._total_counts_this_selection += self._count_getter(tmin, tmax)

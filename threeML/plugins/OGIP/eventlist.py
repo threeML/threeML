@@ -255,6 +255,18 @@ class EventList(object):
         else:
             RuntimeError('A polynomial fit has not been made.')
 
+    def counts_over_interval(self,start, stop):
+
+        mask = self._select_interval(start,stop)
+
+        len(self._arrival_times[mask])
+
+    def _select_interval(self,start, stop):
+
+
+        return np.logical_and(start<=self._arrival_times,self._arrival_times <= stop)
+
+
     def get_poly_info(self):
         """
         Return a pandas panel frame with the polynomial coeffcients
@@ -483,10 +495,10 @@ class EventList(object):
     poly_order = property(___get_poly_order, ___set_poly_order,
                           doc="Get or set the polynomial order")
 
-    def _exposure_over_interval(self, tmin, tmax):
+    def exposure_over_interval(self, tmin, tmax):
         """ calculate the exposure over a given interval  """
 
-        mask = np.logical_and(self._arrival_times >= tmin, self._arrival_times <= tmax)
+        mask = self._select_interval(tmin,tmax)
 
         interval_deadtime = self._dead_time[mask]
 
@@ -774,7 +786,7 @@ class EventList(object):
             m = np.mean((bins[i], bins[i + 1]))
             mean_time.append(m)
 
-            exposure_per_bin.append(self._exposure_over_interval(bins[i], bins[i + 1]))
+            exposure_per_bin.append(self.exposure_over_interval(bins[i], bins[i + 1]))
 
         mean_time = np.array(mean_time)
 
