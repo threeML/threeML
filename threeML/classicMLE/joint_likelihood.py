@@ -54,7 +54,7 @@ class JointLikelihood(object):
         # Process optional keyword parameters
         self.verbose = verbose
 
-        self._likelihood_model = likelihood_model # type: astromodels.core.model.Model
+        self._likelihood_model = likelihood_model  # type: astromodels.core.model.Model
 
         self._data_list = data_list
 
@@ -228,7 +228,7 @@ class JointLikelihood(object):
             # Now produce an ad-hoc display. We don't use the pandas display methods because
             # we want to display uncertainties with the right number of significant numbers
 
-            data = {'Best fit value':{}, 'Unit': {}}
+            data = {'Best fit value': {}, 'Unit': {}}
 
             # Also store the maximum length to decide the length for the line
 
@@ -253,7 +253,6 @@ class JointLikelihood(object):
 
                 data['Best fit value'][this_shortened_name] = rep
                 data['Unit'][this_shortened_name] = self._free_parameters[parameter_name].unit
-
 
             best_fit_table = pd.DataFrame.from_dict(data)
 

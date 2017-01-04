@@ -12,7 +12,6 @@ class DictWithPrettyPrint(dict):
         return display(self)
 
     def _repr_html_(self):
-
         # yaml.dump needs a dict instance, so create one from the current content
 
         dumb_dict = dict(self)

@@ -1,5 +1,5 @@
 import numpy as np
-import scipy
+import scipy.optimize as opt
 import warnings
 from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -7,6 +7,9 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 
 class CannotComputeCovariance(RuntimeWarning):
     pass
+
+from threeML.config.config import threeML_config
+
 
 
 class Polynomial(object):
@@ -21,6 +24,8 @@ class Polynomial(object):
         self._degree = len(coefficients) - 1
 
         self._i_plus_1 = np.array(range(1, self._degree + 1 + 1), dtype=float)
+
+        self._cov_matrix = np.zeros((self._degree + 1, self._degree + 1))
 
         # we can fix some things for speed
         # we only need to set the coeff for the
@@ -116,6 +121,8 @@ class Polynomial(object):
 
             self._cov_matrix = covariance_matrix
 
+
+
         except:
 
             custom_warnings.warn("Cannot invert Hessian matrix, looks like the matrix is singluar")
@@ -123,21 +130,6 @@ class Polynomial(object):
             n_dim = len(best_fit_parameters)
 
             self._cov_matrix = np.zeros((n_dim, n_dim)) * np.nan
-
-
-
-
-
-
-            # self._cov_matrix = compute_covariance_matrix(statistic_gradient, self._coefficients)
-            #
-            # # Check that the covariance matrix is positive-defined
-            #
-            # negative_elements = (np.matrix.diagonal(self._cov_matrix) < 0)
-            #
-            # if (len(negative_elements.nonzero()[0]) > 0):
-            #     raise RuntimeError(
-            #             "Negative element in the diagonal of the covariance matrix. Try to reduce the polynomial grade.")
 
     @property
     def covariance_matrix(self):
@@ -162,7 +154,6 @@ class Polynomial(object):
         :param xmax: stop of the interval
         :return: interval error
         """
-
         c = self._eval_basis(xmax) - self._eval_basis(xmin)
         tmp = c.dot(self._cov_matrix)
         err2 = tmp.dot(c)
@@ -308,16 +299,7 @@ class PolyUnbinnedLogLikelihood(object):
         self._t_stop = t_stop
 
         def cov_call(*parameters):
-            """
-              Evaluate the unbinned Poisson log likelihood
 
-            Args:
-                parameters:
-
-            Returns:
-
-            """
-            # print parameters
             # Compute the values for the model given this set of parameters
             self._model.coefficients = parameters
 
@@ -369,12 +351,6 @@ class PolyUnbinnedLogLikelihood(object):
 
     def __call__(self, parameters):
         """
-          Evaluate the unbinned Poisson log likelihood
-
-        Args:
-            parameters:
-
-        Returns:
 
         """
 
@@ -422,12 +398,9 @@ class PolyUnbinnedLogLikelihood(object):
         return v, tiny
 
 
-def polyfit(x, y, grade, exposure):
-    """
-    function to fit a polynomial to event data. not a member to allow parallel computation
-    """
 
-    test = False
+def polyfit(x, y, grade, exposure):
+    """ funtion to fit a polynomial to event data. not a member to allow parallel computation """
 
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
@@ -470,8 +443,6 @@ def polyfit(x, y, grade, exposure):
     # Check that we have enough non-empty bins to fit this grade of polynomial,
     # otherwise lower the grade
     dof = n_non_zero - (grade + 1)
-    if test:
-        print("Effective dof: %s" % (dof))
 
     if dof <= 2:
         # Fit is poorly or ill-conditioned, have to reduce the number of parameters
@@ -482,10 +453,12 @@ def polyfit(x, y, grade, exposure):
 
     # Try to improve the fit with the log-likelihood
 
-    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
-                                         ftol=1E-5, xtol=1E-5,
-                                         maxiter=1e6, maxfun=1E6,
-                                         disp=False)
+
+
+    final_estimate = \
+    opt.minimize(log_likelihood, initial_guess, method=threeML_config['event list']['binned fit method'],
+                 options=threeML_config['event list']['binned fit options'])['x']
+    final_estimate = np.atleast_1d(final_estimate)
 
     # Get the value for cstat at the minimum
 
@@ -496,11 +469,7 @@ def polyfit(x, y, grade, exposure):
 
     final_polynomial = Polynomial(final_estimate)
 
-    try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
-    except Exception:
-        raise
-    # if test is defined, compare the results with those obtained with ROOT
+    final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
 
 
     return final_polynomial, min_log_likelihood
@@ -513,50 +482,67 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
     """
 
     # first do a simple amplitude fit
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
 
-    search_grid = np.logspace(-2, 4, 10)
+        search_grid = np.logspace(-2, 4, 10)
 
-    initial_guess = np.zeros(grade + 1)
+        initial_guess = np.zeros(grade + 1)
 
-    polynomial = Polynomial(initial_guess)
+        polynomial = Polynomial(initial_guess)
 
-    log_likelihood = PolyUnbinnedLogLikelihood(events,
-                                               polynomial,
-                                               t_start,
-                                               t_stop,
-                                               exposure)
-
-    like_grid = []
-    for amp in search_grid:
-
-        initial_guess[0] = amp
-        like_grid.append(log_likelihood(initial_guess))
-
-    initial_guess[0] = search_grid[np.argmin(like_grid)]
-
-    # Improve the solution
+        # if there are no events then return nothing
 
 
 
-    final_estimate = scipy.optimize.fmin(log_likelihood, initial_guess,
-                                         ftol=1E-5, xtol=1E-5,
-                                         maxiter=1e6, maxfun=1E6,
-                                         disp=False)
+        if len(events) == 0:
 
-    # Get the value for cstat at the minimum
+            return Polynomial([0]), 0
 
-    min_log_likelihood = log_likelihood(final_estimate)
+        log_likelihood = PolyUnbinnedLogLikelihood(events,
+                                                   polynomial,
+                                                   t_start,
+                                                   t_stop,
+                                                   exposure)
+
+        like_grid = []
+        for amp in search_grid:
+
+            initial_guess[0] = amp
+            like_grid.append(log_likelihood(initial_guess))
+
+        initial_guess[0] = search_grid[np.argmin(like_grid)]
+
+        # Improve the solution
+        dof = len(events) - (grade + 1)
+
+        if dof <= 2:
+            # Fit is poorly or ill-conditioned, have to reduce the number of parameters
+            while (dof < 1 and len(initial_guess) > 1):
+                initial_guess = initial_guess[:-1]
+                polynomial = Polynomial(initial_guess)
+                log_likelihood = PolyUnbinnedLogLikelihood(events,
+                                                           polynomial,
+                                                           t_start,
+                                                           t_stop,
+                                                           exposure)
+
+        final_estimate = \
+        opt.minimize(log_likelihood, initial_guess, method=threeML_config['event list']['unbinned fit method'],
+                     options=threeML_config['event list']['unbinned fit options'])['x']
+
+        final_estimate = np.atleast_1d(final_estimate)
+
+        min_log_likelihood = log_likelihood(final_estimate)
 
     # Update the polynomial with the fitted parameters,
     # and the relative covariance matrix
 
     final_polynomial = Polynomial(final_estimate)
 
-    try:
-        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
-    except Exception:
-        raise
-    # if test is defined, compare the results with those obtained with ROOT
+    final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
+
+
 
 
     return final_polynomial, min_log_likelihood

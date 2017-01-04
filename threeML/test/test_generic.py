@@ -4,6 +4,7 @@ from threeML import *
 from threeML.utils.stats_tools import PoissonResiduals, Significance
 from threeML.utils.cartesian import cartesian
 
+
 def test_step_generator_setup():
     ra, dec = 0, 0
     name = "test"

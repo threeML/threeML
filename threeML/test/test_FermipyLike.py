@@ -13,7 +13,6 @@ skip_if_fermipy_is_not_available = pytest.mark.skipif(not is_plugin_available("F
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
 def test_FermipyLike():
-
     from threeML.plugins.FermipyLike import FermipyLike
 
     # Crab coordinates
@@ -67,7 +66,6 @@ def test_FermipyLike():
 
     config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec)
 
-
     # Let's create an instance of the plugin
     # Note that here no processing is made, because fermipy still doesn't know
     # about the model you want to use
@@ -84,6 +82,3 @@ def test_FermipyLike():
     jl = JointLikelihood(model, data)
 
     res = jl.fit()
-
-
-
