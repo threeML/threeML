@@ -521,7 +521,7 @@ class WeightedResponse(GenericResponse):
 
                 if (start <= this_rsp_stop and this_rsp_start <= stop):
                     # Found a matrix covering a part of the interval:
-                    # adding it to the list:
+                    # adding it to the list
 
                     matrices_to_use[rsp_number] = 1
 
