@@ -379,7 +379,8 @@ class Response(GenericResponse):
 
 
 class WeightedResponse(GenericResponse):
-    def _init_(self, rsp_file, trigger_time, count_getter, exposure_getter, arf_file=None):
+
+    def __init__(self, rsp_file, trigger_time, count_getter, exposure_getter, arf_file = None):
         """
         A weighted response function that recalculates the response from a series of
         responses based of the time intervals to be analyzed. Supports multiple, disjoint
@@ -399,8 +400,13 @@ class WeightedResponse(GenericResponse):
         :return:
         """
 
+
+
+
         # lock the count and exposure functions to the
         # object
+
+
 
         self._count_getter = count_getter
         self._exposure_getter = exposure_getter
@@ -722,7 +728,13 @@ class WeightedResponse(GenericResponse):
         self._weight = weight
         self._use_matrices = matrices_to_use
 
-        weighted_matrix = np.multiply(weight, self._matrices[matrices_to_use]).sum()
+
+        weighted_matrix = np.zeros_like(self._matrices[0])
+
+        for w, mat in zip(weight,self._matrices[matrices_to_use]):
+
+            weighted_matrix += w*mat
+
 
         return weighted_matrix
 
@@ -769,14 +781,14 @@ class WeightedResponse(GenericResponse):
 
     def display_response_weighting(self):
 
-        fig, ax = plt.subplot()
+        fig, ax = plt.subplots()
 
 
         # plot the time intervals
 
-        ax.hlines(min(self._weight),self._tstarts,self._tstops,color='red',label='selected intervals')
+        ax.hlines(min(self._weight)-.1,self._tstarts,self._tstops,color='red',label='selected intervals')
         ax.hlines(np.median(self._weight), self._true_rsp_intervals[0], self._true_rsp_intervals[1], color='green', label='true rsp intervals')
-        ax.hlines(max(self._weight), self._matrix_start, self._matrix_stop, color='blue', label='rsp header intervals')
+        ax.hlines(max(self._weight)+.1, self._matrix_start, self._matrix_stop, color='blue', label='rsp header intervals')
 
         mean_true_rsp_time = np.mean(self._true_rsp_intervals.T,axis=1)
 

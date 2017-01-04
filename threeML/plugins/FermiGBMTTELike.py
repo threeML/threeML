@@ -4,7 +4,7 @@ import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 import warnings
-
+import re
 
 
 from threeML.plugins.EventListLike import EventListLike
@@ -12,7 +12,7 @@ from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
 from threeML.io.rich_display import display
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
 from threeML.io.plugin_plots import binned_light_curve_plot
-
+from threeML.plugins.OGIP.response import WeightedResponse
 
 __instrument_name = "Fermi GBM TTE (all detectors)"
 
@@ -78,12 +78,55 @@ class FermiGBMTTELike(EventListLike):
                 mission=self._gbm_tte_file.mission,
                 verbose=verbose)
 
+
+        # we need to see if this is an RSP2
+
+        test = re.match('^.*\.rsp2$',rsp_file)
+        if test is not None:
+
+            self._rsp_is_weighted = True
+
+            rsp_file = WeightedResponse(rsp_file=rsp_file,
+                                        trigger_time=self._gbm_tte_file.trigger_time,
+                                        count_getter=event_list.counts_over_interval,
+                                        exposure_getter=event_list.exposure_over_interval)
+
+        else:
+
+            self._rsp_is_weighted = False
+
+
+
+        rsp_file.set_time_interval(*[interval.replace(' ', '') for interval in source_intervals.split(',')])
+
+
         # pass to the super class
+
 
         EventListLike.__init__(self, name, event_list, background_selections, source_intervals, rsp_file,
                                poly_order, unbinned, verbose)
 
+    def set_active_time_interval(self, *intervals, **kwargs):
+        """
+        Set the time interval to be used during the analysis.
+        For now, only one interval can be selected. This may be
+        updated in the future to allow for self consistent time
+        resolved analysis.
+        Specified as 'tmin-tmax'. Intervals are in seconds. Example:
 
+        set_active_time_interval("0.0-10.0")
+
+        which will set the energy range 0-10. seconds.
+        :param options:
+        :param intervals:
+        :return:
+        """
+
+        if self._rsp_is_weighted and not self._startup:
+
+            self._rsp.set_time_interval(*intervals)
+
+        super(FermiGBMTTELike,self).set_active_time_interval(*intervals, **kwargs)
 
 
     def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None):
