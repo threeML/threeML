@@ -65,13 +65,19 @@ class GridMinimizer(Minimizer):
         assert grid.ndim == 1, "The grid for parameter %s must be 1-dimensional" % parameter.name
 
         # Check that the grid is legal
-        assert grid.max() <= parameter.max_value, "The maximum value in the grid (%s) is above the maximum legal value " \
-                                                  "(%s) for parameter %s" %(grid.max(), parameter.max_value,
-                                                                            parameter.name)
+        if parameter.max_value is not None:
 
-        assert grid.min() >= parameter.min_value, "The minimum value in the grid (%s) is above the minimum legal " \
-                                                  "value (%s) for parameter %s" % (grid.min(), parameter.min_value,
-                                                                                   parameter.name)
+            assert grid.max() <= parameter.max_value, "The maximum value in the grid (%s) is above the maximum " \
+                                                      "legal value (%s) for parameter %s" %(grid.max(),
+                                                                                            parameter.max_value,
+                                                                                            parameter.name)
+
+        if parameter.min_value is not None:
+
+            assert grid.min() >= parameter.min_value, "The minimum value in the grid (%s) is above the minimum legal " \
+                                                      "value (%s) for parameter %s" % (grid.min(),
+                                                                                       parameter.min_value,
+                                                                                       parameter.name)
 
         self._grid[parameter.path] = grid
 

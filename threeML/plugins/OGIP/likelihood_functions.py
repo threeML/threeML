@@ -76,6 +76,7 @@ def poisson_observed_poisson_background_xs(observed_counts, background_counts, e
 
     return ppstat * (-1)
 
+
 def poisson_observed_poisson_background(observed_counts, background_counts, exposure_ratio, expected_model_counts):
 
     # TODO: check this with simulations
@@ -140,3 +141,10 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
                       expected_model_counts[nidx] - logfactorial(observed_counts[nidx])
 
     return log_likes, b
+
+
+def chi2(y, yerr, expectation):
+
+    # This is chi2
+
+    return (y-expectation)**2 / yerr**2
