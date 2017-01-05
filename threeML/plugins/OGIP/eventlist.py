@@ -112,7 +112,6 @@ class EventList(object):
 
         self._fit_method_info = {"bin type": None, 'fit method': None}
 
-
     @staticmethod
     def _parse_time_interval(time_interval):
         # The following regular expression matches any two numbers, positive or negative,
@@ -210,7 +209,6 @@ class EventList(object):
         total_counts = 0
 
         for p in np.asarray(self._polynomials)[mask]:
-
             total_counts += p.integral(start, stop)
 
         return total_counts
@@ -230,7 +228,6 @@ class EventList(object):
         total_counts = 0
 
         for p in np.asarray(self._polynomials)[mask]:
-
             total_counts += p.integral_error(start, stop) ** 2
 
         return np.sqrt(total_counts)
@@ -351,14 +348,40 @@ class EventList(object):
 
         if self._poly_fit_exists:
 
-            print('Refitting background with new polynomial order and existing selections')
-            if self._unbinned:
+            print('Refitting background with new polynomial order (%d) and existing selections' % value)
 
-                self._unbinned_fit_polynomials()
+            if self._time_selection_exists:
 
+                tmp = []
+                for tmin, tmax in zip(self._tmin_list, self._tmax_list):
+                    tmp.append("%.5f-%.5f" % (tmin, tmax))
+
+                self.set_polynomial_fit_interval(*tmp, unbinned=self._unbinned)
             else:
 
-                self._fit_polynomials()
+                RuntimeError("This is a bug. Should never get here")
+
+                # if self._unbinned:
+                #
+                #     self._unbinned_fit_polynomials()
+                #
+                # else:
+                #
+                #     self._fit_polynomials()
+                #
+                # if self._verbose:
+                #     print("%s %d-order polynomial fit with the %s method" % (
+                #         self._fit_method_info['bin type'], self._optimal_polynomial_grade,
+                #         self._fit_method_info['fit method']))
+                #     print('\n')
+                #
+                # if self._time_selection_exists:
+                #
+                #     tmp = []
+                #     for tmin, tmax in zip(self._tmin_list, self._tmax_list):
+                #         tmp.append("%.5f-%.5f" % (tmin, tmax))
+
+                #    self.set_active_time_intervals(*tmp)
 
     def ___set_poly_order(self, value):
         """ Indirect poly order setter """
@@ -368,7 +391,7 @@ class EventList(object):
     def __get_poly_order(self):
         """ get the poly order """
 
-        return self._user_poly_order
+        return self._optimal_polynomial_grade
 
     def ___get_poly_order(self):
         """ Indirect poly order getter """
@@ -378,11 +401,33 @@ class EventList(object):
     poly_order = property(___get_poly_order, ___set_poly_order,
                           doc="Get or set the polynomial order")
 
-    def _exposure_over_interval(self, tmin, tmax):
+    def exposure_over_interval(self, tmin, tmax):
         """ calculate the exposure over a given interval  """
 
         raise RuntimeError("Must be implemented in sub class")
 
+    def counts_over_interval(self, start, stop):
+        """
+        return the number of counts in the selected interval
+        :param start: start of interval
+        :param stop:  stop of interval
+        :return:
+        """
+
+        # this will be a boolean list and the sum will be the
+        # number of events
+
+        return self._select_events(start, stop).sum()
+
+    def _select_events(self, start, stop):
+        """
+        return an index of the selected events
+        :param start:
+        :param stop:
+        :return:
+        """
+
+        return np.logical_and(start <= self._arrival_times, self._arrival_times <= stop)
 
     def set_polynomial_fit_interval(self, *time_intervals, **options):
         """Set the time interval to fit the background.
@@ -416,13 +461,31 @@ class EventList(object):
 
             if t1 < self._start_time:
 
+                custom_warnings.warn(
+                    "The time interval %f-%f started before the first arrival time (%f), so we are changing the intervals to %f-%f" % (
+                    t1, t2, self._start_time, self._start_time, t2))
+
                 t1 = self._start_time
+
 
             if t2 > self._stop_time:
 
-                t2 = self._start_time
 
-            self._poly_time_selections.append((t1, t2))
+                custom_warnings.warn(
+                    "The time interval %f-%f ended after the last arrival time (%f), so we are changing the intervals to %f-%f" % (
+                        t1, t2, self._stop_time, t1, self._stop_time))
+
+                t2 = self._stop_time
+
+            if  (self._stop_time <= t1) or (t2 <= self._start_time):
+                custom_warnings.warn(
+                    "The time interval %f-%f is out side of the arrival times and will be dropped" % (
+                        t1, t2))
+                continue
+
+            else:
+
+                self._poly_time_selections.append((t1, t2))
 
         self._poly_time_selections = np.array(self._poly_time_selections)
 
@@ -446,9 +509,8 @@ class EventList(object):
 
         if self._verbose:
             print("%s %d-order polynomial fit with the %s method" % (
-            self._fit_method_info['bin type'], self._optimal_polynomial_grade, self._fit_method_info['fit method']))
+                self._fit_method_info['bin type'], self._optimal_polynomial_grade, self._fit_method_info['fit method']))
             print('\n')
-
 
         if self._time_selection_exists:
 
@@ -548,7 +610,7 @@ class EventList(object):
         """
 
         min_grade = 0
-        max_grade = 4
+        max_grade = 3
         log_likelihoods = []
 
         for grade in range(min_grade, max_grade + 1):
@@ -686,7 +748,7 @@ class EventList(object):
             m = np.mean((bins[i], bins[i + 1]))
             mean_time.append(m)
 
-            exposure_per_bin.append(self._exposure_over_interval(bins[i], bins[i + 1]))
+            exposure_per_bin.append(self.exposure_over_interval(bins[i], bins[i + 1]))
 
         mean_time = np.array(mean_time)
 
@@ -734,7 +796,6 @@ class EventList(object):
 
             with progress_bar(self._n_channels) as p:
                 for channel in channels:
-
                     channel_mask = total_poly_energies == channel
 
                     # Mask background events and current channel
@@ -778,12 +839,11 @@ class EventList(object):
             n_engines = client.get_number_of_engines()
 
             if n_engines > self._n_channels:
-
                 n_engines = int(self._n_channels)
 
                 custom_warnings.warn(
-                        "The number of engines is larger than the number of channels. Using only %s engines."
-                        % n_engines, ReducingNumberOfThreads)
+                    "The number of engines is larger than the number of channels. Using only %s engines."
+                    % n_engines, ReducingNumberOfThreads)
 
             chunk_size = ceildiv(self._n_channels, n_engines)
 
@@ -796,7 +856,6 @@ class EventList(object):
                 channel_subset = channels[chunk_size * start_index: chunk_size * (start_index + 1)]
 
                 for channel in channel_subset:
-
                     channel_mask = total_poly_energies == channel
 
                     # Select the masked events
@@ -838,7 +897,6 @@ class EventList(object):
 
             polynomials = []
             for i in range(n_engines):
-
                 polynomials.extend(res[i])
 
         # We are now ready to return the polynomials
@@ -854,8 +912,6 @@ class EventList(object):
         self._fit_method_info['bin type'] = 'Unbinned'
         self._fit_method_info['fit method'] = threeML_config['event list']['unbinned fit method']
 
-
-
         # Select all the events that are in the background regions
         # and make a mask
 
@@ -866,10 +922,9 @@ class EventList(object):
         poly_exposure = 0
 
         for selection in self._poly_time_selections:
-
             total_duration += selection[1] - selection[0]
 
-            poly_exposure += self._exposure_over_interval(selection[0], selection[1])
+            poly_exposure += self.exposure_over_interval(selection[0], selection[1])
 
             all_bkg_masks.append(np.logical_and(self._arrival_times >= selection[0],
                                                 self._arrival_times <= selection[1]))
@@ -919,7 +974,6 @@ class EventList(object):
 
             with progress_bar(self._n_channels) as p:
                 for channel in channels:
-
                     channel_mask = total_poly_energies == channel
 
                     # Mask background events and current channel
@@ -956,12 +1010,11 @@ class EventList(object):
             n_engines = client.get_number_of_engines()
 
             if n_engines > self._n_channels:
-
                 n_engines = int(self._n_channels)
 
                 custom_warnings.warn(
-                        "The number of engines is larger than the number of channels. Using only %s engines."
-                        % n_engines, ReducingNumberOfThreads)
+                    "The number of engines is larger than the number of channels. Using only %s engines."
+                    % n_engines, ReducingNumberOfThreads)
 
             chunk_size = ceildiv(self._n_channels, n_engines)
 
@@ -974,7 +1027,6 @@ class EventList(object):
                 channel_subset = channels[chunk_size * start_index: chunk_size * (start_index + 1)]
 
                 for channel in channel_subset:
-
                     channel_mask = total_poly_energies == channel
 
                     # Select the masked events
@@ -1016,7 +1068,6 @@ class EventList(object):
 
             polynomials = []
             for i in range(n_engines):
-
                 polynomials.extend(res[i])
 
         # We are now ready to return the polynomials
@@ -1062,12 +1113,10 @@ class EventListWithDeadTime(EventList):
 
             self._dead_time = None
 
-
-
-    def _exposure_over_interval(self, tmin, tmax):
+    def exposure_over_interval(self, tmin, tmax):
         """ calculate the exposure over a given interval  """
 
-        mask = np.logical_and(self._arrival_times >= tmin, self._arrival_times <= tmax)
+        mask = self._select_events(tmin, tmax)
 
         if self._dead_time is not None:
 
@@ -1097,8 +1146,8 @@ class EventListWithDeadTime(EventList):
 
         for arg in args:
             tmin, tmax = self._parse_time_interval(arg)
-            mask = np.logical_and(self._arrival_times >= tmin,
-                                  self._arrival_times <= tmax)
+
+            mask = self._select_events(tmin,tmax)
 
             tmin_list.append(tmin)
             tmax_list.append(tmax)
@@ -1173,7 +1222,6 @@ class EventListWithDeadTime(EventList):
         self._active_dead_time = total_dead_time
 
 
-
 class EventListWithLiveTime(EventList):
     def __init__(self, arrival_times, energies, n_channels, live_time, live_time_starts, live_time_stops,
                  start_time=None, stop_time=None,
@@ -1206,18 +1254,18 @@ class EventListWithLiveTime(EventList):
                            mission, instrument, verbose)
 
         assert len(live_time) == len(
-                live_time_starts), "Live time fraction (%d) and live time start (%d) have different shapes" % (
+            live_time_starts), "Live time fraction (%d) and live time start (%d) have different shapes" % (
             len(live_time), len(live_time_starts))
 
         assert len(live_time) == len(
-                live_time_stops), "Live time fraction (%d) and live time stop (%d) have different shapes" % (
+            live_time_stops), "Live time fraction (%d) and live time stop (%d) have different shapes" % (
             len(live_time), len(live_time_stops))
 
         self._live_time = np.asarray(live_time)
         self._live_time_starts = np.asarray(live_time_starts)
         self._live_time_stops = np.asarray(live_time_stops)
 
-    def _exposure_over_interval(self, tmin, tmax):
+    def exposure_over_interval(self, tmin, tmax):
         """
 
         :param tmin: start time of interval
@@ -1237,7 +1285,6 @@ class EventListWithLiveTime(EventList):
         # see if it contains elements
 
         if self._live_time[inside_idx]:
-
 
             # we want to take a fraction of the live time covered
 
@@ -1313,8 +1360,7 @@ class EventListWithLiveTime(EventList):
 
         for arg in args:
             tmin, tmax = self._parse_time_interval(arg)
-            mask = np.logical_and(self._arrival_times >= tmin,
-                                  self._arrival_times <= tmax)
+            mask = self._select_events(tmin, tmax)
 
             tmin_list.append(tmin)
             tmax_list.append(tmax)
@@ -1347,15 +1393,13 @@ class EventListWithLiveTime(EventList):
             if not self._poly_fit_exists:
                 raise RuntimeError('A polynomial fit to the channels does not exist!')
 
-            #for chan in range(self._first_channel, self._n_channels + self._first_channel):
-            for chan in range(self._n_channels ):
+            # for chan in range(self._first_channel, self._n_channels + self._first_channel):
+            for chan in range(self._n_channels):
 
                 total_counts = 0
                 counts_err = 0
 
                 for tmin, tmax in zip(tmin_list, tmax_list):
-
-
                     # Now integrate the appropriate background polynomial
                     total_counts += self._polynomials[chan].integral(tmin, tmax)
                     counts_err += (self._polynomials[chan].integral_error(tmin, tmax)) ** 2
@@ -1368,26 +1412,21 @@ class EventListWithLiveTime(EventList):
 
             self._poly_count_err = np.array(tmp_err)
 
-
-
         # Live time correction
 
         exposure = 0.
         total_real_time = 0.
         for tmin, tmax in zip(tmin_list, tmax_list):
-
             total_real_time += tmax - tmin
-            exposure += self._exposure_over_interval(tmin, tmax)
+            exposure += self.exposure_over_interval(tmin, tmax)
 
         # In this case the exposure is the total live time
 
         self._exposure = exposure
         self._active_dead_time = total_real_time - exposure
 
-
         self._tmin_list = tmin_list
         self._tmax_list = tmax_list
-
 
 
 def intervals_overlap(tmin, tmax):

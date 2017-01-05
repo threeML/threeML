@@ -372,9 +372,8 @@ class FermipyLike(PluginPrototype):
                 # NOTE: I use update_source=False because it makes things 100x faster and I verified that
                 # it does not change the result.
 
-                self._gta.set_source_dnde(point_source.name, dnde_MeV, False) \
- \
-                        else:
+                self._gta.set_source_dnde(point_source.name, dnde_MeV, False)
+            else:
 
                 # Nothing to do for a fixed source_
 

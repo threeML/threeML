@@ -10,7 +10,7 @@ from astromodels import clone_model
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.step_plot import step_plot
-from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
 from threeML.plugin_prototype import PluginPrototype, set_external_property
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
@@ -111,7 +111,7 @@ class OGIPLike(PluginPrototype):
 
                 assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
 
-                assert np.all(self._background_counts >= 0), "Error in background spectrum: negative counts!"
+                if not np.all(self._background_counts >= 0): raise NegativeBackground("Error in background spectrum: negative counts!")
 
             else:
 
@@ -127,7 +127,7 @@ class OGIPLike(PluginPrototype):
                     "also the expected background must be zero"
 
 
-                assert np.all(self._background_counts >= 0), "Error in background spectrum: negative background!"
+                if not np.all(self._background_counts >= 0): raise NegativeBackground( "Error in background spectrum: negative background!")
 
         else:
 
