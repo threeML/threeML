@@ -477,7 +477,7 @@ class EventList(object):
 
                 t2 = self._stop_time
 
-            if  (self._stop_time <= t1) or (t2 <= self._stop_time):
+            if  (self._stop_time <= t1) or (t2 <= self._start_time):
                 custom_warnings.warn(
                     "The time interval %f-%f is out side of the arrival times and will be dropped" % (
                         t1, t2))
