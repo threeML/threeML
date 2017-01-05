@@ -17,7 +17,8 @@ def my_format_warning(message, category, *args):
 
 custom_warnings.formatwarning = my_format_warning
 
-
+class NegativeBackground(RuntimeError):
+    pass
 
 class TriggerDoesNotExist(RuntimeError):
     pass
