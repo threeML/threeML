@@ -91,13 +91,15 @@ class FermiGBMTTELike(EventListLike):
                                         count_getter=event_list.counts_over_interval,
                                         exposure_getter=event_list.exposure_over_interval)
 
+            rsp_file.set_time_interval(*[interval.replace(' ', '') for interval in source_intervals.split(',')])
+
         else:
 
             self._rsp_is_weighted = False
 
 
 
-        rsp_file.set_time_interval(*[interval.replace(' ', '') for interval in source_intervals.split(',')])
+
 
 
         # pass to the super class

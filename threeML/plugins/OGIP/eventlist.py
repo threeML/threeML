@@ -351,14 +351,41 @@ class EventList(object):
 
         if self._poly_fit_exists:
 
-            print('Refitting background with new polynomial order and existing selections')
-            if self._unbinned:
+            print('Refitting background with new polynomial order (%d) and existing selections'%value)
 
-                self._unbinned_fit_polynomials()
+            if self._time_selection_exists:
 
+                tmp = []
+                for tmin, tmax in zip(self._tmin_list, self._tmax_list):
+                    tmp.append("%.5f-%.5f" % (tmin, tmax))
+
+
+                self.set_polynomial_fit_interval( *tmp, unbinned=self._unbinned)
             else:
 
-                self._fit_polynomials()
+                RuntimeError("This is a bug. Should never get here")
+
+            # if self._unbinned:
+            #
+            #     self._unbinned_fit_polynomials()
+            #
+            # else:
+            #
+            #     self._fit_polynomials()
+            #
+            # if self._verbose:
+            #     print("%s %d-order polynomial fit with the %s method" % (
+            #         self._fit_method_info['bin type'], self._optimal_polynomial_grade,
+            #         self._fit_method_info['fit method']))
+            #     print('\n')
+            #
+            # if self._time_selection_exists:
+            #
+            #     tmp = []
+            #     for tmin, tmax in zip(self._tmin_list, self._tmax_list):
+            #         tmp.append("%.5f-%.5f" % (tmin, tmax))
+
+            #    self.set_active_time_intervals(*tmp)
 
     def ___set_poly_order(self, value):
         """ Indirect poly order setter """
@@ -368,7 +395,7 @@ class EventList(object):
     def __get_poly_order(self):
         """ get the poly order """
 
-        return self._user_poly_order
+        return self._optimal_polynomial_grade
 
     def ___get_poly_order(self):
         """ Indirect poly order getter """
@@ -571,7 +598,7 @@ class EventList(object):
         """
 
         min_grade = 0
-        max_grade = 4
+        max_grade = 3
         log_likelihoods = []
 
         for grade in range(min_grade, max_grade + 1):
