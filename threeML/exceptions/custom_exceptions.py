@@ -18,6 +18,12 @@ def my_format_warning(message, category, *args):
 custom_warnings.formatwarning = my_format_warning
 
 
+
+class TriggerDoesNotExist(RuntimeError):
+    pass
+
+
+
 class ForbiddenRegionOfParameterSpace(RuntimeWarning):
 
     pass

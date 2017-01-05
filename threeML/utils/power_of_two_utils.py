@@ -20,4 +20,4 @@ def next_power_of_2(x):
     # * .bit_length returns the number of bits necessary to represent self in binary
     # * x << y means 1 with the bits shifted to the left by y, which is the same as multiplying x by 2**y (but faster)
 
-    return 1 << (x-1).bit_length()
+    return 1 << (x - 1).bit_length()

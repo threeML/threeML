@@ -26,23 +26,22 @@ __instrument_name = "Fermi LAT (with fermipy)"
 
 
 # A lookup map for the correspondence between IRFS and evclass
-evclass_irf = {2: 'P8R2_TRANSIENT100E_V6',
-               4: 'P8R2_TRANSIENT100_V6',
-               8: 'P8R2_TRANSIENT020E_V6',
-               16: 'P8R2_TRANSIENT020_V6',
-               32: 'P8R2_TRANSIENT010E_V6',
-               64: 'P8R2_TRANSIENT010_V6',
-               128: 'P8R2_SOURCE_V6',
-               256: 'P8R2_CLEAN_V6',
-               512: 'P8R2_ULTRACLEAN_V6',
-               1024: 'P8R2_ULTRACLEANVETO_V6',
+evclass_irf = {2    : 'P8R2_TRANSIENT100E_V6',
+               4    : 'P8R2_TRANSIENT100_V6',
+               8    : 'P8R2_TRANSIENT020E_V6',
+               16   : 'P8R2_TRANSIENT020_V6',
+               32   : 'P8R2_TRANSIENT010E_V6',
+               64   : 'P8R2_TRANSIENT010_V6',
+               128  : 'P8R2_SOURCE_V6',
+               256  : 'P8R2_CLEAN_V6',
+               512  : 'P8R2_ULTRACLEAN_V6',
+               1024 : 'P8R2_ULTRACLEANVETO_V6',
                32768: 'P8R2_TRANSIENT100S_V6',
                65536: 'P8R2_TRANSIENT015S_V6',
-}
+               }
 
 
 def _get_unique_tag_from_configuration(configuration):
-
     keys_for_hash = (('data', ('evfile', 'scfile')),
                      ('binning', ('roiwidth', 'binsz', 'binsperdec')),
                      ('selection', ('emin', 'emax', 'zmax', 'evclass', 'evtype', 'filter', 'ra', 'dec'))
@@ -124,7 +123,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
     # point sources
     for point_source in likelihood_model.point_sources.values():  # type: astromodels.PointSource
 
-        this_source = {'Index' : 2.56233, 'Scale' : 572.78, 'Prefactor' : 2.4090e-12}
+        this_source = {'Index': 2.56233, 'Scale': 572.78, 'Prefactor': 2.4090e-12}
         this_source['name'] = point_source.name
         this_source['ra'] = point_source.position.ra.value
         this_source['dec'] = point_source.position.dec.value
@@ -166,7 +165,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
 
         # Get the energies at which to evaluate this source
         this_log_energies, _flux = gta.get_source_dnde(point_source.name)
-        this_energies_keV = 10**this_log_energies * 1e3  # fermipy energies are in GeV, we need keV
+        this_energies_keV = 10 ** this_log_energies * 1e3  # fermipy energies are in GeV, we need keV
 
         if energies_keV is None:
 
@@ -178,8 +177,8 @@ def _get_fermipy_instance(configuration, likelihood_model):
 
             assert np.all(energies_keV == this_energies_keV)
 
-        dnde = point_source(energies_keV) # ph / (cm2 s keV)
-        dnde_per_MeV = dnde * 1000.0 # ph / (cm2 s MeV)
+        dnde = point_source(energies_keV)  # ph / (cm2 s keV)
+        dnde_per_MeV = dnde * 1000.0  # ph / (cm2 s MeV)
         gta.set_source_dnde(point_source.name, dnde_per_MeV, False)
 
     # Same for extended source
@@ -194,6 +193,7 @@ class FermipyLike(PluginPrototype):
     """
     Plugin for the data of the Fermi Large Area Telescope, based on fermipy (http://fermipy.readthedocs.io/)
     """
+
     def __init__(self, name, fermipy_config):
         """
         :param name: a name for this instance
@@ -366,15 +366,15 @@ class FermipyLike(PluginPrototype):
             if point_source.has_free_parameters():
 
                 # Now set the spectrum of this source to the right one
-                dnde = point_source(self._pts_energies) # ph / (cm2 s keV)
+                dnde = point_source(self._pts_energies)  # ph / (cm2 s keV)
                 dnde_MeV = dnde * 1000.0  # ph / (cm2 s MeV)
 
                 # NOTE: I use update_source=False because it makes things 100x faster and I verified that
                 # it does not change the result.
 
-                self._gta.set_source_dnde(point_source.name, dnde_MeV, False)\
-
-            else:
+                self._gta.set_source_dnde(point_source.name, dnde_MeV, False) \
+ \
+                        else:
 
                 # Nothing to do for a fixed source_
 

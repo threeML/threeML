@@ -5,6 +5,8 @@ from astropy.vo.client import conesearch
 from astropy.vo.client.exceptions import VOSError
 from astropy.coordinates.name_resolve import get_icrs_coordinates
 
+import astropy.table as astro_table
+
 
 class VirtualObservatoryCatalog(object):
     
@@ -12,7 +14,10 @@ class VirtualObservatoryCatalog(object):
                 
         self.catalog = VOSCatalog.create(name, url, description=description)
 
+        self._get_vo_table_from_source()
+
         self._last_query_results = None
+
 
     def search_around_source(self, source_name, radius):
         """
@@ -88,9 +93,101 @@ class VirtualObservatoryCatalog(object):
         return self._dec
 
     def apply_format(self, table):
-        
+
         raise NotImplementedError("You have to override this!")
 
     def get_model(self):
 
         raise NotImplementedError("You have to override this!")
+
+    def _get_vo_table_from_source(self):
+
+        raise NotImplementedError("You have to override this!")
+
+
+
+    def query(self, query):
+        """
+        query the entire VO table for the given logical argument. Queries are in the form of pandas
+        queries: http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.query.html
+
+        To obtain a preview of the availble columns, try catalog.variables
+
+
+        :param query: pandas style query string
+        :return:
+        """
+
+        assert type(query) == str, 'query must be a string'
+
+        query_results = self._vo_dataframe.query(query)
+
+        table = astro_table.Table.from_pandas(query_results)
+        name_column = astro_table.Column(name='name', data=query_results.index)
+        table.add_column(name_column, index=0)
+
+        out = self.apply_format(table)
+
+        self._last_query_results = query_results
+
+        return out
+
+    def query_sources(self, *sources):
+        """
+        query for the specific source names.
+
+        :param sources: source(s) to search for
+        :return:
+        """
+
+        valid_sources = []
+
+        for source in sources:
+
+            if self._source_is_valid(source):
+
+                valid_sources.append(source)
+
+
+
+        if valid_sources:
+
+            query_string = ' | '.join(map(lambda x: '(index == "%s")' % x, valid_sources))
+
+            query_results = self._vo_dataframe.query(query_string)
+
+            table = astro_table.Table.from_pandas(query_results)
+
+            name_column = astro_table.Column(name='name', data=query_results.index)
+            table.add_column(name_column, index=0)
+
+            out = self.apply_format(table)
+
+            self._last_query_results = query_results
+
+            return out
+
+
+        else:
+
+            RuntimeError("There were not valid sources in your search")
+
+
+    def _source_is_valid(self, source):
+
+        raise NotImplementedError("You have to override this!")
+
+
+
+    @property
+    def result(self):
+        """
+        return a searchable pandas dataframe of results from the last query.
+        :return:
+        """
+
+        return self._last_query_results.copy(deep=True)
+
+
+
+

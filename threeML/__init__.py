@@ -178,7 +178,7 @@ from .io.flux_calculator import SpectralFlux
 # Added by JM to import Model comparison
 from .utils.stats_tools import ModelComparison
 
-from .plugins.OGIP.ogip_plot import display_ogip_model_counts
+from .io.plugin_plots import display_ogip_model_counts
 
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
@@ -188,8 +188,14 @@ from .parallel.parallel_client import parallel_computation
 # Import catalogs
 from threeML.catalogs import *
 
+# Import GBM  downloader
+from threeML.plugins.Fermi_GBM.download_GBM_data import download_GBM_trigger_data, cleanup_downloaded_GBM_data
+
 # Import LAT downloader
 from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+
+# Import LLE downloader
+from threeML.plugins.Fermi_LAT.download_LLE_data import download_LLE_trigger_data, cleanup_downloaded_LLE_data
 
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config

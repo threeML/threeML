@@ -290,7 +290,6 @@ class ProgressBarAscii(ProgressBarBase):
         return current_iteration
 
     def finish(self):
-
         super(ProgressBarAscii, self).finish()
 
         sys.stdout.write("\n")

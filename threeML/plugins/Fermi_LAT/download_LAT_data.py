@@ -19,6 +19,7 @@ class DivParser(HTMLParser.HTMLParser):
     """
     Extract data from a <div></div> tag
     """
+
     def __init__(self, desiredDivName):
 
         HTMLParser.HTMLParser.__init__(self)
@@ -91,11 +92,11 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
     :param destination_directory: directory where you want to save the data (default: current directory)
     :return: the path to the downloaded FT1 and FT2 file
     """
-    _known_time_types = ['MET','Gregorian','MJD']
+    _known_time_types = ['MET', 'Gregorian', 'MJD']
 
     assert time_type in _known_time_types, "Time type must be one of %s" % ",".join(_known_time_types)
 
-    valid_classes = ['Photon','Extended']
+    valid_classes = ['Photon', 'Extended']
     assert data_type in valid_classes, "Data type must be one of %s" % ",".join(valid_classes)
 
     assert radius > 0, "Radius of the Region of Interest must be > 0"
@@ -185,8 +186,8 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         print("Existing event file %s and Spacecraft file %s correspond to the same selection. "
               "We assume you did not tamper with them, so we will return those instead of downloading them again. "
-              "If you want to download them again, remove them from the outdir" %(prev_downloaded_ft1,
-                                                                                  prev_downloaded_ft2))
+              "If you want to download them again, remove them from the outdir" % (prev_downloaded_ft1,
+                                                                                   prev_downloaded_ft2))
 
         return [prev_downloaded_ft1, prev_downloaded_ft2]
 
