@@ -1,9 +1,13 @@
 import astropy.io.fits as pyfits
-import numpy as np
-import warnings
-from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
+import astropy.units as u
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+import numpy as np
+import warnings
+
+from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
+from threeML.io.fits_file import FITSExtension, FITSFile
+
 
 class Response(object):
 
@@ -308,3 +312,125 @@ class Response(object):
         ax.set_xlabel('Reco energy (keV)')
 
         return fig
+
+
+####################################################################################
+# The following classes are used to create OGIP-compliant response files
+# (at the moment only RMF are supported)
+
+class EBOUNDS(FITSExtension):
+
+    _HEADER_KEYWORDS = (('EXTNAME', 'EBOUNDS', 'Extension name'),
+                        ('HDUCLASS', 'OGIP    ', 'format conforms to OGIP standard'),
+                        ('HDUVERS', '1.1.0   ', 'Version of format (OGIP memo CAL/GEN/92-002a)'),
+                        ('HDUDOC', 'OGIP memos CAL/GEN/92-002 & 92-002a', 'Documents describing the forma'),
+                        ('HDUVERS1', '1.0.0   ', 'Obsolete - included for backwards compatibility'),
+                        ('HDUVERS2', '1.1.0   ', 'Obsolete - included for backwards compatibility'),
+                        ('CHANTYPE', 'PI', 'Channel type'),
+                        ('CONTENT', 'Response Matrix', 'File content'),
+                        ('HDUCLAS1', 'RESPONSE', 'Extension contains response data  '),
+                        ('HDUCLAS2', 'EBOUNDS ', 'Extension contains EBOUNDS'),
+                        ('TLMIN1', 1, 'Minimum legal channel number')
+                        )
+
+    def __init__(self, energ_lo, energ_hi):
+        """
+        Represents the EBOUNDS extension of a response matrix FITS file
+
+        :param energ_lo: lower bound of channel energies (in keV)
+        :param energ_hi: lower bound of channel energies (in keV)
+        """
+
+        assert len(energ_lo) == len(energ_hi), "energ_lo and energ_hi have different length!"
+
+        n_channels = len(energ_lo)
+
+        data_tuple = (('CHANNEL', range(1, n_channels + 1)),
+                      ('E_MIN', energ_lo * u.keV),
+                      ('E_MAX', energ_hi * u.keV))
+
+        super(EBOUNDS, self).__init__(data_tuple, self._HEADER_KEYWORDS)
+
+
+class MATRIX(FITSExtension):
+    """
+    Represents the MATRIX extension of a response FITS file following the OGIP format
+
+    :param mc_energies_lo: lower bound of MC energies (in keV)
+    :param mc_energies_hi: hi bound of MC energies (in keV)
+    :param channel_energies_lo: lower bound of channel energies (in keV)
+    :param channel_energies_hi: hi bound of channel energies (in keV
+    :param matrix: the redistribution matrix, representing energy dispersion effects
+    """
+
+
+    _HEADER_KEYWORDS = [
+        ('EXTNAME', 'MATRIX', 'Extension name'),
+        ('HDUCLASS', 'OGIP    ', 'format conforms to OGIP standard'),
+        ('HDUVERS', '1.1.0   ', 'Version of format (OGIP memo CAL/GEN/92-002a)'),
+        ('HDUDOC', 'OGIP memos CAL/GEN/92-002 & 92-002a', 'Documents describing the forma'),
+        ('HDUVERS1', '1.0.0   ', 'Obsolete - included for backwards compatibility'),
+        ('HDUVERS2', '1.1.0   ', 'Obsolete - included for backwards compatibility'),
+        ('HDUCLAS1', 'RESPONSE', 'dataset relates to spectral response'),
+        ('HDUCLAS2', 'RSP_MATRIX', 'dataset is a spectral response matrix'),
+        ('CHANTYPE', 'PI ', 'Detector Channel Type in use (PHA or PI)'),
+        ('DETCHANS', None, 'Number of channels'),
+        ('FILTER', '', 'Filter used'),
+        ('TLMIN4', 1, 'Minimum legal channel number')
+    ]
+
+    def __init__(self, mc_energies_lo, mc_energies_hi, channel_energies_lo, channel_energies_hi, matrix):
+
+        assert mc_energies_lo.shape[0] == mc_energies_hi.shape[0]
+        assert channel_energies_lo.shape[0] == channel_energies_hi.shape[0]
+
+        n_mc_channels = mc_energies_lo.shape[0]
+        n_channels = channel_energies_lo.shape[0]
+
+        assert matrix.shape == (n_mc_channels, n_channels), \
+            "Matrix has the wrong shape. Should be %i x %i, is %i x %i" % (n_mc_channels, n_channels,
+                                                                           matrix.shape[0], matrix.shape[1])
+
+        ones = np.ones_like(mc_energies_hi, np.int16)
+
+        # We need to format the matrix as a list of n_mc_channels rows of n_channels length
+
+        data_tuple = (('ENERG_LO', mc_energies_lo * u.keV),
+                      ('ENERG_HI', mc_energies_hi * u.keV),
+                      ('N_GRP', ones),
+                      ('F_CHAN', ones),
+                      ('N_CHAN', np.ones(n_mc_channels, np.int16) * n_channels),
+                      ('MATRIX', matrix)
+                      )
+
+        super(MATRIX, self).__init__(data_tuple, self._HEADER_KEYWORDS)
+
+        # Update DETCHANS
+        self.hdu.header.set("DETCHANS", n_channels)
+
+
+class RMF(FITSFile):
+
+    def __init__(self, mc_energies_lo, mc_energies_hi, channel_energies_lo, channel_energies_hi, matrix,
+                 telescope_name, instrument_name):
+
+        mc_energies_lo = np.array(mc_energies_lo, np.float32)
+        mc_energies_hi = np.array(mc_energies_hi, np.float32)
+        channel_energies_lo = np.array(channel_energies_lo, np.float32)
+        channel_energies_hi = np.array(channel_energies_hi, np.float32)
+
+        # Create EBOUNDS extension
+        ebounds = EBOUNDS(channel_energies_lo, channel_energies_hi)
+
+        # Create MATRIX extension
+        matrix = MATRIX(mc_energies_lo, mc_energies_hi, channel_energies_lo, channel_energies_hi, matrix)
+
+        # Update HDUCLAS3 keyword
+        matrix.hdu.header.set("HDUCLAS3","FULL")
+
+        # Set telescope and instrument name
+        matrix.hdu.header.set("TELESCOP", telescope_name)
+        matrix.hdu.header.set("INSTRUME", instrument_name)
+
+        # Create FITS file
+        super(RMF, self).__init__(fits_extensions=[ebounds, matrix])
