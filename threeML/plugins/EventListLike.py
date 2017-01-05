@@ -4,7 +4,6 @@ import numpy as np
 
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
 
-
 try:
 
     import requests
@@ -72,8 +71,6 @@ class EventListLike(OGIPLike):
 
         self._verbose = verbose
 
-
-
         try:
 
             OGIPLike.__init__(self,
@@ -92,18 +89,17 @@ class EventListLike(OGIPLike):
             # get the last poly order
             last_poly_order = self._evt_list.poly_order
 
-            print("The polynomial fit resulted in negative background counts. We will reduce the order from (%d) for you.\n" % last_poly_order)
+            print(
+            "The polynomial fit resulted in negative background counts. We will reduce the order from (%d) for you.\n" % last_poly_order)
             not_working = True
             order = last_poly_order - 1
-            while(not_working):
+            while (not_working):
 
-                #self._startup = True  # This keeps things from being called twice!
+                # self._startup = True  # This keeps things from being called twice!
                 self._evt_list.poly_order = int(order)
 
-
-                #self._startup = False
+                # self._startup = False
                 self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
-
 
                 try:
 
@@ -114,7 +110,7 @@ class EventListLike(OGIPLike):
                                       rsp_file=rsp_file,
                                       verbose=verbose)
 
-                    print("\nSuccesfully found a working background of order: %d\n"%order)
+                    print("\nSuccesfully found a working background of order: %d\n" % order)
 
                     not_working = False
 
@@ -124,14 +120,6 @@ class EventListLike(OGIPLike):
                         raise RuntimeError("Cannot fit the background with the current selections")
 
                     order -= 1
-
-
-
-
-
-
-
-
 
     def __set_poly_order(self, value):
         """Background poly order setter """
@@ -178,7 +166,6 @@ class EventListLike(OGIPLike):
         self._active_interval = intervals
 
         if not self._startup:
-
             self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
 
             OGIPLike.__init__(self, self.name,
@@ -193,11 +180,9 @@ class EventListLike(OGIPLike):
         return_ogip = False
 
         if 'return_ogip' in kwargs:
-
             return_ogip = bool(kwargs.pop('return_ogip'))
 
         if return_ogip:
-
             # I really do not like this at the moment
             # but I'm assuming there is only one interval selected
             new_name = "%s_%s" % (self._name, intervals[0])
@@ -230,8 +215,7 @@ class EventListLike(OGIPLike):
             unbinned = options.pop('unbinned')
         else:
 
-            unbinned =self._default_unbinned
-
+            unbinned = self._default_unbinned
 
         self._evt_list.set_polynomial_fit_interval(*intervals, unbinned=unbinned)
 
@@ -241,7 +225,6 @@ class EventListLike(OGIPLike):
         self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
 
         if not self._startup:
-
             OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
                               rsp_file=self._rsp_file, verbose=self._verbose)
 
@@ -249,7 +232,6 @@ class EventListLike(OGIPLike):
         """ stub """
 
         raise RuntimeError('must be implemented in subclass')
-
 
     def write_pha_from_binner(self, file_name, overwrite=False):
         """
@@ -271,7 +253,6 @@ class EventListLike(OGIPLike):
         # time interval saved.
 
         for interval in self.text_bins:
-
             self.set_active_time_interval(interval)
 
             ogip_list.append(copy.copy(self))
@@ -418,13 +399,11 @@ class EventListLike(OGIPLike):
             if type(start) is not list:
 
                 if type(start) is not np.ndarray:
-
                     raise RuntimeError('start must be and array in custom mode')
 
             if type(stop) is not list:
 
                 if type(stop) is not np.ndarray:
-
                     raise RuntimeError('stop must be and array in custom mode')
 
             assert len(start) == len(stop), 'must have equal number of start and stop times'
@@ -461,7 +440,6 @@ class EventListLike(OGIPLike):
 
 
         for i, interval in enumerate(self.text_bins):
-
             self.set_active_time_interval(interval)
 
             new_name = "%s_%d" % (self._name, i)

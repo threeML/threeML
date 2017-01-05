@@ -649,7 +649,38 @@ class WeightedResponse(GenericResponse):
 
         n_summable_matrices = matrices_to_use.sum()
 
-        assert n_summable_matrices > 0, "There were no matrices in the interval requested. This is a bug" # pragma: no cover
+        #assert n_summable_matrices > 0, "There were no matrices in the interval requested. This is a bug" # pragma: no cover
+
+        if n_summable_matrices == 0:
+
+            # Ok, most likely our intervals  were not covered by the matrices.
+            # We will look ot see if the interval is before or after the matrices'
+            # valid time.
+
+            min_interval_time = min(self._tstarts)
+            max_interval_time = max(self._tstops)
+
+            min_rsp_time = min(self._matrix_start)
+            max_rsp_time = max(self._matrix_stop)
+
+            if max_interval_time <= min_interval_time:
+
+                # the interval comes before
+
+                matrices_to_use[0] = True
+
+            elif max_rsp_time <= min_interval_time:
+
+                # the interval is after
+
+                matrices_to_use[-1] = True
+
+            else:
+
+                RuntimeError("We should never get here. This is a bug!")
+
+
+
 
         if n_summable_matrices > 1:
 
@@ -787,7 +818,9 @@ class WeightedResponse(GenericResponse):
         # plot the time intervals
 
         ax.hlines(min(self._weight)-.1,self._tstarts,self._tstops,color='red',label='selected intervals')
+
         ax.hlines(np.median(self._weight), self._true_rsp_intervals[0], self._true_rsp_intervals[1], color='green', label='true rsp intervals')
+
         ax.hlines(max(self._weight)+.1, self._matrix_start, self._matrix_stop, color='blue', label='rsp header intervals')
 
         mean_true_rsp_time = np.mean(self._true_rsp_intervals.T,axis=1)
