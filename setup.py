@@ -48,6 +48,7 @@ setup(
               'threeML/classicMLE',
               'threeML/catalogs',
               'threeML/io',
+              'threeML/io/cern_root_utils',
               'threeML/utils',
               'threeML/parallel',
               'threeML/config'],
