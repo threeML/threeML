@@ -142,10 +142,9 @@ class AnalysisBuilder(object):
 def test_gbm_tte_constructor():
 
 
-
-
-
     with within_directory(__example_dir):
+
+
         data_dir = os.path.join('gbm', 'bn080916009')
 
         src_selection = "0.-10."
@@ -342,7 +341,6 @@ def test_gbm_tte_bayesian_fitting():
 
             assert bb.raw_samples.shape == (n_samples, 2)
 
-    # clean up
 
 
 
