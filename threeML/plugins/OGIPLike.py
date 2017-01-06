@@ -286,7 +286,7 @@ class OGIPLike(PluginPrototype):
 
         set_active_measurements("0.2-c10",exclude=["c30-c50"])
 
-        * Using native PHA qaulity:
+        * Using native PHA quality:
 
         To simply add or exclude channels from the native PHA, one can use the use_quailty
         option:
@@ -485,7 +485,7 @@ class OGIPLike(PluginPrototype):
         Convert the quality array to a channel mask
         for channels marked 5
 
-        :return: boolean array channel maske
+        :return: boolean array channel mask
         """
 
         return self._native_quality <= 2

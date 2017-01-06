@@ -60,6 +60,18 @@ class FermiLATLLELike(EventListLike):
         if trigger_time is not None:
             self._lat_lle_file.trigger_time = trigger_time
 
+        # Mark channels less than 50 MeV as bad
+
+        channel_50MeV = np.searchsorted(self._lat_lle_file.energy_edges[0],50000) - 1
+
+        native_quality = np.zeros(self._lat_lle_file.n_channels,dtype=int)
+
+        idx = np.arange(self._lat_lle_file.n_channels) < channel_50MeV
+
+        native_quality[idx] = 5
+
+        print native_quality
+
         event_list = EventListWithLiveTime(
                 arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.trigger_time,
                 energies=self._lat_lle_file.energies,
@@ -69,14 +81,18 @@ class FermiLATLLELike(EventListLike):
                 live_time_stops=self._lat_lle_file.livetime_stop - self._lat_lle_file.trigger_time,
                 start_time=self._lat_lle_file.tstart - self._lat_lle_file.trigger_time,
                 stop_time=self._lat_lle_file.tstop - self._lat_lle_file.trigger_time,
+                quality=native_quality,
                 first_channel=1,
                 rsp_file=rsp_file,
                 instrument=self._lat_lle_file.instrument,
                 mission=self._lat_lle_file.mission,
                 verbose=verbose)
 
-        EventListLike.__init__(self, name, event_list, background_selections, source_intervals, rsp_file,
+        super(FermiLATLLELike,self).__init__( name, event_list, background_selections, source_intervals, rsp_file,
                                poly_order, unbinned, verbose)
+
+
+
 
     def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None):
         """
@@ -426,6 +442,11 @@ class LLEFile(object):
         :return:
         """
         return self._instrument
+
+    @property
+    def energy_edges(self):
+
+        return np.vstack((self._emin,self._emax))
 
     @property
     def instrument(self):
