@@ -361,28 +361,6 @@ class EventList(object):
 
                 RuntimeError("This is a bug. Should never get here")
 
-                # if self._unbinned:
-                #
-                #     self._unbinned_fit_polynomials()
-                #
-                # else:
-                #
-                #     self._fit_polynomials()
-                #
-                # if self._verbose:
-                #     print("%s %d-order polynomial fit with the %s method" % (
-                #         self._fit_method_info['bin type'], self._optimal_polynomial_grade,
-                #         self._fit_method_info['fit method']))
-                #     print('\n')
-                #
-                # if self._time_selection_exists:
-                #
-                #     tmp = []
-                #     for tmin, tmax in zip(self._tmin_list, self._tmax_list):
-                #         tmp.append("%.5f-%.5f" % (tmin, tmax))
-
-                #    self.set_active_time_intervals(*tmp)
-
     def ___set_poly_order(self, value):
         """ Indirect poly order setter """
 
@@ -540,9 +518,12 @@ class EventList(object):
             rate_err = self._poly_count_err / self._exposure
             rates = self._poly_counts / self._exposure
 
+            # removing negative counts
 
+            idx = rates < 0.
 
-
+            rates[idx] = 0.
+            rate_err[idx] = 0.
 
         else:
 
@@ -610,7 +591,7 @@ class EventList(object):
         """
 
         min_grade = 0
-        max_grade = 3
+        max_grade = 4
         log_likelihoods = []
 
         for grade in range(min_grade, max_grade + 1):
@@ -1113,10 +1094,17 @@ class EventListWithDeadTime(EventList):
 
             self._dead_time = None
 
-    def exposure_over_interval(self, tmin, tmax):
-        """ calculate the exposure over a given interval  """
+    def exposure_over_interval(self, start, stop):
+        """
+        calculate the exposure over the given interval
 
-        mask = self._select_events(tmin, tmax)
+        :param start: start time
+        :param stop:  stop time
+        :return:
+        """
+
+
+        mask = self._select_events(start, stop)
 
         if self._dead_time is not None:
 
@@ -1126,7 +1114,7 @@ class EventListWithDeadTime(EventList):
 
             interval_deadtime = 0
 
-        return (tmax - tmin) - interval_deadtime
+        return (stop - start) - interval_deadtime
 
     def set_active_time_intervals(self, *args):
         '''Set the time interval(s) to be used during the analysis.
@@ -1265,11 +1253,11 @@ class EventListWithLiveTime(EventList):
         self._live_time_starts = np.asarray(live_time_starts)
         self._live_time_stops = np.asarray(live_time_stops)
 
-    def exposure_over_interval(self, tmin, tmax):
+    def exposure_over_interval(self, start, stop):
         """
 
-        :param tmin: start time of interval
-        :param tmax: stop time of interval
+        :param start: start time of interval
+        :param stop: stop time of interval
         :return: exposure
         """
 
@@ -1280,7 +1268,7 @@ class EventListWithLiveTime(EventList):
         # intervals because the closed boundary is covered in the
         # next step
 
-        inside_idx = np.logical_and(self._live_time_starts < tmin, tmax < self._live_time_stops)
+        inside_idx = np.logical_and(self._live_time_starts < start, stop < self._live_time_stops)
 
         # see if it contains elements
 
@@ -1290,7 +1278,7 @@ class EventListWithLiveTime(EventList):
 
             dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
 
-            fraction = (tmax - tmin) / dt
+            fraction = (stop - start) / dt
 
             total_livetime = self._live_time[inside_idx] * fraction
 
@@ -1300,7 +1288,7 @@ class EventListWithLiveTime(EventList):
             # We now go for the closed interval because it is possible to have overlap with other intervals
             # when a closed interval exists... but not when there is only an open interval
 
-            full_inclusion_idx = np.logical_and(tmin <= self._live_time_starts, tmax >= self._live_time_stops)
+            full_inclusion_idx = np.logical_and(start <= self._live_time_starts, stop >= self._live_time_stops)
 
             full_inclusion_livetime = self._live_time[full_inclusion_idx].sum()
 
@@ -1308,13 +1296,13 @@ class EventListWithLiveTime(EventList):
 
             # Get the fractional part of the left bin
 
-            left_remainder_idx = np.logical_and(tmin <= self._live_time_stops, self._live_time_starts <= tmin)
+            left_remainder_idx = np.logical_and(start <= self._live_time_stops, self._live_time_starts <= start)
 
             dt = self._live_time_stops[left_remainder_idx] - self._live_time_starts[left_remainder_idx]
 
             # we want the distance to the stop of this bin
 
-            distance_from_next_bin = self._live_time_stops[left_remainder_idx] - tmin
+            distance_from_next_bin = self._live_time_stops[left_remainder_idx] - start
 
             fraction = distance_from_next_bin / dt
 
@@ -1322,13 +1310,13 @@ class EventListWithLiveTime(EventList):
 
             # Get the fractional part of the right bin
 
-            right_remainder_idx = np.logical_and(self._live_time_starts <= tmax, tmax <= self._live_time_stops)
+            right_remainder_idx = np.logical_and(self._live_time_starts <= stop, stop <= self._live_time_stops)
 
             dt = self._live_time_stops[right_remainder_idx] - self._live_time_starts[right_remainder_idx]
 
             # we want the distance from the last full bin
 
-            distance_from_next_bin = tmax - self._live_time_starts[right_remainder_idx]
+            distance_from_next_bin = stop - self._live_time_starts[right_remainder_idx]
 
             fraction = distance_from_next_bin / dt
 
