@@ -1,16 +1,12 @@
 import matplotlib.pyplot as plt
-
-from threeML.io.step_plot import step_plot
-from threeML.config.config import threeML_config
-
-####
-
 import numpy as np
 from matplotlib.ticker import MaxNLocator
 
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.utils.binner import Rebinner
 
+from threeML.utils.binner import Rebinner
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.io.step_plot import step_plot
+from threeML.config.config import threeML_config
 from threeML.utils.stats_tools import Significance
 from threeML.exceptions.custom_exceptions import custom_warnings
 
@@ -19,8 +15,6 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 
 
 
-
-# Fermi specific plots
 
 def binned_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections, instrument):
     fig, ax = plt.subplots()
@@ -90,9 +84,7 @@ def binned_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selectio
 
 ### OGIP MODEL Plot
 
-
-
-
+# import here
 
 
 NO_REBIN = 1e-99
@@ -478,3 +470,6 @@ def display_ogip_model_counts(analysis, data=(), **kwargs):
     fig.subplots_adjust(hspace=0)
 
     return fig
+
+## OGIP Channel plot
+

@@ -70,8 +70,6 @@ class FermiLATLLELike(EventListLike):
 
         native_quality[idx] = 5
 
-        print native_quality
-
         event_list = EventListWithLiveTime(
                 arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.trigger_time,
                 energies=self._lat_lle_file.energies,
