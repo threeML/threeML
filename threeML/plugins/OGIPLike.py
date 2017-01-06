@@ -1352,7 +1352,7 @@ def excluded_channel_plot(ax, chan_min, chan_max, counts, bkg, mask, bad_mask, s
                             bottom,
                             top,
                             color='none',
-                            edgecolor='limegreen',
+                            edgecolor='#FC0076',
                             hatch='/',
                             alpha=1.)
 
