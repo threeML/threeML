@@ -25,7 +25,7 @@ __example_dir = os.path.join(__this_dir__, '../../examples')
 
 # download the data needed for the test
 
-gbm_data = download_GBM_trigger_data('bn080916009',detectors=['n3'],destination_directory=os.path.join(__example_dir,'gbm','bn080916009'),compress_tte=True)
+
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
@@ -344,6 +344,6 @@ def test_gbm_tte_bayesian_fitting():
 
     # clean up
 
-    cleanup_downloaded_GBM_data(gbm_data)
+
 
 
