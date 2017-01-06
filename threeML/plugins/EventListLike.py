@@ -71,55 +71,54 @@ class EventListLike(OGIPLike):
 
         self._verbose = verbose
 
-        try:
+        #try:
 
-            OGIPLike.__init__(self,
-                              name,
-                              pha_file=self._observed_pha,
-                              bak_file=self._bkg_pha,
-                              rsp_file=rsp_file,
-                              verbose=verbose)
-
-        except(NegativeBackground):
-
-            # The background fit was bad and resulted in negative counts
-            # we will slowly reduce the poly order until the background
-            # works
-
-            # get the last poly order
-            last_poly_order = self._evt_list.poly_order
-
-            print(
-            "The polynomial fit resulted in negative background counts. We will reduce the order from (%d) for you.\n" % last_poly_order)
-            not_working = True
-            order = last_poly_order - 1
-            while (not_working):
-
-                # self._startup = True  # This keeps things from being called twice!
-                self._evt_list.poly_order = int(order)
-
-                # self._startup = False
-                self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
-
-                try:
-
-                    OGIPLike.__init__(self,
-                                      name,
+        super(EventListLike,self).__init__(name,
                                       pha_file=self._observed_pha,
                                       bak_file=self._bkg_pha,
                                       rsp_file=rsp_file,
                                       verbose=verbose)
 
-                    print("\nSuccesfully found a working background of order: %d\n" % order)
-
-                    not_working = False
-
-                except(NegativeBackground):
-
-                    if order == 0:
-                        raise RuntimeError("Cannot fit the background with the current selections")
-
-                    order -= 1
+        # except(NegativeBackground):
+        #
+        #     # The background fit was bad and resulted in negative counts
+        #     # we will slowly reduce the poly order until the background
+        #     # works
+        #
+        #     # get the last poly order
+        #     last_poly_order = self._evt_list.poly_order
+        #
+        #     print(
+        #     "The polynomial fit resulted in negative background counts. You should examine your selections and correct.")
+            # not_working = True
+            # order = last_poly_order - 1
+            # while (not_working):
+            #
+            #     # self._startup = True  # This keeps things from being called twice!
+            #     self._evt_list.poly_order = int(order)
+            #
+            #     # self._startup = False
+            #     self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
+            #
+            #     try:
+            #
+            #         OGIPLike.__init__(self,
+            #                           name,
+            #                           pha_file=self._observed_pha,
+            #                           bak_file=self._bkg_pha,
+            #                           rsp_file=rsp_file,
+            #                           verbose=verbose)
+            #
+            #         print("\nSuccesfully found a working background of order: %d\n" % order)
+            #
+            #         not_working = False
+            #
+            #     except(NegativeBackground):
+            #
+            #         if order == 0:
+            #             raise RuntimeError("Cannot fit the background with the current selections")
+            #
+            #         order -= 1
 
     def __set_poly_order(self, value):
         """Background poly order setter """

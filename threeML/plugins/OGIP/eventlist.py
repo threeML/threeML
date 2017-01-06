@@ -518,9 +518,12 @@ class EventList(object):
             rate_err = self._poly_count_err / self._exposure
             rates = self._poly_counts / self._exposure
 
+            # removing negative counts
 
+            idx = rates < 0.
 
-
+            rates[idx] = 0.
+            rate_err[idx] = 0.
 
         else:
 
