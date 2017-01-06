@@ -3,6 +3,7 @@ import copy
 from contextlib import contextmanager
 import matplotlib.pyplot as plt
 import numpy as np
+
 from astromodels.core.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
@@ -20,7 +21,6 @@ from threeML.plugins.OGIP.response import Response
 from threeML.utils.binner import Rebinner
 from threeML.plugins.OGIP.pha import PHAContainer, PHAWrite
 from threeML.config.config import threeML_config
-
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -286,7 +286,7 @@ class OGIPLike(PluginPrototype):
 
         set_active_measurements("0.2-c10",exclude=["c30-c50"])
 
-        * Using native PHA qaulity:
+        * Using native PHA quality:
 
         To simply add or exclude channels from the native PHA, one can use the use_quailty
         option:
@@ -485,7 +485,7 @@ class OGIPLike(PluginPrototype):
         Convert the quality array to a channel mask
         for channels marked 5
 
-        :return: boolean array channel maske
+        :return: boolean array channel mask
         """
 
         return self._native_quality <= 2
@@ -1196,10 +1196,10 @@ class OGIPLike(PluginPrototype):
         # plot counts and background for the currently selected data
 
         channel_plot(ax, energy_min, energy_max, observed_counts,
-                     color='#377eb8', lw=1.5, alpha=1, label="Total")
+                     color=threeML_config['ogip']['counts color'], lw=1.5, alpha=1, label="Total")
 
         channel_plot(ax, energy_min, energy_max, background_counts,
-                     color='#e41a1c', alpha=.8, label="Background")
+                     color=threeML_config['ogip']['background color'], alpha=.8, label="Background")
 
         mean_chan = np.mean([energy_min, energy_max], axis=0)
 
@@ -1216,7 +1216,7 @@ class OGIPLike(PluginPrototype):
                         alpha=.9,
                         capsize=0,
                         # label=data._name,
-                        color='#377eb8')
+                        color=threeML_config['ogip']['counts color'])
 
             ax.errorbar(mean_chan,
                         background_counts / energy_width,
@@ -1228,7 +1228,7 @@ class OGIPLike(PluginPrototype):
                         alpha=.9,
                         capsize=0,
                         # label=data._name,
-                        color='#e41a1c')
+                        color=threeML_config['ogip']['background color'])
 
         # Now plot and fade the non-used channels
         non_used_mask = (~self._mask)
@@ -1311,6 +1311,9 @@ class OGIPLike(PluginPrototype):
 
         self._rsp.plot_matrix()
 
+
+
+
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))
     width = chan_max - chan_min
@@ -1352,7 +1355,7 @@ def excluded_channel_plot(ax, chan_min, chan_max, counts, bkg, mask, bad_mask, s
                             bottom,
                             top,
                             color='none',
-                            edgecolor='limegreen',
+                            edgecolor='#FE3131',
                             hatch='/',
                             alpha=1.)
 
@@ -1371,16 +1374,17 @@ def slice_disjoint(arr):
     """
 
     slices = []
-    startSlice = arr[0]
+    start_slice = arr[0]
     counter = 0
     for i in range(len(arr) - 1):
         if arr[i + 1] > arr[i] + 1:
-            endSlice = arr[i]
-            slices.append([startSlice, endSlice])
-            startSlice = arr[i + 1]
+            end_slice = arr[i]
+            slices.append([start_slice, end_slice])
+            start_slice = arr[i + 1]
             counter += 1
     if counter == 0:
         return [[arr[0], arr[-1]]]
-    if endSlice != arr[-1]:
-        slices.append([startSlice, arr[-1]])
+    if end_slice != arr[-1]:
+        slices.append([start_slice, arr[-1]])
     return slices
+

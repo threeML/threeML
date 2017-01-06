@@ -39,12 +39,13 @@ def ceildiv(a, b):
 
 
 class EventList(object):
-    def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None,
+    def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None,native_quality=None,
                  first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
-        Container for event style data which are tagged with time and energy/PHA.
-
-
+        The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,
+        temporal polynomial fitting, temporal binning, and exposure calculations (in subclasses). Once events are selected
+        and/or polynomials are fit, the selections can be extracted via a PHAContainer which is can be read by an OGIPLike
+        instance and translated into a PHA instance.
 
 
         :param  n_channels: Number of detector channels
@@ -54,6 +55,10 @@ class EventList(object):
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
         :param  energies: list of event energies or pha channels
+        :param native_quality: native pha quality flags
+        :param mission:
+        :param instrument:
+        :param verbose:
         :param  ra:
         :param  dec:
         """
@@ -63,10 +68,17 @@ class EventList(object):
         self._energies = np.asarray(energies)
         self._n_channels = n_channels
         self._first_channel = first_channel
+        self._native_quality = native_quality
 
         assert self._arrival_times.shape[0] == self._energies.shape[
             0], "Arrival time (%d) and energies (%d) have different shapes" % (
             self._arrival_times.shape[0], self._energies.shape[0])
+
+        if native_quality is not None:
+
+            assert len(native_quality) == n_channels, "the native quality has lenght %d but you specified there were %d channels"%(len(native_quality), n_channels)
+
+
 
         if start_time is None:
 
@@ -532,6 +544,15 @@ class EventList(object):
             rate_err = None
             rates = self._counts / (self._exposure)
 
+        if self._native_quality is None:
+
+            quality = np.zeros_like(rates, dtype=int)
+
+        else:
+
+            quality = self._native_quality
+
+
         pha = PHAContainer(rates=rates,
                            rate_errors=rate_err,
                            n_channels=self._n_channels,
@@ -540,7 +561,7 @@ class EventList(object):
                            response_file=self._rsp_file,
                            mission=self._mission,
                            instrument=self._instrument,
-                           quality=np.zeros_like(rates, dtype=int))  # default quality to all good
+                           quality=quality)  # default quality to all good
 
         return pha
 
@@ -1059,10 +1080,10 @@ class EventList(object):
 
 class EventListWithDeadTime(EventList):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
+                 first_channel=0, quality=None ,rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
-        Container for event style data which are tagged with time and energy/PHA.
-
+        An EventList where the exposure is calculated via and array of dead times per event. Summing these dead times over an
+        interval => live time = interval - dead time
 
 
 
@@ -1071,14 +1092,18 @@ class EventListWithDeadTime(EventList):
         :param  stop_time: stop time of the event list
         :param  dead_time: an array of deadtime per event
         :param  first_channel: where detchans begin indexing
+        :param  quality: native pha quality flags
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
         :param  energies: list of event energies or pha channels
+        :param  mission: mission name
+        :param  instrument: instrument name
+        :param  verbose: verbose level
         :param  ra:
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file,
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, quality,first_channel, rsp_file,
                            ra, dec,
                            mission, instrument, verbose)
 
@@ -1212,10 +1237,10 @@ class EventListWithDeadTime(EventList):
 
 class EventListWithLiveTime(EventList):
     def __init__(self, arrival_times, energies, n_channels, live_time, live_time_starts, live_time_stops,
-                 start_time=None, stop_time=None,
+                 start_time=None, stop_time=None, quality=None,
                  first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
-        Container for event style data which are tagged with time and energy/PHA.
+        An EventList where the exposure is calculated via and array of livetimes per interval.
 
 
 
@@ -1224,20 +1249,20 @@ class EventListWithLiveTime(EventList):
         :param live_time: array of livetime fractions
         :param live_time_starts: start of livetime fraction bins
         :param live_time_stops:  stop of livetime fraction bins
-        :param mission:
-        :param instrument:
+        :param mission: mission name
+        :param instrument: instrument name
         :param  n_channels: Number of detector channels
         :param  start_time: start time of the event list
         :param  stop_time: stop time of the event list
+        :param quality: native pha quality flags
         :param  first_channel: where detchans begin indexing
         :param  rsp_file: the response file corresponding to these events
-
-
+        :param verbose:
         :param  ra:
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file,
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time,quality ,first_channel, rsp_file,
                            ra, dec,
                            mission, instrument, verbose)
 
