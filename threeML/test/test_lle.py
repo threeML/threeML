@@ -22,7 +22,7 @@ __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 __example_dir = os.path.join(__this_dir__, '../../examples')
 
 # get the data needed
-lle_data = download_LLE_trigger_data('bn080916009',destination_directory=os.path.join(__example_dir,'lat'))
+
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
@@ -334,7 +334,7 @@ def test_lle_bayesian_fitting():
 
 
             # assert jl.ncalls != 1
-    cleanup_downloaded_LLE_data(lle_data)
+
 
 # clean up
 
