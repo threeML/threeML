@@ -11,7 +11,6 @@ from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
 from astromodels.sources.point_source import PointSource
-from threeML.plugins.Fermi_GBM.download_GBM_data import download_GBM_trigger_data, cleanup_downloaded_GBM_data
 from astromodels.functions.functions import Log_uniform_prior, Uniform_prior
 
 from threeML.io.file_utils import within_directory
@@ -168,7 +167,7 @@ def test_gbm_tte_constructor():
 
         nai3.background_poly_order = 2
 
-        nai3.background_poly_order = -1
+        #xsnai3.background_poly_order = -1
 
         nai3.set_active_measurements("8-30")
 
@@ -265,7 +264,7 @@ def test_gbm_tte_joint_likelihood_fitting():
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
                                "-10-0, 100-150",
                                src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=1)
 
         ab = AnalysisBuilder(nai3)
 
@@ -310,7 +309,7 @@ def test_gbm_tte_bayesian_fitting():
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
                                "-10-0, 100-150",
                                src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=1)
 
         ab = AnalysisBuilder(nai3)
         ab.set_priors()
