@@ -39,12 +39,13 @@ def ceildiv(a, b):
 
 
 class EventList(object):
-    def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None,
+    def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None,native_quality=None,
                  first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
-        Container for event style data which are tagged with time and energy/PHA.
-
-
+        The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,
+        temporal polynomial fitting, temporal binning, and exposure calculations (in subclasses). Once events are selected
+        and/or polynomials are fit, the selections can be extracted via a PHAContainer which is can be read by an OGIPLike
+        instance and translated into a PHA instance.
 
 
         :param  n_channels: Number of detector channels
@@ -54,6 +55,10 @@ class EventList(object):
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
         :param  energies: list of event energies or pha channels
+        :param native_quality: native pha quality flags
+        :param mission:
+        :param instrument:
+        :param verbose:
         :param  ra:
         :param  dec:
         """
@@ -63,10 +68,17 @@ class EventList(object):
         self._energies = np.asarray(energies)
         self._n_channels = n_channels
         self._first_channel = first_channel
+        self._native_quality = native_quality
 
         assert self._arrival_times.shape[0] == self._energies.shape[
             0], "Arrival time (%d) and energies (%d) have different shapes" % (
             self._arrival_times.shape[0], self._energies.shape[0])
+
+        if native_quality is not None:
+
+            assert len(native_quality) == n_channels, "the native quality has lenght %d but you specified there were %d channels"%(len(native_quality), n_channels)
+
+
 
         if start_time is None:
 
@@ -361,28 +373,6 @@ class EventList(object):
 
                 RuntimeError("This is a bug. Should never get here")
 
-                # if self._unbinned:
-                #
-                #     self._unbinned_fit_polynomials()
-                #
-                # else:
-                #
-                #     self._fit_polynomials()
-                #
-                # if self._verbose:
-                #     print("%s %d-order polynomial fit with the %s method" % (
-                #         self._fit_method_info['bin type'], self._optimal_polynomial_grade,
-                #         self._fit_method_info['fit method']))
-                #     print('\n')
-                #
-                # if self._time_selection_exists:
-                #
-                #     tmp = []
-                #     for tmin, tmax in zip(self._tmin_list, self._tmax_list):
-                #         tmp.append("%.5f-%.5f" % (tmin, tmax))
-
-                #    self.set_active_time_intervals(*tmp)
-
     def ___set_poly_order(self, value):
         """ Indirect poly order setter """
 
@@ -540,9 +530,12 @@ class EventList(object):
             rate_err = self._poly_count_err / self._exposure
             rates = self._poly_counts / self._exposure
 
+            # removing negative counts
 
+            idx = rates < 0.
 
-
+            rates[idx] = 0.
+            rate_err[idx] = 0.
 
         else:
 
@@ -550,6 +543,15 @@ class EventList(object):
 
             rate_err = None
             rates = self._counts / (self._exposure)
+
+        if self._native_quality is None:
+
+            quality = np.zeros_like(rates, dtype=int)
+
+        else:
+
+            quality = self._native_quality
+
 
         pha = PHAContainer(rates=rates,
                            rate_errors=rate_err,
@@ -559,7 +561,7 @@ class EventList(object):
                            response_file=self._rsp_file,
                            mission=self._mission,
                            instrument=self._instrument,
-                           quality=np.zeros_like(rates, dtype=int))  # default quality to all good
+                           quality=quality)  # default quality to all good
 
         return pha
 
@@ -610,7 +612,7 @@ class EventList(object):
         """
 
         min_grade = 0
-        max_grade = 3
+        max_grade = 4
         log_likelihoods = []
 
         for grade in range(min_grade, max_grade + 1):
@@ -1078,10 +1080,10 @@ class EventList(object):
 
 class EventListWithDeadTime(EventList):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
+                 first_channel=0, quality=None ,rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
-        Container for event style data which are tagged with time and energy/PHA.
-
+        An EventList where the exposure is calculated via and array of dead times per event. Summing these dead times over an
+        interval => live time = interval - dead time
 
 
 
@@ -1090,14 +1092,18 @@ class EventListWithDeadTime(EventList):
         :param  stop_time: stop time of the event list
         :param  dead_time: an array of deadtime per event
         :param  first_channel: where detchans begin indexing
+        :param  quality: native pha quality flags
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
         :param  energies: list of event energies or pha channels
+        :param  mission: mission name
+        :param  instrument: instrument name
+        :param  verbose: verbose level
         :param  ra:
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file,
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, quality,first_channel, rsp_file,
                            ra, dec,
                            mission, instrument, verbose)
 
@@ -1113,10 +1119,17 @@ class EventListWithDeadTime(EventList):
 
             self._dead_time = None
 
-    def exposure_over_interval(self, tmin, tmax):
-        """ calculate the exposure over a given interval  """
+    def exposure_over_interval(self, start, stop):
+        """
+        calculate the exposure over the given interval
 
-        mask = self._select_events(tmin, tmax)
+        :param start: start time
+        :param stop:  stop time
+        :return:
+        """
+
+
+        mask = self._select_events(start, stop)
 
         if self._dead_time is not None:
 
@@ -1126,7 +1139,7 @@ class EventListWithDeadTime(EventList):
 
             interval_deadtime = 0
 
-        return (tmax - tmin) - interval_deadtime
+        return (stop - start) - interval_deadtime
 
     def set_active_time_intervals(self, *args):
         '''Set the time interval(s) to be used during the analysis.
@@ -1224,10 +1237,10 @@ class EventListWithDeadTime(EventList):
 
 class EventListWithLiveTime(EventList):
     def __init__(self, arrival_times, energies, n_channels, live_time, live_time_starts, live_time_stops,
-                 start_time=None, stop_time=None,
+                 start_time=None, stop_time=None, quality=None,
                  first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
-        Container for event style data which are tagged with time and energy/PHA.
+        An EventList where the exposure is calculated via and array of livetimes per interval.
 
 
 
@@ -1236,20 +1249,20 @@ class EventListWithLiveTime(EventList):
         :param live_time: array of livetime fractions
         :param live_time_starts: start of livetime fraction bins
         :param live_time_stops:  stop of livetime fraction bins
-        :param mission:
-        :param instrument:
+        :param mission: mission name
+        :param instrument: instrument name
         :param  n_channels: Number of detector channels
         :param  start_time: start time of the event list
         :param  stop_time: stop time of the event list
+        :param quality: native pha quality flags
         :param  first_channel: where detchans begin indexing
         :param  rsp_file: the response file corresponding to these events
-
-
+        :param verbose:
         :param  ra:
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, first_channel, rsp_file,
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time,quality ,first_channel, rsp_file,
                            ra, dec,
                            mission, instrument, verbose)
 
@@ -1265,11 +1278,11 @@ class EventListWithLiveTime(EventList):
         self._live_time_starts = np.asarray(live_time_starts)
         self._live_time_stops = np.asarray(live_time_stops)
 
-    def exposure_over_interval(self, tmin, tmax):
+    def exposure_over_interval(self, start, stop):
         """
 
-        :param tmin: start time of interval
-        :param tmax: stop time of interval
+        :param start: start time of interval
+        :param stop: stop time of interval
         :return: exposure
         """
 
@@ -1280,7 +1293,7 @@ class EventListWithLiveTime(EventList):
         # intervals because the closed boundary is covered in the
         # next step
 
-        inside_idx = np.logical_and(self._live_time_starts < tmin, tmax < self._live_time_stops)
+        inside_idx = np.logical_and(self._live_time_starts < start, stop < self._live_time_stops)
 
         # see if it contains elements
 
@@ -1290,7 +1303,7 @@ class EventListWithLiveTime(EventList):
 
             dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
 
-            fraction = (tmax - tmin) / dt
+            fraction = (stop - start) / dt
 
             total_livetime = self._live_time[inside_idx] * fraction
 
@@ -1300,7 +1313,7 @@ class EventListWithLiveTime(EventList):
             # We now go for the closed interval because it is possible to have overlap with other intervals
             # when a closed interval exists... but not when there is only an open interval
 
-            full_inclusion_idx = np.logical_and(tmin <= self._live_time_starts, tmax >= self._live_time_stops)
+            full_inclusion_idx = np.logical_and(start <= self._live_time_starts, stop >= self._live_time_stops)
 
             full_inclusion_livetime = self._live_time[full_inclusion_idx].sum()
 
@@ -1308,13 +1321,13 @@ class EventListWithLiveTime(EventList):
 
             # Get the fractional part of the left bin
 
-            left_remainder_idx = np.logical_and(tmin <= self._live_time_stops, self._live_time_starts <= tmin)
+            left_remainder_idx = np.logical_and(start <= self._live_time_stops, self._live_time_starts <= start)
 
             dt = self._live_time_stops[left_remainder_idx] - self._live_time_starts[left_remainder_idx]
 
             # we want the distance to the stop of this bin
 
-            distance_from_next_bin = self._live_time_stops[left_remainder_idx] - tmin
+            distance_from_next_bin = self._live_time_stops[left_remainder_idx] - start
 
             fraction = distance_from_next_bin / dt
 
@@ -1322,13 +1335,13 @@ class EventListWithLiveTime(EventList):
 
             # Get the fractional part of the right bin
 
-            right_remainder_idx = np.logical_and(self._live_time_starts <= tmax, tmax <= self._live_time_stops)
+            right_remainder_idx = np.logical_and(self._live_time_starts <= stop, stop <= self._live_time_stops)
 
             dt = self._live_time_stops[right_remainder_idx] - self._live_time_starts[right_remainder_idx]
 
             # we want the distance from the last full bin
 
-            distance_from_next_bin = tmax - self._live_time_starts[right_remainder_idx]
+            distance_from_next_bin = stop - self._live_time_starts[right_remainder_idx]
 
             fraction = distance_from_next_bin / dt
 

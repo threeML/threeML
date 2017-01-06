@@ -8,7 +8,6 @@ from threeML.plugins.FermiLATLLELike import FermiLATLLELike
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
-from threeML.plugins.Fermi_LAT.download_LLE_data import download_LLE_trigger_data, cleanup_downloaded_LLE_data
 from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
 from astromodels.sources.point_source import PointSource
@@ -22,7 +21,7 @@ __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 __example_dir = os.path.join(__this_dir__, '../../examples')
 
 # get the data needed
-lle_data = download_LLE_trigger_data('bn080916009',destination_directory=os.path.join(__example_dir,'lat'))
+
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
@@ -134,38 +133,38 @@ class AnalysisBuilder(object):
         return bayes
 
 
-def test_gbm_lle_constructor():
+def test_lle_constructor():
     with within_directory(__example_dir):
         data_dir = 'lat'
 
         src_selection = "0.-10."
 
-        nai3 = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+        lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
                                os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
-                               "-100-0, 100-200",
+                               "-100--1, 100-200",
                                src_selection,
                                rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
 
-        assert nai3.name == 'lle'
+        assert lle.name == 'lle'
 
-        assert nai3._active_interval == ('0.-10.',)
-        assert nai3._startup == False
-        assert nai3._verbose == True
-        assert nai3.background_noise_model == 'gaussian'
+        assert lle._active_interval == ('0.-10.',)
+        assert lle._startup == False
+        assert lle._verbose == True
+        assert lle.background_noise_model == 'gaussian'
 
-        nai3.view_lightcurve()
+        lle.view_lightcurve()
 
-        nai3.view_lightcurve(energy_selection="500000-100000")
+        lle.view_lightcurve(energy_selection="500000-100000")
 
-        nai3.background_poly_order = 2
+        lle.background_poly_order = 2
 
-        nai3.background_poly_order = -1
 
-        nai3.set_active_measurements("50000-1000000")
 
-        nai3.set_active_time_interval("0-10")
+        lle.set_active_measurements("50000-1000000")
 
-        nai3.set_background_interval("-150-0", "100-250")
+        lle.set_active_time_interval("0-10")
+
+        lle.set_background_interval("-150-0", "100-250")
 
         #nai3.set_background_interval("-15-0", "100-150", unbinned=False)
 
@@ -176,87 +175,79 @@ def test_lle_binning():
 
         src_selection = "0.-10."
 
-        nai3 = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+        lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
                                os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
                                "-100-0, 100-200",
                                src_selection,
                                rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
         # should not have bins yet
 
-
+        with pytest.raises(AttributeError):
+            lle.bins
 
         with pytest.raises(AttributeError):
-            nai3.bins
-
-        with pytest.raises(AttributeError):
-            nai3.text_bins
+            lle.text_bins
 
         # First catch the errors
 
 
-        # This is without specifying the correct options name
-
-
-
-
+        with pytest.raises(RuntimeError):
+            lle.create_time_bins(start=0, stop=10, method='constant')
 
         with pytest.raises(RuntimeError):
-            nai3.create_time_bins(start=0, stop=10, method='constant')
+            lle.create_time_bins(start=0, stop=10, method='significance')
 
         with pytest.raises(RuntimeError):
-            nai3.create_time_bins(start=0, stop=10, method='significance')
+            lle.create_time_bins(start=0, stop=10, method='constant', p0=.1)
 
         with pytest.raises(RuntimeError):
-            nai3.create_time_bins(start=0, stop=10, method='constant', p0=.1)
-
-        with pytest.raises(RuntimeError):
-            nai3.create_time_bins(start=0, stop=10, method='significance', dt=1)
+            lle.create_time_bins(start=0, stop=10, method='significance', dt=1)
 
         # now incorrect options
 
         with pytest.raises(RuntimeError):
-            nai3.create_time_bins(start=0, stop=10, method='not_a_method')
+            lle.create_time_bins(start=0, stop=10, method='not_a_method')
 
         # Now test values
 
 
 
-        nai3.create_time_bins(start=0, stop=10, method='constant', dt=1)
+        lle.create_time_bins(start=0, stop=10, method='constant', dt=1)
 
-        assert len(nai3.text_bins) == 10
+        assert len(lle.text_bins) == 10
 
-        examine_bins(nai3.bins, 0, 10, 10)
+        examine_bins(lle.bins, 0, 10, 10)
 
-        nai3.create_time_bins(start=0, stop=10, method='bayesblocks', p0=.1)
+        lle.create_time_bins(start=0, stop=10, method='bayesblocks', p0=.1)
 
-        examine_bins(nai3.bins, 0, 10, 6)
+        examine_bins(lle.bins, 0, 10, 6)
 
-        nai3.create_time_bins(start=0, stop=10, method='significance', sigma=10)
+        lle.create_time_bins(start=0, stop=10, method='significance', sigma=10)
 
-        examine_bins(nai3.bins, 0, 10, 33)
+        examine_bins(lle.bins, 0, 10, 33)
 
-        nai3.view_lightcurve(use_binner=True)
+        lle.view_lightcurve(use_binner=True)
 
-        nai3.write_pha_from_binner("test_binner", overwrite=True)
+        lle.write_pha_from_binner("test_binner", overwrite=True)
 
-        ogips = nai3.get_ogip_from_binner()
+        ogips = lle.get_ogip_from_binner()
 
 
-def test_gbm_lle_joint_likelihood_fitting():
+def test_lle_joint_likelihood_fitting():
     with within_directory(__example_dir):
         data_dir = 'lat'
 
         src_selection = "0.-70."
 
-        nai3 = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+        lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
                                os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
                                "-100-0, 100-200",
                                src_selection,
                                rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
 
-        nai3.set_active_measurements("50000-100000")
+        lle.set_active_measurements("50000-100000")
 
-        ab = AnalysisBuilder(nai3)
+        ab = AnalysisBuilder(lle)
 
         jls = ab.build_point_source_jl()
 
@@ -281,12 +272,6 @@ def test_gbm_lle_joint_likelihood_fitting():
             assert jl.ncalls == 0
             assert jl.verbose == False
 
-            # res, _ = jl.fit()
-            #
-            # assert jl.current_minimum is not None
-            #
-            # assert jl.minimizer is not None
-            # assert jl.ncalls != 1
 
 
 def test_lle_bayesian_fitting():
@@ -295,7 +280,7 @@ def test_lle_bayesian_fitting():
 
         src_selection = "0.-10."
 
-        nai3 = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+        lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
                                os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
                                "-100-0, 100-200",
                                src_selection,
@@ -303,7 +288,7 @@ def test_lle_bayesian_fitting():
 
 
 
-        ab = AnalysisBuilder(nai3)
+        ab = AnalysisBuilder(lle)
         ab.set_priors()
         bayes = ab.build_point_source_bayes()
 
@@ -332,10 +317,3 @@ def test_lle_bayesian_fitting():
 
             assert bb.raw_samples.shape == (n_samples, 2)
 
-
-            # assert jl.ncalls != 1
-    cleanup_downloaded_LLE_data(lle_data)
-
-# clean up
-
-#
