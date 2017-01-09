@@ -2,13 +2,19 @@ from astropy import units as u, constants
 from sympy import Function, solve, lambdify
 from sympy.abc import x
 
-from threeML.utils.fitted_objects.fitted_object import MLEFittedObject, BayesianFittedObject, GenericFittedObject, \
-    NotCompositeModelError, InvalidUnitError
+from threeML.utils.fitted_objects.fitted_object import MLEFittedObject, BayesianFittedObject, GenericFittedObject
+
+
+class NotCompositeModelError(RuntimeError):
+    pass
+
+
+class InvalidUnitError(RuntimeError):
+    pass
 
 
 class FittedPointSource(GenericFittedObject):
-
-    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component = None):
+    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None):
         """
 
         A 3ML fitted point source.
@@ -31,15 +37,11 @@ class FittedPointSource(GenericFittedObject):
 
             component_names = [function.name for function in composite_model.functions]
 
-
-
-            self._components = dict(zip(component_names,components))
+            self._components = dict(zip(component_names, components))
 
         except:
 
             self._components = None
-
-
 
         if component is not None:
 
@@ -62,7 +64,6 @@ class FittedPointSource(GenericFittedObject):
         energy_unit = u.Unit(energy_unit)
 
         if self._convert_to_frequency:
-
             # we are going to plot in frequency, but
 
             # the functions take energy.
@@ -81,20 +82,15 @@ class FittedPointSource(GenericFittedObject):
 
         flux_function, self._conversion = self._get_flux_function(spectrum_type, model, flux_unit, energy_unit)
 
-
-
         super(FittedPointSource, self).__init__(analysis,
                                                 source,
                                                 flux_function,
                                                 sigma,
                                                 energy_range)
 
-
     def _get_free_parameters(self):
 
-
         self._free_parameters = self._source.spectrum.main.shape.free_parameters
-
 
     @property
     def components(self):
@@ -167,7 +163,6 @@ class FittedPointSource(GenericFittedObject):
             flux_function = this_model
 
         return flux_function, conversion
-
 
     def _get_spectrum_type(self):
         """
@@ -320,8 +315,8 @@ class MLEPointSource(FittedPointSource, MLEFittedObject):
 
 
 class BayesianPointSource(FittedPointSource, BayesianFittedObject):
-
-    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None,fraction_of_samples=.1):
+    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None,
+                 fraction_of_samples=.1):
         """
         A Bayesian fitted point source
 

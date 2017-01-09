@@ -1,12 +1,11 @@
 import pytest
 from threeML import *
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.io.model_plot import InvalidUnitError
+from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
 from threeML.utils.binner import NotEnoughData
 
 
 def test_mle_spectral_plot():
-    # In[2]:
 
     triggerName = 'bn090217206'
     ra = 204.9
@@ -54,27 +53,27 @@ def test_mle_spectral_plot():
 
     fit_results, like_frame = jl.fit()
 
-    sp = SpectralPlotter(jl)
+    
 
     # Test different units
 
-    sp.plot_model(y_unit='1/(s cm2 keV)', num_ene=10)
+    plot_point_source_spectra(jl,flux_unit='1/(s cm2 keV)', num_ene=10)
 
-    sp.plot_model(y_unit='erg/(s cm2 keV)', num_ene=10)
+    plot_point_source_spectra(jl,flux_unit='erg/(s cm2 keV)', num_ene=10)
 
-    sp.plot_model(y_unit='erg2/(s cm2 keV)', num_ene=10)
+    plot_point_source_spectra(jl,flux_unit='erg2/(s cm2 keV)', num_ene=10)
 
-    sp.plot_model(x_unit='MeV', num_ene=10)
+    plot_point_source_spectra(jl,energy_unit='MeV', num_ene=10)
 
-    sp.plot_model(x_unit='Hz', num_ene=10)
+    plot_point_source_spectra(jl,energy_unit='Hz', num_ene=10)
 
     # test that we cannot set invalid units
 
     with pytest.raises(InvalidUnitError):
-        sp.plot_model(x_unit='m', num_ene=10)
+        plot_point_source_spectra(jl,energy_unit='m', num_ene=10)
 
     with pytest.raises(InvalidUnitError):
-        sp.plot_model(y_unit='m', num_ene=10)
+        plot_point_source_spectra(jl,flux_unit='m', num_ene=10)
 
 
 def test_bayes_spectral_plot():
@@ -133,27 +132,32 @@ def test_bayes_spectral_plot():
 
     samples = bayes.sample(n_walkers=50, burn_in=10, n_samples=10)
 
-    sp = SpectralPlotter(bayes)
 
     # Test different units
 
-    sp.plot_model(y_unit='1/(s cm2 keV)', num_ene=10, thin=5)
+    plot_point_source_spectra(bayes,flux_unit='1/(s cm2 keV)', num_ene=10)
 
-    sp.plot_model(y_unit='erg/(s cm2 keV)', num_ene=10, thin=5)
+    plot_point_source_spectra(bayes,flux_unit='erg/(s cm2 keV)', num_ene=10)
 
-    sp.plot_model(y_unit='erg2/(s cm2 keV)', num_ene=10, thin=5)
+    plot_point_source_spectra(bayes,flux_unit='erg2/(s cm2 keV)', num_ene=10)
 
-    sp.plot_model(x_unit='MeV', num_ene=10, thin=5)
+    plot_point_source_spectra(bayes,energy_unit='MeV', num_ene=10)
 
-    sp.plot_model(x_unit='Hz', num_ene=10, thin=5)
+    plot_point_source_spectra(bayes,energy_unit='Hz', num_ene=10)
 
     # test that we cannot set invalid units
 
     with pytest.raises(InvalidUnitError):
-        sp.plot_model(x_unit='m', num_ene=10, thin=5)
+        plot_point_source_spectra(bayes,energy_unit='m', num_ene=10)
 
     with pytest.raises(InvalidUnitError):
-        sp.plot_model(y_unit='m', num_ene=10, thin=5)
+        plot_point_source_spectra(bayes,energy_unit='m', num_ene=10)
+
+
+    # thin is from 0-1
+    with pytest.raises(AssertionError):
+        plot_point_source_spectra(bayes,num_ene=10, fraction_of_samples=10)
+
 
 
 def test_OGIP_plotting():

@@ -8,12 +8,6 @@ import scipy.stats as stats
 from threeML.utils.differentiation import get_jacobian
 
 
-class NotCompositeModelError(RuntimeError):
-    pass
-
-class InvalidUnitError(RuntimeError):
-    pass
-
 
 
 class GenericFittedObject(object):
