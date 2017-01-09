@@ -114,8 +114,7 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
     sf = SpectralFlux(jl)
     sf.component_flux()
 
-    sp = SpectralPlotter(jl)
-    sp.plot_components()
+    plot_point_source_spectra(jl)
 
     powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
     powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
