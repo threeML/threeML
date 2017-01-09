@@ -137,5 +137,5 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
     sf = SpectralFlux(bayes)
     sf.component_flux()
 
-    sp = SpectralPlotter(bayes)
-    sp.plot_components()
+    plot_point_source_spectra(bayes)
+
