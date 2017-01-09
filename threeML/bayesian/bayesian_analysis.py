@@ -126,6 +126,11 @@ class BayesianAnalysis(object):
         return self._analysis_type
 
     @property
+    def likelihood_model(self):
+
+        return self._likelihood_model
+
+    @property
     def log_like_values(self):
         """
         Returns the value of the log_likelihood found by the bayesian sampler while sampling from the posterior. If
@@ -983,7 +988,7 @@ class BayesianAnalysis(object):
 
         return nbins
 
-    def restore_median_fit(self):
+    def restore_best_fit(self):
         """
         Sets the model parameters to the mean of the marginal distributions
         """

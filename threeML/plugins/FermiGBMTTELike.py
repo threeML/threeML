@@ -1,18 +1,18 @@
 __author__ = 'grburgess'
 
+import re
+import warnings
+
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
-import warnings
-import re
 
-
+from threeML.io.plotting.plugin_plots import binned_light_curve_plot
+from threeML.io.rich_display import display
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
-from threeML.io.rich_display import display
-from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
-from threeML.io.plugin_plots import binned_light_curve_plot
 from threeML.plugins.OGIP.response import WeightedResponse
+from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
 
 __instrument_name = "Fermi GBM TTE (all detectors)"
 

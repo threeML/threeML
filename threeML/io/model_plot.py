@@ -32,6 +32,10 @@ class SpectralPlotter(object):
     """
 
     def __init__(self, analysis):
+
+
+        DeprecationWarning("The spectral plot object has be replaced by the plot_point_source_spectra. Please change your script")
+
         quantity_support()
 
         # looking at adding together multiple analysis This may be removed

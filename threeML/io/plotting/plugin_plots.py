@@ -2,13 +2,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MaxNLocator
 
-
-from threeML.utils.binner import Rebinner
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.io.step_plot import step_plot
 from threeML.config.config import threeML_config
-from threeML.utils.stats_tools import Significance
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.plotting.step_plot import step_plot
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.utils.binner import Rebinner
+from threeML.utils.stats_tools import Significance
 
 
 ####

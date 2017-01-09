@@ -1,26 +1,26 @@
 import collections
 import copy
 from contextlib import contextmanager
+
 import matplotlib.pyplot as plt
 import numpy as np
-
+from astromodels import clone_model
 from astromodels.core.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
-from astromodels import clone_model
 
-from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
-from threeML.io.step_plot import step_plot
+from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
+from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
+from threeML.io.plotting.step_plot import step_plot
 from threeML.plugin_prototype import PluginPrototype, set_external_property
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.plugins.OGIP.pha import PHA
+from threeML.plugins.OGIP.pha import PHAContainer, PHAWrite
 from threeML.plugins.OGIP.response import Response
 from threeML.utils.binner import Rebinner
-from threeML.plugins.OGIP.pha import PHAContainer, PHAWrite
-from threeML.config.config import threeML_config
 
 __instrument_name = "All OGIP-compliant instruments"
 

@@ -1,14 +1,12 @@
+import glob
+import imp
 import os
 import sys
-import glob
-import inspect
-import imp
 
-# Import the version
 from version import __version__
 
+
 # Import everything from astromodels
-from astromodels import *
 
 # This dynamically loads a module and return it in a variable
 
@@ -169,16 +167,15 @@ from .classicMLE.joint_likelihood_set import JointLikelihoodSet, JointLikelihood
 from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from .classicMLE.goodness_of_fit import GoodnessOfFit
 
-# Added by JM to import spectral plotting.
+
 from .io.model_plot import SpectralPlotter
 
-# Added by JM to import flux calcuations.
+from .io.plotting import *
+
 from .io.flux_calculator import SpectralFlux
 
-# Added by JM to import Model comparison
 from .utils.stats_tools import ModelComparison
 
-from .io.plugin_plots import display_ogip_model_counts
 
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
@@ -199,8 +196,6 @@ from threeML.plugins.Fermi_LAT.download_LLE_data import download_LLE_trigger_dat
 
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config
-
-import astropy.units as u
 
 import os
 

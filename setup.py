@@ -48,7 +48,9 @@ setup(
               'threeML/classicMLE',
               'threeML/catalogs',
               'threeML/io',
+              'threeML/io/plotting',
               'threeML/utils',
+              'threeML/utils/fitted_objects',
               'threeML/parallel',
               'threeML/config'],
 
