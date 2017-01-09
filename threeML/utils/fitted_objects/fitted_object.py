@@ -290,14 +290,15 @@ class BayesianFittedObject(GenericFittedObject):
         n_samples = self._analysis.raw_samples.shape[0]
 
 
-        # for now, I will hard
-        thin = 10 #int(n_samples) 10
+        thin_step = min(int(1/self._fraction_of_samples), n_samples)
+
+
 
 
         # temporary list to store the propagated samples
         chains = []
 
-        for sample_number in range(0, n_samples, thin):
+        for sample_number in range(0, n_samples, thin_step):
 
             # go through parameters
             for parameter in self._analysis.samples.keys():

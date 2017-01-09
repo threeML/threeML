@@ -321,7 +321,7 @@ class MLEPointSource(FittedPointSource, MLEFittedObject):
 
 class BayesianPointSource(FittedPointSource, BayesianFittedObject):
 
-    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None):
+    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None,fraction_of_samples=.1):
         """
         A Bayesian fitted point source
 
@@ -332,9 +332,14 @@ class BayesianPointSource(FittedPointSource, BayesianFittedObject):
         :param energy_unit: the energy unit
         :param flux_unit: the flux unit
         :param component: the name (string) of a component of the source model
+        :param fraction_of_samples: fraction of the samples to use when computing contours
         """
 
         assert analysis.analysis_type == "bayesian"
+
+        assert 0. < fraction_of_samples < 1., "thin must be between 0 and 1"
+
+        self._fraction_of_samples = fraction_of_samples
 
         super(BayesianPointSource, self).__init__(analysis,
                                                   source,

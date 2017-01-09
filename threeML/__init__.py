@@ -7,6 +7,7 @@ from version import __version__
 
 
 # Import everything from astromodels
+from astromodels import *
 
 # This dynamically loads a module and return it in a variable
 
@@ -196,6 +197,8 @@ from threeML.plugins.Fermi_LAT.download_LLE_data import download_LLE_trigger_dat
 
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config
+
+import astropy.units as u
 
 import os
 

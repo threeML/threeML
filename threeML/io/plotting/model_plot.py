@@ -48,7 +48,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
     else:
 
-        fit_cmap = plt.get_cmap(threeML_config['model plot']['fit cmap'])
+        fit_cmap = plt.get_cmap(threeML_config['model plot']['point source plot']['fit cmap'])
 
     if 'contour_cmap' in kwargs:
 
@@ -56,7 +56,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
     else:
 
-        contour_cmap = plt.get_cmap(threeML_config['model plot']['contour cmap'])
+        contour_cmap = plt.get_cmap(threeML_config['model plot']['point source plot']['contour cmap'])
 
     if 'sigma' in kwargs:
 
@@ -106,6 +106,16 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
         num_ene = 200
 
+    if 'fraction_of_samples' in kwargs:
+
+        fraction_of_samples = kwargs.pop('fraction_of_samples')
+
+    else:
+
+        fraction_of_samples = 0.1
+
+
+
     if 'plot_components' in kwargs:
 
         plot_components = kwargs.pop('plot_components')
@@ -144,8 +154,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
     else:
 
-        plot_style_kwargs = {'linestyle': '-',
-                             'linewidth': 2}
+        plot_style_kwargs = threeML_config['model plot']['point source plot']['plot style']
 
     if 'contour_style_kwargs' in kwargs:
 
@@ -153,7 +162,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
     else:
 
-        contour_style_kwargs = {'alpha': .8}
+        contour_style_kwargs = threeML_config['model plot']['point source plot']['contour style']
 
 
     if 'show_legend' in kwargs:
@@ -171,12 +180,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
     else:
 
-        legend_kwargs = {'loc': 'upper center',
-                         'bbox_to_anchor': (1.05, 1),
-                         'fancybox': True,
-                         'shadow': True,
-                         "ncol": 1}
-
+        legend_kwargs = threeML_config['model plot']['point source plot']['legend style']
     # first extract the sources to plots
 
     bayesian_analyses = {}
@@ -320,7 +324,8 @@ def plot_point_source_spectra(*analyses, **kwargs):
                                                                                 energy_range,
                                                                                 energy_unit,
                                                                                 flux_unit,
-                                                                                sigma)
+                                                                                sigma,
+                                                                                fraction_of_samples=fraction_of_samples)
 
             # if we want to plot components
 
@@ -345,7 +350,8 @@ def plot_point_source_spectra(*analyses, **kwargs):
                                                                             energy_unit,
                                                                             flux_unit,
                                                                             sigma,
-                                                                            component=component)
+                                                                            component=component,
+                                                                            fraction_of_samples=fraction_of_samples)
 
                             num_components_to_plot += 1
 
@@ -359,7 +365,8 @@ def plot_point_source_spectra(*analyses, **kwargs):
                                                                             energy_unit,
                                                                             flux_unit,
                                                                             sigma,
-                                                                            component=component)
+                                                                            component=component,
+                                                                            fraction_of_samples=fraction_of_samples)
 
                             num_components_to_plot += 1
 
@@ -578,6 +585,8 @@ def plot_point_source_spectra(*analyses, **kwargs):
         if show_legend:
 
             ax.legend(**legend_kwargs)
+
+        ax.set_xlim(ene_min,ene_max)
 
     else:
 

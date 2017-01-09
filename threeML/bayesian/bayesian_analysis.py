@@ -663,11 +663,15 @@ class BayesianAnalysis(object):
 
             raise RuntimeError("You have to run the sampler first, using the sample() method")
 
-    def corner_plot_cc(self, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1., parameters=None,
-                       renamed_parameters=None, figsize='PAGE', **kwargs):
+    def corner_plot_cc(self, parameters=None, renamed_parameters=None, figsize='PAGE', **cc_kwargs):
         """
-        Corner plots using chainconsumer which allows for sexier plotting of
+        Corner plots using chainconsumer which allows for nicer plotting of
         marginals
+
+        see: https://samreay.github.io/ChainConsumer/chain_api.html#chainconsumer.ChainConsumer.configure
+
+        for all options
+
 
 
 
@@ -686,6 +690,7 @@ class BayesianAnalysis(object):
         """
 
         if not has_chainconsumer:
+
             RuntimeError("You must have chainconsumer installed to use this function")
 
         if self.samples is not None:
@@ -723,7 +728,7 @@ class BayesianAnalysis(object):
 
 
             if '$' not in labels[i]:
-                labels[i] = val.replace('_',' ')
+                labels[i] = val.replace('_','')
 
 
 
@@ -732,32 +737,27 @@ class BayesianAnalysis(object):
 
         cc.add_chain(self.raw_samples, parameters=labels)
 
-        cc.configure_contour(cloud=cloud, shade=shade, shade_alpha=shade_alpha, sigmas=sigmas)
-        cc.configure_general(**kwargs)
-        fig = cc.plot(parameters=parameters, figsize=figsize)
+        if not cc_kwargs:
+
+            cc_kwargs = threeML_config['bayesian']['chain consumer style']
+
+
+        cc.configure(**cc_kwargs)
+        fig = cc.plot(parameters=parameters)
 
 
         return fig
 
-    def compare_posterior(self, other_fit, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1.,
-                          parameters=None, renamed_parameters=None, **kwargs):
+    def compare_posterior(self, other_fit, parameters=None, renamed_parameters=None, **cc_kwargs):
         """
 
         Create a corner plot from two different bayesian fits which allow for co-plotting of parameters marginals.
+        :param other_fit:
+        :param parameters:
+        :param renamed_parameters:
+        :param cc_kwargs:
+        :return:
 
-        Args:
-            other_fit: Another fitted BayesianAnalysis object to compare top the this analysis
-            sigmas: list of sigma levels to include. 0 must be included to avoid hole in contour
-            cloud: bool. Whether or not to plot MC points
-            shade: bool. Fill in the contours
-            shade_alpha: alpha level of contours
-            parameters: list of parameters to plot
-            renamed_parameters: a python dictionary of parameters to rename.
-             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
-             {'old label': 'new label'}
-            **kwargs: chainconsumer general keyword arguments
-
-        Returns:
 
         """
 
@@ -832,8 +832,11 @@ class BayesianAnalysis(object):
 
         cc.add_chain(other_fit.raw_samples, parameters=labels_other)
 
-        cc.configure_contour(cloud=cloud, shade=shade, shade_alpha=shade_alpha, sigmas=sigmas)
-        cc.configure_general(**kwargs)
+        if not cc_kwargs:
+            cc_kwargs = threeML_config['bayesian']['chain consumer style']
+
+
+        cc.configure(**cc_kwargs)
         fig = cc.plot(parameters=parameters, figsize='PAGE')
 
         return fig
