@@ -11,9 +11,8 @@ import astropy.io.fits as pyfits
 
 from threeML.io.file_utils import sanitize_filename
 from threeML.config.config import threeML_config
-from threeML.io.download_from_ftp import download_files_from_directory_ftp
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
-
+from threeML.io.download_from_http import ApacheDirectory
 
 class DivParser(HTMLParser.HTMLParser):
     """
@@ -336,14 +335,14 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
             urllib.urlcleanup()
 
             raise RuntimeError("Time out when connecting to the server. Check your internet connection, or that "
-                               "you can access http://fermi.gsfc.nasa.gov, then retry")
+                               "you can access %s, then retry" % threeML_config['LAT']['query form'])
 
         except:
 
             urllib.urlcleanup()
 
             raise RuntimeError("Problems with the download. Check your connection or that you can access "
-                               "http://fermi.gsfc.nasa.gov, then retry.")
+                               "%s, then retry." % threeML_config['LAT']['query form'])
 
         with open(fakeName) as f:
 
@@ -373,7 +372,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
             # Continue to next iteration
 
-    remotePath = "%s/lat/queries/" % threeML_config['LAT']['public FTP location']
+    remotePath = "%s/queries/" % threeML_config['LAT']['public HTTP location']
 
     if links != None:
 
@@ -381,9 +380,9 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         print("\nDownloading FT1 and FT2 files...")
 
-        downloaded_files = download_files_from_directory_ftp(remotePath,
-                                                             sanitize_filename(destination_directory),
-                                                             filenames=filenames)
+        downloader = ApacheDirectory(remotePath)
+
+        downloaded_files = [downloader.download(filename, destination_directory) for filename in filenames]
 
     else:
 
