@@ -7,7 +7,7 @@ from astropy.visualization import quantity_support
 
 from threeML.config.config import threeML_config
 from threeML.io.calculate_flux import _setup_analysis_dictionaries
-
+from threeML.io.plotting.cmap_cycle import cmap_intervals
 
 def plot_point_source_spectra(*analyses, **kwargs):
     """
@@ -45,7 +45,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
     else:
 
-        fit_cmap = plt.get_cmap(threeML_config['model plot']['point source plot']['fit cmap'])
+        fit_cmap = threeML_config['model plot']['point source plot']['fit cmap']
 
     if 'contour_cmap' in kwargs:
 
@@ -53,7 +53,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
     else:
 
-        contour_cmap = plt.get_cmap(threeML_config['model plot']['point source plot']['contour cmap'])
+        contour_cmap = threeML_config['model plot']['point source plot']['contour cmap']
 
     if 'sigma' in kwargs:
 
@@ -197,7 +197,8 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
     fig, ax = plt.subplots()
 
-    color = np.linspace(0., 1., num_sources_to_plot)
+    color_fit = cmap_intervals(num_sources_to_plot, fit_cmap)
+    color_contour = cmap_intervals(num_sources_to_plot,contour_cmap)
     color_itr = 0
 
     energy_range = energy_range * u.Unit(energy_unit)
@@ -244,7 +245,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
                         ax.loglog(energy_range[pos_mask],
                                   best_fit[pos_mask],
-                                  color=fit_cmap(color[color_itr]),
+                                  color=color_fit[color_itr],
                                   label=label,
                                   **plot_style_kwargs)
 
@@ -252,7 +253,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
                             ax.fill_between(energy_range[pos_mask],
                                             negative_error[pos_mask],
                                             positive_error[pos_mask],
-                                            facecolor=contour_cmap(color[color_itr]),
+                                            facecolor=color_contour[color_itr],
                                             **contour_style_kwargs
 
                                             )
@@ -281,7 +282,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
                     ax.loglog(energy_range[pos_mask],
                               best_fit[pos_mask],
-                              color=fit_cmap(color[color_itr]),
+                              color=color_fit[color_itr],
                               label=label,
                               **plot_style_kwargs)
 
@@ -289,7 +290,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
                         ax.fill_between(energy_range[pos_mask],
                                         negative_error[pos_mask],
                                         positive_error[pos_mask],
-                                        facecolor=contour_cmap(color[color_itr]),
+                                        facecolor=color_contour[color_itr],
                                         **contour_style_kwargs)
 
                     color_itr += 1
@@ -320,7 +321,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
                         ax.loglog(energy_range,
                                   best_fit,
-                                  color=fit_cmap(color[color_itr]),
+                                  color=color_fit[color_itr],
                                   label=label,
                                   **plot_style_kwargs)
 
@@ -328,7 +329,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
                             ax.fill_between(energy_range,
                                             negative_error,
                                             positive_error,
-                                            facecolor=contour_cmap(color[color_itr]),
+                                            facecolor=color_contour[color_itr],
                                             **contour_style_kwargs
 
                                             )
@@ -355,7 +356,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
                     ax.loglog(energy_range,
                               best_fit,
-                              color=fit_cmap(color[color_itr]),
+                              color=color_fit[color_itr],
                               label=label,
                               **plot_style_kwargs)
 
@@ -363,7 +364,7 @@ def plot_point_source_spectra(*analyses, **kwargs):
                         ax.fill_between(energy_range,
                                         negative_error,
                                         positive_error,
-                                        facecolor=contour_cmap(color[color_itr]),
+                                        facecolor=color_contour[color_itr],
                                         **contour_style_kwargs
 
                                         )
@@ -377,4 +378,92 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
     else:
 
-        pass
+
+        for key in mle_analyses.keys():
+
+            if key in sources_to_use:
+
+                # we won't assume to plot the total until the end
+
+                plot_total = False
+
+                if use_components:
+
+                    # if this source has no components or none that we wish to plot
+                    # then we will plot the total spectrum after this
+
+                    if (not mle_analyses[key]['components'].keys()) or ('total' in components_to_use):
+                        plot_total = True
+
+                    for component in mle_analyses[key]['components'].keys():
+
+                        # extract the information and plot it
+
+                        best_fit = mle_analyses[key]['components'][component].spectrum
+                        positive_error = best_fit + mle_analyses[key]['components'][component].error_region
+                        negative_error = best_fit - mle_analyses[key]['components'][component].error_region
+
+                        pos_mask = np.logical_and(best_fit > 0,
+                                                  mle_analyses[key]['components'][component].error_region > 0)
+
+                        label = "%s: %s" % (key, component)
+
+                        # this is where we keep track of duplicates
+
+                        if key in duplicate_keys:
+                            label = "%s: MLE" % label
+
+                        ax.loglog(energy_range[pos_mask],
+                                  best_fit[pos_mask],
+                                  color=color_fit[color_itr],
+                                  label=label,
+                                  **plot_style_kwargs)
+
+                        if show_contours:
+                            ax.fill_between(energy_range[pos_mask],
+                                            negative_error[pos_mask],
+                                            positive_error[pos_mask],
+                                            facecolor=color_contour[color_itr],
+                                            **contour_style_kwargs
+
+                                            )
+
+                        color_itr += 1
+
+                else:
+
+                    plot_total = True
+
+                if plot_total:
+
+                    # it ends up that we need to plot the total spectrum
+                    # which is just a repeat of the process
+
+                    best_fit = mle_analyses[key]['fitted point source'].spectrum
+                    positive_error = best_fit + mle_analyses[key]['fitted point source'].error_region
+                    negative_error = best_fit - mle_analyses[key]['fitted point source'].error_region
+
+                    pos_mask = np.logical_and(best_fit > 0, mle_analyses[key]['fitted point source'].error_region > 0)
+
+                    label = "%s" % key
+
+                    if key in duplicate_keys:
+                        label = "%s: MLE" % label
+
+                    ax.loglog(energy_range[pos_mask],
+                              best_fit[pos_mask],
+                              color=color_fit[color_itr],
+                              label=label,
+                              **plot_style_kwargs)
+
+                    if show_contours:
+                        ax.fill_between(energy_range[pos_mask],
+                                        negative_error[pos_mask],
+                                        positive_error[pos_mask],
+                                        facecolor=color_contour[color_itr],
+                                        **contour_style_kwargs)
+
+                    color_itr += 1
+
+
+

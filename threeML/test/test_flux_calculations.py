@@ -39,7 +39,7 @@ def test_mle_flux_calculations():
 
     # In[4]:
 
-    powerlaw = Powerlaw()
+    powerlaw = Powerlaw() + Blackbody()
 
     # In[5]:
 
@@ -55,16 +55,26 @@ def test_mle_flux_calculations():
 
     fit_results, like_frame = jl.fit()
 
-    flux = SpectralFlux(jl)
 
-    res = flux.model_flux(flux_unit='erg/(s cm2)', energy_unit='keV', ene_min=10, ene_max=40000)
+    res = calculate_point_source_flux(10,50,jl,flux_unit='1/(s cm2)', energy_unit='keV')
 
-    res = flux.model_flux(flux_unit='1/(s cm2)', energy_unit='keV', ene_min=10, ene_max=40000)
+    res = calculate_point_source_flux(10, 50, jl, flux_unit='erg/(s cm2)', energy_unit='keV')
 
-    res = flux.model_flux(flux_unit='erg2/(s cm2)', energy_unit='MeV', ene_min=10, ene_max=40000)
+    res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s cm2)', energy_unit='keV')
+
+    # tests if we can use wavelength and frequency
+
+    res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s cm2)', energy_unit='Hz')
+
+    res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s cm2)', energy_unit='nm')
+
 
     with pytest.raises(InvalidUnitError):
-        res = flux.model_flux(flux_unit='erg2/(cm2)', energy_unit='keV', ene_min=10, ene_max=40000)
+        res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s cm2)', energy_unit='keV')
+
+    res = calculate_point_source_flux(10, 50, jl, use_components=True, components_to_use=['BlackBody'])
+
+    res = calculate_point_source_flux(10, 50, jl, use_components=True, components_to_use=['BlackBody', 'total'])
 
 
 def test_bayes_flux_calculations():
@@ -100,7 +110,7 @@ def test_bayes_flux_calculations():
 
     # In[4]:
 
-    powerlaw = Powerlaw()
+    powerlaw = Powerlaw() + Blackbody()
 
     # In[5]:
 
@@ -110,22 +120,33 @@ def test_bayes_flux_calculations():
 
     model = Model(GRB)
 
-    powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-    powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+    powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
 
-    bayes = BayesianAnalysis(model, data_list)
+    powerlaw.K_2.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    powerlaw.kT_2 =  Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+
+    jl = BayesianAnalysis(model, data_list)
 
     # In[12]:
 
-    samples = bayes.sample(n_walkers=50, burn_in=10, n_samples=10)
+    samples = jl.sample(n_walkers=50, burn_in=10, n_samples=10)
 
-    flux = SpectralFlux(bayes)
+    res = calculate_point_source_flux(10, 50, jl, flux_unit='1/(s cm2)', energy_unit='keV')
 
-    res = flux.model_flux(flux_unit='erg/(s cm2)', energy_unit='keV', ene_min=10, ene_max=40000)
+    res = calculate_point_source_flux(10, 50, jl, flux_unit='erg/(s cm2)', energy_unit='keV')
 
-    res = flux.model_flux(flux_unit='1/(s cm2)', energy_unit='keV', ene_min=10, ene_max=40000)
+    res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s cm2)', energy_unit='keV')
 
-    res = flux.model_flux(flux_unit='erg2/(s cm2)', energy_unit='keV', ene_min=10, ene_max=40000)
+    # tests if we can use wavelength and frequency
+
+    res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s cm2)', energy_unit='Hz')
+
+    res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s cm2)', energy_unit='nm')
 
     with pytest.raises(InvalidUnitError):
-        res = flux.model_flux(flux_unit='erg2/(cm2)', energy_unit='keV', ene_min=10, ene_max=40000)
+        res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s cm2)', energy_unit='keV')
+
+    res = calculate_point_source_flux(10, 50, jl, use_components=True, components_to_use=['BlackBody'])
+
+    res = calculate_point_source_flux(10, 50, jl, use_components=True, components_to_use=['BlackBody','total'])

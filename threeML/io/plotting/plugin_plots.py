@@ -8,6 +8,7 @@ from threeML.io.plotting.step_plot import step_plot
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.binner import Rebinner
 from threeML.utils.stats_tools import Significance
+from threeML.io.plotting.cmap_cycle import cmap_intervals
 
 
 ####
@@ -153,16 +154,16 @@ def display_ogip_model_counts(analysis, data=(), **kwargs):
     # Default is to show the model with steps
     step = True
 
-    data_cmap = plt.get_cmap(threeML_config['ogip']['data plot cmap'])  # plt.cm.rainbow
-    model_cmap = plt.get_cmap(threeML_config['ogip']['model plot cmap'])  # plt.cm.nipy_spectral_r
+    data_cmap = threeML_config['ogip']['data plot cmap'] # plt.cm.rainbow
+    model_cmap =threeML_config['ogip']['model plot cmap']  # plt.cm.nipy_spectral_r
 
     # Legend is on by default
     show_legend = True
 
     # Default colors
 
-    data_colors = map(lambda x: data_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
-    model_colors = map(lambda x: model_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
+    data_colors = cmap_intervals(len(data_keys),  data_cmap)
+    model_colors = cmap_intervals(len(data_keys), model_cmap)
 
     # Now override defaults according to the optional keywords, if present
 
@@ -203,12 +204,12 @@ def display_ogip_model_counts(analysis, data=(), **kwargs):
     if 'data_cmap' in kwargs:
 
         data_cmap = plt.get_cmap(kwargs.pop('data_cmap'))
-        data_colors = map(lambda x: data_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
+        data_colors = cmap_intervals(len(data_keys),  data_cmap)
 
     if 'model_cmap' in kwargs:
 
         model_cmap = kwargs.pop('model_cmap')
-        model_colors = map(lambda x: model_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
+        model_colors =  cmap_intervals(len(data_keys),  model_cmap)
 
     if 'data_colors' in kwargs:
 
