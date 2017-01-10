@@ -145,11 +145,21 @@ class ApacheDirectory(object):
         file_size = int(this_request.headers['Content-Length'])
 
         # Now check if we really need to download this file
+
+        if compress:
+
+            # Add a .gz at the end of the file path
+
+            local_path += '.gz'
+
         if file_existing_and_readable(local_path):
 
             local_size = os.path.getsize(local_path)
 
-            if local_size == file_size:
+            if local_size == file_size or compress:
+
+                # if the compressed file already exists
+                # it will have a smaller size
 
                 # No need to download it again
                 return local_path
@@ -164,8 +174,8 @@ class ApacheDirectory(object):
 
             opener = gzip.open
 
-            # Add a .gz at the end of the file path
-            local_path += '.gz'
+
+
 
         else:
 
