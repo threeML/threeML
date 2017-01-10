@@ -126,6 +126,7 @@ class EventListLike(OGIPLike):
         self._active_interval = intervals
 
         if not self._startup:
+
             self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
 
             OGIPLike.__init__(self, self.name,

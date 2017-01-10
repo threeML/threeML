@@ -46,25 +46,13 @@ class PHA(object):
 
         if isinstance(phafile, str):
 
-            if '.root' not in phafile:
-
-                self._init_from_FITS(phafile, spectrum_number, file_type)
-
-            else:
-
-                self._init_from_ROOT()
+            self._init_from_FITS(phafile, spectrum_number, file_type)
 
         else:
 
             # Assume this is a PHAContainer or some other object with the same interface
 
             self._init_from_pha_container(phafile, file_type)
-
-    def _init_from_ROOT(self):
-
-        # This will be needed for the VERITAS plugin
-
-        raise NotImplementedError("Not yet implemented")
 
     def _init_from_pha_container(self, phafile, file_type):
 
@@ -201,6 +189,12 @@ class PHA(object):
                 if keyname in header:
                     self._gathered_keywords[internal_name] = header.get(keyname)
 
+                    # Fix "NONE" in None
+                    if self._gathered_keywords[internal_name] == "NONE" or \
+                                    self._gathered_keywords[internal_name] == 'none':
+
+                        self._gathered_keywords[internal_name] = None
+
                     key_has_been_collected = True
 
                 # Note that we check again because the content of the column can override the content of the header
@@ -213,6 +207,11 @@ class PHA(object):
                         # This will set the exposure, among other things
 
                         self._gathered_keywords[internal_name] = data[keyname][self._spectrum_number - 1]
+
+                        # Fix "NONE" in None
+                        if self._gathered_keywords[internal_name] == "NONE" or \
+                                        self._gathered_keywords[internal_name] == 'none':
+                            self._gathered_keywords[internal_name] = None
 
                         key_has_been_collected = True
 
@@ -235,7 +234,7 @@ class PHA(object):
 
                         warnings.warn("ANCRFILE is not set. This is not a compliant OGIP file. Assuming no ARF.")
 
-                        self._gathered_keywords['ancrfile'] = "NONE"
+                        self._gathered_keywords['ancrfile'] = None
 
                     else:
 
@@ -653,11 +652,11 @@ class PHAWrite(object):
 
         for ogip in self._ogiplike:
 
-            self._append_opig(ogip)
+            self._append_ogip(ogip)
 
         self._write_phaII(overwrite)
 
-    def _append_opig(self, ogip):
+    def _append_ogip(self, ogip):
         """
         Add an ogip instance's data into the data list
 
@@ -707,7 +706,7 @@ class PHAWrite(object):
 
                 # There is no ancillary file, so we need to flag it.
 
-                self._ancrfile[key].append('none')
+                self._ancrfile[key].append('NONE')
 
                 if 4 > self._max_length_anc_file_name:
                     self._max_length_anc_file_name = 4
