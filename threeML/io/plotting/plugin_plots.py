@@ -250,7 +250,7 @@ def display_ogip_model_counts(analysis, data=(), **kwargs):
 
         data = analysis.data_list[key]
 
-        energy_min, energy_max = data._rsp.ebounds.T
+        energy_min, energy_max = data._rsp.ebounds[:-1], data._rsp.ebounds[1:]
 
         # figure out the type of data
 

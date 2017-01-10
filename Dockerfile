@@ -1,3 +1,5 @@
+# This is for the mybinder.org container
+
 FROM andrewosh/binder-base
 
 MAINTAINER Giacomo Vianello <giacomov@stanford.edu>
@@ -13,3 +15,5 @@ MAINTAINER Giacomo Vianello <giacomov@stanford.edu>
 USER main
 
 RUN pip install git+https://github.com/giacomov/3ML.git && pip install git+https://github.com/giacomov/astromodels.git
+
+WORKDIR /home/main/notebooks/examples/

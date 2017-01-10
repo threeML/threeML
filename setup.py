@@ -49,6 +49,7 @@ setup(
               'threeML/catalogs',
               'threeML/io',
               'threeML/io/plotting',
+              'threeML/io/cern_root_utils',
               'threeML/utils',
               'threeML/utils/fitted_objects',
               'threeML/parallel',
@@ -98,7 +99,8 @@ setup(
         'corner>=1.0.2',
         'pandas',
         'sympy',
-        'html2text'
+        'html2text',
+        'requests'
     ])
 
 # Check for optional dependencies

@@ -35,7 +35,18 @@ class CannotGenerateHTMLBar(RuntimeError):
 
 
 @contextmanager
-def progress_bar(iterations, width=None):
+def progress_bar(iterations, width=None, scale=1, units='', title=None):
+    """
+    Use as a context manager to display a progress bar which adapts itself to the environment. It will be a widget
+    in jupyter or a text progress bar in a terminal (but you don't have to worry about it)
+
+    :param iterations: number of iterations for completion of the task
+    :param width: width of the progress bar (default: None, which means self-decided)
+    :param scale: display the progress scaled for this number (useful to display downloads for example) (default: 1)
+    :param units: a unit to display after the progress (default: '')
+    :param title: a title for the task, which will be displayed before the progress bar (default: None, i.e., no title)
+    :return: a ProgressBarAscii or a ProgressBarHTML instance, depending on the environment (jupyter or terminal)
+    """
 
     # Instance progress bar
 
@@ -53,7 +64,7 @@ def progress_bar(iterations, width=None):
 
                 # Default is the HTML bar, which only works within a notebook
 
-            this_progress_bar = ProgressBarHTML(iterations, bar_width)
+            this_progress_bar = ProgressBarHTML(iterations, bar_width, scale=scale, units=units, title=title)
 
         except:
 
@@ -67,7 +78,7 @@ def progress_bar(iterations, width=None):
 
             # Running in a terminal. Fall back to the ascii bar
 
-            this_progress_bar = ProgressBarAscii(iterations, bar_width)
+            this_progress_bar = ProgressBarAscii(iterations, bar_width, scale=scale, units=units, title=title)
 
     else:
 
@@ -81,9 +92,9 @@ def progress_bar(iterations, width=None):
 
         # No widgets available, fall back to ascii bar
 
-        this_progress_bar = ProgressBarAscii(iterations, bar_width)
+        this_progress_bar = ProgressBarAscii(iterations, bar_width, scale=scale, units=units, title=title)
 
-    yield this_progress_bar
+    yield this_progress_bar  # type: ProgressBarBase
 
     this_progress_bar.finish()
 
@@ -136,10 +147,9 @@ def multiple_progress_bars(iterations, n, width=None, force_html=False):
         this_progress_bar.finish()
 
 
-
 class ProgressBarBase(object):
 
-    def __init__(self, iterations, width):
+    def __init__(self, iterations, width, scale=1, units='', title=None):
 
         # Store the number of iterations
 
@@ -158,6 +168,15 @@ class ProgressBarBase(object):
 
         # last printed percent
         self._last_printed_percent = 0
+
+        # Store the scale
+        self._scale = float(scale)
+
+        # store the units
+        self._units = units
+
+        # Store the title
+        self._title = title
 
         # Setup
 
@@ -184,7 +203,7 @@ class ProgressBarBase(object):
 
         else:
 
-            self._last_iteration += 1
+            self._last_iteration = iteration
 
     def _animate(self, iteration):
 
@@ -220,18 +239,28 @@ class ProgressBarBase(object):
 
         elapsed_iter = min(current_iteration, self._iterations)
 
-        label_text = '%d / %s in %.1f s (%s remaining)' % (elapsed_iter, self._iterations,
-                                                           delta_t, self._check_remaining_time(current_iteration,
-                                                                                               delta_t))
+        if self._scale != 1:
+
+            label_text = '%.2f / %.2f %s in %.1f s (%s remaining)' % (elapsed_iter / self._scale,
+                                                                      self._iterations / self._scale, self._units,
+                                                                      delta_t,
+                                                                      self._check_remaining_time(current_iteration,
+                                                                                                 delta_t))
+
+        else:
+
+            label_text = '%d / %s %s in %.1f s (%s remaining)' % (elapsed_iter, self._iterations, self._units, delta_t,
+                                                                  self._check_remaining_time(current_iteration,
+                                                                                             delta_t))
 
         return label_text
 
 
 class ProgressBarHTML(ProgressBarBase):
 
-    def __init__(self, iterations, width):
+    def __init__(self, iterations, width, scale=1, units='', title=None):
 
-        super(ProgressBarHTML, self).__init__(iterations, width)
+        super(ProgressBarHTML, self).__init__(iterations, width, scale, units=units, title=title)
 
     def _setup(self):
 
@@ -246,8 +275,14 @@ class ProgressBarHTML(ProgressBarBase):
         # Setup also an HTML label (which will contain the progress, the elapsed time and the foreseen
         # completion time)
 
+        self._title_cell = HTML()
+
+        if self._title is not None:
+
+            self._title_cell.value = "%s : " % self._title
+
         self._label = HTML()
-        self._vbox = VBox(children=[self._label, self._bar])
+        self._vbox = VBox(children=[self._title_cell, self._label, self._bar])
 
         # Display everything
 
@@ -268,13 +303,16 @@ class ProgressBarHTML(ProgressBarBase):
 
 class ProgressBarAscii(ProgressBarBase):
 
-    def __init__(self, iterations, width):
+    def __init__(self, iterations, width, scale=1, units='', title=None):
 
-        super(ProgressBarAscii, self).__init__(iterations, width)
+        super(ProgressBarAscii, self).__init__(iterations, width, scale, units, title=title)
 
     def _setup(self):
 
         self._fill_char = '*'
+
+        # Display the title
+        print("%s :\n" % self._title)
 
         # Display an empty bar
         self._animate(0)

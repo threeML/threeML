@@ -7,7 +7,7 @@ __author__ = 'drjfunk'
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.OGIP.pha import PHA
 from threeML.classicMLE.joint_likelihood import JointLikelihood
-from threeML.plugins.OGIP.response import Response
+from threeML.plugins.OGIP.response import OGIPResponse
 from threeML.data_list import DataList
 from threeML.classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from astromodels.core.model import Model
@@ -103,7 +103,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
             assert isinstance(pha_info[key], PHA)
 
         assert pha_info['pha'].background_file == 'test_bak.pha{1}'
-        assert pha_info['pha'].ancillary_file == 'NONE'
+        assert pha_info['pha'].ancillary_file is None
         assert pha_info['pha'].instrument == 'GBM_NAI_03'
         assert pha_info['pha'].mission == 'GLAST'
         assert pha_info['pha'].is_poisson() == True
@@ -157,7 +157,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
 
         assert pha_info['bak'].scale_factor == 1.0
 
-        assert isinstance(pha_info['rsp'], Response)
+        assert isinstance(pha_info['rsp'], OGIPResponse)
 
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
@@ -172,7 +172,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
             assert isinstance(pha_info[key], PHA)
 
         assert pha_info['pha'].background_file == 'test_bak.pha{1}'
-        assert pha_info['pha'].ancillary_file == 'NONE'
+        assert pha_info['pha'].ancillary_file is None
         assert pha_info['pha'].instrument == 'GBM_NAI_03'
         assert pha_info['pha'].mission == 'GLAST'
         assert pha_info['pha'].is_poisson() == True
@@ -223,7 +223,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
 
         assert pha_info['bak'].scale_factor == 1.0
 
-        assert isinstance(pha_info['rsp'], Response)
+        assert isinstance(pha_info['rsp'], OGIPResponse)
 
 
 def test_ogip_energy_selection():
@@ -252,7 +252,7 @@ def test_ogip_energy_selection():
         assert sum(ogip._mask) == 126
 
         # Test mixed ene/chan setting
-        ogip.set_active_measurements(exclude=['0-c1'])
+        ogip.set_active_measurements(exclude=['0-c1'], verbose=True)
 
         assert sum(ogip._mask) == ogip.n_data_points
         assert sum(ogip._mask) == 126
@@ -435,7 +435,7 @@ def test_pha_write():
             assert isinstance(pha_info[key], PHA)
 
         assert pha_info['pha'].background_file == 'test_bak.pha{1}'
-        assert pha_info['pha'].ancillary_file == 'NONE'
+        assert pha_info['pha'].ancillary_file is None
         assert pha_info['pha'].instrument == 'GBM_NAI_03'
         assert pha_info['pha'].mission == 'GLAST'
         assert pha_info['pha'].is_poisson() == True

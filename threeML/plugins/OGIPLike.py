@@ -1,7 +1,6 @@
 import collections
 import copy
 from contextlib import contextmanager
-
 import matplotlib.pyplot as plt
 import numpy as np
 from astromodels import clone_model
@@ -18,9 +17,9 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ide
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.plugins.OGIP.pha import PHA
-from threeML.plugins.OGIP.pha import PHAContainer, PHAWrite
-from threeML.plugins.OGIP.response import Response
+from threeML.plugins.OGIP.response import OGIPResponse
 from threeML.utils.binner import Rebinner
+from threeML.plugins.OGIP.pha import PHAContainer, PHAWrite
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -29,6 +28,7 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
 class OGIPLike(PluginPrototype):
+
     def __init__(self, name, pha_file, bak_file=None, rsp_file=None, arf_file=None, spectrum_number=None, verbose=True):
 
         # Just a toggle for verbosity
@@ -76,11 +76,11 @@ class OGIPLike(PluginPrototype):
 
         if isinstance(rsp_file, str):
 
-            self._rsp = Response(rsp_file, arf_file=arf_file)
+            self._rsp = OGIPResponse(rsp_file, arf_file=arf_file)
 
         else:
 
-            # Assume a fully formed Response class
+            # Assume a fully formed OGIPResponse class
             self._rsp = rsp_file
 
         # Make sure that data and background have the same number of channels
@@ -358,11 +358,6 @@ class OGIPLike(PluginPrototype):
             assert len(args) == 1, "If you specify 'reset', you cannot specify more than one energy range."
 
             self._mask = self._quality_to_mask()
-
-
-
-
-
 
         else:
 
@@ -979,7 +974,7 @@ class OGIPLike(PluginPrototype):
 
         differential_flux, integral = self._get_diff_flux_and_integral()
 
-        self._rsp.set_function(differential_flux, integral)
+        self._rsp.set_function(integral)
 
     def _get_diff_flux_and_integral(self):
 
@@ -1070,9 +1065,9 @@ class OGIPLike(PluginPrototype):
         :return: (energy_min, energy_max)
         """
 
-        energies = self._rsp.ebounds.T
+        energies = self._rsp.ebounds
 
-        energy_min, energy_max = energies
+        energy_min, energy_max = energies[:-1], energies[1:]
 
         if self._rebinner is not None:
             # Get the rebinned chans. NOTE: these are already masked
@@ -1236,7 +1231,7 @@ class OGIPLike(PluginPrototype):
         if non_used_mask.sum() > 0:
 
             # Get un-rebinned versions of all arrays, so we can directly apply the mask
-            energy_min_unrebinned, energy_max_unrebinned = self._rsp.ebounds.T
+            energy_min_unrebinned, energy_max_unrebinned = self._rsp.ebounds[:-1], self._rsp.ebounds[1:]
             energy_width_unrebinned = energy_max_unrebinned - energy_min_unrebinned
             observed_rate_unrebinned = self._observed_counts / self.exposure
             observed_rate_unrebinned_err = np.sqrt(self._observed_counts) / self.exposure
@@ -1291,7 +1286,7 @@ class OGIPLike(PluginPrototype):
 
         ax.set_xlabel("Energy (keV)")
         ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
-        ax.set_xlim(left=self._rsp.ebounds[0, 0], right=self._rsp.ebounds[-1, 1])
+        ax.set_xlim(left=self._rsp.ebounds[0], right=self._rsp.ebounds[-1])
         ax.legend()
 
     def write_pha(self, file_name, overwrite=False):

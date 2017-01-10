@@ -1,21 +1,21 @@
-from threeML.io.file_utils import sanitize_filename, file_existing_and_readable
+from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make
 from threeML.config.config import threeML_config
-from threeML.io.download_from_ftp import download_files_from_directory_ftp
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
+from threeML.io.download_from_http import ApacheDirectory, RemoteDirectoryNotFound
+from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
+from threeML.plugins.Fermi_GBM.download_GBM_data import _validate_fermi_trigger_name
 
-import ftplib
 import re
 import os
 import numpy as np
 from collections import OrderedDict
 
 
-
 _trigger_name_match=re.compile("^(bn|grb?)? ?(\d{9})$")
 _file_type_match = re.compile('gll_(\D{2,5})_bn\d{9}_v\d{2}\.\D{3}')
-_valid_file_type = ['cspec','pt','lle']
 
-def download_LLE_trigger_data(trigger, destination_directory='.',verbose=True):
+
+def download_LLE_trigger_data(trigger_name, destination_directory='.'):
     """
     Download the latest Fermi LAT LLE and RSP files from the HEASARC server. Will get the
     latest file versions. If the files already exist in your destination
@@ -24,183 +24,74 @@ def download_LLE_trigger_data(trigger, destination_directory='.',verbose=True):
 
     example usage: download_LLE_trigger_data('080916009', destination_directory='.')
 
-    :param trigger: trigger number (str) with no leading letter e.g. '080916009'
+    :param trigger_name: trigger number (str) with no leading letter e.g. '080916009'
     :param destination_directory: download directory
     :return: a dictionary with information about the download
     """
 
-    _valid_trigger_args = ['080916009', 'bn080916009', 'GRB080916009']
-
-    assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                             ', or '.join(
-                                                                                 _valid_trigger_args))
-
-    assert type(trigger) == str, "triggers must be strings"
-
-    trigger = trigger.lower()
-
-    search = _trigger_name_match.match(trigger)
-
-    assert search is not None, assert_string
-
-    assert search.group(2) is not None, assert_string
-
-    trigger = search.group(2)
+    sanitized_trigger_name_ = _validate_fermi_trigger_name(trigger_name)
 
     # create output directory if it does not exists
     destination_directory = sanitize_filename(destination_directory, abspath=True)
+    if_directory_not_existing_then_make(destination_directory)
 
-    if not os.path.exists(destination_directory):
+    # Figure out the directory on the server
+    url = threeML_config['LAT']['public HTTP location']
 
-        os.makedirs(destination_directory)
+    year = '20%s' % sanitized_trigger_name_[:2]
+    directory = 'triggers/%s/bn%s/current' % (year, sanitized_trigger_name_)
 
-    # open and FTP to look at the data
-    ftp = ftplib.FTP('legacy.gsfc.nasa.gov', 'anonymous', '')
-
-    year = '20%s' % trigger[:2]
-    directory = 'lat/triggers/%s/bn%s/current' % (year, trigger)
-
-    directory_ = 'fermi/data/%s' % directory
+    heasarc_web_page_url = '%s/%s' % (url, directory)
 
     try:
-        ftp.cwd(directory_)
-    except ftplib.error_perm:
 
-        ftp.quit()
-        raise TriggerDoesNotExist("Trigger %s does not exist at the FSSC." % trigger)
+        downloader = ApacheDirectory(heasarc_web_page_url)
 
-    file_list = ftp.nlst()
+    except RemoteDirectoryNotFound:
 
-    # kill this quick or urllib will get confused
-    ftp.quit()
+        raise TriggerDoesNotExist("Trigger %s does not exist at %s" % (sanitized_trigger_name_, heasarc_web_page_url))
 
-    del ftp
+    # Download only the lle, pt, cspec and rsp file (i.e., do not get all the png, pdf and so on)
+    pattern = 'gll_(lle|pt|cspec)_bn.+\.(fit|rsp|pha)'
 
-    # collect the rsp and tte files from the ftp list
+    destination_directory_sanitized = sanitize_filename(destination_directory)
 
-    rsp_to_get = []
+    downloaded_files = downloader.download_all_files(destination_directory_sanitized, progress=True, pattern=pattern)
 
-    for filename in file_list:
-        if filename.find("gll_cspec") >= 0 and filename.find(".rsp") >= 0:
-            rsp_to_get.append(filename)
+    # Put the files in a structured dictionary
 
-    lle_to_get = []
+    download_info = DictWithPrettyPrint()
 
-    for filename in file_list:
-        if filename.find("gll_lle") >= 0 and filename.find('.fit') >= 0:
-            lle_to_get.append(filename)
+    for download in downloaded_files:
 
-    ft2_to_get = []
+        file_type = _file_type_match.match(os.path.basename(download)).group(1)
 
-    for filename in file_list:
-        if filename.find("gll_pt") >= 0 and filename.find('.fit') >= 0:
-            ft2_to_get.append(filename)
+        if file_type == 'cspec':
 
-    # lets make sure we get the latest versions of the files
-    # prefer RSP2s
+            # a cspec file can be 2 things: a CSPEC spectral set (with .pha) extension,
+            # or a response matrix (with a .rsp extension)
 
-    rsp_to_get_latest = np.array(_get_latest_version(rsp_to_get))
+            ext = os.path.splitext(os.path.basename(download))[1]
 
-    lle_to_get_latest = np.array(_get_latest_version(lle_to_get))
+            if ext == '.rsp':
 
-    ft2_to_get_latest = np.array(_get_latest_version(ft2_to_get))
+                file_type = 'rsp'
 
+            elif ext == '.pha':
 
+                file_type = 'cspec'
 
-    files_to_download =[]
-    files_existing = []
+            else:
 
+                raise RuntimeError("Should never get here")
 
-    for i, rsp in enumerate(rsp_to_get_latest):
+        # The pt file is really an ft2 file
 
-        if file_existing_and_readable(os.path.join(destination_directory, rsp)):
+        if file_type == 'pt':
 
-            files_existing.append(rsp)
+            file_type = 'ft2'
 
-            print('Skipping: %s exists in %s' % (rsp, destination_directory))
-
-        else:
-
-            files_to_download.append(rsp)
-
-    for i, lle in enumerate(lle_to_get_latest):
-
-        if file_existing_and_readable(os.path.join(destination_directory, lle)):
-
-            files_existing.append(lle)
-
-            print('Skipping: %s exists in %s' % (lle, destination_directory))
-
-        else:
-
-            files_to_download.append(lle)
-
-    for i, ft2 in enumerate(ft2_to_get_latest):
-
-        if file_existing_and_readable(os.path.join(destination_directory, ft2)):
-
-            files_existing.append(ft2)
-
-            print('Skipping: %s exists in %s' % (ft2, destination_directory))
-
-        else:
-
-            files_to_download.append(ft2)
-
-    # now download the files
-
-    remote_path = "%s/%s/" % (threeML_config['LAT']['public FTP location'], directory)
-
-    download_info = {}
-
-    file_lookup = {'lle':'lle','pt':'ft2','cspec':'rsp'}
-
-    if len(files_to_download) > 0:
-
-        if verbose:
-            print("\nDownloading LLE, RSP and FT2 files...")
-
-        downloaded_files = download_files_from_directory_ftp(remote_path,
-                                                             sanitize_filename(destination_directory),
-                                                             filenames=files_to_download)
-
-        # rsp_files = downloaded_files[:len(rsp_to_get_latest[rsp_filter])]
-        # lle_files = downloaded_files[len(rsp_to_get_latest[rsp_filter]):len(rsp_to_get_latest[rsp_filter]) + len(
-        #         ft2_to_get_latest[ft2_filter])]
-        # ft2_files = downloaded_files[len(rsp_to_get_latest[rsp_filter]) + len(ft2_to_get_latest[ft2_filter]):]
-
-
-
-
-        for download in downloaded_files:
-
-            file_type = _file_type_match.match(download.split("/")[-1]).group(1)
-
-            assert file_type in _valid_file_type, "Something went wrong %s is not an LLE, RSP, or FT2 file" % download.split("/")[-1] #pragma: no cover
-
-            download_info[file_lookup[file_type]] = download
-
-
-
-
-
-
-
-
-
-    for downloaded in files_existing:
-
-        file_type = _file_type_match.match(downloaded).group(1)
-
-        assert file_type in _valid_file_type, "Something went wrong %s is not an LLE, RSP, or FT2 file" % download # pragma: no cover
-
-        download_info[file_lookup[file_type]]= os.path.join(destination_directory, downloaded)
-
-
-
-
-
-
+        download_info[file_type] = download
 
     return download_info
 
@@ -262,6 +153,7 @@ def _get_latest_version(filenames):
         final_file_names.append(latest_version)
 
     return final_file_names
+
 
 def cleanup_downloaded_LLE_data(detector_information_dict):
     """
