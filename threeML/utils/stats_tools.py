@@ -65,6 +65,48 @@ def dic(bayesian_trace):
     return 2 * mean_deviance - deviance_at_mean
 
 
+
+
+def _calc_min_interval(x, alpha):
+    """
+    Internal method to determine the minimum interval of a given width
+    Assumes that x is sorted numpy array.
+    :param a: a numpy array containing samples
+    :param alpha: probability of type I error
+
+    :returns: list containing min and max HDI
+
+    """
+
+    n = len(x)
+    cred_mass = 1.0 - alpha
+
+    interval_idx_inc = int(np.floor(cred_mass * n))
+    n_intervals = n - interval_idx_inc
+    interval_width = x[interval_idx_inc:] - x[:n_intervals]
+
+    if len(interval_width) == 0:
+        raise ValueError('Too few elements for interval calculation')
+
+    min_idx = np.argmin(interval_width)
+    hdi_min = x[min_idx]
+    hdi_max = x[min_idx + interval_idx_inc]
+    return hdi_min, hdi_max
+
+def highest_density_posterior( x, alpha=0.05):
+    """Calculate highest posterior density (HPD) of array for given alpha.
+    The HPD is the minimum width Bayesian credible interval (BCI).
+
+    :param x: array containing MCMC samples
+    :param alpha : Desired probability of type I error (defaults to 0.05)
+    """
+
+    sx = np.sort(x)
+    return np.array(_calc_min_interval(sx, alpha))
+
+
+
+
 class ModelComparison(object):
     def __init__(self, *analyses):
         self._analysis_container = analyses

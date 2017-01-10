@@ -1,15 +1,12 @@
 __author__ = 'grburgess'
 
-import re
-import warnings
-
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 import warnings
 import re
 
-from threeML.io.plugin_plots import binned_light_curve_plot
+from threeML.io.plotting.plugin_plots import binned_light_curve_plot
 from threeML.io.rich_display import display
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithDeadTime

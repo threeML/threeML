@@ -173,7 +173,7 @@ from .io.model_plot import SpectralPlotter
 
 from .io.plotting import *
 
-from .io.flux_calculator import SpectralFlux
+from .io.calculate_flux import calculate_point_source_flux
 
 from .utils.stats_tools import ModelComparison
 

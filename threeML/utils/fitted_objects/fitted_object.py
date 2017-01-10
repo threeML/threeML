@@ -6,12 +6,13 @@ import numpy as np
 import scipy.stats as stats
 
 from threeML.utils.differentiation import get_jacobian
+from threeML.utils.stats_tools import highest_density_posterior
 
 
 
 
 class GenericFittedObject(object):
-    def __init__(self, analysis, source, new_function, sigma ,*independent_variable_range):
+    def __init__(self, analysis, source, new_function, sigma , *independent_variable_range):
         """
         A generic 3ML fitted object
 
@@ -271,10 +272,14 @@ class BayesianFittedObject(GenericFittedObject):
 
         total = self._best_fit_values + other._best_fit_values
 
-        error = self._error_region + other._error_region
+        # recompute the sum of the chains
+
+        tmp_error = self.raw_chains + other.raw_chains
+
+        error = np.array([highest_density_posterior(mc, alpha=self._alpha) for mc in tmp_error])
 
 
-        return total, error
+        return total, error.reshape(self._out_shape +(2,))
 
     def _compute_error_region(self):
 
@@ -285,9 +290,6 @@ class BayesianFittedObject(GenericFittedObject):
 
 
         thin_step = min(int(1/self._fraction_of_samples), n_samples)
-
-
-
 
         # temporary list to store the propagated samples
         chains = []
@@ -320,7 +322,9 @@ class BayesianFittedObject(GenericFittedObject):
 
         chains = np.array(chains).T
 
-        contours = np.array([self._analysis._hpd(mc, alpha=self._alpha) for mc in chains])
+        self._raw_chains = chains
+
+        contours = np.array([highest_density_posterior(mc, alpha=self._alpha) for mc in chains])
 
         # reshape the contours and remember the inner dimension is 2-D
 
@@ -329,3 +333,12 @@ class BayesianFittedObject(GenericFittedObject):
         self._error_region = contours
 
 
+    @property
+    def raw_chains(self):
+        """
+        return the raw chains without being converted to
+        HDPs
+
+        :return:
+        """
+        return self._raw_chains

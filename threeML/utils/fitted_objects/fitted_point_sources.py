@@ -2,6 +2,8 @@ from astropy import units as u, constants
 from sympy import Function, solve, lambdify
 from sympy.abc import x
 
+import numpy as np
+
 import scipy.integrate as integrate
 
 
@@ -88,17 +90,17 @@ class DifferentialFluxConversion(FluxConversion):
 
 
 
-        self._flux_lookup = {'photon_flux':  1. / (u.keV * u.cm ** 2 * u.s),
+        self._flux_lookup = {"photon_flux":  1. / (u.keV * u.cm ** 2 * u.s),
                              "energy_flux": u.erg / (u.keV * u.cm ** 2 * u.s),
-                             "nufnu_flux": u.erg / (u.keV * u.cm ** 2 * u.s)}
+                             "nufnu_flux": u.erg**2 / (u.keV * u.cm ** 2 * u.s)}
 
 
-        self._model_converter = {'photon_flux': lambda x: x * flux_model(x),
+        self._model_converter = {"photon_flux": lambda x: x * flux_model(x),
                                  "energy_flux": lambda x: x * x * flux_model(x),
                                  "nufnu_flux": lambda x: x ** 3 * flux_model(x)}
 
 
-        self._model_builder = {'photon_flux': flux_model,
+        self._model_builder = {"photon_flux": flux_model,
                                "energy_flux": lambda x: x * flux_model(x),
                                "nufnu_flux": lambda x: x * x * flux_model(x)}
 
@@ -111,13 +113,13 @@ class IntegralFluxConversion(FluxConversion):
 
      def __init__(self, flux_unit, energy_unit, flux_model):
 
-        self._flux_lookup = {'photon_flux': 1. / ( u.cm ** 2 * u.s),
+        self._flux_lookup = {"photon_flux": 1. / ( u.cm ** 2 * u.s),
                              "energy_flux": u.erg / ( u.cm ** 2 * u.s),
-                             "nufnu_flux": u.erg / ( u.cm ** 2 * u.s)}
+                             "nufnu_flux": u.erg**2 / ( u.cm ** 2 * u.s)}
 
-        self._model_converter = {'photon_flux': lambda x: x * flux_model(x),
-                               "energy_flux": lambda x: x * x * flux_model(x),
-                               "nufnu_flux": lambda x: x ** 3 * flux_model(x)}
+        self._model_converter = {"photon_flux": lambda x: x * flux_model(x),
+                                 "energy_flux": lambda x: x * x * flux_model(x),
+                                 "nufnu_flux": lambda x: x ** 3 * flux_model(x)}
     
 
         def photon_integrand(x):
@@ -129,9 +131,9 @@ class IntegralFluxConversion(FluxConversion):
         def nufnu_integrand(x):
             return x * x * flux_model(x)
     
-        self._model_builder = {'photon_flux': lambda e1, e2: integrate.quad(photon_integrand, e1, e2),
-                                  "energy_flux": lambda e1, e2: integrate.quad(energy_integrand, e1, e2),
-                                  "nufnu_flux": lambda e1, e2: integrate.quad(nufnu_integrand, e1, e2)}
+        self._model_builder = {"photon_flux": lambda e1, e2: integrate.quad(photon_integrand, e1, e2)[0],
+                               "energy_flux": lambda e1, e2: integrate.quad(energy_integrand, e1, e2)[0],
+                               "nufnu_flux": lambda e1, e2: integrate.quad(nufnu_integrand, e1, e2)[0]}
     
         
         super(IntegralFluxConversion, self).__init__(flux_unit,
@@ -143,7 +145,7 @@ class IntegralFluxConversion(FluxConversion):
 
 
 class FittedPointSource(GenericFittedObject):
-    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None):
+    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None, is_differential_flux=True):
         """
 
         A 3ML fitted point source.
@@ -186,13 +188,10 @@ class FittedPointSource(GenericFittedObject):
 
             model = source.spectrum.main
 
-        # see if we have frequency units
-
-        self._x_unit_checker(energy_unit)
 
         energy_unit = u.Unit(energy_unit)
 
-        # for any plotting, the x-axis remain unaltered outside of this class
+        # for any plotting, the x-axis remains unaltered outside of this class
         # therefore we convert to keV using the spectral equiv. helper from
         # astropy so that we can easily except energy, wavelength, or frequency
         # energy units
@@ -210,17 +209,48 @@ class FittedPointSource(GenericFittedObject):
 
         # now we will will find out what type of units we need
 
-        converter = DifferentialFluxConversion(flux_unit, energy_unit, model)
+        # if we are doing differential flux plotting:
 
-        flux_function = converter.model
-        self._conversion = converter.conversion_factor
+        if is_differential_flux:
+
+            converter = DifferentialFluxConversion(flux_unit, energy_unit, model)
+
+            flux_function = converter.model
+
+            self._conversion = converter.conversion_factor
 
 
-        super(FittedPointSource, self).__init__(analysis,
-                                                source,
-                                                flux_function,
-                                                sigma,
-                                                energy_range)
+
+            super(FittedPointSource, self).__init__(analysis,
+                                                    source,
+                                                    flux_function,
+                                                    sigma,
+                                                    energy_range)
+
+        else:
+
+            converter = IntegralFluxConversion(flux_unit, energy_unit, model)
+
+            flux_function = converter.model
+
+            self._conversion = converter.conversion_factor
+
+
+            # we treat the energy range as the range we want to integrate over
+
+            e1 = np.array([energy_range.min()])
+            e2 = np.array([energy_range.max()])
+
+            # super will by pass the MLE/Bayes class if it is
+            # inherited as well and go right to the general and
+            # use the e1, e2 as the integral bounds
+
+            super(FittedPointSource, self).__init__(analysis,
+                                                    source,
+                                                    flux_function,
+                                                    sigma,
+                                                    e1,
+                                                    e2)
 
     def _get_free_parameters(self):
 
@@ -299,7 +329,7 @@ class FittedPointSource(GenericFittedObject):
 
 
 class MLEPointSource(FittedPointSource, MLEFittedObject):
-    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None):
+    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None, is_differential_flux=True):
         """
         an MLE fitted point source
 
@@ -320,19 +350,20 @@ class MLEPointSource(FittedPointSource, MLEFittedObject):
                                              energy_unit,
                                              flux_unit,
                                              sigma,
-                                             component)
+                                             component,
+                                             is_differential_flux)
 
 
 class BayesianPointSource(FittedPointSource, BayesianFittedObject):
     def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None,
-                 fraction_of_samples=.1):
+                 fraction_of_samples=.1,  is_differential_flux=True):
         """
         A Bayesian fitted point source
 
 
         :param analysis: a BayesianAnalysis fitted object
         :param source: the astromodels source to be examined
-        :param energy_range: a numpy aray of of energies
+        :param energy_range: a numpy array of of energies
         :param energy_unit: the energy unit
         :param flux_unit: the flux unit
         :param component: the name (string) of a component of the source model
@@ -341,7 +372,7 @@ class BayesianPointSource(FittedPointSource, BayesianFittedObject):
 
         assert analysis.analysis_type == "bayesian"
 
-        assert 0. < fraction_of_samples < 1., "thin must be between 0 and 1"
+        assert 0. < fraction_of_samples < 1., "fraction_of_samples must be between 0 and 1"
 
         self._fraction_of_samples = fraction_of_samples
 
@@ -351,4 +382,17 @@ class BayesianPointSource(FittedPointSource, BayesianFittedObject):
                                                   energy_unit,
                                                   flux_unit,
                                                   sigma,
-                                                  component)
+                                                  component,
+                                                  is_differential_flux)
+
+    @property
+    def raw_chains(self):
+        """
+        the raw chains of the point source spectrum
+        """
+
+        # This gets the raw chains here, but calls the super class
+        # to return the value. The value can then be manipulated further
+        # up by a parent
+
+        return self._conversion * self._flux_unit * super(BayesianPointSource, self).raw_chains

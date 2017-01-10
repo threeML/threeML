@@ -1,4 +1,4 @@
-__author__='grburgess'
+__author__ = 'grburgess'
 
 import astropy.units as u
 import matplotlib.pyplot as plt
@@ -6,8 +6,7 @@ import numpy as np
 from astropy.visualization import quantity_support
 
 from threeML.config.config import threeML_config
-
-from threeML.utils.fitted_objects.fitted_point_sources import MLEPointSource, BayesianPointSource
+from threeML.io.calculate_flux import _setup_analysis_dictionaries
 
 
 def plot_point_source_spectra(*analyses, **kwargs):
@@ -17,14 +16,14 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
 
     :param analyses: fitted JointLikelihood or BayesianAnalysis objects
-    :param sources_to_plot: (optional) list of PointSource string names to plot from the analysis
+    :param sources_to_use: (optional) list of PointSource string names to plot from the analysis
     :param energy_unit: (optional) astropy energy unit in string form (can also be frequency)
     :param flux_unit: (optional) astropy flux unit in string form
     :param ene_min: (optional) minimum energy to plot
     :param ene_max: (optional) maximum energy to plot
     :param num_ene: (optional) number of energies to plot
-    :param plot_components: (optional) True or False to plot the spectral components
-    :param components_to_plot: (optional) list of string names of the components to plot: including 'total'
+    :param use_components: (optional) True or False to plot the spectral components
+    :param components_to_use: (optional) list of string names of the components to plot: including 'total'
     will also plot the total spectrum
     :param sum_sources: (optional) some all the MLE and Bayesian sources
     :param show_contours: (optional) True or False to plot the contour region
@@ -35,11 +34,9 @@ def plot_point_source_spectra(*analyses, **kwargs):
     :return:
     """
 
-
     # allow matplotlib to plot quantities to the access
+
     quantity_support()
-
-
 
     # get the default color maps
     if 'fit_cmap' in kwargs:
@@ -114,23 +111,21 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
         fraction_of_samples = 0.1
 
+    if 'use_components' in kwargs:
 
-
-    if 'plot_components' in kwargs:
-
-        plot_components = kwargs.pop('plot_components')
+        use_components = kwargs.pop('use_components')
 
     else:
 
-        plot_components = False
+        use_components = False
 
-    if 'components_to_plot' in kwargs:
+    if 'components_to_use' in kwargs:
 
-        components_to_plot = kwargs.pop('components_to_plot')
+        components_to_use = kwargs.pop('components_to_use')
 
     else:
 
-        components_to_plot = []
+        components_to_use = []
 
     if 'sum_sources' in kwargs:
 
@@ -164,7 +159,6 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
         contour_style_kwargs = threeML_config['model plot']['point source plot']['contour style']
 
-
     if 'show_legend' in kwargs:
 
         show_legend = kwargs.pop('show_legend')
@@ -172,7 +166,6 @@ def plot_point_source_spectra(*analyses, **kwargs):
     else:
 
         show_legend = True
-
 
     if 'legend_kwargs' in kwargs:
 
@@ -183,229 +176,26 @@ def plot_point_source_spectra(*analyses, **kwargs):
         legend_kwargs = threeML_config['model plot']['point source plot']['legend style']
     # first extract the sources to plots
 
-    bayesian_analyses = {}
-    mle_analyses = {}
 
-
-    # first we split up the bayesian and mle analysis
-
-    for analysis in analyses:
-
-        for name, source in analysis.likelihood_model.point_sources.iteritems():
-
-            if analysis.analysis_type == "mle":
-
-                mle_analyses[name] = {'source': source, 'analysis': analysis}
-
-            else:
-
-                bayesian_analyses[name] = {'source': source, 'analysis': analysis}
-
-    sources_to_plot = set(bayesian_analyses.keys() + mle_analyses.keys())
-
-    # decided if we only want to plot a few sources
-
-    if "sources_to_plot" in kwargs:
-
-        sources_to_plot_tmp = kwargs.pop('sources_to_plot')
-
-        tmp = []
-
-        for source_key in sources_to_plot_tmp:
-
-            if source_key in sources_to_plot:
-
-                tmp.append(source_key)
-
-            else:
-                pass
-                # warn
-
-        sources_to_plot = tmp
-
-
-    # specify the energy range. We do not yet want to give it units for
-    # quick computation. we add it back before the end
 
     energy_range = np.logspace(np.log10(ene_min), np.log10(ene_max), num_ene)
 
-
-    # keep track of the number of sources we will plot
-
-    num_sources_to_plot = 0
-
-
-    # go through the MLE analysis and build up some fitted sources
-
-    for key in mle_analyses.keys():
-
-
-        # if we want to plot this source
-
-        if key in sources_to_plot:
-
-            mle_analyses[key]['fitted point source'] = MLEPointSource(mle_analyses[key]['analysis'],
-                                                                      mle_analyses[key]['source'],
-                                                                      energy_range,
-                                                                      energy_unit,
-                                                                      flux_unit,
-                                                                      sigma)
-
-            # see if there are any components to plot
-
-            if plot_components:
-
-                num_components_to_plot = 0
-
-                component_dict = {}
-
-                if mle_analyses[key]['fitted point source'].components is not None:
-
-                    for component in mle_analyses[key]['fitted point source'].components:
-
-                        # if we want to plot all the components
-
-                        if not components_to_plot:
-
-                            component_dict[component] = MLEPointSource(mle_analyses[key]['analysis'],
-                                                                       mle_analyses[key]['source'],
-                                                                       energy_range,
-                                                                       energy_unit,
-                                                                       flux_unit,
-                                                                       sigma,
-                                                                       component=component)
-
-                            num_components_to_plot += 1
-
-                        else:
-
-                            # otherwise pick off only the ones of interest
-
-                            if component in components_to_plot:
-
-                                component_dict[component] = MLEPointSource(mle_analyses[key]['analysis'],
-                                                                           mle_analyses[key]['source'],
-                                                                           energy_range,
-                                                                           energy_unit,
-                                                                           flux_unit,
-                                                                           sigma,
-                                                                           component=component)
-
-                                num_components_to_plot += 1
-
-                # save these to the dict
-
-                mle_analyses[key]['components'] = component_dict
-
-
-            # keep track of how many components we need to plot
-
-            if plot_components:
-
-                num_sources_to_plot += num_components_to_plot
-
-                if 'total' in components_to_plot:
-                    num_sources_to_plot += 1
-
-            else:
-
-                num_sources_to_plot += 1
-
-    # repeat for the bayes analyses
-
-    for key in bayesian_analyses.keys():
-
-        # if we have a source to to plot
-
-        if key in sources_to_plot:
-
-            bayesian_analyses[key]['fitted point source'] = BayesianPointSource(bayesian_analyses[key]['analysis'],
-                                                                                bayesian_analyses[key]['source'],
-                                                                                energy_range,
-                                                                                energy_unit,
-                                                                                flux_unit,
-                                                                                sigma,
-                                                                                fraction_of_samples=fraction_of_samples)
-
-            # if we want to plot components
-
-            if plot_components:
-
-                num_components_to_plot = 0
-
-                component_dict = {}
-
-                if bayesian_analyses[key]['fitted point source'].components is not None:
-
-                    for component in mle_analyses[key]['fitted point source'].components:
-
-                        # extracting all components
-
-                        if not components_to_plot:
-
-
-                            component_dict[component] = BayesianPointSource(mle_analyses[key]['analysis'],
-                                                                            mle_analyses[key]['source'],
-                                                                            energy_range,
-                                                                            energy_unit,
-                                                                            flux_unit,
-                                                                            sigma,
-                                                                            component=component,
-                                                                            fraction_of_samples=fraction_of_samples)
-
-                            num_components_to_plot += 1
-
-                        # or just some of them
-
-                        if component in components_to_plot:
-
-                            component_dict[component] = BayesianPointSource(mle_analyses[key]['analysis'],
-                                                                            mle_analyses[key]['source'],
-                                                                            energy_range,
-                                                                            energy_unit,
-                                                                            flux_unit,
-                                                                            sigma,
-                                                                            component=component,
-                                                                            fraction_of_samples=fraction_of_samples)
-
-                            num_components_to_plot += 1
-
-                bayesian_analyses[key]['components'] = component_dict
-
-            # keep track of everything we added on
-
-            if plot_components and num_components_to_plot > 0:
-
-                num_sources_to_plot += num_components_to_plot
-
-                if 'total' in components_to_plot:
-
-                    num_sources_to_plot += 1
-
-            else:
-
-                num_sources_to_plot += 1
-
-    # we may have the same source in a bayesian and mle analysis.
-    # we want to plot them, but make sure to label them differently.
-    # so let's keep track of them
-
-    duplicate_keys = []
-
-    for key in mle_analyses.keys():
-
-        if key in bayesian_analyses.keys():
-            duplicate_keys.append(key)
-
-
-
-
+    mle_analyses, bayesian_analyses, num_sources_to_plot, sources_to_use, duplicate_keys = _setup_analysis_dictionaries(
+        analyses,
+        energy_range,
+        energy_unit,
+        flux_unit,
+        use_components,
+        components_to_use,
+        sigma,
+        fraction_of_samples,
+        differential=True,
+        **kwargs)
 
     # we are now ready to plot.
     # all calculations have been made.
 
     fig, ax = plt.subplots()
-
 
     color = np.linspace(0., 1., num_sources_to_plot)
     color_itr = 0
@@ -420,20 +210,18 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
         for key in mle_analyses.keys():
 
-
-            if key in sources_to_plot:
+            if key in sources_to_use:
 
                 # we won't assume to plot the total until the end
 
                 plot_total = False
 
-                if plot_components:
+                if use_components:
 
                     # if this source has no components or none that we wish to plot
                     # then we will plot the total spectrum after this
 
-                    if (not mle_analyses[key]['components'].keys()) or ('total' in components_to_plot):
-
+                    if (not mle_analyses[key]['components'].keys()) or ('total' in components_to_use):
                         plot_total = True
 
                     for component in mle_analyses[key]['components'].keys():
@@ -510,13 +298,13 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
         for key in bayesian_analyses.keys():
 
-            if key in sources_to_plot:
+            if key in sources_to_use:
 
                 plot_total = False
 
-                if plot_components:
+                if use_components:
 
-                    if (not bayesian_analyses[key]['components'].keys()) or ('total' in components_to_plot):
+                    if (not bayesian_analyses[key]['components'].keys()) or ('total' in components_to_use):
                         plot_total = True
 
                     for component in bayesian_analyses[key]['components'].keys():
@@ -583,16 +371,10 @@ def plot_point_source_spectra(*analyses, **kwargs):
                     color_itr += 1
 
         if show_legend:
-
             ax.legend(**legend_kwargs)
 
-        ax.set_xlim(ene_min,ene_max)
+        ax.set_xlim(ene_min, ene_max)
 
     else:
 
         pass
-
-
-
-
-

@@ -1,6 +1,8 @@
 import emcee
 import emcee.utils
 
+from threeML.utils.stats_tools import highest_density_posterior
+
 try:
 
     import pymultinest
@@ -453,7 +455,7 @@ class BayesianAnalysis(object):
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
             # Get the percentiles from the posterior samples
 
-            lower_bound, upper_bound = self._hpd(self.samples[parameter_name], 1 - (float(probability) / 100.))
+            lower_bound, upper_bound = highest_density_posterior(self.samples[parameter_name], 1 - (float(probability) / 100.))
             median = np.median(self.samples[parameter_name])
 
             # Save them in the dictionary
@@ -1177,60 +1179,3 @@ class BayesianAnalysis(object):
 
         return log_like
 
-    @staticmethod
-    def _calc_min_interval(x, alpha):
-        """
-        Internal method to determine the minimum interval of a given width
-        Assumes that x is sorted numpy array.
-        :param a: a numpy array containing samples
-        :param alpha: probability of type I error
-
-        :returns: list containing min and max HDI
-
-        """
-
-        n = len(x)
-        cred_mass = 1.0 - alpha
-
-        interval_idx_inc = int(np.floor(cred_mass * n))
-        n_intervals = n - interval_idx_inc
-        interval_width = x[interval_idx_inc:] - x[:n_intervals]
-
-        if len(interval_width) == 0:
-            raise ValueError('Too few elements for interval calculation')
-
-        min_idx = np.argmin(interval_width)
-        hdi_min = x[min_idx]
-        hdi_max = x[min_idx + interval_idx_inc]
-        return hdi_min, hdi_max
-
-    def _hpd(self, x, alpha=0.05):
-        """Calculate highest posterior density (HPD) of array for given alpha.
-        The HPD is the minimum width Bayesian credible interval (BCI).
-
-        :param x: array containing MCMC samples
-        :param alpha : Desired probability of type I error (defaults to 0.05)
-        """
-
-        # Currently only 1D available.
-        # future addition will fix this
-
-        # Make a copy of trace
-        # x = x.copy()
-        # For multivariate node
-        # if x.ndim > 1:
-        # Transpose first, then sort
-        #    tx = np.transpose(x, list(range(x.ndim))[1:] + [0])
-        #    dims = np.shape(tx)
-        # Container list for intervals
-        #    intervals = np.resize(0.0, dims[:-1] + (2,))
-
-        #    sx = np.sort(tx[index])
-        # Append to list
-        #    intervals[index] = self._calc_min_interval(sx, alpha)
-        # Transpose back before returning
-        #    return np.array(intervals)
-        # else:
-        # Sort univariate node
-        sx = np.sort(x)
-        return np.array(self._calc_min_interval(sx, alpha))
