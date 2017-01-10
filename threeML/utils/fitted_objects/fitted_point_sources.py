@@ -16,7 +16,7 @@ class InvalidUnitError(RuntimeError):
     pass
 
 
-class CustomConversion(object):
+class FluxConversion(object):
 
     def __init__(self, flux_unit, energy_unit, flux_model):
 
@@ -82,7 +82,7 @@ class CustomConversion(object):
 
         return self._conversion
 
-class DifferentialFluxConversion(CustomConversion):
+class DifferentialFluxConversion(FluxConversion):
 
     def __init__(self, flux_unit, energy_unit, flux_model):
 
@@ -107,7 +107,7 @@ class DifferentialFluxConversion(CustomConversion):
                                                          flux_model)
 
 
-class IntegralFluxConversion(CustomConversion):
+class IntegralFluxConversion(FluxConversion):
 
      def __init__(self, flux_unit, energy_unit, flux_model):
 
@@ -192,24 +192,29 @@ class FittedPointSource(GenericFittedObject):
 
         energy_unit = u.Unit(energy_unit)
 
-        if self._convert_to_frequency:
-            # we are going to plot in frequency, but
+        # for any plotting, the x-axis remain unaltered outside of this class
+        # therefore we convert to keV using the spectral equiv. helper from
+        # astropy so that we can easily except energy, wavelength, or frequency
+        # energy units
 
-            # the functions take energy.
 
-            energy_range = ((energy_range * energy_unit * constants.h).cgs).to('keV')
+        energy_range = (energy_range * energy_unit).to('keV', equivalencies=u.spectral())
 
-            energy_unit = energy_range.unit
+        energy_unit = energy_range.unit
 
-            energy_range = energy_range.value
+        energy_range = energy_range.value
 
         flux_unit = u.Unit(flux_unit)
 
         self._flux_unit = flux_unit
 
-        spectrum_type = self._get_spectrum_type()
+        # now we will will find out what type of units we need
 
-        flux_function, self._conversion = self._get_flux_function(spectrum_type, model, flux_unit, energy_unit)
+        converter = DifferentialFluxConversion(flux_unit, energy_unit, model)
+
+        flux_function = converter.model
+        self._conversion = converter.conversion_factor
+
 
         super(FittedPointSource, self).__init__(analysis,
                                                 source,
@@ -243,131 +248,6 @@ class FittedPointSource(GenericFittedObject):
 
         return self._flux_unit * self._conversion * self._best_fit_values
 
-    @staticmethod
-    def _calculate_conversion(energy_unit, flux_unit, model):
-
-        x = 1 * energy_unit
-
-        tmp = model(x)
-        conversion = tmp.unit.to(flux_unit)
-
-        return conversion
-
-    def _get_flux_function(self, spectrum_type, model, flux_unit, energy_unit):
-        """
-        Returns the appropriate flux function based off input spectral units
-        :param spectrum_type: str from _get_spectrum_type indicating the spectrum type to use
-        :param model: a call to an astromodel function
-        :param y_unit: astropy unit
-        :return: function that calls the correct flux type
-        """
-
-        if spectrum_type == "phtflux":
-
-            def this_model(x):
-                return model(x)
-
-            conversion = self._calculate_conversion(energy_unit, flux_unit, this_model)
-
-            flux_function = this_model
-
-
-        elif spectrum_type == "eneflux":
-
-            def this_model(x):
-                return x * model(x)
-
-            conversion = self._calculate_conversion(energy_unit, flux_unit, this_model)
-
-            flux_function = this_model
-
-
-        elif spectrum_type == "vfvflux":
-
-            def this_model(x):
-                return x * x * model(x)
-
-            conversion = self._calculate_conversion(energy_unit, flux_unit, this_model)
-
-            flux_function = this_model
-
-        return flux_function, conversion
-
-    def _get_spectrum_type(self):
-        """
-
-        :param flux_unit: an astropy unit
-        :return: str indicating the type of unit desired
-        """
-
-        pht_flux_unit = 1. / (u.keV * u.cm ** 2 * u.s)
-        flux_unit = u.erg / (u.keV * u.cm ** 2 * u.s)
-        vfv_unit = u.erg ** 2 / (u.keV * u.cm ** 2 * u.s)
-
-        # Try to convert to base units. If it works then return that unit type
-        try:
-
-            self._flux_unit.to(pht_flux_unit)
-
-            return "phtflux"
-
-
-        except(u.UnitConversionError):
-
-            try:
-
-                self._flux_unit.to(flux_unit)
-
-                return "eneflux"
-
-            except(u.UnitConversionError):
-
-                try:
-                    self._flux_unit.to(vfv_unit)
-
-                    return "vfvflux"
-
-                except:
-
-                    raise InvalidUnitError("The y_unit provided is not a valid spectral quantity")
-
-    def _x_unit_checker(self, energy_unit):
-        """
-        Checks if the x unit is in energy or frequency
-
-        :param energy_unit: astropy unit string
-        :return:
-        """
-
-        x_unit = u.Unit(energy_unit)
-
-        # First we check if the units are energy
-        try:
-
-            x_unit.to('keV')
-
-            # well, this is an energy. we do not have to convert at all
-
-            self._convert_to_frequency = False
-
-        except(u.UnitConversionError):
-
-            # now we see if they are frequency
-
-            try:
-
-                x_unit.to('Hz')
-
-                # Ok, we found a frequency. that means we will do the calculation in eV and then
-                # convert back at the end
-
-
-
-                self._convert_to_frequency = True
-
-            except(u.UnitConversionError):
-
-                raise InvalidUnitError("x unit is not energy or frequency")
 
     @staticmethod
     def _solve_for_component_flux(composite_model):
