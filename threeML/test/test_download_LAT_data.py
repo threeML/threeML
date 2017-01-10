@@ -36,11 +36,11 @@ def test_download_LLE_data():
     # test good trigger names
     good_triggers = ['080916009', 'bn080916009', 'GRB080916009']
 
+    temp_dir = '_download_temp'
+
     for i, trigger in enumerate(good_triggers):
 
-        temp_dir = '_download_temp'
-
-        dl_info = download_LLE_trigger_data(trigger=trigger,
+        dl_info = download_LLE_trigger_data(trigger_name=trigger,
                                             destination_directory=temp_dir)
 
         assert os.path.exists(dl_info['rsp'])
@@ -55,20 +55,20 @@ def test_download_LLE_data():
 
     with pytest.raises(AssertionError):
 
-        download_LLE_trigger_data(trigger='blah080916009',
+        download_LLE_trigger_data(trigger_name='blah080916009',
                                   destination_directory=temp_dir)
 
     with pytest.raises(AssertionError):
 
-        download_LLE_trigger_data(trigger=80916009,
+        download_LLE_trigger_data(trigger_name=80916009,
                                   destination_directory=temp_dir)
 
     with pytest.raises(AssertionError):
 
-        download_LLE_trigger_data(trigger='bn08a916009',
+        download_LLE_trigger_data(trigger_name='bn08a916009',
                                   destination_directory=temp_dir)
 
     with pytest.raises(TriggerDoesNotExist):
 
-        download_LLE_trigger_data(trigger='080916008',
+        download_LLE_trigger_data(trigger_name='080916008',
                                   destination_directory=temp_dir)

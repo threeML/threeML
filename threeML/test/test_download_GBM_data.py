@@ -20,7 +20,7 @@ def test_download_GBM_data():
 
         temp_dir = '_download_temp'
 
-        dl_info = download_GBM_trigger_data(trigger=trigger,
+        dl_info = download_GBM_trigger_data(trigger_name=trigger,
                                             detectors=[which_detector],
                                             destination_directory=temp_dir)
 
@@ -36,34 +36,34 @@ def test_download_GBM_data():
 
     with pytest.raises(AssertionError):
 
-        download_GBM_trigger_data(trigger='blah080916009',
+        download_GBM_trigger_data(trigger_name='blah080916009',
                                   destination_directory=temp_dir)
 
     with pytest.raises(AssertionError):
 
-        download_GBM_trigger_data(trigger=80916009,
+        download_GBM_trigger_data(trigger_name=80916009,
                                   destination_directory=temp_dir)
 
     with pytest.raises(AssertionError):
 
-        download_GBM_trigger_data(trigger='bn08a916009',
+        download_GBM_trigger_data(trigger_name='bn08a916009',
                                   destination_directory=temp_dir)
 
     with pytest.raises(TriggerDoesNotExist):
 
-        download_GBM_trigger_data(trigger='080916008',
+        download_GBM_trigger_data(trigger_name='080916008',
                                   destination_directory=temp_dir)
 
     # now test that bad detectors block us
 
     with pytest.raises(AssertionError):
 
-        download_GBM_trigger_data(trigger='080916009',
+        download_GBM_trigger_data(trigger_name='080916009',
                                   detectors='n1',
                                   destination_directory=temp_dir)
 
     with pytest.raises(AssertionError):
 
-        download_GBM_trigger_data(trigger='080916009',
+        download_GBM_trigger_data(trigger_name='080916009',
                                   detectors=['not_a_detector'],
                                   destination_directory=temp_dir)
