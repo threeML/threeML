@@ -33,6 +33,25 @@ def file_existing_and_readable(filename):
         return False
 
 
+def path_exists_and_is_directory(path):
+
+    sanitized_path = sanitize_filename(path, abspath=True)
+
+    if os.path.exists(sanitized_path):
+
+        if os.path.isdir(path):
+
+            return True
+
+        else:
+
+            return False
+
+    else:
+
+        return False
+
+
 def sanitize_filename(filename, abspath=False):
 
     sanitized = os.path.expandvars(os.path.expanduser(filename))
@@ -58,6 +77,7 @@ def if_directory_not_existing_then_make(directory):
 
         os.makedirs(directory)
 
+
 def get_random_unique_name():
     """
     Returns a name which is random and (with extremely high probability) unique
@@ -66,6 +86,7 @@ def get_random_unique_name():
     """
 
     return str(uuid.uuid4().hex)
+
 
 @contextmanager
 def temporary_directory(prefix='', within_directory=None):
@@ -90,7 +111,6 @@ def temporary_directory(prefix='', within_directory=None):
     except:
 
         custom_warnings.warn("Couldn't remove temporary directory %s" % directory)
-
 
 
 @contextmanager
