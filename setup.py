@@ -97,7 +97,8 @@ setup(
         'corner>=1.0.2',
         'pandas',
         'sympy',
-        'html2text'
+        'html2text',
+        'requests'
     ])
 
 # Check for optional dependencies
