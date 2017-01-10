@@ -2,6 +2,9 @@ from astropy import units as u, constants
 from sympy import Function, solve, lambdify
 from sympy.abc import x
 
+import scipy.integrate as integrate
+
+
 from threeML.utils.fitted_objects.fitted_object import MLEFittedObject, BayesianFittedObject, GenericFittedObject
 
 
@@ -11,6 +14,132 @@ class NotCompositeModelError(RuntimeError):
 
 class InvalidUnitError(RuntimeError):
     pass
+
+
+class CustomConversion(object):
+
+    def __init__(self, flux_unit, energy_unit, flux_model):
+
+        self._flux_unit = flux_unit
+
+        self._energy_unit = energy_unit
+
+        self._model = flux_model
+
+        self._test_value = 1. * energy_unit
+
+        self._flux_type = None
+
+        self._determine_quantity()
+
+        self._calculate_conversion()
+
+    def _determine_quantity(self):
+
+        for k,v in self._flux_lookup.iteritems():
+
+
+            try:
+
+                self._flux_unit.to(v)
+
+                self._flux_type = k
+
+            except(u.UnitConversionError):
+
+                continue
+
+
+        if self._flux_type is None:
+
+            raise InvalidUnitError('The flux_unit provided is not a valid flux quantity')
+
+    def _calculate_conversion(self):
+
+        tmp = self._model_converter[self._flux_type](self._test_value)
+
+        self._conversion = tmp.unit.to(self._flux_unit)
+
+
+    @property
+    def model(self):
+        """
+        the model converted
+
+        :return: a model in the proper units
+        """
+
+        return self._model_builder[self._flux_type]
+
+    @property
+    def conversion_factor(self):
+        """
+        the conversion factor needed to finalize the model into the
+        proper units after computations
+
+        :return:
+        """
+
+        return self._conversion
+
+class DifferentialFluxConversion(CustomConversion):
+
+    def __init__(self, flux_unit, energy_unit, flux_model):
+
+
+
+        self._flux_lookup = {'photon_flux':  1. / (u.keV * u.cm ** 2 * u.s),
+                             "energy_flux": u.erg / (u.keV * u.cm ** 2 * u.s),
+                             "nufnu_flux": u.erg / (u.keV * u.cm ** 2 * u.s)}
+
+
+        self._model_converter = {'photon_flux': lambda x: x * flux_model(x),
+                                 "energy_flux": lambda x: x * x * flux_model(x),
+                                 "nufnu_flux": lambda x: x ** 3 * flux_model(x)}
+
+
+        self._model_builder = {'photon_flux': flux_model,
+                               "energy_flux": lambda x: x * flux_model(x),
+                               "nufnu_flux": lambda x: x * x * flux_model(x)}
+
+        super(DifferentialFluxConversion, self).__init__(flux_unit,
+                                                         energy_unit,
+                                                         flux_model)
+
+
+class IntegralFluxConversion(CustomConversion):
+
+     def __init__(self, flux_unit, energy_unit, flux_model):
+
+        self._flux_lookup = {'photon_flux': 1. / ( u.cm ** 2 * u.s),
+                             "energy_flux": u.erg / ( u.cm ** 2 * u.s),
+                             "nufnu_flux": u.erg / ( u.cm ** 2 * u.s)}
+
+        self._model_converter = {'photon_flux': lambda x: x * flux_model(x),
+                               "energy_flux": lambda x: x * x * flux_model(x),
+                               "nufnu_flux": lambda x: x ** 3 * flux_model(x)}
+    
+
+        def photon_integrand(x):
+            return flux_model(x)
+    
+        def energy_integrand(x):
+            return x * flux_model(x)
+    
+        def nufnu_integrand(x):
+            return x * x * flux_model(x)
+    
+        self._model_builder = {'photon_flux': lambda e1, e2: integrate.quad(photon_integrand, e1, e2),
+                                  "energy_flux": lambda e1, e2: integrate.quad(energy_integrand, e1, e2),
+                                  "nufnu_flux": lambda e1, e2: integrate.quad(nufnu_integrand, e1, e2)}
+    
+        
+        super(IntegralFluxConversion, self).__init__(flux_unit,
+                                                     energy_unit,
+                                                     flux_model)
+
+
+
 
 
 class FittedPointSource(GenericFittedObject):
