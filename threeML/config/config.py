@@ -17,8 +17,6 @@ _config_file_name = 'threeML_config.yml'
 _optimize_methods = ('Nelder-Mead',"Powell","CG","BFGS","Newton-CG","L-BFGS-B","TNC","COBYLA","SLSQP","dogleg","trust-ncg")
 
 
-
-
 class Config(object):
 
     def __init__(self):
