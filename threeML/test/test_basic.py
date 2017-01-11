@@ -111,8 +111,7 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
 
     mc.report(sort='AIC')
 
-    sf = SpectralFlux(jl)
-    sf.component_flux()
+    calculate_point_source_flux(10, 30, jl, use_components=True)
 
     plot_point_source_spectra(jl)
 
@@ -133,8 +132,7 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
 
     mc.report(sort='DIC')
 
-    sf = SpectralFlux(bayes)
-    sf.component_flux()
+    calculate_point_source_flux(10,30,bayes,use_components=True)
 
     plot_point_source_spectra(bayes)
 
