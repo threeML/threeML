@@ -69,11 +69,10 @@ def test_mle_spectral_plot():
 
     # test that we cannot set invalid units
 
-    with pytest.raises(InvalidUnitError):
-        plot_point_source_spectra(jl,energy_unit='m', num_ene=10)
+
 
     with pytest.raises(InvalidUnitError):
-        plot_point_source_spectra(jl,flux_unit='m', num_ene=10)
+        plot_point_source_spectra(jl,flux_unit='g', num_ene=10)
 
 
 def test_bayes_spectral_plot():
@@ -147,11 +146,9 @@ def test_bayes_spectral_plot():
 
     # test that we cannot set invalid units
 
-    with pytest.raises(InvalidUnitError):
-        plot_point_source_spectra(bayes,energy_unit='m', num_ene=10)
 
     with pytest.raises(InvalidUnitError):
-        plot_point_source_spectra(bayes,energy_unit='m', num_ene=10)
+        plot_point_source_spectra(bayes,flux_unit='g', num_ene=10)
 
 
     # thin is from 0-1
