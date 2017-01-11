@@ -656,7 +656,6 @@ class InstrumentResponseSet(object):
 
             # Now the GBM format has a strange feature: the matrix, instead of covering from TSTART to TSTOP, covers
             # from (TSTART + TSTOP) / 2.0 of the previous matrix to the (TSTART + TSTOP) / 2.0 of itself.
-            # Don't ask me why...
             # So let's adjust the coverage intervals accordingly
 
             if len(list_of_matrices) > 1:
