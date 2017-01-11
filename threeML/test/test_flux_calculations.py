@@ -1,7 +1,7 @@
 import pytest
 from threeML import *
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.io.flux_calculator_old import InvalidUnitError
+from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
 
 
 # TODO: add tests for area corrections
