@@ -290,7 +290,7 @@ class FittedPointSource(GenericFittedObject):
         the error region of the point source spectrum
         """
 
-        # This get the error region here, but calls the super class
+        # This gets the error region here, but calls the super class
         # to return the value. The value can then be manipulated further
         # up by a parent
 
@@ -298,8 +298,28 @@ class FittedPointSource(GenericFittedObject):
 
     @property
     def spectrum(self):
+        """
+        the best fit value. This is simply
+        a wrapper around the best_fit call for
+        ease of understanding
 
-        return self._flux_unit * self._conversion * self._best_fit_values
+
+
+        :return:
+        """
+
+        return self.best_fit
+
+    @property
+    def best_fit(self):
+        """
+        the best fit of the function
+
+
+        :return:
+        """
+
+        return self._flux_unit * self._conversion * super(FittedPointSource, self).best_fit
 
 
     @staticmethod

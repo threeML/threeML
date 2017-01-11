@@ -53,9 +53,18 @@ class GenericFittedObject(object):
         self._compute_error_region()
 
     @property
-    def error_region(self):
+    def best_fit(self):
+        """
+        return the evaluation at the best fit
+
+        :return: best fit value(s)
         """
 
+        return self._best_fit_values
+
+    @property
+    def error_region(self):
+        """
         The error region of the newly computed quantity
 
         :return: error region
@@ -122,18 +131,65 @@ class MLEFittedObject(GenericFittedObject):
         how MLE objects add together.
 
         :param other:
-        :return: total best fit and total error
+        :return: total best fit and total error dict
         """
 
         # first add together the main value
 
-        total = self._best_fit_values + other._best_fit_values
+        other_best = other.best_fit
+
+        other_error = other.error_region
 
         # add sum of squares
 
-        total_error = np.sqrt((self.error_region) ** 2 + other.error_region ** 2)
+        total_error = np.sqrt((self.error_region) ** 2 + other_error ** 2)
 
-        return total, total_error
+        total_best = self.best_fit + other_best
+
+        # to facilitate summing
+
+        new_container = ErrorContainer()
+
+        new_container['best_fit'] = total_best
+        new_container['error_region'] = total_error
+
+        return new_container
+
+
+    def __radd__(self, other):
+
+        if other == 0:
+
+            new_container = ErrorContainer()
+
+            new_container['error_region'] = self.error_region
+            new_container['best_fit'] = self.best_fit
+
+            return new_container
+
+
+        elif isinstance(other, ErrorContainer):
+
+            other_error = other['error_region']
+            other_best = other['best_fit']
+
+            total_best = self.best_fit + other_best
+            total_error = np.sqrt(self.error_region ** 2 + other_error ** 2)
+
+            new_container = ErrorContainer()
+
+            new_container['error_region'] = total_error
+            new_container['best_fit'] = total_best
+
+            return new_container
+
+
+
+        else:
+
+            raise RuntimeError('Cannot add together these types!')
+
+
 
     def _compute_error_region(self, ):
         """
@@ -267,19 +323,99 @@ class MLEFittedObject(GenericFittedObject):
 class BayesianFittedObject(GenericFittedObject):
 
 
-
     def __add__(self, other):
+        """
+        how bayesian objects add together.
 
-        total = self._best_fit_values + other._best_fit_values
+        :param other:
+        :return: total best fit and total error dict
+        """
 
-        # recompute the sum of the chains
+        # first add together the main value
 
-        tmp_error = self.raw_chains + other.raw_chains
+        other_best = other.best_fit
 
-        error = np.array([highest_density_posterior(mc, alpha=self._alpha) for mc in tmp_error])
+        other_chains = other.raw_chains
+
+        # direct sum
+
+        total_chain = self.raw_chains + other_chains
+
+        total_best = self.best_fit + other_best
+
+        total_error = np.array([highest_density_posterior(mc, alpha=self._alpha) for mc in total_chain])
+
+        # to facilitate summing
+
+        new_container = ErrorContainer()
+
+        new_container['best_fit'] = total_best
+        new_container['error_region'] = total_error.reshape(self._out_shape +(2,))
+        new_container['raw_chains'] = total_chain
+
+        return new_container
 
 
-        return total, error.reshape(self._out_shape +(2,))
+    def __radd__(self, other):
+
+        if other == 0:
+
+            new_container = ErrorContainer()
+
+            new_container['error_region'] = self.error_region
+            new_container['best_fit'] = self.best_fit
+            new_container['raw_chains'] = self.raw_chains
+
+            return new_container
+
+
+        elif isinstance(other, ErrorContainer):
+
+
+            other_best = other['best_fit']
+
+            other_chains = other['raw_chains']
+
+            # direct sum
+
+            total_chain = self.raw_chains + other_chains
+
+            total_best = self.best_fit + other_best
+
+
+            # This may already be an array
+
+            try:
+
+                total_error = np.array([highest_density_posterior(mc, alpha=self._alpha) for mc in total_chain])
+
+            except(ValueError):
+
+                # This means we had a quantity agrument from astropy
+
+                old_unit = total_chain.unit
+
+                total_error = np.array([highest_density_posterior(mc, alpha=self._alpha) for mc in total_chain.value])
+                total_error = total_error * old_unit
+
+
+
+            # to facilitate summing
+
+            new_container = ErrorContainer()
+
+            new_container['best_fit'] = total_best
+            new_container['error_region'] = total_error.reshape(self._out_shape +(2,))
+            new_container['raw_chains'] = total_chain
+
+            return new_container
+
+
+
+        else:
+
+            raise RuntimeError('Cannot add together these types!')
+
 
     def _compute_error_region(self):
 
@@ -342,3 +478,74 @@ class BayesianFittedObject(GenericFittedObject):
         :return:
         """
         return self._raw_chains
+
+from collections import MutableMapping
+
+class ErrorContainer(MutableMapping):
+    _allowed_keys = "error_region best_fit raw_chains".split()
+
+    def accept(self, key):
+
+        return key in ErrorContainer._allowed_keys
+
+    def __init__(self):
+        """
+        A simple container to store errors that
+        allows for easy adding of error regions
+
+        """
+
+        self.dict = dict()
+
+    def __setitem__(self, key, val):
+        if key not in ErrorContainer._allowed_keys:
+            raise KeyError(
+                'Valid keywords: %s'%', '.join(ErrorContainer._allowed_keys))
+        self.dict[key] = val
+
+    def __getitem__(self, key):
+        return self.dict[key]
+
+    def __delitem__(self, key):
+        RuntimeWarning("You cannot delete keys!")
+
+    def __len__(self):
+        return sum(1 for _ in self)
+
+    def __iter__(self):
+        for key in self.dict:
+            yield key
+
+    def __repr__(self):
+        return repr(dict(self))
+
+    def __str__(self):
+        return str(dict(self))
+
+
+    @property
+    def raw_chains(self):
+        """
+        raw mc chains from a bayesian analysis
+        :return:
+        """
+
+        return self.dict['raw_chains']
+
+    @property
+    def error_region(self):
+        """
+        the error region
+        :return:
+        """
+
+        return self.dict['error_region']
+
+    @property
+    def best_fit(self):
+        """
+        the best fit of the propagated function
+        :return:
+        """
+
+        return self.dict['best_fit']

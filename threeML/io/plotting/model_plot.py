@@ -6,8 +6,9 @@ import numpy as np
 from astropy.visualization import quantity_support
 
 from threeML.config.config import threeML_config
-from threeML.io.calculate_flux import _setup_analysis_dictionaries
+from threeML.io.calculate_flux import _setup_analysis_dictionaries, _collect_sums_into_dictionaries
 from threeML.io.plotting.cmap_cycle import cmap_intervals
+
 
 def plot_point_source_spectra(*analyses, **kwargs):
     """
@@ -197,15 +198,15 @@ def plot_point_source_spectra(*analyses, **kwargs):
 
     fig, ax = plt.subplots()
 
-    color_fit = cmap_intervals(num_sources_to_plot, fit_cmap)
-    color_contour = cmap_intervals(num_sources_to_plot,contour_cmap)
-    color_itr = 0
-
     energy_range = energy_range * u.Unit(energy_unit)
 
     # if we are not going to sum sources
 
     if not sum_sources:
+
+        color_fit = cmap_intervals(num_sources_to_plot, fit_cmap)
+        color_contour = cmap_intervals(num_sources_to_plot, contour_cmap)
+        color_itr = 0
 
         # go thru the mle analysis and plot spectra
 
@@ -233,8 +234,11 @@ def plot_point_source_spectra(*analyses, **kwargs):
                         positive_error = best_fit + mle_analyses[key]['components'][component].error_region
                         negative_error = best_fit - mle_analyses[key]['components'][component].error_region
 
-                        pos_mask = np.logical_and(best_fit > 0,
-                                                  mle_analyses[key]['components'][component].error_region > 0)
+                        neg_mask = negative_error <= 0
+
+                        # replace with small number
+
+                        negative_error[neg_mask] = min(best_fit) * 0.9
 
                         label = "%s: %s" % (key, component)
 
@@ -243,16 +247,16 @@ def plot_point_source_spectra(*analyses, **kwargs):
                         if key in duplicate_keys:
                             label = "%s: MLE" % label
 
-                        ax.loglog(energy_range[pos_mask],
-                                  best_fit[pos_mask],
+                        ax.loglog(energy_range,
+                                  best_fit,
                                   color=color_fit[color_itr],
                                   label=label,
                                   **plot_style_kwargs)
 
                         if show_contours:
-                            ax.fill_between(energy_range[pos_mask],
-                                            negative_error[pos_mask],
-                                            positive_error[pos_mask],
+                            ax.fill_between(energy_range,
+                                            negative_error,
+                                            positive_error,
                                             facecolor=color_contour[color_itr],
                                             **contour_style_kwargs
 
@@ -273,23 +277,27 @@ def plot_point_source_spectra(*analyses, **kwargs):
                     positive_error = best_fit + mle_analyses[key]['fitted point source'].error_region
                     negative_error = best_fit - mle_analyses[key]['fitted point source'].error_region
 
-                    pos_mask = np.logical_and(best_fit > 0, mle_analyses[key]['fitted point source'].error_region > 0)
+                    neg_mask = negative_error <= 0
+
+                    # replace with small number
+
+                    negative_error[neg_mask] = min(best_fit) * 0.9
 
                     label = "%s" % key
 
                     if key in duplicate_keys:
                         label = "%s: MLE" % label
 
-                    ax.loglog(energy_range[pos_mask],
-                              best_fit[pos_mask],
+                    ax.loglog(energy_range,
+                              best_fit,
                               color=color_fit[color_itr],
                               label=label,
                               **plot_style_kwargs)
 
                     if show_contours:
-                        ax.fill_between(energy_range[pos_mask],
-                                        negative_error[pos_mask],
-                                        positive_error[pos_mask],
+                        ax.fill_between(energy_range,
+                                        negative_error,
+                                        positive_error,
                                         facecolor=color_contour[color_itr],
                                         **contour_style_kwargs)
 
@@ -377,93 +385,157 @@ def plot_point_source_spectra(*analyses, **kwargs):
         ax.set_xlim(ene_min, ene_max)
 
     else:
+        # now we sum sources instead
 
 
-        for key in mle_analyses.keys():
+        # we keep MLE and Bayes apart because it makes no
+        # sense to sum them together
 
-            if key in sources_to_use:
-
-                # we won't assume to plot the total until the end
-
-                plot_total = False
-
-                if use_components:
-
-                    # if this source has no components or none that we wish to plot
-                    # then we will plot the total spectrum after this
-
-                    if (not mle_analyses[key]['components'].keys()) or ('total' in components_to_use):
-                        plot_total = True
-
-                    for component in mle_analyses[key]['components'].keys():
-
-                        # extract the information and plot it
-
-                        best_fit = mle_analyses[key]['components'][component].spectrum
-                        positive_error = best_fit + mle_analyses[key]['components'][component].error_region
-                        negative_error = best_fit - mle_analyses[key]['components'][component].error_region
-
-                        pos_mask = np.logical_and(best_fit > 0,
-                                                  mle_analyses[key]['components'][component].error_region > 0)
-
-                        label = "%s: %s" % (key, component)
-
-                        # this is where we keep track of duplicates
-
-                        if key in duplicate_keys:
-                            label = "%s: MLE" % label
-
-                        ax.loglog(energy_range[pos_mask],
-                                  best_fit[pos_mask],
-                                  color=color_fit[color_itr],
-                                  label=label,
-                                  **plot_style_kwargs)
-
-                        if show_contours:
-                            ax.fill_between(energy_range[pos_mask],
-                                            negative_error[pos_mask],
-                                            positive_error[pos_mask],
-                                            facecolor=color_contour[color_itr],
-                                            **contour_style_kwargs
-
-                                            )
-
-                        color_itr += 1
-
-                else:
-
-                    plot_total = True
-
-                if plot_total:
-
-                    # it ends up that we need to plot the total spectrum
-                    # which is just a repeat of the process
-
-                    best_fit = mle_analyses[key]['fitted point source'].spectrum
-                    positive_error = best_fit + mle_analyses[key]['fitted point source'].error_region
-                    negative_error = best_fit - mle_analyses[key]['fitted point source'].error_region
-
-                    pos_mask = np.logical_and(best_fit > 0, mle_analyses[key]['fitted point source'].error_region > 0)
-
-                    label = "%s" % key
-
-                    if key in duplicate_keys:
-                        label = "%s: MLE" % label
-
-                    ax.loglog(energy_range[pos_mask],
-                              best_fit[pos_mask],
-                              color=color_fit[color_itr],
-                              label=label,
-                              **plot_style_kwargs)
-
-                    if show_contours:
-                        ax.fill_between(energy_range[pos_mask],
-                                        negative_error[pos_mask],
-                                        positive_error[pos_mask],
-                                        facecolor=color_contour[color_itr],
-                                        **contour_style_kwargs)
-
-                    color_itr += 1
+        total_analysis_mle, component_sum_dict_mle, num_sources_to_plot = _collect_sums_into_dictionaries(mle_analyses,
+                                                                                                          sources_to_use,
+                                                                                                          use_components,
+                                                                                                          components_to_use)
 
 
 
+
+        total_analysis_bayes, component_sum_dict_bayes, num_sources_to_plot_bayes = _collect_sums_into_dictionaries(
+            bayesian_analyses,
+            sources_to_use,
+            use_components,
+            components_to_use)
+
+
+        num_sources_to_plot += num_sources_to_plot_bayes
+
+        color_fit = cmap_intervals(num_sources_to_plot, fit_cmap)
+        color_contour = cmap_intervals(num_sources_to_plot, contour_cmap)
+        color_itr = 0
+
+        if use_components and component_sum_dict_mle.keys():
+
+            # we have components to plot
+
+            for component, values in component_sum_dict_mle.iteritems():
+
+                summed_analysis = sum(values)
+
+                best_fit = summed_analysis.best_fit
+
+                positive_error = best_fit + summed_analysis.error_region
+
+                negative_error = best_fit - summed_analysis.error_region
+
+                neg_mask = negative_error <= 0
+
+                # replace with small number
+
+                negative_error[neg_mask] = min(best_fit) * 0.9
+
+                ax.loglog(energy_range,
+                          best_fit,
+                          color=color_fit[color_itr],
+                          label="%s: MLE" % component,
+                          **plot_style_kwargs)
+
+                if show_contours:
+                    ax.fill_between(energy_range,
+                                    negative_error,
+                                    positive_error,
+                                    facecolor=color_contour[color_itr],
+                                    **contour_style_kwargs)
+
+                color_itr += 1
+
+        if total_analysis_mle:
+
+            # we will sum and plot the total
+            # analysis
+
+
+            summed_analysis = sum(total_analysis_mle)
+
+            best_fit = summed_analysis.best_fit
+
+            positive_error = best_fit + summed_analysis.error_region
+
+            negative_error = best_fit - summed_analysis.error_region
+
+            neg_mask = negative_error <= 0
+
+            # replace with small number
+
+            negative_error[neg_mask] = min(best_fit) * 0.9
+
+            ax.loglog(energy_range,
+                      best_fit,
+                      color=color_fit[color_itr],
+                      label="total: MLE",
+                      **plot_style_kwargs)
+
+            if show_contours:
+                ax.fill_between(energy_range,
+                                negative_error,
+                                positive_error,
+                                facecolor=color_contour[color_itr],
+                                **contour_style_kwargs)
+
+            color_itr += 1
+
+        if use_components and component_sum_dict_bayes.keys():
+
+            # we have components to plot
+
+            for component, values in component_sum_dict_bayes.iteritems():
+
+                summed_analysis = sum(values)
+
+                best_fit = summed_analysis.best_fit
+
+                positive_error = summed_analysis.error_region[:, 1]
+
+                negative_error = summed_analysis.error_region[:, 0]
+
+                ax.loglog(energy_range,
+                          best_fit,
+                          color=color_fit,
+                          label="%s: Bayesian" % component,
+                          **plot_style_kwargs)
+
+                if show_contours:
+                    ax.fill_between(energy_range,
+                                    negative_error,
+                                    positive_error,
+                                    facecolor=color_contour[color_itr],
+                                    **contour_style_kwargs)
+
+                color_itr += 1
+
+        if total_analysis_bayes:
+
+            # we will sum and plot the total
+            # analysis
+
+
+            summed_analysis = sum(total_analysis_bayes)
+
+            best_fit = summed_analysis.best_fit
+
+            positive_error = summed_analysis.error_region[:, 1]
+
+            negative_error = summed_analysis.error_region[:, 0]
+
+            ax.loglog(energy_range,
+                      best_fit,
+                      color=color_fit[color_itr],
+                      label="total: Bayesian",
+                      **plot_style_kwargs)
+
+            if show_contours:
+                ax.fill_between(energy_range,
+                                negative_error,
+                                positive_error,
+                                facecolor=color_contour[color_itr],
+                                **contour_style_kwargs)
+
+            color_itr += 1

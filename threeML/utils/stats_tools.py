@@ -102,7 +102,7 @@ def highest_density_posterior( x, alpha=0.05):
     """
 
     sx = np.sort(x)
-    return np.array(_calc_min_interval(sx, alpha))
+    return _calc_min_interval(sx, alpha)
 
 
 

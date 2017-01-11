@@ -7,12 +7,13 @@ import numpy as np
 import pandas as pd
 
 
-#def _check_double_source_names(sources):
+# def _check_double_source_names(sources):
 
 
 
 
-def _setup_analysis_dictionaries(analyses,energy_range,energy_unit, flux_unit, use_components,components_to_use, sigma, fraction_of_samples,differential,**kwargs):
+def _setup_analysis_dictionaries(analyses, energy_range, energy_unit, flux_unit, use_components, components_to_use,
+                                 sigma, fraction_of_samples, differential, **kwargs):
     """
     helper function to pull out analysis details that are common to flux and plotting functions
 
@@ -38,7 +39,6 @@ def _setup_analysis_dictionaries(analyses,energy_range,energy_unit, flux_unit, u
     mle_sources = {}
     bayes_sources = {}
 
-
     for analysis in analyses:
 
         for name, source in analysis.likelihood_model.point_sources.iteritems():
@@ -50,7 +50,6 @@ def _setup_analysis_dictionaries(analyses,energy_range,energy_unit, flux_unit, u
                 mle_sources.setdefault(name, []).append(1)
 
                 if len(mle_sources[name]) > 1:
-
                     name = "%s_%d" % (name, len(mle_sources[name]))
 
                 mle_analyses[name] = {'source': source, 'analysis': analysis}
@@ -63,11 +62,9 @@ def _setup_analysis_dictionaries(analyses,energy_range,energy_unit, flux_unit, u
                 # keep track of duplicate sources
 
                 if len(bayes_sources[name]) > 1:
-
                     name = "%s_%d" % (name, len(bayes_sources[name]))
 
                 bayesian_analyses[name] = {'source': source, 'analysis': analysis}
-
 
     sources_to_use = set(bayesian_analyses.keys() + mle_analyses.keys())
 
@@ -259,6 +256,60 @@ def _setup_analysis_dictionaries(analyses,energy_range,energy_unit, flux_unit, u
     return mle_analyses, bayesian_analyses, num_sources_to_use, sources_to_use, duplicate_keys
 
 
+def _collect_sums_into_dictionaries(analyses, sources_to_use, use_components, components_to_use):
+    """
+
+    :param analyses:
+    :param sources_to_use:
+    :param use_components:
+    :param components_to_use:
+    :return:
+    """
+
+    total_analysis = []
+
+    component_sum_dict = {}
+
+    num_sources_to_use = 0
+
+    for key in analyses.keys():
+
+        if key in sources_to_use:
+
+            # we won't assume to plot the total until the end
+
+            use_total = False
+
+            if use_components:
+
+                # append all the components we want to sum to their
+                # own key
+
+                if (not analyses[key]['components'].keys()) or ('total' in components_to_use):
+                    use_total = True
+
+                for component in analyses[key]['components'].keys():
+                    component_sum_dict.setdefault(component, []).append(analyses[key]['components'][component])
+
+            else:
+
+                use_total = True
+
+            if use_total:
+                # append the total spectrum
+
+                total_analysis.append(analyses[key]['fitted point source'])
+
+    if use_components:
+
+        for key, values in component_sum_dict.iteritems():
+            num_sources_to_use += len(values)
+
+    num_sources_to_use += len(total_analysis)
+
+    return total_analysis, component_sum_dict, num_sources_to_use
+
+
 def calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
     """
 
@@ -339,17 +390,15 @@ def calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
     energy_range = np.array([ene_min, ene_max])
 
     mle_analyses, bayesian_analyses, _, sources_to_use, _ = _setup_analysis_dictionaries(analyses,
-                                                                         energy_range,
-                                                                         energy_unit,
-                                                                         flux_unit,
-                                                                         use_components,
-                                                                         components_to_use,
-                                                                         sigma,
-                                                                         fraction_of_samples,
-                                                                         differential=False,
-                                                                         **kwargs)
-
-
+                                                                                         energy_range,
+                                                                                         energy_unit,
+                                                                                         flux_unit,
+                                                                                         use_components,
+                                                                                         components_to_use,
+                                                                                         sigma,
+                                                                                         fraction_of_samples,
+                                                                                         differential=False,
+                                                                                         **kwargs)
 
     out = []
 
@@ -406,10 +455,14 @@ def calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
             # now make a data frame
 
             mle_df = pd.DataFrame({'flux': fluxes, 'error': errors}, index=labels)
-            mle_df = mle_df[['flux','error']]
+            mle_df = mle_df[['flux', 'error']]
             out.append(mle_df)
 
             display(mle_df)
+
+        else:
+
+            out.append(None)
 
         # now do the bayesian side
 
@@ -468,6 +521,10 @@ def calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
 
             display(bayes_df)
 
+        else:
+
+            out.append(None)
+
 
 
 
@@ -475,6 +532,123 @@ def calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
 
     else:
 
-        raise NotImplementedError('Summing fluxes does is not possible yet.')
+        # instead we now sum the fluxes
+        # we keep bayes and mle apart
+
+
+        total_analysis_mle, component_sum_dict_mle, _ = _collect_sums_into_dictionaries(mle_analyses,
+                                                                                        sources_to_use,
+                                                                                        use_components,
+                                                                                        components_to_use)
+
+        total_analysis_bayes, component_sum_dict_bayes, _ = _collect_sums_into_dictionaries(
+            bayesian_analyses,
+            sources_to_use,
+            use_components,
+            components_to_use)
+
+        fluxes = []
+        errors = []
+        labels = []
+
+        if use_components and component_sum_dict_mle.keys():
+
+
+
+            # we have components to plot
+
+            for component, values in component_sum_dict_mle.iteritems():
+                summed_analysis = sum(values)
+
+                best_fit = summed_analysis.best_fit[0,0]
+                error = summed_analysis.error_region[0,0]
+                label = component
+
+                fluxes.append(best_fit)
+                errors.append(error)
+                labels.append(label)
+
+        if total_analysis_mle:
+
+            summed_analysis = sum(total_analysis_mle)
+
+            best_fit = summed_analysis.best_fit[0, 0]
+            error = summed_analysis.error_region[0, 0]
+            label = 'total'
+
+            fluxes.append(best_fit)
+            errors.append(error)
+            labels.append(label)
+
+        if fluxes:
+            # now make a data frame
+
+            mle_df = pd.DataFrame({'flux': fluxes, 'error': errors}, index=labels)
+            mle_df = mle_df[['flux', 'error']]
+            out.append(mle_df)
+
+            display(mle_df)
+
+        else:
+
+            out.append(None)
+
+        # now do the bayesian side
+
+        fluxes = []
+        errors = []
+        distributions = []
+        labels = []
+
+
+        if use_components and component_sum_dict_bayes.keys():
+
+            # we have components to plot
+
+            for component, values in component_sum_dict_bayes.iteritems():
+                summed_analysis = sum(values)
+
+                best_fit = summed_analysis.best_fit[0, 0]
+                positive_error = summed_analysis.error_region[0, 1]
+                negative_error = summed_analysis.error_region[0, 0]
+                dist = summed_analysis.raw_chains[0]
+
+                label = component
+
+                fluxes.append(best_fit)
+                errors.append([negative_error, positive_error])
+                distributions.append(dist)
+                labels.append(label)
+
+        if total_analysis_bayes:
+
+            summed_analysis = sum(total_analysis_bayes)
+
+            best_fit = summed_analysis.best_fit[0, 0]
+            positive_error = summed_analysis.error_region[0, 1]
+            negative_error = summed_analysis.error_region[0, 0]
+            dist = summed_analysis.raw_chains[0]
+
+            label = 'total'
+
+            fluxes.append(best_fit)
+            errors.append([negative_error, positive_error])
+            distributions.append(dist)
+            labels.append(label)
+
+        if fluxes:
+            # now make a data frame
+
+            bayes_df = pd.DataFrame({'flux': fluxes, 'credible region': errors, 'flux distribution': distributions},
+                                    index=labels)
+
+            bayes_df = bayes_df[['flux', 'credible region', 'flux distribution']]
+            out.append(bayes_df)
+
+            display(bayes_df)
+        else:
+
+            out.append(None)
+
 
     return out
