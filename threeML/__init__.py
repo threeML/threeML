@@ -168,9 +168,6 @@ from .classicMLE.joint_likelihood_set import JointLikelihoodSet, JointLikelihood
 from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from .classicMLE.goodness_of_fit import GoodnessOfFit
 
-
-from .io.model_plot import SpectralPlotter
-
 from .io.plotting import *
 
 from .io.calculate_flux import calculate_point_source_flux
