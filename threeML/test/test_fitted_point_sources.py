@@ -94,7 +94,7 @@ flux_keywords = {'use_components': True,
                  'components_to_use': ['total','Powerlaw'],
                  'sources_to_use':['bn090217206'],
                  'flux_unit':'erg/(cm2 s)',
-                 'energy_unit':'keV'}
+                 'energy_unit':'keV','sum_sources':True}
 
 plot_keywords = {'use_components': True,
                  'components_to_use': ['Powerlaw','total'],
@@ -108,7 +108,7 @@ plot_keywords = {'use_components': True,
                  'ene_max':100,
                  'show_legend':False,
                  'fit_cmap':'jet',
-                 'countor_cmap':'jet'}
+                 'countor_cmap':'jet','sum_sources':True}
 
 
 def test_fitted_point_source_plotting():
