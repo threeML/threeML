@@ -124,7 +124,7 @@ def test_bayes_flux_calculations():
     powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
 
     powerlaw.K_2.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-    powerlaw.kT_2 =  Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+    powerlaw.kT_2.prior =  Log_uniform_prior(lower_bound=1.0, upper_bound=10)
 
     jl = BayesianAnalysis(model, data_list)
 
