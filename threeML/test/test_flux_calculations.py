@@ -70,7 +70,7 @@ def test_mle_flux_calculations():
 
 
     with pytest.raises(InvalidUnitError):
-        res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s keV cm2)', energy_unit='keV')
+        res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s g cm2)', energy_unit='keV')
 
     res = calculate_point_source_flux(10, 50, jl, use_components=True, components_to_use=['BlackBody'])
 
@@ -145,7 +145,7 @@ def test_bayes_flux_calculations():
     res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s cm2)', energy_unit='nm')
 
     with pytest.raises(InvalidUnitError):
-        res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s keV cm2)', energy_unit='keV')
+        res = calculate_point_source_flux(10, 50, jl, flux_unit='erg2/(s g cm2)', energy_unit='keV')
 
     res = calculate_point_source_flux(10, 50, jl, use_components=True, components_to_use=['BlackBody'])
 
