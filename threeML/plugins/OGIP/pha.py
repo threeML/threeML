@@ -5,6 +5,7 @@ import warnings
 from collections import MutableMapping
 from copy import copy
 import pkg_resources
+from threeML.io.fits_file import FITSExtension, FITSFile
 
 _required_keywords = {}
 _required_keywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
@@ -950,3 +951,68 @@ class PHAWrite(object):
             # Write to the required filename
 
             new_table.writeto(self._outfile_name[key], clobber=overwrite)
+
+####################################################################################
+# The following classes are used to create OGIP-compliant response files
+# (at the moment only RMF are supported)
+
+class SPECTRUM(FITSExtension):
+
+    _HEADER_KEYWORDS = (('EXTNAME', 'SPECTRUM', 'Extension name'),
+                        ('HDUCLASS', 'OGIP    ', 'format conforms to OGIP standard'),
+                        ('HDUVERS', '1.1.0   ', 'Version of format (OGIP memo CAL/GEN/92-002a)'),
+                        ('FILTER', 'none   ', 'Version of format (OGIP memo CAL/GEN/92-002a)')
+                        ('HDUDOC', 'OGIP memos CAL/GEN/92-002 & 92-002a', 'Documents describing the forma'),
+                        ('HDUVERS1', '1.0.0   ', 'Obsolete - included for backwards compatibility'),
+                        ('HDUVERS2', '1.1.0   ', 'Obsolete - included for backwards compatibility'),
+                        ('CHANTYPE', 'PI', 'Channel type'),
+                        ('CONTENT', 'OGIPResponse Matrix', 'File content'),
+                        ('HDUCLAS1', 'SPECTRUM', 'Extension contains spectral data  '),
+                        ('HDUCLAS2', 'TOTAL ', ''),
+                        ('HDUCLAS3', 'RATE ', '')
+                        ('HDUCLAS4', 'TYPE:II ', '')
+                        ('TLMIN1', 1, 'Minimum legal channel number')
+                        )
+
+
+    def __init__(self, tstart, telapse, spec_num, channel, rate, quality, grouping, exposure, backscale, respfile,
+                 ancrfile, back_file=None, sys_err=None, stat_err=None, is_poisson=False):
+
+        """
+        Represents the SPECTRUM extension of a PHAII file.
+
+        :param tstart:
+        :param telapse:
+        :param spec_num:
+        :param channel:
+        :param rate:
+        :param quality:
+        :param grouping:
+        :param exposure:
+        :param backscale:
+        :param respfile:
+        :param ancrfile:
+        :param back_file:
+        :param sys_err:
+        :param stat_err:
+        :param is_poisson:
+        """
+
+        data_tuple = (('TSTART', tstart),
+                      ('TELAPSE', telapse),
+                      ('SPEC_NUM',np.arange(1, self._n_spectra + 1, dtype=np.int32)),
+                      ('CHANNEL', channel),
+                      ('RATE',rate),
+                      ('STAT_ERR',stat_err),
+                      ('SYS_ERR',sys_err),
+                      ('QUALITY',quality),
+                      ('GROUPING',grouping),
+                      ('EXPOSURE',exposure),
+                      ('BACKSCAL',backscale),
+                      ('RESPFILE',respfile),
+                      ('ANCRFILE',ancrfile)
+                      ('BACKFILE',back_file)
+
+        )
+
+        super(SPECTRUM, self).__init__(data_tuple, self._HEADER_KEYWORDS)
