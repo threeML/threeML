@@ -105,6 +105,13 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             idx = np.array(map(int, row['scat_detector_mask']), dtype=bool)
             detector_selection = self._gbm_detector_lookup[idx]
 
+
+            # get the location
+
+
+            ra = row['ra']
+            dec = row['dec']
+
             # Now we want to know the background intervals
 
             lo_start = row['back_interval_low_start']
@@ -150,7 +157,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             best_dict = {'fluence': best_fit_fluence, 'peak': best_fit_peak}
 
             sources[name] = {'source': spectrum_dict, 'background': background_dict, 'trigger': trigger,
-                             'detectors': detector_selection, 'best fit model': best_dict}
+                             'detectors': detector_selection, 'best fit model': best_dict, 'ra': ra, 'dec': dec}
 
         return DictWithPrettyPrint(sources)
 
