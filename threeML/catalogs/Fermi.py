@@ -195,16 +195,16 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             # get the proper 3ML model
 
             if model == 'band':
-                lh_model = self._build_band(name, ra, dec, row, available_intervals[interval])
+                lh_model, shape = self._build_band(name, ra, dec, row, available_intervals[interval])
 
             if model == 'comp':
-                lh_model = self._build_cpl(name, ra, dec, row, available_intervals[interval])
+                lh_model, shape = self._build_cpl(name, ra, dec, row, available_intervals[interval])
 
             if model == 'plaw':
-                lh_model = self._build_powerlaw(name, ra, dec, row, available_intervals[interval])
+                lh_model, shape = self._build_powerlaw(name, ra, dec, row, available_intervals[interval])
 
             if model == 'sbpl':
-                lh_model = self._build_sbpl(name, ra, dec, row, available_intervals[interval])
+                lh_model, shape = self._build_sbpl(name, ra, dec, row, available_intervals[interval])
 
             # the assertion above should never let us get here
             if lh_model is None:
@@ -212,7 +212,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             # return the model
 
-            sources[name] = lh_model
+            sources[name] = {'3ml model': lh_model, 'spectral shape'}
 
         return sources
 
@@ -280,7 +280,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         model = Model(ps)
 
-        return model
+        return model, band
 
     @staticmethod
     def _build_cpl(name, ra, dec, row, interval):
@@ -333,7 +333,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         model = Model(ps)
 
-        return model
+        return model, cpl
 
     @staticmethod
     def _build_powerlaw(name, ra, dec, row, interval):
@@ -367,7 +367,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         model = Model(ps)
 
-        return model
+        return model, pl
 
     @staticmethod
     def _build_sbpl(name, ra, dec, row, interval):
@@ -435,7 +435,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         model = Model(ps)
 
-        return model
+        return model, sbpl
 
 
 #########
