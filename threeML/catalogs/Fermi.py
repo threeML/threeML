@@ -212,7 +212,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
             # return the model
 
-            sources[name] = {'3ml model': lh_model, 'spectral shape'}
+            sources[name] = {'3ml model': lh_model, 'spectral shape': shape}
 
         return sources
 
