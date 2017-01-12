@@ -8,7 +8,7 @@ from astromodels.utils.angular_distance import angular_distance
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
-
+from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 
 
 _trigger_name_match = re.compile("^GRB\d{9}$")
@@ -152,7 +152,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             sources[name] = {'source': spectrum_dict, 'background': background_dict, 'trigger': trigger,
                              'detectors': detector_selection, 'best fit model': best_dict}
 
-        return sources
+        return DictWithPrettyPrint(sources)
 
     def get_model(self, model='band', interval='fluence'):
         """
