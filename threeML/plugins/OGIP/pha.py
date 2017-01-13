@@ -806,11 +806,6 @@ class PHAWrite(object):
 
         n_channel = len(self._rate['pha'][0])
 
-        vector_format_D = "%sD" % (n_channel)
-        vector_format_I = "%sI" % (n_channel)
-
-        # Do we also want to write out a
-        # background file?
         if self._write_bak_file:
 
             keys = ['pha', 'bak']
@@ -823,137 +818,81 @@ class PHAWrite(object):
 
             if trigTime is not None:
 
-                # use trigTime as reference for TSTART
-                tstart_column = fits.Column(name='TSTART',
-                                            format='D',
-                                            array=np.array(self._tstart[key]),
-                                            unit="s",
-                                            bzero=trigTime)
+                tstart = self._tstart[key] - trigTime
+
             else:
 
-                tstart_column = fits.Column(name='TSTART',
-                                            format='D',
-                                            array=np.array(self._tstart[key]),
-                                            unit="s")
+                tstart = self._tstart[key]
 
-            t_elapse_column = fits.Column(name='TELAPSE',
-                                          format='D',
-                                          array=np.array(self._tstop[key]) - np.array(self._tstart[key]),
-                                          unit="s")
+            if not self._is_poisson[key]:
 
-            spec_num_column = fits.Column(name='SPEC_NUM',
-                                          format='I',
-                                          array=np.arange(1, self._n_spectra + 1, dtype=np.int32))
+                if key == 'pha':
 
-            channel_column = fits.Column(name='CHANNEL',
-                                         format=vector_format_I,
-                                         array=np.array(self._channel[key]))
+                    fits_file = PHAII(self._instrument[key],
+                                      self._mission[key],
+                                      tstart,
+                                      np.array(self._tstop[key]) - np.array(self._tstart[key]),
+                                      self._channel[key],
+                                      self._rate[key],
+                                      self._quality[key],
+                                      self._exposure[key],
+                                      self._backscal[key],
+                                      self._respfile[key],
+                                      self._ancrfile[key],
+                                      self._backfile[key],
+                                      self._sys_err[key],
+                                      self._stat_err[key])
 
-            rate_column = fits.Column(name='RATE',
-                                      format=vector_format_D,
-                                      array=np.array(self._rate[key]),
-                                      unit="Counts/s")
+                else:
 
-            if (self._is_poisson[key] == False):
-                stat_err_column = fits.Column(name='STAT_ERR',
-                                              format=vector_format_D,
-                                              array=np.array(self._stat_err[key]))
+                    fits_file = BAK_PHAII(self._instrument[key],
+                                      self._mission[key],
+                                      tstart,
+                                      np.array(self._tstop[key]) - np.array(self._tstart[key]),
+                                      self._channel[key],
+                                      self._rate[key],
+                                      self._quality[key],
+                                      self._exposure[key],
+                                      self._backscal[key],
+                                      self._respfile[key],
+                                      self._ancrfile[key],
+                                      self._sys_err[key],
+                                      self._stat_err[key])
 
-                sys_err_column = fits.Column(name='SYS_ERR',
-                                             format=vector_format_D,
-                                             array=np.array(self._sys_err[key]))
+            else:
 
-            quality_column = fits.Column(name='QUALITY',
-                                         format=vector_format_I,
-                                         array=np.array(self._quality[key]))
+                if key == 'pha':
 
-            grouping_column = fits.Column(name='GROUPING',
-                                          format=vector_format_I,
-                                          array=np.array(self._grouping[key]))
+                    fits_file = POISSON_PHAII(self._instrument[key],
+                                              self._mission[key],
+                                              tstart,
+                                              np.array(self._tstop[key]) - np.array(self._tstart[key]),
+                                              self._channel[key],
+                                              self._rate[key],
+                                              self._quality[key],
+                                              self._exposure[key],
+                                              self._backscal[key],
+                                              self._respfile[key],
+                                              self._ancrfile[key],
+                                              self._backfile[key])
 
-            exposure_column = fits.Column(name='EXPOSURE',
-                                          format='D',
-                                          array=np.array(self._exposure[key]),
-                                          unit="s")
+                else:
 
-            backscale_column = fits.Column(name='BACKSCAL',
-                                           format='D',
-                                           array=np.array(self._backscal[key]))
-
-            respfile_column = fits.Column(name='RESPFILE',
-                                          format='%iA' % (self._max_length_resp_file_name + 2),
-                                          array=np.array(self._respfile[key]))
-
-            ancrfile_column = fits.Column(name='ANCRFILE',
-                                          format='%iA' % (self._max_length_anc_file_name + 2),
-                                          array=np.array(self._ancrfile[key]))
-
-            # There are the base columns.
-            # We will append to them as needed
-            # by the type of data.
-
-            use_columns = [tstart_column,
-                           t_elapse_column,
-                           spec_num_column,
-                           channel_column,
-                           rate_column,
-                           quality_column,
-                           grouping_column,
-                           exposure_column,
-                           backscale_column,
-                           respfile_column,
-                           ancrfile_column]
+                    fits_file = POISSON_BAK_PHAII(self._instrument[key],
+                                                  self._mission[key],
+                                                  tstart,
+                                                  np.array(self._tstop[key]) - np.array(self._tstart[key]),
+                                                  self._channel[key],
+                                                  self._rate[key],
+                                                  self._quality[key],
+                                                  self._exposure[key],
+                                                  self._backscal[key],
+                                                  self._respfile[key],
+                                                  self._ancrfile[key])
 
 
-            if key == 'pha':
 
-                backfile_column = fits.Column(name='BACKFILE',
-                                              format='%iA' % (self._max_length_background_file_name + 2),
-                                              array=np.array(self._backfile[key]))
-
-                use_columns.append(backfile_column)
-
-            # Insert the stat and sys columns if not Poisson
-            # errors
-
-            if (self._is_poisson[key] == False):
-
-                use_columns.insert(5, stat_err_column)
-                use_columns.insert(6, sys_err_column)
-
-            column_defs = fits.ColDefs(use_columns)
-
-            new_table = fits.BinTableHDU.from_columns(column_defs)
-
-            # Add the keywords required by the OGIP standard:
-            new_table.header.set('EXTNAME', 'SPECTRUM')
-
-            # TODO: add corrscal once implemented
-            new_table.header.set('CORRSCAL', 1.0)
-            new_table.header.set('AREASCAL', 1.0)
-            # new_table.header.set('BACKSCAL', 1.0)
-            new_table.header.set('HDUCLASS', 'OGIP')
-            new_table.header.set('HDUCLAS1', 'SPECTRUM')
-            # TODO: determine spectrum type in PHA class
-            new_table.header.set('HDUCLAS2', 'TOTAL')
-            new_table.header.set('HDUCLAS3', 'RATE')
-            new_table.header.set('HDUCLAS4', 'TYPE:II')
-            new_table.header.set('HDUVERS', '1.2.0')
-            new_table.header.set('TELESCOP', self._mission[key])  # Modify this
-            new_table.header.set('INSTRUME', self._instrument[key])  # assuming all have the same name
-
-            # TODO: check with GV what this is
-            new_table.header.set('FILTER', 'none')
-
-            new_table.header.set('CHANTYPE', 'PHA')
-            new_table.header.set('POISSERR', self._is_poisson[key])
-            new_table.header.set('DETCHANS', len(self._channel[key][0]))
-            new_table.header.set('CREATOR', "3ML v.%s" % (pkg_resources.get_distribution("threeML").version),
-                                 "(G.Vianello, giacomov@slac.stanford.edu)")
-
-            # Write to the required filename
-
-            new_table.writeto(self._outfile_name[key], clobber=overwrite)
+            fits_file.writeto(self._outfile_name[key], clobber=overwrite)
 
 ####################################################################################
 # The following classes are used to create OGIP-compliant PHAII files
