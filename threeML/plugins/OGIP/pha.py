@@ -4,7 +4,7 @@ import numpy as np
 import warnings
 from collections import MutableMapping
 from copy import copy
-import pkg_resources
+from threeML.plugins.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 from threeML.io.fits_file import FITSExtension, FITSFile
 import astropy.units as u
 
@@ -630,7 +630,7 @@ class PHAWrite(object):
 
         self._pseudo_time = 0.
 
-        self._spec_iterartor = 1
+        self._spec_iterator = 1
 
     def write(self, outfile_name, overwrite=True):
         """
@@ -669,6 +669,8 @@ class PHAWrite(object):
         # grab the ogip pha info
         pha_info = ogip.get_pha_files()
 
+        self._out_rsp = []
+
         first_channel = pha_info['rsp'].first_channel
 
         for key in ['pha', 'bak']:
@@ -684,12 +686,12 @@ class PHAWrite(object):
 
                 else:
 
-                    self._backfile[key].append('%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
+                    self._backfile[key].append('%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterator))
 
                     if len('%s_bak.pha{%d}' % (
-                            self._outfile_basename, self._spec_iterartor)) > self._max_length_background_file_name:
+                            self._outfile_basename, self._spec_iterator)) > self._max_length_background_file_name:
                         self._max_length_background_file_name = len(
-                                '%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
+                                '%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterator))
 
                     # We want to write the bak file
 
@@ -723,9 +725,16 @@ class PHAWrite(object):
             else:
 
                 # This will be reached in the case that a response was generated from a plugin
-                # e.g. if we want to use weighted DRMs from GBM. We do not handle this just yet.
+                # e.g. if we want to use weighted DRMs from GBM.
 
-                NotImplementedError("In the future this indicates that we need to generate an RSP file.")
+                rsp_file_name = "%s_.rsp{%d}"%(self._outfile_basename,self._spec_iterator)
+
+                self._respfile[key].append(rsp_file_name)
+
+                if key == 'pha':
+
+                        self._out_rsp.append(pha_info['rsp'])
+
 
             self._rate[key].append(pha_info[key].rates.tolist())
 
@@ -780,14 +789,14 @@ class PHAWrite(object):
 
                 self._tstop[key].append(self._pseudo_time)
 
-            self._spec_iterartor += 1
+            self._spec_iterator += 1
 
 
 
     def _write_phaII(self, overwrite):
 
         # Fix this later... if needed.
-        trigTime = None
+        trigger_time = None
 
         # Assuming background and pha files have the same
         # number of channels
@@ -804,7 +813,7 @@ class PHAWrite(object):
             'bak'], "Mission for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. " % (
             self._mission['pha'], self._mission['bak'])
 
-        n_channel = len(self._rate['pha'][0])
+
 
         if self._write_bak_file:
 
@@ -816,9 +825,9 @@ class PHAWrite(object):
 
         for key in keys:
 
-            if trigTime is not None:
+            if trigger_time is not None:
 
-                tstart = self._tstart[key] - trigTime
+                tstart = self._tstart[key] - trigger_time
 
             else:
 
@@ -835,13 +844,14 @@ class PHAWrite(object):
                                       self._channel[key],
                                       self._rate[key],
                                       self._quality[key],
+                                      self._grouping[key],
                                       self._exposure[key],
                                       self._backscal[key],
                                       self._respfile[key],
                                       self._ancrfile[key],
-                                      self._backfile[key],
-                                      self._sys_err[key],
-                                      self._stat_err[key])
+                                      back_file=self._backfile[key],
+                                      sys_err=self._sys_err[key],
+                                      stat_err=self._stat_err[key])
 
                 else:
 
@@ -852,6 +862,7 @@ class PHAWrite(object):
                                       self._channel[key],
                                       self._rate[key],
                                       self._quality[key],
+                                      self._grouping[key],
                                       self._exposure[key],
                                       self._backscal[key],
                                       self._respfile[key],
@@ -870,11 +881,12 @@ class PHAWrite(object):
                                               self._channel[key],
                                               self._rate[key],
                                               self._quality[key],
+                                              self._grouping[key],
                                               self._exposure[key],
                                               self._backscal[key],
                                               self._respfile[key],
                                               self._ancrfile[key],
-                                              self._backfile[key])
+                                              back_file=self._backfile[key])
 
                 else:
 
@@ -885,6 +897,7 @@ class PHAWrite(object):
                                                   self._channel[key],
                                                   self._rate[key],
                                                   self._quality[key],
+                                                  self._grouping[key],
                                                   self._exposure[key],
                                                   self._backscal[key],
                                                   self._respfile[key],
@@ -892,7 +905,22 @@ class PHAWrite(object):
 
 
 
-            fits_file.writeto(self._outfile_name[key], clobber=overwrite)
+            fits_file.writeto(self._outfile_name[key], overwrite=overwrite)
+
+
+            if self._out_rsp:
+
+
+                extensions = [EBOUNDS(self._out_rsp[0].ebounds)]
+
+                extensions.extend([SPECRESP_MATRIX(this_rsp.monte_carlo_energies, this_rsp.ebounds, this_rsp.matrix) for this_rsp in self._out_rsp])
+
+                rsp2 = FITSFile(fits_extensions=extensions)
+
+                rsp2.writeto("%s_.rsp" % self._outfile_basename,overwrite=True)
+
+
+
 
 ####################################################################################
 # The following classes are used to create OGIP-compliant PHAII files
@@ -909,13 +937,13 @@ class SPECTRUM(FITSExtension):
                         ('HDUVERS2', '1.1.0   ', 'Obsolete - included for backwards compatibility'),
                         ('HDUCLAS1', 'SPECTRUM', 'Extension contains spectral data  '),
                         ('HDUCLAS2', 'TOTAL ', ''),
-                        ('HDUCLAS3', 'RATE ', '')
-                        ('HDUCLAS4', 'TYPE:II ', '')
-                        ('FILTER', '', 'Filter used')
+                        ('HDUCLAS3', 'RATE ', ''),
+                        ('HDUCLAS4', 'TYPE:II ', ''),
+                        ('FILTER', '', 'Filter used'),
                         ('CHANTYPE', 'PHA', 'Channel type'),
                         ('POISSERR', False, 'Are the rates Poisson distributed'),
-                        ('DETCHANS', None, 'Number of channels')
-                        ('CORRSCAL',1.0,'')
+                        ('DETCHANS', None, 'Number of channels'),
+                        ('CORRSCAL',1.0,''),
                         ('AREASCAL',1.0,'')
 
 
@@ -952,8 +980,6 @@ class SPECTRUM(FITSExtension):
                       ('SPEC_NUM',np.arange(1, n_spectra + 1, dtype=np.int32)),
                       ('CHANNEL', channel),
                       ('RATE',rate),
-                      ('STAT_ERR',stat_err),
-                      ('SYS_ERR',sys_err),
                       ('QUALITY',quality),
                       ('GROUPING',grouping),
                       ('EXPOSURE',exposure),
@@ -973,10 +999,7 @@ class SPECTRUM(FITSExtension):
 
         if sys_err is not None:
 
-            data_list.append(('SYS_ERR', stat_err))
-
-
-
+            data_list.append(('SYS_ERR', sys_err))
 
 
         super(SPECTRUM, self).__init__(tuple(data_list), self._HEADER_KEYWORDS)
@@ -1003,7 +1026,7 @@ class POISSON_SPECTRUM(SPECTRUM):
         """
 
         super(POISSON_SPECTRUM, self).__init__(tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
-                 ancrfile, back_file)
+                 ancrfile, back_file=back_file)
 
         self.hdu.header.set("POISSERR", True)
 
@@ -1031,7 +1054,7 @@ class BAK_SPECTRUM(SPECTRUM):
 
 
         super(BAK_SPECTRUM, self).__init__(tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
-                                           ancrfile, sys_err=sys_err, stat_err=stat_err)
+                                           ancrfile, back_file=None, sys_err=sys_err, stat_err=stat_err)
 
 class POISSON_BKG_SPECTRUM(SPECTRUM):
 
@@ -1106,26 +1129,37 @@ class PHAII(FITSFile):
 
         else:
 
-            self._sys_err = None
+            self._sys_err = sys_err
 
         if stat_err is not None:
 
             self._stat_err = np.array(stat_err,np.float64)
 
+        else:
+
+            self._stat_err = stat_err
+
         if back_file is not None:
 
             self._back_file = np.array(back_file)
 
+        else:
+
+            self._back_file = back_file
+
         # Create the SPECTRUM extension
 
-        spectrum_extention =  self._build_spectrum_extension(self)
+        spectrum_extension = self._build_spectrum_extension()
 
         # Set telescope and instrument name
 
-        spectrum_extention.hdu.header.set("TELESCOP", telescope_name)
-        spectrum_extention.hdu.header.set("INSTRUME", instrument_name)
+        spectrum_extension.hdu.header.set("TELESCOP", telescope_name)
+        spectrum_extension.hdu.header.set("INSTRUME", instrument_name)
+        spectrum_extension.hdu.header.set("DETCHANS", len(self._channel[0]))
 
-        super(PHAII, self).__init__(file_extensions=[spectrum_extention])
+
+
+        super(PHAII, self).__init__(fits_extensions=[spectrum_extension])
 
 
 
@@ -1134,36 +1168,22 @@ class PHAII(FITSFile):
 
 
         # build the extension
-        # and exclude sys_err if it is not needed
 
-        if self._sys_err is not None:
+        spectrum_extension = SPECTRUM(self._tstart,
+                                      self._telapse,
+                                      self._channel,
+                                      self._rate,
+                                      self._quality,
+                                      self._grouping,
+                                      self._exposure,
+                                      self._backscale,
+                                      self._respfile,
+                                      self._ancrfile,
+                                      back_file=self._back_file,
+                                      sys_err=self._sys_err,
+                                      stat_err=self._stat_err)
 
-            spectrum_extension = SPECTRUM(self._tstart,
-                                          self._telapse,
-                                          self._channel,
-                                          self._rate,
-                                          self._quality,
-                                          self._grouping,
-                                          self._exposure,
-                                          self._backscale,
-                                          self._respfile,
-                                          self._back_file,
-                                          self._sys_err,
-                                          self._stat_err)
 
-        else:
-
-            spectrum_extension = SPECTRUM(self._tstart,
-                                          self._telapse,
-                                          self._channel,
-                                          self._rate,
-                                          self._quality,
-                                          self._grouping,
-                                          self._exposure,
-                                          self._backscale,
-                                          self._respfile,
-                                          self._back_file,
-                                          stat_err=self._stat_err)
 
         return spectrum_extension
 
@@ -1194,7 +1214,7 @@ class POISSON_PHAII(PHAII):
         """
 
         super(POISSON_PHAII, self).__init__( instrument_name, telescope_name, tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
-                 ancrfile, back_file)
+                 ancrfile, back_file=back_file)
 
     def _build_spectrum_extension(self):
 
@@ -1209,7 +1229,8 @@ class POISSON_PHAII(PHAII):
                                           self._exposure,
                                           self._backscale,
                                           self._respfile,
-                                          self._back_file)
+                                          self._ancrfile,
+                                          back_file=self._back_file)
 
         return spectrum_extension
 
@@ -1241,39 +1262,27 @@ class BAK_PHAII(PHAII):
 
         super(BAK_PHAII, self).__init__(instrument_name, telescope_name, tstart, telapse, channel, rate, quality, grouping, exposure,
                  backscale, respfile,
-                 ancrfile, sys_err=sys_err, stat_err=stat_err)
+                 ancrfile, back_file=None, sys_err=sys_err, stat_err=stat_err)
 
     def _build_spectrum_extension(self):
 
         # build the extension
-        # and exclude sys_err if it is not needed
 
-        if self._sys_err is not None:
 
-            spectrum_extension = BAK_SPECTRUM(self._tstart,
-                                              self._telapse,
-                                              self._channel,
-                                              self._rate,
-                                              self._quality,
-                                              self._grouping,
-                                              self._exposure,
-                                              self._backscale,
-                                              self._respfile,
-                                              sys_err=self._sys_err,
-                                              stat_err=self._stat_err)
+        spectrum_extension = BAK_SPECTRUM(self._tstart,
+                                          self._telapse,
+                                          self._channel,
+                                          self._rate,
+                                          self._quality,
+                                          self._grouping,
+                                          self._exposure,
+                                          self._backscale,
+                                          self._respfile,
+                                          self._ancrfile,
+                                          sys_err=self._sys_err,
+                                          stat_err=self._stat_err)
 
-        else:
 
-            spectrum_extension = BAK_SPECTRUM(self._tstart,
-                                              self._telapse,
-                                              self._channel,
-                                              self._rate,
-                                              self._quality,
-                                              self._grouping,
-                                              self._exposure,
-                                              self._backscale,
-                                              self._respfile,
-                                              stat_err=self._stat_err)
 
         return spectrum_extension
 
@@ -1307,14 +1316,15 @@ class POISSON_BAK_PHAII(BAK_PHAII):
         # build the extension
 
         spectrum_extension = POISSON_BKG_SPECTRUM(self._tstart,
-                                              self._telapse,
-                                              self._channel,
-                                              self._rate,
-                                              self._quality,
-                                              self._grouping,
-                                              self._exposure,
-                                              self._backscale,
-                                              self._respfile)
+                                                  self._telapse,
+                                                  self._channel,
+                                                  self._rate,
+                                                  self._quality,
+                                                  self._grouping,
+                                                  self._exposure,
+                                                  self._backscale,
+                                                  self._respfile,
+                                                  self._ancrfile)
 
         return spectrum_extension
 
