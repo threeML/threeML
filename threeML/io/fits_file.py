@@ -181,7 +181,7 @@ class FITSExtension(object):
 
         # update the header to indicate that the file was created by 3ML
         self._hdu.set('CREATOR', "3ML v.%s" % (pkg_resources.get_distribution("threeML").version),
-             "(G.Vianello, giacomov@slac.stanford.edu)")
+             "(G.Vianello, giacomov@slac.stanford.edu)", 'Program the created the fits file')
 
     @property
     def hdu(self):
