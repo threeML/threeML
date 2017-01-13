@@ -1,6 +1,7 @@
 from astropy.io import fits
 import numpy as np
 import astropy.units as u
+import pkg_resources
 
 # From https://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/c_user/node20.html
 # Codes for the data type of binary table columns and/or for the
@@ -177,6 +178,10 @@ class FITSExtension(object):
         # Create the extension
 
         self._hdu = fits.BinTableHDU.from_columns(fits.ColDefs(fits_columns), header=header)
+
+        # update the header to indicate that the file was created by 3ML
+        self._hdu.set('CREATOR', "3ML v.%s" % (pkg_resources.get_distribution("threeML").version),
+             "(G.Vianello, giacomov@slac.stanford.edu)")
 
     @property
     def hdu(self):
