@@ -3,6 +3,8 @@ import astropy.io.fits as fits
 import os
 import warnings
 
+from threeML.plugins.OGIP.response import OGIPResponse
+
 
 
 class BinnedSpectrum(object):
@@ -38,9 +40,14 @@ class BinnedSpectrum(object):
         self._ebounds = ebounds
         self._exposure = exposure
 
-        assert self._n_channels == len(
-            self._ebounds) + 1, "read %d channels but %s energy boundaries. Should be n+1" % (
-            self._n_channels, len(self._ebounds))
+        # THIS TEMPORARY!! Discuss with Giacomo
+        if ebounds is not None:
+
+
+
+            assert self._n_channels == len(
+                self._ebounds) - 1, "read %d channels but %s energy boundaries. Should be n+1" % (
+                self._n_channels, len(self._ebounds))
 
         if count_errors is not None:
             assert self._n_channels == len(count_errors), "read %d channels but %s count errors. Should be equal" % (
@@ -102,16 +109,16 @@ class BinnedSpectrum(object):
         self._instrument = instrument
 
     @classmethod
-    def from_fits_file(cls, phafile, spectrum_number,file_type='observed'):
+    def from_fits_file(cls, phafile, spectrum_number=None,file_type='observed'):
 
         _required_keywords = {}
-        _required_keywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
+        _required_keywords['observed'] = ("telescope:TELESCOP,instrument:INSTRUME,filter:FILTER," +
                                           "exposure:EXPOSURE,backfile:BACKFILE," +
-                                          "respfile:RESPFILE," +
+                                          "response_file:RESPFILE," +
                                           "ancrfile:ANCRFILE,hduclass:HDUCLASS," +
                                           "hduclas1:HDUCLAS1,poisserr:POISSERR," +
                                           "chantype:CHANTYPE,detchans:DETCHANS,"
-                                          "backscal:BACKSCAL").split(",")
+                                          "scale_factor:BACKSCAL").split(",")
 
         # hduvers:HDUVERS
 
@@ -300,12 +307,43 @@ class BinnedSpectrum(object):
             # Now get the data (counts or rates) and their errors. If counts, transform them in rates
 
             exposure = gathered_keywords['exposure']
-            response_file = gathered_keywords['response_file']
-            ancillary_file = gathered_keywords['ancrfile']
+
+            if 'response_file' in gathered_keywords:
+
+                response_file = gathered_keywords['response_file']
+
+                response = OGIPResponse(response_file)
+
+                ebounds = response.ebounds
+
+
+            else:
+
+                response = None
+
+                # TODO: this is temporary
+
+                ebounds = None
+
+            if  'ancrfile' in gathered_keywords:
+
+                ancillary_file = gathered_keywords['ancrfile']
+
+            else:
+
+                ancillary_file = None
+
+            if 'scale_factor' in gathered_keywords:
+
+                scale_factor = gathered_keywords['scale_factor']
+
+            else:
+
+                scale_factor = None
+
             telescope = gathered_keywords['telescope']
             instrument = gathered_keywords['instrument']
-            scale_factor = gathered_keywords['scale_factor']
-            is_poisson - gathered_keywords['poisserr']
+            is_poisson = gathered_keywords['poisserr']
 
 
             if typeII:
@@ -321,7 +359,7 @@ class BinnedSpectrum(object):
 
                 else:
 
-                    rates = data.field(data_column_name)[spectrum_number - 1, :]
+                    counts = data.field(data_column_name)[spectrum_number - 1, :]
 
                     if not is_poisson:
                         count_errors = data.field("STAT_ERR")[spectrum_number - 1, :]
@@ -331,7 +369,7 @@ class BinnedSpectrum(object):
                     sys_errors = data.field("SYS_ERR")[spectrum_number - 1, :]
                 else:
 
-                    sys_errors = np.zeros(rates.shape)
+                    sys_errors = np.zeros(counts.shape)
 
                 if has_quality_column:
 
@@ -341,11 +379,11 @@ class BinnedSpectrum(object):
 
                     if is_all_data_good:
 
-                        quality = np.zeros_like(rates, dtype=int)
+                        quality = np.zeros_like(counts, dtype=int)
 
                     else:
 
-                        quality = np.zeros_like(rates, dtype=int) + 5
+                        quality = np.zeros_like(counts, dtype=int) + 5
 
 
 
@@ -410,9 +448,10 @@ class BinnedSpectrum(object):
 
         quality = Quality.from_ogip(quality)
 
-        assert rates.shape[0] == gathered_keywords['detchans'], \
+        assert counts.shape[0] == gathered_keywords['detchans'], \
             "The data column (RATES or COUNTS) has a different number of entries than the " \
             "DETCHANS declared in the header"
+
 
         if file_type == 'observed':
 
@@ -420,31 +459,34 @@ class BinnedSpectrum(object):
 
                 return BinnedPoissonSpectrum(counts,
                                              exposure,
-                                             count_errors,
+                                             ebounds,
                                              sys_errors,
-                                             response_file,
+                                             response,
                                              ancillary_file,
                                              telescope,
                                              instrument,
                                              quality,
                                              scale_factor,
                                              background,
-                                             phafile
-                                             )
+                                             phafile)
+
+
 
             else:
 
                 return BinnedSpectrum(counts,
                                       exposure,
-                                      sys_errors,
-                                      response_file,
-                                      ancillary_file,
-                                      telescope,
-                                      instrument,
-                                      quality,
-                                      scale_factor,
-                                      background,
-                                      phafile)
+                                      ebounds,
+                                      count_errors=count_errors,
+                                      sys_errors=sys_errors,
+                                      response_file=response,
+                                      ancillary_file=ancillary_file,
+                                      telescope=telescope,
+                                      instrument=instrument,
+                                      quality=quality,
+                                      scale_factor=scale_factor,
+                                      background=background,
+                                      file_name=phafile)
 
         else:
 
@@ -452,28 +494,27 @@ class BinnedSpectrum(object):
 
                 return BinnedPoissonBackgroundSpectrum(counts,
                                                        exposure,
+                                                       ebounds,
                                                        sys_errors,
-                                                       response_file,
+                                                       response,
                                                        ancillary_file,
                                                        telescope,
                                                        instrument,
                                                        quality,
-                                                       scale_factor,
                                                        phafile)
 
             else:
 
                 return BinnedBackgroundSpectrum(counts,
                                                 exposure,
-                                                count_errors,
-                                                sys_errors,
-                                                response_file,
-                                                ancillary_file,
-                                                telescope,
-                                                instrument,
-                                                quality,
-                                                scale_factor,
-                                                phafile)
+                                                ebounds,
+                                                count_errors=count_errors,
+                                                sys_errors=sys_errors,
+                                                ancillary_file=ancillary_file,
+                                                telescope=telescope,
+                                                instrument=instrument,
+                                                quality=quality,
+                                                file_name=phafile)
 
 
 
@@ -682,8 +723,7 @@ class BinnedPoissonSpectrum(BinnedSpectrum):
            :param file_name: (optional) file name associated to the spectrum
            """
 
-        super(BinnedPoissonSpectrum, self).__init__(self,
-                                                    counts,
+        super(BinnedPoissonSpectrum, self).__init__(counts,
                                                     exposure,
                                                     ebounds,
                                                     is_poisson=True,
@@ -725,8 +765,7 @@ class BinnedPoissonBackgroundSpectrum(BinnedBackgroundSpectrum):
                   :param file_name: (optional) file name associated to the spectrum
                   """
 
-        super(BinnedPoissonSpectrum, self).__init__(self,
-                                                    counts,
+        super(BinnedPoissonSpectrum, self).__init__(counts,
                                                     exposure,
                                                     ebounds,
                                                     is_poisson=True,
