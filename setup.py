@@ -43,6 +43,7 @@ setup(
               'threeML/minimizer',
               'threeML/plugins',
               'threeML/plugins/OGIP',
+              'threeML/plugins/spectrum'
               'threeML/plugins/Fermi_LAT',
               'threeML/plugins/Fermi_GBM',
               'threeML/classicMLE',
