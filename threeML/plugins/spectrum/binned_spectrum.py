@@ -3,42 +3,10 @@ import astropy.io.fits as fits
 import os
 import warnings
 
-class Quality(object):
-    def __init__(self, quality):
-        self._quality = quality
-
-    @property
-    def good(self):
-        return self._quality == 'good'
-
-    def warn(self):
-        return self._quality == 'warn'
-
-    @property
-    def bad(self):
-        return self._quality == 'bad'
-
-    @property
-    def n_elements(self):
-        return len(self._quality)
-
-    @classmethod
-    def from_ogip(cls, ogip_quality):
-        good = ogip_quality == 0
-        warn = ogip_quality == 2
-        bad = np.logical_and(~good, ~warn)
-
-        quality = np.empty_like(ogip_quality, dtype=str)
-
-        quality[good] = 'good'
-        quality[warn] = 'warn'
-        quality[bad] = 'bad'
-
-        return Quality(quality)
 
 
 class BinnedSpectrum(object):
-    def __init__(self, counts, exposure, ebounds, is_poisson=False, count_errors=None, sys_errors=None, response=None,
+    def __init__(self, counts, exposure, ebounds, is_poisson=False, count_errors=None, sys_errors=None, response_file=None,
                  ancillary_file=None, telescope=None, instrument=None, quality=None, scale_factor=None, background=None,
                  file_name=None):
         """
@@ -55,7 +23,7 @@ class BinnedSpectrum(object):
         :param is_poisson: if the histogram is Poisson
         :param count_errors: (optional) count errors for non-Poisson data
         :param sys_errors: (options) systematic error per channel
-        :param response: (optional) instance of InstrumentResponse
+        :param response_file: (optional) response file
         :param ancillary_file: (optional) ancillary file
         :param telescope: (optional) telescope name
         :param instrument: (optional) instrument name
@@ -100,7 +68,7 @@ class BinnedSpectrum(object):
 
         self._scale_factor = scale_factor
 
-        self._response = response
+        self._response = response_file
 
         self._ancillary_file = ancillary_file
 
@@ -134,7 +102,7 @@ class BinnedSpectrum(object):
         self._instrument = instrument
 
     @classmethod
-    def from_fits_file(cls, pha_file_name, file_type='observed'):
+    def from_fits_file(cls, phafile, spectrum_number,file_type='observed'):
 
         _required_keywords = {}
         _required_keywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
@@ -147,7 +115,7 @@ class BinnedSpectrum(object):
 
         # hduvers:HDUVERS
 
-        _required_keywords['background'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
+        _required_keywords['background'] = ("telescope:TELESCOP,instrument:INSTRUME,filter:FILTER," +
                                             "exposure:EXPOSURE," +
                                             "hduclass:HDUCLASS," +
                                             "hduclas1:HDUCLAS1,poisserr:POISSERR," +
@@ -167,20 +135,19 @@ class BinnedSpectrum(object):
 
         file_type = file_type.lower()
 
-        # I am removing this because we do not
-        # want to support reading PHAII files here
         # Allow the use of a syntax like "mySpectrum.pha{1}" to specify the spectrum
         # number in PHA II files
-        # ext = os.path.splitext(pha_file_name)[-1]
 
-        # if '{' in ext:
-        #     spectrum_number = int(ext.split('{')[-1].replace('}', ''))
-        #
-        #     phafile = pha_file_name.split('{')[0]
+        ext = os.path.splitext(phafile)[-1]
+
+        if '{' in ext:
+            spectrum_number = int(ext.split('{')[-1].replace('}', ''))
+
+            phafile = phafile.split('{')[0]
 
         # Read the data
 
-        with fits.open(pha_file_name) as f:
+        with fits.open(phafile) as f:
 
             try:
 
@@ -190,7 +157,7 @@ class BinnedSpectrum(object):
 
                 raise RuntimeError("The input file %s is not in PHA format" % (phafile))
 
-            spectrum_number = spectrum_number
+
 
             spectrum = f[HDUidx]
             data = spectrum.data
@@ -255,14 +222,15 @@ class BinnedSpectrum(object):
             # Determine if this is a PHA I or PHA II
             if len(data.field(data_column_name).shape) == 2:
 
+                typeII = True
 
-                raise RuntimeError("Attempting to read a PHA Type II file. Please use a BinnedSpectrumSet")
-                # typeII = True
+                if spectrum_number == None:
+                    raise RuntimeError("This is a PHA Type II file. You have to provide a spectrum number")
 
-                # if spectrum_number == None:
-                #     raise RuntimeError("This is a PHA Type II file. You have to provide a spectrum number")
+            else:
 
-           
+                typeII = False
+
             # Collect information from mandatory keywords
 
             keys = _required_keywords[file_type]
@@ -327,54 +295,185 @@ class BinnedSpectrum(object):
                     else:
 
                         raise RuntimeError("Keyword %s not found. File %s is not a proper PHA "
-                                           "file" % (keyname, pha_file_name))
+                                           "file" % (keyname, phafile))
 
             # Now get the data (counts or rates) and their errors. If counts, transform them in rates
 
-            
+            exposure = gathered_keywords['exposure']
+            response_file = gathered_keywords['response_file']
+            ancillary_file = gathered_keywords['ancrfile']
+            telescope = gathered_keywords['telescope']
+            instrument = gathered_keywords['instrument']
+            scale_factor = gathered_keywords['scale_factor']
+            is_poisson - gathered_keywords['poisserr']
 
-            # PHA 1 file
-            if has_rates:
 
-                rates = data.field(data_column_name)
+            if typeII:
 
-                if not is_poisson:
-                    rate_errors = data.field("STAT_ERR")
+                # PHA II file
+                if has_rates:
 
-            else:
+                    counts = data.field(data_column_name)[spectrum_number - 1, :] * exposure
 
-                rates = data.field(data_column_name) / exposure
+                    if not is_poisson:
 
-                if not is_poisson:
-                    rate_errors = data.field("STAT_ERR") / exposure
-
-            if "SYS_ERR" in data.columns.names:
-
-                ys_errors = data.field("SYS_ERR")
-
-            else:
-
-                sys_errors = np.zeros(rates.shape)
-
-            if has_quality_column:
-
-                quality = data.field("QUALITY")
-
-            else:
-
-                if is_all_data_good:
-
-                    quality = np.zeros_like(rates, dtype=int)
+                        count_errors = data.field("STAT_ERR")[spectrum_number - 1, :] * exposure
 
                 else:
 
-                    quality = np.zeros_like(rates, dtype=int) + 5
+                    rates = data.field(data_column_name)[spectrum_number - 1, :]
+
+                    if not is_poisson:
+                        count_errors = data.field("STAT_ERR")[spectrum_number - 1, :]
+
+                if "SYS_ERR" in data.columns.names:
+
+                    sys_errors = data.field("SYS_ERR")[spectrum_number - 1, :]
+                else:
+
+                    sys_errors = np.zeros(rates.shape)
+
+                if has_quality_column:
+
+                    quality = data.field("QUALITY")[spectrum_number - 1, :]
+
+                else:
+
+                    if is_all_data_good:
+
+                        quality = np.zeros_like(rates, dtype=int)
+
+                    else:
+
+                        quality = np.zeros_like(rates, dtype=int) + 5
+
+
+
+            elif typeII == False:
+
+                # PHA 1 file
+                if has_rates:
+
+                    counts = data.field(data_column_name) * exposure
+
+                    if not is_poisson:
+
+                        count_errors = data.field("STAT_ERR") * exposure
+
+                else:
+
+                    counts = data.field(data_column_name)
+
+                    if not is_poisson:
+
+                        count_errors = data.field("STAT_ERR")
+
+                if "SYS_ERR" in data.columns.names:
+
+                    sys_errors = data.field("SYS_ERR")
+
+                else:
+
+                    sys_errors = np.zeros(counts.shape)
+
+                if has_quality_column:
+
+                    quality = data.field("QUALITY")
+
+                else:
+
+                    if is_all_data_good:
+
+                        quality = np.zeros_like(counts, dtype=int)
+
+                    else:
+
+                        quality = np.zeros_like(counts, dtype=int) + 5
+
+                        # Now that we have read it, some safety checks
+
+
+
+        if 'backfile' in gathered_keywords:
+
+            background = BinnedSpectrum.from_fits_file(gathered_keywords['backfile'],
+                                                       spectrum_number,
+                                                       file_type='background')
+
+        else:
+
+            background = None
+
+
 
         # Now that we have read it, some safety checks
+
+        quality = Quality.from_ogip(quality)
 
         assert rates.shape[0] == gathered_keywords['detchans'], \
             "The data column (RATES or COUNTS) has a different number of entries than the " \
             "DETCHANS declared in the header"
+
+        if file_type == 'observed':
+
+            if is_poisson:
+
+                return BinnedPoissonSpectrum(counts,
+                                             exposure,
+                                             count_errors,
+                                             sys_errors,
+                                             response_file,
+                                             ancillary_file,
+                                             telescope,
+                                             instrument,
+                                             quality,
+                                             scale_factor,
+                                             background,
+                                             phafile
+                                             )
+
+            else:
+
+                return BinnedSpectrum(counts,
+                                      exposure,
+                                      sys_errors,
+                                      response_file,
+                                      ancillary_file,
+                                      telescope,
+                                      instrument,
+                                      quality,
+                                      scale_factor,
+                                      background,
+                                      phafile)
+
+        else:
+
+            if is_poisson:
+
+                return BinnedPoissonBackgroundSpectrum(counts,
+                                                       exposure,
+                                                       sys_errors,
+                                                       response_file,
+                                                       ancillary_file,
+                                                       telescope,
+                                                       instrument,
+                                                       quality,
+                                                       scale_factor,
+                                                       phafile)
+
+            else:
+
+                return BinnedBackgroundSpectrum(counts,
+                                                exposure,
+                                                count_errors,
+                                                sys_errors,
+                                                response_file,
+                                                ancillary_file,
+                                                telescope,
+                                                instrument,
+                                                quality,
+                                                scale_factor,
+                                                phafile)
 
 
 
@@ -470,16 +569,16 @@ p
         return self._ancillary_file
 
     @property
-    def instrument(self):
+    def telescope(self):
         """
         Returns the name of the mission used to make the observation
         :return: a string
         """
 
-        if self._instrument is None:
+        if self._telescope is None:
             return 'UNKNOWN'
 
-        return self._instrument
+        return self._telescope
 
     @property
     def instrument(self):
@@ -545,7 +644,7 @@ class BinnedBackgroundSpectrum(BinnedSpectrum):
                                                        is_poisson,
                                                        count_errors,
                                                        sys_errors,
-                                                       response=None,
+                                                       response_file=None,
                                                        ancillary_file=ancillary_file,
                                                        telescope=telescope,
                                                        instrument=instrument,
@@ -556,7 +655,7 @@ class BinnedBackgroundSpectrum(BinnedSpectrum):
 
 
 class BinnedPoissonSpectrum(BinnedSpectrum):
-    def __init__(self, counts, exposure, ebounds, sys_errors=None, response=None,
+    def __init__(self, counts, exposure, ebounds, sys_errors=None, response_file=None,
                  ancillary_file=None, telescope=None, instrument=None, quality=None, scale_factor=None, background=None,
                  file_name=None):
         """
@@ -573,7 +672,7 @@ class BinnedPoissonSpectrum(BinnedSpectrum):
            :param exposure: the exposure for the counts
            :param ebounds: the len(counts) + 1 energy edges of the histogram
            :param sys_errors: (options) systematic error per channel
-           :param response: (optional) instance of InstrumentResponse
+           :param response_file: (optional) instance of InstrumentResponse
            :param ancillary_file: (optional) ancillary file
            :param telescope: (optional) telescope name
            :param instrument: (optional) instrument name
@@ -590,7 +689,7 @@ class BinnedPoissonSpectrum(BinnedSpectrum):
                                                     is_poisson=True,
                                                     count_errors=None,
                                                     sys_errors=sys_errors,
-                                                    response=response,
+                                                    response_file=response_file,
                                                     ancillary_file=ancillary_file,
                                                     telescope=telescope,
                                                     instrument=instrument,
@@ -601,7 +700,7 @@ class BinnedPoissonSpectrum(BinnedSpectrum):
 
 
 class BinnedPoissonBackgroundSpectrum(BinnedBackgroundSpectrum):
-    def __init__(self, counts, exposure, ebounds, sys_errors=None, response=None,
+    def __init__(self, counts, exposure, ebounds, sys_errors=None, response_file=None,
                  ancillary_file=None, telescope=None, instrument=None, quality=None, file_name=None):
         """
                   A general binned histogram of either Poisson background rates. While the input is in counts, 3ML spectra work
@@ -618,7 +717,7 @@ class BinnedPoissonBackgroundSpectrum(BinnedBackgroundSpectrum):
                   :param exposure: the exposure for the counts
                   :param ebounds: the len(counts) + 1 energy edges of the histogram
                   :param sys_errors: (options) systematic error per channel
-                  :param response: (optional) instance of InstrumentResponse
+                  :param response_file: (optional) instance of InstrumentResponse
                   :param ancillary_file: (optional) ancillary file
                   :param telescope: (optional) telescope name
                   :param instrument: (optional) instrument name
@@ -633,10 +732,44 @@ class BinnedPoissonBackgroundSpectrum(BinnedBackgroundSpectrum):
                                                     is_poisson=True,
                                                     count_errors=None,
                                                     sys_errors=sys_errors,
-                                                    response=response,
+                                                    response=response_file,
                                                     ancillary_file=ancillary_file,
                                                     telescope=telescope,
                                                     instrument=instrument,
                                                     quality=quality,
                                                     scale_factor=None,
                                                     file_name=file_name)
+
+
+class Quality(object):
+    def __init__(self, quality):
+        self._quality = quality
+
+    @property
+    def good(self):
+        return self._quality == 'good'
+
+    def warn(self):
+        return self._quality == 'warn'
+
+    @property
+    def bad(self):
+        return self._quality == 'bad'
+
+    @property
+    def n_elements(self):
+        return len(self._quality)
+
+    @classmethod
+    def from_ogip(cls, ogip_quality):
+        good = ogip_quality == 0
+        warn = ogip_quality == 2
+        bad = np.logical_and(~good, ~warn)
+
+        quality = np.empty_like(ogip_quality, dtype=str)
+
+        quality[good] = 'good'
+        quality[warn] = 'warn'
+        quality[bad] = 'bad'
+
+        return Quality(quality)
