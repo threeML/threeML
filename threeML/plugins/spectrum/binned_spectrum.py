@@ -40,14 +40,11 @@ class BinnedSpectrum(object):
         self._ebounds = ebounds
         self._exposure = exposure
 
-        # THIS TEMPORARY!! Discuss with Giacomo
-        if ebounds is not None:
 
 
-
-            assert self._n_channels == len(
-                self._ebounds) - 1, "read %d channels but %s energy boundaries. Should be n+1" % (
-                self._n_channels, len(self._ebounds))
+        assert self._n_channels == len(
+            self._ebounds) - 1, "read %d channels but %s energy boundaries. Should be n+1" % (
+            self._n_channels, len(self._ebounds))
 
         if count_errors is not None:
             assert self._n_channels == len(count_errors), "read %d channels but %s count errors. Should be equal" % (
@@ -109,7 +106,31 @@ class BinnedSpectrum(object):
         self._instrument = instrument
 
     @classmethod
-    def from_fits_file(cls, phafile, spectrum_number=None,file_type='observed'):
+    def from_fits_file(cls, phafile, spectrum_number=None, file_type='observed', ebounds=None):
+        """
+
+        Build a spectrum instance from an OGIP PHA fits file. This will read either a PHA Type I file
+        or a single spectrum from a PHA Type II file. For selecting spectra from PHA Type II files, either
+        the standard filename.pha{<spectrum_number>} formalism can work, or the spectrum_number argument can
+        be used.
+
+        The file_type argument tells the constructor if this is an observed or background PHA file. In the case of
+        an observed PHA, if there is an associated background, then we will also build a BinnedSpectrum for that
+        background PHA file. Hence, the optional ebounds argument. Since a background PHA should have no associated
+        response, then we need to pass the required ebounds from the observation response file to the background. This
+        can also serve to overide the ebounds of an observation's associated response file.
+
+        :param phafile: The PHA file name. In the case of a PHA Type II file, can use {<spectrum_number>} construction
+        :param spectrum_number: optional spectrum number for a PHA Type II file
+        :param file_type: string of either observed or background
+        :param ebounds: (optional) ebounds arrays for the PHA file
+        :return:
+
+
+
+        """
+
+        # set up dictionaries detailing required keywords in the files
 
         _required_keywords = {}
         _required_keywords['observed'] = ("telescope:TELESCOP,instrument:INSTRUME,filter:FILTER," +
@@ -304,9 +325,18 @@ class BinnedSpectrum(object):
                         raise RuntimeError("Keyword %s not found. File %s is not a proper PHA "
                                            "file" % (keyname, phafile))
 
-            # Now get the data (counts or rates) and their errors. If counts, transform them in rates
+            # Now get the data (counts or rates) and their errors. If rates, transform them in counts
+            # (Binned spectra hold counts to facilitate proper rate conversion)
+
+            # get the exposure from the gather keywords
 
             exposure = gathered_keywords['exposure']
+
+            # see if there is a response and if so, grab the file
+            # and construct an OGIPResponse. It is possible that the
+            # response file is not properly names (if the file was created
+            # on another computer) in this case, we need to think of a workaround
+            # because the Spectrum instance needs an ebounds extension
 
             if 'response_file' in gathered_keywords:
 
@@ -314,16 +344,20 @@ class BinnedSpectrum(object):
 
                 response = OGIPResponse(response_file)
 
-                ebounds = response.ebounds
+                if ebounds is None:
+
+                    this_ebounds = response.ebounds
 
 
             else:
 
+                # we could not find a response.
+                # is possible this is a background file
+                # thus we rely on the explicit ebounds setting
+
                 response = None
 
-                # TODO: this is temporary
-
-                ebounds = None
+                this_ebounds = ebounds
 
             if  'ancrfile' in gathered_keywords:
 
@@ -432,11 +466,19 @@ class BinnedSpectrum(object):
 
 
 
-        if 'backfile' in gathered_keywords:
+        if 'backfile' in gathered_keywords and file_type == 'observed':
+
+            # If we have a background associated with the file,
+            # we want to go ahead a build a BackgroundBinnedSpectrum
+            # object to associated with this source. This will use the
+            # from_pha constructor as well. However, there will be NO
+            # response in the background file, so we must explicitly
+            # pass the ebounds from the source response to the background
 
             background = BinnedSpectrum.from_fits_file(gathered_keywords['backfile'],
                                                        spectrum_number,
-                                                       file_type='background')
+                                                       file_type='background',
+                                                       ebounds=this_ebounds)
 
         else:
 
@@ -459,7 +501,7 @@ class BinnedSpectrum(object):
 
                 return BinnedPoissonSpectrum(counts,
                                              exposure,
-                                             ebounds,
+                                             this_ebounds,
                                              sys_errors,
                                              response,
                                              ancillary_file,
@@ -476,7 +518,7 @@ class BinnedSpectrum(object):
 
                 return BinnedSpectrum(counts,
                                       exposure,
-                                      ebounds,
+                                      this_ebounds,
                                       count_errors=count_errors,
                                       sys_errors=sys_errors,
                                       response_file=response,
@@ -494,7 +536,7 @@ class BinnedSpectrum(object):
 
                 return BinnedPoissonBackgroundSpectrum(counts,
                                                        exposure,
-                                                       ebounds,
+                                                       this_ebounds,
                                                        sys_errors,
                                                        response,
                                                        ancillary_file,
@@ -507,7 +549,7 @@ class BinnedSpectrum(object):
 
                 return BinnedBackgroundSpectrum(counts,
                                                 exposure,
-                                                ebounds,
+                                                this_ebounds,
                                                 count_errors=count_errors,
                                                 sys_errors=sys_errors,
                                                 ancillary_file=ancillary_file,
@@ -655,7 +697,7 @@ p
 class BinnedBackgroundSpectrum(BinnedSpectrum):
     def __init__(self, counts, exposure, ebounds, is_poisson=False, count_errors=None, sys_errors=None,
                  ancillary_file=None, telescope=None, instrument=None, quality=None,
-                 file_name=None):
+                 file_name=None,source_spectrum=None):
         """
         A general binned histogram of either Poisson or non-Poisson rates that are background. While the input is in counts, 3ML spectra work
         in rates, so this class uses the exposure to construct the rates from the counts. While it is possible to
@@ -679,6 +721,8 @@ class BinnedBackgroundSpectrum(BinnedSpectrum):
         :param file_name: (optional) file name associated to the spectrum
         """
 
+        self._source_spectrum = source_spectrum
+
         super(BinnedBackgroundSpectrum, self).__init__(counts,
                                                        exposure,
                                                        ebounds,
@@ -693,6 +737,9 @@ class BinnedBackgroundSpectrum(BinnedSpectrum):
                                                        scale_factor=None,
                                                        background=None,
                                                        file_name=file_name)
+
+
+
 
 
 class BinnedPoissonSpectrum(BinnedSpectrum):
