@@ -926,6 +926,17 @@ class PHAWrite(object):
 # The following classes are used to create OGIP-compliant PHAII files
 
 
+def _atleast_2d_with_dtype(value,dtype=None):
+
+
+    if dtype is not None:
+        value = np.array(value,dtype=dtype)
+
+    arr = np.atleast_2d(value)
+
+    return arr
+
+
 class SPECTRUM(FITSExtension):
 
     _HEADER_KEYWORDS = (('EXTNAME', 'SPECTRUM', 'Extension name'),
