@@ -128,7 +128,7 @@ class FITSExtension(object):
 
                 units = str(test_value.unit)
 
-            elif isinstance(test_value, str):
+            elif isinstance(test_value, str) or (test_value.dtype.type == np.string_):
 
                 # Get maximum length
 
