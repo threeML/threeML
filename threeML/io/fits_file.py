@@ -174,10 +174,16 @@ class FITSExtension(object):
 
                 else:
 
+                    # see if it is a string array
+
                     if (test_value.dtype.type == np.string_):
-                        max_string_length = len(max(column_data, key=len))
+
+                        max_string_length = max(column_data, key=len).dtype.itemsize
+
 
                         format = '%iA' % max_string_length
+
+                        print column_data
 
                     else:
 
