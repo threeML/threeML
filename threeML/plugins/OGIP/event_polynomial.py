@@ -37,6 +37,15 @@ class Polynomial(object):
 
             self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
 
+    @classmethod
+    def from_previous_fit(cls, coefficients, covariance):
+
+
+        poly = Polynomial(coefficients=coefficients)
+        poly._cov_matrix = covariance
+
+        return poly
+
     @property
     def degree(self):
         """
