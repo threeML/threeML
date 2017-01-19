@@ -150,9 +150,10 @@ def test_gbm_tte_constructor():
 
         nai3 = FermiGBMTTELike('NAI3',
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
-                               "-10-0, 100-150",
-                               src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
+                               source_intervals=src_selection,
+                               background_selections="-10-0, 100-150",
+                               poly_order=-1)
 
         assert nai3.name == 'NAI3'
 
@@ -187,9 +188,10 @@ def test_gbm_binning():
 
         nai3 = FermiGBMTTELike('NAI3',
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
-                               "-10-0, 100-150",
-                               src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=-1)
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
+                               source_intervals=src_selection,
+                               background_selections="-10-0, 100-150",
+                               poly_order=-1)
 
         # should not have bins yet
 
@@ -262,9 +264,10 @@ def test_gbm_tte_joint_likelihood_fitting():
 
         nai3 = FermiGBMTTELike('NAI3',
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
-                               "-10-0, 100-150",
-                               src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=1)
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
+                               source_intervals=src_selection,
+                               background_selections="-10-0, 100-150",
+                               poly_order=-1)
 
         ab = AnalysisBuilder(nai3)
 
@@ -307,9 +310,10 @@ def test_gbm_tte_bayesian_fitting():
 
         nai3 = FermiGBMTTELike('NAI3',
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
-                               "-10-0, 100-150",
-                               src_selection,
-                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"), poly_order=1)
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
+                               source_intervals=src_selection,
+                               background_selections="-10-0, 100-150",
+                               poly_order=-1)
 
         ab = AnalysisBuilder(nai3)
         ab.set_priors()
@@ -340,6 +344,38 @@ def test_gbm_tte_bayesian_fitting():
 
             assert bb.raw_samples.shape == (n_samples, 2)
 
+
+
+
+def test_saving_background():
+    with within_directory(__example_dir):
+        data_dir = os.path.join('gbm', 'bn080916009')
+
+        src_selection = "0.-10."
+
+        nai3 = FermiGBMTTELike('NAI3',
+                               os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
+                               source_intervals=src_selection,
+                               background_selections="-10-0, 100-150",
+                               poly_order=-1)
+
+        old_coeffcients , old_errors = nai3.get_background_parameters()
+
+        nai3.save_background('temp_gbm',overwrite=True)
+
+        nai3 = FermiGBMTTELike('NAI3',
+                               os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
+                               rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
+                               source_intervals=src_selection,
+                               restore_background='temp_gbm_saved_bkg.h5',
+                               poly_order=-1)
+
+        new_coeffcients, new_errors = nai3.get_background_parameters()
+
+        assert new_coeffcients == old_coeffcients
+
+        assert new_errors == old_errors
 
 
 
