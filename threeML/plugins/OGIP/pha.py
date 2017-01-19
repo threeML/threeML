@@ -1123,20 +1123,21 @@ class PHAII(FITSFile):
         # collect the data so that we can have a general
         # extension builder
 
-        self._tstart = np.array(tstart , np.float64) * u.s
-        self._telapse = np.array(telapse, np.float64) * u.s
-        self._channel = np.array(channel, np.int16)
-        self._rate = np.array(rate, np.float64) * 1./u.s
-        self._exposure = np.array(exposure, np.float64) * u.s
-        self._quality = np.array(quality, np.int16)
-        self._grouping = np.array(grouping, np.int16)
-        self._backscale = np.array(backscale, np.float64)
-        self._respfile = np.array(respfile)
-        self._ancrfile = np.array(ancrfile)
+
+        self._tstart = _atleast_2d_with_dtype(tstart , np.float64) * u.s
+        self._telapse = _atleast_2d_with_dtype(telapse, np.float64) * u.s
+        self._channel = _atleast_2d_with_dtype(channel, np.int16)
+        self._rate = _atleast_2d_with_dtype(rate, np.float64) * 1./u.s
+        self._exposure = _atleast_2d_with_dtype(exposure, np.float64) * u.s
+        self._quality = _atleast_2d_with_dtype(quality, np.int16)
+        self._grouping = _atleast_2d_with_dtype(grouping, np.int16)
+        self._backscale = _atleast_2d_with_dtype(backscale, np.float64)
+        self._respfile = _atleast_2d_with_dtype(respfile,str)
+        self._ancrfile = _atleast_2d_with_dtype(ancrfile,str)
 
         if sys_err is not None:
 
-            self._sys_err = np.array(sys_err, np.float64)
+            self._sys_err = _atleast_2d_with_dtype(sys_err, np.float64)
 
         else:
 
@@ -1144,7 +1145,7 @@ class PHAII(FITSFile):
 
         if stat_err is not None:
 
-            self._stat_err = np.array(stat_err,np.float64)
+            self._stat_err = _atleast_2d_with_dtype(stat_err,np.float64)
 
         else:
 
@@ -1152,8 +1153,7 @@ class PHAII(FITSFile):
 
         if back_file is not None:
 
-            self._back_file = np.array(back_file)
-
+            self._back_file = _atleast_2d_with_dtype(back_file,str)
         else:
 
             self._back_file = back_file
