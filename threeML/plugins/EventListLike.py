@@ -292,9 +292,20 @@ class EventListLike(OGIPLike):
         return self._evt_list.get_poly_info()
 
 
+    def save_background(self,filename, overwrite=False):
+        """
+
+        save the background to and HDF5 file. The filename does not need an extension.
+        The filename will be saved as <filename>_bkg.h5
 
 
 
+        :param filename: name of file to save
+        :param overwrite: to overwrite or not
+        :return:
+        """
+
+        self._evt_list.save_background(filename,overwrite)
 
 
 
