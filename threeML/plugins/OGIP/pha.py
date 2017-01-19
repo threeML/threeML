@@ -4,7 +4,9 @@ import numpy as np
 import warnings
 from collections import MutableMapping
 from copy import copy
-import pkg_resources
+from threeML.plugins.OGIP.response import EBOUNDS, SPECRESP_MATRIX
+from threeML.io.fits_file import FITSExtension, FITSFile
+import astropy.units as u
 
 _required_keywords = {}
 _required_keywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
@@ -628,7 +630,7 @@ class PHAWrite(object):
 
         self._pseudo_time = 0.
 
-        self._spec_iterartor = 1
+        self._spec_iterator = 1
 
     def write(self, outfile_name, overwrite=True):
         """
@@ -667,6 +669,8 @@ class PHAWrite(object):
         # grab the ogip pha info
         pha_info = ogip.get_pha_files()
 
+        self._out_rsp = []
+
         first_channel = pha_info['rsp'].first_channel
 
         for key in ['pha', 'bak']:
@@ -682,12 +686,12 @@ class PHAWrite(object):
 
                 else:
 
-                    self._backfile[key].append('%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
+                    self._backfile[key].append('%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterator))
 
                     if len('%s_bak.pha{%d}' % (
-                            self._outfile_basename, self._spec_iterartor)) > self._max_length_background_file_name:
+                            self._outfile_basename, self._spec_iterator)) > self._max_length_background_file_name:
                         self._max_length_background_file_name = len(
-                                '%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterartor))
+                                '%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterator))
 
                     # We want to write the bak file
 
@@ -721,9 +725,16 @@ class PHAWrite(object):
             else:
 
                 # This will be reached in the case that a response was generated from a plugin
-                # e.g. if we want to use weighted DRMs from GBM. We do not handle this just yet.
+                # e.g. if we want to use weighted DRMs from GBM.
 
-                NotImplementedError("In the future this indicates that we need to generate an RSP file.")
+                rsp_file_name = "%s_.rsp{%d}"%(self._outfile_basename,self._spec_iterator)
+
+                self._respfile[key].append(rsp_file_name)
+
+                if key == 'pha':
+
+                        self._out_rsp.append(pha_info['rsp'])
+
 
             self._rate[key].append(pha_info[key].rates.tolist())
 
@@ -778,12 +789,14 @@ class PHAWrite(object):
 
                 self._tstop[key].append(self._pseudo_time)
 
-            self._spec_iterartor += 1
+            self._spec_iterator += 1
+
+
 
     def _write_phaII(self, overwrite):
 
         # Fix this later... if needed.
-        trigTime = None
+        trigger_time = None
 
         # Assuming background and pha files have the same
         # number of channels
@@ -800,13 +813,8 @@ class PHAWrite(object):
             'bak'], "Mission for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. " % (
             self._mission['pha'], self._mission['bak'])
 
-        n_channel = len(self._rate['pha'][0])
 
-        vector_format_D = "%sD" % (n_channel)
-        vector_format_I = "%sI" % (n_channel)
 
-        # Do we also want to write out a
-        # background file?
         if self._write_bak_file:
 
             keys = ['pha', 'bak']
@@ -817,136 +825,506 @@ class PHAWrite(object):
 
         for key in keys:
 
-            if trigTime is not None:
+            if trigger_time is not None:
 
-                # use trigTime as reference for TSTART
-                tstart_column = fits.Column(name='TSTART',
-                                            format='D',
-                                            array=np.array(self._tstart[key]),
-                                            unit="s",
-                                            bzero=trigTime)
+                tstart = self._tstart[key] - trigger_time
+
             else:
 
-                tstart_column = fits.Column(name='TSTART',
-                                            format='D',
-                                            array=np.array(self._tstart[key]),
-                                            unit="s")
+                tstart = self._tstart[key]
 
-            t_elapse_column = fits.Column(name='TELAPSE',
-                                          format='D',
-                                          array=np.array(self._tstop[key]) - np.array(self._tstart[key]),
-                                          unit="s")
+            if not self._is_poisson[key]:
 
-            spec_num_column = fits.Column(name='SPEC_NUM',
-                                          format='I',
-                                          array=np.arange(1, self._n_spectra + 1, dtype=np.int32))
+                if key == 'pha':
 
-            channel_column = fits.Column(name='CHANNEL',
-                                         format=vector_format_I,
-                                         array=np.array(self._channel[key]))
+                    fits_file = PHAII(self._instrument[key],
+                                      self._mission[key],
+                                      tstart,
+                                      np.array(self._tstop[key]) - np.array(self._tstart[key]),
+                                      self._channel[key],
+                                      self._rate[key],
+                                      self._quality[key],
+                                      self._grouping[key],
+                                      self._exposure[key],
+                                      self._backscal[key],
+                                      self._respfile[key],
+                                      self._ancrfile[key],
+                                      back_file=self._backfile[key],
+                                      sys_err=self._sys_err[key],
+                                      stat_err=self._stat_err[key])
 
-            rate_column = fits.Column(name='RATE',
-                                      format=vector_format_D,
-                                      array=np.array(self._rate[key]),
-                                      unit="Counts/s")
+                else:
 
-            if (self._is_poisson[key] == False):
-                stat_err_column = fits.Column(name='STAT_ERR',
-                                              format=vector_format_D,
-                                              array=np.array(self._stat_err[key]))
+                    fits_file = BAK_PHAII(self._instrument[key],
+                                      self._mission[key],
+                                      tstart,
+                                      np.array(self._tstop[key]) - np.array(self._tstart[key]),
+                                      self._channel[key],
+                                      self._rate[key],
+                                      self._quality[key],
+                                      self._grouping[key],
+                                      self._exposure[key],
+                                      self._backscal[key],
+                                      self._respfile[key],
+                                      self._ancrfile[key],
+                                      self._sys_err[key],
+                                      self._stat_err[key])
 
-                sys_err_column = fits.Column(name='SYS_ERR',
-                                             format=vector_format_D,
-                                             array=np.array(self._sys_err[key]))
+            else:
 
-            quality_column = fits.Column(name='QUALITY',
-                                         format=vector_format_I,
-                                         array=np.array(self._quality[key]))
+                if key == 'pha':
 
-            grouping_column = fits.Column(name='GROUPING',
-                                          format=vector_format_I,
-                                          array=np.array(self._grouping[key]))
+                    fits_file = POISSON_PHAII(self._instrument[key],
+                                              self._mission[key],
+                                              tstart,
+                                              np.array(self._tstop[key]) - np.array(self._tstart[key]),
+                                              self._channel[key],
+                                              self._rate[key],
+                                              self._quality[key],
+                                              self._grouping[key],
+                                              self._exposure[key],
+                                              self._backscal[key],
+                                              self._respfile[key],
+                                              self._ancrfile[key],
+                                              back_file=self._backfile[key])
 
-            exposure_column = fits.Column(name='EXPOSURE',
-                                          format='D',
-                                          array=np.array(self._exposure[key]),
-                                          unit="s")
+                else:
 
-            backscale_column = fits.Column(name='BACKSCAL',
-                                           format='D',
-                                           array=np.array(self._backscal[key]))
-
-            respfile_column = fits.Column(name='RESPFILE',
-                                          format='%iA' % (self._max_length_resp_file_name + 2),
-                                          array=np.array(self._respfile[key]))
-
-            ancrfile_column = fits.Column(name='ANCRFILE',
-                                          format='%iA' % (self._max_length_anc_file_name + 2),
-                                          array=np.array(self._ancrfile[key]))
-
-            # There are the base columns.
-            # We will append to them as needed
-            # by the type of data.
-
-            use_columns = [tstart_column,
-                           t_elapse_column,
-                           spec_num_column,
-                           channel_column,
-                           rate_column,
-                           quality_column,
-                           grouping_column,
-                           exposure_column,
-                           backscale_column,
-                           respfile_column,
-                           ancrfile_column]
+                    fits_file = POISSON_BAK_PHAII(self._instrument[key],
+                                                  self._mission[key],
+                                                  tstart,
+                                                  np.array(self._tstop[key]) - np.array(self._tstart[key]),
+                                                  self._channel[key],
+                                                  self._rate[key],
+                                                  self._quality[key],
+                                                  self._grouping[key],
+                                                  self._exposure[key],
+                                                  self._backscal[key],
+                                                  self._respfile[key],
+                                                  self._ancrfile[key])
 
 
-            if key == 'pha':
 
-                backfile_column = fits.Column(name='BACKFILE',
-                                              format='%iA' % (self._max_length_background_file_name + 2),
-                                              array=np.array(self._backfile[key]))
+            fits_file.writeto(self._outfile_name[key], overwrite=overwrite)
 
-                use_columns.append(backfile_column)
 
-            # Insert the stat and sys columns if not Poisson
-            # errors
+            if self._out_rsp:
 
-            if (self._is_poisson[key] == False):
 
-                use_columns.insert(5, stat_err_column)
-                use_columns.insert(6, sys_err_column)
+                extensions = [EBOUNDS(self._out_rsp[0].ebounds)]
 
-            column_defs = fits.ColDefs(use_columns)
+                extensions.extend([SPECRESP_MATRIX(this_rsp.monte_carlo_energies, this_rsp.ebounds, this_rsp.matrix) for this_rsp in self._out_rsp])
 
-            new_table = fits.BinTableHDU.from_columns(column_defs)
+                rsp2 = FITSFile(fits_extensions=extensions)
 
-            # Add the keywords required by the OGIP standard:
-            new_table.header.set('EXTNAME', 'SPECTRUM')
+                rsp2.writeto("%s_.rsp" % self._outfile_basename,overwrite=True)
 
-            # TODO: add corrscal once implemented
-            new_table.header.set('CORRSCAL', 1.0)
-            new_table.header.set('AREASCAL', 1.0)
-            # new_table.header.set('BACKSCAL', 1.0)
-            new_table.header.set('HDUCLASS', 'OGIP')
-            new_table.header.set('HDUCLAS1', 'SPECTRUM')
-            # TODO: determine spectrum type in PHA class
-            new_table.header.set('HDUCLAS2', 'TOTAL')
-            new_table.header.set('HDUCLAS3', 'RATE')
-            new_table.header.set('HDUCLAS4', 'TYPE:II')
-            new_table.header.set('HDUVERS', '1.2.0')
-            new_table.header.set('TELESCOP', self._mission[key])  # Modify this
-            new_table.header.set('INSTRUME', self._instrument[key])  # assuming all have the same name
 
-            # TODO: check with GV what this is
-            new_table.header.set('FILTER', 'none')
 
-            new_table.header.set('CHANTYPE', 'PHA')
-            new_table.header.set('POISSERR', self._is_poisson[key])
-            new_table.header.set('DETCHANS', len(self._channel[key][0]))
-            new_table.header.set('CREATOR', "3ML v.%s" % (pkg_resources.get_distribution("threeML").version),
-                                 "(G.Vianello, giacomov@slac.stanford.edu)")
 
-            # Write to the required filename
+####################################################################################
+# The following classes are used to create OGIP-compliant PHAII files
 
-            new_table.writeto(self._outfile_name[key], clobber=overwrite)
+
+class SPECTRUM(FITSExtension):
+
+    _HEADER_KEYWORDS = (('EXTNAME', 'SPECTRUM', 'Extension name'),
+                        ('CONTENT', 'OGIP PHA data', 'File content'),
+                        ('HDUCLASS', 'OGIP    ', 'format conforms to OGIP standard'),
+                        ('HDUVERS', '1.1.0   ', 'Version of format (OGIP memo CAL/GEN/92-002a)'),
+                        ('HDUDOC', 'OGIP memos CAL/GEN/92-002 & 92-002a', 'Documents describing the forma'),
+                        ('HDUVERS1', '1.0.0   ', 'Obsolete - included for backwards compatibility'),
+                        ('HDUVERS2', '1.1.0   ', 'Obsolete - included for backwards compatibility'),
+                        ('HDUCLAS1', 'SPECTRUM', 'Extension contains spectral data  '),
+                        ('HDUCLAS2', 'TOTAL ', ''),
+                        ('HDUCLAS3', 'RATE ', ''),
+                        ('HDUCLAS4', 'TYPE:II ', ''),
+                        ('FILTER', '', 'Filter used'),
+                        ('CHANTYPE', 'PHA', 'Channel type'),
+                        ('POISSERR', False, 'Are the rates Poisson distributed'),
+                        ('DETCHANS', None, 'Number of channels'),
+                        ('CORRSCAL',1.0,''),
+                        ('AREASCAL',1.0,'')
+
+
+
+                        )
+
+
+    def __init__(self, tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
+                 ancrfile, back_file=None, sys_err=None, stat_err=None):
+
+        """
+        Represents the SPECTRUM extension of a PHAII file.
+
+        :param tstart: array of interval start times
+        :param telapse: array of times elapsed since start
+        :param channel: arrary of channel numbers
+        :param rate: array of rates
+        :param quality: array of OGIP quality values
+        :param grouping: array of OGIP grouping values
+        :param exposure: array of exposures
+        :param backscale: array of backscale values
+        :param respfile: array of associated response file names
+        :param ancrfile: array of associate ancillary file names
+        :param back_file: array of associated background file names
+        :param sys_err: array of optional systematic errors
+        :param stat_err: array of optional statistical errors (required of non poisson!)
+        """
+
+        n_spectra = len(tstart)
+
+
+        data_list = [('TSTART', tstart),
+                      ('TELAPSE', telapse),
+                      ('SPEC_NUM',np.arange(1, n_spectra + 1, dtype=np.int32)),
+                      ('CHANNEL', channel),
+                      ('RATE',rate),
+                      ('QUALITY',quality),
+                      ('GROUPING',grouping),
+                      ('EXPOSURE',exposure),
+                      ('BACKSCAL',backscale),
+                      ('RESPFILE',respfile),
+                      ('ANCRFILE',ancrfile)]
+
+
+        if back_file is not None:
+
+            data_list.append(('BACKFILE', back_file))
+
+
+        if stat_err is not None:
+
+            data_list.append(('STAT_ERR', stat_err))
+
+        if sys_err is not None:
+
+            data_list.append(('SYS_ERR', sys_err))
+
+
+        super(SPECTRUM, self).__init__(tuple(data_list), self._HEADER_KEYWORDS)
+
+class POISSON_SPECTRUM(SPECTRUM):
+    def __init__(self, tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
+                 ancrfile, back_file=None):
+
+        """
+        Represents the SPECTRUM extension of a PHAII file when the rates are POISSON
+        distributed
+
+        :param tstart: array of interval start times
+        :param telapse: array of times elapsed since start
+        :param channel: arrary of channel numbers
+        :param rate: array of rates
+        :param quality: array of OGIP quality values
+        :param grouping: array of OGIP grouping values
+        :param exposure: array of exposures
+        :param backscale: array of backscale values
+        :param respfile: array of associated response file names
+        :param ancrfile: array of associate ancillary file names
+        :param back_file: array of associated background file names
+        """
+
+        super(POISSON_SPECTRUM, self).__init__(tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
+                 ancrfile, back_file=back_file)
+
+        self.hdu.header.set("POISSERR", True)
+
+class BAK_SPECTRUM(SPECTRUM):
+
+    def __init__(self, tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
+                 ancrfile, sys_err=None, stat_err=None):
+        """
+          Represents the banckground SPECTRUM extension of a PHAII file with the rates are not
+          POISSON distributed
+
+          :param tstart: array of interval start times
+          :param telapse: array of times elapsed since start
+          :param channel: arrary of channel numbers
+          :param rate: array of rates
+          :param quality: array of OGIP quality values
+          :param grouping: array of OGIP grouping values
+          :param exposure: array of exposures
+          :param respfile: array of associated response file names
+          :param ancrfile: array of associate ancillary file names
+          :param sys_err: array of optional systematic errors
+          :param stat_err: array of optional statistical errors (required of non poisson!)
+          """
+
+
+
+        super(BAK_SPECTRUM, self).__init__(tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
+                                           ancrfile, back_file=None, sys_err=sys_err, stat_err=stat_err)
+
+class POISSON_BKG_SPECTRUM(SPECTRUM):
+
+    def __init__(self, tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
+                 ancrfile):
+        """
+          Represents the background SPECTRUM extension of a PHAII file when the rates
+          are POISSON distributed
+
+          :param tstart: array of interval start times
+          :param telapse: array of times elapsed since start
+          :param channel: arrary of channel numbers
+          :param rate: array of rates
+          :param quality: array of OGIP quality values
+          :param grouping: array of OGIP grouping values
+          :param exposure: array of exposures
+          :param respfile: array of associated response file names
+          :param ancrfile: array of associate ancillary file names
+          """
+
+        super(BAK_SPECTRUM, self).__init__(tstart, telapse, channel, rate, quality, grouping, exposure, backscale,
+                                           respfile,
+                                           ancrfile)
+
+        self.hdu.header.set("POISSERR", True)
+
+class PHAII(FITSFile):
+
+
+    def __init__(self, instrument_name, telescope_name, tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
+                 ancrfile, back_file=None, sys_err=None, stat_err=None):
+
+
+        """
+
+        A generic PHAII fits file
+
+        :param instrument_name: name of the instrument
+        :param telescope_name: name of the telescope
+        :param tstart: array of interval start times
+        :param telapse: array of times elapsed since start
+        :param channel: arrary of channel numbers
+        :param rate: array of rates
+        :param quality: array of OGIP quality values
+        :param grouping: array of OGIP grouping values
+        :param exposure: array of exposures
+        :param backscale: array of backscale values
+        :param respfile: array of associated response file names
+        :param ancrfile: array of associate ancillary file names
+        :param back_file: array of associated background file names
+        :param sys_err: array of optional systematic errors
+        :param stat_err: array of optional statistical errors (required of non poisson!)
+        """
+
+        # collect the data so that we can have a general
+        # extension builder
+
+        self._tstart = np.array(tstart , np.float64) * u.s
+        self._telapse = np.array(telapse, np.float64) * u.s
+        self._channel = np.array(channel, np.int16)
+        self._rate = np.array(rate, np.float64) * 1./u.s
+        self._exposure = np.array(exposure, np.float64) * u.s
+        self._quality = np.array(quality, np.int16)
+        self._grouping = np.array(grouping, np.int16)
+        self._backscale = np.array(backscale, np.float64)
+        self._respfile = np.array(respfile)
+        self._ancrfile = np.array(ancrfile)
+
+        if sys_err is not None:
+
+            self._sys_err = np.array(sys_err, np.float64)
+
+        else:
+
+            self._sys_err = sys_err
+
+        if stat_err is not None:
+
+            self._stat_err = np.array(stat_err,np.float64)
+
+        else:
+
+            self._stat_err = stat_err
+
+        if back_file is not None:
+
+            self._back_file = np.array(back_file)
+
+        else:
+
+            self._back_file = back_file
+
+        # Create the SPECTRUM extension
+
+        spectrum_extension = self._build_spectrum_extension()
+
+        # Set telescope and instrument name
+
+        spectrum_extension.hdu.header.set("TELESCOP", telescope_name)
+        spectrum_extension.hdu.header.set("INSTRUME", instrument_name)
+        spectrum_extension.hdu.header.set("DETCHANS", len(self._channel[0]))
+
+
+
+        super(PHAII, self).__init__(fits_extensions=[spectrum_extension])
+
+
+
+
+    def _build_spectrum_extension(self):
+
+
+        # build the extension
+
+        spectrum_extension = SPECTRUM(self._tstart,
+                                      self._telapse,
+                                      self._channel,
+                                      self._rate,
+                                      self._quality,
+                                      self._grouping,
+                                      self._exposure,
+                                      self._backscale,
+                                      self._respfile,
+                                      self._ancrfile,
+                                      back_file=self._back_file,
+                                      sys_err=self._sys_err,
+                                      stat_err=self._stat_err)
+
+
+
+        return spectrum_extension
+
+class POISSON_PHAII(PHAII):
+
+
+    def __init__(self, instrument_name, telescope_name, tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
+                 ancrfile, back_file=None):
+
+
+        """
+
+        A PHAII file with POISSON distributed rates
+
+        :param instrument_name: name of the instrument
+        :param telescope_name: name of the telescope
+        :param tstart: array of interval start times
+        :param telapse: array of times elapsed since start
+        :param channel: arrary of channel numbers
+        :param rate: array of rates
+        :param quality: array of OGIP quality values
+        :param grouping: array of OGIP grouping values
+        :param exposure: array of exposures
+        :param backscale: array of backscale values
+        :param respfile: array of associated response file names
+        :param ancrfile: array of associate ancillary file names
+        :param back_file: array of associated background file names
+        """
+
+        super(POISSON_PHAII, self).__init__( instrument_name, telescope_name, tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
+                 ancrfile, back_file=back_file)
+
+    def _build_spectrum_extension(self):
+
+        # build the extension
+
+        spectrum_extension = POISSON_SPECTRUM(self._tstart,
+                                          self._telapse,
+                                          self._channel,
+                                          self._rate,
+                                          self._quality,
+                                          self._grouping,
+                                          self._exposure,
+                                          self._backscale,
+                                          self._respfile,
+                                          self._ancrfile,
+                                          back_file=self._back_file)
+
+        return spectrum_extension
+
+class BAK_PHAII(PHAII):
+
+    def __init__(self, instrument_name, telescope_name, tstart, telapse, channel, rate, quality, grouping, exposure,
+                 backscale, respfile,
+                 ancrfile, sys_err=None, stat_err=None):
+        """
+
+        A background PHAII file
+
+
+        :param instrument_name: name of the instrument
+        :param telescope_name: name of the telescope
+        :param tstart: array of interval start times
+        :param telapse: array of times elapsed since start
+        :param channel: arrary of channel numbers
+        :param rate: array of rates
+        :param quality: array of OGIP quality values
+        :param grouping: array of OGIP grouping values
+        :param exposure: array of exposures
+        :param backscale: array of backscale values
+        :param respfile: array of associated response file names
+        :param ancrfile: array of associate ancillary file names
+        :param sys_err:
+        :param stat_err:
+        """
+
+        super(BAK_PHAII, self).__init__(instrument_name, telescope_name, tstart, telapse, channel, rate, quality, grouping, exposure,
+                 backscale, respfile,
+                 ancrfile, back_file=None, sys_err=sys_err, stat_err=stat_err)
+
+    def _build_spectrum_extension(self):
+
+        # build the extension
+
+
+        spectrum_extension = BAK_SPECTRUM(self._tstart,
+                                          self._telapse,
+                                          self._channel,
+                                          self._rate,
+                                          self._quality,
+                                          self._grouping,
+                                          self._exposure,
+                                          self._backscale,
+                                          self._respfile,
+                                          self._ancrfile,
+                                          sys_err=self._sys_err,
+                                          stat_err=self._stat_err)
+
+
+
+        return spectrum_extension
+
+class POISSON_BAK_PHAII(BAK_PHAII):
+    def __init__(self, instrument_name, telescope_name, tstart, telapse, channel, rate, quality, grouping, exposure,
+                 backscale, respfile, ancrfile):
+        """
+        A background PHAII file with POISSON distributed rates
+
+        :param instrument_name: name of the instrument
+        :param telescope_name: name of the telescope
+        :param tstart: array of interval start times
+        :param telapse: array of times elapsed since start
+        :param channel: arrary of channel numbers
+        :param rate: array of rates
+        :param quality: array of OGIP quality values
+        :param grouping: array of OGIP grouping values
+        :param exposure: array of exposures
+        :param backscale: array of backscale values
+        :param respfile: array of associated response file names
+        :param ancrfile: array of associate ancillary file names
+        """
+
+        super(POISSON_BAK_PHAII, self).__init__(instrument_name, telescope_name, tstart, telapse, channel, rate, quality,
+                                        grouping, exposure,
+                                        backscale, respfile,
+                                        ancrfile)
+
+    def _build_spectrum_extension(self):
+
+        # build the extension
+
+        spectrum_extension = POISSON_BKG_SPECTRUM(self._tstart,
+                                                  self._telapse,
+                                                  self._channel,
+                                                  self._rate,
+                                                  self._quality,
+                                                  self._grouping,
+                                                  self._exposure,
+                                                  self._backscale,
+                                                  self._respfile,
+                                                  self._ancrfile)
+
+        return spectrum_extension
+
