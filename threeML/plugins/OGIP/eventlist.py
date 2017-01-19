@@ -1121,10 +1121,11 @@ class EventList(object):
 
             else:
 
-                raise IOError("The file %s already exists! You cannot call two different "
-                              "template models with the same name" % filename_sanitized)
+                raise IOError("The file %s already exists!" % filename_sanitized)
 
         with HDFStore(filename_sanitized) as store:
+
+            # extract the polynomial information and save it
 
             if self._poly_fit_exists:
 
@@ -1165,6 +1166,8 @@ class EventList(object):
 
             self._polynomials = []
 
+            # create new polynomials
+
             for i in range(len(coefficients)):
 
                 coeff = np.array(coefficients.loc[i])
@@ -1189,6 +1192,8 @@ class EventList(object):
             self._optimal_polynomial_grade = metadata['poly_order']
             self._poly_time_selections = metadata['poly_selections']
             self._unbinned = metadata['unbinned']
+
+        # go thru and count the counts!
 
         self._poly_fit_exists = True
 
