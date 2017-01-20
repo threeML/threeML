@@ -1,14 +1,18 @@
 # Creates a generic event list reader that can create PHA objects on the fly
 
 import numpy as np
-
+import os
 import re
 
 import copy
 import pandas as pd
+from pandas import HDFStore
+
+
 
 from threeML.io.rich_display import display
 from threeML.utils.stats_tools import Significance
+from threeML.io.file_utils import sanitize_filename
 
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
@@ -16,7 +20,8 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.progress_bar import progress_bar
 from threeML.utils.binner import TemporalBinner
 
-from event_polynomial import polyfit, unbinned_polyfit
+
+from event_polynomial import polyfit, unbinned_polyfit, Polynomial
 
 from threeML.plugins.OGIP.pha import PHAContainer
 
@@ -1076,6 +1081,129 @@ class EventList(object):
 
 
         self._polynomials = polynomials
+
+
+    def save_background(self, filename, overwrite=False):
+        """
+        save the background to an HD5F
+
+        :param filename:
+        :return:
+        """
+
+        # make the file name proper
+
+        filename_split = filename.split('.')
+
+        if len(filename_split) > 1:
+
+            filename = "%s_saved_bkg.h5" % ''.join(filename_split[:-1])
+
+        else:
+
+            filename = "%s_saved_bkg.h5" % ''.join(filename_split[0])
+
+        filename_sanitized = sanitize_filename(filename)
+
+        # Check that it does not exists
+        if os.path.exists(filename_sanitized):
+
+            if overwrite:
+
+                try:
+
+                    os.remove(filename_sanitized)
+
+                except:
+
+                    raise IOError("The file %s already exists and cannot be removed (maybe you do not have "
+                                  "permissions to do so?). " % filename_sanitized)
+
+            else:
+
+                raise IOError("The file %s already exists!" % filename_sanitized)
+
+        with HDFStore(filename_sanitized) as store:
+
+            # extract the polynomial information and save it
+
+            if self._poly_fit_exists:
+
+                coeff = []
+                err = []
+
+                for poly in self._polynomials:
+                    coeff.append(poly.coefficients)
+                    err.append(poly.covariance_matrix)
+                df_coeff = pd.DataFrame(coeff)
+                df_err = pd.DataFrame(err)
+
+            else:
+
+                raise RuntimeError('the polynomials have not been fit yet')
+
+            df_coeff.to_hdf(store, 'coefficients')
+            df_err.to_hdf(store, 'covariance')
+
+
+
+            store.get_storer('coefficients').attrs.metadata = {'poly_order': self._optimal_polynomial_grade,
+                                                             'poly_selections': self._poly_time_selections,
+                                                             'unbinned':self._unbinned}
+
+    def restore_fit(self, filename):
+
+
+        filename_sanitized = sanitize_filename(filename)
+
+        with HDFStore(filename_sanitized) as store:
+
+            coefficients = store['coefficients']
+
+
+
+            covariance = store['covariance']
+
+            self._polynomials = []
+
+            # create new polynomials
+
+            for i in range(len(coefficients)):
+
+                coeff = np.array(coefficients.loc[i])
+
+                # make sure we get the right order
+                # pandas stores the non-needed coeff
+                # as nans.
+
+                coeff = coeff[np.isfinite(coeff)]
+
+                cov  = covariance.loc[i][0]
+
+
+
+                self._polynomials.append(Polynomial.from_previous_fit(coeff, cov))
+
+
+
+
+            metadata = store.get_storer('coefficients').attrs.metadata
+
+            self._optimal_polynomial_grade = metadata['poly_order']
+            self._poly_time_selections = metadata['poly_selections']
+            self._unbinned = metadata['unbinned']
+
+        # go thru and count the counts!
+
+        self._poly_fit_exists = True
+
+        if self._time_selection_exists:
+
+            tmp = []
+            for tmin, tmax in zip(self._tmin_list, self._tmax_list):
+                tmp.append("%.5f-%.5f" % (tmin, tmax))
+
+            self.set_active_time_intervals(*tmp)
 
 
 class EventListWithDeadTime(EventList):

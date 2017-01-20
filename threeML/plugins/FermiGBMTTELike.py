@@ -22,7 +22,7 @@ class BinningMethodError(RuntimeError):
 
 class FermiGBMTTELike(EventListLike):
 
-    def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
+    def __init__(self, name, tte_file, rsp_file, source_intervals, background_selections=None,restore_background=None,trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
         """
         A plugin to natively bin, view, and handle Fermi GBM TTE data.
@@ -101,8 +101,15 @@ class FermiGBMTTELike(EventListLike):
 
         # pass to the super class
 
-        EventListLike.__init__(self, name, event_list, background_selections, source_intervals, rsp_file,
-                               poly_order, unbinned, verbose)
+        super(FermiGBMTTELike, self).__init__(name,
+                                              event_list,
+                                              rsp_file=rsp_file,
+                                              source_intervals=source_intervals,
+                                              background_selections=background_selections,
+                                              poly_order=poly_order,
+                                              unbinned=unbinned,
+                                              verbose=verbose,
+                                              restore_poly_fit=restore_background)
 
     def set_active_time_interval(self, *intervals, **kwargs):
         """

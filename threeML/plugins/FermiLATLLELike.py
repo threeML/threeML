@@ -22,8 +22,8 @@ class BinningMethodError(RuntimeError):
 
 
 class FermiLATLLELike(EventListLike):
-    def __init__(self, name, lle_file, ft2_file, background_selections, source_intervals, rsp_file, trigger_time=None,
-                 poly_order=-1, unbinned=False, verbose=True):
+    def __init__(self, name, lle_file, ft2_file, rsp_file, source_intervals, background_selections=None, restore_background=None,
+                 trigger_time=None, poly_order=-1, unbinned=False, verbose=True):
         """
         A plugin to natively bin, view, and handle Fermi LAT LLE data.
         An LLE event file and FT2 (1 sec) are required as well as the associated response
@@ -86,8 +86,17 @@ class FermiLATLLELike(EventListLike):
                 mission=self._lat_lle_file.mission,
                 verbose=verbose)
 
-        super(FermiLATLLELike,self).__init__( name, event_list, background_selections, source_intervals, rsp_file,
-                               poly_order, unbinned, verbose)
+        super(FermiLATLLELike,self).__init__(name,
+                                             event_list,
+                                             rsp_file=rsp_file,
+                                             source_intervals=source_intervals,
+                                             background_selections=background_selections,
+                                             poly_order=poly_order,
+                                             unbinned=unbinned,
+                                             verbose=verbose,
+                                             restore_poly_fit=restore_background
+                                             )
+
 
 
 
