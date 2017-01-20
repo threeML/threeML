@@ -136,11 +136,15 @@ class FITSExtension(object):
 
                 format = '%iA' % max_string_length
 
+
+
+
             elif np.isscalar(test_value):
 
                 format = _NUMPY_TO_FITS_CODE[np.array(test_value).dtype.type]
 
             elif isinstance(test_value, list) or isinstance(test_value, np.ndarray):
+
 
                 # Probably a column array
                 # Check that we can convert it to a proper numpy type
@@ -166,12 +170,25 @@ class FITSExtension(object):
 
                     raise RuntimeError("Column %s contain data which cannot be coerced to %s" % (column_name, col_type))
 
+
+
                 else:
 
-                    # All good. Check the length
-                    # NOTE: variable length arrays are not supported
-                    line_length = len(test_value)
-                    format = '%i%s' % (line_length, _NUMPY_TO_FITS_CODE[col_type])
+                    # see if it is a string array
+
+                    if (test_value.dtype.type == np.string_):
+
+                        max_string_length = max(column_data, key=len).dtype.itemsize
+
+
+                        format = '%iA' % max_string_length
+
+                    else:
+
+                        # All good. Check the length
+                        # NOTE: variable length arrays are not supported
+                        line_length = len(test_value)
+                        format = '%i%s' % (line_length, _NUMPY_TO_FITS_CODE[col_type])
 
             else:
 

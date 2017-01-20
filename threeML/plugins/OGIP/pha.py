@@ -624,10 +624,6 @@ class PHAWrite(object):
         # Assuming all entries will have one answer
         self._is_poisson = {'pha': True, 'bak': True}
 
-        self._max_length_background_file_name = 0
-        self._max_length_resp_file_name = 0
-        self._max_length_anc_file_name = 0
-
         self._pseudo_time = 0.
 
         self._spec_iterator = 1
@@ -681,17 +677,9 @@ class PHAWrite(object):
 
                     self._backfile[key].append(pha_info[key].background_file)
 
-                    if len(pha_info[key].background_file) > self._max_length_background_file_name:
-                        self._max_length_background_file_name = len(pha_info[key].background_file)
-
                 else:
 
                     self._backfile[key].append('%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterator))
-
-                    if len('%s_bak.pha{%d}' % (
-                            self._outfile_basename, self._spec_iterator)) > self._max_length_background_file_name:
-                        self._max_length_background_file_name = len(
-                                '%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterator))
 
                     # We want to write the bak file
 
@@ -701,33 +689,23 @@ class PHAWrite(object):
 
                 self._ancrfile[key].append(pha_info[key].ancillary_file)
 
-                if len(pha_info[key].ancillary_file) > self._max_length_anc_file_name:
-                    self._max_length_anc_file_name = len(pha_info[key].ancillary_file)
-
-
-
             else:
 
                 # There is no ancillary file, so we need to flag it.
 
                 self._ancrfile[key].append('NONE')
 
-                if 4 > self._max_length_anc_file_name:
-                    self._max_length_anc_file_name = 4
 
             if pha_info['rsp'].rsp_filename is not None:
 
                 self._respfile[key].append(pha_info['rsp'].rsp_filename)
-
-                if len(pha_info['rsp'].rsp_filename) > self._max_length_resp_file_name:
-                    self._max_length_resp_file_name = len(pha_info['rsp'].rsp_filename)
 
             else:
 
                 # This will be reached in the case that a response was generated from a plugin
                 # e.g. if we want to use weighted DRMs from GBM.
 
-                rsp_file_name = "%s_.rsp{%d}"%(self._outfile_basename,self._spec_iterator)
+                rsp_file_name = "%s.rsp{%d}"%(self._outfile_basename,self._spec_iterator)
 
                 self._respfile[key].append(rsp_file_name)
 
@@ -789,7 +767,7 @@ class PHAWrite(object):
 
                 self._tstop[key].append(self._pseudo_time)
 
-            self._spec_iterator += 1
+        self._spec_iterator += 1
 
 
 
@@ -917,13 +895,34 @@ class PHAWrite(object):
 
                 rsp2 = FITSFile(fits_extensions=extensions)
 
-                rsp2.writeto("%s_.rsp" % self._outfile_basename,overwrite=True)
+                rsp2.writeto("%s.rsp" % self._outfile_basename,overwrite=True)
 
 
 
 
 ####################################################################################
 # The following classes are used to create OGIP-compliant PHAII files
+
+
+def _atleast_2d_with_dtype(value,dtype=None):
+
+
+    if dtype is not None:
+        value = np.array(value,dtype=dtype)
+
+    arr = np.atleast_2d(value)
+
+    return arr
+
+def _atleast_1d_with_dtype(value,dtype=None):
+
+
+    if dtype is not None:
+        value = np.array(value,dtype=dtype)
+
+    arr = np.atleast_1d(value)
+
+    return arr
 
 
 class SPECTRUM(FITSExtension):
@@ -973,7 +972,6 @@ class SPECTRUM(FITSExtension):
         """
 
         n_spectra = len(tstart)
-
 
         data_list = [('TSTART', tstart),
                       ('TELAPSE', telapse),
@@ -1112,20 +1110,22 @@ class PHAII(FITSFile):
         # collect the data so that we can have a general
         # extension builder
 
-        self._tstart = np.array(tstart , np.float64) * u.s
-        self._telapse = np.array(telapse, np.float64) * u.s
-        self._channel = np.array(channel, np.int16)
-        self._rate = np.array(rate, np.float64) * 1./u.s
-        self._exposure = np.array(exposure, np.float64) * u.s
-        self._quality = np.array(quality, np.int16)
-        self._grouping = np.array(grouping, np.int16)
-        self._backscale = np.array(backscale, np.float64)
-        self._respfile = np.array(respfile)
-        self._ancrfile = np.array(ancrfile)
+
+        self._tstart = _atleast_1d_with_dtype(tstart , np.float64) * u.s
+        self._telapse = _atleast_1d_with_dtype(telapse, np.float64) * u.s
+        self._channel = _atleast_2d_with_dtype(channel, np.int16)
+        self._rate = _atleast_2d_with_dtype(rate, np.float64) * 1./u.s
+        self._exposure = _atleast_1d_with_dtype(exposure, np.float64) * u.s
+        self._quality = _atleast_2d_with_dtype(quality, np.int16)
+        self._grouping = _atleast_2d_with_dtype(grouping, np.int16)
+        self._backscale = _atleast_1d_with_dtype(backscale, np.float64)
+        self._respfile = _atleast_1d_with_dtype(respfile,str)
+        self._ancrfile = _atleast_1d_with_dtype(ancrfile,str)
+
 
         if sys_err is not None:
 
-            self._sys_err = np.array(sys_err, np.float64)
+            self._sys_err = _atleast_2d_with_dtype(sys_err, np.float64)
 
         else:
 
@@ -1133,7 +1133,7 @@ class PHAII(FITSFile):
 
         if stat_err is not None:
 
-            self._stat_err = np.array(stat_err,np.float64)
+            self._stat_err = _atleast_2d_with_dtype(stat_err,np.float64)
 
         else:
 
@@ -1141,8 +1141,7 @@ class PHAII(FITSFile):
 
         if back_file is not None:
 
-            self._back_file = np.array(back_file)
-
+            self._back_file = _atleast_1d_with_dtype(back_file,str)
         else:
 
             self._back_file = back_file
