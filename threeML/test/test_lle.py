@@ -7,6 +7,7 @@ __author__ = 'grburgess'
 from threeML.plugins.FermiLATLLELike import FermiLATLLELike
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.plugins.OGIP.eventlist import OverLappingIntervals
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
@@ -165,7 +166,21 @@ def test_lle_constructor():
 
         lle.set_active_time_interval("0-10")
 
+        with pytest.raises(OverLappingIntervals):
+            lle.set_active_time_interval("0-10", "5-15")
+
         lle.set_background_interval("-150-0", "100-250")
+
+        # test that no background selections and no background save causes error
+
+        with pytest.raises(AssertionError):
+            lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+                                  os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                                  rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                                  source_intervals=src_selection,
+                                  poly_order=-1)
+
+
 
         #nai3.set_background_interval("-15-0", "100-150", unbinned=False)
 
@@ -338,7 +353,11 @@ def test_save_background():
                               background_selections="-100--1, 100-200",
                               poly_order=-1)
 
-        old_coeffcients, old_errors = lle.get_background_parameters()
+        old_coefficients, old_errors = lle.get_background_parameters()
+
+        old_tmin_list = lle._evt_list._tmin_list
+        old_tmax_list = lle._evt_list._tmax_list
+
 
         lle.save_background('temp_lle', overwrite=True)
 
@@ -346,11 +365,18 @@ def test_save_background():
                               os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
                               rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
                               source_intervals=src_selection,
-                              restore_background='temp_lle_saved_bkg.h5')
+                              restore_background='temp_lle.h5')
 
 
-        new_coeffcients, new_errors = lle.get_background_parameters()
+        new_coefficients, new_errors = lle.get_background_parameters()
 
-        assert new_coeffcients == old_coeffcients
+        new_tmin_list = lle._evt_list._tmin_list
+        new_tmax_list = lle._evt_list._tmax_list
+
+        assert new_coefficients == old_coefficients
 
         assert new_errors == old_errors
+
+        assert old_tmax_list == new_tmax_list
+
+        assert old_tmin_list == new_tmin_list

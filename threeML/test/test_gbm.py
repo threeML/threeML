@@ -6,6 +6,7 @@ __author__ = 'grburgess'
 
 from threeML.plugins.FermiGBMTTELike import FermiGBMTTELike
 from threeML.data_list import DataList
+from threeML.plugins.OGIP.eventlist import OverLappingIntervals
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from astromodels.core.model import Model
@@ -174,9 +175,25 @@ def test_gbm_tte_constructor():
 
         nai3.set_active_time_interval("0-10")
 
+        with pytest.raises(OverLappingIntervals):
+
+            nai3.set_active_time_interval("0-10","5-15")
+
+
+
         nai3.set_background_interval("-15-0", "100-150")
 
         nai3.set_background_interval("-15-0", "100-150", unbinned=False)
+
+        # test that no background and no save raises assertion:
+        with pytest.raises(AssertionError):
+            nai3 = FermiGBMTTELike('NAI3',
+                                   os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
+                                   rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
+                                   source_intervals=src_selection,
+                                   poly_order=-1)
+
+
 
 
 def test_gbm_binning():
@@ -360,7 +377,11 @@ def test_saving_background():
                                background_selections="-10-0, 100-150",
                                poly_order=-1)
 
-        old_coeffcients , old_errors = nai3.get_background_parameters()
+        old_coefficients , old_errors = nai3.get_background_parameters()
+
+        old_tmin_list = nai3._evt_list._tmin_list
+        old_tmax_list = nai3._evt_list._tmax_list
+
 
         nai3.save_background('temp_gbm',overwrite=True)
 
@@ -368,14 +389,22 @@ def test_saving_background():
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
                                rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
                                source_intervals=src_selection,
-                               restore_background='temp_gbm_saved_bkg.h5',
+                               restore_background='temp_gbm.h5',
                                poly_order=-1)
 
-        new_coeffcients, new_errors = nai3.get_background_parameters()
+        new_coefficients, new_errors = nai3.get_background_parameters()
 
-        assert new_coeffcients == old_coeffcients
+        new_tmin_list = nai3._evt_list._tmin_list
+        new_tmax_list = nai3._evt_list._tmax_list
+
+        assert new_coefficients == old_coefficients
 
         assert new_errors == old_errors
+
+
+        assert old_tmax_list == new_tmax_list
+
+        assert old_tmin_list == new_tmin_list
 
 
 
