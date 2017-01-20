@@ -570,6 +570,63 @@ class EventList(object):
 
         return pha
 
+    def get_pha_information(self, use_poly=False):
+        """
+        Return a PHAContainer that can be read by the PHA class
+        Args:
+            use_poly: (bool) choose to build from the polynomial fits
+        Returns:
+        """
+        if not self._time_selection_exists:
+            raise RuntimeError('No time selection exists! Cannot calculate rates')
+
+        if use_poly:
+            is_poisson = False
+
+            rate_err = self._poly_count_err / self._exposure
+            rates = self._poly_counts / self._exposure
+
+            # removing negative counts
+
+            idx = rates < 0.
+
+            rates[idx] = 0.
+            rate_err[idx] = 0.
+
+        else:
+
+            is_poisson = True
+
+            rate_err = None
+            rates = self._counts / (self._exposure)
+
+        if self._native_quality is None:
+
+            quality = np.zeros_like(rates, dtype=int)
+
+        else:
+
+            quality = self._native_quality
+
+        container_dict = {}
+
+        container_dict['instrument'] = self._instrument
+        container_dict['telescope'] = self._mission
+        container_dict['tstart'] = min(self._tmin_list)
+        container_dict['telapse'] = max(self._tmax_list) - min(self._tmin_list)
+        container_dict['channel'] = np.arange(self._n_channels) + self._first_channel
+        container_dict['rate'] = rates
+        container_dict['rate error'] = rate_err
+        container_dict['quality'] = quality
+
+        # TODO: make sure the grouping makes sense
+
+        container_dict['grouping'] = np.ones(self._n_channels)
+        container_dict['exposure'] = self._exposure
+        container_dict['response_file'] = self._rsp_file
+
+        return container_dict
+
     def peek(self):
         """
         Examine the currently selected info as well other things.
@@ -793,118 +850,34 @@ class EventList(object):
 
         channels = range(self._first_channel, self._n_channels + self._first_channel)
 
-        # Check whether we are parallelizing or not
+        polynomials = []
+
+        with progress_bar(self._n_channels) as p:
+            for channel in channels:
+                channel_mask = total_poly_energies == channel
+
+                # Mask background events and current channel
+                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+                # Select the masked events
+
+                current_events = total_poly_events[channel_mask]
+
+                # now bin the selected channel counts
+
+                cnts, bins = np.histogram(current_events,
+                                          bins=these_bins)
+
+                # Put data to fit in an x vector and y vector
+
+                polynomial, _ = polyfit(mean_time[non_zero_mask],
+                                        cnts[non_zero_mask],
+                                        self._optimal_polynomial_grade,
+                                        exposure_per_bin[non_zero_mask])
+
+                polynomials.append(polynomial)
+                p.increase()
 
 
-
-        if not threeML_config['parallel']['use-parallel']:
-
-            polynomials = []
-
-            with progress_bar(self._n_channels) as p:
-                for channel in channels:
-                    channel_mask = total_poly_energies == channel
-
-                    # Mask background events and current channel
-                    # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
-                    # Select the masked events
-
-                    current_events = total_poly_events[channel_mask]
-
-                    # now bin the selected channel counts
-
-                    cnts, bins = np.histogram(current_events,
-                                              bins=these_bins)
-
-                    # Put data to fit in an x vector and y vector
-
-                    polynomial, _ = polyfit(mean_time[non_zero_mask],
-                                            cnts[non_zero_mask],
-                                            self._optimal_polynomial_grade,
-                                            exposure_per_bin[non_zero_mask])
-
-                    polynomials.append(polynomial)
-                    p.increase()
-
-
-        else:
-
-            # With parallel computation
-
-            # In order to distribute fairly the computation, the strategy is to parallelize the computation
-            # by assigning to the engines one "line" of the grid at the time
-
-            # Connect to the engines
-
-
-            raise NotImplementedError('Coming Soon!')
-
-            client = ParallelClient()
-
-            # Get the number of engines
-
-            n_engines = client.get_number_of_engines()
-
-            if n_engines > self._n_channels:
-                n_engines = int(self._n_channels)
-
-                custom_warnings.warn(
-                    "The number of engines is larger than the number of channels. Using only %s engines."
-                    % n_engines, ReducingNumberOfThreads)
-
-            chunk_size = ceildiv(self._n_channels, n_engines)
-
-            # need to remove class ref
-            grade = self._optimal_polynomial_grade
-
-            def worker(start_index):
-
-                polynomials = []
-                channel_subset = channels[chunk_size * start_index: chunk_size * (start_index + 1)]
-
-                for channel in channel_subset:
-                    channel_mask = total_poly_energies == channel
-
-                    # Select the masked events
-
-                    current_events = total_poly_events[channel_mask]
-
-                    # now bin the selected channel counts
-
-                    cnts, _ = np.histogram(current_events, bins=these_bins)
-
-                    # cnts = cnts / bin_width
-
-                    # Put data to fit in an x vector and y vector
-
-                    polynomial, _ = polyfit(mean_time[non_zero_mask],
-                                            cnts[non_zero_mask],
-                                            grade,
-                                            exposure_per_bin[non_zero_mask])
-
-                    polynomials.append(polynomial)
-
-                return polynomials
-
-            # Get a balanced view of the engines
-
-            lview = client.load_balanced_view()
-            # lview.block = True
-
-            # Distribute the work among the engines and start it, but return immediately the control
-            # to the main thread
-
-            amr = lview.map_async(worker, range(n_engines))
-
-            # client.wait_watching_progress(amr, 10)
-
-            print("\n")
-
-            res = amr.get()
-
-            polynomials = []
-            for i in range(n_engines):
-                polynomials.extend(res[i])
 
         # We are now ready to return the polynomials
 
