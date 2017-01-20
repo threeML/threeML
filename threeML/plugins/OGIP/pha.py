@@ -624,10 +624,6 @@ class PHAWrite(object):
         # Assuming all entries will have one answer
         self._is_poisson = {'pha': True, 'bak': True}
 
-        self._max_length_background_file_name = 0
-        self._max_length_resp_file_name = 0
-        self._max_length_anc_file_name = 0
-
         self._pseudo_time = 0.
 
         self._spec_iterator = 1
@@ -681,17 +677,9 @@ class PHAWrite(object):
 
                     self._backfile[key].append(pha_info[key].background_file)
 
-                    if len(pha_info[key].background_file) > self._max_length_background_file_name:
-                        self._max_length_background_file_name = len(pha_info[key].background_file)
-
                 else:
 
                     self._backfile[key].append('%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterator))
-
-                    if len('%s_bak.pha{%d}' % (
-                            self._outfile_basename, self._spec_iterator)) > self._max_length_background_file_name:
-                        self._max_length_background_file_name = len(
-                                '%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterator))
 
                     # We want to write the bak file
 
@@ -701,26 +689,17 @@ class PHAWrite(object):
 
                 self._ancrfile[key].append(pha_info[key].ancillary_file)
 
-                if len(pha_info[key].ancillary_file) > self._max_length_anc_file_name:
-                    self._max_length_anc_file_name = len(pha_info[key].ancillary_file)
-
-
-
             else:
 
                 # There is no ancillary file, so we need to flag it.
 
                 self._ancrfile[key].append('NONE')
 
-                if 4 > self._max_length_anc_file_name:
-                    self._max_length_anc_file_name = 4
 
             if pha_info['rsp'].rsp_filename is not None:
 
                 self._respfile[key].append(pha_info['rsp'].rsp_filename)
 
-                if len(pha_info['rsp'].rsp_filename) > self._max_length_resp_file_name:
-                    self._max_length_resp_file_name = len(pha_info['rsp'].rsp_filename)
 
             else:
 
