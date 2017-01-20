@@ -183,8 +183,6 @@ class FITSExtension(object):
 
                         format = '%iA' % max_string_length
 
-                        print column_data
-
                     else:
 
                         # All good. Check the length
