@@ -1097,7 +1097,7 @@ class EventList(object):
 
 
 
-        filename = "%s.h5" % filename
+        filename = "%s.h5" % filename[0]
 
 
         filename_sanitized = sanitize_filename(filename)
