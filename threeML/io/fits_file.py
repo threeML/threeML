@@ -82,6 +82,16 @@ class FITSFile(object):
 
     writeto.__doc__ = fits.HDUList.writeto.__doc__
 
+    def __getitem__(self, item):
+
+        return self._hdu_list.__getitem__(item)
+
+    def info(self, output=None):
+
+        self._hdu_list.info(output)
+
+    info.__doc__ = fits.HDUList.info.__doc__
+
 
 class FITSExtension(object):
 
