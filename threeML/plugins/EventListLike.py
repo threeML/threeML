@@ -3,12 +3,7 @@ __author__ = 'grburgess'
 import numpy as np
 
 from threeML.io.file_utils import file_existing_and_readable
-import pandas as pd
-import os
-from pandas import HDFStore
-from threeML.io.file_utils import sanitize_filename
-
-from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
+from threeML.exceptions.custom_exceptions import custom_warnings
 
 try:
 
@@ -25,13 +20,7 @@ else:
 import copy
 
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
-from threeML.io.rich_display import display
-
-from threeML.io.step_plot import step_plot
 from threeML.plugins.OGIP.pha import PHAWrite
-
-from threeML.config.config import threeML_config
 
 __instrument_name = "Generic EventList data"
 

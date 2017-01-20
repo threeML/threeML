@@ -7,6 +7,7 @@ __author__ = 'grburgess'
 from threeML.plugins.FermiLATLLELike import FermiLATLLELike
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.plugins.OGIP.eventlist import OverLappingIntervals
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
@@ -164,6 +165,9 @@ def test_lle_constructor():
         lle.set_active_measurements("50000-1000000")
 
         lle.set_active_time_interval("0-10")
+
+        with pytest.raises(OverLappingIntervals):
+            lle.set_active_time_interval("0-10", "5-15")
 
         lle.set_background_interval("-150-0", "100-250")
 

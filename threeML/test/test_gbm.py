@@ -6,6 +6,7 @@ __author__ = 'grburgess'
 
 from threeML.plugins.FermiGBMTTELike import FermiGBMTTELike
 from threeML.data_list import DataList
+from threeML.plugins.OGIP.eventlist import OverLappingIntervals
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from astromodels.core.model import Model
@@ -173,6 +174,12 @@ def test_gbm_tte_constructor():
         nai3.set_active_measurements("8-30")
 
         nai3.set_active_time_interval("0-10")
+
+        with pytest.raises(OverLappingIntervals):
+
+            nai3.set_active_time_interval("0-10","5-15")
+
+
 
         nai3.set_background_interval("-15-0", "100-150")
 
