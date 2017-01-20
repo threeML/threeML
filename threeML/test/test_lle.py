@@ -346,7 +346,7 @@ def test_save_background():
                               os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
                               rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
                               source_intervals=src_selection,
-                              restore_background='temp_lle_saved_bkg.h5')
+                              restore_background='temp_lle.h5')
 
 
         new_coeffcients, new_errors = lle.get_background_parameters()

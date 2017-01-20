@@ -368,7 +368,7 @@ def test_saving_background():
                                os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
                                rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
                                source_intervals=src_selection,
-                               restore_background='temp_gbm_saved_bkg.h5',
+                               restore_background='temp_gbm.h5',
                                poly_order=-1)
 
         new_coeffcients, new_errors = nai3.get_background_parameters()
