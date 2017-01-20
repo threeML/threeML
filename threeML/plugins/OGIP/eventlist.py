@@ -1148,6 +1148,12 @@ class EventList(object):
                                                              'poly_selections': self._poly_time_selections,
                                                              'unbinned':self._unbinned}
 
+        if self._verbose:
+
+            print("\nSaved fitted background to %s.\n"% filename)
+
+
+
     def restore_fit(self, filename):
 
 
