@@ -1093,15 +1093,12 @@ class EventList(object):
 
         # make the file name proper
 
-        filename_split = filename.split('.')
+        filename = os.path.splitext(filename)
 
-        if len(filename_split) > 1:
 
-            filename = "%s_saved_bkg.h5" % ''.join(filename_split[:-1])
 
-        else:
+        filename = "%s.h5" % filename
 
-            filename = "%s_saved_bkg.h5" % ''.join(filename_split[0])
 
         filename_sanitized = sanitize_filename(filename)
 
