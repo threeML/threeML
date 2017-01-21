@@ -1033,7 +1033,7 @@ class PHAII(FITSFile):
             self._back_file = _atleast_1d_with_dtype(back_file,str)
         else:
 
-            self._back_file = back_file
+            self._back_file = np.array(['NONE'] * self._tstart.shape[0])
 
         # Create the SPECTRUM extension
 

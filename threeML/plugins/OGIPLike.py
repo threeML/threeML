@@ -19,7 +19,7 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_b
 from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import OGIPResponse
 from threeML.utils.binner import Rebinner
-from threeML.plugins.OGIP.pha import PHAWrite
+from threeML.plugins.OGIP.pha import PHAWrite, PHAII, POISSON_PHAII, POISSON_BAK_PHAII, BAK_PHAII
 from threeML.config.config import threeML_config
 
 __instrument_name = "All OGIP-compliant instruments"
@@ -660,43 +660,73 @@ class OGIPLike(PluginPrototype):
 
             if self.observation_noise_model == 'poisson':
 
-                is_obs_poisson = True
+                pha = POISSON_PHAII(telescope_name=self._pha.mission,
+                                    instrument_name=self._pha.instrument,
+                                    tstart=0,
+                                    telapse=self.exposure,
+                                    channel=range(1, n_channels+1),
+                                    rate=randomized_source_rate,
+                                    quality=self._native_quality,
+                                    grouping=np.ones(n_channels),
+                                    exposure=self.exposure,
+                                    backscale=None,
+                                    respfile=None,
+                                    ancrfile=None)
+
 
             else:
 
-                is_obs_poisson = False
+                raise NotImplementedError()
 
-            pha = PHAContainer(rates=randomized_source_rate,
-                               n_channels=n_channels,
-                               exposure=self.exposure,
-                               is_poisson=is_obs_poisson,
-                               response_file=None,  # We will specify it later
-                               ancillary_file=None,  # We will specify it later
-                               quality=self._native_quality,
-                               mission=self._pha.mission,
-                               instrument=self._pha.instrument
-                               )
+                # pha = PHAII(telescope_name=self._pha.mission,
+                #                     instrument_name=self._pha.instrument,
+                #                     tstart=0,
+                #                     telapse=self.exposure,
+                #                     channel=range(1, n_channels + 1),
+                #                     rate=randomized_source_rate,
+                #                     stat_err=,
+                #                     quality=self._native_quality,
+                #                     grouping=np.ones(n_channels),
+                #                     exposure=self.exposure,
+                #                     backscale=None,
+                #                     respfile=None,
+                #                     ancrfile=None)
+
+
+
 
             if self.background_noise_model == 'poisson':
 
-                is_bkg_poisson = True
+                bak = POISSON_BAK_PHAII(telescope_name=self._pha.mission,
+                                        instrument_name=self._pha.instrument,
+                                        tstart=0,
+                                        telapse=self.exposure,
+                                        channel=range(1, n_channels + 1),
+                                        rate=randomized_background_rate,
+                                        quality=self._native_quality,
+                                        grouping=np.ones(n_channels),
+                                        exposure=self.background_exposure,
+                                        backscale=None,
+                                        respfile=None,
+                                        ancrfile=None)
 
             else:
 
-                is_bkg_poisson = False
 
-            bak = PHAContainer(rates=randomized_background_rate,
-                               rate_errors=randomized_background_rate_err,
-                               n_channels=n_channels,
-                               exposure=self.background_exposure,
-                               is_poisson=is_bkg_poisson,
-                               response_file=None,
-                               ancillary_file=None,
-                               quality=self._native_quality,
-                               mission=self._pha.mission,
-                               instrument=self._pha.instrument
-                               )
 
+                bak = BAK_PHAII(telescope_name=self._pha.mission,
+                                        instrument_name=self._pha.instrument,
+                                        tstart=0,
+                                        telapse=self.exposure,
+                                        channel=range(1, n_channels+1),
+                                        rate=randomized_source_rate,
+                                        stat_err=randomized_background_rate_err,
+                                        quality=self._native_quality,
+                                        grouping=np.ones(n_channels),
+                                        exposure=self.background_exposure,
+                                        backscale=None,
+                                        respfile=None,
+                                        ancrfile=None)
             # Now create another instance of OGIPLike with the randomized data we just generated
 
             new_ogip_like = OGIPLike(new_name,
@@ -706,7 +736,8 @@ class OGIPLike(PluginPrototype):
                                      # re-read from disk (way faster!)
                                      arf_file=None,  # The ARF is None because if present has been already read in
                                      # the self._rsp class
-                                     verbose=self._verbose)
+                                     verbose=self._verbose,
+                                     spectrum_number=1)
 
             # Apply the same selections as the current data set
             if original_rebinner is not None:
