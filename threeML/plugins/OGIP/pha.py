@@ -803,7 +803,7 @@ def _atleast_1d_with_dtype(value,dtype=None):
             # which is needed for None Type args
             # to string arrays
 
-            idx = np.lower(value) == 'none'
+            idx = np.core.defchararray.lower(value) == 'none'
 
             value[idx] = 'NONE'
 
