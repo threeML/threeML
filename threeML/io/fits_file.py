@@ -92,6 +92,14 @@ class FITSFile(object):
 
     info.__doc__ = fits.HDUList.info.__doc__
 
+    def index_of(self, key):
+
+        return self._hdu_list.index_of(key)
+
+    index_of.__doc__ = fits.HDUList.index_of.__doc__
+
+
+
 
 class FITSExtension(object):
 
