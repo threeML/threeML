@@ -8,7 +8,7 @@ import root_numpy
 from threeML.io.cern_root_utils.io_utils import get_list_of_keys, open_ROOT_file
 from threeML.io.cern_root_utils.tobject_to_numpy import tgraph_to_arrays, th2_to_arrays, tree_to_ndarray
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.OGIP.pha import PHAContainer
+from threeML.plugins.OGIP.pha import POISSON_PHAII
 from threeML.plugins.OGIP.response import RMF
 import astropy.io.fits as pyfits
 
@@ -89,15 +89,16 @@ class VERITASRun(object):
         # Number of "channels"
         n_channels = self._recon_energies.shape[0]
 
-        pha = PHAContainer(rates = rates,
-                           rate_errors = rate_err,
-                           n_channels = n_channels,
-                           exposure = exposure,
-                           is_poisson = True,
-                           response_file=self._rsp_file,
-                           mission = self._mission,
-                           instrument = self._instrument,
-                           quality = np.zeros_like(rates, dtype=int))  # default quality to all good
+        pha = POISSON_PHAII(instrument_name=self._instrument,
+                    telescope_name=self._mission,
+                    channel=,
+                    rate=rates,
+                    quality=np.zeros_like(rates, dtype=int),
+                    grouping=np.ones(n_channels),
+                    exposure=exposure,
+                    backscale=None,
+                    respfile=self._rsp_file,
+                    ancrfile=None)
 
         return pha
 
