@@ -1,4 +1,4 @@
-# Creates a generic event list reader that can create PHA objects on the fly
+
 
 import numpy as np
 import os
@@ -21,9 +21,8 @@ from threeML.io.progress_bar import progress_bar
 from threeML.utils.binner import TemporalBinner
 
 
-from event_polynomial import polyfit, unbinned_polyfit, Polynomial
+from threeML.plugins.OGIP.event_polynomial import polyfit, unbinned_polyfit, Polynomial
 
-from threeML.plugins.OGIP.pha import PHAContainer
 
 
 class ReducingNumberOfThreads(Warning):
@@ -514,61 +513,6 @@ class EventList(object):
                 tmp.append("%.5f-%.5f" % (tmin, tmax))
 
             self.set_active_time_intervals(*tmp)
-
-    def get_pha_container(self, use_poly=False):
-        """
-        Return a PHAContainer that can be read by the PHA class
-
-
-        Args:
-            use_poly: (bool) choose to build from the polynomial fits
-
-        Returns:
-
-        """
-        if not self._time_selection_exists:
-            raise RuntimeError('No time selection exists! Cannot calculate rates')
-
-        if use_poly:
-            is_poisson = False
-
-            rate_err = self._poly_count_err / self._exposure
-            rates = self._poly_counts / self._exposure
-
-            # removing negative counts
-
-            idx = rates < 0.
-
-            rates[idx] = 0.
-            rate_err[idx] = 0.
-
-        else:
-
-            is_poisson = True
-
-            rate_err = None
-            rates = self._counts / (self._exposure)
-
-        if self._native_quality is None:
-
-            quality = np.zeros_like(rates, dtype=int)
-
-        else:
-
-            quality = self._native_quality
-
-
-        pha = PHAContainer(rates=rates,
-                           rate_errors=rate_err,
-                           n_channels=self._n_channels,
-                           exposure=self._exposure,
-                           is_poisson=is_poisson,
-                           response_file=self._rsp_file,
-                           mission=self._mission,
-                           instrument=self._instrument,
-                           quality=quality)  # default quality to all good
-
-        return pha
 
     def get_pha_information(self, use_poly=False):
         """
