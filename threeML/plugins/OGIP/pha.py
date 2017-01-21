@@ -797,6 +797,16 @@ def _atleast_1d_with_dtype(value,dtype=None):
     if dtype is not None:
         value = np.array(value,dtype=dtype)
 
+        if dtype == str:
+
+            # convert None to NONE
+            # which is needed for None Type args
+            # to string arrays
+
+            idx = np.lower(value) == 'none'
+
+            value[idx] = 'NONE'
+
     arr = np.atleast_1d(value)
 
     return arr

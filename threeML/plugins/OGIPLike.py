@@ -19,7 +19,7 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_b
 from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import OGIPResponse
 from threeML.utils.binner import Rebinner
-from threeML.plugins.OGIP.pha import PHAContainer, PHAWrite
+from threeML.plugins.OGIP.pha import PHAWrite
 from threeML.config.config import threeML_config
 
 __instrument_name = "All OGIP-compliant instruments"
@@ -190,18 +190,18 @@ class OGIPLike(PluginPrototype):
         # Apply the mask
         self._apply_mask_to_original_vectors()
 
-    def _get_pha_instance(self, pha_file_or_container, *args, **kwargs):
+    def _get_pha_instance(self, pha_file_or_instance, *args, **kwargs):
 
         # If the user didn't provide them, read the needed files from the keywords in the PHA file
         # It is possible a user passed a PHAContainer from an EventList. In this case, this will fail
         # resulting in an attribute error. We will check for this and if it fails, and then try to load the
         # PHAContainer
 
-        if isinstance(pha_file_or_container, str):
+        if isinstance(pha_file_or_instance, str):
 
             # This is supposed to be a filename
 
-            pha_file = sanitize_filename(pha_file_or_container)
+            pha_file = sanitize_filename(pha_file_or_instance)
 
             assert file_existing_and_readable(pha_file.split("{")[0]), "File %s not existing or not " \
                                                                        "readable" % pha_file
@@ -212,7 +212,7 @@ class OGIPLike(PluginPrototype):
 
             # Assume this is a PHAContainer or a subclass (or some other object with the same interface)
 
-            pha = PHA(pha_file_or_container, *args, **kwargs)
+            pha = PHA(pha_file_or_instance, *args, **kwargs)
 
         return pha
 
