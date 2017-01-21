@@ -21,13 +21,7 @@ else:
 import copy
 
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
-from threeML.io.rich_display import display
-
-from threeML.io.step_plot import step_plot
 from threeML.plugins.OGIP.pha import PHAWrite
-
-from threeML.config.config import threeML_config
 
 __instrument_name = "Generic EventList data"
 

@@ -1011,15 +1011,12 @@ class EventList(object):
 
         # make the file name proper
 
-        filename_split = filename.split('.')
+        filename = os.path.splitext(filename)
 
-        if len(filename_split) > 1:
 
-            filename = "%s_saved_bkg.h5" % ''.join(filename_split[:-1])
 
-        else:
+        filename = "%s.h5" % filename[0]
 
-            filename = "%s_saved_bkg.h5" % ''.join(filename_split[0])
 
         filename_sanitized = sanitize_filename(filename)
 
@@ -1068,6 +1065,12 @@ class EventList(object):
             store.get_storer('coefficients').attrs.metadata = {'poly_order': self._optimal_polynomial_grade,
                                                              'poly_selections': self._poly_time_selections,
                                                              'unbinned':self._unbinned}
+
+        if self._verbose:
+
+            print("\nSaved fitted background to %s.\n"% filename)
+
+
 
     def restore_fit(self, filename):
 
