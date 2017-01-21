@@ -619,8 +619,9 @@ class EventList(object):
         container_dict['rate error'] = rate_err
         container_dict['quality'] = quality
 
-        # TODO: make sure the grouping makes sense
 
+        # TODO: make sure the grouping makes sense
+        container_dict['backfile']='NONE'
         container_dict['grouping'] = np.ones(self._n_channels)
         container_dict['exposure'] = self._exposure
         container_dict['response_file'] = self._rsp_file
