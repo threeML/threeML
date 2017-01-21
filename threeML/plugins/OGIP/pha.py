@@ -59,18 +59,20 @@ class PHA(object):
 
             filename = phafile
 
-            with fits.open(phafile) as pha_instance:
+            # create a FITS_FILE instance
 
-
-
-                spectrum = self._extract_pha_information(pha_instance, spectrum_number, file_type, phafile)
+            phafile = PHAII.from_fits_file(phafile)
 
 
         elif isinstance(phafile, PHAII):
 
+            # we simply create a dummy filename
+
             filename = 'pha_instance'
 
-            spectrum = self._extract_pha_information(phafile, spectrum_number, file_type, filename)
+
+
+        spectrum = self._extract_pha_information(phafile, spectrum_number, file_type, filename)
 
 
 
@@ -1109,6 +1111,22 @@ class PHAII(FITSFile):
                                  backscale=None,
                                  respfile=pha_information['response_file'],
                                  ancrfile=None)
+    @classmethod
+    def from_fits_file(cls,fits_file):
+
+        with fits.open(fits_file) as f:
+
+
+            spectrum = FITSExtension.from_fits_file_extension(f['SPECTRUM'])
+
+
+
+            out = FITSFile(primary_hdu=f['PRIMARY'], fits_extensions=[spectrum])
+
+
+        return out
+
+
 
 
     @property
