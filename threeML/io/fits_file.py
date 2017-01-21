@@ -74,6 +74,7 @@ class FITSFile(object):
 
         self._hdu_list = fits.HDUList(hdus=hdu_list)
 
+
     def writeto(self, *args, **kwargs):
 
         self._hdu_list.writeto(*args, **kwargs)
@@ -230,3 +231,22 @@ class FITSExtension(object):
     def hdu(self):
 
         return self._hdu
+
+    @classmethod
+    def from_fits_file_extension(cls, fits_extension):
+
+
+        data = fits_extension.data
+
+        data_tuple = []
+
+        for name in data.columns.names:
+
+
+            data_tuple.append((name,data[name]))
+
+
+
+        header_tuple = fits_extension.header.items()
+
+        return cls(data_tuple,header_tuple)
