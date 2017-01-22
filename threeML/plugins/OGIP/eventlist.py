@@ -1132,8 +1132,8 @@ class EventList(object):
                 for poly in self._polynomials:
                     coeff.append(poly.coefficients)
                     err.append(poly.covariance_matrix)
-                df_coeff = pd.DataFrame(coeff)
-                df_err = pd.DataFrame(err)
+                df_coeff = pd.Series(coeff)
+                df_err = pd.Series(err)
 
             else:
 
@@ -1181,7 +1181,7 @@ class EventList(object):
 
                 coeff = coeff[np.isfinite(coeff)]
 
-                cov  = covariance.loc[i][0]
+                cov  = covariance.loc[i]
 
 
 
