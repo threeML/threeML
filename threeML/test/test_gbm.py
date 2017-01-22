@@ -179,7 +179,7 @@ def test_gbm_tte_constructor():
 
             nai3.set_active_time_interval("0-10","5-15")
 
-
+        nai3.set_active_time_interval("0-10")
 
         nai3.set_background_interval("-15-0", "100-150")
 

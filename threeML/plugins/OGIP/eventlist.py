@@ -19,6 +19,7 @@ from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.progress_bar import progress_bar
 from threeML.utils.binner import TemporalBinner
+from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
 
 from event_polynomial import polyfit, unbinned_polyfit, Polynomial
@@ -451,8 +452,11 @@ class EventList(object):
 
         self._poly_time_selections = []
 
-        for time_interval in time_intervals:
-            t1, t2 = self._parse_time_interval(time_interval)
+        poly_intervals = TimeIntervalSet.from_strings(*time_intervals)
+
+        for time_interval in poly_intervals:
+            t1 = time_interval.start_time
+            t2 = time_interval.stop_time
 
             if t1 < self._start_time:
 
@@ -509,11 +513,11 @@ class EventList(object):
 
         if self._time_selection_exists:
 
-            tmp = []
-            for tmin, tmax in zip(self._tmin_list, self._tmax_list):
-                tmp.append("%.5f-%.5f" % (tmin, tmax))
+            # tmp = []
+            # for tmin, tmax in zip(self._tmin_list, self._tmax_list):
+            #     tmp.append("%.5f-%.5f" % (tmin, tmax))
 
-            self.set_active_time_intervals(*tmp)
+            self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 
     def get_pha_container(self, use_poly=False):
         """
@@ -1288,14 +1292,19 @@ class EventListWithDeadTime(EventList):
         tmax_list = []
         interval_masks = []
 
-        for arg in args:
-            tmin, tmax = self._parse_time_interval(arg)
+        time_intervals = TimeIntervalSet.from_strings(*args)
+
+        for interval in time_intervals:
+            tmin = interval.start_time
+            tmax = interval.stop_time
 
             mask = self._select_events(tmin,tmax)
 
             tmin_list.append(tmin)
             tmax_list.append(tmax)
             interval_masks.append(mask)
+
+        self._time_intervals = time_intervals
 
         if intervals_overlap(tmin_list, tmax_list):
             raise OverLappingIntervals('Provided intervals are overlapping and hence invalid')
@@ -1502,13 +1511,18 @@ class EventListWithLiveTime(EventList):
         tmax_list = []
         interval_masks = []
 
-        for arg in args:
-            tmin, tmax = self._parse_time_interval(arg)
+        time_intervals = TimeIntervalSet.from_strings(*args)
+
+        for interval in time_intervals:
+            tmin = interval.start_time
+            tmax = interval.stop_time
             mask = self._select_events(tmin, tmax)
 
             tmin_list.append(tmin)
             tmax_list.append(tmax)
             interval_masks.append(mask)
+
+        self._time_intervals = time_intervals
 
         if intervals_overlap(tmin_list, tmax_list):
             raise OverLappingIntervals('Provided intervals are overlapping and hence invalid')
