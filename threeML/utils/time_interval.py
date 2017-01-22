@@ -121,6 +121,16 @@ class TimeInterval(object):
 
             return False
 
+    def to_string(self):
+        """
+        returns a string representation of the time interval that is like the
+        argument of many interval reading funcitons
+
+        :return:
+        """
+
+        return "%f-%f"%(self.start_time,self.stop_time)
+
     def __add__(self, number):
         """
         Return a new time interval equal to the original time interval shifted to the right by number
@@ -275,5 +285,15 @@ class TimeIntervalSet(object):
         stop_times = map(attrgetter("stop_time"), self._intervals)
 
         return np.allclose(start_times[1:], stop_times[:-1], rtol=relative_tolerance)
+
+    def to_string(self):
+        """
+
+
+        returns a set of string representaitons of the intervals
+        :return:
+        """
+
+        return ','.join([interval.to_string() for interval in self._intervals])
 
 
