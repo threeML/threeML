@@ -169,8 +169,8 @@ class EventListLike(OGIPLike):
                                                 verbose=self._verbose,
                                                 spectrum_number=1)
 
-        self._tstart = self._evt_list.time_intervals.absolute_start_time
-        self._tstop = self._evt_list.time_intervals.absolute_stop_time
+        self._tstart = self._event_list.time_intervals.absolute_start_time
+        self._tstop = self._event_list.time_intervals.absolute_stop_time
 
         return_ogip = False
 
