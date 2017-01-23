@@ -6,6 +6,8 @@ import numpy as np
 class IntervalsDoNotOverlap(RuntimeError):
     pass
 
+class IntervalsNotContiguous(RuntimeError):
+    pass
 
 class TimeInterval(object):
 
@@ -239,9 +241,6 @@ class TimeIntervalSet(object):
         :param time_edges:
         :return:
         """
-
-        assert len(time_edges)%2 != 0, "bin edges must be of unequal length"
-
         # sort the time edges
 
         time_edges.sort()
@@ -419,12 +418,42 @@ class TimeIntervalSet(object):
 
     @property
     def start_times(self):
+        """
+        Return the starts fo the set
 
-        return [start for start in self._intervals.start_time]
+        :return: list of start times
+        """
 
+        return [interval.start_time for interval in self._intervals]
+
+    @property
     def stop_times(self):
+        """
+        Return the stops of the set
 
-        return [stop for stop in self._intervals.stop_time]
+        :return:
+        """
+
+        return [interval.stop_time for interval in self._intervals]
+
+    @property
+    def time_edges(self):
+        """
+        return an array of time edges if contiguous
+        :return:
+        """
+
+        if self.is_contiguous():
+
+            edges = [interval.start_time for interval in itemgetter(*self.argsort())(self._intervals)]
+            edges.append([interval.stop_time for interval in itemgetter(*self.argsort())(self._intervals)][-1])
+
+        else:
+
+            raise IntervalsNotContiguous("Cannot return time edges for non-contiguous intervals")
+
+        return edges
+
 
     def to_string(self):
         """
