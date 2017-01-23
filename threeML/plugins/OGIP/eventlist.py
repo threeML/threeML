@@ -548,8 +548,8 @@ class EventList(object):
 
         container_dict['instrument'] = self._instrument
         container_dict['telescope'] = self._mission
-        container_dict['tstart'] = min(self._tmin_list)
-        container_dict['telapse'] = max(self._tmax_list) - min(self._tmin_list)
+        container_dict['tstart'] = self._time_intervals.absolute_start_time
+        container_dict['telapse'] = self._time_intervals.absolute_stop_time - self._time_intervals.absolute_start_time
         container_dict['channel'] = np.arange(self._n_channels) + self._first_channel
         container_dict['rate'] = rates
         container_dict['rate error'] = rate_err
