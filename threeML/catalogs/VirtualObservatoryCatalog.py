@@ -7,6 +7,12 @@ from astropy.coordinates.name_resolve import get_icrs_coordinates
 
 import astropy.table as astro_table
 
+from threeML.io.network import internet_connection_is_active
+
+
+class ConeSearchFailed(RuntimeError):
+    pass
+
 
 class VirtualObservatoryCatalog(object):
     
@@ -48,6 +54,11 @@ class VirtualObservatoryCatalog(object):
 
         skycoord = SkyCoord(ra=ra * u.degree, dec=dec * u.degree, frame='icrs')
 
+        # First check that we have an active internet connection
+        if not internet_connection_is_active():  # pragma: no cover
+
+            raise ConeSearchFailed("It looks like you don't have an active internet connection. Cannot continue.")
+
         with warnings.catch_warnings():
             
             #Ignore all warnings, which are many from the conesearch module
@@ -61,28 +72,33 @@ class VirtualObservatoryCatalog(object):
                                                 verb=3, verbose=True,
                                                 cache=False)
             
-            except VOSError as exc:
-                
-                print(exc.message)
-                return None
+            except VOSError as exc:  # Pragma: no cover
 
-        table = votable.to_table()
+                # Download failed
 
-        self._last_query_results = table.to_pandas().set_index('name').sort_values("Search_Offset")
+                raise ConeSearchFailed("Cone search failed. Reason: %s" % exc.message)
 
-        out = self.apply_format(table)
-        
-        #This is needed to avoid strange errors
-        del votable
-        del table
+            else:
 
-        # Save coordinates of center of cone search
-        self._ra = ra
-        self._dec = dec
+                # Download successful
 
-        # Make a DataFrame with the name of the source as index
+                table = votable.to_table()
 
-        return out
+                self._last_query_results = table.to_pandas().set_index('name').sort_values("Search_Offset")
+
+                out = self.apply_format(table)
+
+                #This is needed to avoid strange errors
+                del votable
+                del table
+
+                # Save coordinates of center of cone search
+                self._ra = ra
+                self._dec = dec
+
+                # Make a DataFrame with the name of the source as index
+
+                return out
 
     @property
     def ra_center(self):
