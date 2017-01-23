@@ -379,8 +379,8 @@ def test_saving_background():
 
         old_coefficients , old_errors = nai3.get_background_parameters()
 
-        old_tmin_list = nai3._evt_list._tmin_list
-        old_tmax_list = nai3._evt_list._tmax_list
+        old_tmin_list = nai3._event_list._tmin_list
+        old_tmax_list = nai3._event_list._tmax_list
 
 
         nai3.save_background('temp_gbm',overwrite=True)
@@ -394,8 +394,8 @@ def test_saving_background():
 
         new_coefficients, new_errors = nai3.get_background_parameters()
 
-        new_tmin_list = nai3._evt_list._tmin_list
-        new_tmax_list = nai3._evt_list._tmax_list
+        new_tmin_list = nai3._event_list._tmin_list
+        new_tmax_list = nai3._event_list._tmax_list
 
         assert new_coefficients == old_coefficients
 

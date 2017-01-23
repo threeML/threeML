@@ -117,7 +117,7 @@ class FermiLATLLELike(EventListLike):
             energy_selection = [interval.replace(' ', '') for interval in energy_selection.split(',')]
 
             valid_channels = []
-            mask = np.array([False] * self._evt_list.n_events)
+            mask = np.array([False] * self._event_list.n_events)
 
             for selection in energy_selection:
 
@@ -134,18 +134,18 @@ class FermiLATLLELike(EventListLike):
                 # Update the allowed channels
                 valid_channels.extend(range(idx1, idx2))
 
-                this_mask = np.logical_and(self._evt_list.energies >= idx1, self._evt_list.energies <= idx2)
+                this_mask = np.logical_and(self._event_list.energies >= idx1, self._event_list.energies <= idx2)
 
                 np.logical_or(mask, this_mask, out=mask)
 
         else:
 
-            mask = np.array([True] * self._evt_list.n_events)
+            mask = np.array([True] * self._event_list.n_events)
             valid_channels = range(self._lat_lle_file.n_channels)
 
         if use_binner:
 
-            bin_start, bin_stop = self._evt_list.bins
+            bin_start, bin_stop = self._event_list.bins
             bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
 
             # perhaps we want to look a little before or after the binner
@@ -176,7 +176,7 @@ class FermiLATLLELike(EventListLike):
         for j, tb in enumerate(time_bins):
             tmpbkg = 0.
             for i in valid_channels:
-                poly = self._evt_list.polynomials[i]
+                poly = self._event_list.polynomials[i]
 
                 tmpbkg += poly.integral(tb[0], tb[1]) / (width[j])
 
@@ -186,15 +186,15 @@ class FermiLATLLELike(EventListLike):
                                 cnts,
                                 bkg,
                                 width,
-                                selection=zip(self._evt_list.tmin_list, self._evt_list.tmax_list),
-                                bkg_selections=self._evt_list.poly_intervals,
+                                selection=zip(self._event_list.tmin_list, self._event_list.tmax_list),
+                                bkg_selections=self._event_list.poly_intervals,
                                 instrument='lle')
 
     def peek(self):
 
         print("LLE File Info:")
 
-        self._evt_list.peek()
+        self._event_list.peek()
 
         print('Timing Info:')
 

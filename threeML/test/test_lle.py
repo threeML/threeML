@@ -355,8 +355,8 @@ def test_save_background():
 
         old_coefficients, old_errors = lle.get_background_parameters()
 
-        old_tmin_list = lle._evt_list._tmin_list
-        old_tmax_list = lle._evt_list._tmax_list
+        old_tmin_list = lle._event_list._tmin_list
+        old_tmax_list = lle._event_list._tmax_list
 
 
         lle.save_background('temp_lle', overwrite=True)
@@ -370,8 +370,8 @@ def test_save_background():
 
         new_coefficients, new_errors = lle.get_background_parameters()
 
-        new_tmin_list = lle._evt_list._tmin_list
-        new_tmax_list = lle._evt_list._tmax_list
+        new_tmin_list = lle._event_list._tmin_list
+        new_tmax_list = lle._event_list._tmax_list
 
         assert new_coefficients == old_coefficients
 
