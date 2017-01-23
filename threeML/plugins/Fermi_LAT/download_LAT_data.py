@@ -300,9 +300,9 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         print("\nEstimated complete time for your query: %s seconds" % estimatedTimeForTheQuery)
 
-    httpAddress = filter(lambda x: x.find("http://fermi.gsfc.nasa.gov") >= 0, parser.data)[0]
+    http_address = filter(lambda x: x.find("http://fermi.gsfc.nasa.gov") >= 0, parser.data)[0]
 
-    print("\nIf this download fails, you can find your data at %s (when ready)\n" % httpAddress)
+    print("\nIf this download fails, you can find your data at %s (when ready)\n" % http_address)
 
     # Now periodically check if the query is complete
 
@@ -328,7 +328,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         try:
 
-            _ = urllib.urlretrieve(httpAddress, fakeName)
+            _ = urllib.urlretrieve(http_address.replace("http","https"), fakeName)
 
         except socket.timeout:
 

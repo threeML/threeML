@@ -74,6 +74,7 @@ class FITSFile(object):
 
         self._hdu_list = fits.HDUList(hdus=hdu_list)
 
+
     def writeto(self, *args, **kwargs):
 
         self._hdu_list.writeto(*args, **kwargs)
@@ -81,6 +82,24 @@ class FITSFile(object):
     # Update the docstring to be the same as the method we are wrapping
 
     writeto.__doc__ = fits.HDUList.writeto.__doc__
+
+    def __getitem__(self, item):
+
+        return self._hdu_list.__getitem__(item)
+
+    def info(self, output=None):
+
+        self._hdu_list.info(output)
+
+    info.__doc__ = fits.HDUList.info.__doc__
+
+    def index_of(self, key):
+
+        return self._hdu_list.index_of(key)
+
+    index_of.__doc__ = fits.HDUList.index_of.__doc__
+
+
 
 
 class FITSExtension(object):
@@ -212,3 +231,22 @@ class FITSExtension(object):
     def hdu(self):
 
         return self._hdu
+
+    @classmethod
+    def from_fits_file_extension(cls, fits_extension):
+
+
+        data = fits_extension.data
+
+        data_tuple = []
+
+        for name in data.columns.names:
+
+
+            data_tuple.append((name,data[name]))
+
+
+
+        header_tuple = fits_extension.header.items()
+
+        return cls(data_tuple,header_tuple)

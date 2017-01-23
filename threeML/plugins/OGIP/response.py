@@ -338,7 +338,7 @@ class OGIPResponse(InstrumentResponse):
         # Read the ARF if there is any
         # NOTE: this has to happen *after* calling the parent constructor
 
-        if arf_file is not None and arf_file != 'none' and arf_file != 'NONE':
+        if arf_file is not None and arf_file.lower() != 'none':
 
             self._read_arf_file(arf_file)
 

@@ -374,7 +374,7 @@ def test_saving_background():
 
         old_coefficients , old_errors = nai3.get_background_parameters()
 
-        old_tmin_list = nai3._evt_list.time_intervals
+        old_tmin_list = nai3._event_list.time_intervals
 
 
 
@@ -389,7 +389,7 @@ def test_saving_background():
 
         new_coefficients, new_errors = nai3.get_background_parameters()
 
-        new_tmin_list = nai3._evt_list.time_intervals
+        new_tmin_list = nai3._event_list.time_intervals
 
 
         assert new_coefficients == old_coefficients
