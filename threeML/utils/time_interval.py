@@ -378,6 +378,18 @@ class TimeIntervalSet(object):
 
         return new_set
 
+    def __eq__(self, other):
+
+        for interval_this, interval_other in zip(self.sort(), other.sort()):
+
+            if not interval_this == interval_other:
+
+                return False
+
+        return True
+
+
+
     def pop(self, index):
 
         return self._intervals.pop(index)
@@ -389,7 +401,7 @@ class TimeIntervalSet(object):
         :return:
         """
 
-        return TimeIntervalSet(itemgetter(*self.argsort())(self._intervals))
+        return TimeIntervalSet(np.atleast_1d(itemgetter(*self.argsort())(self._intervals)))
 
     def argsort(self):
         """
@@ -435,6 +447,24 @@ class TimeIntervalSet(object):
         """
 
         return [interval.stop_time for interval in self._intervals]
+
+    @property
+    def absolute_start_time(self):
+        """
+        the minimum of the start times
+        :return:
+        """
+
+        return min(self.start_times)
+
+    @property
+    def absolute_stop_time(self):
+        """
+        the maximum of the stop times
+        :return:
+        """
+
+        return max(self.stop_times)
 
     @property
     def time_edges(self):
