@@ -505,10 +505,6 @@ class EventList(object):
 
         if self._time_selection_exists:
 
-            # tmp = []
-            # for tmin, tmax in zip(self._tmin_list, self._tmax_list):
-            #     tmp.append("%.5f-%.5f" % (tmin, tmax))
-
             self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 
     def get_pha_container(self, use_poly=False):
@@ -1203,8 +1199,6 @@ class EventListWithDeadTime(EventList):
 
         self._time_selection_exists = True
 
-        tmin_list = []
-        tmax_list = []
         interval_masks = []
 
         time_intervals = TimeIntervalSet.from_strings(*args)
@@ -1217,8 +1211,6 @@ class EventListWithDeadTime(EventList):
 
             mask = self._select_events(tmin,tmax)
 
-            #tmin_list.append(tmin)
-            #tmax_list.append(tmax)
             interval_masks.append(mask)
 
         self._time_intervals = time_intervals
@@ -1265,7 +1257,7 @@ class EventListWithDeadTime(EventList):
 
             self._poly_count_err = np.array(tmp_err)
 
-            # self._is_poisson = False
+
 
         # Dead time correction
 
@@ -1281,10 +1273,7 @@ class EventListWithDeadTime(EventList):
             total_dead_time = 0.
 
         self._exposure = exposure - total_dead_time
-        # self._total_dead_time = total_dead_time
 
-        # self._tmin_list = tmin_list
-        # self._tmax_list = tmax_list
 
         self._active_dead_time = total_dead_time
 
@@ -1421,8 +1410,6 @@ class EventListWithLiveTime(EventList):
 
         self._time_selection_exists = True
 
-        # tmin_list = []
-        # tmax_list = []
         interval_masks = []
 
         time_intervals = TimeIntervalSet.from_strings(*args)
@@ -1434,8 +1421,6 @@ class EventListWithLiveTime(EventList):
             tmax = interval.stop_time
             mask = self._select_events(tmin, tmax)
 
-            # tmin_list.append(tmin)
-            # tmax_list.append(tmax)
             interval_masks.append(mask)
 
         self._time_intervals = time_intervals
