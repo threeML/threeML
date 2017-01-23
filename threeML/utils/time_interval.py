@@ -218,15 +218,13 @@ class TimeIntervalSet(object):
         :return:
         """
 
-        assert len(start_times) == len(start_times), 'starts length: %d and stops length: %d must have same length'%(len(start_times), len(start_times))
+        assert len(start_times) == len(stop_times), 'starts length: %d and stops length: %d must have same length'%(len(start_times), len(stop_times))
 
         list_of_intervals = []
 
         for tmin, tmax in zip(start_times, stop_times):
 
             list_of_intervals.append(TimeInterval(tmin, tmax))
-
-            return cls(list_of_intervals)
 
         return cls(list_of_intervals)
 
@@ -254,15 +252,88 @@ class TimeIntervalSet(object):
 
             list_of_intervals.append(TimeInterval(tmin, tmax))
 
-            return cls(list_of_intervals)
-
         return cls(list_of_intervals)
 
+    def merge_intersecting_intervals(self, in_place=False):
+        """
+
+        merges intersecting intervals into a contiguous intervals
+
+
+        :return:
+        """
+
+        # get a copy of the sorted intervals
+
+        sorted_intervals = self.sort()
+
+        new_intervals = []
+
+        while( len(sorted_intervals) > 1):
+
+            # pop the first interval off the stack
+
+            this_interval = sorted_intervals.pop(0)
+
+            # see if that interval overlaps with the the next one
+
+            if this_interval.overlaps_with(sorted_intervals[0]):
+
+                # if so, pop the next one
+
+                next_interval = sorted_intervals.pop(0)
+
+                # and merge the two, appending them to the new intervals
+
+                new_intervals.append(this_interval.merge(next_interval))
+
+            else:
+
+                # otherwise just append this interval
+
+                new_intervals.append(this_interval)
+
+            # now if there is only one interval left
+            # it should not overlap with any other interval
+            # and the loop will stop
+            # otherwise, we continue
+
+        # if there was only one interval
+        # or a leftover from the merge
+        # we append it
+        if sorted_intervals:
+
+            assert len(sorted_intervals) == 1, "there should only be one interval left over, this is a bug" #pragma: no cover
+
+            # we want to make sure that the last new interval did not
+            # overlap with the final interval
+            if new_intervals:
+
+                if new_intervals[-1].overlaps_with(sorted_intervals[0]):
+
+                    new_intervals[-1] = new_intervals[-1].merge(sorted_intervals[0])
+
+                else:
+
+                    new_intervals.append(sorted_intervals[0])
+
+
+            else:
+
+                new_intervals.append(sorted_intervals[0])
 
 
 
 
 
+
+        if in_place:
+
+            self.__init__(new_intervals)
+
+        else:
+
+            return TimeIntervalSet(new_intervals)
 
 
     def extend(self, list_of_intervals):
