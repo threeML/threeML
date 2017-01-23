@@ -205,6 +205,66 @@ class TimeIntervalSet(object):
 
         return map(float, tokens)
 
+    @classmethod
+    def from_starts_and_stops(cls,start_times,stop_times):
+        """
+        Builds a TimeIntervalSet from a list of start and stop times:
+
+        start = [-1,0]  ->   [-1,0], [0,1]
+        stop =  [0,1]
+
+        :param start_times:
+        :param stop_times:
+        :return:
+        """
+
+        assert len(start_times) == len(start_times), 'starts length: %d and stops length: %d must have same length'%(len(start_times), len(start_times))
+
+        list_of_intervals = []
+
+        for tmin, tmax in zip(start_times, stop_times):
+
+            list_of_intervals.append(TimeInterval(tmin, tmax))
+
+            return cls(list_of_intervals)
+
+        return cls(list_of_intervals)
+
+    @classmethod
+    def from_list_of_edges(cls, time_edges):
+        """
+        Builds a TimeIntervalSet from a list of time edges:
+
+        edges = [-1,0,1] -> [-1,0], [0,1]
+
+
+        :param time_edges:
+        :return:
+        """
+
+        assert len(time_edges)%2 != 0, "bin edges must be of unequal length"
+
+        # sort the time edges
+
+        time_edges.sort()
+
+        list_of_intervals = []
+
+        for tmin, tmax in zip(time_edges[:-1], time_edges[1:]):
+
+            list_of_intervals.append(TimeInterval(tmin, tmax))
+
+            return cls(list_of_intervals)
+
+        return cls(list_of_intervals)
+
+
+
+
+
+
+
+
     def extend(self, list_of_intervals):
 
         self._intervals.extend(list_of_intervals)
