@@ -286,6 +286,15 @@ class TimeIntervalSet(object):
 
         return np.allclose(start_times[1:], stop_times[:-1], rtol=relative_tolerance)
 
+    @property
+    def start_times(self):
+
+        return [start for start in self._intervals.start_time]
+
+    def stop_times(self):
+
+        return [stop for stop in self._intervals.stop_time]
+
     def to_string(self):
         """
 
