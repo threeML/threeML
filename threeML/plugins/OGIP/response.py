@@ -593,9 +593,12 @@ class InstrumentResponseSet(object):
         # Order the matrices by time
 
         idx = self._coverage_intervals.argsort()
-        self._coverage_intervals = TimeIntervalSet(itemgetter(*idx)(self._coverage_intervals))
-        self._matrix_list = itemgetter(*idx)(self._matrix_list)
 
+        # It is possible that there is only one coverage interval (these are published by GBM e.g. GRB090819607)
+        # so we need to be sure that the array is a least 1D
+
+        self._coverage_intervals = TimeIntervalSet(np.atleast_1d(itemgetter(*idx)(self._coverage_intervals)))
+        self._matrix_list = np.atleast_1d(itemgetter(*idx)(self._matrix_list))
         # Now make sure that the coverage intervals are contiguous (i.e., there are no gaps)
         if not self._coverage_intervals.is_contiguous():
 
