@@ -6,7 +6,6 @@ __author__ = 'grburgess'
 
 from threeML.plugins.FermiGBMTTELike import FermiGBMTTELike
 from threeML.data_list import DataList
-from threeML.plugins.OGIP.eventlist import OverLappingIntervals
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from astromodels.core.model import Model
@@ -175,11 +174,7 @@ def test_gbm_tte_constructor():
 
         nai3.set_active_time_interval("0-10")
 
-        with pytest.raises(OverLappingIntervals):
-
-            nai3.set_active_time_interval("0-10","5-15")
-
-
+        nai3.set_active_time_interval("0-10")
 
         nai3.set_background_interval("-15-0", "100-150")
 
@@ -379,8 +374,8 @@ def test_saving_background():
 
         old_coefficients , old_errors = nai3.get_background_parameters()
 
-        old_tmin_list = nai3._event_list._tmin_list
-        old_tmax_list = nai3._event_list._tmax_list
+        old_tmin_list = nai3._event_list.time_intervals
+
 
 
         nai3.save_background('temp_gbm',overwrite=True)
@@ -394,15 +389,12 @@ def test_saving_background():
 
         new_coefficients, new_errors = nai3.get_background_parameters()
 
-        new_tmin_list = nai3._event_list._tmin_list
-        new_tmax_list = nai3._event_list._tmax_list
+        new_tmin_list = nai3._event_list.time_intervals
+
 
         assert new_coefficients == old_coefficients
 
         assert new_errors == old_errors
-
-
-        assert old_tmax_list == new_tmax_list
 
         assert old_tmin_list == new_tmin_list
 

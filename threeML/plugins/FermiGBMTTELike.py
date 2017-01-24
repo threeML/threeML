@@ -216,8 +216,9 @@ class FermiGBMTTELike(EventListLike):
             bkg.append(tmpbkg)
 
         binned_light_curve_plot(time_bins, cnts, bkg, width,
-                                selection=zip(self._event_list.tmin_list, self._event_list._tmax_list),
-                                bkg_selections=self._event_list.poly_intervals, instrument='gbm')
+                                selection=zip(self._event_list.time_intervals.start_times, self._event_list.time_intervals.stop_times),
+                                bkg_selections=zip(self._event_list.poly_intervals.start_times,self._event_list.poly_intervals.stop_times),
+                                instrument='gbm')
 
     def peek(self):
 

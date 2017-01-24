@@ -7,7 +7,6 @@ __author__ = 'grburgess'
 from threeML.plugins.FermiLATLLELike import FermiLATLLELike
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
-from threeML.plugins.OGIP.eventlist import OverLappingIntervals
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
@@ -165,9 +164,6 @@ def test_lle_constructor():
         lle.set_active_measurements("50000-1000000")
 
         lle.set_active_time_interval("0-10")
-
-        with pytest.raises(OverLappingIntervals):
-            lle.set_active_time_interval("0-10", "5-15")
 
         lle.set_background_interval("-150-0", "100-250")
 
@@ -335,7 +331,6 @@ def test_lle_bayesian_fitting():
                 assert samples[key_2].shape[0] == n_samples
 
             assert len(bb.log_like_values) == n_samples
-            # assert len(bb.log_probability_values) == n_samples
 
             assert bb.raw_samples.shape == (n_samples, 2)
 
@@ -355,8 +350,8 @@ def test_save_background():
 
         old_coefficients, old_errors = lle.get_background_parameters()
 
-        old_tmin_list = lle._event_list._tmin_list
-        old_tmax_list = lle._event_list._tmax_list
+        old_tmin_list = lle._event_list.time_intervals
+
 
 
         lle.save_background('temp_lle', overwrite=True)
@@ -370,13 +365,13 @@ def test_save_background():
 
         new_coefficients, new_errors = lle.get_background_parameters()
 
-        new_tmin_list = lle._event_list._tmin_list
-        new_tmax_list = lle._event_list._tmax_list
+        new_tmin_list = lle._event_list.time_intervals
+
 
         assert new_coefficients == old_coefficients
 
         assert new_errors == old_errors
 
-        assert old_tmax_list == new_tmax_list
+
 
         assert old_tmin_list == new_tmin_list

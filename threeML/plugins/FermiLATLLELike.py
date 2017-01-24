@@ -186,8 +186,8 @@ class FermiLATLLELike(EventListLike):
                                 cnts,
                                 bkg,
                                 width,
-                                selection=zip(self._event_list.tmin_list, self._event_list.tmax_list),
-                                bkg_selections=self._event_list.poly_intervals,
+                                selection=zip(self._event_list.time_intervals.start_times, self._event_list.time_intervals.stop_times),
+                                bkg_selections=zip(self._event_list.poly_intervals.start_times, self._event_list.poly_intervals.stop_times),
                                 instrument='lle')
 
     def peek(self):
