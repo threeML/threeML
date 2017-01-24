@@ -12,6 +12,21 @@ from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 from threeML.exceptions.custom_exceptions import custom_warnings
 
 
+class NoCoverageIntervals(RuntimeError):
+    pass
+
+class NonContiguousCoverageIntervals(RuntimeError):
+    pass
+
+class NoMatrixForInterval(RuntimeError):
+    pass
+
+class IntervalOfInterestNotCovered(RuntimeError):
+    pass
+
+class GapInCoverageIntervals(RuntimeError):
+    pass
+
 class InstrumentResponse(object):
 
     def __init__(self, matrix, ebounds, monte_carlo_energies, coverage_interval=None):
@@ -565,7 +580,7 @@ class InstrumentResponseSet(object):
 
         if None in self._coverage_intervals:
 
-            raise RuntimeError("You need to specify the coverage interval for all matrices in the matrix_list")
+            raise NoCoverageIntervals("You need to specify the coverage interval for all matrices in the matrix_list")
 
         # Remove from the list matrices that cover intervals of zero duration (yes, the GBM publishes those too,
         # one example is in data/ogip_test_gbm_b0.rsp2)
@@ -602,7 +617,7 @@ class InstrumentResponseSet(object):
         # Now make sure that the coverage intervals are contiguous (i.e., there are no gaps)
         if not self._coverage_intervals.is_contiguous():
 
-            raise RuntimeError("The provided responses have coverage intervals which are not contiguous!")
+            raise NonContiguousCoverageIntervals("The provided responses have coverage intervals which are not contiguous!")
 
         # Apply the reference time shift, if any
         self._coverage_intervals -= reference_time
@@ -766,7 +781,9 @@ class InstrumentResponseSet(object):
 
         # Check that we have at least one matrix
 
-        assert np.any(matrices_mask), "Could not find any matrix applicable to %s" % interval_of_interest
+        if not np.any(matrices_mask):
+
+            raise NoMatrixForInterval("Could not find any matrix applicable to %s\n Have intervals:%s" % (interval_of_interest,', '.join([str(interval) for interval in self._coverage_intervals]) ))
 
         # Compute the weights
 
@@ -815,18 +832,27 @@ class InstrumentResponseSet(object):
         # Check that the first matrix with weight > 0 has an effective interval starting at the beginning of
         # the interval of interest (otherwise it means that part of the interval of interest is not covered!)
 
-        assert effective_intervals[0].start_time == interval_of_interest.start_time
+        if effective_intervals[0].start_time != interval_of_interest.start_time:
+
+            raise IntervalOfInterestNotCovered('The interval of interest (%s) is not covered by %s'% (interval_of_interest,effective_intervals[0]))
 
         # Check that the last matrix with weight > 0 has an effective interval starting at the beginning of
         # the interval of interest (otherwise it means that part of the interval of interest is not covered!)
 
-        assert effective_intervals[-1].stop_time == interval_of_interest.stop_time
+        if effective_intervals[-1].stop_time != interval_of_interest.stop_time:
+            raise IntervalOfInterestNotCovered(
+                'The interval of interest (%s) is not covered by %s' % (interval_of_interest, effective_intervals[0]))
+
 
         # Lastly, check that there is no interruption in coverage (bad time intervals are *not* supported)
         all_tstarts = np.array(map(lambda x:x.start_time, effective_intervals))
         all_tstops = np.array(map(lambda x:x.stop_time, effective_intervals))
 
-        assert np.all((all_tstops[:-1] == all_tstarts[1:])), "Gap in coverage! Bad time intervals are not supported!"
+        if not np.all((all_tstops[:-1] == all_tstarts[1:])):
+
+            raise GapInCoverageIntervals("Gap in coverage! Bad time intervals are not supported!")
+
+
 
         return weights
 
