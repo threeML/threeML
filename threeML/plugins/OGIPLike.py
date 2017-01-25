@@ -75,7 +75,7 @@ class OGIPLike(PluginPrototype):
 
         # Read in the response
 
-        if isinstance(rsp_file, str):
+        if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
 
             self._rsp = OGIPResponse(rsp_file, arf_file=arf_file)
 
