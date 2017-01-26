@@ -517,6 +517,7 @@ class EventList(object):
             raise RuntimeError('No time selection exists! Cannot calculate rates')
 
         if use_poly:
+
             is_poisson = False
 
             rate_err = self._poly_count_err / self._exposure
@@ -1162,7 +1163,7 @@ class EventListWithDeadTime(EventList):
                 total_counts = 0
                 counts_err = 0
 
-                for tmin, tmax in zip(self._time_intervals.start_times, self._time_intervals.start_times):
+                for tmin, tmax in zip(self._time_intervals.start_times, self._time_intervals.stop_times):
                     # Now integrate the appropriate background polynomial
                     total_counts += self._polynomials[chan].integral(tmin, tmax)
                     counts_err += (self._polynomials[chan].integral_error(tmin, tmax)) ** 2
