@@ -383,6 +383,7 @@ class PHA(object):
 
         return self.counts.sum()
 
+    @property
     def total_count_error(self):
         """
         :return: total count error

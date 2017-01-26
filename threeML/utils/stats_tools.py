@@ -66,6 +66,10 @@ def dic(bayesian_trace):
 
 
 def sqrt_sum_of_squares(arg):
+    """
+    :param arg: and array of number to be squared and summed
+    :return: the sqrt of the sum of the squares
+    """
 
     return np.sqrt( np.square(arg).sum() )
 

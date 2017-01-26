@@ -20,6 +20,7 @@ from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import OGIPResponse
 from threeML.utils.binner import Rebinner
 from threeML.plugins.OGIP.pha import PHAWrite, PHAII, POISSON_PHAII, POISSON_BAK_PHAII, BAK_PHAII
+from threeML.utils.stats_tools import Significance
 from threeML.config.config import threeML_config
 
 __instrument_name = "All OGIP-compliant instruments"
@@ -897,6 +898,56 @@ class OGIPLike(PluginPrototype):
     @property
     def tstop(self):
         return self._tstop
+
+    @property
+    def significance(self):
+        """
+        :return: the significance of the data over background
+        """
+
+        sig_obj = Significance(Non=self._pha.total_count,
+                           Noff=self._bak.total_count,
+                           alpha=self.exposure/self.background_exposure)
+
+        if self._pha.is_poisson() and self._bak.is_poisson():
+
+            # use simple li & ma
+            significance = sig_obj.li_and_ma()
+
+        elif self._pha.is_poisson() and not self._bak.is_poisson():
+
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._bak.total_count_error)
+
+        else:
+
+            raise NotImplementedError("We haven't put in other significances yet")
+
+        return significance[0]
+
+    @property
+    def significance_per_channel(self):
+        """
+        :return: the significance of the data over background per channel
+        """
+
+        sig_obj = Significance(Non=self._pha.counts,
+                               Noff=self._bak.counts,
+                               alpha=self.exposure / self.background_exposure)
+
+        if self._pha.is_poisson() and self._bak.is_poisson():
+
+            # use simple li & ma
+            significance = sig_obj.li_and_ma()
+
+        elif self._pha.is_poisson() and not self._bak.is_poisson():
+
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._bak.counts_error)
+
+        else:
+
+            raise NotImplementedError("We haven't put in other significances yet")
+
+        return significance
 
     def _loglike_poisson_obs_poisson_bkg(self):
 
