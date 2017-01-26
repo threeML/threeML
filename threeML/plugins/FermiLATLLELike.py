@@ -190,15 +190,11 @@ class FermiLATLLELike(EventListLike):
                                 bkg_selections=zip(self._event_list.poly_intervals.start_times, self._event_list.poly_intervals.stop_times),
                                 instrument='lle')
 
-    def peek(self):
+    def __repr__(self):
 
-        print("LLE File Info:")
+        out = "%s\n%s" % (super(FermiLATLLELike, self).__repr__(), self._lat_lle_file.__repr__())
 
-        self._event_list.peek()
-
-        print('Timing Info:')
-
-        self._lat_lle_file.peek()
+        return out
 
 
 class LLEFile(object):
@@ -479,7 +475,7 @@ class LLEFile(object):
 
 
 
-    def peek(self):
+    def __repr__(self):
         """
         Examine the currently selected interval
         If connected to the internet, will also look up info for other instruments to compare with
@@ -488,24 +484,28 @@ class LLEFile(object):
         :return: none
         """
 
+
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
-        fermi_dict = {}
+        fermi_dict = collections.OrderedDict()
 
-        fermi_dict['Fermi Trigger Time'] = self.trigger_time
-        fermi_dict['Fermi MET OBS Start'] = self._tstart
-        fermi_dict['Fermi MET OBS Stop'] = self._tstop
+        fermi_dict['Fermi Trigger Time'] = "%.3f" % self._trigger_time
+        fermi_dict['Fermi MET OBS Start'] = "%.3f" % self._start_events
+        fermi_dict['Fermi MET OBS Stop'] = "%.3f" % self._stop_events
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
         fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
+        fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
+
+        out = fermi_df.to_string()
+
         if mission_dict is not None:
-            mission_df = pd.Series(mission_dict)
+            mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
-            display(mission_df)
+            out = "%s\n%s" % (out, mission_df.to_string())
 
-        fermi_df = pd.Series(fermi_dict)
+        return out
 
-        display(fermi_df)
 
 
 

@@ -1,19 +1,15 @@
-
+__author__='grburgess'
 
 import numpy as np
 import os
-import re
-
+import collections
 import copy
 import pandas as pd
 from pandas import HDFStore
 
-
-
 from threeML.io.rich_display import display
 from threeML.utils.stats_tools import Significance
 from threeML.io.file_utils import sanitize_filename
-
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -565,39 +561,35 @@ class EventList(object):
 
         return container_dict
 
-    def peek(self):
+    def __repr__(self):
         """
         Examine the currently selected info as well other things.
 
         """
 
-        info_dict = {}
+        info_dict = collections.OrderedDict()
+        for i, interval in enumerate(self.time_intervals):
+            info_dict['active selection (%d)' % (i+1)] = interval.__repr__()
 
-        info_dict['Active Selections'] = zip(self._time_intervals.start_times, self._time_intervals.stop_times)
-        info_dict['Active Deadtime'] = self._active_dead_time
-        info_dict['Active Exposure'] = self._exposure
-        info_dict['Total N. Events'] = len(self._arrival_times)
-        info_dict['Active Counts'] = self._counts.sum()
-        info_dict['Number of Channels'] = self._n_channels
+
+
+        info_dict['active deadtime'] = self._active_dead_time
 
         if self._poly_fit_exists:
-            info_dict['Polynomial Selections'] = zip(self._poly_intervals.start_times, self._poly_intervals.stop_times)
-            info_dict['Polynomial Order'] = self._optimal_polynomial_grade
-            info_dict['Active Count Error'] = np.sqrt((self._poly_count_err ** 2).sum())
-            info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
-            info_dict['Poly fit type'] = self._fit_method_info['bin type']
-            info_dict['Poly fit method'] = self._fit_method_info['fit method']
 
-            sig = Significance(self._counts.sum(), self._poly_counts.sum())
+            for i, interval in enumerate(self.poly_intervals):
+                info_dict['polynomial selection (%d)' % (i+1)] = interval.__repr__()
 
-            bkg_sig = np.sqrt((self._poly_count_err ** 2).sum())
+            info_dict['polynomial order'] = self._optimal_polynomial_grade
 
-            # too provocative?
-            info_dict['Significance'] = sig.li_and_ma_equivalent_for_gaussian_background(bkg_sig)
+            info_dict['polynomial fit type'] = self._fit_method_info['bin type']
+            info_dict['polynomial fit method'] = self._fit_method_info['fit method']
 
-        info_df = pd.Series(info_dict)
 
-        display(info_df)
+
+        info_df = pd.Series(info_dict,index=info_dict.keys())
+
+        return info_df.to_string()
 
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
         """
@@ -980,8 +972,9 @@ class EventList(object):
 
 
             store.get_storer('coefficients').attrs.metadata = {'poly_order': self._optimal_polynomial_grade,
-                                                             'poly_selections': zip(self._poly_intervals.start_times,self._poly_intervals.stop_times),
-                                                             'unbinned':self._unbinned}
+                                                               'poly_selections': zip(self._poly_intervals.start_times,self._poly_intervals.stop_times),
+                                                               'unbinned':self._unbinned,
+                                                               'fit_method':self._fit_method_info['fit method']}
 
         if self._verbose:
 
@@ -1033,6 +1026,16 @@ class EventList(object):
 
             self._poly_intervals = TimeIntervalSet.from_starts_and_stops(poly_selections[:,0],poly_selections[:,1])
             self._unbinned = metadata['unbinned']
+
+            if self._unbinned:
+                self._fit_method_info['bin type'] = 'unbinned'
+
+            else:
+
+                self._fit_method_info['bin type'] = 'binned'
+
+            self._fit_method_info['fit method'] = metadata['fit_method']
+
 
         # go thru and count the counts!
 

@@ -406,9 +406,9 @@ class GBMTTEFile(object):
 
         fermi_dict = collections.OrderedDict()
 
-        fermi_dict['Fermi Trigger Time'] = self._trigger_time
-        fermi_dict['Fermi MET OBS Start'] = self._start_events
-        fermi_dict['Fermi MET OBS Stop'] = self._stop_events
+        fermi_dict['Fermi Trigger Time'] = "%.3f" % self._trigger_time
+        fermi_dict['Fermi MET OBS Start'] = "%.3f" % self._start_events
+        fermi_dict['Fermi MET OBS Stop'] = "%.3f" % self._stop_events
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
         fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
