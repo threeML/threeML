@@ -126,14 +126,6 @@ def test_unbinned_fit():
     assert evt_list._poly_counts.sum() > 0
 
 
-    # make sure it auto found the poly order
-
-    # assert len(poly) == results.shape[1]
-
-    #for r, v in zip(results.get_values()[0], poly):
-
-    #    assert is_within_tolerance(v, r, relative_tolerance=1.)
-
 
 def test_binned_fit():
     start, stop = 0, 50
@@ -154,17 +146,9 @@ def test_binned_fit():
 
     evt_list.set_polynomial_fit_interval("%f-%f" % (start + 1, stop - 1), unbinned=False)
 
-    results = evt_list.get_poly_info()['coefficients']
-
-    # make sure it auto found the poly order
-
-    #assert len(poly) == results.shape[1]
-
-    for r, v in zip(results.get_values()[0], poly):
-
-        assert is_within_tolerance(v, r, relative_tolerance=1.)
-
     evt_list.set_active_time_intervals("0-1")
+
+    results = evt_list.get_poly_info()['coefficients']
 
     assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0,1])
 
