@@ -2,10 +2,10 @@ import os
 import astropy.io.fits as fits
 import numpy as np
 import warnings
-from collections import MutableMapping
-from copy import copy
 from threeML.plugins.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 from threeML.io.fits_file import FITSExtension, FITSFile
+from threeML.utils.stats_tools import sqrt_sum_of_squares
+
 import astropy.units as u
 
 _required_keywords = {}
@@ -321,9 +321,6 @@ class PHA(object):
 
         return spectrum
 
-
-
-
     @property
     def rates(self):
         """
@@ -341,6 +338,59 @@ class PHA(object):
         assert self.is_poisson() == False, "Cannot request errors on rates for a Poisson spectrum"
 
         return self._rate_errors
+
+    @property
+    def total_rate(self):
+        """
+        :return: total rate
+        """
+
+        return self._rates.sum()
+
+    @property
+    def total_rate_error(self):
+        """
+        :return: total rate error
+        """
+        assert self.is_poisson() == False, "Cannot request errors on rates for a Poisson spectrum"
+
+        return sqrt_sum_of_squares(self._rate_errors)
+
+
+    @property
+    def counts(self):
+        """
+        :return: counts per channel
+        """
+
+        return self._rates * self.exposure
+
+    @property
+    def counts_error(self):
+        """
+        :return: count error per channel
+        """
+
+        assert self.is_poisson() == False, "Cannot request errors on rates for a Poisson spectrum"
+
+        return self.rate_errors * self.exposure
+
+    @property
+    def total_count(self):
+        """
+        :return: total counts
+        """
+
+        return self.counts.sum()
+
+    def total_count_error(self):
+        """
+        :return: total count error
+        """
+
+        assert self.is_poisson() == False, "Cannot request errors on rates for a Poisson spectrum"
+
+        return sqrt_sum_of_squares(self.counts_error)
 
     @property
     def n_channels(self):
