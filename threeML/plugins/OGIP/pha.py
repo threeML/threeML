@@ -868,9 +868,9 @@ class SPECTRUM(FITSExtension):
                       ('CHANNEL', channel),
                       ('RATE',rate),
                       ('QUALITY',quality),
+                      ('BACKSCAL', backscale),
                       ('GROUPING',grouping),
                       ('EXPOSURE',exposure),
-                      ('BACKSCAL',backscale),
                       ('RESPFILE',respfile),
                       ('ANCRFILE',ancrfile)]
 
@@ -1092,7 +1092,7 @@ class PHAII(FITSFile):
                              quality=pha_information['quality'],
                              grouping=pha_information['grouping'],
                              exposure=pha_information['exposure'],
-                             backscale=None,
+                             backscale=1.,
                              respfile=pha_information['response_file'],
                              ancrfile=None)
 
@@ -1108,7 +1108,7 @@ class PHAII(FITSFile):
                                  grouping=pha_information['grouping'],
                                  exposure=pha_information['exposure'],
                                  back_file=pha_information['backfile'],
-                                 backscale=None,
+                                 backscale=1.,
                                  respfile=pha_information['response_file'],
                                  ancrfile=None)
     @classmethod
