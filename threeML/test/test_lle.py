@@ -176,6 +176,7 @@ def test_lle_constructor():
                                   source_intervals=src_selection,
                                   poly_order=-1)
 
+            assert isinstance(lle.__repr__(), str)
 
 
         #nai3.set_background_interval("-15-0", "100-150", unbinned=False)

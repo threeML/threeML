@@ -188,6 +188,8 @@ def test_gbm_tte_constructor():
                                    source_intervals=src_selection,
                                    poly_order=-1)
 
+        assert isinstance(nai3.__repr__(), str)
+
 
 
 

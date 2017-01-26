@@ -97,6 +97,8 @@ def test_event_list_constructor():
 
     assert evt_list._mission == 'UNKNOWN'
 
+    assert isinstance(evt_list.__repr__(), str)
+
 
 def test_unbinned_fit():
     start, stop = 0, 50
