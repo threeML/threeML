@@ -1,6 +1,7 @@
 __author__ = 'grburgess'
 
 import numpy as np
+import pandas as pd
 
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.plugins.OGIP.pha import PHAII
@@ -113,6 +114,12 @@ class EventListLike(OGIPLike):
                                       spectrum_number=1)
 
 
+
+    def __repr__(self):
+
+        out = "%s\n%s" % (super(EventListLike, self).__repr__(), self._event_list.__repr__())
+
+        return out
 
     def __set_poly_order(self, value):
         """Background poly order setter """

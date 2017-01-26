@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import re
 import warnings
+import collections
 
 from threeML.io.plugin_plots import binned_light_curve_plot
 from threeML.io.rich_display import display
@@ -220,15 +221,11 @@ class FermiGBMTTELike(EventListLike):
                                 bkg_selections=zip(self._event_list.poly_intervals.start_times,self._event_list.poly_intervals.stop_times),
                                 instrument='gbm')
 
-    def peek(self):
+    def __repr__(self):
 
-        print "TTE File Info:"
+        out = "%s\n%s" % (super(FermiGBMTTELike, self).__repr__(), self._gbm_tte_file.__repr__())
 
-        self._event_list.peek()
-
-        print 'Timing Info:'
-
-        self._gbm_tte_file.peek()
+        return out
 
 
 
@@ -396,7 +393,7 @@ class GBMTTEFile(object):
 
         return mission_dict
 
-    def peek(self):
+    def __repr__(self):
         """
         Examine the currently selected interval
         If connected to the internet, will also look up info for other instruments to compare with
@@ -407,7 +404,7 @@ class GBMTTEFile(object):
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
 
-        fermi_dict = {}
+        fermi_dict = collections.OrderedDict()
 
         fermi_dict['Fermi Trigger Time'] = self._trigger_time
         fermi_dict['Fermi MET OBS Start'] = self._start_events
@@ -415,13 +412,16 @@ class GBMTTEFile(object):
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
         fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
+        fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
+
+        out = fermi_df.to_string()
+
         if mission_dict is not None:
-            mission_df = pd.Series(mission_dict)
+            mission_df = pd.Series(mission_dict,index=mission_dict.keys())
 
-            display(mission_df)
+            out = "%s\n%s" % (out,mission_df.to_string())
 
-        fermi_df = pd.Series(fermi_dict)
 
-        display(fermi_df)
+        return out
 
 
