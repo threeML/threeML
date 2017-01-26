@@ -3,6 +3,7 @@ import copy
 from contextlib import contextmanager
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 from astromodels.core.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
@@ -22,6 +23,7 @@ from threeML.utils.binner import Rebinner
 from threeML.plugins.OGIP.pha import PHAWrite, PHAII, POISSON_PHAII, POISSON_BAK_PHAII, BAK_PHAII
 from threeML.utils.stats_tools import Significance
 from threeML.config.config import threeML_config
+from threeML.io.rich_display import display
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -190,6 +192,39 @@ class OGIPLike(PluginPrototype):
         self._mask = self._quality_to_mask()
         # Apply the mask
         self._apply_mask_to_original_vectors()
+
+    def __repr__(self):
+
+
+        obs = collections.OrderedDict()
+
+        obs['n. channels'] = self._pha.n_channels
+
+        obs['total rate'] = self._pha.total_rate
+
+        if not self._pha.is_poisson():
+            obs['total rate error'] = self._pha.total_rate_error
+
+        obs['total bkg. rate'] = self._bak.total_rate
+
+        if not self._bak.is_poisson():
+            obs['total bkg. rate error'] = self._bak.total_rate_error
+
+        obs['exposure'] = self.exposure
+        obs['bkg. exposure'] = self.background_exposure
+        obs['significance'] =self.significance
+        obs['is poisson'] = self._pha.is_poisson()
+        obs['bkg. is poisson'] = self._bak.is_poisson()
+        obs['response'] = self._pha.response_file
+
+        obs_series = pd.Series(data=obs,index=obs.keys())
+
+        return obs_series.to_string()
+
+
+
+
+
 
     def _get_pha_instance(self, pha_file_or_instance, *args, **kwargs):
 
