@@ -252,8 +252,8 @@ class EventListLike(OGIPLike):
         # create copies of the OGIP plugins with the
         # time interval saved.
 
-        for interval in self.text_bins:
-            self.set_active_time_interval(interval)
+        for interval in self._event_list.bins:
+            self.set_active_time_interval(interval.to_string())
 
             ogip_list.append(copy.copy(self))
 
@@ -298,14 +298,6 @@ class EventListLike(OGIPLike):
 
         self._event_list.save_background(filename, overwrite)
 
-
-
-
-
-    @property
-    def text_bins(self):
-
-        return self._event_list.text_bins
 
     @property
     def bins(self):
@@ -459,8 +451,8 @@ class EventListLike(OGIPLike):
 
 
 
-        for i, interval in enumerate(self.text_bins):
-            self.set_active_time_interval(interval)
+        for i, interval in enumerate(self._event_list.bins):
+            self.set_active_time_interval(interval.to_string())
 
             new_name = "%s_%d" % (self._name, i)
 
