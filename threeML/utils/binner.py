@@ -252,47 +252,10 @@ class Rebinner(object):
 
 
 class TemporalBinner(TimeIntervalSet):
+    """
+    An extension of the TimeInterval set that includes binning capabilities
 
-
-    def _setup(self, arrival_times, tstart=None, tstop=None):
-
-        self._arrival_times = arrival_times
-
-        if tstart is None:
-
-            self._tstart = self._arrival_times.min()
-
-        else:
-
-            self._tstart = float(tstart)
-
-        if tstop is None:
-
-            self._tstop = self._arrival_times.max()
-
-        else:
-
-            self._tstop = float(tstop)
-
-    # def __repr__(self):
-    #
-    #     return self._intervals.__repr__()
-    #
-    # def __len__(self):
-    #
-    #     return self._intervals.__len__()
-    #
-    # @property
-    # def bins(self):
-    #
-    #     return [self._intervals.start_times, self._intervals.start_times]
-    #
-    # @property
-    # def text_bins(self):
-    #
-    #
-    #     return self._intervals.to_string().split(',')
-
+    """
 
     @classmethod
     def from_bin_by_significance(cls, arrival_times, background_getter, background_error_getter=None, sigma_level=10, min_counts=1,tstart=None, tstop=None):
@@ -514,7 +477,6 @@ class TemporalBinner(TimeIntervalSet):
 
             return cls.from_starts_and_stops(starts, stops)
 
-
     @classmethod
     def from_bin_by_constant(cls, arrival_times, dt):
         """
@@ -529,7 +491,6 @@ class TemporalBinner(TimeIntervalSet):
         stops = tmp + dt
 
         return cls.from_starts_and_stops(starts, stops)
-
 
     @classmethod
     def from_bin_by_bayesian_blocks(cls, arrival_times , p0, bkg_integral_distribution=None):
