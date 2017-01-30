@@ -388,7 +388,7 @@ class TemporalBinner(TimeIntervalSet):
                 while (not end_fast_search):
 
                     # we calculate the sigma of the current region
-                    _, counts = TemporalBinner._select_events(current_start, current_stop)
+                    _, counts = TemporalBinner._select_events(arrival_times,current_start, current_stop)
 
                     sigma_exceeded = TemporalBinner._check_exceeds_sigma_interval(current_start,
                                                                         current_stop,
@@ -559,7 +559,7 @@ class TemporalBinner(TimeIntervalSet):
 
         """
 
-        final_edges = bayesian_blocks(arrival_times, arrival_times[0], arrival_times[1], p0, bkg_integral_distribution)
+        final_edges = bayesian_blocks(arrival_times, arrival_times[0], arrival_times[-1], p0, bkg_integral_distribution)
 
         starts = np.asarray(final_edges)[:-1]
         stops = np.asarray(final_edges)[1:]
