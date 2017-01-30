@@ -227,12 +227,11 @@ class FermiGBMTTELike(EventListLike):
 
     def _output(self):
         super_out = super(FermiGBMTTELike, self)._output()
-        super_out.append(self._gbm_tte_file._output())
+        return super_out.append(self._gbm_tte_file._output())
 
-        return super_out
 
     def display(self):
-        display(self._output())
+        display(self._output().to_frame())
 
 
 class GBMTTEFile(object):
@@ -427,7 +426,7 @@ class GBMTTEFile(object):
         if mission_dict is not None:
             mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
-            fermi_df.append(mission_df)
+            fermi_df=fermi_df.append(mission_df)
 
         return fermi_df
 

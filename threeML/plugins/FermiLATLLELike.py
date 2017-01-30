@@ -195,12 +195,10 @@ class FermiLATLLELike(EventListLike):
 
     def _output(self):
         super_out = super(FermiLATLLELike, self)._output()
-        super_out.append(self._lat_lle_file._output())
-
-        return super_out
+        return super_out.append(self._lat_lle_file._output())
 
     def display(self):
-        display(self._output())
+        display(self._output().to_frame())
 
 
 class LLEFile(object):
@@ -512,7 +510,7 @@ class LLEFile(object):
         if mission_dict is not None:
             mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
-            fermi_df.append(mission_df)
+            fermi_df = fermi_df.append(mission_df)
 
 
 

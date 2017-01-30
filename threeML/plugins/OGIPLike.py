@@ -231,7 +231,7 @@ class OGIPLike(PluginPrototype):
         :return:
         """
 
-        display(self._output())
+        display(self._output().to_frame())
 
 
 

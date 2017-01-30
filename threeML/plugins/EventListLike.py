@@ -123,13 +123,12 @@ class EventListLike(OGIPLike):
     def _output(self):
 
         super_out = super(EventListLike, self)._output()
-        super_out.append(self._event_list._output())
+        return super_out.append(self._event_list._output())
 
-        return super_out
 
     def display(self):
 
-        display(self._output())
+        display(self._output().to_frame())
 
 
 
