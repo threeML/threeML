@@ -10,6 +10,7 @@ import warnings
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithLiveTime
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
+from threeML.io.rich_display import display
 
 from threeML.io.plugin_plots import binned_light_curve_plot
 
@@ -190,10 +191,16 @@ class FermiLATLLELike(EventListLike):
                                 instrument='lle')
 
     def __repr__(self):
+        return self._output().to_string()
 
-        out = "%s\n%s" % (super(FermiLATLLELike, self).__repr__(), self._lat_lle_file.__repr__())
+    def _output(self):
+        super_out = super(FermiLATLLELike, self)._output()
+        super_out.append(self._lat_lle_file._output())
 
-        return out
+        return super_out
+
+    def display(self):
+        display(self._output())
 
 
 class LLEFile(object):
@@ -475,14 +482,19 @@ class LLEFile(object):
 
 
     def __repr__(self):
-        """
-        Examine the currently selected interval
-        If connected to the internet, will also look up info for other instruments to compare with
-        Fermi.
 
-        :return: none
-        """
+        return  self._output().to_string()
 
+
+    def _output(self):
+
+        """
+                Examine the currently selected interval
+                If connected to the internet, will also look up info for other instruments to compare with
+                Fermi.
+
+                :return: none
+                """
 
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
@@ -496,14 +508,17 @@ class LLEFile(object):
 
         fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
 
-        out = fermi_df.to_string()
 
         if mission_dict is not None:
             mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
-            out = "%s\n%s" % (out, mission_df.to_string())
+            fermi_df.append(mission_df)
 
-        return out
+
+
+        return fermi_df
+
+
 
 
 

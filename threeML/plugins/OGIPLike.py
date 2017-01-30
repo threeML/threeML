@@ -196,6 +196,12 @@ class OGIPLike(PluginPrototype):
     def __repr__(self):
 
 
+
+
+        return self._output().to_string()
+
+    def _output(self):
+
         obs = collections.OrderedDict()
 
         obs['n. channels'] = self._pha.n_channels
@@ -212,17 +218,20 @@ class OGIPLike(PluginPrototype):
 
         obs['exposure'] = self.exposure
         obs['bkg. exposure'] = self.background_exposure
-        obs['significance'] =self.significance
+        obs['significance'] = self.significance
         obs['is poisson'] = self._pha.is_poisson()
         obs['bkg. is poisson'] = self._bak.is_poisson()
         obs['response'] = self._pha.response_file
 
-        obs_series = pd.Series(data=obs,index=obs.keys())
+        return pd.Series(data=obs, index=obs.keys())
 
-        return obs_series.to_string()
+    def display(self):
+        """
+        Displays the current content of the OGIP object
+        :return:
+        """
 
-
-
+        display(self._output())
 
 
 

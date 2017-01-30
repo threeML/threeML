@@ -221,13 +221,18 @@ class FermiGBMTTELike(EventListLike):
                                 bkg_selections=zip(self._event_list.poly_intervals.start_times,self._event_list.poly_intervals.stop_times),
                                 instrument='gbm')
 
+
     def __repr__(self):
+        return self._output().to_string()
 
-        out = "%s\n%s" % (super(FermiGBMTTELike, self).__repr__(), self._gbm_tte_file.__repr__())
+    def _output(self):
+        super_out = super(FermiGBMTTELike, self)._output()
+        super_out.append(self._gbm_tte_file._output())
 
-        return out
+        return super_out
 
-
+    def display(self):
+        display(self._output())
 
 
 class GBMTTEFile(object):
@@ -394,15 +399,20 @@ class GBMTTEFile(object):
         return mission_dict
 
     def __repr__(self):
-        """
-        Examine the currently selected interval
-        If connected to the internet, will also look up info for other instruments to compare with
-        Fermi.
 
-        :return: none
+        return self._output().to_string()
+
+
+    def _output(self):
+
         """
+                Examine the currently selected interval
+                If connected to the internet, will also look up info for other instruments to compare with
+                Fermi.
+
+                :return: none
+                """
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
-
 
         fermi_dict = collections.OrderedDict()
 
@@ -414,14 +424,13 @@ class GBMTTEFile(object):
 
         fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
 
-        out = fermi_df.to_string()
-
         if mission_dict is not None:
-            mission_df = pd.Series(mission_dict,index=mission_dict.keys())
+            mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
-            out = "%s\n%s" % (out,mission_df.to_string())
+            fermi_df.append(mission_df)
+
+        return fermi_df
 
 
-        return out
 
 

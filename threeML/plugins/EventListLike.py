@@ -6,6 +6,7 @@ import pandas as pd
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.plugins.OGIP.pha import PHAII
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.rich_display import display
 
 try:
 
@@ -117,9 +118,20 @@ class EventListLike(OGIPLike):
 
     def __repr__(self):
 
-        out = "%s\n%s" % (super(EventListLike, self).__repr__(), self._event_list.__repr__())
+        return self._output().to_string()
 
-        return out
+    def _output(self):
+
+        super_out = super(EventListLike, self)._output()
+        super_out.append(self._event_list._output())
+
+        return super_out
+
+    def display(self):
+
+        display(self._output())
+
+
 
     def __set_poly_order(self, value):
         """Background poly order setter """

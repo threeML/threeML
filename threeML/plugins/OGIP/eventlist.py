@@ -567,29 +567,30 @@ class EventList(object):
 
         """
 
+
+        return self._output().to_string()
+
+    def _output(self):
+
         info_dict = collections.OrderedDict()
         for i, interval in enumerate(self.time_intervals):
-            info_dict['active selection (%d)' % (i+1)] = interval.__repr__()
-
-
+            info_dict['active selection (%d)' % (i + 1)] = interval.__repr__()
 
         info_dict['active deadtime'] = self._active_dead_time
 
         if self._poly_fit_exists:
 
             for i, interval in enumerate(self.poly_intervals):
-                info_dict['polynomial selection (%d)' % (i+1)] = interval.__repr__()
+                info_dict['polynomial selection (%d)' % (i + 1)] = interval.__repr__()
 
             info_dict['polynomial order'] = self._optimal_polynomial_grade
 
             info_dict['polynomial fit type'] = self._fit_method_info['bin type']
             info_dict['polynomial fit method'] = self._fit_method_info['fit method']
 
+        return pd.Series(info_dict, index=info_dict.keys())
 
 
-        info_df = pd.Series(info_dict,index=info_dict.keys())
-
-        return info_df.to_string()
 
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
         """
