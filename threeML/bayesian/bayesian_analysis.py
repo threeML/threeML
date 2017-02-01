@@ -42,20 +42,20 @@ from corner import corner
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
 from threeML.io.rich_display import display
 from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
+from threeML.analysis_results import BayesianResults
 
-from astromodels import ModelAssertionViolation
+from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
 
-def sample_with_progress(p0, sampler, n_samples, **kwargs):
+def sample_with_progress(title, p0, sampler, n_samples, **kwargs):
     # Loop collecting n_samples samples
 
     pos, prob, state = [None, None, None]
 
     # This is only for producing the progress bar
 
-    progress_bar_iter = max(int(n_samples / 100), 1)
+    with progress_bar(n_samples, title=title) as progress:
 
-    with progress_bar(n_samples) as progress:
         for i, result in enumerate(sampler.sample(p0, iterations=n_samples, **kwargs)):
             # Show progress
 
@@ -73,6 +73,7 @@ def sample_without_progress(p0, sampler, n_samples, **kwargs):
 
 
 class BayesianAnalysis(object):
+
     def __init__(self, likelihood_model, data_list, **kwargs):
         """
         Bayesian analysis.
@@ -116,10 +117,16 @@ class BayesianAnalysis(object):
         self._raw_samples = None
         self._sampler = None
         self._log_like_values = None
+        self._results = None
 
         # Get the initial list of free parameters, useful for debugging purposes
 
         self._update_free_parameters()
+
+    @property
+    def results(self):
+
+        return self._results
 
     @property
     def analysis_type(self):
@@ -159,12 +166,13 @@ class BayesianAnalysis(object):
 
         return self._marginal_likelihood
 
-    def sample(self, n_walkers, burn_in, n_samples):
+    def sample(self, n_walkers, burn_in, n_samples, quiet=False):
         """
         Sample the posterior with the Goodman & Weare's Affine Invariant Markov chain Monte Carlo
-        :param: n_walkers
-        :param: burn_in
-        :param: n_samples
+        :param n_walkers:
+        :param burn_in:
+        :param n_samples:
+        :param quiet: if False, do not print results
 
         :return: MCMC samples
 
@@ -180,42 +188,42 @@ class BayesianAnalysis(object):
 
         sampling_procedure = sample_with_progress
 
-        if threeML_config['parallel']['use-parallel']:
+        # Deactivate memoization in astromodels, which is useless in this case since we will never use twice the
+        # same set of parameters
+        with use_astromodels_memoization(False):
 
-            c = ParallelClient()
-            view = c[:]
+            if threeML_config['parallel']['use-parallel']:
 
-            sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                            self.get_posterior,
-                                            pool=view)
+                c = ParallelClient()
+                view = c[:]
 
-            # Sampling with progress in parallel is super-slow, so let's
-            # use the non-interactive one
-            sampling_procedure = sample_without_progress
+                sampler = emcee.EnsembleSampler(n_walkers, n_dim,
+                                                self.get_posterior,
+                                                pool=view)
 
-        else:
+                # Sampling with progress in parallel is super-slow, so let's
+                # use the non-interactive one
+                sampling_procedure = sample_without_progress
 
-            sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                            self.get_posterior)
+            else:
 
-        print("Running burn-in of %s samples...\n" % burn_in)
+                sampler = emcee.EnsembleSampler(n_walkers, n_dim,
+                                                self.get_posterior)
 
-        # Sample the burn-in
-        pos, prob, state = sampling_procedure(p0, sampler, burn_in)
+            # Sample the burn-in
+            pos, prob, state = sampling_procedure("Burn-in", p0, sampler, burn_in)
 
-        # Reset sampler
+            # Reset sampler
 
-        sampler.reset()
+            sampler.reset()
 
-        # Run the true sampling
+            # Run the true sampling
 
-        print("\nSampling...\n")
-
-        _ = sampling_procedure(pos, sampler, n_samples, rstate0=state)
+            _ = sampling_procedure("Sampling", pos, sampler, n_samples, rstate0=state)
 
         acc = np.mean(sampler.acceptance_fraction)
 
-        print("\nMean acceptance fraction: %s" % acc)
+        print("\nMean acceptance fraction: %s\n" % acc)
 
         self._sampler = sampler
         self._raw_samples = sampler.flatchain
@@ -236,6 +244,13 @@ class BayesianAnalysis(object):
         self._marginal_likelihood = None
 
         self._build_samples_dictionary()
+
+        self._build_results()
+
+        # Display results
+        if not quiet:
+
+            self._results.display()
 
         return self.samples
 
@@ -267,15 +282,15 @@ class BayesianAnalysis(object):
 
         print("Running burn-in of %s samples...\n" % burn_in)
 
-        p, lnprob, lnlike = sample_with_progress(p0, sampler, burn_in)
+        p, lnprob, lnlike = sample_with_progress("Burn-in", p0, sampler, burn_in)
 
         # Reset sampler
 
         sampler.reset()
 
-        print("\nSampling...\n")
+        print("\nSampling\n")
 
-        _ = sample_with_progress(p, sampler, n_samples,
+        _ = sample_with_progress("Sampling", p, sampler, n_samples,
                                  lnprob0=lnprob, lnlike0=lnlike)
 
         self._sampler = sampler
@@ -334,7 +349,7 @@ class BayesianAnalysis(object):
         if not os.path.exists(mcmc_chains_out_dir):
             os.makedirs(mcmc_chains_out_dir)
 
-        print("\nSampling...\n")
+        print("\nSampling\n")
         print("MULTINEST has its own convergence criteria... you will have to wait blindly for it to finish")
         print("If INS is enabled, one can monitor the likelihood in the terminal for completion information")
 
@@ -343,7 +358,7 @@ class BayesianAnalysis(object):
 
         if threeML_config['parallel']['use-parallel']:
 
-            raise RuntimeError("If you want to run multinest in paralell you need to use an ad-hoc method")
+            raise RuntimeError("If you want to run multinest in parallell you need to use an ad-hoc method")
 
         else:
 
@@ -368,17 +383,13 @@ class BayesianAnalysis(object):
 
         # now get the log probability
 
-        self._log_probability_values = self.get_posterior(self._raw_samples)
+        self._log_probability_values = map(lambda samples: self.get_posterior(samples), self._raw_samples)
 
         self._build_samples_dictionary()
 
         # now get the marginal likelihood
 
         self._marginal_likelihood = multinest_analyzer.get_stats()['global evidence'] / np.log(10.)
-
-
-
-
 
         return self.samples
 
@@ -395,6 +406,38 @@ class BayesianAnalysis(object):
             # Add the samples for this parameter for this source
 
             self._samples[parameter_name] = self._raw_samples[:, i]
+
+    def _build_results(self):
+
+        # Find maximum of the log posterior
+        idx = self._log_probability_values.argmax()
+
+        # Get parameter values at the maximum
+        approximate_MAP_point = self._raw_samples[idx, :]
+
+        # Sets the values of the parameters to their MAP values
+        for i, parameter in enumerate(self._free_parameters):
+
+            self._free_parameters[parameter].value = approximate_MAP_point[i]
+
+        # Get the value of the posterior for each dataset at the MAP
+        log_posteriors = collections.OrderedDict()
+
+        log_prior = self._log_prior(approximate_MAP_point)
+
+        total = 0
+
+        for dataset in self.data_list.values():
+
+            log_posteriors[dataset.name] = dataset.get_log_like() + log_prior
+
+            total += log_posteriors[dataset.name]
+
+        log_posteriors['total'] = total
+
+        # Instance the result
+
+        self._results = BayesianResults(self._likelihood_model, self._raw_samples, log_posteriors)
 
     @property
     def raw_samples(self):
@@ -1010,12 +1053,14 @@ class BayesianAnalysis(object):
         # Assign this trial values to the parameters and
         # store the corresponding values for the priors
 
-        self._update_free_parameters()
+        # self._update_free_parameters()
 
         assert len(self._free_parameters) == len(trial_values), ("Something is wrong. Number of free parameters "
                                                                  "do not match the number of trial values.")
 
         log_prior = 0
+
+        #with use_
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
