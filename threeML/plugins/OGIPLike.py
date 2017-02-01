@@ -75,7 +75,7 @@ class OGIPLike(PluginPrototype):
 
         # Read in the response
 
-        if isinstance(rsp_file, str):
+        if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
 
             self._rsp = OGIPResponse(rsp_file, arf_file=arf_file)
 
@@ -669,7 +669,7 @@ class OGIPLike(PluginPrototype):
                                     quality=self._native_quality,
                                     grouping=np.ones(n_channels),
                                     exposure=self.exposure,
-                                    backscale=None,
+                                    backscale=self.scale_factor,
                                     respfile=None,
                                     ancrfile=None)
 
@@ -706,7 +706,7 @@ class OGIPLike(PluginPrototype):
                                         quality=self._native_quality,
                                         grouping=np.ones(n_channels),
                                         exposure=self.background_exposure,
-                                        backscale=None,
+                                        backscale=self.scale_factor,
                                         respfile=None,
                                         ancrfile=None)
 
@@ -719,12 +719,12 @@ class OGIPLike(PluginPrototype):
                                         tstart=0,
                                         telapse=self.exposure,
                                         channel=range(1, n_channels+1),
-                                        rate=randomized_source_rate,
+                                        rate=randomized_background_rate,
                                         stat_err=randomized_background_rate_err,
                                         quality=self._native_quality,
                                         grouping=np.ones(n_channels),
                                         exposure=self.background_exposure,
-                                        backscale=None,
+                                        backscale=self.scale_factor,
                                         respfile=None,
                                         ancrfile=None)
             # Now create another instance of OGIPLike with the randomized data we just generated
