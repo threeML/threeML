@@ -10,6 +10,9 @@ from version import __version__
 # Import everything from astromodels
 from astromodels import *
 
+# Now import the optimizers first (to avoid conflicting libraries problems)
+from .minimizer.minimization import _minimizers
+
 # This dynamically loads a module and return it in a variable
 
 def is_module_importable(module_full_path):
