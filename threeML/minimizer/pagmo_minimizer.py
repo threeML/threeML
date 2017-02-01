@@ -6,9 +6,6 @@ import dill
 from threeML.minimizer.minimization import Minimizer
 
 
-algorithm = PyGMO.algorithm.de(100)
-
-
 class WrapperUnpickler(object):
 
     def __call__(self, dill_package, dim):
@@ -103,12 +100,13 @@ class PAGMOMinimizer(Minimizer):
 
         # By default the population number is 5 times the number of parameters
 
-        self._island = PyGMO.island(algorithm_instance, self.functor, self.Npar * 5)
+        self._algorithm = algorithm_instance
 
     def minimize(self, compute_covar=True):
 
         best_fit_values, final_value = evolve(self.function,
                                               self.parameters,
+                                              self._algorithm,
                                               evolution_step=self._evolution_step,
                                               max_evolutions=self._max_evolutions,
                                               ftol=self.ftol)
@@ -129,7 +127,7 @@ class PAGMOMinimizer(Minimizer):
 
 # This cannot be part of a class, unfortunately, because of how PyGMO serialize objects
 
-def evolve(function, parameters, evolution_step=20, max_evolutions=1000, ftol=1e-3):
+def evolve(function, parameters, algorithm, evolution_step=20, max_evolutions=1000, ftol=1e-3):
 
     Npar = len(parameters)
 
