@@ -14,6 +14,11 @@ from threeML.config.config import threeML_config
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 from threeML.io.download_from_http import ApacheDirectory
 
+
+# Set default timeout for operations
+socket.setdefaulttimeout(120)
+
+
 class DivParser(HTMLParser.HTMLParser):
     """
     Extract data from a <div></div> tag
@@ -307,7 +312,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
     # Now periodically check if the query is complete
 
     startTime = time.time()
-    timeout = max(1.5 * max(5.0, float(estimatedTimeForTheQuery)), 60)  # Seconds
+    timeout = max(1.5 * max(5.0, float(estimatedTimeForTheQuery)), 120)  # Seconds
     refreshTime = min(float(estimatedTimeForTheQuery) / 2.0, 5.0)  # Seconds
 
     # When the query will be completed, the page will contain this string:
@@ -328,7 +333,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         try:
 
-            _ = urllib.urlretrieve(http_address.replace("http","https"), fakeName)
+            _ = urllib.urlretrieve(http_address.replace("http","https"), fakeName, )
 
         except socket.timeout:
 
