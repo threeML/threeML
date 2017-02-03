@@ -185,6 +185,16 @@ def _get_fermipy_instance(configuration, likelihood_model):
     return gta, energies_keV
 
 
+def _expensive_imports_hook():
+
+    from fermipy.gtanalysis import GTAnalysis
+    from GtBurst.LikelihoodComponent import findGalacticTemplate, findIsotropicTemplate
+
+    globals()['GTAnalysis'] = GTAnalysis
+    globals()['findGalacticTemplate'] = findGalacticTemplate
+    globals()['findIsotropicTemplate'] = findIsotropicTemplate
+
+
 class FermipyLike(PluginPrototype):
     """
     Plugin for the data of the Fermi Large Area Telescope, based on fermipy (http://fermipy.readthedocs.io/)
@@ -194,14 +204,30 @@ class FermipyLike(PluginPrototype):
 
         instance = object.__new__(cls)
 
-        from fermipy.gtanalysis import GTAnalysis
-        from GtBurst.LikelihoodComponent import findGalacticTemplate, findIsotropicTemplate
+        if 'test' in kwargs:
 
-        globals()['GTAnalysis'] = GTAnalysis
-        globals()['findGalacticTemplate'] = findGalacticTemplate
-        globals()['findIsotropicTemplate'] = findIsotropicTemplate
+            if kwargs['test']:
 
-        return instance
+                # Do not return the instance, just try to import the modules
+                try:
+
+                    _expensive_imports_hook()
+
+                except:
+
+                    return False
+
+                else:
+
+                    return True
+
+        else:
+
+            # we do not catch here
+
+            _expensive_imports_hook()
+
+            return instance
 
     def __init__(self, name, fermipy_config):
         """

@@ -160,6 +160,17 @@ def is_plugin_available(plugin):
 
     if plugin in _available_plugins.values():
 
+        # FIXME
+        if plugin == "FermipyLike":
+
+            # Test it
+            available = FermipyLike.__new__(FermipyLike, test=True)
+
+            if not available:
+                # Do not register it
+
+                return False
+
         return True
 
     else:
@@ -206,10 +217,8 @@ import astropy.units as u
 
 import os
 
-if is_plugin_available("FermipyLike"):
-
-    # Import the LAT data downloader
-    from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+# Import the LAT data downloader
+from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
 
 # Import the results loader
 from threeML.analysis_results import load_analysis_results
