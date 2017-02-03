@@ -1,7 +1,6 @@
 import os
 import sys
 import glob
-import inspect
 import imp
 
 # Import the version
@@ -9,6 +8,9 @@ from version import __version__
 
 # Import everything from astromodels
 from astromodels import *
+
+# Now import the optimizers first (to avoid conflicting libraries problems)
+from .minimizer.minimization import _minimizers
 
 # This dynamically loads a module and return it in a variable
 
@@ -158,6 +160,17 @@ def is_plugin_available(plugin):
 
     if plugin in _available_plugins.values():
 
+        # FIXME
+        if plugin == "FermipyLike":
+
+            # Test it
+            available = FermipyLike.__new__(FermipyLike, test=True)
+
+            if not available:
+                # Do not register it
+
+                return False
+
         return True
 
     else:
@@ -204,10 +217,11 @@ import astropy.units as u
 
 import os
 
-if is_plugin_available("FermipyLike"):
+# Import the LAT data downloader
+from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
 
-    # Import the LAT data downloader
-    from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+# Import the results loader
+from threeML.analysis_results import load_analysis_results
 
 # Check that the number of threads is set to 1 for all multi-thread libraries
 # otherwise numpy operations will be way slower than what they could be, since

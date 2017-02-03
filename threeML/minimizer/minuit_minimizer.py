@@ -26,7 +26,7 @@ class MinuitMinimizer(Minimizer):
     # minuit. This makes the implementation a little bit more cumbersome, but more adaptable if we want
     # to switch back to the bare bone SEAL minuit
 
-    def __init__(self, function, parameters, ftol=1, verbosity=0):
+    def __init__(self, function, parameters, ftol=0.1, verbosity=0):
 
         super(MinuitMinimizer, self).__init__(function, parameters, ftol, verbosity)
 
@@ -92,7 +92,7 @@ class MinuitMinimizer(Minimizer):
         # Finally we can instance the Minuit class
         self.minuit = Minuit(self._f, **iminuit_init_parameters)
 
-        self.minuit.tol = self.ftol  # ftol
+        #self.minuit.tol = self.ftol  # ftol
 
         try:
 
@@ -103,8 +103,6 @@ class MinuitMinimizer(Minimizer):
             # iMinuit uses errodef, not up
 
             self.minuit.errordef = 0.5
-
-        self.minuit.strategy = 0  # More accurate
 
         self._best_fit_parameters = None
         self._function_minimum_value = None
