@@ -762,7 +762,7 @@ class PHAWrite(object):
 
 
 
-            fits_file.writeto(self._outfile_name[key], overwrite=overwrite)
+            fits_file.writeto(self._outfile_name[key], clobber=overwrite)
 
 
             if self._out_rsp:
@@ -774,7 +774,7 @@ class PHAWrite(object):
 
                 rsp2 = FITSFile(fits_extensions=extensions)
 
-                rsp2.writeto("%s.rsp" % self._outfile_basename,overwrite=True)
+                rsp2.writeto("%s.rsp" % self._outfile_basename, clobber=True)
 
 
 
