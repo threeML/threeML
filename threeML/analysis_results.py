@@ -1,306 +1,318 @@
-import numpy as np
-import uncertainties
-import astromodels
-from operator import attrgetter, itemgetter
-import pandas as pd
-import collections
-import math
-import inspect
+import datetime
 import functools
+import inspect
+import math
+from operator import attrgetter
+import collections
+import numpy as np
+import pandas as pd
+import astropy.units as u
 
-from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
-from threeML.io.table import NumericMatrix, long_path_formatter
-from threeML.io.rich_display import display
+import astromodels
+from astromodels.core.my_yaml import my_yaml
+from astromodels.core.model_parser import ModelParser
+
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.file_utils import sanitize_filename
+from threeML.io.fits_file import fits, FITSFile, FITSExtension
+from threeML.io.rich_display import display
+from threeML.io.table import NumericMatrix, long_path_formatter
+from threeML.io.uncertainty_formatter import uncertainty_formatter
+from threeML.version import __version__
+from threeML.random_variates import RandomVariates
 
-def _order_of_magnitude(value):
 
-    return 10 ** np.floor(np.log10(abs(value)))
+# These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
+# them with normal characters when we write the keyword, and we substitute them back when we read it back
+_subs = (('\n', "_NEWLINE_"), ("'", "_QUOTE1_"), ('"', "_QUOTE2_"), ('{', "_PARO_"), ('}', "_PARC_"))
 
-def _interval_formatter(value, low_bound, hi_bound):
+
+def _escape_yaml_for_fits(yaml_code):
+
+    for sub in _subs:
+
+        yaml_code = yaml_code.replace(sub[0], sub[1])
+
+    return yaml_code
+
+
+def _escape_back_yaml_from_fits(yaml_code):
+
+    for sub in _subs:
+
+        yaml_code = yaml_code.replace(sub[1], sub[0])
+
+    return yaml_code
+
+
+
+def load_analysis_results(fits_file):
     """
-    Gets a value and its error in input, and returns the value, the uncertainty and the common exponent with the proper
-    number of significant digits
+    Load the results of one or more analysis from a FITS file produced by 3ML
 
-    :param value:
-    :param error: a *positive* value
-    :return: (num, unc, exponent)
+    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
+    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
     """
 
-    # Get the errors (instead of the boundaries)
+    with fits.open(fits_file) as f:
 
-    error_m = low_bound - value
-    error_p = hi_bound - value
+        n_results = map(lambda x: x.name, f).count('ANALYSIS_RESULTS')
 
-    # Compute the sign of the errors
-    # NOTE: sometimes value is not within low_bound - hi_bound, so these sign might not always
-    # be -1 and +1 respectively
+        if n_results == 1:
 
-    sign_m = _sign(low_bound - value)
-    sign_p = _sign(hi_bound - value)
-
-    # Scale the values to the order of magnitude of the value
-
-    order_of_magnitude = max([_order_of_magnitude(value), _order_of_magnitude(error_m), _order_of_magnitude(error_p)])
-
-    scaled_value = value / order_of_magnitude
-    scaled_error_m = error_m / order_of_magnitude
-    scaled_error_p = error_p / order_of_magnitude
-
-    # Get the uncertainties instance of the scaled values/errors
-
-    x = uncertainties.ufloat(scaled_value, abs(scaled_error_m))
-
-    # Split the uncertainty in number, negative error, and exponent (if any)
-
-    num1, unc1, exponent1 = get_uncertainty_tokens(x)
-
-    # Since we scaled to the order of magnitude of value, there shouldn't be any exponent
-
-    assert exponent1 is None
-
-    # Repeat the same for the other error
-
-    y = uncertainties.ufloat(scaled_value, abs(scaled_error_p))
-
-    num2, unc2, exponent2 = get_uncertainty_tokens(y)
-
-    assert exponent2 is None
-
-    # Choose the representation of the number with more digits
-    # This is necessary for asymmetric intervals where one of the two errors is much larger in magnitude
-    # then the others. For example, 1 -0.01 +90. This will choose 1.00 instead of 1,so that the final
-    # representation will be 1.00 -0.01 +90
-
-    if len(num1) > len(num2):
-
-        num = num1
-
-    else:
-
-        num = num2
-
-    # Get the exponent of 10 to use for the representation
-
-    expon = int(np.log10(order_of_magnitude))
-
-    if unc1 != unc2:
-
-        # Asymmetric error
-
-        repr1 = "%s%s" % (sign_m, unc1)
-        repr2 = "%s%s" % (sign_p, unc2)
-
-        if expon == 0:
-
-            # No need to show any power of 10
-
-            return "%s %s %s" % (num, repr1, repr2)
-
-        elif expon == 1:
-
-            # Display 10 instead of 10^1
-
-            return "(%s %s %s) x 10" % (num, repr1, repr2)
+            return _load_one_results(f['ANALYSIS_RESULTS', 1])
 
         else:
 
-            # Display 10^expon
+            return _load_set_of_results(f, n_results)
 
-            return "(%s %s %s) x 10^%s" % (num, repr1, repr2, expon)
 
-    else:
+def _load_one_results(fits_extension):
 
-        # Symmetric error
-        repr1 = "+/- %s" % unc1
+    # Gather analysis type
+    analysis_type = fits_extension.header.get("RESUTYPE")
 
-        if expon == 0:
+    # Gather the optimized model
+    serialized_model = _escape_back_yaml_from_fits(fits_extension.header.get("MODEL"))
+    model_dict = my_yaml.load(serialized_model)
 
-            return "%s %s" % (num, repr1)
+    optimized_model = ModelParser(model_dict=model_dict).get_model()
 
-        elif expon == 1:
+    # Gather statistics values
+    statistic_values = collections.OrderedDict()
 
-            return "(%s %s) x 10" % (num, repr1)
+    for key in fits_extension.header.keys():
+
+        if key.find("STAT")==0:
+
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("STAT",""))
+            value = float(fits_extension.header.get(key))
+            name = fits_extension.header.get("PN%i" % id)
+            statistic_values[name] = value
+
+    if analysis_type == "MLE":
+
+        # Get covariance matrix
+
+        covariance_matrix = fits_extension.data.field("COVARIANCE").T
+
+        # Instance and return
+
+        return MLEResults(optimized_model, covariance_matrix, statistic_values)
+
+    elif analysis_type == "Bayesian":
+
+        # Gather samples
+        samples = fits_extension.data.field("SAMPLES")
+
+        # Instance and return
+
+        return BayesianResults(optimized_model, samples.T, statistic_values)
+
+
+def _load_set_of_results(open_fits_file, n_results):
+
+    # Gather all results
+    all_results = []
+
+    for i in range(n_results):
+
+        all_results.append(_load_one_results(open_fits_file['ANALYSIS_RESULTS', i+1]))
+
+    this_set = AnalysisResultsSet(all_results)
+
+    # Now gather the SEQUENCE extension and set the characterization frame accordingly
+
+    sequence_ext = open_fits_file['SEQUENCE']
+
+    seq_type = sequence_ext.header.get("SEQ_TYPE")
+
+    # Build the data tuple
+    record = sequence_ext.data
+
+    data_list = []
+
+    for column in record.columns:
+
+        if column.unit is None:
+
+            this_tuple = (column.name, record[column.name])
 
         else:
 
-            return "(%s %s) x 10^%s" % (num, repr1, expon)
+            this_tuple = (column.name, record[column.name] * u.Unit(column.unit))
+
+        data_list.append(this_tuple)
+
+    this_set.characterize_sequence(seq_type, tuple(data_list))
+
+    return this_set
 
 
-def _sign(number):
-
-    if number < 0:
-
-        return "-"
-
-    else:
-
-        return "+"
-
-
-class RandomVariates(np.ndarray):
+class SEQUENCE(FITSExtension):
     """
-    A subclass of np.array which is meant to contain samples for one parameter. This class contains methods to easily
-    compute properties for the parameter (errors and so on)
+    Represents the SEQUENCE extension of a FITS file containing a set of results from a set of analysis
+
     """
-    def __new__(cls, input_array, value=None):
-        # Input array is an already formed ndarray instance
-        # We first cast to be our class type
 
-        obj = np.asarray(input_array).view(cls)
+    _HEADER_KEYWORDS = [
+        ('EXTNAME', 'SEQUENCE', 'Extension name'),
+        ('ORIGIN', '3ML', 'Multi-Mission Max. Likelihood v. %s' % __version__),
+        ('SEQ_TYPE', None, 'Description of sequence type')
+    ]
 
-        # Add the value
-        obj._orig_value = value
+    def __init__(self, name, data_tuple):
 
-        # Finally, we must return the newly created object:
-        return obj
+        # Init FITS extension
 
-    def __array_finalize__(self, obj):
+        super(SEQUENCE, self).__init__(data_tuple, self._HEADER_KEYWORDS)
 
-        # see InfoArray.__array_finalize__ for comments
-        if obj is None: return
+        # Update keywords
+        self.hdu.header.set("SEQ_TYPE", name)
 
-        # Add the value
 
-        self._orig_value = getattr(obj, '_orig_value', None)
+class ANALYSIS_RESULTS(FITSExtension):
+    """
+    Represents the COVARIANCE extension of a FITS file encoding the results of an analysis
 
-    def __array_wrap__(self, out_arr):
+    :param analysis_results:
+    :type analysis_results: _AnalysisResults
+    """
 
-        # This gets called at the end of any operation, where out_arr is the result of the operation
-        # We need to update _orig_value so that the final results will have it
 
-        out_arr._orig_value = out_arr.median
+    _HEADER_KEYWORDS = [
+        ('EXTNAME', 'ANALYSIS_RESULTS', 'Extension name'),
+        ('MODEL', None, 'A pseudo-yaml serialization of the model'),
+        ('ORIGIN', '3ML', 'Multi-Mission Max. Likelihood v. %s' % __version__),
+        ('RESUTYPE', None, 'Analysis producing results (MLE or Bayesian)')
+    ]
 
-        # then just call the parent
-        return np.ndarray.__array_wrap__(self, out_arr)
+    def __init__(self, analysis_results):
 
-    @property
-    def median(self):
-        """Returns median value"""
+        optimized_model = analysis_results.optimized_model
 
-        # the np.asarray casting avoids the calls to __new__ and __array_finalize_ of this class
+        # Gather the dictionary with free parameters
 
-        return float(np.median(np.asarray(self)))
+        free_parameters = optimized_model.free_parameters
 
-    @property
-    def average(self):
-        """Returns average value"""
+        n_parameters = len(free_parameters)
 
-        return float(np.asarray(self).mean())
+        # Gather covariance matrix (if any)
 
-    @property
-    def value(self):
+        if analysis_results.analysis_type == "MLE":
 
-        return float(self._orig_value)
+            assert isinstance(analysis_results, MLEResults)
 
-    @property
-    def samples(self):
+            covariance_matrix = analysis_results.covariance_matrix
 
-        return np.asarray(self)
+            # Check that the covariance matrix has the right shape
 
-    def highest_posterior_density_interval(self, cl=0.68):
-        """
-        Returns the Highest Posterior Density interval (HPD) for the parameter, for the given credibility level.
+            assert covariance_matrix.shape == (n_parameters, n_parameters), \
+                "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (n_parameters, n_parameters,
+                                                                                covariance_matrix.shape[0],
+                                                                                covariance_matrix.shape[1])
 
-        NOTE: the returned interval is the HPD only if the posterior is not multimodal. If it is multimodal, you should
-        probably report the full posterior, not only an interval.
+            # Empty samples set
+            samples = np.zeros(n_parameters)
 
-        :param cl: credibility level (0 < cl < 1)
-        :return: (low_bound, hi_bound)
-        """
+        else:
 
-        assert 0 < cl < 1, "The credibility level should be 0 < cl < 1"
+            assert isinstance(analysis_results, BayesianResults)
 
-        # NOTE: we cannot sort the array, because we would destroy the covariance with other physical quantities,
-        # so we get a copy instead. This copy will live only for the duration of this method (but of course will be
-        # collected only whenevery the garbage collector decides to).
+            # Empty covariance matrix
 
-        ordered = np.sort(np.array(self))
+            covariance_matrix = np.zeros(n_parameters)
 
-        n = ordered.size
+            # Gather the samples
+            samples = analysis_results._samples_transposed
 
-        # This is the probability that the interval should span
-        interval_integral = 1.0 - cl
+        # Serialize the model so it can be placed in the header
 
-        # If all values have the same probability, then the hpd is degenerate, but its length is from 0 to
-        # the value corresponding to the (interval_integral * n)-th sample.
-        # This is the index of the rightermost element which can be part of the interval
+        yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
 
-        index_of_rightmost_possibility = int(np.floor(interval_integral * n))
+        # Replace characters which cannot be contained in a FITS header with other characters
+        yaml_model_serialization = _escape_yaml_for_fits(yaml_model_serialization)
 
-        # Compute the index of the last element that is eligible to be the left bound of the interval
+        # Get data frame with parameters (always use equal tail errors)
 
-        index_of_leftmost_possibility = n - index_of_rightmost_possibility
+        data_frame = analysis_results.get_data_frame(error_type="equal tail")
 
-        # Now compute the width of all intervals that might be the one we are looking for
+        # Prepare columns
 
-        interval_width = ordered[index_of_rightmost_possibility:] - ordered[:index_of_leftmost_possibility]
+        data_tuple = [('NAME', free_parameters.keys()),
+                      ('VALUE', data_frame['value'].values),
+                      ('NEGATIVE_ERROR', data_frame['negative_error'].values),
+                      ('POSITIVE_ERROR', data_frame['positive_error'].values),
+                      ('ERROR', data_frame['error'].values),
+                      ('UNIT', np.array(data_frame['unit'].values, str)),
+                      ('COVARIANCE', covariance_matrix),
+                      ('SAMPLES', samples)]
 
-        # This might happen if there are too few values
-        if len(interval_width) == 0:
+        # Init FITS extension
 
-            raise RuntimeError('Too few elements for interval calculation')
+        super(ANALYSIS_RESULTS, self).__init__(data_tuple, self._HEADER_KEYWORDS)
 
-        # Find the index of the shortest interval
+        # Update keywords with their values for this instance
+        self.hdu.header.set("MODEL", yaml_model_serialization)
+        self.hdu.header.set("RESUTYPE", analysis_results.analysis_type)
 
-        idx_of_minimum = np.argmin(interval_width)
+        # Now add two keywords for each instrument
+        stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
 
-        # Find the extremes of the shortest interval
+        for i, (plugin_instance_name, stat_value) in enumerate(stat_series.iteritems()):
 
-        hpd_left_bound = ordered[idx_of_minimum]
-        hpd_right_bound = ordered[idx_of_minimum + index_of_rightmost_possibility]
+            self.hdu.header.set("STAT%i" % i, stat_value, comment="Stat. value for plugin %i" % i)
+            self.hdu.header.set("PN%i" % i, plugin_instance_name, comment="Name of plugin %i" % i)
 
-        return hpd_left_bound, hpd_right_bound
 
-    def equal_tail_confidence_interval(self, cl=0.68):
-        """
-        Returns the equal tail confidence interval, i.e., an interval centered on the median of the distribution with
-        the same probability on the right and on the left of the mean.
+class AnalysisResultsFITS(FITSFile):
+    """
+    A FITS file for storing one or more results from 3ML analysis
 
-        If the distribution of the parameter is Gaussian and cl=0.68, this is equivalent to the 1 sigma confidence
-        interval.
+    """
 
-        :param cl: confidence level (0 < cl < 1)
-        :return: (low_bound, hi_bound)
-        """
+    def __init__(self, *analysis_results, **kwargs):
 
-        assert 0 < cl < 1, "Confidence level must be 0 < cl < 1"
+        # This will contain the list of extensions we want to write in the file
 
-        half_cl = cl / 2.0 * 100.0
+        extensions = []
 
-        low_bound, hi_bound = np.percentile(np.asarray(self), [50.0 - half_cl, 50.0 + half_cl])
+        if 'sequence_name' in kwargs:
 
-        return float(low_bound), float(hi_bound)
+            # This is a set of results
 
-    # np.ndarray already has a mean() and a std() methods
+            assert 'sequence_tuple' in kwargs
 
-    def __repr__(self):
+            # We got elements to write the SEQUENCE extension
 
-        # Get representation for the HPD
+            # Make SEQUENCE extension
+            sequence_ext = SEQUENCE(kwargs['sequence_name'], kwargs['sequence_tuple'])
 
-        min_bound, max_bound = self.highest_posterior_density_interval(0.68)
+            extensions.append(sequence_ext)
 
-        hpd_string = _interval_formatter(self.median, min_bound, max_bound)
+        # Make one extension for each analysis results
 
-        # Get representation for the equal-tail interval
+        results_ext = map(ANALYSIS_RESULTS, analysis_results)
 
-        min_bound, max_bound = self.equal_tail_confidence_interval(0.68)
+        # Fix the EXTVER keyword (must be increasing among extensions with same name
+        for i, res_ext in enumerate(results_ext):
 
-        eqt_string = _interval_formatter(self.median, min_bound, max_bound)
+            res_ext.hdu.header.set("EXTVER", i+1)
 
-        # Put them together
+        extensions.extend(results_ext)
 
-        representation = "equal-tail: %s, hpd: %s" % (eqt_string, hpd_string)
+        # Create FITS file
+        super(AnalysisResultsFITS, self).__init__(fits_extensions=extensions)
 
-        return representation
-
-    def __str__(self):
-
-        return self.__repr__()
+        # Set a couple of keywords in the primary header
+        self._hdu_list[0].header.set("DATE", datetime.datetime.now().isoformat())
+        self._hdu_list[0].header.set("ORIGIN", "3ML", comment=('Multi-Mission Max. Likelihood v. %s' % __version__))
 
 
 class _AnalysisResults(object):
-
     """
     A unified class to store results from a maximum likelihood or a Bayesian analysis, which provides a unique interface
     and allows for "error propagation" (which means different things in the two contexts) in arbitrary expressions.
@@ -317,7 +329,7 @@ class _AnalysisResults(object):
     :type statistic_values: dict
     """
 
-    def __init__(self, optimized_model, samples, statistic_values):
+    def __init__(self, optimized_model, samples, statistic_values, analysis_type):
 
         # Safety checks
 
@@ -332,37 +344,66 @@ class _AnalysisResults(object):
 
         self._optimized_model = astromodels.clone_model(optimized_model)
 
-        # Get one instance of PhysicalQuantitySample for each free parameter
-        # Put them in an ordered dictionary
+        # Save a transposed version of the samples for easier access
 
-        self._parameters_variates = collections.OrderedDict()
-
-        for par_path, this_samples in zip(self._optimized_model.free_parameters.keys(), samples.T):
-
-            this_value = self._optimized_model[par_path].value
-
-            self._parameters_variates[par_path] = RandomVariates(this_samples, this_value)
+        self._samples_transposed = samples.T
 
         # Store likelihood values in a pandas Series
 
         self._optimal_statistic_values = pd.Series(statistic_values)
+
+        # The .free_parameters property of the model is pretty costly because it needs to update all the parameters
+        # to see if they are free. Since the saved model will not be touched we can cache that
+        self._free_parameters = self._optimized_model.free_parameters
+
+        # Gather also the optimized values of the parameters
+        self._values = np.array(map(lambda x: x.value, self._free_parameters.values()))
+
+        # Set the analysis type
+        self._analysis_type = analysis_type
+
+    @property
+    def samples(self):
+        """
+        Returns the matrix of the samples
+
+        :return:
+        """
+
+        return self._samples_transposed
+
+    @property
+    def analysis_type(self):
+
+        return self._analysis_type
+
+    def write_to(self, filename, overwrite=False):
+        """
+        Write results to a FITS file
+
+        :param filename:
+        :param overwrite:
+        :return: None
+        """
+
+        fits_file = AnalysisResultsFITS(self)
+
+        fits_file.writeto(sanitize_filename(filename), overwrite=overwrite)
 
     def get_variates(self, param_path):
 
         assert param_path in self._optimized_model.free_parameters, "Parameter %s is not a " \
                                                                     "free parameters of the model" % param_path
 
-        return self._parameters_variates[param_path]
+        param_index = self._free_parameters.keys().index(param_path)
 
-    def parameters_samples_iter(self, how_many=None):
+        this_value = self._values[param_index]
 
-        if how_many is None:
+        these_samples = self._samples_transposed[param_index]
 
-            how_many = self._parameters_variates.values()[0].size
+        this_variate = RandomVariates(these_samples, value=this_value)
 
-        for i in range(how_many):
-
-            yield map(itemgetter(i), self._parameters_variates.values())
+        return this_variate
 
     @staticmethod
     def propagate(function, **kwargs):
@@ -412,7 +453,10 @@ class _AnalysisResults(object):
         # right order, as they will be taken from the kwargs
         wrapper = functools.partial(vectorized, **kwargs)
 
-        return wrapper
+        # Finally make so that the result is always a RandomVariate
+        wrapper2 = lambda *args, **kwargs: RandomVariates(wrapper(*args, **kwargs))
+
+        return wrapper2
 
     @property
     def optimized_model(self):
@@ -431,9 +475,7 @@ class _AnalysisResults(object):
         :return: a covariance matrix estimated from the samples
         """
 
-        samples = self._parameters_variates.values()
-
-        return np.cov(samples)
+        return np.cov(self._samples_transposed)
 
     def get_correlation_matrix(self):
 
@@ -479,11 +521,21 @@ class _AnalysisResults(object):
 
         return correlation_matrix
 
-    def get_statistic_frame(self, name):
+    def get_statistic_frame(self):
+
+        raise NotImplementedError("You have to implement this")
+
+    def _get_statistic_frame(self, name):
 
         logl_results = {}
 
-        logl_results[name] = self._optimal_statistic_values
+        # Create a new ordered dict so we can add the total
+        optimal_statistic_values = collections.OrderedDict(self._optimal_statistic_values.iteritems())
+
+        # Add the total
+        optimal_statistic_values['total'] = np.sum(self._optimal_statistic_values.values)
+
+        logl_results[name] = optimal_statistic_values
 
         loglike_dataframe = pd.DataFrame(logl_results)
 
@@ -514,7 +566,7 @@ class _AnalysisResults(object):
 
         else:
 
-            raise ValueError("error_type must be either 'equal_tail' or 'hpd'. Got %s" % error_type)
+            raise ValueError("error_type must be either 'equal tail' or 'hpd'. Got %s" % error_type)
 
         # Build the data frame
         values_dict = pd.Series()
@@ -523,10 +575,10 @@ class _AnalysisResults(object):
         average_error_dict = pd.Series()
         units_dict = pd.Series()
 
-        for this_par, this_phys_q in zip(self._optimized_model.free_parameters.values(),
-                                         self._parameters_variates.values()):
-
+        for this_par in self._free_parameters.values():
             this_path = this_par.path
+
+            this_phys_q = self.get_variates(this_path)
 
             values_dict[this_path] = this_phys_q.value
 
@@ -557,7 +609,6 @@ class _AnalysisResults(object):
         data = (('Value', pd.Series()), ('Unit', pd.Series()))
 
         for i, parameter_name in enumerate(fit_results.index.values):
-
             value = fit_results.at[parameter_name, 'value']
 
             negative_error = fit_results.at[parameter_name, 'negative_error']
@@ -569,7 +620,7 @@ class _AnalysisResults(object):
             # Format the value and the error with sensible significant
             # numbers
 
-            pretty_string = _interval_formatter(value, negative_error + value, positive_error + value)
+            pretty_string = uncertainty_formatter(value, negative_error + value, positive_error + value)
 
             # Apply name formatter so long paths are shorten
             this_shortened_name = long_path_formatter(parameter_name, 40)
@@ -597,11 +648,11 @@ class BayesianResults(_AnalysisResults):
 
     def __init__(self, optimized_model, samples, posterior_values):
 
-        super(BayesianResults, self).__init__(optimized_model, samples, posterior_values)
+        super(BayesianResults, self).__init__(optimized_model, samples, posterior_values, 'Bayesian')
 
     def get_correlation_matrix(self):
         """
-        Compute correlation matrix
+        Estimate the covariance matrix from the samples
 
         :return: the correlation matrix
         """
@@ -612,9 +663,9 @@ class BayesianResults(_AnalysisResults):
 
         return self._get_correlation_matrix(covariance)
 
-    def get_statistic_frame(self, name=None):
+    def get_statistic_frame(self):
 
-        return super(BayesianResults, self).get_statistic_frame(name='-log(posterior)')
+        return self._get_statistic_frame(name='-log(posterior)')
 
     def display(self, display_correlation=False, error_type="equal tail", cl=0.68):
 
@@ -629,7 +680,6 @@ class BayesianResults(_AnalysisResults):
             corr_matrix = NumericMatrix(self.get_correlation_matrix())
 
             for col in corr_matrix.colnames:
-
                 corr_matrix[col].format = '2.2f'
 
             print("\nCorrelation matrix:\n")
@@ -641,9 +691,7 @@ class BayesianResults(_AnalysisResults):
         display(self.get_statistic_frame())
 
 
-
 class MLEResults(_AnalysisResults):
-
     """
     Build the _AnalysisResults object starting from a covariance matrix.
 
@@ -659,7 +707,7 @@ class MLEResults(_AnalysisResults):
     :return: an _AnalysisResults instance
     """
 
-    def __init__(self, optimized_model, covariance_matrix, likelihood_values, n_samples=1000):
+    def __init__(self, optimized_model, covariance_matrix, likelihood_values, n_samples=5000):
 
         # Generate samples for each parameter accounting for their covariance
 
@@ -669,18 +717,30 @@ class MLEResults(_AnalysisResults):
         # Get the best fit value for each parameter
         values = map(attrgetter("value"), optimized_model.free_parameters.values())
 
+        # This is the expected shape for the covariance matrix
+
         expected_shape = (len(values), len(values))
 
-        assert covariance_matrix.shape == expected_shape, "Covariance matrix has wrong shape. " \
-                                                          "Got %s, should be %s" % (covariance_matrix.shape,
-                                                                                    expected_shape)
+        if covariance_matrix.shape != ():
 
-        assert np.all(np.isfinite(covariance_matrix)), "Covariance matrix contains Nan or inf. Cannot continue."
+            assert covariance_matrix.shape == expected_shape, "Covariance matrix has wrong shape. " \
+                                                              "Got %s, should be %s" % (covariance_matrix.shape,
+                                                                                        expected_shape)
 
-        # Generate samples from the multivariate normal distribution, i.e., accounting for the covariance of the
-        # parameters
+            assert np.all(np.isfinite(covariance_matrix)), "Covariance matrix contains Nan or inf. Cannot continue."
 
-        samples = np.random.multivariate_normal(np.array(values).T, covariance_matrix, n_samples)
+            # Generate samples from the multivariate normal distribution, i.e., accounting for the covariance of the
+            # parameters
+
+            samples = np.random.multivariate_normal(np.array(values).T, covariance_matrix, n_samples)
+
+        else:
+
+            # No error information, just make duplicates of the values
+            samples = np.ones((n_samples, len(values))) * np.array(values)
+
+            # Make a fake covariance matrix
+            covariance_matrix = np.zeros(expected_shape)
 
         # Now reject the samples outside of the boundaries. If we reject more than 1% we warn the user
 
@@ -698,7 +758,6 @@ class MLEResults(_AnalysisResults):
         for i, sample in enumerate(samples):
 
             if np.any(sample > hi_bounds) or np.any(sample < low_bounds):
-
                 # Remove this sample
                 to_be_kept_mask[i] = False
 
@@ -708,7 +767,6 @@ class MLEResults(_AnalysisResults):
         # Warn the user if more than 1% of the samples have been lost
 
         if n_removed_samples > samples.shape[0] / 100.0:
-
             custom_warnings.warn("%s percent of samples have been thrown away because they failed the constraints "
                                  "on the parameters. This results might not be suitable for error propagation. "
                                  "Enlarge the boundaries until you loose less than 1 percent of the samples." %
@@ -719,7 +777,7 @@ class MLEResults(_AnalysisResults):
 
         # Finally build the class
 
-        super(MLEResults, self).__init__(optimized_model, samples, likelihood_values)
+        super(MLEResults, self).__init__(optimized_model, samples, likelihood_values, "MLE")
 
         # Store the covariance matrix
 
@@ -757,17 +815,16 @@ class MLEResults(_AnalysisResults):
         data = (('Value', pd.Series()), ('Unit', pd.Series()))
 
         for i, parameter_name in enumerate(fit_results.index.values):
-
             value = fit_results.at[parameter_name, 'value']
 
-            error = np.sqrt(self.covariance_matrix[i,i])
+            error = np.sqrt(self.covariance_matrix[i, i])
 
             unit = fit_results.at[parameter_name, 'unit']
 
             # Format the value and the error with sensible significant
             # numbers
 
-            pretty_string = _interval_formatter(value,  value - error, value + error)
+            pretty_string = uncertainty_formatter(value, value - error, value + error)
 
             # Apply name formatter so long paths are shorten
             this_shortened_name = long_path_formatter(parameter_name, 40)
@@ -779,9 +836,9 @@ class MLEResults(_AnalysisResults):
 
         return best_fit_table
 
-    def get_statistic_frame(self, name=None):
+    def get_statistic_frame(self):
 
-        return super(MLEResults, self).get_statistic_frame(name='-log(likelihood)')
+        return self._get_statistic_frame(name='-log(likelihood)')
 
     def display(self, display_correlation=True, error_type="equal tail", cl=0.68):
 
@@ -796,7 +853,6 @@ class MLEResults(_AnalysisResults):
             corr_matrix = NumericMatrix(self.get_correlation_matrix())
 
             for col in corr_matrix.colnames:
-
                 corr_matrix[col].format = '2.2f'
 
             print("\nCorrelation matrix:\n")
@@ -806,3 +862,123 @@ class MLEResults(_AnalysisResults):
         print("\nValues of -log(likelihood) at the minimum:\n")
 
         display(self.get_statistic_frame())
+
+
+class AnalysisResultsSet(collections.Sequence):
+    """
+    A container for results which behaves like a list (but you cannot add/remove elements).
+
+    You can index (analysis_set[0]), iterate (for item in analysis_set) and measure with len()
+    """
+
+    def __init__(self, results):
+
+        self._results = results
+
+    def __getitem__(self, item):
+
+        return self._results[item]
+
+    def __len__(self):
+
+        return len(self._results)
+
+    def set_x(self, name, x, unit=None):
+        """
+        Associate the provided x with these results. The values in x will be written in the SEQUENCE extension when
+        saving these results to a FITS file.
+
+        :param name: a name for this sequence (for example, "time" or "energy"). Please use only letters and numbers
+        (no special characters)
+        :param x:
+        :param unit: unit for x (like "s" for seconds, or a astropy.units.Unit instance)
+        :return:
+        """
+
+        assert len(x) == len(self), "Wrong number of bounds (%i, should be %i)" % (len(x), len(self))
+
+        if unit is not None:
+
+            unit = u.Unit(unit)
+
+            data_tuple = (('VALUE', x * unit),)
+
+        else:
+
+            data_tuple = (('VALUE', x),)
+
+        self.characterize_sequence(name, data_tuple)
+
+    def set_bins(self, name, lower_bounds, upper_bounds, unit=None):
+        """
+        Associate the provided bins with these results. These bins will be written in the SEQUENCE extension when
+        saving these results to a FITS file
+
+        :param name: a name for these bins (for example, "time" or "energy"). Please use only letters and numbers
+        (no special characters)
+        :param lower_bounds:
+        :param upper_bounds:
+        :param unit: unit for the boundaries (like "s" for seconds, or a astropy.units.Unit instance)
+        :return:
+        """
+
+
+        assert len(upper_bounds) == len(lower_bounds), "Upper and lower bounds must have the same length"
+
+        assert len(upper_bounds) == len(self), "Wrong number of bounds (%i, should be %i)" % (len(upper_bounds),
+                                                                                              len(self))
+
+        if unit is not None:
+
+            unit = u.Unit(unit)
+
+            data_tuple = (('LOWER_BOUND', lower_bounds * unit),
+                           ('UPPER_BOUND', upper_bounds * unit))
+
+        else:
+
+            data_tuple = (('LOWER_BOUND', lower_bounds), ('UPPER_BOUND', upper_bounds))
+
+        self.characterize_sequence(name, data_tuple)
+
+    def characterize_sequence(self, name, data_tuple):
+        """
+        Characterize the sequence of these results. The provided data frame will be saved along with the results
+        in the "SEQUENCE" extension to allow the interpretation of the results.
+
+        This method is completely general, and allow for a lot of flexibility.
+
+        If this is a binned analysis and you only want to save the lower and upper bound of the bins, use
+        set_bins instead.
+
+        If you only want to associate one quantity for each entry, use set_x.
+        """
+
+        self._sequence_name = str(name)
+
+        assert len(data_tuple[0]) == len(self), "A column in tuple has length of %i (should be %i)" % (len(data_tuple),
+                                                                                                       len(self))
+
+        self._sequence_tuple = data_tuple
+
+    def write_to(self, filename, overwrite=False):
+        """
+        Write this set of results to a FITS file.
+
+        :param filename: name for the output file
+        :param overwrite: True or False
+        :return: None
+        """
+
+        if not hasattr(self, "_sequence_name"):
+
+            # The user didn't specify what this sequence is
+
+            # Make the default sequence
+            frame_tuple = (('VALUE', range(len(self))),)
+
+            self.characterize_sequence("unspecified", pd.DataFrame.from_items(frame_tuple))
+
+        fits = AnalysisResultsFITS(*self, sequence_tuple=self._sequence_tuple, sequence_name=self._sequence_name)
+
+        fits.writeto(sanitize_filename(filename), overwrite=overwrite)

@@ -14,11 +14,11 @@ import astromodels.core.model
 
 from threeML.minimizer import minimization
 from threeML.exceptions import custom_exceptions
-from threeML.io.table import Table, NumericMatrix, long_path_formatter
+from threeML.io.table import Table
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
-from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
+from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.analysis_results import MLEResults
 
 from astromodels import ModelAssertionViolation
@@ -226,9 +226,11 @@ class JointLikelihood(object):
         # First restore best fit (to make sure we compute the likelihood at the right point)
         self._minimizer.restore_best_fit()
 
-        # Fill the dictionary with the values of the -log likelihood (total, and dataset by dataset)
+        # Fill the dictionary with the values of the -log likelihood (dataset by dataset)
 
         minus_log_likelihood_values = collections.OrderedDict()
+
+        # Keep track of the total for a double check
 
         total = 0
 
@@ -241,8 +243,6 @@ class JointLikelihood(object):
             total += ml
 
         assert total == self._current_minimum, "Current minimum stored after fit and current do not correspond!"
-
-        minus_log_likelihood_values['total'] = self._current_minimum
 
         # Now instance an analysis results class
         self._analysis_results = MLEResults(self.likelihood_model, self._minimizer.covariance_matrix,
@@ -282,62 +282,16 @@ class JointLikelihood(object):
         data = []
         name_length = 0
 
-        for k, v in self._free_parameters.iteritems():
+        for k, v in self._free_parameters.items():
 
             # Format the value and the error with sensible significant
             # numbers
 
-            # Process the negative error
+            neg_error = errors[k][0]
 
-            neg_error = abs(errors[k][0])
+            pos_error = errors[k][1]
 
-            if np.isnan(neg_error):
-
-                x = uncertainties.ufloat(v.value, 0)
-
-            else:
-
-                x = uncertainties.ufloat(v.value, neg_error)
-
-            # Split the uncertainty in number, negative error, and exponent (if any)
-
-            num, uncm, exponent = get_uncertainty_tokens(x)
-
-            if np.isnan(neg_error):
-
-                uncm = np.nan
-
-            # Process the positive error
-
-            pos_error = abs(errors[k][1])
-
-            if np.isnan(pos_error):
-
-                x = uncertainties.ufloat(v.value, 0)
-
-            else:
-
-                x = uncertainties.ufloat(v.value, pos_error)
-
-            # Split the uncertainty in number, positive error, and exponent (if any)
-
-            _, uncp, _ = get_uncertainty_tokens(x)
-
-            if np.isnan(pos_error):
-
-                uncp = np.nan
-
-            if exponent is None:
-
-                # Number without exponent
-
-                pretty_string = "%s -%s +%s" % (num, uncm, uncp)
-
-            else:
-
-                # Number with exponent
-
-                pretty_string = "(%s -%s +%s)%s" % (num, uncm, uncp, exponent)
+            pretty_string = uncertainty_formatter(v.value, v.value + neg_error, v.value + pos_error)
 
             data.append([k, pretty_string, v.unit])
 

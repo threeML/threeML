@@ -32,16 +32,12 @@ import os
 
 import matplotlib.pyplot as plt
 
-import uncertainties
 
-from threeML.io.table import Table
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.io.progress_bar import progress_bar
 from corner import corner
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
-from threeML.io.rich_display import display
-from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
 from threeML.analysis_results import BayesianResults
 
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
@@ -425,15 +421,9 @@ class BayesianAnalysis(object):
 
         log_prior = self._log_prior(approximate_MAP_point)
 
-        total = 0
-
         for dataset in self.data_list.values():
 
             log_posteriors[dataset.name] = dataset.get_log_like() + log_prior
-
-            total += log_posteriors[dataset.name]
-
-        log_posteriors['total'] = total
 
         # Instance the result
 
@@ -477,173 +467,173 @@ class BayesianAnalysis(object):
 
         return -2. * (np.mean(self._log_like_values) - np.max(self._log_like_values))  # need to check math!
 
-    def get_highest_density_interval(self, probability=95):
-        """
-        Print and returns the (non-equal-tail) highest density credible intervals for all free parameters in the model
-
-        :param probability: the probability for this credible interval (default: 95, corresponding to 95%)
-        :return: a dictionary with the lower bound and upper bound of the credible intervals, as well as the median
-        """
-        # Gather the credible intervals (percentiles of the posterior)
-
-        credible_intervals = collections.OrderedDict()
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-            # Get the percentiles from the posterior samples
-
-            lower_bound, upper_bound = self._hpd(self.samples[parameter_name], 1 - (float(probability) / 100.))
-            median = np.median(self.samples[parameter_name])
-
-            # Save them in the dictionary
-
-            credible_intervals[parameter_name] = {'lower bound': lower_bound,
-                                                  'median': median,
-                                                  'upper bound': upper_bound}
-
-        # Print a table with the errors
-
-        data = []
-        name_length = 0
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
-            # Format the value and the error with sensible significant
-            # numbers
-
-            lower_bound, median, upper_bound = [credible_intervals[parameter_name][key] for key in ('lower bound',
-                                                                                                    'median',
-                                                                                                    'upper bound')
-                                                ]
-
-            # Process the negative "error"
-
-            x = uncertainties.ufloat(median, abs(lower_bound - median))
-
-            # Split the uncertainty in number, negative error, and exponent (if any)
-
-            number, unc_lower_bound, exponent = get_uncertainty_tokens(x)
-
-            # Process the positive "error"
-
-            x = uncertainties.ufloat(median, abs(upper_bound - median))
-
-            # Split the uncertainty in number, positive error, and exponent (if any)
-
-            _, unc_upper_bound, _ = get_uncertainty_tokens(x)
-
-            if exponent is None:
-
-                # Number without exponent
-
-                pretty_string = "%s -%s +%s" % (number, unc_lower_bound, unc_upper_bound)
-
-            else:
-
-                # Number with exponent
-
-                pretty_string = "(%s -%s +%s)%s" % (number, unc_lower_bound, unc_upper_bound, exponent)
-
-            unit = self._free_parameters[parameter_name].unit
-
-            data.append([parameter_name, pretty_string, unit])
-
-            if len(parameter_name) > name_length:
-                name_length = len(parameter_name)
-
-        # Create and display the table
-
-        table = Table(rows=data,
-                      names=["Name", "Value", "Unit"],
-                      dtype=('S%i' % name_length, str, 'S15'))
-
-        display(table)
-
-        return credible_intervals
-
-    def get_credible_intervals(self, probability=68):
-        """
-        Print and returns the (equal-tail) credible intervals for all free parameters in the model
-
-        :param probability: the probability for this credible interval (default: 68, corresponding to 68%)
-        :return: a dictionary with the lower bound and upper bound of the credible intervals, as well as the median
-        """
-
-        # Gather the credible intervals (percentiles of the posterior)
-
-        credible_intervals = collections.OrderedDict()
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-            # Get the percentiles from the posterior samples
-
-            lower_bound, median, upper_bound = np.percentile(self.samples[parameter_name],
-                                                             (100 - probability, 50, probability))
-
-            # Save them in the dictionary
-
-            credible_intervals[parameter_name] = {'lower bound': lower_bound,
-                                                  'median': median,
-                                                  'upper bound': upper_bound}
-
-        # Print a table with the errors
-
-        data = []
-        name_length = 0
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
-            # Format the value and the error with sensible significant
-            # numbers
-
-            lower_bound, median, upper_bound = [credible_intervals[parameter_name][key] for key in ('lower bound',
-                                                                                                    'median',
-                                                                                                    'upper bound')
-                                                ]
-
-            # Process the negative "error"
-
-            x = uncertainties.ufloat(median, abs(lower_bound - median))
-
-            # Split the uncertainty in number, negative error, and exponent (if any)
-
-            number, unc_lower_bound, exponent = get_uncertainty_tokens(x)
-
-            # Process the positive "error"
-
-            x = uncertainties.ufloat(median, abs(upper_bound - median))
-
-            # Split the uncertainty in number, positive error, and exponent (if any)
-
-            _, unc_upper_bound, _ = get_uncertainty_tokens(x)
-
-            if exponent is None:
-
-                # Number without exponent
-
-                pretty_string = "%s -%s +%s" % (number, unc_lower_bound, unc_upper_bound)
-
-            else:
-
-                # Number with exponent
-
-                pretty_string = "(%s -%s +%s)%s" % (number, unc_lower_bound, unc_upper_bound, exponent)
-
-            unit = self._free_parameters[parameter_name].unit
-
-            data.append([parameter_name, pretty_string, unit])
-
-            if len(parameter_name) > name_length:
-                name_length = len(parameter_name)
-
-        # Create and display the table
-
-        table = Table(rows=data,
-                      names=["Name", "Value", "Unit"],
-                      dtype=('S%i' % name_length, str, 'S15'))
-
-        display(table)
-        print("\n(probability %s)" % probability)
-
-        return credible_intervals
+    # def get_highest_density_interval(self, probability=95):
+    #     """
+    #     Print and returns the (non-equal-tail) highest density credible intervals for all free parameters in the model
+    #
+    #     :param probability: the probability for this credible interval (default: 95, corresponding to 95%)
+    #     :return: a dictionary with the lower bound and upper bound of the credible intervals, as well as the median
+    #     """
+    #     # Gather the credible intervals (percentiles of the posterior)
+    #
+    #     credible_intervals = collections.OrderedDict()
+    #
+    #     for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+    #         # Get the percentiles from the posterior samples
+    #
+    #         lower_bound, upper_bound = self._hpd(self.samples[parameter_name], 1 - (float(probability) / 100.))
+    #         median = np.median(self.samples[parameter_name])
+    #
+    #         # Save them in the dictionary
+    #
+    #         credible_intervals[parameter_name] = {'lower bound': lower_bound,
+    #                                               'median': median,
+    #                                               'upper bound': upper_bound}
+    #
+    #     # Print a table with the errors
+    #
+    #     data = []
+    #     name_length = 0
+    #
+    #     for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+    #
+    #         # Format the value and the error with sensible significant
+    #         # numbers
+    #
+    #         lower_bound, median, upper_bound = [credible_intervals[parameter_name][key] for key in ('lower bound',
+    #                                                                                                 'median',
+    #                                                                                                 'upper bound')
+    #                                             ]
+    #
+    #         # Process the negative "error"
+    #
+    #         x = uncertainties.ufloat(median, abs(lower_bound - median))
+    #
+    #         # Split the uncertainty in number, negative error, and exponent (if any)
+    #
+    #         number, unc_lower_bound, exponent = get_uncertainty_tokens(x)
+    #
+    #         # Process the positive "error"
+    #
+    #         x = uncertainties.ufloat(median, abs(upper_bound - median))
+    #
+    #         # Split the uncertainty in number, positive error, and exponent (if any)
+    #
+    #         _, unc_upper_bound, _ = get_uncertainty_tokens(x)
+    #
+    #         if exponent is None:
+    #
+    #             # Number without exponent
+    #
+    #             pretty_string = "%s -%s +%s" % (number, unc_lower_bound, unc_upper_bound)
+    #
+    #         else:
+    #
+    #             # Number with exponent
+    #
+    #             pretty_string = "(%s -%s +%s)%s" % (number, unc_lower_bound, unc_upper_bound, exponent)
+    #
+    #         unit = self._free_parameters[parameter_name].unit
+    #
+    #         data.append([parameter_name, pretty_string, unit])
+    #
+    #         if len(parameter_name) > name_length:
+    #             name_length = len(parameter_name)
+    #
+    #     # Create and display the table
+    #
+    #     table = Table(rows=data,
+    #                   names=["Name", "Value", "Unit"],
+    #                   dtype=('S%i' % name_length, str, 'S15'))
+    #
+    #     display(table)
+    #
+    #     return credible_intervals
+
+    # def get_credible_intervals(self, probability=68):
+    #     """
+    #     Print and returns the (equal-tail) credible intervals for all free parameters in the model
+    #
+    #     :param probability: the probability for this credible interval (default: 68, corresponding to 68%)
+    #     :return: a dictionary with the lower bound and upper bound of the credible intervals, as well as the median
+    #     """
+    #
+    #     # Gather the credible intervals (percentiles of the posterior)
+    #
+    #     credible_intervals = collections.OrderedDict()
+    #
+    #     for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+    #         # Get the percentiles from the posterior samples
+    #
+    #         lower_bound, median, upper_bound = np.percentile(self.samples[parameter_name],
+    #                                                          (100 - probability, 50, probability))
+    #
+    #         # Save them in the dictionary
+    #
+    #         credible_intervals[parameter_name] = {'lower bound': lower_bound,
+    #                                               'median': median,
+    #                                               'upper bound': upper_bound}
+    #
+    #     # Print a table with the errors
+    #
+    #     data = []
+    #     name_length = 0
+    #
+    #     for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+    #
+    #         # Format the value and the error with sensible significant
+    #         # numbers
+    #
+    #         lower_bound, median, upper_bound = [credible_intervals[parameter_name][key] for key in ('lower bound',
+    #                                                                                                 'median',
+    #                                                                                                 'upper bound')
+    #                                             ]
+    #
+    #         # Process the negative "error"
+    #
+    #         x = uncertainties.ufloat(median, abs(lower_bound - median))
+    #
+    #         # Split the uncertainty in number, negative error, and exponent (if any)
+    #
+    #         number, unc_lower_bound, exponent = get_uncertainty_tokens(x)
+    #
+    #         # Process the positive "error"
+    #
+    #         x = uncertainties.ufloat(median, abs(upper_bound - median))
+    #
+    #         # Split the uncertainty in number, positive error, and exponent (if any)
+    #
+    #         _, unc_upper_bound, _ = get_uncertainty_tokens(x)
+    #
+    #         if exponent is None:
+    #
+    #             # Number without exponent
+    #
+    #             pretty_string = "%s -%s +%s" % (number, unc_lower_bound, unc_upper_bound)
+    #
+    #         else:
+    #
+    #             # Number with exponent
+    #
+    #             pretty_string = "(%s -%s +%s)%s" % (number, unc_lower_bound, unc_upper_bound, exponent)
+    #
+    #         unit = self._free_parameters[parameter_name].unit
+    #
+    #         data.append([parameter_name, pretty_string, unit])
+    #
+    #         if len(parameter_name) > name_length:
+    #             name_length = len(parameter_name)
+    #
+    #     # Create and display the table
+    #
+    #     table = Table(rows=data,
+    #                   names=["Name", "Value", "Unit"],
+    #                   dtype=('S%i' % name_length, str, 'S15'))
+    #
+    #     display(table)
+    #     print("\n(probability %s)" % probability)
+    #
+    #     return credible_intervals
 
     def corner_plot(self, renamed_parameters=None, **kwargs):
         """
