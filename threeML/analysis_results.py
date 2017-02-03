@@ -562,7 +562,7 @@ class _AnalysisResults(object):
 
         elif error_type == "hpd":
 
-            errors_gatherer = RandomVariates.equal_tail_confidence_interval
+            errors_gatherer = RandomVariates.highest_posterior_density_interval
 
         else:
 
