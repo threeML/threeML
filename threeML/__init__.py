@@ -1,7 +1,6 @@
 import os
 import sys
 import glob
-import inspect
 import imp
 
 # Import the version
@@ -211,6 +210,9 @@ if is_plugin_available("FermipyLike"):
 
     # Import the LAT data downloader
     from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+
+# Import the results loader
+from threeML.analysis_results import load_analysis_results
 
 # Check that the number of threads is set to 1 for all multi-thread libraries
 # otherwise numpy operations will be way slower than what they could be, since
