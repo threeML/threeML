@@ -3,10 +3,6 @@ import numpy as np
 import os
 import yaml
 
-from fermipy.gtanalysis import GTAnalysis
-from fermipy.config import ConfigManager
-
-from GtBurst.LikelihoodComponent import findGalacticTemplate, findIsotropicTemplate
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
 from threeML.plugin_prototype import PluginPrototype
@@ -194,6 +190,19 @@ class FermipyLike(PluginPrototype):
     Plugin for the data of the Fermi Large Area Telescope, based on fermipy (http://fermipy.readthedocs.io/)
     """
 
+    def __new__(cls, *args, **kwargs):
+
+        instance = object.__new__(cls)
+
+        from fermipy.gtanalysis import GTAnalysis
+        from GtBurst.LikelihoodComponent import findGalacticTemplate, findIsotropicTemplate
+
+        globals()['GTAnalysis'] = GTAnalysis
+        globals()['findGalacticTemplate'] = findGalacticTemplate
+        globals()['findIsotropicTemplate'] = findIsotropicTemplate
+
+        return instance
+
     def __init__(self, name, fermipy_config):
         """
         :param name: a name for this instance
@@ -280,6 +289,8 @@ class FermipyLike(PluginPrototype):
     @staticmethod
     def get_basic_config(evfile, scfile, ra, dec, emin=100.0, emax=100000.0, zmax=100.0, evclass=128, evtype=3,
                          filter='DATA_QUAL>0 && LAT_CONFIG==1'):
+
+        from fermipy.config import ConfigManager
 
         # Get default config from fermipy
         basic_config = ConfigManager.load(get_path_of_data_file("fermipy_basic_config.yml"))  # type: dict

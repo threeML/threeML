@@ -5,8 +5,6 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from astromodels import Parameter
-from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
-from hawc import liff_3ML
 from matplotlib import gridspec
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
@@ -19,6 +17,19 @@ __instrument_name = "HAWC"
 
 
 class HAWCLike(PluginPrototype):
+
+    def __new__(cls, *args, **kwargs):
+
+        instance = object.__new__(cls)
+
+        from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
+        from hawc import liff_3ML
+
+        globals()['pyToCppModelInterfaceCache'] = pyToCppModelInterfaceCache
+        globals()['liff_3ML'] = liff_3ML
+
+        return instance
+
 
     def __init__(self, name, maptree, response, n_transits=None, **kwargs):
 
