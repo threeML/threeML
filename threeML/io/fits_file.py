@@ -77,6 +77,14 @@ class FITSFile(object):
 
     def writeto(self, *args, **kwargs):
 
+        if 'overwrite' in kwargs:
+
+            # For some reason HDUList has clobber, not overwrite. If we got that keyword,
+            # substitute it
+
+            kwargs['clobber'] = kwargs['overwrite']
+            kwargs.pop('overwrite')
+
         self._hdu_list.writeto(*args, **kwargs)
 
     # Update the docstring to be the same as the method we are wrapping
@@ -133,8 +141,6 @@ class FITSExtension(object):
 
                 # Probe the format
 
-
-
                 format = _NUMPY_TO_FITS_CODE[np.array(test_value.value).dtype.type]
 
                 # check if this is a vector of quantities
@@ -154,9 +160,6 @@ class FITSExtension(object):
                 max_string_length = len(max(column_data, key=len))
 
                 format = '%iA' % max_string_length
-
-
-
 
             elif np.isscalar(test_value):
 
