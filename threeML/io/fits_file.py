@@ -1,6 +1,7 @@
 from astropy.io import fits
 import numpy as np
 import astropy.units as u
+import pkg_resources
 
 # From https://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/c_user/node20.html
 # Codes for the data type of binary table columns and/or for the
@@ -73,13 +74,40 @@ class FITSFile(object):
 
         self._hdu_list = fits.HDUList(hdus=hdu_list)
 
+
     def writeto(self, *args, **kwargs):
+
+        if 'overwrite' in kwargs:
+
+            # For some reason HDUList has clobber, not overwrite. If we got that keyword,
+            # substitute it
+
+            kwargs['clobber'] = kwargs['overwrite']
+            kwargs.pop('overwrite')
 
         self._hdu_list.writeto(*args, **kwargs)
 
     # Update the docstring to be the same as the method we are wrapping
 
     writeto.__doc__ = fits.HDUList.writeto.__doc__
+
+    def __getitem__(self, item):
+
+        return self._hdu_list.__getitem__(item)
+
+    def info(self, output=None):
+
+        self._hdu_list.info(output)
+
+    info.__doc__ = fits.HDUList.info.__doc__
+
+    def index_of(self, key):
+
+        return self._hdu_list.index_of(key)
+
+    index_of.__doc__ = fits.HDUList.index_of.__doc__
+
+
 
 
 class FITSExtension(object):
@@ -115,6 +143,12 @@ class FITSExtension(object):
 
                 format = _NUMPY_TO_FITS_CODE[np.array(test_value.value).dtype.type]
 
+                # check if this is a vector of quantities
+
+                if test_value.shape:
+
+                    format = '%i%s' % (test_value.shape[0], format)
+
                 # Store the unit as text
 
                 units = str(test_value.unit)
@@ -132,6 +166,7 @@ class FITSExtension(object):
                 format = _NUMPY_TO_FITS_CODE[np.array(test_value).dtype.type]
 
             elif isinstance(test_value, list) or isinstance(test_value, np.ndarray):
+
 
                 # Probably a column array
                 # Check that we can convert it to a proper numpy type
@@ -157,12 +192,25 @@ class FITSExtension(object):
 
                     raise RuntimeError("Column %s contain data which cannot be coerced to %s" % (column_name, col_type))
 
+
+
                 else:
 
-                    # All good. Check the length
-                    # NOTE: variable length arrays are not supported
-                    line_length = len(test_value)
-                    format = '%i%s' % (line_length, _NUMPY_TO_FITS_CODE[col_type])
+                    # see if it is a string array
+
+                    if (test_value.dtype.type == np.string_):
+
+                        max_string_length = max(column_data, key=len).dtype.itemsize
+
+
+                        format = '%iA' % max_string_length
+
+                    else:
+
+                        # All good. Check the length
+                        # NOTE: variable length arrays are not supported
+                        line_length = len(test_value)
+                        format = '%i%s' % (line_length, _NUMPY_TO_FITS_CODE[col_type])
 
             else:
 
@@ -178,7 +226,30 @@ class FITSExtension(object):
 
         self._hdu = fits.BinTableHDU.from_columns(fits.ColDefs(fits_columns), header=header)
 
+        # update the header to indicate that the file was created by 3ML
+        self._hdu.header.set('CREATOR', "3ML v.%s" % (pkg_resources.get_distribution("threeML").version),
+             "(G.Vianello, giacomov@slac.stanford.edu)")
+
     @property
     def hdu(self):
 
         return self._hdu
+
+    @classmethod
+    def from_fits_file_extension(cls, fits_extension):
+
+
+        data = fits_extension.data
+
+        data_tuple = []
+
+        for name in data.columns.names:
+
+
+            data_tuple.append((name,data[name]))
+
+
+
+        header_tuple = fits_extension.header.items()
+
+        return cls(data_tuple,header_tuple)

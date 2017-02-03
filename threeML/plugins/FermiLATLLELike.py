@@ -20,8 +20,8 @@ class BinningMethodError(RuntimeError):
 
 
 class FermiLATLLELike(EventListLike):
-    def __init__(self, name, lle_file, ft2_file, background_selections, source_intervals, rsp_file, trigger_time=None,
-                 poly_order=-1, unbinned=False, verbose=True):
+    def __init__(self, name, lle_file, ft2_file, rsp_file, source_intervals, background_selections=None, restore_background=None,
+                 trigger_time=None, poly_order=-1, unbinned=False, verbose=True):
         """
         A plugin to natively bin, view, and handle Fermi LAT LLE data.
         An LLE event file and FT2 (1 sec) are required as well as the associated response
@@ -84,8 +84,17 @@ class FermiLATLLELike(EventListLike):
                 mission=self._lat_lle_file.mission,
                 verbose=verbose)
 
-        super(FermiLATLLELike,self).__init__( name, event_list, background_selections, source_intervals, rsp_file,
-                               poly_order, unbinned, verbose)
+        super(FermiLATLLELike,self).__init__(name,
+                                             event_list,
+                                             rsp_file=rsp_file,
+                                             source_intervals=source_intervals,
+                                             background_selections=background_selections,
+                                             poly_order=poly_order,
+                                             unbinned=unbinned,
+                                             verbose=verbose,
+                                             restore_poly_fit=restore_background
+                                             )
+
 
 
 
@@ -106,7 +115,7 @@ class FermiLATLLELike(EventListLike):
             energy_selection = [interval.replace(' ', '') for interval in energy_selection.split(',')]
 
             valid_channels = []
-            mask = np.array([False] * self._evt_list.n_events)
+            mask = np.array([False] * self._event_list.n_events)
 
             for selection in energy_selection:
 
@@ -123,18 +132,18 @@ class FermiLATLLELike(EventListLike):
                 # Update the allowed channels
                 valid_channels.extend(range(idx1, idx2))
 
-                this_mask = np.logical_and(self._evt_list.energies >= idx1, self._evt_list.energies <= idx2)
+                this_mask = np.logical_and(self._event_list.energies >= idx1, self._event_list.energies <= idx2)
 
                 np.logical_or(mask, this_mask, out=mask)
 
         else:
 
-            mask = np.array([True] * self._evt_list.n_events)
+            mask = np.array([True] * self._event_list.n_events)
             valid_channels = range(self._lat_lle_file.n_channels)
 
         if use_binner:
 
-            bin_start, bin_stop = self._evt_list.bins
+            bin_start, bin_stop = self._event_list.bins
             bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
 
             # perhaps we want to look a little before or after the binner
@@ -165,7 +174,7 @@ class FermiLATLLELike(EventListLike):
         for j, tb in enumerate(time_bins):
             tmpbkg = 0.
             for i in valid_channels:
-                poly = self._evt_list.polynomials[i]
+                poly = self._event_list.polynomials[i]
 
                 tmpbkg += poly.integral(tb[0], tb[1]) / (width[j])
 
@@ -175,15 +184,15 @@ class FermiLATLLELike(EventListLike):
                                 cnts,
                                 bkg,
                                 width,
-                                selection=zip(self._evt_list.tmin_list, self._evt_list.tmax_list),
-                                bkg_selections=self._evt_list.poly_intervals,
+                                selection=zip(self._event_list.time_intervals.start_times, self._event_list.time_intervals.stop_times),
+                                bkg_selections=zip(self._event_list.poly_intervals.start_times, self._event_list.poly_intervals.stop_times),
                                 instrument='lle')
 
     def peek(self):
 
         print("LLE File Info:")
 
-        self._evt_list.peek()
+        self._event_list.peek()
 
         print('Timing Info:')
 

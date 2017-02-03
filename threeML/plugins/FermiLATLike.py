@@ -3,11 +3,6 @@ import collections
 import uuid
 import os
 
-import UnbinnedAnalysis
-import BinnedAnalysis
-import pyLikelihood as pyLike
-from GtBurst import LikelihoodComponent
-from GtBurst import FuncFactory
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 
@@ -147,6 +142,25 @@ class LikelihoodModelConverter(object):
 
 
 class FermiLATLike(PluginPrototype):
+
+    def __new__(cls, *args, **kwargs):
+
+        instance = object.__new__(cls)
+
+        import UnbinnedAnalysis
+        import BinnedAnalysis
+        import pyLikelihood as pyLike
+        from GtBurst import LikelihoodComponent
+        from GtBurst import FuncFactory
+
+        globals()['UnbinnedAnalysis'] = UnbinnedAnalysis
+        globals()['BinnedAnalysis'] = BinnedAnalysis
+        globals()['pyLike'] = pyLike
+        globals()['LikelihoodComponent'] = LikelihoodComponent
+        globals()['FuncFactory'] = FuncFactory
+
+        return instance
+
 
     def __init__(self, name, eventFile, ft2File, livetimeCube, kind, *args):
 

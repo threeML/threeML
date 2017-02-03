@@ -2,6 +2,10 @@ __author__ = 'grburgess'
 
 import numpy as np
 
+from threeML.io.file_utils import file_existing_and_readable
+from threeML.plugins.OGIP.pha import PHAII
+from threeML.exceptions.custom_exceptions import custom_warnings
+
 try:
 
     import requests
@@ -17,7 +21,6 @@ else:
 import copy
 
 from threeML.plugins.OGIPLike import OGIPLike
-
 from threeML.plugins.OGIP.pha import PHAWrite
 
 __instrument_name = "Generic EventList data"
@@ -28,30 +31,66 @@ class BinningMethodError(RuntimeError):
 
 
 class EventListLike(OGIPLike):
-    def __init__(self, name, event_list, background_selections, source_intervals, rsp_file,
-                 poly_order=-1, unbinned=True, verbose=True):
+    def __init__(self, name, event_list, rsp_file, source_intervals, background_selections=None,
+                 poly_order=-1, unbinned=True, verbose=True,restore_poly_fit=None):
         """
         Generic EventListLike that should be inherited
         """
 
-        self._evt_list = event_list
+        assert (background_selections is not None) or (restore_poly_fit is not None), "you specify background selections or a restore file"
 
-        self._evt_list.poly_order = poly_order
+        self._event_list = event_list
+
+        self._event_list.poly_order = poly_order
 
         # Fit the background and
         # Obtain the counts for the initial input interval
         # which is embedded in the background call
 
-
-
-
         self._startup = True  # This keeps things from being called twice!
 
         source_intervals = [interval.replace(' ', '') for interval in source_intervals.split(',')]
-        background_selections = [interval.replace(' ', '') for interval in background_selections.split(',')]
+
 
         self.set_active_time_interval(*source_intervals)
-        self.set_background_interval(*background_selections, unbinned=unbinned)
+
+        if restore_poly_fit is None:
+
+            background_selections = [interval.replace(' ', '') for interval in background_selections.split(',')]
+
+            self.set_background_interval(*background_selections, unbinned=unbinned)
+
+        else:
+
+            if file_existing_and_readable(restore_poly_fit):
+
+                self._event_list.restore_fit(restore_poly_fit)
+
+                # In theory this will automatically get the poly counts if a
+                # time interval already exists
+
+                self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
+
+
+
+            else:
+
+                if background_selections is None:
+
+                    raise RuntimeError("Could not find saved background %s and no background_selections specified" % restore_poly_fit)
+
+                else:
+
+                    custom_warnings.warn("Could not find saved background %s. Fitting background manually" % restore_poly_fit)
+
+                    background_selections = [interval.replace(' ', '') for interval in background_selections.split(',')]
+
+                    self.set_background_interval(*background_selections, unbinned=unbinned)
+
+
+
+
+
 
         # Keeps track of if we are beginning
         self._startup = False
@@ -70,14 +109,15 @@ class EventListLike(OGIPLike):
                                       pha_file=self._observed_pha,
                                       bak_file=self._bkg_pha,
                                       rsp_file=rsp_file,
-                                      verbose=verbose)
+                                      verbose=verbose,
+                                      spectrum_number=1)
 
 
 
     def __set_poly_order(self, value):
         """Background poly order setter """
 
-        self._evt_list.poly_order = value
+        self._event_list.poly_order = value
 
     def ___set_poly_order(self, value):
         """ Indirect poly order setter """
@@ -86,7 +126,7 @@ class EventListLike(OGIPLike):
 
     def __get_poly_order(self):
         """ Get poly order """
-        return self._evt_list.poly_order
+        return self._event_list.poly_order
 
     def ___get_poly_order(self):
         """ Indirect poly order getter """
@@ -112,24 +152,25 @@ class EventListLike(OGIPLike):
         :return:
         """
 
-        self._evt_list.set_active_time_intervals(*intervals)
+        self._event_list.set_active_time_intervals(*intervals)
 
-        self._observed_pha = self._evt_list.get_pha_container(use_poly=False)
+        self._observed_pha = PHAII.from_event_list(self._event_list, use_poly=False)
 
         self._active_interval = intervals
 
         if not self._startup:
 
-            self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
+            self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
 
-            OGIPLike.__init__(self, self.name,
-                              pha_file=self._observed_pha,
-                              bak_file=self._bkg_pha,
-                              rsp_file=self._rsp_file,
-                              verbose=self._verbose)
+            super(EventListLike, self).__init__(self.name,
+                                                pha_file=self._observed_pha,
+                                                bak_file=self._bkg_pha,
+                                                rsp_file=self._rsp_file,
+                                                verbose=self._verbose,
+                                                spectrum_number=1)
 
-        self._tstart = min(self._evt_list.tmin_list)
-        self._tstop = max(self._evt_list.tmax_list)
+        self._tstart = self._event_list.time_intervals.absolute_start_time
+        self._tstop = self._event_list.time_intervals.absolute_stop_time
 
         return_ogip = False
 
@@ -145,7 +186,8 @@ class EventListLike(OGIPLike):
                                 pha_file=self._observed_pha,
                                 bak_file=self._bkg_pha,
                                 rsp_file=self._rsp_file,
-                                verbose=self._verbose)
+                                verbose=self._verbose,
+                                spectrum_number=1)
 
             return new_ogip
 
@@ -171,16 +213,20 @@ class EventListLike(OGIPLike):
 
             unbinned = self._default_unbinned
 
-        self._evt_list.set_polynomial_fit_interval(*intervals, unbinned=unbinned)
+        self._event_list.set_polynomial_fit_interval(*intervals, unbinned=unbinned)
 
         # In theory this will automatically get the poly counts if a
         # time interval already exists
 
-        self._bkg_pha = self._evt_list.get_pha_container(use_poly=True)
+        self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
 
         if not self._startup:
-            OGIPLike.__init__(self, self.name, pha_file=self._observed_pha, bak_file=self._bkg_pha,
-                              rsp_file=self._rsp_file, verbose=self._verbose)
+            super(EventListLike, self).__init__(self.name,
+                                                pha_file=self._observed_pha,
+                                                bak_file=self._bkg_pha,
+                                                rsp_file=self._rsp_file,
+                                                verbose=self._verbose,
+                                                spectrum_number=1)
 
     def view_lightcurve(self, start=-10, stop=60., dt=1., use_binner=False, energy_selection=None):
         """ stub """
@@ -234,17 +280,37 @@ class EventListLike(OGIPLike):
 
         """
 
-        return self._evt_list.get_poly_info()
+        return self._event_list.get_poly_info()
+
+
+    def save_background(self,filename, overwrite=False):
+        """
+
+        save the background to and HDF5 file. The filename does not need an extension.
+        The filename will be saved as <filename>_bkg.h5
+
+
+
+        :param filename: name of file to save
+        :param overwrite: to overwrite or not
+        :return:
+        """
+
+        self._event_list.save_background(filename, overwrite)
+
+
+
+
 
     @property
     def text_bins(self):
 
-        return self._evt_list.text_bins
+        return self._event_list.text_bins
 
     @property
     def bins(self):
 
-        return self._evt_list.bins
+        return self._event_list.bins
 
     def read_bins(self, ttelike):
         """
@@ -294,7 +360,7 @@ class EventListLike(OGIPLike):
 
                 raise RuntimeError('constant bins requires the dt option set!')
 
-            self._evt_list.bin_by_constant(start, stop, dt)
+            self._event_list.bin_by_constant(start, stop, dt)
 
 
         elif method == 'significance':
@@ -325,7 +391,7 @@ class EventListLike(OGIPLike):
 
                 mask = None
 
-            self._evt_list.bin_by_significance(start, stop, sigma=sigma, min_counts=min_counts, mask=mask)
+            self._event_list.bin_by_significance(start, stop, sigma=sigma, min_counts=min_counts, mask=mask)
 
 
         elif method == 'bayesblocks':
@@ -346,7 +412,7 @@ class EventListLike(OGIPLike):
 
                 use_background = False
 
-            self._evt_list.bin_by_bayesian_blocks(start, stop, p0, use_background)
+            self._event_list.bin_by_bayesian_blocks(start, stop, p0, use_background)
 
         elif method == 'custom':
 
@@ -362,7 +428,7 @@ class EventListLike(OGIPLike):
 
             assert len(start) == len(stop), 'must have equal number of start and stop times'
 
-            self._evt_list.bin_by_custom(start, stop)
+            self._event_list.bin_by_custom(start, stop)
 
 
 
@@ -402,7 +468,8 @@ class EventListLike(OGIPLike):
                                 pha_file=self._observed_pha,
                                 bak_file=self._bkg_pha,
                                 rsp_file=self._rsp_file,
-                                verbose=self._verbose)
+                                verbose=self._verbose,
+                                spectrum_number = 1)
 
             ogip_list.append(new_ogip)
 

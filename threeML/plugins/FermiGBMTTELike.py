@@ -22,7 +22,7 @@ class BinningMethodError(RuntimeError):
 
 class FermiGBMTTELike(EventListLike):
 
-    def __init__(self, name, tte_file, background_selections, source_intervals, rsp_file, trigger_time=None,
+    def __init__(self, name, tte_file, rsp_file, source_intervals, background_selections=None,restore_background=None,trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
         """
         A plugin to natively bin, view, and handle Fermi GBM TTE data.
@@ -101,8 +101,15 @@ class FermiGBMTTELike(EventListLike):
 
         # pass to the super class
 
-        EventListLike.__init__(self, name, event_list, background_selections, source_intervals, rsp_file,
-                               poly_order, unbinned, verbose)
+        super(FermiGBMTTELike, self).__init__(name,
+                                              event_list,
+                                              rsp_file=rsp_file,
+                                              source_intervals=source_intervals,
+                                              background_selections=background_selections,
+                                              poly_order=poly_order,
+                                              unbinned=unbinned,
+                                              verbose=verbose,
+                                              restore_poly_fit=restore_background)
 
     def set_active_time_interval(self, *intervals, **kwargs):
         """
@@ -143,7 +150,7 @@ class FermiGBMTTELike(EventListLike):
             energy_selection = [interval.replace(' ', '') for interval in energy_selection.split(',')]
 
             valid_channels = []
-            mask = np.array([False] * self._evt_list.n_events)
+            mask = np.array([False] * self._event_list.n_events)
 
             for selection in energy_selection:
 
@@ -160,18 +167,18 @@ class FermiGBMTTELike(EventListLike):
                 # Update the allowed channels
                 valid_channels.extend(range(idx1, idx2))
 
-                this_mask = np.logical_and(self._evt_list.energies >= idx1, self._evt_list.energies <= idx2)
+                this_mask = np.logical_and(self._event_list.energies >= idx1, self._event_list.energies <= idx2)
 
                 np.logical_or(mask, this_mask, out=mask)
 
         else:
 
-            mask = np.array([True] * self._evt_list.n_events)
+            mask = np.array([True] * self._event_list.n_events)
             valid_channels = range(self._gbm_tte_file.n_channels)
 
         if use_binner:
 
-            bin_start, bin_stop = self._evt_list.bins
+            bin_start, bin_stop = self._event_list.bins
             bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
 
             # perhaps we want to look a little before or after the binner
@@ -202,21 +209,22 @@ class FermiGBMTTELike(EventListLike):
         for j, tb in enumerate(time_bins):
             tmpbkg = 0.
             for i in valid_channels:
-                poly = self._evt_list.polynomials[i]
+                poly = self._event_list.polynomials[i]
 
                 tmpbkg += poly.integral(tb[0], tb[1]) / (width[j])
 
             bkg.append(tmpbkg)
 
         binned_light_curve_plot(time_bins, cnts, bkg, width,
-                                selection=zip(self._evt_list.tmin_list, self._evt_list._tmax_list),
-                                bkg_selections=self._evt_list.poly_intervals, instrument='gbm')
+                                selection=zip(self._event_list.time_intervals.start_times, self._event_list.time_intervals.stop_times),
+                                bkg_selections=zip(self._event_list.poly_intervals.start_times,self._event_list.poly_intervals.stop_times),
+                                instrument='gbm')
 
     def peek(self):
 
         print "TTE File Info:"
 
-        self._evt_list.peek()
+        self._event_list.peek()
 
         print 'Timing Info:'
 

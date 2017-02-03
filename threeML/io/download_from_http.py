@@ -124,7 +124,6 @@ class ApacheDirectory(object):
         # If no filename is specified, use the same name that the file has on the remote server
 
         if new_filename is None:
-
             new_filename = remote_filename.split("/")[-1]
 
         # Get the fully qualified path for the remote and the local file
@@ -147,7 +146,6 @@ class ApacheDirectory(object):
         # Now check if we really need to download this file
 
         if compress:
-
             # Add a .gz at the end of the file path
 
             local_path += '.gz'
@@ -157,7 +155,6 @@ class ApacheDirectory(object):
             local_size = os.path.getsize(local_path)
 
             if local_size == file_size or compress:
-
                 # if the compressed file already exists
                 # it will have a smaller size
 
@@ -186,7 +183,8 @@ class ApacheDirectory(object):
             # Set a title for the progress bar
             bar_title = "Downloading %s" % new_filename
 
-            with progress_bar(file_size, scale=1024*1024, units='Mb', title=bar_title) as bar:  # type: ProgressBarBase
+            with progress_bar(file_size, scale=1024 * 1024, units='Mb',
+                              title=bar_title) as bar:  # type: ProgressBarBase
 
                 with opener(local_path, 'wb') as f:
 

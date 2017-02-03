@@ -1041,6 +1041,18 @@ else:
 
     _minimizers["MULTINEST"] = MultinestMinimizer
 
+try:
+
+    from threeML.minimizer.pagmo_minimizer import PAGMOMinimizer
+
+except ImportError:
+
+    custom_warnings.warn("PyGMO is not available", ImportWarning)
+
+else:
+
+    _minimizers["PAGMO"] = PAGMOMinimizer
+
 # Check that we have at least one minimizer available
 
 if len(_minimizers) == 0:

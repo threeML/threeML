@@ -140,10 +140,11 @@ def test_lle_constructor():
         src_selection = "0.-10."
 
         lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
-                               os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
-                               "-100--1, 100-200",
-                               src_selection,
-                               rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
+                              os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                              rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                              source_intervals=src_selection,
+                              background_selections="-100--1, 100-200",
+                              poly_order=-1)
 
         assert lle.name == 'lle'
 
@@ -166,6 +167,17 @@ def test_lle_constructor():
 
         lle.set_background_interval("-150-0", "100-250")
 
+        # test that no background selections and no background save causes error
+
+        with pytest.raises(AssertionError):
+            lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+                                  os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                                  rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                                  source_intervals=src_selection,
+                                  poly_order=-1)
+
+
+
         #nai3.set_background_interval("-15-0", "100-150", unbinned=False)
 
 
@@ -175,11 +187,13 @@ def test_lle_binning():
 
         src_selection = "0.-10."
 
+
         lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
-                               os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
-                               "-100-0, 100-200",
-                               src_selection,
-                               rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
+                              os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                              rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                              source_intervals=src_selection,
+                              background_selections="-100--1, 100-200",
+                              poly_order=-1)
         # should not have bins yet
 
         with pytest.raises(AttributeError):
@@ -239,11 +253,13 @@ def test_lle_joint_likelihood_fitting():
 
         src_selection = "0.-70."
 
+
         lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
-                               os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
-                               "-100-0, 100-200",
-                               src_selection,
-                               rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
+                              os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                              rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                              source_intervals=src_selection,
+                              background_selections="-100--1, 100-200",
+                              poly_order=-1)
 
         lle.set_active_measurements("50000-100000")
 
@@ -280,11 +296,13 @@ def test_lle_bayesian_fitting():
 
         src_selection = "0.-10."
 
+
         lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
-                               os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
-                               "-100-0, 100-200",
-                               src_selection,
-                               rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"), poly_order=-1)
+                              os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                              rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                              source_intervals=src_selection,
+                              background_selections="-100--1, 100-200",
+                              poly_order=-1)
 
 
 
@@ -313,7 +331,47 @@ def test_lle_bayesian_fitting():
                 assert samples[key_2].shape[0] == n_samples
 
             assert len(bb.log_like_values) == n_samples
-            # assert len(bb.log_probability_values) == n_samples
 
             assert bb.raw_samples.shape == (n_samples, 2)
 
+
+def test_save_background():
+    with within_directory(__example_dir):
+        data_dir = 'lat'
+
+        src_selection = "0.-10."
+
+        lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+                              os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                              rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                              source_intervals=src_selection,
+                              background_selections="-100--1, 100-200",
+                              poly_order=-1)
+
+        old_coefficients, old_errors = lle.get_background_parameters()
+
+        old_tmin_list = lle._event_list.time_intervals
+
+
+
+        lle.save_background('temp_lle', overwrite=True)
+
+        lle = FermiLATLLELike('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+                              os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                              rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                              source_intervals=src_selection,
+                              restore_background='temp_lle.h5')
+
+
+        new_coefficients, new_errors = lle.get_background_parameters()
+
+        new_tmin_list = lle._event_list.time_intervals
+
+
+        assert new_coefficients == old_coefficients
+
+        assert new_errors == old_errors
+
+
+
+        assert old_tmin_list == new_tmin_list

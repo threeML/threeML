@@ -61,7 +61,7 @@ def test_XYLike_chi2():
     res = xy.fit(fitfun)
 
     # Verify that the fit converged where it should have
-    assert np.allclose(res[0]['value'], [0.82875721, 40.20837408, 62.75971318, 5.04091298, 0.27279792])
+    assert np.allclose(res[0]['value'].values, [0.83005902, 40.20040456, 62.78162993, 5.04082923, 0.27279872])
 
 
 def test_XYLike_poisson():

@@ -6,6 +6,8 @@ import numpy as np
 class IntervalsDoNotOverlap(RuntimeError):
     pass
 
+class IntervalsNotContiguous(RuntimeError):
+    pass
 
 class TimeInterval(object):
 
@@ -121,6 +123,16 @@ class TimeInterval(object):
 
             return False
 
+    def to_string(self):
+        """
+        returns a string representation of the time interval that is like the
+        argument of many interval reading funcitons
+
+        :return:
+        """
+
+        return "%f-%f"%(self.start_time,self.stop_time)
+
     def __add__(self, number):
         """
         Return a new time interval equal to the original time interval shifted to the right by number
@@ -195,6 +207,134 @@ class TimeIntervalSet(object):
 
         return map(float, tokens)
 
+    @classmethod
+    def from_starts_and_stops(cls,start_times,stop_times):
+        """
+        Builds a TimeIntervalSet from a list of start and stop times:
+
+        start = [-1,0]  ->   [-1,0], [0,1]
+        stop =  [0,1]
+
+        :param start_times:
+        :param stop_times:
+        :return:
+        """
+
+        assert len(start_times) == len(stop_times), 'starts length: %d and stops length: %d must have same length'%(len(start_times), len(stop_times))
+
+        list_of_intervals = []
+
+        for tmin, tmax in zip(start_times, stop_times):
+
+            list_of_intervals.append(TimeInterval(tmin, tmax))
+
+        return cls(list_of_intervals)
+
+    @classmethod
+    def from_list_of_edges(cls, time_edges):
+        """
+        Builds a TimeIntervalSet from a list of time edges:
+
+        edges = [-1,0,1] -> [-1,0], [0,1]
+
+
+        :param time_edges:
+        :return:
+        """
+        # sort the time edges
+
+        time_edges.sort()
+
+        list_of_intervals = []
+
+        for tmin, tmax in zip(time_edges[:-1], time_edges[1:]):
+
+            list_of_intervals.append(TimeInterval(tmin, tmax))
+
+        return cls(list_of_intervals)
+
+    def merge_intersecting_intervals(self, in_place=False):
+        """
+
+        merges intersecting intervals into a contiguous intervals
+
+
+        :return:
+        """
+
+        # get a copy of the sorted intervals
+
+        sorted_intervals = self.sort()
+
+        new_intervals = []
+
+        while( len(sorted_intervals) > 1):
+
+            # pop the first interval off the stack
+
+            this_interval = sorted_intervals.pop(0)
+
+            # see if that interval overlaps with the the next one
+
+            if this_interval.overlaps_with(sorted_intervals[0]):
+
+                # if so, pop the next one
+
+                next_interval = sorted_intervals.pop(0)
+
+                # and merge the two, appending them to the new intervals
+
+                new_intervals.append(this_interval.merge(next_interval))
+
+            else:
+
+                # otherwise just append this interval
+
+                new_intervals.append(this_interval)
+
+            # now if there is only one interval left
+            # it should not overlap with any other interval
+            # and the loop will stop
+            # otherwise, we continue
+
+        # if there was only one interval
+        # or a leftover from the merge
+        # we append it
+        if sorted_intervals:
+
+            assert len(sorted_intervals) == 1, "there should only be one interval left over, this is a bug" #pragma: no cover
+
+            # we want to make sure that the last new interval did not
+            # overlap with the final interval
+            if new_intervals:
+
+                if new_intervals[-1].overlaps_with(sorted_intervals[0]):
+
+                    new_intervals[-1] = new_intervals[-1].merge(sorted_intervals[0])
+
+                else:
+
+                    new_intervals.append(sorted_intervals[0])
+
+
+            else:
+
+                new_intervals.append(sorted_intervals[0])
+
+
+
+
+
+
+        if in_place:
+
+            self.__init__(new_intervals)
+
+        else:
+
+            return TimeIntervalSet(new_intervals)
+
+
     def extend(self, list_of_intervals):
 
         self._intervals.extend(list_of_intervals)
@@ -238,6 +378,18 @@ class TimeIntervalSet(object):
 
         return new_set
 
+    def __eq__(self, other):
+
+        for interval_this, interval_other in zip(self.sort(), other.sort()):
+
+            if not interval_this == interval_other:
+
+                return False
+
+        return True
+
+
+
     def pop(self, index):
 
         return self._intervals.pop(index)
@@ -249,7 +401,7 @@ class TimeIntervalSet(object):
         :return:
         """
 
-        return TimeIntervalSet(itemgetter(*self.argsort())(self._intervals))
+        return TimeIntervalSet(np.atleast_1d(itemgetter(*self.argsort())(self._intervals)))
 
     def argsort(self):
         """
@@ -275,5 +427,72 @@ class TimeIntervalSet(object):
         stop_times = map(attrgetter("stop_time"), self._intervals)
 
         return np.allclose(start_times[1:], stop_times[:-1], rtol=relative_tolerance)
+
+    @property
+    def start_times(self):
+        """
+        Return the starts fo the set
+
+        :return: list of start times
+        """
+
+        return [interval.start_time for interval in self._intervals]
+
+    @property
+    def stop_times(self):
+        """
+        Return the stops of the set
+
+        :return:
+        """
+
+        return [interval.stop_time for interval in self._intervals]
+
+    @property
+    def absolute_start_time(self):
+        """
+        the minimum of the start times
+        :return:
+        """
+
+        return min(self.start_times)
+
+    @property
+    def absolute_stop_time(self):
+        """
+        the maximum of the stop times
+        :return:
+        """
+
+        return max(self.stop_times)
+
+    @property
+    def time_edges(self):
+        """
+        return an array of time edges if contiguous
+        :return:
+        """
+
+        if self.is_contiguous():
+
+            edges = [interval.start_time for interval in itemgetter(*self.argsort())(self._intervals)]
+            edges.append([interval.stop_time for interval in itemgetter(*self.argsort())(self._intervals)][-1])
+
+        else:
+
+            raise IntervalsNotContiguous("Cannot return time edges for non-contiguous intervals")
+
+        return edges
+
+
+    def to_string(self):
+        """
+
+
+        returns a set of string representaitons of the intervals
+        :return:
+        """
+
+        return ','.join([interval.to_string() for interval in self._intervals])
 
 

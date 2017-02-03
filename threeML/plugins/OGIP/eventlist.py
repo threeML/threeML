@@ -1,24 +1,29 @@
-# Creates a generic event list reader that can create PHA objects on the fly
+
 
 import numpy as np
-
+import os
 import re
 
 import copy
 import pandas as pd
+from pandas import HDFStore
+
+
 
 from threeML.io.rich_display import display
 from threeML.utils.stats_tools import Significance
+from threeML.io.file_utils import sanitize_filename
 
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.progress_bar import progress_bar
 from threeML.utils.binner import TemporalBinner
+from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
-from event_polynomial import polyfit, unbinned_polyfit
 
-from threeML.plugins.OGIP.pha import PHAContainer
+from threeML.plugins.OGIP.event_polynomial import polyfit, unbinned_polyfit, Polynomial
+
 
 
 class ReducingNumberOfThreads(Warning):
@@ -69,6 +74,8 @@ class EventList(object):
         self._n_channels = n_channels
         self._first_channel = first_channel
         self._native_quality = native_quality
+
+        self._time_intervals = None
 
         assert self._arrival_times.shape[0] == self._energies.shape[
             0], "Arrival time (%d) and energies (%d) have different shapes" % (
@@ -124,14 +131,6 @@ class EventList(object):
 
         self._fit_method_info = {"bin type": None, 'fit method': None}
 
-    @staticmethod
-    def _parse_time_interval(time_interval):
-        # The following regular expression matches any two numbers, positive or negative,
-        # like "-10 --5","-10 - -5", "-10-5", "5-10" and so on
-
-        tokens = re.match('(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)', time_interval).groups()
-
-        return map(float, tokens)
 
     def set_active_time_intervals(self, *args):
 
@@ -147,16 +146,8 @@ class EventList(object):
         return self._energies
 
     @property
-    def tmin_list(self):
-        return self._tmin_list
-
-    @property
-    def tmax_list(self):
-        return self._tmax_list
-
-    @property
     def poly_intervals(self):
-        return self._poly_time_selections
+        return self._poly_intervals
 
     @property
     def polynomials(self):
@@ -364,11 +355,8 @@ class EventList(object):
 
             if self._time_selection_exists:
 
-                tmp = []
-                for tmin, tmax in zip(self._tmin_list, self._tmax_list):
-                    tmp.append("%.5f-%.5f" % (tmin, tmax))
+                self.set_polynomial_fit_interval(*self._poly_intervals.to_string().split(','), unbinned=self._unbinned)
 
-                self.set_polynomial_fit_interval(*tmp, unbinned=self._unbinned)
             else:
 
                 RuntimeError("This is a bug. Should never get here")
@@ -390,6 +378,15 @@ class EventList(object):
 
     poly_order = property(___get_poly_order, ___set_poly_order,
                           doc="Get or set the polynomial order")
+
+    @property
+    def time_intervals(self):
+        """
+        the time intervals of the events
+
+        :return:
+        """
+        return self._time_intervals
 
     def exposure_over_interval(self, tmin, tmax):
         """ calculate the exposure over a given interval  """
@@ -426,8 +423,9 @@ class EventList(object):
 
         set_polynomial_fit_interval("-10.0-0.0","10.-15.")
 
-        Args:
-            *time_intervals:
+        :param time_intervals: intervals to fit on
+        :param options:
+
         """
 
         # Find out if we want to binned or unbinned.
@@ -444,10 +442,13 @@ class EventList(object):
 
             unbinned = True
 
-        self._poly_time_selections = []
 
-        for time_interval in time_intervals:
-            t1, t2 = self._parse_time_interval(time_interval)
+
+        poly_intervals = TimeIntervalSet.from_strings(*time_intervals)
+
+        for time_interval in poly_intervals:
+            t1 = time_interval.start_time
+            t2 = time_interval.stop_time
 
             if t1 < self._start_time:
 
@@ -473,11 +474,8 @@ class EventList(object):
                         t1, t2))
                 continue
 
-            else:
 
-                self._poly_time_selections.append((t1, t2))
-
-        self._poly_time_selections = np.array(self._poly_time_selections)
+        self._poly_intervals = poly_intervals
 
         # Fit the events with the given intervals
         if unbinned:
@@ -497,6 +495,8 @@ class EventList(object):
 
         self._poly_fit_exists = True
 
+
+
         if self._verbose:
             print("%s %d-order polynomial fit with the %s method" % (
                 self._fit_method_info['bin type'], self._optimal_polynomial_grade, self._fit_method_info['fit method']))
@@ -504,27 +504,20 @@ class EventList(object):
 
         if self._time_selection_exists:
 
-            tmp = []
-            for tmin, tmax in zip(self._tmin_list, self._tmax_list):
-                tmp.append("%.5f-%.5f" % (tmin, tmax))
+            self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 
-            self.set_active_time_intervals(*tmp)
-
-    def get_pha_container(self, use_poly=False):
+    def get_pha_information(self, use_poly=False):
         """
         Return a PHAContainer that can be read by the PHA class
-
-
         Args:
             use_poly: (bool) choose to build from the polynomial fits
-
         Returns:
-
         """
         if not self._time_selection_exists:
             raise RuntimeError('No time selection exists! Cannot calculate rates')
 
         if use_poly:
+
             is_poisson = False
 
             rate_err = self._poly_count_err / self._exposure
@@ -552,18 +545,25 @@ class EventList(object):
 
             quality = self._native_quality
 
+        container_dict = {}
 
-        pha = PHAContainer(rates=rates,
-                           rate_errors=rate_err,
-                           n_channels=self._n_channels,
-                           exposure=self._exposure,
-                           is_poisson=is_poisson,
-                           response_file=self._rsp_file,
-                           mission=self._mission,
-                           instrument=self._instrument,
-                           quality=quality)  # default quality to all good
+        container_dict['instrument'] = self._instrument
+        container_dict['telescope'] = self._mission
+        container_dict['tstart'] = self._time_intervals.absolute_start_time
+        container_dict['telapse'] = self._time_intervals.absolute_stop_time - self._time_intervals.absolute_start_time
+        container_dict['channel'] = np.arange(self._n_channels) + self._first_channel
+        container_dict['rate'] = rates
+        container_dict['rate error'] = rate_err
+        container_dict['quality'] = quality
 
-        return pha
+
+        # TODO: make sure the grouping makes sense
+        container_dict['backfile']='NONE'
+        container_dict['grouping'] = np.ones(self._n_channels)
+        container_dict['exposure'] = self._exposure
+        container_dict['response_file'] = self._rsp_file
+
+        return container_dict
 
     def peek(self):
         """
@@ -573,7 +573,7 @@ class EventList(object):
 
         info_dict = {}
 
-        info_dict['Active Selections'] = zip(self._tmin_list, self._tmax_list)
+        info_dict['Active Selections'] = zip(self._time_intervals.start_times, self._time_intervals.stop_times)
         info_dict['Active Deadtime'] = self._active_dead_time
         info_dict['Active Exposure'] = self._exposure
         info_dict['Total N. Events'] = len(self._arrival_times)
@@ -581,7 +581,7 @@ class EventList(object):
         info_dict['Number of Channels'] = self._n_channels
 
         if self._poly_fit_exists:
-            info_dict['Polynomial Selections'] = self._poly_time_selections
+            info_dict['Polynomial Selections'] = zip(self._poly_intervals.start_times, self._poly_intervals.stop_times)
             info_dict['Polynomial Order'] = self._optimal_polynomial_grade
             info_dict['Active Count Error'] = np.sqrt((self._poly_count_err ** 2).sum())
             info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
@@ -664,8 +664,9 @@ class EventList(object):
         max_grade = 4
         log_likelihoods = []
 
-        t_start = self._poly_time_selections[:, 0]
-        t_stop = self._poly_time_selections[:, 1]
+        t_start = self._poly_intervals.start_times
+        t_stop = self._poly_intervals.stop_times
+
 
         for grade in range(min_grade, max_grade + 1):
             polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure)
@@ -711,9 +712,9 @@ class EventList(object):
 
         all_bkg_masks = []
 
-        for selection in self._poly_time_selections:
-            all_bkg_masks.append(np.logical_and(self._arrival_times >= selection[0],
-                                                self._arrival_times <= selection[1]))
+        for selection in self._poly_intervals:
+            all_bkg_masks.append(np.logical_and(self._arrival_times >= selection.start_time,
+                                                self._arrival_times <= selection.stop_time))
         poly_mask = all_bkg_masks[0]
 
         # If there are multiple masks:
@@ -759,9 +760,9 @@ class EventList(object):
         # Remove bins with zero counts
         all_non_zero_mask = []
 
-        for selection in self._poly_time_selections:
-            all_non_zero_mask.append(np.logical_and(mean_time >= selection[0],
-                                                    mean_time <= selection[1]))
+        for selection in self._poly_intervals:
+            all_non_zero_mask.append(np.logical_and(mean_time >= selection.start_time,
+                                                    mean_time <= selection.stop_time))
 
         non_zero_mask = all_non_zero_mask[0]
         if len(all_non_zero_mask) > 1:
@@ -788,118 +789,34 @@ class EventList(object):
 
         channels = range(self._first_channel, self._n_channels + self._first_channel)
 
-        # Check whether we are parallelizing or not
+        polynomials = []
+
+        with progress_bar(self._n_channels) as p:
+            for channel in channels:
+                channel_mask = total_poly_energies == channel
+
+                # Mask background events and current channel
+                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+                # Select the masked events
+
+                current_events = total_poly_events[channel_mask]
+
+                # now bin the selected channel counts
+
+                cnts, bins = np.histogram(current_events,
+                                          bins=these_bins)
+
+                # Put data to fit in an x vector and y vector
+
+                polynomial, _ = polyfit(mean_time[non_zero_mask],
+                                        cnts[non_zero_mask],
+                                        self._optimal_polynomial_grade,
+                                        exposure_per_bin[non_zero_mask])
+
+                polynomials.append(polynomial)
+                p.increase()
 
 
-
-        if not threeML_config['parallel']['use-parallel']:
-
-            polynomials = []
-
-            with progress_bar(self._n_channels) as p:
-                for channel in channels:
-                    channel_mask = total_poly_energies == channel
-
-                    # Mask background events and current channel
-                    # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
-                    # Select the masked events
-
-                    current_events = total_poly_events[channel_mask]
-
-                    # now bin the selected channel counts
-
-                    cnts, bins = np.histogram(current_events,
-                                              bins=these_bins)
-
-                    # Put data to fit in an x vector and y vector
-
-                    polynomial, _ = polyfit(mean_time[non_zero_mask],
-                                            cnts[non_zero_mask],
-                                            self._optimal_polynomial_grade,
-                                            exposure_per_bin[non_zero_mask])
-
-                    polynomials.append(polynomial)
-                    p.increase()
-
-
-        else:
-
-            # With parallel computation
-
-            # In order to distribute fairly the computation, the strategy is to parallelize the computation
-            # by assigning to the engines one "line" of the grid at the time
-
-            # Connect to the engines
-
-
-            raise NotImplementedError('Coming Soon!')
-
-            client = ParallelClient()
-
-            # Get the number of engines
-
-            n_engines = client.get_number_of_engines()
-
-            if n_engines > self._n_channels:
-                n_engines = int(self._n_channels)
-
-                custom_warnings.warn(
-                    "The number of engines is larger than the number of channels. Using only %s engines."
-                    % n_engines, ReducingNumberOfThreads)
-
-            chunk_size = ceildiv(self._n_channels, n_engines)
-
-            # need to remove class ref
-            grade = self._optimal_polynomial_grade
-
-            def worker(start_index):
-
-                polynomials = []
-                channel_subset = channels[chunk_size * start_index: chunk_size * (start_index + 1)]
-
-                for channel in channel_subset:
-                    channel_mask = total_poly_energies == channel
-
-                    # Select the masked events
-
-                    current_events = total_poly_events[channel_mask]
-
-                    # now bin the selected channel counts
-
-                    cnts, _ = np.histogram(current_events, bins=these_bins)
-
-                    # cnts = cnts / bin_width
-
-                    # Put data to fit in an x vector and y vector
-
-                    polynomial, _ = polyfit(mean_time[non_zero_mask],
-                                            cnts[non_zero_mask],
-                                            grade,
-                                            exposure_per_bin[non_zero_mask])
-
-                    polynomials.append(polynomial)
-
-                return polynomials
-
-            # Get a balanced view of the engines
-
-            lview = client.load_balanced_view()
-            # lview.block = True
-
-            # Distribute the work among the engines and start it, but return immediately the control
-            # to the main thread
-
-            amr = lview.map_async(worker, range(n_engines))
-
-            # client.wait_watching_progress(amr, 10)
-
-            print("\n")
-
-            res = amr.get()
-
-            polynomials = []
-            for i in range(n_engines):
-                polynomials.extend(res[i])
 
         # We are now ready to return the polynomials
 
@@ -923,13 +840,13 @@ class EventList(object):
 
         poly_exposure = 0
 
-        for selection in self._poly_time_selections:
-            total_duration += selection[1] - selection[0]
+        for selection in self._poly_intervals:
+            total_duration += selection.duration
 
-            poly_exposure += self.exposure_over_interval(selection[0], selection[1])
+            poly_exposure += self.exposure_over_interval(selection.start_time, selection.stop_time)
 
-            all_bkg_masks.append(np.logical_and(self._arrival_times >= selection[0],
-                                                self._arrival_times <= selection[1]))
+            all_bkg_masks.append(np.logical_and(self._arrival_times >= selection.start_time,
+                                                self._arrival_times <= selection.stop_time))
         poly_mask = all_bkg_masks[0]
 
         # If there are multiple masks:
@@ -967,115 +884,163 @@ class EventList(object):
 
         # Check whether we are parallelizing or not
 
-        t_start = self._poly_time_selections[:, 0]
-        t_stop = self._poly_time_selections[:, 1]
-
-        if not threeML_config['parallel']['use-parallel']:
-
-            polynomials = []
-
-            with progress_bar(self._n_channels) as p:
-                for channel in channels:
-                    channel_mask = total_poly_energies == channel
-
-                    # Mask background events and current channel
-                    # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
-                    # Select the masked events
-
-                    current_events = total_poly_events[channel_mask]
-
-                    polynomial, _ = unbinned_polyfit(current_events,
-                                                     self._optimal_polynomial_grade,
-                                                     t_start,
-                                                     t_stop,
-                                                     poly_exposure)
-
-                    polynomials.append(polynomial)
-                    p.increase()
+        t_start = self._poly_intervals.start_times
+        t_stop = self._poly_intervals.stop_times
 
 
-        else:
+        polynomials = []
 
-            raise NotImplementedError('Coming Soon!')
+        with progress_bar(self._n_channels) as p:
+            for channel in channels:
+                channel_mask = total_poly_energies == channel
 
-            # With parallel computation
+                # Mask background events and current channel
+                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+                # Select the masked events
 
-            # In order to distribute fairly the computation, the strategy is to parallelize the computation
-            # by assigning to the engines one "line" of the grid at the time
+                current_events = total_poly_events[channel_mask]
 
-            # Connect to the engines
+                polynomial, _ = unbinned_polyfit(current_events,
+                                                 self._optimal_polynomial_grade,
+                                                 t_start,
+                                                 t_stop,
+                                                 poly_exposure)
 
-            client = ParallelClient()
+                polynomials.append(polynomial)
+                p.increase()
 
-            # Get the number of engines
 
-            n_engines = client.get_number_of_engines()
 
-            if n_engines > self._n_channels:
-                n_engines = int(self._n_channels)
-
-                custom_warnings.warn(
-                    "The number of engines is larger than the number of channels. Using only %s engines."
-                    % n_engines, ReducingNumberOfThreads)
-
-            chunk_size = ceildiv(self._n_channels, n_engines)
-
-            # need to remove class ref
-            grade = self._optimal_polynomial_grade
-
-            def worker(start_index):
-
-                polynomials = []
-                channel_subset = channels[chunk_size * start_index: chunk_size * (start_index + 1)]
-
-                for channel in channel_subset:
-                    channel_mask = total_poly_energies == channel
-
-                    # Select the masked events
-
-                    current_events = total_poly_events[channel_mask]
-
-                    # now bin the selected channel counts
-
-                    cnts, _ = np.histogram(current_events, bins=these_bins)
-
-                    # cnts = cnts / bin_width
-
-                    # Put data to fit in an x vector and y vector
-
-                    polynomial, _ = polyfit(mean_time[non_zero_mask],
-                                            cnts[non_zero_mask],
-                                            grade,
-                                            exposure_per_bin[non_zero_mask])
-
-                    polynomials.append(polynomial)
-
-                return polynomials
-
-            # Get a balanced view of the engines
-
-            lview = client.load_balanced_view()
-            # lview.block = True
-
-            # Distribute the work among the engines and start it, but return immediately the control
-            # to the main thread
-
-            amr = lview.map_async(worker, range(n_engines))
-
-            # client.wait_watching_progress(amr, 10)
-
-            print("\n")
-
-            res = amr.get()
-
-            polynomials = []
-            for i in range(n_engines):
-                polynomials.extend(res[i])
 
         # We are now ready to return the polynomials
 
 
         self._polynomials = polynomials
+
+
+    def save_background(self, filename, overwrite=False):
+        """
+        save the background to an HD5F
+
+        :param filename:
+        :return:
+        """
+
+        # make the file name proper
+
+        filename = os.path.splitext(filename)
+
+
+
+        filename = "%s.h5" % filename[0]
+
+
+        filename_sanitized = sanitize_filename(filename)
+
+        # Check that it does not exists
+        if os.path.exists(filename_sanitized):
+
+            if overwrite:
+
+                try:
+
+                    os.remove(filename_sanitized)
+
+                except:
+
+                    raise IOError("The file %s already exists and cannot be removed (maybe you do not have "
+                                  "permissions to do so?). " % filename_sanitized)
+
+            else:
+
+                raise IOError("The file %s already exists!" % filename_sanitized)
+
+        with HDFStore(filename_sanitized) as store:
+
+            # extract the polynomial information and save it
+
+            if self._poly_fit_exists:
+
+                coeff = []
+                err = []
+
+                for poly in self._polynomials:
+                    coeff.append(poly.coefficients)
+                    err.append(poly.covariance_matrix)
+                df_coeff = pd.Series(coeff)
+                df_err = pd.Series(err)
+
+            else:
+
+                raise RuntimeError('the polynomials have not been fit yet')
+
+            df_coeff.to_hdf(store, 'coefficients')
+            df_err.to_hdf(store, 'covariance')
+
+
+
+            store.get_storer('coefficients').attrs.metadata = {'poly_order': self._optimal_polynomial_grade,
+                                                             'poly_selections': zip(self._poly_intervals.start_times,self._poly_intervals.stop_times),
+                                                             'unbinned':self._unbinned}
+
+        if self._verbose:
+
+            print("\nSaved fitted background to %s.\n"% filename)
+
+
+
+    def restore_fit(self, filename):
+
+
+        filename_sanitized = sanitize_filename(filename)
+
+        with HDFStore(filename_sanitized) as store:
+
+            coefficients = store['coefficients']
+
+
+
+            covariance = store['covariance']
+
+            self._polynomials = []
+
+            # create new polynomials
+
+            for i in range(len(coefficients)):
+
+                coeff = np.array(coefficients.loc[i])
+
+                # make sure we get the right order
+                # pandas stores the non-needed coeff
+                # as nans.
+
+                coeff = coeff[np.isfinite(coeff)]
+
+                cov  = covariance.loc[i]
+
+
+
+                self._polynomials.append(Polynomial.from_previous_fit(coeff, cov))
+
+
+
+
+
+            metadata = store.get_storer('coefficients').attrs.metadata
+
+            self._optimal_polynomial_grade = metadata['poly_order']
+            poly_selections = np.array(metadata['poly_selections'])
+
+            self._poly_intervals = TimeIntervalSet.from_starts_and_stops(poly_selections[:,0],poly_selections[:,1])
+            self._unbinned = metadata['unbinned']
+
+        # go thru and count the counts!
+
+        self._poly_fit_exists = True
+
+        if self._time_selection_exists:
+
+            self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 
 
 class EventListWithDeadTime(EventList):
@@ -1153,21 +1118,21 @@ class EventListWithDeadTime(EventList):
 
         self._time_selection_exists = True
 
-        tmin_list = []
-        tmax_list = []
         interval_masks = []
 
-        for arg in args:
-            tmin, tmax = self._parse_time_interval(arg)
+        time_intervals = TimeIntervalSet.from_strings(*args)
+
+        time_intervals.merge_intersecting_intervals(in_place=True)
+
+        for interval in time_intervals:
+            tmin = interval.start_time
+            tmax = interval.stop_time
 
             mask = self._select_events(tmin,tmax)
 
-            tmin_list.append(tmin)
-            tmax_list.append(tmax)
             interval_masks.append(mask)
 
-        if intervals_overlap(tmin_list, tmax_list):
-            raise OverLappingIntervals('Provided intervals are overlapping and hence invalid')
+        self._time_intervals = time_intervals
 
         time_mask = interval_masks[0]
         if len(interval_masks) > 1:
@@ -1198,7 +1163,7 @@ class EventListWithDeadTime(EventList):
                 total_counts = 0
                 counts_err = 0
 
-                for tmin, tmax in zip(tmin_list, tmax_list):
+                for tmin, tmax in zip(self._time_intervals.start_times, self._time_intervals.stop_times):
                     # Now integrate the appropriate background polynomial
                     total_counts += self._polynomials[chan].integral(tmin, tmax)
                     counts_err += (self._polynomials[chan].integral_error(tmin, tmax)) ** 2
@@ -1211,13 +1176,13 @@ class EventListWithDeadTime(EventList):
 
             self._poly_count_err = np.array(tmp_err)
 
-            # self._is_poisson = False
+
 
         # Dead time correction
 
         exposure = 0.
-        for tmin, tmax in zip(tmin_list, tmax_list):
-            exposure += tmax - tmin
+        for interval in self._time_intervals:
+            exposure += interval.duration
 
         if self._dead_time is not None:
 
@@ -1227,10 +1192,7 @@ class EventListWithDeadTime(EventList):
             total_dead_time = 0.
 
         self._exposure = exposure - total_dead_time
-        # self._total_dead_time = total_dead_time
 
-        self._tmin_list = tmin_list
-        self._tmax_list = tmax_list
 
         self._active_dead_time = total_dead_time
 
@@ -1367,20 +1329,21 @@ class EventListWithLiveTime(EventList):
 
         self._time_selection_exists = True
 
-        tmin_list = []
-        tmax_list = []
         interval_masks = []
 
-        for arg in args:
-            tmin, tmax = self._parse_time_interval(arg)
+        time_intervals = TimeIntervalSet.from_strings(*args)
+
+        time_intervals.merge_intersecting_intervals(in_place=True)
+
+        for interval in time_intervals:
+            tmin = interval.start_time
+            tmax = interval.stop_time
             mask = self._select_events(tmin, tmax)
 
-            tmin_list.append(tmin)
-            tmax_list.append(tmax)
             interval_masks.append(mask)
 
-        if intervals_overlap(tmin_list, tmax_list):
-            raise OverLappingIntervals('Provided intervals are overlapping and hence invalid')
+        self._time_intervals = time_intervals
+
 
         time_mask = interval_masks[0]
         if len(interval_masks) > 1:
@@ -1412,7 +1375,7 @@ class EventListWithLiveTime(EventList):
                 total_counts = 0
                 counts_err = 0
 
-                for tmin, tmax in zip(tmin_list, tmax_list):
+                for tmin, tmax in zip(self._time_intervals.start_times, self._time_intervals.stop_times):
                     # Now integrate the appropriate background polynomial
                     total_counts += self._polynomials[chan].integral(tmin, tmax)
                     counts_err += (self._polynomials[chan].integral_error(tmin, tmax)) ** 2
@@ -1429,38 +1392,11 @@ class EventListWithLiveTime(EventList):
 
         exposure = 0.
         total_real_time = 0.
-        for tmin, tmax in zip(tmin_list, tmax_list):
-            total_real_time += tmax - tmin
-            exposure += self.exposure_over_interval(tmin, tmax)
+        for interval in self._time_intervals:
+            total_real_time += interval.duration
+            exposure += self.exposure_over_interval(interval.start_time, interval.stop_time)
 
         # In this case the exposure is the total live time
 
         self._exposure = exposure
         self._active_dead_time = total_real_time - exposure
-
-        self._tmin_list = tmin_list
-        self._tmax_list = tmax_list
-
-
-def intervals_overlap(tmin, tmax):
-    n_intervals = len(tmin)
-
-    # Check that
-    for i in range(n_intervals):
-        throw_away_tmin = copy.copy(tmin)
-        throw_away_tmax = copy.copy(tmax)
-
-        this_min = throw_away_tmin.pop(i)
-        this_max = throw_away_tmax.pop(i)
-
-        for mn, mx in zip(throw_away_tmin, throw_away_tmax):
-
-            if this_min < mn < this_max:
-
-                return True
-
-            elif this_min < mx < this_max:
-
-                return True
-
-        return False
