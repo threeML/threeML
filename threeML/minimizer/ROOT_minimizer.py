@@ -77,13 +77,24 @@ class ROOTMinimizer(Minimizer):
 
         if compute_covar:
 
-            covariance_matrix = self._compute_covariance_matrix(best_fit_values)
+            self.minimizer.Hesse()
+
+            # The ROOT Minimizer instance already got the covariance matrix,
+            # we just need to copy it
+
+            covariance_matrix = np.zeros((self.Npar, self.Npar))
+
+            for i in range(self.Npar):
+
+                for j in range(self.Npar):
+
+                    covariance_matrix[i,j] = self.minimizer.CovMatrix(i,j)
 
         else:
 
             covariance_matrix = None
 
-        minimum = self.functor(best_fit_values)
+        minimum = self.minimizer.MinValue()
 
         self._store_fit_results(best_fit_values, minimum, covariance_matrix)
 

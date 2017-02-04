@@ -2,6 +2,7 @@ import PyGMO
 from PyGMO.problem import base
 import numpy as np
 import dill
+import sys
 
 from threeML.minimizer.minimization import Minimizer
 
@@ -104,12 +105,22 @@ class PAGMOMinimizer(Minimizer):
 
     def minimize(self, compute_covar=True):
 
-        best_fit_values, final_value = evolve(self.function,
-                                              self.parameters,
-                                              self._algorithm,
-                                              evolution_step=self._evolution_step,
-                                              max_evolutions=self._max_evolutions,
-                                              ftol=self.ftol)
+        try:
+
+            best_fit_values, final_value = evolve(self.function,
+                                                  self.parameters,
+                                                  self._algorithm,
+                                                  evolution_step=self._evolution_step,
+                                                  max_evolutions=self._max_evolutions,
+                                                  ftol=self.ftol)
+
+        except:
+
+            raise
+
+            exc_type, message, _ = sys.exc_info()
+
+            raise RuntimeError("Could not evolve the population. Exc. type: %s, message: %s" % (exc_type, message))
 
         # Compute errors with the Hessian
 

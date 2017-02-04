@@ -99,6 +99,8 @@ class JointLikelihood(object):
 
         self._minimizer_callback = None
 
+        self._analysis_results = None
+
     @property
     def likelihood_model(self):
         """
