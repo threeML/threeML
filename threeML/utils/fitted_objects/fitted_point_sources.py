@@ -168,13 +168,13 @@ class IntegralFluxConversion(FluxConversion):
 
 
 class FittedPointSource(GenericFittedObject):
-    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None, is_differential_flux=True):
+    def __init__(self, analysis_result, source, energy_range, energy_unit, flux_unit, sigma=1, component=None, is_differential_flux=True):
         """
 
         A 3ML fitted point source.
 
 
-        :param analysis: a 3ML analysis
+        :param analysis_result: a 3ML analysis
         :param source: the source to solve for
         :param energy_range: an array of energies to calculate the source over
         :param energy_unit: string astropy unit
@@ -244,7 +244,7 @@ class FittedPointSource(GenericFittedObject):
 
 
 
-            super(FittedPointSource, self).__init__(analysis,
+            super(FittedPointSource, self).__init__(analysis_result,
                                                     source,
                                                     flux_function,
                                                     sigma,
@@ -268,7 +268,7 @@ class FittedPointSource(GenericFittedObject):
             # inherited as well and go right to the general and
             # use the e1, e2 as the integral bounds
 
-            super(FittedPointSource, self).__init__(analysis,
+            super(FittedPointSource, self).__init__(analysis_result,
                                                     source,
                                                     flux_function,
                                                     sigma,
@@ -372,12 +372,12 @@ class FittedPointSource(GenericFittedObject):
 
 
 class MLEPointSource(FittedPointSource, MLEFittedObject):
-    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None, is_differential_flux=True):
+    def __init__(self, analysis_result, source, energy_range, energy_unit, flux_unit, sigma=1, component=None, is_differential_flux=True):
         """
         An MLE fitted point source
 
 
-        :param analysis: a JointLikelihood fitted object
+        :param analysis_result: a JointLikelihood fitted object
         :param source: the astromodels source to be examined
         :param energy_range: a numpy aray of of energies
         :param energy_unit: the energy unit
@@ -385,9 +385,9 @@ class MLEPointSource(FittedPointSource, MLEFittedObject):
         :param component: the name (string) of a component of the source model
         """
 
-        assert analysis.analysis_type == "mle"
+        assert analysis_result.analysis_type == "mle"
 
-        super(MLEPointSource, self).__init__(analysis,
+        super(MLEPointSource, self).__init__(analysis_result,
                                              source,
                                              energy_range,
                                              energy_unit,
@@ -398,13 +398,13 @@ class MLEPointSource(FittedPointSource, MLEFittedObject):
 
 
 class BayesianPointSource(FittedPointSource, BayesianFittedObject):
-    def __init__(self, analysis, source, energy_range, energy_unit, flux_unit, sigma=1, component=None,
-                 fraction_of_samples=.1,  is_differential_flux=True):
+    def __init__(self, analysis_result, source, energy_range, energy_unit, flux_unit, sigma=1, component=None,
+                 fraction_of_samples=.1, is_differential_flux=True):
         """
         A Bayesian fitted point source
 
 
-        :param analysis: a BayesianAnalysis fitted object
+        :param analysis_result: a BayesianAnalysis fitted object
         :param source: the astromodels source to be examined
         :param energy_range: a numpy array of of energies
         :param energy_unit: the energy unit
@@ -413,13 +413,13 @@ class BayesianPointSource(FittedPointSource, BayesianFittedObject):
         :param fraction_of_samples: fraction of the samples to use when computing contours
         """
 
-        assert analysis.analysis_type == "bayesian"
+        assert analysis_result.analysis_type == "bayesian"
 
         assert 0. < fraction_of_samples < 1., "fraction_of_samples must be between 0 and 1"
 
         self._fraction_of_samples = fraction_of_samples
 
-        super(BayesianPointSource, self).__init__(analysis,
+        super(BayesianPointSource, self).__init__(analysis_result,
                                                   source,
                                                   energy_range,
                                                   energy_unit,

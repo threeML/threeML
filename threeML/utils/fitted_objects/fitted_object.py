@@ -7,16 +7,18 @@ import scipy.stats as stats
 
 from threeML.utils.differentiation import get_jacobian
 from threeML.utils.stats_tools import highest_density_posterior
-
+from threeML.analysis_results import _AnalysisResults
+from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 
 
 
 class GenericFittedObject(object):
-    def __init__(self, analysis, source, new_function, sigma , *independent_variable_range):
+    def __init__(self, analysis_result, new_function, cl, *independent_variable_range):
         """
         A generic 3ML fitted object
 
-        :param analysis: a 3ML JointLikelihood or BayesianAnalysis object
+        :param analysis_result: a 3ML analysis result
         :param source: an astromodels source
         :param new_function: the function to use the fitted values to compute new values
         :param sigma: the level of sigma to display in the contours
@@ -25,12 +27,25 @@ class GenericFittedObject(object):
 
         # lock variables to the class
 
-        self._analysis = analysis
-        self._source = source
+        # we can pass either an analysis (Bayesian or JL) and extract the results
+        if isinstance(analysis_result,JointLikelihood) or isinstance(analysis_result,BayesianAnalysis):
+
+            # extract the result
+            self._analysis_results = analysis_result.results
+
+        elif isinstance(analysis_result,_AnalysisResults):
+
+            self._analysis_results = analysis_result
+
+
+
+
+
+        self._analysis = analysis_result
         self._independent_variable_range = independent_variable_range
 
-        self._sigma = sigma
-        self._alpha = self._calculate_alpha(sigma)
+        self._cl = cl
+
 
         # if only 1-D then we must place into its own tuple to
         # keep from confusing itertools
@@ -39,8 +54,6 @@ class GenericFittedObject(object):
             self._independent_variable_range = (self._independent_variable_range[0],)
 
         self._function = new_function
-
-        self._get_free_parameters()
 
         # figure out the output shape of the best fit and errors
 
@@ -52,15 +65,28 @@ class GenericFittedObject(object):
 
         self._compute_error_region()
 
+
+
+
     @property
-    def best_fit(self):
+    def median(self):
         """
         return the evaluation at the best fit
 
         :return: best fit value(s)
         """
 
-        return self._best_fit_values
+        return self._analysis_results.median
+
+    @property
+    def mean(self):
+        """
+        return the evaluation at the best fit
+
+        :return: best fit value(s)
+        """
+
+        return self._analysis_results.mean
 
     @property
     def error_region(self):
@@ -76,9 +102,32 @@ class GenericFittedObject(object):
 
         pass
 
-    def _get_free_parameters(self):
 
-        raise RuntimeError("Must be implemented in subclass") # pragma: no cover
+    def _build_propagated_function(self):
+
+        arguments = {}
+        for par in self._function.parameters.values():
+
+            if par.free:
+
+                this_name = par.name
+
+                this_variate = self._analysis_results.get_variates(par.path)
+
+                # Do not use more than 1000 values (would make computation too slow for nothing)
+
+                if len(this_variate) > 1000:
+                    this_variate = np.random.choice(this_variate, size=1000)
+
+                arguments[this_name] = this_variate
+
+                # Prepare the error propagator function
+
+        pp = self._analysis_results.propagate(self._function, **arguments)
+
+
+
+
 
     def _compute_best_fit_values(self):
         """
@@ -91,7 +140,7 @@ class GenericFittedObject(object):
         :return:
         """
 
-        self._analysis.restore_best_fit()
+
 
         # if there are independent variables
         if self._independent_variable_range:
