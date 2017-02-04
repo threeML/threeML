@@ -2,8 +2,10 @@ import contextlib
 import sys
 
 
-class DummyFile(object):
+class _DummyFile(object):
     def write(self, x): pass
+
+    def flush(self, *args, **kwargs): pass
 
 
 @contextlib.contextmanager
@@ -16,7 +18,7 @@ def suppress_stdout():
 
     save_stdout = sys.stdout
 
-    sys.stdout = DummyFile()
+    sys.stdout = _DummyFile()
 
     yield
 

@@ -933,11 +933,12 @@ class AnalysisResultsSet(collections.Sequence):
             unit = u.Unit(unit)
 
             data_tuple = (('LOWER_BOUND', lower_bounds * unit),
-                           ('UPPER_BOUND', upper_bounds * unit))
+                          ('UPPER_BOUND', upper_bounds * unit))
 
         else:
 
-            data_tuple = (('LOWER_BOUND', lower_bounds), ('UPPER_BOUND', upper_bounds))
+            data_tuple = (('LOWER_BOUND', lower_bounds),
+                          ('UPPER_BOUND', upper_bounds))
 
         self.characterize_sequence(name, data_tuple)
 
@@ -956,8 +957,10 @@ class AnalysisResultsSet(collections.Sequence):
 
         self._sequence_name = str(name)
 
-        assert len(data_tuple[0]) == len(self), "A column in tuple has length of %i (should be %i)" % (len(data_tuple),
-                                                                                                       len(self))
+        for i, this_tuple in enumerate(data_tuple):
+
+            assert len(this_tuple[1]) == len(self), "Column %i in tuple has length of " \
+                                                    "%i (should be %i)" % (i, len(data_tuple), len(self))
 
         self._sequence_tuple = data_tuple
 
@@ -977,7 +980,7 @@ class AnalysisResultsSet(collections.Sequence):
             # Make the default sequence
             frame_tuple = (('VALUE', range(len(self))),)
 
-            self.characterize_sequence("unspecified", pd.DataFrame.from_items(frame_tuple))
+            self.characterize_sequence("unspecified", frame_tuple)
 
         fits = AnalysisResultsFITS(*self, sequence_tuple=self._sequence_tuple, sequence_name=self._sequence_name)
 

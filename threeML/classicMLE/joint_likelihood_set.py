@@ -95,6 +95,8 @@ class JointLikelihoodSet(object):
 
         self._compute_covariance = False
 
+        self._all_results = None
+
     def set_minimizer(self, minimizer, algorithm=None, callback=None):
 
         self._minimizer = minimizer
@@ -272,13 +274,31 @@ class JointLikelihoodSet(object):
 
             this_model_results = map(lambda x: x[2][i], results)
 
-            self._all_results.append(this_model_results)
+            self._all_results.append(AnalysisResultsSet(this_model_results))
 
         return parameter_frames, like_frames
 
+    @property
+    def results(self):
+        """
+        Returns a results set for each model. If there is more than one model, it will return a list of
+        AnalysisResultsSet instances, otherwise it will return one AnalysisResultsSet instance
+
+        :return:
+        """
+
+        if len(self._all_results) == 1:
+
+            return self._all_results[0]
+
+        else:
+
+            return self._all_results
+
     def write_to(self, filenames, overwrite=False):
         """
-        Write the results to one file per model
+        Write the results to one file per model. If you need more control, get the results using the .results property
+        then write each results set by itself.
 
         :param filenames: list of filenames, one per model, or filename (if there is only one model per interval)
         :param overwrite: overwrite existing files
@@ -294,7 +314,7 @@ class JointLikelihoodSet(object):
         # Now write one file for each model
         for i in range(self._n_models):
 
-            this_results = AnalysisResultsSet(self._all_results[i])
+            this_results = self._all_results[i]
 
             this_results.write_to(filenames[i], overwrite=overwrite)
 
