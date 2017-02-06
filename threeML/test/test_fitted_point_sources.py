@@ -129,18 +129,18 @@ def test_fitted_point_source_plotting():
 
             for x in analysis_to_test:
 
-                calculate_point_source_flux(1,10,*x,flux_unit=u2,energy_unit=e_unit)
+                calculate_point_source_flux(1,10,x,flux_unit=u2,energy_unit=e_unit)
 
-                calculate_point_source_flux(1, 10, *x, **flux_keywords)
+                calculate_point_source_flux(1, 10, x, **flux_keywords)
 
-                plot_point_source_spectra(*x,flux_unit=u1,energy_unit=e_unit)
+                plot_point_source_spectra(x,flux_unit=u1,energy_unit=e_unit)
 
-                plot_point_source_spectra(*x,**plot_keywords)
-
-                with pytest.raises(InvalidUnitError):
-
-                    calculate_point_source_flux(0,10,*x,flux_unit=bad_flux_units[0])
+                plot_point_source_spectra(x,**plot_keywords)
 
                 with pytest.raises(InvalidUnitError):
-                    plot_point_source_spectra(*x,flux_unit=bad_flux_units[0])
+
+                    calculate_point_source_flux(0,10,x,flux_unit=bad_flux_units[0])
+
+                with pytest.raises(InvalidUnitError):
+                    plot_point_source_spectra(x,flux_unit=bad_flux_units[0])
 
