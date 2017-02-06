@@ -791,7 +791,7 @@ class EventList(object):
 
         polynomials = []
 
-        with progress_bar(self._n_channels) as p:
+        with progress_bar(self._n_channels, title="Fitting %s background"%self._instrument) as p:
             for channel in channels:
                 channel_mask = total_poly_energies == channel
 
@@ -890,7 +890,7 @@ class EventList(object):
 
         polynomials = []
 
-        with progress_bar(self._n_channels) as p:
+        with progress_bar(self._n_channels, title="Fitting %s background"%self._instrument) as p:
             for channel in channels:
                 channel_mask = total_poly_energies == channel
 
