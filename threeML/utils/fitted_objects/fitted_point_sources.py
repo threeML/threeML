@@ -180,6 +180,9 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         A 3ML fitted point source.
 
 
+        :param confidence_level:
+        :param equal_tailed:
+        :param is_differential_flux:
         :param analysis_result: a 3ML analysis
         :param source: the source to solve for
         :param energy_range: an array of energies to calculate the source over

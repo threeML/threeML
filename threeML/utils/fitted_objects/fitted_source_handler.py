@@ -67,6 +67,17 @@ class GenericFittedSourceHandler(object):
         return self.values + other.values
 
 
+    def __radd__(self, other):
+
+        if other == 0:
+
+            return self
+
+        else:
+
+            return self.values + other.values
+
+
     def _transform(self, value):
         """
         dummy transform to be overridden in a subclass
@@ -161,6 +172,15 @@ class GenericFittedSourceHandler(object):
         return self._propagated_variates
 
     @property
+    def samples(self):
+        """
+
+        :return: the raw samples of the variates
+        """
+
+        return self._propagated_variates.samples
+
+    @property
     def median(self):
         """
 
@@ -252,11 +272,11 @@ class VariatesContainer(object):
         # calculate mean and median and transform them into the provided
         # output shape
 
-        self._average = np.array([val.average for val in self.values])
+        self._average = np.array([val.average for val in self._values])
 
         self._average = self._average.reshape(self._out_shape)
 
-        self._median = np.array([val.median for val in self.values])
+        self._median = np.array([val.median for val in self._values])
 
         self._median = self._median.reshape(self._out_shape)
 
@@ -268,7 +288,7 @@ class VariatesContainer(object):
         # if equal tailed errors requested
         if equal_tailed:
 
-            for val in self.values:
+            for val in self._values:
 
                 error = val.equal_tail_confidence_interval(self._cl)
                 upper_error.append(error[1])
@@ -278,7 +298,7 @@ class VariatesContainer(object):
 
             # else use the hdp
 
-            for val in self.values:
+            for val in self._values:
 
                 error = val.highest_posterior_density_interval(self._cl)
                 upper_error.append(error[1])
@@ -290,6 +310,21 @@ class VariatesContainer(object):
         self._lower_error = np.array(lower_error).reshape(self._out_shape)
 
 
+
+        samples = []
+
+        for val in self._values:
+
+            samples.append(val.samples)
+
+        n_samples = len(samples[0])
+
+        samples_shape = list(self._out_shape) + [n_samples]
+
+        self._samples_shape = tuple(samples_shape)
+
+        self._samples = np.array(samples).reshape(samples_shape)
+
     @property
     def values(self):
         """
@@ -297,6 +332,15 @@ class VariatesContainer(object):
         """
 
         return self._values
+
+    @property
+    @transform
+    def samples(self):
+        """
+
+        :return: the transformed raw samples
+        """
+        return self._samples
 
     @property
     @transform
