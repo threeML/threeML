@@ -691,26 +691,18 @@ class BayesianAnalysis(object):
 
             raise RuntimeError("You have to run the sampler first, using the sample() method")
 
-    def corner_plot_cc(self, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1., parameters=None,
-                       renamed_parameters=None, figsize='PAGE', **kwargs):
+    def corner_plot_cc(self, parameters=None, renamed_parameters=None, figsize='PAGE', **cc_kwargs):
         """
-        Corner plots using chainconsumer which allows for sexier plotting of
+        Corner plots using chainconsumer which allows for nicer plotting of
         marginals
-
-
-
-        :param sigmas: list of sigma levels to include. 0 must be included to avoid hole in contour
-        :param cloud: bool. Whether or not to plot MC points
-        :param shade: bool. Fill in the contours
-        :param shade_alpha: alpha level of contours
+        see: https://samreay.github.io/ChainConsumer/chain_api.html#chainconsumer.ChainConsumer.configure
+        for all options
         :param parameters: list of parameters to plot
         :param renamed_parameters: a python dictionary of parameters to rename.
              Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
              {'old label': 'new label'}
-        :param **kwargs: chainconsumer general keyword arguments
-
+        :param **cc_kwargs: chainconsumer general keyword arguments
         :return fig:
-
         """
 
         if not has_chainconsumer:
@@ -723,7 +715,6 @@ class BayesianAnalysis(object):
 
         labels = []
         priors = []
-
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
             short_name = parameter_name.split(".")[-1]
@@ -743,27 +734,22 @@ class BayesianAnalysis(object):
                     if labels[i] == old_label:
                         labels[i] = new_label
 
-
-
         # Must remove underscores!
 
         for i, val, in enumerate(labels):
 
-
             if '$' not in labels[i]:
-                labels[i] = val.replace('_',' ')
-
-
-
+                labels[i] = val.replace('_', '')
 
         cc = chainconsumer.ChainConsumer()
 
         cc.add_chain(self.raw_samples, parameters=labels)
 
-        cc.configure_contour(cloud=cloud, shade=shade, shade_alpha=shade_alpha, sigmas=sigmas)
-        cc.configure_general(**kwargs)
-        fig = cc.plot(parameters=parameters, figsize=figsize)
+        if not cc_kwargs:
+            cc_kwargs = threeML_config['bayesian']['chain consumer style']
 
+        cc.configure(**cc_kwargs)
+        fig = cc.plot(parameters=parameters)
 
         return fig
 
