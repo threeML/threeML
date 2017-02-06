@@ -126,13 +126,11 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
 
     fig = bayes.corner_plot()
 
+
     mc = ModelComparison(bayes)
 
     mc.report()
 
     mc.report(sort='DIC')
 
-    calculate_point_source_flux(10,30,bayes,use_components=True)
-
-    plot_point_source_spectra(bayes)
 

@@ -87,7 +87,7 @@ good_energy_units = ['keV', 'Hz', 'nm']
 bad_flux_units = ['g']
 
 
-analysis_to_test = [jl_simple,jl_complex,bayes_simple,bayes_complex]
+analysis_to_test = [jl_simple.results,jl_complex.results,bayes_simple.results,bayes_complex.results]
 
 
 flux_keywords = {'use_components': True,
