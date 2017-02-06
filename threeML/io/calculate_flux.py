@@ -645,7 +645,7 @@ def calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
 
 
             mle_df = pd.DataFrame({'flux': fluxes, 'negative error':n_errors, 'positive error': p_errors}, index=labels)
-            mle_df = mle_df[['flux', 'error']]
+            mle_df = mle_df[['flux', 'negative error', 'positive error']]
             out.append(mle_df)
 
             display(mle_df)
@@ -723,7 +723,7 @@ def calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
             bayes_df = pd.DataFrame({'flux': fluxes, 'negative error': n_errors, 'positive error':p_errors,'flux distribution': distributions},
                                     index=labels)
 
-            bayes_df = bayes_df[['flux', 'credible region', 'flux distribution']]
+            bayes_df = bayes_df[['flux', 'negative error', 'positive error' ,'flux distribution']]
             out.append(bayes_df)
 
             display(bayes_df)

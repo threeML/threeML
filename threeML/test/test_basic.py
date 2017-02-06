@@ -100,9 +100,6 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
 
     fit_results, like_frame = jl.fit()
 
-    #   res = jl.get_errors()
-
-
 
 
     mc = ModelComparison(jl)
@@ -110,10 +107,6 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
     mc.report()
 
     mc.report(sort='AIC')
-
-    calculate_point_source_flux(10, 30, jl, use_components=True)
-
-    plot_point_source_spectra(jl)
 
     powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
     powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)

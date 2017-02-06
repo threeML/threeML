@@ -87,31 +87,38 @@ good_energy_units = ['keV', 'Hz', 'nm']
 bad_flux_units = ['g']
 
 
-analysis_to_test = [jl_simple.results,jl_complex.results,bayes_simple.results,bayes_complex.results]
+analysis_to_test = [jl_simple.results,
+                    jl_complex.results,
+                    bayes_simple.results,
+                    bayes_complex.results]
 
 
-flux_keywords = {'use_components': True,
-                 'components_to_use': ['total','Powerlaw'],
-                 'sources_to_use':['bn090217206'],
-                 'flux_unit':'erg/(cm2 s)',
-                 'energy_unit':'keV','sum_sources':True}
 
-plot_keywords = {'use_components': True,
-                 'components_to_use': ['Powerlaw','total'],
-                 'sources_to_use':['bn090217206'],
-                 'flux_unit':'erg/(cm2 s)',
-                 'energy_unit':'keV',
-                 'plot_style_kwargs':{},
-                 'contour_style_kwargs':{},
-                 'legend_kwargs':{},
-                 'ene_min':10,
-                 'ene_max':100,
-                 'show_legend':False,
-                 'fit_cmap':'jet',
-                 'countor_cmap':'jet','sum_sources':True}
 
 
 def test_fitted_point_source_plotting():
+
+    flux_keywords = {'use_components': True,
+                    'components_to_use': ['total', 'Powerlaw'],
+                    'sources_to_use': ['bn090217206'],
+                    'flux_unit': 'erg/(cm2 s)',
+                    'energy_unit': 'keV',
+                    'sum_sources': True}
+
+    plot_keywords = {'use_components': True,
+                     'components_to_use': ['Powerlaw', 'total'],
+                     'sources_to_use': ['bn090217206'],
+                     'flux_unit': 'erg/(cm2 s)',
+                     'energy_unit': 'keV',
+                     'plot_style_kwargs': {},
+                     'contour_style_kwargs': {},
+                     'legend_kwargs': {},
+                     'ene_min': 10,
+                     'ene_max': 100,
+                     'show_legend': False,
+                     'fit_cmap': 'jet',
+                     'countor_cmap': 'jet',
+                     'sum_sources': True}
 
 
     for u1, u2 in zip(good_d_flux_units,good_i_flux_units):
@@ -124,7 +131,7 @@ def test_fitted_point_source_plotting():
 
                 calculate_point_source_flux(1,10,*x,flux_unit=u2,energy_unit=e_unit)
 
-                calculate_point_source_flux(1, 10, *x, ** flux_keywords)
+                calculate_point_source_flux(1, 10, *x, **flux_keywords)
 
                 plot_point_source_spectra(*x,flux_unit=u1,energy_unit=e_unit)
 
