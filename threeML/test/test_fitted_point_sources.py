@@ -98,12 +98,6 @@ analysis_to_test = [jl_simple.results,
 
 def test_fitted_point_source_plotting():
 
-    flux_keywords = {'use_components': True,
-                    'components_to_use': ['total', 'Powerlaw'],
-                    'sources_to_use': ['bn090217206'],
-                    'flux_unit': 'erg/(cm2 s)',
-                    'energy_unit': 'keV',
-                    'sum_sources': True}
 
     plot_keywords = {'use_components': True,
                      'components_to_use': ['Powerlaw', 'total'],
@@ -115,6 +109,7 @@ def test_fitted_point_source_plotting():
                      'legend_kwargs': {},
                      'ene_min': 10,
                      'ene_max': 100,
+                     'num_ene':5,
                      'show_legend': False,
                      'fit_cmap': 'jet',
                      'countor_cmap': 'jet',
@@ -129,18 +124,29 @@ def test_fitted_point_source_plotting():
 
             for x in analysis_to_test:
 
-                calculate_point_source_flux(1,10,x,flux_unit=u2,energy_unit=e_unit)
 
-                calculate_point_source_flux(1, 10, x, **flux_keywords)
-
-                plot_point_source_spectra(x,flux_unit=u1,energy_unit=e_unit)
+                plot_point_source_spectra(x,flux_unit=u1,energy_unit=e_unit,num_ene=5)
 
                 plot_point_source_spectra(x,**plot_keywords)
 
                 with pytest.raises(InvalidUnitError):
-
-                    calculate_point_source_flux(0,10,x,flux_unit=bad_flux_units[0])
-
-                with pytest.raises(InvalidUnitError):
                     plot_point_source_spectra(x,flux_unit=bad_flux_units[0])
+
+
+
+def test_fitted_point_source_flux_calculations():
+
+
+    flux_keywords = {'use_components': True,
+                     'components_to_use': ['total', 'Powerlaw'],
+                     'sources_to_use': ['bn090217206'],
+                     'flux_unit': 'erg/(cm2 s)',
+                     'energy_unit': 'keV',
+                     'sum_sources': True}
+
+
+    calculate_point_source_flux(1,10,analysis_to_test[0],flux_unit=good_i_flux_units[0],energy_unit='keV')
+
+    calculate_point_source_flux(1, 10, analysis_to_test[-2], **flux_keywords)
+
 
