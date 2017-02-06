@@ -127,7 +127,7 @@ def test_fitted_point_source_plotting():
 
             print u
 
-            for x in itertools.product(analysis_to_test):
+            for x in analysis_to_test:
 
                 calculate_point_source_flux(1,10,*x,flux_unit=u2,energy_unit=e_unit)
 
