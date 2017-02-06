@@ -1,51 +1,35 @@
 __author__ = "grburgess"
 
 import itertools
+import functools
 
 import numpy as np
-import scipy.stats as stats
-
-from threeML.utils.differentiation import get_jacobian
-from threeML.utils.stats_tools import highest_density_posterior
-from threeML.analysis_results import _AnalysisResults
-from threeML.classicMLE.joint_likelihood import JointLikelihood
-from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 
 
 
-class GenericFittedObject(object):
-    def __init__(self, analysis_result, new_function, cl, *independent_variable_range):
+class GenericFittedSourceHandler(object):
+    def __init__(self, analysis_result, new_function, parameter_names, parameters, confidence_level, equal_tailed, *independent_variable_range):
         """
-        A generic 3ML fitted object
+        A generic 3ML fitted source  post-processor. This should be sub-classed in general
 
         :param analysis_result: a 3ML analysis result
-        :param source: an astromodels source
         :param new_function: the function to use the fitted values to compute new values
-        :param sigma: the level of sigma to display in the contours
+        :param parameter_names: a list of parameter names
+        :param parameters: astromodels parameter dictionary
+        :param confidence_level: the confidence level to compute error
         :param independent_variable_range: the range(s) of independent values to compute the new function over
         """
 
-        # lock variables to the class
+        # bind the class properties
 
-        # we can pass either an analysis (Bayesian or JL) and extract the results
-        if isinstance(analysis_result,JointLikelihood) or isinstance(analysis_result,BayesianAnalysis):
-
-            # extract the result
-            self._analysis_results = analysis_result.results
-
-        elif isinstance(analysis_result,_AnalysisResults):
-
-            self._analysis_results = analysis_result
-
-
-
-
-
+        self._analysis_results = analysis_result
         self._analysis = analysis_result
         self._independent_variable_range = independent_variable_range
-
-        self._cl = cl
-
+        self._cl = confidence_level
+        self._equal_tailed=equal_tailed
+        self._function = new_function
+        self._parameter_names = parameter_names
+        self._parameters = parameters
 
         # if only 1-D then we must place into its own tuple to
         # keep from confusing itertools
@@ -53,50 +37,44 @@ class GenericFittedObject(object):
         if len(self._independent_variable_range) == 1:
             self._independent_variable_range = (self._independent_variable_range[0],)
 
-        self._function = new_function
 
         # figure out the output shape of the best fit and errors
 
         self._out_shape = tuple(map(len, self._independent_variable_range))
 
+        # construct the propagated function
+
+        self._build_propagated_function()
+
         # fold the function through its independent values
-        self._compute_best_fit_values()
-
-
-        self._compute_error_region()
+        self._evaluate()
 
 
 
-
-    @property
-    def median(self):
+    def __add__(self, other):
         """
-        return the evaluation at the best fit
-
-        :return: best fit value(s)
+        The basics of adding are handled in the VariatesContainer
+        :param other: another fitted source handler
+        :return: a VariatesContainer with the summed values
         """
 
-        return self._analysis_results.median
+        # assure that the shapes will be the same
+        assert other._out_shape == self._out_shape, 'cannot sum together arrays with different shapes!'
 
-    @property
-    def mean(self):
+        # this will get the value container for the other values
+
+        return self.values + other.values
+
+
+    def _transform(self, value):
         """
-        return the evaluation at the best fit
-
-        :return: best fit value(s)
-        """
-
-        return self._analysis_results.mean
-
-    @property
-    def error_region(self):
-        """
-        The error region of the newly computed quantity
-
-        :return: error region
+        dummy transform to be overridden in a subclass
+        :param value:
+        :return: transformed value
         """
 
-        return self._error_region
+        return value
+
 
     def update_tag(self, tag, value):
 
@@ -104,13 +82,19 @@ class GenericFittedObject(object):
 
 
     def _build_propagated_function(self):
+        """
+        builds a propagated function using RandomVariates propagation
+
+        :return:
+        """
 
         arguments = {}
-        for par in self._function.parameters.values():
+
+        # because we might be using composite functions,
+        # we have to keep track of parameter names in a non-elegant way
+        for par,name in zip(self._parameters.values(), self._parameter_names):
 
             if par.free:
-
-                this_name = par.name
 
                 this_variate = self._analysis_results.get_variates(par.path)
 
@@ -119,17 +103,19 @@ class GenericFittedObject(object):
                 if len(this_variate) > 1000:
                     this_variate = np.random.choice(this_variate, size=1000)
 
-                arguments[this_name] = this_variate
+                arguments[name] = this_variate
 
-                # Prepare the error propagator function
+            else:
 
-        pp = self._analysis_results.propagate(self._function, **arguments)
+                # use the fixed value rather than a variate
 
+                arguments[name] = par.value
 
+        # create the propagtor
 
+        self._propagated_function = self._analysis_results.propagate(self._function, **arguments)
 
-
-    def _compute_best_fit_values(self):
+    def _evaluate(self):
         """
 
         calculate the best or mean fit of the new function or
@@ -139,462 +125,251 @@ class GenericFittedObject(object):
 
         :return:
         """
-
-
-
         # if there are independent variables
         if self._independent_variable_range:
 
-            values = []
+            variates = []
 
             # scroll through the independent variables
 
             for variables in itertools.product(*self._independent_variable_range):
-                values.append(self._function(*variables))
+                variates.append(self._propagated_function(*variables))
 
-            values = np.array(values)
-
-            # reshape and attach to the class
-
-            self._best_fit_values = values.reshape(self._out_shape)
 
         # otherwise just evaluate
         else:
 
-            self._best_fit_values = self._function()
+            variates = self._propagated_function()
 
-    def _compute_error_region(self, function, *independent_variables):
+        # create a variates container
 
-        raise RuntimeError("Must be implemented in subclass") # pragma: no cover
+        self._propagated_variates = VariatesContainer(variates, self._out_shape, self._cl, self._transform, self._equal_tailed)
 
-    def _calculate_alpha(self, sigma):
-        """ alpha = 1-p  """
+    @property
+    def values(self):
+        """
 
-        return (stats.norm.sf(sigma) * 2)
+        :return: The VariatesContainer
+        """
 
-class MLEFittedObject(GenericFittedObject):
+        return self._propagated_variates
 
+    @property
+    def median(self):
+        """
+
+        :return: the median of the variates
+        """
+
+        return self._propagated_variates.median
+
+    @property
+    def average(self):
+        """
+
+        :return: the average of the variates
+        """
+
+        return self._propagated_variates.average
+
+    @property
+    def upper_error(self):
+        """
+
+        :return: the upper error of the variates
+        """
+
+        return self._propagated_variates.upper_error
+
+    @property
+    def lower_error(self):
+        """
+
+        :return: the lower error of the variates
+        """
+
+        return self._propagated_variates.lower_error
+
+
+
+
+def transform(method):
+    """
+    A wrapper to call the _transform method for outputs of Variates container class
+    :param method:
+    :return:
+    """
+
+    @functools.wraps(method)
+    def wrapped(instance, *args, **kwargs):
+        return instance._transform(method(instance, *args, **kwargs))
+
+    return wrapped
+
+
+class VariatesContainer(object):
+
+
+    def __init__(self,values, out_shape , cl, transform, equal_tailed=True):
+        """
+        A container to store an *List* of RandomVariates and transform their outputs
+        to the appropriate shape. This cannot be done with normal numpy array operations
+        because an array of RandomVariates becomes a normal ndarray. Therefore, we calculate
+        the averages, errors, etc, and transform those.
+
+        Additionally, any unit association must be done post calculation as well because the
+        numpy array constructor sees a unit array as a regular array and again loses the RandomVariates
+        properties. Therefore, the transform method is used which applies a function to the output properties,
+        e.g., a unit association and or conversion.
+
+
+
+        :param values: a flat List of RandomVariates
+        :param out_shape: the array shape for the output variables
+        :param cl: the confidence level to calculate error intervals on
+        :param transform: a method to transform the outputs
+        :param equal_tailed: whether to use equal-tailed error intervals or not
+        """
+
+
+
+        self._values = values # type: list
+
+        self._out_shape = out_shape #type: tuple
+
+        self._cl = cl #type: float
+
+        self._equal_tailed = equal_tailed #type: bool
+
+        self._transform = transform #type: callable
+
+        # calculate mean and median and transform them into the provided
+        # output shape
+
+        self._average = np.array([val.average for val in self.values])
+
+        self._average = self._average.reshape(self._out_shape)
+
+        self._median = np.array([val.median for val in self.values])
+
+        self._median = self._median.reshape(self._out_shape)
+
+        # construct the error intervals
+
+        upper_error = []
+        lower_error = []
+
+        # if equal tailed errors requested
+        if equal_tailed:
+
+            for val in self.values:
+
+                error = val.equal_tail_confidence_interval(self._cl)
+                upper_error.append(error[1])
+                lower_error.append(error[0])
+
+        else:
+
+            # else use the hdp
+
+            for val in self.values:
+
+                error = val.highest_posterior_density_interval(self._cl)
+                upper_error.append(error[1])
+                lower_error.append(error[0])
+
+        # reshape the errors into the output shape
+
+        self._upper_error = np.array(upper_error).reshape(self._out_shape)
+        self._lower_error = np.array(lower_error).reshape(self._out_shape)
+
+
+    @property
+    def values(self):
+        """
+        :return: the list of of RandomVariates
+        """
+
+        return self._values
+
+    @property
+    @transform
+    def average(self):
+        """
+
+        :return: the transformed average
+        """
+
+        return self._average
+
+    @property
+    @transform
+    def median(self):
+        """
+
+        :return: the transformed median
+        """
+
+        return self._median
+
+    @property
+    @transform
+    def upper_error(self):
+        """
+
+        :return: the transformed upper error
+        """
+
+        return self._upper_error
+
+
+    @property
+    @transform
+    def lower_error(self):
+        """
+
+        :return: the transformed lower error
+        """
+
+        return self._lower_error
 
     def __add__(self, other):
         """
-        how MLE objects add together.
+
 
         :param other:
-        :return: total best fit and total error dict
+        :return:
         """
 
-        # first add together the main value
+        assert other._out_shape == self._out_shape, 'cannot sum together arrays with different shapes!'
 
-        other_best = other.best_fit
+        # this will get the value container for the other values
 
-        other_error = other.error_region
+        other_values = other.values
 
-        # add sum of squares
 
-        total_error = np.sqrt((self.error_region) ** 2 + other_error ** 2)
+        summed_values = [v+vo for v,vo in zip(self._values, other_values)]
 
-        total_best = self.best_fit + other_best
-
-        # to facilitate summing
-
-        new_container = ErrorContainer()
-
-        new_container['best_fit'] = total_best
-        new_container['error_region'] = total_error
-
-        return new_container
-
+        return VariatesContainer(summed_values, self._out_shape, self._cl, self._transform, self._equal_tailed)
 
     def __radd__(self, other):
 
         if other == 0:
 
-            new_container = ErrorContainer()
-
-            new_container['error_region'] = self.error_region
-            new_container['best_fit'] = self.best_fit
-
-            return new_container
-
-
-        elif isinstance(other, ErrorContainer):
-
-            other_error = other['error_region']
-            other_best = other['best_fit']
-
-            total_best = self.best_fit + other_best
-            total_error = np.sqrt(self.error_region ** 2 + other_error ** 2)
-
-            new_container = ErrorContainer()
-
-            new_container['error_region'] = total_error
-            new_container['best_fit'] = total_best
-
-            return new_container
-
-
+            return self
 
         else:
 
-            raise RuntimeError('Cannot add together these types!')
+            other_values = other.values
 
+            summed_values = [v + vo for v, vo in zip(self._values, other_values)]
 
+            return VariatesContainer(summed_values, self._out_shape, self._cl, self._transform, self._equal_tailed)
 
-    def _compute_error_region(self, ):
-        """
-        propagate errors via gaussian error propagation
 
-        :return:
-        """
 
-        self._error_region = self._propagate_into_function()
 
 
-    @property
-    def error_region(self):
-        """
-        Return the MLE error region and the specified error level
 
-        :return:
-        """
 
-        return self._sigma * super(MLEFittedObject,self).error_region
 
-
-    def _propagate_into_function(self):
-        """
-
-        propagate the cavariance matrix into the
-        new function
-
-
-        :return:
-        """
-
-        errors = []
-
-        # Get the parameters from the minimizer
-
-        parameters = self._analysis.minimizer.parameters
-
-        # We will compute the error at each  interval
-        # so that we can plot the spread as a function of energy
-
-        if self._independent_variable_range:
-
-            # with progress_bar(len(energy)) as p:
-            for variables in itertools.product(*self._independent_variable_range):
-
-                first_derivatives = []
-
-                # Now loop through each parameter and free it while
-                # holding the others constant. This is the normal (pun intended)
-                # error propagation formula.
-
-                for par in parameters.keys():
-                    # go back to the best fit
-
-                    self._analysis.restore_best_fit()
-
-                    parameter_best_fit_value = parameters[par].value
-                    min_value, max_value = parameters[par].bounds
-
-                    # Create a temporary flux function to take a
-                    # derivative w.r.t. the free parameter
-
-                    def tmpflux(current_value):
-                        parameters[par].value = current_value
-
-                        return self._function(*variables)  # .value
-
-                    # get the first derivatives and append them for some
-                    # linear algebra
-
-                    this_derivative = get_jacobian(tmpflux, parameter_best_fit_value, min_value, max_value)[0][0]
-
-                    first_derivatives.append(this_derivative)
-
-                first_derivatives = np.array(first_derivatives)
-
-                # Now we take the inner product with the covariance matrix
-
-                tmp = first_derivatives.dot(self._analysis.covariance_matrix)
-
-                errors.append(np.sqrt(tmp.dot(first_derivatives)))
-
-            errors = np.array(errors).reshape(self._out_shape)
-
-
-        else:
-
-            # the function has no independent variables
-
-            first_derivatives = []
-
-            # Now loop through each parameter and free it while
-            # holding the others constant. This is the normal (pun intended)
-            # error propagation formula.
-
-            for par in parameters.keys():
-                # go back to the best fit
-
-                self._analysis.restore_best_fit()
-
-                parameter_best_fit_value = parameters[par].value
-                min_value, max_value = parameters[par].bounds
-
-                # Create a temporary flux function to take a
-                # derivative w.r.t. the free parameter
-
-                def tmpflux(current_value):
-                    parameters[par].value = current_value
-
-                    return self._function()  # .value
-
-                # get the first derivatives and append them for some
-                # linear algebra
-
-                this_derivative = get_jacobian(tmpflux, parameter_best_fit_value, min_value, max_value)[0][0]
-
-                first_derivatives.append(this_derivative)
-
-            first_derivatives = np.array(first_derivatives)
-
-            # Now we take the inner product with the covariance matrix
-
-            tmp = first_derivatives.dot(self._analysis.covariance_matrix)
-
-            errors = np.sqrt(tmp.dot(first_derivatives))
-
-
-        return errors
-
-class BayesianFittedObject(GenericFittedObject):
-
-
-    def __add__(self, other):
-        """
-        how bayesian objects add together.
-
-        :param other:
-        :return: total best fit and total error dict
-        """
-
-        # first add together the main value
-
-        other_best = other.best_fit
-
-        other_chains = other.raw_chains
-
-        # direct sum
-
-        total_chain = self.raw_chains + other_chains
-
-        total_best = self.best_fit + other_best
-
-        total_error = np.array([highest_density_posterior(mc, alpha=self._alpha) for mc in total_chain])
-
-        # to facilitate summing
-
-        new_container = ErrorContainer()
-
-        new_container['best_fit'] = total_best
-        new_container['error_region'] = total_error.reshape(self._out_shape +(2,))
-        new_container['raw_chains'] = total_chain
-
-        return new_container
-
-
-    def __radd__(self, other):
-
-        if other == 0:
-
-            new_container = ErrorContainer()
-
-            new_container['error_region'] = self.error_region
-            new_container['best_fit'] = self.best_fit
-            new_container['raw_chains'] = self.raw_chains
-
-            return new_container
-
-
-        elif isinstance(other, ErrorContainer):
-
-
-            other_best = other['best_fit']
-
-            other_chains = other['raw_chains']
-
-            # direct sum
-
-            total_chain = self.raw_chains + other_chains
-
-            total_best = self.best_fit + other_best
-
-
-            # This may already be an array
-
-            try:
-
-                total_error = np.array([highest_density_posterior(mc, alpha=self._alpha) for mc in total_chain])
-
-            except(ValueError):
-
-                # This means we had a quantity agrument from astropy
-
-                old_unit = total_chain.unit
-
-                total_error = np.array([highest_density_posterior(mc, alpha=self._alpha) for mc in total_chain.value])
-                total_error = total_error * old_unit
-
-
-
-            # to facilitate summing
-
-            new_container = ErrorContainer()
-
-            new_container['best_fit'] = total_best
-            new_container['error_region'] = total_error.reshape(self._out_shape +(2,))
-            new_container['raw_chains'] = total_chain
-
-            return new_container
-
-
-
-        else:
-
-            raise RuntimeError('Cannot add together these types!')
-
-
-    def _compute_error_region(self):
-
-        # Get the the number of samples
-
-
-        n_samples = self._analysis.raw_samples.shape[0]
-
-
-        thin_step = min(int(1/self._fraction_of_samples), n_samples)
-
-        # temporary list to store the propagated samples
-        chains = []
-
-        for sample_number in range(0, n_samples, thin_step):
-
-            # go through parameters
-            for parameter in self._analysis.samples.keys():
-
-                mod_par = parameter.split('.')[-1]
-
-                self._free_parameters[mod_par].value = self._analysis.samples[parameter][sample_number]
-
-
-            values = []
-            if self._independent_variable_range:
-                for variables in itertools.product(*self._independent_variable_range):
-
-                    values.append(self._function(*variables))
-
-
-                values = np.array(values)
-
-            else:
-
-                values = self._function()
-
-            chains.append(values)
-
-
-        chains = np.array(chains).T
-
-        self._raw_chains = chains
-
-        contours = np.array([highest_density_posterior(mc, alpha=self._alpha) for mc in chains])
-
-        # reshape the contours and remember the inner dimension is 2-D
-
-        contours.reshape(self._out_shape +(2,))
-
-        self._error_region = contours
-
-
-    @property
-    def raw_chains(self):
-        """
-        return the raw chains without being converted to
-        HDPs
-
-        :return:
-        """
-        return self._raw_chains
-
-from collections import MutableMapping
-
-class ErrorContainer(MutableMapping):
-    _allowed_keys = "error_region best_fit raw_chains".split()
-
-    def accept(self, key):
-
-        return key in ErrorContainer._allowed_keys
-
-    def __init__(self):
-        """
-        A simple container to store errors that
-        allows for easy adding of error regions
-
-        """
-
-        self.dict = dict()
-
-    def __setitem__(self, key, val):
-        if key not in ErrorContainer._allowed_keys:
-            raise KeyError(
-                'Valid keywords: %s'%', '.join(ErrorContainer._allowed_keys))
-        self.dict[key] = val
-
-    def __getitem__(self, key):
-        return self.dict[key]
-
-    def __delitem__(self, key):
-        RuntimeWarning("You cannot delete keys!")
-
-    def __len__(self):
-        return sum(1 for _ in self)
-
-    def __iter__(self):
-        for key in self.dict:
-            yield key
-
-    def __repr__(self):
-        return repr(dict(self))
-
-    def __str__(self):
-        return str(dict(self))
-
-
-    @property
-    def raw_chains(self):
-        """
-        raw mc chains from a bayesian analysis
-        :return:
-        """
-
-        return self.dict['raw_chains']
-
-    @property
-    def error_region(self):
-        """
-        the error region
-        :return:
-        """
-
-        return self.dict['error_region']
-
-    @property
-    def best_fit(self):
-        """
-        the best fit of the propagated function
-        :return:
-        """
-
-        return self.dict['best_fit']
