@@ -1,13 +1,11 @@
-from astropy import units as u, constants
-from sympy import Function, solve, lambdify
-from sympy.abc import x
+__author__ = 'grburgess'
 
+from astropy import units as u
 import numpy as np
-
 import scipy.integrate as integrate
 
 
-from threeML.utils.fitted_objects.fitted_object import MLEFittedObject, BayesianFittedObject, GenericFittedObject
+from threeML.utils.fitted_objects.fitted_source_handler import GenericFittedSourceHandler
 
 
 class NotCompositeModelError(RuntimeError):
@@ -21,6 +19,13 @@ class InvalidUnitError(RuntimeError):
 class FluxConversion(object):
 
     def __init__(self, flux_unit, energy_unit, flux_model):
+        """
+        a generic flux conversion class to handle transforming spectra
+        between different flux units
+        :param flux_unit: the desired flux unit
+        :param energy_unit: the energy unit
+        :param flux_model: the model to be transformed
+        """
 
         self._flux_unit = flux_unit
 
@@ -91,12 +96,13 @@ class FluxConversion(object):
 
 class DifferentialFluxConversion(FluxConversion):
 
-    def __init__(self, flux_unit, energy_unit, flux_model):
+    def __init__(self, flux_unit, energy_unit, flux_model,test_model):
         """
         Handles differential flux conversion and model building
         for point sources
 
 
+        :param test_model: model to test the flux on
         :param flux_unit: an astropy unit string for differential flux
         :param energy_unit: an astropy unit string for energy
         :param flux_model: the base flux model to use
@@ -109,14 +115,17 @@ class DifferentialFluxConversion(FluxConversion):
                              "nufnu_flux": u.erg**2 / (u.keV * u.cm ** 2 * u.s)}
 
 
-        self._model_converter = {"photon_flux": flux_model,
-                                 "energy_flux": lambda x: x * flux_model(x),
-                                 "nufnu_flux": lambda x: x * x * flux_model(x)}
+
+
+
+        self._model_converter = {"photon_flux": test_model,
+                                 "energy_flux": lambda x: x * test_model(x),
+                                 "nufnu_flux": lambda x: x * x * test_model(x)}
 
 
         self._model_builder = {"photon_flux": flux_model,
-                               "energy_flux": lambda x: x * flux_model(x),
-                               "nufnu_flux": lambda x: x * x * flux_model(x)}
+                               "energy_flux": lambda x, **param_specification: x * flux_model(x,**param_specification),
+                               "nufnu_flux": lambda x, **param_specification: x * x * flux_model(x, **param_specification)}
 
         super(DifferentialFluxConversion, self).__init__(flux_unit,
                                                          energy_unit,
@@ -125,7 +134,7 @@ class DifferentialFluxConversion(FluxConversion):
 
 class IntegralFluxConversion(FluxConversion):
 
-    def __init__(self, flux_unit, energy_unit, flux_model):
+    def __init__(self, flux_unit, energy_unit, flux_model,test_model):
          """
          Handles integral flux conversion and model building
          for point sources
@@ -140,23 +149,23 @@ class IntegralFluxConversion(FluxConversion):
                              "energy_flux": u.erg / ( u.cm ** 2 * u.s),
                              "nufnu_flux": u.erg**2 / ( u.cm ** 2 * u.s)}
 
-         self._model_converter = {"photon_flux": lambda x: x * flux_model(x),
-                                     "energy_flux": lambda x: x * x * flux_model(x),
-                                     "nufnu_flux": lambda x: x ** 3 * flux_model(x)}
+         self._model_converter = {"photon_flux": lambda x: x * test_model(x),
+                                     "energy_flux": lambda x: x * x * test_model(x),
+                                     "nufnu_flux": lambda x: x ** 3 * test_model(x)}
 
 
-         def photon_integrand(x):
-             return flux_model(x)
+         def photon_integrand(x,param_specification):
+             return flux_model(x, **param_specification)
 
-         def energy_integrand(x):
-             return x * flux_model(x)
+         def energy_integrand(x,param_specification):
+             return x * flux_model(x, **param_specification)
 
-         def nufnu_integrand(x):
-             return x * x * flux_model(x)
+         def nufnu_integrand(x, param_specification):
+             return x * x * flux_model(x, **param_specification)
 
-         self._model_builder = {"photon_flux": lambda e1, e2: integrate.quad(photon_integrand, e1, e2)[0],
-                               "energy_flux": lambda e1, e2: integrate.quad(energy_integrand, e1, e2)[0],
-                               "nufnu_flux": lambda e1, e2: integrate.quad(nufnu_integrand, e1, e2)[0]}
+         self._model_builder = {"photon_flux": lambda e1, e2, **param_specification: integrate.quad(photon_integrand, e1, e2,args=(param_specification))[0],
+                               "energy_flux": lambda e1, e2, **param_specification: integrate.quad(energy_integrand, e1, e2,args=(param_specification))[0],
+                               "nufnu_flux": lambda e1, e2, **param_specification: integrate.quad(nufnu_integrand, e1, e2,args=(param_specification))[0]}
 
 
          super(IntegralFluxConversion, self).__init__(flux_unit,
@@ -164,11 +173,8 @@ class IntegralFluxConversion(FluxConversion):
                                                      flux_model)
 
 
-
-
-
-class FittedPointSource(GenericFittedObject):
-    def __init__(self, analysis_result, source, energy_range, energy_unit, flux_unit, sigma=1, component=None, is_differential_flux=True):
+class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
+    def __init__(self, analysis_result, source, energy_range, energy_unit, flux_unit, confidence_level=0.68, equal_tailed=True, component=None, is_differential_flux=True):
         """
 
         A 3ML fitted point source.
@@ -179,19 +185,22 @@ class FittedPointSource(GenericFittedObject):
         :param energy_range: an array of energies to calculate the source over
         :param energy_unit: string astropy unit
         :param flux_unit: string astropy flux unit
-        :param component: the component to calculate
+        :param component: the component name to calculate
         """
+
+        # first extract the source
+
+        self._point_source = analysis_result.optimized_model.point_sources[source]
+
 
         # extract the components
 
+
         try:
-            composite_model = source.spectrum.main.composite
+            composite_model = self._point_source.spectrum.main.composite
 
-            components = self._solve_for_component_flux(composite_model)
+            self._components = self._solve_for_component_flux(composite_model)
 
-            component_names = [function.name for function in composite_model.functions]
-
-            self._components = dict(zip(component_names, components))
 
         except:
 
@@ -201,7 +210,10 @@ class FittedPointSource(GenericFittedObject):
 
             if self._components is not None:
 
-                model = self._components[component]
+                model = self._components[component]['function'].evaluate_at
+                parameters =  self._components[component]['function'].parameters
+                test_model = self._components[component]['function']
+                parameter_names = self._components[component]['parameter_names']
 
             else:
 
@@ -209,7 +221,10 @@ class FittedPointSource(GenericFittedObject):
 
         else:
 
-            model = source.spectrum.main
+            model = self._point_source.spectrum.main.shape.evaluate_at
+            parameters = self._point_source.spectrum.main.shape.parameters
+            test_model = self._point_source.spectrum.main.shape
+            parameter_names = [par.name for par in self._point_source.spectrum.main.shape.parameters.values()]
 
 
         energy_unit = u.Unit(energy_unit)
@@ -236,7 +251,7 @@ class FittedPointSource(GenericFittedObject):
 
         if is_differential_flux:
 
-            converter = DifferentialFluxConversion(flux_unit, energy_unit, model)
+            converter = DifferentialFluxConversion(flux_unit, energy_unit, model, test_model)
 
             flux_function = converter.model
 
@@ -244,15 +259,17 @@ class FittedPointSource(GenericFittedObject):
 
 
 
-            super(FittedPointSource, self).__init__(analysis_result,
-                                                    source,
-                                                    flux_function,
-                                                    sigma,
-                                                    energy_range)
+            super(FittedPointSourceSpectralHandler, self).__init__(analysis_result,
+                                                                   flux_function,
+                                                                   parameter_names,
+                                                                   parameters,
+                                                                   confidence_level,
+                                                                   equal_tailed,
+                                                                   energy_range)
 
         else:
 
-            converter = IntegralFluxConversion(flux_unit, energy_unit, model)
+            converter = IntegralFluxConversion(flux_unit, energy_unit, model, test_model)
 
             flux_function = converter.model
 
@@ -268,174 +285,69 @@ class FittedPointSource(GenericFittedObject):
             # inherited as well and go right to the general and
             # use the e1, e2 as the integral bounds
 
-            super(FittedPointSource, self).__init__(analysis_result,
-                                                    source,
-                                                    flux_function,
-                                                    sigma,
-                                                    e1,
-                                                    e2)
+            super(FittedPointSourceSpectralHandler, self).__init__(analysis_result,
+                                                                   flux_function,
+                                                                   parameter_names,
+                                                                   parameters,
+                                                                   confidence_level,
+                                                                   equal_tailed,
+                                                                   e1,
+                                                                   e2)
 
-    def _get_free_parameters(self):
-
-        self._free_parameters = self._source.spectrum.main.shape.free_parameters
 
     @property
     def components(self):
+        """
+
+        :return: the components of the function
+        """
 
         return self._components
 
-    @property
-    def error_region(self):
+    def _transform(self,value):
         """
-        the error region of the point source spectrum
-        """
-
-        # This gets the error region here, but calls the super class
-        # to return the value. The value can then be manipulated further
-        # up by a parent
-
-        return self._conversion * self._flux_unit * super(FittedPointSource, self).error_region
-
-    @property
-    def spectrum(self):
-        """
-        the best fit value. This is simply
-        a wrapper around the best_fit call for
-        ease of understanding
-
-
-
+        transform the values into the proper flux unit and apply the units
+        :param value:
         :return:
         """
 
-        return self.best_fit
-
-    @property
-    def best_fit(self):
-        """
-        the best fit of the function
-
-
-        :return:
-        """
-
-        return self._flux_unit * self._conversion * super(FittedPointSource, self).best_fit
+        return self._conversion * self._flux_unit * value
 
 
     @staticmethod
     def _solve_for_component_flux(composite_model):
         """
-        Uses sympy to algebraically solve for functional form of the component models.
-        This produces the proper form of the individual flux w.r.t the total flux so
-        that error propagation can take into full account the variance in the full model
+
+        now that we are using RandomVariates, we only need to compute the
+        function directly to see the error in a component
 
         :param composite_model: an astromodels composite model
-        :return: list of solved component flux functions
+        :return: dict of component properties
         """
 
-        replicated_expression = composite_model.expression
-
-        num_models = len(composite_model.functions)
-        mod_solve = []
         function_dict = {}
 
-        # First build the expressions and create a dictionary for
-        # the component functions to be referecenced later
+        for function in composite_model.functions:
 
-        for i, func in enumerate(composite_model.functions):
-            # Need to replace all the strings correctly
-            replicated_expression = replicated_expression.replace("%s{%d}" % (func.name, i + 1),
-                                                                  "mod_solve[%d](x)" % i)
+            tmp_dict = {}
 
-            # build function dict
-            function_dict["%s_%d" % (func.name, i + 1)] = func
+            # extract the parameter names using the static_name property
+            # because this is what the children will use in evaluate_at
 
-            # create sympy functions
-            mod_solve.append(Function("%s_%d" % (func.name, i + 1)))
+            parameter_names = [par.static_name for par in function.parameters.values()]
 
-        # add the total flux at the end
-        function_dict['total'] = composite_model
+            tmp_dict['parameter_names'] = parameter_names
 
-        replicated_expression += "- mod_solve[%d](x)" % num_models
-
-        mod_solve.append(Function("total"))
-
-        solutions = []
-        # go through all models and solve for component fluxes algebraically
-        for i, func in enumerate(composite_model.functions):
-            solutions.append(solve(eval(replicated_expression), str(mod_solve[i]) + '(x)')[0])
-
-        # use sympy to create new functions for the solved components
-        component_flux = [lambdify(x, sol, function_dict) for sol in solutions]
-
-        return component_flux
+            tmp_dict['function'] = function
 
 
-class MLEPointSource(FittedPointSource, MLEFittedObject):
-    def __init__(self, analysis_result, source, energy_range, energy_unit, flux_unit, sigma=1, component=None, is_differential_flux=True):
-        """
-        An MLE fitted point source
+
+            function_dict[function.name] = tmp_dict
+
+        return function_dict
 
 
-        :param analysis_result: a JointLikelihood fitted object
-        :param source: the astromodels source to be examined
-        :param energy_range: a numpy aray of of energies
-        :param energy_unit: the energy unit
-        :param flux_unit: the flux unit
-        :param component: the name (string) of a component of the source model
-        """
-
-        assert analysis_result.analysis_type == "mle"
-
-        super(MLEPointSource, self).__init__(analysis_result,
-                                             source,
-                                             energy_range,
-                                             energy_unit,
-                                             flux_unit,
-                                             sigma,
-                                             component,
-                                             is_differential_flux)
 
 
-class BayesianPointSource(FittedPointSource, BayesianFittedObject):
-    def __init__(self, analysis_result, source, energy_range, energy_unit, flux_unit, sigma=1, component=None,
-                 fraction_of_samples=.1, is_differential_flux=True):
-        """
-        A Bayesian fitted point source
 
 
-        :param analysis_result: a BayesianAnalysis fitted object
-        :param source: the astromodels source to be examined
-        :param energy_range: a numpy array of of energies
-        :param energy_unit: the energy unit
-        :param flux_unit: the flux unit
-        :param component: the name (string) of a component of the source model
-        :param fraction_of_samples: fraction of the samples to use when computing contours
-        """
-
-        assert analysis_result.analysis_type == "bayesian"
-
-        assert 0. < fraction_of_samples < 1., "fraction_of_samples must be between 0 and 1"
-
-        self._fraction_of_samples = fraction_of_samples
-
-        super(BayesianPointSource, self).__init__(analysis_result,
-                                                  source,
-                                                  energy_range,
-                                                  energy_unit,
-                                                  flux_unit,
-                                                  sigma,
-                                                  component,
-                                                  is_differential_flux)
-
-    @property
-    def raw_chains(self):
-        """
-        the raw chains of the point source spectrum
-        """
-
-        # This gets the raw chains here, but calls the super class
-        # to return the value. The value can then be manipulated further
-        # up by a parent
-
-        return self._conversion * self._flux_unit * super(BayesianPointSource, self).raw_chains

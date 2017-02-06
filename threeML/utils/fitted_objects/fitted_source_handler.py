@@ -2,9 +2,10 @@ __author__ = "grburgess"
 
 import itertools
 import functools
-
 import numpy as np
 
+from threeML.io.progress_bar import progress_bar
+from astromodels import use_astromodels_memoization
 
 
 class GenericFittedSourceHandler(object):
@@ -121,8 +122,6 @@ class GenericFittedSourceHandler(object):
         calculate the best or mean fit of the new function or
         quantity
 
-
-
         :return:
         """
         # if there are independent variables
@@ -131,9 +130,16 @@ class GenericFittedSourceHandler(object):
             variates = []
 
             # scroll through the independent variables
+            n_iterations = np.product(self._out_shape)
 
-            for variables in itertools.product(*self._independent_variable_range):
-                variates.append(self._propagated_function(*variables))
+            with progress_bar(n_iterations, title="Propagating errors") as p:
+
+                with use_astromodels_memoization(False):
+
+                    for variables in itertools.product(*self._independent_variable_range):
+                        variates.append(self._propagated_function(*variables))
+
+                        p.increase()
 
 
         # otherwise just evaluate
