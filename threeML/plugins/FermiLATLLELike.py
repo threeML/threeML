@@ -145,8 +145,7 @@ class FermiLATLLELike(EventListLike):
 
         if use_binner:
 
-            bin_start, bin_stop = self._event_list.bins
-            bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
+            bins = self._event_list.bins.time_edges
 
             # perhaps we want to look a little before or after the binner
             if start < bins[0]:
