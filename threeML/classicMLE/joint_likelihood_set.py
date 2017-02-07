@@ -1,4 +1,5 @@
 import logging
+import numpy as np
 
 log = logging.getLogger(__name__)
 
@@ -7,6 +8,8 @@ from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.progress_bar import progress_bar
+from threeML.analysis_results import AnalysisResultsSet
+
 from astromodels import Model
 import pandas as pd
 
@@ -33,7 +36,7 @@ class JointLikelihoodSet(object):
 
         try:
 
-            len(model_or_models)
+            n_models = len(model_or_models)
 
         except TypeError:
 
@@ -41,6 +44,9 @@ class JointLikelihoodSet(object):
 
             assert isinstance(model_or_models, Model), "The model getter function should return a model or a list of " \
                                                        "models"
+
+            # Save that
+            self._n_models = 1
 
             # Wrap the function so that self._model_getter will return a list of one element
 
@@ -58,6 +64,9 @@ class JointLikelihoodSet(object):
             # No need for a wrapper in this case
 
             self._model_getter = model_getter
+
+            # save the number of models
+            self._n_models = n_models
 
         # Set up some attributes we will need
 
@@ -86,6 +95,7 @@ class JointLikelihoodSet(object):
 
         self._compute_covariance = False
 
+        self._all_results = None
 
     def set_minimizer(self, minimizer, algorithm=None, callback=None):
 
@@ -122,6 +132,7 @@ class JointLikelihoodSet(object):
 
         parameters_frames = []
         like_frames = []
+        analysis_results = []
 
         for this_model in this_models:
 
@@ -134,6 +145,7 @@ class JointLikelihoodSet(object):
 
             parameters_frames.append(this_parameter_frame)
             like_frames.append(this_like_frame)
+            analysis_results.append(jl.results)
 
         # Now merge the results in one data frame for the parameters and one for the likelihood
         # values
@@ -154,7 +166,7 @@ class JointLikelihoodSet(object):
             frame_with_parameters = parameters_frames[0]
             frame_with_like = like_frames[0]
 
-        return frame_with_parameters, frame_with_like
+        return frame_with_parameters, frame_with_like, analysis_results
 
     def _fitter(self, jl):
 
@@ -229,18 +241,6 @@ class JointLikelihoodSet(object):
 
             client = ParallelClient(**options_for_parallel_computation)
 
-            # amr = client.interactive_map(self.worker, range(self._n_iterations))
-            #
-            # results = []
-            #
-            # with progress_bar(self._n_iterations) as p:
-            #
-            #     for i, res in enumerate(amr):
-            #
-            #         results.append(res)
-            #
-            #         p.increase()
-
             results = client.execute_with_progress_bar(self.worker, range(self._n_iterations))
 
 
@@ -266,8 +266,57 @@ class JointLikelihoodSet(object):
         parameter_frames = pd.concat(map(lambda x: x[0], results), keys=range(self._n_iterations))
         like_frames = pd.concat(map(lambda x: x[1], results), keys=range(self._n_iterations))
 
+        # Store a list with all results (this is a list of lists, each list contains the results for the different
+        # iterations for the same model)
+        self._all_results = []
+
+        for i in range(self._n_models):
+
+            this_model_results = map(lambda x: x[2][i], results)
+
+            self._all_results.append(AnalysisResultsSet(this_model_results))
+
         return parameter_frames, like_frames
 
+    @property
+    def results(self):
+        """
+        Returns a results set for each model. If there is more than one model, it will return a list of
+        AnalysisResultsSet instances, otherwise it will return one AnalysisResultsSet instance
+
+        :return:
+        """
+
+        if len(self._all_results) == 1:
+
+            return self._all_results[0]
+
+        else:
+
+            return self._all_results
+
+    def write_to(self, filenames, overwrite=False):
+        """
+        Write the results to one file per model. If you need more control, get the results using the .results property
+        then write each results set by itself.
+
+        :param filenames: list of filenames, one per model, or filename (if there is only one model per interval)
+        :param overwrite: overwrite existing files
+        :return: None
+        """
+
+        # Trick to make filenames always a list
+        filenames = list(np.array(filenames, ndmin=1))
+
+        # Check that we have the right amount of file names
+        assert len(filenames) == self._n_models
+
+        # Now write one file for each model
+        for i in range(self._n_models):
+
+            this_results = self._all_results[i]
+
+            this_results.write_to(filenames[i], overwrite=overwrite)
 
 
 class JointLikelihoodSetAnalyzer(object):

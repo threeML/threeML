@@ -31,10 +31,6 @@ def set_external_property(method):
     return wrapper
 
 
-
-
-
-
 class PluginPrototype(object):
 
     __metaclass__ = abc.ABCMeta
@@ -44,6 +40,9 @@ class PluginPrototype(object):
         assert is_valid_variable_name(name), "The name %s cannot be used as a name. You need to use a valid " \
                                              "python identifier: no spaces, cannot start with numbers, cannot contain " \
                                              "operators symbols such as -, +, *, /" % name
+
+        # Make sure total is not used as a name (need to use it for other things, like the total value of the statistic)
+        assert name.lower() != "total", "Sorry, you cannot use 'total' as name for a plugin."
 
         self._name = name
 

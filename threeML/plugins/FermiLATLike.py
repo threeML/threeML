@@ -1,33 +1,39 @@
 import numpy
 import collections
-import uuid
 import os
+
+import matplotlib.pyplot as plt
+from matplotlib import gridspec
+
+from astromodels import Parameter
+from astromodels.core.model_parser import ModelParser
+
+from threeML.plugin_prototype import PluginPrototype
+from threeML.io.file_utils import get_random_unique_name
+from threeML.plugins.gammaln import logfactorial
+from threeML.io.suppress_stdout import suppress_stdout
 
 import UnbinnedAnalysis
 import BinnedAnalysis
 import pyLikelihood as pyLike
 from GtBurst import LikelihoodComponent
 from GtBurst import FuncFactory
-import matplotlib.pyplot as plt
-from matplotlib import gridspec
-
-from threeML.plugin_prototype import PluginPrototype
-from threeML.io.file_utils import get_random_unique_name
-from astromodels import Parameter
-from threeML.plugins.gammaln import logfactorial
-from threeML.io.suppress_stdout import suppress_stdout
 
 __instrument_name = "Fermi LAT (standard classes)"
 
 
-class myPointSource(LikelihoodComponent.GenericSource):
+class MyPointSource(LikelihoodComponent.GenericSource):
+
     def __init__(self, source, name, temp_file):
         self.source = source
         self.source.name = name
         self.temp_file = temp_file
 
+        super(MyPointSource, self).__init__()
+
 
 class LikelihoodModelConverter(object):
+
     def __init__(self, likelihoodModel, irfs):
 
         self.likelihoodModel = likelihoodModel
@@ -143,12 +149,27 @@ class LikelihoodModelConverter(object):
         src.spatialModel.setAttributes()
         src.setAttributes()
 
-        return myPointSource(src, name, tempName)
+        return MyPointSource(src, name, tempName)
+
+
+class FermiLATUnpickler(object):
+
+    def __call__(self, name, eventFile, ft2File, livetimeCube, kind, exposureMap, likelihoodModel, innerMinimization):
+
+        instance = FermiLATLike(name, eventFile, ft2File, livetimeCube, kind, exposureMap)
+
+        instance.setInnerMinimization(innerMinimization)
+
+        instance.set_model(likelihoodModel)
+
+        return instance
+
 
 
 class FermiLATLike(PluginPrototype):
 
-    def __init__(self, name, eventFile, ft2File, livetimeCube, kind, *args):
+    def __init__(self, name, eventFile, ft2File, livetimeCube, kind, exposureMap=None,
+                 sourceMaps=None, binnedExpoMap=None):
 
         # Initially the nuisance parameters dict is empty, as we don't know yet
         # the likelihood model. They will be updated in set_model
@@ -193,7 +214,9 @@ class FermiLATLike(PluginPrototype):
             self.kind = kind.upper()
 
         if (kind.upper() == 'UNBINNED'):
-            exposureMap = args[0]
+
+            assert exposureMap is not None, "You have to provide an exposure map"
+
             self.eventFile = eventFile
             self.exposureMap = exposureMap
             # Read the files and generate the pyLikelihood object
@@ -204,7 +227,10 @@ class FermiLATLike(PluginPrototype):
                                                     irfs=self.irf)
 
         elif (kind.upper() == "BINNED"):
-            sourceMaps, binnedExpoMap = args
+
+            assert sourceMaps is not None, "You have to provide a source map"
+            assert binnedExpoMap is not None, "You have to provided a (binned) exposure map"
+
             self.sourceMaps = sourceMaps
             self.binnedExpoMap = binnedExpoMap
 
@@ -267,7 +293,6 @@ class FermiLATLike(PluginPrototype):
 
         self.update_nuisance_parameters(new_nuisance_parameters)
 
-    pass
 
     def get_name(self):
         '''
@@ -312,7 +337,7 @@ class FermiLATLike(PluginPrototype):
                 return 1e5
             else:
                 # Update the value for the nuisance parameters
-                for par in self.nuisanceParameters.values():
+                for par in self.nuisance_parameters.values():
                     newValue = self.getNuisanceParameterValue(par.name)
                     par.value = newValue
                 pass
@@ -322,42 +347,6 @@ class FermiLATLike(PluginPrototype):
         return log_like - logfactorial(self.like.total_nobs())
 
     pass
-
-    # def _initFileFunction(self):
-    # If the point source is already in the model, delete it
-    # (like.deleteSource() returns the model)
-    # gtlikeSrcModel            = self.like.deleteSource(self.modelManager.name)
-
-    # Get the new model for the source (with the latest parameter values)
-    # and add it back to the likelihood model
-    #  self._getNewGtlikeModel(gtlikeSrcModel,self.effCorrLimit)
-    #  self.like.addSource(gtlikeSrcModel)
-
-    # Slow! But no other options at the moment
-    #  self.like.writeXml(self.xmlModel)
-    #  self.like.logLike.reReadXml(self.xmlModel)
-    # pass
-
-    # def _getNewGtlikeModel(self,currentGtlikeModel,effAreaAllowedSize=0.1):
-    # Write on disk the current model
-    #  tempName                  = os.path.join(
-    #                              os.path.dirname(
-    #                              os.path.abspath(self.xmlModel)
-    #                                             ),
-    #                             '__fileSpectrum.txt')
-    #
-    #  #This will recompute the model if necessary
-    #  self.modelManager.writeToFile(tempName,self.emin,self.emax,self.Nenergies)
-    #
-    #  #Generate a new FileFunction spectrum and assign it to the source
-    #  fileFunction              = pyLike.FileFunction()
-    #  fileFunction.readFunction(tempName)
-    #  fileFunction.setParam("Normalization",1)
-    #  p                         = fileFunction.parameter("Normalization")
-    #  p.setBounds(1-float(effAreaAllowedSize),1+effAreaAllowedSize)
-    #
-    #  currentGtlikeModel.setSpectrum(fileFunction)
-    # pass
 
     def _updateGtlikeModel(self):
         '''
@@ -407,6 +396,18 @@ class FermiLATLike(PluginPrototype):
         return value - logfactorial(self.like.total_nobs())
 
     pass
+    #
+    def __reduce__(self):
+
+        return FermiLATUnpickler(), (self.name, self.eventFile, self.ft2File,
+                                     self.livetimeCube, self.kind, self.exposureMap, self.likelihoodModel,
+                                     self.innerMinimization)
+
+    # def __setstate__(self, likelihoodModel):
+    #
+    #     import pdb;pdb.set_trace()
+    #
+    #     self.set_model(likelihoodModel)
 
     def getModelAndData(self):
 
@@ -505,19 +506,19 @@ class FermiLATLike(PluginPrototype):
 
             # Prepare a callback which will set the parameter value in the pyLikelihood object if it gets
             # changed
-            def this_callback(parameter):
-
-                _, src, pname = parameter.name.split("_")
-
-                try:
-
-                    self.like.model[src].funcs['Spectrum'].getParam(pname).setValue(parameter.value)
-
-                except:
-
-                    import pdb;pdb.set_trace()
-
-            nuisanceParameters["%s_%s" % (self.name, name)].add_callback(this_callback)
+            # def this_callback(parameter):
+            #
+            #     _, src, pname = parameter.name.split("_")
+            #
+            #     try:
+            #
+            #         self.like.model[src].funcs['Spectrum'].getParam(pname).setValue(parameter.value)
+            #
+            #     except:
+            #
+            #         import pdb;pdb.set_trace()
+            #
+            # nuisanceParameters["%s_%s" % (self.name, name)].add_callback(this_callback)
 
         return nuisanceParameters
 

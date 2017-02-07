@@ -811,21 +811,31 @@ class PHAWrite(object):
                                                   self._respfile[key],
                                                   self._ancrfile[key])
 
+            # write the file
+
+            fits_file.writeto(self._outfile_name[key], clobber=overwrite)
 
 
-            fits_file.writeto(self._outfile_name[key], overwrite=overwrite)
+        if self._out_rsp:
+
+            # add the various responses needed
+
+            extensions = [EBOUNDS(self._out_rsp[0].ebounds)]
+
+            extensions.extend([SPECRESP_MATRIX(this_rsp.monte_carlo_energies, this_rsp.ebounds, this_rsp.matrix) for this_rsp in self._out_rsp])
+
+            for ext in extensions[1:]:
 
 
-            if self._out_rsp:
+                # Set telescope and instrument name
+                ext.hdu.header.set("TELESCOP", self._mission['pha'])
+                ext.hdu.header.set("INSTRUME", self._instrument['pha'])
 
 
-                extensions = [EBOUNDS(self._out_rsp[0].ebounds)]
+            rsp2 = FITSFile(fits_extensions=extensions)
 
-                extensions.extend([SPECRESP_MATRIX(this_rsp.monte_carlo_energies, this_rsp.ebounds, this_rsp.matrix) for this_rsp in self._out_rsp])
+            rsp2.writeto("%s.rsp" % self._outfile_basename, clobber=True)
 
-                rsp2 = FITSFile(fits_extensions=extensions)
-
-                rsp2.writeto("%s.rsp" % self._outfile_basename,overwrite=True)
 
 
 

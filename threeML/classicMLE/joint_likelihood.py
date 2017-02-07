@@ -3,7 +3,6 @@ import numpy
 import scipy.optimize
 import scipy.stats
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
 from matplotlib.colors import BoundaryNorm
 
 from threeML.io.rich_display import display
@@ -15,11 +14,14 @@ import astromodels.core.model
 
 from threeML.minimizer import minimization
 from threeML.exceptions import custom_exceptions
-from threeML.io.table import Table, NumericMatrix, long_path_formatter
+from threeML.io.table import Table
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
-from threeML.utils.uncertainties_regexpr import get_uncertainty_tokens
+from threeML.config.config import threeML_config
+from threeML.io.uncertainty_formatter import uncertainty_formatter
+from threeML.analysis_results import MLEResults
+
 
 from astromodels import ModelAssertionViolation
 
@@ -83,7 +85,9 @@ class JointLikelihood(object):
 
         # Pre-defined minimizer is Minuit
 
-        self.set_minimizer("MINUIT")
+        self.set_minimizer(threeML_config['mle']['default minimizer'],
+                           threeML_config['mle']['default minimizer algorithm'],
+                           threeML_config['mle']['default minimizer callback'])
 
         # Initial set of free parameters
 
@@ -98,6 +102,8 @@ class JointLikelihood(object):
         self._minimizer = None
 
         self._minimizer_callback = None
+
+        self._analysis_results = None
 
     @property
     def likelihood_model(self):
@@ -198,7 +204,7 @@ class JointLikelihood(object):
             # Now check and fix if needed all the deltas of the parameters
             # to 20% of their value (otherwise the fit will be super-slow)
 
-            for k, v in self._free_parameters.iteritems():
+            for k, v in self._free_parameters.items():
 
                 if abs(v.delta) < abs(v.value) * 0.2:
 
@@ -221,73 +227,16 @@ class JointLikelihood(object):
 
             self._current_minimum = float(log_likelihood_minimum)
 
-            # Get the results from the minimizer (a panda container)
+        # Now collect the values for the likelihood for the various datasets
 
-            fit_results = self._minimizer.fit_results
+        # First restore best fit (to make sure we compute the likelihood at the right point)
+        self._minimizer.restore_best_fit()
 
-            # Now produce an ad-hoc display. We don't use the pandas display methods because
-            # we want to display uncertainties with the right number of significant numbers
-
-            data = {'Best fit value': {}, 'Unit': {}}
-
-            # Also store the maximum length to decide the length for the line
-
-            name_length = 0
-
-            for i, parameter_name in enumerate(fit_results.index.values):
-
-                value = fit_results.at[parameter_name, 'value']
-
-                error = fit_results.at[parameter_name, 'error']
-
-                # Format the value and the error with sensible significant
-                # numbers
-                x = uncertainties.ufloat(value, error)
-
-                # Add some space around the +/- sign
-
-                rep = x.__str__().replace("+/-", " +/- ")
-
-                # Apply name formatter so long paths are shorten
-                this_shortened_name = long_path_formatter(parameter_name, 40)
-
-                data['Best fit value'][this_shortened_name] = rep
-                data['Unit'][this_shortened_name] = self._free_parameters[parameter_name].unit
-
-            best_fit_table = pd.DataFrame.from_dict(data)
-
-            if not quiet:
-
-                print("Best fit values:\n")
-
-                display(best_fit_table)
-
-                print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
-
-            if compute_covariance:
-
-                corr_matrix = NumericMatrix(self._minimizer.correlation_matrix)
-
-                for col in corr_matrix.colnames:
-
-                    corr_matrix[col].format = '2.2f'
-
-                if not quiet:
-
-                    print("\nCorrelation matrix:\n")
-
-                    display(corr_matrix)
-
-            # Now collect the values for the likelihood for the various datasets
-
-            # First restore best fit (to make sure we compute the likelihood at the right point)
-            self._minimizer.restore_best_fit()
-
-        # Fill the dictionary with the values of the -log likelihood (total, and dataset by dataset)
+        # Fill the dictionary with the values of the -log likelihood (dataset by dataset)
 
         minus_log_likelihood_values = collections.OrderedDict()
 
-        minus_log_likelihood_values['total'] = self._current_minimum
+        # Keep track of the total for a double check
 
         total = 0
 
@@ -301,21 +250,22 @@ class JointLikelihood(object):
 
         assert total == self._current_minimum, "Current minimum stored after fit and current do not correspond!"
 
-        # Generate data frame
+        # Now instance an analysis results class
+        self._analysis_results = MLEResults(self.likelihood_model, self._minimizer.covariance_matrix,
+                                            minus_log_likelihood_values)
 
-        logl_results = collections.OrderedDict()
-
-        logl_results['-log(likelihood)'] = pd.Series(minus_log_likelihood_values)
-
-        loglike_dataframe = pd.DataFrame(logl_results)
+        # Show the results
 
         if not quiet:
 
-            print("\nValues of -log(likelihood) at the minimum:\n")
+            self._analysis_results.display()
 
-            display(loglike_dataframe)
+        return self._analysis_results.get_data_frame(), self._analysis_results.get_statistic_frame()
 
-        return fit_results, loglike_dataframe
+    @property
+    def results(self):
+
+        return self._analysis_results
 
     def get_errors(self, quiet=False):
         """
@@ -338,62 +288,16 @@ class JointLikelihood(object):
         data = []
         name_length = 0
 
-        for k, v in self._free_parameters.iteritems():
+        for k, v in self._free_parameters.items():
 
             # Format the value and the error with sensible significant
             # numbers
 
-            # Process the negative error
+            neg_error = errors[k][0]
 
-            neg_error = abs(errors[k][0])
+            pos_error = errors[k][1]
 
-            if np.isnan(neg_error):
-
-                x = uncertainties.ufloat(v.value, 0)
-
-            else:
-
-                x = uncertainties.ufloat(v.value, neg_error)
-
-            # Split the uncertainty in number, negative error, and exponent (if any)
-
-            num, uncm, exponent = get_uncertainty_tokens(x)
-
-            if np.isnan(neg_error):
-
-                uncm = np.nan
-
-            # Process the positive error
-
-            pos_error = abs(errors[k][1])
-
-            if np.isnan(pos_error):
-
-                x = uncertainties.ufloat(v.value, 0)
-
-            else:
-
-                x = uncertainties.ufloat(v.value, pos_error)
-
-            # Split the uncertainty in number, positive error, and exponent (if any)
-
-            _, uncp, _ = get_uncertainty_tokens(x)
-
-            if np.isnan(pos_error):
-
-                uncp = np.nan
-
-            if exponent is None:
-
-                # Number without exponent
-
-                pretty_string = "%s -%s +%s" % (num, uncm, uncp)
-
-            else:
-
-                # Number with exponent
-
-                pretty_string = "(%s -%s +%s)%s" % (num, uncm, uncp, exponent)
+            pretty_string = uncertainty_formatter(v.value, v.value + neg_error, v.value + pos_error)
 
             data.append([k, pretty_string, v.unit])
 
@@ -777,13 +681,7 @@ class JointLikelihood(object):
 
                 raise
 
-            # if this_log_like > 0:
-
-            #    raise RuntimeError("LogLike cannot be larger than 0")
-
             summed_log_likelihood += this_log_like
-
-            # dataset.getLogLike()
 
         # Check that the global like is not NaN
         # I use this weird check because it is not guaranteed that the plugins return np.nan,
@@ -809,10 +707,12 @@ class JointLikelihood(object):
         * ROOT
         * MINUIT (which means iminuit, default)
         * PYOPT
+        * PAGMO (http://esa.github.io/pygmo/documentation)
 
         :param minimizer: the name of the new minimizer.
         :param algorithm: (optional) for the PYOPT minimizer, specify the algorithm among those available. See a list at
-        http://www.pyopt.org/reference/optimizers.html . For the other minimizers this is ignored, if provided.
+        http://www.pyopt.org/reference/optimizers.html . For the PAGMO algorithm, this is an instance of an algorithm
+        (see http://esa.github.io/pygmo/documentation/algorithms.html). For the other minimizers this is ignored.
         :param callback: (optional) a function which receives the minimizer instance as argument, which perform further
         setup before the minimizer is used for the fit. This is for example needed for the GRID minimizer to setup the
         grid
@@ -855,6 +755,14 @@ class JointLikelihood(object):
 
             self._minimizer_name = "GRID"
             self._minimizer_algorithm = None
+
+        elif minimizer.upper() == "PAGMO":
+
+            assert algorithm is not None, "You have to provide an instance of an algorithm for the PAGMO minimizer. " \
+                                          "See http://esa.github.io/pygmo/documentation/algorithms.html"
+
+            self._minimizer_name = "PAGMO"
+            self._minimizer_algorithm = algorithm
 
         else:
 
