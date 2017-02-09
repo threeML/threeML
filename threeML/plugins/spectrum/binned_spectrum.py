@@ -1,7 +1,4 @@
 import numpy as np
-import os
-import warnings
-
 import pandas as pd
 
 from threeML.utils.histogram import Histogram
@@ -96,7 +93,7 @@ class BinnedSpectrum(Histogram):
 
     INTERVAL_TYPE = Channel
 
-    def __init__(self, counts, exposure, ebounds, count_errors=None, sys_errors=None, quality=None, scale_factor=1., is_poisson=False):
+    def __init__(self, counts, exposure, ebounds, count_errors=None, sys_errors=None, quality=None, scale_factor=1., is_poisson=False, mission=None, instrument=None):
         """
         A general binned histogram of either Poisson or non-Poisson rates. While the input is in counts, 3ML spectra work
         in rates, so this class uses the exposure to construct the rates from the counts. While it is possible to
@@ -158,7 +155,21 @@ class BinnedSpectrum(Histogram):
             self._quality = Quality.all_good(len(rates))
 
 
+        if mission is None:
 
+            self._mission = 'UNKNOWN'
+
+        else:
+
+            self._mission = mission
+
+        if instrument is None:
+
+            self._instrument = 'UNKNOWN'
+
+        else:
+
+            self._instrument = instrument
 
         self._scale_factor = scale_factor
 
@@ -220,10 +231,19 @@ class BinnedSpectrum(Histogram):
         """
         return self._exposure
 
-    @@property
+    @property
     def quality(self):
         return self._quality
 
+    @property
+    def mission(self):
+
+        return self._mission
+
+    @property
+    def instrument(self):
+
+        return self._instrument
 
     @classmethod
     def from_text_file(cls, file_name, **kwargs):
@@ -257,7 +277,7 @@ class BinnedSpectrum(Histogram):
 
 class BinnedSpectrumWithDispersion(BinnedSpectrum):
 
-    def __init__(self, counts, exposure, response, count_errors=None, sys_errors=None, quality=None, scale_factor=1., is_poisson=False ):
+    def __init__(self, counts, exposure, response, count_errors=None, sys_errors=None, quality=None, scale_factor=1., is_poisson=False, mission=None, instrument=None ):
         """
         A binned spectrum that must be deconvolved via a dispersion or response matrix
 
@@ -270,6 +290,8 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         :param quality:
         :param scale_factor:
         :param is_poisson:
+        :param mission:
+        :param instrument:
         """
 
 
@@ -288,7 +310,9 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
                                                            sys_errors=sys_errors,
                                                            quality=quality,
                                                            scale_factor=scale_factor,
-                                                           is_poisson=is_poisson)
+                                                           is_poisson=is_poisson,
+                                                           mission=mission,
+                                                           instrument=instrument)
 
 
     @property
