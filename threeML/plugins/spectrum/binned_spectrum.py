@@ -220,6 +220,9 @@ class BinnedSpectrum(Histogram):
         """
         return self._exposure
 
+    @@property
+    def quality(self):
+        return self._quality
 
 
     @classmethod
