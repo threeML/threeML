@@ -1,0 +1,373 @@
+import numpy as np
+import os
+import warnings
+
+
+from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, Quality
+from threeML.plugins.OGIP.pha import PHAII
+from threeML.plugins.OGIP.response import OGIPResponse
+
+class PHASpectrum(BinnedSpectrumWithDispersion):
+
+    def __init__(self, pha_file_or_instance, spectrum_number=None, file_type='observed',rsp_file=None, arf_file=None):
+
+        _required_keywords = {}
+        _required_keywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
+                                          "exposure:EXPOSURE,backfile:BACKFILE," +
+                                          "respfile:RESPFILE," +
+                                          "ancrfile:ANCRFILE,hduclass:HDUCLASS," +
+                                          "hduclas1:HDUCLAS1,poisserr:POISSERR," +
+                                          "chantype:CHANTYPE,detchans:DETCHANS,"
+                                          "backscal:BACKSCAL").split(",")
+
+        # hduvers:HDUVERS
+
+        _required_keywords['background'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
+                                            "exposure:EXPOSURE," +
+                                            "hduclass:HDUCLASS," +
+                                            "hduclas1:HDUCLAS1,poisserr:POISSERR," +
+                                            "chantype:CHANTYPE,detchans:DETCHANS,"
+                                            "backscal:BACKSCAL").split(",")
+
+        # hduvers:HDUVERS
+
+        _might_be_columns = {}
+        _might_be_columns['observed'] = ("EXPOSURE,BACKFILE," +
+                                         "CORRFILE,CORRSCAL," +
+                                         "RESPFILE,ANCRFILE,"
+                                         "BACKSCAL").split(",")
+        _might_be_columns['background'] = ("EXPOSURE,BACKSCAL").split(",")
+
+
+
+
+
+
+        if isinstance(pha_file_or_instance, str):
+
+            ext = os.path.splitext(pha_file_or_instance)[-1]
+
+            if '{' in ext:
+                spectrum_number = int(ext.split('{')[-1].replace('}', ''))
+
+                pha_file_or_instance = pha_file_or_instance.split('{')[0]
+
+            # Read the data
+
+            filename = pha_file_or_instance
+
+            # create a FITS_FILE instance
+
+            pha_file_or_instance = PHAII.from_fits_file(pha_file_or_instance)
+
+
+        elif isinstance(pha_file_or_instance, PHAII):
+
+            # we simply create a dummy filename
+
+            filename = 'pha_instance'
+
+        #spectrum = self._extract_pha_information(pha_file_or_instance, spectrum_number, file_type, filename)
+
+        assert file_type.lower() in ['observed', 'background'], "Unrecognized filetype keyword value"
+
+        file_type = file_type.lower()
+
+        try:
+
+            HDUidx = pha_file_or_instance.index_of("SPECTRUM")
+
+        except:
+
+            raise RuntimeError("The input file %s is not in PHA format" % (pha_file_or_instance))
+
+        #spectrum_number = spectrum_number
+
+        spectrum = pha_file_or_instance[HDUidx]
+
+
+        data = spectrum.data
+        header = spectrum.header
+
+        # We don't support yet the rescaling
+
+        if "CORRFILE" in header:
+
+            if header.get("CORRFILE").upper().strip() != "NONE":
+                raise RuntimeError("CORRFILE is not yet supported")
+
+        # See if there is there is a QUALITY==0 in the header
+
+        if "QUALITY" in header:
+
+            has_quality_column = False
+
+            if header["QUALITY"] == 0:
+
+                is_all_data_good = True
+
+            else:
+
+                is_all_data_good = False
+
+
+        else:
+
+            if "QUALITY" in data.columns.names:
+
+                has_quality_column = True
+
+                is_all_data_good = False
+
+            else:
+
+                has_quality_column = False
+
+                is_all_data_good = True
+
+                warnings.warn(
+                    'Could not find QUALITY in columns or header of PHA file. This is not a valid OGIP file. Assuming QUALITY =0 (good)')
+
+        # Determine if this file contains COUNTS or RATES
+
+        if "COUNTS" in data.columns.names:
+
+            has_rates = False
+            data_column_name = "COUNTS"
+
+        elif "RATE" in data.columns.names:
+
+            has_rates = True
+            data_column_name = "RATE"
+
+        else:
+
+            raise RuntimeError("This file does not contain a RATE nor a COUNTS column. "
+                               "This is not a valid PHA file")
+
+        # Determine if this is a PHA I or PHA II
+        if len(data.field(data_column_name).shape) == 2:
+
+            typeII = True
+
+            if spectrum_number == None:
+                raise RuntimeError("This is a PHA Type II file. You have to provide a spectrum number")
+
+        else:
+
+            typeII = False
+
+        # Collect information from mandatory keywords
+
+        keys = _required_keywords[file_type]
+
+        gathered_keywords = {}
+
+        for k in keys:
+
+            internal_name, keyname = k.split(":")
+
+            key_has_been_collected = False
+
+            if keyname in header:
+                gathered_keywords[internal_name] = header.get(keyname)
+
+                # Fix "NONE" in None
+                if gathered_keywords[internal_name] == "NONE" or \
+                                gathered_keywords[internal_name] == 'none':
+                    gathered_keywords[internal_name] = None
+
+                key_has_been_collected = True
+
+            # Note that we check again because the content of the column can override the content of the header
+
+            if keyname in _might_be_columns[file_type] and typeII:
+
+                # Check if there is a column with this name
+
+                if keyname in data.columns.names:
+                    # This will set the exposure, among other things
+
+                    gathered_keywords[internal_name] = data[keyname][spectrum_number - 1]
+
+                    # Fix "NONE" in None
+                    if gathered_keywords[internal_name] == "NONE" or \
+                                    gathered_keywords[internal_name] == 'none':
+                        gathered_keywords[internal_name] = None
+
+                    key_has_been_collected = True
+
+            if not key_has_been_collected:
+
+                # The keyword POISSERR is a special case, because even if it is missing,
+                # it is assumed to be False if there is a STAT_ERR column in the file
+
+                if keyname == "POISSERR" and "STAT_ERR" in data.columns.names:
+
+                    warnings.warn("POISSERR is not set. Assuming non-poisson errors as given in the "
+                                  "STAT_ERR column")
+
+                    gathered_keywords['poisserr'] = False
+
+                elif keyname == "ANCRFILE":
+
+                    # Some non-compliant files have no ARF because they don't need one. Don't fail, but issue a
+                    # warning
+
+                    warnings.warn("ANCRFILE is not set. This is not a compliant OGIP file. Assuming no ARF.")
+
+                    gathered_keywords['ancrfile'] = None
+
+                else:
+
+                    raise RuntimeError("Keyword %s not found. File %s is not a proper PHA "
+                                       "file" % (keyname, filename))
+
+
+        is_poisson = gathered_keywords['poisserr']
+
+        exposure = gathered_keywords['exposure']
+
+        # now we need to get the response file so that we can extract the EBOUNDS
+
+        if file_type == 'observed':
+
+            if rsp_file is None:
+
+                # this means it should be specified in the header
+                rsp_file = gathered_keywords['respfile']
+
+                if arf_file is  None:
+
+                    arf_file = gathered_keywords['ancrfile']
+
+                    # Read in the response
+
+            if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
+                rsp = OGIPResponse(rsp_file, arf_file=arf_file)
+
+            else:
+
+                # assume a fully formed OGIPResponse
+                rsp = rsp_file
+
+
+
+
+        if file_type == 'background':
+
+            # we need the rsp ebounds from response to build the histogram
+
+            assert isinstance(rsp_file,OGIPResponse), 'You must supply and OGIPResponse to extract the energy bounds'
+
+            rsp = rsp_file
+
+
+        # Now get the data (counts or rates) and their errors. If counts, transform them in rates
+
+        if typeII:
+
+            # PHA II file
+            if has_rates:
+
+                rates = data.field(data_column_name)[spectrum_number - 1, :]
+
+                if not is_poisson:
+                    rate_errors = data.field("STAT_ERR")[spectrum_number - 1, :]
+
+            else:
+
+                rates = data.field(data_column_name)[spectrum_number - 1, :] / exposure
+
+                if not is_poisson:
+                    rate_errors = data.field("STAT_ERR")[spectrum_number - 1, :] / exposure
+
+            if "SYS_ERR" in data.columns.names:
+
+                sys_errors = data.field("SYS_ERR")[spectrum_number - 1, :]
+            else:
+
+                sys_errors = np.zeros(rates.shape)
+
+            if has_quality_column:
+
+                quality = data.field("QUALITY")[spectrum_number - 1, :]
+
+            else:
+
+                if is_all_data_good:
+
+                    quality = np.zeros_like(rates, dtype=int)
+
+                else:
+
+                    quality = np.zeros_like(rates, dtype=int) + 5
+
+
+
+        elif typeII == False:
+
+            # PHA 1 file
+            if has_rates:
+
+                rates = data.field(data_column_name)
+
+                if not is_poisson:
+                    rate_errors = data.field("STAT_ERR")
+
+            else:
+
+                rates = data.field(data_column_name) / exposure
+
+                if not is_poisson:
+                    rate_errors = data.field("STAT_ERR") / exposure
+
+            if "SYS_ERR" in data.columns.names:
+
+                sys_errors = data.field("SYS_ERR")
+
+            else:
+
+                sys_errors = np.zeros(rates.shape)
+
+            if has_quality_column:
+
+                quality = data.field("QUALITY")
+
+            else:
+
+                if is_all_data_good:
+
+                    quality = np.zeros_like(rates, dtype=int)
+
+                else:
+
+                    quality = np.zeros_like(rates, dtype=int) + 5
+
+                    # Now that we have read it, some safety checks
+
+            assert rates.shape[0] == gathered_keywords['detchans'], \
+                "The data column (RATES or COUNTS) has a different number of entries than the " \
+                "DETCHANS declared in the header"
+
+
+        quality = Quality.from_ogip(quality)
+
+        counts = rates*exposure
+
+        if not is_poisson:
+
+            count_errors = rate_errors * exposure
+
+        else:
+
+            count_errors = None
+
+        super(PHASpectrum, self).__init__(counts=counts,
+                                                 exposure=exposure,
+                                                 response=rsp,
+                                                 count_errors=count_errors,
+                                                 sys_errors=sys_errors,
+                                                 is_poisson=is_poisson,
+                                                 quality=quality)
+
