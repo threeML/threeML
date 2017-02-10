@@ -64,13 +64,13 @@ def binned_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selectio
             step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
                       color=threeML_config[instrument]['background selection color'],
                       fill=True,
-                      fillAlpha=.4,
+                      alpha=.4,
                       fill_min=min_cnts)
 
     step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
               color=threeML_config[instrument]['background selection color'],
               fill=True,
-              fill_min=min_cnts, fillAlpha=.4, label="Bkg. Selections")
+              fill_min=min_cnts, alpha=.4, label="Bkg. Selections")
 
     ax.plot(mean_time, bkg, threeML_config[instrument]['background color'], lw=2., label="Background")
 
