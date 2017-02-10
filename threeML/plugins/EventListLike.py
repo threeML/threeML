@@ -106,9 +106,9 @@ class EventListLike(OGIPLike):
 
 
         super(EventListLike,self).__init__(name,
-                                      pha_file=self._observed_pha,
-                                      bak_file=self._bkg_pha,
-                                      rsp_file=rsp_file,
+                                      observation=self._observed_pha,
+                                      background=self._bkg_pha,
+                                      response=rsp_file,
                                       verbose=verbose,
                                       spectrum_number=1)
 
@@ -163,9 +163,9 @@ class EventListLike(OGIPLike):
             self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
 
             super(EventListLike, self).__init__(self.name,
-                                                pha_file=self._observed_pha,
-                                                bak_file=self._bkg_pha,
-                                                rsp_file=self._rsp_file,
+                                                observation=self._observed_pha,
+                                                background=self._bkg_pha,
+                                                response=self._rsp_file,
                                                 verbose=self._verbose,
                                                 spectrum_number=1)
 
@@ -183,9 +183,9 @@ class EventListLike(OGIPLike):
             new_name = "%s_%s" % (self._name, intervals[0])
 
             new_ogip = OGIPLike(new_name,
-                                pha_file=self._observed_pha,
-                                bak_file=self._bkg_pha,
-                                rsp_file=self._rsp_file,
+                                observation=self._observed_pha,
+                                background=self._bkg_pha,
+                                response=self._rsp_file,
                                 verbose=self._verbose,
                                 spectrum_number=1)
 
@@ -222,9 +222,9 @@ class EventListLike(OGIPLike):
 
         if not self._startup:
             super(EventListLike, self).__init__(self.name,
-                                                pha_file=self._observed_pha,
-                                                bak_file=self._bkg_pha,
-                                                rsp_file=self._rsp_file,
+                                                observation=self._observed_pha,
+                                                background=self._bkg_pha,
+                                                response=self._rsp_file,
                                                 verbose=self._verbose,
                                                 spectrum_number=1)
 
@@ -465,9 +465,9 @@ class EventListLike(OGIPLike):
             new_name = "%s_%d" % (self._name, i)
 
             new_ogip = OGIPLike(new_name,
-                                pha_file=self._observed_pha,
-                                bak_file=self._bkg_pha,
-                                rsp_file=self._rsp_file,
+                                observation=self._observed_pha,
+                                background=self._bkg_pha,
+                                response=self._rsp_file,
                                 verbose=self._verbose,
                                 spectrum_number = 1)
 
