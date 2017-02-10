@@ -5,43 +5,53 @@ import warnings
 
 from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, Quality
 from threeML.plugins.OGIP.pha import PHAII
-from threeML.plugins.OGIP.response import OGIPResponse
+from threeML.plugins.OGIP.response import OGIPResponse, InstrumentResponse
+
+_required_keywords = {}
+_required_keywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
+                                  "exposure:EXPOSURE,backfile:BACKFILE," +
+                                  "respfile:RESPFILE," +
+                                  "ancrfile:ANCRFILE,hduclass:HDUCLASS," +
+                                  "hduclas1:HDUCLAS1,poisserr:POISSERR," +
+                                  "chantype:CHANTYPE,detchans:DETCHANS,"
+                                  "backscal:BACKSCAL").split(",")
+
+# hduvers:HDUVERS
+
+_required_keywords['background'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
+                                    "exposure:EXPOSURE," +
+                                    "hduclass:HDUCLASS," +
+                                    "hduclas1:HDUCLAS1,poisserr:POISSERR," +
+                                    "chantype:CHANTYPE,detchans:DETCHANS,"
+                                    "backscal:BACKSCAL").split(",")
+
+# hduvers:HDUVERS
+
+_might_be_columns = {}
+_might_be_columns['observed'] = ("EXPOSURE,BACKFILE," +
+                                 "CORRFILE,CORRSCAL," +
+                                 "RESPFILE,ANCRFILE,"
+                                 "BACKSCAL").split(",")
+_might_be_columns['background'] = ("EXPOSURE,BACKSCAL").split(",")
 
 class PHASpectrum(BinnedSpectrumWithDispersion):
 
     def __init__(self, pha_file_or_instance, spectrum_number=None, file_type='observed',rsp_file=None, arf_file=None):
-
-        _required_keywords = {}
-        _required_keywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
-                                          "exposure:EXPOSURE,backfile:BACKFILE," +
-                                          "respfile:RESPFILE," +
-                                          "ancrfile:ANCRFILE,hduclass:HDUCLASS," +
-                                          "hduclas1:HDUCLAS1,poisserr:POISSERR," +
-                                          "chantype:CHANTYPE,detchans:DETCHANS,"
-                                          "backscal:BACKSCAL").split(",")
-
-        # hduvers:HDUVERS
-
-        _required_keywords['background'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
-                                            "exposure:EXPOSURE," +
-                                            "hduclass:HDUCLASS," +
-                                            "hduclas1:HDUCLAS1,poisserr:POISSERR," +
-                                            "chantype:CHANTYPE,detchans:DETCHANS,"
-                                            "backscal:BACKSCAL").split(",")
-
-        # hduvers:HDUVERS
-
-        _might_be_columns = {}
-        _might_be_columns['observed'] = ("EXPOSURE,BACKFILE," +
-                                         "CORRFILE,CORRSCAL," +
-                                         "RESPFILE,ANCRFILE,"
-                                         "BACKSCAL").split(",")
-        _might_be_columns['background'] = ("EXPOSURE,BACKSCAL").split(",")
+        """
+        A spectrum with dispersion build from an OGIP-compliant PHA FITS file. Both Type I & II files can be read. Type II
+        spectra are selected either by specifying the spectrum_number or via the {spectrum_number} file name convention used
+        in XSPEC. If the file_type is background, a 3ML InstrumentResponse or subclass must be passed so that the energy
+        bounds can be obtained.
 
 
+        :param pha_file_or_instance: either a PHA file name or threeML.plugins.OGIP.pha.PHAII instance
+        :param spectrum_number: (optional) the spectrum number of the TypeII file to be used
+        :param file_type: observed or background
+        :param rsp_file: RMF filename or threeML.plugins.OGIP.response.InstrumentResponse instance
+        :param arf_file: (optional) and ARF filen ame
+        """
 
-
-
+        # extract the spectrum number if needed
 
         if isinstance(pha_file_or_instance, str):
 
@@ -60,6 +70,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
             pha_file_or_instance = PHAII.from_fits_file(pha_file_or_instance)
 
+        # If this is already a FITS_FILE instance,
 
         elif isinstance(pha_file_or_instance, PHAII):
 
@@ -67,7 +78,6 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
             filename = 'pha_instance'
 
-        #spectrum = self._extract_pha_information(pha_file_or_instance, spectrum_number, file_type, filename)
 
         assert file_type.lower() in ['observed', 'background'], "Unrecognized filetype keyword value"
 
@@ -258,7 +268,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
             # we need the rsp ebounds from response to build the histogram
 
-            assert isinstance(rsp_file,OGIPResponse), 'You must supply and OGIPResponse to extract the energy bounds'
+            assert isinstance(rsp_file,InstrumentResponse), 'You must supply and OGIPResponse to extract the energy bounds'
 
             rsp = rsp_file
 
@@ -363,11 +373,135 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
             count_errors = None
 
+        # default the grouping to all open bins
+        # this will only be altered if the spectrum is rebinned
+        self._grouping = np.ones_like(counts)
+
+        # this saves the extra properties to the class
+
+        self._gathered_keywords = gathered_keywords
+
+        self._file_type = file_type
+
+        # pass the needed spectrum values back up
+        # remember that Spectrum reads counts, but returns
+        # rates!
+
+
         super(PHASpectrum, self).__init__(counts=counts,
-                                                 exposure=exposure,
-                                                 response=rsp,
-                                                 count_errors=count_errors,
-                                                 sys_errors=sys_errors,
-                                                 is_poisson=is_poisson,
-                                                 quality=quality)
+                                          exposure=exposure,
+                                          response=rsp,
+                                          count_errors=count_errors,
+                                          sys_errors=sys_errors,
+                                          is_poisson=is_poisson,
+                                          quality=quality)
+
+    def _return_file(self, key):
+
+        if key in self._gathered_keywords:
+
+            return self._gathered_keywords[key]
+
+        else:
+
+            return None
+
+
+    def set_ogip_grouping(self,grouping):
+        """
+        If the counts are rebinned, this updates the grouping
+        :param grouping:
+
+        """
+
+        self._grouping = grouping
+
+    @property
+    def background_file(self):
+        """
+        Returns the background file definied in the header, or None if there is none defined
+p
+        :return: a path to a file, or None
+        """
+
+        return self._return_file('backfile')
+
+    @property
+    def scale_factor(self):
+        """
+        This is a scale factor (in the BACKSCAL keyword) which must be used to rescale background and source
+        regions
+
+        :return:
+        """
+        return self._gathered_keywords['backscal']
+
+    @property
+    def response_file(self):
+        """
+            Returns the response file definied in the header, or None if there is none defined
+
+            :return: a path to a file, or None
+            """
+        return self._return_file('respfile')
+
+    @property
+    def ancillary_file(self):
+        """
+            Returns the ancillary file definied in the header, or None if there is none defined
+
+            :return: a path to a file, or None
+            """
+        return self._return_file('ancrfile')
+
+    @property
+    def grouping(self):
+
+        return self._grouping
+
+    def new_spectrum(self, new_counts, new_count_errors):
+        """
+        make a new spectrum with new counts and errors and all other
+        parameters the same
+
+
+        :param new_counts: new counts for the spectrum
+        :param new_count_errors: new errors from the spectrum
+        :return: new pha spectrum
+        """
+
+
+
+        if new_count_errors is None:
+            stat_err = None
+
+        else:
+
+            stat_err = new_count_errors/self.exposure
+
+        # create a new PHAII instance
+
+        pha = PHAII(instrument_name=self.instrument,
+                    telescope_name=self.mission,
+                    tstart=0,
+                    telapse=self.exposure,
+                    channel=range(1,len(self)+1),
+                    rate=new_counts/self.exposure,
+                    stat_err=stat_err,
+                    quality=self.quality.to_ogip(),
+                    grouping=self.grouping,
+                    exposure=self.exposure,
+                    backscale=self.scale_factor,
+                    respfile=None,
+                    ancrfile=None,
+                    is_poisson=self.is_poisson)
+
+        # now make a new spectrum
+
+        new_spectrum = PHASpectrum(pha,
+                                   spectrum_number=1,
+                                   file_type=self._file_type,
+                                   rsp_file=self._rsp)
+
+        return new_spectrum
 
