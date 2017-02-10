@@ -2,15 +2,15 @@ __author__ = 'grburgess'
 
 import astropy.io.fits as fits
 import numpy as np
-
+import collections
 import pandas as pd
 import warnings
 
 
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithLiveTime
-from threeML.io.rich_display import display
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
+from threeML.io.rich_display import display
 
 from threeML.io.plugin_plots import binned_light_curve_plot
 
@@ -145,8 +145,7 @@ class FermiLATLLELike(EventListLike):
 
         if use_binner:
 
-            bin_start, bin_stop = self._event_list.bins
-            bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
+            bins = self._event_list.bins.time_edges
 
             # perhaps we want to look a little before or after the binner
             if start < bins[0]:
@@ -190,15 +189,15 @@ class FermiLATLLELike(EventListLike):
                                 bkg_selections=zip(self._event_list.poly_intervals.start_times, self._event_list.poly_intervals.stop_times),
                                 instrument='lle')
 
-    def peek(self):
+    def __repr__(self):
+        return self._output().to_string()
 
-        print("LLE File Info:")
+    def _output(self):
+        super_out = super(FermiLATLLELike, self)._output()
+        return super_out.append(self._lat_lle_file._output())
 
-        self._event_list.peek()
-
-        print('Timing Info:')
-
-        self._lat_lle_file.peek()
+    def display(self):
+        display(self._output().to_frame())
 
 
 class LLEFile(object):
@@ -479,33 +478,45 @@ class LLEFile(object):
 
 
 
-    def peek(self):
-        """
-        Examine the currently selected interval
-        If connected to the internet, will also look up info for other instruments to compare with
-        Fermi.
+    def __repr__(self):
 
-        :return: none
+        return  self._output().to_string()
+
+
+    def _output(self):
+
         """
+                Examine the currently selected interval
+                If connected to the internet, will also look up info for other instruments to compare with
+                Fermi.
+
+                :return: none
+                """
 
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
-        fermi_dict = {}
+        fermi_dict = collections.OrderedDict()
 
-        fermi_dict['Fermi Trigger Time'] = self.trigger_time
-        fermi_dict['Fermi MET OBS Start'] = self._tstart
-        fermi_dict['Fermi MET OBS Stop'] = self._tstop
+        fermi_dict['Fermi Trigger Time'] = "%.3f" % self._trigger_time
+        fermi_dict['Fermi MET OBS Start'] = "%.3f" % self._tstart
+        fermi_dict['Fermi MET OBS Stop'] = "%.3f" % self._tstop
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
         fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
+        fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
+
+
         if mission_dict is not None:
-            mission_df = pd.Series(mission_dict)
+            mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
-            display(mission_df)
+            fermi_df = fermi_df.append(mission_df)
 
-        fermi_df = pd.Series(fermi_dict)
 
-        display(fermi_df)
+
+        return fermi_df
+
+
+
 
 
 

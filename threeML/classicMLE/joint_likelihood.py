@@ -18,8 +18,10 @@ from threeML.io.table import Table
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
+from threeML.config.config import threeML_config
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.analysis_results import MLEResults
+
 
 from astromodels import ModelAssertionViolation
 
@@ -83,7 +85,9 @@ class JointLikelihood(object):
 
         # Pre-defined minimizer is Minuit
 
-        self.set_minimizer("MINUIT")
+        self.set_minimizer(threeML_config['mle']['default minimizer'],
+                           threeML_config['mle']['default minimizer algorithm'],
+                           threeML_config['mle']['default minimizer callback'])
 
         # Initial set of free parameters
 

@@ -1,5 +1,9 @@
+import collections
+import pandas as pd
+
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
+from threeML.io.rich_display import display
 from astromodels.utils.valid_variable import is_valid_variable_name
 
 from threeML.plugins.OGIP.pha import PHAWrite
@@ -77,7 +81,45 @@ class OGIPLike(DispersionSpectrumLike):
 
         pha_writer.write(file_name, overwrite=overwrite)
 
+    def display(self):
+        """
+        Displays the current content of the OGIP object
+        :return:
+        """
 
+        display(self._output().to_frame())
+
+    def __repr__(self):
+
+
+
+
+            return self._output().to_string()
+
+    def _output(self):
+
+        obs = collections.OrderedDict()
+
+        obs['n. channels'] = self._pha.n_channels
+
+        obs['total rate'] = self._pha.total_rate
+
+        if not self._pha.is_poisson():
+            obs['total rate error'] = self._pha.total_rate_error
+
+        obs['total bkg. rate'] = self._bak.total_rate
+
+        if not self._bak.is_poisson():
+            obs['total bkg. rate error'] = self._bak.total_rate_error
+
+        obs['exposure'] = self.exposure
+        obs['bkg. exposure'] = self.background_exposure
+        obs['significance'] = self.significance
+        obs['is poisson'] = self._pha.is_poisson()
+        obs['bkg. is poisson'] = self._bak.is_poisson()
+        obs['response'] = self._pha.response_file
+
+        return pd.Series(data=obs, index=obs.keys())
 
 
 

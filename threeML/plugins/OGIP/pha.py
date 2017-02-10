@@ -3,6 +3,8 @@ import astropy.io.fits as fits
 import numpy as np
 from threeML.plugins.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 from threeML.io.fits_file import FITSExtension, FITSFile
+from threeML.utils.stats_tools import sqrt_sum_of_squares
+
 import astropy.units as u
 
 class PHAWrite(object):

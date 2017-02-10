@@ -1,5 +1,6 @@
 import re
 import warnings
+import collections
 
 try:
 
@@ -26,7 +27,7 @@ def compute_fermi_relative_mission_times(trigger_time):
     :param trigger_time: a fermi MET
     :return: mission time in a python dictionary
     """
-    mission_dict = {}
+    mission_dict = collections.OrderedDict()
 
     if trigger_time == 0:
         return None

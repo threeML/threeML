@@ -1,10 +1,12 @@
 __author__ = 'grburgess'
 
 import numpy as np
+import pandas as pd
 
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.plugins.OGIP.pha import PHAII
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.rich_display import display
 
 try:
 
@@ -111,6 +113,22 @@ class EventListLike(OGIPLike):
                                       response=rsp_file,
                                       verbose=verbose,
                                       spectrum_number=1)
+
+
+
+    def __repr__(self):
+
+        return self._output().to_string()
+
+    def _output(self):
+
+        super_out = super(EventListLike, self)._output()
+        return super_out.append(self._event_list._output())
+
+
+    def display(self):
+
+        display(self._output().to_frame())
 
 
 
@@ -252,8 +270,8 @@ class EventListLike(OGIPLike):
         # create copies of the OGIP plugins with the
         # time interval saved.
 
-        for interval in self.text_bins:
-            self.set_active_time_interval(interval)
+        for interval in self._event_list.bins:
+            self.set_active_time_interval(interval.to_string())
 
             ogip_list.append(copy.copy(self))
 
@@ -298,14 +316,6 @@ class EventListLike(OGIPLike):
 
         self._event_list.save_background(filename, overwrite)
 
-
-
-
-
-    @property
-    def text_bins(self):
-
-        return self._event_list.text_bins
 
     @property
     def bins(self):
@@ -459,8 +469,8 @@ class EventListLike(OGIPLike):
 
 
 
-        for i, interval in enumerate(self.text_bins):
-            self.set_active_time_interval(interval)
+        for i, interval in enumerate(self._event_list.bins):
+            self.set_active_time_interval(interval.to_string())
 
             new_name = "%s_%d" % (self._name, i)
 
