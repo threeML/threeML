@@ -77,7 +77,7 @@ class Interval(object):
         new_start = max(self._start, interval.start)
         new_stop = min(self._stop, interval.stop)
 
-        return Interval(new_start, new_stop)
+        return self.new(new_start, new_stop)
 
     def merge(self, interval):
         """
@@ -139,25 +139,7 @@ class Interval(object):
 
         return "%f-%f"%(self.start,self.stop)
 
-    def __add__(self, number):
-        """
-        Return a new time interval equal to the original time interval shifted to the right by number
 
-        :param number: a float
-        :return: a new TimeInterval instance
-        """
-
-        return self.new(self._start + number, self._stop + number)
-
-    def __sub__(self, number):
-        """
-        Return a new time interval equal to the original time interval shifted to the left by number
-
-        :param number: a float
-        :return: a new TimeInterval instance
-        """
-
-        return self.new(self._start - number, self._stop - number)
 
     def __eq__(self, other):
 
@@ -390,30 +372,6 @@ class IntervalSet(object):
 
         return self._intervals[item]
 
-    def __add__(self, number):
-        """
-        Shift all time intervals to the right by number
-
-        :param number: a float
-        :return: new TimeIntervalSet instance
-        """
-
-        new_set = self.new()
-        new_set.extend([time_interval + number for time_interval in self._intervals])
-
-        return new_set
-
-    def __sub__(self, number):
-        """
-        Shift all time intervals to the left by number (in place)
-
-        :param number: a float
-        :return: new TimeIntervalSet instance
-        """
-
-        new_set = self.new([time_interval - number for time_interval in self._intervals])
-
-        return new_set
 
     def __eq__(self, other):
 
@@ -464,6 +422,23 @@ class IntervalSet(object):
         stops = map(attrgetter("stop"), self._intervals)
 
         return np.allclose(starts[1:], stops[:-1], rtol=relative_tolerance)
+
+    def containing_bin(self, value):
+
+        '''Finds the channel containing the provided energy.
+               NOTE: returns the channel index (starting at zero),
+               not the channel number (likely starting from 1).
+
+               If you ask for a energy lower than the minimum ebounds, 0 will be returned
+               If you ask for a energy higher than the maximum ebounds, the last channel index will be returned
+               '''
+
+        # Get the index of the first ebounds upper bound larger than energy
+        # (but never go below zero or above the last channel)
+        idx = min(max(0, np.searchsorted(self.edges, value) - 1), len(self))
+
+        return idx
+
 
     @property
     def starts(self):

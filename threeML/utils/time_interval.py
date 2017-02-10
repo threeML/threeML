@@ -5,6 +5,26 @@ from threeML.utils.interval import Interval, IntervalSet
 
 class TimeInterval(Interval):
 
+    def __add__(self, number):
+        """
+        Return a new time interval equal to the original time interval shifted to the right by number
+
+        :param number: a float
+        :return: a new TimeInterval instance
+        """
+
+        return self.new(self._start + number, self._stop + number)
+
+    def __sub__(self, number):
+        """
+        Return a new time interval equal to the original time interval shifted to the left by number
+
+        :param number: a float
+        :return: a new TimeInterval instance
+        """
+
+        return self.new(self._start - number, self._stop - number)
+
     @property
     def duration(self):
 
@@ -23,7 +43,7 @@ class TimeInterval(Interval):
     @property
     def half_time(self):
 
-        return self._get_mid_point()
+        return self.mid_point
 
     def __repr__(self):
 
@@ -85,8 +105,29 @@ class TimeIntervalSet(IntervalSet):
         :return:
         """
 
-        self.edges
+        return self.edges
 
+    def __add__(self, number):
+        """
+        Shift all time intervals to the right by number
 
+        :param number: a float
+        :return: new TimeIntervalSet instance
+        """
 
+        new_set = self.new()
+        new_set.extend([time_interval + number for time_interval in self._intervals])
 
+        return new_set
+
+    def __sub__(self, number):
+        """
+        Shift all time intervals to the left by number (in place)
+
+        :param number: a float
+        :return: new TimeIntervalSet instance
+        """
+
+        new_set = self.new([time_interval - number for time_interval in self._intervals])
+
+        return new_set
