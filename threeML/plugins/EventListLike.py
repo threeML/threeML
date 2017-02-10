@@ -1,10 +1,12 @@
 __author__ = 'grburgess'
 
 import numpy as np
+import pandas as pd
 
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.plugins.OGIP.pha import PHAII
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.rich_display import display
 
 try:
 
@@ -111,6 +113,22 @@ class EventListLike(OGIPLike):
                                       rsp_file=rsp_file,
                                       verbose=verbose,
                                       spectrum_number=1)
+
+
+
+    def __repr__(self):
+
+        return self._output().to_string()
+
+    def _output(self):
+
+        super_out = super(EventListLike, self)._output()
+        return super_out.append(self._event_list._output())
+
+
+    def display(self):
+
+        display(self._output().to_frame())
 
 
 

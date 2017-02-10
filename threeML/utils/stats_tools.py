@@ -65,6 +65,16 @@ def dic(bayesian_trace):
     return 2 * mean_deviance - deviance_at_mean
 
 
+def sqrt_sum_of_squares(arg):
+    """
+    :param arg: and array of number to be squared and summed
+    :return: the sqrt of the sum of the squares
+    """
+
+    return np.sqrt( np.square(arg).sum() )
+
+
+
 class ModelComparison(object):
     def __init__(self, *analyses):
         self._analysis_container = analyses

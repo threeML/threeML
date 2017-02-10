@@ -339,6 +339,10 @@ class TimeIntervalSet(object):
 
         self._intervals.extend(list_of_intervals)
 
+    def __repr__(self):
+
+        return "\n".join(interval.__repr__() for interval in self._intervals)
+
     def __len__(self):
 
         return len(self._intervals)
@@ -494,5 +498,6 @@ class TimeIntervalSet(object):
         """
 
         return ','.join([interval.to_string() for interval in self._intervals])
+
 
 
