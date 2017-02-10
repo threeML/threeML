@@ -836,8 +836,8 @@ class SpectrumLike(PluginPrototype):
         # only for the PHASpectrum subclass do we need to update the the grouping
         if isinstance(self._observed_spectrum,PHASpectrum):
 
-            self._observed_spectrum.set_grouping(rebinner.grouping)
-            self._background_spectrum.set_grouping(rebinner.grouping)
+            self._observed_spectrum.set_ogip_grouping(rebinner.grouping)
+            self._background_spectrum.set_ogip_grouping(rebinner.grouping)
 
         self._apply_rebinner(rebinner)
 

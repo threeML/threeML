@@ -394,7 +394,9 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
                                           count_errors=count_errors,
                                           sys_errors=sys_errors,
                                           is_poisson=is_poisson,
-                                          quality=quality)
+                                          quality=quality,
+                                          mission=gathered_keywords['mission'],
+                                          instrument=gathered_keywords['instrument'])
 
     def _return_file(self, key):
 
@@ -498,10 +500,10 @@ p
 
         # now make a new spectrum
 
-        new_spectrum = PHASpectrum(pha,
-                                   spectrum_number=1,
-                                   file_type=self._file_type,
-                                   rsp_file=self._rsp)
+        # new_spectrum = PHASpectrum(pha,
+        #                            spectrum_number=1,
+        #                            file_type=self._file_type,
+        #                            rsp_file=self._rsp)
 
-        return new_spectrum
+        return pha
 

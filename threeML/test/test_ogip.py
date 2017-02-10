@@ -1,11 +1,9 @@
 import pytest
-import numpy as np
 import os
 
-__author__ = 'drjfunk'
 
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.OGIP.pha import PHA
+from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.plugins.OGIP.response import OGIPResponse
 from threeML.data_list import DataList
@@ -73,7 +71,7 @@ class AnalysisBuilder(object):
 
 def test_loading_a_generic_pha_file():
     with within_directory(__this_dir__):
-        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+        ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         pha_info = ogip.get_pha_files()
 
@@ -96,19 +94,19 @@ def test_loading_a_generic_pha_file():
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
     with within_directory(__this_dir__):
 
-        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+        ogip = OGIPLike('test_ogip', observation='test.pha{1}')
         ogip.set_active_measurements('all')
         pha_info = ogip.get_pha_files()
 
         for key in ['pha', 'bak']:
 
-            assert isinstance(pha_info[key], PHA)
+            assert isinstance(pha_info[key], PHASpectrum)
 
         assert pha_info['pha'].background_file == 'test_bak.pha{1}'
         assert pha_info['pha'].ancillary_file is None
         assert pha_info['pha'].instrument == 'GBM_NAI_03'
         assert pha_info['pha'].mission == 'GLAST'
-        assert pha_info['pha'].is_poisson() == True
+        assert pha_info['pha'].is_poisson == True
         assert pha_info['pha'].n_channels == ogip.n_data_points
         assert pha_info['pha'].n_channels == len(pha_info['pha'].rates)
 
@@ -148,7 +146,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
         assert pha_info['bak'].instrument == 'GBM_NAI_03'
         assert pha_info['bak'].mission == 'GLAST'
 
-        assert pha_info['bak'].is_poisson() == False
+        assert pha_info['bak'].is_poisson == False
 
         assert pha_info['bak'].n_channels == ogip.n_data_points
         assert pha_info['bak'].n_channels == len(pha_info['pha'].rates)
@@ -164,20 +162,20 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
     with within_directory(__this_dir__):
-        ogip = OGIPLike('test_ogip', pha_file='test.pha', spectrum_number=1)
+        ogip = OGIPLike('test_ogip', observation='test.pha', spectrum_number=1)
         ogip.set_active_measurements('all')
 
         pha_info = ogip.get_pha_files()
 
         for key in ['pha', 'bak']:
 
-            assert isinstance(pha_info[key], PHA)
+            assert isinstance(pha_info[key], PHASpectrum)
 
         assert pha_info['pha'].background_file == 'test_bak.pha{1}'
         assert pha_info['pha'].ancillary_file is None
         assert pha_info['pha'].instrument == 'GBM_NAI_03'
         assert pha_info['pha'].mission == 'GLAST'
-        assert pha_info['pha'].is_poisson() == True
+        assert pha_info['pha'].is_poisson == True
         assert pha_info['pha'].n_channels == ogip.n_data_points
         assert pha_info['pha'].n_channels == len(pha_info['pha'].rates)
 
@@ -214,7 +212,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
         assert pha_info['bak'].instrument == 'GBM_NAI_03'
         assert pha_info['bak'].mission == 'GLAST'
 
-        assert pha_info['bak'].is_poisson() == False
+        assert pha_info['bak'].is_poisson == False
 
         assert pha_info['bak'].n_channels == ogip.n_data_points
         assert pha_info['bak'].n_channels == len(pha_info['pha'].rates)
@@ -230,9 +228,9 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
 
 def test_ogip_energy_selection():
     with within_directory(__this_dir__):
-        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+        ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
-        assert sum(ogip._mask) == sum(ogip._quality_to_mask())
+        assert sum(ogip._mask) == sum(ogip.quality.good)
 
 
         # Test that  selecting a subset reduces the number of data points
@@ -278,12 +276,12 @@ def test_ogip_energy_selection():
 
         ogip.set_active_measurements('reset')
 
-        assert sum(ogip._mask) == sum(ogip._quality_to_mask())
+        assert sum(ogip._mask) == sum(ogip.quality.good)
 
 
 def test_ogip_rebinner():
     with within_directory(__this_dir__):
-        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+        ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         n_data_points = 128
         ogip.set_active_measurements("all")
@@ -310,7 +308,7 @@ def test_ogip_rebinner():
 
 def test_various_effective_area():
     with within_directory(__this_dir__):
-        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+        ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         ogip.use_effective_area_correction()
 
@@ -321,7 +319,7 @@ def test_various_effective_area():
 def test_simulating_data_sets():
     with within_directory(__this_dir__):
 
-        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+        ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         with pytest.raises(AssertionError):
             _ = ogip.simulated_parameters
@@ -359,7 +357,7 @@ def test_simulating_data_sets():
         del ogip
         del new_ogip
 
-        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+        ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         ab = AnalysisBuilder(ogip)
         ab.build_point_source_jl()
@@ -380,7 +378,7 @@ def test_simulating_data_sets():
 def test_likelihood_ratio_test():
     with within_directory(__this_dir__):
 
-        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+        ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         ogip.set_active_measurements("all")
 
@@ -406,9 +404,9 @@ def test_xrt():
         dec = -28.546
         ra = 280.52
         xrt_dir = 'xrt'
-        xrt = SwiftXRTLike("XRT", pha_file=os.path.join(xrt_dir, "xrt_src.pha"),
-                           bak_file=os.path.join(xrt_dir, "xrt_bkg.pha"),
-                           rsp_file=os.path.join(xrt_dir, "xrt.rmf"),
+        xrt = SwiftXRTLike("XRT", observation=os.path.join(xrt_dir, "xrt_src.pha"),
+                           background=os.path.join(xrt_dir, "xrt_bkg.pha"),
+                           response=os.path.join(xrt_dir, "xrt.rmf"),
                            arf_file=os.path.join(xrt_dir, "xrt.arf"))
 
         spectral_model = Powerlaw()
@@ -424,23 +422,23 @@ def test_xrt():
 def test_pha_write():
     with within_directory(__this_dir__):
 
-        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+        ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         ogip.write_pha('test_write', overwrite=True)
 
-        written_ogip = OGIPLike('write_ogip', pha_file='test_write.pha{1}')
+        written_ogip = OGIPLike('write_ogip', observation='test_write.pha{1}')
 
         pha_info = written_ogip.get_pha_files()
 
         for key in ['pha', 'bak']:
 
-            assert isinstance(pha_info[key], PHA)
+            assert isinstance(pha_info[key], PHASpectrum)
 
         assert pha_info['pha'].background_file == 'test_bak.pha{1}'
         assert pha_info['pha'].ancillary_file is None
         assert pha_info['pha'].instrument == 'GBM_NAI_03'
         assert pha_info['pha'].mission == 'GLAST'
-        assert pha_info['pha'].is_poisson() == True
+        assert pha_info['pha'].is_poisson == True
         assert pha_info['pha'].n_channels == len(pha_info['pha'].rates)
 
 

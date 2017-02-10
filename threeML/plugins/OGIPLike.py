@@ -48,20 +48,19 @@ class OGIPLike(DispersionSpectrumLike):
                                        observed_spectrum=pha,
                                        background_spectrum=bak,
                                        verbose=verbose)
-    #
-    # def get_simulated_dataset(self, new_name=None, **kwargs):
-    #     """
-    #     Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
-    #     model, as well as from the background (depending on the respective noise models)
-    #
-    #     :return: a DispersionSpectrumLike simulated instance
-    #      """
-    #
-    #     # pass the response thru to the constructor
-    #     return super(OGIPLike, self).get_simulated_dataset(new_name=new_name,
-    #                                                        pha_file=self._rsp,
-    #                                                        bak_file=0.,
-    #                                                        **kwargs)
+
+    def get_simulated_dataset(self, new_name=None,**kwargs):
+        """
+        Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
+        model, as well as from the background (depending on the respective noise models)
+
+        :return: a DispersionSpectrumLike simulated instance
+         """
+
+        # pass the response thru to the constructor
+        return super(OGIPLike, self).get_simulated_dataset(new_name=new_name,
+                                                           spectrum_number=1,
+                                                           **kwargs)
 
     @property
     def grouping(self):
