@@ -100,24 +100,24 @@ class OGIPLike(DispersionSpectrumLike):
 
         obs = collections.OrderedDict()
 
-        obs['n. channels'] = self._pha.n_channels
+        obs['n. channels'] = self._observed_spectrum.n_channels
 
-        obs['total rate'] = self._pha.total_rate
+        obs['total rate'] = self._observed_spectrum.total_rate
 
-        if not self._pha.is_poisson():
-            obs['total rate error'] = self._pha.total_rate_error
+        if not self._observed_spectrum.is_poisson:
+            obs['total rate error'] = self._observed_spectrum.total_rate_error
 
-        obs['total bkg. rate'] = self._bak.total_rate
+        obs['total bkg. rate'] = self._background_spectrum.total_rate
 
-        if not self._bak.is_poisson():
-            obs['total bkg. rate error'] = self._bak.total_rate_error
+        if not self._background_spectrum.is_poisson:
+            obs['total bkg. rate error'] = self._background_spectrum.total_rate_error
 
         obs['exposure'] = self.exposure
         obs['bkg. exposure'] = self.background_exposure
         obs['significance'] = self.significance
-        obs['is poisson'] = self._pha.is_poisson()
-        obs['bkg. is poisson'] = self._bak.is_poisson()
-        obs['response'] = self._pha.response_file
+        obs['is poisson'] = self._observed_spectrum.is_poisson
+        obs['bkg. is poisson'] = self._background_spectrum.is_poisson
+        obs['response'] = self._observed_spectrum.response_file
 
         return pd.Series(data=obs, index=obs.keys())
 

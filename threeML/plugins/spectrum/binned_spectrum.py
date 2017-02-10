@@ -4,6 +4,7 @@ import pandas as pd
 from threeML.utils.histogram import Histogram
 from threeML.utils.interval import Interval, IntervalSet
 from threeML.plugins.OGIP.response import InstrumentResponse
+from threeML.utils.stats_tools import sqrt_sum_of_squares
 
 class Channel(Interval):
 
@@ -235,6 +236,59 @@ class BinnedSpectrum(Histogram):
         :return: rates per channel
         """
         return self._contents
+
+    @property
+    def total_rate(self):
+        """
+        :return: total rate
+        """
+
+        return self._contents.sum()
+
+    @property
+    def total_rate_error(self):
+        """
+        :return: total rate error
+        """
+        assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
+
+        return sqrt_sum_of_squares(self._errors)
+
+    @property
+    def counts(self):
+        """
+        :return: counts per channel
+        """
+
+        return self._contents * self.exposure
+
+    @property
+    def counts_error(self):
+        """
+        :return: count error per channel
+        """
+
+        assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
+
+        return self._errors * self.exposure
+
+    @property
+    def total_count(self):
+        """
+        :return: total counts
+        """
+
+        return self.counts.sum()
+
+    @property
+    def total_count_error(self):
+        """
+        :return: total count error
+        """
+
+        assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
+
+        return sqrt_sum_of_squares(self.counts_error)
 
     @property
     def is_poisson(self):

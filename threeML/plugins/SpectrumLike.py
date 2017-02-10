@@ -18,6 +18,7 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.plugins.OGIP.likelihood_functions import chi2
 from threeML.utils.binner import Rebinner
+from threeML.utils.stats_tools import Significance
 from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum
 from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
 
@@ -648,41 +649,10 @@ class SpectrumLike(PluginPrototype):
 
                 if self._background_noise_model == 'poisson':
 
-                    # Since we use a profile likelihood, the background model is conditional on the source model, so let's
-                    # get it from the likelihood function
-                    _, background_model_counts = self._loglike_poisson_obs_poisson_bkg()
-
-                    # Now randomize the expectations
-
-                    # Randomize expectations for the source
-
-                    idx = (self._observed_counts_errors > 0)
-
-                    randomized_source_counts = np.zeros_like(source_model_counts)
-
-                    randomized_source_counts[idx] = np.random.normal(loc=source_model_counts[idx] + background_model_counts[idx],
-                                                                     scale=self._observed_counts_errors)
-
-                    # Issue a warning if the generated source is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_source_counts < 0)  # type: np.ndarray
-
-                    negative_source_n = np.sum(idx)
-
-                    if negative_source_n > 0:
-                        custom_warnings.warn("Generated source has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_source_n))
-
-                        randomized_source_counts[idx] = 0
-
-                    randomized_source_count_err = copy.copy(self._observed_counts_errors)
-
-                    # Randomize expectations for the background
-
-                    randomized_background_counts = np.random.poisson(background_model_counts)
-                    # randomized_background_rate = randomized_background_counts / self.background_exposure
-
-                    randomized_background_count_err = None
+                    raise RuntimeError(
+                        "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
+                        self._observation_noise_model,
+                        self._background_noise_model))
 
                 elif self._background_noise_model == 'ideal':
 
@@ -1219,6 +1189,56 @@ class SpectrumLike(PluginPrototype):
         else:
 
             return int(self._mask.sum())
+
+    @property
+    def significance(self):
+        """
+        :return: the significance of the data over background
+        """
+
+        sig_obj = Significance(Non=self._observed_spectrum.total_count,
+                               Noff=self._background_spectrum.total_count,
+                               alpha=self.exposure / self.background_exposure)
+
+        if self._observed_spectrum.is_poisson and self._background_spectrum.is_poisson:
+
+            # use simple li & ma
+            significance = sig_obj.li_and_ma()
+
+        elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
+
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._background_spectrum.total_count_error)
+
+        else:
+
+            raise NotImplementedError("We haven't put in other significances yet")
+
+        return significance[0]
+
+    @property
+    def significance_per_channel(self):
+        """
+        :return: the significance of the data over background per channel
+        """
+
+        sig_obj = Significance(Non=self._observed_spectrum.counts,
+                               Noff=self._background_spectrum.counts,
+                               alpha=self.exposure / self.background_exposure)
+
+        if self._observed_spectrum.is_poisson and self._background_spectrum.is_poisson:
+
+            # use simple li & ma
+            significance = sig_obj.li_and_ma()
+
+        elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
+
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._background_spectrum.counts_error)
+
+        else:
+
+            raise NotImplementedError("We haven't put in other significances yet")
+
+        return significance
 
     def view_count_spectrum(self, plot_errors=True, show_bad_channels=True):
         """
