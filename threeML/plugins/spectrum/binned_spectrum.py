@@ -44,18 +44,35 @@ class Quality(object):
         :param quality:
         """
 
+        total_length = len(quality)
+
+        good = quality == 'good'
+        warn = quality == 'warn'
+        bad  = quality == 'bad'
+
+        assert total_length == sum(good) + sum(warn) +sum(bad), 'quality can only contain "good", "warn", and "bad"'
+
+        self._good = good
+        self._warn = warn
+        self._bad = bad
+
         self._quality = quality
+
+    def __len__(self):
+
+        return len(self._quality)
 
     @property
     def good(self):
-        return self._quality == 'good'
+        return self._good
 
+    @property
     def warn(self):
-        return self._quality == 'warn'
+        return self._warn
 
     @property
     def bad(self):
-        return self._quality == 'bad'
+        return self._bad
 
     @property
     def n_elements(self):
@@ -67,23 +84,40 @@ class Quality(object):
         warn = ogip_quality == 2
         bad = np.logical_and(~good, ~warn)
 
-        quality = np.empty_like(ogip_quality, dtype=str)
+        quality = np.array(['good' for i in xrange(len(ogip_quality))])
 
-        quality[good] = 'good'
+        #quality[good] = 'good'
         quality[warn] = 'warn'
         quality[bad] = 'bad'
 
         return cls(quality)
 
+    def to_ogip(self):
+        """
+        makes a quality array following the OGIP standards:
+        0 = good
+        2 = warn
+        5 = bad
+
+        :return:
+        """
+
+        ogip_quality = np.zeros(self._quality.shape,dtype=np.int32)
+
+        ogip_quality[self.warn] = 2
+        ogip_quality[self.bad] = 5
+
+        return ogip_quality
+
     @classmethod
-    def all_good(cls, n_channels):
+    def create_all_good(cls, n_channels):
         """
         construct a quality object with all good channels
         :param n_channels:
         :return:
         """
 
-        quality = np.array(['good']* int(n_channels))
+        quality = np.array(['good' for i in xrange(int(n_channels))])
 
         return cls(quality)
 
@@ -96,27 +130,35 @@ class BinnedSpectrum(Histogram):
     def __init__(self, counts, exposure, ebounds, count_errors=None, sys_errors=None, quality=None, scale_factor=1., is_poisson=False, mission=None, instrument=None):
         """
         A general binned histogram of either Poisson or non-Poisson rates. While the input is in counts, 3ML spectra work
-        in rates, so this class uses the exposure to construct the rates from the counts. While it is possible to
-        construct a histogram directly, this class provides methods to construct histograms from PHA and ROOT (not yet!)
-        files directly.
-
-
+        in rates, so this class uses the exposure to construct the rates from the counts.
 
         :param counts: an array of counts
         :param exposure: the exposure for the counts
         :param ebounds: the len(counts) + 1 energy edges of the histogram or an instance of EBOUNDSIntervalSet
+        :param count_errors: (optional) the count errors for the spectra
+        :param sys_errors: (optional) systematic errors on the spectrum
+        :param quality: quality instance marking good, bad and warned channels. If not provided, all channels are assumed to be good
+        :param scale_factor: scaling parameter of the spectrum
         :param is_poisson: if the histogram is Poisson
-        :param count_errors: (optional) count errors for non-Poisson data
-        :param sys_errors: (optional) systematic error per channel
+        :param mission: the mission name
+        :param instrument: the instrument name
         """
 
+        # attach the parameters ot the object
+
         self._is_poisson = is_poisson
+
         self._exposure = exposure
 
+        self._scale_factor = scale_factor
+
+        # if we do not have a ChannelSet,
 
         if not isinstance(ebounds, ChannelSet):
 
-            ebounds = ChannelSet.from_list_of_edges(ebounds)
+            # make one from the edges
+
+            ebounds = ChannelSet.from_list_of_edges(ebounds) #type: ChannelSet
 
 
         if count_errors is not None:
@@ -135,6 +177,8 @@ class BinnedSpectrum(Histogram):
 
             sys_errors = np.zeros_like(counts)
 
+        self._sys_errors = sys_errors
+
         # convert rates to counts
 
         rates = counts / self._exposure
@@ -152,7 +196,7 @@ class BinnedSpectrum(Histogram):
 
             # if there is no quality, then assume all channels are good
 
-            self._quality = Quality.all_good(len(rates))
+            self._quality = Quality.create_all_good(len(rates))
 
 
         if mission is None:
@@ -171,8 +215,8 @@ class BinnedSpectrum(Histogram):
 
             self._instrument = instrument
 
-        self._scale_factor = scale_factor
 
+        # pass up to the binned spectrum
 
         super(BinnedSpectrum, self).__init__(list_of_intervals=ebounds,
                                              contents=rates,
@@ -207,6 +251,11 @@ class BinnedSpectrum(Histogram):
         assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
 
         return self._errors
+
+    @property
+    def sys_errors(self):
+
+        return self._sys_errors
 
     @property
     def n_channels(self):
@@ -245,34 +294,129 @@ class BinnedSpectrum(Histogram):
 
         return self._instrument
 
+    def new_spectrum(self,new_counts,new_count_errors):
+        """
+        make a new spectrum with new counts and errors and all other
+        parameters the same
+
+
+        :param new_counts: new counts for the spectrum
+        :param new_count_errors: new errors from the spectrum
+        :return:
+        """
+
+        return BinnedSpectrum(counts=new_counts,
+                              ebounds=ChannelSet.from_list_of_edges(self.edges),
+                              count_errors=new_count_errors,
+                              sys_errors=self._sys_errors,
+                              quality=self._quality,
+                              scale_factor=self._scale_factor,
+                              is_poisson=self._is_poisson,
+                              mission=self._mission,
+                              instrument=self._instrument)
+
     @classmethod
-    def from_text_file(cls, file_name, **kwargs):
+    def from_pandas(cls,pandas_dataframe,exposure,scale_factor=1.,is_poisson=False,mission=None,instrument=None):
+        """
+        Build a spectrum from data contained within a pandas data frame.
+
+        The required columns are:
+
+        'emin': low energy bin edge
+        'emax': high energy bin edge
+        'counts': the counts in each bin
+
+        Optional column names are:
+
+        'count_errors': errors on the counts for non-Poisson data
+        'sys_errors': systematic error per channel
+        'quality' list of 3ML quality flags 'good', 'warn', 'bad'
 
 
-        file_df = pd.read_table(file_name,**kwargs)
+        :param pandas_dataframe: data frame containing information to be read into spectrum
+        :param exposure: the exposure  of the spectrum
+        :param scale_factor: the scale factor of the spectrum
+        :param is_poisson: if the data are Poisson distributed
+        :param mission: (optional) the mission name
+        :param instrument: (optional) the instrument name
+        :return:
+        """
 
-    @classmethod
-    def from_pandas(cls,pandas_dataframe):
+        # get the required columns
 
-        pass
+        emin = np.array(pandas_dataframe['emin'])
+        emax = np.array(pandas_dataframe['emax'])
+        counts = np.array(pandas_dataframe['counts'])
+        ebounds = emin.tolist()
+        ebounds.append(emax[-1])
 
-    @classmethod
-    def from_astropy_table(cls, astropy_table):
 
-        pass
+        ebounds = ChannelSet.from_list_of_edges(ebounds)
 
-    def to_text(self, file_name):
+        # default optional parameters
+        count_errors = None
+        sys_errors = None
+        quality = None
 
-        pass
+        if 'count_errors' in pandas_dataframe.keys():
 
-    def to_astropy(self):
+            count_errors = np.array(pandas_dataframe['count_errors'])
 
-        pass
+        if 'sys_errors' in pandas_dataframe.keys():
+            sys_errors = np.array(pandas_dataframe['sys_errors'])
 
-    def to_pandas(self):
+        if 'quality' in pandas_dataframe.keys():
+            quality = Quality(np.array(pandas_dataframe['quality']))
 
-        pass
+        return cls(counts=counts,
+                   exposure=exposure,
+                   ebounds=ebounds,
+                   count_errors=count_errors,
+                   sys_errors=sys_errors,
+                   quality=quality,
+                   scale_factor=scale_factor,
+                   is_poisson=is_poisson,
+                   mission=mission,
+                   instrument=instrument)
 
+    def to_pandas(self,use_rate=True):
+        """
+        make a pandas table from the spectrum.
+
+        :param use_rate: if the table should use rates or counts
+        :return:
+        """
+
+
+
+        if use_rate:
+
+            out_name = 'rates'
+            out_values = self.rates
+
+        else:
+
+            out_name = 'counts'
+            out_values = self.rates * self.exposure
+
+        out_dict = {'emin': self.starts, 'emax': self.stops,out_name:out_values, 'quality': self.quality}
+
+        if self.rate_errors is not None:
+
+            if use_rate:
+
+                out_dict['rate_errors'] = self.rate_errors
+
+            else:
+
+                out_dict['count_errors'] =self.rate_errors * self.exposure
+
+        if self.sys_errors is not None:
+
+            out_dict['sys_errors'] = None
+
+
+        return pd.DataFrame(out_dict)
 
 
 class BinnedSpectrumWithDispersion(BinnedSpectrum):
@@ -319,6 +463,28 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
     def response(self):
 
         return self._rsp
+
+    def new_spectrum(self, new_counts, new_count_errors):
+        """
+        make a new spectrum with new counts and errors and all other
+        parameters the same
+
+
+        :param new_counts: new counts for the spectrum
+        :param new_count_errors: new errors from the spectrum
+        :return:
+        """
+
+        return BinnedSpectrumWithDispersion(counts=new_counts,
+                                            response=self._rsp,
+                                            count_errors=new_count_errors,
+                                            sys_errors=self._sys_errors,
+                                            quality=self._quality,
+                                            scale_factor=self._scale_factor,
+                                            is_poisson=self._is_poisson,
+                                            mission=self._mission,
+                                            instrument=self._instrument)
+
 
 
 
