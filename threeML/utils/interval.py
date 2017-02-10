@@ -396,7 +396,7 @@ class IntervalSet(object):
         :return:
         """
 
-        return (np.atleast_1d(itemgetter(*self.argsort())(self._intervals)))
+        return self.new(np.atleast_1d(itemgetter(*self.argsort())(self._intervals)))
 
     def argsort(self):
         """
