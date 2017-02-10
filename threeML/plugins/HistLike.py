@@ -6,11 +6,17 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ide
 from threeML.plugins.OGIP.likelihood_functions import chi2
 
 
-
+__instrument_name = "n.a."
 
 class HistLike(XYLike):
 
-    def __init__(self,name, histogram, is_poisson=False):
+    def __init__(self,name, histogram):
+        """
+        Fit a 3ML Histogram such that the model is evaluated its integral over the histogram bins
+
+        :param name: plugin name
+        :param histogram: 3ML histogram
+        """
 
 
         assert isinstance(histogram,Histogram), "input must be a 3ML histogram"
@@ -29,7 +35,7 @@ class HistLike(XYLike):
 
         n_point_sources = self._likelihood_model.get_number_of_point_sources()
 
-        # Make a function which will stack all point sources (OGIP do not support spatial dimension)
+        # Make a function which will stack all point sources (HISTLike does not support spatial dimension)
 
         def differential_flux(energies):
             fluxes = self._likelihood_model.get_point_source_fluxes(0, energies)
