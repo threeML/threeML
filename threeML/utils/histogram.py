@@ -1,13 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import copy
 
 from threeML.utils.interval import IntervalSet, Interval
 from threeML.io.step_plot import step_plot
-
-
-
-
-
+from threeML.utils.stats_tools import sqrt_sum_of_squares
 
 
 
@@ -15,12 +12,19 @@ class Histogram(IntervalSet):
 
     INTERVAL_TYPE = Interval
 
-    def __init__(self,list_of_intervals,contents,errors=None,sys_errors=None, is_poisson=False):
-
-        assert len(list_of_intervals) == len(contents), 'contents and intervals are not the same dimension '
+    def __init__(self,list_of_intervals,contents=None,errors=None,sys_errors=None, is_poisson=False):
 
 
-        self._contents = contents
+
+        if contents is None:
+
+            self._contents = np.zeros(len(list_of_intervals))
+
+        else:
+            assert len(list_of_intervals) == len(contents), 'contents and intervals are not the same dimension '
+
+
+            self._contents = np.array(contents)
 
         if errors is not None:
 
@@ -30,23 +34,119 @@ class Histogram(IntervalSet):
             assert  is_poisson == False, 'cannot have errors and is_poisson True'
 
 
-        self._errors = errors
+            self._errors = np.array(errors)
+
+        else:
+
+            self._errors = None
 
 
         if sys_errors is not None:
 
             assert len(sys_errors) == len(contents),  'contents and errors are not the same dimension '
 
+            self._sys_errors = np.array(sys_errors)
 
-        self._sys_errors = sys_errors
+        else:
+
+            self._sys_errors = None
+
+
+
 
         self._is_poisson = is_poisson
 
-
-
-
-
         super(Histogram, self).__init__(list_of_intervals)
+
+        # make some assertions so that we make sure the histogram makes sense
+
+        assert self.is_contiguous(), "Histograms must have contiguous bins"
+
+        assert np.all(self.argsort() == np.arange(len(self))),  "Histogram bins must be ordered"
+
+
+    def bin_entries(self, entires):
+        """
+        add the entries into the proper bin
+
+
+        :param entires: list of events
+        :return:
+        """
+
+        which_bins = np.digitize(entires, self.edges) - 1
+
+
+
+        for bin in which_bins:
+
+            try:
+
+                self._contents[bin] += 1
+
+            except(IndexError):
+                # ignore if we are outside the bins
+                pass
+
+
+
+
+    def __add__(self, other):
+
+        assert self == other, "The bins are not equal"
+
+        if self._is_poisson:
+
+            assert other.is_poisson, 'Trying to add a Poisson and non-poisson histogram together'
+
+            new_errors = None
+
+        else:
+
+            assert not other.is_poisson, 'Trying to add a Poisson and non-poisson histogram together'
+
+            if self._errors is not None:
+
+                assert other.errors is not None, "This histogram has errors, but the other does not"
+
+                new_errors = [ sqrt_sum_of_squares([e1,e2]) for e1,e2 in zip(self._errors,other.errors)]
+
+            else:
+
+                new_errors = None
+
+        if self._sys_errors is not None and other.sys_errors is not None:
+
+            new_sys_errors = [ sqrt_sum_of_squares([e1,e2]) for e1,e2 in zip(self._sys_errors,other.sys_errors)]
+
+        elif self._sys_errors is not None:
+
+            new_sys_errors = self._sys_errors
+
+        elif other.sys_errors is not None:
+
+            new_sys_errors = other.sys_errors
+
+        else:
+
+            new_sys_errors = None
+
+        new_contents = self.contents + other.contents
+
+
+        # because Hist gets inherited very deeply, when we add we will not know exactly
+        # what all the additional class members will be, so we will make a copy of the class
+        # This is not ideal and there is probably a better way to do this
+        # TODO: better new hist constructor
+
+
+        new_hist = copy.deepcopy(self)
+
+        new_hist._contents = new_contents
+        new_hist._errors = new_errors
+        new_hist._sys_errors = new_sys_errors
+
+        return new_hist
 
 
     @property
@@ -69,6 +169,8 @@ class Histogram(IntervalSet):
     def is_poisson(self):
 
         return self._is_poisson
+
+
 
     @classmethod
     def from_numpy_histogram(cls,hist,errors=None,sys_errors=None,is_poisson=False,**kwargs):
@@ -107,6 +209,22 @@ class Histogram(IntervalSet):
                    is_poisson=is_poisson,
                    **kwargs)
 
+
+    @classmethod
+    def from_entries(cls,list_of_intervals,entries):
+        """
+        create a histogram from a list of intervals and entries to bin
+
+        :param list_of_intervals:
+        :param entries:
+        :return:
+        """
+
+        new_hist = cls(list_of_intervals=list_of_intervals,is_poisson=True)
+
+        new_hist.bin_entries(entires=entries)
+
+        return new_hist
 
     def display(self,fill=False,fill_min=0.,x_label='x',y_label='y',**kwargs):
 

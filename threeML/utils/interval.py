@@ -375,9 +375,9 @@ class IntervalSet(object):
 
     def __eq__(self, other):
 
-        for interval_this, interval_other in zip(self.sort(), other.sort()):
+        for interval_this, interval_other in zip(self.argsort(), other.argsort()):
 
-            if not interval_this == interval_other:
+            if not self[interval_this] == other[interval_other]:
 
                 return False
 
