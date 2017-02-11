@@ -62,7 +62,7 @@ class Histogram(IntervalSet):
 
         assert self.is_contiguous(), "Histograms must have contiguous bins"
 
-        assert np.all(self.argsort() == np.arange(len(self))),  "Histogram bins must be ordered"
+        assert self.is_sorted,  "Histogram bins must be ordered"
 
 
     def bin_entries(self, entires):
@@ -155,6 +155,11 @@ class Histogram(IntervalSet):
         return self._errors
 
     @property
+    def total_error(self):
+
+        return sqrt_sum_of_squares(self._errors)
+
+    @property
     def sys_errors(self):
 
         return self._sys_errors
@@ -164,6 +169,10 @@ class Histogram(IntervalSet):
 
         return self._contents
 
+    @property
+    def total(self):
+
+        return sum(self._contents)
 
     @property
     def is_poisson(self):

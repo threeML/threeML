@@ -263,7 +263,7 @@ class BinnedSpectrum(Histogram):
         return self._contents * self.exposure
 
     @property
-    def counts_error(self):
+    def count_errors(self):
         """
         :return: count error per channel
         """
@@ -288,7 +288,7 @@ class BinnedSpectrum(Histogram):
 
         assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
 
-        return sqrt_sum_of_squares(self.counts_error)
+        return sqrt_sum_of_squares(self.count_errors)
 
     @property
     def is_poisson(self):
@@ -337,6 +337,11 @@ class BinnedSpectrum(Histogram):
     @property
     def quality(self):
         return self._quality
+
+    @property
+    def scale_factor(self):
+
+        return self._scale_factor
 
     @property
     def mission(self):

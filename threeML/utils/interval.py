@@ -1,4 +1,5 @@
 import re
+import copy
 from operator import itemgetter, attrgetter
 import numpy as np
 
@@ -6,14 +7,12 @@ import numpy as np
 class IntervalsDoNotOverlap(RuntimeError):
     pass
 
+
 class IntervalsNotContiguous(RuntimeError):
     pass
 
 
-
-
 class Interval(object):
-
     def __init__(self, start, stop, swap_if_inverted=False):
 
         self._start = float(start)
@@ -46,7 +45,6 @@ class Interval(object):
 
         return cls(*args, **kwargs)
 
-
     def _get_width(self):
 
         return self._stop - self._start
@@ -71,7 +69,6 @@ class Interval(object):
         """
 
         if not self.overlaps_with(interval):
-
             raise IntervalsDoNotOverlap("Current interval does not overlap with provided interval")
 
         new_start = max(self._start, interval.start)
@@ -137,9 +134,7 @@ class Interval(object):
         :return:
         """
 
-        return "%f-%f"%(self.start,self.stop)
-
-
+        return "%f-%f" % (self.start, self.stop)
 
     def __eq__(self, other):
 
@@ -156,10 +151,6 @@ class Interval(object):
             return self.start == other.start and self.stop == other.stop
 
 
-
-
-
-
 class IntervalSet(object):
     """
     A set of intervals
@@ -168,13 +159,12 @@ class IntervalSet(object):
 
     INTERVAL_TYPE = Interval
 
-
     def __init__(self, list_of_intervals=()):
 
         self._intervals = list(list_of_intervals)
 
     @classmethod
-    def new(cls,*args,**kwargs):
+    def new(cls, *args, **kwargs):
         """
         Create a new interval set of this type
         :param args:
@@ -182,10 +172,10 @@ class IntervalSet(object):
         :return: interval set
         """
 
-        return cls(*args,**kwargs)
+        return cls(*args, **kwargs)
 
     @classmethod
-    def new_interval(cls,*args,**kwargs):
+    def new_interval(cls, *args, **kwargs):
         """
         Create a new interval of INTERVAL_TYPE
         :param args:
@@ -193,8 +183,7 @@ class IntervalSet(object):
         :return: interval
         """
 
-        return cls.INTERVAL_TYPE(*args,**kwargs)
-
+        return cls.INTERVAL_TYPE(*args, **kwargs)
 
     @classmethod
     def from_strings(cls, *intervals):
@@ -205,11 +194,9 @@ class IntervalSet(object):
         :return:
         """
 
-
         list_of_intervals = []
 
         for interval in intervals:
-
             imin, imax = cls._parse_interval(interval)
 
             list_of_intervals.append(cls.new_interval(imin, imax))
@@ -226,7 +213,7 @@ class IntervalSet(object):
         return map(float, tokens)
 
     @classmethod
-    def from_starts_and_stops(cls,starts,stops):
+    def from_starts_and_stops(cls, starts, stops):
         """
         Builds a TimeIntervalSet from a list of start and stop times:
 
@@ -238,12 +225,12 @@ class IntervalSet(object):
         :return:
         """
 
-        assert len(starts) == len(stops), 'starts length: %d and stops length: %d must have same length'%(len(starts), len(stops))
+        assert len(starts) == len(stops), 'starts length: %d and stops length: %d must have same length' % (
+        len(starts), len(stops))
 
         list_of_intervals = []
 
         for imin, imax in zip(starts, stops):
-
             list_of_intervals.append(cls.new_interval(imin, imax))
 
         return cls(list_of_intervals)
@@ -266,9 +253,7 @@ class IntervalSet(object):
         list_of_intervals = []
 
         for imin, imax in zip(edges[:-1], edges[1:]):
-
             list_of_intervals.append(cls.new_interval(imin, imax))
-
 
         return cls(list_of_intervals)
 
@@ -287,7 +272,7 @@ class IntervalSet(object):
 
         new_intervals = []
 
-        while( len(sorted_intervals) > 1):
+        while (len(sorted_intervals) > 1):
 
             # pop the first interval off the stack
 
@@ -311,17 +296,18 @@ class IntervalSet(object):
 
                 new_intervals.append(this_interval)
 
-            # now if there is only one interval left
-            # it should not overlap with any other interval
-            # and the loop will stop
-            # otherwise, we continue
+                # now if there is only one interval left
+                # it should not overlap with any other interval
+                # and the loop will stop
+                # otherwise, we continue
 
         # if there was only one interval
         # or a leftover from the merge
         # we append it
         if sorted_intervals:
 
-            assert len(sorted_intervals) == 1, "there should only be one interval left over, this is a bug" #pragma: no cover
+            assert len(
+                sorted_intervals) == 1, "there should only be one interval left over, this is a bug"  # pragma: no cover
 
             # we want to make sure that the last new interval did not
             # overlap with the final interval
@@ -340,11 +326,6 @@ class IntervalSet(object):
 
                 new_intervals.append(sorted_intervals[0])
 
-
-
-
-
-
         if in_place:
 
             self.__init__(new_intervals)
@@ -352,7 +333,6 @@ class IntervalSet(object):
         else:
 
             return self.new(new_intervals)
-
 
     def extend(self, list_of_intervals):
 
@@ -365,25 +345,20 @@ class IntervalSet(object):
     def __iter__(self):
 
         for interval in self._intervals:
-
             yield interval
 
     def __getitem__(self, item):
 
         return self._intervals[item]
 
-
     def __eq__(self, other):
 
         for interval_this, interval_other in zip(self.argsort(), other.argsort()):
 
             if not self[interval_this] == other[interval_other]:
-
                 return False
 
         return True
-
-
 
     def pop(self, index):
 
@@ -396,7 +371,13 @@ class IntervalSet(object):
         :return:
         """
 
-        return self.new(np.atleast_1d(itemgetter(*self.argsort())(self._intervals)))
+        if self.is_sorted:
+
+            return copy.deepcopy(self)
+
+        else:
+
+            return self.new(np.atleast_1d(itemgetter(*self.argsort())(self._intervals)))
 
     def argsort(self):
         """
@@ -406,9 +387,9 @@ class IntervalSet(object):
         """
 
         # Gather all tstarts
-        tstarts = map(lambda x:x.start, self._intervals)
+        tstarts = map(lambda x: x.start, self._intervals)
 
-        return map(lambda x:x[0], sorted(enumerate(tstarts), key=itemgetter(1)))
+        return map(lambda x: x[0], sorted(enumerate(tstarts), key=itemgetter(1)))
 
     def is_contiguous(self, relative_tolerance=1e-5):
         """
@@ -423,22 +404,27 @@ class IntervalSet(object):
 
         return np.allclose(starts[1:], stops[:-1], rtol=relative_tolerance)
 
+    @property
+    def is_sorted(self):
+        """
+        Check whether the time intervals are sorted
+        :return: True or False
+        """
+
+        return np.all(self.argsort() == np.arange(len(self)))
+
     def containing_bin(self, value):
-
-        '''Finds the channel containing the provided energy.
-               NOTE: returns the channel index (starting at zero),
-               not the channel number (likely starting from 1).
-
-               If you ask for a energy lower than the minimum ebounds, 0 will be returned
-               If you ask for a energy higher than the maximum ebounds, the last channel index will be returned
-               '''
+        """
+        finds the index of the interval containing
+        :param value:
+        :return:
+        """
 
         # Get the index of the first ebounds upper bound larger than energy
         # (but never go below zero or above the last channel)
         idx = min(max(0, np.searchsorted(self.edges, value) - 1), len(self))
 
         return idx
-
 
     @property
     def starts(self):
@@ -470,8 +456,6 @@ class IntervalSet(object):
 
         return np.array([interval._get_width() for interval in self._intervals])
 
-
-
     @property
     def absolute_start(self):
         """
@@ -497,7 +481,7 @@ class IntervalSet(object):
         :return:
         """
 
-        if self.is_contiguous():
+        if self.is_contiguous() and self.is_sorted:
 
             edges = [interval.start for interval in itemgetter(*self.argsort())(self._intervals)]
             edges.append([interval.stop for interval in itemgetter(*self.argsort())(self._intervals)][-1])
@@ -507,7 +491,6 @@ class IntervalSet(object):
             raise IntervalsNotContiguous("Cannot return edges for non-contiguous intervals")
 
         return edges
-
 
     def to_string(self):
         """
@@ -529,5 +512,4 @@ class IntervalSet(object):
         :return:
         """
 
-
-        return np.vstack((self.starts,self.stops)).T
+        return np.vstack((self.starts, self.stops)).T

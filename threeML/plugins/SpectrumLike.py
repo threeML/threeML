@@ -55,12 +55,12 @@ class SpectrumLike(PluginPrototype):
 
         # Precomputed observed and background counts (for speed)
 
-        self._observed_spectrum = observed_spectrum
-        self._background_spectrum = background_spectrum
+        self._observed_spectrum = observed_spectrum #type: BinnedSpectrum
+        self._background_spectrum = background_spectrum #type: BinnedSpectrum
 
 
-        self._observed_counts = self._observed_spectrum.rates * self._observed_spectrum.exposure  # type: np.ndarray
-        self._background_counts = self._background_spectrum.rates * self._background_spectrum.exposure  # type: np.ndarray
+        self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
+        self._background_counts = self._background_spectrum.counts  # type: np.ndarray
 
         self._scaled_background_counts = self._get_expected_background_counts_scaled()  # type: np.ndarray
 
@@ -87,7 +87,7 @@ class SpectrumLike(PluginPrototype):
                 self.observation_noise_model = 'poisson'
                 self.background_noise_model = 'gaussian'
 
-                self._back_counts_errors = self._background_spectrum.rate_errors * self._background_spectrum.exposure  # type: np.ndarray
+                self._back_counts_errors = self._background_spectrum.count_errors  # type: np.ndarray
 
                 idx = (self._back_counts_errors == 0)  # type: np.ndarray
 
@@ -102,32 +102,17 @@ class SpectrumLike(PluginPrototype):
 
             if self._background_spectrum.is_poisson:
 
-                self.observation_noise_model = 'gaussian'
-                self.background_noise_model = 'poisson'
+                raise NotImplementedError("We currently do not support Gaussian observation and Poisson background")
 
-                self._back_counts_errors = None
-
-                self._observed_counts_errors = self._observed_spectrum.rate_errors * self._observed_spectrum.exposure # type: np.ndarray
-
-                assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
-
-                if not np.all(self._background_counts >= 0): raise NegativeBackground(
-                    "Error in background spectrum: negative counts!")
-
-                idx = (self._observed_counts_errors == 0)  # type: np.ndarray
-
-                assert np.all(self._observed_counts_errors[idx] == self._observed_counts[idx]), \
-                    "Error in ovserved spectrum: if the error on the observation is zero, " \
-                    "also the expected observation must be zero"
 
             else:
 
                 self.observation_noise_model = 'gaussian'
                 self.background_noise_model = 'gaussian'
 
-                self._back_counts_errors = self._background_spectrum.rate_errors * self._background_spectrum.exposure  # type: np.ndarray
+                self._back_counts_errors = self._background_spectrum.count_errors  # type: np.ndarray
 
-                self._observed_counts_errors = self._observed_spectrum.rate_errors * self._observed_spectrum.exposure  # type: np.ndarray
+                self._observed_counts_errors = self._observed_spectrum.count_errors  # type: np.ndarray
 
                 idx = (self._back_counts_errors == 0)  # type: np.ndarray
 
@@ -194,32 +179,6 @@ class SpectrumLike(PluginPrototype):
         self._mask = self._observed_spectrum.quality.good
         # Apply the mask
         self._apply_mask_to_original_vectors()
-
-    def _get_pha_instance(self, pha_file_or_instance, *args, **kwargs):
-
-        # If the user didn't provide them, read the needed files from the keywords in the PHA file
-        # It is possible a user passed a PHAContainer from an EventList. In this case, this will fail
-        # resulting in an attribute error. We will check for this and if it fails, and then try to load the
-        # PHAContainer
-
-        if isinstance(pha_file_or_instance, str):
-
-            # This is supposed to be a filename
-
-            pha_file = sanitize_filename(pha_file_or_instance)
-
-            assert file_existing_and_readable(pha_file.split("{")[0]), "File %s not existing or not " \
-                                                                       "readable" % pha_file
-
-            pha = PHA(pha_file, *args, **kwargs)
-
-        else:
-
-            # Assume this is a PHAContainer or a subclass (or some other object with the same interface)
-
-            pha = PHA(pha_file_or_instance, *args, **kwargs)
-
-        return pha
 
     def get_pha_files(self):
 
@@ -802,7 +761,6 @@ class SpectrumLike(PluginPrototype):
 
         return cls(*args,**kwargs)
 
-
     @property
     def simulated_parameters(self):
         """
@@ -897,6 +855,14 @@ class SpectrumLike(PluginPrototype):
         bkg_counts = self._background_spectrum.rates * self._observed_spectrum.exposure * scale_factor
 
         return bkg_counts
+
+    def _loglike_gaussian_obs_gaussian_bkg(self):
+
+
+        raise NotImplementedError("We need to add chi2")
+        model_counts = self.get_model()
+
+        #loglike, bkg_model = chi2()
 
     def _loglike_poisson_obs_poisson_bkg(self):
 
@@ -1232,7 +1198,7 @@ class SpectrumLike(PluginPrototype):
 
         elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
 
-            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._background_spectrum.counts_error)
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._background_spectrum.count_errors)
 
         else:
 
