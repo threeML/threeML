@@ -32,6 +32,8 @@ def test_spectrum_constructor():
     specLike.set_model(model)
     specLike.get_model()
 
+    specLike.get_simulated_dataset()
+
 
     specLike.significance
     specLike.significance_per_channel

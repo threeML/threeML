@@ -91,7 +91,7 @@ def test_hist_like():
 
 
 
-    rnum = np.random.randn(1E6) + 1.
+    rnum = np.random.randn(1000000) + 1.
     hrnum = np.histogram(rnum, bins=100, normed=False)
     hh = Histogram.from_numpy_histogram(hrnum, is_poisson=True)
 
