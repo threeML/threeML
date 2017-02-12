@@ -403,7 +403,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         # get the expected counts
         # NOTE: _rsp.convolve() returns already the rate (counts / s)
-        expected_model_rate = data.get_model()  # * data.exposure  / data.exposure
+        expected_model_rate = data._evaluate_model() * data.exposure # * data.exposure  / data.exposure
 
         # calculate all the correct quantites
 
