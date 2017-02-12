@@ -407,7 +407,7 @@ class OGIPResponse(InstrumentResponse):
     @property
     def first_channel(self):
         """
-        The first channel of the channel array. Correpsonds to
+        The first channel of the channel array. Corresponds to
         TLMIN keyword in FITS files
 
         :return: first channel

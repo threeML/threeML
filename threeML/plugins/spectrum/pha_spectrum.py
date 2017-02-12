@@ -66,6 +66,8 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
             filename = pha_file_or_instance
 
+
+
             # create a FITS_FILE instance
 
             pha_file_or_instance = PHAII.from_fits_file(pha_file_or_instance)
@@ -78,6 +80,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
             filename = 'pha_instance'
 
+        self._file_name = filename
 
         assert file_type.lower() in ['observed', 'background'], "Unrecognized filetype keyword value"
 
@@ -417,6 +420,11 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         """
 
         self._grouping = grouping
+
+    @property
+    def filename(self):
+
+        return self._file_name
 
     @property
     def background_file(self):

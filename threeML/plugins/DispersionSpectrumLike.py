@@ -1,29 +1,32 @@
 import copy
+import pandas as pd
 
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrumWithDispersion
 from threeML.plugins.OGIP.response import InstrumentResponse
+from threeML.io.rich_display import display
+
 
 __instrument_name = "General binned spectral data with energy dispersion"
 
 class DispersionSpectrumLike(SpectrumLike):
 
-    def __init__(self, name, observed_spectrum, background_spectrum, verbose=True):
+    def __init__(self, name, observation, background, verbose=True):
 
 
-        assert isinstance(observed_spectrum,BinnedSpectrumWithDispersion), "observed spectrum is not an instance of BinnedSpectrumWithDispersion"
+        assert isinstance(observation, BinnedSpectrumWithDispersion), "observed spectrum is not an instance of BinnedSpectrumWithDispersion"
 
-        assert observed_spectrum.response is not None, "the observed spectrum does not have a response"
+        assert observation.response is not None, "the observed spectrum does not have a response"
 
         # assign the response to the plugins
 
-        self._rsp = observed_spectrum.response #type: InstrumentResponse
+        self._rsp = observation.response #type: InstrumentResponse
 
 
 
         super(DispersionSpectrumLike, self).__init__(name=name,
-                                                     observed_spectrum=observed_spectrum,
-                                                     background_spectrum=background_spectrum,
+                                                     observation=observation,
+                                                     background=background,
                                                      verbose=verbose)
 
     def set_model(self, likelihoodModel):
@@ -87,5 +90,16 @@ class DispersionSpectrumLike(SpectrumLike):
         """
 
         self._rsp.plot_matrix()
+
+    def _output(self):
+        # type: () -> pd.Series
+
+        super_out = super(DispersionSpectrumLike, self)._output() #type: pd.Series
+
+        the_df = pd.Series({'response':self._rsp.rsp_filename})
+
+
+        return super_out.append(the_df)
+
 
 

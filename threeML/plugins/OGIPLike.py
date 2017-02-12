@@ -1,9 +1,7 @@
-import collections
 import pandas as pd
 
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
-from threeML.io.rich_display import display
 from astromodels.utils.valid_variable import is_valid_variable_name
 
 from threeML.plugins.OGIP.pha import PHAWrite
@@ -45,15 +43,18 @@ class OGIPLike(DispersionSpectrumLike):
         # already.
 
         super(OGIPLike, self).__init__(name=name,
-                                       observed_spectrum=pha,
-                                       background_spectrum=bak,
+                                       observation=pha,
+                                       background=bak,
                                        verbose=verbose)
 
     def get_simulated_dataset(self, new_name=None,**kwargs):
+        # type: (str, dict) -> OGIPLike
         """
         Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
 
+        :param new_name: name of the simulated plugin
+        :param kwargs: keywords to pass back up to parents
         :return: a DispersionSpectrumLike simulated instance
          """
 
@@ -80,45 +81,22 @@ class OGIPLike(DispersionSpectrumLike):
 
         pha_writer.write(file_name, overwrite=overwrite)
 
-    def display(self):
-        """
-        Displays the current content of the OGIP object
-        :return:
-        """
-
-        display(self._output().to_frame())
-
-    def __repr__(self):
-
-
-
-
-            return self._output().to_string()
-
     def _output(self):
+        # type: () -> pd.Series
 
-        obs = collections.OrderedDict()
+        superout = super(OGIPLike, self)._output()
 
-        obs['n. channels'] = self._observed_spectrum.n_channels
+        this_out ={'pha file': self._observed_spectrum.filename, 'bak file':self._background_spectrum.filename}
 
-        obs['total rate'] = self._observed_spectrum.total_rate
+        this_df = pd.Series(this_out)
 
-        if not self._observed_spectrum.is_poisson:
-            obs['total rate error'] = self._observed_spectrum.total_rate_error
+        return this_df.append(superout)
 
-        obs['total bkg. rate'] = self._background_spectrum.total_rate
 
-        if not self._background_spectrum.is_poisson:
-            obs['total bkg. rate error'] = self._background_spectrum.total_rate_error
 
-        obs['exposure'] = self.exposure
-        obs['bkg. exposure'] = self.background_exposure
-        obs['significance'] = self.significance
-        obs['is poisson'] = self._observed_spectrum.is_poisson
-        obs['bkg. is poisson'] = self._background_spectrum.is_poisson
-        obs['response'] = self._observed_spectrum.response_file
 
-        return pd.Series(data=obs, index=obs.keys())
+
+
 
 
 

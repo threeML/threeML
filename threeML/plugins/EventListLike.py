@@ -1,29 +1,18 @@
 __author__ = 'grburgess'
 
 import numpy as np
-import pandas as pd
 
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.plugins.OGIP.pha import PHAII
 from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.rich_display import display
-
-try:
-
-    import requests
-
-except ImportError:
-
-    has_requests = False
-
-else:
-
-    has_requests = True
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins.OGIP.pha import PHAWrite
+from threeML.io.plugin_plots import binned_light_curve_plot
+from threeML.utils.stats_tools import Significance
 
 import copy
 
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.OGIP.pha import PHAWrite
+
 
 __instrument_name = "Generic EventList data"
 
@@ -116,20 +105,10 @@ class EventListLike(OGIPLike):
 
 
 
-    def __repr__(self):
-
-        return self._output().to_string()
-
     def _output(self):
 
         super_out = super(EventListLike, self)._output()
         return super_out.append(self._event_list._output())
-
-
-    def display(self):
-
-        display(self._output().to_frame())
-
 
 
     def __set_poly_order(self, value):
@@ -246,11 +225,6 @@ class EventListLike(OGIPLike):
                                                 verbose=self._verbose,
                                                 spectrum_number=1)
 
-    def view_lightcurve(self, start=-10, stop=60., dt=1., use_binner=False, energy_selection=None):
-        """ stub """
-
-        raise RuntimeError('must be implemented in subclass')
-
     def write_pha_from_binner(self, file_name, overwrite=False):
         """
 
@@ -316,11 +290,155 @@ class EventListLike(OGIPLike):
 
         self._event_list.save_background(filename, overwrite)
 
+    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None,
+                        significance_level=None, instrument='n.a.'):
+        # type: (float, float, float, bool, str, float, str) -> None
+
+        """
+        :param instrument:
+        :param start:
+        :param stop:
+        :param dt:
+        :param use_binner:
+        :param energy_selection:
+        :param significance_level:
+        """
+
+        if energy_selection is not None:
+
+            # we can go through and filter out those channels that do not correspond to
+            # out energy selection
+
+            energy_selection = [interval.replace(' ', '') for interval in energy_selection.split(',')]
+
+            valid_channels = []
+            mask = np.array([False] * self._event_list.n_events)
+
+            for selection in energy_selection:
+
+                ee = map(float, selection.split("-"))
+
+                if len(ee) != 2:
+                    raise RuntimeError('Energy selection is not valid! Form: <low>-<high>.')
+
+                emin, emax = sorted(ee)
+
+                idx1 = self._rsp.energy_to_channel(emin)
+                idx2 = self._rsp.energy_to_channel(emax)
+
+                # Update the allowed channels
+                valid_channels.extend(range(idx1, idx2))
+
+                this_mask = np.logical_and(self._event_list.energies >= idx1, self._event_list.energies <= idx2)
+
+                np.logical_or(mask, this_mask, out=mask)
+
+        else:
+
+            mask = np.array([True] * self._event_list.n_events)
+            valid_channels = range(self._event_list.n_channels)
+
+        if use_binner:
+
+            # we will use the binner object to bin the
+            # light curve and ignore the normal linear binning
+
+            bins = self._event_list.bins.time_edges
+
+            # perhaps we want to look a little before or after the binner
+            if start < bins[0]:
+                pre_bins = np.arange(start, bins[0], dt).tolist()[:-1]
+
+                pre_bins.extend(bins)
+
+                bins = pre_bins
+
+            if stop > bins[-1]:
+                post_bins = np.arange(bins[-1], stop, dt)
+
+                bins.extend(post_bins[1:])
+
+        else:
+
+            # otherwise, just use regular linear binning
+
+            bins = np.arange(start, stop + dt, dt)
+
+        cnts, bins = np.histogram(self._event_list.arrival_times[mask], bins=bins)
+        time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
+
+        width = np.diff(bins)
+
+        # now we want to get the estimated background from the polynomial fit
+
+        bkg = []
+        for j, tb in enumerate(time_bins):
+            tmpbkg = 0.
+            for i in valid_channels:
+                poly = self._event_list.polynomials[i]
+
+                tmpbkg += poly.integral(tb[0], tb[1])
+
+            bkg.append(tmpbkg/width[j])
+
+        # here we will create a filter for the bins that exceed a certain
+        # significance level
+
+        if significance_level is not None:
+
+
+            raise NotImplementedError("significnace filter is not complete")
+
+            # create a significance object
+
+            significance = Significance(Non=cnts/width,Noff=bkg)
+
+            # we will go thru and get the background errors
+            # for the current binned light curve
+
+            bkg_err = []
+            for j, tb in enumerate(time_bins):
+                tmpbkg = 0.
+                for i in valid_channels:
+                    poly = self._event_list.polynomials[i]
+
+                    tmpbkg += poly.integral_error(tb[0], tb[1])**2
+
+                bkg_err.append(np.sqrt(tmpbkg)/ width[j])
+
+            # collect the significances for this light curve and this binning
+
+            lightcurve_sigma = significance.li_and_ma_equivalent_for_gaussian_background(sigma_b=np.asarray(bkg_err))
+
+            print lightcurve_sigma
+
+            # now create a filter for the bins that exceed the significance
+
+            sig_filter = lightcurve_sigma >= significance_level
+
+            if self._verbose:
+
+                print('time bins with significance greater that %f are shown in green'%significance_level)
+
+        else:
+
+            sig_filter = significance_level
+
+
+        # pass all this to the light curve plotter
+
+        binned_light_curve_plot(time_bins, cnts, bkg, width,
+                                selection=self._event_list.time_intervals.bin_stack,
+                                bkg_selections=self._event_list.poly_intervals.bin_stack,
+                                instrument=instrument,
+                                significance_filter=sig_filter
+                                )
 
     @property
     def bins(self):
 
         return self._event_list.bins
+
 
     def read_bins(self, ttelike):
         """
@@ -490,3 +608,5 @@ class EventListLike(OGIPLike):
         self._verbose = old_verbose
 
         return ogip_list
+
+

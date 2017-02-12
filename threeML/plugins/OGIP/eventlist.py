@@ -136,6 +136,15 @@ class EventList(object):
     def n_events(self):
 
         return self._arrival_times.shape[0]
+    @property
+    def arrival_times(self):
+
+        return self._arrival_times
+
+    @property
+    def n_channels(self):
+
+        return self._n_channels
 
     @property
     def energies(self):
@@ -184,10 +193,6 @@ class EventList(object):
             pan = pd.Panel({'coefficients': df_coeff, 'error': df_err})
 
             return pan
-
-
-
-
 
 
         else:
@@ -241,16 +246,6 @@ class EventList(object):
 
             raise RuntimeError('This EventList has no binning specified')
 
-    # @property
-    # def text_bins(self):
-    #
-    #     if self._temporal_binner is not None:
-    #
-    #         return self._temporal_binner.text_bins
-    #     else:
-    #
-    #         raise RuntimeError('This EventList has no binning specified')
-
     def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
         """
 
@@ -292,11 +287,11 @@ class EventList(object):
         #                                           sigma_level=sigma,
         #                                           min_counts=min_counts)
 
-        self._temporal_binner = TemporalBinner.from_bin_by_significance(events,
-                                                                        tmp_bkg_getter,
-                                                                        background_error_getter=tmp_err_getter,
-                                                                        sigma_level=sigma,
-                                                                        min_counts=min_counts)
+        self._temporal_binner = TemporalBinner.bin_by_significance(events,
+                                                                   tmp_bkg_getter,
+                                                                   background_error_getter=tmp_err_getter,
+                                                                   sigma_level=sigma,
+                                                                   min_counts=min_counts)
 
     def bin_by_constant(self, start, stop, dt=1):
         """
@@ -310,7 +305,7 @@ class EventList(object):
 
         events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
 
-        self._temporal_binner = TemporalBinner.from_bin_by_constant(events,dt)
+        self._temporal_binner = TemporalBinner.bin_by_constant(events, dt)
 
 
     def bin_by_custom(self, start, stop):
@@ -323,7 +318,7 @@ class EventList(object):
         :return:
         """
 
-        self._temporal_binner = TemporalBinner.from_bin_by_custom(start,stop)
+        self._temporal_binner = TemporalBinner.bin_by_custom(start, stop)
         #self._temporal_binner.bin_by_custom(start, stop)
 
     def bin_by_bayesian_blocks(self, start, stop, p0, use_background=False):
@@ -336,14 +331,14 @@ class EventList(object):
 
             integral_background = lambda t: self.get_total_poly_count(start, t)
 
-            self._temporal_binner = TemporalBinner.from_bin_by_bayesian_blocks(events,
-                                                                               p0,
-                                                                               bkg_integral_distribution=integral_background)
+            self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(events,
+                                                                          p0,
+                                                                          bkg_integral_distribution=integral_background)
 
         else:
 
-            self._temporal_binner = TemporalBinner.from_bin_by_bayesian_blocks(events,
-                                                                               p0)
+            self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(events,
+                                                                          p0)
 
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """

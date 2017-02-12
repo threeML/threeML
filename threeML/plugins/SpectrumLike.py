@@ -3,14 +3,15 @@ import copy
 from contextlib import contextmanager
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 from astromodels.core.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
 from astromodels import clone_model
 
-from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
-from threeML.io.step_plot import step_plot
+from threeML.io.rich_display import display
+from threeML.io.plugin_plots import channel_plot, disjoint_patch_plot
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
 from threeML.plugin_prototype import PluginPrototype, set_external_property
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
@@ -32,31 +33,39 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 class SpectrumLike(PluginPrototype):
 
-    def __init__(self, name, observed_spectrum, background_spectrum, verbose=True):
+    def __init__(self, name, observation, background, verbose=True):
+        # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
+        """
+        A plugin for generic spectral data, accepts an observed binned spectrum,
+        and a background binned spectrum
+
+        :param name: the plugin name
+        :param observation: the observed spectrum
+        :param background: the background spectrum
+        :param verbose: turn on/off verbose logging
+        """
 
         # Just a toggle for verbosity
         self._verbose = bool(verbose)
-
-
 
         assert is_valid_variable_name(name), "Name %s is not a valid name for a plugin. You must use a name which is " \
                                              "a valid python identifier: no spaces, no operators (+,-,/,*), " \
                                              "it cannot start with a number, no special characters" % name
 
 
-        assert isinstance(observed_spectrum,
+        assert isinstance(observation,
                           BinnedSpectrum), "The observed spectrum is not an instance of BinnedSpectrum"
 
-        assert isinstance(background_spectrum,
+        assert isinstance(background,
                           BinnedSpectrum), "The background spectrum is not an instance of BinnedSpectrum"
 
-        assert observed_spectrum.n_channels == background_spectrum.n_channels, "Data file and background file have different " \
+        assert observation.n_channels == background.n_channels, "Data file and background file have different " \
                                                              "number of channels"
 
         # Precomputed observed and background counts (for speed)
 
-        self._observed_spectrum = observed_spectrum #type: BinnedSpectrum
-        self._background_spectrum = background_spectrum #type: BinnedSpectrum
+        self._observed_spectrum = observation #type: BinnedSpectrum
+        self._background_spectrum = background #type: BinnedSpectrum
 
 
         self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
@@ -1187,8 +1196,8 @@ class SpectrumLike(PluginPrototype):
         :return: the significance of the data over background per channel
         """
 
-        sig_obj = Significance(Non=self._observed_spectrum.counts,
-                               Noff=self._background_spectrum.counts,
+        sig_obj = Significance(Non=self._current_observed_counts,
+                               Noff=self._current_background_counts,
                                alpha=self.exposure / self.background_exposure)
 
         if self._observed_spectrum.is_poisson and self._background_spectrum.is_poisson:
@@ -1198,7 +1207,7 @@ class SpectrumLike(PluginPrototype):
 
         elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
 
-            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._background_spectrum.count_errors)
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._current_back_counts_errors)
 
         else:
 
@@ -1206,7 +1215,7 @@ class SpectrumLike(PluginPrototype):
 
         return significance
 
-    def view_count_spectrum(self, plot_errors=True, show_bad_channels=True):
+    def view_count_spectrum(self, plot_errors=True, show_bad_channels=True, show_warn_channels=False, significance_level=None):
         """
         View the count and background spectrum. Useful to check energy selections.
         :param plot_errors: plot errors on the counts
@@ -1364,92 +1373,123 @@ class SpectrumLike(PluginPrototype):
                             # label=data._name,
                             color=threeML_config['ogip']['background color'])
 
-            excluded_channel_plot(ax, energy_min_unrebinned, energy_max_unrebinned,
-                                  observed_rate_unrebinned,
-                                  background_rate_unrebinned,
-                                  self._mask,
-                                  self._observed_spectrum.quality.bad,
-                                  show_bad_channels)
+
+            # make some nice top and bottom plot ranges
+
+            top = max([max(background_rate_unrebinned / energy_width_unrebinned), max(observed_rate_unrebinned / energy_width_unrebinned)]) * 1.5
+
+            bottom = min([min(background_rate_unrebinned / energy_width_unrebinned), min(observed_rate_unrebinned / energy_width_unrebinned)]) *0.8
+
+            # plot the deselected regions
+
+            disjoint_patch_plot(ax,
+                                energy_min_unrebinned,
+                                energy_max_unrebinned,
+                                top,
+                                bottom,
+                                ~self._mask,
+                                color='k',
+                                alpha=.4)
+
+            # plot the bad quality channels if requested
+
+            if show_bad_channels:
+
+                if self._verbose and sum(self._observed_spectrum.quality.bad) >0:
+                    print('bad channels shown in red hatching\n')
+
+                disjoint_patch_plot(ax,
+                                    energy_min_unrebinned,
+                                    energy_max_unrebinned,
+                                    top,
+                                    bottom,
+                                    self._observed_spectrum.quality.bad,
+                                    color='none',
+                                    edgecolor='#FE3131',
+                                    hatch='/',
+                                    alpha=.95
+                                    )
+
+            if show_warn_channels:
+
+                if self._verbose and sum(self._observed_spectrum.quality.warn) >0:
+                    print('warned channels shown in purple hatching\n')
+
+                disjoint_patch_plot(ax,
+                                    energy_min_unrebinned,
+                                    energy_max_unrebinned,
+                                    top,
+                                    bottom,
+                                    self._observed_spectrum.quality.bad,
+                                    color='none',
+                                    edgecolor='#C79BFE',
+                                    hatch='/',
+                                    alpha=.95
+                                    )
+
+            if significance_level is not None:
+
+                if self._verbose:
+                    print('channels below the significance threshold shown in red\n')
+
+                significance_mask = self.significance_per_channel < significance_level
+
+                disjoint_patch_plot(ax,
+                                    energy_min_unrebinned,
+                                    energy_max_unrebinned,
+                                    top,
+                                    bottom,
+                                    significance_mask,
+                                    color='red',
+                                    alpha=.3
+                                    )
+
+
+
 
         ax.set_xlabel("Energy (keV)")
         ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
         ax.set_xlim(left=self._observed_spectrum.absolute_start, right=self._observed_spectrum.absolute_stop)
         ax.legend()
 
+        def __repr__(self):
+
+            return self._output().to_string()
+
+    def _output(self):
+        # type: () -> pd.Series
+
+        obs = collections.OrderedDict()
+
+        obs['n. channels'] = self._observed_spectrum.n_channels
+
+        obs['total rate'] = self._observed_spectrum.total_rate
+
+        if not self._observed_spectrum.is_poisson:
+            obs['total rate error'] = self._observed_spectrum.total_rate_error
+
+        obs['total bkg. rate'] = self._background_spectrum.total_rate
+
+        if not self._background_spectrum.is_poisson:
+            obs['total bkg. rate error'] = self._background_spectrum.total_rate_error
+
+        obs['exposure'] = self.exposure
+        obs['bkg. exposure'] = self.background_exposure
+        obs['significance'] = self.significance
+        obs['is poisson'] = self._observed_spectrum.is_poisson
+        obs['bkg. is poisson'] = self._background_spectrum.is_poisson
+        #obs['response'] = self._observed_spectrum.response_file
+
+        return pd.Series(data=obs, index=obs.keys())
+
+    def display(self):
+        
+        display(self._output().to_frame())
+
+    def __repr__(self):
+
+        return self._output().to_string()
 
 
 
-def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
-    chans = np.array(zip(chan_min, chan_max))
-    width = chan_max - chan_min
-
-    step_plot(chans, counts / width, ax, **kwargs)
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-
-    return ax
-
-
-def excluded_channel_plot(ax, chan_min, chan_max, counts, bkg, mask, bad_mask, show_bad_channels):
-    # Figure out the best limit
-
-    width = chan_max - chan_min
-
-    top = max([max(bkg / width), max(counts / width)])
-    top = top + top * .5
-    bottom = min([min(bkg / width), min(counts / width)])
-    bottom = bottom - bottom * .2
-
-    # Find the contiguous regions that are deselected
-    slices = slice_disjoint((~mask).nonzero()[0])
-
-    for region in slices:
-        ax.fill_between([chan_min[region[0]], chan_max[region[1]]],
-                        bottom,
-                        top,
-                        color='k',
-                        alpha=.5)
-
-    if show_bad_channels and sum(bad_mask) >0:
-
-        # Find the contiguous regions that are deselected
-        slices = slice_disjoint((bad_mask).nonzero()[0])
-
-        for region in slices:
-            ax.fill_between([chan_min[region[0]], chan_max[region[1]]],
-                            bottom,
-                            top,
-                            color='none',
-                            edgecolor='#FE3131',
-                            hatch='/',
-                            alpha=1.)
-
-    ax.set_ylim(bottom, top)
-
-
-def slice_disjoint(arr):
-    """
-    Returns an array of disjoint indicies.
-
-    Args:
-        arr:
-
-    Returns:
-
-    """
-
-    slices = []
-    start_slice = arr[0]
-    counter = 0
-    for i in range(len(arr) - 1):
-        if arr[i + 1] > arr[i] + 1:
-            end_slice = arr[i]
-            slices.append([start_slice, end_slice])
-            start_slice = arr[i + 1]
-            counter += 1
-    if counter == 0:
-        return [[arr[0], arr[-1]]]
-    if end_slice != arr[-1]:
-        slices.append([start_slice, arr[-1]])
-    return slices
 

@@ -28,7 +28,7 @@ def test_spectrum_constructor():
 
 
 
-    specLike = SpectrumLike('fake', observed_spectrum=obs_spectrum, background_spectrum=bkg_spectrum)
+    specLike = SpectrumLike('fake', observation=obs_spectrum, background=bkg_spectrum)
     specLike.set_model(model)
     specLike.get_model()
 
@@ -44,7 +44,7 @@ def test_spectrum_constructor():
 
     with pytest.raises(NotImplementedError):
 
-        specLike = SpectrumLike('fake', observed_spectrum=obs_spectrum, background_spectrum=bkg_spectrum)
+        specLike = SpectrumLike('fake', observation=obs_spectrum, background=bkg_spectrum)
 
 
 

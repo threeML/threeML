@@ -366,6 +366,7 @@ class BinnedSpectrum(Histogram):
 
         return BinnedSpectrum(counts=new_counts,
                               ebounds=ChannelSet.from_list_of_edges(self.edges),
+                              exposure=self._exposure,
                               count_errors=new_count_errors,
                               sys_errors=self._sys_errors,
                               quality=self._quality,
