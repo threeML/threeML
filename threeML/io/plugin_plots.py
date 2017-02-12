@@ -12,10 +12,6 @@ from threeML.utils.stats_tools import Significance
 from threeML.exceptions.custom_exceptions import custom_warnings
 
 
-####
-
-
-
 
 def binned_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections, instrument, significance_filter=None):
     """
@@ -407,7 +403,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         # get the expected counts
         # NOTE: _rsp.convolve() returns already the rate (counts / s)
-        expected_model_rate = data._nuisance_parameter.value * data._rsp.convolve()  # * data.exposure  / data.exposure
+        expected_model_rate = data.get_model()  # * data.exposure  / data.exposure
 
         # calculate all the correct quantites
 
@@ -603,7 +599,7 @@ def display_histogram_fit(analysis,data=(),**kwargs):
         # Make sure it is a valid key
         if key in analysis.data_list.keys():
 
-            if isinstance(analysis.data_list[key], HistLike):
+            if isinstance(analysis.data_list[key], threeML.plugins.HistLike.HistLike):
 
                 new_data_keys.append(key)
 
