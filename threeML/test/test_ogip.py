@@ -90,6 +90,8 @@ def test_loading_a_generic_pha_file():
         assert 'bak' in pha_info
         assert 'rsp' in pha_info
 
+        ogip.__repr__()
+
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
     with within_directory(__this_dir__):

@@ -1,19 +1,15 @@
-
+__author__='grburgess'
 
 import numpy as np
 import os
-import re
-
+import collections
 import copy
 import pandas as pd
 from pandas import HDFStore
 
-
-
 from threeML.io.rich_display import display
 from threeML.utils.stats_tools import Significance
 from threeML.io.file_utils import sanitize_filename
-
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -240,20 +236,20 @@ class EventList(object):
 
         if self._temporal_binner is not None:
 
-            return self._temporal_binner.bins
+            return self._temporal_binner
         else:
 
             raise RuntimeError('This EventList has no binning specified')
 
-    @property
-    def text_bins(self):
-
-        if self._temporal_binner is not None:
-
-            return self._temporal_binner.text_bins
-        else:
-
-            raise RuntimeError('This EventList has no binning specified')
+    # @property
+    # def text_bins(self):
+    #
+    #     if self._temporal_binner is not None:
+    #
+    #         return self._temporal_binner.text_bins
+    #     else:
+    #
+    #         raise RuntimeError('This EventList has no binning specified')
 
     def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
         """
@@ -286,15 +282,21 @@ class EventList(object):
 
         events = events[np.logical_and(events <= stop, events >= start)]
 
-        self._temporal_binner = TemporalBinner(events)
+
 
         tmp_bkg_getter = lambda a, b: self.get_total_poly_count(a, b, mask)
         tmp_err_getter = lambda a, b: self.get_total_poly_error(a, b, mask)
 
-        self._temporal_binner.bin_by_significance(tmp_bkg_getter,
-                                                  background_error_getter=tmp_err_getter,
-                                                  sigma_level=sigma,
-                                                  min_counts=min_counts)
+        # self._temporal_binner.bin_by_significance(tmp_bkg_getter,
+        #                                           background_error_getter=tmp_err_getter,
+        #                                           sigma_level=sigma,
+        #                                           min_counts=min_counts)
+
+        self._temporal_binner = TemporalBinner.from_bin_by_significance(events,
+                                                                        tmp_bkg_getter,
+                                                                        background_error_getter=tmp_err_getter,
+                                                                        sigma_level=sigma,
+                                                                        min_counts=min_counts)
 
     def bin_by_constant(self, start, stop, dt=1):
         """
@@ -308,8 +310,8 @@ class EventList(object):
 
         events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
 
-        self._temporal_binner = TemporalBinner(events)
-        self._temporal_binner.bin_by_constanst(dt)
+        self._temporal_binner = TemporalBinner.from_bin_by_constant(events,dt)
+
 
     def bin_by_custom(self, start, stop):
         """
@@ -321,24 +323,27 @@ class EventList(object):
         :return:
         """
 
-        self._temporal_binner = TemporalBinner(self._arrival_times)
-        self._temporal_binner.bin_by_custom(start, stop)
+        self._temporal_binner = TemporalBinner.from_bin_by_custom(start,stop)
+        #self._temporal_binner.bin_by_custom(start, stop)
 
     def bin_by_bayesian_blocks(self, start, stop, p0, use_background=False):
 
         events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
 
-        self._temporal_binner = TemporalBinner(events)
+        #self._temporal_binner = TemporalBinner(events)
 
         if use_background:
 
             integral_background = lambda t: self.get_total_poly_count(start, t)
 
-            self._temporal_binner.bin_by_bayesian_blocks(p0, bkg_integral_distribution=integral_background)
+            self._temporal_binner = TemporalBinner.from_bin_by_bayesian_blocks(events,
+                                                                               p0,
+                                                                               bkg_integral_distribution=integral_background)
 
         else:
 
-            self._temporal_binner.bin_by_bayesian_blocks(p0)
+            self._temporal_binner = TemporalBinner.from_bin_by_bayesian_blocks(events,
+                                                                               p0)
 
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
@@ -565,39 +570,36 @@ class EventList(object):
 
         return container_dict
 
-    def peek(self):
+    def __repr__(self):
         """
         Examine the currently selected info as well other things.
 
         """
 
-        info_dict = {}
 
-        info_dict['Active Selections'] = zip(self._time_intervals.start_times, self._time_intervals.stop_times)
-        info_dict['Active Deadtime'] = self._active_dead_time
-        info_dict['Active Exposure'] = self._exposure
-        info_dict['Total N. Events'] = len(self._arrival_times)
-        info_dict['Active Counts'] = self._counts.sum()
-        info_dict['Number of Channels'] = self._n_channels
+        return self._output().to_string()
+
+    def _output(self):
+
+        info_dict = collections.OrderedDict()
+        for i, interval in enumerate(self.time_intervals):
+            info_dict['active selection (%d)' % (i + 1)] = interval.__repr__()
+
+        info_dict['active deadtime'] = self._active_dead_time
 
         if self._poly_fit_exists:
-            info_dict['Polynomial Selections'] = zip(self._poly_intervals.start_times, self._poly_intervals.stop_times)
-            info_dict['Polynomial Order'] = self._optimal_polynomial_grade
-            info_dict['Active Count Error'] = np.sqrt((self._poly_count_err ** 2).sum())
-            info_dict['Active Polynomial Counts'] = self._poly_counts.sum()
-            info_dict['Poly fit type'] = self._fit_method_info['bin type']
-            info_dict['Poly fit method'] = self._fit_method_info['fit method']
 
-            sig = Significance(self._counts.sum(), self._poly_counts.sum())
+            for i, interval in enumerate(self.poly_intervals):
+                info_dict['polynomial selection (%d)' % (i + 1)] = interval.__repr__()
 
-            bkg_sig = np.sqrt((self._poly_count_err ** 2).sum())
+            info_dict['polynomial order'] = self._optimal_polynomial_grade
 
-            # too provocative?
-            info_dict['Significance'] = sig.li_and_ma_equivalent_for_gaussian_background(bkg_sig)
+            info_dict['polynomial fit type'] = self._fit_method_info['bin type']
+            info_dict['polynomial fit method'] = self._fit_method_info['fit method']
 
-        info_df = pd.Series(info_dict)
+        return pd.Series(info_dict, index=info_dict.keys())
 
-        display(info_df)
+
 
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
         """
@@ -980,8 +982,9 @@ class EventList(object):
 
 
             store.get_storer('coefficients').attrs.metadata = {'poly_order': self._optimal_polynomial_grade,
-                                                             'poly_selections': zip(self._poly_intervals.start_times,self._poly_intervals.stop_times),
-                                                             'unbinned':self._unbinned}
+                                                               'poly_selections': zip(self._poly_intervals.start_times,self._poly_intervals.stop_times),
+                                                               'unbinned':self._unbinned,
+                                                               'fit_method':self._fit_method_info['fit method']}
 
         if self._verbose:
 
@@ -1033,6 +1036,16 @@ class EventList(object):
 
             self._poly_intervals = TimeIntervalSet.from_starts_and_stops(poly_selections[:,0],poly_selections[:,1])
             self._unbinned = metadata['unbinned']
+
+            if self._unbinned:
+                self._fit_method_info['bin type'] = 'unbinned'
+
+            else:
+
+                self._fit_method_info['bin type'] = 'binned'
+
+            self._fit_method_info['fit method'] = metadata['fit_method']
+
 
         # go thru and count the counts!
 

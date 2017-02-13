@@ -4,7 +4,8 @@ import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 import warnings
-import re
+import collections
+
 
 from threeML.io.plotting.plugin_plots import binned_light_curve_plot
 from threeML.io.rich_display import display
@@ -178,8 +179,8 @@ class FermiGBMTTELike(EventListLike):
 
         if use_binner:
 
-            bin_start, bin_stop = self._event_list.bins
-            bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
+
+            bins = self._event_list.bins.time_edges
 
             # perhaps we want to look a little before or after the binner
             if start < bins[0]:
@@ -220,17 +221,17 @@ class FermiGBMTTELike(EventListLike):
                                 bkg_selections=zip(self._event_list.poly_intervals.start_times,self._event_list.poly_intervals.stop_times),
                                 instrument='gbm')
 
-    def peek(self):
 
-        print "TTE File Info:"
+    def __repr__(self):
+        return self._output().to_string()
 
-        self._event_list.peek()
-
-        print 'Timing Info:'
-
-        self._gbm_tte_file.peek()
+    def _output(self):
+        super_out = super(FermiGBMTTELike, self)._output()
+        return super_out.append(self._gbm_tte_file._output())
 
 
+    def display(self):
+        display(self._output().to_frame())
 
 
 class GBMTTEFile(object):
@@ -396,32 +397,39 @@ class GBMTTEFile(object):
 
         return mission_dict
 
-    def peek(self):
-        """
-        Examine the currently selected interval
-        If connected to the internet, will also look up info for other instruments to compare with
-        Fermi.
+    def __repr__(self):
 
-        :return: none
+        return self._output().to_string()
+
+
+    def _output(self):
+
         """
+                Examine the currently selected interval
+                If connected to the internet, will also look up info for other instruments to compare with
+                Fermi.
+
+                :return: none
+                """
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
+        fermi_dict = collections.OrderedDict()
 
-        fermi_dict = {}
-
-        fermi_dict['Fermi Trigger Time'] = self._trigger_time
-        fermi_dict['Fermi MET OBS Start'] = self._start_events
-        fermi_dict['Fermi MET OBS Stop'] = self._stop_events
+        fermi_dict['Fermi Trigger Time'] = "%.3f" % self._trigger_time
+        fermi_dict['Fermi MET OBS Start'] = "%.3f" % self._start_events
+        fermi_dict['Fermi MET OBS Stop'] = "%.3f" % self._stop_events
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
         fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
+        fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
+
         if mission_dict is not None:
-            mission_df = pd.Series(mission_dict)
+            mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
-            display(mission_df)
+            fermi_df=fermi_df.append(mission_df)
 
-        fermi_df = pd.Series(fermi_dict)
+        return fermi_df
 
-        display(fermi_df)
+
 
 

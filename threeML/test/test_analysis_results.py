@@ -130,7 +130,7 @@ def _results_are_same(res1, res2, bayes=False):
     unit1 = frame1.pop('unit')
     unit2 = frame2.pop('unit')
 
-    assert np.allclose(frame1.values, frame2.values, rtol=0.1)
+    assert np.allclose(frame1.values, frame2.values, rtol=0.15)
     assert np.all(unit1 == unit2)
 
     # Now check the values for the statistics

@@ -3,6 +3,7 @@ import copy
 from contextlib import contextmanager
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 from astromodels.core.parameter import Parameter
 from astromodels.functions.functions import Uniform_prior
@@ -20,7 +21,9 @@ from threeML.plugins.OGIP.pha import PHA
 from threeML.plugins.OGIP.response import OGIPResponse
 from threeML.utils.binner import Rebinner
 from threeML.plugins.OGIP.pha import PHAWrite, PHAII, POISSON_PHAII, POISSON_BAK_PHAII, BAK_PHAII
+from threeML.utils.stats_tools import Significance
 from threeML.config.config import threeML_config
+from threeML.io.rich_display import display
 
 __instrument_name = "All OGIP-compliant instruments"
 
@@ -189,6 +192,48 @@ class OGIPLike(PluginPrototype):
         self._mask = self._quality_to_mask()
         # Apply the mask
         self._apply_mask_to_original_vectors()
+
+    def __repr__(self):
+
+
+
+
+        return self._output().to_string()
+
+    def _output(self):
+
+        obs = collections.OrderedDict()
+
+        obs['n. channels'] = self._pha.n_channels
+
+        obs['total rate'] = self._pha.total_rate
+
+        if not self._pha.is_poisson():
+            obs['total rate error'] = self._pha.total_rate_error
+
+        obs['total bkg. rate'] = self._bak.total_rate
+
+        if not self._bak.is_poisson():
+            obs['total bkg. rate error'] = self._bak.total_rate_error
+
+        obs['exposure'] = self.exposure
+        obs['bkg. exposure'] = self.background_exposure
+        obs['significance'] = self.significance
+        obs['is poisson'] = self._pha.is_poisson()
+        obs['bkg. is poisson'] = self._bak.is_poisson()
+        obs['response'] = self._pha.response_file
+
+        return pd.Series(data=obs, index=obs.keys())
+
+    def display(self):
+        """
+        Displays the current content of the OGIP object
+        :return:
+        """
+
+        display(self._output().to_frame())
+
+
 
     def _get_pha_instance(self, pha_file_or_instance, *args, **kwargs):
 
@@ -897,6 +942,56 @@ class OGIPLike(PluginPrototype):
     @property
     def tstop(self):
         return self._tstop
+
+    @property
+    def significance(self):
+        """
+        :return: the significance of the data over background
+        """
+
+        sig_obj = Significance(Non=self._pha.total_count,
+                           Noff=self._bak.total_count,
+                           alpha=self.exposure/self.background_exposure)
+
+        if self._pha.is_poisson() and self._bak.is_poisson():
+
+            # use simple li & ma
+            significance = sig_obj.li_and_ma()
+
+        elif self._pha.is_poisson() and not self._bak.is_poisson():
+
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._bak.total_count_error)
+
+        else:
+
+            raise NotImplementedError("We haven't put in other significances yet")
+
+        return significance[0]
+
+    @property
+    def significance_per_channel(self):
+        """
+        :return: the significance of the data over background per channel
+        """
+
+        sig_obj = Significance(Non=self._pha.counts,
+                               Noff=self._bak.counts,
+                               alpha=self.exposure / self.background_exposure)
+
+        if self._pha.is_poisson() and self._bak.is_poisson():
+
+            # use simple li & ma
+            significance = sig_obj.li_and_ma()
+
+        elif self._pha.is_poisson() and not self._bak.is_poisson():
+
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._bak.counts_error)
+
+        else:
+
+            raise NotImplementedError("We haven't put in other significances yet")
+
+        return significance
 
     def _loglike_poisson_obs_poisson_bkg(self):
 
