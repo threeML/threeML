@@ -113,6 +113,8 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
                                                                                         equal_tailed=equal_tailed,
                                                                                         is_differential_flux=differential)
 
+            num_sources_to_use += 1
+
         # see if there are any components to use
 
         if use_components:
@@ -193,6 +195,8 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
                                                                                              confidence_level,
                                                                                              equal_tailed,
                                                                                              is_differential_flux=differential)
+
+            num_sources_to_use += 1
 
         # if we want to use components
 
