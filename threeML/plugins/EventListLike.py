@@ -105,6 +105,13 @@ class EventListLike(OGIPLike):
 
 
 
+    @classmethod
+    def _new(cls,*args,**kwargs):
+
+        # because the inner class is actaully
+        # OGIPLike, we need to explicitly call it here
+        return OGIPLike._new(*args,**kwargs)
+
     def _output(self):
 
         super_out = super(EventListLike, self)._output()
