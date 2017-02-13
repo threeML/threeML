@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import warnings
 import collections
+import re
 
 
 from threeML.io.plotting.plugin_plots import binned_light_curve_plot
