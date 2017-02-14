@@ -12,6 +12,7 @@ skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_i
 
 
 @skip_if_internet_is_not_available
+@pytest.mark.xfail
 def test_download_LAT_data():
     # Crab
     ra = 83.6331
@@ -32,6 +33,7 @@ def test_download_LAT_data():
 
 
 @skip_if_internet_is_not_available
+@pytest.mark.xfail
 def test_download_LLE_data():
     # test good trigger names
     good_triggers = ['080916009', 'bn080916009', 'GRB080916009']
