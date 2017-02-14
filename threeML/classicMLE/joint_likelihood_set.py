@@ -16,7 +16,7 @@ import pandas as pd
 
 class JointLikelihoodSet(object):
 
-    def __init__(self, data_getter, model_getter, n_iterations, iteration_name='interval'):
+    def __init__(self, data_getter, model_getter, n_iterations, iteration_name='interval', preprocessor=None):
 
         # Store the data and model getter
 
@@ -97,6 +97,8 @@ class JointLikelihoodSet(object):
 
         self._all_results = None
 
+        self._preprocessor = preprocessor
+
     def set_minimizer(self, minimizer, algorithm=None, callback=None):
 
         self._minimizer = minimizer
@@ -125,6 +127,11 @@ class JointLikelihoodSet(object):
         # Get the model for this interval
 
         this_models = self._model_getter(interval)
+
+        # Apply preprocessor (if any)
+        if self._preprocessor is not None:
+
+            self._preprocessor(this_models, this_data)
 
         n_models = len(this_models)
 
