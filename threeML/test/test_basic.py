@@ -100,9 +100,6 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
 
     fit_results, like_frame = jl.fit()
 
-    #   res = jl.get_errors()
-
-
 
 
     mc = ModelComparison(jl)
@@ -110,12 +107,6 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
     mc.report()
 
     mc.report(sort='AIC')
-
-    sf = SpectralFlux(jl)
-    sf.component_flux()
-
-    sp = SpectralPlotter(jl)
-    sp.plot_components()
 
     powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
     powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
@@ -128,14 +119,11 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
 
     fig = bayes.corner_plot()
 
+
     mc = ModelComparison(bayes)
 
     mc.report()
 
     mc.report(sort='DIC')
 
-    sf = SpectralFlux(bayes)
-    sf.component_flux()
 
-    sp = SpectralPlotter(bayes)
-    sp.plot_components()

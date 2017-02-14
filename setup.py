@@ -49,8 +49,10 @@ setup(
               'threeML/classicMLE',
               'threeML/catalogs',
               'threeML/io',
+              'threeML/io/plotting',
               'threeML/io/cern_root_utils',
               'threeML/utils',
+              'threeML/utils/fitted_objects',
               'threeML/parallel',
               'threeML/config'],
 
@@ -97,7 +99,6 @@ setup(
         'astromodels>=0.2.1',
         'corner>=1.0.2',
         'pandas',
-        'sympy',
         'html2text',
         'requests'
     ])
