@@ -307,11 +307,6 @@ class BinnedSpectrum(Histogram):
         return self._errors
 
     @property
-    def sys_errors(self):
-
-        return self._sys_errors
-
-    @property
     def n_channels(self):
 
         return len(self)
@@ -353,7 +348,7 @@ class BinnedSpectrum(Histogram):
 
         return self._instrument
 
-    def new_spectrum(self,new_counts,new_count_errors):
+    def clone(self, new_counts=None, new_count_errors=None):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -363,6 +358,11 @@ class BinnedSpectrum(Histogram):
         :param new_count_errors: new errors from the spectrum
         :return:
         """
+
+        if new_counts is None:
+
+            new_counts = self.counts
+            new_count_errors = self.count_errors
 
         return BinnedSpectrum(counts=new_counts,
                               ebounds=ChannelSet.from_list_of_edges(self.edges),
@@ -524,7 +524,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
 
         return self._rsp
 
-    def new_spectrum(self, new_counts, new_count_errors):
+    def clone(self, new_counts=None, new_count_errors=None):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -534,6 +534,10 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         :param new_count_errors: new errors from the spectrum
         :return:
         """
+
+        if new_counts is None:
+            new_counts = self.counts
+            new_count_errors = self.count_errors
 
         return BinnedSpectrumWithDispersion(counts=new_counts,
                                             response=self._rsp,

@@ -469,7 +469,7 @@ p
 
         return self._grouping
 
-    def new_spectrum(self, new_counts, new_count_errors):
+    def clone(self, new_counts=None, new_count_errors=None, ):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -480,6 +480,9 @@ p
         :return: new pha spectrum
         """
 
+        if new_counts is None:
+            new_counts = self.counts
+            new_count_errors = self.count_errors
 
 
         if new_count_errors is None:
@@ -506,12 +509,6 @@ p
                     ancrfile=None,
                     is_poisson=self.is_poisson)
 
-        # now make a new spectrum
-
-        # new_spectrum = PHASpectrum(pha,
-        #                            spectrum_number=1,
-        #                            file_type=self._file_type,
-        #                            rsp_file=self._rsp)
 
         return pha
 

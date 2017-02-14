@@ -728,21 +728,21 @@ class SpectrumLike(PluginPrototype):
             # member so as to build the appropriate spectrum type. All parameters of the current
             # spectrum remain the same except for the rate and rate errors
 
-            new_observation = self._observed_spectrum.new_spectrum(new_counts=randomized_source_counts,
-                                                                   new_count_errors=randomized_source_count_err)
+            new_observation = self._observed_spectrum.clone(new_counts=randomized_source_counts,
+                                                            new_count_errors=randomized_source_count_err)
 
 
-            new_background = self._background_spectrum.new_spectrum(new_counts=randomized_background_counts,
-                                                                    new_count_errors=randomized_background_count_err)
+            new_background = self._background_spectrum.clone(new_counts=randomized_background_counts,
+                                                             new_count_errors=randomized_background_count_err)
 
             # Now create another instance of BinnedSpectrum with the randomized data we just generated
             # notice that the _new member is a classmethod
 
-            new_spectrum_plugin = self._new(name=new_name,
-                                            observation=new_observation,
-                                            background=new_background,
-                                            verbose=self._verbose,
-                                            **kwargs)
+            new_spectrum_plugin = self._new_plugin(name=new_name,
+                                                   observation=new_observation,
+                                                   background=new_background,
+                                                   verbose=self._verbose,
+                                                   **kwargs)
 
             # Apply the same selections as the current data set
             if original_rebinner is not None:
@@ -766,7 +766,27 @@ class SpectrumLike(PluginPrototype):
             return new_spectrum_plugin
 
     @classmethod
-    def _new(cls,*args,**kwargs):
+    def _new_plugin(cls, *args, **kwargs):
+        """
+        allows for constructing a new plugin of the appropriate
+        type in conjunction with the Spectrum.clone method.
+        It is used for example in get_simulated_dataset
+
+        new_background = self._background_spectrum.clone(new_counts=randomized_background_counts,
+                                                  new_count_errors=randomized_background_count_err)
+
+
+        new_spectrum_plugin = self._new_plugin(name=new_name,
+                                               observation=new_observation,
+                                               background=new_background,
+                                               verbose=self._verbose,
+                                               **kwargs)
+
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
 
         return cls(*args,**kwargs)
 

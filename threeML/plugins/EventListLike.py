@@ -106,11 +106,11 @@ class EventListLike(OGIPLike):
 
 
     @classmethod
-    def _new(cls,*args,**kwargs):
+    def _new_plugin(cls, *args, **kwargs):
 
         # because the inner class is actaully
         # OGIPLike, we need to explicitly call it here
-        return OGIPLike._new(*args,**kwargs)
+        return OGIPLike._new_plugin(*args, **kwargs)
 
     def _output(self):
 
