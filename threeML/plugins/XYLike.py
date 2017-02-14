@@ -36,18 +36,47 @@ class XYLike(PluginPrototype):
 
             assert np.all(self._yerr > 0), "Errors cannot be negative or zero."
 
-            self._is_poisson = False
-
             print("Using chi2 statistic with the provided errors.")
 
-        else:
+            self._is_poisson = False
 
-            assert poisson_data, "You did not provide errors and you did not set poisson_error to True."
+            self._has_errors = True
+
+        elif not poisson_data:
+
+            # JM: I'm leaving the possibility to do an unweighted fit... we can remove if this is a
+            #     a bad idea
+
+            #assert poisson_data, "You did not provide errors and you did not set poisson_error to True."
+
+            self._yerr = np.ones_like(self._y)
+
+            self._is_poisson = False
+
+            self._has_errors = False
+
+            print("Using unweighted chi2 statistic.")
+
+        else:
 
             print("Using Poisson log-likelihood")
 
             self._is_poisson = True
             self._yerr = None
+            self._has_errors = True
+
+
+    @property
+    def is_poisson(self):
+
+        return self._is_poisson
+
+    @property
+    def has_errors(self):
+
+        return self._has_errors
+
+
 
     def set_model(self, likelihood_model_instance):
         """
@@ -103,6 +132,11 @@ class XYLike(PluginPrototype):
         """
 
         return self.get_log_like()
+
+    def get_model_flux(self):
+
+        pass
+
 
     def fit(self, function, minimizer='minuit'):
         """

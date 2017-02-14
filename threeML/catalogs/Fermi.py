@@ -8,7 +8,7 @@ from astromodels.utils.angular_distance import angular_distance
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
-
+from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 
 
 _trigger_name_match = re.compile("^GRB\d{9}$")
@@ -105,6 +105,13 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             idx = np.array(map(int, row['scat_detector_mask']), dtype=bool)
             detector_selection = self._gbm_detector_lookup[idx]
 
+
+            # get the location
+
+
+            ra = row['ra']
+            dec = row['dec']
+
             # Now we want to know the background intervals
 
             lo_start = row['back_interval_low_start']
@@ -150,9 +157,9 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             best_dict = {'fluence': best_fit_fluence, 'peak': best_fit_peak}
 
             sources[name] = {'source': spectrum_dict, 'background': background_dict, 'trigger': trigger,
-                             'detectors': detector_selection, 'best fit model': best_dict}
+                             'detectors': detector_selection, 'best fit model': best_dict, 'ra': ra, 'dec': dec}
 
-        return sources
+        return DictWithPrettyPrint(sources)
 
     def get_model(self, model='band', interval='fluence'):
         """
@@ -188,16 +195,16 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             # get the proper 3ML model
 
             if model == 'band':
-                lh_model = self._build_band(name, ra, dec, row, available_intervals[interval])
+                lh_model, shape = self._build_band(name, ra, dec, row, available_intervals[interval])
 
             if model == 'comp':
-                lh_model = self._build_cpl(name, ra, dec, row, available_intervals[interval])
+                lh_model, shape = self._build_cpl(name, ra, dec, row, available_intervals[interval])
 
             if model == 'plaw':
-                lh_model = self._build_powerlaw(name, ra, dec, row, available_intervals[interval])
+                lh_model, shape = self._build_powerlaw(name, ra, dec, row, available_intervals[interval])
 
             if model == 'sbpl':
-                lh_model = self._build_sbpl(name, ra, dec, row, available_intervals[interval])
+                lh_model, shape = self._build_sbpl(name, ra, dec, row, available_intervals[interval])
 
             # the assertion above should never let us get here
             if lh_model is None:
@@ -273,7 +280,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         model = Model(ps)
 
-        return model
+        return model, band
 
     @staticmethod
     def _build_cpl(name, ra, dec, row, interval):
@@ -326,7 +333,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         model = Model(ps)
 
-        return model
+        return model, cpl
 
     @staticmethod
     def _build_powerlaw(name, ra, dec, row, interval):
@@ -360,7 +367,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         model = Model(ps)
 
-        return model
+        return model, pl
 
     @staticmethod
     def _build_sbpl(name, ra, dec, row, interval):
@@ -428,7 +435,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         model = Model(ps)
 
-        return model
+        return model, sbpl
 
 
 #########

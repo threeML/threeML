@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def step_plot(xbins, y, ax, color='b', lw=1., ls='-', fill=False, fillAlpha=.6, fill_min=0, **keywords):
+def step_plot(xbins, y, ax, fill=False, fill_min=0, **kwargs):
     '''
     Routine for plotting a in steps with the ability to fill the plot
     xbins is a 2D list of start and stop values.
@@ -19,7 +19,7 @@ def step_plot(xbins, y, ax, color='b', lw=1., ls='-', fill=False, fillAlpha=.6, 
             x.append(t[1])
             newy.append(v)
 
-        ax.fill_between(x, newy, fill_min, color=color, linewidth=lw, linestyle=ls, alpha=fillAlpha)
+        ax.fill_between(x, newy, fill_min, **kwargs)
 
     else:
 
@@ -60,4 +60,4 @@ def step_plot(xbins, y, ax, color='b', lw=1., ls='-', fill=False, fillAlpha=.6, 
 
         new_y = np.ma.masked_where(~np.isfinite(new_y), new_y)
 
-        ax.step(new_x, new_y, where='post', color=color, linewidth=lw, linestyle=ls, **keywords)
+        ax.step(new_x, new_y, where='post',**kwargs)

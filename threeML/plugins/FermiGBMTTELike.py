@@ -3,11 +3,10 @@ __author__ = 'grburgess'
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
-import re
 import warnings
+import collections
+import re
 
-from threeML.io.plugin_plots import binned_light_curve_plot
-from threeML.io.rich_display import display
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
 from threeML.plugins.OGIP.response import InstrumentResponseSet
@@ -21,8 +20,8 @@ class BinningMethodError(RuntimeError):
 
 
 class FermiGBMTTELike(EventListLike):
-
-    def __init__(self, name, tte_file, rsp_file, source_intervals, background_selections=None,restore_background=None,trigger_time=None,
+    def __init__(self, name, tte_file, rsp_file, source_intervals, background_selections=None, restore_background=None,
+                 trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
         """
         A plugin to natively bin, view, and handle Fermi GBM TTE data.
@@ -66,22 +65,21 @@ class FermiGBMTTELike(EventListLike):
         # Create the the event list
 
         event_list = EventListWithDeadTime(
-                arrival_times=self._gbm_tte_file.arrival_times - self._gbm_tte_file.trigger_time,
-                energies=self._gbm_tte_file.energies,
-                n_channels=self._gbm_tte_file.n_channels,
-                start_time=self._gbm_tte_file.tstart - self._gbm_tte_file.trigger_time,
-                stop_time=self._gbm_tte_file.tstop - self._gbm_tte_file.trigger_time,
-                dead_time=self._gbm_tte_file.deadtime,
-                first_channel=1,
-                rsp_file=rsp_file,
-                instrument=self._gbm_tte_file.det_name,
-                mission=self._gbm_tte_file.mission,
-                verbose=verbose)
-
+            arrival_times=self._gbm_tte_file.arrival_times - self._gbm_tte_file.trigger_time,
+            energies=self._gbm_tte_file.energies,
+            n_channels=self._gbm_tte_file.n_channels,
+            start_time=self._gbm_tte_file.tstart - self._gbm_tte_file.trigger_time,
+            stop_time=self._gbm_tte_file.tstop - self._gbm_tte_file.trigger_time,
+            dead_time=self._gbm_tte_file.deadtime,
+            first_channel=1,
+            rsp_file=rsp_file,
+            instrument=self._gbm_tte_file.det_name,
+            mission=self._gbm_tte_file.mission,
+            verbose=verbose)
 
         # we need to see if this is an RSP2
 
-        test = re.match('^.*\.rsp2$',rsp_file)
+        test = re.match('^.*\.rsp2$', rsp_file)
 
         if test is not None:
 
@@ -93,7 +91,7 @@ class FermiGBMTTELike(EventListLike):
                                                                  reference_time=self._gbm_tte_file.trigger_time)
 
             rsp_file = self._rsp_set.weight_by_counts(*[interval.replace(' ', '')
-                                                  for interval in source_intervals.split(',')])
+                                                        for interval in source_intervals.split(',')])
 
         else:
 
@@ -128,13 +126,12 @@ class FermiGBMTTELike(EventListLike):
         """
 
         if self._rsp_is_weighted and not self._startup:
-
             self._rsp = self._rsp_set.weight_by_counts(*intervals)
 
-        super(FermiGBMTTELike,self).set_active_time_interval(*intervals, **kwargs)
+        super(FermiGBMTTELike, self).set_active_time_interval(*intervals, **kwargs)
 
-
-    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None):
+    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None,
+                        significance_level=None):
         """
 
         :param use_binner: use the bins created via a binner
@@ -144,93 +141,17 @@ class FermiGBMTTELike(EventListLike):
         :param energy_selection: string containing energy interval
         :return: fig
         """
+        super(FermiGBMTTELike, self).view_lightcurve(start=start,
+                                                     stop=stop,
+                                                     dt=dt,
+                                                     use_binner=use_binner,
+                                                     energy_selection=energy_selection,
+                                                     significance_level=significance_level,
+                                                     instrument='gbm')
 
-        if energy_selection is not None:
-
-            energy_selection = [interval.replace(' ', '') for interval in energy_selection.split(',')]
-
-            valid_channels = []
-            mask = np.array([False] * self._event_list.n_events)
-
-            for selection in energy_selection:
-
-                ee = map(float, selection.split("-"))
-
-                if len(ee) != 2:
-                    raise RuntimeError('Energy selection is not valid! Form: <low>-<high>.')
-
-                emin, emax = sorted(ee)
-
-                idx1 = self._rsp.energy_to_channel(emin)
-                idx2 = self._rsp.energy_to_channel(emax)
-
-                # Update the allowed channels
-                valid_channels.extend(range(idx1, idx2))
-
-                this_mask = np.logical_and(self._event_list.energies >= idx1, self._event_list.energies <= idx2)
-
-                np.logical_or(mask, this_mask, out=mask)
-
-        else:
-
-            mask = np.array([True] * self._event_list.n_events)
-            valid_channels = range(self._gbm_tte_file.n_channels)
-
-        if use_binner:
-
-            bin_start, bin_stop = self._event_list.bins
-            bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
-
-            # perhaps we want to look a little before or after the binner
-            if start < bins[0]:
-
-                pre_bins = np.arange(start, bins[0], dt).tolist()[:-1]
-
-                pre_bins.extend(bins)
-
-                bins = pre_bins
-
-            if stop > bins[-1]:
-
-                post_bins = np.arange(bins[-1], stop, dt)
-
-                bins.extend(post_bins[1:])
-
-        else:
-
-            bins = np.arange(start, stop + dt, dt)
-
-        cnts, bins = np.histogram(self._gbm_tte_file.arrival_times[mask] - self._gbm_tte_file.trigger_time, bins=bins)
-        time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
-
-        width = np.diff(bins)
-
-        bkg = []
-        for j, tb in enumerate(time_bins):
-            tmpbkg = 0.
-            for i in valid_channels:
-                poly = self._event_list.polynomials[i]
-
-                tmpbkg += poly.integral(tb[0], tb[1]) / (width[j])
-
-            bkg.append(tmpbkg)
-
-        binned_light_curve_plot(time_bins, cnts, bkg, width,
-                                selection=zip(self._event_list.time_intervals.start_times, self._event_list.time_intervals.stop_times),
-                                bkg_selections=zip(self._event_list.poly_intervals.start_times,self._event_list.poly_intervals.stop_times),
-                                instrument='gbm')
-
-    def peek(self):
-
-        print "TTE File Info:"
-
-        self._event_list.peek()
-
-        print 'Timing Info:'
-
-        self._gbm_tte_file.peek()
-
-
+    def _output(self):
+        super_out = super(FermiGBMTTELike, self)._output()
+        return super_out.append(self._gbm_tte_file._output())
 
 
 class GBMTTEFile(object):
@@ -360,10 +281,10 @@ class GBMTTEFile(object):
         pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
 
         args = dict(
-                time_in_sf=self._trigger_time,
-                timesys_in="u",
-                timesys_out="u",
-                apply_clock_offset="yes")
+            time_in_sf=self._trigger_time,
+            timesys_in="u",
+            timesys_out="u",
+            apply_clock_offset="yes")
 
         if has_requests:
 
@@ -396,32 +317,34 @@ class GBMTTEFile(object):
 
         return mission_dict
 
-    def peek(self):
-        """
-        Examine the currently selected interval
-        If connected to the internet, will also look up info for other instruments to compare with
-        Fermi.
+    def __repr__(self):
 
-        :return: none
+        return self._output().to_string()
+
+    def _output(self):
+
         """
+                Examine the currently selected interval
+                If connected to the internet, will also look up info for other instruments to compare with
+                Fermi.
+
+                :return: none
+                """
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
+        fermi_dict = collections.OrderedDict()
 
-        fermi_dict = {}
-
-        fermi_dict['Fermi Trigger Time'] = self._trigger_time
-        fermi_dict['Fermi MET OBS Start'] = self._start_events
-        fermi_dict['Fermi MET OBS Stop'] = self._stop_events
+        fermi_dict['Fermi Trigger Time'] = "%.3f" % self._trigger_time
+        fermi_dict['Fermi MET OBS Start'] = "%.3f" % self._start_events
+        fermi_dict['Fermi MET OBS Stop'] = "%.3f" % self._stop_events
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
         fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
+        fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
+
         if mission_dict is not None:
-            mission_df = pd.Series(mission_dict)
+            mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
-            display(mission_df)
+            fermi_df = fermi_df.append(mission_df)
 
-        fermi_df = pd.Series(fermi_dict)
-
-        display(fermi_df)
-
-
+        return fermi_df

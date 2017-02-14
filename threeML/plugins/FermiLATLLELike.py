@@ -1,18 +1,18 @@
 __author__ = 'grburgess'
 
-import astropy.io.fits as fits
-import numpy as np
-
-import pandas as pd
 import warnings
 
+import astropy.io.fits as fits
+import numpy as np
+import collections
+import pandas as pd
 
+from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
+from threeML.io.rich_display import display
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithLiveTime
-from threeML.io.rich_display import display
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
-
-from threeML.io.plugin_plots import binned_light_curve_plot
+from threeML.io.rich_display import display
 
 __instrument_name = "Fermi LAT LLE"
 
@@ -97,11 +97,8 @@ class FermiLATLLELike(EventListLike):
                                              restore_poly_fit=restore_background
                                              )
 
-
-
-
-
-    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None):
+    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None,
+                        significance_level=None):
         """
 
         :param use_binner: use the bins created via a binner
@@ -109,96 +106,19 @@ class FermiLATLLELike(EventListLike):
         :param stop:  stop time to view
         :param dt:  dt of the light curve
         :param energy_selection: string containing energy interval
-        :return: fig
+        :return: None
         """
+        super(FermiLATLLELike, self).view_lightcurve(start=start,
+                                                     stop=stop,
+                                                     dt=dt,
+                                                     use_binner=use_binner,
+                                                     energy_selection=energy_selection,
+                                                     significance_level=significance_level,
+                                                     instrument='lle')
 
-        if energy_selection is not None:
-
-            energy_selection = [interval.replace(' ', '') for interval in energy_selection.split(',')]
-
-            valid_channels = []
-            mask = np.array([False] * self._event_list.n_events)
-
-            for selection in energy_selection:
-
-                ee = map(float, selection.split("-"))
-
-                if len(ee) != 2:
-                    raise RuntimeError('Energy selection is not valid! Form: <low>-<high>.')
-
-                emin, emax = sorted(ee)
-
-                idx1 = self._rsp.energy_to_channel(emin)
-                idx2 = self._rsp.energy_to_channel(emax)
-
-                # Update the allowed channels
-                valid_channels.extend(range(idx1, idx2))
-
-                this_mask = np.logical_and(self._event_list.energies >= idx1, self._event_list.energies <= idx2)
-
-                np.logical_or(mask, this_mask, out=mask)
-
-        else:
-
-            mask = np.array([True] * self._event_list.n_events)
-            valid_channels = range(self._lat_lle_file.n_channels)
-
-        if use_binner:
-
-            bin_start, bin_stop = self._event_list.bins
-            bins = bin_start.tolist() + [bin_stop.tolist()[-1]]  # type: list
-
-            # perhaps we want to look a little before or after the binner
-            if start < bins[0]:
-
-                pre_bins = np.arange(start, bins[0], dt).tolist()[:-1]
-
-                pre_bins.extend(bins)
-
-                bins = pre_bins
-
-            if stop > bins[-1]:
-
-                post_bins = np.arange(bins[-1], stop, dt)
-
-                bins.extend(post_bins[1:])
-
-        else:
-
-            bins = np.arange(start, stop + dt, dt)
-
-        cnts, bins = np.histogram(self._lat_lle_file.arrival_times[mask] - self._lat_lle_file.trigger_time, bins=bins)
-        time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
-
-        width = np.diff(bins)
-
-        bkg = []
-        for j, tb in enumerate(time_bins):
-            tmpbkg = 0.
-            for i in valid_channels:
-                poly = self._event_list.polynomials[i]
-
-                tmpbkg += poly.integral(tb[0], tb[1]) / (width[j])
-
-            bkg.append(tmpbkg)
-
-        binned_light_curve_plot(time_bins,
-                                cnts,
-                                bkg,
-                                width,
-                                selection=zip(self._event_list.time_intervals.start_times, self._event_list.time_intervals.stop_times),
-                                bkg_selections=zip(self._event_list.poly_intervals.start_times, self._event_list.poly_intervals.stop_times),
-                                instrument='lle')
-
-    def peek(self):
-
-        print("LLE File Info:")
-
-        self._event_list.peek()
-
-        print('Timing Info:')
-
-        self._lat_lle_file.peek()
+    def _output(self):
+        super_out = super(FermiLATLLELike, self)._output()
+        return super_out.append(self._lat_lle_file._output())
 
 
 class LLEFile(object):
@@ -479,33 +399,45 @@ class LLEFile(object):
 
 
 
-    def peek(self):
-        """
-        Examine the currently selected interval
-        If connected to the internet, will also look up info for other instruments to compare with
-        Fermi.
+    def __repr__(self):
 
-        :return: none
+        return  self._output().to_string()
+
+
+    def _output(self):
+
         """
+                Examine the currently selected interval
+                If connected to the internet, will also look up info for other instruments to compare with
+                Fermi.
+
+                :return: none
+                """
 
         mission_dict = compute_fermi_relative_mission_times(self._trigger_time)
 
-        fermi_dict = {}
+        fermi_dict = collections.OrderedDict()
 
-        fermi_dict['Fermi Trigger Time'] = self.trigger_time
-        fermi_dict['Fermi MET OBS Start'] = self._tstart
-        fermi_dict['Fermi MET OBS Stop'] = self._tstop
+        fermi_dict['Fermi Trigger Time'] = "%.3f" % self._trigger_time
+        fermi_dict['Fermi MET OBS Start'] = "%.3f" % self._tstart
+        fermi_dict['Fermi MET OBS Stop'] = "%.3f" % self._tstop
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
         fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
+        fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
+
+
         if mission_dict is not None:
-            mission_df = pd.Series(mission_dict)
+            mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
-            display(mission_df)
+            fermi_df = fermi_df.append(mission_df)
 
-        fermi_df = pd.Series(fermi_dict)
 
-        display(fermi_df)
+
+        return fermi_df
+
+
+
 
 
 

@@ -1,17 +1,19 @@
 import pytest
-import numpy as np
 import os
 
-__author__ = 'grburgess'
 
 from threeML.plugins.FermiGBMTTELike import FermiGBMTTELike
+from threeML.plugins.OGIPLike import OGIPLike
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
+from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
+
 from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
 from astromodels.sources.point_source import PointSource
 from astromodels.functions.functions import Log_uniform_prior, Uniform_prior
+
 
 from threeML.io.file_utils import within_directory
 
@@ -36,32 +38,6 @@ def is_within_tolerance(truth, value, relative_tolerance=0.01):
     else:
 
         return False
-
-
-def examine_bins(bins, real_start, real_stop, expected_number_of_bins):
-    assert len(bins) == 2
-
-    starts, stops = bins
-
-    # check that the start and stop make sense
-
-    assert np.round(starts[0], decimals=3) >= real_start
-    assert np.round(stops[-1], decimals=3) <= real_stop
-
-    # test bin ordering
-
-    for x, y in zip(starts, stops):
-
-        assert x < y
-
-    # test bin length
-
-    assert len(starts) == expected_number_of_bins
-    assert len(stops) == expected_number_of_bins
-
-
-
-
 
 
 class AnalysisBuilder(object):
@@ -180,6 +156,8 @@ def test_gbm_tte_constructor():
 
         nai3.set_background_interval("-15-0", "100-150", unbinned=False)
 
+
+
         # test that no background and no save raises assertion:
         with pytest.raises(AssertionError):
             nai3 = FermiGBMTTELike('NAI3',
@@ -187,6 +165,21 @@ def test_gbm_tte_constructor():
                                    rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
                                    source_intervals=src_selection,
                                    poly_order=-1)
+
+        nai3.display()
+
+        model = Model(PointSource('fake',0,0,Powerlaw()))
+
+        nai3.set_model(model)
+
+        sim = nai3.get_simulated_dataset()
+
+        assert isinstance(sim,OGIPLike)
+
+        plot_tte_lightcurve(os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"))
+
+
+
 
 
 
@@ -212,8 +205,6 @@ def test_gbm_binning():
         with pytest.raises(AttributeError):
             nai3.bins
 
-        with pytest.raises(AttributeError):
-            nai3.text_bins
 
         # First catch the errors
 
@@ -247,21 +238,30 @@ def test_gbm_binning():
 
         nai3.create_time_bins(start=0, stop=10, method='constant', dt=1)
 
-        assert len(nai3.text_bins) == 10
+        assert len(nai3.bins) == 10
 
-        examine_bins(nai3.bins, 0, 10, 10)
+        assert nai3.bins.argsort() == range(len(nai3.bins))
 
         nai3.create_time_bins(start=0, stop=10, method='bayesblocks', p0=.1)
 
-        examine_bins(nai3.bins, 0, 10, 9)
+        assert nai3.bins.argsort() == range(len(nai3.bins))
+
+        assert len(nai3.bins) == 9
 
         nai3.create_time_bins(start=0, stop=10, method='significance', sigma=40)
 
-        examine_bins(nai3.bins, 0, 10, 4)
+        assert nai3.bins.argsort() == range(len(nai3.bins))
+
+        assert len(nai3.bins) == 4
+
+
+
 
         nai3.view_lightcurve(use_binner=True)
 
         nai3.write_pha_from_binner("test_binner", overwrite=True)
+
+        nai3.write_pha('test_from_nai3', overwrite=True)
 
         ogips = nai3.get_ogip_from_binner()
 

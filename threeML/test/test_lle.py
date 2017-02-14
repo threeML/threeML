@@ -35,29 +35,6 @@ def is_within_tolerance(truth, value, relative_tolerance=0.01):
         return False
 
 
-def examine_bins(bins, real_start, real_stop, expected_number_of_bins):
-    assert len(bins) == 2
-
-    starts, stops = bins
-
-
-
-    # check that the start and stop make sense
-
-    assert np.round(starts[0], decimals=0) >= real_start
-    assert np.round(stops[-1], decimals=0) <= real_stop
-
-    # test bin ordering
-
-    for x, y in zip(starts, stops):
-
-        assert x < y
-
-    # test bin length
-
-    assert len(starts) == expected_number_of_bins
-    assert len(stops) == expected_number_of_bins
-
 
 class AnalysisBuilder(object):
     def __init__(self, plugin):
@@ -176,6 +153,7 @@ def test_lle_constructor():
                                   source_intervals=src_selection,
                                   poly_order=-1)
 
+        lle.__repr__()
 
 
         #nai3.set_background_interval("-15-0", "100-150", unbinned=False)
@@ -199,8 +177,7 @@ def test_lle_binning():
         with pytest.raises(AttributeError):
             lle.bins
 
-        with pytest.raises(AttributeError):
-            lle.text_bins
+
 
         # First catch the errors
 
@@ -228,17 +205,20 @@ def test_lle_binning():
 
         lle.create_time_bins(start=0, stop=10, method='constant', dt=1)
 
-        assert len(lle.text_bins) == 10
+        assert len(lle.bins) == 10
 
-        examine_bins(lle.bins, 0, 10, 10)
+        assert lle.bins.argsort() == range(len(lle.bins))
 
         lle.create_time_bins(start=0, stop=10, method='bayesblocks', p0=.1)
 
-        examine_bins(lle.bins, 0, 10, 6)
+        assert len(lle.bins) == 6
 
+        assert lle.bins.argsort() == range(len(lle.bins))
         lle.create_time_bins(start=0, stop=10, method='significance', sigma=10)
 
-        examine_bins(lle.bins, 0, 10, 33)
+        assert len(lle.bins) == 33
+
+        assert lle.bins.argsort() == range(len(lle.bins))
 
         lle.view_lightcurve(use_binner=True)
 

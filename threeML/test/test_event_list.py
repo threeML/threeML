@@ -98,6 +98,8 @@ def test_event_list_constructor():
     assert evt_list._mission == 'UNKNOWN'
 
 
+
+
 def test_unbinned_fit():
     start, stop = 0, 50
 
@@ -124,6 +126,8 @@ def test_unbinned_fit():
     assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
 
     assert evt_list._poly_counts.sum() > 0
+
+    evt_list.__repr__()
 
 
 
@@ -154,5 +158,7 @@ def test_binned_fit():
 
 
     assert evt_list._poly_counts.sum() > 0
+
+    evt_list.__repr__()
 
         ####

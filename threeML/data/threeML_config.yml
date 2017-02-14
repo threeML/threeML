@@ -94,6 +94,14 @@ lle:
 
 mle:
 
+  # The default minimization algorithm
+
+  default minimizer (name): MINUIT
+
+  default minimizer algorithm (name): None
+
+  default minimizer callback (name): None
+
   # Colors for MLE contours and profiles
 
   # The cmap for filling the contour
@@ -122,21 +130,63 @@ mle:
 
   profile level 3 (color): 'red'
 
+bayesian:
+
+  chain consumer style (dict):
+
+    # these are the default chain consumer
+    # params.
+
+    statistics (name): mean
+
+    flip (switch): True
+
+    cloud (switch): False
 
 model plot:
 
 
-  # The color map for MLE best fit lines per component
+   point source plot:
 
-  fit cmap (cmap): Set1
+       # The color map for MLE best fit lines per component
 
-  # The color map for MLE contour regions
+       fit cmap (cmap): Set1
 
-  contour cmap (cmap): Set2
+       # The color map for MLE contour regions
 
-  # The color map of bayes regions per component
+       contour cmap (cmap): Set2
 
-  bayes cmap (cmap): Set1
+       # The color map of bayes regions per component
+
+       bayes cmap (cmap): Set1
+
+
+       # the following are MPL kwargs for plotting
+       # that can be setup as default for the
+       # point source spectrum plot
+
+       # plot kwargs for the point source spectrum
+
+       plot style (dict):
+
+           linestyle (name): '-'
+
+           linewidth (number): !!float 1.5
+
+       # contour kwargs for the point source spectrum
+
+       contour style (dict):
+           alpha (number): .7
+
+       # legend kwargs for the point source spectrum
+
+       legend style (dict):
+
+            loc (name): 'lower left'
+            fancybox (switch): True
+            shadow (switch): True
+
+
 
 event list:
 

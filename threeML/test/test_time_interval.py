@@ -1,7 +1,7 @@
 import pytest
 
-from threeML.utils.time_interval import TimeInterval, IntervalsDoNotOverlap, TimeIntervalSet, IntervalsNotContiguous
-
+from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
+from threeML.utils.interval import IntervalsDoNotOverlap, IntervalsNotContiguous
 
 def test_time_interval_constructor():
 

@@ -5,23 +5,12 @@ import numpy as np
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.plugins.OGIP.pha import PHAII
 from threeML.exceptions.custom_exceptions import custom_warnings
-
-try:
-
-    import requests
-
-except ImportError:
-
-    has_requests = False
-
-else:
-
-    has_requests = True
-
-import copy
-
+from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.OGIP.pha import PHAWrite
+from threeML.utils.stats_tools import Significance
+
+import copy
 
 __instrument_name = "Generic EventList data"
 
@@ -32,12 +21,13 @@ class BinningMethodError(RuntimeError):
 
 class EventListLike(OGIPLike):
     def __init__(self, name, event_list, rsp_file, source_intervals, background_selections=None,
-                 poly_order=-1, unbinned=True, verbose=True,restore_poly_fit=None):
+                 poly_order=-1, unbinned=True, verbose=True, restore_poly_fit=None):
         """
         Generic EventListLike that should be inherited
         """
 
-        assert (background_selections is not None) or (restore_poly_fit is not None), "you specify background selections or a restore file"
+        assert (background_selections is not None) or (
+            restore_poly_fit is not None), "you specify background selections or a restore file"
 
         self._event_list = event_list
 
@@ -50,7 +40,6 @@ class EventListLike(OGIPLike):
         self._startup = True  # This keeps things from being called twice!
 
         source_intervals = [interval.replace(' ', '') for interval in source_intervals.split(',')]
-
 
         self.set_active_time_interval(*source_intervals)
 
@@ -77,20 +66,17 @@ class EventListLike(OGIPLike):
 
                 if background_selections is None:
 
-                    raise RuntimeError("Could not find saved background %s and no background_selections specified" % restore_poly_fit)
+                    raise RuntimeError(
+                        "Could not find saved background %s and no background_selections specified" % restore_poly_fit)
 
                 else:
 
-                    custom_warnings.warn("Could not find saved background %s. Fitting background manually" % restore_poly_fit)
+                    custom_warnings.warn(
+                        "Could not find saved background %s. Fitting background manually" % restore_poly_fit)
 
                     background_selections = [interval.replace(' ', '') for interval in background_selections.split(',')]
 
                     self.set_background_interval(*background_selections, unbinned=unbinned)
-
-
-
-
-
 
         # Keeps track of if we are beginning
         self._startup = False
@@ -103,16 +89,24 @@ class EventListLike(OGIPLike):
 
         self._verbose = verbose
 
+        super(EventListLike, self).__init__(name,
+                                            observation=self._observed_pha,
+                                            background=self._bkg_pha,
+                                            response=rsp_file,
+                                            verbose=verbose,
+                                            spectrum_number=1)
 
+    @classmethod
+    def _new_plugin(cls, *args, **kwargs):
 
-        super(EventListLike,self).__init__(name,
-                                      pha_file=self._observed_pha,
-                                      bak_file=self._bkg_pha,
-                                      rsp_file=rsp_file,
-                                      verbose=verbose,
-                                      spectrum_number=1)
+        # because the inner class is actaully
+        # OGIPLike, we need to explicitly call it here
+        return OGIPLike._new_plugin(*args, **kwargs)
 
+    def _output(self):
 
+        super_out = super(EventListLike, self)._output()
+        return super_out.append(self._event_list._output())
 
     def __set_poly_order(self, value):
         """Background poly order setter """
@@ -159,13 +153,12 @@ class EventListLike(OGIPLike):
         self._active_interval = intervals
 
         if not self._startup:
-
             self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
 
             super(EventListLike, self).__init__(self.name,
-                                                pha_file=self._observed_pha,
-                                                bak_file=self._bkg_pha,
-                                                rsp_file=self._rsp_file,
+                                                observation=self._observed_pha,
+                                                background=self._bkg_pha,
+                                                response=self._rsp_file,
                                                 verbose=self._verbose,
                                                 spectrum_number=1)
 
@@ -183,9 +176,9 @@ class EventListLike(OGIPLike):
             new_name = "%s_%s" % (self._name, intervals[0])
 
             new_ogip = OGIPLike(new_name,
-                                pha_file=self._observed_pha,
-                                bak_file=self._bkg_pha,
-                                rsp_file=self._rsp_file,
+                                observation=self._observed_pha,
+                                background=self._bkg_pha,
+                                response=self._rsp_file,
                                 verbose=self._verbose,
                                 spectrum_number=1)
 
@@ -222,16 +215,11 @@ class EventListLike(OGIPLike):
 
         if not self._startup:
             super(EventListLike, self).__init__(self.name,
-                                                pha_file=self._observed_pha,
-                                                bak_file=self._bkg_pha,
-                                                rsp_file=self._rsp_file,
+                                                observation=self._observed_pha,
+                                                background=self._bkg_pha,
+                                                response=self._rsp_file,
                                                 verbose=self._verbose,
                                                 spectrum_number=1)
-
-    def view_lightcurve(self, start=-10, stop=60., dt=1., use_binner=False, energy_selection=None):
-        """ stub """
-
-        raise RuntimeError('must be implemented in subclass')
 
     def write_pha_from_binner(self, file_name, overwrite=False):
         """
@@ -252,8 +240,8 @@ class EventListLike(OGIPLike):
         # create copies of the OGIP plugins with the
         # time interval saved.
 
-        for interval in self.text_bins:
-            self.set_active_time_interval(interval)
+        for interval in self._event_list.bins:
+            self.set_active_time_interval(interval.to_string())
 
             ogip_list.append(copy.copy(self))
 
@@ -282,8 +270,7 @@ class EventListLike(OGIPLike):
 
         return self._event_list.get_poly_info()
 
-
-    def save_background(self,filename, overwrite=False):
+    def save_background(self, filename, overwrite=False):
         """
 
         save the background to and HDF5 file. The filename does not need an extension.
@@ -298,14 +285,149 @@ class EventListLike(OGIPLike):
 
         self._event_list.save_background(filename, overwrite)
 
+    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None,
+                        significance_level=None, instrument='n.a.'):
+        # type: (float, float, float, bool, str, float, str) -> None
 
+        """
+        :param instrument:
+        :param start:
+        :param stop:
+        :param dt:
+        :param use_binner:
+        :param energy_selection:
+        :param significance_level:
+        """
 
+        if energy_selection is not None:
 
+            # we can go through and filter out those channels that do not correspond to
+            # out energy selection
 
-    @property
-    def text_bins(self):
+            energy_selection = [interval.replace(' ', '') for interval in energy_selection.split(',')]
 
-        return self._event_list.text_bins
+            valid_channels = []
+            mask = np.array([False] * self._event_list.n_events)
+
+            for selection in energy_selection:
+
+                ee = map(float, selection.split("-"))
+
+                if len(ee) != 2:
+                    raise RuntimeError('Energy selection is not valid! Form: <low>-<high>.')
+
+                emin, emax = sorted(ee)
+
+                idx1 = self._rsp.energy_to_channel(emin)
+                idx2 = self._rsp.energy_to_channel(emax)
+
+                # Update the allowed channels
+                valid_channels.extend(range(idx1, idx2))
+
+                this_mask = np.logical_and(self._event_list.energies >= idx1, self._event_list.energies <= idx2)
+
+                np.logical_or(mask, this_mask, out=mask)
+
+        else:
+
+            mask = np.array([True] * self._event_list.n_events)
+            valid_channels = range(self._event_list.n_channels)
+
+        if use_binner:
+
+            # we will use the binner object to bin the
+            # light curve and ignore the normal linear binning
+
+            bins = self._event_list.bins.time_edges
+
+            # perhaps we want to look a little before or after the binner
+            if start < bins[0]:
+                pre_bins = np.arange(start, bins[0], dt).tolist()[:-1]
+
+                pre_bins.extend(bins)
+
+                bins = pre_bins
+
+            if stop > bins[-1]:
+                post_bins = np.arange(bins[-1], stop, dt)
+
+                bins.extend(post_bins[1:])
+
+        else:
+
+            # otherwise, just use regular linear binning
+
+            bins = np.arange(start, stop + dt, dt)
+
+        cnts, bins = np.histogram(self._event_list.arrival_times[mask], bins=bins)
+        time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
+
+        width = np.diff(bins)
+
+        # now we want to get the estimated background from the polynomial fit
+
+        bkg = []
+        for j, tb in enumerate(time_bins):
+            tmpbkg = 0.
+            for i in valid_channels:
+                poly = self._event_list.polynomials[i]
+
+                tmpbkg += poly.integral(tb[0], tb[1])
+
+            bkg.append(tmpbkg / width[j])
+
+        # here we will create a filter for the bins that exceed a certain
+        # significance level
+
+        if significance_level is not None:
+
+            raise NotImplementedError("significnace filter is not complete")
+
+            # create a significance object
+
+            significance = Significance(Non=cnts / width, Noff=bkg)
+
+            # we will go thru and get the background errors
+            # for the current binned light curve
+
+            bkg_err = []
+            for j, tb in enumerate(time_bins):
+                tmpbkg = 0.
+                for i in valid_channels:
+                    poly = self._event_list.polynomials[i]
+
+                    tmpbkg += poly.integral_error(tb[0], tb[1]) ** 2
+
+                bkg_err.append(np.sqrt(tmpbkg) / width[j])
+
+            # collect the significances for this light curve and this binning
+
+            lightcurve_sigma = significance.li_and_ma_equivalent_for_gaussian_background(sigma_b=np.asarray(bkg_err))
+
+            print lightcurve_sigma
+
+            # now create a filter for the bins that exceed the significance
+
+            sig_filter = lightcurve_sigma >= significance_level
+
+            if self._verbose:
+                print('time bins with significance greater that %f are shown in green' % significance_level)
+
+        else:
+
+            sig_filter = significance_level
+
+        # pass all this to the light curve plotter
+
+        binned_light_curve_plot(time_bins=time_bins,
+                                cnts=cnts,
+                                width=width,
+                                bkg=bkg,
+                                selection=self._event_list.time_intervals.bin_stack,
+                                bkg_selections=self._event_list.poly_intervals.bin_stack,
+                                instrument=instrument,
+                                significance_filter=sig_filter
+                                )
 
     @property
     def bins(self):
@@ -459,17 +581,17 @@ class EventListLike(OGIPLike):
 
 
 
-        for i, interval in enumerate(self.text_bins):
-            self.set_active_time_interval(interval)
+        for i, interval in enumerate(self._event_list.bins):
+            self.set_active_time_interval(interval.to_string())
 
             new_name = "%s_%d" % (self._name, i)
 
             new_ogip = OGIPLike(new_name,
-                                pha_file=self._observed_pha,
-                                bak_file=self._bkg_pha,
-                                rsp_file=self._rsp_file,
+                                observation=self._observed_pha,
+                                background=self._bkg_pha,
+                                response=self._rsp_file,
                                 verbose=self._verbose,
-                                spectrum_number = 1)
+                                spectrum_number=1)
 
             ogip_list.append(new_ogip)
 

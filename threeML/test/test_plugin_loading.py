@@ -28,7 +28,7 @@ def test_loading_ogip():
     with within_directory(__this_dir__):
 
 
-        ogip = OGIPLike('test_ogip', pha_file='test.pha{1}')
+        ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
 
 def test_loading_xrt():
@@ -36,9 +36,9 @@ def test_loading_xrt():
     with within_directory(__example_dir):
 
         xrt_dir = 'xrt'
-        xrt = SwiftXRTLike("XRT", pha_file=os.path.join(xrt_dir, "xrt_src.pha"),
-                           bak_file=os.path.join(xrt_dir, "xrt_bkg.pha"),
-                           rsp_file=os.path.join(xrt_dir, "xrt.rmf"),
+        xrt = SwiftXRTLike("XRT", observation=os.path.join(xrt_dir, "xrt_src.pha"),
+                           background=os.path.join(xrt_dir, "xrt_bkg.pha"),
+                           response=os.path.join(xrt_dir, "xrt.rmf"),
                            arf_file=os.path.join(xrt_dir, "xrt.arf"))
 
 # already tested

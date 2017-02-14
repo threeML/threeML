@@ -2,7 +2,7 @@ import numpy as np
 import warnings
 
 from threeML.utils.stats_tools import Significance
-# from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.utils.time_interval import TimeIntervalSet
 from threeML.io.progress_bar import progress_bar
 from threeML.utils.bayesian_blocks import bayesian_blocks
 
@@ -251,49 +251,14 @@ class Rebinner(object):
 
 
 
-class TemporalBinner(object):
+class TemporalBinner(TimeIntervalSet):
     """
-    A class to provide binning of temporal light curves via various methods
+    An extension of the TimeInterval set that includes binning capabilities
 
     """
 
-    def __init__(self, arrival_times, tstart=None, tstop=None):
-
-        self._arrival_times = arrival_times
-
-        if tstart is None:
-
-            self._tstart = self._arrival_times.min()
-
-        else:
-
-            self._tstart = float(tstart)
-
-        if tstop is None:
-
-            self._tstop = self._arrival_times.max()
-
-        else:
-
-            self._tstop = float(tstop)
-
-    @property
-    def bins(self):
-
-        return [np.asarray(self._starts), np.asarray(self._stops)]
-
-    @property
-    def text_bins(self):
-
-        txt_bins = []
-
-        for start, stop in zip(self._starts, self._stops):
-
-            txt_bins.append("%f-%f" % (start, stop))
-
-        return txt_bins
-
-    def bin_by_significance(self, background_getter, background_error_getter=None, sigma_level=10, min_counts=1):
+    @classmethod
+    def bin_by_significance(cls, arrival_times, background_getter, background_error_getter=None, sigma_level=10, min_counts=1, tstart=None, tstop=None):
         """
 
         Bin the data to a given significance level for a given background method and sigma
@@ -308,9 +273,27 @@ class TemporalBinner(object):
         :return:
         """
 
-        self._starts = []
 
-        self._stops = []
+
+        if tstart is None:
+
+            tstart = arrival_times.min()
+
+        else:
+
+            tstart = float(tstart)
+
+        if tstop is None:
+
+            tstop = arrival_times.max()
+
+        else:
+
+            tstop = float(tstop)
+
+        starts = []
+
+        stops = []
 
         # Switching to a fast search
         # Idea inspired by Damien Begue
@@ -327,15 +310,15 @@ class TemporalBinner(object):
             increase_factor = 0.25
             decrease_factor = 0.25
 
-        current_start = self._arrival_times[0]
+        current_start = arrival_times[0]
 
         # first we need to see if the interval provided has enough counts
 
-        _, counts = self._select_events(current_start, self._arrival_times[-1])
+        _, counts = TemporalBinner._select_events(arrival_times,current_start, arrival_times[-1])
 
         # if it does not, the flag for the big loop never gets set
-        end_all_search = not self._check_exceeds_sigma_interval(current_start,
-                                                                self._arrival_times[-1],
+        end_all_search = not TemporalBinner._check_exceeds_sigma_interval(current_start,
+                                                                arrival_times[-1],
                                                                 counts,
                                                                 sigma_level,
                                                                 background_getter,
@@ -343,7 +326,7 @@ class TemporalBinner(object):
 
         # We will start the search at the mid point of the whole interval
 
-        mid_point = 0.5 * (self._arrival_times[-1] + current_start)
+        mid_point = 0.5 * (arrival_times[-1] + current_start)
 
         current_stop = mid_point
 
@@ -357,7 +340,7 @@ class TemporalBinner(object):
         # this is the main loop
         # as long as we have not reached the end of the interval
         # the loop will run
-        with progress_bar(self._arrival_times.shape[0]) as pbar:
+        with progress_bar(arrival_times.shape[0]) as pbar:
             while (not end_all_search):
 
                 # start of the fast search
@@ -368,9 +351,9 @@ class TemporalBinner(object):
                 while (not end_fast_search):
 
                     # we calculate the sigma of the current region
-                    _, counts = self._select_events(current_start, current_stop)
+                    _, counts = TemporalBinner._select_events(arrival_times,current_start, current_stop)
 
-                    sigma_exceeded = self._check_exceeds_sigma_interval(current_start,
+                    sigma_exceeded = TemporalBinner._check_exceeds_sigma_interval(current_start,
                                                                         current_stop,
                                                                         counts,
                                                                         sigma_level,
@@ -389,7 +372,7 @@ class TemporalBinner(object):
                         if decreased_interval:
 
                             # mark where we are in the list
-                            start_idx = searchsorted(self._arrival_times, current_stop)
+                            start_idx = searchsorted(arrival_times, current_stop)
 
                             # end the fast search
                             end_fast_search = True
@@ -398,10 +381,10 @@ class TemporalBinner(object):
                         else:
 
                             # unless, we would increase it too far
-                            if (current_stop + time_step * increase_factor) >= self._arrival_times[-1]:
+                            if (current_stop + time_step * increase_factor) >= arrival_times[-1]:
 
                                 # mark where we are in the interval
-                                start_idx = searchsorted(self._arrival_times, current_stop)
+                                start_idx = searchsorted(arrival_times, current_stop)
 
                                 # then we also want to go ahead and get out of the fast search
                                 end_fast_search = True
@@ -430,7 +413,7 @@ class TemporalBinner(object):
                 # start searching from where the fast search ended
                 pbar.increase(counts)
 
-                for time in self._arrival_times[start_idx:]:
+                for time in arrival_times[start_idx:]:
 
                     total_counts += 1
                     pbar.increase()
@@ -461,15 +444,15 @@ class TemporalBinner(object):
                         if sigma >= sigma_level:
 
                             # if we succeeded we want to mark the time bins
-                            self._stops.append(time)
+                            stops.append(time)
 
-                            self._starts.append(current_start)
+                            starts.append(current_start)
 
                             # set up the next fast search
                             # by looking past this interval
                             current_start = time
 
-                            current_stop = 0.5 * (self._arrival_times[-1] + time)
+                            current_stop = 0.5 * (arrival_times[-1] + time)
 
                             end_fast_search = False
 
@@ -483,19 +466,19 @@ class TemporalBinner(object):
                     # so lets kill the main search
                     end_all_search = True
 
-        if not self._starts:
+
+
+
+        if not starts:
 
             print("The requested sigma level could not be achieved in the interval. Try decreasing it.")
 
+        else:
 
+            return cls.from_starts_and_stops(starts, stops)
 
-
-
-
-
-
-
-    def bin_by_constanst(self, dt):
+    @classmethod
+    def bin_by_constant(cls, arrival_times, dt):
         """
         Create bins with a constant dt
 
@@ -503,17 +486,20 @@ class TemporalBinner(object):
         :return: None
         """
 
-        tmp = np.arange(self._arrival_times[0], self._arrival_times[-1], dt)
-        self._starts = tmp
-        self._stops = tmp + dt
+        tmp = np.arange(arrival_times[0], arrival_times[-1], dt)
+        starts = tmp
+        stops = tmp + dt
 
-    def bin_by_bayesian_blocks(self, p0, bkg_integral_distribution=None):
+        return cls.from_starts_and_stops(starts, stops)
+
+    @classmethod
+    def bin_by_bayesian_blocks(cls, arrival_times, p0, bkg_integral_distribution=None):
         """Divide a series of events characterized by their arrival time in blocks
         of perceptibly constant count rate. If the background integral distribution
         is given, divide the series in blocks where the difference with respect to
         the background is perceptibly constant.
-        Args:
-          self._arrival_times (iterable): An iterable (list, numpy.array...) containing the arrival
+
+        :param arrival_times: An iterable (list, numpy.array...) containing the arrival
                          time of the events.
                          NOTE: the input array MUST be time-ordered, and without
                          duplicated entries. To ensure this, you may execute the
@@ -522,25 +508,28 @@ class TemporalBinner(object):
                          tt_array = numpy.unique(tt_array)
                          tt_array.sort()
                          before running the algorithm.
-          p0 (float): The probability of finding a variations (i.e., creating a new
+        :param p0: The probability of finding a variations (i.e., creating a new
                       block) when there is none. In other words, the probability of
                       a Type I error, i.e., rejecting the null-hypothesis when is
                       true. All found variations will have a post-trial significance
                       larger than p0.
-          bkg_integral_distribution (function, optional): the integral distribution for the
+        :param bkg_integral_distribution : the integral distribution for the
                       background counts. It must be a function of the form f(x),
                       which must return the integral number of counts expected from
                       the background component between time 0 and x.
-        Returns:
-          numpy.array: the edges of the blocks found
+
         """
 
-        final_edges = bayesian_blocks(self._arrival_times, self._tstart, self._tstop, p0, bkg_integral_distribution)
+        final_edges = bayesian_blocks(arrival_times, arrival_times[0], arrival_times[-1], p0, bkg_integral_distribution)
 
-        self._starts = np.asarray(final_edges)[:-1]
-        self._stops = np.asarray(final_edges)[1:]
+        starts = np.asarray(final_edges)[:-1]
+        stops = np.asarray(final_edges)[1:]
 
-    def bin_by_custom(self, start, stop):
+        return  cls.from_starts_and_stops(starts, stops)
+
+
+    @classmethod
+    def bin_by_custom(cls, starts, stops):
         """
         Simplicity function to make custom bins. This form keeps introduction of
         custom bins uniform for other binning methods
@@ -550,10 +539,11 @@ class TemporalBinner(object):
         :return:
         """
 
-        self._starts = start
-        self._stops = stop
 
-    def _check_exceeds_sigma_interval(self, start, stop, counts, sigma_level, background_getter,
+        return cls.from_starts_and_stops(starts, stops)
+
+    @staticmethod
+    def _check_exceeds_sigma_interval(start, stop, counts, sigma_level, background_getter,
                                       background_error_getter=None):
 
         """
@@ -595,7 +585,8 @@ class TemporalBinner(object):
 
             return False
 
-    def _select_events(self, start, stop, ):
+    @staticmethod
+    def _select_events(arrival_times, start, stop ):
         """
         get the events and total counts over an interval
 
@@ -605,9 +596,9 @@ class TemporalBinner(object):
         :return:
         """
 
-        lt_idx = start <= self._arrival_times
-        gt_idx = self._arrival_times <= stop
+        lt_idx = start <= arrival_times
+        gt_idx = arrival_times <= stop
 
         idx = np.logical_and(lt_idx, gt_idx)
 
-        return idx, self._arrival_times[idx].shape[0]
+        return idx, arrival_times[idx].shape[0]

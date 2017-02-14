@@ -1,10 +1,10 @@
-import os
-import sys
 import glob
 import imp
+import os
+import sys
 
-# Import the version
 from version import __version__
+
 
 # Import everything from astromodels
 from astromodels import *
@@ -182,16 +182,12 @@ from .classicMLE.joint_likelihood_set import JointLikelihoodSet, JointLikelihood
 from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from .classicMLE.goodness_of_fit import GoodnessOfFit
 
-# Added by JM to import spectral plotting.
-from .io.model_plot import SpectralPlotter
+from .io.plotting import *
 
-# Added by JM to import flux calcuations.
-from .io.flux_calculator import SpectralFlux
+from .io.calculate_flux import calculate_point_source_flux
 
-# Added by JM to import Model comparison
 from .utils.stats_tools import ModelComparison
 
-from .io.plugin_plots import display_ogip_model_counts
 
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
