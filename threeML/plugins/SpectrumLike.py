@@ -11,7 +11,7 @@ from astromodels.utils.valid_variable import is_valid_variable_name
 from astromodels import clone_model
 
 from threeML.io.rich_display import display
-from threeML.io.plugin_plots import channel_plot, disjoint_patch_plot
+from threeML.io.plotting.plugin_plots import channel_plot, disjoint_patch_plot
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
 from threeML.plugin_prototype import PluginPrototype, set_external_property
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg

@@ -7,7 +7,7 @@ from threeML.plugins.OGIP.pha import PHAII
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.OGIP.pha import PHAWrite
-from threeML.io.plugin_plots import binned_light_curve_plot
+from threeML.io.plotting.plugin_plots import binned_light_curve_plot
 from threeML.utils.stats_tools import Significance
 
 import copy
