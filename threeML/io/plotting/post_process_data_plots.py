@@ -157,6 +157,13 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         energy_min, energy_max = data._rsp.ebounds[:-1], data._rsp.ebounds[1:]
 
+        chan_width = energy_max - energy_min
+
+        # get the expected counts
+        # NOTE: _rsp.convolve() returns already the rate (counts / s)
+        expected_model_rate = data._evaluate_model() * data._nuisance_parameter.value
+
+
         # figure out the type of data
 
         if data._observation_noise_model == 'poisson':
@@ -185,7 +192,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
                 background_counts = data._background_counts
 
-                background_errors = data._back_counts_errors
+                background_errors = data._back_count_errors
+
+            elif data._background_noise_model is None:
+
+                raise NotImplementedError("do not have this model yet")
 
             else:
 
@@ -193,21 +204,32 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         else:
 
-            raise NotImplementedError("Not yet implemented")
+            if data._background_noise_model is None:
+                # Observed counts
+                observed_counts = data._observed_counts
 
-        chan_width = energy_max - energy_min
+                cnt_err = data._observed_count_errors
 
-        # get the expected counts
-        # NOTE: _rsp.convolve() returns already the rate (counts / s)
-        expected_model_rate = data._evaluate_model()  # * data.exposure  / data.exposure
+
+
 
         # calculate all the correct quantites
 
-        # since we compare to the model rate... background subtract but with proper propagation
-        src_rate = (observed_counts / data.exposure - background_counts / data.background_exposure)
+        if data._background_noise_model is not None:
 
-        src_rate_err = np.sqrt((cnt_err / data.exposure) ** 2 +
-                               (background_errors / data.background_exposure) ** 2)
+            # since we compare to the model rate... background subtract but with proper propagation
+            src_rate = (observed_counts / data.exposure - background_counts / data.background_exposure)
+
+            src_rate_err = np.sqrt((cnt_err / data.exposure) ** 2 +
+                                   (background_errors / data.background_exposure) ** 2)
+
+        else:
+
+            # since we compare to the model rate... background subtract but with proper propagation
+            src_rate = (observed_counts / data.exposure)
+
+            src_rate_err = cnt_err / data.exposure
+
 
         # rebin on the source rate
 
@@ -300,17 +322,21 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         # we need to get the rebinned counts
         rebinned_observed_counts, = this_rebinner.rebin(observed_counts)
 
+        rebinned_observed_count_errors, = this_rebinner.rebin_errors(cnt_err)
+
         # the rebinned counts expected from the model
         rebinned_model_counts = new_model_rate * data.exposure
 
         # and also the rebinned background
 
-        rebinned_background_counts, = this_rebinner.rebin(background_counts)
-        rebinned_background_errors, = this_rebinner.rebin_errors(background_errors)
+        if data._background_noise_model is not None:
+            rebinned_background_counts, = this_rebinner.rebin(background_counts)
+            rebinned_background_errors, = this_rebinner.rebin_errors(background_errors)
 
-        significance_calc = Significance(rebinned_observed_counts,
-                                         rebinned_background_counts + rebinned_model_counts / data.scale_factor,
-                                         data.scale_factor)
+            significance_calc = Significance(rebinned_observed_counts,
+                                             rebinned_background_counts + rebinned_model_counts / data.scale_factor,
+                                             data.scale_factor)
+
 
         # Divide the various cases
 
@@ -336,7 +362,13 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         else:
 
-            raise NotImplementedError("Not yet implemented")
+            if data._background_noise_model is None:
+
+                residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_observed_count_errors
+
+            else:
+
+                raise NotImplementedError("Not yet implemented")
 
         ax1.axhline(0, linestyle='--', color='k')
         ax1.errorbar(mean_energy,
