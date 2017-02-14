@@ -53,6 +53,13 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         # extract the spectrum number if needed
 
+
+
+        assert isinstance(pha_file_or_instance, str) or isinstance(pha_file_or_instance,
+                                                                   PHAII), 'Must provide a FITS file name or PHAII instance'
+
+
+
         if isinstance(pha_file_or_instance, str):
 
             ext = os.path.splitext(pha_file_or_instance)[-1]
@@ -79,6 +86,11 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
             # we simply create a dummy filename
 
             filename = 'pha_instance'
+
+
+        else:
+
+            raise RuntimeError('This is a bug')
 
         self._file_name = filename
 
@@ -512,3 +524,34 @@ p
 
         return pha
 
+    @classmethod
+    def from_dispersion_spectrum(cls, dispersion_spectrum, file_type='observed'):
+        # type: (BinnedSpectrumWithDispersion, str) -> PHASpectrum
+
+
+
+        if dispersion_spectrum.is_poisson:
+
+            rate_errors = None
+
+        else:
+
+            rate_errors = dispersion_spectrum.rate_errors
+
+        pha = PHAII(instrument_name=dispersion_spectrum.instrument,
+                    telescope_name=dispersion_spectrum.mission,
+                    tstart=0,  # TODO: add this in so that we have proper time!
+                    telapse=dispersion_spectrum.exposure,
+                    channel=range(1, len(dispersion_spectrum) + 1),
+                    rate=dispersion_spectrum.rates,
+                    stat_err=rate_errors,
+                    quality=dispersion_spectrum.quality.to_ogip(),
+                    grouping=np.ones(len(dispersion_spectrum)),
+                    exposure=dispersion_spectrum.exposure,
+                    backscale=dispersion_spectrum.scale_factor,
+                    respfile=None,
+                    ancrfile=None,
+                    is_poisson=dispersion_spectrum.is_poisson)
+
+        return cls(pha_file_or_instance=pha, spectrum_number=1, file_type=file_type,
+                   rsp_file=dispersion_spectrum.response)

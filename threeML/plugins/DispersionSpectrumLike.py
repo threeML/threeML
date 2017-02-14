@@ -4,7 +4,6 @@ import pandas as pd
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrumWithDispersion
 from threeML.plugins.OGIP.response import InstrumentResponse
-from threeML.io.rich_display import display
 
 
 __instrument_name = "General binned spectral data with energy dispersion"
@@ -101,5 +100,20 @@ class DispersionSpectrumLike(SpectrumLike):
 
         return super_out.append(the_df)
 
+    def write_pha(self, filename, overwrite=False):
+        """
 
+        :param filename:
+        :param overwrite:
+        :return:
+        """
 
+        # we need to pass up the variables to an OGIPLike
+        # so that we have the proper variable name
+
+        # a local import here because OGIPLike is dependent on this
+
+        from threeML.plugins.OGIPLike import OGIPLike
+
+        ogiplike = OGIPLike.from_general_dispersion_spectrum(self)
+        ogiplike.write_pha(file_name=filename, overwrite=overwrite)

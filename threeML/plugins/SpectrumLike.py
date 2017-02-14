@@ -1226,6 +1226,13 @@ class SpectrumLike(PluginPrototype):
 
         return significance
 
+    def write_pha(self):
+
+        raise NotImplementedError("this is in progress")
+
+
+        # we just need to make a diagonal response and then follow the example in dispersion like
+
     def view_count_spectrum(self, plot_errors=True, show_bad_channels=True, show_warn_channels=False,
                             significance_level=None):
         """

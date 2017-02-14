@@ -261,6 +261,8 @@ def test_gbm_binning():
 
         nai3.write_pha_from_binner("test_binner", overwrite=True)
 
+        nai3.write_pha('test_from_nai3', overwrite=True)
+
         ogips = nai3.get_ogip_from_binner()
 
 

@@ -9,6 +9,8 @@ from threeML.io.cern_root_utils.io_utils import get_list_of_keys, open_ROOT_file
 from threeML.io.cern_root_utils.tobject_to_numpy import tgraph_to_arrays, th2_to_arrays, tree_to_ndarray
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.OGIP.pha import POISSON_PHAII
+from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrumWithDispersion
+from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIP.response import RMF
 import astropy.io.fits as pyfits
 
@@ -89,6 +91,19 @@ class VERITASRun(object):
         # Number of "channels"
         n_channels = self._recon_energies.shape[0]
 
+        # G.V: here is how you could do this with the new frame work
+        # so that you are not tied to PHA format
+
+        #
+        # spectrum = BinnedSpectrumWithDispersion(counts=counts,
+        #                                         exposure=exposure,
+        #                                         response=self._rsp_file,  # should be a fully formed InstrumentResponse
+        #                                         is_poisson=True,
+        #                                         mission=self._mission,
+        #                                         instrument=self._instrument)
+        #
+        # return spectrum
+
         pha = POISSON_PHAII(instrument_name=self._instrument,
                     telescope_name=self._mission,
                     channel=,
@@ -128,6 +143,23 @@ class VERITASData(object):
 
             f.close()
 
+
+# Try dispersionLike?
+
+# class VERITASLike(BinnedSpectrumWithDispersion):
+#
+#     def __init__(self, name, udara_style_root_file):
+#
+#
+#         # here build your BinnedSpectraWithDispersion
+#
+#
+#
+#         super(VERITASLike, self).__init__(name,
+#                                           observation, # will have response as a member
+#                                           background, # might need to override if you do not have a bakcground
+#         )
+#
 
 # This function get a list of
 
