@@ -7,6 +7,8 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
+from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
+
 from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
 from astromodels.sources.point_source import PointSource
@@ -173,6 +175,11 @@ def test_gbm_tte_constructor():
         sim = nai3.get_simulated_dataset()
 
         assert isinstance(sim,OGIPLike)
+
+        plot_tte_lightcurve(os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"))
+
+
+
 
 
 

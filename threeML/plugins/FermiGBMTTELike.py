@@ -7,9 +7,6 @@ import warnings
 import collections
 import re
 
-
-from threeML.io.plotting.plugin_plots import binned_light_curve_plot
-from threeML.io.rich_display import display
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
 from threeML.plugins.OGIP.response import InstrumentResponseSet
@@ -23,8 +20,8 @@ class BinningMethodError(RuntimeError):
 
 
 class FermiGBMTTELike(EventListLike):
-
-    def __init__(self, name, tte_file, rsp_file, source_intervals, background_selections=None,restore_background=None,trigger_time=None,
+    def __init__(self, name, tte_file, rsp_file, source_intervals, background_selections=None, restore_background=None,
+                 trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
         """
         A plugin to natively bin, view, and handle Fermi GBM TTE data.
@@ -68,22 +65,21 @@ class FermiGBMTTELike(EventListLike):
         # Create the the event list
 
         event_list = EventListWithDeadTime(
-                arrival_times=self._gbm_tte_file.arrival_times - self._gbm_tte_file.trigger_time,
-                energies=self._gbm_tte_file.energies,
-                n_channels=self._gbm_tte_file.n_channels,
-                start_time=self._gbm_tte_file.tstart - self._gbm_tte_file.trigger_time,
-                stop_time=self._gbm_tte_file.tstop - self._gbm_tte_file.trigger_time,
-                dead_time=self._gbm_tte_file.deadtime,
-                first_channel=1,
-                rsp_file=rsp_file,
-                instrument=self._gbm_tte_file.det_name,
-                mission=self._gbm_tte_file.mission,
-                verbose=verbose)
-
+            arrival_times=self._gbm_tte_file.arrival_times - self._gbm_tte_file.trigger_time,
+            energies=self._gbm_tte_file.energies,
+            n_channels=self._gbm_tte_file.n_channels,
+            start_time=self._gbm_tte_file.tstart - self._gbm_tte_file.trigger_time,
+            stop_time=self._gbm_tte_file.tstop - self._gbm_tte_file.trigger_time,
+            dead_time=self._gbm_tte_file.deadtime,
+            first_channel=1,
+            rsp_file=rsp_file,
+            instrument=self._gbm_tte_file.det_name,
+            mission=self._gbm_tte_file.mission,
+            verbose=verbose)
 
         # we need to see if this is an RSP2
 
-        test = re.match('^.*\.rsp2$',rsp_file)
+        test = re.match('^.*\.rsp2$', rsp_file)
 
         if test is not None:
 
@@ -95,7 +91,7 @@ class FermiGBMTTELike(EventListLike):
                                                                  reference_time=self._gbm_tte_file.trigger_time)
 
             rsp_file = self._rsp_set.weight_by_counts(*[interval.replace(' ', '')
-                                                  for interval in source_intervals.split(',')])
+                                                        for interval in source_intervals.split(',')])
 
         else:
 
@@ -130,12 +126,12 @@ class FermiGBMTTELike(EventListLike):
         """
 
         if self._rsp_is_weighted and not self._startup:
-
             self._rsp = self._rsp_set.weight_by_counts(*intervals)
 
-        super(FermiGBMTTELike,self).set_active_time_interval(*intervals, **kwargs)
+        super(FermiGBMTTELike, self).set_active_time_interval(*intervals, **kwargs)
 
-    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None, significance_level=None):
+    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None,
+                        significance_level=None):
         """
 
         :param use_binner: use the bins created via a binner
@@ -152,8 +148,6 @@ class FermiGBMTTELike(EventListLike):
                                                      energy_selection=energy_selection,
                                                      significance_level=significance_level,
                                                      instrument='gbm')
-
-
 
     def _output(self):
         super_out = super(FermiGBMTTELike, self)._output()
@@ -287,10 +281,10 @@ class GBMTTEFile(object):
         pattern = """<tr>.*?<th scope=row><label for="(.*?)">(.*?)</label></th>.*?<td align=center>.*?</td>.*?<td>(.*?)</td>.*?</tr>"""
 
         args = dict(
-                time_in_sf=self._trigger_time,
-                timesys_in="u",
-                timesys_out="u",
-                apply_clock_offset="yes")
+            time_in_sf=self._trigger_time,
+            timesys_in="u",
+            timesys_out="u",
+            apply_clock_offset="yes")
 
         if has_requests:
 
@@ -327,7 +321,6 @@ class GBMTTEFile(object):
 
         return self._output().to_string()
 
-
     def _output(self):
 
         """
@@ -352,10 +345,6 @@ class GBMTTEFile(object):
         if mission_dict is not None:
             mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
-            fermi_df=fermi_df.append(mission_df)
+            fermi_df = fermi_df.append(mission_df)
 
         return fermi_df
-
-
-
-

@@ -7,7 +7,7 @@ import numpy as np
 import collections
 import pandas as pd
 
-from threeML.io.plotting.plugin_plots import binned_light_curve_plot
+from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 from threeML.io.rich_display import display
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithLiveTime

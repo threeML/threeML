@@ -2,216 +2,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MaxNLocator
 
-
 import threeML.plugins.SpectrumLike
 import threeML.plugins.HistLike
-from threeML.io.step_plot import step_plot
-from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.plotting.step_plot import step_plot
-from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.binner import Rebinner
 from threeML.utils.stats_tools import Significance
 from threeML.io.plotting.cmap_cycle import cmap_intervals
-
-
-
-def binned_light_curve_plot(time_bins, cnts, bkg, width, selection, bkg_selections, instrument, significance_filter=None):
-    """
-
-    :param time_bins:
-    :param cnts:
-    :param bkg:
-    :param width:
-    :param selection:
-    :param bkg_selections:
-    :param instrument:
-    :param significance_filter:
-    :return:
-    """
-    fig, ax = plt.subplots()
-
-    top = max(cnts / width) * 1.2
-    min_cnts = min(cnts[cnts > 0] / width[cnts > 0]) * 0.95
-    bottom=min_cnts
-    mean_time = map(np.mean, time_bins)
-
-    all_masks = []
-
-    #round
-
-    np.round(time_bins,decimals=4,out=time_bins)
-    np.round(selection, decimals=4, out=selection)
-    np.round(bkg_selections, decimals=4, out=bkg_selections)
-
-
-    # purple: #8da0cb
-
-    # first plot the full lightcurve
-
-    step_plot(time_bins, cnts / width, ax,
-              color=threeML_config[instrument]['lightcurve color'], label="Light Curve")
-
-    # now plot the temporal selections
-
-
-    for tmin, tmax in selection:
-        tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
-
-        all_masks.append(tmp_mask)
-
-
-    if len(all_masks) > 1:
-
-        for mask in all_masks[1:]:
-            step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
-                      color=threeML_config[instrument]['selection color'],
-                      fill=True,
-                      fill_min=min_cnts)
-
-
-
-    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
-              color=threeML_config[instrument]['selection color'],
-              fill=True,
-              fill_min=min_cnts, label="Selection")
-
-    # now plot the background selections
-
-    all_masks = []
-    for tmin, tmax in bkg_selections:
-        tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
-
-        all_masks.append(tmp_mask)
-
-    if len(all_masks) > 1:
-
-        for mask in all_masks[1:]:
-
-            step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
-                      color=threeML_config[instrument]['background selection color'],
-                      fill=True,
-                      alpha=.4,
-                      fill_min=min_cnts)
-
-    step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
-              color=threeML_config[instrument]['background selection color'],
-              fill=True,
-              fill_min=min_cnts,
-              alpha=.4,
-              label="Bkg. Selections",
-              zorder=-30)
-
-
-    # now plot the estimated background
-
-    ax.plot(mean_time, bkg, threeML_config[instrument]['background color'], lw=2., label="Background")
-
-    if significance_filter is not None:
-
-
-
-        # plot the significant time bins
-        # i.e., those that are above the input significance threshold
-
-        disjoint_patch_plot(ax,
-                            time_bins[:,0],
-                            time_bins[:,1],
-                            top,
-                            bottom,
-                            significance_filter,
-                            color='limegreen',
-                            alpha=.3,
-                            zorder=-33)
-
-    # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
-
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("Rate (cnts/s)")
-    ax.set_ylim(bottom, top)
-    ax.set_xlim(time_bins.min(), time_bins.max())
-    ax.legend()
-
-
-def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
-    chans = np.array(zip(chan_min, chan_max))
-    width = chan_max - chan_min
-
-    step_plot(chans, counts / width, ax, **kwargs)
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-
-    return ax
-
-
-def disjoint_patch_plot(ax, bin_min, bin_max, top, bottom, mask, **kwargs):
-    # type: (plt.Axes, np.array, np.array, float, float, np.array, dict) -> None
-    """
-
-    :param ax: matplotlib Axes to plot to
-    :param bin_min: bin starts
-    :param bin_max: bin stops
-    :param top: top y value to plot
-    :param bottom: bottom y value to plot
-    :param mask: mask of the bins
-    :param kwargs: matplotlib plot keywords
-    :return:
-    """
-    # Figure out the best limit
-
-    # Find the contiguous regions that are selected
-
-
-    non_zero = (mask).nonzero()[0]
-
-    if len(non_zero) >0:
-
-        slices = slice_disjoint(non_zero)
-
-        for region in slices:
-            ax.fill_between([bin_min[region[0]], bin_max[region[1]]],
-                            bottom,
-                            top,
-                            **kwargs)
-
-
-        ax.set_ylim(bottom, top)
-
-
-def slice_disjoint(arr):
-    """
-    Returns an array of disjoint indicies.
-
-    Args:
-        arr:
-
-    Returns:
-
-    """
-
-    slices = []
-    start_slice = arr[0]
-    counter = 0
-    for i in range(len(arr) - 1):
-        if arr[i + 1] > arr[i] + 1:
-            end_slice = arr[i]
-            slices.append([start_slice, end_slice])
-            start_slice = arr[i + 1]
-            counter += 1
-    if counter == 0:
-        return [[arr[0], arr[-1]]]
-    if end_slice != arr[-1]:
-        slices.append([start_slice, arr[-1]])
-    return slices
-
-
-
-
-
-### OGIP MODEL Plot
-
-# import here
-
+from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.config.config import threeML_config
+from threeML.io.plotting.step_plot import step_plot
+
+# This file contains plots which are plot in data space after a model has been
+# assigned to the plugin.
 
 NO_REBIN = 1e-99
 
@@ -269,9 +70,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                                      "display_ogip_model_counts" % key)
 
     if not new_data_keys:
-
         RuntimeError(
-                'There were no valid OGIP data requested for plotting. Please use the detector names in the data list')
+            'There were no valid OGIP data requested for plotting. Please use the detector names in the data list')
 
     data_keys = new_data_keys
 
@@ -280,25 +80,23 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     # Default is to show the model with steps
     step = True
 
-    data_cmap = threeML_config['ogip']['data plot cmap'] # plt.cm.rainbow
-    model_cmap =threeML_config['ogip']['model plot cmap']  # plt.cm.nipy_spectral_r
+    data_cmap = threeML_config['ogip']['data plot cmap']  # plt.cm.rainbow
+    model_cmap = threeML_config['ogip']['model plot cmap']  # plt.cm.nipy_spectral_r
 
     # Legend is on by default
     show_legend = True
 
     # Default colors
 
-    data_colors = cmap_intervals(len(data_keys),  data_cmap)
+    data_colors = cmap_intervals(len(data_keys), data_cmap)
     model_colors = cmap_intervals(len(data_keys), model_cmap)
 
     # Now override defaults according to the optional keywords, if present
 
     if 'show_legend' in kwargs:
-
         show_legend = bool(kwargs.pop('show_legend'))
 
     if 'step' in kwargs:
-
         step = bool(kwargs.pop('step'))
 
     if 'min_rate' in kwargs:
@@ -318,8 +116,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             min_rates = list(min_rate)
 
             assert len(min_rates) >= len(
-                    data_keys), "If you provide different minimum rates for each data set, you need" \
-                                "to provide an iterable of the same length of the number of datasets"
+                data_keys), "If you provide different minimum rates for each data set, you need" \
+                            "to provide an iterable of the same length of the number of datasets"
 
     else:
 
@@ -328,30 +126,25 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         min_rates = [NO_REBIN] * len(data_keys)
 
     if 'data_cmap' in kwargs:
-
         data_cmap = plt.get_cmap(kwargs.pop('data_cmap'))
-        data_colors = cmap_intervals(len(data_keys),  data_cmap)
+        data_colors = cmap_intervals(len(data_keys), data_cmap)
 
     if 'model_cmap' in kwargs:
-
         model_cmap = kwargs.pop('model_cmap')
-        model_colors =  cmap_intervals(len(data_keys),  model_cmap)
+        model_colors = cmap_intervals(len(data_keys), model_cmap)
 
     if 'data_colors' in kwargs:
-
         data_colors = kwargs.pop('data_colors')
 
         assert len(data_colors) >= len(data_keys), "You need to provide at least a number of data colors equal to the " \
                                                    "number of datasets"
 
     if 'model_colors' in kwargs:
-
         model_colors = kwargs.pop('model_colors')
 
         assert len(model_colors) >= len(
-                data_keys), "You need to provide at least a number of model colors equal to the " \
-                            "number of datasets"
-
+            data_keys), "You need to provide at least a number of model colors equal to the " \
+                        "number of datasets"
 
     fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
@@ -555,7 +348,6 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                      color=data_color)
 
     if show_legend:
-
         ax.legend(fontsize='x-small', loc=0)
 
     ax.set_ylabel("Net rate\n(counts s$^{-1}$ keV$^{-1}$)")
@@ -582,9 +374,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     return fig
 
-def display_histogram_fit(analysis,data=(),**kwargs):
 
-
+def display_histogram_fit(analysis, data=(), **kwargs):
     if not data:
 
         data_keys = analysis.data_list.keys()
@@ -612,10 +403,8 @@ def display_histogram_fit(analysis,data=(),**kwargs):
                                      "display_histogram_fit" % key)
 
     if not new_data_keys:
-
         RuntimeError(
-                'There were no valid HistLike data requested for plotting. Please use the names in the data list')
-
+            'There were no valid HistLike data requested for plotting. Please use the names in the data list')
 
     data_keys = new_data_keys
 
@@ -648,7 +437,6 @@ def display_histogram_fit(analysis,data=(),**kwargs):
     if 'log_axes' in kwargs:
         log_axes = True
 
-
     if 'data_cmap' in kwargs:
         data_cmap = plt.get_cmap(kwargs.pop('data_cmap'))
         data_colors = map(lambda x: data_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
@@ -675,8 +463,6 @@ def display_histogram_fit(analysis,data=(),**kwargs):
     # go thru the detectors
     for key, data_color, model_color in zip(data_keys, data_colors, model_colors):
 
-
-
         data = analysis.data_list[key]
 
         x_min, x_max = data.histogram.absolute_start, data.histogram.absolute_stop
@@ -694,16 +480,13 @@ def display_histogram_fit(analysis,data=(),**kwargs):
 
         width = data.histogram.widths
 
-
         expected_model = data.get_model_flux()
-
 
         mean_x = []
 
         # For each bin find the weighted average of the channel center
 
         delta_x = [[], []]
-
 
         for bin in data.histogram:
 
@@ -769,12 +552,8 @@ def display_histogram_fit(analysis,data=(),**kwargs):
 
         else:
 
-
-
-            ax.plot(data.histogram.mid_points, expected_model/width, alpha=.8, label='%s Model' % data._name, color=model_color)
-
-
-
+            ax.plot(data.histogram.mid_points, expected_model / width, alpha=.8, label='%s Model' % data._name,
+                    color=model_color)
 
         if data.is_poisson:
 
@@ -786,13 +565,11 @@ def display_histogram_fit(analysis,data=(),**kwargs):
 
             if data.has_errors:
 
-                residuals = (data.histogram.contents - expected_model)/ data.histogram.errors
+                residuals = (data.histogram.contents - expected_model) / data.histogram.errors
 
             else:
 
                 residuals = data.histogram.contents - expected_model
-
-
 
         ax1.axhline(0, linestyle='--', color='k')
         ax1.errorbar(mean_x,
@@ -809,7 +586,6 @@ def display_histogram_fit(analysis,data=(),**kwargs):
     ax.set_ylabel("Y")
 
     if log_axes:
-
         ax.set_xscale('log')
         ax.set_yscale('log', nonposy='clip')
 

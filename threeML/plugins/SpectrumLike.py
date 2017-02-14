@@ -11,7 +11,7 @@ from astromodels.utils.valid_variable import is_valid_variable_name
 from astromodels import clone_model
 
 from threeML.io.rich_display import display
-from threeML.io.plotting.plugin_plots import channel_plot, disjoint_patch_plot
+from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
 from threeML.plugin_prototype import PluginPrototype, set_external_property
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
@@ -32,7 +32,6 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
 class SpectrumLike(PluginPrototype):
-
     def __init__(self, name, observation, background, verbose=True):
         # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
         """
@@ -52,7 +51,6 @@ class SpectrumLike(PluginPrototype):
                                              "a valid python identifier: no spaces, no operators (+,-,/,*), " \
                                              "it cannot start with a number, no special characters" % name
 
-
         assert isinstance(observation,
                           BinnedSpectrum), "The observed spectrum is not an instance of BinnedSpectrum"
 
@@ -60,13 +58,12 @@ class SpectrumLike(PluginPrototype):
                           BinnedSpectrum), "The background spectrum is not an instance of BinnedSpectrum"
 
         assert observation.n_channels == background.n_channels, "Data file and background file have different " \
-                                                             "number of channels"
+                                                                "number of channels"
 
         # Precomputed observed and background counts (for speed)
 
-        self._observed_spectrum = observation #type: BinnedSpectrum
-        self._background_spectrum = background #type: BinnedSpectrum
-
+        self._observed_spectrum = observation  # type: BinnedSpectrum
+        self._background_spectrum = background  # type: BinnedSpectrum
 
         self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
         self._background_counts = self._background_spectrum.counts  # type: np.ndarray
@@ -89,7 +86,8 @@ class SpectrumLike(PluginPrototype):
 
                 assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
 
-                if not np.all(self._background_counts >= 0): raise NegativeBackground("Error in background spectrum: negative counts!")
+                if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                    "Error in background spectrum: negative counts!")
 
             else:
 
@@ -104,8 +102,8 @@ class SpectrumLike(PluginPrototype):
                     "Error in background spectrum: if the error on the background is zero, " \
                     "also the expected background must be zero"
 
-
-                if not np.all(self._background_counts >= 0): raise NegativeBackground( "Error in background spectrum: negative background!")
+                if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                    "Error in background spectrum: negative background!")
 
         else:
 
@@ -149,7 +147,6 @@ class SpectrumLike(PluginPrototype):
 
         # Print the autoprobed noise models
         if self._verbose:
-
             print("Auto-probed noise models:")
             print("- observation: %s" % self.observation_noise_model)
             print("- background: %s" % self.background_noise_model)
@@ -345,7 +342,8 @@ class SpectrumLike(PluginPrototype):
 
                     if s[0].lower() == 'c':
 
-                        assert int(s[1:]) <= self._observed_spectrum.n_channels, "%s is larger than the number of channels: %d" % (
+                        assert int(s[
+                                   1:]) <= self._observed_spectrum.n_channels, "%s is larger than the number of channels: %d" % (
                             s, self._observed_spectrum.n_channels)
                         idx[i] = int(s[1:])
 
@@ -365,7 +363,6 @@ class SpectrumLike(PluginPrototype):
 
         # If you are just excluding channels
         if len(args) == 0:
-
             self._mask[:] = True
 
         if 'exclude' in kwargs:
@@ -383,7 +380,8 @@ class SpectrumLike(PluginPrototype):
 
                     if s[0].lower() == 'c':
 
-                        assert int(s[1:]) <= self._observed_spectrum.n_channels, "%s is larger than the number of channels: %d" % (
+                        assert int(s[
+                                   1:]) <= self._observed_spectrum.n_channels, "%s is larger than the number of channels: %d" % (
                             s, self._observed_spectrum.n_channels)
                         idx[i] = int(s[1:])
 
@@ -424,15 +422,13 @@ class SpectrumLike(PluginPrototype):
                 for i in xrange(self._observed_spectrum.n_channels):
 
                     if self._observed_spectrum.quality.bad[i] and self._mask[i]:
-
                         deselected_channels.append(i)
 
                 custom_warnings.warn("You have opted to use channels which are flagged BAD in the PHA file.")
 
                 if self._verbose:
-
-                    custom_warnings.warn("These channels are: %s" %(', '.join([str(ch) for ch in deselected_channels])))
-
+                    custom_warnings.warn(
+                        "These channels are: %s" % (', '.join([str(ch) for ch in deselected_channels])))
 
     def _apply_mask_to_original_vectors(self):
 
@@ -443,7 +439,6 @@ class SpectrumLike(PluginPrototype):
         self._current_scaled_background_counts = self._scaled_background_counts[self._mask]
 
         if self._back_counts_errors is not None:
-
             self._current_back_counts_errors = self._back_counts_errors[self._mask]
 
     @contextmanager
@@ -479,7 +474,7 @@ class SpectrumLike(PluginPrototype):
 
             self._apply_mask_to_original_vectors()
 
-    def get_simulated_dataset(self, new_name=None,**kwargs):
+    def get_simulated_dataset(self, new_name=None, **kwargs):
         """
         Returns another Binned instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
@@ -495,7 +490,6 @@ class SpectrumLike(PluginPrototype):
 
         # Generate a name for the new dataset if needed
         if new_name is None:
-
             new_name = "%s_sim_%i" % (self.name, self._n_synthetic_datasets)
 
         # Generate randomized data depending on the different noise models
@@ -533,12 +527,12 @@ class SpectrumLike(PluginPrototype):
                     # Randomize expectations for the source
 
                     randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
-                    #randomized_source_rate = randomized_source_counts / self.exposure
+                    # randomized_source_rate = randomized_source_counts / self.exposure
 
                     # Randomize expectations for the background
 
                     randomized_background_counts = np.random.poisson(background_model_counts)
-                    #randomized_background_rate = randomized_background_counts / self.background_exposure
+                    # randomized_background_rate = randomized_background_counts / self.background_exposure
 
                     randomized_background_count_err = None
 
@@ -549,7 +543,7 @@ class SpectrumLike(PluginPrototype):
                     # Randomize expectations for the source
 
                     randomized_source_counts = np.random.poisson(source_model_counts + self._background_counts)
-                    #randomized_source_rate = randomized_source_counts / self.exposure
+                    # randomized_source_rate = randomized_source_counts / self.exposure
 
                     # No randomization for the background in this case
 
@@ -568,7 +562,7 @@ class SpectrumLike(PluginPrototype):
                     # Randomize expectations for the source
 
                     randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
-                    #randomized_source_rate = randomized_source_counts / self.exposure
+                    # randomized_source_rate = randomized_source_counts / self.exposure
 
                     # Now randomize the expectations.
 
@@ -589,7 +583,6 @@ class SpectrumLike(PluginPrototype):
                     negative_background_n = np.sum(idx)
 
                     if negative_background_n > 0:
-
                         custom_warnings.warn("Generated background has negative counts "
                                              "in %i channels. Fixing them to zero" % (negative_background_n))
 
@@ -597,7 +590,7 @@ class SpectrumLike(PluginPrototype):
 
                     # Now compute rates and errors
 
-                    #randomized_background_rate = randomized_background_counts / self.background_exposure
+                    # randomized_background_rate = randomized_background_counts / self.background_exposure
 
                     randomized_background_count_err = copy.copy(self._back_counts_errors)
 
@@ -605,8 +598,10 @@ class SpectrumLike(PluginPrototype):
 
                 else:
 
-                    raise RuntimeError("This is a bug. The combination of source (%s) and background (%s) noise models does not exist" %(self._observation_noise_model,
-                                                                                                                                         self._background_noise_model))
+                    raise RuntimeError(
+                        "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
+                            self._observation_noise_model,
+                            self._background_noise_model))
 
             else:
 
@@ -619,8 +614,8 @@ class SpectrumLike(PluginPrototype):
 
                     raise RuntimeError(
                         "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
-                        self._observation_noise_model,
-                        self._background_noise_model))
+                            self._observation_noise_model,
+                            self._background_noise_model))
 
                 elif self._background_noise_model == 'ideal':
 
@@ -718,10 +713,8 @@ class SpectrumLike(PluginPrototype):
 
                     raise RuntimeError(
                         "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
-                        self._observation_noise_model,
-                        self._background_noise_model))
-
-
+                            self._observation_noise_model,
+                            self._background_noise_model))
 
             # create new source and background spectra
             # the children of BinnedSpectra must properly override the new_spectrum
@@ -730,7 +723,6 @@ class SpectrumLike(PluginPrototype):
 
             new_observation = self._observed_spectrum.clone(new_counts=randomized_source_counts,
                                                             new_count_errors=randomized_source_count_err)
-
 
             new_background = self._background_spectrum.clone(new_counts=randomized_background_counts,
                                                              new_count_errors=randomized_background_count_err)
@@ -788,7 +780,7 @@ class SpectrumLike(PluginPrototype):
         :return:
         """
 
-        return cls(*args,**kwargs)
+        return cls(*args, **kwargs)
 
     @property
     def simulated_parameters(self):
@@ -821,8 +813,7 @@ class SpectrumLike(PluginPrototype):
         rebinner = Rebinner(self._background_counts, min_number_of_counts, self._mask)
 
         # only for the PHASpectrum subclass do we need to update the the grouping
-        if isinstance(self._observed_spectrum,PHASpectrum):
-
+        if isinstance(self._observed_spectrum, PHASpectrum):
             self._observed_spectrum.set_ogip_grouping(rebinner.grouping)
             self._background_spectrum.set_ogip_grouping(rebinner.grouping)
 
@@ -887,11 +878,10 @@ class SpectrumLike(PluginPrototype):
 
     def _loglike_gaussian_obs_gaussian_bkg(self):
 
-
         raise NotImplementedError("We need to add chi2")
         model_counts = self.get_model()
 
-        #loglike, bkg_model = chi2()
+        # loglike, bkg_model = chi2()
 
     def _loglike_poisson_obs_poisson_bkg(self):
 
@@ -1202,7 +1192,8 @@ class SpectrumLike(PluginPrototype):
 
         elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
 
-            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._background_spectrum.total_count_error)
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(
+                self._background_spectrum.total_count_error)
 
         else:
 
@@ -1235,7 +1226,8 @@ class SpectrumLike(PluginPrototype):
 
         return significance
 
-    def view_count_spectrum(self, plot_errors=True, show_bad_channels=True, show_warn_channels=False, significance_level=None):
+    def view_count_spectrum(self, plot_errors=True, show_bad_channels=True, show_warn_channels=False,
+                            significance_level=None):
         """
         View the count and background spectrum. Useful to check energy selections.
         :param plot_errors: plot errors on the counts
@@ -1244,7 +1236,6 @@ class SpectrumLike(PluginPrototype):
         """
 
         if sum(self._mask) == 0:
-
             raise RuntimeError("There are no active channels selected to plot!")
 
         # adding the rebinner: j. michael.
@@ -1347,7 +1338,8 @@ class SpectrumLike(PluginPrototype):
         if non_used_mask.sum() > 0:
 
             # Get un-rebinned versions of all arrays, so we can directly apply the mask
-            energy_min_unrebinned, energy_max_unrebinned = np.array(self._observed_spectrum.starts), np.array(self._observed_spectrum.stops)
+            energy_min_unrebinned, energy_max_unrebinned = np.array(self._observed_spectrum.starts), np.array(
+                self._observed_spectrum.stops)
             energy_width_unrebinned = energy_max_unrebinned - energy_min_unrebinned
             observed_rate_unrebinned = self._observed_counts / self.exposure
             observed_rate_unrebinned_err = np.sqrt(self._observed_counts) / self.exposure
@@ -1366,7 +1358,6 @@ class SpectrumLike(PluginPrototype):
                          color=threeML_config['ogip']['background color'], alpha=.8)
 
             if plot_errors:
-
                 mean_chan_unrebinned = np.mean([energy_min_unrebinned, energy_max_unrebinned], axis=0)
 
                 ax.errorbar(mean_chan_unrebinned[non_used_mask],
@@ -1393,12 +1384,13 @@ class SpectrumLike(PluginPrototype):
                             # label=data._name,
                             color=threeML_config['ogip']['background color'])
 
-
             # make some nice top and bottom plot ranges
 
-            top = max([max(background_rate_unrebinned / energy_width_unrebinned), max(observed_rate_unrebinned / energy_width_unrebinned)]) * 1.5
+            top = max([max(background_rate_unrebinned / energy_width_unrebinned),
+                       max(observed_rate_unrebinned / energy_width_unrebinned)]) * 1.5
 
-            bottom = min([min(background_rate_unrebinned / energy_width_unrebinned), min(observed_rate_unrebinned / energy_width_unrebinned)]) *0.8
+            bottom = min([min(background_rate_unrebinned / energy_width_unrebinned),
+                          min(observed_rate_unrebinned / energy_width_unrebinned)]) * 0.8
 
             # plot the deselected regions
 
@@ -1415,7 +1407,7 @@ class SpectrumLike(PluginPrototype):
 
             if show_bad_channels:
 
-                if self._verbose and sum(self._observed_spectrum.quality.bad) >0:
+                if self._verbose and sum(self._observed_spectrum.quality.bad) > 0:
                     print('bad channels shown in red hatching\n')
 
                 disjoint_patch_plot(ax,
@@ -1432,7 +1424,7 @@ class SpectrumLike(PluginPrototype):
 
             if show_warn_channels:
 
-                if self._verbose and sum(self._observed_spectrum.quality.warn) >0:
+                if self._verbose and sum(self._observed_spectrum.quality.warn) > 0:
                     print('warned channels shown in purple hatching\n')
 
                 disjoint_patch_plot(ax,
@@ -1463,9 +1455,6 @@ class SpectrumLike(PluginPrototype):
                                     color='red',
                                     alpha=.3
                                     )
-
-
-
 
         ax.set_xlabel("Energy (keV)")
         ax.set_ylabel("Rate (counts s$^{-1}$ keV$^{-1}$)")
@@ -1498,18 +1487,14 @@ class SpectrumLike(PluginPrototype):
         obs['significance'] = self.significance
         obs['is poisson'] = self._observed_spectrum.is_poisson
         obs['bkg. is poisson'] = self._background_spectrum.is_poisson
-        #obs['response'] = self._observed_spectrum.response_file
+        # obs['response'] = self._observed_spectrum.response_file
 
         return pd.Series(data=obs, index=obs.keys())
 
     def display(self):
-        
+
         display(self._output().to_frame())
 
     def __repr__(self):
 
         return self._output().to_string()
-
-
-
-
