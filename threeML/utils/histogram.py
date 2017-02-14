@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import copy
 
 from threeML.utils.interval import IntervalSet, Interval
-from threeML.io.step_plot import step_plot
+from threeML.io.plotting.step_plot import step_plot
 from threeML.utils.stats_tools import sqrt_sum_of_squares
 
 
