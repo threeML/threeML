@@ -1,13 +1,14 @@
 import pytest
-import numpy as np
 import os
 
-__author__ = 'grburgess'
 
 from threeML.plugins.FermiGBMTTELike import FermiGBMTTELike
+from threeML.plugins.OGIPLike import OGIPLike
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
+from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
+
 from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
 from astromodels.sources.point_source import PointSource
@@ -155,6 +156,8 @@ def test_gbm_tte_constructor():
 
         nai3.set_background_interval("-15-0", "100-150", unbinned=False)
 
+
+
         # test that no background and no save raises assertion:
         with pytest.raises(AssertionError):
             nai3 = FermiGBMTTELike('NAI3',
@@ -163,7 +166,20 @@ def test_gbm_tte_constructor():
                                    source_intervals=src_selection,
                                    poly_order=-1)
 
-        nai3.__repr__()
+        nai3.display()
+
+        model = Model(PointSource('fake',0,0,Powerlaw()))
+
+        nai3.set_model(model)
+
+        sim = nai3.get_simulated_dataset()
+
+        assert isinstance(sim,OGIPLike)
+
+        plot_tte_lightcurve(os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"))
+
+
+
 
 
 
@@ -244,6 +260,8 @@ def test_gbm_binning():
         nai3.view_lightcurve(use_binner=True)
 
         nai3.write_pha_from_binner("test_binner", overwrite=True)
+
+        nai3.write_pha('test_from_nai3', overwrite=True)
 
         ogips = nai3.get_ogip_from_binner()
 

@@ -11,7 +11,6 @@ from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 from threeML.exceptions.custom_exceptions import custom_warnings
 
-
 class NoCoverageIntervals(RuntimeError):
     pass
 
@@ -408,7 +407,7 @@ class OGIPResponse(InstrumentResponse):
     @property
     def first_channel(self):
         """
-        The first channel of the channel array. Correpsonds to
+        The first channel of the channel array. Corresponds to
         TLMIN keyword in FITS files
 
         :return: first channel

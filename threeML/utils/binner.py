@@ -258,7 +258,7 @@ class TemporalBinner(TimeIntervalSet):
     """
 
     @classmethod
-    def from_bin_by_significance(cls, arrival_times, background_getter, background_error_getter=None, sigma_level=10, min_counts=1,tstart=None, tstop=None):
+    def bin_by_significance(cls, arrival_times, background_getter, background_error_getter=None, sigma_level=10, min_counts=1, tstart=None, tstop=None):
         """
 
         Bin the data to a given significance level for a given background method and sigma
@@ -478,7 +478,7 @@ class TemporalBinner(TimeIntervalSet):
             return cls.from_starts_and_stops(starts, stops)
 
     @classmethod
-    def from_bin_by_constant(cls, arrival_times, dt):
+    def bin_by_constant(cls, arrival_times, dt):
         """
         Create bins with a constant dt
 
@@ -493,7 +493,7 @@ class TemporalBinner(TimeIntervalSet):
         return cls.from_starts_and_stops(starts, stops)
 
     @classmethod
-    def from_bin_by_bayesian_blocks(cls, arrival_times , p0, bkg_integral_distribution=None):
+    def bin_by_bayesian_blocks(cls, arrival_times, p0, bkg_integral_distribution=None):
         """Divide a series of events characterized by their arrival time in blocks
         of perceptibly constant count rate. If the background integral distribution
         is given, divide the series in blocks where the difference with respect to
@@ -529,7 +529,7 @@ class TemporalBinner(TimeIntervalSet):
 
 
     @classmethod
-    def from_bin_by_custom(cls, starts, stops):
+    def bin_by_custom(cls, starts, stops):
         """
         Simplicity function to make custom bins. This form keeps introduction of
         custom bins uniform for other binning methods

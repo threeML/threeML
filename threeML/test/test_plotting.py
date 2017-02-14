@@ -65,13 +65,13 @@ def test_OGIP_plotting():
 
     fit_results, like_frame = jl.fit()
 
-    _ = display_ogip_model_counts(jl)
+    _ = display_spectrum_model_counts(jl)
 
-    _ = display_ogip_model_counts(jl, data=('NaI6'))
+    _ = display_spectrum_model_counts(jl, data=('NaI6'))
 
-    _ = display_ogip_model_counts(jl, data=('wrong'))
+    _ = display_spectrum_model_counts(jl, data=('wrong'))
 
-    _ = display_ogip_model_counts(jl, min_rate=1E-8)
+    _ = display_spectrum_model_counts(jl, min_rate=1E-8)
 
     with pytest.raises(NotEnoughData):
-        _ = display_ogip_model_counts(jl, min_rate=1E8)
+        _ = display_spectrum_model_counts(jl, min_rate=1E8)
