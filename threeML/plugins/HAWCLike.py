@@ -5,6 +5,8 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 from astromodels import Parameter
+from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
+from hawc import liff_3ML
 from matplotlib import gridspec
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
@@ -17,19 +19,6 @@ __instrument_name = "HAWC"
 
 
 class HAWCLike(PluginPrototype):
-
-    def __new__(cls, *args, **kwargs):
-
-        instance = object.__new__(cls)
-
-        from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
-        from hawc import liff_3ML
-
-        globals()['pyToCppModelInterfaceCache'] = pyToCppModelInterfaceCache
-        globals()['liff_3ML'] = liff_3ML
-
-        return instance
-
 
     def __init__(self, name, maptree, response, n_transits=None, **kwargs):
 
@@ -71,10 +60,10 @@ class HAWCLike(PluginPrototype):
 
             self._n_transits = None
 
-            # Default value for minChannel and maxChannel
-
-        self._min_channel = int(defaultMinChannel)
-        self._max_channel = int(defaultMaxChannel)
+        # Default list of bins
+        
+        self._bin_list = self._min_and_max_to_list(defaultMinChannel,
+                                                   defaultMaxChannel)
 
         # By default the fit of the CommonNorm is deactivated
 
@@ -95,6 +84,11 @@ class HAWCLike(PluginPrototype):
 
         super(HAWCLike, self).__init__(name, self._nuisance_parameters)
 
+    @staticmethod
+    def _min_and_max_to_list(min_channel, max_channel):
+        
+        return [str(n) for n in xrange(min_channel, max_channel + 1)]
+
     def set_ROI(self, ra, dec, radius, fixed_ROI=False):
 
         self._roi_ra = ra
@@ -110,7 +104,7 @@ class HAWCLike(PluginPrototype):
 
         # Return only the objects needed to recreate the class
         # IN particular, we do NOT return the theLikeHAWC class,
-        # which is not pickeable. It will instead be recreated
+        # which is not pickleable. It will instead be recreated
         # on the other side
 
         d = {}
@@ -120,9 +114,7 @@ class HAWCLike(PluginPrototype):
         d['response'] = self._response
         d['model'] = self._model
         d['n_transits'] = self._n_transits
-        d['minChannel'] = self._min_channel
-        d['maxChannel'] = self._max_channel
-
+        d['bin_list'] = self._bin_list
         d['roi_ra'] = self._roi_ra
 
         if self._roi_ra is not None:
@@ -149,19 +141,22 @@ class HAWCLike(PluginPrototype):
         if state['roi_ra'] is not None:
             self.set_ROI(state['roi_ra'], state['roi_dec'], state['roi_radius'], state['fixedROI'])
 
-        self.set_active_measurements(state['minChannel'], state['maxChannel'])
+        self.set_bin_list(state['bin_list'])
 
         self.set_model(state['model'])
-
-    def set_active_measurements(self, minChannel, maxChannel):
-
-        self._min_channel = int(minChannel)
-        self._max_channel = int(maxChannel)
+        
+    def set_bin_list(self, bin_list):
+        
+        self._bin_list = bin_list
 
         if self._instanced:
             sys.stderr.write("Since the plugins was already used before, the change in active measurements" +
                              "will not be effective until you create a new JointLikelihood or Bayesian" +
                              "instance")
+
+    def set_active_measurements(self, minChannel, maxChannel):
+    
+        self.set_bin_list(self._min_and_max_to_list(minChannel, maxChannel))
 
     def set_model(self, likelihood_model_instance):
         """
@@ -206,8 +201,7 @@ class HAWCLike(PluginPrototype):
                 self._theLikeHAWC = liff_3ML.LikeHAWC(self._maptree,
                                                       self._response,
                                                       self._pymodel,
-                                                      self._min_channel,
-                                                      self._max_channel,
+                                                      self._bin_list,
                                                       self._fullsky)
 
             else:
@@ -216,8 +210,7 @@ class HAWCLike(PluginPrototype):
                                                       self._n_transits,
                                                       self._response,
                                                       self._pymodel,
-                                                      self._min_channel,
-                                                      self._max_channel,
+                                                      self._bin_list,
                                                       self._fullsky)
 
 
@@ -372,7 +365,7 @@ class HAWCLike(PluginPrototype):
 
         return logL
 
-    def display(self, radius=0.5):
+    def display(self, radius=0.5, pulls=False):
 
         figs = []
 
@@ -388,6 +381,8 @@ class HAWCLike(PluginPrototype):
             bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
 
             total = signal + bkg
+            
+            error = np.sqrt(total)
 
             fig = plt.figure()
 
@@ -396,15 +391,16 @@ class HAWCLike(PluginPrototype):
 
             sub = plt.subplot(gs[0])
 
-            nHitBins = np.arange(self._min_channel, self._max_channel + 1)
+            n_bins    = len(self._bin_list)
+            bin_index = np.arange(n_bins)
 
-            sub.errorbar(nHitBins, total, yerr=np.sqrt(total),
-                         capsize=0, color='black', label='Observation',
-                         fmt='.')
+            sub.errorbar(bin_index, total, yerr=error, capsize=0,
+                         color='black', label='Observation', fmt='.')
 
-            sub.plot(nHitBins, model + bkg, label='Model + bkg')
+            sub.plot(bin_index, model + bkg, label='Model + bkg')
 
-            plt.legend(bbox_to_anchor=(1.05, 1), loc=2, numpoints=1)
+            plt.legend(bbox_to_anchor=(1.0, 1.0), loc="upper right",
+                       numpoints=1)
 
             # Residuals
 
@@ -412,15 +408,18 @@ class HAWCLike(PluginPrototype):
 
             # Using model variance to account for low statistic
 
-            resid = (signal - model) / model
+            resid = (signal - model) / (error if pulls else model)
 
             sub1.axhline(0, linestyle='--')
 
-            sub1.errorbar(nHitBins, resid,
-                          yerr=np.sqrt(total) / model,
-                          capsize=0, fmt='.')
+            sub1.errorbar(
+                bin_index, resid,
+                yerr=np.zeros(error.shape) if pulls else error / model,
+                capsize=0, fmt='.'
+            )
 
-            sub.set_xlim([nHitBins.min() - 0.5, nHitBins.max() + 0.5])
+            x_limits = [-0.5, n_bins - 0.5]
+            sub.set_xlim(x_limits)
 
             sub.set_yscale("log", nonposy='clip')
 
@@ -430,12 +429,15 @@ class HAWCLike(PluginPrototype):
 
             sub1.set_xlabel("Analysis bin")
 
-            sub1.set_ylabel(r"$\frac{excess - mod.}{mod.}$", fontsize=20)
+            sub1.set_ylabel(r"$\frac{{excess - "
+                            "mod.}}{{{}.}}$".format("err" if pulls else "mod"),
+                            fontsize=20)
 
-            sub1.set_xlim([nHitBins.min() - 0.5, nHitBins.max() + 0.5])
+            sub1.set_xlim(x_limits)
 
             sub.set_xticks([])
-            sub1.set_xticks(nHitBins)
+            sub1.set_xticks(bin_index)
+            sub1.set_xticklabels(self._bin_list)
 
             figs.append(fig)
 
