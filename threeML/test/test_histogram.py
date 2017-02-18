@@ -94,42 +94,43 @@ def test_hist_addition():
     hh8 = hh3 + hh5
 
 def test_hist_like():
+    with within_directory(__this_dir__):
 
 
 
-    rnum = np.random.randn(1000000) + 1.
-    hrnum = np.histogram(rnum, bins=100, normed=False)
-    hh = Histogram.from_numpy_histogram(hrnum, is_poisson=True)
+        rnum = np.loadtxt('test_hist_data.txt') + 1.
+        hrnum = np.histogram(rnum, bins=100, normed=False)
+        hh = Histogram.from_numpy_histogram(hrnum, is_poisson=True)
 
-    hlike = HistLike('hist', hh)
+        hlike = HistLike('hist', hh)
 
-    data_list = DataList(hlike)
+        data_list = DataList(hlike)
 
-    normal = Gaussian()
+        normal = Gaussian()
 
-    res, lh = hlike.fit(normal)
+        res, lh = hlike.fit(normal)
 
-    norm = res['value']['fake.spectrum.main.Gaussian.F']
-    mu = res['value']['fake.spectrum.main.Gaussian.mu']
-    sigma = res['value']['fake.spectrum.main.Gaussian.sigma']
+        norm = res['value']['fake.spectrum.main.Gaussian.F']
+        mu = res['value']['fake.spectrum.main.Gaussian.mu']
+        sigma = res['value']['fake.spectrum.main.Gaussian.sigma']
 
-    assert is_within_tolerance(1E6,norm,relative_tolerance=1E2)
-    assert is_within_tolerance(1,mu,relative_tolerance=.5)
-    assert is_within_tolerance(1,sigma,relative_tolerance=.01)
+        assert is_within_tolerance(1E6,norm,relative_tolerance=1E2)
+        assert is_within_tolerance(1,mu,relative_tolerance=.5)
+        assert is_within_tolerance(1,sigma,relative_tolerance=.01)
 
-    ps = PointSource('fake',0,0,spectral_shape=normal)
+        ps = PointSource('fake',0,0,spectral_shape=normal)
 
-    model = Model(ps)
+        model = Model(ps)
 
-    jl = JointLikelihood(model,data_list=data_list)
+        jl = JointLikelihood(model,data_list=data_list)
 
-    display_histogram_fit(jl)
+        display_histogram_fit(jl)
 
-    hh = Histogram.from_numpy_histogram(hrnum, errors=np.ones(100))
+        hh = Histogram.from_numpy_histogram(hrnum, errors=np.ones(100))
 
-    hlike = HistLike('hist', hh)
+        hlike = HistLike('hist', hh)
 
-    hlike.fit(normal)
+        hlike.fit(normal)
 
 
 
