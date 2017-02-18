@@ -4,8 +4,12 @@ from threeML.utils.histogram import Histogram
 from threeML import *
 from threeML.plugins.HistLike import HistLike
 from threeML.io.plotting.post_process_data_plots import display_histogram_fit
-import numpy as np
 
+from threeML.io.file_utils import within_directory
+import numpy as np
+import os
+
+__this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth !=0
@@ -20,39 +24,41 @@ def is_within_tolerance(truth, value, relative_tolerance=0.01):
 
 def test_hist_constructor():
 
-    bins=[-3,-2,-1,0,1,2,3]
+    with within_directory(__this_dir__):
 
-    bounds = IntervalSet.from_list_of_edges(bins)
+        bins=[-3,-2,-1,0,1,2,3]
 
-    contents = np.ones(len(bins) - 1)
+        bounds = IntervalSet.from_list_of_edges(bins)
 
-    hh1 = Histogram(bounds, contents, is_poisson=True)
+        contents = np.ones(len(bins) - 1)
 
-    assert hh1.is_poisson == True
+        hh1 = Histogram(bounds, contents, is_poisson=True)
 
-    assert len(hh1) == len(bins)-1
+        assert hh1.is_poisson == True
 
-    hh1.display()
+        assert len(hh1) == len(bins)-1
 
+        hh1.display()
 
-
-
-    rnum = np.random.randn(1000)
-    hrnum = np.histogram(rnum, bins=bins, normed=False)
-    hh2 = Histogram.from_numpy_histogram(hrnum, is_poisson=True)
-
-    hh3 = Histogram.from_entries(bounds,rnum)
-
-    assert hh2==hh3
-
-    hh4 = Histogram(bounds, contents, errors=contents)
-
-    assert hh4.is_poisson == False
+        rnum = np.loadtxt('test_hist_data.txt')
 
 
-    with pytest.raises(AssertionError):
+        #rnum = np.random.randn(1000)
+        hrnum = np.histogram(rnum, bins=bins, normed=False)
+        hh2 = Histogram.from_numpy_histogram(hrnum, is_poisson=True)
 
-        hh4 = Histogram(bounds, contents, errors=contents,is_poisson=True)
+        hh3 = Histogram.from_entries(bounds,rnum)
+
+        assert hh2==hh3
+
+        hh4 = Histogram(bounds, contents, errors=contents)
+
+        assert hh4.is_poisson == False
+
+
+        with pytest.raises(AssertionError):
+
+            hh4 = Histogram(bounds, contents, errors=contents,is_poisson=True)
 
 def test_hist_addition():
 
