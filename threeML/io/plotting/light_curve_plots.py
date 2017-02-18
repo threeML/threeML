@@ -48,7 +48,7 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
 
         light_curve_color = threeML_config[instrument]['lightcurve color']
         selection_color = threeML_config[instrument]['selection color']
-        background_color = threeML_config[instrument]['selection color']
+        background_color = threeML_config[instrument]['background color']
         background_selection_color = threeML_config[instrument]['background selection color']
 
     # first plot the full lightcurve
