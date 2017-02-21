@@ -147,6 +147,15 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                     if key in duplicate_keys:
                         label = "%s: MLE" % label
 
+
+
+                    # because parallel computation can change the number of energy
+                    # values, lets resolve back the energy range
+
+                    energy_range =  mle_analyses[key]['components'][component].independent_variable_range[0] * u.Unit(_defaults['energy_unit'])
+
+
+
                     ax.loglog(energy_range,
                               best_fit,
                               color=color_fit[color_itr],
@@ -195,6 +204,12 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                 if key in duplicate_keys:
                     label = "%s: MLE" % label
 
+                # because parallel computation can change the number of energy
+                # values, lets resolve back the energy range
+
+                energy_range = mle_analyses[key]['fitted point source'].independent_variable_range[0] * u.Unit(
+                    _defaults['energy_unit'])
+
                 ax.loglog(energy_range,
                           best_fit,
                           color=color_fit[color_itr],
@@ -241,6 +256,12 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                     if key in duplicate_keys:
                         label = "%s: Bayesian" % label
 
+                    # because parallel computation can change the number of energy
+                    # values, lets resolve back the energy range
+
+                    energy_range =bayesian_analyses[key]['components'][component].independent_variable_range[0] * u.Unit(
+                        _defaults['energy_unit'])
+
                     ax.loglog(energy_range,
                               best_fit,
                               color=color_fit[color_itr],
@@ -283,6 +304,13 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                 if key in duplicate_keys:
                     label = "%s: Bayesian" % label
+
+                # because parallel computation can change the number of energy
+                # values, lets resolve back the energy range
+
+                energy_range =  bayesian_analyses[key]['fitted point source'].independent_variable_range[
+                                   0] * u.Unit(
+                    _defaults['energy_unit'])
 
                 ax.loglog(energy_range,
                           best_fit,
@@ -360,6 +388,13 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                 negative_error[neg_mask] = min(best_fit) * 0.9
 
+                # because parallel computation can change the number of energy
+                # values, lets resolve back the energy range
+
+                energy_range = summed_analysis.independent_variable_range[
+                                   0] * u.Unit(
+                    _defaults['energy_unit'])
+
                 ax.loglog(energy_range,
                           best_fit,
                           color=color_fit[color_itr],
@@ -401,6 +436,13 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
             negative_error[neg_mask] = min(best_fit) * 0.9
 
+            # because parallel computation can change the number of energy
+            # values, lets resolve back the energy range
+
+            energy_range = summed_analysis.independent_variable_range[
+                               0] * u.Unit(
+                _defaults['energy_unit'])
+
             ax.loglog(energy_range,
                       best_fit,
                       color=color_fit[color_itr],
@@ -436,6 +478,13 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                 negative_error = summed_analysis.lower_error
 
+                # because parallel computation can change the number of energy
+                # values, lets resolve back the energy range
+
+                energy_range = summed_analysis.independent_variable_range[
+                                   0] * u.Unit(
+                    _defaults['energy_unit'])
+
                 ax.loglog(energy_range,
                           best_fit,
                           color=color_fit,
@@ -470,6 +519,13 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
             positive_error = summed_analysis.upper_error
 
             negative_error = summed_analysis.lower_error
+
+            # because parallel computation can change the number of energy
+            # values, lets resolve back the energy range
+
+            energy_range = summed_analysis.independent_variable_range[
+                               0] * u.Unit(
+                _defaults['energy_unit'])
 
             ax.loglog(energy_range,
                       best_fit,

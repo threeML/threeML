@@ -6,6 +6,18 @@ import numpy as np
 
 from threeML.io.progress_bar import progress_bar
 from astromodels import use_astromodels_memoization
+from threeML.config.config import threeML_config
+from threeML.parallel.parallel_client import ParallelClient
+from threeML.exceptions.custom_exceptions import custom_warnings
+
+
+class ReducingNumberOfThreads(Warning):
+    pass
+
+
+class ReducingNumberOfSteps(Warning):
+    pass
+
 
 
 class GenericFittedSourceHandler(object):
@@ -143,14 +155,143 @@ class GenericFittedSourceHandler(object):
             # scroll through the independent variables
             n_iterations = np.product(self._out_shape)
 
-            with progress_bar(n_iterations, title="Propagating errors") as p:
+            if not threeML_config['parallel']['use-parallel']:
 
-                with use_astromodels_memoization(False):
+                with progress_bar(n_iterations, title="Propagating errors") as p:
 
-                    for variables in itertools.product(*self._independent_variable_range):
-                        variates.append(self._propagated_function(*variables))
+                    with use_astromodels_memoization(False):
 
-                        p.increase()
+                        for variables in itertools.product(*self._independent_variable_range):
+                            variates.append(self._propagated_function(*variables))
+
+                            p.increase()
+
+            else:
+
+                # With parallel computation
+
+                # In order to distribute fairly the computation, the strategy is to parallelize the computation
+                # by assigning to the engines one "line" of the grid at the time
+
+                # Connect to the engines
+
+                client = ParallelClient()
+
+                # Get the number of engines
+
+                n_engines = client.get_number_of_engines()
+
+                # Check whether the number of threads is larger than the number of steps in the first direction
+
+                if n_engines > n_iterations:
+                    n_engines = int(n_iterations)
+
+                    custom_warnings.warn(
+                        "The number of engines is larger than the number of steps. Using only %s engines."
+                        % n_engines, ReducingNumberOfThreads)
+
+                    # Check if the number of steps is divisible by the number
+                    # of threads, otherwise issue a warning and make it so
+
+                if float(n_iterations) % n_engines != 0:
+                    # Set the number of steps to an integer multiple of the engines
+                    # (note that // is the floor division, also called integer division)
+
+                    n_iterations = (n_iterations // n_engines) * n_engines
+
+                    custom_warnings.warn(
+                        "Number of steps is not a multiple of the number of threads. Reducing steps to %s"
+                        % n_iterations, ReducingNumberOfSteps)
+
+                    # Compute the number of splits, i.e., how many lines in the grid for each engine.
+                    # (note that this is guaranteed to be an integer number after the previous checks)
+
+
+                    new_grids = []
+
+                    for var_range in self._independent_variable_range:
+
+                        start = var_range.min()
+                        stop = var_range.max()
+                        n_elements = len(var_range)
+
+                        if np.all(np.round(np.array(var_range),6) == np.round(np.linspace(start,stop,n_elements),6 )):
+
+                            # we have a linear grid
+
+                            new_grid =  np.linspace(start,stop,n_iterations)
+
+                        elif np.all(np.round(np.array(var_range),6) == np.round(np.logspace(np.log10(start),np.log10(stop),n_elements),6 )):
+
+                            # we have a log gird
+
+                            new_grid = np.logspace(np.log10(start),np.log10(stop),n_iterations)
+
+                        else:
+
+                            # cannot determine so assuming a linear grid
+
+                            new_grid = np.linspace(start, stop, n_iterations)
+
+                        new_grids.append(new_grid)
+
+                    self._independent_variable_range = tuple(new_grids)
+
+                    self._out_shape = tuple(map(len, self._independent_variable_range))
+
+
+
+
+
+                n_split_steps = n_iterations // n_engines
+
+
+                # Define the parallel worker which will go through the computation
+
+
+
+
+
+                variables =list(itertools.product(*self._independent_variable_range))
+
+                def worker(start_index):
+
+                    with use_astromodels_memoization(False):
+
+                        start = start_index*n_split_steps
+                        stop  = start + n_split_steps
+
+                        variates = []
+
+                        for var in variables[ start:stop ]:
+
+                             variates.append(self._propagated_function(*var))
+
+                    return variates
+
+                    # Get a balanced view of the engines
+
+                lview = client.load_balanced_view()
+                # lview.block = True
+
+                # Distribute the work among the engines and start it, but return immediately the control
+                # to the main thread
+
+                amr = lview.map_async(worker, range(n_engines))
+
+                client.wait_watching_progress(amr, 10)
+
+                results = amr.get()
+
+                variates = []
+
+                for i in xrange(n_engines):
+
+                    variates.extend(results[i])
+
+
+
+
 
 
         # otherwise just evaluate
@@ -179,6 +320,11 @@ class GenericFittedSourceHandler(object):
         """
 
         return self._propagated_variates.samples
+
+    @property
+    def independent_variable_range(self):
+
+        return self._independent_variable_range
 
     @property
     def median(self):
