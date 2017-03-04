@@ -14,6 +14,19 @@ def regularized_log(vector):
     return np.where(vector > 0, np.log(vector), 0)
 
 
+def xlogy(x, y):
+    """
+    A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine
+    0 * log(inf) is nan, instead of 0.
+
+    :param x:
+    :param y:
+    :return:
+    """
+
+    return np.where(x > 0, x * np.log(y), 0)
+
+
 def poisson_log_likelihood_ideal_bkg(observed_counts, expected_bkg_counts, expected_model_counts):
     """
     Poisson log-likelihood for the case where the background has no uncertainties:
@@ -62,17 +75,16 @@ def poisson_observed_poisson_background_xs(observed_counts, background_counts, e
     # we regularize the log so it will not give NaN if expected_model_counts and background_nuisance_parameter are both
     # zero. For any good model this should also mean observed_counts = 0, btw.
 
-    second_term = - observed_counts * np.log(expected_model_counts + exposure_ratio * background_nuisance_parameter +
-                                             1e-100)
+    second_term = - xlogy(observed_counts, expected_model_counts + exposure_ratio * background_nuisance_parameter)
 
-    third_term = - background_counts * regularized_log(background_nuisance_parameter)
+    third_term = - xlogy(background_counts, background_nuisance_parameter)
 
     ppstat = 2 * (first_term + second_term + third_term)
 
-    ppstat += 2 * (- observed_counts * (1 - regularized_log(observed_counts))
-                   - background_counts * (1 - regularized_log(background_counts)))
+    ppstat += 2 * (- observed_counts + xlogy(observed_counts, observed_counts)
+                   - background_counts + xlogy(background_counts, background_counts))
 
-    assert np.isfinite(ppstat).all()
+    # assert np.isfinite(ppstat).all()
 
     return ppstat * (-1)
 
@@ -97,7 +109,7 @@ def poisson_observed_poisson_background(observed_counts, background_counts, expo
 
     # Profile likelihood
 
-    loglike = o * np.log(alpha*B_mle + M) + b*regularized_log(B_mle) - (alpha+1) * B_mle - M - \
+    loglike = xlogy(o, alpha*B_mle + M) + xlogy(b, B_mle) - (alpha+1) * B_mle - M - \
               logfactorial(b) - logfactorial(o)
 
     return loglike, B_mle * alpha
@@ -137,7 +149,7 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
 
     # the 1e-100 in the log is to avoid zero divisions
     # This is the Poisson likelihood with no background
-    log_likes[nidx] = observed_counts[nidx] * np.log(expected_model_counts[nidx] + 1e-100) - \
+    log_likes[nidx] = xlogy(observed_counts[nidx], expected_model_counts[nidx]) - \
                       expected_model_counts[nidx] - logfactorial(observed_counts[nidx])
 
     return log_likes, b
