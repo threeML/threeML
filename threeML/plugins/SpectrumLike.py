@@ -936,12 +936,10 @@ class SpectrumLike(PluginPrototype):
         # Apply the rebinning to everything.
         # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
 
-
-
-        self._current_observed_counts = self._rebinner.rebin(self._observed_counts)
+        self._current_observed_counts, = self._rebinner.rebin(self._observed_counts)
 
         if self._observed_count_errors is not None:
-            self._current_observed_count_errors = self._rebinner.rebin_errors(self._observed_count_errors)
+            self._current_observed_count_errors, = self._rebinner.rebin_errors(self._observed_count_errors)
 
         if self._background_spectrum is not None:
 
