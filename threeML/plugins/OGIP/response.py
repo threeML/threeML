@@ -2,8 +2,11 @@ import astropy.io.fits as pyfits
 import numpy as np
 import warnings
 import matplotlib.cm as cm
+from matplotlib.colors import SymLogNorm
 import matplotlib.pyplot as plt
 from operator import itemgetter, attrgetter
+import copy
+
 import astropy.units as u
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
@@ -79,13 +82,17 @@ class InstrumentResponse(object):
                                                                  [self._ebounds.shape[0]-1,
                                                                   self._mc_energies.shape[0]-1])
 
-        if self._mc_energies.max() >= self.ebounds.max():
+        if self._mc_energies.max() < self._ebounds.max():
 
-            custom_warnings.warn("Maximum MC energy is smaller than maximum EBOUNDS energy", RuntimeWarning)
+            custom_warnings.warn("Maximum MC energy (%s) is smaller "
+                                 "than maximum EBOUNDS energy (%s)" % (self._mc_energies.max(), self.ebounds.max()),
+                                 RuntimeWarning)
 
-        if self._mc_energies.min() <= self.ebounds.min():
+        if self._mc_energies.min() > self._ebounds.min():
 
-            custom_warnings.warn("Minimum MC energy is larger than minimum EBOUNDS energy", RuntimeWarning)
+            custom_warnings.warn("Minimum MC energy (%s) is larger than "
+                                 "minimum EBOUNDS energy (%s)" % (self._mc_energies.min(), self._ebounds.min()),
+                                 RuntimeWarning)
 
     # This will be overridden by subclasses
     @property
@@ -214,35 +221,48 @@ class InstrumentResponse(object):
 
         fig, ax = plt.subplots()
 
-        image = self._matrix.T
-
-        ax.set_xscale('log')
-        ax.set_yscale('log')
-
-        idx1 = 0
-        idx2 = 0
+        idx_mc = 0
+        idx_eb = 0
 
         # Some times the lower edges may be zero, so we skip them
 
         if self._mc_energies[0] == 0:
-            idx1 = 1
+            idx_mc = 1
 
         if self._ebounds[0] == 0:
-            idx2 = 1
+            idx_eb = 1
 
-        ax.imshow(image[idx1:, idx2:], extent=(self._mc_energies[idx1],
-                                               self._mc_energies[-1],
-                                               self._ebounds[idx2],
-                                               self._ebounds[-1]),
-                  aspect=1.5,
-                  cmap=cm.BrBG_r)
+        # ax.imshow(image[idx_eb:, idx_mc:], extent=(self._ebounds[idx_eb],
+        #                                            self._ebounds[-1],
+        #                                            self._mc_energies[idx_mc],
+        #                                            self._mc_energies[-1]),
+        #           aspect='equal',
+        #           cmap=cm.BrBG_r,
+        #           origin='lower',
+        #           norm=SymLogNorm(1.0, 1.0, vmin=self._matrix.min(), vmax=self._matrix.max()))
+
+        # Find minimum non-zero element
+        vmin = self._matrix[self._matrix > 0].min()
+
+        cmap = copy.deepcopy(cm.ocean)
+
+        cmap.set_under('gray')
+
+        mappable = ax.pcolormesh(self._mc_energies[idx_mc:], self._ebounds[idx_eb:], self._matrix,
+                                 cmap=cmap,
+                                 norm=SymLogNorm(1.0, 1.0, vmin=vmin, vmax=self._matrix.max()))
+
+        ax.set_xscale('log')
+        ax.set_yscale('log')
+
+        fig.colorbar(mappable, label="cm$^{2}$")
 
         # if show_energy is not None:
         #    ener_val = Quantity(show_energy).to(self.reco_energy.unit).value
         #    ax.hlines(ener_val, 0, 200200, linestyles='dashed')
 
-        ax.set_ylabel('True energy (keV)')
-        ax.set_xlabel('Reco energy (keV)')
+        ax.set_xlabel('True energy (keV)')
+        ax.set_ylabel('Reco energy (keV)')
 
         return fig
 
