@@ -22,6 +22,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
     :param sources_to_use: (optional) list of PointSource string names to plot from the analysis
     :param energy_unit: (optional) astropy energy unit in string form (can also be frequency)
     :param flux_unit: (optional) astropy flux unit in string form
+    :param confidence_level: (optional) confidence level to use (default: 0.68)
     :param ene_min: (optional) minimum energy to plot
     :param ene_max: (optional) maximum energy to plot
     :param num_ene: (optional) number of energies to plot
@@ -59,7 +60,8 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                  'plot_style_kwargs': threeML_config['model plot']['point source plot']['plot style'],
                  'contour_style_kwargs': threeML_config['model plot']['point source plot']['contour style'],
                  'show_legend': True,
-                 'legend_kwargs': threeML_config['model plot']['point source plot']['legend style']
+                 'legend_kwargs': threeML_config['model plot']['point source plot']['legend style'],
+                 'subplot': None
 
                  }
 
@@ -89,7 +91,15 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
     # we are now ready to plot.
     # all calculations have been made.
 
-    fig, ax = plt.subplots()
+    if _defaults['subplot'] is None:
+
+        fig, ax = plt.subplots()
+
+    else:
+
+        ax = _defaults['subplot']
+
+        fig = ax.get_figure()
 
     energy_range = energy_range * u.Unit(_defaults['energy_unit'])
 
@@ -490,4 +500,4 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
         ax.set_xlim(_defaults['ene_min'], _defaults['ene_max'])
         color_itr += 1
 
-
+    return fig
