@@ -771,7 +771,7 @@ class Minimizer(object):
             if minimum_bound is None:
 
                 # Cannot find error in this direction (it's probably outside the allowed boundaries)
-                custom_warnings.warn("Cannot find lower boundary for parameter %s" % parameter_name, CannotComputeErrors)
+                custom_warnings.warn("Cannot find boundary for parameter %s" % parameter_name, CannotComputeErrors)
 
                 error = np.nan
                 break
@@ -782,15 +782,18 @@ class Minimizer(object):
 
                 biased_likelihood = lambda x: pl(x) - self._m_log_like_minimum - target_delta_log_like
 
-                if sign == -1:
+                try:
 
-                    precise_bound = scipy.optimize.brentq(biased_likelihood, minimum_bound,
-                                                          maximum_bound, xtol=1e-5, maxiter=1000)
+                    precise_bound = scipy.optimize.brentq(biased_likelihood,
+                                                          minimum_bound,
+                                                          maximum_bound,
+                                                          xtol=1e-5, maxiter=1000)  #type: float
+                except:
 
-                else:
+                    custom_warnings.warn("Cannot find boundary for parameter %s" % parameter_name, CannotComputeErrors)
 
-                    precise_bound = scipy.optimize.brentq(biased_likelihood, minimum_bound,
-                                                          maximum_bound, xtol=1e-5, maxiter=1000)
+                    error = np.nan
+                    break
 
                 error = precise_bound - best_fit_value
 
