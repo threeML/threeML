@@ -96,7 +96,7 @@ setup(
         'pyyaml',
         'dill',
         'iminuit>=1.2',
-        'astromodels>=0.2.1',
+        'astromodels>=0.4.0',
         'corner>=1.0.2',
         'pandas',
         'html2text',
