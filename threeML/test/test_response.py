@@ -273,14 +273,11 @@ def test_response_set_constructor():
     # Now test construction from the .from_rsp2 method
     rsp2_file = get_path_of_data_file("ogip_test_gbm_b0.rsp2")
 
-    # It should also warn because there is one matrix in the response file which has TSTART=TSTOP
-    with pytest.warns(RuntimeWarning):
+    with warnings.catch_warnings():
 
-        with warnings.catch_warnings():
+        warnings.simplefilter("error", np.VisibleDeprecationWarning)
 
-            warnings.simplefilter("error", np.VisibleDeprecationWarning)
-
-            rsp_set = InstrumentResponseSet.from_rsp2_file(rsp2_file, exposure_getter, counts_getter)
+        rsp_set = InstrumentResponseSet.from_rsp2_file(rsp2_file, exposure_getter, counts_getter)
 
     assert len(rsp_set) == 3
 

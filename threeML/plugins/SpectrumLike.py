@@ -54,87 +54,134 @@ class SpectrumLike(PluginPrototype):
         assert isinstance(observation,
                           BinnedSpectrum), "The observed spectrum is not an instance of BinnedSpectrum"
 
-        assert isinstance(background,
-                          BinnedSpectrum), "The background spectrum is not an instance of BinnedSpectrum"
+        if background is not None:
+            assert isinstance(background,
+                              BinnedSpectrum), "The background spectrum is not an instance of BinnedSpectrum"
 
-        assert observation.n_channels == background.n_channels, "Data file and background file have different " \
-                                                                "number of channels"
+            assert observation.n_channels == background.n_channels, "Data file and background file have different " \
+                                                                    "number of channels"
 
         # Precomputed observed and background counts (for speed)
 
         self._observed_spectrum = observation  # type: BinnedSpectrum
-        self._background_spectrum = background  # type: BinnedSpectrum
 
         self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
-        self._background_counts = self._background_spectrum.counts  # type: np.ndarray
 
-        self._scaled_background_counts = self._get_expected_background_counts_scaled()  # type: np.ndarray
+        if background is None:
+
+            self._background_spectrum = background  # type: BinnedSpectrum
+
+        else:
+
+            self._background_spectrum = background  # type: BinnedSpectrum
+
+            self._background_counts = self._background_spectrum.counts  # type: np.ndarray
+
+            self._scaled_background_counts = self._get_expected_background_counts_scaled()  # type: np.ndarray
 
         # Init everything else to None
         self._like_model = None
         self._rebinner = None
 
         # Now auto-probe the statistic to use
-        if self._observed_spectrum.is_poisson:
+        if self._background_spectrum is not None:
 
-            if self._background_spectrum.is_poisson:
+            if self._observed_spectrum.is_poisson:
 
-                self.observation_noise_model = 'poisson'
-                self.background_noise_model = 'poisson'
+                self._observed_count_errors = None
 
-                self._back_counts_errors = None
+                if self._background_spectrum.is_poisson:
 
-                assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
+                    self.observation_noise_model = 'poisson'
+                    self.background_noise_model = 'poisson'
 
-                if not np.all(self._background_counts >= 0): raise NegativeBackground(
-                    "Error in background spectrum: negative counts!")
+                    self._back_count_errors = None
+
+                    assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
+
+                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                        "Error in background spectrum: negative counts!")
+
+                else:
+
+                    self.observation_noise_model = 'poisson'
+                    self.background_noise_model = 'gaussian'
+
+                    self._back_count_errors = self._background_spectrum.count_errors  # type: np.ndarray
+
+                    idx = (self._back_count_errors == 0)  # type: np.ndarray
+
+                    assert np.all(self._back_count_errors[idx] == self._background_counts[idx]), \
+                        "Error in background spectrum: if the error on the background is zero, " \
+                        "also the expected background must be zero"
+
+                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                        "Error in background spectrum: negative background!")
 
             else:
 
-                self.observation_noise_model = 'poisson'
-                self.background_noise_model = 'gaussian'
+                if self._background_spectrum.is_poisson:
 
-                self._back_counts_errors = self._background_spectrum.count_errors  # type: np.ndarray
+                    raise NotImplementedError("We currently do not support Gaussian observation and Poisson background")
 
-                idx = (self._back_counts_errors == 0)  # type: np.ndarray
 
-                assert np.all(self._back_counts_errors[idx] == self._background_counts[idx]), \
-                    "Error in background spectrum: if the error on the background is zero, " \
-                    "also the expected background must be zero"
+                else:
 
-                if not np.all(self._background_counts >= 0): raise NegativeBackground(
-                    "Error in background spectrum: negative background!")
+                    self.observation_noise_model = 'gaussian'
+                    self.background_noise_model = 'gaussian'
+
+                    self._back_count_errors = self._background_spectrum.count_errors  # type: np.ndarray
+
+                    self._observed_count_errors = self._observed_spectrum.count_errors  # type: np.ndarray
+
+                    idx = (self._back_count_errors == 0)  # type: np.ndarray
+
+                    assert np.all(self._back_count_errors[idx] == self._background_counts[idx]), \
+                        "Error in background spectrum: if the error on the background is zero, " \
+                        "also the expected background must be zero"
+
+                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                        "Error in background spectrum: negative background!")
+
+                    idx = (self._observed_count_errors == 0)  # type: np.ndarray
+
+                    assert np.all(self._observed_count_errors[idx] == self._observed_counts[idx]), \
+                        "Error in ovserved spectrum: if the error on the observation is zero, " \
+                        "also the expected observation must be zero"
+
 
         else:
 
-            if self._background_spectrum.is_poisson:
+            # this is the case for no background
 
-                raise NotImplementedError("We currently do not support Gaussian observation and Poisson background")
+            self._background_counts = None
+            self._back_count_errors = None
+            self._scaled_background_counts = None
 
+            if self._observed_spectrum.is_poisson:
+
+                self._observed_count_errors = None
+
+                assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
+
+                self.observation_noise_model = 'poisson'
+                self.background_noise_model = None
 
             else:
 
                 self.observation_noise_model = 'gaussian'
-                self.background_noise_model = 'gaussian'
+                self.background_noise_model = None
 
-                self._back_counts_errors = self._background_spectrum.count_errors  # type: np.ndarray
+                self._observed_count_errors = self._observed_spectrum.count_errors  # type: np.ndarray
 
-                self._observed_counts_errors = self._observed_spectrum.count_errors  # type: np.ndarray
+                idx = (self._observed_count_errors == 0)  # type: np.ndarray
 
-                idx = (self._back_counts_errors == 0)  # type: np.ndarray
-
-                assert np.all(self._back_counts_errors[idx] == self._background_counts[idx]), \
-                    "Error in background spectrum: if the error on the background is zero, " \
-                    "also the expected background must be zero"
-
-                if not np.all(self._background_counts >= 0): raise NegativeBackground(
-                    "Error in background spectrum: negative background!")
-
-                idx = (self._observed_counts_errors == 0)  # type: np.ndarray
-
-                assert np.all(self._observed_counts_errors[idx] == self._observed_counts[idx]), \
+                assert np.all(self._observed_count_errors[idx] == self._observed_counts[idx]), \
                     "Error in ovserved spectrum: if the error on the observation is zero, " \
                     "also the expected observation must be zero"
+
+
+
 
         # Initialize a mask that selects all the data.
         # We will initially use the quality mask for the PHA file
@@ -168,9 +215,10 @@ class SpectrumLike(PluginPrototype):
         # they will contain the rebinned and/or masked versions
 
         self._current_observed_counts = self._observed_counts
+        self._current_observed_count_errors = self._observed_count_errors
         self._current_background_counts = self._background_counts
         self._current_scaled_background_counts = self._scaled_background_counts
-        self._current_back_counts_errors = self._back_counts_errors
+        self._current_back_count_errors = self._back_count_errors
 
         # This will be used to keep track of how many syntethic datasets have been generated
         self._n_synthetic_datasets = 0
@@ -435,11 +483,17 @@ class SpectrumLike(PluginPrototype):
         # Apply the mask
 
         self._current_observed_counts = self._observed_counts[self._mask]
-        self._current_background_counts = self._background_counts[self._mask]
-        self._current_scaled_background_counts = self._scaled_background_counts[self._mask]
 
-        if self._back_counts_errors is not None:
-            self._current_back_counts_errors = self._back_counts_errors[self._mask]
+        if self._observed_count_errors is not None:
+            self._current_observed_count_errors = self._observed_count_errors[self._mask]
+
+        if self._background_spectrum is not None:
+
+            self._current_background_counts = self._background_counts[self._mask]
+            self._current_scaled_background_counts = self._scaled_background_counts[self._mask]
+
+            if self._back_count_errors is not None:
+                self._current_back_count_errors = self._back_count_errors[self._mask]
 
     @contextmanager
     def _without_mask_nor_rebinner(self):
@@ -569,12 +623,12 @@ class SpectrumLike(PluginPrototype):
                     # We cannot generate variates with zero sigma. They variates from those channel will always be zero
                     # This is a limitation of this whole idea. However, remember that by construction an error of zero
                     # it is only allowed when the background counts are zero as well.
-                    idx = (self._back_counts_errors > 0)
+                    idx = (self._back_count_errors > 0)
 
                     randomized_background_counts = np.zeros_like(background_model_counts)
 
                     randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
-                                                                         scale=self._back_counts_errors[idx])
+                                                                         scale=self._back_count_errors[idx])
 
                     # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
 
@@ -592,7 +646,7 @@ class SpectrumLike(PluginPrototype):
 
                     # randomized_background_rate = randomized_background_counts / self.background_exposure
 
-                    randomized_background_count_err = copy.copy(self._back_counts_errors)
+                    randomized_background_count_err = copy.copy(self._back_count_errors)
 
                     randomized_source_count_err = None
 
@@ -621,13 +675,13 @@ class SpectrumLike(PluginPrototype):
 
                     # Randomize expectations for the source
 
-                    idx = (self._observed_counts_errors > 0)
+                    idx = (self._observed_count_errors > 0)
 
                     randomized_source_counts = np.zeros_like(source_model_counts)
 
                     randomized_source_counts[idx] = np.random.normal(
                         loc=source_model_counts[idx] + self._background_counts[idx],
-                        scale=self._observed_counts_errors)
+                        scale=self._observed_count_errors)
 
                     # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
 
@@ -641,7 +695,7 @@ class SpectrumLike(PluginPrototype):
 
                         randomized_source_counts[idx] = 0
 
-                    randomized_source_count_err = copy.copy(self._observed_counts_errors)
+                    randomized_source_count_err = copy.copy(self._observed_count_errors)
 
                     # No randomization for the background in this case
 
@@ -657,13 +711,13 @@ class SpectrumLike(PluginPrototype):
 
                     # Randomize expectations for the source
 
-                    idx = (self._observed_counts_errors > 0)
+                    idx = (self._observed_count_errors > 0)
 
                     randomized_source_counts = np.zeros_like(source_model_counts)
 
                     randomized_source_counts[idx] = np.random.normal(
                         loc=source_model_counts[idx] + background_model_counts[idx],
-                        scale=self._observed_counts_errors)
+                        scale=self._observed_count_errors)
 
                     # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
 
@@ -677,19 +731,19 @@ class SpectrumLike(PluginPrototype):
 
                         randomized_source_counts[idx] = 0
 
-                    randomized_source_count_err = copy.copy(self._observed_counts_errors)
+                    randomized_source_count_err = copy.copy(self._observed_count_errors)
 
                     # Now randomize the expectations.
 
                     # We cannot generate variates with zero sigma. They variates from those channel will always be zero
                     # This is a limitation of this whole idea. However, remember that by construction an error of zero
                     # it is only allowed when the background counts are zero as well.
-                    idx = (self._back_counts_errors > 0)
+                    idx = (self._back_count_errors > 0)
 
                     randomized_background_counts = np.zeros_like(background_model_counts)
 
                     randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
-                                                                         scale=self._back_counts_errors[idx])
+                                                                         scale=self._back_count_errors[idx])
 
                     # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
 
@@ -707,7 +761,32 @@ class SpectrumLike(PluginPrototype):
 
                     # randomized_background_rate = randomized_background_counts / self.background_exposure
 
-                    randomized_background_count_err = copy.copy(self._back_counts_errors)
+                    randomized_background_count_err = copy.copy(self._back_count_errors)
+
+                elif self.background_noise_model is None:
+
+                    idx = (self._observed_count_errors > 0)
+
+                    randomized_source_counts = np.zeros_like(source_model_counts)
+
+                    randomized_source_counts[idx] = np.random.normal(loc=source_model_counts[idx],
+                                                                     scale=self._observed_count_errors)
+
+                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+
+                    idx = (randomized_source_counts < 0)  # type: np.ndarray
+
+                    negative_source_n = np.sum(idx)
+
+                    if negative_source_n > 0:
+                        custom_warnings.warn("Generated source has negative counts "
+                                             "in %i channels. Fixing them to zero" % (negative_source_n))
+
+                        randomized_source_counts[idx] = 0
+
+                    randomized_source_count_err = copy.copy(self._observed_count_errors)
+
+                    randomized_background_counts = None
 
                 else:
 
@@ -724,8 +803,14 @@ class SpectrumLike(PluginPrototype):
             new_observation = self._observed_spectrum.clone(new_counts=randomized_source_counts,
                                                             new_count_errors=randomized_source_count_err)
 
-            new_background = self._background_spectrum.clone(new_counts=randomized_background_counts,
-                                                             new_count_errors=randomized_background_count_err)
+            if self._background_spectrum is not None:
+
+                new_background = self._background_spectrum.clone(new_counts=randomized_background_counts,
+                                                                 new_count_errors=randomized_background_count_err)
+
+            else:
+
+                new_background = None
 
             # Now create another instance of BinnedSpectrum with the randomized data we just generated
             # notice that the _new member is a classmethod
@@ -810,7 +895,32 @@ class SpectrumLike(PluginPrototype):
 
         # NOTE: the rebinner takes care of the mask already
 
+        assert self._background_spectrum is not None, "This data has no background, cannot rebin on background!"
+
         rebinner = Rebinner(self._background_counts, min_number_of_counts, self._mask)
+
+        # only for the PHASpectrum subclass do we need to update the the grouping
+        if isinstance(self._observed_spectrum, PHASpectrum):
+            self._observed_spectrum.set_ogip_grouping(rebinner.grouping)
+            self._background_spectrum.set_ogip_grouping(rebinner.grouping)
+
+        self._apply_rebinner(rebinner)
+
+    def rebin_on_source(self, min_number_of_counts):
+        """
+        Rebin the spectrum guaranteeing the provided minimum number of counts in each source bin.
+
+        To neutralize this completely, use "remove_rebinning"
+
+        :param min_number_of_counts: the minimum number of counts in each bin
+        :return: none
+        """
+
+        # NOTE: the rebinner takes care of the mask already
+
+
+
+        rebinner = Rebinner(self._observed_counts, min_number_of_counts, self._mask)
 
         # only for the PHASpectrum subclass do we need to update the the grouping
         if isinstance(self._observed_spectrum, PHASpectrum):
@@ -826,16 +936,21 @@ class SpectrumLike(PluginPrototype):
         # Apply the rebinning to everything.
         # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
 
-        (self._current_observed_counts,
-         self._current_background_counts,
-         self._current_scaled_background_counts) = self._rebinner.rebin(self._observed_counts,
-                                                                        self._background_counts,
-                                                                        self._scaled_background_counts)
+        self._current_observed_counts, = self._rebinner.rebin(self._observed_counts)
 
-        if self._back_counts_errors is not None:
-            # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
+        if self._observed_count_errors is not None:
+            self._current_observed_count_errors, = self._rebinner.rebin_errors(self._observed_count_errors)
 
-            self._current_back_counts_errors, = self._rebinner.rebin_errors(self._back_counts_errors)
+        if self._background_spectrum is not None:
+
+            (self._current_background_counts,
+             self._current_scaled_background_counts) = self._rebinner.rebin(self._background_counts,
+                                                                            self._scaled_background_counts)
+
+            if self._back_count_errors is not None:
+                # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
+
+                self._current_back_count_errors, = self._rebinner.rebin_errors(self._back_count_errors)
 
         if self._verbose:
             print("Now using %s bins" % self._rebinner.n_bins)
@@ -876,6 +991,18 @@ class SpectrumLike(PluginPrototype):
 
         return bkg_counts
 
+    def _loglike_gaussian_obs_no_bkg(self):
+
+        model_counts = self.get_model()
+
+        chi2_ = chi2(self._current_observed_counts,
+                     self._current_observed_count_errors,
+                     model_counts)
+
+        assert np.all(np.isfinite(chi2_))
+
+        return np.sum(chi2_) * (-1)
+
     def _loglike_gaussian_obs_gaussian_bkg(self):
 
         raise NotImplementedError("We need to add chi2")
@@ -902,7 +1029,7 @@ class SpectrumLike(PluginPrototype):
 
         loglike, bkg_model = poisson_observed_gaussian_background(self._current_observed_counts,
                                                                   self._current_background_counts,
-                                                                  self._current_back_counts_errors,
+                                                                  self._current_back_count_errors,
                                                                   expected_model_counts)
 
         return np.sum(loglike), bkg_model
@@ -923,10 +1050,12 @@ class SpectrumLike(PluginPrototype):
     def _set_background_noise_model(self, new_model):
 
         # Do not make differences between upper and lower cases
-        new_model = new_model.lower()
+        if new_model is not None:
+            new_model = new_model.lower()
 
-        assert new_model in _known_noise_models, "Noise model %s not recognized. " \
-                                                 "Allowed models are: %s" % (new_model, ", ".join(_known_noise_models))
+            assert new_model in _known_noise_models, "Noise model %s not recognized. " \
+                                                     "Allowed models are: %s" % (
+                                                     new_model, ", ".join(_known_noise_models))
 
         self._background_noise_model = new_model
 
@@ -977,7 +1106,8 @@ class SpectrumLike(PluginPrototype):
 
         else:
 
-            raise NotImplementedError("Not yet implemented")
+            if self._background_noise_model is None:
+                loglike = self._loglike_gaussian_obs_no_bkg()
 
         return loglike
 
@@ -1218,7 +1348,7 @@ class SpectrumLike(PluginPrototype):
 
         elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
 
-            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._current_back_counts_errors)
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._current_back_count_errors)
 
         else:
 
@@ -1276,22 +1406,33 @@ class SpectrumLike(PluginPrototype):
 
                 background_counts = copy.copy(self._current_background_counts)
 
-                background_errors = copy.copy(self._current_back_counts_errors)
+                background_errors = copy.copy(self._current_back_count_errors)
 
             else:
 
                 raise RuntimeError("This is a bug")
 
+            # convert to rates, ugly, yes
+
+            observed_counts /= self._observed_spectrum.exposure
+            background_counts /= self._background_spectrum.exposure
+            cnt_err /= self._observed_spectrum.exposure
+            background_errors /= self._background_spectrum.exposure
+
+
         else:
 
-            raise NotImplementedError("Not yet implemented")
+            if self._background_noise_model is None:
+                observed_counts = copy.copy(self._current_observed_counts)
 
-        # convert to rates, ugly, yes
+                cnt_err = copy.copy(self._current_observed_count_errors)
 
-        observed_counts /= self._observed_spectrum.exposure
-        background_counts /= self._background_spectrum.exposure
-        cnt_err /= self._observed_spectrum.exposure
-        background_errors /= self._background_spectrum.exposure
+                # convert to rates, ugly, yes
+
+            observed_counts /= self._observed_spectrum.exposure
+            background_counts = np.zeros(observed_counts.shape)
+            cnt_err /= self._observed_spectrum.exposure
+            background_errors = np.zeros(observed_counts.shape)
 
         # Make the plots
         fig, ax = plt.subplots()
@@ -1327,17 +1468,18 @@ class SpectrumLike(PluginPrototype):
                         # label=data._name,
                         color=threeML_config['ogip']['counts color'])
 
-            ax.errorbar(mean_chan,
-                        background_counts / energy_width,
-                        yerr=background_errors / energy_width,
-                        fmt='',
-                        # markersize=3,
-                        linestyle='',
-                        elinewidth=.7,
-                        alpha=.9,
-                        capsize=0,
-                        # label=data._name,
-                        color=threeML_config['ogip']['background color'])
+            if self._background_noise_model is not None:
+                ax.errorbar(mean_chan,
+                            background_counts / energy_width,
+                            yerr=background_errors / energy_width,
+                            fmt='',
+                            # markersize=3,
+                            linestyle='',
+                            elinewidth=.7,
+                            alpha=.9,
+                            capsize=0,
+                            # label=data._name,
+                            color=threeML_config['ogip']['background color'])
 
         # Now plot and fade the non-used channels
         non_used_mask = (~self._mask)
@@ -1350,8 +1492,6 @@ class SpectrumLike(PluginPrototype):
             energy_width_unrebinned = energy_max_unrebinned - energy_min_unrebinned
             observed_rate_unrebinned = self._observed_counts / self.exposure
             observed_rate_unrebinned_err = np.sqrt(self._observed_counts) / self.exposure
-            background_rate_unrebinned = self._background_counts / self.background_exposure
-            background_rate_unrebinned_err = np.sqrt(self._background_counts) / self.background_exposure
 
             channel_plot(ax,
                          energy_min_unrebinned[non_used_mask],
@@ -1359,10 +1499,19 @@ class SpectrumLike(PluginPrototype):
                          observed_rate_unrebinned[non_used_mask],
                          color=threeML_config['ogip']['counts color'], lw=1.5, alpha=1)
 
-            channel_plot(ax, energy_min_unrebinned[non_used_mask],
-                         energy_max_unrebinned[non_used_mask],
-                         background_rate_unrebinned[non_used_mask],
-                         color=threeML_config['ogip']['background color'], alpha=.8)
+            if self._background_noise_model is not None:
+
+                background_rate_unrebinned = self._background_counts / self.background_exposure
+                background_rate_unrebinned_err = np.sqrt(self._background_counts) / self.background_exposure
+
+                channel_plot(ax, energy_min_unrebinned[non_used_mask],
+                             energy_max_unrebinned[non_used_mask],
+                             background_rate_unrebinned[non_used_mask],
+                             color=threeML_config['ogip']['background color'], alpha=.8)
+            else:
+
+                background_rate_unrebinned = np.zeros_like(observed_rate_unrebinned)
+                background_rate_unrebinned_err = np.zeros_like(observed_rate_unrebinned_err)
 
             if plot_errors:
                 mean_chan_unrebinned = np.mean([energy_min_unrebinned, energy_max_unrebinned], axis=0)
@@ -1379,17 +1528,19 @@ class SpectrumLike(PluginPrototype):
                             # label=data._name,
                             color=threeML_config['ogip']['counts color'])
 
-                ax.errorbar(mean_chan_unrebinned[non_used_mask],
-                            background_rate_unrebinned[non_used_mask] / energy_width_unrebinned[non_used_mask],
-                            yerr=background_rate_unrebinned_err[non_used_mask] / energy_width_unrebinned[non_used_mask],
-                            fmt='',
-                            # markersize=3,
-                            linestyle='',
-                            elinewidth=.7,
-                            alpha=.9,
-                            capsize=0,
-                            # label=data._name,
-                            color=threeML_config['ogip']['background color'])
+                if self._background_noise_model is not None:
+                    ax.errorbar(mean_chan_unrebinned[non_used_mask],
+                                background_rate_unrebinned[non_used_mask] / energy_width_unrebinned[non_used_mask],
+                                yerr=background_rate_unrebinned_err[non_used_mask] / energy_width_unrebinned[
+                                    non_used_mask],
+                                fmt='',
+                                # markersize=3,
+                                linestyle='',
+                                elinewidth=.7,
+                                alpha=.9,
+                                capsize=0,
+                                # label=data._name,
+                                color=threeML_config['ogip']['background color'])
 
             # make some nice top and bottom plot ranges
 

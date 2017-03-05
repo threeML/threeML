@@ -176,7 +176,7 @@ class SEQUENCE(FITSExtension):
 
 class ANALYSIS_RESULTS(FITSExtension):
     """
-    Represents the COVARIANCE extension of a FITS file encoding the results of an analysis
+    Represents the ANALYSIS_RESULTS extension of a FITS file encoding the results of an analysis
 
     :param analysis_results:
     :type analysis_results: _AnalysisResults
@@ -623,7 +623,7 @@ class _AnalysisResults(object):
             pretty_string = uncertainty_formatter(value, negative_error + value, positive_error + value)
 
             # Apply name formatter so long paths are shorten
-            this_shortened_name = long_path_formatter(parameter_name, 40)
+            this_shortened_name = long_path_formatter(parameter_name, 60)
 
             data[0][1][this_shortened_name] = pretty_string
             data[1][1][this_shortened_name] = unit

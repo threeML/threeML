@@ -128,7 +128,8 @@ class BinnedSpectrum(Histogram):
 
     INTERVAL_TYPE = Channel
 
-    def __init__(self, counts, exposure, ebounds, count_errors=None, sys_errors=None, quality=None, scale_factor=1., is_poisson=False, mission=None, instrument=None):
+    def __init__(self, counts, exposure, ebounds, count_errors=None, sys_errors=None, quality=None, scale_factor=1.,
+                 is_poisson=False, mission=None, instrument=None):
         """
         A general binned histogram of either Poisson or non-Poisson rates. While the input is in counts, 3ML spectra work
         in rates, so this class uses the exposure to construct the rates from the counts.
@@ -481,7 +482,8 @@ class BinnedSpectrum(Histogram):
 
 class BinnedSpectrumWithDispersion(BinnedSpectrum):
 
-    def __init__(self, counts, exposure, response, count_errors=None, sys_errors=None, quality=None, scale_factor=1., is_poisson=False, mission=None, instrument=None ):
+    def __init__(self, counts, exposure, response, count_errors=None, sys_errors=None, quality=None, scale_factor=1.,
+                 is_poisson=False, mission=None, instrument=None ):
         """
         A binned spectrum that must be deconvolved via a dispersion or response matrix
 

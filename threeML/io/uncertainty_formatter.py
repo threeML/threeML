@@ -14,7 +14,7 @@ def get_uncertainty_tokens(x):
     try:
 
         number, uncertainty, exponent = re.match('\(?(\-?[0-9]+\.?[0-9]*) ([0-9]+\.?[0-9]*)\)?(e[\+|\-][0-9]+)?',
-                                                 x.__str__().replace("+/-", " ")).groups()
+                                                 x.__str__().replace("+/-", " ").replace("nan", "0")).groups()
 
     except:
 

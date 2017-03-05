@@ -13,7 +13,7 @@ from astromodels.functions.functions import Powerlaw, Exponential_cutoff, Cutoff
 from astromodels.sources.point_source import PointSource
 from threeML.plugins.SwiftXRTLike import SwiftXRTLike
 from threeML.plugins.OGIP.likelihood_functions import *
-
+from threeML import *
 
 
 from threeML.io.file_utils import within_directory
@@ -417,6 +417,56 @@ def test_xrt():
         data = DataList(xrt)
 
         jl = JointLikelihood(model, data, verbose=False)
+
+
+def test_swift_gbm():
+    with within_directory(__example_dir):
+        gbm_dir = "gbm"
+        bat_dir = "bat"
+
+        bat = OGIPLike('BAT',
+                       observation=os.path.join(bat_dir, 'gbm_bat_joint_BAT.pha'),
+                       response=os.path.join(bat_dir, 'gbm_bat_joint_BAT.rsp'))
+
+        bat.set_active_measurements('15-150')
+        bat.view_count_spectrum()
+
+        nai6 = OGIPLike('n6',
+                        os.path.join(gbm_dir, 'gbm_bat_joint_NAI_06.pha'),
+                        os.path.join(gbm_dir, 'gbm_bat_joint_NAI_06.bak'),
+                        os.path.join(gbm_dir, 'gbm_bat_joint_NAI_06.rsp'),
+                        spectrum_number=1)
+
+        nai6.set_active_measurements('8-900')
+        nai6.view_count_spectrum()
+
+        bgo0 = OGIPLike('b0',
+                        os.path.join(gbm_dir, 'gbm_bat_joint_BGO_00.pha'),
+                        os.path.join(gbm_dir, 'gbm_bat_joint_BGO_00.bak'),
+                        os.path.join(gbm_dir, 'gbm_bat_joint_BGO_00.rsp'),
+                        spectrum_number=1)
+
+        bgo0.set_active_measurements('250-10000')
+        bgo0.view_count_spectrum()
+
+        bat.use_effective_area_correction(.2, 1.5)
+        bat.fix_effective_area_correction(.6)
+        bat.use_effective_area_correction(.2, 1.5)
+
+        band = Band()
+        model = Model(PointSource('joint_fit', 0, 0, spectral_shape=band))
+
+        band.K = .04
+        band.xp = 300.
+
+        data_list = DataList(bat, nai6, bgo0)
+
+        jl = JointLikelihood(model, data_list)
+
+        _ = jl.fit()
+
+        _ = display_spectrum_model_counts(jl, step=False)
+
 
 
 def test_pha_write():

@@ -31,11 +31,15 @@ def test_spectrum_constructor():
 
 
 
+
     specLike = SpectrumLike('fake', observation=obs_spectrum, background=bkg_spectrum)
     specLike.set_model(model)
     specLike.get_model()
 
     specLike.get_simulated_dataset()
+
+    specLike.rebin_on_background(min_number_of_counts=1E-1)
+    specLike.remove_rebinning()
 
 
     specLike.significance
@@ -48,6 +52,21 @@ def test_spectrum_constructor():
     with pytest.raises(NotImplementedError):
 
         specLike = SpectrumLike('fake', observation=obs_spectrum, background=bkg_spectrum)
+
+    # gaussian source only
+
+    obs_spectrum = BinnedSpectrum(counts=np.ones(len(ebounds)), count_errors=np.ones(len(ebounds)), exposure=1,
+                                  ebounds=ebounds)
+
+    specLike = SpectrumLike('fake', observation=obs_spectrum, background=None)
+    specLike.set_model(model)
+    specLike.get_model()
+
+    specLike.get_simulated_dataset()
+
+    with pytest.raises(AssertionError):
+        specLike.rebin_on_background(min_number_of_counts=1E-1)
+
 
 
 def test_dispersion_spectrum_constructor():

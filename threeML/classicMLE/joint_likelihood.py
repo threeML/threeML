@@ -192,10 +192,6 @@ class JointLikelihood(object):
 
             custom_warnings.warn("There is no free parameter in the current model", RuntimeWarning)
 
-            # Generate an empty data frame, which will be returned
-
-            fit_results = pd.DataFrame.from_dict({})
-
             # Store the "minimum", which is just the current value
             self._current_minimum = float(self.minus_log_like_profile([]))
 

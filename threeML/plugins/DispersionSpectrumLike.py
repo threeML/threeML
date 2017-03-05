@@ -9,8 +9,7 @@ from threeML.plugins.OGIP.response import InstrumentResponse
 __instrument_name = "General binned spectral data with energy dispersion"
 
 class DispersionSpectrumLike(SpectrumLike):
-
-    def __init__(self, name, observation, background, verbose=True):
+    def __init__(self, name, observation, background=None, verbose=True):
 
 
         assert isinstance(observation, BinnedSpectrumWithDispersion), "observed spectrum is not an instance of BinnedSpectrumWithDispersion"
