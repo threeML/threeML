@@ -248,10 +248,6 @@ class GenericFittedSourceHandler(object):
 
                 # Define the parallel worker which will go through the computation
 
-
-
-
-
                 variables =list(itertools.product(*self._independent_variable_range))
 
                 def worker(start_index):
@@ -271,23 +267,10 @@ class GenericFittedSourceHandler(object):
 
                     # Get a balanced view of the engines
 
-                lview = client.load_balanced_view()
-                # lview.block = True
+                out = client.execute_with_progress_bar(worker,range(n_engines))
+                variates  = [item for sublist in out for item in sublist]
 
-                # Distribute the work among the engines and start it, but return immediately the control
-                # to the main thread
 
-                amr = lview.map_async(worker, range(n_engines))
-
-                client.wait_watching_progress(amr, 10)
-
-                results = amr.get()
-
-                variates = []
-
-                for i in xrange(n_engines):
-
-                    variates.extend(results[i])
 
 
 
