@@ -38,9 +38,10 @@ def test_filter_set():
     assert fs.waveunits == 'nm'
     assert len(fs.average_wavelength) == fs.n_bands
     assert fs.filter_names == np.array(dummy_filter_name)
+
     fig = fs.plot_filters()
 
-    with pytest.raises(AssertionError)
+    with pytest.raises(AssertionError):
 
         fs.effective_stimulus()
 
@@ -85,4 +86,7 @@ def test_filter_set():
 
 
 
+def test_photolike():
+
+    pass
 
