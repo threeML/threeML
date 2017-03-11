@@ -34,32 +34,35 @@ def test_filter_set():
                    magnitude_systems=['abmag'])
 
 
-
     assert fs.n_bands == len(dummy_filter_name)
-
     assert fs.waveunits == 'nm'
-
     assert len(fs.average_wavelength) == fs.n_bands
-
     assert fs.filter_names == np.array(dummy_filter_name)
-
-
-
     fig = fs.plot_filters()
 
+    with pytest.raises(AssertionError)
 
+        fs.effective_stimulus()
 
+    def dummy_function(x):
+        return x
 
+    fs.set_model(dummy_function)
+
+    assert fs._model_set
+
+    es = fs.effective_stimulus()
+
+    assert len(es) == fs.n_bands
 
 
 
     with pytest.raises(AssertionError):
-
-
         fs = FilterSet(filter_names=dummy_filter_name,
                        wave_lengths=dummy_wave[:1],
                        transmission_curves=dummy_trans,
                        magnitude_systems=['abmag'])
+
 
     with pytest.raises(AssertionError):
         fs = FilterSet(filter_names=dummy_filter_name,
@@ -72,6 +75,11 @@ def test_filter_set():
                        wave_lengths=dummy_wave,
                        transmission_curves=dummy_trans[1:],
                        magnitude_systems=['abmag','abmag'])
+
+
+
+
+
 
 
 
