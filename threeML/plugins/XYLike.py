@@ -93,19 +93,30 @@ class XYLike(PluginPrototype):
 
         self._likelihood_model = likelihood_model_instance
 
-    def get_log_like(self):
-        """
-        Return the value of the log-likelihood with the current values for the
-        parameters
-        """
+
+    def _get_expectations(self):
 
         n_point_sources = self._likelihood_model.get_number_of_point_sources()
 
         # Make a function which will stack all point sources (XYLike do not support spatial dimension)
 
         expectation = np.sum(map(lambda source: source(self._x),
-                             self._likelihood_model.point_sources.values()),
+                                 self._likelihood_model.point_sources.values()),
                              axis=0)
+
+        return expectation
+
+
+
+    def get_log_like(self):
+        """
+        Return the value of the log-likelihood with the current values for the
+        parameters
+        """
+
+        # Make a function which will stack all point sources (XYLike do not support spatial dimension)
+
+        expectation = self._get_expectations()
 
         if self._is_poisson:
 
