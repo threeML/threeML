@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 
 import pysynphot
 
-
 from threeML.io.plotting.cmap_cycle import cmap_intervals
-
 
 
 class FilterSet(object):
@@ -21,21 +19,22 @@ class FilterSet(object):
         """
 
 
-        assert transmission_curves.shape == wave_lengths.shape
 
-        assert len(filter_names) == len(magnitude_systems)
+        self._transmission_curves = np.atleast_2d(transmission_curves)
 
-        assert len(wave_lengths) == len(filter_names)
+        self._wave_lengths = np.atleast_2d(wave_lengths)
+
+        self._magnitude_systems = magnitude_systems
 
         self._filter_names = np.array(filter_names)
 
-        self._wavelengths = wave_lengths
-
         self._waveunits = wavesunits
 
-        self._transmission_curves = transmission_curves
+        assert len(self._filter_names) == len(self._magnitude_systems), 'magnitude systems and filter names are different lengths'
 
-        self._magnitude_systems = magnitude_systems
+        assert len(self._wave_lengths) == len(self._filter_names), 'wave lengths and filter names are different lengths'
+
+        assert self._transmission_curves.shape == self._wave_lengths.shape, 'the wavenlengths and transmission curves are diffrent shapes'
 
         self._n_bands = len(filter_names)
 
@@ -51,8 +50,7 @@ class FilterSet(object):
 
         self._bandpass = collections.OrderedDict()
 
-        for name, wavelength, curve in zip(self._filter_names, self._wavelengths, self._transmission_curves):
-
+        for name, wavelength, curve in zip(self._filter_names, self._wave_lengths, self._transmission_curves):
             bandpass = pysynphot.ArrayBandpass(wave=wavelength,
                                                throughput=curve,
                                                name=name,
@@ -70,7 +68,6 @@ class FilterSet(object):
 
         self._observations = collections.OrderedDict()
 
-
         # now set the model for stimulus with the filter
         for k, v in self._bandpass.iteritems():
             self._observations[k] = pysynphot.Observation(wrapper, v)
@@ -83,7 +80,6 @@ class FilterSet(object):
         magnitude system
         :return:
         """
-
 
         assert self._model_set
 
