@@ -100,7 +100,8 @@ setup(
         'corner>=1.0.2',
         'pandas',
         'html2text',
-        'requests'
+        'requests',
+        'pysynphot'
     ])
 
 # Check for optional dependencies
