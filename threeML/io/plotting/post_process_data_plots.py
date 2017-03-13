@@ -11,6 +11,8 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 from threeML.io.plotting.step_plot import step_plot
 
+from threeML.plugins.SpectrumLike import SpectrumLike
+
 # This file contains plots which are plot in data space after a model has been
 # assigned to the plugin.
 
@@ -153,7 +155,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
 
-        data = analysis.data_list[key]
+        data = analysis.data_list[key] # type: SpectrumLike
+
 
         energy_min, energy_max = data._rsp.ebounds[:-1], data._rsp.ebounds[1:]
 
@@ -217,11 +220,13 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         if data._background_noise_model is not None:
 
+            scale_factor = data._observed_spectrum.scale_factor / data._background_spectrum.scale_factor
+
             # since we compare to the model rate... background subtract but with proper propagation
-            src_rate = (observed_counts / data.exposure - background_counts / data.background_exposure)
+            src_rate = (observed_counts / data.exposure - (background_counts / data.background_exposure) * scale_factor)
 
             src_rate_err = np.sqrt((cnt_err / data.exposure) ** 2 +
-                                   (background_errors / data.background_exposure) ** 2)
+                                   ((background_errors / data.background_exposure) * scale_factor) ** 2)
 
         else:
 
