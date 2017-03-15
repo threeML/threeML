@@ -121,6 +121,13 @@ class FilterSet(object):
         return fig
 
     @property
+    def effective_widths(self):
+
+        widths = np.array([self._angstrom.Convert(band.photbw(),self._waveunits) for band in self._bandpass.itervalues()])
+
+        return widths
+
+    @property
     def n_bands(self):
         """
 

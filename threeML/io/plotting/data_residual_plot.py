@@ -129,7 +129,10 @@ class ResidualPlot(object):
         self._ax1.set_xlabel(xlabel)
         self._ax1.set_ylabel("Residuals\n($\sigma$)")
 
-        # This takes care of making space for all labels around the figure
+
+
+
+            # This takes care of making space for all labels around the figure
 
         self._fig.tight_layout()
 

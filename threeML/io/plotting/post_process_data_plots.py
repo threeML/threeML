@@ -739,17 +739,21 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
         # get the expected counts
         # NOTE: _rsp.convolve() returns already the rate (counts / s)
-        expected_model_magnitudes = data._get_expectations()
+        expected_model_magnitudes = -1* data._get_expectations()
         avg_wave_length = data._filter_set.average_wavelength
 
 
-        magnitudes = data._photometry_data.magnitudes
+        magnitudes = -1 * data._photometry_data.magnitudes
         mag_errors= data._photometry_data.magnitude_errors
 
         residuals = (expected_model_magnitudes - magnitudes) / mag_errors
 
+        widths = data._filter_set.effective_widths
+
+
         residual_plot.add_data(x=avg_wave_length,
                                y=magnitudes,
+                               xerr=widths,
                                yerr=mag_errors,
                                residuals=residuals,
                                label=data._name,

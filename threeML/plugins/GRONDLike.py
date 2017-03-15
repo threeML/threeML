@@ -10,6 +10,8 @@ from threeML.plugins.photometry.photometric_data import PhotometryData
 from threeML.config.config import threeML_config
 from threeML.io.file_utils import if_directory_not_existing_then_make, file_existing_and_readable
 
+__instrument_name = "GROND 7-band photometric imager"
+
 _grond_filter_names = ['g', 'r', 'i', 'z', 'J', 'H', 'K']
 _grond_magnitude_systems_vega = ['abmag', 'abmag', 'abmag', 'abmag', 'vega mag', 'vega mag', 'vega mag']
 _grond_magnitude_systems_ab = ['abmag', 'abmag', 'abmag', 'abmag', 'abmag', 'abmag', 'abmag']

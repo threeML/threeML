@@ -5,6 +5,8 @@ from threeML.plugins.photometry.photometric_data import PhotometryData
 from threeML.plugins.photometry.filter_set import FilterSet
 
 
+__instrument_name = "Generic photometric data"
+
 class PhotometryLike(XYLike):
     def __init__(self, name, photometry_data, filter_set, verbose=True):
         # type: (str, PhotometryData, FilterSet, bool) -> object
