@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import pysynphot
+import pysynphot.units as synphot_units
 
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 
@@ -43,6 +44,13 @@ class FilterSet(object):
         self._build_filters()
 
         self._model_set = False
+
+
+        # even when units are specified on the wave table
+        # pysynphot operation return in anstroms. So we need a
+        # converter
+
+        self._angstrom = synphot_units.Angstrom()
 
     def _build_filters(self):
 
@@ -137,7 +145,7 @@ class FilterSet(object):
         :return: the average wave length of the filters
         """
 
-        return [band.avgwave() for band in self._bandpass.itervalues()]
+        return [self._angstrom.Convert(band.avgwave(),self._waveunits) for band in self._bandpass.itervalues()]
 
     @property
     def waveunits(self):
