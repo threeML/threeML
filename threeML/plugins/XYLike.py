@@ -65,6 +65,8 @@ class XYLike(PluginPrototype):
             self._yerr = None
             self._has_errors = True
 
+        self._n_synthetic_datasets=0
+
 
     @property
     def is_poisson(self):
@@ -169,4 +171,50 @@ class XYLike(PluginPrototype):
         jl.set_minimizer(minimizer)
 
         return jl.fit()
+
+    def get_simulated_dataset(self, new_name=None, **kwargs):
+        """
+        Returns another Binned instance where data have been obtained by randomizing the current expectation from the
+        model, as well as from the background (depending on the respective noise models)
+
+        :return: an BinnedSpectrum or child instance
+        """
+
+        assert self._likelihood_model is not None, "You need to set up a model before randomizing"
+
+        # Keep track of how many syntethic datasets we have generated
+
+        self._n_synthetic_datasets += 1
+
+        # Generate a name for the new dataset if needed
+        if new_name is None:
+            new_name = "%s_sim_%i" % (self.name, self._n_synthetic_datasets)
+
+        expectation = self._get_expectations()
+
+        if self._is_poisson:
+
+            pass
+
+        else:
+
+            # Randomize expectations for the data
+
+            idx = (self._yerr > 0)
+
+            randomized_y = np.zeros_like(expectation)
+
+            randomized_y[idx] = np.random.normal(loc=expectation[idx],scale=self._yerr[idx])
+
+
+
+            randomized_y_err = copy.copy(self._yerr)
+
+            # No randomization for the background in this case
+
+            randomized_background_counts = self._background_counts
+
+            randomized_background_count_err = None
+
+
 

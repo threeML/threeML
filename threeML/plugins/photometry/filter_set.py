@@ -89,7 +89,7 @@ class FilterSet(object):
         :return:
         """
 
-        assert self._model_set
+        assert self._model_set, 'no likelihood model has been set'
 
         return np.array(
             [obs.effstim(mag_sys) for obs, mag_sys in zip(self._observations.itervalues(), self._magnitude_systems)])
@@ -188,7 +188,7 @@ class AstromodelWrapper(pysynphot.spectrum.AnalyticSpectrum):
         super(AstromodelWrapper, self).__init__(waveunits, fluxunits)
 
 
-    def __call__(self, x):
+    def __call__(self, wavelength):
 
         # the function argument from astromodels expects keV
         # but pysynphot will give us angstrom,
@@ -199,4 +199,6 @@ class AstromodelWrapper(pysynphot.spectrum.AnalyticSpectrum):
         # so we convert keV to Hz via E = h nu
 
 
-        return self._differential_flux(hc / x) * h
+
+
+        return self._differential_flux(hc / wavelength) * h

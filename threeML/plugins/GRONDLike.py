@@ -198,3 +198,8 @@ class GRONDLike(PhotometryLike):
         with open(grond_filter_file, 'w') as f:
             for line in filter_data:
                 f.write(line)
+
+    @classmethod
+    def from_file(cls, file):
+
+        raise NotImplementedError('file reading has not been implemented')
