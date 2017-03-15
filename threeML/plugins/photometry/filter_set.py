@@ -149,6 +149,9 @@ class FilterSet(object):
         return self._waveunits
 
 
+hc = 12.3984129 # keV A
+h = 4.1356674E-18 # keV s
+
 class AstromodelWrapper(pysynphot.spectrum.AnalyticSpectrum):
     def __init__(self, differential_flux):
         """
@@ -163,13 +166,22 @@ class AstromodelWrapper(pysynphot.spectrum.AnalyticSpectrum):
         # photolam units are pht /s /cm2/ A
         # thus, we must shift A -> keV for astromodels
 
-        fluxunits = pysynphot.units.Units('photlam')  # make our own flux unit
+        fluxunits = pysynphot.units.Units('photnu')  # make our own flux unit
 
         self._differential_flux = differential_flux
 
         super(AstromodelWrapper, self).__init__(waveunits, fluxunits)
 
-        self._Angstrom_to_keV = 1239842.5
 
     def __call__(self, x):
-        return self._differential_flux(x * self._Angstrom_to_keV) / self._Angstrom_to_keV
+
+        # the function argument from astromodels expects keV
+        # but pysynphot will give us angstrom,
+        # so we convert E = hc/lambda
+
+        # the output of the function is expected to be :
+        #     pht/ s / cm2 / Hz
+        # so we convert keV to Hz via E = h nu
+
+
+        return self._differential_flux(hc / x) * h
