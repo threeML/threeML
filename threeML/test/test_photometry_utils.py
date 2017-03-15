@@ -2,8 +2,11 @@ import pytest
 import numpy as np
 
 from threeML.plugins.photometry.filter_set import FilterSet
-from threeML.plugins.photometry.photometric_data import PhotometryData
-
+from threeML.plugins.GRONDLike import GRONDLike
+from threeML.io.plotting.post_process_data_plots import display_photometry_model_magnitudes
+from threeML.data_list import DataList
+from threeML.classicMLE.joint_likelihood import JointLikelihood
+from astromodels import *
 
 def test_filter_set():
     dummy_filter_name = ['g']
@@ -86,7 +89,37 @@ def test_filter_set():
 
 
 
-def test_photolike():
+def test_GRONDlike():
 
-    pass
+
+    grond = GRONDLike('GROND',
+                      g=20.93, g_err=.23,
+                      r=19.96, r_err=0.12,
+                      i=18.08, i_err=.07,
+                      z=17.82, z_err=.04,
+                      J=16.29, J_err=.03,
+                      H=15.28, H_err=.03,
+                      K=14.68, K_err=.04,
+                      use_vega=False)
+
+
+    pl= Powerlaw()
+    model = Model(PointSource('grb',0,0,spectral_shape=pl))
+
+    jl = JointLikelihood(model,DataList(grond))
+
+    jl.fit()
+
+
+    display_photometry_model_magnitudes(jl)
+
+
+
+
+
+
+
+
+
+
 
