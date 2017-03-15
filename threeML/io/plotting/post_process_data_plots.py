@@ -296,22 +296,6 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             mean_energy.append(this_mean_energy)
 
 
-
-        # ax.errorbar(mean_energy,
-        #             new_rate / new_chan_width,
-        #             yerr=new_err / new_chan_width,
-        #             xerr=delta_energy,
-        #             fmt='.',
-        #             markersize=3,
-        #             linestyle='',
-        #             # elinewidth=.5,
-        #             alpha=.9,
-        #             capsize=0,
-        #             label=data._name,
-        #             color=data_color)
-
-
-
         # Residuals
 
         # we need to get the rebinned counts
@@ -404,41 +388,6 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                                   yscale='log',
                                   show_legend=show_legend)
 
-    #     ax1.axhline(0, linestyle='--', color='k')
-    #     ax1.errorbar(mean_energy,
-    #                  residuals,
-    #                  yerr=np.ones_like(residuals),
-    #                  capsize=0,
-    #                  fmt='.',
-    #                  markersize=3,
-    #                  color=data_color)
-    #
-    # if show_legend:
-    #     ax.legend(fontsize='x-small', loc=0)
-    #
-    # ax.set_ylabel("Net rate\n(counts s$^{-1}$ keV$^{-1}$)")
-    #
-    # ax.set_xscale('log')
-    # ax.set_yscale('log', nonposy='clip')
-    #
-    # ax1.set_xscale("log")
-    #
-    # locator = MaxNLocator(prune='upper', nbins=5)
-    # ax1.yaxis.set_major_locator(locator)
-    #
-    # ax1.set_xlabel("Energy\n(keV)")
-    # ax1.set_ylabel("Residuals\n($\sigma$)")
-    #
-    # # This takes care of making space for all labels around the figure
-    #
-    # fig.tight_layout()
-    #
-    # # Now remove the space between the two subplots
-    # # NOTE: this must be placed *after* tight_layout, otherwise it will be ineffective
-    #
-    # fig.subplots_adjust(hspace=0)
-
-    return fig
 
 
 def display_histogram_fit(analysis, data=(), **kwargs):
