@@ -96,16 +96,16 @@ class PhotometryLike(XYLike):
 
         super(PhotometryLike, self).set_model(likelihood_model)
 
-        n_point_sources = self._like_model.get_number_of_point_sources()
+        n_point_sources = self._likelihood_model.get_number_of_point_sources()
 
         def differential_flux(energies):
 
             for i in xrange(n_point_sources):
-                fluxes = self._like_model.get_point_source_fluxes(0, energies)
+                fluxes = self._likelihood_model.get_point_source_fluxes(0, energies)
 
                 # If we have only one point source, this will never be executed
                 for i in range(1, n_point_sources):
-                    fluxes += self._like_model.get_point_source_fluxes(i, energies)
+                    fluxes += self._likelihood_model.get_point_source_fluxes(i, energies)
 
             return fluxes
 
