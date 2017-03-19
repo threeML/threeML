@@ -1,14 +1,14 @@
+import collections
+import os
+import urllib2
+
 import numpy as np
 import pandas as pd
-import collections
-import urllib2
-import os
-
-from threeML.plugins.PhotometryLike import PhotometryLike
-from threeML.plugins.photometry.filter_set import FilterSet
-from threeML.plugins.photometry.photometric_data import PhotometryData
 from threeML.config.config import threeML_config
 from threeML.io.file_utils import if_directory_not_existing_then_make, file_existing_and_readable
+from threeML.plugins.PhotometryLike import PhotometryLike
+from threeML.plugins.photometry import FilterSet
+from threeML.plugins.photometry import PhotometryData
 
 __instrument_name = "GROND 7-band photometric imager"
 
