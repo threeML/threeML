@@ -957,32 +957,32 @@ class JointLikelihood(object):
 
         # NOTE: suppress the UnicodeWarning, which is due to a small problem in matplotlib
 
-        with custom_warnings.catch_warnings():
-
-            # Cause all warnings to always be triggered.
-            custom_warnings.simplefilter("ignore", UnicodeWarning)
-
-            im = sub.imshow(cc,
-                            cmap=palette,
-                            extent=[b.min(), b.max(), a.min(), a.max()],
-                            aspect=float(b.max() - b.min()) / (a.max() - a.min()),
-                            origin='lower',
-                            norm=BoundaryNorm(bounds, 256),
-                            interpolation='bicubic',
-                            vmax=(self._current_minimum + delta_chi2).max())
+        # with custom_warnings.catch_warnings():
+        #
+        #     # Cause all warnings to always be triggered.
+        #     custom_warnings.simplefilter("ignore", UnicodeWarning)
+        #
+        #     im = sub.imshow(cc,
+        #                     cmap=palette,
+        #                     extent=[b.min(), b.max(), a.min(), a.max()],
+        #                     aspect=float(b.max() - b.min()) / (a.max() - a.min()),
+        #                     origin='lower',
+        #                     norm=BoundaryNorm(bounds, 256),
+        #                     interpolation='bicubic',
+        #                     vmax=(self._current_minimum + delta_chi2).max())
 
         # Plot the color bar with the sigmas
-        cb = fig.colorbar(im, boundaries=bounds[:-1])
-        lbounds = [0]
-        lbounds.extend(bounds[:-1])
-        cb.set_ticks(lbounds)
-        ll = ['']
-        ll.extend(map(lambda x: r'%i $\sigma$' % x, sigmas))
-        cb.set_ticklabels(ll)
+        # cb = fig.colorbar(im, boundaries=bounds[:-1])
+        # lbounds = [0]
+        # lbounds.extend(bounds[:-1])
+        # cb.set_ticks(lbounds)
+        # ll = ['']
+        # ll.extend(map(lambda x: r'%i $\sigma$' % x, sigmas))
+        # cb.set_ticklabels(ll)
 
         # Align the labels to the end of the color level
-        for t in cb.ax.get_yticklabels():
-            t.set_verticalalignment('baseline')
+        # for t in cb.ax.get_yticklabels():
+        #     t.set_verticalalignment('baseline')
 
         # Draw the line contours
         sub.contour(b, a, cc, self._current_minimum + delta_chi2,
