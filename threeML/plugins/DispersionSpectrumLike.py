@@ -89,6 +89,11 @@ class DispersionSpectrumLike(SpectrumLike):
 
         self._rsp.plot_matrix()
 
+    @property
+    def response(self):
+
+        return self._rsp
+
     def _output(self):
         # type: () -> pd.Series
 
