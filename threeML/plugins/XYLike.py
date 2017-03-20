@@ -1,5 +1,7 @@
-from threeML.plugin_prototype import PluginPrototype
 import numpy as np
+import matplotlib.pyplot as plt
+
+from threeML.plugin_prototype import PluginPrototype
 
 from astromodels import Model, PointSource
 
@@ -65,6 +67,38 @@ class XYLike(PluginPrototype):
             self._yerr = None
             self._has_errors = True
 
+        # This will keep track of the simulated datasets we generate
+        self._n_simulated_datasets = 0
+
+    @classmethod
+    def from_function(cls, name, function, x, yerr):
+
+        y = function(x)
+
+        xyl_gen = XYLike("generator", x, y, yerr)
+
+        pts = PointSource("fake", 0.0, 0.0, function)
+
+        model = Model(pts)
+
+        xyl_gen.set_model(model)
+
+        return xyl_gen.get_simulated_dataset(name)
+
+    @property
+    def x(self):
+
+        return self._x
+
+    @property
+    def y(self):
+
+        return self._y
+
+    @property
+    def y_err(self):
+
+        return self._yerr
 
     @property
     def is_poisson(self):
@@ -93,19 +127,28 @@ class XYLike(PluginPrototype):
 
         self._likelihood_model = likelihood_model_instance
 
+    def _get_total_expectation(self):
+
+        n_point_sources = self._likelihood_model.get_number_of_point_sources()
+
+        assert n_point_sources > 0, "You need to have at least one point source defined"
+        assert self._likelihood_model.get_number_of_extended_sources() == 0, "XYLike does not support extended sources"
+
+        # Make a function which will stack all point sources (XYLike do not support spatial dimension)
+
+        expectation = np.sum(map(lambda source: source(self._x),
+                                 self._likelihood_model.point_sources.values()),
+                             axis=0)
+
+        return expectation
+
     def get_log_like(self):
         """
         Return the value of the log-likelihood with the current values for the
         parameters
         """
 
-        n_point_sources = self._likelihood_model.get_number_of_point_sources()
-
-        # Make a function which will stack all point sources (XYLike do not support spatial dimension)
-
-        expectation = np.sum(map(lambda source: source(self._x),
-                             self._likelihood_model.point_sources.values()),
-                             axis=0)
+        expectation = self._get_total_expectation()
 
         if self._is_poisson:
 
@@ -121,6 +164,44 @@ class XYLike(PluginPrototype):
             assert np.all(np.isfinite(chi2_))
 
             return np.sum(chi2_) * (-1)
+
+    def get_simulated_dataset(self, new_name=None):
+
+        assert self._has_errors, "You cannot simulate a dataset if the original dataset has no errors"
+
+        self._n_simulated_datasets += 1
+
+        if new_name is None:
+
+            new_name = "%s_sim%i" % (self.name, self._n_simulated_datasets)
+
+        # Get total expectation from model
+        expectation = self._get_total_expectation()
+
+        if self._is_poisson:
+
+            new_y = np.random.poisson(expectation)
+
+        else:
+
+            new_y = np.random.normal(expectation, self._yerr)
+
+        return type(self)(new_name, self._x, new_y, yerr=self._yerr, poisson_data=self._is_poisson)
+
+    def plot(self, x_label='x', y_label='y', x_scale='linear', y_scale='linear'):
+
+        fig, sub = plt.subplots(1,1)
+
+        sub.errorbar(self.x, self.y, yerr=self.y_err, fmt='.')
+
+        sub.set_xscale(x_scale)
+        sub.set_yscale(y_scale)
+
+        sub.set_xlabel(x_label)
+        sub.set_ylabel(y_label)
+
+        return fig
+
 
     def inner_fit(self):
         """
@@ -149,7 +230,7 @@ class XYLike(PluginPrototype):
 
         # This is a wrapper to give an easier way to fit simple data without having to go through the definition
         # of sources
-        pts = PointSource("fake", 0.0, 0.0, function)
+        pts = PointSource("source", 0.0, 0.0, function)
 
         model = Model(pts)
 
