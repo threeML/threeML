@@ -315,10 +315,6 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
     timeout = max(1.5 * max(5.0, float(estimatedTimeForTheQuery)), 120)  # Seconds
     refreshTime = min(float(estimatedTimeForTheQuery) / 2.0, 5.0)  # Seconds
 
-    # When the query will be completed, the page will contain this string:
-    # The state of your query is 2 (Query complete)
-    endString = "The state of your query is 2 (Query complete)"
-
     # precompile Url regular expression
     regexpr = re.compile("wget (.*.fits)")
 
