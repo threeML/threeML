@@ -1,16 +1,26 @@
 # NOTE: XSpec must be loaded before any other plugin/package from threeML because otherwise it could
 # complain about conflicting CFITSIO libraries
-try:
+import os
 
-    import xspec
+if os.environ.get("HEADAS") is not None:
 
-except ImportError:
+    # Try to import xspec
 
-    has_pyxspec = False
+    try:
+
+        import xspec
+
+    except ImportError:
+
+        has_pyxspec = False
+
+    else:
+
+        has_pyxspec = True
 
 else:
 
-    has_pyxspec = True
+    has_pyxspec = False
 
 import pytest
 import numpy as np
