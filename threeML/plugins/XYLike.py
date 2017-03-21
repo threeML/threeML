@@ -180,6 +180,9 @@ class XYLike(PluginPrototype):
         :return: an BinnedSpectrum or child instance
         """
 
+        raise NotImplementedError('cannot get simulated data from XYLike yet')
+
+
         assert self._likelihood_model is not None, "You need to set up a model before randomizing"
 
         # Keep track of how many syntethic datasets we have generated
