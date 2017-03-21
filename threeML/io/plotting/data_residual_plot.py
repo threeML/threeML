@@ -18,6 +18,8 @@ class ResidualPlot(object):
 
 
 
+
+
     def add_model_step(self, xmin, xmax, xwidth, y, residuals, label, color='r'):
         """
 
@@ -94,7 +96,7 @@ class ResidualPlot(object):
                      color=color)
 
 
-    def finalize(self, xlabel='x', ylabel='y',xscale='log',yscale='log', show_legend=True):
+    def finalize(self, xlabel='x', ylabel='y',xscale='log',yscale='log', show_legend=True,invert_y=False):
         """
 
         :param xlabel:
@@ -140,6 +142,9 @@ class ResidualPlot(object):
         # NOTE: this must be placed *after* tight_layout, otherwise it will be ineffective
 
         self._fig.subplots_adjust(hspace=0)
+
+        if invert_y:
+            self._ax.set_ylim(self._ax.get_ylim()[::-1])
 
 
         return self._fig

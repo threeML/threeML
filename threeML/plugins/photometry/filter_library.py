@@ -72,35 +72,40 @@ class FilterLibrary(object):
         # create attributes which are lib.observatory.instrument
         # and the instrument attributes are speclite FilterResponse objects
 
-        for observatory, value in self._library.iteritems():
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
 
-            # create a node for the observatory
-            this_node = ObservatoryNode(value)
+            print('Loading optical filters')
 
-            # attach it to the object
+            for observatory, value in self._library.iteritems():
 
-            setattr(self, observatory, this_node)
+                # create a node for the observatory
+                this_node = ObservatoryNode(value)
 
-            # now get the instruments
+                # attach it to the object
 
-            for instrument, value2 in value.iteritems():
+                setattr(self, observatory, this_node)
+
+                # now get the instruments
+
+                for instrument, value2 in value.iteritems():
 
 
-                # update the instruments
+                    # update the instruments
 
-                self._instruments.append(instrument)
+                    self._instruments.append(instrument)
 
-                # create the filter response via speclite
+                    # create the filter response via speclite
 
-                filter_path = os.path.join(get_speclite_filter_path(), observatory, instrument)
+                    filter_path = os.path.join(get_speclite_filter_path(), observatory, instrument)
 
-                filters_to_load = ["%s-%s.ecsv" % (filter_path, filter) for filter in value2]
+                    filters_to_load = ["%s-%s.ecsv" % (filter_path, filter) for filter in value2]
 
-                this_filter = spec_filter.load_filters(*filters_to_load)
+                    this_filter = spec_filter.load_filters(*filters_to_load)
 
-                # attach the filters to the observatory
+                    # attach the filters to the observatory
 
-                setattr(this_node, instrument, this_filter)
+                    setattr(this_node, instrument, this_filter)
 
         self._instruments.sort()
 

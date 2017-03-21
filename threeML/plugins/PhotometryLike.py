@@ -1,38 +1,100 @@
 import numpy as np
 
 from threeML.plugins.XYLike import XYLike
-from threeML.plugins.photometry.photometric_data import PhotometryData
 from threeML.plugins.photometry.filter_set import FilterSet
 
 
 __instrument_name = "Generic photometric data"
 
 class PhotometryLike(XYLike):
-    def __init__(self, name, photometry_data, filter_set, verbose=True):
-        # type: (str, PhotometryData, FilterSet, bool) -> object
+    def __init__(self, name, filters, **data):
+        """
+        The photometry plugin is desinged to fit optical/IR/UV photometric data from a given
+        filter system. Filters are given in the form a speclite (http://speclite.readthedocs.io)
+        FitlerResponse or FilterSequence objects. 3ML contains a vast number of filters via the SVO
+        VO service: http://svo2.cab.inta-csic.es/svo/theory/fps/ and can be accessed via:
 
-        assert isinstance(photometry_data, PhotometryData), 'data must be of type PhotometryData'
-        assert isinstance(filter_set, FilterSet), 'filters must be of type FilterSet'
+        from threeML.plugins.photometry.filter_library import threeML_filter_library
 
-        assert photometry_data.n_bands == filter_set.n_bands, 'number of data filters does not equal number of filters'
+        One can also construct their own filters with speclite.
 
-        # make sure that the filter names are in order and the same
-        assert np.all(
-            photometry_data.filter_names == filter_set.filter_names), 'filter names do not match or are not in order'
+        Example:
 
-        self._mask = np.ones(photometry_data.n_bands, dtype=bool)
+        grond = PhotometryLike('GROND',
+                       filters=threeML_filter_library.ESO.GROND,
+                       g=(20.93,.23),
+                       r=(20.6,0.12),
+                       i=(20.4,.07),
+                       z=(20.3,.04),
+                       J=(20.0,.03),
+                       H=(19.8,.03),
+                       K=(19.7,.04))
 
-        self._photometry_data = photometry_data
-        self._filter_set = filter_set
+
+        Magnitudes and errors are entered as keyword arguments where the key is the filter name and
+        the argument is a tuple containing the data. You can exclude data for individual filters and
+        they will be ignored during the fit.
+
+        NOTE: PhotometryLike expects apparent AM magnitudes. Please calibrate your data to this system
+
+
+        :param name: plugin name
+        :param filters: speclite filters
+        :param data: keyword args of band name and tuple(mag, mag error)
+        """
+
+
+        # convert names so that only the filters are present
+        # speclite uses '-' to separate instrument and filter
+
+        names = [fname.split('-')[1] for fname in filters.names]
+
+        # since we may only have a few of the  filters in use
+        # we will mask the filters not needed. The will stay fixed
+        # during the life of the plugin
+
+        starting_mask = np.zeros(len(names), dtype=bool)
+
+        for band in data.keys():
+
+            assert band in names, 'band %s is not a member of the filter set %s'%(band,'blah')
+            starting_mask[ names.index(band)] = True
+
+        # create a filter set and use only the bands that were specified
+
+        self._filter_set = FilterSet(filters, starting_mask)
+
+
+        self._magnitudes = np.zeros(self._filter_set.n_bands)
+
+        self._magnitude_errors = np.zeros(self._filter_set.n_bands)
+
+        # we want to fill the magnitudes in the same order as the
+        # the filters
+
+        for i, band in enumerate(self._filter_set.filter_names):
+
+            self._magnitudes[i] = data[band][0]
+            self._magnitude_errors[i] = data[band][1]
+
+        self._mask = np.ones(self._filter_set.n_bands, dtype=bool)
 
         # pass thru to XYLike
 
         super(PhotometryLike, self).__init__(name=name,
-                                             x=filter_set.average_wavelength, # dummy x values
-                                             y=photometry_data.magnitudes,
-                                             yerr=photometry_data.magnitude_errors,
+                                             x=self._filter_set.effective_wavelength, # dummy x values
+                                             y=self._magnitudes,
+                                             yerr=self._magnitude_errors,
                                              poisson_data=False)
 
+
+    @property
+    def magnitudes(self):
+        return self._magnitudes
+
+    @property
+    def magnitude_errors(self):
+        return self._magnitude_errors
 
     def set_active_filters(self, *filter_names):
         """
@@ -60,9 +122,9 @@ class PhotometryLike(XYLike):
         # reconstruct the plugin with selected data
 
         super(PhotometryLike, self).__init__(name=self.name,
-                                             x=self._filter_set.average_wavelength[self._mask],  # dummy x values
-                                             y=self._photometry_data.magnitudes[self._mask],
-                                             yerr=self._photometry_data.magnitude_errors[self._mask],
+                                             x=self._filter_set.effective_wavelength[self._mask],  # dummy x values
+                                             y=self._magnitudes[self._mask],
+                                             yerr=self._magnitude_errors[self._mask],
                                              poisson_data=False)
 
     def set_inactive_filters(self, *filter_names):
@@ -88,17 +150,25 @@ class PhotometryLike(XYLike):
 
         # reconstruct the plugin with selected data
 
+
         super(PhotometryLike, self).__init__(name=self.name,
-                                             x=self._filter_set.average_wavelength[self._mask],
-                                             y=self._photometry_data.magnitudes[self._mask],
-                                             yerr=self._photometry_data.magnitude_errors[self._mask],
+                                             x=self._filter_set.effective_wavelength[self._mask],  # dummy x values
+                                             y=self._magnitudes[self._mask],
+                                             yerr=self._magnitude_errors[self._mask],
                                              poisson_data=False)
 
     def set_model(self, likelihood_model):
+        """
+        set the likelihood model
+        :param likelihood_model:
+        :return:
+        """
 
         super(PhotometryLike, self).set_model(likelihood_model)
 
         n_point_sources = self._likelihood_model.get_number_of_point_sources()
+
+        # sum up the differential
 
         def differential_flux(energies):
 
@@ -113,9 +183,9 @@ class PhotometryLike(XYLike):
 
         self._filter_set.set_model(differential_flux)
 
-    def _get_expectation(self):
+    def _get_expectations(self):
 
-        return self._filter_set.effective_stimulus()
+        return self._filter_set.ab_magnitudes()[self._mask]
 
     def display_filters(self):
         """

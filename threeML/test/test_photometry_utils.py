@@ -1,12 +1,11 @@
 import pytest
-import numpy as np
-
-from threeML.plugins.photometry.filter_set import FilterSet
-from threeML.plugins.GRONDLike import GRONDLike
-from threeML.io.plotting.post_process_data_plots import display_photometry_model_magnitudes
-from threeML.data_list import DataList
-from threeML.classicMLE.joint_likelihood import JointLikelihood
 from astromodels import *
+from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.data_list import DataList
+from threeML.io.plotting.post_process_data_plots import display_photometry_model_magnitudes
+from threeML.plugins.GRONDLike import GRONDLike
+from threeML.plugins.photometry import FilterSet
+
 
 def test_filter_set():
     dummy_filter_name = ['g']

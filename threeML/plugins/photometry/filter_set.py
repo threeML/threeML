@@ -1,226 +1,20 @@
-import collections
+import speclite.filters as spec_filters
+import astropy.units as astro_units
 import numpy as np
-import matplotlib.pyplot as plt
+import astropy.constants as constants
 
-import pysynphot
-import pysynphot.units as synphot_units
-import os
-import speclite
+from threeML.utils.interval import IntervalSet
 
-from threeML.io.plotting.cmap_cycle import cmap_intervals
 
+conversion_factor=(constants.c**2 * constants.h**2).to('keV2 * cm2')
 
-class FilterSet_pysynphot(object):
-    def __init__(self, filter_names, wave_lengths, transmission_curves, magnitude_systems, wavesunits='nm'):
-        """
 
-        :param filter_names: array of filter names
-        :param wave_lengths: the wave lengths for each transmission curve
-        :param transmission_curves: the transmission or throughput curves
-        :param magnitude_systems: the magnitude system for each transmission curve
-        :param wavesunits: the units of the wave length. see pysynphot for appropriate units http://pysynphot.readthedocs.io/en/latest/units.html?
-        """
+class  NotASpeclikeFilter(RuntimeError):
+    pass
 
-
-
-        self._transmission_curves = np.atleast_2d(transmission_curves)
-
-        self._wave_lengths = np.atleast_2d(wave_lengths)
-
-        self._magnitude_systems = magnitude_systems
-
-        self._filter_names = np.array(filter_names)
-
-        self._waveunits = wavesunits
-
-        assert len(self._filter_names) == len(self._magnitude_systems), 'magnitude systems and filter names are different lengths'
-
-        assert len(self._wave_lengths) == len(self._filter_names), 'wave lengths and filter names are different lengths'
-
-        assert self._transmission_curves.shape == self._wave_lengths.shape, 'the wavenlengths and transmission curves are diffrent shapes'
-
-        self._n_bands = len(filter_names)
-
-        # build the filter curves with pysynphot
-
-        self._build_filters()
-
-        self._model_set = False
-
-
-        # even when units are specified on the wave table
-        # pysynphot operation return in anstroms. So we need a
-        # converter
-
-        self._angstrom = synphot_units.Angstrom()
-
-    def _build_filters(self):
-
-        # collect the band passes into an ordered dict
-
-        self._bandpass = collections.OrderedDict()
-
-        for name, wavelength, curve in zip(self._filter_names, self._wave_lengths, self._transmission_curves):
-            bandpass = pysynphot.ArrayBandpass(wave=wavelength,
-                                               throughput=curve,
-                                               name=name,
-                                               waveunits=self._waveunits
-                                               )
-
-            self._bandpass[name] = bandpass
-
-    def set_model(self, differential_flux):
-        """
-        Wrap astromodels model into a pysynphot model and assign it to an observation
-        """
-
-        wrapper = AstromodelWrapper(differential_flux)
-
-        self._observations = collections.OrderedDict()
-
-        # now set the model for stimulus with the filter
-        for k, v in self._bandpass.iteritems():
-            self._observations[k] = pysynphot.Observation(wrapper, v)
-
-        self._model_set = True
-
-    def effective_stimulus(self):
-        """
-        return the effective stimulus of the model and filter for the given
-        magnitude system
-        :return:
-        """
-
-        assert self._model_set, 'no likelihood model has been set'
-
-        return np.array(
-            [obs.effstim(mag_sys) for obs, mag_sys in zip(self._observations.itervalues(), self._magnitude_systems)])
-
-    def plot_filters(self):
-        """
-        plot the filter/ transmission curves
-        :return: fig
-        """
-
-        fig, ax = plt.subplots()
-
-        cc = cmap_intervals(self._n_bands, 'spectral')
-        i = 0
-        for key, band in self._bandpass.iteritems():
-            ax.fill_between(band.wave,
-                            0.,
-                            band.throughput,
-                            color=cc[i],
-                            alpha=.8,
-                            label=key)
-
-            i += 1
-        ax.legend()
-        ax.set_ylabel('Throughput')
-        ax.set_xlabel(self._waveunits)
-        ax.set_ylim(bottom=0., top=1.)
-
-        return fig
-
-    @property
-    def effective_widths(self):
-
-        widths = np.array([self._angstrom.Convert(band.photbw(),self._waveunits) for band in self._bandpass.itervalues()])
-
-        return widths
-
-    @property
-    def n_bands(self):
-        """
-
-        :return: the number of bands
-        """
-
-        return self._filter_names.shape[0]
-
-    @property
-    def filter_names(self):
-        """
-
-        :return: the filter names
-        """
-
-        return self._filter_names
-
-    @property
-    def average_wavelength(self):
-        """
-
-        :return: the average wave length of the filters
-        """
-
-        return [self._angstrom.Convert(band.avgwave(),self._waveunits) for band in self._bandpass.itervalues()]
-
-    @property
-    def waveunits(self):
-        """
-
-        :return: the pysynphot wave units
-        """
-
-        return self._waveunits
-
-
-hc = 12.3984129 # keV A
-h = 4.1356674E-18 # keV s
-
-class AstromodelWrapper(pysynphot.spectrum.AnalyticSpectrum):
-    def __init__(self, differential_flux):
-        """
-        wrap and astromodel call into the pysynphot
-        model.
-        """
-
-        # we must shift A -> keV in the function input
-
-        waveunits = pysynphot.units.Units('angstrom')  # go to keV
-
-        # photolam units are pht /s /cm2/ A
-        # thus, we must shift A -> keV for astromodels
-
-        fluxunits = pysynphot.units.Units('photnu')  # make our own flux unit
-
-        self._differential_flux = differential_flux
-
-        super(AstromodelWrapper, self).__init__(waveunits, fluxunits)
-
-
-    def __call__(self, wavelength):
-
-        # the function argument from astromodels expects keV
-        # but pysynphot will give us angstrom,
-        # so we convert E = hc/lambda
-
-        # the output of the function is expected to be :
-        #     pht/ s / cm2 / Hz
-        # so we convert keV to Hz via E = h nu
-
-
-
-
-        return self._differential_flux(hc / wavelength) * h
-
-
-
-
-
-class FilterBuilder(object):
-
-    def __init__(self):
-
-        pass
-
-
-
-#######
 
 class FilterSet(object):
-    def __init__(self, filter):
+    def __init__(self, filter, mask=None):
         """
 
         :param filter_names: array of filter names
@@ -230,15 +24,88 @@ class FilterSet(object):
         :param wavesunits: the units of the wave length. see pysynphot for appropriate units http://pysynphot.readthedocs.io/en/latest/units.html?
         """
 
+        if isinstance(filter,spec_filters.FilterResponse):
+
+            # we will make a sequence
+
+            self._filters = spec_filters.FilterSequence([filter])
+
+        elif isinstance(filter,spec_filters.FilterSequence):
+
+            self._filters = filter  # type: spec_filters.FilterSequence
+
+        else:
+
+            raise NotASpeclikeFilter('filter must be a speclite FilterResponse or FilterSequence')
+
+
+        if mask is not None:
+
+            tmp = []
+
+            for condition, response in zip(mask, self._filters):
+
+                if condition:
+
+                    tmp.append(response)
+
+
+            self._filters = spec_filters.FilterSequence(tmp)
+
+            self._names = np.array([name.split('-')[1] for name in self._filters.names])
+            self._long_name = self._filters.names
+
+
 
 
 
         self._model_set = False
 
+        # calculate the FWHM
 
-        self._filter = filter
+        self._calculate_fwhm()
 
 
+    @property
+    def wavelength_bounds(self):
+
+        return self._wavebounds
+
+    def _calculate_fwhm(self):
+        """
+        calculate the FWHM of the filters
+        :return:
+        """
+
+        wmin = []
+        wmax = []
+
+
+
+        for filter in self._filters:
+
+            response = filter.response
+            max_response =  response.max()
+            idx_max = response.argmax()
+            half_max = 0.5 * max_response
+
+            idx1 = abs(response[:idx_max] -
+                         half_max).argmin()
+
+            idx2 = abs(response[idx_max:] -
+                         half_max).argmin() + idx_max
+
+            # have to grab the private member here
+            # bc the library does not expose it!
+
+            w1 = filter._wavelength[idx1]
+            w2 = filter._wavelength[idx2]
+
+
+            wmin.append(w1)
+            wmax.append(w2)
+
+        self._wavebounds = IntervalSet.from_starts_and_stops(wmin,wmax)
 
 
     def set_model(self, differential_flux):
@@ -246,27 +113,28 @@ class FilterSet(object):
         Wrap astromodels model into a pysynphot model and assign it to an observation
         """
 
-        wrapper = AstromodelWrapper(differential_flux)
+        def wrapped_model(x):
+            return differential_flux(x) * conversion_factor / x ** 3
 
-        self._observations = collections.OrderedDict()
 
-        # now set the model for stimulus with the filter
-        for k, v in self._bandpass.iteritems():
-            self._observations[k] = pysynphot.Observation(wrapper, v)
+
+        self._wrapped_model = wrapped_model
 
         self._model_set = True
 
-    def effective_stimulus(self):
+    def ab_magnitudes(self):
         """
         return the effective stimulus of the model and filter for the given
         magnitude system
-        :return:
+        :return: np.ndarray of ab magnitudes
         """
 
         assert self._model_set, 'no likelihood model has been set'
 
-        return np.array(
-            [obs.effstim(mag_sys) for obs, mag_sys in zip(self._observations.itervalues(), self._magnitude_systems)])
+
+        return self._filters.get_ab_magnitudes(self._wrapped_model).to_pandas().loc[0]
+
+
 
     def plot_filters(self):
         """
@@ -274,32 +142,8 @@ class FilterSet(object):
         :return: fig
         """
 
-        fig, ax = plt.subplots()
+        spec_filters.plot_filters(self._filters)
 
-        cc = cmap_intervals(self._n_bands, 'spectral')
-        i = 0
-        for key, band in self._bandpass.iteritems():
-            ax.fill_between(band.wave,
-                            0.,
-                            band.throughput,
-                            color=cc[i],
-                            alpha=.8,
-                            label=key)
-
-            i += 1
-        ax.legend()
-        ax.set_ylabel('Throughput')
-        ax.set_xlabel(self._waveunits)
-        ax.set_ylim(bottom=0., top=1.)
-
-        return fig
-
-    @property
-    def effective_widths(self):
-
-        widths = np.array([self._angstrom.Convert(band.photbw(),self._waveunits) for band in self._bandpass.itervalues()])
-
-        return widths
 
     @property
     def n_bands(self):
@@ -308,7 +152,7 @@ class FilterSet(object):
         :return: the number of bands
         """
 
-        return self._filter_names.shape[0]
+        return len(self._filters.names)
 
     @property
     def filter_names(self):
@@ -317,16 +161,25 @@ class FilterSet(object):
         :return: the filter names
         """
 
-        return self._filter_names
+        return self._names
 
     @property
-    def average_wavelength(self):
+    def native_filter_names(self):
+        """
+        the native filter names
+        :return:
+        """
+
+        return self._filters.names
+
+    @property
+    def effective_wavelength(self):
         """
 
         :return: the average wave length of the filters
         """
 
-        return [self._angstrom.Convert(band.avgwave(),self._waveunits) for band in self._bandpass.itervalues()]
+        return self._filters.effective_wavelengths
 
     @property
     def waveunits(self):
@@ -335,4 +188,4 @@ class FilterSet(object):
         :return: the pysynphot wave units
         """
 
-        return self._waveunits
+        return astro_units.Angstrom

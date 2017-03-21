@@ -3,6 +3,10 @@ import pandas as pd
 
 from threeML.io.rich_display import display
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
+from threeML.plugins.photometry.filter_set import FilterSet
+import collections
+
+
 
 class PhotometryData(object):
     def __init__(self, magnitudes, magnitude_errors, filter_names, tstart=None, tstop=None):
@@ -14,6 +18,15 @@ class PhotometryData(object):
         :param magnitude_errors: observed magnitude errors
         :param filter_names: filter names associated with the magnitudes
         """
+
+
+
+        assert len(magnitude_errors) == len(magnitudes), 'magnitudes and errors must be the same length!'
+        assert len(filter_names) == len(magnitudes), 'magnitudes and errors must be the same length!'
+
+
+
+
         self._magnitudes = np.array(magnitudes)
 
         self._magnitude_errors = np.array(magnitude_errors)
@@ -21,6 +34,8 @@ class PhotometryData(object):
         self._filter_names = np.array(filter_names)
 
         self._time = None
+
+
 
         if tstart is not None:
 
