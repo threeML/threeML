@@ -14,9 +14,9 @@ def test_filter_set():
 
     fs1 = FilterSet(sf)
 
-    sf = spec_filters.load_filter('bessell-r')
+    #sf = spec_filters.load_filter('bessell-r')
 
-    fs2 = FilterSet(sf)
+    #fs2 = FilterSet(sf)
 
     with pytest.raises(NotASpeclikeFilter):
 
