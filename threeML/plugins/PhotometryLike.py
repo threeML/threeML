@@ -1,4 +1,6 @@
 import numpy as np
+import copy
+import collections
 
 from threeML.plugins.XYLike import XYLike
 from threeML.plugins.photometry.filter_set import FilterSet
@@ -47,7 +49,20 @@ class PhotometryLike(XYLike):
         # convert names so that only the filters are present
         # speclite uses '-' to separate instrument and filter
 
-        names = [fname.split('-')[1] for fname in filters.names]
+        try:
+
+            # we have a filter sequence
+
+            names = [fname.split('-')[1] for fname in filters.names]
+
+        except(AttributeError):
+
+            # we have a filter response
+
+            names = [filters.name.split('-')[1]]
+
+
+
 
         # since we may only have a few of the  filters in use
         # we will mask the filters not needed. The will stay fixed
@@ -77,7 +92,6 @@ class PhotometryLike(XYLike):
             self._magnitudes[i] = data[band][0]
             self._magnitude_errors[i] = data[band][1]
 
-        self._mask = np.ones(self._filter_set.n_bands, dtype=bool)
 
         # pass thru to XYLike
 
@@ -114,6 +128,7 @@ class PhotometryLike(XYLike):
                 if name == select_name:
                     self._mask[i] = True
 
+
         print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
                                                                     len(self._mask),
                                                                     ', '.join(
@@ -135,6 +150,7 @@ class PhotometryLike(XYLike):
         """
 
         # scroll through the known filter names
+
 
         for i, name in enumerate(self._filter_set.filter_names):
 
@@ -185,7 +201,7 @@ class PhotometryLike(XYLike):
 
     def _get_expectations(self):
 
-        return self._filter_set.ab_magnitudes()[self._mask]
+        return self._filter_set.ab_magnitudes()[self._mask].as_matrix()
 
     def display_filters(self):
         """
@@ -195,3 +211,33 @@ class PhotometryLike(XYLike):
         """
 
         return self._filter_set.plot_filters()
+
+    def _new_plugin(self, name, x, y, yerr):
+        """
+        construct a new PhotometryLike plugin. allows for returning a new plugin
+        from simulated data set while customizing the constructor
+        further down the inheritance tree
+
+        :param name: new name
+        :param x: new x
+        :param y: new y
+        :param yerr: new yerr
+        :return: new XYLike
+
+
+        """
+
+        bands = collections.OrderedDict()
+
+        for i, band in enumerate(self._filter_set.filter_names):
+
+            bands[band] = (y[i],yerr[i])
+
+        new_photo = PhotometryLike(name,filters=self._filter_set.speclite_filters, **bands)
+
+        # apply the current mask
+
+        new_photo._mask = copy.copy(self._mask)
+
+        return new_photo
+
