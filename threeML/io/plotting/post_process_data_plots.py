@@ -363,7 +363,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                                          new_energy_max,
                                          new_chan_width,
                                          new_model_rate,
-                                         llabel='%s Model' % data._name,
+                                         label='%s Model' % data._name,
                                          color=model_color)
 
 
