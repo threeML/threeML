@@ -204,30 +204,11 @@ class FermipyLike(PluginPrototype):
 
         instance = object.__new__(cls)
 
-        if 'test' in kwargs:
+        # we do not catch here
 
-            if kwargs['test']:
+        _expensive_imports_hook()
 
-                # Do not return the instance, just try to import the modules
-                try:
-
-                    _expensive_imports_hook()
-
-                except:
-
-                    return False
-
-                else:
-
-                    return True
-
-        else:
-
-            # we do not catch here
-
-            _expensive_imports_hook()
-
-            return instance
+        return instance
 
     def __init__(self, name, fermipy_config):
         """
