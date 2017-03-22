@@ -110,15 +110,15 @@ def test_hist_like():
 
         res, lh = hlike.fit(normal)
 
-        norm = res['value']['fake.spectrum.main.Gaussian.F']
-        mu = res['value']['fake.spectrum.main.Gaussian.mu']
-        sigma = res['value']['fake.spectrum.main.Gaussian.sigma']
+        norm = res['value']['source.spectrum.main.Gaussian.F']
+        mu = res['value']['source.spectrum.main.Gaussian.mu']
+        sigma = res['value']['source.spectrum.main.Gaussian.sigma']
 
         assert is_within_tolerance(1E6,norm,relative_tolerance=1E2)
         assert is_within_tolerance(1,mu,relative_tolerance=.5)
         assert is_within_tolerance(1,sigma,relative_tolerance=.01)
 
-        ps = PointSource('fake',0,0,spectral_shape=normal)
+        ps = PointSource('source',0,0,spectral_shape=normal)
 
         model = Model(ps)
 
