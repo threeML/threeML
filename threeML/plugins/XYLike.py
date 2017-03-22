@@ -1,5 +1,6 @@
 from threeML.plugin_prototype import PluginPrototype
 import numpy as np
+import copy
 
 from astromodels import Model, PointSource
 
@@ -66,6 +67,10 @@ class XYLike(PluginPrototype):
             self._has_errors = True
 
         self._n_synthetic_datasets=0
+
+        # currently not used by XYLike, but needed for subclasses
+
+        self._mask = np.ones(self._x.shape,dtype=bool)
 
 
     @property
@@ -180,8 +185,11 @@ class XYLike(PluginPrototype):
         :return: an BinnedSpectrum or child instance
         """
 
-        raise NotImplementedError('cannot get simulated data from XYLike yet')
+        # unmask the data
 
+        old_mask = copy.copy(self._mask)
+
+        self._mask = np.ones(self._x.shape,dtype=bool)
 
         assert self._likelihood_model is not None, "You need to set up a model before randomizing"
 
@@ -195,9 +203,12 @@ class XYLike(PluginPrototype):
 
         expectation = self._get_expectations()
 
+
+
         if self._is_poisson:
 
-            pass
+            randomized_y_err = None
+            raise NotImplementedError('cannot get simulated poisson data from XYLike yet')
 
         else:
 
@@ -209,15 +220,48 @@ class XYLike(PluginPrototype):
 
             randomized_y[idx] = np.random.normal(loc=expectation[idx],scale=self._yerr[idx])
 
-
-
             randomized_y_err = copy.copy(self._yerr)
 
-            # No randomization for the background in this case
 
-            randomized_background_counts = self._background_counts
+        # remask the data BEFORE creating the new plugin
 
-            randomized_background_count_err = None
+        self._mask = old_mask
+
+        new_plugin = self._new_plugin(name=new_name,
+                                      x=self._x,
+                                      y=randomized_y,
+                                      yerr=randomized_y_err)
+
+
+
+
+        return new_plugin
+
+
+    def _new_plugin(self, name,x,y,yerr):
+        """
+        construct a new plugin. allows for returning a new plugin
+        from simulated data set while customizing the constructor
+        further down the inheritance tree
+
+        :param name: new name
+        :param x: new x
+        :param y: new y
+        :param yerr: new yerr
+        :return: new XYLike
+
+
+        """
+
+
+        new_xy =  XYLike(name,x,y,yerr,poisson_data=self._is_poisson)
+
+        # apply the current mask
+
+        new_xy._mask = copy.copy(self._mask)
+
+        return new_xy
+
 
 
 
