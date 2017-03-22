@@ -8,9 +8,16 @@ from astromodels import clone_model
 
 class GoodnessOfFit(object):
 
-    def __init__(self, joint_likelihood_instance, like_data_frame):
+    def __init__(self, joint_likelihood_instance, like_data_frame=None):
 
         self._jl_instance = joint_likelihood_instance
+
+        # Make sure we have a fit
+        assert self._jl_instance.results is not None, "You have to perform a fit before using GoodnessOfFit"
+
+        if like_data_frame is None:
+
+            like_data_frame = self._jl_instance.results.get_statistic_frame()
 
         # Restore best fit and store the reference value for the likelihood
         self._jl_instance.restore_best_fit()
