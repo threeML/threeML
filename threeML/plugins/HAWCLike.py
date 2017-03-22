@@ -430,8 +430,7 @@ class HAWCLike(PluginPrototype):
             sub1.set_xlabel("Analysis bin")
 
             sub1.set_ylabel(r"$\frac{{excess - "
-                            "mod.}}{{{}.}}$".format("err" if pulls else "mod"),
-                            fontsize=20)
+                            "mod.}}{{{}.}}$".format("err" if pulls else "mod"))
 
             sub1.set_xlim(x_limits)
 
