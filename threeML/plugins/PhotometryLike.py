@@ -199,7 +199,7 @@ class PhotometryLike(XYLike):
 
         self._filter_set.set_model(differential_flux)
 
-    def _get_expectations(self):
+    def _get_total_expectation(self):
 
         return self._filter_set.ab_magnitudes()[self._mask].as_matrix()
 

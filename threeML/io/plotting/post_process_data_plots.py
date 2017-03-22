@@ -746,7 +746,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
         sort_idx = avg_wave_length.argsort()
 
-        expected_model_magnitudes = data._get_expectations()[sort_idx]
+        expected_model_magnitudes = data._get_total_expectation()[sort_idx]
         magnitudes = data.magnitudes[sort_idx]
         mag_errors= data.magnitude_errors[sort_idx]
         avg_wave_length = avg_wave_length[sort_idx]

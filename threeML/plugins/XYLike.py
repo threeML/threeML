@@ -221,7 +221,7 @@ class XYLike(PluginPrototype):
 
         """
 
-        new_xy = XYLike(name, x, y, yerr, poisson_data=self._is_poisson)
+        new_xy = type(self)(name, x, y, yerr, poisson_data=self._is_poisson)
 
         # apply the current mask
 
