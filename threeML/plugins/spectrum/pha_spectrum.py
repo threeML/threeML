@@ -118,7 +118,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         if "CORRFILE" in header:
 
-            if header.get("CORRFILE").upper().strip() != "NONE":
+            if (header.get("CORRFILE").upper().strip() != "NONE") and (header.get("CORRFILE").upper().strip() != ''):
                 raise RuntimeError("CORRFILE is not yet supported")
 
         # See if there is there is a QUALITY==0 in the header
@@ -242,6 +242,15 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
                     warnings.warn("ANCRFILE is not set. This is not a compliant OGIP file. Assuming no ARF.")
 
                     gathered_keywords['ancrfile'] = None
+
+                elif keyname == "FILTER":
+
+                    # Some non-compliant files have no FILTER because they don't need one. Don't fail, but issue a
+                    # warning
+
+                    warnings.warn("FILTER is not set. This is not a compliant OGIP file. Assuming no FILTER.")
+
+                    gathered_keywords['filter'] = None
 
                 else:
 
