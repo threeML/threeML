@@ -20,7 +20,7 @@ class ResidualPlot(object):
 
 
 
-    def add_model_step(self, xmin, xmax, xwidth, y, residuals, label, color='r'):
+    def add_model_step(self, xmin, xmax, xwidth, y, label, color='r'):
         """
 
         :param xmin:
