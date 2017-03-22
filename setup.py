@@ -50,6 +50,7 @@ setup(
               'threeML/plugins/spectrum',
               'threeML/plugins/Fermi_LAT',
               'threeML/plugins/Fermi_GBM',
+              'threeML/plugins/photometry',
               'threeML/classicMLE',
               'threeML/catalogs',
               'threeML/io',
