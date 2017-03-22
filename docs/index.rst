@@ -9,7 +9,10 @@ Welcome to The Multi-Mission Maximum Likelihood framework's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 10
+    :maxdepth: 10
+
+    notebooks/Quickstart.ipynb
+
 
 .. automodule:: threeML
     :members:
