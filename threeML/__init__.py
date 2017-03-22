@@ -1,37 +1,14 @@
 import glob
 import imp
-import os
-import sys
+import traceback
 
 from version import __version__
-
 
 # Import everything from astromodels
 from astromodels import *
 
 # Now import the optimizers first (to avoid conflicting libraries problems)
 from .minimizer.minimization import _minimizers
-
-# This dynamically loads a module and return it in a variable
-
-def is_module_importable(module_full_path):
-
-    try:
-
-        _ = imp.load_source('__', module_full_path)
-
-    except:
-
-        return False
-
-    else:
-
-        return True
-
-
-
-# Import in the current namespace everything under the
-# models directory
 
 # This must be here before the automatic import of subpackages,
 # otherwise we will incur in weird issues with other packages
@@ -52,63 +29,54 @@ except ImportError:
                          "the C/C++ interface (currently HAWC)",
                          custom_exceptions.CppInterfaceNotAvailable)
 
-# Import the classic Maximum Likelihood Estimation package
-
-from .classicMLE.joint_likelihood import JointLikelihood
-
-# Import the Bayesian analysis
-from .bayesian.bayesian_analysis import BayesianAnalysis
-
-# Import the DataList class
-
-from data_list import DataList
-
-
-# Find the directory containing 3ML
-
-threeML_dir = os.path.abspath(os.path.dirname(__file__))
-
-# Import all modules here
-
-sys.path.insert(0, threeML_dir)
-mods = [os.path.basename(f)[:-3] for f in glob.glob(os.path.join(threeML_dir, "*.py"))]
-
-# Filter out __init__
-
-modsToImport = filter(lambda x: x.find("__init__") < 0, mods)
-
-# Import everything in current directory
-
-for mod in modsToImport:
-    exec ("from %s import *" % mod)
-
 # Now look for plugins
+
+# This verifies if a module is importable
+
+def is_module_importable(module_full_path):
+
+    try:
+
+        _ = imp.load_source('__', module_full_path)
+
+    except:
+
+        return False, traceback.format_exc()
+
+    else:
+
+        return True, '%s imported ok' % module_full_path
 
 plugins_dir = os.path.join(os.path.dirname(__file__), "plugins")
 
 found_plugins = glob.glob(os.path.join(plugins_dir, "*.py"))
 
-
 # Filter out __init__
 
 found_plugins = filter(lambda x: x.find("__init__") < 0, found_plugins)
 
-_available_plugins = {}
+_working_plugins = {}
+_not_working_plugins = {}
+
+# Loop over each candidates plugins and check if it is importable
 
 for i, module_full_path in enumerate(found_plugins):
 
-    # Loop over each candidates plugins
+    plugin_name = os.path.splitext(os.path.basename(module_full_path))[0]
 
-    if not is_module_importable(module_full_path):
+    is_importable, failure_traceback = is_module_importable(module_full_path)
+
+    if not is_importable:
 
         custom_warnings.warn("Could not import plugin %s. Do you have the relative instrument software installed "
                              "and configured?" % os.path.basename(module_full_path),
                              custom_exceptions.CannotImportPlugin)
+
+        _not_working_plugins[plugin_name] = failure_traceback
+
         continue
 
     else:
-
-        plugin_name = os.path.splitext(os.path.basename(module_full_path))[0]
 
         # First get the instrument name
         try:
@@ -134,8 +102,10 @@ for i, module_full_path in enumerate(found_plugins):
 
         else:
 
-            _available_plugins[__instrument_name] = plugin_name
+            _working_plugins[__instrument_name] = plugin_name
 
+
+# Now some convenience functions
 
 def get_available_plugins():
     """
@@ -145,9 +115,18 @@ def get_available_plugins():
     """
     print("Available plugins:\n")
 
-    for instrument, class_name in _available_plugins.iteritems():
+    for instrument, class_name in _working_plugins.items():
 
         print("%s for %s" % (class_name, instrument))
+
+
+def _display_plugin_traceback(plugin):
+
+    print("#############################################################")
+    print("\nCouldn't import plugin %s" % plugin)
+    print("\nTraceback:\n")
+    print(_not_working_plugins[plugin])
+    print("#############################################################")
 
 
 def is_plugin_available(plugin):
@@ -158,16 +137,22 @@ def is_plugin_available(plugin):
     :return: True or False
     """
 
-    if plugin in _available_plugins.values():
+    if plugin in _working_plugins.values():
 
         # FIXME
         if plugin == "FermipyLike":
 
-            # Test it
-            available = FermipyLike.__new__(FermipyLike, test=True)
+            try:
 
-            if not available:
+                _ = FermipyLike.__new__(FermipyLike, test=True)
+
+            except:
+
                 # Do not register it
+
+                _not_working_plugins[plugin] = traceback.format_exc()
+
+                _display_plugin_traceback(plugin)
 
                 return False
 
@@ -175,7 +160,26 @@ def is_plugin_available(plugin):
 
     else:
 
-        return False
+        if plugin in _not_working_plugins:
+
+            _display_plugin_traceback(plugin)
+
+            return False
+
+        else:
+
+            raise RuntimeError("Plugin %s is not known" % plugin)
+
+# Import the classic Maximum Likelihood Estimation package
+
+from .classicMLE.joint_likelihood import JointLikelihood
+
+# Import the Bayesian analysis
+from .bayesian.bayesian_analysis import BayesianAnalysis
+
+# Import the DataList class
+
+from data_list import DataList
 
 # Import the joint likelihood set
 from .classicMLE.joint_likelihood_set import JointLikelihoodSet, JointLikelihoodSetAnalyzer
@@ -187,7 +191,6 @@ from .io.plotting import *
 from .io.calculate_flux import calculate_point_source_flux
 
 from .utils.stats_tools import ModelComparison
-
 
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
@@ -218,6 +221,7 @@ from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
 
 # Import the results loader
 from threeML.analysis_results import load_analysis_results
+
 
 # Check that the number of threads is set to 1 for all multi-thread libraries
 # otherwise numpy operations will be way slower than what they could be, since
