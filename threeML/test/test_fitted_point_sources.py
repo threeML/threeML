@@ -145,8 +145,8 @@ def test_fitted_point_source_flux_calculations():
                      'sum_sources': True}
 
 
-    calculate_point_source_flux(1,10,analysis_to_test[0],flux_unit=good_i_flux_units[0],energy_unit='keV')
+    _calculate_point_source_flux(1, 10, analysis_to_test[0], flux_unit=good_i_flux_units[0], energy_unit='keV')
 
-    calculate_point_source_flux(1, 10, analysis_to_test[-2], **flux_keywords)
+    _calculate_point_source_flux(1, 10, analysis_to_test[-2], **flux_keywords)
 
 
