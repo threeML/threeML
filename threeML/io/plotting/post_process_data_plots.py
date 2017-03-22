@@ -773,7 +773,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
         return residual_plot.finalize(xlabel="Wavelength\n(%s)"%data._filter_set.waveunits,
                                       ylabel='Magnitudes',
-                                      xscale='log',
+                                      xscale='linear',
                                       yscale='linear',
                                       invert_y=True)
 
