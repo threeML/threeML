@@ -1,6 +1,8 @@
+from threeML.plugin_prototype import PluginPrototype
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import copy
 
 from threeML.plugin_prototype import PluginPrototype
 
@@ -76,6 +78,9 @@ class XYLike(PluginPrototype):
         self._joint_like_obj = None
 
         self._likelihood_model = None
+        # currently not used by XYLike, but needed for subclasses
+
+        self._mask = np.ones(self._x.shape, dtype=bool)
 
     @classmethod
     def from_function(cls, name, function, x, yerr):
@@ -260,7 +265,7 @@ class XYLike(PluginPrototype):
         # Make a function which will stack all point sources (XYLike do not support spatial dimension)
 
         expectation = np.sum(map(lambda source: source(self._x),
-                                 self._likelihood_model.point_sources.values()),
+                             self._likelihood_model.point_sources.values()),
                              axis=0)
 
         return expectation
@@ -294,6 +299,13 @@ class XYLike(PluginPrototype):
 
         self._n_simulated_datasets += 1
 
+        # unmask the data
+
+        old_mask = copy.copy(self._mask)
+
+        self._mask = np.ones(self._x.shape, dtype=bool)
+
+
         if new_name is None:
 
             new_name = "%s_sim%i" % (self.name, self._n_simulated_datasets)
@@ -309,7 +321,34 @@ class XYLike(PluginPrototype):
 
             new_y = np.random.normal(expectation, self._yerr)
 
-        return type(self)(new_name, self._x, new_y, yerr=self._yerr, poisson_data=self._is_poisson, quiet=True)
+        # remask the data BEFORE creating the new plugin
+
+        self._mask = old_mask
+
+        return self._new_plugin(new_name, self._x, new_y, yerr=self._yerr)
+
+    def _new_plugin(self, name, x, y, yerr):
+        """
+        construct a new plugin. allows for returning a new plugin
+        from simulated data set while customizing the constructor
+        further down the inheritance tree
+
+        :param name: new name
+        :param x: new x
+        :param y: new y
+        :param yerr: new yerr
+        :return: new XYLike
+
+
+        """
+
+        new_xy = type(self)(name, x, y, yerr, poisson_data=self._is_poisson)
+
+        # apply the current mask
+
+        new_xy._mask = copy.copy(self._mask)
+
+        return new_xy
 
     def plot(self, x_label='x', y_label='y', x_scale='linear', y_scale='linear'):
 

@@ -197,6 +197,10 @@ from .utils.step_parameter_generator import step_generator
 
 from .parallel.parallel_client import parallel_computation
 
+
+# Import optical filters
+#from threeML.plugins.photometry.filter_factory import threeML_filter_library
+
 # Import catalogs
 from threeML.catalogs import *
 

@@ -3,6 +3,8 @@
 import os
 import sys
 
+import glob
+
 from setuptools import setup
 
 # Get the version number
@@ -29,6 +31,8 @@ def is_module_available(module_name):
 
         return True
 
+
+
 # This list will contain the messages to print just before the end of the setup
 # so that the user actually note them, instead of loosing them in the tons of
 # messages of the build process
@@ -54,7 +58,8 @@ setup(
               'threeML/utils',
               'threeML/utils/fitted_objects',
               'threeML/parallel',
-              'threeML/config'],
+              'threeML/config'
+              ],
 
     version=__version__,
 
@@ -83,7 +88,7 @@ setup(
     #             ('threeML/config', ["threeML/config/threeML_config.yml"])
     #             ],
 
-        package_data={'threeML': ['data/*'], },
+        package_data={'threeML': ['data/*','data/optical_filters/*/*.ecsv'], },
     include_package_data=True,
 
     install_requires=[
@@ -100,7 +105,8 @@ setup(
         'corner>=1.0.2',
         'pandas',
         'html2text',
-        'requests'
+        'requests',
+        'speclite'
     ])
 
 # Check for optional dependencies
