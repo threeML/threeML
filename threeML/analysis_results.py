@@ -20,6 +20,7 @@ from threeML.io.table import NumericMatrix, long_path_formatter
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.version import __version__
 from threeML.random_variates import RandomVariates
+from threeML.io.calculate_flux import _calculate_point_source_flux
 
 
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
@@ -631,6 +632,72 @@ class _AnalysisResults(object):
         best_fit_table = pd.DataFrame.from_items(data)
 
         return best_fit_table
+
+    def get_point_source_flux(self, ene_min, ene_max, sources = (), confidence_level=0.68,
+                              flux_unit='erg/(s cm2)', use_components=False, components_to_use=(),
+                              sum_sources=False):
+        """
+
+        :param ene_min: minimum energy (an astropy quantity, like 1.0 * u.keV. You can also use a frequency, like
+        1 * u.Hz)
+        :param ene_max: maximum energy (an astropy quantity, like 10 * u.keV. You can also use a frequency, like
+        10 * u.Hz)
+        :param sources: Use this to specify the name of the source or a tuple/list of source names to be plotted.
+        If you don't use this, all sources will be plotted.
+        :param confidence_level: the confidence level for the error (default: 0.68)
+        :param flux_unit: (optional) astropy flux unit in string form (can be
+        :param use_components: plot the components of each source (default: False)
+        :param components_to_use: (optional) list of string names of the components to plot: including 'total'
+        :param sum_sources: (optional) if True, also the sum of all sources will be plotted
+        :return:
+        """
+
+        # Convert the ene_min and ene_max in pure numbers in keV
+        _ene_min = ene_min.to("keV").value
+        _ene_max = ene_max.to("keV").value
+
+        _params = {
+            'confidence_level': confidence_level,
+            'equal_tailed': True,  # FIXME: what happens if this is False?
+            'best_fit': 'median',
+            'energy_unit': 'keV',
+            'flux_unit': flux_unit,
+            'use_components': use_components,
+            'components_to_use': components_to_use,
+            'sources_to_use': sources,
+            'sum_sources': sum_sources,
+
+        }
+
+        mle_results, bayes_results = _calculate_point_source_flux(_ene_min, _ene_max, self, **_params)
+
+        # The output contains one source per row
+        def _format_error(row):
+
+            rep = uncertainty_formatter(row['flux'].value, row['low bound'].value, row['hi bound'].value)
+
+            # Represent the unit as a string
+            unit_rep = str(row['flux'].unit)
+
+            return pd.Series({'flux': "%s %s" % (rep, unit_rep)})
+
+        if mle_results is not None:
+
+            # Format the errors and display the resulting data frame
+
+            display(mle_results.apply(_format_error, axis=1))
+
+            # Return the dataframe
+            return mle_results
+
+        elif bayes_results is not None:
+
+            # Format the errors and display the resulting data frame
+
+            display(bayes_results.apply(_format_error, axis=1))
+
+            # Return the dataframe
+            return bayes_results
 
 
 class BayesianResults(_AnalysisResults):
