@@ -2,7 +2,8 @@ import pytest
 from threeML import *
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
-import itertools
+from threeML.io.calculate_flux import _calculate_point_source_flux
+
 
 def make_simple_model():
     triggerName = 'bn090217206'
