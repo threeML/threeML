@@ -16,13 +16,20 @@ class  NotASpeclikeFilter(RuntimeError):
 class FilterSet(object):
     def __init__(self, filter, mask=None):
         """
+        This class handles the optical filter functionality. It is build around speclite:
+        http://speclite.readthedocs.io/en/latest/
 
-        :param filter_names: array of filter names
-        :param wave_lengths: the wave lengths for each transmission curve
-        :param transmission_curves: the transmission or throughput curves
-        :param magnitude_systems: the magnitude system for each transmission curve
-        :param wavesunits: the units of the wave length. see pysynphot for appropriate units http://pysynphot.readthedocs.io/en/latest/units.html?
+        It accepts speclite fitlerresponse or sequences, allowing for full customization
+        of the fitlers.
+
+
+
+        :param filter: a speclite FitlerResponse or FilterSequence
+        :param mask: an initial mask on the filters (bool array) that remains fixed
         """
+
+        # we explicitly violate duck typing here in order to have one routine
+        # to return values from the filters (speclite appends 's' to the end of sequence calls)
 
         if isinstance(filter,spec_filters.FilterResponse):
 
@@ -38,7 +45,6 @@ class FilterSet(object):
 
             raise NotASpeclikeFilter('filter must be a speclite FilterResponse or FilterSequence')
 
-
         if mask is not None:
 
             tmp = []
@@ -51,14 +57,11 @@ class FilterSet(object):
 
 
             self._filters = spec_filters.FilterSequence(tmp)
-
             self._names = np.array([name.split('-')[1] for name in self._filters.names])
             self._long_name = self._filters.names
 
 
-
-
-
+        # haven't set a likelihood model yet
         self._model_set = False
 
         # calculate the FWHM
@@ -68,6 +71,10 @@ class FilterSet(object):
 
     @property
     def wavelength_bounds(self):
+        """
+        IntervalSet of FWHM bounds of the filters
+        :return:
+        """
 
         return self._wavebounds
 
@@ -80,7 +87,8 @@ class FilterSet(object):
         wmin = []
         wmax = []
 
-
+        # go through each filter
+        # and find the non-gaussian FWHM bounds
 
         for filter in self._filters:
 
@@ -110,7 +118,11 @@ class FilterSet(object):
 
     def set_model(self, differential_flux):
         """
-        Wrap astromodels model into a pysynphot model and assign it to an observation
+        set the model of that will be used during the convolution. Not that speclite
+        considers a differential flux to be in units of erg/s/cm2/lambda so we must convert
+        astromodels into the proper units (using astropy units!)
+
+
         """
 
         def wrapped_model(x):
@@ -133,7 +145,6 @@ class FilterSet(object):
 
 
         return self._filters.get_ab_magnitudes(self._wrapped_model).to_pandas().loc[0]
-
 
 
     def plot_filters(self):
@@ -171,6 +182,16 @@ class FilterSet(object):
         """
 
         return self._filters.names
+
+    @property
+    def speclite_filters(self):
+        """
+        exposes the speclite fitlers for simulations
+
+        :return:
+        """
+
+        return self._filters
 
     @property
     def effective_wavelength(self):
