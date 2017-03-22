@@ -218,3 +218,21 @@ In order to use the HAWC plugin, you will also need to install cthreeML (run thi
 environment, you can still install the packages by adding the ```--user``` option at the
 end of each ```pip``` command.
 
+### Acknowledgements 
+3ML makes use of the Spanish Virtual Observatory's Filter Profile servce (http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NIRT).
+
+If you use these profiles in your research, please consider citing them:
+
+This research has made use of the SVO Filter Profile Service (http://svo2.cab.inta-csic.es/theory/fps/) supported from the Spanish MINECO through grant AyA2014-55216
+and we would appreciate if you could include the following references in your publication:
+
+The SVO Filter Profile Service. Rodrigo, C., Solano, E., Bayo, A. http://ivoa.net/documents/Notes/SVOFPS/index.html
+The Filter Profile Service Access Protocol. Rodrigo, C., Solano, E. http://ivoa.net/documents/Notes/SVOFPSDAL/index.html
+
+
+### Citing 3ML
+
+
+
+
+

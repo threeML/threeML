@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib.ticker import MaxNLocator
 
 import threeML.plugins.SpectrumLike
+import threeML.plugins.PhotometryLike
 import threeML.plugins.HistLike
 from threeML.utils.binner import Rebinner
 from threeML.utils.stats_tools import Significance
@@ -10,8 +11,10 @@ from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 from threeML.io.plotting.step_plot import step_plot
+from threeML.io.plotting.data_residual_plot import ResidualPlot
 
 from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.plugins.PhotometryLike import PhotometryLike
 
 # This file contains plots which are plot in data space after a model has been
 # assigned to the plugin.
@@ -148,7 +151,9 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             data_keys), "You need to provide at least a number of model colors equal to the " \
                         "number of datasets"
 
-    fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
+    #fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
+
+    residual_plot = ResidualPlot(**kwargs)
 
     # go thru the detectors
     for key, data_color, model_color, min_rate in zip(data_keys, data_colors, model_colors, min_rates):
@@ -290,37 +295,6 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             delta_energy[1].append(e_max - this_mean_energy)
             mean_energy.append(this_mean_energy)
 
-        ax.errorbar(mean_energy,
-                    new_rate / new_chan_width,
-                    yerr=new_err / new_chan_width,
-                    xerr=delta_energy,
-                    fmt='.',
-                    markersize=3,
-                    linestyle='',
-                    # elinewidth=.5,
-                    alpha=.9,
-                    capsize=0,
-                    label=data._name,
-                    color=data_color)
-
-        if step:
-
-            step_plot(np.asarray(zip(new_energy_min, new_energy_max)),
-                      new_model_rate / new_chan_width,
-                      ax, alpha=.8,
-                      label='%s Model' % data._name, color=model_color)
-
-        else:
-
-            # We always plot the model un-rebinned here
-
-            # Mask the array so we don't plot the model where data have been excluded
-            # y = expected_model_rate / chan_width
-            y = np.ma.masked_where(~data._mask, expected_model_rate / chan_width)
-
-            x = np.mean([energy_min, energy_max], axis=0)
-
-            ax.plot(x, y, alpha=.8, label='%s Model' % data._name, color=model_color)
 
         # Residuals
 
@@ -375,41 +349,45 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
                 raise NotImplementedError("Not yet implemented")
 
-        ax1.axhline(0, linestyle='--', color='k')
-        ax1.errorbar(mean_energy,
-                     residuals,
-                     yerr=np.ones_like(residuals),
-                     capsize=0,
-                     fmt='.',
-                     markersize=3,
-                     color=data_color)
+        residual_plot.add_data(mean_energy,
+                               new_rate / new_chan_width,
+                               residuals,
+                               yerr=new_err / new_chan_width,
+                               xerr=delta_energy,
+                               label=data._name,
+                               color=data_color)
 
-    if show_legend:
-        ax.legend(fontsize='x-small', loc=0)
+        if step:
 
-    ax.set_ylabel("Net rate\n(counts s$^{-1}$ keV$^{-1}$)")
+            residual_plot.add_model_step(new_energy_min,
+                                         new_energy_max,
+                                         new_chan_width,
+                                         new_model_rate,
+                                         label='%s Model' % data._name,
+                                         color=model_color)
 
-    ax.set_xscale('log')
-    ax.set_yscale('log', nonposy='clip')
 
-    ax1.set_xscale("log")
+        else:
 
-    locator = MaxNLocator(prune='upper', nbins=5)
-    ax1.yaxis.set_major_locator(locator)
+            # We always plot the model un-rebinned here
 
-    ax1.set_xlabel("Energy\n(keV)")
-    ax1.set_ylabel("Residuals\n($\sigma$)")
+            # Mask the array so we don't plot the model where data have been excluded
+            # y = expected_model_rate / chan_width
+            y = np.ma.masked_where(~data._mask, expected_model_rate / chan_width)
 
-    # This takes care of making space for all labels around the figure
+            x = np.mean([energy_min, energy_max], axis=0)
 
-    fig.tight_layout()
+            residual_plot.add_model(x,
+                                    y,
+                                    label='%s Model' % data._name,
+                                    color=model_color)
 
-    # Now remove the space between the two subplots
-    # NOTE: this must be placed *after* tight_layout, otherwise it will be ineffective
+    return residual_plot.finalize(xlabel="Energy\n(keV)",
+                                  ylabel="Net rate\n(counts s$^{-1}$ keV$^{-1}$)",
+                                  xscale='log',
+                                  yscale='log',
+                                  show_legend=show_legend)
 
-    fig.subplots_adjust(hspace=0)
-
-    return fig
 
 
 def display_histogram_fit(analysis, data=(), **kwargs):
@@ -644,3 +622,165 @@ def display_histogram_fit(analysis, data=(), **kwargs):
     fig.subplots_adjust(hspace=0)
 
     return fig
+
+
+def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
+    """
+
+    Display the fitted model count spectrum of one or more Spectrum plugins
+
+    NOTE: all parameters passed as keyword arguments that are not in the list below, will be passed as keyword arguments
+    to the plt.subplots() constructor. So for example, you can specify the size of the figure using figsize = (20,10)
+
+    :param args: one or more instances of Spectrum plugin
+    :param min_rate: (optional) rebin to keep this minimum rate in each channel (if possible). If one number is
+    provided, the same minimum rate is used for each dataset, otherwise a list can be provided with the minimum rate
+    for each dataset
+    :param data_cmap: (str) (optional) the color map used to extract automatically the colors for the data
+    :param model_cmap: (str) (optional) the color map used to extract automatically the colors for the models
+    :param data_colors: (optional) a tuple or list with the color for each dataset
+    :param model_colors: (optional) a tuple or list with the color for each folded model
+    :param show_legend: (optional) if True (default), shows a legend
+    :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
+    with linear interpolation between each bin
+    :return: figure instance
+
+
+    """
+
+    # If the user supplies a subset of the data, we will use that
+
+    if not data:
+
+        data_keys = analysis.data_list.keys()
+
+    else:
+
+        data_keys = data
+
+    # Now we want to make sure that we only grab OGIP plugins
+
+    new_data_keys = []
+
+    for key in data_keys:
+
+        # Make sure it is a valid key
+        if key in analysis.data_list.keys():
+
+            if isinstance(analysis.data_list[key], PhotometryLike):
+
+                new_data_keys.append(key)
+
+            else:
+
+                custom_warnings.warn("Dataset %s is not of the Photometery kind. Cannot be plotted by "
+                                     "display_photometry_model_magnitudes" % key)
+
+    if not new_data_keys:
+        RuntimeError(
+            'There were no valid Photometry data requested for plotting. Please use the detector names in the data list')
+
+    data_keys = new_data_keys
+
+    # Default is to show the model with steps
+    step = True
+
+    data_cmap = threeML_config['photo']['data plot cmap']  # plt.cm.rainbow
+    model_cmap = threeML_config['photo']['model plot cmap']  # plt.cm.nipy_spectral_r
+
+    # Legend is on by default
+    show_legend = True
+
+    # Default colors
+
+    data_colors = cmap_intervals(len(data_keys), data_cmap)
+    model_colors = cmap_intervals(len(data_keys), model_cmap)
+
+    # Now override defaults according to the optional keywords, if present
+
+    if 'show_legend' in kwargs:
+        show_legend = bool(kwargs.pop('show_legend'))
+
+    if 'step' in kwargs:
+        step = bool(kwargs.pop('step'))
+
+
+
+    if 'data_cmap' in kwargs:
+        data_cmap = plt.get_cmap(kwargs.pop('data_cmap'))
+        data_colors = cmap_intervals(len(data_keys), data_cmap)
+
+    if 'model_cmap' in kwargs:
+        model_cmap = kwargs.pop('model_cmap')
+        model_colors = cmap_intervals(len(data_keys), model_cmap)
+
+    if 'data_colors' in kwargs:
+        data_colors = kwargs.pop('data_colors')
+
+        assert len(data_colors) >= len(data_keys), "You need to provide at least a number of data colors equal to the " \
+                                                   "number of datasets"
+
+    if 'model_colors' in kwargs:
+        model_colors = kwargs.pop('model_colors')
+
+        assert len(model_colors) >= len(
+            data_keys), "You need to provide at least a number of model colors equal to the " \
+                        "number of datasets"
+
+    residual_plot = ResidualPlot(**kwargs)
+
+
+    # go thru the detectors
+    for key, data_color, model_color in zip(data_keys, data_colors, model_colors):
+
+
+        data = analysis.data_list[key]  # type: PhotometryLike
+
+
+        # get the expected counts
+
+
+        avg_wave_length = data._filter_set.effective_wavelength.value #type: np.ndarray
+
+        # need to sort because filters are not always in order
+
+        sort_idx = avg_wave_length.argsort()
+
+        expected_model_magnitudes = data._get_total_expectation()[sort_idx]
+        magnitudes = data.magnitudes[sort_idx]
+        mag_errors= data.magnitude_errors[sort_idx]
+        avg_wave_length = avg_wave_length[sort_idx]
+
+        residuals = (expected_model_magnitudes - magnitudes) / mag_errors
+
+        widths = data._filter_set.wavelength_bounds.widths[sort_idx]
+
+
+        residual_plot.add_data(x=avg_wave_length,
+                               y=magnitudes,
+                               xerr=widths,
+                               yerr=mag_errors,
+                               residuals=residuals,
+                               label=data._name,
+                               color=data_color)
+
+        residual_plot.add_model(avg_wave_length,
+                                expected_model_magnitudes,
+                                label='%s Model' % data._name,
+                                color=model_color)
+
+
+
+        return residual_plot.finalize(xlabel="Wavelength\n(%s)"%data._filter_set.waveunits,
+                                      ylabel='Magnitudes',
+                                      xscale='linear',
+                                      yscale='linear',
+                                      invert_y=True)
+
+
+
+
+
+
+
+
