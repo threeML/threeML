@@ -1,8 +1,8 @@
 __author__ = 'drjfunk'
 
-from threeML import *
-
-
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins.SwiftXRTLike import SwiftXRTLike
+import os
 
 from threeML.io.file_utils import within_directory
 
