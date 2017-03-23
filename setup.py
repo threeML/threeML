@@ -32,6 +32,20 @@ def is_module_available(module_name):
         return True
 
 
+# Create list of data files
+def find_data_files(directory):
+
+    paths = []
+
+    for (path, directories, filenames) in os.walk(directory):
+
+        for filename in filenames:
+
+            paths.append(os.path.join('..', path, filename))
+
+    return paths
+
+extra_files = find_data_files('threeML/data')
 
 # This list will contain the messages to print just before the end of the setup
 # so that the user actually note them, instead of loosing them in the tons of
@@ -89,7 +103,9 @@ setup(
     #             ('threeML/config', ["threeML/config/threeML_config.yml"])
     #             ],
 
-        package_data={'threeML': ['data/*','data/optical_filters/*/*.ecsv'], },
+    # NOTE: we use '' as package name because the extra_files already contain the full path from here
+
+        package_data={'': extra_files, },
     include_package_data=True,
 
     install_requires=[
