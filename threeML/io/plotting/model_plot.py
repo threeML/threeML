@@ -443,7 +443,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                     negative_error[neg_mask] = min(best_fit) * 0.9
 
-                if component_sum_dict_mle[component].is_dimensionless:
+                if np.any([c.dimensionless for c in component_sum_dict_mle[component]]):
 
                     plotter.add_dimensionless_model(energy_range=energy_range,
                                                     best_fit=best_fit,
@@ -537,7 +537,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                     negative_error = summed_analysis.lower_error
 
-                if component_sum_dict_bayes[component].is_dimensionless:
+                if np.any([c.dimensionless for c in component_sum_dict_bayes[component]]):
 
                     plotter.add_dimensionless_model(energy_range=energy_range,
                                                     best_fit=best_fit,
