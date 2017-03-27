@@ -70,7 +70,7 @@ class FluxConversion(object):
 
         tmp = self._model_converter[self._flux_type](self._test_value)
 
-        if tmp.unit == u.dimensionless_unscaled:
+        if tmp.unit == u.dimensionless_unscaled or tmp.unit == self._test_value.unit or tmp.unit == (self._test_value.unit)**2:
 
             # this is a multiplicative model
             self._conversion = 1.
