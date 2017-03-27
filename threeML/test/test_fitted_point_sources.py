@@ -28,7 +28,7 @@ def make_simple_model():
     return model, data_list
 
 
-def make_componets_model():
+def make_components_model():
 
     triggerName = 'bn090217206'
     ra = 204.9
@@ -52,11 +52,39 @@ def make_componets_model():
 
     return model, data_list
 
+def make_dless_components_model():
+
+    triggerName = 'bn090217206'
+    ra = 204.9
+    dec = -8.4
+    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../examples'))
+    obsSpectrum = os.path.join(datadir, "bn090217206_n6_srcspectra.pha{1}")
+    bakSpectrum = os.path.join(datadir, "bn090217206_n6_bkgspectra.bak{1}")
+    rspFile = os.path.join(datadir, "bn090217206_n6_weightedrsp.rsp{1}")
+    NaI6 = OGIPLike("NaI6", obsSpectrum, bakSpectrum, rspFile)
+    NaI6.set_active_measurements("10.0-30.0", "40.0-950.0")
+    data_list = DataList(NaI6)
+    powerlaw = Powerlaw()*Constant()
+    GRB = PointSource(triggerName, ra, dec, spectral_shape=powerlaw)
+    model = Model(GRB)
+
+    powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+    powerlaw.k_2 =1.
+    powerlaw.k_2.fix = True
+
+    #powerlaw.K_2.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    #powerlaw.xc_2.prior = Log_uniform_prior(lower_bound=100, upper_bound=1000)
+
+    return model, data_list
+
+
 simple_model, simple_data = make_simple_model()
 
-complex_model, complex_data = make_componets_model()
+complex_model, complex_data = make_components_model()
 # prepare mle
 
+dless_model, dless_data = make_dless_components_model()
 
 jl_simple = JointLikelihood(simple_model,simple_data)
 
@@ -65,6 +93,10 @@ jl_simple.fit()
 jl_complex = JointLikelihood(complex_model,complex_data)
 
 jl_complex.fit()
+
+jl_dless = JointLikelihood(dless_model,dless_data)
+
+jl_dless.fit()
 
 
 bayes_simple = BayesianAnalysis(simple_model, simple_data)
@@ -75,6 +107,10 @@ bayes_complex = BayesianAnalysis(complex_model, complex_data)
 
 
 bayes_complex.sample(10,10,20)
+
+bayes_dless = BayesianAnalysis(dless_model, dless_data)
+
+bayes_dless.sample(10,10,20)
 
 
 good_d_flux_units =['1/(cm2 s keV)', 'erg/(cm2 s keV)', 'erg2/(cm2 s keV)']
@@ -90,8 +126,10 @@ bad_flux_units = ['g']
 
 analysis_to_test = [jl_simple.results,
                     jl_complex.results,
+                    jl_dless.results,
                     bayes_simple.results,
-                    bayes_complex.results]
+                    bayes_complex.results,
+                    bayes_dless.results]
 
 
 
