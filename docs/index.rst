@@ -12,7 +12,7 @@ Contents:
     :maxdepth: 10
 
     notebooks/Quickstart.ipynb
-
+    notebooks/The 3ML workflow.ipynb
 
 .. automodule:: threeML
     :members:
