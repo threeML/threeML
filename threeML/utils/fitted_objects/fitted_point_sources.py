@@ -70,8 +70,23 @@ class FluxConversion(object):
 
         tmp = self._model_converter[self._flux_type](self._test_value)
 
-        self._conversion = tmp.unit.to(self._flux_unit)
+        if tmp.unit == u.dimensionless_unscaled or tmp.unit == self._test_value.unit or tmp.unit == (self._test_value.unit)**2:
 
+            # this is a multiplicative model
+            self._conversion = 1.
+            self._is_dimensionless = True
+
+
+        else:
+
+            self._conversion = tmp.unit.to(self._flux_unit)
+            self._is_dimensionless = False
+
+
+    @property
+    def is_dimensionless(self):
+
+        return self._is_dimensionless
 
     @property
     def model(self):
@@ -262,6 +277,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
 
 
+
             super(FittedPointSourceSpectralHandler, self).__init__(analysis_result,
                                                                    flux_function,
                                                                    parameter_names,
@@ -297,6 +313,13 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
                                                                    e1,
                                                                    e2)
 
+        self._is_dimensionless = converter.is_dimensionless
+
+
+    @property
+    def is_dimensionless(self):
+
+        return self._is_dimensionless
 
     @property
     def components(self):
