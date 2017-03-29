@@ -16,14 +16,3 @@ Contents:
 
 .. automodule:: threeML
     :members:
-
-.. autoclass:: JointLikelihood
-    :members:
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
