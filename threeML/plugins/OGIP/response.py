@@ -458,24 +458,26 @@ class OGIPResponse(InstrumentResponse):
 
         rsp = np.zeros([data.shape[0], n_channels], float)
 
-        n_grp = data.field("N_GRP")
+        n_grp = data.field("N_GRP")  # type: np.ndarray
 
         # The numbering of channels could start at 0, or at some other number (usually 1). Of course the indexing
         # of arrays starts at 0. So let's offset the F_CHAN column to account for that
 
-        f_chan = data.field("F_CHAN") - tlmin_fchan
-        n_chan = data.field("N_CHAN")
+        f_chan = data.field("F_CHAN") - tlmin_fchan  # type: np.ndarray
+        n_chan = data.field("N_CHAN")  # type: np.ndarray
 
         # In certain matrices where compression has not been used, n_grp, f_chan and n_chan are not array columns,
-        # but simple scalars. Expand then their dimensions so that we don't need to customize the code below
+        # but simple scalars. Expand then their dimensions so that we don't need to customize the code below.
+        # However, if the columns are variable-length arrays, then they do have ndmin = 1 but have dtype 'object'.
+        # In that case we don't want to add a dimension, as they are essentially a list of arrays.
 
-        if n_grp.ndim == 1:
+        if n_grp.ndim == 1 and data.field("N_CHAN").dtype != np.object:
             n_grp = np.expand_dims(n_grp, 1)
 
-        if f_chan.ndim == 1:
+        if f_chan.ndim == 1 and data.field("N_CHAN").dtype != np.object:
             f_chan = np.expand_dims(f_chan, 1)
 
-        if n_chan.ndim == 1:
+        if n_chan.ndim == 1 and data.field("N_CHAN").dtype != np.object:
             n_chan = np.expand_dims(n_chan, 1)
 
         matrix = data.field(column_name)
