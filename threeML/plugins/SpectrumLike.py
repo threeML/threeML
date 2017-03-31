@@ -1313,7 +1313,7 @@ class SpectrumLike(PluginPrototype):
 
         sig_obj = Significance(Non=self._observed_spectrum.total_count,
                                Noff=self._background_spectrum.total_count,
-                               alpha=self.exposure / self.background_exposure)
+                               alpha=np.round(self.exposure / self.background_exposure,decimals=3))
 
         if self._observed_spectrum.is_poisson and self._background_spectrum.is_poisson:
 

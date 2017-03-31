@@ -347,7 +347,7 @@ class PoissonResiduals(object):
 
     def __init__(self, Non, Noff, alpha=1.0):
 
-        assert alpha > 0 and alpha <= 1
+        assert alpha > 0 and alpha <= 1, 'alpha was %f' %alpha
 
         self.Non = np.array(Non, dtype=float, ndmin=1)
 
@@ -425,7 +425,7 @@ class Significance(object):
 
     def __init__(self, Non, Noff, alpha=1):
 
-        assert alpha > 0 and alpha <= 1
+        assert alpha > 0 and alpha <= 1,  'alpha was %f' %alpha
 
         self.Non = np.array(Non, dtype=float, ndmin=1)
 
