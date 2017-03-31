@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from astromodels.core.parameter import Parameter
-from astromodels.functions.functions import Uniform_prior
+from astromodels.functions.priors import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
 from astromodels import clone_model
 
