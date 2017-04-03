@@ -12,7 +12,7 @@ from astromodels.core.model import Model
 from astromodels.functions.functions import Powerlaw, Exponential_cutoff
 from astromodels.sources.point_source import PointSource
 
-from astromodels.functions.functions import Log_uniform_prior, Uniform_prior
+from astromodels.functions.priors import Log_uniform_prior, Uniform_prior
 
 from threeML.io.file_utils import within_directory
 
