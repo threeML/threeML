@@ -134,7 +134,7 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
             for component in mle_analyses[key]['component_names']:
 
-                print component
+
 
                 # if we want to plot all the components
 
