@@ -140,6 +140,8 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                 for component in mle_analyses[key]['components'].keys():
 
+                    print component
+
                     positive_error = None
                     negative_error = None
 
@@ -194,20 +196,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
 
 
-                    # ax.loglog(energy_range,
-                    #           best_fit,
-                    #           color=color_fit[color_itr],
-                    #           label=label,
-                    #           **_defaults['plot_style_kwargs'])
-                    #
-                    # if _defaults['show_contours']:
-                    #     ax.fill_between(energy_range,
-                    #                     negative_error,
-                    #                     positive_error,
-                    #                     facecolor=color_contour[color_itr],
-                    #                     **_defaults['contour_style_kwargs']
-                    #
-                    #                     )
 
                     color_itr += 1
 
