@@ -32,7 +32,6 @@ import os
 
 import matplotlib.pyplot as plt
 
-
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.io.progress_bar import progress_bar
@@ -51,7 +50,6 @@ def sample_with_progress(title, p0, sampler, n_samples, **kwargs):
     # This is only for producing the progress bar
 
     with progress_bar(n_samples, title=title) as progress:
-
         for i, result in enumerate(sampler.sample(p0, iterations=n_samples, **kwargs)):
             # Show progress
 
@@ -69,7 +67,6 @@ def sample_without_progress(p0, sampler, n_samples, **kwargs):
 
 
 class BayesianAnalysis(object):
-
     def __init__(self, likelihood_model, data_list, **kwargs):
         """
         Bayesian analysis.
@@ -245,7 +242,6 @@ class BayesianAnalysis(object):
 
         # Display results
         if not quiet:
-
             self._results.display()
 
         return self.samples
@@ -413,7 +409,6 @@ class BayesianAnalysis(object):
 
         # Sets the values of the parameters to their MAP values
         for i, parameter in enumerate(self._free_parameters):
-
             self._free_parameters[parameter].value = approximate_MAP_point[i]
 
         # Get the value of the posterior for each dataset at the MAP
@@ -422,7 +417,6 @@ class BayesianAnalysis(object):
         log_prior = self._log_prior(approximate_MAP_point)
 
         for dataset in self.data_list.values():
-
             log_posteriors[dataset.name] = dataset.get_log_like() + log_prior
 
         # Instance the result
@@ -673,7 +667,6 @@ class BayesianAnalysis(object):
                         if labels[i] == old_label:
                             labels[i] = new_label
 
-
             # default arguments
             default_args = {'show_titles': True, 'title_fmt': ".2g", 'labels': labels,
                             'quantiles': [0.16, 0.50, 0.84]}
@@ -753,497 +746,531 @@ class BayesianAnalysis(object):
 
         return fig
 
-    def compare_posterior(self, other_fit, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1.,
-                          parameters=None, renamed_parameters=None, **kwargs):
+    def compare_posterior(self, *other_fits, **kwargs):
         """
+        Create a corner plot from many different bayesian fits which allow for co-plotting of parameters marginals.
 
-        Create a corner plot from two different bayesian fits which allow for co-plotting of parameters marginals.
-
-        Args:
-            other_fit: Another fitted BayesianAnalysis object to compare top the this analysis
-            sigmas: list of sigma levels to include. 0 must be included to avoid hole in contour
-            cloud: bool. Whether or not to plot MC points
-            shade: bool. Fill in the contours
-            shade_alpha: alpha level of contours
-            parameters: list of parameters to plot
-            renamed_parameters: a python dictionary of parameters to rename.
+        :param other_fits: other fitted Bayesian analysis objects
+        :param parameters: parameters to plot
+        :param renamed_parameters: a python dictionary of parameters to rename.
              Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
              {'old label': 'new label'}
-            **kwargs: chainconsumer general keyword arguments
+        :param kwargs: chain consumer kwargs
+        :return:
 
-        Returns:
 
         """
 
         if not has_chainconsumer:
             RuntimeError("You must have chainconsumer installed to use this function")
 
-        if self.samples is not None:
-            assert len(self._free_parameters.keys()) == self.raw_samples[0].shape[0], ("Mismatch between sample"
-
-
-
-                                                                                       " dimensions and number of free"
-                                                                                       " parameters")
-
-        if other_fit.samples is not None:
-            assert len(other_fit._free_parameters.keys()) == other_fit.raw_samples[0].shape[0], (
-                "Mismatch between sample"
-
-
-
-                " dimensions and number of free"
-                " parameters")
-
-        labels = []
-        priors = []
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-            short_name = parameter_name.split(".")[-1]
-
-            labels.append(short_name)
-
-            priors.append(self._likelihood_model.parameters[parameter_name].prior)
-
-        labels_other = []
-        priors_other = []
-
-        for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.iteritems()):
-            short_name = parameter_name.split(".")[-1]
-
-            labels_other.append(short_name)
-
-            priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)
-
-        # Rename any parameters so that they can be plotted together.
-        # A dictionary is passed with keys = old label values = new label.
-
-        if renamed_parameters is not None:
-
-            for old_label, new_label in renamed_parameters.iteritems():
-
-                for i, _ in enumerate(labels):
-
-                    if labels[i] == old_label:
-                        labels[i] = new_label
-
-                for i, _ in enumerate(labels_other):
-
-                    if labels_other[i] == old_label:
-                        labels_other[i] = new_label
-
-
-        # Must remove underscores!
-
-        for i, val, in enumerate(labels):
-
-            if '$' not in labels[i]:
-                labels[i] = val.replace('_', ' ')
-
         cc = chainconsumer.ChainConsumer()
 
-        cc.add_chain(self.raw_samples, parameters=labels)
+        if self.samples is not None:
+            assert len(self._free_parameters.keys()) == self.raw_samples[0].shape[0], "Mismatch between sample " \
+                                                                                      "dimensions and number of free parameters"
 
-        cc.add_chain(other_fit.raw_samples, parameters=labels_other)
+            if 'parameters' in kwargs:
 
-        cc.configure_contour(cloud=cloud, shade=shade, shade_alpha=shade_alpha, sigmas=sigmas)
-        cc.configure_general(**kwargs)
-        fig = cc.plot(parameters=parameters, figsize='PAGE')
-
-        return fig
-
-    def plot_chains(self, thin=None):
-        """
-        Produce a plot of the series of samples for each parameter
-
-        :parameter thin: use only one sample every 'thin' samples
-        :return: a matplotlib.figure instance
-        """
-
-        figures = []
-
-        for parameter_name in self._free_parameters.keys():
-
-            figure, subplot = plt.subplots(1, 1)
-
-            if thin is None:
-
-                # Use all samples
-
-                subplot.plot(self.samples[parameter_name])
+                parameters = kwargs.pop('parameters')
 
             else:
 
-                assert isinstance(thin, int), "Thin must be a integer number"
+                parameters = None
 
-                subplot.plot(self.samples[parameter_name][::thin])
+            if 'renamed_parameters' in kwargs:
 
-            subplot.set_ylabel(parameter_name.replace(".", "\n"))
-            subplot.set_xlabel("sample #")
-
-            figures.append(figure)
-
-        return figures
-
-    def convergence_plots(self, n_samples_in_each_subset, n_subsets):
-        """
-        Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same
-        values if the MCMC has converged to the posterior distribution.
-
-        The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second
-        is to take random samples from the chain (bootstrap)
-
-        :param n_samples_in_each_subset: number of samples in each subset
-        :param n_subsets: number of subsets to take for each strategy
-        :return: a matplotlib.figure instance
-        """
-
-        # Compute all the quantities
-
-        averages = {}
-        bootstrap_averages = {}
-
-        variances = {}
-        bootstrap_variances = {}
-
-        n_samples = self._raw_samples[:, 0].shape[0]
-
-        stepsize = n_samples // n_subsets
-
-        assert stepsize > 10, "Too few samples for this method to be effective"
-
-        print("Stepsize for sliding window is %s" % stepsize)
-
-        for parameter_name in self._free_parameters.keys():
-
-            this_samples = self.samples[parameter_name]
-
-            # First compute averages and variances using the sliding window
-
-            this_averages = []
-            this_variances = []
-
-            for i in range(n_subsets):
-
-                idx1 = i * stepsize
-                idx2 = idx1 + n_samples_in_each_subset
-
-                if idx2 > n_samples - 1:
-                    break
-
-                this_averages.append(np.average(this_samples[idx1: idx2]))
-                this_variances.append(np.std(this_samples[idx1: idx2]))
-
-            averages[parameter_name] = this_averages
-
-            variances[parameter_name] = this_variances
-
-            # Now choose random samples and do the same
-
-            this_bootstrap_averages = []
-            this_bootstrap_variances = []
-
-            for i in range(n_subsets):
-                samples = np.random.choice(self.samples[parameter_name], n_samples)
-
-                this_bootstrap_averages.append(np.average(samples))
-                this_bootstrap_variances.append(np.std(samples))
-
-            bootstrap_averages[parameter_name] = this_bootstrap_averages
-            bootstrap_variances[parameter_name] = this_bootstrap_variances
-
-        # Now plot all these things
-
-        def plot_one_histogram(subplot, data, label):
-
-            nbins = self.freedman_diaconis_rule(data)
-
-            subplot.hist(data, nbins, label=label)
-
-            subplot.locator_params(nbins=4)
-
-        figures = []
-
-        for i, parameter_name in enumerate(self._free_parameters.keys()):
-            fig, subs = plt.subplots(1, 2, sharey=True)
-
-            fig.suptitle(parameter_name)
-
-            plot_one_histogram(subs[0], averages[parameter_name], 'sliding window')
-            plot_one_histogram(subs[0], bootstrap_averages[parameter_name], 'bootstrap')
-
-            subs[0].set_ylabel("N subsets")
-            subs[0].set_xlabel("Average")
-
-            plot_one_histogram(subs[1], variances[parameter_name], 'sliding window')
-            plot_one_histogram(subs[1], bootstrap_variances[parameter_name], 'bootstrap')
-
-            subs[1].set_xlabel("Std. deviation")
-
-            figures.append(fig)
-
-        return figures
-
-    @staticmethod
-    def freedman_diaconis_rule(data):
-        """
-        Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data
-
-        :param data: an array of data
-        :return: the optimal number of bins
-        """
-
-        q25, q75 = np.percentile(data, [25.0, 75.0])
-        iqr = abs(q75 - q25)
-
-        binsize = 2 * iqr * pow(len(data), -1 / 3.0)
-
-        nbins = np.ceil((max(data) - min(data)) / binsize)
-
-        return nbins
-
-    def restore_median_fit(self):
-        """
-        Sets the model parameters to the mean of the marginal distributions
-        """
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-            # Add the samples for this parameter for this source
-
-            mean_par = np.median(self._samples[parameter_name])
-            parameter.value = mean_par
-
-
-
-    def _update_free_parameters(self):
-        """
-        Update the dictionary of the current free parameters
-        :return:
-        """
-
-        self._free_parameters = self._likelihood_model.free_parameters
-
-    def get_posterior(self, trial_values):
-        """Compute the posterior for the normal sampler"""
-
-        # Assign this trial values to the parameters and
-        # store the corresponding values for the priors
-
-        # self._update_free_parameters()
-
-        assert len(self._free_parameters) == len(trial_values), ("Something is wrong. Number of free parameters "
-                                                                 "do not match the number of trial values.")
-
-        log_prior = 0
-
-        #with use_
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-
-            prior_value = parameter.prior(trial_values[i])
-
-            if prior_value == 0:
-                # Outside allowed region of parameter space
-
-                return -np.inf
+                renamed_parameters = kwargs.pop('renamed_parameters')
 
             else:
 
-                parameter.value = trial_values[i]
+                renamed_parameters = None
 
-                log_prior += math.log10(prior_value)
 
-        log_like = self._log_like(trial_values)
 
-        # print("Log like is %s, log_prior is %s, for trial values %s" % (log_like, log_prior,trial_values))
 
-        return log_like + log_prior
+            for other_fit in other_fits:
 
-    def _construct_multinest_posterior(self):
-        """
-        pymultinest becomes confused with the self pointer. We therefore ceate callbacks
-        that pymultinest can understand.
+                if other_fit.samples is not None:
+                    assert len(other_fit._free_parameters.keys()) == other_fit.raw_samples[0].shape[0], (
+                        "Mismatch between sample"
 
-        Here, we construct the prior and log. likelihood for multinest on the unit cube
-        """
 
-        # First update the free parameters (in case the user changed them after the construction of the class)
-        self._update_free_parameters()
 
-        def loglike(trial_values, ndim, params):
+                        " dimensions and number of free"
+                        " parameters")
 
-            # NOTE: the _log_like function DOES NOT assign trial_values to the parameters
 
-            for i, parameter in enumerate(self._free_parameters.values()):
-                parameter.value = trial_values[i]
 
-            log_like = self._log_like(trial_values)
 
-            if self.verbose:
-                n_par = len(self._free_parameters)
 
-                print("Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
-                                                                 log_like))
+                labels_other = []
+                priors_other = []
 
-            return log_like
+                for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.iteritems()):
+                    short_name = parameter_name.split(".")[-1]
 
-        # Now construct the prior
-        # MULTINEST priors are defined on the unit cube
-        # and should return the value in the bounds... not the
-        # probability. Therefore, we must make some transforms
+                    labels_other.append(short_name)
 
-        def prior(params, ndim, nparams):
+                    priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)
+
+                # Rename any parameters so that they can be plotted together.
+                # A dictionary is passed with keys = old label values = new label.
+
+                if renamed_parameters is not None:
+
+                    for old_label, new_label in renamed_parameters.iteritems():
+
+
+
+                        for i, _ in enumerate(labels_other):
+
+                            if labels_other[i] == old_label:
+                                labels_other[i] = new_label
+
+                for i, val, in enumerate(labels_other):
+
+                    if '$' not in labels_other[i]:
+                        labels_other[i] = val.replace('_', ' ')
+
+                # Must remove underscores!
+
+
+
+                cc.add_chain(other_fit.raw_samples, parameters=labels_other)
+
+
+
+
+            labels = []
+            priors = []
+
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+                short_name = parameter_name.split(".")[-1]
+
+                labels.append(short_name)
+
+                priors.append(self._likelihood_model.parameters[parameter_name].prior)
+
+
+            if renamed_parameters is not None:
+
+                for old_label, new_label in renamed_parameters.iteritems():
+
+                    for i, _ in enumerate(labels):
+
+                        if labels[i] == old_label:
+                            labels[i] = new_label
+
+            # Must remove underscores!
+
+            for i, val, in enumerate(labels):
+
+                if '$' not in labels[i]:
+                    labels[i] = val.replace('_', ' ')
+
+
+            cc.add_chain(self.raw_samples, parameters=labels)
+
+            # should only be the cc kwargs
+
+            cc.configure_general(**kwargs)
+            fig = cc.plot(parameters=parameters, figsize='PAGE')
+
+            return fig
+
+        def plot_chains(self, thin=None):
+            """
+            Produce a plot of the series of samples for each parameter
+
+            :parameter thin: use only one sample every 'thin' samples
+            :return: a matplotlib.figure instance
+            """
+
+            figures = []
+
+            for parameter_name in self._free_parameters.keys():
+
+                figure, subplot = plt.subplots(1, 1)
+
+                if thin is None:
+
+                    # Use all samples
+
+                    subplot.plot(self.samples[parameter_name])
+
+                else:
+
+                    assert isinstance(thin, int), "Thin must be a integer number"
+
+                    subplot.plot(self.samples[parameter_name][::thin])
+
+                subplot.set_ylabel(parameter_name.replace(".", "\n"))
+                subplot.set_xlabel("sample #")
+
+                figures.append(figure)
+
+            return figures
+
+        def convergence_plots(self, n_samples_in_each_subset, n_subsets):
+            """
+            Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same
+            values if the MCMC has converged to the posterior distribution.
+
+            The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second
+            is to take random samples from the chain (bootstrap)
+
+            :param n_samples_in_each_subset: number of samples in each subset
+            :param n_subsets: number of subsets to take for each strategy
+            :return: a matplotlib.figure instance
+            """
+
+            # Compute all the quantities
+
+            averages = {}
+            bootstrap_averages = {}
+
+            variances = {}
+            bootstrap_variances = {}
+
+            n_samples = self._raw_samples[:, 0].shape[0]
+
+            stepsize = n_samples // n_subsets
+
+            assert stepsize > 10, "Too few samples for this method to be effective"
+
+            print("Stepsize for sliding window is %s" % stepsize)
+
+            for parameter_name in self._free_parameters.keys():
+
+                this_samples = self.samples[parameter_name]
+
+                # First compute averages and variances using the sliding window
+
+                this_averages = []
+                this_variances = []
+
+                for i in range(n_subsets):
+
+                    idx1 = i * stepsize
+                    idx2 = idx1 + n_samples_in_each_subset
+
+                    if idx2 > n_samples - 1:
+                        break
+
+                    this_averages.append(np.average(this_samples[idx1: idx2]))
+                    this_variances.append(np.std(this_samples[idx1: idx2]))
+
+                averages[parameter_name] = this_averages
+
+                variances[parameter_name] = this_variances
+
+                # Now choose random samples and do the same
+
+                this_bootstrap_averages = []
+                this_bootstrap_variances = []
+
+                for i in range(n_subsets):
+                    samples = np.random.choice(self.samples[parameter_name], n_samples)
+
+                    this_bootstrap_averages.append(np.average(samples))
+                    this_bootstrap_variances.append(np.std(samples))
+
+                bootstrap_averages[parameter_name] = this_bootstrap_averages
+                bootstrap_variances[parameter_name] = this_bootstrap_variances
+
+            # Now plot all these things
+
+            def plot_one_histogram(subplot, data, label):
+
+                nbins = self.freedman_diaconis_rule(data)
+
+                subplot.hist(data, nbins, label=label)
+
+                subplot.locator_params(nbins=4)
+
+            figures = []
+
+            for i, parameter_name in enumerate(self._free_parameters.keys()):
+                fig, subs = plt.subplots(1, 2, sharey=True)
+
+                fig.suptitle(parameter_name)
+
+                plot_one_histogram(subs[0], averages[parameter_name], 'sliding window')
+                plot_one_histogram(subs[0], bootstrap_averages[parameter_name], 'bootstrap')
+
+                subs[0].set_ylabel("N subsets")
+                subs[0].set_xlabel("Average")
+
+                plot_one_histogram(subs[1], variances[parameter_name], 'sliding window')
+                plot_one_histogram(subs[1], bootstrap_variances[parameter_name], 'bootstrap')
+
+                subs[1].set_xlabel("Std. deviation")
+
+                figures.append(fig)
+
+            return figures
+
+        @staticmethod
+        def freedman_diaconis_rule(data):
+            """
+            Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data
+
+            :param data: an array of data
+            :return: the optimal number of bins
+            """
+
+            q25, q75 = np.percentile(data, [25.0, 75.0])
+            iqr = abs(q75 - q25)
+
+            binsize = 2 * iqr * pow(len(data), -1 / 3.0)
+
+            nbins = np.ceil((max(data) - min(data)) / binsize)
+
+            return nbins
+
+        def restore_median_fit(self):
+            """
+            Sets the model parameters to the mean of the marginal distributions
+            """
+
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+                # Add the samples for this parameter for this source
+
+                mean_par = np.median(self._samples[parameter_name])
+                parameter.value = mean_par
+
+        def _update_free_parameters(self):
+            """
+            Update the dictionary of the current free parameters
+            :return:
+            """
+
+            self._free_parameters = self._likelihood_model.free_parameters
+
+        def get_posterior(self, trial_values):
+            """Compute the posterior for the normal sampler"""
+
+            # Assign this trial values to the parameters and
+            # store the corresponding values for the priors
+
+            # self._update_free_parameters()
+
+            assert len(self._free_parameters) == len(trial_values), ("Something is wrong. Number of free parameters "
+                                                                     "do not match the number of trial values.")
+
+            log_prior = 0
+
+            # with use_
 
             for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
-                try:
+                prior_value = parameter.prior(trial_values[i])
 
-                    params[i] = parameter.prior.from_unit_cube(params[i])
+                if prior_value == 0:
+                    # Outside allowed region of parameter space
 
-                except AttributeError:
+                    return -np.inf
 
-                    raise RuntimeError("The prior you are trying to use for parameter %s is "
-                                       "not compatible with multinest" % parameter_name)
+                else:
 
-        # Give a test run to the prior to check that it is working. If it crashes while multinest is going
-        # it will not stop multinest from running and generate thousands of exceptions (argh!)
-        n_dim = len(self._free_parameters)
+                    parameter.value = trial_values[i]
 
-        _ = prior([0.5] * n_dim, n_dim, [])
+                    log_prior += math.log10(prior_value)
 
-        return loglike, prior
+            log_like = self._log_like(trial_values)
 
-    def _get_starting_points(self, n_walkers, variance=0.1):
+            # print("Log like is %s, log_prior is %s, for trial values %s" % (log_like, log_prior,trial_values))
 
-        # Generate the starting points for the walkers by getting random
-        # values for the parameters close to the current value
+            return log_like + log_prior
 
-        # Fractional variance for randomization
-        # (0.1 means var = 0.1 * value )
+        def _construct_multinest_posterior(self):
+            """
+            pymultinest becomes confused with the self pointer. We therefore ceate callbacks
+            that pymultinest can understand.
 
-        p0 = []
+            Here, we construct the prior and log. likelihood for multinest on the unit cube
+            """
 
-        for i in range(n_walkers):
-            this_p0 = map(lambda x: x.get_randomized_value(variance), self._free_parameters.values())
+            # First update the free parameters (in case the user changed them after the construction of the class)
+            self._update_free_parameters()
 
-            p0.append(this_p0)
+            def loglike(trial_values, ndim, params):
 
-        return p0
+                # NOTE: the _log_like function DOES NOT assign trial_values to the parameters
 
-    def _log_prior(self, trial_values):
-        """Compute the sum of log-priors, used in the parallel tempering sampling"""
+                for i, parameter in enumerate(self._free_parameters.values()):
+                    parameter.value = trial_values[i]
 
-        # Compute the sum of the log-priors
+                log_like = self._log_like(trial_values)
 
-        log_prior = 0
+                if self.verbose:
+                    n_par = len(self._free_parameters)
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+                    print(
+                    "Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
+                                                               log_like))
 
-            prior_value = parameter.prior(trial_values[i])
+                return log_like
 
-            if prior_value == 0:
-                # Outside allowed region of parameter space
+            # Now construct the prior
+            # MULTINEST priors are defined on the unit cube
+            # and should return the value in the bounds... not the
+            # probability. Therefore, we must make some transforms
+
+            def prior(params, ndim, nparams):
+
+                for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+                    try:
+
+                        params[i] = parameter.prior.from_unit_cube(params[i])
+
+                    except AttributeError:
+
+                        raise RuntimeError("The prior you are trying to use for parameter %s is "
+                                           "not compatible with multinest" % parameter_name)
+
+            # Give a test run to the prior to check that it is working. If it crashes while multinest is going
+            # it will not stop multinest from running and generate thousands of exceptions (argh!)
+            n_dim = len(self._free_parameters)
+
+            _ = prior([0.5] * n_dim, n_dim, [])
+
+            return loglike, prior
+
+        def _get_starting_points(self, n_walkers, variance=0.1):
+
+            # Generate the starting points for the walkers by getting random
+            # values for the parameters close to the current value
+
+            # Fractional variance for randomization
+            # (0.1 means var = 0.1 * value )
+
+            p0 = []
+
+            for i in range(n_walkers):
+                this_p0 = map(lambda x: x.get_randomized_value(variance), self._free_parameters.values())
+
+                p0.append(this_p0)
+
+            return p0
+
+        def _log_prior(self, trial_values):
+            """Compute the sum of log-priors, used in the parallel tempering sampling"""
+
+            # Compute the sum of the log-priors
+
+            log_prior = 0
+
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+                prior_value = parameter.prior(trial_values[i])
+
+                if prior_value == 0:
+                    # Outside allowed region of parameter space
+
+                    return -np.inf
+
+                else:
+
+                    parameter.value = trial_values[i]
+
+                    log_prior += math.log10(prior_value)
+
+            return log_prior
+
+        def _log_like(self, trial_values):
+            """Compute the log-likelihood"""
+
+            # Get the value of the log-likelihood for this parameters
+
+            try:
+
+                # Loop over each dataset and get the likelihood values for each set
+
+                log_like_values = map(lambda dataset: dataset.get_log_like(), self.data_list.values())
+
+            except ModelAssertionViolation:
+
+                # Fit engine or sampler outside of allowed zone
 
                 return -np.inf
 
-            else:
+            except:
 
-                parameter.value = trial_values[i]
+                # We don't want to catch more serious issues
 
-                log_prior += math.log10(prior_value)
+                raise
 
-        return log_prior
+            # Sum the values of the log-like
 
-    def _log_like(self, trial_values):
-        """Compute the log-likelihood"""
+            log_like = np.sum(log_like_values)
 
-        # Get the value of the log-likelihood for this parameters
+            if not np.isfinite(log_like):
+                # Issue warning
 
-        try:
+                custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values,
+                                     LikelihoodIsInfinite)
 
-            # Loop over each dataset and get the likelihood values for each set
+                return -np.inf
 
-            log_like_values = map(lambda dataset: dataset.get_log_like(), self.data_list.values())
+            return log_like
 
-        except ModelAssertionViolation:
+        @staticmethod
+        def _calc_min_interval(x, alpha):
+            """
+            Internal method to determine the minimum interval of a given width
+            Assumes that x is sorted numpy array.
+            :param a: a numpy array containing samples
+            :param alpha: probability of type I error
 
-            # Fit engine or sampler outside of allowed zone
+            :returns: list containing min and max HDI
 
-            return -np.inf
+            """
 
-        except:
+            n = len(x)
+            cred_mass = 1.0 - alpha
 
-            # We don't want to catch more serious issues
+            interval_idx_inc = int(np.floor(cred_mass * n))
+            n_intervals = n - interval_idx_inc
+            interval_width = x[interval_idx_inc:] - x[:n_intervals]
 
-            raise
+            if len(interval_width) == 0:
+                raise ValueError('Too few elements for interval calculation')
 
-        # Sum the values of the log-like
+            min_idx = np.argmin(interval_width)
+            hdi_min = x[min_idx]
+            hdi_max = x[min_idx + interval_idx_inc]
+            return hdi_min, hdi_max
 
-        log_like = np.sum(log_like_values)
+        def _hpd(self, x, alpha=0.05):
+            """Calculate highest posterior density (HPD) of array for given alpha.
+            The HPD is the minimum width Bayesian credible interval (BCI).
 
-        if not np.isfinite(log_like):
-            # Issue warning
+            :param x: array containing MCMC samples
+            :param alpha : Desired probability of type I error (defaults to 0.05)
+            """
 
-            custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values, LikelihoodIsInfinite)
+            # Currently only 1D available.
+            # future addition will fix this
 
-            return -np.inf
+            # Make a copy of trace
+            # x = x.copy()
+            # For multivariate node
+            # if x.ndim > 1:
+            # Transpose first, then sort
+            #    tx = np.transpose(x, list(range(x.ndim))[1:] + [0])
+            #    dims = np.shape(tx)
+            # Container list for intervals
+            #    intervals = np.resize(0.0, dims[:-1] + (2,))
 
-        return log_like
-
-    @staticmethod
-    def _calc_min_interval(x, alpha):
-        """
-        Internal method to determine the minimum interval of a given width
-        Assumes that x is sorted numpy array.
-        :param a: a numpy array containing samples
-        :param alpha: probability of type I error
-
-        :returns: list containing min and max HDI
-
-        """
-
-        n = len(x)
-        cred_mass = 1.0 - alpha
-
-        interval_idx_inc = int(np.floor(cred_mass * n))
-        n_intervals = n - interval_idx_inc
-        interval_width = x[interval_idx_inc:] - x[:n_intervals]
-
-        if len(interval_width) == 0:
-            raise ValueError('Too few elements for interval calculation')
-
-        min_idx = np.argmin(interval_width)
-        hdi_min = x[min_idx]
-        hdi_max = x[min_idx + interval_idx_inc]
-        return hdi_min, hdi_max
-
-    def _hpd(self, x, alpha=0.05):
-        """Calculate highest posterior density (HPD) of array for given alpha.
-        The HPD is the minimum width Bayesian credible interval (BCI).
-
-        :param x: array containing MCMC samples
-        :param alpha : Desired probability of type I error (defaults to 0.05)
-        """
-
-        # Currently only 1D available.
-        # future addition will fix this
-
-        # Make a copy of trace
-        # x = x.copy()
-        # For multivariate node
-        # if x.ndim > 1:
-        # Transpose first, then sort
-        #    tx = np.transpose(x, list(range(x.ndim))[1:] + [0])
-        #    dims = np.shape(tx)
-        # Container list for intervals
-        #    intervals = np.resize(0.0, dims[:-1] + (2,))
-
-        #    sx = np.sort(tx[index])
-        # Append to list
-        #    intervals[index] = self._calc_min_interval(sx, alpha)
-        # Transpose back before returning
-        #    return np.array(intervals)
-        # else:
-        # Sort univariate node
-        sx = np.sort(x)
-        return np.array(self._calc_min_interval(sx, alpha))
+            #    sx = np.sort(tx[index])
+            # Append to list
+            #    intervals[index] = self._calc_min_interval(sx, alpha)
+            # Transpose back before returning
+            #    return np.array(intervals)
+            # else:
+            # Sort univariate node
+            sx = np.sort(x)
+            return np.array(self._calc_min_interval(sx, alpha))
