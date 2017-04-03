@@ -254,9 +254,9 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         # energy units
 
 
-        energy_range = (energy_range * energy_unit).to('keV', equivalencies=u.spectral())
+        energy_range = (energy_range).to('keV', equivalencies=u.spectral())
 
-        energy_unit = energy_range.unit
+        #energy_unit = energy_range.unit
 
         energy_range = energy_range.value
 

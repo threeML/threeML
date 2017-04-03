@@ -95,10 +95,10 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
                         comps = []
 
-                        # duplicate components
-                        comps = ["%s_n%i" % (s, suffix) if num > 1 else s for s, num in
-                                 collections.Counter(comps).items() for
-                                 suffix in range(1, num + 1)]
+                    # duplicate components
+                    comps = ["%s_n%i" % (s, suffix) if num > 1 else s for s, num in
+                             collections.Counter(comps).items() for
+                             suffix in range(1, num + 1)]
 
                     bayesian_analyses[name] = {'source': source_name, 'analysis': analysis, 'component_names': comps}
 
@@ -183,9 +183,9 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
             if 'total' in components_to_use:
                 num_sources_to_use += 1
 
-        else:
-
-            num_sources_to_use += 1
+        # else:
+        #
+        #     num_sources_to_use += 1
 
     # repeat for the bayes analyses
 
@@ -257,10 +257,10 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
             if 'total' in components_to_use:
                 num_sources_to_use += 1
-
-        else:
-
-            num_sources_to_use += 1
+        #
+        # else:
+        #
+        #     num_sources_to_use += 1
 
     # we may have the same source in a bayesian and mle analysis.
     # we want to plot them, but make sure to label them differently.

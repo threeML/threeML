@@ -47,6 +47,8 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
     _defaults = {'fit_cmap': threeML_config['model plot']['point source plot']['fit cmap'],
                  'contour_cmap': threeML_config['model plot']['point source plot']['contour cmap'],
+                 'contour_colors' : None,
+                 'fit_colors': None,
                  'confidence_level': 0.68,
                  'equal_tailed': True,
                  'best_fit': 'median',
@@ -78,8 +80,37 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
             _defaults[key] = value
 
+    if isinstance(_defaults['ene_min'], u.Quantity):
 
-    energy_range = np.logspace(np.log10(_defaults['ene_min']), np.log10(_defaults['ene_max']), _defaults['num_ene'])
+        assert isinstance(_defaults['ene_max'], u.Quantity), 'both energy arguments must be Quantities'
+
+    if isinstance(_defaults['ene_max'], u.Quantity):
+
+        assert isinstance(_defaults['ene_min'], u.Quantity), 'both energy arguments must be Quantities'
+
+    if isinstance(_defaults['ene_max'], u.Quantity):
+
+
+        energy_range = np.linspace(_defaults['ene_min'], _defaults['ene_max'],_defaults['num_ene']) # type: u.Quantity
+
+        _defaults['energy_unit'] = energy_range.unit
+
+
+        if _defaults['xscale'] == 'log':
+
+
+
+            energy_range = np.logspace(np.log10(energy_range.min().value),
+                                       np.log10(energy_range.max().value),
+                                       _defaults['num_ene']) * energy_range.unit
+
+    else:
+
+        energy_range = np.logspace(np.log10(_defaults['ene_min']),
+                                   np.log10(_defaults['ene_max']),
+                                   _defaults['num_ene']) * u.Unit(_defaults['energy_unit'])
+
+
 
     mle_analyses, bayesian_analyses, num_sources_to_plot, duplicate_keys = _setup_analysis_dictionaries(
         analysis_results,
@@ -98,14 +129,54 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
 
 
-    energy_range = energy_range * u.Unit(_defaults['energy_unit'])
+    #energy_range = energy_range * u.Unit(_defaults['energy_unit'])
 
     # if we are not going to sum sources
 
     if not _defaults['sum_sources']:
 
-        color_fit = cmap_intervals(num_sources_to_plot, _defaults['fit_cmap'])
-        color_contour = cmap_intervals(num_sources_to_plot, _defaults['contour_cmap'])
+        if _defaults['fit_colors'] is None:
+
+            color_fit = cmap_intervals(num_sources_to_plot, _defaults['fit_cmap'])
+
+
+        else:
+
+            # duck typing
+            if isinstance(_defaults['fit_colors'],str):
+
+                color_fit = [_defaults['fit_colors']]*num_sources_to_plot
+
+            elif isinstance(_defaults['fit_colors'],list):
+
+                assert len(_defaults['fit_colors']) == num_sources_to_plot,\
+                    'list of colors (%d) must be the same length as sources ot plot (%s)'%(len(_defaults['fit_colors']),num_sources_to_plot)
+
+                color_fit = _defaults['fit_colors']
+
+
+
+
+        if _defaults['contour_colors'] is None:
+
+
+            color_contour = cmap_intervals(num_sources_to_plot, _defaults['contour_cmap'])
+
+        else:
+
+            # duck typing
+            if isinstance(_defaults['contour_colors'], str):
+
+                color_contour = [_defaults['contour_colors']] * num_sources_to_plot
+
+            elif isinstance(_defaults['contour_colors'], list):
+
+                assert len(_defaults['contour_colors']) == num_sources_to_plot, \
+                    'list of colors (%d) must be the same length as sources ot plot (%s)' % (
+                    len(_defaults['contour_colors']), num_sources_to_plot)
+
+                color_contour = _defaults['fit_colors']
+
         color_itr = 0
 
         # go thru the mle analysis and plot spectra
@@ -140,7 +211,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                 for component in mle_analyses[key]['components'].keys():
 
-                    print component
+
 
                     positive_error = None
                     negative_error = None
