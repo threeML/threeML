@@ -13,6 +13,7 @@ Contents:
 
     notebooks/Quickstart.ipynb
     notebooks/The 3ML workflow.ipynb
+    notebooks/Point source plotting.ipynb
 
 .. automodule:: threeML
     :members:

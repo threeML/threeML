@@ -32,7 +32,6 @@ import os
 
 import matplotlib.pyplot as plt
 
-
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.io.progress_bar import progress_bar
@@ -51,7 +50,6 @@ def sample_with_progress(title, p0, sampler, n_samples, **kwargs):
     # This is only for producing the progress bar
 
     with progress_bar(n_samples, title=title) as progress:
-
         for i, result in enumerate(sampler.sample(p0, iterations=n_samples, **kwargs)):
             # Show progress
 
@@ -69,7 +67,6 @@ def sample_without_progress(p0, sampler, n_samples, **kwargs):
 
 
 class BayesianAnalysis(object):
-
     def __init__(self, likelihood_model, data_list, **kwargs):
         """
         Bayesian analysis.
@@ -245,7 +242,6 @@ class BayesianAnalysis(object):
 
         # Display results
         if not quiet:
-
             self._results.display()
 
         return self.samples
@@ -413,7 +409,6 @@ class BayesianAnalysis(object):
 
         # Sets the values of the parameters to their MAP values
         for i, parameter in enumerate(self._free_parameters):
-
             self._free_parameters[parameter].value = approximate_MAP_point[i]
 
         # Get the value of the posterior for each dataset at the MAP
@@ -422,7 +417,6 @@ class BayesianAnalysis(object):
         log_prior = self._log_prior(approximate_MAP_point)
 
         for dataset in self.data_list.values():
-
             log_posteriors[dataset.name] = dataset.get_log_like() + log_prior
 
         # Instance the result
@@ -673,7 +667,6 @@ class BayesianAnalysis(object):
                         if labels[i] == old_label:
                             labels[i] = new_label
 
-
             # default arguments
             default_args = {'show_titles': True, 'title_fmt': ".2g", 'labels': labels,
                             'quantiles': [0.16, 0.50, 0.84]}
@@ -753,104 +746,138 @@ class BayesianAnalysis(object):
 
         return fig
 
-    def compare_posterior(self, other_fit, sigmas=[0, 1, 2, 3], cloud=False, shade=True, shade_alpha=1.,
-                          parameters=None, renamed_parameters=None, **kwargs):
+    def compare_posterior(self, *other_fits, **kwargs):
         """
+        Create a corner plot from many different bayesian fits which allow for co-plotting of parameters marginals.
 
-        Create a corner plot from two different bayesian fits which allow for co-plotting of parameters marginals.
-
-        Args:
-            other_fit: Another fitted BayesianAnalysis object to compare top the this analysis
-            sigmas: list of sigma levels to include. 0 must be included to avoid hole in contour
-            cloud: bool. Whether or not to plot MC points
-            shade: bool. Fill in the contours
-            shade_alpha: alpha level of contours
-            parameters: list of parameters to plot
-            renamed_parameters: a python dictionary of parameters to rename.
+        :param other_fits: other fitted Bayesian analysis objects
+        :param parameters: parameters to plot
+        :param renamed_parameters: a python dictionary of parameters to rename.
              Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
              {'old label': 'new label'}
-            **kwargs: chainconsumer general keyword arguments
+        :param kwargs: chain consumer kwargs
+        :return:
 
-        Returns:
 
         """
 
         if not has_chainconsumer:
             RuntimeError("You must have chainconsumer installed to use this function")
 
-        if self.samples is not None:
-            assert len(self._free_parameters.keys()) == self.raw_samples[0].shape[0], ("Mismatch between sample"
-
-
-
-                                                                                       " dimensions and number of free"
-                                                                                       " parameters")
-
-        if other_fit.samples is not None:
-            assert len(other_fit._free_parameters.keys()) == other_fit.raw_samples[0].shape[0], (
-                "Mismatch between sample"
-
-
-
-                " dimensions and number of free"
-                " parameters")
-
-        labels = []
-        priors = []
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-            short_name = parameter_name.split(".")[-1]
-
-            labels.append(short_name)
-
-            priors.append(self._likelihood_model.parameters[parameter_name].prior)
-
-        labels_other = []
-        priors_other = []
-
-        for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.iteritems()):
-            short_name = parameter_name.split(".")[-1]
-
-            labels_other.append(short_name)
-
-            priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)
-
-        # Rename any parameters so that they can be plotted together.
-        # A dictionary is passed with keys = old label values = new label.
-
-        if renamed_parameters is not None:
-
-            for old_label, new_label in renamed_parameters.iteritems():
-
-                for i, _ in enumerate(labels):
-
-                    if labels[i] == old_label:
-                        labels[i] = new_label
-
-                for i, _ in enumerate(labels_other):
-
-                    if labels_other[i] == old_label:
-                        labels_other[i] = new_label
-
-
-        # Must remove underscores!
-
-        for i, val, in enumerate(labels):
-
-            if '$' not in labels[i]:
-                labels[i] = val.replace('_', ' ')
-
         cc = chainconsumer.ChainConsumer()
 
-        cc.add_chain(self.raw_samples, parameters=labels)
+        if self.samples is not None:
+            assert len(self._free_parameters.keys()) == self.raw_samples[0].shape[0], "Mismatch between sample " \
+                                                                                      "dimensions and number of free parameters"
 
-        cc.add_chain(other_fit.raw_samples, parameters=labels_other)
+            if 'parameters' in kwargs:
 
-        cc.configure_contour(cloud=cloud, shade=shade, shade_alpha=shade_alpha, sigmas=sigmas)
-        cc.configure_general(**kwargs)
-        fig = cc.plot(parameters=parameters, figsize='PAGE')
+                parameters = kwargs.pop('parameters')
 
-        return fig
+            else:
+
+                parameters = None
+
+            if 'renamed_parameters' in kwargs:
+
+                renamed_parameters = kwargs.pop('renamed_parameters')
+
+            else:
+
+                renamed_parameters = None
+
+
+
+
+            for other_fit in other_fits:
+
+                if other_fit.samples is not None:
+                    assert len(other_fit._free_parameters.keys()) == other_fit.raw_samples[0].shape[0], (
+                        "Mismatch between sample"
+
+
+
+                        " dimensions and number of free"
+                        " parameters")
+
+
+
+
+
+                labels_other = []
+                priors_other = []
+
+                for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.iteritems()):
+                    short_name = parameter_name.split(".")[-1]
+
+                    labels_other.append(short_name)
+
+                    priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)
+
+                # Rename any parameters so that they can be plotted together.
+                # A dictionary is passed with keys = old label values = new label.
+
+                if renamed_parameters is not None:
+
+                    for old_label, new_label in renamed_parameters.iteritems():
+
+
+
+                        for i, _ in enumerate(labels_other):
+
+                            if labels_other[i] == old_label:
+                                labels_other[i] = new_label
+
+                for i, val, in enumerate(labels_other):
+
+                    if '$' not in labels_other[i]:
+                        labels_other[i] = val.replace('_', ' ')
+
+                # Must remove underscores!
+
+
+
+                cc.add_chain(other_fit.raw_samples, parameters=labels_other)
+
+
+
+
+            labels = []
+            priors = []
+
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+                short_name = parameter_name.split(".")[-1]
+
+                labels.append(short_name)
+
+                priors.append(self._likelihood_model.parameters[parameter_name].prior)
+
+
+            if renamed_parameters is not None:
+
+                for old_label, new_label in renamed_parameters.iteritems():
+
+                    for i, _ in enumerate(labels):
+
+                        if labels[i] == old_label:
+                            labels[i] = new_label
+
+            # Must remove underscores!
+
+            for i, val, in enumerate(labels):
+
+                if '$' not in labels[i]:
+                    labels[i] = val.replace('_', ' ')
+
+
+            cc.add_chain(self.raw_samples, parameters=labels)
+
+            # should only be the cc kwargs
+
+            cc.configure(**kwargs)
+            fig = cc.plot(parameters=parameters, figsize='PAGE')
+
+            return fig
 
     def plot_chains(self, thin=None):
         """
@@ -1013,8 +1040,6 @@ class BayesianAnalysis(object):
             mean_par = np.median(self._samples[parameter_name])
             parameter.value = mean_par
 
-
-
     def _update_free_parameters(self):
         """
         Update the dictionary of the current free parameters
@@ -1036,7 +1061,7 @@ class BayesianAnalysis(object):
 
         log_prior = 0
 
-        #with use_
+        # with use_
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
@@ -1082,8 +1107,9 @@ class BayesianAnalysis(object):
             if self.verbose:
                 n_par = len(self._free_parameters)
 
-                print("Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
-                                                                 log_like))
+                print(
+                "Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
+                                                           log_like))
 
             return log_like
 
@@ -1184,7 +1210,8 @@ class BayesianAnalysis(object):
         if not np.isfinite(log_like):
             # Issue warning
 
-            custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values, LikelihoodIsInfinite)
+            custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values,
+                                 LikelihoodIsInfinite)
 
             return -np.inf
 
