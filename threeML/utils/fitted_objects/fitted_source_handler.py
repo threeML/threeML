@@ -77,7 +77,6 @@ class GenericFittedSourceHandler(object):
 
             return self.values + other.values
 
-
     def _transform(self, value):
         """
         dummy transform to be overridden in a subclass

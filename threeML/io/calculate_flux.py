@@ -6,6 +6,7 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 
 import numpy as np
 import pandas as pd
+import collections
 
 
 def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, flux_unit, use_components,
@@ -63,6 +64,13 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
                         comps = []
 
+                    # duplicate components
+                    comps = ["%s_n%i" % (s, suffix) if num > 1 else s for s, num in collections.Counter(comps).items() for
+                     suffix in range(1, num + 1)]
+
+
+
+
                     mle_analyses[name] = {'source': source_name, 'analysis': analysis, 'component_names': comps}
 
 
@@ -86,6 +94,11 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
                     except:
 
                         comps = []
+
+                    # duplicate components
+                    comps = ["%s_n%i" % (s, suffix) if num > 1 else s for s, num in
+                             collections.Counter(comps).items() for
+                             suffix in range(1, num + 1)]
 
                     bayesian_analyses[name] = {'source': source_name, 'analysis': analysis, 'component_names': comps}
 
@@ -121,9 +134,12 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
             for component in mle_analyses[key]['component_names']:
 
+
+
                 # if we want to plot all the components
 
                 if not components_to_use:
+
 
                     component_dict[component] = FittedPointSourceSpectralHandler(mle_analyses[key]['analysis'],
                                                                                  mle_analyses[key]['source'],
@@ -167,9 +183,9 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
             if 'total' in components_to_use:
                 num_sources_to_use += 1
 
-        else:
-
-            num_sources_to_use += 1
+        # else:
+        #
+        #     num_sources_to_use += 1
 
     # repeat for the bayes analyses
 
@@ -201,6 +217,7 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
             for component in bayesian_analyses[key]['component_names']:
 
                 # extracting all components
+
 
                 if not components_to_use:
                     component_dict[component] = FittedPointSourceSpectralHandler(bayesian_analyses[key]['analysis'],
@@ -240,10 +257,10 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
             if 'total' in components_to_use:
                 num_sources_to_use += 1
-
-        else:
-
-            num_sources_to_use += 1
+        #
+        # else:
+        #
+        #     num_sources_to_use += 1
 
     # we may have the same source in a bayesian and mle analysis.
     # we want to plot them, but make sure to label them differently.

@@ -3,6 +3,7 @@ __author__ = 'grburgess'
 from astropy import units as u
 import numpy as np
 import scipy.integrate as integrate
+import collections
 
 
 from threeML.utils.fitted_objects.fitted_source_handler import GenericFittedSourceHandler
@@ -79,7 +80,7 @@ class FluxConversion(object):
 
         else:
 
-            self._conversion = tmp.unit.to(self._flux_unit)
+            self._conversion = tmp.unit.to(self._flux_unit, equivalencies=u.spectral())
             self._is_dimensionless = False
 
 
@@ -252,8 +253,13 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         # astropy so that we can easily except energy, wavelength, or frequency
         # energy units
 
+        if isinstance(energy_range,u.Quantity):
 
-        energy_range = (energy_range * energy_unit).to('keV', equivalencies=u.spectral())
+            energy_range = (energy_range).to('keV', equivalencies=u.spectral())
+
+        else:
+
+            energy_range = (energy_range * energy_unit).to('keV', equivalencies=u.spectral())
 
         energy_unit = energy_range.unit
 
@@ -353,7 +359,15 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
         function_dict = {}
 
-        for function in composite_model.functions:
+        names = [f.name for f in composite_model.functions]
+
+        counts = collections.Counter(names)
+        for s, num in counts.items():
+            if num > 1:  # ignore strings that only appear once
+                for suffix in range(1, num + 1):  # suffix starts at 1 and increases by 1 each time
+                    names[names.index(s)] = "%s_n%i" % (s, suffix)  # replace each appearance of s
+
+        for i, function in enumerate(composite_model.functions):
 
             tmp_dict = {}
 
@@ -368,7 +382,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
 
 
-            function_dict[function.name] = tmp_dict
+            function_dict[names[i]] = tmp_dict
 
         return function_dict
 
