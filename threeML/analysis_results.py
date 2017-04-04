@@ -13,6 +13,18 @@ from astromodels.core.my_yaml import my_yaml
 from astromodels.core.model_parser import ModelParser
 
 from corner import corner
+try:
+
+    import chainconsumer
+
+except:
+
+    has_chainconsumer = False
+
+else:
+
+    has_chainconsumer = True
+
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
@@ -23,6 +35,7 @@ from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.version import __version__
 from threeML.random_variates import RandomVariates
 from threeML.io.calculate_flux import _calculate_point_source_flux
+from threeML.config.config import threeML_config
 
 
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
@@ -751,6 +764,188 @@ class _AnalysisResults(object):
         fig = corner(self._samples_transposed.T, **default_args)
 
         return fig
+
+    def corner_plot_cc(self, parameters=None, renamed_parameters=None, figsize='PAGE', **cc_kwargs):
+        """
+        Corner plots using chainconsumer which allows for nicer plotting of
+        marginals
+        see: https://samreay.github.io/ChainConsumer/chain_api.html#chainconsumer.ChainConsumer.configure
+        for all options
+        :param parameters: list of parameters to plot
+        :param renamed_parameters: a python dictionary of parameters to rename.
+             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
+             {'old label': 'new label'}
+        :param **cc_kwargs: chainconsumer general keyword arguments
+        :return fig:
+        """
+
+        if not has_chainconsumer:
+            RuntimeError("You must have chainconsumer installed to use this function: pip install chainconsumer")
+
+
+        assert len(self._free_parameters.keys()) == self._samples_transposed.T[0].shape[0], ("Mismatch between sample"
+                                                                                   " dimensions and number of free"
+                                                                                   " parameters")
+
+        labels = []
+        priors = []
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+            short_name = parameter_name.split(".")[-1]
+
+            labels.append(short_name)
+
+            priors.append(self._optimized_model.parameters[parameter_name].prior)
+
+        # Rename the parameters if needed.
+
+        if renamed_parameters is not None:
+
+            for old_label, new_label in renamed_parameters.iteritems():
+
+                for i, _ in enumerate(labels):
+
+                    if labels[i] == old_label:
+                        labels[i] = new_label
+
+        # Must remove underscores!
+
+        for i, val, in enumerate(labels):
+
+            if '$' not in labels[i]:
+                labels[i] = val.replace('_', '')
+
+        cc = chainconsumer.ChainConsumer()
+
+        cc.add_chain(self._samples_transposed.T, parameters=labels)
+
+        if not cc_kwargs:
+            cc_kwargs = threeML_config['bayesian']['chain consumer style']
+
+        cc.configure(**cc_kwargs)
+        fig = cc.plot(parameters=parameters)
+
+        return fig
+
+    def comparison_corner_plot(self, *other_fits, **kwargs):
+        """
+        Create a corner plot from many different fits which allow for co-plotting of parameters marginals.
+
+        :param other_fits: other fitted results
+        :param parameters: parameters to plot
+        :param renamed_parameters: a python dictionary of parameters to rename.
+             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
+             {'old label': 'new label'}
+        :param kwargs: chain consumer kwargs
+        :return:
+
+        Returns:
+
+        """
+
+        if not has_chainconsumer:
+            RuntimeError("You must have chainconsumer installed to use this function")
+
+        cc = chainconsumer.ChainConsumer()
+
+        if self.samples is not None:
+            assert len(self._free_parameters.keys()) == self._samples_transposed.T[0].shape[0], "Mismatch between sample " \
+                                                                                      "dimensions and number of free parameters"
+
+            if 'parameters' in kwargs:
+
+                parameters = kwargs.pop('parameters')
+
+            else:
+
+                parameters = None
+
+            if 'renamed_parameters' in kwargs:
+
+                renamed_parameters = kwargs.pop('renamed_parameters')
+
+            else:
+
+                renamed_parameters = None
+
+            for other_fit in other_fits:
+
+                if other_fit.samples is not None:
+                    assert len(other_fit._free_parameters.keys()) == other_fit.samples.T[0].shape[0], (
+                        "Mismatch between sample"
+
+
+
+                        " dimensions and number of free"
+                        " parameters")
+
+                labels_other = []
+                #priors_other = []
+
+                for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.iteritems()):
+                    short_name = parameter_name.split(".")[-1]
+
+                    labels_other.append(short_name)
+
+                    #priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)
+
+                # Rename any parameters so that they can be plotted together.
+                # A dictionary is passed with keys = old label values = new label.
+
+                if renamed_parameters is not None:
+
+                    for old_label, new_label in renamed_parameters.iteritems():
+
+                        for i, _ in enumerate(labels_other):
+
+                            if labels_other[i] == old_label:
+                                labels_other[i] = new_label
+
+                for i, val, in enumerate(labels_other):
+
+                    if '$' not in labels_other[i]:
+                        labels_other[i] = val.replace('_', ' ')
+
+                # Must remove underscores!
+
+
+
+                cc.add_chain(other_fit.samples.T, parameters=labels_other)
+
+            labels = []
+            #priors = []
+
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+                short_name = parameter_name.split(".")[-1]
+
+                labels.append(short_name)
+
+                #priors.append(self._optimized_model.parameters[parameter_name].prior)
+
+            if renamed_parameters is not None:
+
+                for old_label, new_label in renamed_parameters.iteritems():
+
+                    for i, _ in enumerate(labels):
+
+                        if labels[i] == old_label:
+                            labels[i] = new_label
+
+            # Must remove underscores!
+
+            for i, val, in enumerate(labels):
+
+                if '$' not in labels[i]:
+                    labels[i] = val.replace('_', ' ')
+
+            cc.add_chain(self._samples_transposed.T, parameters=labels)
+
+            # should only be the cc kwargs
+
+            cc.configure(**kwargs)
+            fig = cc.plot(parameters=parameters, figsize='PAGE')
+
+            return fig
 
 
 class BayesianResults(_AnalysisResults):

@@ -664,53 +664,17 @@ class BayesianAnalysis(object):
         :return fig:
         """
 
-        if not has_chainconsumer:
-            RuntimeError("You must have chainconsumer installed to use this function")
+
 
         if self.samples is not None:
-            assert len(self._free_parameters.keys()) == self.raw_samples[0].shape[0], ("Mismatch between sample"
-                                                                                       " dimensions and number of free"
-                                                                                       " parameters")
 
-        labels = []
-        priors = []
+            return self._results.corner_plot_cc(parameters,renamed_parameters,figsize, **cc_kwargs)
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-            short_name = parameter_name.split(".")[-1]
+        else:
 
-            labels.append(short_name)
+            raise RuntimeError("You have to run the sampler first, using the sample() method")
 
-            priors.append(self._likelihood_model.parameters[parameter_name].prior)
 
-        # Rename the parameters if needed.
-
-        if renamed_parameters is not None:
-
-            for old_label, new_label in renamed_parameters.iteritems():
-
-                for i, _ in enumerate(labels):
-
-                    if labels[i] == old_label:
-                        labels[i] = new_label
-
-        # Must remove underscores!
-
-        for i, val, in enumerate(labels):
-
-            if '$' not in labels[i]:
-                labels[i] = val.replace('_', '')
-
-        cc = chainconsumer.ChainConsumer()
-
-        cc.add_chain(self.raw_samples, parameters=labels)
-
-        if not cc_kwargs:
-            cc_kwargs = threeML_config['bayesian']['chain consumer style']
-
-        cc.configure(**cc_kwargs)
-        fig = cc.plot(parameters=parameters)
-
-        return fig
 
     def compare_posterior(self, *other_fits, **kwargs):
         """
@@ -728,123 +692,16 @@ class BayesianAnalysis(object):
 
         """
 
-        if not has_chainconsumer:
-            RuntimeError("You must have chainconsumer installed to use this function")
 
-        cc = chainconsumer.ChainConsumer()
 
         if self.samples is not None:
-            assert len(self._free_parameters.keys()) == self.raw_samples[0].shape[0], "Mismatch between sample " \
-                                                                                      "dimensions and number of free parameters"
+            return self._results.comparison_corner_plot(self, *other_fits, **kwargs)
 
-            if 'parameters' in kwargs:
+        else:
 
-                parameters = kwargs.pop('parameters')
-
-            else:
-
-                parameters = None
-
-            if 'renamed_parameters' in kwargs:
-
-                renamed_parameters = kwargs.pop('renamed_parameters')
-
-            else:
-
-                renamed_parameters = None
+            raise RuntimeError("You have to run the sampler first, using the sample() method")
 
 
-
-
-            for other_fit in other_fits:
-
-                if other_fit.samples is not None:
-                    assert len(other_fit._free_parameters.keys()) == other_fit.raw_samples[0].shape[0], (
-                        "Mismatch between sample"
-
-
-
-                        " dimensions and number of free"
-                        " parameters")
-
-
-
-
-
-                labels_other = []
-                priors_other = []
-
-                for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.iteritems()):
-                    short_name = parameter_name.split(".")[-1]
-
-                    labels_other.append(short_name)
-
-                    priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)
-
-                # Rename any parameters so that they can be plotted together.
-                # A dictionary is passed with keys = old label values = new label.
-
-                if renamed_parameters is not None:
-
-                    for old_label, new_label in renamed_parameters.iteritems():
-
-
-
-                        for i, _ in enumerate(labels_other):
-
-                            if labels_other[i] == old_label:
-                                labels_other[i] = new_label
-
-                for i, val, in enumerate(labels_other):
-
-                    if '$' not in labels_other[i]:
-                        labels_other[i] = val.replace('_', ' ')
-
-                # Must remove underscores!
-
-
-
-                cc.add_chain(other_fit.raw_samples, parameters=labels_other)
-
-
-
-
-            labels = []
-            priors = []
-
-            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-                short_name = parameter_name.split(".")[-1]
-
-                labels.append(short_name)
-
-                priors.append(self._likelihood_model.parameters[parameter_name].prior)
-
-
-            if renamed_parameters is not None:
-
-                for old_label, new_label in renamed_parameters.iteritems():
-
-                    for i, _ in enumerate(labels):
-
-                        if labels[i] == old_label:
-                            labels[i] = new_label
-
-            # Must remove underscores!
-
-            for i, val, in enumerate(labels):
-
-                if '$' not in labels[i]:
-                    labels[i] = val.replace('_', ' ')
-
-
-            cc.add_chain(self.raw_samples, parameters=labels)
-
-            # should only be the cc kwargs
-
-            cc.configure(**kwargs)
-            fig = cc.plot(parameters=parameters, figsize='PAGE')
-
-            return fig
 
     def plot_chains(self, thin=None):
         """
