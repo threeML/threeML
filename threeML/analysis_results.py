@@ -12,6 +12,8 @@ import astromodels
 from astromodels.core.my_yaml import my_yaml
 from astromodels.core.model_parser import ModelParser
 
+from corner import corner
+
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import fits, FITSFile, FITSExtension
@@ -698,6 +700,57 @@ class _AnalysisResults(object):
 
             # Return the dataframe
             return bayes_results
+
+    def corner_plot(self, renamed_parameters=None, **kwargs):
+        """
+        Produce the corner plot showing the marginal distributions in one and two directions.
+
+        :param renamed_parameters: a python dictionary of parameters to rename.
+             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
+             {'old label': 'new label'}
+        :param kwargs: arguments to be passed to the corner function
+        :return: a matplotlib.figure instance
+        """
+
+
+
+        assert len(self._free_parameters.keys()) == self._samples_transposed.T[0].shape[0], ("Mismatch between sample"
+                                                                                   " dimensions and number of free"
+                                                                                   " parameters")
+
+        labels = []
+        priors = []
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+            short_name = parameter_name.split(".")[-1]
+
+            labels.append(short_name)
+
+            priors.append(self._optimized_model.parameters[parameter_name].prior)
+
+        # Rename the parameters if needed.
+
+        if renamed_parameters is not None:
+
+            for old_label, new_label in renamed_parameters.iteritems():
+
+                for i, _ in enumerate(labels):
+
+                    if labels[i] == old_label:
+                        labels[i] = new_label
+
+        # default arguments
+        default_args = {'show_titles': True, 'title_fmt': ".2g", 'labels': labels,
+                        'quantiles': [0.16, 0.50, 0.84]}
+
+        # Update the default arguents with the one provided (if any). Note that .update also adds new keywords,
+        # if they weren't present in the original dictionary, so you can use any option in kwargs, not just
+        # the one in default_args
+        default_args.update(kwargs)
+
+        fig = corner(self._samples_transposed.T, **default_args)
+
+        return fig
 
 
 class BayesianResults(_AnalysisResults):

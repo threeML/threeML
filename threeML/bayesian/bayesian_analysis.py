@@ -648,44 +648,7 @@ class BayesianAnalysis(object):
 
         if self.samples is not None:
 
-            assert len(self._free_parameters.keys()) == self.raw_samples[0].shape[0], ("Mismatch between sample"
-                                                                                       " dimensions and number of free"
-                                                                                       " parameters")
-
-            labels = []
-            priors = []
-
-            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
-                short_name = parameter_name.split(".")[-1]
-
-                labels.append(short_name)
-
-                priors.append(self._likelihood_model.parameters[parameter_name].prior)
-
-            # Rename the parameters if needed.
-
-            if renamed_parameters is not None:
-
-                for old_label, new_label in renamed_parameters.iteritems():
-
-                    for i, _ in enumerate(labels):
-
-                        if labels[i] == old_label:
-                            labels[i] = new_label
-
-
-            # default arguments
-            default_args = {'show_titles': True, 'title_fmt': ".2g", 'labels': labels,
-                            'quantiles': [0.16, 0.50, 0.84]}
-
-            # Update the default arguents with the one provided (if any). Note that .update also adds new keywords,
-            # if they weren't present in the original dictionary, so you can use any option in kwargs, not just
-            # the one in default_args
-            default_args.update(kwargs)
-
-            fig = corner(self.raw_samples, **default_args)
-
-            return fig
+            return self._results.corner_plot(renamed_parameters, **kwargs)
 
         else:
 
