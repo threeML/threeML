@@ -16,7 +16,6 @@ from threeML.minimizer import minimization
 from threeML.exceptions import custom_exceptions
 from threeML.io.table import Table
 from threeML.parallel.parallel_client import ParallelClient
-from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
 from threeML.config.config import threeML_config
 from threeML.io.uncertainty_formatter import uncertainty_formatter

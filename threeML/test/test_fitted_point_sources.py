@@ -3,7 +3,7 @@ from threeML import *
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
 from threeML.io.calculate_flux import _calculate_point_source_flux
-
+import astropy.units as u
 
 def make_simple_model():
     triggerName = 'bn090217206'
@@ -135,6 +135,8 @@ analysis_to_test = [jl_simple.results,
 
 
 
+
+
 def test_fitted_point_source_plotting():
 
 
@@ -159,17 +161,16 @@ def test_fitted_point_source_plotting():
 
         for e_unit in good_energy_units:
 
-            print u
 
             for x in analysis_to_test:
 
 
-                plot_point_source_spectra(x,flux_unit=u1,energy_unit=e_unit,num_ene=5)
+                _=plot_point_source_spectra(x,flux_unit=u1,energy_unit=e_unit,num_ene=5)
 
-                plot_point_source_spectra(x,**plot_keywords)
+                _=plot_point_source_spectra(x,**plot_keywords)
 
                 with pytest.raises(InvalidUnitError):
-                    plot_point_source_spectra(x,flux_unit=bad_flux_units[0])
+                    _=plot_point_source_spectra(x,flux_unit=bad_flux_units[0])
 
 
 
@@ -188,4 +189,15 @@ def test_fitted_point_source_flux_calculations():
 
     _calculate_point_source_flux(1, 10, analysis_to_test[-2], **flux_keywords)
 
+
+def test_units_on_energy_range():
+
+
+    _ = plot_point_source_spectra(analysis_to_test[0],ene_min=1.*u.keV, ene_max=1*u.MeV)
+
+    with pytest.raises(AssertionError):
+        plot_point_source_spectra(analysis_to_test[0], ene_min=1., ene_max=1* u.MeV)
+
+    with pytest.raises(AssertionError):
+        plot_point_source_spectra(analysis_to_test[0], ene_min=1.*u.keV, ene_max=1.)
 

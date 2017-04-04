@@ -80,7 +80,7 @@ class FluxConversion(object):
 
         else:
 
-            self._conversion = tmp.unit.to(self._flux_unit)
+            self._conversion = tmp.unit.to(self._flux_unit, equivalencies=u.spectral())
             self._is_dimensionless = False
 
 
@@ -253,10 +253,15 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         # astropy so that we can easily except energy, wavelength, or frequency
         # energy units
 
+        if isinstance(energy_range,u.Quantity):
 
-        energy_range = (energy_range).to('keV', equivalencies=u.spectral())
+            energy_range = (energy_range).to('keV', equivalencies=u.spectral())
 
-        #energy_unit = energy_range.unit
+        else:
+
+            energy_range = (energy_range * energy_unit).to('keV', equivalencies=u.spectral())
+
+        energy_unit = energy_range.unit
 
         energy_range = energy_range.value
 
