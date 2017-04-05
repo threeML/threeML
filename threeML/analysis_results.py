@@ -765,7 +765,7 @@ class _AnalysisResults(object):
 
         return fig
 
-    def corner_plot_cc(self, parameters=None, renamed_parameters=None, figsize='PAGE', **cc_kwargs):
+    def corner_plot_cc(self, parameters=None, renamed_parameters=None, **cc_kwargs):
         """
         Corner plots using chainconsumer which allows for nicer plotting of
         marginals
@@ -783,9 +783,19 @@ class _AnalysisResults(object):
             RuntimeError("You must have chainconsumer installed to use this function: pip install chainconsumer")
 
 
-        assert len(self._free_parameters.keys()) == self._samples_transposed.T[0].shape[0], ("Mismatch between sample"
-                                                                                   " dimensions and number of free"
-                                                                                   " parameters")
+
+        # these are the keywords for the plot command
+
+        _default_plot_args = {'truth': None,
+                              'figsize': 'GROW',
+                              'filename': None,
+                              'display': False,
+                              'legend': None}
+        keys=cc_kwargs.keys()
+        for key in keys:
+
+            if key in _default_plot_args:
+                _default_plot_args[key] = cc_kwargs.pop(key)
 
         labels = []
         priors = []
@@ -823,7 +833,7 @@ class _AnalysisResults(object):
             cc_kwargs = threeML_config['bayesian']['chain consumer style']
 
         cc.configure(**cc_kwargs)
-        fig = cc.plot(parameters=parameters)
+        fig = cc.plot(parameters=parameters, **_default_plot_args)
 
         return fig
 
@@ -848,104 +858,116 @@ class _AnalysisResults(object):
 
         cc = chainconsumer.ChainConsumer()
 
-        if self.samples is not None:
-            assert len(self._free_parameters.keys()) == self._samples_transposed.T[0].shape[0], "Mismatch between sample " \
-                                                                                      "dimensions and number of free parameters"
+        # these are the keywords for the plot command
 
-            if 'parameters' in kwargs:
+        _default_plot_args = {'truth':None,
+                              'figsize':'GROW',
+                              'parameters':None,
+                              'filename':None,
+                              'display':False,
+                              'legend':None}
 
-                parameters = kwargs.pop('parameters')
+        keys = kwargs.keys()
 
-            else:
+        for key in keys:
 
-                parameters = None
+            if key in _default_plot_args:
 
-            if 'renamed_parameters' in kwargs:
-
-                renamed_parameters = kwargs.pop('renamed_parameters')
-
-            else:
-
-                renamed_parameters = None
-
-            for other_fit in other_fits:
-
-                if other_fit.samples is not None:
-                    assert len(other_fit._free_parameters.keys()) == other_fit.samples.T[0].shape[0], (
-                        "Mismatch between sample"
+                _default_plot_args[key] = kwargs.pop(key)
 
 
 
-                        " dimensions and number of free"
-                        " parameters")
 
-                labels_other = []
-                #priors_other = []
 
-                for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.iteritems()):
-                    short_name = parameter_name.split(".")[-1]
+        if 'renamed_parameters' in kwargs:
 
-                    labels_other.append(short_name)
+            renamed_parameters = kwargs.pop('renamed_parameters')
 
-                    #priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)
+        else:
 
-                # Rename any parameters so that they can be plotted together.
-                # A dictionary is passed with keys = old label values = new label.
-
-                if renamed_parameters is not None:
-
-                    for old_label, new_label in renamed_parameters.iteritems():
-
-                        for i, _ in enumerate(labels_other):
-
-                            if labels_other[i] == old_label:
-                                labels_other[i] = new_label
-
-                for i, val, in enumerate(labels_other):
-
-                    if '$' not in labels_other[i]:
-                        labels_other[i] = val.replace('_', ' ')
-
-                # Must remove underscores!
+            renamed_parameters = None
 
 
 
-                cc.add_chain(other_fit.samples.T, parameters=labels_other)
 
-            labels = []
-            #priors = []
+        for other_fit in other_fits:
 
-            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+            if other_fit.samples is not None:
+                assert len(other_fit._free_parameters.keys()) == other_fit.samples.T[0].shape[0], (
+                    "Mismatch between sample"
+
+
+
+                    " dimensions and number of free"
+                    " parameters")
+
+            labels_other = []
+            #priors_other = []
+
+            for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.iteritems()):
                 short_name = parameter_name.split(".")[-1]
 
-                labels.append(short_name)
+                labels_other.append(short_name)
 
-                #priors.append(self._optimized_model.parameters[parameter_name].prior)
+                #priors_other.append(other_fit._likelihood_model.parameters[parameter_name].prior)
+
+            # Rename any parameters so that they can be plotted together.
+            # A dictionary is passed with keys = old label values = new label.
 
             if renamed_parameters is not None:
 
                 for old_label, new_label in renamed_parameters.iteritems():
 
-                    for i, _ in enumerate(labels):
+                    for i, _ in enumerate(labels_other):
 
-                        if labels[i] == old_label:
-                            labels[i] = new_label
+                        if labels_other[i] == old_label:
+                            labels_other[i] = new_label
+
+            for i, val, in enumerate(labels_other):
+
+                if '$' not in labels_other[i]:
+                    labels_other[i] = val.replace('_', ' ')
 
             # Must remove underscores!
 
-            for i, val, in enumerate(labels):
 
-                if '$' not in labels[i]:
-                    labels[i] = val.replace('_', ' ')
 
-            cc.add_chain(self._samples_transposed.T, parameters=labels)
+            cc.add_chain(other_fit.samples.T, parameters=labels_other)
 
-            # should only be the cc kwargs
+        labels = []
+        #priors = []
 
-            cc.configure(**kwargs)
-            fig = cc.plot(parameters=parameters, figsize='PAGE')
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+            short_name = parameter_name.split(".")[-1]
 
-            return fig
+            labels.append(short_name)
+
+            #priors.append(self._optimized_model.parameters[parameter_name].prior)
+
+        if renamed_parameters is not None:
+
+            for old_label, new_label in renamed_parameters.iteritems():
+
+                for i, _ in enumerate(labels):
+
+                    if labels[i] == old_label:
+                        labels[i] = new_label
+
+        # Must remove underscores!
+
+        for i, val, in enumerate(labels):
+
+            if '$' not in labels[i]:
+                labels[i] = val.replace('_', ' ')
+
+        cc.add_chain(self._samples_transposed.T, parameters=labels)
+
+        # should only be the cc kwargs
+
+        cc.configure(**kwargs)
+        fig = cc.plot(**_default_plot_args)
+
+        return fig
 
 
 class BayesianResults(_AnalysisResults):
