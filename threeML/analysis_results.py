@@ -797,8 +797,12 @@ class _AnalysisResults(object):
             if key in _default_plot_args:
                 _default_plot_args[key] = cc_kwargs.pop(key)
 
+
         labels = []
         priors = []
+
+
+
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
             short_name = parameter_name.split(".")[-1]
@@ -846,6 +850,7 @@ class _AnalysisResults(object):
         :param renamed_parameters: a python dictionary of parameters to rename.
              Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
              {'old label': 'new label'}
+        :param names: (optional) name for each chain first name is this chain followed by each added chain
         :param kwargs: chain consumer kwargs
         :return:
 
@@ -875,7 +880,18 @@ class _AnalysisResults(object):
 
                 _default_plot_args[key] = kwargs.pop(key)
 
+        # allows us to name chains
 
+        if 'names' in kwargs:
+
+            names =kwargs.pop('names')
+
+
+            assert len(names) == len(other_fits) +1, 'you have %d chains but %d names'%(len(other_fits)+1,len(names))
+
+        else:
+
+            names = None
 
 
 
@@ -888,9 +904,7 @@ class _AnalysisResults(object):
             renamed_parameters = None
 
 
-
-
-        for other_fit in other_fits:
+        for  j, other_fit in enumerate(other_fits):
 
             if other_fit.samples is not None:
                 assert len(other_fit._free_parameters.keys()) == other_fit.samples.T[0].shape[0], (
@@ -923,16 +937,21 @@ class _AnalysisResults(object):
                         if labels_other[i] == old_label:
                             labels_other[i] = new_label
 
+            # Must remove underscores!
+
             for i, val, in enumerate(labels_other):
 
                 if '$' not in labels_other[i]:
                     labels_other[i] = val.replace('_', ' ')
 
-            # Must remove underscores!
 
+            if names is not None:
 
+                cc.add_chain(other_fit.samples.T, parameters=labels_other, name=names[j+1])
 
-            cc.add_chain(other_fit.samples.T, parameters=labels_other)
+            else:
+
+                cc.add_chain(other_fit.samples.T, parameters=labels_other)
 
         labels = []
         #priors = []
@@ -960,7 +979,14 @@ class _AnalysisResults(object):
             if '$' not in labels[i]:
                 labels[i] = val.replace('_', ' ')
 
-        cc.add_chain(self._samples_transposed.T, parameters=labels)
+
+        if names is not None:
+
+            cc.add_chain(self._samples_transposed.T, parameters=labels, name=names[0])
+
+        else:
+
+            cc.add_chain(self._samples_transposed.T, parameters=labels)
 
         # should only be the cc kwargs
 
