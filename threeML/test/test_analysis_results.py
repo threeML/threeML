@@ -254,3 +254,14 @@ def test_bayesian_input_output():
     os.remove(temp_file)
 
     _results_are_same(rb1, rb2, bayes=True)
+
+
+def test_corner_plotting():
+
+    ar = _get_mle_analysis_results()
+
+    ar.corner_plot()
+
+
+
+
