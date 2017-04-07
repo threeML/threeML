@@ -10,9 +10,10 @@ import re
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.eventlist import EventListWithDeadTimeFraction
 from threeML.io.cern_root_utils.io_utils import open_ROOT_file
-from threeML.io.cern_root_utils.tobject_to_numpy import tree_to_ndarray
+from threeML.io.cern_root_utils.tobject_to_numpy import tree_to_ndarray, th2_to_arrays
+from threeML.plugins.OGIP.response import InstrumentResponse
 
-__instrument_name = "Fermi GBM TTE (all detectors)"
+__instrument_name = "POLAR spectroscopy"
 
 
 class BinningMethodError(RuntimeError):
@@ -38,31 +39,29 @@ class POLARLike(EventListLike):
         :param verbose:
         """
 
-
         self._default_unbinned = unbinned
 
         # extract the polar varaibles
 
         self._polar_data = POLARData(polar_root_file, trigger_time, rsp_file)
 
-        # TODO: get the response matrix out
 
         # Create the the event list
 
         event_list = EventListWithDeadTimeFraction(arrival_times=self._polar_data.time,
                                                    energies=self._polar_data.pha,
-                                                   n_channels=20, # TODO: cahnge!
+                                                   n_channels=self._polar_data.n_channels,
                                                    start_time=self._polar_data.time.min(),
                                                    stop_time=self._polar_data.time.max(),
                                                    dead_time_fraction=self._polar_data.dead_time_fraction,
                                                    verbose=verbose,
-                                                   rsp_file='nothing') # TODO: cahnge
+                                                   rsp_file=rsp_file)
 
         # pass to the super class
 
         super(POLARLike, self).__init__(name,
                                         event_list,
-                                        rsp_file=rsp, # TODO: change!
+                                        rsp_file=self._polar_data.rsp,
                                         source_intervals=source_intervals,
                                         background_selections=background_selections,
                                         poly_order=poly_order,
@@ -111,7 +110,7 @@ class POLARLike(EventListLike):
         super_out = super(POLARLike, self)._output()
         return super_out
 
-        #return super_out.append(self._gbm_tte_file._output())
+        # return super_out.append(self._gbm_tte_file._output())
 
 
 class POLARData(object):
@@ -126,10 +125,8 @@ class POLARData(object):
         :param rsp_file: path to rsp file
         """
 
-
         # open the event file
         with open_ROOT_file(polar_root_file) as f:
-
             tmp = tree_to_ndarray(f.Get('polar_out'))
 
             # extract the pedestal corrected ADC channels
@@ -150,20 +147,23 @@ class POLARData(object):
             # digitize the ADC channels into bins
             # these bins are preliminary
 
-            self._binned_pha = np.digitize(pha, [0, 204.75,409.5, 614.25, 819, 1023.75, 1228.5,
-                                                 1433.25, 1638, 1842.75, 2047.5, 2252.25, 2457,
-                                                 2661.75, 2866.5,3071.25, 3276, 3480.75, 3685.5,
-                                                 3890.25, 4095])
+        with open_ROOT_file(rsp_file) as f:
+            matrix = th2_to_arrays(f.Get('rsp'))[-1]
+            ebounds = th2_to_arrays(f.Get('EM_bounds'))[-1]
+            mc_low = th2_to_arrays(f.Get('ER_low'))[-1]
+            mc_high = th2_to_arrays(f.Get('ER_high'))[-1]
 
-        # # open the event file
-        # with open_ROOT_file(rsp_file) as f:
-        #
-        #
+        mc_energies = np.append(mc_low, mc_high[-1])
 
+        # build the POLAR response
 
+        self._rsp = InstrumentResponse(matrix=matrix,
+                                       ebounds=ebounds,
+                                       monte_carlo_energies=mc_energies)
 
+        # bin the ADC channels
 
-
+        self._binned_pha = np.digitize(pha, ebounds)
 
     @property
     def pha(self):
@@ -177,8 +177,11 @@ class POLARData(object):
     def dead_time_fraction(self):
         return self._dead_time_fraction
 
-
     @property
     def rsp(self):
-
         return self._rsp
+
+    @property
+    def n_channels(self):
+
+        return len(self._rsp.ebounds) - 1
