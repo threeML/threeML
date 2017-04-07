@@ -40,6 +40,35 @@ def cmap_intervals(length=50, cmap='YlOrBr', start=None, stop=None):
     :param cmap: str name of a matplotlib colormap (see matplotlib.pyplot.cm)
     """
     cm = getattr(plt.cm, cmap)
+
+    # qualitative color maps
+    if cmap in  ['Accent', 'Dark2', 'Paired', 'Pastel1',
+                             'Pastel2', 'Set1', 'Set2', 'Set3', 'Vega10',
+                             'Vega20', 'Vega20b', 'Vega20c']:
+
+
+
+
+        base_n_colors = cm.N
+
+        cmap_list = cm(range(base_n_colors))
+
+        if base_n_colors< length:
+
+
+            factor = int(np.floor_divide(length,base_n_colors))
+
+
+            cmap_list = np.tile(cmap_list,(factor,1))
+
+
+        return cmap_list
+
+
+
+
+
+
     crange = CMAP_RANGE.get(cmap, dict(start=0, stop=255))
     if cmap in REVERSE_CMAP:
         crange = dict(start=crange['stop'], stop=crange['start'])

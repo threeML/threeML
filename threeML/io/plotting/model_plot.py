@@ -129,15 +129,13 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
 
 
-    #energy_range = energy_range * u.Unit(_defaults['energy_unit'])
-
     # if we are not going to sum sources
 
     if not _defaults['sum_sources']:
 
         if _defaults['fit_colors'] is None:
 
-            color_fit = cmap_intervals(num_sources_to_plot, _defaults['fit_cmap'])
+            color_fit = cmap_intervals(num_sources_to_plot+1, _defaults['fit_cmap'])
 
 
         else:
@@ -156,11 +154,10 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
 
 
-
         if _defaults['contour_colors'] is None:
 
 
-            color_contour = cmap_intervals(num_sources_to_plot, _defaults['contour_cmap'])
+            color_contour = cmap_intervals(num_sources_to_plot+1, _defaults['contour_cmap'])
 
         else:
 
@@ -380,8 +377,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                                           contour_color=color_contour[color_itr],
                                           label=label)
 
-
-
                     color_itr += 1
 
 
@@ -428,6 +423,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
 
                 color_itr += 1
+
 
 
 
@@ -752,7 +748,7 @@ class SpectralContourPlot(object):
             self._ax_right.set_ylabel('Arbitrary units')
 
             if self._show_legend:
-                self._ax_right.legend(loc='best')
+                self._ax_right.legend(**self._legend_kwargs)
 
 
         self._ax.set_xlim(self._emin,self._emax)
