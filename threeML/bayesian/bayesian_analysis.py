@@ -807,7 +807,7 @@ class BayesianAnalysis(object):
 
         def plot_one_histogram(subplot, data, label):
 
-            nbins = self.freedman_diaconis_rule(data)
+            nbins = int(self.freedman_diaconis_rule(data))
 
             subplot.hist(data, nbins, label=label)
 
