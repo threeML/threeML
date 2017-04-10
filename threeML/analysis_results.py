@@ -711,7 +711,7 @@ class _AnalysisResults(object):
         """
 
         if self.analysis_type == 'MLE':
-            raise custom_warnings.warn(
+            custom_warnings.warn(
                 ' "Careful: these plots are an approximation, as they assume linear correlation among parameters. To account for non-linear correlation use the get_contour method of the JointLikelihood object."')
 
         assert len(self._free_parameters.keys()) == self._samples_transposed.T[0].shape[0], ("Mismatch between sample"
@@ -767,7 +767,7 @@ class _AnalysisResults(object):
         """
 
         if self.analysis_type == 'MLE':
-            raise custom_warnings.warn(
+            custom_warnings.warn(
                 ' "Careful: these plots are an approximation, as they assume linear correlation among parameters. To account for non-linear correlation use the get_contour method of the JointLikelihood object."')
 
         if not has_chainconsumer:
@@ -844,7 +844,7 @@ class _AnalysisResults(object):
         """
 
         if self.analysis_type == 'MLE':
-            raise custom_warnings.warn(
+            custom_warnings.warn(
                 ' "Careful: these plots are an approximation, as they assume linear correlation among parameters. To account for non-linear correlation use the get_contour method of the JointLikelihood object."')
 
         if not has_chainconsumer:
