@@ -219,6 +219,14 @@ In order to use the HAWC plugin, you will also need to install cthreeML (run thi
 environment, you can still install the packages by adding the ```--user``` option at the
 end of each ```pip``` command.
 
+#### Tips for Mac users
+The following paths need to be added to you DYLD_LIBRARY path if you have FORTRAN installed via these package managers:
+
+* Homebrew: DYLD_LIBRARY_PATH=/usr/local/lib/gcc/<version number>:$DYLD_LIBRARY_PATH
+* Fink: DYLD_LIBRARY_PATH=/sw/lib/gcc<version number>/lib:$DYLD_LIBRARY_PATH
+
+Please inform us if you have problems related to your FORTRAN distribution.
+
 ### Acknowledgements 
 3ML makes use of the Spanish Virtual Observatory's Filter Profile servce (http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NIRT).
 
