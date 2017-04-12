@@ -699,6 +699,65 @@ class _AnalysisResults(object):
             # Return the dataframe
             return bayes_results
 
+
+
+class BayesianResults(_AnalysisResults):
+    """
+    Store results of a Bayesian analysis (i.e., the samples) and allow for computation with them and "error propagation"
+
+    :param optimized_model: a Model instance with the MAP values of the parameters. A clone will be stored within
+    the class, so there is no need to clone it before hand
+    :type optimized_model: astromodels.Model
+    :param samples: the samples for the parameters
+    :type samples: np.ndarray
+    :param posterior_values: a dictionary containing the posterior values for the different datasets at the HPD
+    :type posterior_values: dict
+    """
+
+    def __init__(self, optimized_model, samples, posterior_values):
+
+        super(BayesianResults, self).__init__(optimized_model, samples, posterior_values, 'Bayesian')
+
+    def get_correlation_matrix(self):
+        """
+        Estimate the covariance matrix from the samples
+
+        :return: the correlation matrix
+        """
+
+        # Here we need to estimate the covariance from the samples, then compute the correlation matrix
+
+        covariance = self.estimate_covariance_matrix()
+
+        return self._get_correlation_matrix(covariance)
+
+    def get_statistic_frame(self):
+
+        return self._get_statistic_frame(name='-log(posterior)')
+
+    def display(self, display_correlation=False, error_type="equal tail", cl=0.68):
+
+        best_fit_table = self._get_best_fit_table(error_type, cl)
+
+        print("Maximum a posteriori probability (MAP) point:\n")
+
+        display(best_fit_table)
+
+        if display_correlation:
+
+            corr_matrix = NumericMatrix(self.get_correlation_matrix())
+
+            for col in corr_matrix.colnames:
+                corr_matrix[col].format = '2.2f'
+
+            print("\nCorrelation matrix:\n")
+
+            display(corr_matrix)
+
+        print("\nValues of -log(posterior) at the minimum:\n")
+
+        display(self.get_statistic_frame())
+
     def corner_plot(self, renamed_parameters=None, **kwargs):
         """
         Produce the corner plot showing the marginal distributions in one and two directions.
@@ -709,10 +768,6 @@ class _AnalysisResults(object):
         :param kwargs: arguments to be passed to the corner function
         :return: a matplotlib.figure instance
         """
-
-        if self.analysis_type == 'MLE':
-            custom_warnings.warn(
-                ' "Careful: these plots are an approximation, as they assume linear correlation among parameters. To account for non-linear correlation use the get_contour method of the JointLikelihood object."')
 
         assert len(self._free_parameters.keys()) == self._samples_transposed.T[0].shape[0], ("Mismatch between sample"
                                                                                              " dimensions and number of free"
@@ -766,9 +821,6 @@ class _AnalysisResults(object):
         :return fig:
         """
 
-        if self.analysis_type == 'MLE':
-            custom_warnings.warn(
-                ' "Careful: these plots are an approximation, as they assume linear correlation among parameters. To account for non-linear correlation use the get_contour method of the JointLikelihood object."')
 
         if not has_chainconsumer:
             RuntimeError("You must have chainconsumer installed to use this function: pip install chainconsumer")
@@ -843,9 +895,6 @@ class _AnalysisResults(object):
 
         """
 
-        if self.analysis_type == 'MLE':
-            custom_warnings.warn(
-                ' "Careful: these plots are an approximation, as they assume linear correlation among parameters. To account for non-linear correlation use the get_contour method of the JointLikelihood object."')
 
         if not has_chainconsumer:
             RuntimeError("You must have chainconsumer installed to use this function")
@@ -875,7 +924,7 @@ class _AnalysisResults(object):
             names = kwargs.pop('names')
 
             assert len(names) == len(other_fits) + 1, 'you have %d chains but %d names' % (
-            len(other_fits) + 1, len(names))
+                len(other_fits) + 1, len(names))
 
         else:
 
@@ -977,64 +1026,6 @@ class _AnalysisResults(object):
         fig = cc.plot(**_default_plot_args)
 
         return fig
-
-
-class BayesianResults(_AnalysisResults):
-    """
-    Store results of a Bayesian analysis (i.e., the samples) and allow for computation with them and "error propagation"
-
-    :param optimized_model: a Model instance with the MAP values of the parameters. A clone will be stored within
-    the class, so there is no need to clone it before hand
-    :type optimized_model: astromodels.Model
-    :param samples: the samples for the parameters
-    :type samples: np.ndarray
-    :param posterior_values: a dictionary containing the posterior values for the different datasets at the HPD
-    :type posterior_values: dict
-    """
-
-    def __init__(self, optimized_model, samples, posterior_values):
-
-        super(BayesianResults, self).__init__(optimized_model, samples, posterior_values, 'Bayesian')
-
-    def get_correlation_matrix(self):
-        """
-        Estimate the covariance matrix from the samples
-
-        :return: the correlation matrix
-        """
-
-        # Here we need to estimate the covariance from the samples, then compute the correlation matrix
-
-        covariance = self.estimate_covariance_matrix()
-
-        return self._get_correlation_matrix(covariance)
-
-    def get_statistic_frame(self):
-
-        return self._get_statistic_frame(name='-log(posterior)')
-
-    def display(self, display_correlation=False, error_type="equal tail", cl=0.68):
-
-        best_fit_table = self._get_best_fit_table(error_type, cl)
-
-        print("Maximum a posteriori probability (MAP) point:\n")
-
-        display(best_fit_table)
-
-        if display_correlation:
-
-            corr_matrix = NumericMatrix(self.get_correlation_matrix())
-
-            for col in corr_matrix.colnames:
-                corr_matrix[col].format = '2.2f'
-
-            print("\nCorrelation matrix:\n")
-
-            display(corr_matrix)
-
-        print("\nValues of -log(posterior) at the minimum:\n")
-
-        display(self.get_statistic_frame())
 
 
 class MLEResults(_AnalysisResults):
