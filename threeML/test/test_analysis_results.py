@@ -258,7 +258,7 @@ def test_bayesian_input_output():
 
 def test_corner_plotting():
 
-    ar = _get_mle_analysis_results()
+    ar = _get_bayes_analysis_results()
 
     ar.corner_plot()
 
