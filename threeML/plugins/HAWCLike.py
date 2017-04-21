@@ -72,6 +72,8 @@ class HAWCLike(PluginPrototype):
         # This is to keep track of whether the user defined a ROI or not
 
         self._roi_ra = None
+        self._roi_fits = None
+        self._roi_galactic = False
 
         # Create the dictionary of nuisance parameters
 
@@ -89,7 +91,7 @@ class HAWCLike(PluginPrototype):
         
         return [str(n) for n in xrange(min_channel, max_channel + 1)]
 
-    def set_ROI(self, ra, dec, radius, fixed_ROI=False):
+    def set_ROI(self, ra, dec, radius, fixed_ROI=False, galactic=False):
 
         self._roi_ra = ra
         self._roi_dec = dec
@@ -97,6 +99,33 @@ class HAWCLike(PluginPrototype):
         self._roi_radius = radius
 
         self._fixed_ROI = fixed_ROI
+        self._roi_galactic = galactic
+
+    def set_strip_ROI(self, rastart, rastop, decstart, decstop, fixed_ROI=False, galactic=False):
+
+        self._roi_ra = [rastart, rastop]
+        self._roi_dec = [decstart, decstop]
+
+        self._fixed_ROI = fixed_ROI
+        self._roi_galactic = galactic
+
+    def set_polygon_ROI(self, ralist, declist, fixed_ROI=False, galactic=False):
+
+        self._roi_ra = ralist
+        self._roi_dec = declist
+
+        self._fixed_ROI = fixed_ROI
+        self._roi_galactic = galactic
+
+    def set_template_ROI(self, fitsname, threshold, fixed_ROI=False):
+
+        self._roi_ra = None
+
+        self._roi_fits = fitsname
+        self._roi_threshold = threshold
+
+        self._fixed_ROI = fixed_ROI
+        self._roi_galactic = False
 
     def __getstate__(self):
 
@@ -215,11 +244,33 @@ class HAWCLike(PluginPrototype):
 
 
 
-            if self._roi_ra is None and self._fullsky:
-                raise RuntimeError("You have to define a ROI with the setROI method")
+            if self._fullsky:
 
-            if self._roi_ra is not None and self._fullsky:
-                self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._roi_radius, self._fixed_ROI)
+                if self._roi_ra is not None:
+
+                    if not isinstance(self._roi_ra, list):
+
+                        self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._roi_radius, self._fixed_ROI, self._roi_galactic)
+
+                    elif len(self._roi_ra) == 2:
+
+                        self._theLikeHAWC.SetROI(self._roi_ra[0], self._roi_ra[1], self._roi_dec[0], self._roi_dec[1], self._fixed_ROI, self._roi_galactic)
+
+                    elif len(self._roi_ra) > 2:
+
+                        self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._fixed_ROI, self._roi_galactic)
+
+                    else:
+
+                        raise RuntimeError("Only one point is found, use set_ROI(float ra, float dec, float radius, bool fixedROI, bool galactic).")
+
+                elif self._roi_fits is not None:
+
+                    self._theLikeHAWC.SetROI(self._roi_fits, self._roi_threshold, self._fixed_ROI)
+
+                else:
+
+                    raise RuntimeError("You have to define a ROI with the setROI method")
 
         except:
 
