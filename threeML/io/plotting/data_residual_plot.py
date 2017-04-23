@@ -3,6 +3,7 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 
 from threeML.io.plotting.step_plot import step_plot
+from threeML.config.config import threeML_config
 
 class ResidualPlot(object):
 
@@ -73,10 +74,10 @@ class ResidualPlot(object):
                     y,
                     yerr=yerr,
                     xerr=xerr,
-                    fmt='.',
-                    markersize=3,
+                    fmt=threeML_config['residual plot']['error marker'],
+                    markersize=threeML_config['residual plot']['error marker size'],
                     linestyle='',
-                    # elinewidth=.5,
+                    elinewidth=threeML_config['residual plot']['error line width'],
                     alpha=.9,
                     capsize=0,
                     label=label,
@@ -91,8 +92,9 @@ class ResidualPlot(object):
                      residuals,
                      yerr=np.ones_like(residuals),
                      capsize=0,
-                     fmt='.',
-                     markersize=3,
+                     fmt=threeML_config['residual plot']['error marker'],
+                     elinewidth=threeML_config['residual plot']['error line width'],
+                     markersize=threeML_config['residual plot']['error marker size'],
                      color=color)
 
 
