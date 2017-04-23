@@ -97,12 +97,30 @@ class BayesianAnalysis(object):
 
         self._likelihood_model = likelihood_model
 
-        self.data_list = data_list
+        self._data_list = data_list
 
-        # Make sure that the current model is used in all data sets
+        for dataset in self._data_list.values():
 
-        for dataset in self.data_list.values():
             dataset.set_model(self._likelihood_model)
+
+            # Now get the nuisance parameters from the data and add them to the model
+            # NOTE: it is important that this is *after* the setting of the model, as some
+            # plugins might need to adjust the number of nuisance parameters depending on the
+            # likelihood model
+
+            for parameter_name, parameter in dataset.nuisance_parameters.items():
+                # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
+                # of the same plugin will overwrite each other's nuisance parameters
+
+                assert dataset.name in parameter_name, "This is a bug of the plugin for %s: nuisance parameters " \
+                                                       "must contain the instance name" % type(dataset)
+
+                self._likelihood_model.add_external_parameter(parameter)
+
+        # # Make sure that the current model is used in all data sets
+        #
+        # for dataset in self.data_list.values():
+        #     dataset.set_model(self._likelihood_model)
 
         # Init the samples to None
 
@@ -417,7 +435,7 @@ class BayesianAnalysis(object):
 
         log_prior = self._log_prior(approximate_MAP_point)
 
-        for dataset in self.data_list.values():
+        for dataset in self._data_list.values():
 
             log_posteriors[dataset.name] = dataset.get_log_like() + log_prior
 
@@ -1013,7 +1031,7 @@ class BayesianAnalysis(object):
 
             # Loop over each dataset and get the likelihood values for each set
 
-            log_like_values = map(lambda dataset: dataset.get_log_like(), self.data_list.values())
+            log_like_values = map(lambda dataset: dataset.get_log_like(), self._data_list.values())
 
         except ModelAssertionViolation:
 
