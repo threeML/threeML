@@ -660,6 +660,9 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
+
+        raise DeprecationWarning('Please use <bayesian_analysis>.results.corner_plot. This feature will be removed in the future.')
+
         if self.samples is not None:
 
             return self._results.corner_plot(renamed_parameters, **kwargs)
@@ -682,6 +685,8 @@ class BayesianAnalysis(object):
         :return fig:
         """
 
+        raise DeprecationWarning(
+            'Please use <bayesian_analysis>.results.corner_plot_cc. This feature will be removed in the future.')
 
 
         if self.samples is not None:
