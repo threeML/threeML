@@ -661,7 +661,7 @@ class BayesianAnalysis(object):
         """
 
 
-        raise DeprecationWarning('Please use <bayesian_analysis>.results.corner_plot. This feature will be removed in the future.')
+        DeprecationWarning('Please use <bayesian_analysis>.results.corner_plot. This feature will be removed in the future.')
 
         if self.samples is not None:
 
@@ -685,7 +685,7 @@ class BayesianAnalysis(object):
         :return fig:
         """
 
-        raise DeprecationWarning(
+        DeprecationWarning(
             'Please use <bayesian_analysis>.results.corner_plot_cc. This feature will be removed in the future.')
 
 
@@ -758,6 +758,14 @@ class BayesianAnalysis(object):
             figures.append(figure)
 
         return figures
+
+    @property
+    def data_list(self):
+        """
+        :return: data list for this analysis
+        """
+
+        return self._data_list
 
     def convergence_plots(self, n_samples_in_each_subset, n_subsets):
         """
