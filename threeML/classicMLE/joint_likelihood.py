@@ -284,6 +284,8 @@ class JointLikelihood(object):
 
         total = 0
 
+        # sum up the total number of data points
+
         total_number_of_data_points = 0
 
         for dataset in self._data_list.values():
@@ -302,6 +304,8 @@ class JointLikelihood(object):
 
         statistical_measures = collections.OrderedDict()
 
+        # for MLE we can only compute the AIC and BIC as they
+        # are point estimates
 
         statistical_measures['AIC'] = aic(-total,len(self._free_parameters),total_number_of_data_points)
         statistical_measures['BIC'] = bic(-total,len(self._free_parameters),total_number_of_data_points)
