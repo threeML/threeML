@@ -66,10 +66,11 @@ class PHAWrite(object):
 
         :param outfile_name: string (excluding .pha) of the PHA to write
         :param overwrite: (optional) bool to overwrite existing file
+        :param force_rsp_write: force the writing of an RSP
         :return:
         """
 
-        self._force_rsp_write = force_rsp_write
+
 
         # Remove the .pha extension if any
         if os.path.splitext(outfile_name)[-1].lower() == '.pha':
@@ -89,7 +90,7 @@ class PHAWrite(object):
 
         self._write_phaII(overwrite)
 
-    def _append_ogip(self, ogip):
+    def _append_ogip(self, ogip, force_rsp_write):
         """
         Add an ogip instance's data into the data list
 
@@ -135,7 +136,7 @@ class PHAWrite(object):
                 self._ancrfile[key].append('NONE')
 
 
-            if pha_info['rsp'].rsp_filename is not None and not self._force_rsp_write:
+            if pha_info['rsp'].rsp_filename is not None and not force_rsp_write:
 
                 self._respfile[key].append(pha_info['rsp'].rsp_filename)
 
