@@ -449,3 +449,13 @@ class HAWCLike(PluginPrototype):
     def write_residual_map(self, fileName):
 
         self._theLikeHAWC.WriteResidualMap(fileName)
+
+    def get_number_of_data_points(self):
+        """
+        returns the number of active photons
+        :return:
+        """
+
+        # TODO: Giacomo, this should be the number of events/bins you are using!
+
+        return 1

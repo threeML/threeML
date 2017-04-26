@@ -125,3 +125,14 @@ class PluginPrototype(object):
         logLike value.
         """
         pass
+
+    @abc.abstractmethod
+    def get_number_of_data_points(self):
+        """
+        This returns the number of data points that are used to evaluate the likelihood.
+        For binned measurements, this is the number of active bins used in the fit. For
+        unbinned measurements, this would be the number of photons/particles that are
+        evaluated on the likelihood
+        """
+
+        pass

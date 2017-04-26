@@ -425,3 +425,14 @@ class XYLike(PluginPrototype):
 
         return g.by_mc(n_iterations, continue_of_failure)
 
+
+    def get_number_of_data_points(self):
+        """
+        returns the number of active data points
+        :return:
+        """
+
+        # the sum of the mask should be the number of data points in use
+
+        return self._mask.sum()
+
