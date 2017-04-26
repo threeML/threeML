@@ -47,7 +47,7 @@ def _escape_back_yaml_from_fits(yaml_code):
 
 
 
-def load_analysis_results(fits_file):
+def load_analysis_results(fits_file, new_limits=None):
     """
     Load the results of one or more analysis from a FITS file produced by 3ML
 
@@ -61,14 +61,14 @@ def load_analysis_results(fits_file):
 
         if n_results == 1:
 
-            return _load_one_results(f['ANALYSIS_RESULTS', 1])
+            return _load_one_results(f['ANALYSIS_RESULTS', 1], new_limits)
 
         else:
 
-            return _load_set_of_results(f, n_results)
+            return _load_set_of_results(f, n_results, new_limits)
 
 
-def _load_one_results(fits_extension):
+def _load_one_results(fits_extension, new_limits=None):
 
     # Gather analysis type
     analysis_type = fits_extension.header.get("RESUTYPE")
@@ -78,6 +78,13 @@ def _load_one_results(fits_extension):
     model_dict = my_yaml.load(serialized_model)
 
     optimized_model = ModelParser(model_dict=model_dict).get_model()
+
+    # Now update limits (if provided)
+    if new_limits:
+
+        for param in new_limits:
+
+            optimized_model[param].bounds = new_limits[param]
 
     # Gather statistics values
     statistic_values = collections.OrderedDict()
@@ -114,14 +121,14 @@ def _load_one_results(fits_extension):
         return BayesianResults(optimized_model, samples.T, statistic_values)
 
 
-def _load_set_of_results(open_fits_file, n_results):
+def _load_set_of_results(open_fits_file, n_results, new_limits=None):
 
     # Gather all results
     all_results = []
 
     for i in range(n_results):
 
-        all_results.append(_load_one_results(open_fits_file['ANALYSIS_RESULTS', i+1]))
+        all_results.append(_load_one_results(open_fits_file['ANALYSIS_RESULTS', i+1], new_limits))
 
     this_set = AnalysisResultsSet(all_results)
 
@@ -824,7 +831,7 @@ class MLEResults(_AnalysisResults):
 
         for i, sample in enumerate(samples):
 
-            if np.any(sample > hi_bounds) or np.any(sample < low_bounds):
+            if np.any(sample >= hi_bounds) or np.any(sample <= low_bounds):
                 # Remove this sample
                 to_be_kept_mask[i] = False
 
