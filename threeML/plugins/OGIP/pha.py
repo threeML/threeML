@@ -83,7 +83,7 @@ class PHAWrite(object):
 
         for ogip in self._ogiplike:
 
-            self._append_ogip(ogip)
+            self._append_ogip(ogip, force_rsp_write)
 
 
 
