@@ -95,25 +95,33 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
         # go to HEASARC and get the requested table
         heasarc_url = 'http://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=%s' % heasarc_table_name
 
-        urllib.urlretrieve(heasarc_url, filename=file_name_sanatized)
+        try:
 
-        # save the time that we go this table
+            urllib.urlretrieve(heasarc_url, filename=file_name_sanatized)
 
-        with open(cache_file_sanatized, 'w') as cache:
 
-            yaml_dict = {}
 
-            current_time = astro_time.Time(datetime.datetime.utcnow(), scale='utc')
+            # save the time that we go this table
 
-            yaml_dict['last save'] = current_time.datetime.strftime('%Y-%m-%d-%H-%M-%S')
+            with open(cache_file_sanatized, 'w') as cache:
 
-            seconds_in_day = 86400.
+                yaml_dict = {}
 
-            yaml_dict['cache time'] = seconds_in_day * cache_time_days
+                current_time = astro_time.Time(datetime.datetime.utcnow(), scale='utc')
 
-            yaml.dump(yaml_dict, stream=cache, default_flow_style=False)
+                yaml_dict['last save'] = current_time.datetime.strftime('%Y-%m-%d-%H-%M-%S')
 
-    # use astropy routines read the votable
+                seconds_in_day = 86400.
+
+                yaml_dict['cache time'] = seconds_in_day * cache_time_days
+
+                yaml.dump(yaml_dict, stream=cache, default_flow_style=False)
+
+        except(IOError):
+
+            warnings.warn('The cache is outdated but the internet cannot be reached. Please check your connection')
+
+    # use astropy routines to read the votable
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         vo_table = votable.parse(file_name_sanatized)
