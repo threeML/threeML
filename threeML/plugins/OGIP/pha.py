@@ -95,6 +95,7 @@ class PHAWrite(object):
         Add an ogip instance's data into the data list
 
         :param ogip: and OGIPLike instance
+        :param force_rsp_write: force the writing of an rsp
         :return: None
         """
 
