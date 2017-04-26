@@ -5,15 +5,22 @@ import collections
 import ROOT
 import numpy as np
 
+import scipy.integrate
+import astromodels
+
 from threeML.io.cern_root_utils.io_utils import get_list_of_keys, open_ROOT_file
 from threeML.io.cern_root_utils.tobject_to_numpy import tgraph_to_arrays, th2_to_arrays, tree_to_ndarray
 from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.plugins.OGIP.response import InstrumentResponse
-from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, BinnedSpectrum
 from threeML.exceptions.custom_exceptions import custom_warnings
 
+from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
+
 __instrument_name = "VERITAS"
+
+
+# Integrate the interpolation of the effective area for each bin in the residstribution matrix, then sum over the MC
+# energies for the same bin, then renormalize the latter to be the same. The factor should be the same for all
+# channels
 
 
 # This is the data format v 1.0 agreed with Udara:
@@ -60,33 +67,40 @@ class VERITASRun(object):
             self._tRunSummary = np.squeeze(tree_to_ndarray(f.Get(run_name+'/tRunSummary')))  # type: np.ndarray
 
             # Now read the histogram
-            self._log_mc_energies, \
             self._log_recon_energies, \
+            self._log_mc_energies, \
             self._hMigration = th2_to_arrays(f.Get(run_name + "/hMigration"))
 
-            assert np.allclose(self._log_mc_energies, self._log_recon_energies)
+            # Transform energies to keV (they are in TeV)
+            self._log_recon_energies += 9
+            self._log_mc_energies += 9
 
-            # Renormalize the migration matrix for the spectrum which was used to generate it
-            # (a power law with index -1.5)
-            w = (-2 * (10**self._log_mc_energies[1:])**(-0.5) + 2 * (10**self._log_mc_energies[:-1])**(-0.5))
+            # Compute bin centers and bin width of the Monte Carlo energy bins
 
-            # Renormalize the migration matrix to 1 (it's supposed to be a probability)
-            for i in range(self._hMigration.shape[0]):
+            self._dE = (10 ** self._log_mc_energies[1:] - 10 ** self._log_mc_energies[:-1])
+            self._mc_energies_c = (10 ** self._log_mc_energies[1:] + 10 ** self._log_mc_energies[:-1]) / 2.0
 
-                this_column = self._hMigration[i, :] / w  # type: np.ndarray
+            self._n_chan = self._log_recon_energies.shape[0] - 1
 
-                renorm = np.sum(this_column)
-
-                if renorm > 0:
-
-                    self._hMigration[i, :] = this_column / renorm
+            # Remove all nans by substituting them with 0.0
+            idx = np.isfinite(self._hMigration)
+            self._hMigration[~idx] = 0.0
 
             # Read the TGraph
             tgraph = f.Get(run_name + "/gMeanEffectiveArea")
             self._log_eff_area_energies, self._eff_area = tgraph_to_arrays(tgraph)
 
+            # Transform the effective area to cm2 (it is in m2 in the file)
+            self._eff_area *= 1e4
+
+            # Transform energies to keV
+            self._log_eff_area_energies += 9
+
+        # Now use the effective area provided in the file to renormalize the migration matrix appropriately
+        self._renorm_hMigration()
+
         # Exposure is tOn*(1-tDeadTimeFracOn)
-        self._exposure = float(self._tRunSummary['DeadTimeFracOn']) * float(self._tRunSummary['tOn'])
+        self._exposure = float(1 - self._tRunSummary['DeadTimeFracOn']) * float(self._tRunSummary['tOn'])
 
         # Members for generating OGIP equivalents
 
@@ -94,13 +108,73 @@ class VERITASRun(object):
         self._instrument = "VERITAS"
 
         # Now bin the counts
-        self._counts, _ = np.histogram(self._data_on['Erec'], self._log_recon_energies)
+
+        self._counts, _ = self._bin_counts_log(self._data_on['Erec'] * 1e9, self._log_recon_energies)
 
         # Now bin the background counts
-        self._bkg_counts, _ = np.histogram(self._data_off['Erec'], self._log_recon_energies)
 
-        # Build the response
-        self._response = self._build_response()
+        self._bkg_counts, _ = self._bin_counts_log(self._data_off['Erec'] * 1e9, self._log_recon_energies)
+
+        print("Read a %s x %s matrix, spectrum has %s bins, eff. area has %s elements" %
+              (self._hMigration.shape[0], self._hMigration.shape[1], self._counts.shape[0], self._eff_area.shape[0]))
+
+        # Read in the background renormalization (ratio between source and background region)
+
+        self._bkg_renorm = float(self._tRunSummary['OffNorm'])
+
+        # Use above 300 GeV
+
+        self._first_chan = 61
+        self._last_chan = 110
+
+    def _renorm_hMigration(self):
+
+        # Get energies where the effective area is given
+
+        energies_eff = (10 ** self._log_eff_area_energies)
+
+        # Get the unnormalized effective area x photon flux contained in the migration matrix
+
+        v = np.sum(self._hMigration, axis=0)
+
+        # Get the expected photon flux using the simulated spectrum
+
+        mc_e1 = 10 ** self._log_mc_energies[:-1]
+        mc_e2 = 10 ** self._log_mc_energies[1:]
+
+        expectation = self._simulated_spectrum(self._mc_energies_c) * (mc_e2 - mc_e1)
+
+        # Get the unnormalized effective area
+
+        new_v = v / expectation
+
+        # Compute the renormalization based on the energy range from 200 GeV to 1 TeV
+
+        emin = 0.5 * 1e9
+        emax = 1 * 1e9
+
+        idx = (self._mc_energies_c > emin) & (self._mc_energies_c < emax)
+        avg1 = np.average(new_v[idx])
+
+        idx = (energies_eff > emin) & (energies_eff < emax)
+        avg2 = np.average(self._eff_area[idx])
+
+        renorm = avg1 / avg2
+
+        # Renormalize the migration matrix
+
+        self._hMigration = self._hMigration / renorm
+
+    @staticmethod
+    def _bin_counts_log(counts, log_bins):
+
+        energies_on_log = np.log10(np.array(counts))
+
+        # Substitute nans (due to negative energies in unreconstructed events)
+
+        energies_on_log[~np.isfinite(energies_on_log)] = -99
+
+        return np.histogram(energies_on_log, log_bins)
 
     @property
     def migration_matrix(self):
@@ -125,66 +199,178 @@ class VERITASRun(object):
 
         repr += "Exposure: %.2f s, on area / off area: %.2f\n" % (self._exposure, float(self._tRunSummary['OffNorm']))
 
+        failed_on_idx = (self._data_on['Erec'] <= 0)
+        failed_off_idx = (self._data_off['Erec'] <= 0)
+
+        repr += "Events with failed reconstruction: %i src, %i bkg" % (np.sum(failed_on_idx), np.sum(failed_off_idx))
+
         print(repr)
 
-    def _build_response(self):
+    # def _build_response(self):
+    #
+    #     # Interpolate the effective area on the same bins of the migration matrix
+    #     # NOTE: these are mid energies in log space
+    #     mid_energies = (10**self._log_mc_energies[1:] + 10**self._log_mc_energies[:-1]) / 2.0  #type: np.ndarray
+    #
+    #     log_mid_energies = np.log10(mid_energies)
+    #
+    #     interpolated_effective_area = np.interp(log_mid_energies,
+    #                                             self._log_eff_area_energies, self._eff_area,
+    #                                             left=0, right=0)
+    #
+    #     # Transform to cm2 from m2
+    #     interpolated_effective_area *= 1e4
+    #
+    #     self._interpolated_effective_area = interpolated_effective_area
+    #
+    #     # Get response matrix, which is effective area times energy dispersion
+    #     # matrix = self._hMigration * interpolated_effective_area
+    #
+    #     matrix = self._hMigration
+    #
+    #     # Put a lower limit different than zero to avoid problems downstream when convolving a model with the response
+    #
+    #     # Energies in VERITAS files are in TeV, we need them in keV
+    #
+    #     response = InstrumentResponse(matrix, (10**self._log_recon_energies) * 1e9, (10**self._log_mc_energies) * 1e9)
+    #
+    #     return response
+    #
+    # def get_spectrum(self):
+    #
+    #     spectrum = BinnedSpectrumWithDispersion(counts=self._counts,
+    #                                             exposure=self._exposure,
+    #                                             response=self._response,
+    #                                             is_poisson=True,
+    #                                             mission=self._mission,
+    #                                             instrument=self._instrument)
+    #
+    #     return spectrum
+    #
+    # def get_background_spectrum(self):
+    #
+    #     # Renormalization for the background (on_area / off_area), so this is usually < 1
+    #     bkg_renorm = self._bkg_renorm
+    #
+    #     # by renormalizing the exposure of the background we account for the fact that the area is larger
+    #     # (it is equivalent to introducing a renormalization)
+    #     renormed_exposure = self._exposure / bkg_renorm
+    #
+    #     background_spectrum = BinnedSpectrum(counts=self._bkg_counts,
+    #                                          exposure=renormed_exposure,
+    #                                          ebounds=self._response.ebounds,
+    #                                          is_poisson=True,
+    #                                          mission=self._mission,
+    #                                          instrument=self._instrument)
+    #
+    #     return background_spectrum
 
-        # Interpolate the effective area on the same bins of the migration matrix
-        # NOTE: these are mid energies in log space
-        mid_energies = (10**self._log_mc_energies[1:] + 10**self._log_mc_energies[:-1]) / 2.0  #type: np.ndarray
+    def _get_diff_flux_and_integral(self, like_model):
 
-        log_mid_energies = np.log10(mid_energies)
+        n_point_sources = like_model.get_number_of_point_sources()
 
-        interpolated_effective_area = np.interp(log_mid_energies,
-                                                self._log_eff_area_energies, self._eff_area,
-                                                left=0, right=0)
+        # Make a function which will stack all point sources (OGIP do not support spatial dimension)
 
-        # Transform to cm2 from m2
-        interpolated_effective_area *= 1e4
+        def differential_flux(energies):
+            fluxes = like_model.get_point_source_fluxes(0, energies)
 
-        # Get response matrix, which is effective area times energy dispersion
-        matrix = self._hMigration * interpolated_effective_area
+            # If we have only one point source, this will never be executed
+            for i in range(1, n_point_sources):
+                fluxes += like_model.get_point_source_fluxes(i, energies)
 
-        # TODO: use energy dispersion
-        # Avoid energy dispersion for the moment
-        #matrix = np.identity(self._hMigration.shape[0], float) * interpolated_effective_area
+            return fluxes
 
-        # Put a lower limit different than zero to avoid problems downstream when convolving a model with the response
+        # The following integrates the diffFlux function using Simpson's rule
+        # This assume that the intervals e1,e2 are all small, which is guaranteed
+        # for any reasonable response matrix, given that e1 and e2 are Monte-Carlo
+        # energies. It also assumes that the function is smooth in the interval
+        # e1 - e2 and twice-differentiable, again reasonable on small intervals for
+        # decent models. It might fail for models with too sharp features, smaller
+        # than the size of the monte carlo interval.
 
-        # Energies in VERITAS files are in TeV, we need them in keV
+        def integral(e1, e2):
+            # Simpson's rule
 
-        response = InstrumentResponse(matrix, (10**self._log_recon_energies) * 1e9, (10**self._log_mc_energies) * 1e9)
+            return (e2 - e1) / 6.0 * (differential_flux(e1)
+                                      + 4 * differential_flux((e1 + e2) / 2.0)
+                                      + differential_flux(e2))
 
-        return response
+        return differential_flux, integral
 
-    def get_spectrum(self):
+    @staticmethod
+    def _simulated_spectrum(x):
 
-        spectrum = BinnedSpectrumWithDispersion(counts=self._counts,
-                                                exposure=self._exposure,
-                                                response=self._response,
-                                                is_poisson=True,
-                                                mission=self._mission,
-                                                instrument=self._instrument)
+        return (x)**(-2.0)
 
-        return spectrum
+    @staticmethod
+    def _simulated_spectrum_f(e1, e2):
 
-    def get_background_spectrum(self):
+        integral_f = lambda x: -3.0 / (x**0.5)
 
-        # Renormalization for the background (on_area / off_area), so this is usually < 1
-        bkg_renorm = float(self._tRunSummary['OffNorm'])
+        return integral_f(e2) - integral_f(e1)
 
-        # by renormalizing the exposure of the background we account for the fact that the area is larger
-        # (it is equivalent to introducing a renormalization)
-        renormed_exposure = self._exposure / bkg_renorm
+    @staticmethod
+    def _integrate(function, e1, e2):
 
-        background_spectrum = BinnedSpectrum(counts=self._bkg_counts,
-                                             exposure=renormed_exposure,
-                                             ebounds=self._response.ebounds,
-                                             is_poisson=True,
-                                             mission=self._mission,
-                                             instrument=self._instrument)
+        integrals = []
 
-        return background_spectrum
+        for ee1, ee2 in zip(e1,e2):
+
+            grid = np.linspace(ee1, ee2, 30)
+
+            integrals.append(scipy.integrate.simps(function(grid), grid))
+
+        # integrals = map(lambda x:scipy.integrate.quad(function, x[0], x[1], epsrel=1e-2)[0], zip(e1, e2))
+
+        return np.array(integrals)
+
+    def get_log_like(self, like_model, fast=True):
+
+        # Reweight the response matrix
+        diff_flux, integral = self._get_diff_flux_and_integral(like_model)
+
+        e1 = 10**self._log_mc_energies[:-1]
+        e2 = 10**self._log_mc_energies[1:]
+
+        dE = (e2 - e1)
+
+        if not fast:
+
+            this_spectrum = self._integrate(diff_flux, e1, e2) / dE  # 1 / keV cm2 s
+
+            sim_spectrum = self._simulated_spectrum_f(e1, e2) / dE # 1 / keV cm2 s
+
+        else:
+
+            this_spectrum = diff_flux(self._mc_energies_c)
+
+            sim_spectrum = self._simulated_spectrum(self._mc_energies_c)
+
+        weight = this_spectrum / sim_spectrum  # type: np.ndarray
+
+        # print("Sum of weight: %s" % np.sum(weight))
+
+        n_pred = np.zeros(self._n_chan)
+
+        for i in range(n_pred.shape[0]):
+
+            n_pred[i] = np.sum(self._hMigration[i, :] * weight) * self._exposure
+
+        log_like, _ = poisson_observed_poisson_background(self._counts, self._bkg_counts, self._bkg_renorm,
+                                                          n_pred)
+
+        log_like_tot = np.sum(log_like[self._first_chan: self._last_chan + 1])  # type: float
+
+        # print("%s: obs: %s, npred: %s, bkg: %s (%s), npred + bkg: %s -> %.2f" % (self._run_name,
+        #                                                              np.sum(self._counts),
+        #                                                              np.sum(n_pred),
+        #                                                              np.sum(self._bkg_counts),
+        #                                                              np.sum(self._bkg_counts) * self._bkg_renorm,
+        #                                             np.sum(n_pred)+ np.sum(self._bkg_counts) * self._bkg_renorm,
+        #                                                                        log_like_tot))
+
+        return log_like_tot, locals()
+
 
 
 class VERITASLike(PluginPrototype):
@@ -225,12 +411,15 @@ class VERITASLike(PluginPrototype):
             else:
 
                 # Get background spectrum and observation spectrum (with response)
-                this_observation = this_run.get_spectrum()
-                this_background = this_run.get_background_spectrum()
-
-                self._runs_like[run_name] = DispersionSpectrumLike(run_name,
-                                                                   this_observation,
-                                                                   this_background)
+                # this_observation = this_run.get_spectrum()
+                # this_background = this_run.get_background_spectrum()
+                #
+                # self._runs_like[run_name] = DispersionSpectrumLike(run_name,
+                #                                                    this_observation,
+                #                                                    this_background)
+                #
+                # self._runs_like[run_name].set_active_measurements("c50-c130")
+                self._runs_like[run_name] = this_run
 
         super(VERITASLike, self).__init__(name, {})
 
@@ -252,9 +441,11 @@ class VERITASLike(PluginPrototype):
         """
 
         # Set the model for all runs
-        for run in self._runs_like.values():
+        self._likelihood_model = likelihood_model_instance  # type: astromodels.Model
 
-            run.set_model(likelihood_model_instance)
+        # for run in self._runs_like.values():
+        #
+        #     run.set_model(likelihood_model_instance)
 
     def get_log_like(self):
         """
@@ -267,7 +458,7 @@ class VERITASLike(PluginPrototype):
 
         for run in self._runs_like.values():
 
-            total += run.get_log_like()
+            total += run.get_log_like(self._likelihood_model)[0]
 
         return total
 
