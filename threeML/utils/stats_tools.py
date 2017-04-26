@@ -22,7 +22,13 @@ def aic(log_like, n_parameters, n_data_points):
     """
 
     val = -2. * log_like + 2 * n_parameters
-    val += 2 * n_parameters * (n_parameters + 1) / (n_data_points - n_parameters - 1)
+    val += 2 * n_parameters * (n_parameters + 1) / float(n_data_points - n_parameters - 1)
+
+    if not np.isfinite(val):
+        val = 0
+
+        warnings.warn('AIC was NAN. Recording zero, but you should examine your fit.')
+
 
     return val
 
@@ -33,16 +39,17 @@ def bic(log_like, n_parameters, n_data_points):
     """
     val = -2. * log_like + n_parameters * np.log(n_data_points)
 
+    if not np.isfinite(val):
+        val = 0
+
+
+        warnings.warn('BIC was NAN. Recording zero, but you should examine your fit.')
+
     return val
 
 
 def waic(bayesian_trace):
     raise NotImplementedError("Coming soon to a theater near you.")
-
-
-def effective_number_of_parameters(bayesian_trace):
-    raise NotImplementedError("Coming soon to a theater near you.")
-
 
 def dic(bayes_analysis):
     """
@@ -74,7 +81,7 @@ def dic(bayes_analysis):
     elpd_dic = deviance_at_mean - pdic
 
 
-    if np.isnan(pdic) or np.isnan(elpd_dic):
+    if not np.isfinite(pdic) or not np.isfinite(elpd_dic):
 
         elpd_dic = 0
         pdic = 0
