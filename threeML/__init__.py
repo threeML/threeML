@@ -190,8 +190,6 @@ from .io.plotting import *
 
 from .io.calculate_flux import calculate_point_source_flux
 
-from .utils.stats_tools import ModelComparison
-
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
 
