@@ -104,7 +104,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
         return super_out.append(the_df)
 
-    def write_pha(self, filename, overwrite=False):
+    def write_pha(self, filename, overwrite=False, force_rsp_write=False):
         """
 
         :param filename:
@@ -120,4 +120,4 @@ class DispersionSpectrumLike(SpectrumLike):
         from threeML.plugins.OGIPLike import OGIPLike
 
         ogiplike = OGIPLike.from_general_dispersion_spectrum(self)
-        ogiplike.write_pha(file_name=filename, overwrite=overwrite)
+        ogiplike.write_pha(file_name=filename, overwrite=overwrite, force_rsp_write=force_rsp_write)

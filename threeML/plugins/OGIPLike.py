@@ -97,18 +97,21 @@ class OGIPLike(DispersionSpectrumLike):
 
         return self._observed_spectrum.grouping
 
-    def write_pha(self, file_name, overwrite=False):
+    def write_pha(self, file_name, overwrite=False, force_rsp_write=False):
         """
         Create a pha file of the current pha selections
 
 
         :param file_name: output file name (excluding extension)
+        :param overwrite: overwrite the files
+        :param force_rsp_write: for an rsp to be saved
+
         :return: None
         """
 
         pha_writer = PHAWrite(self)
 
-        pha_writer.write(file_name, overwrite=overwrite)
+        pha_writer.write(file_name, overwrite=overwrite, force_rsp_write=force_rsp_write)
 
     def _output(self):
         # type: () -> pd.Series

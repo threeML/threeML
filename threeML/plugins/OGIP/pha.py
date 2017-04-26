@@ -58,7 +58,7 @@ class PHAWrite(object):
 
         self._spec_iterator = 1
 
-    def write(self, outfile_name, overwrite=True):
+    def write(self, outfile_name, overwrite=True, force_rsp_write=False):
         """
         Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines
         if BAK files should be generated.
@@ -68,6 +68,8 @@ class PHAWrite(object):
         :param overwrite: (optional) bool to overwrite existing file
         :return:
         """
+
+        self._force_rsp_write = force_rsp_write
 
         # Remove the .pha extension if any
         if os.path.splitext(outfile_name)[-1].lower() == '.pha':
@@ -81,6 +83,9 @@ class PHAWrite(object):
         for ogip in self._ogiplike:
 
             self._append_ogip(ogip)
+
+
+
 
         self._write_phaII(overwrite)
 
@@ -130,7 +135,7 @@ class PHAWrite(object):
                 self._ancrfile[key].append('NONE')
 
 
-            if pha_info['rsp'].rsp_filename is not None:
+            if pha_info['rsp'].rsp_filename is not None and not self._force_rsp_write:
 
                 self._respfile[key].append(pha_info['rsp'].rsp_filename)
 
