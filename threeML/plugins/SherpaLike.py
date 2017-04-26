@@ -186,13 +186,3 @@ class SherpaLike(PluginPrototype):
         axarr[0].set_ylabel('counts')
         axarr[1].set_ylabel('residuals (counts-model)/model')
         axarr[1].set_xlabel("energy (keV)")
-
-    def get_number_of_data_points(self):
-        """
-        returns the number of active photons
-        :return:
-        """
-
-        # TODO: Giacomo, this should be the number of evens/bins you are using!
-
-        return 1

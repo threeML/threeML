@@ -536,12 +536,3 @@ class FermiLATLike(PluginPrototype):
         value = self.like.model[src].funcs['Spectrum'].getParam(pname).getValue()
         return value / 100.0
 
-    def get_number_of_data_points(self):
-        """
-        returns the number of active photons
-        :return:
-        """
-
-        # TODO: Giacomo, this should be the number of evens/bins you are using!
-
-        return 1
