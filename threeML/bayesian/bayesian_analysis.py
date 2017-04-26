@@ -435,6 +435,9 @@ class BayesianAnalysis(object):
 
         log_prior = self._log_prior(approximate_MAP_point)
 
+        # keep track of the total number of data points
+        # and the total posterior
+
         total_n_data_points = 0
 
         total_log_posterior = 0
@@ -455,14 +458,19 @@ class BayesianAnalysis(object):
 
         statistical_measures = collections.OrderedDict()
 
+        # compute the point estimates
 
         statistical_measures['AIC'] = aic(total_log_posterior,len(self._free_parameters),total_n_data_points)
         statistical_measures['BIC'] = bic(total_log_posterior,len(self._free_parameters),total_n_data_points)
 
         this_dic, pdic = dic(self)
 
+        # compute the posterior estimates
+
         statistical_measures['DIC'] = this_dic
         statistical_measures['PDIC'] = pdic
+
+        #TODO: add WAIC
 
 
         # Instance the result
