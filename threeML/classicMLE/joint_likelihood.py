@@ -20,6 +20,7 @@ from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
 from threeML.config.config import threeML_config
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.analysis_results import MLEResults
+from threeML.utils.stats_tools import aic, bic
 
 
 from astromodels import ModelAssertionViolation
@@ -235,6 +236,8 @@ class JointLikelihood(object):
 
         total = 0
 
+        total_number_of_data_points = 0
+
         for dataset in self._data_list.values():
 
             ml = dataset.inner_fit() * (-1)
@@ -243,11 +246,22 @@ class JointLikelihood(object):
 
             total += ml
 
+            total_number_of_data_points += dataset.get_number_of_data_points()
+
         assert total == self._current_minimum, "Current minimum stored after fit and current do not correspond!"
+
+        # compute additional statistics measures
+
+        statistical_measures = collections.OrderedDict()
+
+
+        statistical_measures['AIC'] = aic(-total,len(self._free_parameters),total_number_of_data_points)
+        statistical_measures['BIC'] = bic(-total,len(self._free_parameters),total_number_of_data_points)
+
 
         # Now instance an analysis results class
         self._analysis_results = MLEResults(self.likelihood_model, self._minimizer.covariance_matrix,
-                                            minus_log_likelihood_values)
+                                            minus_log_likelihood_values,statistical_measures=statistical_measures)
 
         # Show the results
 

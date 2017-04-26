@@ -44,25 +44,36 @@ def effective_number_of_parameters(bayesian_trace):
     raise NotImplementedError("Coming soon to a theater near you.")
 
 
-def dic(bayesian_trace):
+def dic(bayes_analysis):
     """
-    The Deviance information criteria derived from MCMC traces
-    Read more:  dx.doi.org/10.1111/1467-9868.00353
+    elpd_DIC = log p(y|mean(parameters)) - p_DIC
 
+    the first term is the deviance at the mean of the posterior
+    and p_DIC is the effective number of free parameters:
 
-    :param bayesian_trace: an instance of Bayesian Analysis
+    p_DIC = 2(log p(y|mean(parameters)) - 1/N sum(log p(y|parameters_s), 1,N) )
 
-    :return: deviance information criteria
+    DIC = -2*elpd_DIC
+
+    the effective number of free parameters can be negative if the mean is
+    the mean is far from the mode
+
+    :param bayes_analysis: a bayesian analysis object
+    :return dic, effective number of free parameters:
 
     """
 
-    mean_deviance = -2. * np.mean(bayesian_trace.log_probability_values)
+    mean_of_free_parameters = np.mean(bayes_analysis.raw_samples, axis=0)
 
-    mean_of_free_parameters = np.mean(bayesian_trace.raw_samples, axis=0)
+    deviance_at_mean = bayes_analysis.get_posterior(mean_of_free_parameters)
 
-    deviance_at_mean = -2. * bayesian_trace.get_posterior(mean_of_free_parameters)
+    mean_deviance = np.mean(bayes_analysis.log_probability_values)
 
-    return 2 * mean_deviance - deviance_at_mean
+    pdic = 2 * (deviance_at_mean - mean_deviance)
+
+    elpd_dic = deviance_at_mean - pdic
+
+    return -2 * elpd_dic, pdic
 
 
 def sqrt_sum_of_squares(arg):
