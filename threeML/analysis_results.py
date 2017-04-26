@@ -573,7 +573,14 @@ class _AnalysisResults(object):
         return loglike_dataframe
 
     def get_statistic_measure_frame(self):
+        """
+        Returns a panadas DataFrame with additional statistical information including
+        point and posterior based information criteria as well as their effective number
+        of free parameters. To use these properly, it is vital you consult the statsitical
+        literature.
 
+        :return: a pandas DataFrame instance
+        """
 
         return self._statistical_measures.to_frame(name='statistical measures')
 
