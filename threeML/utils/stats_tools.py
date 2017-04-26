@@ -73,6 +73,14 @@ def dic(bayes_analysis):
 
     elpd_dic = deviance_at_mean - pdic
 
+
+    if np.isnan(pdic) or np.isnan(elpd_dic):
+
+        elpd_dic = 0
+        pdic = 0
+
+        warnings.warn('DIC was NAN. Recording zero, but you should examine your fit.')
+
     return -2 * elpd_dic, pdic
 
 
