@@ -432,3 +432,4 @@ class FermipyLike(PluginPrototype):
         logLike value.
         """
         return self.get_log_like()
+

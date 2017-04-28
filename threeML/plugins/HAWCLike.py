@@ -500,3 +500,4 @@ class HAWCLike(PluginPrototype):
     def write_residual_map(self, fileName):
 
         self._theLikeHAWC.WriteResidualMap(fileName)
+

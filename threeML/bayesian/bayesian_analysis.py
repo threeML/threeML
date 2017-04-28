@@ -35,9 +35,9 @@ import matplotlib.pyplot as plt
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.io.progress_bar import progress_bar
-from corner import corner
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
 from threeML.analysis_results import BayesianResults
+from threeML.utils.stats_tools import aic, bic, dic
 
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
@@ -62,7 +62,7 @@ def sample_with_progress(title, p0, sampler, n_samples, **kwargs):
     return pos, prob, state
 
 
-def sample_without_progress(p0, sampler, n_samples, **kwargs):
+def sample_without_progress(p0, sampler, n_samples, title=None, **kwargs):
     return sampler.run_mcmc(p0, n_samples, **kwargs)
 
 
@@ -222,7 +222,7 @@ class BayesianAnalysis(object):
                                                 self.get_posterior)
 
             # Sample the burn-in
-            pos, prob, state = sampling_procedure("Burn-in", p0, sampler, burn_in)
+            pos, prob, state = sampling_procedure(title="Burn-in", p0=p0, sampler=sampler, n_samples=burn_in)
 
             # Reset sampler
 
@@ -230,7 +230,7 @@ class BayesianAnalysis(object):
 
             # Run the true sampling
 
-            _ = sampling_procedure("Sampling", pos, sampler, n_samples, rstate0=state)
+            _ = sampling_procedure(title="Sampling", p0=pos, sampler=sampler, n_samples=n_samples, rstate0=state)
 
         acc = np.mean(sampler.acceptance_fraction)
 
@@ -435,13 +435,47 @@ class BayesianAnalysis(object):
 
         log_prior = self._log_prior(approximate_MAP_point)
 
+        # keep track of the total number of data points
+        # and the total posterior
+
+        total_n_data_points = 0
+
+        total_log_posterior = 0
+
         for dataset in self._data_list.values():
 
-            log_posteriors[dataset.name] = dataset.get_log_like() + log_prior
+
+            log_posterior = dataset.get_log_like() + log_prior
+
+            log_posteriors[dataset.name] = log_posterior
+
+            total_n_data_points += dataset.get_number_of_data_points()
+
+            total_log_posterior += log_posterior
+
+
+        # compute the statistical measures
+
+        statistical_measures = collections.OrderedDict()
+
+        # compute the point estimates
+
+        statistical_measures['AIC'] = aic(total_log_posterior,len(self._free_parameters),total_n_data_points)
+        statistical_measures['BIC'] = bic(total_log_posterior,len(self._free_parameters),total_n_data_points)
+
+        this_dic, pdic = dic(self)
+
+        # compute the posterior estimates
+
+        statistical_measures['DIC'] = this_dic
+        statistical_measures['PDIC'] = pdic
+
+        #TODO: add WAIC
+
 
         # Instance the result
 
-        self._results = BayesianResults(self._likelihood_model, self._raw_samples, log_posteriors)
+        self._results = BayesianResults(self._likelihood_model, self._raw_samples, log_posteriors,statistical_measures=statistical_measures)
 
     @property
     def raw_samples(self):
@@ -472,14 +506,6 @@ class BayesianAnalysis(object):
 
         return self._sampler
 
-    def get_effective_free_parameters(self):
-        """
-        Calculates the effective number of free parameters from the posterior
-         -2.*(mean(posterior)-max(log. likelihood))
-        :return: Effective number of free parameters
-        """
-
-        return -2. * (np.mean(self._log_like_values) - np.max(self._log_like_values))  # need to check math!
 
     # def get_highest_density_interval(self, probability=95):
     #     """

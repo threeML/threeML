@@ -1649,6 +1649,16 @@ class SpectrumLike(PluginPrototype):
 
         return pd.Series(data=obs, index=obs.keys())
 
+    def get_number_of_data_points(self):
+        """
+        returns the number of active data bins
+        :return:
+        """
+
+        # the sum of the mask should be the number of data bins in use
+
+        return self._mask.sum()
+
     def display(self):
 
         display(self._output().to_frame())

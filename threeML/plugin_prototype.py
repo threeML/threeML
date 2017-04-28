@@ -23,7 +23,6 @@ def set_external_property(method):
         if instance._external_properties:
 
             for property, value in instance._external_properties:
-
                 property.value = value
 
         return method(instance, *args, **kwargs)
@@ -32,11 +31,9 @@ def set_external_property(method):
 
 
 class PluginPrototype(object):
-
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, name, nuisance_parameters):
-
         assert is_valid_variable_name(name), "The name %s cannot be used as a name. You need to use a valid " \
                                              "python identifier: no spaces, cannot start with numbers, cannot contain " \
                                              "operators symbols such as -, +, *, /" % name
@@ -56,7 +53,6 @@ class PluginPrototype(object):
         self._external_properties = []
 
     def get_name(self):
-
         warnings.warn("Do not use get_name() for plugins, use the .name property", DeprecationWarning)
 
         return self.name
@@ -81,7 +77,6 @@ class PluginPrototype(object):
         return self._nuisance_parameters
 
     def update_nuisance_parameters(self, new_nuisance_parameters):
-
         assert isinstance(new_nuisance_parameters, dict)
 
         self._nuisance_parameters = new_nuisance_parameters
@@ -95,6 +90,19 @@ class PluginPrototype(object):
         """
 
         self._external_properties.append((property, value))
+
+    def get_number_of_data_points(self):
+        """
+        This returns the number of data points that are used to evaluate the likelihood.
+        For binned measurements, this is the number of active bins used in the fit. For
+        unbinned measurements, this would be the number of photons/particles that are
+        evaluated on the likelihood
+        """
+
+        warnings.warn(
+            "get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable", )
+
+        return 1.
 
     ######################################################################
     # The following methods must be implemented by each plugin

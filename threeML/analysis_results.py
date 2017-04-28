@@ -35,6 +35,7 @@ from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.version import __version__
 from threeML.random_variates import RandomVariates
 from threeML.io.calculate_flux import _calculate_point_source_flux
+from threeML.utils.stats_tools import dic
 from threeML.config.config import threeML_config
 
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
@@ -90,6 +91,8 @@ def _load_one_results(fits_extension):
     # Gather statistics values
     statistic_values = collections.OrderedDict()
 
+    measure_values = collections.OrderedDict()
+
     for key in fits_extension.header.keys():
 
         if key.find("STAT") == 0:
@@ -101,6 +104,15 @@ def _load_one_results(fits_extension):
             name = fits_extension.header.get("PN%i" % id)
             statistic_values[name] = value
 
+        if key.find("MEAS") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("MEAS", ""))
+            name = fits_extension.header.get(key)
+            value = float(fits_extension.header.get("MV%i" % id))
+            measure_values[name] = value
+
     if analysis_type == "MLE":
 
         # Get covariance matrix
@@ -109,7 +121,7 @@ def _load_one_results(fits_extension):
 
         # Instance and return
 
-        return MLEResults(optimized_model, covariance_matrix, statistic_values)
+        return MLEResults(optimized_model, covariance_matrix, statistic_values, statistical_measures=measure_values)
 
     elif analysis_type == "Bayesian":
 
@@ -118,7 +130,7 @@ def _load_one_results(fits_extension):
 
         # Instance and return
 
-        return BayesianResults(optimized_model, samples.T, statistic_values)
+        return BayesianResults(optimized_model, samples.T, statistic_values, statistical_measures=measure_values)
 
 
 def _load_set_of_results(open_fits_file, n_results):
@@ -270,6 +282,15 @@ class ANALYSIS_RESULTS(FITSExtension):
             self.hdu.header.set("STAT%i" % i, stat_value, comment="Stat. value for plugin %i" % i)
             self.hdu.header.set("PN%i" % i, plugin_instance_name, comment="Name of plugin %i" % i)
 
+        # Now add the statistical measures
+
+        measure_series = analysis_results.statistical_measures # type: pd.Series
+
+        for i, (measure, measure_value) in enumerate(measure_series.iteritems()):
+            self.hdu.header.set("MEAS%i" % i, measure, comment="Measure type %i" % i)
+            self.hdu.header.set("MV%i" % i, measure_value, comment="Measure value %i" % i)
+
+
 
 class AnalysisResultsFITS(FITSFile):
     """
@@ -330,7 +351,7 @@ class _AnalysisResults(object):
     :type statistic_values: dict
     """
 
-    def __init__(self, optimized_model, samples, statistic_values, analysis_type):
+    def __init__(self, optimized_model, samples, statistic_values, analysis_type, statistical_measures):
 
         # Safety checks
 
@@ -352,6 +373,10 @@ class _AnalysisResults(object):
         # Store likelihood values in a pandas Series
 
         self._optimal_statistic_values = pd.Series(statistic_values)
+
+        # Store the statistical measures as a pandas Series
+
+        self._statistical_measures = pd.Series(statistical_measures)
 
         # The .free_parameters property of the model is pretty costly because it needs to update all the parameters
         # to see if they are free. Since the saved model will not be touched we can cache that
@@ -487,6 +512,11 @@ class _AnalysisResults(object):
 
         return self._optimal_statistic_values
 
+    @property
+    def statistical_measures(self):
+
+        return self._statistical_measures
+
     def _get_correlation_matrix(self, covariance):
         """
         Compute the correlation matrix
@@ -541,6 +571,18 @@ class _AnalysisResults(object):
         loglike_dataframe = pd.DataFrame(logl_results)
 
         return loglike_dataframe
+
+    def get_statistic_measure_frame(self):
+        """
+        Returns a panadas DataFrame with additional statistical information including
+        point and posterior based information criteria as well as their effective number
+        of free parameters. To use these properly, it is vital you consult the statsitical
+        literature.
+
+        :return: a pandas DataFrame instance
+        """
+
+        return self._statistical_measures.to_frame(name='statistical measures')
 
     def get_data_frame(self, error_type="equal tail", cl=0.68):
         """
@@ -714,9 +756,10 @@ class BayesianResults(_AnalysisResults):
     :type posterior_values: dict
     """
 
-    def __init__(self, optimized_model, samples, posterior_values):
+    def __init__(self, optimized_model, samples, posterior_values, statistical_measures):
 
-        super(BayesianResults, self).__init__(optimized_model, samples, posterior_values, 'Bayesian')
+        super(BayesianResults, self).__init__(optimized_model, samples, posterior_values, 'Bayesian', statistical_measures)
+
 
     def get_correlation_matrix(self):
         """
@@ -757,6 +800,10 @@ class BayesianResults(_AnalysisResults):
         print("\nValues of -log(posterior) at the minimum:\n")
 
         display(self.get_statistic_frame())
+
+        print("\nValues of statistical measures:\n")
+
+        display(self.get_statistic_measure_frame())
 
     def corner_plot(self, renamed_parameters=None, **kwargs):
         """
@@ -1028,6 +1075,8 @@ class BayesianResults(_AnalysisResults):
         return fig
 
 
+
+
 class MLEResults(_AnalysisResults):
     """
     Build the _AnalysisResults object starting from a covariance matrix.
@@ -1044,7 +1093,7 @@ class MLEResults(_AnalysisResults):
     :return: an _AnalysisResults instance
     """
 
-    def __init__(self, optimized_model, covariance_matrix, likelihood_values, n_samples=5000):
+    def __init__(self, optimized_model, covariance_matrix, likelihood_values, n_samples=5000, statistical_measures=None):
 
         # Generate samples for each parameter accounting for their covariance
 
@@ -1114,7 +1163,7 @@ class MLEResults(_AnalysisResults):
 
         # Finally build the class
 
-        super(MLEResults, self).__init__(optimized_model, samples, likelihood_values, "MLE")
+        super(MLEResults, self).__init__(optimized_model, samples, likelihood_values, "MLE", statistical_measures)
 
         # Store the covariance matrix
 
@@ -1199,6 +1248,10 @@ class MLEResults(_AnalysisResults):
         print("\nValues of -log(likelihood) at the minimum:\n")
 
         display(self.get_statistic_frame())
+
+        print("\nValues of statistical measures:\n")
+
+        display(self.get_statistic_measure_frame())
 
 
 class AnalysisResultsSet(collections.Sequence):
