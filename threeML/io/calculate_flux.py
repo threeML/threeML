@@ -29,13 +29,13 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
     :return:
     """
 
-    bayesian_analyses = {}
-    mle_analyses = {}
+    bayesian_analyses = collections.OrderedDict()
+    mle_analyses  = collections.OrderedDict()
 
     # first we split up the bayesian and mle analysis
 
-    mle_sources = {}
-    bayes_sources = {}
+    mle_sources = collections.OrderedDict()
+    bayes_sources = collections.OrderedDict()
 
     for analysis in analysis_results:
 
@@ -287,7 +287,7 @@ def _collect_sums_into_dictionaries(analyses, use_components, components_to_use)
 
     total_analysis = []
 
-    component_sum_dict = {}
+    component_sum_dict = collections.OrderedDict()
 
     num_sources_to_use = 0
 
