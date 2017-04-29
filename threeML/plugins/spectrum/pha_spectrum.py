@@ -325,7 +325,34 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
             if has_quality_column:
 
-                quality = data.field("QUALITY")[spectrum_number - 1, :]
+                try:
+
+                    quality = data.field("QUALITY")[spectrum_number - 1, :]
+
+                except(IndexError):
+
+                    # GBM CSPEC files do not follow OGIP conventions and instead
+                    # list simply QUALITY=0 for each spectrum
+                    # so we have to read them differently
+
+                    quality_element = data.field("QUALITY")[spectrum_number - 1]
+
+                    # issue a warning to be coy
+
+                    warnings.warn('The QUALITY column has the wrong shape. This PHAII file does not follow OGIP standards')
+
+                    if quality_element == 0:
+
+                        quality = np.zeros_like(rates, dtype=int)
+
+                    else:
+
+                        quality = np.zeros_like(rates, dtype=int) + 5
+
+
+
+
+
 
             else:
 
