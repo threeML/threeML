@@ -1,9 +1,11 @@
-from threeML.plugins.OGIP.eventlist import EventListWithDeadTime, EventList
-from threeML.utils.time_interval import TimeIntervalSet
+import os
+
 import numpy as np
 import pytest
+
 from threeML.io.file_utils import within_directory
-import os
+from threeML.utils.time_interval import TimeIntervalSet
+from threeML.utils.time_series.eventlist import EventListWithDeadTime, EventList
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 

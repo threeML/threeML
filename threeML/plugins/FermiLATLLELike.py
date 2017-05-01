@@ -1,18 +1,15 @@
 __author__ = 'grburgess'
 
+import collections
 import warnings
 
 import astropy.io.fits as fits
 import numpy as np
-import collections
 import pandas as pd
 
-from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
-from threeML.io.rich_display import display
 from threeML.plugins.EventListLike import EventListLike
-from threeML.plugins.OGIP.eventlist import EventListWithLiveTime
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
-from threeML.io.rich_display import display
+from threeML.utils.time_series.eventlist import EventListWithLiveTime
 
 __instrument_name = "Fermi LAT LLE"
 

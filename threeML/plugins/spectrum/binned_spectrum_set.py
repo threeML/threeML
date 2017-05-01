@@ -1,12 +1,11 @@
 import numpy as np
 
-from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum
-from threeML.utils.time_interval import TimeIntervalSet
-from threeML.plugins.OGIP.event_polynomial import fit_global_and_determine_optimum_grade, polyfit
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.progress_bar import progress_bar
-from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
-import astropy.io.fits as fits
+from threeML.utils.time_interval import TimeIntervalSet
+from threeML.utils.time_series.polynomial import fit_global_and_determine_optimum_grade, polyfit
+from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum
+#from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
 
 
 
@@ -20,10 +19,20 @@ class BinnedSpectrumSet(object):
         :param reference_time:
         """
 
-        self._binned_spectrum_list = binned_spectrum_list
+        self._binned_spectrum_list = binned_spectrum_list # type: list(BinnedSpectrum)
         self._reference_time = reference_time
 
-        self._time_intervals = time_intervals  - reference_time#type: TimeIntervalSet
+        # normalize the time intervals if there are any
+
+        if time_intervals is not None:
+
+            self._time_intervals = time_intervals  - reference_time#type: TimeIntervalSet
+
+        else:
+
+            self._time_intervals = None
+
+
 
 
     @property
@@ -40,16 +49,59 @@ class BinnedSpectrumSet(object):
         return len(self._binned_spectrum_list)
 
 
+    def time_to_index(self, time):
+        """
+        get the index of the input time
+
+        :param time: time to search for
+        :return: integer
+        """
+
+        assert self._time_intervals is not None, 'This spectrum set has no time intervals'
+
+        return self._time_intervals.containing_bin(time)
+
+    @property
+    def qaulity_per_bin(self):
+
+        return np.array([spectrum.quality for spectrum in self._binned_spectrum_list])
+
+
+
+    @property
+    def n_channels(self):
+
+        return self.counts_per_bin.shape[1]
+
     @property
     def counts_per_bin(self):
 
         return np.array([spectrum.counts for spectrum in self._binned_spectrum_list])
 
     @property
-    def exposure(self):
+    def count_errors_per_bin(self):
+
+        return np.array([spectrum.count_errors for spectrum in self._binned_spectrum_list])
+
+    @property
+    def rates_per_bin(self):
+
+        return np.array([spectrum.rates for spectrum in self._binned_spectrum_list])
+
+    @property
+    def rate_errors_per_bin(self):
+
+        return np.array([spectrum.rate_errors for spectrum in self._binned_spectrum_list])
+
+    @property
+    def sys_errors_per_bin(self):
+
+        return np.array([spectrum.sys_errors for spectrum in self._binned_spectrum_list])
+
+    @property
+    def exposure_per_bin(self):
 
         return np.array([spectrum.exposure for spectrum in self._binned_spectrum_list])
-
 
 
     @property
@@ -58,6 +110,13 @@ class BinnedSpectrumSet(object):
         return self._time_intervals
 
     def polynomial_fit(self, *fit_intervals):
+        """
+        fits a polynomial to all channels over the input time intervals
+
+        :param fit_intervals: str input intervals
+        :return:
+        """
+
 
 
         assert self._time_intervals is not None, 'cannot do a temporal fit with no time intervals'
@@ -111,7 +170,7 @@ class BinnedSpectrumSet(object):
 
 
             selected_counts.append(self.counts_per_bin[mask])
-            selected_exposure.append(self.exposure[mask])
+            selected_exposure.append(self.exposure_per_bin[mask])
             selected_midpoints.append(self._time_intervals.half_times[mask])
 
 
@@ -149,97 +208,6 @@ class BinnedSpectrumSet(object):
         # for internal in self._time_intervals:
         #
         #     for polynomial
-
-
-
-    @classmethod
-    def from_pha2_fits(cls, pha2_file,*rsp_files):
-
-        with fits.open(pha2_file) as f:
-
-            try:
-
-                HDUidx = f.index_of("SPECTRUM")
-
-            except:
-
-                raise RuntimeError("The input file %s is not in PHA format" % (pha2_file))
-
-            spectrum = f[HDUidx]
-            data = spectrum.data
-
-            if "COUNTS" in data.columns.names:
-
-                has_rates = False
-                data_column_name = "COUNTS"
-
-            elif "RATE" in data.columns.names:
-
-                has_rates = True
-                data_column_name = "RATE"
-
-            else:
-
-                raise RuntimeError("This file does not contain a RATE nor a COUNTS column. "
-                                   "This is not a valid PHA file")
-
-                # Determine if this is a PHA I or PHA II
-            if len(data.field(data_column_name).shape) == 2:
-
-                num_spectra = data.field(data_column_name).shape[0]
-
-            else:
-
-                raise RuntimeError("This appears to be a PHA I and not PHA II file")
-
-
-            assert len(rsp_files) == 1 or len(rsp_files) == num_spectra, 'The number of RSPs input does not math the number of spectra in the PHAII file'
-
-            # if one rsp file is used for all spectra, then we create
-            # a proper length array to account for that
-
-            if len(rsp_files) < num_spectra:
-
-                rsp_files = [rsp_files[0]] * num_spectra
-
-
-
-            list_of_binned_spectra =[ PHASpectrum(pha2_file,
-                                                  spectrum_number=spectrum_number,
-                                                  file_type='observed',
-                                                  rsp_file=rsp_files[spectrum_number-1]) for spectrum_number in range(1, num_spectra+1)]
-
-
-
-            # now get the time intervals
-
-            start_times = data.field('TIME')
-            stop_times = data.field('ENDTIME')
-
-            time_intervals = TimeIntervalSet.from_starts_and_stops(start_times, stop_times)
-
-            reference_time = 0
-
-            # see if there is a reference time in the file
-
-            if 'TRIGTIME' in spectrum.header:
-
-                reference_time = spectrum.header['TRIGTIME']
-
-
-            for t_number in range(spectrum.header['TFIELDS']):
-
-                if 'TZERO%d' %t_number in spectrum.header:
-
-                    reference_time = spectrum.header['TZERO%d' %t_number]
-
-
-            return cls( list_of_binned_spectra, reference_time=reference_time, time_intervals=time_intervals)
-
-
-
-
-
 
 
 

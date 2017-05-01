@@ -42,16 +42,21 @@ class Quality(object):
     def __init__(self, quality):
         """
         simple class to formalize the quality flags used in spectra
-        :param quality:
+        :param quality: a quality array
         """
 
-        total_length = len(quality)
+        #total_length = len(quality)
+
+        n_elements = 1
+        for dim in quality.shape:
+
+            n_elements *= dim
 
         good = quality == 'good'
         warn = quality == 'warn'
         bad  = quality == 'bad'
 
-        assert total_length == sum(good) + sum(warn) +sum(bad), 'quality can only contain "good", "warn", and "bad"'
+        assert n_elements == good.sum() + warn.sum() + bad.sum(), 'quality can only contain "good", "warn", and "bad"'
 
         self._good = good
         self._warn = warn
@@ -62,6 +67,12 @@ class Quality(object):
     def __len__(self):
 
         return len(self._quality)
+
+    def get_slice(self, idx):
+
+
+        return Quality(self._quality[idx,:])
+
 
     @property
     def good(self):
@@ -85,7 +96,11 @@ class Quality(object):
         warn = ogip_quality == 2
         bad = np.logical_and(~good, ~warn)
 
-        quality = np.array(['good' for i in xrange(len(ogip_quality))])
+
+        quality = np.empty_like(ogip_quality,dtype='|S4')
+        quality[:] = 'good'
+
+        # quality = np.array(['good' for i in xrange(len(ogip_quality))])
 
         #quality[good] = 'good'
         quality[warn] = 'warn'
