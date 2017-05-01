@@ -15,7 +15,7 @@ from threeML.io.progress_bar import progress_bar
 from threeML.io.rich_display import display
 from threeML.utils.binner import TemporalBinner
 from threeML.utils.time_interval import TimeIntervalSet
-from threeML.utils.time_series.event_polynomial import polyfit, unbinned_polyfit, Polynomial
+from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit, Polynomial
 from threeML.utils.time_series.time_series import TimeSeries
 
 class ReducingNumberOfThreads(Warning):
