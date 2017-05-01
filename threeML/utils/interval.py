@@ -426,7 +426,7 @@ class IntervalSet(object):
 
         return idx
 
-    def containing_interval(self, start, stop, as_mask=False):
+    def containing_interval(self, start, stop, inner=True, as_mask=False):
         """
 
         returns either a mask of the intervals contained in the selection
@@ -434,19 +434,39 @@ class IntervalSet(object):
 
         :param start: start of interval
         :param stop: stop of interval
+        :param inner: if True, returns only intervals strictly contained within bounds, if False, returns outer bounds as well
         :param as_mask: if you want a mask or the intervals
         :return:
         """
 
-        mask = np.zeros(len(self))
+        mask = np.zeros(len(self),dtype=bool)
 
         down_selected_bins = []
 
         for i, bin in enumerate(self):
 
-            if bin.start <= start or bin.stop <= stop:
+
+
+            if bin.start >= start and bin.stop <= stop:
                 mask[i] = True
                 down_selected_bins.append(bin)
+
+            if not inner:
+
+                # now we also add the edges
+
+                if bin.start <=start and start<=bin.stop:
+                    mask[i] = True
+                    down_selected_bins.append(bin)
+
+                elif bin.start <=stop and stop<=bin.stop:
+                    mask[i] = True
+                    down_selected_bins.append(bin)
+
+
+
+
+
 
         if as_mask:
 
