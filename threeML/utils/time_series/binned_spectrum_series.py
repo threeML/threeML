@@ -68,7 +68,7 @@ class BinnedSpectrumSeries(TimeSeries):
 
         total_counts = 0
 
-        for idx in bins:
+        for idx in np.where(bins)[0]:
 
             total_counts += self._binned_spectrum_set[idx].counts.sum()
 
@@ -80,13 +80,10 @@ class BinnedSpectrumSeries(TimeSeries):
         return an index of the selected bins
         :param start: start time
         :param stop: stop time
-        :return: int indexes
+        :return: int indices
         """
 
-        start_idx  = self._binned_spectrum_set.time_to_index(start)
-        stop_idx = self._binned_spectrum_set.time_to_index(stop)
-
-        return np.arange(start_idx,stop_idx + 1)
+        return self._binned_spectrum_set.time_intervals.containing_interval(start,stop,as_mask=True)
 
     def _adjust_to_true_intervals(self, time_intervals):
         """
@@ -146,29 +143,29 @@ class BinnedSpectrumSeries(TimeSeries):
         selected_midpoints = []
 
         for selection in poly_intervals:
-            # get the mask of these events
-            mask = self._binned_spectrum_set.time_intervals.containing_interval(selection.start_time,
-                                                            selection.stop_time,
-                                                            as_mask=True)
 
-            selected_counts.append(self._binned_spectrum_set.counts_per_bin[mask])
-            selected_exposure.append(self._binned_spectrum_set.exposure_per_bin[mask])
+            # get the mask of these bins
+            mask = self._select_bins(selection.start_time,selection.stop_time)
+
+            # sum the counts along time
+            selected_counts.append(self._binned_spectrum_set.counts_per_bin[mask].sum(axis=0))
+            selected_exposure.append(self._binned_spectrum_set.exposure_per_bin[mask].sum())
             selected_midpoints.append(self._time_intervals.half_times[mask])
 
         selected_counts = np.array(selected_counts)
 
+        # some the counts along channel
         optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(selected_counts.sum(axis=1),
-                                                                          selected_midpoints,
-                                                                          selected_exposure)
+                                                                                selected_midpoints,
+                                                                                selected_exposure)
         # if self._verbose:
         #     print("Auto-determined polynomial order: %d" % optimal_polynomial_grade)
         #     print('\n')
 
-        n_channels = selected_counts.shape[1]
 
         polynomials = []
 
-        with progress_bar(n_channels, title="Fitting background") as p:
+        with progress_bar(self._n_channels, title="Fitting background") as p:
             for counts in selected_counts.T:
                 polynomial, _ = polyfit(counts,
                                         selected_midpoints,
@@ -180,39 +177,6 @@ class BinnedSpectrumSeries(TimeSeries):
 
         self._polynomials = polynomials
 
-
-class BinnedSpectrumSeriesWithDeadTime(BinnedSpectrumSeries):
-
-    def __init__(self, binned_spectrum_set, dead_time, first_channel=1, rsp_file=None, ra=None, dec=None,
-                 mission=None, instrument=None, verbose=True):
-        # type: (BinnedSpectrumSet, np.ndarray, int, str, float, float, str, str, bool) -> None
-        """
-
-        :param binned_spectrum_set:
-        :param deadtime:
-        :param first_channel:
-        :param rsp_file:
-        :param ra:
-        :param dec:
-        :param mission:
-        :param instrument:
-        :param verbose:
-        """
-
-
-        assert len(dead_time) == len(binned_spectrum_set), 'deadtime per bin is not the same length as all the bins'
-
-        super(BinnedSpectrumSeriesWithDeadTime, self).__init__(binned_spectrum_set,
-                                                               first_channel,
-                                                               rsp_file,
-                                                               ra,
-                                                               dec,
-                                                               mission,
-                                                               instrument,
-                                                               verbose)
-
-
-        self._dead_time = np.array(dead_time)
 
     def set_active_time_intervals(self, *args):
         """
@@ -242,14 +206,19 @@ class BinnedSpectrumSeriesWithDeadTime(BinnedSpectrumSeries):
         self._counts = np.zeros(self._n_channels)
 
 
-        # now we need to sum up the counts, figure out the interval indices
+        all_idx = np.zeros(len(self._binned_spectrum_set),dtype=bool)
+        # now we need to sum up the counts and total time
 
-        interval_indices = []
+        total_time = 0
 
         for interval in time_intervals:
             self._counts += self.counts_over_interval(interval.start,interval.stop)
 
-            interval_indices.extend(self._select_bins(interval.start,interval.stop))
+            all_idx = np.logical_or(all_idx,self._select_bins(interval.start,interval.stop))
+
+            total_time += interval.duration
+
+
 
 
         self._time_intervals = time_intervals
@@ -281,22 +250,12 @@ class BinnedSpectrumSeriesWithDeadTime(BinnedSpectrumSeries):
 
             self._poly_count_err = np.array(tmp_err)
 
-        # Dead time correction
 
-        exposure = 0.
-        for interval in self._time_intervals:
-            exposure += interval.duration
+        self._exposure = self._binned_spectrum_set.exposure_per_bin[all_idx].sum()
 
-        if self._dead_time is not None:
+        self._active_dead_time = total_time - self._exposure
 
-            total_dead_time = self._dead_time[interval_indices].sum()
-        else:
 
-            total_dead_time = 0.
-
-        self._exposure = exposure - total_dead_time
-
-        self._active_dead_time = total_dead_time
 
     def exposure_over_interval(self, start, stop):
         """
@@ -311,16 +270,5 @@ class BinnedSpectrumSeriesWithDeadTime(BinnedSpectrumSeries):
         mask = self._select_bins(start, stop)
 
 
-        # adjust to the actaul start and stop
 
-
-
-        if self._dead_time is not None:
-
-            interval_deadtime = (self._dead_time[mask]).sum()
-
-        else:
-
-            interval_deadtime = 0
-
-        return ( - start) - interval_deadtime
+        return self._binned_spectrum_set.exposure_per_bin[mask].sum()
