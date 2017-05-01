@@ -432,9 +432,9 @@ class IntervalSet(object):
         returns either a mask of the intervals contained in the selection
         or a new set of intervals within the selection. NOTE: no sort is performed
 
-        :param start:
-        :param stop:
-        :param as_mask:
+        :param start: start of interval
+        :param stop: stop of interval
+        :param as_mask: if you want a mask or the intervals
         :return:
         """
 
