@@ -426,6 +426,36 @@ class IntervalSet(object):
 
         return idx
 
+    def containing_interval(self, start, stop, as_mask=False):
+        """
+
+        returns either a mask of the intervals contained in the selection
+        or a new set of intervals within the selection. NOTE: no sort is performed
+
+        :param start:
+        :param stop:
+        :param as_mask:
+        :return:
+        """
+
+        mask = np.zeros(len(self))
+
+        down_selected_bins = []
+
+        for i, bin in enumerate(self):
+
+            if bin.start <= start or bin.stop <= stop:
+                mask[i] = True
+                down_selected_bins.append(bin)
+
+        if as_mask:
+
+            return mask
+
+        else:
+
+            return self.new(down_selected_bins)
+
     @property
     def starts(self):
         """
