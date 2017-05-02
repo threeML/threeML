@@ -144,7 +144,7 @@ class BinnedSpectrum(Histogram):
     INTERVAL_TYPE = Channel
 
     def __init__(self, counts, exposure, ebounds, count_errors=None, sys_errors=None, quality=None, scale_factor=1.,
-                 is_poisson=False, mission=None, instrument=None):
+                 is_poisson=False, mission=None, instrument=None, tstart=None, tstop=None):
         """
         A general binned histogram of either Poisson or non-Poisson rates. While the input is in counts, 3ML spectra work
         in rates, so this class uses the exposure to construct the rates from the counts.
@@ -233,6 +233,11 @@ class BinnedSpectrum(Histogram):
             self._instrument = instrument
 
 
+        self._tstart = tstart
+
+        self._tstop
+
+
         # pass up to the binned spectrum
 
         super(BinnedSpectrum, self).__init__(list_of_intervals=ebounds,
@@ -305,6 +310,16 @@ class BinnedSpectrum(Histogram):
         assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
 
         return sqrt_sum_of_squares(self.count_errors)
+
+    @property
+    def tstart(self):
+
+        return self._tstart
+
+    @property
+    def tstop(self):
+
+        return self._tstop
 
     @property
     def is_poisson(self):
@@ -494,11 +509,41 @@ class BinnedSpectrum(Histogram):
 
         return pd.DataFrame(out_dict)
 
+    @classmethod
+    def from_time_series(cls, time_series, use_poly=False):
+        """
+
+        :param time_series:
+        :param use_poly:
+        :return:
+        """
+        raise NotImplementedError('This is still under construction')
+
+
+        pha_information = time_series.get_pha_information(use_poly)
+
+        is_poisson = True
+
+        if use_poly:
+            is_poisson = False
+
+        return cls(instrument=pha_information['instrument'],
+                   telescope=pha_information['telescope'],
+                   tstart=pha_information['tstart'],
+                   telapse=pha_information['telapse'],
+                   channel=pha_information['channel'],
+                   rate=pha_information['rate'],
+                   stat_err=pha_information['rate error'],
+                   quality=pha_information['quality'],
+                   grouping=pha_information['grouping'],
+                   exposure=pha_information['exposure'],
+                   backscale=1.,
+                   is_poisson=is_poisson)
 
 class BinnedSpectrumWithDispersion(BinnedSpectrum):
 
     def __init__(self, counts, exposure, response, count_errors=None, sys_errors=None, quality=None, scale_factor=1.,
-                 is_poisson=False, mission=None, instrument=None ):
+                 is_poisson=False, mission=None, instrument=None, tstart=None, tstop=None ):
         """
         A binned spectrum that must be deconvolved via a dispersion or response matrix
 
@@ -533,13 +578,45 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
                                                            scale_factor=scale_factor,
                                                            is_poisson=is_poisson,
                                                            mission=mission,
-                                                           instrument=instrument)
+                                                           instrument=instrument,
+                                                           tstart=tstart,
+                                                           tstop=tstop)
 
 
     @property
     def response(self):
 
         return self._rsp
+
+    @classmethod
+    def from_time_series(cls, time_series, use_poly=False):
+        """
+
+        :param time_series:
+        :param use_poly:
+        :return:
+        """
+        raise NotImplementedError('This is still under construction')
+
+        pha_information = time_series.get_pha_information(use_poly)
+
+        is_poisson = True
+
+        if use_poly:
+            is_poisson = False
+
+        return cls(instrument=pha_information['instrument'],
+                   telescope=pha_information['telescope'],
+                   tstart=pha_information['tstart'],
+                   telapse=pha_information['telapse'],
+                   channel=pha_information['channel'],
+                   rate=pha_information['rate'],
+                   stat_err=pha_information['rate error'],
+                   quality=pha_information['quality'],
+                   grouping=pha_information['grouping'],
+                   exposure=pha_information['exposure'],
+                   backscale=1.,
+                   is_poisson=is_poisson)
 
     def clone(self, new_counts=None, new_count_errors=None):
         """

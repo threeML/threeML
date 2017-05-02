@@ -149,6 +149,69 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
             warnings.warn(
                 'Could not find QUALITY in columns or header of PHA file. This is not a valid OGIP file. Assuming QUALITY =0 (good)')
 
+    # looking for tstart and tstop
+
+    tstart = None
+    tstop = None
+
+    has_tstart = False
+    has_tstop = False
+    has_telapse = False
+
+
+    if "TSTART" in header:
+
+        has_tstart_column = False
+
+        has_tstart = True
+
+
+
+    else:
+
+        if "TSTART" in data.columns.names:
+
+            has_tstart_column = True
+
+            has_tstart = True
+
+    if "TELAPSE" in header:
+
+        has_telapse_column = False
+
+        has_telapse = True
+
+
+
+    else:
+
+        if "TELAPSE" in data.columns.names:
+            has_telapse_column = True
+
+            has_telapse = True
+
+    if "TSTOP" in header:
+
+        has_tstop_column = False
+
+        has_tstop = True
+
+
+
+    else:
+
+        if "TSTOP" in data.columns.names:
+            has_tstop_column = True
+
+            has_tstop = True
+
+
+    if has_tstop and has_telapse:
+
+        warnings.warn('Found TSTOP and TELAPSE. This file is invalid. Using TSTOP.')
+
+        has_telapse = False
+
     # Determine if this file contains COUNTS or RATES
 
     if "COUNTS" in data.columns.names:
@@ -415,6 +478,54 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
                 quality = np.zeros_like(rates, dtype=int) + 5
 
+        if has_tstart:
+
+            if has_tstart_column:
+
+                if not treat_as_time_series:
+
+                    tstart = data.field("TSTART")[spectrum_number - 1, :]
+
+                else:
+
+                    tstart = data.field("TSTART")
+
+            else:
+
+
+                tstart = header['TSTART']
+
+        if has_tstop:
+
+            if has_tstop_column:
+
+                if not treat_as_time_series:
+
+                    tstop = data.field("TSTOP")[spectrum_number - 1, :]
+
+                else:
+
+                    tstop = data.field("TSTOP")
+
+            else:
+
+                tstop = header['TSTOP']
+
+        if has_telapse:
+
+            if has_telapse_column:
+
+                if not treat_as_time_series:
+
+                    tstop = tstart + data.field("TELAPSE")[spectrum_number - 1, :]
+
+                else:
+
+                    tstop = tstart + data.field("TELAPSE")
+
+            else:
+
+                tstop = tstart + header['TELAPSE']
 
 
     elif typeII == False:
@@ -458,7 +569,43 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
                 quality = np.zeros_like(rates, dtype=int) + 5
 
-                # Now that we have read it, some safety checks
+
+
+        # read start and stop times if needed
+
+        if has_tstart:
+
+            if has_tstart_column:
+
+
+                tstart = data.field("TSTART")
+
+            else:
+
+                tstart = header['TSTART']
+
+        if has_tstop:
+
+            if has_tstop_column:
+
+
+                tstop = data.field("TSTOP")
+
+            else:
+
+                tstop = header['TSTOP']
+
+        if has_telapse:
+
+            if has_telapse_column:
+
+                tstop = tstart + data.field("TELAPSE")
+
+            else:
+
+                tstop = tstart + header['TELAPSE']
+
+        # Now that we have read it, some safety checks
 
         assert rates.shape[0] == gathered_keywords['detchans'], \
             "The data column (RATES or COUNTS) has a different number of entries than the " \
@@ -496,7 +643,8 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
     out = collections.OrderedDict(counts=counts, count_errors=count_errors, rates=rates, rate_errors=rate_errors,
                                   sys_errors=sys_errors, exposure=exposure, is_poisson=is_poisson, rsp=rsp,
-                                  gathered_keywords=gathered_keywords, quality=quality, file_name=file_name )
+                                  gathered_keywords=gathered_keywords, quality=quality, file_name=file_name,
+                                  tstart=tstart, tstop=tstop )
 
 
     return out
@@ -556,7 +704,9 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
                                           is_poisson=pha_information['is_poisson'],
                                           quality=pha_information['quality'],
                                           mission=pha_information['gathered_keywords']['mission'],
-                                          instrument=pha_information['gathered_keywords']['instrument'])
+                                          instrument=pha_information['gathered_keywords']['instrument'],
+                                          tstart=pha_information['tstart'],
+                                          tstop=pha_information['tstop'])
 
     def _return_file(self, key):
 
@@ -649,12 +799,32 @@ p
 
             stat_err = new_count_errors/self.exposure
 
+        if self._tstart is None:
+
+            tstart = 0
+
+        else:
+
+            tstart = self._tstart
+
+        if self._tstop is None:
+
+
+
+            telapse = self.exposure
+
+        else:
+
+            telapse = self._tstop - tstart
+
         # create a new PHAII instance
+
+
 
         pha = PHAII(instrument_name=self.instrument,
                     telescope_name=self.mission,
-                    tstart=0,
-                    telapse=self.exposure,
+                    tstart=tstart,
+                    telapse=telapse,
                     channel=range(1,len(self)+1),
                     rate=new_counts/self.exposure,
                     stat_err=stat_err,
@@ -683,10 +853,26 @@ p
 
             rate_errors = dispersion_spectrum.rate_errors
 
+        if dispersion_spectrum.tstart is None:
+
+            tstart = 0
+
+        else:
+
+            tstart = dispersion_spectrum.tstart
+
+        if dispersion_spectrum.tstop is None:
+
+            telapse = dispersion_spectrum.exposure
+
+        else:
+
+            telapse = dispersion_spectrum.tstop - tstart
+
         pha = PHAII(instrument_name=dispersion_spectrum.instrument,
                     telescope_name=dispersion_spectrum.mission,
-                    tstart=0,  # TODO: add this in so that we have proper time!
-                    telapse=dispersion_spectrum.exposure,
+                    tstart=tstart,  # TODO: add this in so that we have proper time!
+                    telapse=telapse,
                     channel=range(1, len(dispersion_spectrum) + 1),
                     rate=dispersion_spectrum.rates,
                     stat_err=rate_errors,
