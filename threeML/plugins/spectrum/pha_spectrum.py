@@ -969,7 +969,9 @@ class PHASpectrumSet(BinnedSpectrumSet):
         self._file_type = file_type
 
 
-        # need to see if we have count errors
+        # need to see if we have count errors, tstart, tstop
+        # if not, we create an list of None
+
         if pha_information['count_errors'] is None:
 
             count_errors = [None]*num_spectra
@@ -978,9 +980,24 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
             count_errors = pha_information['count_errors']
 
+        if pha_information['tstart'] is None:
+
+            tstart = [None] * num_spectra
+
+        else:
+
+            tstart = pha_information['tstart']
+
+        if pha_information['tstop'] is None:
+
+            tstop = [None] * num_spectra
+
+        else:
+
+            tstop = pha_information['tstop']
 
 
-
+        # now build the list of binned spectra
 
         list_of_binned_spectra = []
 
@@ -997,7 +1014,9 @@ class PHASpectrumSet(BinnedSpectrumSet):
                                                                            is_poisson=pha_information['is_poisson'],
                                                                            quality=pha_information['quality'].get_slice(i),
                                                                            mission=pha_information['gathered_keywords']['mission'],
-                                                                           instrument=pha_information['gathered_keywords']['instrument']))
+                                                                           instrument=pha_information['gathered_keywords']['instrument'],
+                                                                           tstart=tstart[i],
+                                                                           tstop=tstop[i]))
 
                 p.increase()
 
