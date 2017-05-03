@@ -490,10 +490,6 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
                     tstart = data.field("TSTART")
 
-            else:
-
-
-                tstart = header['TSTART']
 
         if has_tstop:
 
@@ -507,9 +503,6 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
                     tstop = data.field("TSTOP")
 
-            else:
-
-                tstop = header['TSTOP']
 
         if has_telapse:
 
@@ -523,9 +516,6 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
                     tstop = tstart + data.field("TELAPSE")
 
-            else:
-
-                tstop = tstart + header['TELAPSE']
 
 
     elif typeII == False:

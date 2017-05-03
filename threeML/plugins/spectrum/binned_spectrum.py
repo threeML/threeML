@@ -235,7 +235,7 @@ class BinnedSpectrum(Histogram):
 
         self._tstart = tstart
 
-        self._tstop
+        self._tstop = tstop
 
 
         # pass up to the binned spectrum
@@ -528,12 +528,12 @@ class BinnedSpectrum(Histogram):
             is_poisson = False
 
         return cls(instrument=pha_information['instrument'],
-                   telescope=pha_information['telescope'],
+                   mission=pha_information['telescope'],
                    tstart=pha_information['tstart'],
                    telapse=pha_information['telapse'],
-                   channel=pha_information['channel'],
-                   rate=pha_information['rate'],
-                   stat_err=pha_information['rate error'],
+                   #channel=pha_information['channel'],
+                   counts=pha_information['counts'],
+                   count_errors=pha_information['counts error'],
                    quality=pha_information['quality'],
                    grouping=pha_information['grouping'],
                    exposure=pha_information['exposure'],
@@ -589,14 +589,14 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         return self._rsp
 
     @classmethod
-    def from_time_series(cls, time_series, use_poly=False):
+    def from_time_series(cls, time_series, response, use_poly=False):
         """
 
         :param time_series:
         :param use_poly:
         :return:
         """
-        raise NotImplementedError('This is still under construction')
+
 
         pha_information = time_series.get_pha_information(use_poly)
 
@@ -606,16 +606,17 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
             is_poisson = False
 
         return cls(instrument=pha_information['instrument'],
-                   telescope=pha_information['telescope'],
+                   mission=pha_information['telescope'],
                    tstart=pha_information['tstart'],
-                   telapse=pha_information['telapse'],
-                   channel=pha_information['channel'],
-                   rate=pha_information['rate'],
-                   stat_err=pha_information['rate error'],
+                   tstop=pha_information['tstart'] + pha_information['telapse'],
+                   #channel=pha_information['channel'],
+                   counts =pha_information['counts'],
+                   count_errors=pha_information['counts error'],
                    quality=pha_information['quality'],
-                   grouping=pha_information['grouping'],
+                   #grouping=pha_information['grouping'],
                    exposure=pha_information['exposure'],
-                   backscale=1.,
+                   response=response,
+                   scale_factor=1.,
                    is_poisson=is_poisson)
 
     def clone(self, new_counts=None, new_count_errors=None):
