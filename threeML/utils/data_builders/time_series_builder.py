@@ -1,6 +1,5 @@
 import numpy as np
 
-
 from threeML.utils.time_series.time_series import TimeSeries
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -20,10 +19,8 @@ from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.io.progress_bar import progress_bar
 
-
 import copy
 import re
-import astropy.io.fits as fits
 
 
 class BinningMethodError(RuntimeError):
@@ -31,23 +28,38 @@ class BinningMethodError(RuntimeError):
 
 
 class TimeSeriesBuilder(object):
-
-
-    def __init__(self, name, time_series,response=None,
+    def __init__(self, name, time_series, response=None,
                  poly_order=-1, unbinned=True, verbose=True, restore_poly_fit=None):
+        """
+        Class for handling generic time series data including binned and event list
+        series. Depending on the data, this class builds either a  SpectrumLike or
+        DisperisonSpectrumLike plugin
 
+        For specific instruments, use the TimeSeries.from() classmethods
+
+
+        :param name: name for the plugin
+        :param time_series: a TimeSeries instance
+        :param response: options InstrumentResponse instance
+        :param poly_order: the polynomial order to use for background fitting
+        :param unbinned: if the background should be fit unbinned
+        :param verbose: the verbosity switch
+        :param restore_poly_fit: file from which to read a prefitted background
+        """
 
         assert isinstance(time_series, TimeSeries), "must be a TimeSeries instance"
 
         self._name = name
 
-        self._time_series = time_series # type: TimeSeries
+        self._time_series = time_series  # type: TimeSeries
+
+        # make sure we have a proper response
 
         if response is not None:
+            assert isinstance(response, InstrumentResponse) or isinstance(response,
+                                                                          InstrumentResponseSet), 'Response must be an instance of InstrumentResponse'
 
-            assert isinstance(response, InstrumentResponse) or isinstance(response, InstrumentResponseSet), 'Response must be an instance of InstrumentResponse'
-
-
+        # deal with RSP weighting if need be
 
         if isinstance(response, InstrumentResponseSet):
 
@@ -73,8 +85,9 @@ class TimeSeriesBuilder(object):
 
         self._time_series.poly_order = poly_order
 
-
         self._default_unbinned = unbinned
+
+        # try and restore the poly fit if requested
 
         if restore_poly_fit is not None:
 
@@ -89,8 +102,9 @@ class TimeSeriesBuilder(object):
                     self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=True)
 
                 else:
-
-                    self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response, use_poly=True)
+                    self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
+                                                                                              self._response,
+                                                                                              use_poly=True)
 
 
             else:
@@ -98,15 +112,11 @@ class TimeSeriesBuilder(object):
                 custom_warnings.warn(
                     "Could not find saved background %s." % restore_poly_fit)
 
-
-        
-        
-
     def _output(self):
 
         pass
-        #super_out = super(EventListLike, self)._output()
-        #return super_out.append(self._time_series._output())
+        # super_out = super(EventListLike, self)._output()
+        # return super_out.append(self._time_series._output())
 
     def __set_poly_order(self, value):
         """Background poly order setter """
@@ -157,13 +167,10 @@ class TimeSeriesBuilder(object):
         else:
 
             if self._rsp_is_weighted:
-
                 self._response = self._weighted_rsp.weight_by_counts(*intervals)
 
-
-            self._observed_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response, use_poly=False)
-
-
+            self._observed_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response,
+                                                                                    use_poly=False)
 
         self._active_interval = intervals
 
@@ -175,13 +182,13 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response, use_poly=True)
-
+                self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
+                                                                                          self._response, use_poly=True)
 
         self._tstart = self._time_series.time_intervals.absolute_start_time
         self._tstop = self._time_series.time_intervals.absolute_stop_time
 
-        #return_ogip = False
+        # return_ogip = False
 
         # if 'return_ogip' in kwargs:
         #     return_ogip = bool(kwargs.pop('return_ogip'))
@@ -235,22 +242,27 @@ class TimeSeriesBuilder(object):
 
             # we do not need to worry about the interval of the response if it is a set. only the ebounds are extracted here
 
-            self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response, use_poly=True)
+            self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response,
+                                                                                      use_poly=True)
 
     def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False):
         """
+        Write PHA fits files from the selected bins. If writing from an event list, the
+        bins are from create_time_bins. If using a pre-time binned time series, the bins are those
+        native to the data. Start and stop times can be used to  control which bins are written to files
 
-        :param file_name:
-        :param overwrite:
-        :return:
+        :param file_name: the file name of the output files
+        :param start: optional start time of the bins
+        :param stop: optional stop time of the bins
+        :param overwrite: if the fits files should be overwritten
+        :return: None
         """
+
+        # we simply create a bunch of dispersion plugins and convert them to OGIP
 
         ogip_list = [OGIPLike.from_general_dispersion_spectrum(sl) for sl in self.to_spectrumlike(from_bins=True,
                                                                                                   start=start,
                                                                                                   stop=stop)]
-
-        # create copies of the OGIP plugins with the
-        # time interval saved.
 
         # write out the PHAII file
 
@@ -258,15 +270,10 @@ class TimeSeriesBuilder(object):
 
         pha_writer.write(file_name, overwrite=overwrite)
 
-
     def get_background_parameters(self):
         """
         Returns a pandas DataFrame containing the background polynomial
-        coefficients for each cahnnel.
-
-        Returns:
-
-            background dataframe
+        coefficients for each channel.
 
         """
 
@@ -299,7 +306,6 @@ class TimeSeriesBuilder(object):
         """
 
         self._time_series.view_lightcurve(start, stop, dt, use_binner)
-
 
     @property
     def bins(self):
@@ -337,8 +343,7 @@ class TimeSeriesBuilder(object):
         :return:
         """
 
-        assert isinstance(self._time_series,EventList), 'can only bin event lists currently'
-
+        assert isinstance(self._time_series, EventList), 'can only bin event lists currently'
 
         if 'use_energy_mask' in options:
 
@@ -434,20 +439,23 @@ class TimeSeriesBuilder(object):
 
             raise BinningMethodError('Only constant, significance, bayesblock, or custom method argument accepted.')
 
-    def to_spectrumlike(self, from_bins=False, start=None, stop=None, interval_name='interval'):
+    def to_spectrumlike(self, from_bins=False, start=None, stop=None, interval_name='_interval'):
         """
-        return a SpectrumLike or DispersionSpectrumLike plugin
-        from the current selections
+        Create plugin(s) from either the current active selection or the time bins.
+        If creating from an event list, the
+        bins are from create_time_bins. If using a pre-time binned time series, the bins are those
+        native to the data. Start and stop times can be used to  control which bins are used.
 
+        :param from_bins: choose to create plugins from the time bins
+        :param start: optional start time of the bins
+        :param stop: optional stop time of the bins
 
-        :return:
+        :return: SpectrumLike plugin(s)
         """
 
         assert self._observed_spectrum is not None, 'Must have selected an active time interval'
 
-
         if not from_bins:
-
 
             if self._response is None:
 
@@ -484,11 +492,10 @@ class TimeSeriesBuilder(object):
 
                 these_bins = these_bins.containing_interval(start, stop, inner=False)
 
-
             # create copies of the OGIP plugins with the
             # time interval saved.
 
-            with progress_bar(len(these_bins),title='Creating plugins') as p:
+            with progress_bar(len(these_bins), title='Creating plugins') as p:
 
                 for i, interval in enumerate(these_bins):
                     self.set_active_time_interval(interval.to_string())
@@ -497,30 +504,25 @@ class TimeSeriesBuilder(object):
 
                         if self._response is None:
 
-
-
-
-                            sl =  SpectrumLike(name="%s_%s%d"%(self._name,interval_name,i),
-                                               observation=self._observed_spectrum,
-                                               background=self._background_spectrum,
-                                               verbose=self._verbose)
+                            sl = SpectrumLike(name="%s%s%d" % (self._name, interval_name, i),
+                                              observation=self._observed_spectrum,
+                                              background=self._background_spectrum,
+                                              verbose=self._verbose)
 
                         else:
 
-                            sl =  DispersionSpectrumLike(name="%s_%s%d"%(self._name,interval_name,i),
-                                                         observation=self._observed_spectrum,
-                                                         background=self._background_spectrum,
-                                                         verbose=self._verbose)
+                            sl = DispersionSpectrumLike(name="%s%s%d" % (self._name, interval_name, i),
+                                                        observation=self._observed_spectrum,
+                                                        background=self._background_spectrum,
+                                                        verbose=self._verbose)
 
                         list_of_speclikes.append(sl)
 
                     except(NegativeBackground):
 
-                        custom_warnings.warn('Something is wrong with interval %s. skipping.'%interval)
+                        custom_warnings.warn('Something is wrong with interval %s. skipping.' % interval)
 
                     p.increase()
-
-
 
             # restore the old interval
 
@@ -530,43 +532,37 @@ class TimeSeriesBuilder(object):
 
             return list_of_speclikes
 
-
-
-
-
-
-
     @classmethod
-    def from_gbm_tte(cls,name, tte_file, rsp_file, restore_background=None,
-                 trigger_time=None,
-                 poly_order=-1, unbinned=True, verbose=True):
+    def from_gbm_tte(cls, name, tte_file, rsp_file, restore_background=None,
+                     trigger_time=None,
+                     poly_order=-1, unbinned=True, verbose=True):
         """
-               A plugin to natively bin, view, and handle Fermi GBM TTE data.
-               A TTE event file are required as well as the associated response
+           A plugin to natively bin, view, and handle Fermi GBM TTE data.
+           A TTE event file are required as well as the associated response
 
 
 
-               Background selections are specified as
-               a comma separated string e.g. "-10-0,10-20"
+           Background selections are specified as
+           a comma separated string e.g. "-10-0,10-20"
 
-               Initial source selection is input as a string e.g. "0-5"
+           Initial source selection is input as a string e.g. "0-5"
 
-               One can choose a background polynomial order by hand (up to 4th order)
-               or leave it as the default polyorder=-1 to decide by LRT test
+           One can choose a background polynomial order by hand (up to 4th order)
+           or leave it as the default polyorder=-1 to decide by LRT test
 
-               :param name: name for your choosing
-               :param tte_file: GBM tte event file
-               :param rsp_file: Associated TTE CSPEC response file
-               :param trigger_time: trigger time if needed
-               :param poly_order: 0-4 or -1 for auto
-               :param unbinned: unbinned likelihood fit (bool)
-               :param verbose: verbose (bool)
+           :param name: name for your choosing
+           :param tte_file: GBM tte event file
+           :param rsp_file: Associated TTE CSPEC response file
+           :param trigger_time: trigger time if needed
+           :param poly_order: 0-4 or -1 for auto
+           :param unbinned: unbinned likelihood fit (bool)
+           :param verbose: verbose (bool)
 
 
 
                """
 
-        #self._default_unbinned = unbinned
+        # self._default_unbinned = unbinned
 
         # Load the relevant information from the TTE file
 
@@ -597,19 +593,15 @@ class TimeSeriesBuilder(object):
         if test is not None:
 
             rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
-                                                                 counts_getter=event_list.counts_over_interval,
-                                                                 exposure_getter=event_list.exposure_over_interval,
-                                                                 reference_time=gbm_tte_file.trigger_time)
+                                                       counts_getter=event_list.counts_over_interval,
+                                                       exposure_getter=event_list.exposure_over_interval,
+                                                       reference_time=gbm_tte_file.trigger_time)
 
 
 
         else:
 
-
             rsp = OGIPResponse(rsp_file)
-
-
-
 
         # pass to the super class
 
@@ -621,12 +613,10 @@ class TimeSeriesBuilder(object):
                    verbose=verbose,
                    restore_poly_fit=restore_background)
 
-
-
     @classmethod
-    def from_gbm_cspec_or_ctime(cls,name, cspec_or_ctime_file, rsp_file, restore_background=None,
-                 trigger_time=None,
-                 poly_order=-1, verbose=True):
+    def from_gbm_cspec_or_ctime(cls, name, cspec_or_ctime_file, rsp_file, restore_background=None,
+                                trigger_time=None,
+                                poly_order=-1, verbose=True):
         """
                A plugin to natively bin, view, and handle Fermi GBM TTE data.
                A TTE event file are required as well as the associated response
@@ -653,15 +643,13 @@ class TimeSeriesBuilder(object):
 
                """
 
-        #self._default_unbinned = unbinned
+        # self._default_unbinned = unbinned
 
         # Load the relevant information from the TTE file
 
-        cdata = GBMCdata(cspec_or_ctime_file,rsp_file)
+        cdata = GBMCdata(cspec_or_ctime_file, rsp_file)
 
-
-
-        #Set a trigger time if one has not been set
+        # Set a trigger time if one has not been set
 
         if trigger_time is not None:
             cdata.trigger_time = trigger_time
@@ -681,19 +669,15 @@ class TimeSeriesBuilder(object):
         if test is not None:
 
             rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
-                                                                 counts_getter=event_list.counts_over_interval,
-                                                                 exposure_getter=event_list.exposure_over_interval,
-                                                                 reference_time=cdata.trigger_time)
+                                                       counts_getter=event_list.counts_over_interval,
+                                                       exposure_getter=event_list.exposure_over_interval,
+                                                       reference_time=cdata.trigger_time)
 
 
 
         else:
 
-
             rsp = OGIPResponse(rsp_file)
-
-
-
 
         # pass to the super class
 
@@ -705,12 +689,9 @@ class TimeSeriesBuilder(object):
                    verbose=verbose,
                    restore_poly_fit=restore_background)
 
-
-
-
     @classmethod
-    def from_lat_lle(cls,name, lle_file, ft2_file, rsp_file, restore_background=None,
-                 trigger_time=None, poly_order=-1, unbinned=False, verbose=True):
+    def from_lat_lle(cls, name, lle_file, ft2_file, rsp_file, restore_background=None,
+                     trigger_time=None, poly_order=-1, unbinned=False, verbose=True):
 
         """
                A plugin to natively bin, view, and handle Fermi LAT LLE data.
@@ -737,7 +718,6 @@ class TimeSeriesBuilder(object):
 
 
                """
-
 
         lat_lle_file = LLEFile(lle_file, ft2_file, rsp_file)
 
@@ -786,4 +766,3 @@ class TimeSeriesBuilder(object):
     def from_polar(cls):
 
         pass
-
