@@ -42,7 +42,7 @@ def test_fits_file():
 
         assert dummy_fits['TEST'].header['TFORM1'] == dtype_keys[i]
 
-        assert len(dummy_fits['TEST'].data['TEST_VALUE'] == test_values)
+        assert np.alltrue(dummy_fits['TEST'].data['TEST_VALUE'] == test_values)
 
 
         file_name = 'test_fits%d.fits'%i
@@ -64,5 +64,5 @@ def test_fits_file():
 
         assert read_dummy_fits['TEST'].header['TFORM1'] == dtype_keys[i]
 
-        assert len(read_dummy_fits['TEST'].data['TEST_VALUE'] == test_values)
+        assert np.alltrue(read_dummy_fits['TEST'].data['TEST_VALUE'] == test_values)
 
