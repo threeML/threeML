@@ -10,6 +10,7 @@ import pandas as pd
 from threeML.plugins.EventListLike import EventListLike
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
 from threeML.utils.time_series.eventlist import EventListWithLiveTime
+from threeML.exceptions.custom_exceptions import deprecated
 
 __instrument_name = "Fermi LAT LLE"
 
@@ -19,6 +20,7 @@ class BinningMethodError(RuntimeError):
 
 
 class FermiLATLLELike(EventListLike):
+    @deprecated('Please use the TimeSeriesBuilder for LAT LLE data. This plugin will soon disappear')
     def __init__(self, name, lle_file, ft2_file, rsp_file, source_intervals, background_selections=None, restore_background=None,
                  trigger_time=None, poly_order=-1, unbinned=False, verbose=True):
         """

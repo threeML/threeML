@@ -2,8 +2,7 @@ __author__ = 'grburgess'
 
 import collections
 import re
-import warnings
-
+from threeML.exceptions.custom_exceptions import custom_warnings, deprecated
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
@@ -21,6 +20,7 @@ class BinningMethodError(RuntimeError):
 
 
 class FermiGBMTTELike(EventListLike):
+    @deprecated('Please use the TimeSeriesBuilder for GBM TTE data')
     def __init__(self, name, tte_file, rsp_file, source_intervals, background_selections=None, restore_background=None,
                  trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
@@ -73,7 +73,7 @@ class FermiGBMTTELike(EventListLike):
             stop_time=self._gbm_tte_file.tstop - self._gbm_tte_file.trigger_time,
             dead_time=self._gbm_tte_file.deadtime,
             first_channel=1,
-            rsp_file=rsp_file,
+            #rsp_file=rsp_file,
             instrument=self._gbm_tte_file.det_name,
             mission=self._gbm_tte_file.mission,
             verbose=verbose)

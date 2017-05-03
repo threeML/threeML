@@ -10,6 +10,8 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.OGIP.pha import PHAWrite
 from threeML.utils.stats_tools import Significance
 
+from threeML.exceptions.custom_exceptions import deprecated
+
 import copy
 
 __instrument_name = "Generic EventList data"
@@ -20,11 +22,15 @@ class BinningMethodError(RuntimeError):
 
 
 class EventListLike(OGIPLike):
+    @deprecated('Please use the TimeSeriesBuilder for event list data')
     def __init__(self, name, event_list, rsp_file, source_intervals, background_selections=None,
                  poly_order=-1, unbinned=True, verbose=True, restore_poly_fit=None):
         """
         Generic EventListLike that should be inherited
         """
+
+
+
 
         assert (background_selections is not None) or (
             restore_poly_fit is not None), "you specify background selections or a restore file"

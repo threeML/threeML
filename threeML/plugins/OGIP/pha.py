@@ -533,7 +533,7 @@ class PHAII(FITSFile):
                      grouping=pha_information['grouping'],
                      exposure=pha_information['exposure'],
                      backscale=1.,
-                     respfile=pha_information['response_file'],
+                     respfile=None,#pha_information['response_file'],
                      ancrfile=None,
                      is_poisson=is_poisson)
 
