@@ -35,21 +35,11 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
     # round
     np.round(time_bins, decimals=4, out=time_bins)
 
-    # set up default colors
-    instrument =None
-    if instrument is None:
 
-        light_curve_color = 'k'
-        selection_color = 'b'
-        background_color = 'r'
-        background_selection_color = 'yellow'
-
-    else:
-
-        light_curve_color = threeML_config['gbm']['lightcurve color']
-        selection_color = threeML_config['gbm']['selection color']
-        background_color = threeML_config['gbm']['background color']
-        background_selection_color = threeML_config['gbm']['background selection color']
+    light_curve_color = threeML_config['lightcurve']['lightcurve color']
+    selection_color = threeML_config['lightcurve']['selection color']
+    background_color = threeML_config['lightcurve']['background color']
+    background_selection_color = threeML_config['lightcurve']['background selection color']
 
     # first plot the full lightcurve
 
