@@ -80,7 +80,7 @@ class FermiLATLLELike(EventListLike):
                 stop_time=self._lat_lle_file.tstop - self._lat_lle_file.trigger_time,
                 quality=native_quality,
                 first_channel=1,
-                rsp_file=rsp_file,
+                #rsp_file=rsp_file,
                 instrument=self._lat_lle_file.instrument,
                 mission=self._lat_lle_file.mission,
                 verbose=verbose)
