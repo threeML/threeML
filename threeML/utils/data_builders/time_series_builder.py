@@ -709,9 +709,78 @@ class TimeSeriesBuilder(object):
 
 
     @classmethod
-    def from_lat_lle(cls):
+    def from_lat_lle(cls,name, lle_file, ft2_file, rsp_file, restore_background=None,
+                 trigger_time=None, poly_order=-1, unbinned=False, verbose=True):
 
-        pass
+        """
+               A plugin to natively bin, view, and handle Fermi LAT LLE data.
+               An LLE event file and FT2 (1 sec) are required as well as the associated response
+
+
+
+               Background selections are specified as
+               a comma separated string e.g. "-10-0,10-20"
+
+               Initial source selection is input as a string e.g. "0-5"
+
+               One can choose a background polynomial order by hand (up to 4th order)
+               or leave it as the default polyorder=-1 to decide by LRT test
+
+               :param name: name of the plugin
+               :param lle_file: lle event file
+               :param ft2_file: fermi FT2 file
+               :param rsp_file: lle response file
+               :param trigger_time: trigger time if needed
+               :param poly_order: 0-4 or -1 for auto
+               :param unbinned: unbinned likelihood fit (bool)
+               :param verbose: verbose (bool)
+
+
+               """
+
+
+        lat_lle_file = LLEFile(lle_file, ft2_file, rsp_file)
+
+        if trigger_time is not None:
+            lat_lle_file.trigger_time = trigger_time
+
+        # Mark channels less than 50 MeV as bad
+
+        channel_30MeV = np.searchsorted(lat_lle_file.energy_edges[0], 30000.) - 1
+
+        native_quality = np.zeros(lat_lle_file.n_channels, dtype=int)
+
+        idx = np.arange(lat_lle_file.n_channels) < channel_30MeV
+
+        native_quality[idx] = 5
+
+        event_list = EventListWithLiveTime(
+            arrival_times=lat_lle_file.arrival_times - lat_lle_file.trigger_time,
+            energies=lat_lle_file.energies,
+            n_channels=lat_lle_file.n_channels,
+            live_time=lat_lle_file.livetime,
+            live_time_starts=lat_lle_file.livetime_start - lat_lle_file.trigger_time,
+            live_time_stops=lat_lle_file.livetime_stop - lat_lle_file.trigger_time,
+            start_time=lat_lle_file.tstart - lat_lle_file.trigger_time,
+            stop_time=lat_lle_file.tstop - lat_lle_file.trigger_time,
+            quality=native_quality,
+            first_channel=1,
+            # rsp_file=rsp_file,
+            instrument=lat_lle_file.instrument,
+            mission=lat_lle_file.mission,
+            verbose=verbose)
+
+        # pass to the super class
+
+        rsp = OGIPResponse(rsp_file)
+
+        return cls(name,
+                   event_list,
+                   response=rsp,
+                   poly_order=poly_order,
+                   unbinned=unbinned,
+                   verbose=verbose,
+                   restore_poly_fit=restore_background)
 
     @classmethod
     def from_polar(cls):

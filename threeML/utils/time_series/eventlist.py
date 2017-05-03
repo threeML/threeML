@@ -705,7 +705,7 @@ class EventListWithLiveTime(EventList):
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time,quality ,first_channel, rsp_file,
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time,quality ,first_channel,
                            ra, dec,
                            mission, instrument, verbose)
 
