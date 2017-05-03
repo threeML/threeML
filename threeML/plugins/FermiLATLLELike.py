@@ -112,8 +112,7 @@ class FermiLATLLELike(EventListLike):
                                                      dt=dt,
                                                      use_binner=use_binner,
                                                      energy_selection=energy_selection,
-                                                     significance_level=significance_level,
-                                                     instrument='lle')
+                                                     significance_level=significance_level)
 
     def _output(self):
         super_out = super(FermiLATLLELike, self)._output()

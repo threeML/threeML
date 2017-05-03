@@ -147,8 +147,8 @@ class FermiGBMTTELike(EventListLike):
                                                      dt=dt,
                                                      use_binner=use_binner,
                                                      energy_selection=energy_selection,
-                                                     significance_level=significance_level,
-                                                     instrument='gbm')
+                                                     significance_level=significance_level
+                                                     )
 
     def _output(self):
         super_out = super(FermiGBMTTELike, self)._output()

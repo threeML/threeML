@@ -527,12 +527,16 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
             rates = data.field(data_column_name)
 
+            rate_errors = None
+
             if not is_poisson:
                 rate_errors = data.field("STAT_ERR")
 
         else:
 
             rates = data.field(data_column_name) / exposure
+
+            rate_errors = None
 
             if not is_poisson:
                 rate_errors = data.field("STAT_ERR") / exposure
