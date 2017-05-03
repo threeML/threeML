@@ -36,8 +36,8 @@ _NUMPY_TO_FITS_CODE = {
     np.int16: 'I',
     np.int32: 'J',
     np.int64: 'K',
-    np.uint16: 'U',
-    np.uint32: 'V',
+    np.uint16: 'I',
+    np.uint32: 'J',
 
     # Floating point
 
