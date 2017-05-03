@@ -10,8 +10,7 @@ from threeML.io.plotting.step_plot import step_plot
 
 
 
-def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bkg_selections=None, instrument=None,
-                            significance_filter=None):
+def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bkg_selections=None):
     """
 
     :param time_bins: stacked array of time intervals
@@ -21,7 +20,7 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
     :param selection: bin selection
     :param bkg_selections:
     :param instrument:
-    :param significance_filter:
+
     :return:
     """
     fig, ax = plt.subplots()
@@ -37,6 +36,7 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
     np.round(time_bins, decimals=4, out=time_bins)
 
     # set up default colors
+    instrument =None
     if instrument is None:
 
         light_curve_color = 'k'
@@ -46,10 +46,10 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
 
     else:
 
-        light_curve_color = threeML_config[instrument]['lightcurve color']
-        selection_color = threeML_config[instrument]['selection color']
-        background_color = threeML_config[instrument]['background color']
-        background_selection_color = threeML_config[instrument]['background selection color']
+        light_curve_color = threeML_config['gbm']['lightcurve color']
+        selection_color = threeML_config['gbm']['selection color']
+        background_color = threeML_config['gbm']['background color']
+        background_selection_color = threeML_config['gbm']['background selection color']
 
     # first plot the full lightcurve
 
@@ -114,21 +114,6 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
 
         ax.plot(mean_time, bkg, background_color, lw=2., label="Background")
 
-    if significance_filter is not None:
-        raise NotImplementedError("Have not finished this code")
-
-        # plot the significant time bins
-        # i.e., those that are above the input significance threshold
-
-        disjoint_patch_plot(ax,
-                            time_bins[:, 0],
-                            time_bins[:, 1],
-                            top,
-                            bottom,
-                            significance_filter,
-                            color='limegreen',
-                            alpha=.3,
-                            zorder=-33)
 
     # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
 

@@ -484,7 +484,7 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
                 if not treat_as_time_series:
 
-                    tstart = data.field("TSTART")[spectrum_number - 1, :]
+                    tstart = data.field("TSTART")[spectrum_number - 1]
 
                 else:
 
@@ -497,7 +497,7 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
                 if not treat_as_time_series:
 
-                    tstop = data.field("TSTOP")[spectrum_number - 1, :]
+                    tstop = data.field("TSTOP")[spectrum_number - 1]
 
                 else:
 
@@ -510,7 +510,7 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
                 if not treat_as_time_series:
 
-                    tstop = tstart + data.field("TELAPSE")[spectrum_number - 1, :]
+                    tstop = tstart + data.field("TELAPSE")[spectrum_number - 1]
 
                 else:
 
@@ -1165,8 +1165,8 @@ p
 
         pha = PHAII(instrument_name=dispersion_spectrum.instrument,
                     telescope_name=dispersion_spectrum.mission,
-                    tstart=0,  # TODO: add this in so that we have proper time!
-                    telapse=dispersion_spectrum.exposure,
+                    tstart=dispersion_spectrum.tstart,
+                    telapse=dispersion_spectrum.tstop - dispersion_spectrum.tstart,
                     channel=range(1, len(dispersion_spectrum) + 1),
                     rate=dispersion_spectrum.rates,
                     stat_err=rate_errors,

@@ -1,24 +1,25 @@
 import numpy as np
 
-from threeML.utils.data_builders.time_series_builder import SpectrumHelper
+
 from threeML.utils.time_series.time_series import TimeSeries
 from threeML.io.file_utils import file_existing_and_readable
-from threeML.plugins.OGIP.pha import PHAII
 from threeML.exceptions.custom_exceptions import custom_warnings
 
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.OGIP.pha import PHAWrite
-from threeML.utils.stats_tools import Significance
 from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion
-from threeML.plugins.spectrum.pha_spectrum import PHASpectrumSet
+
 from threeML.utils.data_builders.fermi.gbm_data import GBMTTEFile, GBMCdata
 from threeML.utils.data_builders.fermi.lat_data import LLEFile
 
-from threeML.utils.time_series.eventlist import EventListWithDeadTime, EventListWithLiveTime
+from threeML.utils.time_series.eventlist import EventListWithDeadTime, EventListWithLiveTime, EventList
 from threeML.utils.time_series.binned_spectrum_series import BinnedSpectrumSeries
 from threeML.plugins.OGIP.response import InstrumentResponse, InstrumentResponseSet, OGIPResponse
-from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.plugins.SpectrumLike import SpectrumLike, NegativeBackground
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
+from threeML.utils.time_interval import TimeIntervalSet
+from threeML.io.progress_bar import progress_bar
+
 
 import copy
 import re
@@ -236,7 +237,7 @@ class TimeSeriesBuilder(object):
 
             self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response, use_poly=True)
 
-    def write_pha_from_binner(self, file_name, overwrite=False):
+    def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False):
         """
 
         :param file_name:
@@ -244,21 +245,12 @@ class TimeSeriesBuilder(object):
         :return:
         """
 
-        # save the original interval if there is one
-        old_interval = copy.copy(self._active_interval)
-        old_verbose = copy.copy(self._verbose)
-
-        self._verbose = False
-
-        ogip_list = []
+        ogip_list = [OGIPLike.from_general_dispersion_spectrum(sl) for sl in self.to_spectrumlike(from_bins=True,
+                                                                                                  start=start,
+                                                                                                  stop=stop)]
 
         # create copies of the OGIP plugins with the
         # time interval saved.
-
-        for interval in self._time_series.bins:
-            self.set_active_time_interval(interval.to_string())
-
-            ogip_list.append(copy.copy(self))
 
         # write out the PHAII file
 
@@ -266,11 +258,6 @@ class TimeSeriesBuilder(object):
 
         pha_writer.write(file_name, overwrite=overwrite)
 
-        # restore the old interval
-
-        self.set_active_time_interval(*old_interval)
-
-        self._verbose = old_verbose
 
     def get_background_parameters(self):
         """
@@ -349,6 +336,9 @@ class TimeSeriesBuilder(object):
         :param p0: <bayesblocks> the chance probability of having the correct bin configuration.
         :return:
         """
+
+        assert isinstance(self._time_series,EventList), 'can only bin event lists currently'
+
 
         if 'use_energy_mask' in options:
 
@@ -444,52 +434,7 @@ class TimeSeriesBuilder(object):
 
             raise BinningMethodError('Only constant, significance, bayesblock, or custom method argument accepted.')
 
-    def get_ogip_from_binner(self):
-        """
-
-        Returns a list of ogip_instances corresponding to the
-        time intervals created by the binner.
-
-        :return: list of ogip instances for each time interval
-        """
-
-        # save the original interval if there is one
-        old_interval = copy.copy(self._active_interval)
-        old_verbose = copy.copy(self._verbose)
-
-        self._verbose = False
-
-        ogip_list = []
-
-        # create copies of the OGIP plugins with the
-        # time interval saved.
-
-
-
-        for i, interval in enumerate(self._time_series.bins):
-            self.set_active_time_interval(interval.to_string())
-
-            new_name = "%s_%d" % (self._name, i)
-
-            new_ogip = OGIPLike(new_name,
-                                observation=self._observed_spectrum,
-                                background=self._background_spectrum,
-                                response=self._rsp_file,
-                                verbose=self._verbose,
-                                spectrum_number=1)
-
-            ogip_list.append(new_ogip)
-
-        # restore the old interval
-
-        self.set_active_time_interval(*old_interval)
-
-        self._verbose = old_verbose
-
-        return ogip_list
-
-
-    def to_spectrumlike(self, from_bins=False):
+    def to_spectrumlike(self, from_bins=False, start=None, stop=None, interval_name='interval'):
         """
         return a SpectrumLike or DispersionSpectrumLike plugin
         from the current selections
@@ -498,21 +443,96 @@ class TimeSeriesBuilder(object):
         :return:
         """
 
+        assert self._observed_spectrum is not None, 'Must have selected an active time interval'
 
 
-        if self._response is None:
+        if not from_bins:
 
-            return SpectrumLike(name=self._name,
-                                observation=self._observed_spectrum,
-                                background=self._background_spectrum,
-                                verbose=self._verbose)
+
+            if self._response is None:
+
+                return SpectrumLike(name=self._name,
+                                    observation=self._observed_spectrum,
+                                    background=self._background_spectrum,
+                                    verbose=self._verbose)
+
+            else:
+
+                return DispersionSpectrumLike(name=self._name,
+                                              observation=self._observed_spectrum,
+                                              background=self._background_spectrum,
+                                              verbose=self._verbose)
+
 
         else:
 
-            return DispersionSpectrumLike(name=self._name,
-                                          observation=self._observed_spectrum,
-                                          background=self._background_spectrum,
-                                          verbose=self._verbose)
+            # save the original interval if there is one
+            old_interval = copy.copy(self._active_interval)
+            old_verbose = copy.copy(self._verbose)
+
+            self._verbose = False
+
+            list_of_speclikes = []
+
+            these_bins = self._time_series.bins  # type: TimeIntervalSet
+
+            if start is not None:
+                assert stop is not None, 'must specify a start AND a stop time'
+
+            if stop is not None:
+                assert stop is not None, 'must specify a start AND a stop time'
+
+                these_bins = these_bins.containing_interval(start, stop, inner=False)
+
+
+            # create copies of the OGIP plugins with the
+            # time interval saved.
+
+            with progress_bar(len(these_bins),title='Creating plugins') as p:
+
+                for i, interval in enumerate(these_bins):
+                    self.set_active_time_interval(interval.to_string())
+
+                    try:
+
+                        if self._response is None:
+
+
+
+
+                            sl =  SpectrumLike(name="%s_%s%d"%(self._name,interval_name,i),
+                                               observation=self._observed_spectrum,
+                                               background=self._background_spectrum,
+                                               verbose=self._verbose)
+
+                        else:
+
+                            sl =  DispersionSpectrumLike(name="%s_%s%d"%(self._name,interval_name,i),
+                                                         observation=self._observed_spectrum,
+                                                         background=self._background_spectrum,
+                                                         verbose=self._verbose)
+
+                        list_of_speclikes.append(sl)
+
+                    except(NegativeBackground):
+
+                        custom_warnings.warn('Something is wrong with interval %s. skipping.'%interval)
+
+                    p.increase()
+
+
+
+            # restore the old interval
+
+            self.set_active_time_interval(*old_interval)
+
+            self._verbose = old_verbose
+
+            return list_of_speclikes
+
+
+
+
 
 
 

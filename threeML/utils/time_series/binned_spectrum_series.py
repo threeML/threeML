@@ -33,7 +33,7 @@ class BinnedSpectrumSeries(TimeSeries):
         super(BinnedSpectrumSeries, self).__init__(binned_spectrum_set.time_intervals.absolute_start,
                                                    binned_spectrum_set.time_intervals.absolute_stop,
                                                    binned_spectrum_set.n_channels,
-                                                   binned_spectrum_set.qaulity_per_bin[0],
+                                                   binned_spectrum_set.quality_per_bin[0],
                                                    first_channel,
                                                    ra,
                                                    dec,
@@ -61,9 +61,9 @@ class BinnedSpectrumSeries(TimeSeries):
 
         """
 
+        # git a set of bins containing the intervals
 
-
-        bins = self.bins.containing_interval( start, stop) # type: TimeIntervalSet
+        bins = self._binned_spectrum_set.time_intervals.containing_interval( start, stop) # type: TimeIntervalSet
 
         cnts = []
         width = []
@@ -74,8 +74,6 @@ class BinnedSpectrumSeries(TimeSeries):
             width.append(bin.duration)
 
 
-
-
         # now we want to get the estimated background from the polynomial fit
 
         if self.poly_fit_exists:
@@ -84,15 +82,13 @@ class BinnedSpectrumSeries(TimeSeries):
             for j, tb in enumerate(bins):
                 tmpbkg = 0.
                 for poly in self.polynomials:
-                    tmpbkg += poly.integral(bin.start_time, bin.stop_time)
+                    tmpbkg += poly.integral(tb.start_time, tb.stop_time)
 
                 bkg.append(tmpbkg / width[j])
 
         else:
 
             bkg = None
-
-        print bkg
 
         # pass all this to the light curve plotter
 
@@ -112,6 +108,8 @@ class BinnedSpectrumSeries(TimeSeries):
 
             bkg_selection = None
 
+
+        # plot the light curve
 
         binned_light_curve_plot(time_bins=bins.bin_stack,
                                 cnts=np.array(cnts),
@@ -203,18 +201,22 @@ class BinnedSpectrumSeries(TimeSeries):
         :return:
         """
 
-
+        # mark that we have fit a poly now
 
         self._poly_fit_exists = True
 
+        # set the fit method
         self._fit_method_info['bin type'] = 'Binned'
         self._fit_method_info['fit method'] = threeML_config['event list']['binned fit method']
 
+        # we need to adjust the selection to the true intervals of the time-binned spectra
+
         tmp_poly_intervals = self._poly_intervals
-
         poly_intervals = self._adjust_to_true_intervals(tmp_poly_intervals)
-
         self._poly_intervals = poly_intervals
+
+        # now lets get all the counts, exposure and midpoints for the
+        # selection
 
         selected_counts = []
         selected_exposure = []
@@ -223,10 +225,15 @@ class BinnedSpectrumSeries(TimeSeries):
         for selection in poly_intervals:
 
             # get the mask of these bins
+
             mask = self._select_bins(selection.start_time,selection.stop_time)
 
-            # sum the counts along time
+            # the counts will be (time, channel) here,
+            # so the mask is selecting time.
+            # a sum along axis=0 is a sum in time, while axis=1 is a sum in energy
+
             selected_counts.extend(self._binned_spectrum_set.counts_per_bin[mask])
+
             selected_exposure.extend(self._binned_spectrum_set.exposure_per_bin[mask])
             selected_midpoints.extend(self._binned_spectrum_set.time_intervals.mid_points[mask])
 
@@ -235,7 +242,7 @@ class BinnedSpectrumSeries(TimeSeries):
         selected_exposure = np.array(selected_exposure)
 
         # Now we will find the the best poly order unless the use specified one
-        # The total cnts (over channels) is binned to .1 sec intervals
+        # The total cnts (over channels) is binned
 
         if self._user_poly_order == -1:
 
@@ -246,23 +253,20 @@ class BinnedSpectrumSeries(TimeSeries):
                 print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
                 print('\n')
 
-
         else:
 
             self._optimal_polynomial_grade = self._user_poly_order
 
-
-        # if self._verbose:
-        #     print("Auto-determined polynomial order: %d" % optimal_polynomial_grade)
-        #     print('\n')
-
-
         polynomials = []
+
+        # now fit the light curve of each channel
+        # and save the estimated polynomial
 
         with progress_bar(self._n_channels, title="Fitting background") as p:
             for counts in selected_counts.T:
-                polynomial, _ = polyfit(counts,
-                                        selected_midpoints,
+
+                polynomial, _ = polyfit(selected_midpoints,
+                                        counts,
                                         self._optimal_polynomial_grade,
                                         selected_exposure)
 

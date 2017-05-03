@@ -520,7 +520,7 @@ class BinnedSpectrum(Histogram):
         raise NotImplementedError('This is still under construction')
 
 
-        pha_information = time_series.get_pha_information(use_poly)
+        pha_information = time_series.get_information_dict(use_poly)
 
         is_poisson = True
 
@@ -598,7 +598,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         """
 
 
-        pha_information = time_series.get_pha_information(use_poly)
+        pha_information = time_series.get_information_dict(use_poly)
 
         is_poisson = True
 

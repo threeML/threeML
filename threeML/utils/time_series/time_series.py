@@ -16,7 +16,8 @@ from threeML.io.rich_display import display
 from threeML.utils.binner import TemporalBinner
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit, Polynomial
-
+from threeML.plugins.OGIP.response import InstrumentResponse
+from threeML.plugins.spectrum.binned_spectrum import Quality
 
 class ReducingNumberOfThreads(Warning):
     pass
@@ -37,7 +38,7 @@ def ceildiv(a, b):
 
 class TimeSeries(object):
     def __init__(self, start_time,stop_time, n_channels ,native_quality=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
+                 first_channel=1, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,
         temporal polynomial fitting, temporal binning, and exposure calculations (in subclasses). Once events are selected
@@ -65,7 +66,15 @@ class TimeSeries(object):
         self._first_channel = first_channel
         self._native_quality = native_quality
 
+
+        # we haven't made selections yet
+
         self._time_intervals = None
+        self._poly_intervals = None
+        self._counts = None
+        self._poly_counts = None
+        self._poly_count_err= None
+
 
         if native_quality is not None:
 
@@ -74,8 +83,9 @@ class TimeSeries(object):
 
         self._start_time = start_time
 
-
         self._stop_time = stop_time
+
+        # name the instrument if there is not one
 
         if instrument is None:
 
@@ -97,7 +107,7 @@ class TimeSeries(object):
 
             self._mission = mission
 
-        self._rsp_file = rsp_file
+
 
         self._user_poly_order = -1
         self._time_selection_exists = False
@@ -105,18 +115,19 @@ class TimeSeries(object):
 
         self._fit_method_info = {"bin type": None, 'fit method': None}
 
-
     def set_active_time_intervals(self, *args):
 
         raise RuntimeError("Must be implemented in subclass")
 
+    @property
+    def poly_fit_exists(self):
 
+        return self._poly_fit_exists
 
     @property
     def n_channels(self):
 
         return self._n_channels
-
 
     @property
     def poly_intervals(self):
@@ -275,7 +286,6 @@ class TimeSeries(object):
 
         self._temporal_binner = TemporalBinner.bin_by_constant(events, dt)
 
-
     def bin_by_custom(self, start, stop):
         """
         Interface to temporal binner's custom bin mode
@@ -374,8 +384,6 @@ class TimeSeries(object):
 
         raise RuntimeError("Must be implemented in sub class")
 
-
-
     def set_polynomial_fit_interval(self, *time_intervals, **options):
         """Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
@@ -402,10 +410,11 @@ class TimeSeries(object):
 
             unbinned = True
 
-
+        # we create some time intervals
 
         poly_intervals = TimeIntervalSet.from_strings(*time_intervals)
 
+        # adjust the selections to the data
         for time_interval in poly_intervals:
             t1 = time_interval.start_time
             t2 = time_interval.stop_time
@@ -418,9 +427,7 @@ class TimeSeries(object):
 
                 t1 = self._start_time
 
-
             if t2 > self._stop_time:
-
 
                 custom_warnings.warn(
                     "The time interval %f-%f ended after the last arrival time (%f), so we are changing the intervals to %f-%f" % (
@@ -434,6 +441,7 @@ class TimeSeries(object):
                         t1, t2))
                 continue
 
+        # set the poly intervals as an attribute
 
         self._poly_intervals = poly_intervals
 
@@ -450,28 +458,26 @@ class TimeSeries(object):
 
             self._fit_polynomials()
 
-        # Since changing the poly fit will alter the counts
-        # We need to recalculate the source interval
+        # we have a fit now
 
         self._poly_fit_exists = True
-
-
 
         if self._verbose:
             print("%s %d-order polynomial fit with the %s method" % (
                 self._fit_method_info['bin type'], self._optimal_polynomial_grade, self._fit_method_info['fit method']))
             print('\n')
 
+        # recalculate the selected counts
+
         if self._time_selection_exists:
 
             self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 
-    def get_pha_information(self, use_poly=False):
+    def get_information_dict(self, use_poly=False):
         """
-        Return a PHAContainer that can be read by the PHA class
-        Args:
-            use_poly: (bool) choose to build from the polynomial fits
-        Returns:
+        Return a PHAContainer that can be read by different builders
+
+        :param use_poly: (bool) choose to build from the polynomial fits
         """
         if not self._time_selection_exists:
             raise RuntimeError('No time selection exists! Cannot calculate rates')
@@ -480,12 +486,17 @@ class TimeSeries(object):
 
             is_poisson = False
 
+            counts_err = self._poly_count_err
+            counts = self._poly_counts
             rate_err = self._poly_count_err / self._exposure
             rates = self._poly_counts / self._exposure
 
             # removing negative counts
 
-            idx = rates < 0.
+            idx = counts < 0.
+
+            counts[idx] = 0.
+            counts_err[idx] = 0.
 
             rates[idx] = 0.
             rate_err[idx] = 0.
@@ -494,12 +505,15 @@ class TimeSeries(object):
 
             is_poisson = True
 
+            counts_err = None
+            counts = self._counts
+            rates = self._counts / self._exposure
             rate_err = None
-            rates = self._counts / (self._exposure)
+
 
         if self._native_quality is None:
 
-            quality = np.zeros_like(rates, dtype=int)
+            quality = np.zeros_like(counts, dtype=int)
 
         else:
 
@@ -512,16 +526,26 @@ class TimeSeries(object):
         container_dict['tstart'] = self._time_intervals.absolute_start_time
         container_dict['telapse'] = self._time_intervals.absolute_stop_time - self._time_intervals.absolute_start_time
         container_dict['channel'] = np.arange(self._n_channels) + self._first_channel
-        container_dict['rate'] = rates
+        container_dict['counts'] = counts
+        container_dict['counts error'] = counts_err
+        container_dict['rates'] = rates
         container_dict['rate error'] = rate_err
-        container_dict['quality'] = quality
 
+        # check to see if we already have a quality object
+
+        if isinstance(quality, Quality):
+
+            container_dict['quality'] = quality
+
+        else:
+
+            container_dict['quality'] = Quality.from_ogip(quality)
 
         # TODO: make sure the grouping makes sense
         container_dict['backfile']='NONE'
         container_dict['grouping'] = np.ones(self._n_channels)
         container_dict['exposure'] = self._exposure
-        container_dict['response_file'] = self._rsp_file
+        #container_dict['response'] = self._response
 
         return container_dict
 
@@ -553,8 +577,6 @@ class TimeSeries(object):
             info_dict['polynomial fit method'] = self._fit_method_info['fit method']
 
         return pd.Series(info_dict, index=info_dict.keys())
-
-
 
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
         """
@@ -652,12 +674,9 @@ class TimeSeries(object):
 
         raise NotImplementedError('this must be implemented in a subclass')
 
-
     def _unbinned_fit_polynomials(self):
 
         raise NotImplementedError('this must be implemented in a subclass')
-
-
 
     def save_background(self, filename, overwrite=False):
         """
@@ -729,8 +748,6 @@ class TimeSeries(object):
 
             print("\nSaved fitted background to %s.\n"% filename)
 
-
-
     def restore_fit(self, filename):
 
 
@@ -793,3 +810,7 @@ class TimeSeries(object):
         if self._time_selection_exists:
 
             self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
+
+    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False):
+
+        raise NotImplementedError('must be implemented in subclass')

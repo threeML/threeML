@@ -208,8 +208,6 @@ class GBMCdata(object):
 
         self.spectrum_set = PHASpectrumSet(cdata_file,rsp_file=rsp_file)
 
-
-
         cdata = fits.open(cdata_file)
 
 

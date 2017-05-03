@@ -15,8 +15,9 @@ from threeML.io.progress_bar import progress_bar
 from threeML.io.rich_display import display
 from threeML.utils.binner import TemporalBinner
 from threeML.utils.time_interval import TimeIntervalSet
-from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit, Polynomial
+from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit
 from threeML.utils.time_series.time_series import TimeSeries
+from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 
 class ReducingNumberOfThreads(Warning):
     pass
@@ -37,7 +38,7 @@ def ceildiv(a, b):
 
 class EventList(TimeSeries):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None,native_quality=None,
-                 first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
+                 first_channel=0, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,
         temporal polynomial fitting, temporal binning, and exposure calculations (in subclasses). Once events are selected
@@ -64,21 +65,16 @@ class EventList(TimeSeries):
         # pass up to TimeSeries
 
         super(EventList,self).__init__(start_time,stop_time, n_channels ,native_quality,
-                 first_channel, rsp_file, ra, dec, mission, instrument, verbose)
+                 first_channel, ra, dec, mission, instrument, verbose)
 
 
 
         self._arrival_times = np.asarray(arrival_times)
         self._energies = np.asarray(energies)
 
-
-
         assert self._arrival_times.shape[0] == self._energies.shape[
             0], "Arrival time (%d) and energies (%d) have different shapes" % (
             self._arrival_times.shape[0], self._energies.shape[0])
-
-
-
 
     @property
     def n_events(self):
@@ -93,7 +89,6 @@ class EventList(TimeSeries):
     @property
     def energies(self):
         return self._energies
-
 
     @property
     def bins(self):
@@ -166,7 +161,6 @@ class EventList(TimeSeries):
 
         self._temporal_binner = TemporalBinner.bin_by_constant(events, dt)
 
-
     def bin_by_custom(self, start, stop):
         """
         Interface to temporal binner's custom bin mode
@@ -199,7 +193,92 @@ class EventList(TimeSeries):
             self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(events,
                                                                           p0)
 
+    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False):
+        # type: (float, float, float, bool) -> None
 
+        """
+        :param start:
+        :param stop:
+        :param dt:
+        :param use_binner:
+
+        """
+
+        if use_binner:
+
+            # we will use the binner object to bin the
+            # light curve and ignore the normal linear binning
+
+            bins = self.bins.time_edges
+
+            # perhaps we want to look a little before or after the binner
+            if start < bins[0]:
+                pre_bins = np.arange(start, bins[0], dt).tolist()[:-1]
+
+                pre_bins.extend(bins)
+
+                bins = pre_bins
+
+            if stop > bins[-1]:
+                post_bins = np.arange(bins[-1], stop, dt)
+
+                bins.extend(post_bins[1:])
+
+        else:
+
+            # otherwise, just use regular linear binning
+
+            bins = np.arange(start, stop + dt, dt)
+
+        cnts, bins = np.histogram(self.arrival_times, bins=bins)
+        time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
+
+        width = np.diff(bins)
+
+        # now we want to get the estimated background from the polynomial fit
+
+        if self.poly_fit_exists:
+            bkg = []
+            for j, tb in enumerate(time_bins):
+                tmpbkg = 0.
+                for poly in self.polynomials:
+                    tmpbkg += poly.integral(tb[0], tb[1])
+
+                bkg.append(tmpbkg / width[j])
+
+        else:
+
+            bkg = None
+
+
+
+        # pass all this to the light curve plotter
+
+
+        if self.time_intervals is not None:
+
+            selection = self.time_intervals.bin_stack
+
+        else:
+
+            selection = None
+
+        if self.poly_intervals is not None:
+
+            bkg_selection = self.poly_intervals.bin_stack
+
+        else:
+
+            bkg_selection = None
+
+        binned_light_curve_plot(time_bins=time_bins,
+                                cnts=cnts,
+                                width=width,
+                                bkg=bkg,
+                                selection=selection,
+                                bkg_selections=bkg_selection,
+
+                                )
 
     def counts_over_interval(self, start, stop):
         """
@@ -217,8 +296,8 @@ class EventList(TimeSeries):
     def _select_events(self, start, stop):
         """
         return an index of the selected events
-        :param start:
-        :param stop:
+        :param start: start time
+        :param stop: stop time
         :return:
         """
 
@@ -447,7 +526,7 @@ class EventList(TimeSeries):
 
 class EventListWithDeadTime(EventList):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
-                 first_channel=0, quality=None ,rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
+                 first_channel=0, quality=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         An EventList where the exposure is calculated via and array of dead times per event. Summing these dead times over an
         interval => live time = interval - dead time
@@ -470,7 +549,7 @@ class EventListWithDeadTime(EventList):
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, quality,first_channel, rsp_file,
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, quality,first_channel,
                            ra, dec,
                            mission, instrument, verbose)
 

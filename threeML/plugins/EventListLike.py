@@ -58,7 +58,7 @@ class EventListLike(OGIPLike):
                 # In theory this will automatically get the poly counts if a
                 # time interval already exists
 
-                self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
+                self._bkg_pha = PHAII.from_time_series(self._event_list, use_poly=True)
 
 
 
@@ -148,12 +148,12 @@ class EventListLike(OGIPLike):
 
         self._event_list.set_active_time_intervals(*intervals)
 
-        self._observed_pha = PHAII.from_event_list(self._event_list, use_poly=False)
+        self._observed_pha = PHAII.from_time_series(self._event_list, use_poly=False)
 
         self._active_interval = intervals
 
         if not self._startup:
-            self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
+            self._bkg_pha = PHAII.from_time_series(self._event_list, use_poly=True)
 
             super(EventListLike, self).__init__(self.name,
                                                 observation=self._observed_pha,
@@ -211,7 +211,7 @@ class EventListLike(OGIPLike):
         # In theory this will automatically get the poly counts if a
         # time interval already exists
 
-        self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
+        self._bkg_pha = PHAII.from_time_series(self._event_list, use_poly=True)
 
         if not self._startup:
             super(EventListLike, self).__init__(self.name,
