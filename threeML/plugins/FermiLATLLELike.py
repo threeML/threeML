@@ -9,7 +9,7 @@ import pandas as pd
 
 from threeML.plugins.EventListLike import EventListLike
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
-from threeML.utils.time_series.eventlist import EventListWithLiveTime
+from threeML.utils.time_series.event_list import EventListWithLiveTime
 from threeML.exceptions.custom_exceptions import deprecated
 
 __instrument_name = "Fermi LAT LLE"

@@ -11,7 +11,7 @@ from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpect
 from threeML.utils.data_builders.fermi.gbm_data import GBMTTEFile, GBMCdata
 from threeML.utils.data_builders.fermi.lat_data import LLEFile
 
-from threeML.utils.time_series.eventlist import EventListWithDeadTime, EventListWithLiveTime, EventList
+from threeML.utils.time_series.event_list import EventListWithDeadTime, EventListWithLiveTime, EventList
 from threeML.utils.time_series.binned_spectrum_series import BinnedSpectrumSeries
 from threeML.plugins.OGIP.response import InstrumentResponse, InstrumentResponseSet, OGIPResponse
 from threeML.plugins.SpectrumLike import SpectrumLike, NegativeBackground

@@ -217,4 +217,4 @@ def plot_tte_lightcurve(tte_file, start=-10, stop=50, dt=1):
 
     # plot the light curve
 
-    binned_light_curve_plot(time_bins=time_bins, cnts=counts, width=width, instrument='gbm')
+    binned_light_curve_plot(time_bins=time_bins, cnts=counts, width=width)

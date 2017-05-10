@@ -5,7 +5,7 @@ import pytest
 
 from threeML.io.file_utils import within_directory
 from threeML.utils.time_interval import TimeIntervalSet
-from threeML.utils.time_series.eventlist import EventListWithDeadTime, EventList
+from threeML.utils.time_series.event_list import EventListWithDeadTime, EventList
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
@@ -45,8 +45,7 @@ def test_event_list_constructor():
     with pytest.raises(AttributeError):
         evt_list.text_bins
 
-    with pytest.raises(AttributeError):
-        evt_list.poly_intervals
+    assert evt_list.poly_intervals is None
 
     with pytest.raises(AttributeError):
         evt_list.tmax_list
@@ -54,7 +53,7 @@ def test_event_list_constructor():
     with pytest.raises(AttributeError):
         evt_list.tmin_list
 
-    assert evt_list.polynomials == None
+    assert evt_list.polynomials is None
 
     assert evt_list._instrument == 'UNKNOWN'
 

@@ -430,9 +430,7 @@ class EventListLike(OGIPLike):
                                 width=width,
                                 bkg=bkg,
                                 selection=self._event_list.time_intervals.bin_stack,
-                                bkg_selections=self._event_list.poly_intervals.bin_stack,
-                                instrument=instrument,
-                                significance_filter=sig_filter
+                                bkg_selections=self._event_list.poly_intervals.bin_stack
                                 )
 
     @property

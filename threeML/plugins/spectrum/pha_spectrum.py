@@ -685,6 +685,8 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         self._file_type = file_type
 
+        self._file_name = pha_information['file_name']
+
         # pass the needed spectrum values back up
         # remember that Spectrum reads counts, but returns
         # rates!

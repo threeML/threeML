@@ -10,7 +10,7 @@ import pandas as pd
 from threeML.plugins.EventListLike import EventListLike
 from threeML.plugins.OGIP.response import InstrumentResponseSet
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
-from threeML.utils.time_series.eventlist import EventListWithDeadTime
+from threeML.utils.time_series.event_list import EventListWithDeadTime
 
 __instrument_name = "Fermi GBM TTE (all detectors)"
 
