@@ -50,7 +50,7 @@ class GBMTTEFile(object):
 
         self._telescope = tte['PRIMARY'].header['TELESCOP']
 
-        self._calculate_deattime()
+        self._calculate_deadtime()
 
     @property
     def trigger_time(self):

@@ -68,8 +68,10 @@ class TimeSeriesBuilder(object):
             self._weighted_rsp = response
 
             # just get a dummy response for the moment
+            # it will be corrected when we set the interval
 
-            self._response = response.weight_by_counts('0-1')
+            self._response = InstrumentResponse.create_dummy_response(response.ebounds,
+                                                                      response.monte_carlo_energies)
 
         else:
 
@@ -166,8 +168,10 @@ class TimeSeriesBuilder(object):
 
         else:
 
+            print self._time_series.time_intervals.to_string().split(',')
+
             if self._rsp_is_weighted:
-                self._response = self._weighted_rsp.weight_by_counts(*intervals)
+                self._response = self._weighted_rsp.weight_by_counts(*self._time_series.time_intervals.to_string().split(','))
 
             self._observed_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response,
                                                                                     use_poly=False)
