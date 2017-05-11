@@ -439,42 +439,40 @@ class IntervalSet(object):
         :return:
         """
 
-        mask = np.zeros(len(self),dtype=bool)
+        # loop only once because every call unpacks the array
+        # we need to round for the comparison because we may have read from
+        # strings which are rounded to six decimals
 
-        down_selected_bins = []
+        starts = np.round(self.starts,decimals=6)
+        stops = np.round(self.stops,decimals=6)
 
-        for i, bin in enumerate(self):
-
-
-
-            if bin.start >= start and bin.stop <= stop:
-                mask[i] = True
-                down_selected_bins.append(bin)
-
-            if not inner:
-
-                # now we also add the edges
-
-                if bin.start <=start and start<=bin.stop:
-                    mask[i] = True
-                    down_selected_bins.append(bin)
-
-                elif bin.start <=stop and stop<=bin.stop:
-                    mask[i] = True
-                    down_selected_bins.append(bin)
+        start = np.round(start,decimals=6)
+        stop = np.round(stop, decimals=6)
 
 
+        condition = (starts >= start) & (stop >= stops)
 
+        if not inner:
 
+            # now we get the end caps
+            lower_condition = (starts <= start) & ( start <= stops)
 
+            upper_condition = (starts <= stop) & (stop <= stops)
+
+            condition = condition | lower_condition | upper_condition
+
+        # if we just want the mask
 
         if as_mask:
 
-            return mask
+            return condition
 
         else:
 
-            return self.new(down_selected_bins)
+            return self.new(np.asarray(self._intervals)[condition])
+
+
+
 
     @property
     def starts(self):

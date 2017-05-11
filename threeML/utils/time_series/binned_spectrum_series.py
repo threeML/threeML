@@ -46,6 +46,11 @@ class BinnedSpectrumSeries(TimeSeries):
 
     @property
     def bins(self):
+        """
+        the time bins of the spectrum set
+        :return: TimeIntervalSet
+        """
+
 
 
         return self._binned_spectrum_set.time_intervals
@@ -165,8 +170,8 @@ class BinnedSpectrumSeries(TimeSeries):
 
         # get all the starts and stops from these time intervals
 
-        true_starts = self._binned_spectrum_set.time_intervals.start_times
-        true_stops = self._binned_spectrum_set.time_intervals.stop_times
+        true_starts = np.array(self._binned_spectrum_set.time_intervals.start_times)
+        true_stops = np.array(self._binned_spectrum_set.time_intervals.stop_times)
 
         new_starts = []
         new_stops = []
@@ -176,11 +181,20 @@ class BinnedSpectrumSeries(TimeSeries):
 
             # find where the suggest intervals hits the true interval
 
-            idx = np.searchsorted(true_starts, interval.start_time)
+            # searchsorted is fast, but is not returing what we want
+            # we want the actaul values of the bins closest to the input
+
+            #idx = np.searchsorted(true_starts, interval.start_time,side)
+
+            idx = (np.abs(true_starts - interval.start_time)).argmin()
+
 
             new_start = true_starts[idx]
 
-            idx = np.searchsorted(true_stops, interval.stop_time)
+            #idx = np.searchsorted(true_stops, interval.stop_time)
+
+            idx = (np.abs(true_stops - interval.stop_time)).argmin()
+
 
             new_stop = true_stops[idx]
 
@@ -298,7 +312,6 @@ class BinnedSpectrumSeries(TimeSeries):
         # lets adjust the time intervals to the actual ones since they are prebinned
 
         time_intervals = self._adjust_to_true_intervals(time_intervals)
-
 
 
         # start out with no time bins selection

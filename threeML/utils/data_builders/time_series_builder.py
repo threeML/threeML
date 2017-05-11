@@ -168,8 +168,6 @@ class TimeSeriesBuilder(object):
 
         else:
 
-            print self._time_series.time_intervals.to_string().split(',')
-
             if self._rsp_is_weighted:
                 self._response = self._weighted_rsp.weight_by_counts(*self._time_series.time_intervals.to_string().split(','))
 
@@ -192,24 +190,6 @@ class TimeSeriesBuilder(object):
         self._tstart = self._time_series.time_intervals.absolute_start_time
         self._tstop = self._time_series.time_intervals.absolute_stop_time
 
-        # return_ogip = False
-
-        # if 'return_ogip' in kwargs:
-        #     return_ogip = bool(kwargs.pop('return_ogip'))
-        #
-        # if return_ogip:
-        #     # I really do not like this at the moment
-        #     # but I'm assuming there is only one interval selected
-        #     new_name = "%s_%s" % (self._name, intervals[0])
-        #
-        #     new_ogip = OGIPLike(new_name,
-        #                         observation=self._observed_pha,
-        #                         background=self._bkg_pha,
-        #                         response=self._rsp_file,
-        #                         verbose=self._verbose,
-        #                         spectrum_number=1)
-        #
-        #     return new_ogip
 
     def set_background_interval(self, *intervals, **options):
         """
@@ -459,6 +439,8 @@ class TimeSeriesBuilder(object):
 
         assert self._observed_spectrum is not None, 'Must have selected an active time interval'
 
+
+        # this is for a single interval
         if not from_bins:
 
             if self._response is None:
@@ -478,13 +460,24 @@ class TimeSeriesBuilder(object):
 
         else:
 
+            # this is for a set of intervals.
+
+            assert self._time_series.bins is not None, 'This time series does not have any bins!'
+
             # save the original interval if there is one
             old_interval = copy.copy(self._active_interval)
             old_verbose = copy.copy(self._verbose)
 
+            # we will keep it quiet to keep from being annoying
+
             self._verbose = False
 
             list_of_speclikes = []
+
+            # get the bins from the time series
+            # for event lists, these are from created bins
+            # for binned spectra sets, these are the native bines
+
 
             these_bins = self._time_series.bins  # type: TimeIntervalSet
 
@@ -496,12 +489,15 @@ class TimeSeriesBuilder(object):
 
                 these_bins = these_bins.containing_interval(start, stop, inner=False)
 
-            # create copies of the OGIP plugins with the
-            # time interval saved.
+
+
+           # loop through the intervals and create spec likes
 
             with progress_bar(len(these_bins), title='Creating plugins') as p:
 
                 for i, interval in enumerate(these_bins):
+
+
                     self.set_active_time_interval(interval.to_string())
 
                     try:
