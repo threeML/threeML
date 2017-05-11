@@ -237,8 +237,28 @@ def test_read_gbm_tte():
 
 
 def test_read_lle():
+    with within_directory(__example_dir):
+        data_dir = 'lat'
 
-    pass
+
+        lle = TimeSeriesBuilder.from_lat_lle('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+                              os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                              rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                              poly_order=-1)
+
+
+
+        lle.view_lightcurve()
+
+        lle.set_active_time_interval("0-10")
+
+        lle.set_background_interval("-150-0", "100-250")
+
+        speclike = lle.to_spectrumlike()
+
+        assert isinstance(speclike, DispersionSpectrumLike)
+
+
 
 
 
