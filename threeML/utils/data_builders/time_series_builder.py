@@ -81,7 +81,7 @@ class TimeSeriesBuilder(object):
             self._response = response
 
         self._verbose = verbose
-
+        self._active_interval = None
         self._observed_spectrum = None
         self._background_spectrum = None
 
@@ -221,16 +221,18 @@ class TimeSeriesBuilder(object):
         # In theory this will automatically get the poly counts if a
         # time interval already exists
 
-        if self._response is None:
+        if self._active_interval is not None:
 
-            self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=True)
+            if self._response is None:
 
-        else:
+                self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=True)
 
-            # we do not need to worry about the interval of the response if it is a set. only the ebounds are extracted here
+            else:
 
-            self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response,
-                                                                                      use_poly=True)
+                # we do not need to worry about the interval of the response if it is a set. only the ebounds are extracted here
+
+                self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response,
+                                                                                          use_poly=True)
 
     def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False):
         """
@@ -440,11 +442,10 @@ class TimeSeriesBuilder(object):
         :return: SpectrumLike plugin(s)
         """
 
-        assert self._observed_spectrum is not None, 'Must have selected an active time interval'
-
-
         # this is for a single interval
         if not from_bins:
+
+            assert self._observed_spectrum is not None, 'Must have selected an active time interval'
 
             if self._response is None:
 
@@ -529,7 +530,13 @@ class TimeSeriesBuilder(object):
 
             # restore the old interval
 
-            self.set_active_time_interval(*old_interval)
+            if old_interval is not None:
+
+               self.set_active_time_interval(*old_interval)
+
+            else:
+
+               self._active_interval = None
 
             self._verbose = old_verbose
 
@@ -766,6 +773,11 @@ class TimeSeriesBuilder(object):
                    restore_poly_fit=restore_background)
 
     @classmethod
+    def from_phaII(cls):
+
+        raise NotImplementedError('Reading from a generic PHAII file is not yet supportedgb')
+
+    @classmethod
     def from_polar(cls):
 
-        pass
+        raise NotImplementedError('Reading of POLAR data is not yet supported')
