@@ -259,6 +259,40 @@ def test_read_lle():
         assert isinstance(speclike, DispersionSpectrumLike)
 
 
+        # will test background with lle data
+
+
+        old_coefficients, old_errors = lle.get_background_parameters()
+
+        old_tmin_list = lle._time_series.poly_intervals
+
+
+
+        lle.save_background('temp_lle', overwrite=True)
+
+        lle = TimeSeriesBuilder.from_lat_lle('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
+                                             os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                                             rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                                             restore_background='temp_lle.h5')
+
+
+
+
+
+        new_coefficients, new_errors = lle.get_background_parameters()
+
+        new_tmin_list = lle._time_series.poly_intervals
+
+
+        assert new_coefficients == old_coefficients
+
+        assert new_errors == old_errors
+
+
+
+        assert old_tmin_list == new_tmin_list
+
+
 
 
 

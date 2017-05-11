@@ -96,17 +96,20 @@ class TimeSeriesBuilder(object):
             if file_existing_and_readable(restore_poly_fit):
                 self._time_series.restore_fit(restore_poly_fit)
 
+                if verbose:
+                    print('Successfully restored fit from %s'%restore_poly_fit)
+
                 # In theory this will automatically get the poly counts if a
                 # time interval already exists
-
-                if self._response is None:
-
-                    self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=True)
-
-                else:
-                    self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
-                                                                                              self._response,
-                                                                                              use_poly=True)
+                #
+                # if self._response is None:
+                #
+                #     self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=True)
+                #
+                # else:
+                #     self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
+                #                                                                               self._response,
+                #                                                                               use_poly=True)
 
 
             else:

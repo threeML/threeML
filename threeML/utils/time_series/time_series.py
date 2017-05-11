@@ -161,13 +161,13 @@ class TimeSeries(object):
             df_coeff = pd.DataFrame(coeff)
             df_err = pd.DataFrame(err)
 
-            print('Coefficients')
-
-            display(df_coeff)
-
-            print('Coefficient Error')
-
-            display(df_err)
+            # print('Coefficients')
+            #
+            # display(df_coeff)
+            #
+            # print('Coefficient Error')
+            #
+            # display(df_err)
 
             pan = pd.Panel({'coefficients': df_coeff, 'error': df_err})
 
