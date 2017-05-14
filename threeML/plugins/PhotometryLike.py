@@ -201,7 +201,7 @@ class PhotometryLike(XYLike):
 
     def _get_total_expectation(self):
 
-        return self._filter_set.ab_magnitudes()[self._mask].as_matrix()
+        return self._filter_set.ab_magnitudes()[self._mask]#.as_matrix()
 
     def display_filters(self):
         """
