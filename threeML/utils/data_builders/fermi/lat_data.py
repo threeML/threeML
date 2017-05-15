@@ -1,5 +1,3 @@
-__author__ = 'grburgess'
-
 import collections
 import warnings
 
@@ -7,116 +5,7 @@ import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 
-from threeML.plugins.EventListLike import EventListLike
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
-from threeML.utils.time_series.event_list import EventListWithLiveTime
-from threeML.exceptions.custom_exceptions import deprecated
-
-__instrument_name = "Fermi LAT LLE"
-
-
-class BinningMethodError(RuntimeError):
-    pass
-
-
-class FermiLATLLELike(EventListLike):
-    @deprecated('Please use the TimeSeriesBuilder for LAT LLE data. This plugin will soon disappear')
-    def __init__(self, name, lle_file, ft2_file, rsp_file, source_intervals, background_selections=None, restore_background=None,
-                 trigger_time=None, poly_order=-1, unbinned=False, verbose=True):
-        """
-        A plugin to natively bin, view, and handle Fermi LAT LLE data.
-        An LLE event file and FT2 (1 sec) are required as well as the associated response
-
-
-
-        Background selections are specified as
-        a comma separated string e.g. "-10-0,10-20"
-
-        Initial source selection is input as a string e.g. "0-5"
-
-        One can choose a background polynomial order by hand (up to 4th order)
-        or leave it as the default polyorder=-1 to decide by LRT test
-
-        :param name: name of the plugin
-        :param lle_file: lle event file
-        :param ft2_file: fermi FT2 file
-        :param background_selections: comma sep. background intervals as string
-        :param source_intervals: comma sep. source intervals as string
-        :param rsp_file: lle response file
-        :param trigger_time: trigger time if needed
-        :param poly_order: 0-4 or -1 for auto
-        :param unbinned: unbinned likelihood fit (bool)
-        :param verbose: verbose (bool)
-
-
-        """
-
-
-        self._default_unbinned = unbinned
-
-        self._lat_lle_file = LLEFile(lle_file, ft2_file, rsp_file)
-
-        if trigger_time is not None:
-            self._lat_lle_file.trigger_time = trigger_time
-
-        # Mark channels less than 50 MeV as bad
-
-        channel_50MeV = np.searchsorted(self._lat_lle_file.energy_edges[0],50000) - 1
-
-        native_quality = np.zeros(self._lat_lle_file.n_channels,dtype=int)
-
-        idx = np.arange(self._lat_lle_file.n_channels) < channel_50MeV
-
-        native_quality[idx] = 5
-
-        event_list = EventListWithLiveTime(
-                arrival_times=self._lat_lle_file.arrival_times - self._lat_lle_file.trigger_time,
-                energies=self._lat_lle_file.energies,
-                n_channels=self._lat_lle_file.n_channels,
-                live_time=self._lat_lle_file.livetime,
-                live_time_starts=self._lat_lle_file.livetime_start - self._lat_lle_file.trigger_time,
-                live_time_stops=self._lat_lle_file.livetime_stop - self._lat_lle_file.trigger_time,
-                start_time=self._lat_lle_file.tstart - self._lat_lle_file.trigger_time,
-                stop_time=self._lat_lle_file.tstop - self._lat_lle_file.trigger_time,
-                quality=native_quality,
-                first_channel=1,
-                #rsp_file=rsp_file,
-                instrument=self._lat_lle_file.instrument,
-                mission=self._lat_lle_file.mission,
-                verbose=verbose)
-
-        super(FermiLATLLELike,self).__init__(name,
-                                             event_list,
-                                             rsp_file=rsp_file,
-                                             source_intervals=source_intervals,
-                                             background_selections=background_selections,
-                                             poly_order=poly_order,
-                                             unbinned=unbinned,
-                                             verbose=verbose,
-                                             restore_poly_fit=restore_background
-                                             )
-
-    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None,
-                        significance_level=None):
-        """
-
-        :param use_binner: use the bins created via a binner
-        :param start: start time to view
-        :param stop:  stop time to view
-        :param dt:  dt of the light curve
-        :param energy_selection: string containing energy interval
-        :return: None
-        """
-        super(FermiLATLLELike, self).view_lightcurve(start=start,
-                                                     stop=stop,
-                                                     dt=dt,
-                                                     use_binner=use_binner,
-                                                     energy_selection=energy_selection,
-                                                     significance_level=significance_level)
-
-    def _output(self):
-        super_out = super(FermiLATLLELike, self)._output()
-        return super_out.append(self._lat_lle_file._output())
 
 
 class LLEFile(object):
@@ -433,9 +322,5 @@ class LLEFile(object):
 
 
         return fermi_df
-
-
-
-
 
 

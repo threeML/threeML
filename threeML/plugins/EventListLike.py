@@ -10,6 +10,8 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.OGIP.pha import PHAWrite
 from threeML.utils.stats_tools import Significance
 
+from threeML.exceptions.custom_exceptions import deprecated
+
 import copy
 
 __instrument_name = "Generic EventList data"
@@ -20,11 +22,15 @@ class BinningMethodError(RuntimeError):
 
 
 class EventListLike(OGIPLike):
+    @deprecated('Please use the TimeSeriesBuilder for event list data')
     def __init__(self, name, event_list, rsp_file, source_intervals, background_selections=None,
                  poly_order=-1, unbinned=True, verbose=True, restore_poly_fit=None):
         """
         Generic EventListLike that should be inherited
         """
+
+
+
 
         assert (background_selections is not None) or (
             restore_poly_fit is not None), "you specify background selections or a restore file"
@@ -58,7 +64,7 @@ class EventListLike(OGIPLike):
                 # In theory this will automatically get the poly counts if a
                 # time interval already exists
 
-                self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
+                self._bkg_pha = PHAII.from_time_series(self._event_list, use_poly=True)
 
 
 
@@ -148,12 +154,12 @@ class EventListLike(OGIPLike):
 
         self._event_list.set_active_time_intervals(*intervals)
 
-        self._observed_pha = PHAII.from_event_list(self._event_list, use_poly=False)
+        self._observed_pha = PHAII.from_time_series(self._event_list, use_poly=False)
 
         self._active_interval = intervals
 
         if not self._startup:
-            self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
+            self._bkg_pha = PHAII.from_time_series(self._event_list, use_poly=True)
 
             super(EventListLike, self).__init__(self.name,
                                                 observation=self._observed_pha,
@@ -211,7 +217,7 @@ class EventListLike(OGIPLike):
         # In theory this will automatically get the poly counts if a
         # time interval already exists
 
-        self._bkg_pha = PHAII.from_event_list(self._event_list, use_poly=True)
+        self._bkg_pha = PHAII.from_time_series(self._event_list, use_poly=True)
 
         if not self._startup:
             super(EventListLike, self).__init__(self.name,
@@ -424,9 +430,7 @@ class EventListLike(OGIPLike):
                                 width=width,
                                 bkg=bkg,
                                 selection=self._event_list.time_intervals.bin_stack,
-                                bkg_selections=self._event_list.poly_intervals.bin_stack,
-                                instrument=instrument,
-                                significance_filter=sig_filter
+                                bkg_selections=self._event_list.poly_intervals.bin_stack
                                 )
 
     @property

@@ -10,8 +10,7 @@ from threeML.io.plotting.step_plot import step_plot
 
 
 
-def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bkg_selections=None, instrument=None,
-                            significance_filter=None):
+def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bkg_selections=None):
     """
 
     :param time_bins: stacked array of time intervals
@@ -21,7 +20,7 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
     :param selection: bin selection
     :param bkg_selections:
     :param instrument:
-    :param significance_filter:
+
     :return:
     """
     fig, ax = plt.subplots()
@@ -36,20 +35,11 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
     # round
     np.round(time_bins, decimals=4, out=time_bins)
 
-    # set up default colors
-    if instrument is None:
 
-        light_curve_color = 'k'
-        selection_color = 'b'
-        background_color = 'r'
-        background_selection_color = 'yellow'
-
-    else:
-
-        light_curve_color = threeML_config[instrument]['lightcurve color']
-        selection_color = threeML_config[instrument]['selection color']
-        background_color = threeML_config[instrument]['background color']
-        background_selection_color = threeML_config[instrument]['background selection color']
+    light_curve_color = threeML_config['lightcurve']['lightcurve color']
+    selection_color = threeML_config['lightcurve']['selection color']
+    background_color = threeML_config['lightcurve']['background color']
+    background_selection_color = threeML_config['lightcurve']['background selection color']
 
     # first plot the full lightcurve
 
@@ -114,21 +104,6 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
 
         ax.plot(mean_time, bkg, background_color, lw=2., label="Background")
 
-    if significance_filter is not None:
-        raise NotImplementedError("Have not finished this code")
-
-        # plot the significant time bins
-        # i.e., those that are above the input significance threshold
-
-        disjoint_patch_plot(ax,
-                            time_bins[:, 0],
-                            time_bins[:, 1],
-                            top,
-                            bottom,
-                            significance_filter,
-                            color='limegreen',
-                            alpha=.3,
-                            zorder=-33)
 
     # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
 
@@ -242,4 +217,4 @@ def plot_tte_lightcurve(tte_file, start=-10, stop=50, dt=1):
 
     # plot the light curve
 
-    binned_light_curve_plot(time_bins=time_bins, cnts=counts, width=width, instrument='gbm')
+    binned_light_curve_plot(time_bins=time_bins, cnts=counts, width=width)

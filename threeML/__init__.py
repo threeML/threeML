@@ -199,6 +199,9 @@ from .parallel.parallel_client import parallel_computation
 # Import optical filters
 #from threeML.plugins.photometry.filter_factory import threeML_filter_library
 
+# import time series builder, soon to replace the Fermi plugins
+from threeML.utils.data_builders import *
+
 # Import catalogs
 from threeML.catalogs import *
 

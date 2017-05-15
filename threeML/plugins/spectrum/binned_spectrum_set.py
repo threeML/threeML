@@ -1,18 +1,34 @@
+import numpy as np
+
+from threeML.utils.time_interval import TimeIntervalSet
 from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum
 
-import astropy.io.fits as fits
 
 class BinnedSpectrumSet(object):
+    def __init__(self, binned_spectrum_list, reference_time=0.0, time_intervals=None):
+        """
+        a set of binned spectra with optional time intervals
 
-    def __init__(self, binned_spectrum_list, reference_time=0.0):
+        :param binned_spectrum_list: lit of binned spectal
+        :param reference_time: reference time for time intervals
+        :param time_intervals: optional timeinterval set
         """
 
-        :param binned_spectrum_list:
-        :param reference_time:
-        """
-
-        self._binned_spectrum_list = binned_spectrum_list
+        self._binned_spectrum_list = binned_spectrum_list  # type: list(BinnedSpectrum)
         self._reference_time = reference_time
+
+        # normalize the time intervals if there are any
+
+        if time_intervals is not None:
+
+            self._time_intervals = time_intervals - reference_time  # type: TimeIntervalSet
+
+            assert len(time_intervals) == len(
+                binned_spectrum_list), 'time intervals mus be the same length as binned spectra'
+
+        else:
+
+            self._time_intervals = None
 
     @property
     def reference_time(self):
@@ -27,51 +43,80 @@ class BinnedSpectrumSet(object):
 
         return len(self._binned_spectrum_list)
 
-    @classmethod
-    def from_pha2_fits(cls, pha2_file):
+    def time_to_index(self, time):
+        """
+        get the index of the input time
 
-        with fits.open(pha2_file) as f:
+        :param time: time to search for
+        :return: integer
+        """
 
-            try:
+        assert self._time_intervals is not None, 'This spectrum set has no time intervals'
 
-                HDUidx = f.index_of("SPECTRUM")
+        return self._time_intervals.containing_bin(time)
 
-            except:
+    def sort(self):
+        """
+        sort the bin spectra in place according to time
+        :return:
+        """
 
-                raise RuntimeError("The input file %s is not in PHA format" % (pha2_file))
+        assert self._time_intervals is not None, 'must have time intervals to do sorting'
 
-            spectrum = f[HDUidx]
-            data = spectrum.data
+        # get the sorting index
 
-            if "COUNTS" in data.columns.names:
+        idx = self._time_intervals.argsort()
 
-                has_rates = False
-                data_column_name = "COUNTS"
+        # reorder the spectra
 
-            elif "RATE" in data.columns.names:
+        self._binned_spectrum_list = self._binned_spectrum_list[idx]
 
-                has_rates = True
-                data_column_name = "RATE"
+        # sort the time intervals in place
 
-            else:
-
-                raise RuntimeError("This file does not contain a RATE nor a COUNTS column. "
-                                   "This is not a valid PHA file")
-
-                # Determine if this is a PHA I or PHA II
-            if len(data.field(data_column_name).shape) == 2:
-
-                num_spectra = data.field(data_column_name).shape[0]
-
-            else:
-
-                raise RuntimeError("This appears to be a PHA I and not PHA II file")
+        self._time_intervals.sort()
 
 
+    @property
+    def quality_per_bin(self):
 
-            list_of_binned_spectra =[ BinnedSpectrum.from_fits_file('%s{%d}'%(pha2_file,spectrum_number),
-                                                                    file_type='observed') for spectrum_number in range(1, num_spectra+1)]
+        return np.array([spectrum.quality for spectrum in self._binned_spectrum_list])
 
+    @property
+    def n_channels(self):
 
+        return self.counts_per_bin.shape[1]
 
+    @property
+    def counts_per_bin(self):
 
+        return np.array([spectrum.counts for spectrum in self._binned_spectrum_list])
+
+    @property
+    def count_errors_per_bin(self):
+
+        return np.array([spectrum.count_errors for spectrum in self._binned_spectrum_list])
+
+    @property
+    def rates_per_bin(self):
+
+        return np.array([spectrum.rates for spectrum in self._binned_spectrum_list])
+
+    @property
+    def rate_errors_per_bin(self):
+
+        return np.array([spectrum.rate_errors for spectrum in self._binned_spectrum_list])
+
+    @property
+    def sys_errors_per_bin(self):
+
+        return np.array([spectrum.sys_errors for spectrum in self._binned_spectrum_list])
+
+    @property
+    def exposure_per_bin(self):
+
+        return np.array([spectrum.exposure for spectrum in self._binned_spectrum_list])
+
+    @property
+    def time_intervals(self):
+
+        return self._time_intervals
