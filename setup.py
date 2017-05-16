@@ -71,6 +71,9 @@ setup(
               'threeML/io/plotting',
               'threeML/io/cern_root_utils',
               'threeML/utils',
+              'threeML/utils/time_series',
+              'threeML/utils/data_builders',
+              'threeML/utils/data_builders/fermi',
               'threeML/utils/fitted_objects',
               'threeML/parallel',
               'threeML/config'
