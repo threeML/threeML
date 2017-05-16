@@ -562,11 +562,11 @@ class PHAII(FITSFile):
                         break
 
                 if spectrum_extension is not None:
-                    warnings.warn("was able to find loosly compliant SPECTRUM extension: "+
+                    warnings.warn("was able to find loosely compliant SPECTRUM extension: "+
                                    spectrum_extension.header['EXTNAME']+
                                    "; it will be reset to standard name \"SPECTRUM\"")
 
-                    spectrum_extension.header['EXTNAME']="SPECTRUM"
+
 
             spectrum = FITSExtension.from_fits_file_extension(spectrum_extension)
 
