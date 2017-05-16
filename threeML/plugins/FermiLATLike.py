@@ -300,8 +300,6 @@ class FermiLATLike(PluginPrototype):
         '''
         return self.name
 
-    pass
-
     def setInnerMinimization(self, s):
 
         self.innerMinimization = bool(s)
