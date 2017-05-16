@@ -548,22 +548,27 @@ class PHAII(FITSFile):
                 spectrum_extension=f['SPECTRUM']
             else:
                 warnings.warn("unable to find SPECTRUM extension: not OGIP PHA!")
+
                 spectrum_extension=None
+
                 for extension in f:
-                    if spectrum_extension is None and  \
-                       'HDUCLASS' in extension.header and extension.header['HDUCLASS']=='OGIP' and  \
-                       'HDUCLAS1' in extension.header and extension.header['HDUCLAS1']=='SPECTRUM':
-                        spectrum_extension=extension
+                    hduclass = extension.header.get("HDUCLASS")
+                    hduclas1 = extension.header.get("HDUCLAS1")
+                    
+                    if hduclass == 'OGIP' and hduclas1 == 'SPECTRUM':
+                        spectrum_extension = extension
+                        warnings.warn("File has no SPECTRUM extension, but found a spectrum in extension %s" % (spectrum_extension.header.get("EXTNAME")))
+                        spectrum_extension.header['EXTNAME'] = 'SPECTRUM'
+                        break
 
                 if spectrum_extension is not None:
-                    warnings.warn("was able to find loosly compatible SPECTRUM extension: "+
+                    warnings.warn("was able to find loosly compliant SPECTRUM extension: "+
                                    spectrum_extension.header['EXTNAME']+
-                                   "; it will be reset to standard SPECTRUM")
+                                   "; it will be reset to standard name \"SPECTRUM\"")
 
                     spectrum_extension.header['EXTNAME']="SPECTRUM"
 
             spectrum = FITSExtension.from_fits_file_extension(spectrum_extension)
-
 
             out = FITSFile(primary_hdu=f['PRIMARY'], fits_extensions=[spectrum])
 

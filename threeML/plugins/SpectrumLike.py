@@ -1333,8 +1333,8 @@ class SpectrumLike(PluginPrototype):
 
                 raise NotImplementedError("We haven't put in other significances yet")
         else:
-            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(
-                self._observed_spectrum.total_count_error)
+            custom_warnings.warn("Significance with no background is not yet computed accurately")
+            significance = [np.NaN]
 
         return significance[0]
 

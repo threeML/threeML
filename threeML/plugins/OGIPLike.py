@@ -118,10 +118,15 @@ class OGIPLike(DispersionSpectrumLike):
 
         superout = super(OGIPLike, self)._output()
 
+        if self._background_spectrum is not None:
+            bak_file = self._background_spectrum.filename
+        else:
+            bak_file = None
+
         this_out = {
-                    'pha file': self._observed_spectrum.filename,
-                    'bak file': self._background_spectrum.filename if self._background_spectrum is not None else None
-                    }
+                     'pha file': self._observed_spectrum.filename,
+                     'bak file': bak_file
+        }
 
         this_df = pd.Series(this_out)
 
