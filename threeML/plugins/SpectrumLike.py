@@ -66,10 +66,10 @@ class SpectrumLike(PluginPrototype):
         self._observed_spectrum = observation  # type: BinnedSpectrum
 
         self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
-
+            
         if background is None:
 
-            self._background_spectrum = background  # type: BinnedSpectrum
+            self._background_spectrum =  None
 
         else:
 
@@ -1239,6 +1239,9 @@ class SpectrumLike(PluginPrototype):
         :return:
         """
 
+        if self._background_spectrum is None:
+            return 1
+
         return self._observed_spectrum.exposure / self._background_spectrum.exposure * self._observed_spectrum.scale_factor / self._background_spectrum.scale_factor
 
     @property
@@ -1312,22 +1315,26 @@ class SpectrumLike(PluginPrototype):
         """
 
         sig_obj = Significance(Non=self._observed_spectrum.total_count,
-                               Noff=self._background_spectrum.total_count,
+                               Noff=self._background_spectrum.total_count if self._background_spectrum is not None else None,
                                alpha=self.scale_factor)
 
-        if self._observed_spectrum.is_poisson and self._background_spectrum.is_poisson:
+        if self._background_spectrum is not None:
+            if self._observed_spectrum.is_poisson and self._background_spectrum.is_poisson:
 
-            # use simple li & ma
-            significance = sig_obj.li_and_ma()
+                # use simple li & ma
+                significance = sig_obj.li_and_ma()
 
-        elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
+            elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
 
-            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(
-                self._background_spectrum.total_count_error)
+                significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(
+                    self._background_spectrum.total_count_error)
 
+            else:
+
+                raise NotImplementedError("We haven't put in other significances yet")
         else:
-
-            raise NotImplementedError("We haven't put in other significances yet")
+            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(
+                self._observed_spectrum.total_count_error)
 
         return significance[0]
 
@@ -1635,16 +1642,19 @@ class SpectrumLike(PluginPrototype):
         if not self._observed_spectrum.is_poisson:
             obs['total rate error'] = self._observed_spectrum.total_rate_error
 
-        obs['total bkg. rate'] = self._background_spectrum.total_rate
 
-        if not self._background_spectrum.is_poisson:
-            obs['total bkg. rate error'] = self._background_spectrum.total_rate_error
+        if self._background_spectrum is not None:
+            obs['total bkg. rate'] = self._background_spectrum.total_rate
+            if not self._background_spectrum.is_poisson:
+                obs['total bkg. rate error'] = self._background_spectrum.total_rate_error
+            obs['bkg. exposure'] = self.background_exposure
+            obs['bkg. is poisson'] = self._background_spectrum.is_poisson
 
         obs['exposure'] = self.exposure
-        obs['bkg. exposure'] = self.background_exposure
-        obs['significance'] = self.significance
         obs['is poisson'] = self._observed_spectrum.is_poisson
-        obs['bkg. is poisson'] = self._background_spectrum.is_poisson
+        
+        obs['significance'] = self.significance
+
         # obs['response'] = self._observed_spectrum.response_file
 
         return pd.Series(data=obs, index=obs.keys())

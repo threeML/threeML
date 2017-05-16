@@ -90,6 +90,27 @@ def test_loading_a_generic_pha_file():
 
         ogip.__repr__()
 
+def test_loading_a_loose_ogip_pha_file():
+    with within_directory(__this_dir__):
+        ogip = OGIPLike('test_ogip', observation='example_integral.pha')
+
+        pha_info = ogip.get_pha_files()
+
+        assert ogip.name == 'test_ogip'
+        assert ogip.n_data_points == sum(ogip._mask)
+        assert sum(ogip._mask) == ogip.n_data_points
+        #assert ogip.tstart is None
+        #assert ogip.tstop is None
+        assert 'cons_test_ogip' in ogip.nuisance_parameters
+        assert ogip.nuisance_parameters['cons_test_ogip'].fix == True
+        assert ogip.nuisance_parameters['cons_test_ogip'].free == False
+
+        assert 'pha' in pha_info
+        #assert 'bak' in pha_info
+        assert 'rsp' in pha_info
+
+        ogip.__repr__()
+
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
     with within_directory(__this_dir__):

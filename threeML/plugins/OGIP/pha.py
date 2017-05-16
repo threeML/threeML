@@ -1,6 +1,7 @@
 import os
 import astropy.io.fits as fits
 import numpy as np
+import warnings
 from threeML.plugins.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.utils.stats_tools import sqrt_sum_of_squares
@@ -543,8 +544,25 @@ class PHAII(FITSFile):
         with fits.open(fits_file) as f:
 
 
-            spectrum = FITSExtension.from_fits_file_extension(f['SPECTRUM'])
+            if 'SPECTRUM' in f: 
+                spectrum_extension=f['SPECTRUM']
+            else:
+                warnings.warn("unable to find SPECTRUM extension: not OGIP PHA!")
+                spectrum_extension=None
+                for extension in f:
+                    if spectrum_extension is None and  \
+                       'HDUCLASS' in extension.header and extension.header['HDUCLASS']=='OGIP' and  \
+                       'HDUCLAS1' in extension.header and extension.header['HDUCLAS1']=='SPECTRUM':
+                        spectrum_extension=extension
 
+                if spectrum_extension is not None:
+                    warnings.warn("was able to find loosly compatible SPECTRUM extension: "+
+                                   spectrum_extension.header['EXTNAME']+
+                                   "; it will be reset to standard SPECTRUM")
+
+                    spectrum_extension.header['EXTNAME']="SPECTRUM"
+
+            spectrum = FITSExtension.from_fits_file_extension(spectrum_extension)
 
 
             out = FITSFile(primary_hdu=f['PRIMARY'], fits_extensions=[spectrum])
