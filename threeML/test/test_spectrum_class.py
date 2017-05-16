@@ -67,6 +67,17 @@ def test_spectrum_constructor():
     with pytest.raises(AssertionError):
         specLike.rebin_on_background(min_number_of_counts=1E-1)
 
+def test_spectrum_constructor_no_background():
+
+    ebounds = ChannelSet.from_list_of_edges(np.array([0,1,2,3,4,5]))
+
+    obs_spectrum = BinnedSpectrum(counts=np.ones(len(ebounds)),exposure=1,ebounds=ebounds, is_poisson=True)
+
+    assert np.all(obs_spectrum.counts == obs_spectrum.rates)
+
+    specLike = SpectrumLike('fake', observation=obs_spectrum, background=None)
+
+    specLike.__repr__()
 
 
 def test_dispersion_spectrum_constructor():
