@@ -22,6 +22,8 @@ from threeML.io.progress_bar import progress_bar
 import copy
 import re
 
+import astropy.io.fits as fits
+
 
 class BinningMethodError(RuntimeError):
     pass
@@ -600,6 +602,28 @@ class TimeSeriesBuilder(object):
 
         test = re.match('^.*\.rsp2$', rsp_file)
 
+        # some GBM RSPs that are not marked RSP2 are in fact RSP2s
+        # we need to check
+
+        if test is None:
+
+            with fits.open(rsp_file) as f:
+
+                # there should only be a header, ebounds and one spec rsp extension
+
+                if len(f) > 3:
+
+                    # make test a dummy value to trigger the nest loop
+
+                    test = -1
+
+                    custom_warnings.warn('The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2')
+
+
+
+
+
+
         if test is not None:
 
             rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
@@ -675,6 +699,23 @@ class TimeSeriesBuilder(object):
         # we need to see if this is an RSP2
 
         test = re.match('^.*\.rsp2$', rsp_file)
+
+        # some GBM RSPs that are not marked RSP2 are in fact RSP2s
+        # we need to check
+
+        if test is None:
+
+            with fits.open(rsp_file) as f:
+
+                # there should only be a header, ebounds and one spec rsp extension
+
+                if len(f) > 3:
+                    # make test a dummy value to trigger the nest loop
+
+                    test = -1
+
+                    custom_warnings.warn(
+                        'The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2')
 
         if test is not None:
 
