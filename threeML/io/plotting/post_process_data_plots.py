@@ -150,6 +150,10 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         assert len(model_colors) >= len(
             data_keys), "You need to provide at least a number of model colors equal to the " \
                         "number of datasets"
+    
+    ratio_residuals=False
+    if 'ratio_residuals' in kwargs:
+        ratio_residuals = bool(kwargs['ratio_residuals'])
 
     #fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
@@ -319,39 +323,45 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         # Divide the various cases
 
-        if data._observation_noise_model == 'poisson':
-
-            if data._background_noise_model == 'poisson':
-
-                # We use the Li-Ma formula to get the significance (sigma)
-
-                residuals = significance_calc.li_and_ma()
-
-            elif data._background_noise_model == 'ideal':
-
-                residuals = significance_calc.known_background()
-
-            elif data._background_noise_model == 'gaussian':
-
-                residuals = significance_calc.li_and_ma_equivalent_for_gaussian_background(rebinned_background_errors)
-
-            else:
-
-                raise RuntimeError("This is a bug")
-
+        if ratio_residuals:
+            residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_model_counts
+            residual_errors = rebinned_observed_count_errors / rebinned_model_counts
         else:
+            residual_errors = None 
+            if data._observation_noise_model == 'poisson':
 
-            if data._background_noise_model is None:
+                if data._background_noise_model == 'poisson':
 
-                residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_observed_count_errors
+                    # We use the Li-Ma formula to get the significance (sigma)
+
+                    residuals = significance_calc.li_and_ma()
+
+                elif data._background_noise_model == 'ideal':
+
+                    residuals = significance_calc.known_background()
+
+                elif data._background_noise_model == 'gaussian':
+
+                    residuals = significance_calc.li_and_ma_equivalent_for_gaussian_background(rebinned_background_errors)
+
+                else:
+
+                    raise RuntimeError("This is a bug")
 
             else:
 
-                raise NotImplementedError("Not yet implemented")
+                if data._background_noise_model is None:
+
+                    residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_observed_count_errors
+
+                else:
+
+                    raise NotImplementedError("Not yet implemented")
 
         residual_plot.add_data(mean_energy,
                                new_rate / new_chan_width,
                                residuals,
+                               residual_yerr=residual_errors,
                                yerr=new_err / new_chan_width,
                                xerr=delta_energy,
                                label=data._name,

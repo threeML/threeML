@@ -13,6 +13,9 @@ class ResidualPlot(object):
         :param kwargs:
         """
 
+        self.ratio_residuals = False
+        if 'ratio_residuals' in kwargs:
+            self.ratio_residuals = bool(kwargs.pop('ratio_residuals'))
 
         self._fig, (self._ax, self._ax1) = plt.subplots(2, 1, sharex=True,
                                                         gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
@@ -54,7 +57,7 @@ class ResidualPlot(object):
         self._ax.plot(x,y,label=label,color=color,alpha=.8)
 
 
-    def add_data(self, x, y, residuals, label, xerr=None, yerr=None, color='r'):
+    def add_data(self, x, y, residuals, label, xerr=None, yerr=None, residual_yerr=None, color='r'):
         """
 
         :param x:
@@ -87,10 +90,14 @@ class ResidualPlot(object):
 
         #residuals = (expected_model_magnitudes - mag_errors) / mag_errors
 
+        if not self.ratio_residuals:
+            residual_yerr=np.ones_like(residuals)
+
         self._ax1.axhline(0, linestyle='--', color='k')
         self._ax1.errorbar(x,
                      residuals,
-                     yerr=np.ones_like(residuals),
+                     xerr=xerr,
+                     yerr=residual_yerr,
                      capsize=0,
                      fmt=threeML_config['residual plot']['error marker'],
                      elinewidth=threeML_config['residual plot']['error line width'],
@@ -131,7 +138,11 @@ class ResidualPlot(object):
         self._ax1.yaxis.set_major_locator(locator)
 
         self._ax1.set_xlabel(xlabel)
-        self._ax1.set_ylabel("Residuals\n($\sigma$)")
+
+        if self.ratio_residuals:
+            self._ax1.set_ylabel("Residuals\n(fraction of model)")
+        else:
+            self._ax1.set_ylabel("Residuals\n($\sigma$)")
 
 
 
