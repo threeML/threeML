@@ -1,6 +1,7 @@
 import os
 import astropy.io.fits as fits
 import numpy as np
+import warnings
 from threeML.plugins.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.utils.stats_tools import sqrt_sum_of_squares
@@ -510,9 +511,9 @@ class PHAII(FITSFile):
 
 
     @classmethod
-    def from_event_list(cls, event_list, use_poly=False):
+    def from_time_series(cls, time_series, use_poly=False):
 
-        pha_information = event_list.get_pha_information(use_poly)
+        pha_information = time_series.get_information_dict(use_poly)
 
         is_poisson = True
 
@@ -527,13 +528,13 @@ class PHAII(FITSFile):
                      tstart=pha_information['tstart'],
                      telapse=pha_information['telapse'],
                      channel=pha_information['channel'],
-                     rate=pha_information['rate'],
+                     rate=pha_information['rates'],
                      stat_err=pha_information['rate error'],
-                     quality=pha_information['quality'],
+                     quality=pha_information['quality'].to_ogip(),
                      grouping=pha_information['grouping'],
                      exposure=pha_information['exposure'],
                      backscale=1.,
-                     respfile=pha_information['response_file'],
+                     respfile=None,#pha_information['response_file'],
                      ancrfile=None,
                      is_poisson=is_poisson)
 
@@ -543,9 +544,28 @@ class PHAII(FITSFile):
         with fits.open(fits_file) as f:
 
 
-            spectrum = FITSExtension.from_fits_file_extension(f['SPECTRUM'])
+            if 'SPECTRUM' in f: 
+                spectrum_extension=f['SPECTRUM']
+            else:
+                warnings.warn("unable to find SPECTRUM extension: not OGIP PHA!")
+
+                spectrum_extension=None
+
+                for extension in f:
+                    hduclass = extension.header.get("HDUCLASS")
+                    hduclas1 = extension.header.get("HDUCLAS1")
+                    
+                    if hduclass == 'OGIP' and hduclas1 == 'SPECTRUM':
+                        spectrum_extension = extension
+                        warnings.warn("File has no SPECTRUM extension, but found a spectrum in extension %s" % (spectrum_extension.header.get("EXTNAME")))
+                        spectrum_extension.header['EXTNAME'] = 'SPECTRUM'
+                        break
 
 
+
+
+
+            spectrum = FITSExtension.from_fits_file_extension(spectrum_extension)
 
             out = FITSFile(primary_hdu=f['PRIMARY'], fits_extensions=[spectrum])
 

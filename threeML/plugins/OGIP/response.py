@@ -284,6 +284,26 @@ class InstrumentResponse(object):
 
         fits_file.writeto(filename, clobber=overwrite)
 
+    @classmethod
+    def create_dummy_response(cls, ebounds, monte_carlo_energies):
+        """
+        Creates a dummy identity response of the shape of the ebounds and mc energies
+
+        :param ebounds: the energy boundaries of the detector channels (size n_channels + 1)
+        :param monte_carlo_energies: the energy boundaries of the monte carlo channels (size n_mc_energies + 1)
+        :return: InstrumentResponse
+        """
+
+        # create the dummy matrix
+
+        dummy_matrix = np.eye(ebounds.shape[0]-1, monte_carlo_energies.shape[0]-1)
+
+        return cls(dummy_matrix,ebounds,monte_carlo_energies)
+
+
+
+
+
 
 class OGIPResponse(InstrumentResponse):
 
@@ -876,6 +896,16 @@ class InstrumentResponseSet(object):
 
 
         return weights
+
+    @property
+    def ebounds(self):
+
+        return self._matrix_list[0].ebounds
+
+    @property
+    def monte_carlo_energies(self):
+
+        return self._matrix_list[0].monte_carlo_energies
 
 
 ####################################################################################
