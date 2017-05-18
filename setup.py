@@ -157,4 +157,4 @@ for dep_name in optional_dependencies:
         
         status = '*NOT* available'
     
-    print((" * %s is %s (%s)\n" % (dep_name, status, optional_dependencies[dep_name][1])))
+    print(" * %s is %s (%s)\n" % (dep_name, status, optional_dependencies[dep_name][1]))
