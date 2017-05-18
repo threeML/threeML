@@ -163,7 +163,7 @@ def cleanup_downloaded_LLE_data(detector_information_dict):
 
     for data_file in list(detector_information_dict.values()):
 
-        print(("Removing: %s"%data_file))
+        print("Removing: %s"%data_file)
 
         os.remove(data_file)
 

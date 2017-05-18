@@ -207,7 +207,7 @@ def add_svo_filter_to_speclite(observatory, instrument, ffilter, update=False):
 
             success = False
 
-            print(('%s:%s:%s has an invalid wave table, SKIPPING'% (observatory, instrument, ffilter)))
+            print('%s:%s:%s has an invalid wave table, SKIPPING'% (observatory, instrument, ffilter))
 
         return success
 
@@ -278,7 +278,7 @@ def download_SVO_filters(filter_dict, update = False):
 
             instruments = v.get_first_table().to_table()['filterID'].tolist()
 
-            print(('Downloading %s filters' % (obs)))
+            print('Downloading %s filters' % (obs))
 
             for x in instruments:
 

@@ -274,8 +274,8 @@ class HAWCLike(PluginPrototype):
 
         except:
 
-            print(("Could not instance the LikeHAWC class from LIFF. " +
-                  "Check that HAWC software is working"))
+            print("Could not instance the LikeHAWC class from LIFF. " +
+                  "Check that HAWC software is working")
 
             raise
 

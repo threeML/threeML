@@ -129,10 +129,10 @@ class PhotometryLike(XYLike):
                     self._mask[i] = True
 
 
-        print(("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
+        print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
                                                                     len(self._mask),
                                                                     ', '.join(
-                                                                        self._filter_set.filter_names[self._mask]))))
+                                                                        self._filter_set.filter_names[self._mask])))
 
         # reconstruct the plugin with selected data
 
@@ -159,10 +159,10 @@ class PhotometryLike(XYLike):
                 if name == select_name:
                     self._mask[i] = False
 
-        print(("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
+        print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
                                                                     len(self._mask),
                                                                     ', '.join(
-                                                                        self._filter_set.filter_names[self._mask]))))
+                                                                        self._filter_set.filter_names[self._mask])))
 
         # reconstruct the plugin with selected data
 
