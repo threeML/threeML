@@ -32,13 +32,13 @@ def test_photo_plugin():
 
     grond = PhotometryLike('GROND',
                            filters=threeML_filter_library.ESO.GROND,
-                           g=(20.93, .23),
-                           r=(19.96, 0.12),
-                           i=(18.8, .07),
-                           z=(17.82, .04),
-                           J=(16.29, .03),
-                           H=(15.28, .03),
-                           K=(14.68, .04))
+                           g=(19.92, .1),
+                           r=(19.75, .1),
+                           i=(19.65, .1),
+                           z=(19.56, .1),
+                           J=(19.38, .1),
+                           H=(19.22, .1),
+                           K=(19.07, .1))
 
     grond.display_filters()
 
@@ -50,9 +50,10 @@ def test_photo_plugin():
 
     jl = JointLikelihood(model, data_list)
 
-    spec.piv = 1E-2
+    spec.piv = 1E0
+    spec.K.min_value = 0.
 
-    jl.set_minimizer('ROOT')
+    #jl.set_minimizer('ROOT')
 
     _ = jl.fit()
 
