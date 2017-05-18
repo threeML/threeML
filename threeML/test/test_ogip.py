@@ -132,9 +132,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
         assert pha_info['pha'].n_channels == len(pha_info['pha'].rates)
 
         # Test that Poisson rates cannot call rate error
-        with pytest.raises(AssertionError):
-
-            _ = pha_info['pha'].rate_errors
+        assert pha_info['pha'].rate_errors is None
 
         assert sum(pha_info['pha'].sys_errors == np.zeros_like(pha_info['pha'].rates)) == pha_info['bak'].n_channels
 
@@ -201,9 +199,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
         assert pha_info['pha'].n_channels == len(pha_info['pha'].rates)
 
         # Test that Poisson rates cannot call rate error
-        with pytest.raises(AssertionError):
-
-            _ = pha_info['pha'].rate_errors
+        assert pha_info['pha'].rate_errors is None
 
         assert sum(pha_info['pha'].sys_errors == np.zeros_like(pha_info['pha'].rates)) == pha_info['bak'].n_channels
         assert pha_info['pha'].response_file.split('/')[-1] == 'glg_cspec_n3_bn080916009_v07.rsp'
