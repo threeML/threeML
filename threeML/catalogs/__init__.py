@@ -1,2 +1,2 @@
-from Fermi import FermiGBMBurstCatalog, FermiLATSourceCatalog, FermiLLEBurstCatalog
-from Swift import SwiftGRBCatalog
+from .Fermi import FermiGBMBurstCatalog, FermiLATSourceCatalog, FermiLLEBurstCatalog
+from .Swift import SwiftGRBCatalog

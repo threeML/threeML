@@ -38,7 +38,7 @@ class AnalysisBuilder(object):
     @property
     def keys(self):
 
-        return self._shapes.keys()
+        return list(self._shapes.keys())
 
     def build_point_source_jl(self):
 
@@ -46,7 +46,7 @@ class AnalysisBuilder(object):
 
         jls = {}
 
-        for key in self._shapes.keys():
+        for key in list(self._shapes.keys()):
             ps = PointSource('test', 0, 0, spectral_shape=self._shapes[key])
             model = Model(ps)
             jls[key] = JointLikelihood(model, data_list)
@@ -59,7 +59,7 @@ class AnalysisBuilder(object):
 
         jls = {}
 
-        for key in self._shapes.keys():
+        for key in list(self._shapes.keys()):
             ps = PointSource('test', 0, 0, spectral_shape=self._shapes[key])
             model = Model(ps)
             jls[key] = JointLikelihood(model, data_list)

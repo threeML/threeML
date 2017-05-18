@@ -2,7 +2,7 @@ import glob
 import imp
 import traceback
 
-from version import __version__
+from .version import __version__
 
 # Import everything from astromodels
 from astromodels import *
@@ -53,7 +53,7 @@ found_plugins = glob.glob(os.path.join(plugins_dir, "*.py"))
 
 # Filter out __init__
 
-found_plugins = filter(lambda x: x.find("__init__") < 0, found_plugins)
+found_plugins = [x for x in found_plugins if x.find("__init__") < 0]
 
 _working_plugins = {}
 _not_working_plugins = {}
@@ -115,17 +115,17 @@ def get_available_plugins():
     """
     print("Available plugins:\n")
 
-    for instrument, class_name in _working_plugins.items():
+    for instrument, class_name in list(_working_plugins.items()):
 
-        print("%s for %s" % (class_name, instrument))
+        print(("%s for %s" % (class_name, instrument)))
 
 
 def _display_plugin_traceback(plugin):
 
     print("#############################################################")
-    print("\nCouldn't import plugin %s" % plugin)
+    print(("\nCouldn't import plugin %s" % plugin))
     print("\nTraceback:\n")
-    print(_not_working_plugins[plugin])
+    print((_not_working_plugins[plugin]))
     print("#############################################################")
 
 
@@ -137,7 +137,7 @@ def is_plugin_available(plugin):
     :return: True or False
     """
 
-    if plugin in _working_plugins.values():
+    if plugin in list(_working_plugins.values()):
 
         # FIXME
         if plugin == "FermipyLike":
@@ -179,7 +179,7 @@ from .bayesian.bayesian_analysis import BayesianAnalysis
 
 # Import the DataList class
 
-from data_list import DataList
+from .data_list import DataList
 
 # Import the joint likelihood set
 from .classicMLE.joint_likelihood_set import JointLikelihoodSet, JointLikelihoodSetAnalyzer

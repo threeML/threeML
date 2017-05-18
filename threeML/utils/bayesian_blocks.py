@@ -301,7 +301,7 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkgIntegralDistr=None):
 
     # Transform the found edges back into the original time system
     if (bkgIntegralDistr is not None):
-        finalEdges = map(lambda x: lookupTable[x], edg)
+        finalEdges = [lookupTable[x] for x in edg]
     else:
         finalEdges = edg
     pass
@@ -320,4 +320,4 @@ if __name__ == "__main__":
             f.write("%s\n" % (t))
 
     res = bayesian_blocks(tt, 0, 1000, 1e-3, None)
-    print res
+    print(res)

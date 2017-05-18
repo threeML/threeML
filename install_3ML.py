@@ -22,7 +22,7 @@ def internet_connection_is_active(host="8.8.8.8", port=53, timeout=3):
 
     except Exception as ex:
 
-        print(ex.message)
+        print((ex.message))
         return False
 
     else:
@@ -32,17 +32,17 @@ def internet_connection_is_active(host="8.8.8.8", port=53, timeout=3):
 
 def discovery_message(message):
 
-    print("\n * %s\n" % message)
+    print(("\n * %s\n" % message))
 
 
 def fixable_problem(message):
 
-    print("\nPROBLEM: %s\n" % message)
+    print(("\nPROBLEM: %s\n" % message))
 
 
 def fatal_error(message):
 
-    print("\n\nFATAL: %s\n\n" % message)
+    print(("\n\nFATAL: %s\n\n" % message))
 
     sys.exit(-1)
 
@@ -53,7 +53,7 @@ def yes_or_no(prompt):
 
         # This is only python2 compatible. Will need to change to input() instead of raw_input() with python3.
 
-        answer = raw_input(prompt)
+        answer = eval(input(prompt))
 
         # strtobool returns True if answer is yes,y,t,1, no if
 
@@ -74,7 +74,7 @@ def prompt_string(message, default=None, path=False):
 
     while True:
 
-        answer = raw_input(message)
+        answer = eval(input(message))
 
         if answer == '':
 
@@ -92,7 +92,7 @@ def prompt_string(message, default=None, path=False):
 
                 if len(re.findall("[^0-9a-zA-Z_%s~${}]" % os.path.sep, answer)) > 0:
 
-                    print("Invalid path. Please use only letters, numbers and underscores (and %s)" % os.path.sep)
+                    print(("Invalid path. Please use only letters, numbers and underscores (and %s)" % os.path.sep))
                     continue
 
                 else:
@@ -243,12 +243,12 @@ if __name__ == "__main__":
     # Print final message
     discovery_message("Installation complete.")
 
-    print("\n\nREMEMBER: before using 3ML you need to run 'source %s/bin/activate'. Normally this needs to "
+    print(("\n\nREMEMBER: before using 3ML you need to run 'source %s/bin/activate'. Normally this needs to "
           "be done after you set up all the other packages, like AERIE, the Fermi Science Tools and so on, otherwise"
           "some of the plugins might be unavailable.\n "
           "If you want to uninstall, simply remove the entire directory %s "
           "(no other python environment will be touched, but of course you will loose anything you have "
-          "installed in that environment)" % (env_path, env_path))
+          "installed in that environment)" % (env_path, env_path)))
 
     sys.exit(0)
 

@@ -54,7 +54,7 @@ class AnalysisBuilder(object):
     @property
     def keys(self):
 
-        return self._shapes.keys()
+        return list(self._shapes.keys())
 
     def set_priors(self):
 
@@ -92,7 +92,7 @@ class AnalysisBuilder(object):
 
         jls = {}
 
-        for key in self._shapes.keys():
+        for key in list(self._shapes.keys()):
             ps = PointSource('test', 0, 0, spectral_shape=self._shapes[key])
             model = Model(ps)
             jls[key] = JointLikelihood(model, data_list)
@@ -105,7 +105,7 @@ class AnalysisBuilder(object):
 
         bayes = {}
 
-        for key in self._shapes.keys():
+        for key in list(self._shapes.keys()):
             ps = PointSource('test', 0, 0, spectral_shape=self._shapes[key])
             model = Model(ps)
 
@@ -240,17 +240,17 @@ def test_gbm_binning():
 
         assert len(nai3.bins) == 10
 
-        assert nai3.bins.argsort() == range(len(nai3.bins))
+        assert nai3.bins.argsort() == list(range(len(nai3.bins)))
 
         nai3.create_time_bins(start=0, stop=10, method='bayesblocks', p0=.1)
 
-        assert nai3.bins.argsort() == range(len(nai3.bins))
+        assert nai3.bins.argsort() == list(range(len(nai3.bins)))
 
         assert len(nai3.bins) == 9
 
         nai3.create_time_bins(start=0, stop=10, method='significance', sigma=40)
 
-        assert nai3.bins.argsort() == range(len(nai3.bins))
+        assert nai3.bins.argsort() == list(range(len(nai3.bins)))
 
         assert len(nai3.bins) == 4
 
@@ -348,7 +348,7 @@ def test_gbm_tte_bayesian_fitting():
 
             samples = bb.sample(n_walkers=n_walk, burn_in=10, n_samples=n_samp)
 
-            for key_2 in samples.keys():
+            for key_2 in list(samples.keys()):
                 assert samples[key_2].shape[0] == n_samples
 
             assert len(bb.log_like_values) == n_samples

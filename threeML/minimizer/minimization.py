@@ -84,7 +84,7 @@ class FunctionWrapper(object):
 
         for i, parameter_name in enumerate(self._fixed_parameters_names):
 
-            this_index = self._all_parameters.keys().index(parameter_name)
+            this_index = list(self._all_parameters.keys()).index(parameter_name)
 
             self._indexes_of_fixed_par[this_index] = True
 
@@ -112,7 +112,7 @@ class ContourWorker(object):
 
         # Update the values for the parameters with the best fit one
 
-        for key, value in self._minuit_values.iteritems():
+        for key, value in list(self._minuit_values.items()):
             minuit_args[key] = value
 
         # This is a likelihood
@@ -179,7 +179,7 @@ class ContourWorker(object):
 
                 continue
 
-            if minuit_name not in this_minuit_args.keys():
+            if minuit_name not in list(this_minuit_args.keys()):
 
                 raise ParameterIsNotFree("Parameter %s is not a free parameter." % minuit_name)
 
@@ -298,10 +298,10 @@ class ProfileLikelihood(object):
             # parameters dictionary)
 
             param_1_name = self._fixed_parameters[0]
-            param_1_idx = self._all_parameters.keys().index(param_1_name)
+            param_1_idx = list(self._all_parameters.keys()).index(param_1_name)
 
             param_2_name = self._fixed_parameters[1]
-            param_2_idx = self._all_parameters.keys().index(param_2_name)
+            param_2_idx = list(self._all_parameters.keys()).index(param_2_name)
 
             if param_1_idx > param_2_idx:
 
@@ -407,7 +407,7 @@ class Minimizer(object):
 
         self._function = function
         self._parameters = parameters
-        self._Npar = len(self.parameters.keys())
+        self._Npar = len(list(self.parameters.keys()))
         self._ftol = ftol
         self._verbosity = verbosity
 
@@ -472,7 +472,7 @@ class Minimizer(object):
 
         for i in range(self.Npar):
 
-            name = self.parameters.keys()[i]
+            name = list(self.parameters.keys())[i]
 
             value = best_fit_values[i]
 
@@ -552,7 +552,7 @@ class Minimizer(object):
 
         best_fit_values = self._fit_results['value'].values
 
-        for parameter_name, best_fit_value in zip(self.parameters.keys(), best_fit_values):
+        for parameter_name, best_fit_value in zip(list(self.parameters.keys()), best_fit_values):
 
             self.parameters[parameter_name].value = best_fit_value
 
@@ -580,8 +580,8 @@ class Minimizer(object):
 
             return np.zeros((n_dim, n_dim)) * np.nan
 
-        minima = map(lambda parameter:parameter.min_value, self.parameters.values())
-        maxima = map(lambda parameter: parameter.max_value, self.parameters.values())
+        minima = [parameter.min_value for parameter in list(self.parameters.values())]
+        maxima = [parameter.max_value for parameter in list(self.parameters.values())]
 
         # Check whether some of the minima or of the maxima are None. If they are, set them
         # to a value 1000 times smaller or larger respectively than the best fit.
@@ -733,7 +733,7 @@ class Minimizer(object):
                                          "computation." % (this_log_like, parameter_name, trial),
                                          BetterMinimumDuringProfiling)
 
-                    xs = map(lambda x:x.value, self.parameters.values())
+                    xs = [x.value for x in list(self.parameters.values())]
 
                     self._store_fit_results(xs, this_log_like, None)
 
@@ -882,7 +882,7 @@ class Minimizer(object):
             p1log = False
             p2log = False
 
-            if 'log' in options.keys():
+            if 'log' in list(options.keys()):
 
                 assert len(options['log']) == n_dimensions, ("When specifying the 'log' option you have to provide a " +
                                                              "boolean for each dimension you are stepping on.")

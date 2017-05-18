@@ -17,7 +17,7 @@ class FuncWrapper(ROOT.TPyMultiGenFunction):
 
     def DoEval(self, args):
 
-        new_args = map(lambda i:args[i],range(self.dimensions))
+        new_args = [args[i] for i in range(self.dimensions)]
 
         return self.function(*new_args)
 
@@ -42,7 +42,7 @@ class ROOTMinimizer(Minimizer):
 
         self.minimizer.SetFunction(self.functor)
 
-        for i, par in enumerate(self.parameters.values()):
+        for i, par in enumerate(list(self.parameters.values())):
 
             if par.min_value is not None and par.max_value is not None:
 
@@ -73,7 +73,7 @@ class ROOTMinimizer(Minimizer):
 
         self.minimizer.Minimize()
 
-        best_fit_values = np.array(map(lambda x: x[0], zip(self.minimizer.X(), range(self.Npar))))
+        best_fit_values = np.array([x[0] for x in zip(self.minimizer.X(), list(range(self.Npar)))])
 
         if compute_covar:
 

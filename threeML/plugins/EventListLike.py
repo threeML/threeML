@@ -317,7 +317,7 @@ class EventListLike(OGIPLike):
 
             for selection in energy_selection:
 
-                ee = map(float, selection.split("-"))
+                ee = list(map(float, selection.split("-")))
 
                 if len(ee) != 2:
                     raise RuntimeError('Energy selection is not valid! Form: <low>-<high>.')
@@ -328,7 +328,7 @@ class EventListLike(OGIPLike):
                 idx2 = self._rsp.energy_to_channel(emax)
 
                 # Update the allowed channels
-                valid_channels.extend(range(idx1, idx2))
+                valid_channels.extend(list(range(idx1, idx2)))
 
                 this_mask = np.logical_and(self._event_list.energies >= idx1, self._event_list.energies <= idx2)
 
@@ -337,7 +337,7 @@ class EventListLike(OGIPLike):
         else:
 
             mask = np.array([True] * self._event_list.n_events)
-            valid_channels = range(self._event_list.n_channels)
+            valid_channels = list(range(self._event_list.n_channels))
 
         if use_binner:
 
@@ -410,14 +410,14 @@ class EventListLike(OGIPLike):
 
             lightcurve_sigma = significance.li_and_ma_equivalent_for_gaussian_background(sigma_b=np.asarray(bkg_err))
 
-            print lightcurve_sigma
+            print(lightcurve_sigma)
 
             # now create a filter for the bins that exceed the significance
 
             sig_filter = lightcurve_sigma >= significance_level
 
             if self._verbose:
-                print('time bins with significance greater that %f are shown in green' % significance_level)
+                print(('time bins with significance greater that %f are shown in green' % significance_level))
 
         else:
 

@@ -2,7 +2,7 @@ from threeML.utils.power_of_two_utils import *
 
 
 def test_is_power_of_two():
-    power_of_twos = map(lambda x: 2 ** x, range(32))
+    power_of_twos = [2 ** x for x in range(32)]
 
     for power_of_two in power_of_twos:
 

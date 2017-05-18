@@ -21,7 +21,7 @@ class GridMinimizer(Minimizer):
 
         self._original_values = collections.OrderedDict()
 
-        for par_name, par in parameters.items():
+        for par_name, par in list(parameters.items()):
 
             self._original_values[par_name] = par.value
 
@@ -58,7 +58,7 @@ class GridMinimizer(Minimizer):
 
         assert isinstance(parameter, Parameter)
 
-        assert parameter in self.parameters.values(), "Parameter %s is not part of the current model" % parameter.name
+        assert parameter in list(self.parameters.values()), "Parameter %s is not part of the current model" % parameter.name
 
         grid = np.array(grid)
 
@@ -89,19 +89,19 @@ class GridMinimizer(Minimizer):
 
         # For each point in the grid, perform a fit
 
-        parameters = self._grid.keys()
+        parameters = list(self._grid.keys())
 
         overall_minimum = 1e20
         best_fit_values = None
         covariance_matrix = None
 
-        for values_tuple in itertools.product(*self._grid.values()):
+        for values_tuple in itertools.product(*list(self._grid.values())):
 
             # Reset everything to the original values, so that the fit will always start
             # from there, instead that from the values obtained in the last iterations, which
             # might have gone completely awry
 
-            for par_name, par_value in self._original_values.items():
+            for par_name, par_value in list(self._original_values.items()):
 
                 self.parameters[par_name].value = par_value
 

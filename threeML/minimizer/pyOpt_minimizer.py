@@ -18,7 +18,7 @@ class PyOptWrapper(object):
 
     def __call__(self, x):
 
-        new_args = map(lambda i: x[i], range(self._dimensions))
+        new_args = [x[i] for i in range(self._dimensions)]
 
         try:
 
@@ -105,7 +105,7 @@ class PyOptMinimizer(Minimizer):
 
         # Add constraints for parameters
 
-        for i, par in enumerate(self.parameters.values()):
+        for i, par in enumerate(list(self.parameters.values())):
 
             if par.min_value is not None and par.max_value is not None:
 

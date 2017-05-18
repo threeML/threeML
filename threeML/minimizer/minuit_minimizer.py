@@ -14,7 +14,7 @@ class MINOSFailed(Exception):
 
 def add_method(self, method, name=None):
     if name is None:
-        name = method.func_name
+        name = method.__name__
 
     setattr(self.__class__, name, method)
 
@@ -44,7 +44,7 @@ class MinuitMinimizer(Minimizer):
         # units, and hence they are much faster to set and retrieve. These are indeed introduced by
         # astromodels to be used for computing-intensive situations like fitting
 
-        for k, par in self.parameters.iteritems():
+        for k, par in list(self.parameters.items()):
 
             current_name = self._parameter_name_to_minuit_name(k)
 
@@ -83,7 +83,7 @@ class MinuitMinimizer(Minimizer):
         # Write and compile the code for such function
 
         code = 'def _f(self, %s):\n  return self.function(%s)' % (var_spelled_out, var_spelled_out)
-        exec code
+        exec(code)
 
         # Add the function just created as a method of the class
         # so it will be able to use the 'self' pointer
@@ -159,7 +159,7 @@ class MinuitMinimizer(Minimizer):
 
         super(MinuitMinimizer, self).restore_best_fit()
 
-        for k, par in self.parameters.iteritems():
+        for k, par in list(self.parameters.items()):
 
             minuit_name = self._parameter_name_to_minuit_name(k)
 
@@ -191,7 +191,7 @@ class MinuitMinimizer(Minimizer):
 
             best_fit_values = []
 
-            for k, par in self.parameters.iteritems():
+            for k, par in list(self.parameters.items()):
 
                 minuit_name = self._parameter_name_to_minuit_name(k)
 
@@ -257,7 +257,7 @@ class MinuitMinimizer(Minimizer):
 
         errors = collections.OrderedDict()
 
-        for k, par in self.parameters.iteritems():
+        for k, par in list(self.parameters.items()):
 
             minuit_name = self._parameter_name_to_minuit_name(k)
 

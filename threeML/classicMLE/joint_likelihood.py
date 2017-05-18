@@ -60,7 +60,7 @@ class JointLikelihood(object):
 
         self._data_list = data_list
 
-        for dataset in self._data_list.values():
+        for dataset in list(self._data_list.values()):
 
             dataset.set_model(self._likelihood_model)
 
@@ -69,7 +69,7 @@ class JointLikelihood(object):
             # plugins might need to adjust the number of nuisance parameters depending on the
             # likelihood model
 
-            for parameter_name, parameter in dataset.nuisance_parameters.items():
+            for parameter_name, parameter in list(dataset.nuisance_parameters.items()):
 
                 # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
                 # of the same plugin will overwrite each other's nuisance parameters
@@ -199,7 +199,7 @@ class JointLikelihood(object):
 
             # Now fix sensible values for parameters deltas
 
-            for k, v in self._free_parameters.items():
+            for k, v in list(self._free_parameters.items()):
 
                 if v.min_value is None and v.max_value is None:
 
@@ -288,7 +288,7 @@ class JointLikelihood(object):
 
         total_number_of_data_points = 0
 
-        for dataset in self._data_list.values():
+        for dataset in list(self._data_list.values()):
 
             ml = dataset.inner_fit() * (-1)
 
@@ -349,7 +349,7 @@ class JointLikelihood(object):
         data = []
         name_length = 0
 
-        for k, v in self._free_parameters.items():
+        for k, v in list(self._free_parameters.items()):
 
             # Format the value and the error with sensible significant
             # numbers
@@ -552,7 +552,7 @@ class JointLikelihood(object):
 
                 # Re-create the minimizer
 
-                backup_freeParameters = map(lambda x:x.value, self._likelihood_model.free_parameters.values())
+                backup_freeParameters = [x.value for x in list(self._likelihood_model.free_parameters.values())]
 
                 this_minimizer = self._get_minimizer(self.minus_log_like_profile,
                                                      self._free_parameters)
@@ -569,7 +569,7 @@ class JointLikelihood(object):
 
                 # Restore best fit values
 
-                for val, par in zip(backup_freeParameters, self._likelihood_model.free_parameters.values()):
+                for val, par in zip(backup_freeParameters, list(self._likelihood_model.free_parameters.values())):
 
                     par.value = val
 
@@ -583,7 +583,7 @@ class JointLikelihood(object):
             # Distribute the work among the engines and start it, but return immediately the control
             # to the main thread
 
-            amr = lview.map_async(worker, range(n_engines))
+            amr = lview.map_async(worker, list(range(n_engines)))
 
             client.wait_watching_progress(amr, 10)
 
@@ -671,15 +671,15 @@ class JointLikelihood(object):
 
                 aidx, bidx = numpy.unravel_index(idx, cc.shape)
 
-                print("\nFound a better minimum: %s with %s = %s and %s = %s. Run again your fit starting from here."
-                      % (cc.min(), param_1, a[aidx], param_2, b[bidx]))
+                print(("\nFound a better minimum: %s with %s = %s and %s = %s. Run again your fit starting from here."
+                      % (cc.min(), param_1, a[aidx], param_2, b[bidx])))
 
             else:
 
                 idx = cc.argmin()
 
-                print("Found a better minimum: %s with %s = %s. Run again your fit starting from here."
-                      % (cc.min(), param_1, a[idx]))
+                print(("Found a better minimum: %s with %s = %s. Run again your fit starting from here."
+                      % (cc.min(), param_1, a[idx])))
 
         return a, b, cc, fig
 
@@ -711,7 +711,7 @@ class JointLikelihood(object):
 
         # Assign the new values to the parameters
 
-        for i, parameter in enumerate(self._free_parameters.values()):
+        for i, parameter in enumerate(list(self._free_parameters.values())):
 
             parameter.value = trial_values[i]
 
@@ -720,7 +720,7 @@ class JointLikelihood(object):
 
         summed_log_likelihood = 0
 
-        for dataset in self._data_list.values():
+        for dataset in list(self._data_list.values()):
 
             try:
 
@@ -755,7 +755,7 @@ class JointLikelihood(object):
             return minimization.FIT_FAILED
 
         if self.verbose:
-            print("Trying with parameters %s, resulting in logL = %s" % (trial_values, summed_log_likelihood))
+            print(("Trying with parameters %s, resulting in logL = %s" % (trial_values, summed_log_likelihood)))
 
         # Return the minus log likelihood
 
@@ -783,7 +783,7 @@ class JointLikelihood(object):
         assert minimizer.upper() in minimization._minimizers, "Minimizer %s is not available on this system. Available " \
                                                               "minimizers: " \
                                                               "%s" % (minimizer,
-                                                                      ",".join(minimization._minimizers.keys()))
+                                                                      ",".join(list(minimization._minimizers.keys())))
 
         if minimizer.upper() == "MINUIT":
 
@@ -804,7 +804,7 @@ class JointLikelihood(object):
 
             assert algorithm.upper() in minimization._pyopt_algorithms, "Provided algorithm not available. " \
                                                                         "Available algorithms are: " \
-                                                                        "%s" % minimization._pyopt_algorithms.keys()
+                                                                        "%s" % list(minimization._pyopt_algorithms.keys())
             self._minimizer_algorithm = algorithm.upper()
 
         elif minimizer.upper() == "MULTINEST":
@@ -828,7 +828,7 @@ class JointLikelihood(object):
         else:
 
             raise ValueError("Do not know minimizer %s. "
-                             "Available minimizers are: %s" % (minimizer, ",".join(minimization._minimizers.keys())))
+                             "Available minimizers are: %s" % (minimizer, ",".join(list(minimization._minimizers.keys()))))
 
         # Get the type
 
@@ -881,7 +881,7 @@ class JointLikelihood(object):
         data = []
         max_length_of_name = 0
 
-        for k, v in parameters.iteritems():
+        for k, v in list(parameters.items()):
 
             current_name = "%s_of_%s" % (k[1], k[0])
 
@@ -979,7 +979,7 @@ class JointLikelihood(object):
         delta = cc.max() - cc.min()
 
         if delta < 0.5:
-            print("\n\nThe maximum difference in statistic is %s among all the points in the grid." % delta)
+            print(("\n\nThe maximum difference in statistic is %s among all the points in the grid." % delta))
             print(" This is too small. Enlarge the search region to display a contour plot")
 
             return None

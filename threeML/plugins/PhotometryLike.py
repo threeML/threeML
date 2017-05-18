@@ -70,7 +70,7 @@ class PhotometryLike(XYLike):
 
         starting_mask = np.zeros(len(names), dtype=bool)
 
-        for band in data.keys():
+        for band in list(data.keys()):
 
             assert band in names, 'band %s is not a member of the filter set %s'%(band,'blah')
             starting_mask[ names.index(band)] = True
@@ -129,10 +129,10 @@ class PhotometryLike(XYLike):
                     self._mask[i] = True
 
 
-        print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
+        print(("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
                                                                     len(self._mask),
                                                                     ', '.join(
-                                                                        self._filter_set.filter_names[self._mask])))
+                                                                        self._filter_set.filter_names[self._mask]))))
 
         # reconstruct the plugin with selected data
 
@@ -159,10 +159,10 @@ class PhotometryLike(XYLike):
                 if name == select_name:
                     self._mask[i] = False
 
-        print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
+        print(("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
                                                                     len(self._mask),
                                                                     ', '.join(
-                                                                        self._filter_set.filter_names[self._mask])))
+                                                                        self._filter_set.filter_names[self._mask]))))
 
         # reconstruct the plugin with selected data
 
@@ -188,7 +188,7 @@ class PhotometryLike(XYLike):
 
         def differential_flux(energies):
 
-            for i in xrange(n_point_sources):
+            for i in range(n_point_sources):
                 fluxes = self._likelihood_model.get_point_source_fluxes(0, energies)
 
                 # If we have only one point source, this will never be executed

@@ -103,7 +103,7 @@ class GenericFittedSourceHandler(object):
 
         # because we might be using composite functions,
         # we have to keep track of parameter names in a non-elegant way
-        for par,name in zip(self._parameters.values(), self._parameter_names):
+        for par,name in zip(list(self._parameters.values()), self._parameter_names):
 
             if par.free:
 

@@ -344,7 +344,7 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
                 # Read in the response
 
-        if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
+        if isinstance(rsp_file, str) or isinstance(rsp_file, str):
             rsp = OGIPResponse(rsp_file, arf_file=arf_file)
 
         else:
@@ -821,7 +821,7 @@ p
                     telescope_name=self.mission,
                     tstart=tstart,
                     telapse=telapse,
-                    channel=range(1,len(self)+1),
+                    channel=list(range(1,len(self)+1)),
                     rate=new_counts/self.exposure,
                     stat_err=stat_err,
                     quality=self.quality.to_ogip(),
@@ -869,7 +869,7 @@ p
                     telescope_name=dispersion_spectrum.mission,
                     tstart=tstart,  # TODO: add this in so that we have proper time!
                     telapse=telapse,
-                    channel=range(1, len(dispersion_spectrum) + 1),
+                    channel=list(range(1, len(dispersion_spectrum) + 1)),
                     rate=dispersion_spectrum.rates,
                     stat_err=rate_errors,
                     quality=dispersion_spectrum.quality.to_ogip(),
@@ -999,7 +999,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
 
         with progress_bar(num_spectra,title='Loading PHAII spectra') as p:
-            for i in xrange(num_spectra):
+            for i in range(num_spectra):
 
 
                 list_of_binned_spectra.append(BinnedSpectrumWithDispersion(counts=pha_information['counts'][i],
@@ -1141,7 +1141,7 @@ p
                     telescope_name=self.mission,
                     tstart=0,
                     telapse=self.exposure,
-                    channel=range(1,len(self)+1),
+                    channel=list(range(1,len(self)+1)),
                     rate=new_counts/self.exposure,
                     stat_err=stat_err,
                     quality=self.quality.to_ogip(),
@@ -1173,7 +1173,7 @@ p
                     telescope_name=dispersion_spectrum.mission,
                     tstart=dispersion_spectrum.tstart,
                     telapse=dispersion_spectrum.tstop - dispersion_spectrum.tstart,
-                    channel=range(1, len(dispersion_spectrum) + 1),
+                    channel=list(range(1, len(dispersion_spectrum) + 1)),
                     rate=dispersion_spectrum.rates,
                     stat_err=rate_errors,
                     quality=dispersion_spectrum.quality.to_ogip(),

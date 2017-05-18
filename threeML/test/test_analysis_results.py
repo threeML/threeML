@@ -211,7 +211,7 @@ def test_error_propagation():
 
     arguments = {}
 
-    for par in fitfun.parameters.values():
+    for par in list(fitfun.parameters.values()):
 
         if par.free:
 

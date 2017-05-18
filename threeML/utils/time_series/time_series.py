@@ -329,7 +329,7 @@ class TimeSeries(object):
 
         if self._poly_fit_exists:
 
-            print('Refitting background with new polynomial order (%d) and existing selections' % value)
+            print(('Refitting background with new polynomial order (%d) and existing selections' % value))
 
             if self._time_selection_exists:
 
@@ -463,8 +463,8 @@ class TimeSeries(object):
         self._poly_fit_exists = True
 
         if self._verbose:
-            print("%s %d-order polynomial fit with the %s method" % (
-                self._fit_method_info['bin type'], self._optimal_polynomial_grade, self._fit_method_info['fit method']))
+            print(("%s %d-order polynomial fit with the %s method" % (
+                self._fit_method_info['bin type'], self._optimal_polynomial_grade, self._fit_method_info['fit method'])))
             print('\n')
 
         # recalculate the selected counts
@@ -576,7 +576,7 @@ class TimeSeries(object):
             info_dict['polynomial fit type'] = self._fit_method_info['bin type']
             info_dict['polynomial fit method'] = self._fit_method_info['fit method']
 
-        return pd.Series(info_dict, index=info_dict.keys())
+        return pd.Series(info_dict, index=list(info_dict.keys()))
 
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
         """
@@ -600,7 +600,7 @@ class TimeSeries(object):
             log_likelihoods.append(log_like)
 
         # Found the best one
-        delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
+        delta_loglike = np.array([2 * (x[0] - x[1]) for x in zip(log_likelihoods[:-1], log_likelihoods[1:])])
 
         # print("\ndelta log-likelihoods:")
 
@@ -653,7 +653,7 @@ class TimeSeries(object):
             log_likelihoods.append(log_like)
 
         # Found the best one
-        delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
+        delta_loglike = np.array([2 * (x[0] - x[1]) for x in zip(log_likelihoods[:-1], log_likelihoods[1:])])
 
         delta_threshold = 9.0
 
@@ -740,13 +740,13 @@ class TimeSeries(object):
 
 
             store.get_storer('coefficients').attrs.metadata = {'poly_order': self._optimal_polynomial_grade,
-                                                               'poly_selections': zip(self._poly_intervals.start_times,self._poly_intervals.stop_times),
+                                                               'poly_selections': list(zip(self._poly_intervals.start_times,self._poly_intervals.stop_times)),
                                                                'unbinned':self._unbinned,
                                                                'fit_method':self._fit_method_info['fit method']}
 
         if self._verbose:
 
-            print("\nSaved fitted background to %s.\n"% filename)
+            print(("\nSaved fitted background to %s.\n"% filename))
 
     def restore_fit(self, filename):
 

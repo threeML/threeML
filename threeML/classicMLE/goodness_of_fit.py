@@ -33,7 +33,7 @@ class GoodnessOfFit(object):
 
         new_datas = []
 
-        for dataset in self._jl_instance.data_list.values():
+        for dataset in list(self._jl_instance.data_list.values()):
 
             # Make sure we start from the best fit model
 
@@ -87,7 +87,7 @@ class GoodnessOfFit(object):
 
         gof['total'] = np.sum(idx) / float(n_iterations)
 
-        for dataset in self._jl_instance.data_list.values():
+        for dataset in list(self._jl_instance.data_list.values()):
 
             sim_name = "%s_sim" % dataset.name
 

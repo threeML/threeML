@@ -30,9 +30,7 @@ def set_external_property(method):
     return wrapper
 
 
-class PluginPrototype(object):
-    __metaclass__ = abc.ABCMeta
-
+class PluginPrototype(object, metaclass=abc.ABCMeta):
     def __init__(self, name, nuisance_parameters):
         assert is_valid_variable_name(name), "The name %s cannot be used as a name. You need to use a valid " \
                                              "python identifier: no spaces, cannot start with numbers, cannot contain " \
