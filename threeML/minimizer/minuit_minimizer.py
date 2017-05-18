@@ -216,6 +216,7 @@ class MinuitMinimizer(Minimizer):
     # Override the default _compute_covariance_matrix
     def _compute_covariance_matrix(self, best_fit_values):
 
+        self.minuit.migrad()
         self.minuit.hesse()
 
         covariance = np.array(self.minuit.matrix(correlation=False))
