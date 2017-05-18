@@ -234,7 +234,7 @@ class BayesianAnalysis(object):
 
         acc = np.mean(sampler.acceptance_fraction)
 
-        print(("\nMean acceptance fraction: %s\n" % acc))
+        print("\nMean acceptance fraction: %s\n" % acc)
 
         self._sampler = sampler
         self._raw_samples = sampler.flatchain
@@ -290,7 +290,7 @@ class BayesianAnalysis(object):
         for i in range(n_temps):
             p0[i, :, :] = self._get_starting_points(n_walkers)
 
-        print(("Running burn-in of %s samples...\n" % burn_in))
+        print("Running burn-in of %s samples...\n" % burn_in)
 
         p, lnprob, lnlike = sample_with_progress("Burn-in", p0, sampler, burn_in)
 
@@ -820,7 +820,7 @@ class BayesianAnalysis(object):
 
         assert stepsize > 10, "Too few samples for this method to be effective"
 
-        print(("Stepsize for sliding window is %s" % stepsize))
+        print("Stepsize for sliding window is %s" % stepsize)
 
         for parameter_name in list(self._free_parameters.keys()):
 
@@ -988,7 +988,7 @@ class BayesianAnalysis(object):
             if self.verbose:
                 n_par = len(self._free_parameters)
 
-                print((
+                print(
                 "Trial values %s gave a log_like of %s" % (["%.2g" % trial_values[i] for i in range(n_par)],
                                                            log_like)))
 

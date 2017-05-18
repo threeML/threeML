@@ -195,8 +195,8 @@ class SpectrumLike(PluginPrototype):
         # Print the autoprobed noise models
         if self._verbose:
             print("Auto-probed noise models:")
-            print(("- observation: %s" % self.observation_noise_model))
-            print(("- background: %s" % self.background_noise_model))
+            print("- observation: %s" % self.observation_noise_model)
+            print("- background: %s" % self.background_noise_model)
 
         # Now create the nuisance parameter for the effective area correction, which is fixed
         # by default. This factor multiplies the model so that it can account for calibration uncertainties on the
@@ -407,7 +407,7 @@ class SpectrumLike(PluginPrototype):
                 self._mask[idx[0]:idx[1] + 1] = True
 
                 if self._verbose:
-                    print(("Range %s translates to channels %s-%s" % (arg, idx[0], idx[1])))
+                    print("Range %s translates to channels %s-%s" % (arg, idx[0], idx[1]))
 
         # If you are just excluding channels
         if len(args) == 0:
@@ -445,10 +445,10 @@ class SpectrumLike(PluginPrototype):
                 self._mask[idx[0]:idx[1] + 1] = False
 
                 if self._verbose:
-                    print(("Range %s translates to excluding channels %s-%s" % (arg, idx[0], idx[1])))
+                    print("Range %s translates to excluding channels %s-%s" % (arg, idx[0], idx[1]))
 
         if self._verbose:
-            print(("Now using %s channels out of %s" % (np.sum(self._mask), self._observed_spectrum.n_channels)))
+            print("Now using %s channels out of %s" % (np.sum(self._mask), self._observed_spectrum.n_channels))
 
         # Apply the mask
         self._apply_mask_to_original_vectors()
@@ -953,7 +953,7 @@ class SpectrumLike(PluginPrototype):
                 self._current_back_count_errors, = self._rebinner.rebin_errors(self._back_count_errors)
 
         if self._verbose:
-            print(("Now using %s bins" % self._rebinner.n_bins))
+            print("Now using %s bins" % self._rebinner.n_bins)
 
     def remove_rebinning(self):
         """

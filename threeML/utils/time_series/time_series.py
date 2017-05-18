@@ -329,7 +329,7 @@ class TimeSeries(object):
 
         if self._poly_fit_exists:
 
-            print(('Refitting background with new polynomial order (%d) and existing selections' % value))
+            print('Refitting background with new polynomial order (%d) and existing selections' % value)
 
             if self._time_selection_exists:
 
@@ -463,8 +463,8 @@ class TimeSeries(object):
         self._poly_fit_exists = True
 
         if self._verbose:
-            print(("%s %d-order polynomial fit with the %s method" % (
-                self._fit_method_info['bin type'], self._optimal_polynomial_grade, self._fit_method_info['fit method'])))
+            print("%s %d-order polynomial fit with the %s method" % (
+                self._fit_method_info['bin type'], self._optimal_polynomial_grade, self._fit_method_info['fit method']))
             print('\n')
 
         # recalculate the selected counts
@@ -746,7 +746,7 @@ class TimeSeries(object):
 
         if self._verbose:
 
-            print(("\nSaved fitted background to %s.\n"% filename))
+            print("\nSaved fitted background to %s.\n"% filename)
 
     def restore_fit(self, filename):
 

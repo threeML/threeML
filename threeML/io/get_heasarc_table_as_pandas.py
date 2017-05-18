@@ -48,7 +48,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     if not file_existing_and_readable(cache_file_sanatized):
 
-        print(("The cache for %s does not yet exist. We will try to build it\n" % heasarc_table_name))
+        print("The cache for %s does not yet exist. We will try to build it\n" % heasarc_table_name)
 
         write_cache = True
         cache_exists = False
@@ -90,7 +90,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     if write_cache or update:
 
-        print(("Building cache for %s.\n" % heasarc_table_name))
+        print("Building cache for %s.\n" % heasarc_table_name)
 
         # go to HEASARC and get the requested table
         heasarc_url = 'http://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=%s' % heasarc_table_name

@@ -264,7 +264,7 @@ class BinnedSpectrumSeries(TimeSeries):
                                                                                     selected_midpoints,
                                                                                     selected_exposure)
             if self._verbose:
-                print(("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade))
+                print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
                 print('\n')
 
         else:

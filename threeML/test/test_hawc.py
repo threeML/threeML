@@ -111,8 +111,8 @@ def test_hawc_point_source_fit():
     TS = llh.calc_TS()
     sigma = np.sqrt(TS)
 
-    print(("Test statistic: %g" % TS))
-    print(("Significance:   %g\n" % sigma))
+    print("Test statistic: %g" % TS)
+    print("Significance:   %g\n" % sigma)
 
     assert is_within_tolerance(14366.4, TS)
     assert is_within_tolerance(119.86, sigma)
@@ -122,7 +122,7 @@ def test_hawc_point_source_fit():
     # Convert it to 1 / (TeV cm2 s)
     diff_flux_TeV = diff_flux.to(1 / (u.TeV * u.cm ** 2 * u.s))
 
-    print(("Norm @ 1 TeV:  %s \n" % diff_flux_TeV))
+    print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
     assert is_within_tolerance(3.00657105936e-11, diff_flux_TeV.value)
 
@@ -218,15 +218,15 @@ def test_hawc_extended_source_fit():
     assert is_within_tolerance(3510.26, TS)
     assert is_within_tolerance(59.2475, sigma)
 
-    print(("Test statistic: %g" % TS))
-    print(("Significance:   %g\n" % sigma))
+    print("Test statistic: %g" % TS)
+    print("Significance:   %g\n" % sigma)
 
     # Get the differential flux at 1 TeV
     diff_flux = spectrum(1 * u.TeV)
     # Convert it to 1 / (TeV cm2 s)
     diff_flux_TeV = diff_flux.to(1 / (u.TeV * u.cm ** 2 * u.s))
 
-    print(("Norm @ 1 TeV:  %s \n" % diff_flux_TeV))
+    print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
     assert is_within_tolerance(4.53214528088e-11, diff_flux_TeV.value)
 

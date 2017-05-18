@@ -17,7 +17,7 @@ def internet_connection_is_active(host="8.8.8.8", port=53, timeout=3):
 
     except Exception as ex:
 
-        print((ex.message))
+        print(ex.message)
         return False
 
     else:

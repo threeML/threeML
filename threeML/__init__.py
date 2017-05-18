@@ -117,15 +117,15 @@ def get_available_plugins():
 
     for instrument, class_name in list(_working_plugins.items()):
 
-        print(("%s for %s" % (class_name, instrument)))
+        print("%s for %s" % (class_name, instrument))
 
 
 def _display_plugin_traceback(plugin):
 
     print("#############################################################")
-    print(("\nCouldn't import plugin %s" % plugin))
+    print("\nCouldn't import plugin %s" % plugin)
     print("\nTraceback:\n")
-    print((_not_working_plugins[plugin]))
+    print(_not_working_plugins[plugin])
     print("#############################################################")
 
 
