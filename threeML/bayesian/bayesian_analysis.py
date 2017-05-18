@@ -990,7 +990,7 @@ class BayesianAnalysis(object):
 
                 print(
                 "Trial values %s gave a log_like of %s" % (["%.2g" % trial_values[i] for i in range(n_par)],
-                                                           log_like)))
+                                                           log_like))
 
             return log_like
 
