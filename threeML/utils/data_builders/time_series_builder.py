@@ -303,18 +303,18 @@ class TimeSeriesBuilder(object):
 
         return self._time_series.bins
 
-    def read_bins(self, ttelike):
+    def read_bins(self, time_series_builder):
         """
 
-        Read the temporal bins from another *binned* FermiGBMTTELike instance
+        Read the temporal bins from another *binned* TimeSeriesBuilder instance
         and apply those bins to this instance
 
-        :param ttelike: *binned* FermiGBMTTELike instance
+        :param time_series_builder: *binned* time series builder to copy
         :return:
         """
 
-        start, stop = ttelike.bins
-        self.create_time_bins(start, stop, method='custom')
+        other_bins = time_series_builder.bins.bin_stack
+        self.create_time_bins(other_bins[:,0], other_bins[:,1], method='custom')
 
     def create_time_bins(self, start, stop, method='constant', **options):
         """
@@ -326,7 +326,7 @@ class TimeSeriesBuilder(object):
         :param start: start of the bins or array of start times for custom mode
         :param stop: stop of the bins or array of stop times for custom mode
         :param method: constant, significance, bayesblocks, custom
-        :param use_energy_mask: (optional) use the energy mask when binning (default false)
+
         :param dt: <constant method> delta time of the
         :param sigma: <significance> sigma level of bins
         :param min_counts: (optional) <significance> minimum number of counts per bin
@@ -336,13 +336,14 @@ class TimeSeriesBuilder(object):
 
         assert isinstance(self._time_series, EventList), 'can only bin event lists currently'
 
-        if 'use_energy_mask' in options:
 
-            use_energy_mask = options.pop('use_energy_mask')
-
-        else:
-
-            use_energy_mask = False
+        # if 'use_energy_mask' in options:
+        #
+        #     use_energy_mask = options.pop('use_energy_mask')
+        #
+        # else:
+        #
+        #     use_energy_mask = False
 
         if method == 'constant':
 
@@ -374,17 +375,19 @@ class TimeSeriesBuilder(object):
 
                 min_counts = 10
 
+
+            # removed for now
             # should we mask the data
 
-            if use_energy_mask:
+            # if use_energy_mask:
+            #
+            #     mask = self._mask
+            #
+            # else:
+            #
+            #     mask = None
 
-                mask = self._mask
-
-            else:
-
-                mask = None
-
-            self._time_series.bin_by_significance(start, stop, sigma=sigma, min_counts=min_counts, mask=mask)
+            self._time_series.bin_by_significance(start, stop, sigma=sigma, min_counts=min_counts, mask=None)
 
 
         elif method == 'bayesblocks':
@@ -425,10 +428,14 @@ class TimeSeriesBuilder(object):
 
 
 
-
         else:
 
             raise BinningMethodError('Only constant, significance, bayesblock, or custom method argument accepted.')
+
+        if self._verbose:
+
+            print('Created %d bins via %s'% (len(self._time_series.bins), method))
+
 
     def to_spectrumlike(self, from_bins=False, start=None, stop=None, interval_name='_interval'):
         """
