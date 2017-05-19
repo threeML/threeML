@@ -30,8 +30,6 @@ def test_spectrum_constructor():
     assert np.all(bkg_spectrum.counts == bkg_spectrum.rates)
 
 
-
-
     specLike = SpectrumLike('fake', observation=obs_spectrum, background=bkg_spectrum)
     specLike.set_model(model)
     specLike.get_model()
@@ -79,6 +77,60 @@ def test_spectrum_constructor_no_background():
 
     specLike.__repr__()
 
+def addition_proof_simple(x,y,z):
+    assert x.counts[3] + y.counts[3] == z.counts[3]
+
+def addition_proof_weighted(x,y,z):
+    assert (x.rates[3]/x.rate_errors[3]**2 + y.rates[3]/y.rate_errors[3]**2) / \
+           (1/x.rate_errors[3]**2 + 1/y.rate_errors[3]**2) \
+           == z.rates[3]/z.exposure 
+
+def spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,addition,addition_proof):
+    obs_spectrum = addition(obs_spectrum_1, obs_spectrum_2)
+    
+    addition_proof(obs_spectrum_1, obs_spectrum_2, obs_spectrum)
+
+    assert obs_spectrum_1.exposure + obs_spectrum_2.exposure == obs_spectrum.exposure
+
+    assert np.all(obs_spectrum.counts == obs_spectrum.rates * obs_spectrum.exposure)
+
+    specLike = SpectrumLike('fake', observation=obs_spectrum, background=None)
+
+    assert obs_spectrum.count_errors is None or obs_spectrum.count_errors.__class__ == np.ndarray
+
+    specLike.__repr__()
+
+
+def test_spectrum_addition():
+    ebounds = ChannelSet.from_list_of_edges(np.array([0,1,2,3,4,5]))
+    ebounds_different = ChannelSet.from_list_of_edges(np.array([0,1,2,3,4,5]))
+
+    obs_spectrum_1 = BinnedSpectrum(counts=np.ones(len(ebounds)),count_errors=np.ones(len(ebounds)),exposure=1,ebounds=ebounds, is_poisson=False)
+    obs_spectrum_2 = BinnedSpectrum(counts=np.ones(len(ebounds)),count_errors=np.ones(len(ebounds)),exposure=2,ebounds=ebounds, is_poisson=False)
+    obs_spectrum_incompatible = BinnedSpectrum(counts=np.ones(len(ebounds)),count_errors=np.ones(len(ebounds)),exposure=2,ebounds=ebounds_different, is_poisson=False)
+
+    spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x+y,addition_proof_simple)
+    spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x.add_inverse_variance_weighted(y),addition_proof_weighted)
+
+def test_spectrum_addition_poisson():
+    ebounds = ChannelSet.from_list_of_edges(np.array([0,1,2,3,4,5]))
+    ebounds_different = ChannelSet.from_list_of_edges(np.array([0,1,2,3,4,5]))
+
+    obs_spectrum_1 = BinnedSpectrum(counts=np.ones(len(ebounds)),exposure=1,ebounds=ebounds, is_poisson=True)
+    obs_spectrum_2 = BinnedSpectrum(counts=np.ones(len(ebounds)),exposure=2,ebounds=ebounds, is_poisson=True)
+    obs_spectrum_incompatible = BinnedSpectrum(counts=np.ones(len(ebounds_different)),exposure=2,ebounds=ebounds, is_poisson=True)
+    
+    spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x+y,addition_proof_simple)
+    #spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x.add_inverse_variance_weighted(y))
+
+
+def test_spectrum_clone():
+    ebounds = ChannelSet.from_list_of_edges(np.array([0,1,2,3,4,5]))
+
+    obs_spectrum = BinnedSpectrum(counts=np.ones(len(ebounds)),count_errors=np.ones(len(ebounds)),exposure=1,ebounds=ebounds, is_poisson=False)
+    obs_spectrum.clone(new_counts=np.zeros_like(obs_spectrum.counts), new_count_errors=np.zeros_like(obs_spectrum.counts))
+    obs_spectrum.clone()
+
 
 def test_dispersion_spectrum_constructor():
     rsp = OGIPResponse(os.path.join(__example_dir, 'bn090217206_n6_weightedrsp.rsp'))
@@ -97,3 +149,35 @@ def test_dispersion_spectrum_constructor():
     specLike.get_model()
 
     specLike.write_pha('test_from_dispersion', overwrite=True)
+
+def test_dispersion_spectrum_addition_poisson():
+    rsp = OGIPResponse(os.path.join(__example_dir, 'bn090217206_n6_weightedrsp.rsp'))
+    ebounds = ChannelSet.from_instrument_response(rsp)
+
+    obs_spectrum_1 = BinnedSpectrumWithDispersion(counts=np.ones(len(ebounds)),exposure=1, response=rsp, is_poisson=True)
+    obs_spectrum_2 = BinnedSpectrumWithDispersion(counts=np.ones(len(ebounds)),exposure=2, response=rsp, is_poisson=True)
+    obs_spectrum_incompatible = None
+    
+    spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x+y,addition_proof_simple)
+    #spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x.add_inverse_variance_weighted(y),addition_proof_weighted)
+
+def test_dispersion_spectrum_addition():
+    rsp = OGIPResponse(os.path.join(__example_dir, 'bn090217206_n6_weightedrsp.rsp'))
+    ebounds = ChannelSet.from_instrument_response(rsp)
+
+    obs_spectrum_1 = BinnedSpectrumWithDispersion(counts=np.ones(len(ebounds)),count_errors=np.ones(len(ebounds)),exposure=1, response=rsp, is_poisson=False)
+    obs_spectrum_2 = BinnedSpectrumWithDispersion(counts=np.ones(len(ebounds)),count_errors=np.ones(len(ebounds)),exposure=2, response=rsp, is_poisson=False)
+    obs_spectrum_incompatible = None
+
+    spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x+y,addition_proof_simple)
+    spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x.add_inverse_variance_weighted(y),addition_proof_weighted)
+
+
+def test_dispersion_spectrum_clone():
+    rsp = OGIPResponse(os.path.join(__example_dir, 'bn090217206_n6_weightedrsp.rsp'))
+
+    obs_spectrum = BinnedSpectrumWithDispersion(counts=np.ones(128), exposure=1, response=rsp, is_poisson=True)
+
+    obs_spectrum.clone(new_counts=np.zeros_like(obs_spectrum.counts), new_count_errors=None)
+
+    obs_spectrum.clone()
