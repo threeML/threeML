@@ -15,15 +15,17 @@ class ResidualPlot(object):
         :param kwargs:
         """
 
-        self.ratio_residuals = False
+        self._ratio_residuals = False
         if 'ratio_residuals' in kwargs:
-            self.ratio_residuals = bool(kwargs.pop('ratio_residuals'))
+            self._ratio_residuals = bool(kwargs.pop('ratio_residuals'))
 
         self._fig, (self._ax, self._ax1) = plt.subplots(2, 1, sharex=True,
                                                         gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
 
-
+    @property
+    def ratio_residuals(self):
+        return self._ratio_residuals
 
 
     def add_model_step(self, xmin, xmax, xwidth, y, label, color='r'):
