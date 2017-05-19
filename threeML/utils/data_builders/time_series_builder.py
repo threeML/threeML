@@ -303,17 +303,17 @@ class TimeSeriesBuilder(object):
 
         return self._time_series.bins
 
-    def read_bins(self, ttelike):
+    def read_bins(self, time_series_builder):
         """
 
-        Read the temporal bins from another *binned* FermiGBMTTELike instance
+        Read the temporal bins from another *binned* TimeSeriesBuilder instance
         and apply those bins to this instance
 
-        :param ttelike: *binned* FermiGBMTTELike instance
+        :param time_series_builder: *binned* time series builder to copy
         :return:
         """
 
-        start, stop = ttelike.bins
+        start, stop = time_series_builder.bins.bin_stack
         self.create_time_bins(start, stop, method='custom')
 
     def create_time_bins(self, start, stop, method='constant', **options):
