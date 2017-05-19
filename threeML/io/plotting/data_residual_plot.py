@@ -5,6 +5,8 @@ import numpy as np
 from threeML.io.plotting.step_plot import step_plot
 from threeML.config.config import threeML_config
 
+from threeML.exceptions.custom_exceptions import custom_warnings
+
 class ResidualPlot(object):
 
     def __init__(self,**kwargs):
@@ -140,6 +142,7 @@ class ResidualPlot(object):
         self._ax1.set_xlabel(xlabel)
 
         if self.ratio_residuals:
+            custom_warnings.warn("Residuals plotted as ratios: beware that they are not statistical quantites, and can not be used to asses fit quality")
             self._ax1.set_ylabel("Residuals\n(fraction of model)")
         else:
             self._ax1.set_ylabel("Residuals\n($\sigma$)")
