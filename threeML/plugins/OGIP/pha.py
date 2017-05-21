@@ -82,6 +82,8 @@ class PHAWrite(object):
 
         self._outfile_name = {'pha': '%s.pha' % outfile_name, 'bak': '%s_bak.pha' % outfile_name}
 
+        self._out_rsp = []
+
         for ogip in self._ogiplike:
 
             self._append_ogip(ogip, force_rsp_write)
@@ -103,7 +105,7 @@ class PHAWrite(object):
         # grab the ogip pha info
         pha_info = ogip.get_pha_files()
 
-        self._out_rsp = []
+
 
         first_channel = pha_info['rsp'].first_channel
 
@@ -146,6 +148,8 @@ class PHAWrite(object):
 
                 # This will be reached in the case that a response was generated from a plugin
                 # e.g. if we want to use weighted DRMs from GBM.
+
+
 
                 rsp_file_name = "%s.rsp{%d}"%(self._outfile_basename,self._spec_iterator)
 
@@ -289,12 +293,14 @@ class PHAWrite(object):
 
             extensions.extend([SPECRESP_MATRIX(this_rsp.monte_carlo_energies, this_rsp.ebounds, this_rsp.matrix) for this_rsp in self._out_rsp])
 
-            for ext in extensions[1:]:
+            for i, ext in enumerate(extensions[1:]):
 
 
                 # Set telescope and instrument name
                 ext.hdu.header.set("TELESCOP", self._mission['pha'])
                 ext.hdu.header.set("INSTRUME", self._instrument['pha'])
+                ext.hdu.header.set("EXTVER", i+1)
+
 
 
             rsp2 = FITSFile(fits_extensions=extensions)
