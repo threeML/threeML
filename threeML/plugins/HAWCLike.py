@@ -29,7 +29,7 @@ class HAWCLike(PluginPrototype):
 
         self._fullsky = False
 
-        if 'fullsky' in kwargs.keys():
+        if 'fullsky' in list(kwargs.keys()):
             self._fullsky = bool(kwargs['fullsky'])
 
         # Sanitize files in input (expand variables and so on)
@@ -89,7 +89,7 @@ class HAWCLike(PluginPrototype):
     @staticmethod
     def _min_and_max_to_list(min_channel, max_channel):
         
-        return [str(n) for n in xrange(min_channel, max_channel + 1)]
+        return [str(n) for n in range(min_channel, max_channel + 1)]
 
     def set_ROI(self, ra, dec, radius, fixed_ROI=False, galactic=False):
 
@@ -287,7 +287,7 @@ class HAWCLike(PluginPrototype):
         # engine or the Bayesian sampler change the CommonNorm value, the change will be
         # propagated to the LikeHAWC instance
 
-        self._nuisance_parameters.values()[0].add_callback(self._CommonNormCallback)
+        list(self._nuisance_parameters.values())[0].add_callback(self._CommonNormCallback)
 
         # Update to start the computation of positions and energies inside LiFF
 
@@ -404,7 +404,7 @@ class HAWCLike(PluginPrototype):
         are no nuisance parameters
         '''
 
-        return self._nuisance_parameters.keys()
+        return list(self._nuisance_parameters.keys())
 
     def inner_fit(self):
 
@@ -412,7 +412,7 @@ class HAWCLike(PluginPrototype):
 
         logL = self.get_log_like()
 
-        self._nuisance_parameters.values()[0].value = self._theLikeHAWC.CommonNorm()
+        list(self._nuisance_parameters.values())[0].value = self._theLikeHAWC.CommonNorm()
 
         return logL
 

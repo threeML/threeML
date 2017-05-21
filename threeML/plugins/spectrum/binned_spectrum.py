@@ -133,7 +133,7 @@ class Quality(object):
         :return:
         """
 
-        quality = np.array(['good' for i in xrange(int(n_channels))])
+        quality = np.array(['good' for i in range(int(n_channels))])
 
         return cls(quality)
 
@@ -449,14 +449,14 @@ class BinnedSpectrum(Histogram):
         sys_errors = None
         quality = None
 
-        if 'count_errors' in pandas_dataframe.keys():
+        if 'count_errors' in list(pandas_dataframe.keys()):
 
             count_errors = np.array(pandas_dataframe['count_errors'])
 
-        if 'sys_errors' in pandas_dataframe.keys():
+        if 'sys_errors' in list(pandas_dataframe.keys()):
             sys_errors = np.array(pandas_dataframe['sys_errors'])
 
-        if 'quality' in pandas_dataframe.keys():
+        if 'quality' in list(pandas_dataframe.keys()):
             quality = Quality(np.array(pandas_dataframe['quality']))
 
         return cls(counts=counts,

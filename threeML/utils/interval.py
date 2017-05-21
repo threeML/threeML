@@ -210,7 +210,7 @@ class IntervalSet(object):
 
         tokens = re.match('(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)', time_interval).groups()
 
-        return map(float, tokens)
+        return list(map(float, tokens))
 
     @classmethod
     def from_starts_and_stops(cls, starts, stops):
@@ -387,9 +387,9 @@ class IntervalSet(object):
         """
 
         # Gather all tstarts
-        tstarts = map(lambda x: x.start, self._intervals)
+        tstarts = [x.start for x in self._intervals]
 
-        return map(lambda x: x[0], sorted(enumerate(tstarts), key=itemgetter(1)))
+        return [x[0] for x in sorted(enumerate(tstarts), key=itemgetter(1))]
 
     def is_contiguous(self, relative_tolerance=1e-5):
         """
@@ -399,8 +399,8 @@ class IntervalSet(object):
         :return: True or False
         """
 
-        starts = map(attrgetter("start"), self._intervals)
-        stops = map(attrgetter("stop"), self._intervals)
+        starts = list(map(attrgetter("start"), self._intervals))
+        stops = list(map(attrgetter("stop"), self._intervals))
 
         return np.allclose(starts[1:], stops[:-1], rtol=relative_tolerance)
 

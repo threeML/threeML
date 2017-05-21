@@ -53,7 +53,7 @@ def yes_or_no(prompt):
 
         # This is only python2 compatible. Will need to change to input() instead of raw_input() with python3.
 
-        answer = raw_input(prompt)
+        answer = eval(input(prompt))
 
         # strtobool returns True if answer is yes,y,t,1, no if
 
@@ -74,7 +74,7 @@ def prompt_string(message, default=None, path=False):
 
     while True:
 
-        answer = raw_input(message)
+        answer = eval(input(message))
 
         if answer == '':
 

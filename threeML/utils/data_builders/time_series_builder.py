@@ -99,7 +99,7 @@ class TimeSeriesBuilder(object):
                 self._time_series.restore_fit(restore_poly_fit)
 
                 if verbose:
-                    print('Successfully restored fit from %s'%restore_poly_fit)
+                    print(('Successfully restored fit from %s'%restore_poly_fit))
 
                 # In theory this will automatically get the poly counts if a
                 # time interval already exists

@@ -467,7 +467,7 @@ class SpectrumLike(PluginPrototype):
                 # so we need to figure out which channels these are where excluded
 
                 deselected_channels = []
-                for i in xrange(self._observed_spectrum.n_channels):
+                for i in range(self._observed_spectrum.n_channels):
 
                     if self._observed_spectrum.quality.bad[i] and self._mask[i]:
                         deselected_channels.append(i)
@@ -1657,7 +1657,7 @@ class SpectrumLike(PluginPrototype):
 
         # obs['response'] = self._observed_spectrum.response_file
 
-        return pd.Series(data=obs, index=obs.keys())
+        return pd.Series(data=obs, index=list(obs.keys()))
 
     def get_number_of_data_points(self):
         """

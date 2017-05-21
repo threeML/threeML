@@ -1,9 +1,9 @@
-import HTMLParser
+import html.parser
 import html2text
 import re
 import socket
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import os
 import glob
 
@@ -19,14 +19,14 @@ from threeML.io.download_from_http import ApacheDirectory
 socket.setdefaulttimeout(120)
 
 
-class DivParser(HTMLParser.HTMLParser):
+class DivParser(html.parser.HTMLParser):
     """
     Extract data from a <div></div> tag
     """
 
     def __init__(self, desiredDivName):
 
-        HTMLParser.HTMLParser.__init__(self)
+        html.parser.HTMLParser.__init__(self)
 
         self.recording = 0
         self.data = []
@@ -188,10 +188,10 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
     # If we have both FT1 and FT2 matching the ID, we do not need to download anymore
     if prev_downloaded_ft1 is not None and prev_downloaded_ft2 is not None:
 
-        print("Existing event file %s and Spacecraft file %s correspond to the same selection. "
+        print(("Existing event file %s and Spacecraft file %s correspond to the same selection. "
               "We assume you did not tamper with them, so we will return those instead of downloading them again. "
               "If you want to download them again, remove them from the outdir" % (prev_downloaded_ft1,
-                                                                                   prev_downloaded_ft2))
+                                                                                   prev_downloaded_ft2)))
 
         return [prev_downloaded_ft1, prev_downloaded_ft2]
 
@@ -199,13 +199,13 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     print("Query parameters:")
 
-    for k, v in query_parameters.items():
+    for k, v in list(query_parameters.items()):
 
-        print("%30s = %s" % (k, v))
+        print(("%30s = %s" % (k, v)))
 
     # POST encoding
 
-    postData = urllib.urlencode(query_parameters)
+    postData = urllib.parse.urlencode(query_parameters)
     temporaryFileName = "__temp_query_result.html"
 
     # Remove temp file if present
@@ -220,11 +220,11 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     # This is to avoid caching
 
-    urllib.urlcleanup()
+    urllib.request.urlcleanup()
 
     # Get the form compiled
     try:
-        urllib.urlretrieve(url,
+        urllib.request.urlretrieve(url,
                            temporaryFileName,
                            lambda x, y, z: 0, postData)
     except socket.timeout:
@@ -259,16 +259,16 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     # Remove useless lines from the text
 
-    text = filter(lambda x: x.find("[") < 0 and
+    text = [x for x in text if x.find("[") < 0 and
                             x.find("]") < 0 and
                             x.find("#") < 0 and
                             x.find("* ") < 0 and
                             x.find("+") < 0 and
-                            x.find("Skip navigation") < 0, text)
+                            x.find("Skip navigation") < 0]
 
     # Remove empty lines
 
-    text = filter(lambda x: len(x.replace(" ", "")) > 1, text)
+    text = [x for x in text if len(x.replace(" ", "")) > 1]
 
     if " ".join(text).find("down due to maintenance") >= 0:
 
@@ -303,11 +303,11 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     else:
 
-        print("\nEstimated complete time for your query: %s seconds" % estimatedTimeForTheQuery)
+        print(("\nEstimated complete time for your query: %s seconds" % estimatedTimeForTheQuery))
 
     http_address = filter(lambda x: x.find("http://fermi.gsfc.nasa.gov") >= 0, parser.data)[0]
 
-    print("\nIf this download fails, you can find your data at %s (when ready)\n" % http_address)
+    print(("\nIf this download fails, you can find your data at %s (when ready)\n" % http_address))
 
     # Now periodically check if the query is complete
 
@@ -329,18 +329,18 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         try:
 
-            _ = urllib.urlretrieve(http_address.replace("http","https"), fakeName, )
+            _ = urllib.request.urlretrieve(http_address.replace("http","https"), fakeName, )
 
         except socket.timeout:
 
-            urllib.urlcleanup()
+            urllib.request.urlcleanup()
 
             raise RuntimeError("Time out when connecting to the server. Check your internet connection, or that "
                                "you can access %s, then retry" % threeML_config['LAT']['query form'])
 
         except:
 
-            urllib.urlcleanup()
+            urllib.request.urlcleanup()
 
             raise RuntimeError("Problems with the download. Check your connection or that you can access "
                                "%s, then retry." % threeML_config['LAT']['query form'])
@@ -368,7 +368,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
             os.remove(fakeName)
 
-            urllib.urlcleanup()
+            urllib.request.urlcleanup()
             time.sleep(refreshTime)
 
             # Continue to next iteration
@@ -377,7 +377,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     if links != None:
 
-        filenames = map(lambda x: x.split('/')[-1], links)
+        filenames = [x.split('/')[-1] for x in links]
 
         print("\nDownloading FT1 and FT2 files...")
 

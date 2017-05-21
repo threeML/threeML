@@ -1,6 +1,6 @@
-import urlparse
+import urllib.parse
 import ftplib
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import os
 
 from threeML.io.progress_bar import progress_bar
@@ -18,7 +18,7 @@ def download_file_from_ftp(ftp_url, destination_directory):
 
 def download_files_from_directory_ftp(ftp_url, destination_directory, filenames=None, namefilter=None):
     # Parse url
-    tokens = urlparse.urlparse(ftp_url)
+    tokens = urllib.parse.urlparse(ftp_url)
     serverAddress = tokens.netloc
     directory = tokens.path
 
@@ -78,9 +78,9 @@ def download_files_from_directory_ftp(ftp_url, destination_directory, filenames=
 
                 local_filename = os.path.join(destination_directory, filename)
 
-                urllib.urlretrieve("ftp://%s/%s/%s" % (serverAddress, directory, filename), local_filename)
+                urllib.request.urlretrieve("ftp://%s/%s/%s" % (serverAddress, directory, filename), local_filename)
 
-                urllib.urlcleanup()
+                urllib.request.urlcleanup()
 
                 downloaded_files.append(local_filename)
 

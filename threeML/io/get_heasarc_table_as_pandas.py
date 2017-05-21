@@ -1,4 +1,4 @@
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import os
 import astropy.time as astro_time
 import datetime
@@ -63,7 +63,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
             yaml_cache = yaml.safe_load(cache)
 
-            cached_time = astro_time.Time(datetime.datetime(*map(int, yaml_cache['last save'].split('-'))))
+            cached_time = astro_time.Time(datetime.datetime(*list(map(int, yaml_cache['last save'].split('-')))))
 
             # the second line how many seconds to keep the file around
 
@@ -97,7 +97,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
         try:
 
-            urllib.urlretrieve(heasarc_url, filename=file_name_sanatized)
+            urllib.request.urlretrieve(heasarc_url, filename=file_name_sanatized)
 
 
 

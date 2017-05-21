@@ -192,10 +192,10 @@ class GBMTTEFile(object):
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
         fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
-        fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
+        fermi_df = pd.Series(fermi_dict, index=list(fermi_dict.keys()))
 
         if mission_dict is not None:
-            mission_df = pd.Series(mission_dict, index=mission_dict.keys())
+            mission_df = pd.Series(mission_dict, index=list(mission_dict.keys()))
 
             fermi_df = fermi_df.append(mission_df)
 
@@ -358,10 +358,10 @@ class GBMCdata(object):
         fermi_dict['Fermi UTC OBS Start'] = self._utc_start
         fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
 
-        fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
+        fermi_df = pd.Series(fermi_dict, index=list(fermi_dict.keys()))
 
         if mission_dict is not None:
-            mission_df = pd.Series(mission_dict, index=mission_dict.keys())
+            mission_df = pd.Series(mission_dict, index=list(mission_dict.keys()))
 
             fermi_df = fermi_df.append(mission_df)
 

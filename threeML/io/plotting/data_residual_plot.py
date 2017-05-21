@@ -36,7 +36,7 @@ class ResidualPlot(object):
 
 
 
-        step_plot(np.asarray(zip(xmin, xmax)),
+        step_plot(np.asarray(list(zip(xmin, xmax))),
                   y / xwidth,
                   self._ax, alpha=.8,
                   label=label, color=color)

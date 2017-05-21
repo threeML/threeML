@@ -138,7 +138,7 @@ class SherpaLike(PluginPrototype):
         Not implemented yet.
         """
         # TODO implement nuisance parameters
-        return self.nuisanceParameters.keys()
+        return list(self.nuisanceParameters.keys())
 
     def inner_fit(self):
         """Inner fit. Just a hack to get it to work now.

@@ -31,7 +31,7 @@ class PAGMOWrapper(base):
             minima = []
             maxima = []
 
-            for param in parameters.values():
+            for param in list(parameters.values()):
 
                 min_val, max_val = param.bounds
 
@@ -155,7 +155,7 @@ def evolve(function, parameters, algorithm, evolution_step=20, max_evolutions=10
 
     final_value = 0
 
-    for i in xrange(max_evolutions):
+    for i in range(max_evolutions):
 
         # Evolve the population a certain number of times
 

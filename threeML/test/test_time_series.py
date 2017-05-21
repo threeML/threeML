@@ -215,17 +215,17 @@ def test_read_gbm_tte():
 
         assert len(nai3.bins) == 10
 
-        assert nai3.bins.argsort() == range(len(nai3.bins))
+        assert nai3.bins.argsort() == list(range(len(nai3.bins)))
 
         nai3.create_time_bins(start=0, stop=10, method='bayesblocks', p0=.1)
 
-        assert nai3.bins.argsort() == range(len(nai3.bins))
+        assert nai3.bins.argsort() == list(range(len(nai3.bins)))
 
         assert len(nai3.bins) == 9
 
         nai3.create_time_bins(start=0, stop=10, method='significance', sigma=40)
 
-        assert nai3.bins.argsort() == range(len(nai3.bins))
+        assert nai3.bins.argsort() == list(range(len(nai3.bins)))
 
         assert len(nai3.bins) == 5
 

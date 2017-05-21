@@ -72,7 +72,7 @@ class MultinestMinimizer(Minimizer):
 
         def prior(params, ndim, nparams):
 
-            for i, (parameter_name, parameter) in enumerate(self.parameters.iteritems()):
+            for i, (parameter_name, parameter) in enumerate(iter(list(self.parameters.items()))):
 
                 try:
 

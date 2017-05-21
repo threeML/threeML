@@ -360,7 +360,7 @@ class EventList(TimeSeries):
         # Find the mean time of the bins and calculate the exposure in each bin
         mean_time = []
         exposure_per_bin = []
-        for i in xrange(len(bins) - 1):
+        for i in range(len(bins) - 1):
             m = np.mean((bins[i], bins[i + 1]))
             mean_time.append(m)
 
@@ -392,7 +392,7 @@ class EventList(TimeSeries):
                                                                                           exposure_per_bin[
                                                                                               non_zero_mask])
             if self._verbose:
-                print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
+                print(("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade))
                 print('\n')
 
 
@@ -400,7 +400,7 @@ class EventList(TimeSeries):
 
             self._optimal_polynomial_grade = self._user_poly_order
 
-        channels = range(self._first_channel, self._n_channels + self._first_channel)
+        channels = list(range(self._first_channel, self._n_channels + self._first_channel))
 
         polynomials = []
 
@@ -483,7 +483,7 @@ class EventList(TimeSeries):
             self._optimal_polynomial_grade = self._unbinned_fit_global_and_determine_optimum_grade(total_poly_events,
                                                                                                    poly_exposure)
             if self._verbose:
-                print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
+                print(("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade))
                 print('\n')
 
 
@@ -491,7 +491,7 @@ class EventList(TimeSeries):
 
             self._optimal_polynomial_grade = self._user_poly_order
 
-        channels = range(self._first_channel, self._n_channels + self._first_channel)
+        channels = list(range(self._first_channel, self._n_channels + self._first_channel))
 
         # Check whether we are parallelizing or not
 

@@ -122,7 +122,7 @@ def download_GBM_trigger_data(trigger_name, detectors=None, destination_director
             # The "map" is necessary to transform the tokens to normal string (instead of unicode),
             # because u"b0" != "b0" as a key for a dictionary
 
-            _, file_type, detname, _, version_ext = map(str, tokens)
+            _, file_type, detname, _, version_ext = list(map(str, tokens))
 
         version, ext = version_ext.split(".")
 
@@ -161,7 +161,7 @@ def download_GBM_trigger_data(trigger_name, detectors=None, destination_director
 
     download_info = DictWithPrettyPrint([(det, DictWithPrettyPrint()) for det in detectors])
 
-    for detector in remote_files_info.keys():
+    for detector in list(remote_files_info.keys()):
 
         remote_detector_info = remote_files_info[detector]
         local_detector_info = download_info[detector]
@@ -230,7 +230,7 @@ def _get_latest_version(filenames):
 
     # Now we we go through and make selections
 
-    for key in vn_as_num.keys():
+    for key in list(vn_as_num.keys()):
 
         # first we favor RSP2
 
@@ -264,11 +264,11 @@ def cleanup_downloaded_GBM_data(detector_information_dict):
     :param detector_information_dict: the return dictionary from download_GBM_trigger_data
     """
     # go through each detector
-    for detector in detector_information_dict.keys():
+    for detector in list(detector_information_dict.keys()):
 
         # for each detector, remove the data file
-        for data_file in detector_information_dict[detector].values():
-            print("Removing: %s" % data_file)
+        for data_file in list(detector_information_dict[detector].values()):
+            print(("Removing: %s" % data_file))
 
             os.remove(data_file)
 

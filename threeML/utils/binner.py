@@ -209,7 +209,7 @@ class Rebinner(object):
         new_start = np.zeros(len(self._starts))
         new_stop = np.zeros(len(self._starts))
 
-        for i, (low_bound, hi_bound) in enumerate(zip(self._starts, self._stops)):
+        for i, (low_bound, hi_bound) in enumerate(list(zip(self._starts, self._stops))):
             new_start[i] = old_start[low_bound]
             new_stop[i] = old_stop[hi_bound - 1]
 

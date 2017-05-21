@@ -28,7 +28,7 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
     top = max(cnts / width) * 1.2
     min_cnts = min(cnts[cnts > 0] / width[cnts > 0]) * 0.95
     bottom = min_cnts
-    mean_time = map(np.mean, time_bins)
+    mean_time = list(map(np.mean, time_bins))
 
     all_masks = []
 
@@ -115,7 +115,7 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
 
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
-    chans = np.array(zip(chan_min, chan_max))
+    chans = np.array(list(zip(chan_min, chan_max)))
     width = chan_max - chan_min
 
     step_plot(chans, counts / width, ax, **kwargs)
@@ -213,7 +213,7 @@ def plot_tte_lightcurve(tte_file, start=-10, stop=50, dt=1):
 
     width = np.diff(bins)
 
-    time_bins = np.array(zip(bins[:-1], bins[1:]))
+    time_bins = np.array(list(zip(bins[:-1], bins[1:])))
 
     # plot the light curve
 

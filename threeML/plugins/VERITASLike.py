@@ -115,8 +115,8 @@ class VERITASRun(object):
 
         self._bkg_counts, _ = self._bin_counts_log(self._data_off['Erec'] * 1e9, self._log_recon_energies)
 
-        print("Read a %s x %s matrix, spectrum has %s bins, eff. area has %s elements" %
-              (self._hMigration.shape[0], self._hMigration.shape[1], self._counts.shape[0], self._eff_area.shape[0]))
+        print(("Read a %s x %s matrix, spectrum has %s bins, eff. area has %s elements" %
+              (self._hMigration.shape[0], self._hMigration.shape[1], self._counts.shape[0], self._eff_area.shape[0])))
 
         # Read in the background renormalization (ratio between source and background region)
 
@@ -392,7 +392,7 @@ class VERITASLike(PluginPrototype):
 
         # Get the names of all runs included
 
-        run_names = filter(lambda x: x.find("run") == 0, keys)
+        run_names = [x for x in keys if x.find("run") == 0]
 
         self._runs_like = collections.OrderedDict()
 
@@ -425,13 +425,13 @@ class VERITASLike(PluginPrototype):
 
     def rebin_on_background(self, *args, **kwargs):
 
-        for run in self._runs_like.values():
+        for run in list(self._runs_like.values()):
 
             run.rebin_on_background(*args, **kwargs)
 
     def rebin_on_source(self, *args, **kwargs):
 
-        for run in self._runs_like.values():
+        for run in list(self._runs_like.values()):
 
             run.rebin_on_source(*args, **kwargs)
 
@@ -456,7 +456,7 @@ class VERITASLike(PluginPrototype):
         # Collect the likelihood from each run
         total = 0
 
-        for run in self._runs_like.values():
+        for run in list(self._runs_like.values()):
 
             total += run.get_log_like(self._likelihood_model)[0]
 

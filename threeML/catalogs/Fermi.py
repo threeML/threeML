@@ -1,6 +1,6 @@
 import numpy
 import re
-from VirtualObservatoryCatalog import VirtualObservatoryCatalog
+from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
@@ -99,10 +99,10 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # Loop over the table and build a source for each entry
         sources = {}
 
-        for name, row in self._last_query_results.T.iteritems():
+        for name, row in list(self._last_query_results.T.items()):
             # First we want to get the the detectors used in the SCAT file
 
-            idx = np.array(map(int, row['scat_detector_mask']), dtype=bool)
+            idx = np.array(list(map(int, row['scat_detector_mask'])), dtype=bool)
             detector_selection = self._gbm_detector_lookup[idx]
 
 
@@ -181,13 +181,13 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         available_intervals = {'fluence': 'flnc', 'peak': 'pflx'}
 
-        assert interval in available_intervals.keys(), 'interval not recognized. choices are %s' % (
-            ' ,'.join(available_intervals.keys()))
+        assert interval in list(available_intervals.keys()), 'interval not recognized. choices are %s' % (
+            ' ,'.join(list(available_intervals.keys())))
 
         sources = {}
         lh_model = None
 
-        for name, row in self._last_query_results.T.iteritems():
+        for name, row in list(self._last_query_results.T.items()):
 
             ra = row['ra']
             dec = row['dec']
@@ -651,7 +651,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         # Translate the 3 letter code to a more informative category, according
         # to the dictionary above
 
-        table['source_type'] = numpy.array(map(translate, table['source_type']))
+        table['source_type'] = numpy.array(list(map(translate, table['source_type'])))
 
         try:
 
@@ -685,7 +685,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         # Loop over the table and build a source for each entry
         sources = []
 
-        for name, row in self._last_query_results.T.iteritems():
+        for name, row in list(self._last_query_results.T.items()):
 
             if name[-1] == 'e':
                 # Extended source

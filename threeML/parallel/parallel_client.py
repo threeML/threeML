@@ -116,7 +116,7 @@ if has_parallel:
             # (more robust, and allows for serialization of class
             # methods)
 
-            if 'profile' not in kwargs.keys():
+            if 'profile' not in list(kwargs.keys()):
 
                 kwargs['profile'] = threeML_config['parallel']['IPython profile name']
 
@@ -154,7 +154,7 @@ if has_parallel:
 
                 # Limit the view to the needed engines
 
-                lview = self.load_balanced_view(range(n_items))
+                lview = self.load_balanced_view(list(range(n_items)))
 
                 n_active_engines = n_items
 
@@ -197,7 +197,7 @@ if has_parallel:
                     p.increase()
 
             # Reorder the list according to the id
-            return map(lambda x:x[1], sorted(results, key=lambda x:x[0]))
+            return [x[1] for x in sorted(results, key=lambda x:x[0])]
 
         @staticmethod
         def fetch_progress_from_progress_bars(ar):
@@ -259,7 +259,7 @@ if has_parallel:
 
             n_engines = self.get_number_of_engines()
 
-            print("Found %s engines" % n_engines)
+            print(("Found %s engines" % n_engines))
 
             try:
 
