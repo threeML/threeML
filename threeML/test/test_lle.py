@@ -174,7 +174,7 @@ def test_lle_binning():
                               poly_order=-1)
         # should not have bins yet
 
-        with pytest.raises(AttributeError):
+        with pytest.raises(RuntimeError):
             lle.bins
 
 

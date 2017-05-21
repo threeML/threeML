@@ -9,6 +9,9 @@ from threeML.utils.time_series.event_list import EventListWithDeadTime, EventLis
 from threeML.utils.data_builders.time_series_builder import TimeSeriesBuilder
 from threeML.io.file_utils import within_directory
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
+from threeML.plugins.OGIPLike import OGIPLike
+
+import astropy.io.fits as fits
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 __example_dir = os.path.join(__this_dir__, '../../examples')
@@ -43,7 +46,7 @@ def test_event_list_constructor():
 
     assert evt_list.n_events == 10
 
-    with pytest.raises(AttributeError):
+    with pytest.raises(RuntimeError):
         evt_list.bins
 
     with pytest.raises(AttributeError):
@@ -175,7 +178,7 @@ def test_read_gbm_tte():
 
 
 
-        with pytest.raises(AttributeError):
+        with pytest.raises(RuntimeError):
             nai3.bins
 
         # First catch the errors
@@ -231,6 +234,24 @@ def test_read_gbm_tte():
         nai3.write_pha_from_binner('test_from_nai3', overwrite=True)
 
 
+
+def test_reading_of_written_pha():
+    with within_directory(__example_dir):
+
+
+
+        # check the number of items written
+
+        with fits.open('test_from_nai3.rsp') as f:
+
+            # 2 ext + 5 rsp ext
+            assert len(f) == 7
+
+
+        # make sure we can read spectrum number
+
+        ogip = OGIPLike('test',observation='test_from_nai3.pha',spectrum_number=1)
+        ogip = OGIPLike('test', observation='test_from_nai3.pha', spectrum_number=2)
 
 
 
