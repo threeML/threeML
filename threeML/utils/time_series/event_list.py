@@ -234,7 +234,8 @@ class EventList(TimeSeries):
         cnts, bins = np.histogram(self.arrival_times, bins=bins)
         time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
 
-        width = np.diff(bins)
+        #width = np.diff(bins)
+        width = []
 
         # now we want to get the estimated background from the polynomial fit
 
@@ -242,14 +243,28 @@ class EventList(TimeSeries):
             bkg = []
             for j, tb in enumerate(time_bins):
                 tmpbkg = 0.
+                this_width = self.exposure_over_interval(tb[0], tb[1])
+
                 for poly in self.polynomials:
                     tmpbkg += poly.integral(tb[0], tb[1])
 
-                bkg.append(tmpbkg / width[j])
+                width.append(this_width)
+
+                bkg.append(tmpbkg / this_width)
 
         else:
 
             bkg = None
+
+            for j, tb in enumerate(time_bins):
+
+                this_width = self.exposure_over_interval(tb[0], tb[1])
+
+
+                width.append(this_width)
+
+
+        width = np.array(width)
 
 
 
@@ -384,6 +399,7 @@ class EventList(TimeSeries):
 
         # Now we will find the the best poly order unless the use specified one
         # The total cnts (over channels) is binned to .1 sec intervals
+
 
         if self._user_poly_order == -1:
 
