@@ -71,6 +71,7 @@ class EventList(TimeSeries):
 
         self._arrival_times = np.asarray(arrival_times)
         self._energies = np.asarray(energies)
+        self._temporal_binner = None
 
         assert self._arrival_times.shape[0] == self._energies.shape[
             0], "Arrival time (%d) and energies (%d) have different shapes" % (

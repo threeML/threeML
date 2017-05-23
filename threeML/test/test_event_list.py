@@ -39,7 +39,7 @@ def test_event_list_constructor():
 
     assert evt_list.n_events == 10
 
-    with pytest.raises(AttributeError):
+    with pytest.raises(RuntimeError):
         evt_list.bins
 
     with pytest.raises(AttributeError):
