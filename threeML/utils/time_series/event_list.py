@@ -231,8 +231,11 @@ class EventList(TimeSeries):
 
             bins = np.arange(start, stop + dt, dt)
 
+
         cnts, bins = np.histogram(self.arrival_times, bins=bins)
         time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
+
+
 
         #width = np.diff(bins)
         width = []
@@ -240,15 +243,31 @@ class EventList(TimeSeries):
         # now we want to get the estimated background from the polynomial fit
 
         if self.poly_fit_exists:
+
+            # we will store the bkg rate for each time bin
+
             bkg = []
+
             for j, tb in enumerate(time_bins):
+
+                # zero out the bkg
                 tmpbkg = 0.
+
+                # we will use the exposure for the width
+
                 this_width = self.exposure_over_interval(tb[0], tb[1])
 
+                # sum up the counts over this interval
+
                 for poly in self.polynomials:
+
                     tmpbkg += poly.integral(tb[0], tb[1])
 
+                # capture the exposure
+
                 width.append(this_width)
+
+                # capture the bkg *rate*
 
                 bkg.append(tmpbkg / this_width)
 
@@ -265,7 +284,6 @@ class EventList(TimeSeries):
 
 
         width = np.array(width)
-
 
 
         # pass all this to the light curve plotter
@@ -286,6 +304,7 @@ class EventList(TimeSeries):
         else:
 
             bkg_selection = None
+
 
         binned_light_curve_plot(time_bins=time_bins,
                                 cnts=cnts,
@@ -434,6 +453,7 @@ class EventList(TimeSeries):
 
                 cnts, bins = np.histogram(current_events,
                                           bins=these_bins)
+
 
                 # Put data to fit in an x vector and y vector
 
@@ -640,6 +660,7 @@ class EventListWithDeadTime(EventList):
         tmp_counts = []  # Temporary list to hold the total counts per chan
 
         for chan in range(self._first_channel, self._n_channels + self._first_channel):
+            print chan
             channel_mask = self._energies == chan
             counts_mask = np.logical_and(channel_mask, time_mask)
             total_counts = len(self._arrival_times[counts_mask])
