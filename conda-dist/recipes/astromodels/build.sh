@@ -1,9 +1,13 @@
 #!/bin/bash
 
-pip install -v .
+if [ "$(uname)" == "Darwin" ]; then
+    
+    LDFLAGS="-lXS -lXSFunctions -lXSModel -lXSUtil" pip install -v .
+    
+fi
 
-# Add more build steps here, if they are necessary.
+if [ "$(uname)" == "Linux" ]; then
 
-# See
-# http://docs.continuum.io/conda/build.html
-# for a list of environment variables that are set during the build process.
+    pip install -v .
+
+fi
