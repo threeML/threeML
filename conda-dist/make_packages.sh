@@ -1,7 +1,10 @@
 #!/bin/bash
 
 if [ "$(uname)" == "Linux" ]; then
-
+    
+    unset HEADAS
+    unset LD_PRELOAD
+    
     CONDA_ENV='/home/giacomov/miniconda2'
     
     WHEEL2CONDA='/home/giacomov/.local/bin/wheel2conda'
