@@ -698,7 +698,7 @@ class TimeSeriesBuilder(object):
         # Create the the event list
 
         event_list = BinnedSpectrumSeries(cdata.spectrum_set,
-                                          first_channel=1,
+                                          first_channel=0,
                                           mission='Fermi',
                                           instrument=cdata.det_name,
                                           verbose=verbose)

@@ -660,7 +660,7 @@ class EventListWithDeadTime(EventList):
         tmp_counts = []  # Temporary list to hold the total counts per chan
 
         for chan in range(self._first_channel, self._n_channels + self._first_channel):
-            print chan
+
             channel_mask = self._energies == chan
             counts_mask = np.logical_and(channel_mask, time_mask)
             total_counts = len(self._arrival_times[counts_mask])
