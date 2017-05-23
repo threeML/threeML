@@ -31,6 +31,7 @@ class Polynomial(object):
         # we only need to set the coeff for the
         # integral polynomial
         if not is_integral:
+
             integral_coeff = [0]
 
             integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
