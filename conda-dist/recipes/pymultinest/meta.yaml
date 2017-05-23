@@ -1,0 +1,32 @@
+package:
+  name: pymultinest
+  version: "2.2"
+
+source:
+  fn: pymultinest-2.2.tar.gz
+  url: https://pypi.python.org/packages/c4/68/955d228d8d55c1df8badfe60c306a082640ce5ee051a57fe25893d86d7f4/pymultinest-2.2.tar.gz
+  md5: 05ee84ffd99a133f2eaf397989ff17db
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - multinest
+    - numpy
+
+  run:
+    - python
+    - multinest
+    - numpy
+    - scipy
+    - matplotlib
+
+test:
+  imports:
+    - pymultinest
+
+about:
+  home: http://johannesbuchner.github.com/PyMultiNest/
+  license: GPLv3
+  summary: 'Access modules for the MultiNest, APEMoST, Cuba and PolyChord integration libraries'
+  license_family: GPL3
