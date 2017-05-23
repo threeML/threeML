@@ -111,6 +111,17 @@ def test_loading_a_loose_ogip_pha_file():
 
         ogip.__repr__()
 
+def test_loading_bad_keywords_file():
+    with within_directory(__this_dir__):
+        pha_fn='example_integral_spi.pha'
+        rsp_fn='example_integral_spi.rsp'
+
+        pha_spectrum=PHASpectrum(pha_fn,rsp_file=rsp_fn)
+
+        assert type(pha_spectrum.is_poisson) == bool
+
+        ogip = OGIPLike('test_ogip', observation=pha_fn, response=rsp_fn)
+        ogip.__repr__()
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
     with within_directory(__this_dir__):
