@@ -1,10 +1,20 @@
 cd BUILD_DIR
 ./configure --prefix=${SRC_DIR}/xspec-modelsonly-build
 
-# We need a custom include and library path to use the packages installed
-# in the build environment
+if [ "$(uname)" == "Linux" ]; then
 
-./hmake 'XSLM_USER_FLAGS="-I${PREFIX}/include"' 'XSLM_USER_LIBS="-L${PREFIX}/lib -lCCfits -lcfitsio -lwcslib"'
+    # We need a custom include and library path to use the packages installed
+    # in the build environment
+
+    ./hmake 'XSLM_USER_FLAGS="-I${PREFIX}/include"' 'XSLM_USER_LIBS="-L${PREFIX}/lib -lCCfits -lcfitsio -lwcslib"'
+
+fi
+
+if [ "$(uname)" == "Darwin" ]; then
+
+    ./hmake 'LDFLAGS_CXX=-headerpad_max_install_names -lcfitsio -lCCfits -lccfits -lwcs'
+
+fi
 
 make install
 
