@@ -1,0 +1,64 @@
+package:
+  name: iminuit
+  version: "1.2"
+
+source:
+  fn: iminuit-1.2.tar.gz
+  url: https://pypi.python.org/packages/c9/fd/87931ec898e16557b8f6ae6e576743d00ca085c1cb4eb4673d8f4b02ac20/iminuit-1.2.tar.gz
+  md5: 4701ec472cae42015e26251703e6e984
+#  patches:
+   # List any patch files here
+   # - fix.patch
+
+# build:
+  # noarch_python: True
+  # preserve_egg_dir: True
+  # entry_points:
+    # Put any entry points (scripts to be generated automatically) here. The
+    # syntax is module:function.  For example
+    #
+    # - iminuit = iminuit:main
+    #
+    # Would create an entry point called iminuit that calls iminuit.main()
+
+
+  # If this is a new build for the same version, increment the build
+  # number. If you do not include this key, it defaults to 0.
+  # number: 1
+
+requirements:
+  build:
+    - python
+    - setuptools
+
+  run:
+    - python
+
+test:
+  # Python imports
+  imports:
+    - iminuit
+    - iminuit.frontends
+    - iminuit.tests
+
+  # commands:
+    # You can put test commands to be run here.  Use this to test that the
+    # entry points work.
+
+
+  # You can also put a file called run_test.py in the recipe that will be run
+  # at test time.
+
+  # requires:
+    # Put any additional test requirements here.  For example
+    # - nose
+
+about:
+  home: https://github.com/iminuit/iminuit
+  license: GNU General Public License (GPL) or MIT License
+  summary: 'Interactive Minimization Tools based on MINUIT'
+  license_family: LGPL
+
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml
