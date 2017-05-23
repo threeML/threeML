@@ -206,7 +206,7 @@ then:
 ```bash
 > pip install numpy scipy ipython
 > pip install git+https://github.com/giacomov/3ML.git 
-> pip install git+https://github.com/giacomov/astromodels.git
+> pip install git+https://github.com/giacomov/astromodels.git --upgrade
 ```
 
 In order to use the HAWC plugin, you will also need to install cthreeML (run this *after* setting up the HAWC environment):
