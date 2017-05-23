@@ -600,7 +600,7 @@ class TimeSeriesBuilder(object):
                                            start_time=gbm_tte_file.tstart - gbm_tte_file.trigger_time,
                                            stop_time=gbm_tte_file.tstop - gbm_tte_file.trigger_time,
                                            dead_time=gbm_tte_file.deadtime,
-                                           first_channel=1,
+                                           first_channel=0,
                                            instrument=gbm_tte_file.det_name,
                                            mission=gbm_tte_file.mission,
                                            verbose=verbose)
