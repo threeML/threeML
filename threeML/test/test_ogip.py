@@ -92,7 +92,7 @@ def test_loading_a_generic_pha_file():
 
 def test_loading_a_loose_ogip_pha_file():
     with within_directory(__this_dir__):
-        ogip = OGIPLike('test_ogip', observation='example_integral.pha')
+        ogip = OGIPLike('test_ogip', observation='example_integral.pha',response='example_integral.rsp')
 
         pha_info = ogip.get_pha_files()
 
