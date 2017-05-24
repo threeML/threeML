@@ -19,7 +19,7 @@ __instrument_name = "n.a."
 
 class XYLike(PluginPrototype):
 
-    def __init__(self, name, x, y, yerr=None, poisson_data=False, quiet=False):
+    def __init__(self, name, x, y, yerr=None, poisson_data=False, quiet=False, source_name=None):
 
         nuisance_parameters = {}
 
@@ -81,6 +81,9 @@ class XYLike(PluginPrototype):
         # currently not used by XYLike, but needed for subclasses
 
         self._mask = np.ones(self._x.shape, dtype=bool)
+
+        # This is the name of the source this SED refers to (if it is a SED)
+        self._source_name = source_name
 
     @classmethod
     def from_function(cls, name, function, x, yerr):
@@ -213,6 +216,21 @@ class XYLike(PluginPrototype):
 
         df.to_csv(**kwargs)
 
+    def assign_to_source(self, source_name):
+        """
+        Assign these data to the given source (instead of to the sum of all sources, which is the default)
+        
+        :param source_name: name of the source (must be contained in the likelihood model)
+        :return: none
+        """
+
+        if self._likelihood_model is not None:
+
+            assert self._source_name in self._likelihood_model.sources, "Source %s is not contained in " \
+                                                                        "the likelihood model" % source_name
+
+        self._source_name = source_name
+
     @property
     def x(self):
 
@@ -238,8 +256,6 @@ class XYLike(PluginPrototype):
 
         return self._has_errors
 
-
-
     def set_model(self, likelihood_model_instance):
         """
         Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
@@ -253,20 +269,44 @@ class XYLike(PluginPrototype):
 
         assert likelihood_model_instance.get_number_of_point_sources() > 0, "You have to have at least one point source"
 
+        if self._source_name is not None:
+
+            # Make sure that the source is in the model
+            assert self._source_name in likelihood_model_instance.sources, \
+                                                "This XYLike plugin refers to the source %s, " \
+                                                "but that source is not in the likelihood model" % (self._source_name)
+
         self._likelihood_model = likelihood_model_instance
 
     def _get_total_expectation(self):
 
-        n_point_sources = self._likelihood_model.get_number_of_point_sources()
+        if self._source_name is None:
 
-        assert n_point_sources > 0, "You need to have at least one point source defined"
-        assert self._likelihood_model.get_number_of_extended_sources() == 0, "XYLike does not support extended sources"
+            n_point_sources = self._likelihood_model.get_number_of_point_sources()
 
-        # Make a function which will stack all point sources (XYLike do not support spatial dimension)
+            assert n_point_sources > 0, "You need to have at least one point source defined"
+            assert self._likelihood_model.get_number_of_extended_sources() == 0, "XYLike does not support extended sources"
 
-        expectation = np.sum(map(lambda source: source(self._x),
-                             self._likelihood_model.point_sources.values()),
-                             axis=0)
+            # Make a function which will stack all point sources (XYLike do not support spatial dimension)
+
+            expectation = np.sum(map(lambda source: source(self._x),
+                                 self._likelihood_model.point_sources.values()),
+                                 axis=0)
+
+        else:
+
+            # This XYLike dataset refers to a specific source
+
+            # Note that we checked that self._source_name is in the model when the model was set
+
+            try:
+
+                expectation = self._likelihood_model.sources[self._source_name](self._x)
+
+            except KeyError:
+
+                raise KeyError("This XYLike plugin has been assigned to source %s, "
+                               "which does not exist in the current model" % self._source_name)
 
         return expectation
 
