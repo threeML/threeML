@@ -40,7 +40,11 @@ if [ "$(uname)" == "Linux" ]; then
     rm -rf win-64
     rm -rf linux-32
     rm -rf *.whl
-    
+
+    # Remove threeML (it will be uploaded later in noarh)
+    rm -rf linux-64/three*
+    rm -rf osx-64/three*
+
     echo "Add the wheels to the channel"
     anaconda upload linux-64/* --force
     anaconda upload osx-64/* --force
