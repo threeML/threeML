@@ -1,13 +1,13 @@
 #!/bin/bash
 
+# Remember to set these:
+# CONDA_ENV='/home/giacomov/miniconda2'
+# WHEEL2CONDA='/home/giacomov/.local/bin/wheel2conda'
+
 if [ "$(uname)" == "Linux" ]; then
     
     unset HEADAS
     unset LD_PRELOAD
-    
-    CONDA_ENV='/home/giacomov/miniconda2'
-    
-    WHEEL2CONDA='/home/giacomov/.local/bin/wheel2conda'
     
     # activate conda
     source ${CONDA_ENV}/bin/activate
@@ -53,6 +53,6 @@ fi
 
 echo "Make custom recipes"
 conda config --set anaconda_upload yes
-conda build recipes/* -c giacomov
+conda build recipes/* -c nlesc,giacomov
 
 
