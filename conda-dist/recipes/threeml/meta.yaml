@@ -1,0 +1,92 @@
+package:
+  name: threeml
+  version: "0.3.2"
+
+source:
+  git_url: https://github.com/giacomov/3ML.git
+
+build:
+  noarch_python: True
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - numpy >=1.6
+    - scipy
+    - emcee
+    - astropy >=1.0.3
+    - matplotlib
+    - uncertainties
+    - pyyaml
+    - dill
+    - iminuit >=1.2
+    - astromodels
+    - corner >=1.0.2
+    - pandas
+    - pymultinest
+    - cthreeml
+    - ipywidgets
+    - ipython
+    - jupyter
+    - speclite
+    - requests
+
+  run:
+    - python
+    - numpy >=1.6
+    - scipy
+    - emcee
+    - astropy >=1.0.3
+    - matplotlib
+    - uncertainties
+    - pyyaml
+    - dill
+    - iminuit >=1.2
+    - astromodels >=0.2.1
+    - corner >=1.0.2
+    - pandas
+    - pymultinest
+    - cthreeml
+    - ipywidgets
+    - ipython
+    - jupyter
+    - speclite
+    - requests
+
+test:
+  # Python imports
+  imports:
+    - threeML
+    - threeML.bayesian
+    - threeML.catalogs
+    - threeML.classicMLE
+    - threeML.config
+    - threeML.exceptions
+    - threeML.io
+    - threeML.minimizer
+    - threeML.parallel
+    - threeML.plugins
+    - threeML.utils
+
+  # commands:
+    # You can put test commands to be run here.  Use this to test that the
+    # entry points work.
+
+
+  # You can also put a file called run_test.py in the recipe that will be run
+  # at test time.
+
+  # requires:
+    # Put any additional test requirements here.  For example
+    # - nose
+
+about:
+  home: https://github.com/giacomov/3ML
+  license: BSD-3
+  summary: 'The Multi-Mission Maximum Likelihood framework'
+  license_family: BSD
+
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml
