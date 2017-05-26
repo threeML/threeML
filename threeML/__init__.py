@@ -1,3 +1,17 @@
+# We import matplotlib first, because we need control on the backend
+# Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
+import os
+
+from .exceptions.custom_exceptions import custom_warnings
+
+if os.environ.get('DISPLAY') is None:
+
+    custom_warnings.warn("No DISPLAY variable set. Using backend for graphics without display (Agg)")
+
+    import matplotlib as mpl
+    mpl.use('Agg')
+
+
 import glob
 import imp
 import traceback
@@ -15,7 +29,6 @@ from .minimizer.minimization import _minimizers
 # using similar names (for example, the io package)
 
 from .exceptions import custom_exceptions
-from .exceptions.custom_exceptions import custom_warnings
 from .plugin_prototype import PluginPrototype
 
 try:
