@@ -53,6 +53,6 @@ fi
 
 echo "Make custom recipes"
 conda config --set anaconda_upload yes
-conda build recipes/* -c nlesc,giacomov
+conda build recipes/* -c giacomov
 
 
