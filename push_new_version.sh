@@ -14,11 +14,18 @@ increment_version() {
 }
 
 commit_and_push() {
-  git commit -m 'Automatic patch number increase [ci skip]' 3ML/threeML/version.py
+  cd 3ML
+  git commit -m 'Automatic patch number increase [ci skip]' threeML/version.py
   git push
 }
 
-setup_git
-checkout_repo
-increment_version
-commit_and_push
+# Increment versions only for jobs which aren't pull requests
+
+if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
+
+    setup_git
+    checkout_repo
+    increment_version
+    commit_and_push
+
+fi
