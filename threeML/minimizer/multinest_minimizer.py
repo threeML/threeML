@@ -3,7 +3,7 @@ import math
 import os
 
 import pymultinest
-from astromodels.functions.functions import Uniform_prior, Log_uniform_prior
+from astromodels.functions.priors import Uniform_prior, Log_uniform_prior
 
 from threeML.minimizer.minimization import Minimizer
 from threeML.io.file_utils import temporary_directory
