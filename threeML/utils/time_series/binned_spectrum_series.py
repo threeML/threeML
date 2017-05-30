@@ -116,14 +116,16 @@ class BinnedSpectrumSeries(TimeSeries):
 
         # plot the light curve
 
-        binned_light_curve_plot(time_bins=bins.bin_stack,
+        fig = binned_light_curve_plot(time_bins=bins.bin_stack,
                                 cnts=np.array(cnts),
                                 width=np.array(width),
                                 bkg=bkg,
                                 selection=selection,
-                                bkg_selections=bkg_selection,
+                                bkg_selections=bkg_selection)
 
-                                )
+
+
+        return fig
 
 
     def counts_over_interval(self, start, stop):

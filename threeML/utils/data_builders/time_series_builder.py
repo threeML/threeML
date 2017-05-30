@@ -296,7 +296,23 @@ class TimeSeriesBuilder(object):
 
         """
 
-        self._time_series.view_lightcurve(start, stop, dt, use_binner)
+        return self._time_series.view_lightcurve(start, stop, dt, use_binner)
+
+    @property
+    def tstart(self):
+        """
+        :return: start time of the active interval
+        """
+
+        return self._tstart
+
+    @property
+    def tstop(self):
+        """
+        :return: stop time of the active interval
+        """
+
+        return self._tstop
 
     @property
     def bins(self):
