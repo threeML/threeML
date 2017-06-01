@@ -352,7 +352,9 @@ class OGIPResponse(InstrumentResponse):
                                   "need an ancillary file (ARF) which you didn't provide. You should refer to the "
                                   "documentation  of the instrument and make sure you don't need an ARF.")
 
-            except:
+            except Exception as e:
+                warnings.warn("The default choice for MATRIX extension failed:"+repr(e)+\
+                              "available: "+" ".join([repr(e.header.get('EXTNAME')) for e in f]))
 
                 # Other detectors might use the SPECRESP MATRIX name instead, usually when the response has been
                 # already convoluted with the effective area

@@ -22,6 +22,9 @@ _required_keywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:F
                                   "chantype:CHANTYPE,detchans:DETCHANS,"
                                   "backscal:BACKSCAL").split(",")
 
+# python types, not fits
+_required_keyword_types={'POISSERR':bool}
+
 # hduvers:HDUVERS
 
 _required_keywords['background'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
@@ -254,14 +257,23 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
         key_has_been_collected = False
 
         if keyname in header:
-            gathered_keywords[internal_name] = header.get(keyname)
+            if keyname in _required_keyword_types and type(header.get(keyname)) is not _required_keyword_types[keyname]:
+                warnings.warn("unexpected type of %(keyname)s, expected %(expected_type)s\n found %(found_type)s: %(found_value)s"%
+                        dict(
+                                keyname=keyname,
+                                expected_type=_required_keyword_types[keyname],
+                                found_type=type(header.get(keyname)),
+                                found_value=header.get(keyname),
+                            ))
+            else:
+                gathered_keywords[internal_name] = header.get(keyname)
 
-            # Fix "NONE" in None
-            if gathered_keywords[internal_name] == "NONE" or \
-                            gathered_keywords[internal_name] == 'none':
-                gathered_keywords[internal_name] = None
+                # Fix "NONE" in None
+                if gathered_keywords[internal_name] == "NONE" or \
+                                gathered_keywords[internal_name] == 'none':
+                    gathered_keywords[internal_name] = None
 
-            key_has_been_collected = True
+                key_has_been_collected = True
 
         # Note that we check again because the content of the column can override the content of the header
 
