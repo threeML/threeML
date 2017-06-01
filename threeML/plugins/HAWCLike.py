@@ -495,6 +495,9 @@ class HAWCLike(PluginPrototype):
 
     def write_model_map(self, fileName, poisson=False):
 
+        # This is to make sure we have computed the sources (otherwise the following method WriteModelMap will fail
+        self._fill_model_cache()
+
         self._theLikeHAWC.WriteModelMap(fileName, poisson)
 
     def write_residual_map(self, fileName):
