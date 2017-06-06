@@ -29,6 +29,9 @@ class IntervalOfInterestNotCovered(RuntimeError):
 class GapInCoverageIntervals(RuntimeError):
     pass
 
+class InvalidResponse(RuntimeError):
+    pass
+
 class InstrumentResponse(object):
 
     def __init__(self, matrix, ebounds, monte_carlo_energies, coverage_interval=None):
@@ -301,9 +304,27 @@ class InstrumentResponse(object):
         return cls(dummy_matrix,ebounds,monte_carlo_energies)
 
 
+def _find_hdu_by_keys(f,keys,exactly_one=True):
+    found=[]
+    for hdu in f:
+        match=True
+        for k,v in keys.items():
+            if hdu.header.get(k)!=v:
+                match=False
 
+        if match:
+            found.append(hdu)
 
+    if len(found)==0:
+        return None
+    else:
+        if exactly_one:
+            assert len(found)==1, "found too many:"+repr(found)
+            return found[0]
+        else:
+            return found
 
+    
 
 class OGIPResponse(InstrumentResponse):
 
@@ -340,36 +361,59 @@ class OGIPResponse(InstrumentResponse):
         # Read the response
         with pyfits.open(rsp_file) as f:
 
-            try:
+            # This is usually when the response file contains only the energy dispersion
+            hdu=_find_hdu_by_keys(f,dict(EXTNAME='MATRIX',EXTVER=rsp_number))
+            if hdu is None and rsp_number==1:
+                hdu=_find_hdu_by_keys(f,dict(EXTNAME='MATRIX'))
 
-                # This is usually when the response file contains only the energy dispersion
-
-                data = f['MATRIX', rsp_number].data
-                header = f['MATRIX', rsp_number].header
-
+            if hdu is not None:
                 if arf_file is None:
                     warnings.warn("The response is in an extension called MATRIX, which usually means you also "
                                   "need an ancillary file (ARF) which you didn't provide. You should refer to the "
                                   "documentation  of the instrument and make sure you don't need an ARF.")
-
-            except Exception as e:
-                warnings.warn("The default choice for MATRIX extension failed:"+repr(e)+\
-                              "available: "+" ".join([repr(e.header.get('EXTNAME')) for e in f]))
-
+            else:
                 # Other detectors might use the SPECRESP MATRIX name instead, usually when the response has been
                 # already convoluted with the effective area
+                hdu=_find_hdu_by_keys(f,dict(EXTNAME='SPECRESP MATRIX',EXTVER=rsp_number))
+                if hdu is None and rsp_number==1:
+                    hdu=_find_hdu_by_keys(f,dict(EXTNAME='SPECRESP MATRIX'))
 
-                # Note that here we are not catching any exception, because
-                # we have to fail if we cannot read the matrix
+                if hdu is not None:
+                    pass
+                else:
+                    generic_ogip_rsp=dict(
+                                HDUCLASS='OGIP',
+                                HDUCLAS1='RESPONSE',
+                                HDUCLAS2='RSP_MATRIX',
+                                EXTVER=rsp_number,
+                            )
 
-                data = f['SPECRESP MATRIX', rsp_number].data
-                header = f['SPECRESP MATRIX', rsp_number].header
+                    hdu=_find_hdu_by_keys(f,generic_ogip_rsp)
+                    if hdu is None and rsp_number==1:
+                        del generic_ogip_rsp['EXTVER']
+                        hdu=_find_hdu_by_keys(f,generic_ogip_rsp)
+
+                    if hdu is None:
+                        raise InvalidResponse("in file "+rsp_file+" found only: "+" ".join([repr(h.header.get('EXTNAME')) for h in f]))
+                
+
+
+            data = hdu.data
+            header = hdu.header 
 
             # These 3 operations must be executed when the file is still open
-
             matrix = self._read_matrix(data, header)
 
-            ebounds = self._read_ebounds(f['EBOUNDS'])
+            ebounds_hdu=_find_hdu_by_keys(f,dict(EXTNAME='EBOUNDS'))
+            if ebounds_hdu is None:
+                generic_ogip_ebounds=dict(
+                            HDUCLASS='OGIP',
+                            HDUCLAS1='RESPONSE',
+                            HDUCLAS2='EBOUNDS',
+                        )
+                ebounds_hdu=_find_hdu_by_keys(f,generic_ogip_ebounds)
+
+            ebounds = self._read_ebounds(ebounds_hdu)
 
             mc_channels = self._read_mc_channels(data)
 
