@@ -232,7 +232,7 @@ if __name__ == "__main__":
         f.write("pip install git+https://github.com/giacomov/3ML.git --upgrade\n")
         f.write("pip install git+https://github.com/giacomov/astromodels.git --upgrade\n")
         f.write("pip install git+https://github.com/giacomov/cthreeML.git || "
-                "echo '\n\nNOTE: could not install chtreeML. Probably boost python is not available' \n")
+                "echo '\n\nNOTE: could not install cthreeML. Probably boost python is not available' \n")
 
     # Execute script
     subprocess.check_call("/bin/bash __install_script.sh", shell=True)
