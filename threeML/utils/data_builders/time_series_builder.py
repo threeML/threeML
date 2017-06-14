@@ -10,8 +10,9 @@ from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpect
 
 from threeML.utils.data_builders.fermi.gbm_data import GBMTTEFile, GBMCdata
 from threeML.utils.data_builders.fermi.lat_data import LLEFile
+from threeML.utils.data_builders.polar_data import POLARData
 
-from threeML.utils.time_series.event_list import EventListWithDeadTime, EventListWithLiveTime, EventList
+from threeML.utils.time_series.event_list import EventListWithDeadTime, EventListWithLiveTime, EventListWithDeadTimeFraction, EventList
 from threeML.utils.time_series.binned_spectrum_series import BinnedSpectrumSeries
 from threeML.plugins.OGIP.response import InstrumentResponse, InstrumentResponseSet, OGIPResponse
 from threeML.plugins.SpectrumLike import SpectrumLike, NegativeBackground
@@ -826,6 +827,36 @@ class TimeSeriesBuilder(object):
         raise NotImplementedError('Reading from a generic PHAII file is not yet supportedgb')
 
     @classmethod
-    def from_polar(cls):
+    def from_polar(cls, name, polar_root_file, rsp_file,
+        restore_background = None,
+        trigger_time = 0.,
+        poly_order = -1, unbinned = True, verbose = True):
 
-        raise NotImplementedError('Reading of POLAR data is not yet supported')
+        #self._default_unbinned = unbinned
+
+        # extract the polar varaibles
+
+        polar_data = POLARData(polar_root_file, trigger_time, rsp_file)
+
+        # Create the the event list
+
+        event_list = EventListWithDeadTimeFraction(arrival_times=polar_data.time,
+                                                   energies = polar_data.pha,
+                                                   n_channels = polar_data.n_channels,
+                                                   start_time = polar_data.time.min(),
+                                                   stop_time = polar_data.time.max(),
+                                                   dead_time_fraction = polar_data.dead_time_fraction,
+                                                   verbose = verbose
+                                                   )
+
+        # pass to the super class
+
+
+
+        return cls(name,
+                   event_list,
+                   response=polar_data.rsp,
+                   poly_order=poly_order,
+                   unbinned=unbinned,
+                   verbose=verbose,
+                   restore_poly_fit=restore_background)

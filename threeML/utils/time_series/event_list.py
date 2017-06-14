@@ -717,7 +717,7 @@ class EventListWithDeadTime(EventList):
 
 class EventListWithDeadTimeFraction(EventList):
     def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time_fraction=None,
-                 first_channel=0, quality=None ,rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
+                 first_channel=0, quality=None , ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         An EventList where the exposure is calculated via and array dead time fractions per event .
         Summing these dead times over an
@@ -741,7 +741,7 @@ class EventListWithDeadTimeFraction(EventList):
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, quality,first_channel, rsp_file,
+        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, quality,first_channel,
                            ra, dec,
                            mission, instrument, verbose)
 
