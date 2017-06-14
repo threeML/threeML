@@ -426,6 +426,54 @@ class IntervalSet(object):
 
         return idx
 
+    def containing_interval(self, start, stop, inner=True, as_mask=False):
+        """
+
+        returns either a mask of the intervals contained in the selection
+        or a new set of intervals within the selection. NOTE: no sort is performed
+
+        :param start: start of interval
+        :param stop: stop of interval
+        :param inner: if True, returns only intervals strictly contained within bounds, if False, returns outer bounds as well
+        :param as_mask: if you want a mask or the intervals
+        :return:
+        """
+
+        # loop only once because every call unpacks the array
+        # we need to round for the comparison because we may have read from
+        # strings which are rounded to six decimals
+
+        starts = np.round(self.starts,decimals=6)
+        stops = np.round(self.stops,decimals=6)
+
+        start = np.round(start,decimals=6)
+        stop = np.round(stop, decimals=6)
+
+
+        condition = (starts >= start) & (stop >= stops)
+
+        if not inner:
+
+            # now we get the end caps
+            lower_condition = (starts <= start) & ( start <= stops)
+
+            upper_condition = (starts <= stop) & (stop <= stops)
+
+            condition = condition | lower_condition | upper_condition
+
+        # if we just want the mask
+
+        if as_mask:
+
+            return condition
+
+        else:
+
+            return self.new(np.asarray(self._intervals)[condition])
+
+
+
+
     @property
     def starts(self):
         """

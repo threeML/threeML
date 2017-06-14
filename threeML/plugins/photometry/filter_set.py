@@ -6,7 +6,6 @@ import astropy.constants as constants
 from threeML.utils.interval import IntervalSet
 
 
-conversion_factor=(constants.c**2 * constants.h**2).to('keV2 * cm2')
 
 
 class  NotASpeclikeFilter(RuntimeError):
@@ -125,6 +124,8 @@ class FilterSet(object):
 
         """
 
+        conversion_factor = (constants.c ** 2 * constants.h ** 2).to('keV2 * cm2')
+
         def wrapped_model(x):
             return differential_flux(x) * conversion_factor / x ** 3
 
@@ -143,8 +144,31 @@ class FilterSet(object):
 
         assert self._model_set, 'no likelihood model has been set'
 
+        # speclite has issues with unit conversion
+        # so we will do the calculation manually here
 
-        return self._filters.get_ab_magnitudes(self._wrapped_model).to_pandas().loc[0]
+        ratio = []
+
+        for filter in self._filters:
+
+            # first get the flux and convert it to base units
+            synthetic_flux = filter.convolve_with_function(self._wrapped_model).to('1/(cm2 s)')
+
+            # normalize it to the filter's AB magnitude
+
+
+
+            ratio.append((synthetic_flux/filter.ab_zeropoint.to('1/(cm2 s)')).value)
+
+
+
+        ratio = np.array(ratio)
+
+        return -2.5 * np.log10(ratio)
+
+
+
+        #return self._filters.get_ab_magnitudes(self._wrapped_model).to_pandas().loc[0]
 
 
     def plot_filters(self):

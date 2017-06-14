@@ -90,6 +90,38 @@ def test_loading_a_generic_pha_file():
 
         ogip.__repr__()
 
+def test_loading_a_loose_ogip_pha_file():
+    with within_directory(__this_dir__):
+        ogip = OGIPLike('test_ogip', observation='example_integral.pha')
+
+        pha_info = ogip.get_pha_files()
+
+        assert ogip.name == 'test_ogip'
+        assert ogip.n_data_points == sum(ogip._mask)
+        assert sum(ogip._mask) == ogip.n_data_points
+        #assert ogip.tstart is None
+        #assert ogip.tstop is None
+        assert 'cons_test_ogip' in ogip.nuisance_parameters
+        assert ogip.nuisance_parameters['cons_test_ogip'].fix == True
+        assert ogip.nuisance_parameters['cons_test_ogip'].free == False
+
+        assert 'pha' in pha_info
+        #assert 'bak' in pha_info
+        assert 'rsp' in pha_info
+
+        ogip.__repr__()
+
+def test_loading_bad_keywords_file():
+    with within_directory(__this_dir__):
+        pha_fn='example_integral_spi.pha'
+        rsp_fn='example_integral_spi.rsp'
+
+        pha_spectrum=PHASpectrum(pha_fn,rsp_file=rsp_fn)
+
+        assert type(pha_spectrum.is_poisson) == bool
+
+        ogip = OGIPLike('test_ogip', observation=pha_fn, response=rsp_fn)
+        ogip.__repr__()
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
     with within_directory(__this_dir__):
@@ -111,9 +143,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
         assert pha_info['pha'].n_channels == len(pha_info['pha'].rates)
 
         # Test that Poisson rates cannot call rate error
-        with pytest.raises(AssertionError):
-
-            _ = pha_info['pha'].rate_errors
+        assert pha_info['pha'].rate_errors is None
 
         assert sum(pha_info['pha'].sys_errors == np.zeros_like(pha_info['pha'].rates)) == pha_info['bak'].n_channels
 
@@ -180,9 +210,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
         assert pha_info['pha'].n_channels == len(pha_info['pha'].rates)
 
         # Test that Poisson rates cannot call rate error
-        with pytest.raises(AssertionError):
-
-            _ = pha_info['pha'].rate_errors
+        assert pha_info['pha'].rate_errors is None
 
         assert sum(pha_info['pha'].sys_errors == np.zeros_like(pha_info['pha'].rates)) == pha_info['bak'].n_channels
         assert pha_info['pha'].response_file.split('/')[-1] == 'glg_cspec_n3_bn080916009_v07.rsp'

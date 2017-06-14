@@ -1,3 +1,17 @@
+# We import matplotlib first, because we need control on the backend
+# Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
+import os
+
+from .exceptions.custom_exceptions import custom_warnings
+
+if os.environ.get('DISPLAY') is None:
+
+    custom_warnings.warn("No DISPLAY variable set. Using backend for graphics without display (Agg)")
+
+    import matplotlib as mpl
+    mpl.use('Agg')
+
+
 import glob
 import imp
 import traceback
@@ -15,7 +29,6 @@ from .minimizer.minimization import _minimizers
 # using similar names (for example, the io package)
 
 from .exceptions import custom_exceptions
-from .exceptions.custom_exceptions import custom_warnings
 from .plugin_prototype import PluginPrototype
 
 try:
@@ -190,8 +203,6 @@ from .io.plotting import *
 
 from .io.calculate_flux import calculate_point_source_flux
 
-from .utils.stats_tools import ModelComparison
-
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
 
@@ -200,6 +211,9 @@ from .parallel.parallel_client import parallel_computation
 
 # Import optical filters
 #from threeML.plugins.photometry.filter_factory import threeML_filter_library
+
+# import time series builder, soon to replace the Fermi plugins
+from threeML.utils.data_builders import *
 
 # Import catalogs
 from threeML.catalogs import *

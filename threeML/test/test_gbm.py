@@ -202,7 +202,7 @@ def test_gbm_binning():
 
 
 
-        with pytest.raises(AttributeError):
+        with pytest.raises(RuntimeError):
             nai3.bins
 
 

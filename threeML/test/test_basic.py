@@ -50,11 +50,6 @@ def test_a_basic_analysis_from_start_to_finish():
 
     res = jl.get_contours(powerlaw.index, -1.25, -1.1, 60, powerlaw.K, 1.8, 3.4, 60)
 
-    mc = ModelComparison(jl)
-
-    mc.report()
-
-    mc.report(sort='AIC')
 
     powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
     powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
@@ -65,11 +60,7 @@ def test_a_basic_analysis_from_start_to_finish():
 
     fig = bayes.corner_plot()
 
-    mc = ModelComparison(bayes)
 
-    mc.report()
-
-    mc.report(sort='DIC')
 
 
 def test_a_basic_multicomp_analysis_from_start_to_finish():
@@ -102,11 +93,6 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
 
 
 
-    mc = ModelComparison(jl)
-
-    mc.report()
-
-    mc.report(sort='AIC')
 
     powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
     powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
@@ -118,12 +104,4 @@ def test_a_basic_multicomp_analysis_from_start_to_finish():
     samples = bayes.sample(n_walkers=50, burn_in=10, n_samples=10)
 
     fig = bayes.corner_plot()
-
-
-    mc = ModelComparison(bayes)
-
-    mc.report()
-
-    mc.report(sort='DIC')
-
 

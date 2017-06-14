@@ -2,6 +2,7 @@
 [![codecov](https://codecov.io/gh/giacomov/3ML/branch/master/graph/badge.svg)](https://codecov.io/gh/giacomov/3ML)
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/giacomov/3ml)
 [![Code Climate](https://codeclimate.com/github/giacomov/3ML/badges/gpa.svg)](https://codeclimate.com/github/giacomov/3ML)
+[![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 # The Multi-Mission Maximum Likelihood framework (3ML)
 
@@ -205,7 +206,7 @@ then:
 ```bash
 > pip install numpy scipy ipython
 > pip install git+https://github.com/giacomov/3ML.git 
-> pip install git+https://github.com/giacomov/astromodels.git
+> pip install git+https://github.com/giacomov/astromodels.git --upgrade
 ```
 
 In order to use the HAWC plugin, you will also need to install cthreeML (run this *after* setting up the HAWC environment):
@@ -217,6 +218,14 @@ In order to use the HAWC plugin, you will also need to install cthreeML (run thi
 * NOTE: If you do not have permission to install packages in your current python 
 environment, you can still install the packages by adding the ```--user``` option at the
 end of each ```pip``` command.
+
+#### Tips for Mac users
+The following paths need to be added to you DYLD_LIBRARY path if you have FORTRAN installed via these package managers:
+
+* Homebrew: DYLD_LIBRARY_PATH=/usr/local/lib/gcc/<version number>:$DYLD_LIBRARY_PATH
+* Fink: DYLD_LIBRARY_PATH=/sw/lib/gcc<version number>/lib:$DYLD_LIBRARY_PATH
+
+Please inform us if you have problems related to your FORTRAN distribution.
 
 ### Acknowledgements 
 3ML makes use of the Spanish Virtual Observatory's Filter Profile servce (http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NIRT).

@@ -31,6 +31,7 @@ class Polynomial(object):
         # we only need to set the coeff for the
         # integral polynomial
         if not is_integral:
+
             integral_coeff = [0]
 
             integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
@@ -409,7 +410,7 @@ class PolyUnbinnedLogLikelihood(object):
 
 
 def polyfit(x, y, grade, exposure):
-    """ funtion to fit a polynomial to event data. not a member to allow parallel computation """
+    """ function to fit a polynomial to event data. not a member to allow parallel computation """
 
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
@@ -555,3 +556,88 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
 
 
     return final_polynomial, min_log_likelihood
+#
+# def fit_global_and_determine_optimum_grade(cnts, bins, exposure):
+#     """
+#     Provides the ability to find the optimum polynomial grade for *binned* counts by fitting the
+#     total (all channels) to 0-4 order polynomials and then comparing them via a likelihood ratio test.
+#
+#
+#     :param cnts: counts per bin
+#     :param bins: the bins used
+#     :param exposure: exposure per bin
+#     :return: polynomial grade
+#     """
+#
+#     min_grade = 0
+#     max_grade = 4
+#     log_likelihoods = []
+#
+#     for grade in range(min_grade, max_grade + 1):
+#         polynomial, log_like = polyfit(bins, cnts, grade, exposure)
+#
+#         log_likelihoods.append(log_like)
+#
+#     # Found the best one
+#     delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
+#
+#
+#
+#     delta_threshold = 9.0
+#
+#     mask = (delta_loglike >= delta_threshold)
+#
+#     if (len(mask.nonzero()[0]) == 0):
+#
+#         # best grade is zero!
+#         best_grade = 0
+#
+#     else:
+#
+#         best_grade = mask.nonzero()[0][-1] + 1
+#
+#     return best_grade
+
+
+# def unbinned_fit_global_and_determine_optimum_grade(events, exposure,t_start, t_stop):
+#     """
+#     Provides the ability to find the optimum polynomial grade for *unbinned* events by fitting the
+#     total (all channels) to 0-4 order polynomials and then comparing them via a likelihood ratio test.
+#
+#
+#     :param events: an event list
+#     :param exposure: the exposure per event
+#     :return: polynomial grade
+#     """
+#
+#     # Fit the sum of all the channels to determine the optimal polynomial
+#     # grade
+#
+#
+#     min_grade = 0
+#     max_grade = 4
+#     log_likelihoods = []
+#
+#
+#     for grade in range(min_grade, max_grade + 1):
+#         polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure)
+#
+#         log_likelihoods.append(log_like)
+#
+#     # Found the best one
+#     delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
+#
+#     delta_threshold = 9.0
+#
+#     mask = (delta_loglike >= delta_threshold)
+#
+#     if (len(mask.nonzero()[0]) == 0):
+#
+#         # best grade is zero!
+#         best_grade = 0
+#
+#     else:
+#
+#         best_grade = mask.nonzero()[0][-1] + 1
+#
+#     return best_grade

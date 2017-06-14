@@ -20,6 +20,7 @@ from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
 from threeML.config.config import threeML_config
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.analysis_results import MLEResults
+from threeML.utils.stats_tools import aic, bic
 
 
 from astromodels import ModelAssertionViolation
@@ -196,14 +197,62 @@ class JointLikelihood(object):
 
         else:
 
-            # Now check and fix if needed all the deltas of the parameters
-            # to 20% of their value (otherwise the fit will be super-slow)
+            # Now fix sensible values for parameters deltas
 
             for k, v in self._free_parameters.items():
 
-                if abs(v.delta) < abs(v.value) * 0.2:
+                if v.min_value is None and v.max_value is None:
 
-                    v.delta = abs(v.value) * 0.2
+                    # No boundaries, use 20% of value as initial delta
+
+                    if abs(v.delta) < abs(v.value) * 0.2:
+
+                        v.delta = abs(v.value) * 0.2
+
+                elif v.min_value is not None:
+
+                    if v.max_value is not None:
+
+                        # Bounded in both directions. Use 1/20 of the total range of variations as delta
+
+                        v.delta = (v.max_value - v.min_value) / 20.0
+
+                    else:
+
+                        # Bounded only in the negative direction. Make sure we are not at the boundary
+                        if np.isclose(v.value, v.min_value, abs(v.value) / 20):
+
+                            custom_warnings.warn("The current value of parameter %s is very close to "
+                                                 "its lower bound when starting the fit. Fixing it" % v.name)
+
+                            v.value = v.value + 0.1 * abs(v.value)
+
+                            v.delta = 0.05 * abs(v.value)
+
+                        else:
+
+                            v.delta = min(v.delta, (v.value - v.min_value) / 2.0)
+
+                else:
+
+                    if v.max_value is not None:
+
+                        # Bounded only in the positive direction
+                        # Bounded only in the negative direction. Make sure we are not at the boundary
+                        if np.isclose(v.value, v.max_value, abs(v.value) / 20):
+
+                            custom_warnings.warn("The current value of parameter %s is very close to "
+                                                 "its upper bound when starting the fit. Fixing it" % v.name)
+
+                            v.value = v.value - 0.1 * abs(v.value)
+
+                            v.delta = 0.05 * abs(v.value)
+
+                        else:
+
+                            v.delta = min(v.delta, (v.max_value - v.value) / 2.0)
+
+
 
             # Instance the minimizer
 
@@ -235,6 +284,10 @@ class JointLikelihood(object):
 
         total = 0
 
+        # sum up the total number of data points
+
+        total_number_of_data_points = 0
+
         for dataset in self._data_list.values():
 
             ml = dataset.inner_fit() * (-1)
@@ -243,11 +296,24 @@ class JointLikelihood(object):
 
             total += ml
 
+            total_number_of_data_points += dataset.get_number_of_data_points()
+
         assert total == self._current_minimum, "Current minimum stored after fit and current do not correspond!"
+
+        # compute additional statistics measures
+
+        statistical_measures = collections.OrderedDict()
+
+        # for MLE we can only compute the AIC and BIC as they
+        # are point estimates
+
+        statistical_measures['AIC'] = aic(-total,len(self._free_parameters),total_number_of_data_points)
+        statistical_measures['BIC'] = bic(-total,len(self._free_parameters),total_number_of_data_points)
+
 
         # Now instance an analysis results class
         self._analysis_results = MLEResults(self.likelihood_model, self._minimizer.covariance_matrix,
-                                            minus_log_likelihood_values)
+                                            minus_log_likelihood_values,statistical_measures=statistical_measures)
 
         # Show the results
 

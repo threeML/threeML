@@ -1,6 +1,7 @@
 import os
 import astropy.io.fits as fits
 import numpy as np
+import warnings
 from threeML.plugins.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.utils.stats_tools import sqrt_sum_of_squares
@@ -58,7 +59,7 @@ class PHAWrite(object):
 
         self._spec_iterator = 1
 
-    def write(self, outfile_name, overwrite=True):
+    def write(self, outfile_name, overwrite=True, force_rsp_write=False):
         """
         Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines
         if BAK files should be generated.
@@ -66,8 +67,11 @@ class PHAWrite(object):
 
         :param outfile_name: string (excluding .pha) of the PHA to write
         :param overwrite: (optional) bool to overwrite existing file
+        :param force_rsp_write: force the writing of an RSP
         :return:
         """
+
+
 
         # Remove the .pha extension if any
         if os.path.splitext(outfile_name)[-1].lower() == '.pha':
@@ -78,24 +82,30 @@ class PHAWrite(object):
 
         self._outfile_name = {'pha': '%s.pha' % outfile_name, 'bak': '%s_bak.pha' % outfile_name}
 
+        self._out_rsp = []
+
         for ogip in self._ogiplike:
 
-            self._append_ogip(ogip)
+            self._append_ogip(ogip, force_rsp_write)
+
+
+
 
         self._write_phaII(overwrite)
 
-    def _append_ogip(self, ogip):
+    def _append_ogip(self, ogip, force_rsp_write):
         """
         Add an ogip instance's data into the data list
 
         :param ogip: and OGIPLike instance
+        :param force_rsp_write: force the writing of an rsp
         :return: None
         """
 
         # grab the ogip pha info
         pha_info = ogip.get_pha_files()
 
-        self._out_rsp = []
+
 
         first_channel = pha_info['rsp'].first_channel
 
@@ -130,7 +140,7 @@ class PHAWrite(object):
                 self._ancrfile[key].append('NONE')
 
 
-            if pha_info['rsp'].rsp_filename is not None:
+            if pha_info['rsp'].rsp_filename is not None and not force_rsp_write:
 
                 self._respfile[key].append(pha_info['rsp'].rsp_filename)
 
@@ -138,6 +148,8 @@ class PHAWrite(object):
 
                 # This will be reached in the case that a response was generated from a plugin
                 # e.g. if we want to use weighted DRMs from GBM.
+
+
 
                 rsp_file_name = "%s.rsp{%d}"%(self._outfile_basename,self._spec_iterator)
 
@@ -281,12 +293,14 @@ class PHAWrite(object):
 
             extensions.extend([SPECRESP_MATRIX(this_rsp.monte_carlo_energies, this_rsp.ebounds, this_rsp.matrix) for this_rsp in self._out_rsp])
 
-            for ext in extensions[1:]:
+            for i, ext in enumerate(extensions[1:]):
 
 
                 # Set telescope and instrument name
                 ext.hdu.header.set("TELESCOP", self._mission['pha'])
                 ext.hdu.header.set("INSTRUME", self._instrument['pha'])
+                ext.hdu.header.set("EXTVER", i+1)
+
 
 
             rsp2 = FITSFile(fits_extensions=extensions)
@@ -503,9 +517,9 @@ class PHAII(FITSFile):
 
 
     @classmethod
-    def from_event_list(cls, event_list, use_poly=False):
+    def from_time_series(cls, time_series, use_poly=False):
 
-        pha_information = event_list.get_pha_information(use_poly)
+        pha_information = time_series.get_information_dict(use_poly)
 
         is_poisson = True
 
@@ -520,13 +534,13 @@ class PHAII(FITSFile):
                      tstart=pha_information['tstart'],
                      telapse=pha_information['telapse'],
                      channel=pha_information['channel'],
-                     rate=pha_information['rate'],
+                     rate=pha_information['rates'],
                      stat_err=pha_information['rate error'],
-                     quality=pha_information['quality'],
+                     quality=pha_information['quality'].to_ogip(),
                      grouping=pha_information['grouping'],
                      exposure=pha_information['exposure'],
                      backscale=1.,
-                     respfile=pha_information['response_file'],
+                     respfile=None,#pha_information['response_file'],
                      ancrfile=None,
                      is_poisson=is_poisson)
 
@@ -536,9 +550,28 @@ class PHAII(FITSFile):
         with fits.open(fits_file) as f:
 
 
-            spectrum = FITSExtension.from_fits_file_extension(f['SPECTRUM'])
+            if 'SPECTRUM' in f: 
+                spectrum_extension=f['SPECTRUM']
+            else:
+                warnings.warn("unable to find SPECTRUM extension: not OGIP PHA!")
+
+                spectrum_extension=None
+
+                for extension in f:
+                    hduclass = extension.header.get("HDUCLASS")
+                    hduclas1 = extension.header.get("HDUCLAS1")
+                    
+                    if hduclass == 'OGIP' and hduclas1 == 'SPECTRUM':
+                        spectrum_extension = extension
+                        warnings.warn("File has no SPECTRUM extension, but found a spectrum in extension %s" % (spectrum_extension.header.get("EXTNAME")))
+                        spectrum_extension.header['EXTNAME'] = 'SPECTRUM'
+                        break
 
 
+
+
+
+            spectrum = FITSExtension.from_fits_file_extension(spectrum_extension)
 
             out = FITSFile(primary_hdu=f['PRIMARY'], fits_extensions=[spectrum])
 

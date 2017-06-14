@@ -1,16 +1,16 @@
 __author__ = 'grburgess'
 
+import collections
+import re
+from threeML.exceptions.custom_exceptions import custom_warnings, deprecated
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
-import warnings
-import collections
-import re
 
 from threeML.plugins.EventListLike import EventListLike
-from threeML.plugins.OGIP.eventlist import EventListWithDeadTime
 from threeML.plugins.OGIP.response import InstrumentResponseSet
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
+from threeML.utils.time_series.event_list import EventListWithDeadTime
 
 __instrument_name = "Fermi GBM TTE (all detectors)"
 
@@ -20,6 +20,7 @@ class BinningMethodError(RuntimeError):
 
 
 class FermiGBMTTELike(EventListLike):
+    @deprecated('Please use the TimeSeriesBuilder for GBM TTE data')
     def __init__(self, name, tte_file, rsp_file, source_intervals, background_selections=None, restore_background=None,
                  trigger_time=None,
                  poly_order=-1, unbinned=True, verbose=True):
@@ -72,7 +73,7 @@ class FermiGBMTTELike(EventListLike):
             stop_time=self._gbm_tte_file.tstop - self._gbm_tte_file.trigger_time,
             dead_time=self._gbm_tte_file.deadtime,
             first_channel=1,
-            rsp_file=rsp_file,
+            #rsp_file=rsp_file,
             instrument=self._gbm_tte_file.det_name,
             mission=self._gbm_tte_file.mission,
             verbose=verbose)
@@ -146,8 +147,8 @@ class FermiGBMTTELike(EventListLike):
                                                      dt=dt,
                                                      use_binner=use_binner,
                                                      energy_selection=energy_selection,
-                                                     significance_level=significance_level,
-                                                     instrument='gbm')
+                                                     significance_level=significance_level
+                                                     )
 
     def _output(self):
         super_out = super(FermiGBMTTELike, self)._output()

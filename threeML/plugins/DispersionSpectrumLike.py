@@ -104,12 +104,14 @@ class DispersionSpectrumLike(SpectrumLike):
 
         return super_out.append(the_df)
 
-    def write_pha(self, filename, overwrite=False):
+    def write_pha(self, filename, overwrite=False, force_rsp_write=False):
         """
+        Writes the observation, background and (optional) rsp to PHAII fits files
 
-        :param filename:
-        :param overwrite:
-        :return:
+        :param filename: base file name to write out
+        :param overwrite: if you would like to force overwriting of the files
+        :param force_rsp_write: force the writing of an rsp even if not required
+
         """
 
         # we need to pass up the variables to an OGIPLike
@@ -120,4 +122,4 @@ class DispersionSpectrumLike(SpectrumLike):
         from threeML.plugins.OGIPLike import OGIPLike
 
         ogiplike = OGIPLike.from_general_dispersion_spectrum(self)
-        ogiplike.write_pha(file_name=filename, overwrite=overwrite)
+        ogiplike.write_pha(file_name=filename, overwrite=overwrite, force_rsp_write=force_rsp_write)

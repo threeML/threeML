@@ -42,16 +42,21 @@ class Quality(object):
     def __init__(self, quality):
         """
         simple class to formalize the quality flags used in spectra
-        :param quality:
+        :param quality: a quality array
         """
 
-        total_length = len(quality)
+        #total_length = len(quality)
+
+        n_elements = 1
+        for dim in quality.shape:
+
+            n_elements *= dim
 
         good = quality == 'good'
         warn = quality == 'warn'
         bad  = quality == 'bad'
 
-        assert total_length == sum(good) + sum(warn) +sum(bad), 'quality can only contain "good", "warn", and "bad"'
+        assert n_elements == good.sum() + warn.sum() + bad.sum(), 'quality can only contain "good", "warn", and "bad"'
 
         self._good = good
         self._warn = warn
@@ -62,6 +67,12 @@ class Quality(object):
     def __len__(self):
 
         return len(self._quality)
+
+    def get_slice(self, idx):
+
+
+        return Quality(self._quality[idx,:])
+
 
     @property
     def good(self):
@@ -85,7 +96,11 @@ class Quality(object):
         warn = ogip_quality == 2
         bad = np.logical_and(~good, ~warn)
 
-        quality = np.array(['good' for i in xrange(len(ogip_quality))])
+
+        quality = np.empty_like(ogip_quality,dtype='|S4')
+        quality[:] = 'good'
+
+        # quality = np.array(['good' for i in xrange(len(ogip_quality))])
 
         #quality[good] = 'good'
         quality[warn] = 'warn'
@@ -129,7 +144,7 @@ class BinnedSpectrum(Histogram):
     INTERVAL_TYPE = Channel
 
     def __init__(self, counts, exposure, ebounds, count_errors=None, sys_errors=None, quality=None, scale_factor=1.,
-                 is_poisson=False, mission=None, instrument=None):
+                 is_poisson=False, mission=None, instrument=None, tstart=None, tstop=None):
         """
         A general binned histogram of either Poisson or non-Poisson rates. While the input is in counts, 3ML spectra work
         in rates, so this class uses the exposure to construct the rates from the counts.
@@ -218,6 +233,11 @@ class BinnedSpectrum(Histogram):
             self._instrument = instrument
 
 
+        self._tstart = tstart
+
+        self._tstop = tstop
+
+
         # pass up to the binned spectrum
 
         super(BinnedSpectrum, self).__init__(list_of_intervals=ebounds,
@@ -269,9 +289,11 @@ class BinnedSpectrum(Histogram):
         :return: count error per channel
         """
 
-        assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
-
-        return self._errors * self.exposure
+        #VS: impact of this change is unclear to me, it seems to make sense and the tests pass
+        if self.is_poisson:
+            return None
+        else:
+            return self._errors * self.exposure
 
     @property
     def total_count(self):
@@ -286,10 +308,22 @@ class BinnedSpectrum(Histogram):
         """
         :return: total count error
         """
+        
+        #VS: impact of this change is unclear to me, it seems to make sense and the tests pass
+        if self.is_poisson:
+            return None
+        else:
+            return sqrt_sum_of_squares(self.count_errors)
 
-        assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
+    @property
+    def tstart(self):
 
-        return sqrt_sum_of_squares(self.count_errors)
+        return self._tstart
+
+    @property
+    def tstop(self):
+
+        return self._tstop
 
     @property
     def is_poisson(self):
@@ -303,9 +337,10 @@ class BinnedSpectrum(Histogram):
         :return: errors on the rates
         """
 
-        assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
-
-        return self._errors
+        if self.is_poisson:
+            return None
+        else:
+            return self._errors
 
     @property
     def n_channels(self):
@@ -349,7 +384,7 @@ class BinnedSpectrum(Histogram):
 
         return self._instrument
 
-    def clone(self, new_counts=None, new_count_errors=None):
+    def clone(self, new_counts=None, new_count_errors=None, new_exposure=None):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -361,13 +396,15 @@ class BinnedSpectrum(Histogram):
         """
 
         if new_counts is None:
-
             new_counts = self.counts
             new_count_errors = self.count_errors
 
+        if new_exposure is None:
+            new_exposure = self.exposure
+
         return BinnedSpectrum(counts=new_counts,
                               ebounds=ChannelSet.from_list_of_edges(self.edges),
-                              exposure=self._exposure,
+                              exposure=new_exposure,
                               count_errors=new_count_errors,
                               sys_errors=self._sys_errors,
                               quality=self._quality,
@@ -478,12 +515,107 @@ class BinnedSpectrum(Histogram):
 
 
         return pd.DataFrame(out_dict)
+    
+    @classmethod
+    def from_time_series(cls, time_series, use_poly=False):
+        """
+
+        :param time_series:
+        :param use_poly:
+        :return:
+        """
+        raise NotImplementedError('This is still under construction')
+
+
+        pha_information = time_series.get_information_dict(use_poly)
+
+        is_poisson = True
+
+        if use_poly:
+            is_poisson = False
+
+        return cls(instrument=pha_information['instrument'],
+                   mission=pha_information['telescope'],
+                   tstart=pha_information['tstart'],
+                   telapse=pha_information['telapse'],
+                   #channel=pha_information['channel'],
+                   counts=pha_information['counts'],
+                   count_errors=pha_information['counts error'],
+                   quality=pha_information['quality'],
+                   grouping=pha_information['grouping'],
+                   exposure=pha_information['exposure'],
+                   backscale=1.,
+                   is_poisson=is_poisson)
+
+    def __add__(self,other):
+        assert self == other, "The bins are not equal"
+
+        new_sys_errors=self.sys_errors
+        if new_sys_errors is None:
+            new_sys_errors=other.sys_errors
+        elif other.sys_errors is not None:
+            new_sys_errors += other.sys_errors
+
+        new_exposure = self.exposure + other.exposure
+
+        if self.count_errors is None and other.count_errors is None:
+            new_count_errors = None 
+        else:
+            assert self.count_errors is not None or other.count_errors is not None, 'only one of the two spectra have errors, can not add!'
+            new_count_errors = (self.count_errors**2 + other.count_errors**2) ** 0.5
+
+        new_counts = self.counts + other.counts
+
+
+        new_spectrum = self.clone(new_counts=new_counts,
+                                  new_count_errors=new_count_errors,
+                                  new_exposure=new_exposure)
+
+        new_spectrum._tstart = min(self.tstart,other.tstart)
+        new_spectrum._tstop = max(self.tstop,other.tstop)
+
+        return new_spectrum
+
+
+    def add_inverse_variance_weighted(self, other):
+        assert self == other, "The bins are not equal"
+
+        if self.is_poisson or other.is_poisson:
+            raise Exception("Inverse_variance_weighting not implemented for poisson")
+
+        new_sys_errors=self.sys_errors
+        if new_sys_errors is None:
+            new_sys_errors=other.sys_errors
+        elif other.sys_errors is not None:
+            new_sys_errors += other.sys_errors
+
+        new_exposure = self.exposure + other.exposure
+
+        new_rate_errors = np.array([ (e1**-2 + e2**-2)**-0.5 for e1,e2 in zip(self.rate_errors,other._errors) ] )
+        new_rates = np.array( [ (c1*e1**-2 + c2*e2**-2) for c1,e1,c2,e2 in zip(self.rates,self._errors,other.rates, other._errors) ] ) * new_rate_errors**2
+        
+        new_count_errors = new_rate_errors * new_exposure
+        new_counts = new_rates * new_exposure
+
+        new_counts[np.isnan(new_counts)]=0
+        new_count_errors[np.isnan(new_count_errors)]=0
+
+        new_spectrum = self.clone(new_counts=new_counts,
+                                  new_count_errors=new_count_errors)
+
+        new_spectrum._exposure = new_exposure 
+        new_spectrum._tstart = min(self.tstart,other.tstart)
+        new_spectrum._tstop = max(self.tstop,other.tstop)
+
+        return new_spectrum
+
+
 
 
 class BinnedSpectrumWithDispersion(BinnedSpectrum):
 
     def __init__(self, counts, exposure, response, count_errors=None, sys_errors=None, quality=None, scale_factor=1.,
-                 is_poisson=False, mission=None, instrument=None ):
+                 is_poisson=False, mission=None, instrument=None, tstart=None, tstop=None ):
         """
         A binned spectrum that must be deconvolved via a dispersion or response matrix
 
@@ -518,7 +650,9 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
                                                            scale_factor=scale_factor,
                                                            is_poisson=is_poisson,
                                                            mission=mission,
-                                                           instrument=instrument)
+                                                           instrument=instrument,
+                                                           tstart=tstart,
+                                                           tstop=tstop)
 
 
     @property
@@ -526,7 +660,38 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
 
         return self._rsp
 
-    def clone(self, new_counts=None, new_count_errors=None):
+    @classmethod
+    def from_time_series(cls, time_series, response, use_poly=False):
+        """
+
+        :param time_series:
+        :param use_poly:
+        :return:
+        """
+
+
+        pha_information = time_series.get_information_dict(use_poly)
+
+        is_poisson = True
+
+        if use_poly:
+            is_poisson = False
+
+        return cls(instrument=pha_information['instrument'],
+                   mission=pha_information['telescope'],
+                   tstart=pha_information['tstart'],
+                   tstop=pha_information['tstart'] + pha_information['telapse'],
+                   #channel=pha_information['channel'],
+                   counts =pha_information['counts'],
+                   count_errors=pha_information['counts error'],
+                   quality=pha_information['quality'],
+                   #grouping=pha_information['grouping'],
+                   exposure=pha_information['exposure'],
+                   response=response,
+                   scale_factor=1.,
+                   is_poisson=is_poisson)
+
+    def clone(self, new_counts=None, new_count_errors=None, new_sys_errors=None, new_exposure=None):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -541,15 +706,31 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
             new_counts = self.counts
             new_count_errors = self.count_errors
 
+        if new_sys_errors is None:
+            new_sys_errors = self.sys_errors
+        
+        if new_exposure is None:
+            new_exposure = self.exposure
+
         return BinnedSpectrumWithDispersion(counts=new_counts,
+                                            exposure=new_exposure,
                                             response=self._rsp,
                                             count_errors=new_count_errors,
-                                            sys_errors=self._sys_errors,
+                                            sys_errors=new_sys_errors,
                                             quality=self._quality,
                                             scale_factor=self._scale_factor,
                                             is_poisson=self._is_poisson,
                                             mission=self._mission,
                                             instrument=self._instrument)
+
+    def __add__(self,other):
+        #TODO implement equality in InstrumentResponse class
+        assert self.response is other.response
+
+        new_spectrum = super(BinnedSpectrumWithDispersion,self).__add__(other)
+
+        return new_spectrum
+
 
 
 

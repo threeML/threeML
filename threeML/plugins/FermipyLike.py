@@ -315,7 +315,7 @@ class FermipyLike(PluginPrototype):
         dec = float(dec)
 
         assert 0 <= ra <= 360, "The provided R.A. (%s) is not valid. Should be 0 <= ra <= 360.0" % ra
-        assert -90 <= ra <= 90, "The provided Dec (%s) is not valid. Should be -90 <= dec <= 90.0" % dec
+        assert -90 <= dec <= 90, "The provided Dec (%s) is not valid. Should be -90 <= dec <= 90.0" % dec
 
         basic_config['selection']['ra'] = ra
         basic_config['selection']['dec'] = dec
@@ -432,3 +432,4 @@ class FermipyLike(PluginPrototype):
         logLike value.
         """
         return self.get_log_like()
+

@@ -13,6 +13,7 @@ Contents:
 
     notebooks/Quickstart.ipynb
     notebooks/The 3ML workflow.ipynb
+    notebooks/Building Plugins from TimeSeries.ipynb
     notebooks/Point source plotting.ipynb
 
 .. automodule:: threeML

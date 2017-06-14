@@ -109,7 +109,7 @@ class Histogram(IntervalSet):
 
                 assert other.errors is not None, "This histogram has errors, but the other does not"
 
-                new_errors = [ sqrt_sum_of_squares([e1,e2]) for e1,e2 in zip(self._errors,other.errors)]
+                new_errors = np.array([ sqrt_sum_of_squares([e1,e2]) for e1,e2 in zip(self._errors,other.errors)])
 
             else:
 
@@ -117,7 +117,7 @@ class Histogram(IntervalSet):
 
         if self._sys_errors is not None and other.sys_errors is not None:
 
-            new_sys_errors = [ sqrt_sum_of_squares([e1,e2]) for e1,e2 in zip(self._sys_errors,other.sys_errors)]
+            new_sys_errors = np.array([ sqrt_sum_of_squares([e1,e2]) for e1,e2 in zip(self._sys_errors,other.sys_errors)])
 
         elif self._sys_errors is not None:
 
@@ -147,7 +147,6 @@ class Histogram(IntervalSet):
         new_hist._sys_errors = new_sys_errors
 
         return new_hist
-
 
     @property
     def errors(self):
