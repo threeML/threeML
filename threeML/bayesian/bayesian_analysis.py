@@ -264,7 +264,7 @@ class BayesianAnalysis(object):
 
         return self.samples
 
-    def sample_parallel_tempering(self, n_temps, n_walkers, burn_in, n_samples):
+    def sample_parallel_tempering(self, n_temps, n_walkers, burn_in, n_samples, quiet=False):
         """
         Sample with parallel tempering
 
@@ -317,14 +317,21 @@ class BayesianAnalysis(object):
 
         self._build_samples_dictionary()
 
+        self._build_results()
+
+        # Display results
+        if not quiet:
+            self._results.display()
+
         return self.samples
 
-    def sample_multinest(self, n_live_points, chain_name="chains/fit-", **kwargs):
+    def sample_multinest(self, n_live_points, chain_name="chains/fit-", quiet=False, **kwargs):
         """
         Sample the posterior with MULTINEST nested sampling (Feroz & Hobson)
 
-        :param: n_live_points
-        :param: chain_names
+        :param: n_live_points: number of MULTINEST livepoints
+        :param: chain_names: where to stor the multinest incremental output
+        :param: quiet: Whether or not to should results
         :param: **kwargs (pyMULTINEST kwords)
 
         :return: MCMC samples
@@ -393,9 +400,15 @@ class BayesianAnalysis(object):
 
         # now get the log probability
 
-        self._log_probability_values = map(lambda samples: self.get_posterior(samples), self._raw_samples)
+        self._log_probability_values = np.array(map(lambda samples: self.get_posterior(samples), self._raw_samples))
 
         self._build_samples_dictionary()
+
+        self._build_results()
+
+        # Display results
+        if not quiet:
+            self._results.display()
 
         # now get the marginal likelihood
 

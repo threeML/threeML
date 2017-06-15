@@ -200,8 +200,9 @@ class LLEFile(object):
 
         # There are some events outside of the energy bounds. We will dump those
 
-
         self._filter_idx = self._pha > 0
+
+
 
         self._n_channels = len(self._channels)
 

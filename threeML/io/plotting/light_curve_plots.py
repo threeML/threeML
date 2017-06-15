@@ -113,6 +113,8 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
     ax.set_xlim(time_bins.min(), time_bins.max())
     ax.legend()
 
+    return fig
+
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     chans = np.array(zip(chan_min, chan_max))
