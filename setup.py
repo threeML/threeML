@@ -113,9 +113,9 @@ setup(
 
     install_requires=[
         'numpy >= 1.6',
-        'scipy',
+        'scipy >=0.18',
         'emcee',
-        'astropy>=1.0.3',
+        'astropy>=1.3.3',
         'matplotlib',
         'uncertainties',
         'pyyaml',
