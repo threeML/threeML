@@ -152,12 +152,22 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         assert len(data_colors) >= len(data_keys), "You need to provide at least a number of data colors equal to the " \
                                                    "number of datasets"
 
+    elif 'data_color' in kwargs:
+
+        data_colors = [kwargs.pop('data_color')] * len(data_keys)
+
+
+
     if 'model_colors' in kwargs:
         model_colors = kwargs.pop('model_colors')
 
         assert len(model_colors) >= len(
             data_keys), "You need to provide at least a number of model colors equal to the " \
                         "number of datasets"
+
+    elif 'model_color' in kwargs:
+
+        model_colors = [kwargs.pop('model_color')] * len(data_keys)
 
     #fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
