@@ -1,8 +1,9 @@
 import yaml
 from threeML.io.rich_display import display
+import collections
 
 
-class DictWithPrettyPrint(dict):
+class DictWithPrettyPrint(collections.OrderedDict):
     """
     A dictionary with a _repr_html method for the Jupyter notebook
 
@@ -11,11 +12,18 @@ class DictWithPrettyPrint(dict):
     def display(self):
         return display(self)
 
+    def __str__(self):
+
+        string_repr = yaml.dump(dict(self), default_flow_style=False)
+
+        return string_repr
+
+    def _repr_pretty_(self, pp, cycle):
+
+        print(self.__str__())
+
     def _repr_html_(self):
-        # yaml.dump needs a dict instance, so create one from the current content
 
-        dumb_dict = dict(self)
-
-        string_repr = yaml.dump(dumb_dict, default_flow_style=False)
+        string_repr = self.__str__()
 
         return '<pre>%s</pre>' % string_repr
