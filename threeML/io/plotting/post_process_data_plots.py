@@ -38,6 +38,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     :param model_cmap: (str) (optional) the color map used to extract automatically the colors for the models
     :param data_colors: (optional) a tuple or list with the color for each dataset
     :param model_colors: (optional) a tuple or list with the color for each folded model
+    :param data_color: (optional) color for all datasets
+    :param model_color: (optional) color for all folded models
     :param show_legend: (optional) if True (default), shows a legend
     :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
     with linear interpolation between each bin
