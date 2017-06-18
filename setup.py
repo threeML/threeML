@@ -126,7 +126,8 @@ setup(
         'pandas',
         'html2text',
         'requests',
-        'speclite'
+        'speclite',
+        'ipython<6.0'
     ])
 
 # Check for optional dependencies
