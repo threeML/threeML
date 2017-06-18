@@ -13,6 +13,8 @@ class MultinestMinimizer(Minimizer):
 
     def __init__(self, function, parameters, ftol=1e3, verbosity=1):
 
+        raise NotImplementedError("Not yet ported to new minimizer interface")
+
         super(MultinestMinimizer, self).__init__(function, parameters, ftol, verbosity)
 
     def _setup(self):

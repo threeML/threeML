@@ -388,7 +388,7 @@ class SPECTRUM(FITSExtension):
 
         data_list = [('TSTART', tstart),
                       ('TELAPSE', telapse),
-                      ('SPEC_NUM',np.arange(1, n_spectra + 1, dtype=np.int32)),
+                      ('SPEC_NUM',np.arange(1, n_spectra + 1, dtype=np.int16)),
                       ('CHANNEL', channel),
                       ('RATE',rate),
                       ('QUALITY',quality),
@@ -418,6 +418,7 @@ class SPECTRUM(FITSExtension):
         super(SPECTRUM, self).__init__(tuple(data_list), self._HEADER_KEYWORDS)
 
         self.hdu.header.set("POISSERR", is_poisson)
+
 
 class PHAII(FITSFile):
 
@@ -450,22 +451,21 @@ class PHAII(FITSFile):
         # collect the data so that we can have a general
         # extension builder
 
-
-        self._tstart = _atleast_1d_with_dtype(tstart , np.float64) * u.s
-        self._telapse = _atleast_1d_with_dtype(telapse, np.float64) * u.s
+        self._tstart = _atleast_1d_with_dtype(tstart , np.float32) * u.s
+        self._telapse = _atleast_1d_with_dtype(telapse, np.float32) * u.s
         self._channel = _atleast_2d_with_dtype(channel, np.int16)
-        self._rate = _atleast_2d_with_dtype(rate, np.float64) * 1./u.s
-        self._exposure = _atleast_1d_with_dtype(exposure, np.float64) * u.s
+        self._rate = _atleast_2d_with_dtype(rate, np.float32) * 1./u.s
+        self._exposure = _atleast_1d_with_dtype(exposure, np.float32) * u.s
         self._quality = _atleast_2d_with_dtype(quality, np.int16)
         self._grouping = _atleast_2d_with_dtype(grouping, np.int16)
-        self._backscale = _atleast_1d_with_dtype(backscale, np.float64)
+        self._backscale = _atleast_1d_with_dtype(backscale, np.float32)
         self._respfile = _atleast_1d_with_dtype(respfile,str)
         self._ancrfile = _atleast_1d_with_dtype(ancrfile,str)
 
 
         if sys_err is not None:
 
-            self._sys_err = _atleast_2d_with_dtype(sys_err, np.float64)
+            self._sys_err = _atleast_2d_with_dtype(sys_err, np.float32)
 
         else:
 
@@ -473,7 +473,7 @@ class PHAII(FITSFile):
 
         if stat_err is not None:
 
-            self._stat_err = _atleast_2d_with_dtype(stat_err,np.float64)
+            self._stat_err = _atleast_2d_with_dtype(stat_err,np.float32)
 
         else:
 

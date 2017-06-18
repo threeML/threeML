@@ -301,7 +301,6 @@ def test_gbm_tte_joint_likelihood_fitting():
                 _ = jl.correlation_matrix
 
             assert jl.current_minimum is None
-            assert jl.minimizer_in_use == ('MINUIT', None, None)
             assert jl.minimizer is None
             assert jl.ncalls == 0
             assert jl.verbose == False

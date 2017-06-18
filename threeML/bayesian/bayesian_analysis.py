@@ -799,6 +799,13 @@ class BayesianAnalysis(object):
         return figures
 
     @property
+    def likelihood_model(self):
+        """
+        :return: likelihood model (a Model instance)
+        """
+        return self.likelihood_model
+
+    @property
     def data_list(self):
         """
         :return: data list for this analysis

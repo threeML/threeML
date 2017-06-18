@@ -106,8 +106,7 @@ class LikelihoodRatioTest(object):
 
         # Use the same minimizer as in the first joint likelihood object
 
-        minimizer_name, algorithm, callback = self._joint_likelihood_instance0.minimizer_in_use
-        jl_set.set_minimizer(minimizer_name, algorithm, callback=callback)
+        jl_set.set_minimizer(self._joint_likelihood_instance0.minimizer_in_use)
 
         # Run the set
         data_frame, like_data_frame = jl_set.go(continue_on_failure=continue_on_failure)

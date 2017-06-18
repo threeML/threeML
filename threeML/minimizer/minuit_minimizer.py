@@ -1,6 +1,10 @@
-from threeML.minimizer.minimization import Minimizer, FIT_FAILED, CannotComputeErrors
+from threeML.minimizer.minimization import LocalMinimizer, CannotComputeErrors, FitFailed, CannotComputeCovariance
+from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
+from threeML.io.detect_notebook import is_inside_notebook
 
 from iminuit import Minuit
+from iminuit.frontends.console import ConsoleFrontend
+from iminuit.frontends.html import HtmlFrontend
 import collections
 import numpy as np
 
@@ -19,45 +23,66 @@ def add_method(self, method, name=None):
     setattr(self.__class__, name, method)
 
 
-class MinuitMinimizer(Minimizer):
+def _get_frontend():
+    """
+    Returns the appropriate frontend (HTML for notebook and Console for the console)
+
+    :return:
+    """
+
+    if is_inside_notebook():
+
+        return HtmlFrontend()
+
+    else:
+
+        return ConsoleFrontend()
+
+
+class MinuitMinimizer(LocalMinimizer):
+
+    valid_setup_keys = ('ftol',)
 
     # NOTE: this class is built to be able to work both with iMinuit and with a boost interface to SEAL
     # minuit, i.e., it does not rely on functionality that iMinuit provides which is not of the original
     # minuit. This makes the implementation a little bit more cumbersome, but more adaptable if we want
     # to switch back to the bare bone SEAL minuit
 
-    def __init__(self, function, parameters, ftol=0.1, verbosity=0):
+    def __init__(self, function, parameters, verbosity=0):
 
-        super(MinuitMinimizer, self).__init__(function, parameters, ftol, verbosity)
+        # This will contain the results of the last call to Migrad
+        self._last_migrad_results = None
 
-    def _setup(self):
+        super(MinuitMinimizer, self).__init__(function, parameters, verbosity)
+
+    def _setup(self, user_setup_dict):
 
         # Prepare the dictionary for the parameters which will be used by iminuit
 
-        iminuit_init_parameters = {}
+        iminuit_init_parameters = collections.OrderedDict()
 
         # List of variable names that will be used for iminuit.
 
         variable_names_for_iminuit = []
 
-        # NOTE: we use the scaled_ versions of value, min_value and max_value because they don't have
-        # units, and hence they are much faster to set and retrieve. These are indeed introduced by
-        # astromodels to be used for computing-intensive situations like fitting
+        # NOTE: we use the internal_ versions of value, min_value and max_value because they don't have
+        # units, and they are transformed to make the fit easier (for example in log scale)
 
-        for k, par in self.parameters.iteritems():
+        for parameter_path, (value, delta, minimum, maximum) in self._internal_parameters.items():
 
-            current_name = self._parameter_name_to_minuit_name(k)
+            current_name = self._parameter_name_to_minuit_name(parameter_path)
 
             variable_names_for_iminuit.append(current_name)
 
             # Initial value
-            iminuit_init_parameters['%s' % current_name] = par.value
+            iminuit_init_parameters['%s' % current_name] = value
 
             # Initial delta
-            iminuit_init_parameters['error_%s' % current_name] = par.delta
+            iminuit_init_parameters['error_%s' % current_name] = delta
 
             # Limits
-            iminuit_init_parameters['limit_%s' % current_name] = (par.min_value, par.max_value)
+            iminuit_init_parameters['limit_%s' % current_name] = (minimum,
+                                                                  maximum)
 
             # This is useless, since all parameters here are free,
             # but do it anyway for clarity
@@ -68,6 +93,8 @@ class MinuitMinimizer(Minimizer):
         iminuit_init_parameters['errordef'] = 0.5
 
         iminuit_init_parameters['print_level'] = self.verbosity
+
+        iminuit_init_parameters['frontend'] = _get_frontend()
 
         # We need to make a function with the parameters as explicit
         # variables in the calling sequence, so that Minuit will be able
@@ -92,17 +119,18 @@ class MinuitMinimizer(Minimizer):
         # Finally we can instance the Minuit class
         self.minuit = Minuit(self._f, **iminuit_init_parameters)
 
-        #self.minuit.tol = self.ftol  # ftol
+        # Make sure we got this right (some versions of iminuit does not understand the keyword in the setup)
 
-        try:
+        self.minuit.errordef = 0.5
 
-            self.minuit.up = 0.5  # This is a likelihood
+        if user_setup_dict is not None:
 
-        except AttributeError:
+            self.minuit.tol = user_setup_dict['ftol']
 
-            # iMinuit uses errodef, not up
+        else:
 
-            self.minuit.errordef = 0.5
+            # Do nothing and leave the default in iminuit
+            pass
 
         self._best_fit_parameters = None
         self._function_minimum_value = None
@@ -118,37 +146,6 @@ class MinuitMinimizer(Minimizer):
 
         return parameter.replace(".", "_")
 
-    def _migrad_has_converged(self):
-
-        # In the MINUIT manual this is the condition for MIGRAD to have converged
-        # 0.002 * tolerance * UPERROR (which is 0.5 for likelihood)
-
-        return self.minuit.edm <= 0.002 * self.minuit.tol * 0.5
-
-    def _run_migrad(self, trials=10):
-
-        # Repeat Migrad up to trials times, until it converges
-
-        minimum = None
-
-        for i in range(trials):
-
-            self.minuit.migrad()
-
-            minimum = self.minuit.fval
-
-            if self._migrad_has_converged():
-
-                # Converged
-                break
-
-            else:
-
-                # Try again
-                continue
-
-        return minimum
-
     # Override this because minuit uses different names
     def restore_best_fit(self):
         """
@@ -157,15 +154,50 @@ class MinuitMinimizer(Minimizer):
         :return: none
         """
 
+        # Reset the internal value of all parameters
+
         super(MinuitMinimizer, self).restore_best_fit()
 
-        for k, par in self.parameters.iteritems():
+        # Update also the internal iminuit dictionary
+
+        for k, par in self.parameters.items():
 
             minuit_name = self._parameter_name_to_minuit_name(k)
 
-            self.minuit.values[minuit_name] = par.value
+            self.minuit.values[minuit_name] = par._get_internal_value()
 
-    def minimize(self, compute_covar=True):
+    def _is_fit_ok(self):
+        """
+        iMinuit provides the method migrad_ok(). However, that method also checks for a valid Hessian matrix, which
+        is a stricter requirement than just asking that the fit has converged. That is why we implement this method
+
+        :return: whether the fit converged or not
+        """
+
+        assert self._last_migrad_results is not None, "MIGRAD has not been run yet."
+
+        if not self._last_migrad_results[0]['is_above_max_edm'] and \
+                self._last_migrad_results[0]['has_valid_parameters']:
+
+            return True
+
+        else:
+
+            return False
+
+    def _print_current_status(self):
+        """
+        To be used to print info before raising an exception
+        :return:
+        """
+
+        print("Last status:\n")
+        print(self._last_migrad_results[0])
+        print("\n")
+        # Print params to get some info about the failure
+        self.minuit.print_param()
+
+    def _minimize(self):
         """
         Minimize the function using MIGRAD
 
@@ -177,49 +209,59 @@ class MinuitMinimizer(Minimizer):
                  to minimization.FIT_FAILED
         """
 
-        minimum = self._run_migrad(10)
+        # Try a maximum of 10 times and break as soon as the fit is ok
 
-        if not self._migrad_has_converged():
+        self._last_migrad_results = self.minuit.migrad(resume=False)
 
-            print("\nMIGRAD did not converge in 10 trials.")
+        for i in range(9):
 
-            return collections.OrderedDict(), FIT_FAILED
+            if self._is_fit_ok():
+
+                break
+
+            else:
+
+                # Try again
+                self._last_migrad_results = self.minuit.migrad()
+
+        if not self._is_fit_ok():
+
+            self._print_current_status()
+
+            raise FitFailed("MIGRAD call failed. This is usually due to unconstrained parameters.")
 
         else:
 
-            # Get the best fit values
+            # Gather the optimized values for all parameters from the internal
+            # iminuit dictionary
 
             best_fit_values = []
 
-            for k, par in self.parameters.iteritems():
+            for k, par in self.parameters.items():
 
                 minuit_name = self._parameter_name_to_minuit_name(k)
 
                 best_fit_values.append(self.minuit.values[minuit_name])
 
-            # Get covariance matrix
-
-            if compute_covar:
-
-                covariance = self._compute_covariance_matrix(best_fit_values)
-
-            else:
-
-                covariance = None
-
-            # Now store the results
-
-            self._store_fit_results(best_fit_values, minimum, covariance)
-
-            return best_fit_values, minimum
+            return best_fit_values, self._last_migrad_results[0]['fval']
 
     # Override the default _compute_covariance_matrix
     def _compute_covariance_matrix(self, best_fit_values):
 
-        self.minuit.migrad()
         self.minuit.hesse()
 
-        covariance = np.array(self.minuit.matrix(correlation=False))
+        try:
+
+            covariance = np.array(self.minuit.matrix(correlation=False))
+
+        except RuntimeError:
+
+            # Covariance computation has failed
+
+            # Print current status
+            self._print_current_status()
+
+            raise CannotComputeCovariance("HESSE failed. Most probably some of your parameters are unconstrained.")
 
         return covariance
 
@@ -234,15 +276,17 @@ class MinuitMinimizer(Minimizer):
 
         self.restore_best_fit()
 
-        if not self._migrad_has_converged():
+        if not self._is_fit_ok():
             
-            raise CannotComputeErrors("MIGRAD results not valid, cannot compute errors. Did you run the fit first ?")
+            raise CannotComputeErrors("MIGRAD results not valid, cannot compute errors.")
 
         try:
 
             self.minuit.minos()
 
         except:
+
+            self._print_current_status()
 
             raise MINOSFailed("MINOS has failed. This is not necessarily a problem if:\n\n"
                               "* There are unconstrained parameters (the error is undefined). This is usually signaled "
@@ -258,14 +302,29 @@ class MinuitMinimizer(Minimizer):
 
         errors = collections.OrderedDict()
 
-        for k, par in self.parameters.iteritems():
+        for k, par in self.parameters.items():
 
             minuit_name = self._parameter_name_to_minuit_name(k)
 
             minus_error = self.minuit.merrors[(minuit_name, -1)]
             plus_error = self.minuit.merrors[(minuit_name, 1)]
 
-            errors[k] = ((minus_error,plus_error))
+            if par.has_transformation():
+
+                # Need to transform in the external reference
+
+                best_fit_value_internal = self._fit_results.loc[par.path, 'value']
+
+                _, minus_error_external = par.internal_to_external_delta(best_fit_value_internal, minus_error)
+
+                _, plus_error_external = par.internal_to_external_delta(best_fit_value_internal, plus_error)
+
+            else:
+
+                minus_error_external = minus_error
+                plus_error_external = plus_error
+
+            errors[k] = ((minus_error_external, plus_error_external))
 
         return errors
 

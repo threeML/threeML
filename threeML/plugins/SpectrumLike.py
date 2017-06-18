@@ -17,7 +17,7 @@ from threeML.plugin_prototype import PluginPrototype, set_external_property
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
-from threeML.plugins.OGIP.likelihood_functions import chi2
+from threeML.plugins.OGIP.likelihood_functions import half_chi2
 from threeML.utils.binner import Rebinner
 from threeML.utils.stats_tools import Significance
 from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum
@@ -814,11 +814,11 @@ class SpectrumLike(PluginPrototype):
 
             # Now create another instance of BinnedSpectrum with the randomized data we just generated
             # notice that the _new member is a classmethod
-
+            # (we use verbose=False to avoid many messages when doing many simulations)
             new_spectrum_plugin = self._new_plugin(name=new_name,
                                                    observation=new_observation,
                                                    background=new_background,
-                                                   verbose=self._verbose,
+                                                   verbose=False,
                                                    **kwargs)
 
             # Apply the same selections as the current data set
@@ -995,9 +995,9 @@ class SpectrumLike(PluginPrototype):
 
         model_counts = self.get_model()
 
-        chi2_ = chi2(self._current_observed_counts,
-                     self._current_observed_count_errors,
-                     model_counts)
+        chi2_ = half_chi2(self._current_observed_counts,
+                          self._current_observed_count_errors,
+                          model_counts)
 
         assert np.all(np.isfinite(chi2_))
 

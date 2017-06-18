@@ -2,6 +2,9 @@
 # Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
 import os
 
+# Finally import the serialization machinery
+from .io.serialization import *
+
 from .exceptions.custom_exceptions import custom_warnings
 
 if os.environ.get('DISPLAY') is None:
@@ -22,7 +25,7 @@ from version import __version__
 from astromodels import *
 
 # Now import the optimizers first (to avoid conflicting libraries problems)
-from .minimizer.minimization import _minimizers
+from .minimizer.minimization import _minimizers, LocalMinimization, GlobalMinimization
 
 # This must be here before the automatic import of subpackages,
 # otherwise we will incur in weird issues with other packages

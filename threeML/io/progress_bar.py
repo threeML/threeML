@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import sys, time
 import datetime
+from threeML.io.detect_notebook import is_inside_notebook
 
 # This is used for testing purposes
 
@@ -50,7 +51,7 @@ def progress_bar(iterations, width=None, scale=1, units='', title=None):
 
     # Instance progress bar
 
-    if has_widgets:
+    if has_widgets and is_inside_notebook():
 
         try:
 
@@ -67,6 +68,8 @@ def progress_bar(iterations, width=None, scale=1, units='', title=None):
             this_progress_bar = ProgressBarHTML(iterations, bar_width, scale=scale, units=units, title=title)
 
         except:
+
+            # Fall back to Ascii progress bar
 
             if width is None:
 
@@ -105,7 +108,7 @@ def multiple_progress_bars(iterations, n, width=None, force_html=False):
 
     # Instance n identical progress bars
 
-    if has_widgets:
+    if has_widgets and is_inside_notebook():
 
         if width is None:
 

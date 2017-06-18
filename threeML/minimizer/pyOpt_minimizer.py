@@ -93,6 +93,9 @@ class PyOptMinimizer(Minimizer):
 
     def __init__(self, function, parameters, ftol=1e-1, verbosity=10):
 
+        raise NotImplementedError("Not yet ported to new minimizer interface. Use nlopt algorithms available through "
+                                  "pygmo (PAGMO minimizer)")
+
         super(PyOptMinimizer, self).__init__(function, parameters, ftol, verbosity)
 
     def _setup(self):
