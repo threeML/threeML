@@ -1233,6 +1233,10 @@ class SpectrumLike(PluginPrototype):
 
     @property
     def mask(self):
+        """
+        The channel mask
+        :return:
+        """
 
         return self._mask
 
