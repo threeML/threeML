@@ -13,6 +13,7 @@ class ResidualPlot(object):
         :param kwargs:
         """
 
+        # turn on or off residuals
 
         if show_residuals:
 

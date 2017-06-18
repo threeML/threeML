@@ -1261,6 +1261,177 @@ class SpectrumLike(PluginPrototype):
     def tstop(self):
         return self._tstop
 
+
+    @property
+    def expected_model_rate(self):
+
+        return self._evaluate_model() * self._nuisance_parameter.value
+
+
+
+    @property
+    def observed_counts(self):
+        """
+
+        :return: the observed counts
+        """
+
+        return self._observed_counts
+
+    @property
+    def observed_count_errors(self):
+        """
+
+        :return: the observed counts errors
+        """
+
+        cnt_err = None
+
+        if self._observation_noise_model == 'poisson':
+
+            cnt_err = np.sqrt(self._observed_counts)
+
+        else:
+
+            if self._background_noise_model is None:
+                cnt_err = self._observed_count_errors
+
+                # calculate all the correct quantites
+
+        return cnt_err
+
+    @property
+    def background_counts(self):
+        """
+
+        :return: the observed background counts
+        """
+
+        background_counts = None
+
+        if self._observation_noise_model == 'poisson':
+
+
+            if self._background_noise_model == 'poisson':
+
+                background_counts = self._background_counts
+
+                # Gehrels weighting, a little bit better approximation when statistic is low
+                # (and inconsequential when statistic is high)
+
+            elif self._background_noise_model == 'ideal':
+
+                background_counts = self._scaled_background_counts
+
+            elif self._background_noise_model == 'gaussian':
+
+                background_counts = self._background_counts
+
+            elif self._background_noise_model is None:
+
+                raise NotImplementedError("do not have this model yet")
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            if self._background_noise_model is None:
+                # Observed counts
+                background_counts = None
+
+                # calculate all the correct quantites
+
+        return background_counts
+
+    @property
+    def background_count_errors(self):
+        """
+
+        :return: the observed background count errors
+        """
+
+        background_errors = None
+
+        if self._observation_noise_model == 'poisson':
+
+            if self._background_noise_model == 'poisson':
+
+                # Gehrels weighting, a little bit better approximation when statistic is low
+                # (and inconsequential when statistic is high)
+
+                background_errors = 1 + np.sqrt(self._background_counts + 0.75)
+
+            elif self._background_noise_model == 'ideal':
+
+                background_errors = np.zeros_like(self._scaled_background_counts)
+
+            elif self._background_noise_model == 'gaussian':
+
+                background_errors = self._back_count_errors
+
+            elif self._background_noise_model is None:
+
+                raise NotImplementedError("do not have this model yet")
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            if self._background_noise_model is None:
+                background_errors = None
+
+
+        return background_errors
+
+
+
+
+    @property
+    def source_rate(self):
+
+
+        if self._background_noise_model is not None:
+
+            scale_factor = self._observed_spectrum.scale_factor / self._background_spectrum.scale_factor
+
+            # since we compare to the model rate... background subtract but with proper propagation
+            src_rate = (self.observed_counts / self.exposure - (self.background_counts / self.background_exposure) * scale_factor)
+
+
+
+        else:
+
+            # since we compare to the model rate... background subtract but with proper propagation
+            src_rate = (self.observed_counts / self.exposure)
+
+
+        return src_rate
+
+    @property
+    def source_rate_error(self):
+
+        if self._background_noise_model is not None:
+
+            scale_factor = self._observed_spectrum.scale_factor / self._background_spectrum.scale_factor
+
+            src_rate_err = np.sqrt((self.observed_count_errors / self.exposure) ** 2 +
+                                   ((self.background_count_errors / self.background_exposure) * scale_factor) ** 2)
+
+        else:
+
+            src_rate_err = self.observed_count_errors / self.exposure
+
+        return src_rate_err
+
+
+
+
+
+
     @property
     def background_exposure(self):
         """

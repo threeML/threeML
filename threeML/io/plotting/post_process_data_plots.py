@@ -177,76 +177,14 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         # get the expected counts
         # NOTE: _rsp.convolve() returns already the rate (counts / s)
-        expected_model_rate = data._evaluate_model() * data._nuisance_parameter.value
+        expected_model_rate = data.expected_model_rate
 
 
         # figure out the type of data
 
-        if data._observation_noise_model == 'poisson':
+        src_rate = data.source_rate
+        src_rate_err = data.source_rate_error
 
-            # Observed counts
-            observed_counts = data._observed_counts
-
-            cnt_err = np.sqrt(observed_counts)
-
-            if data._background_noise_model == 'poisson':
-
-                background_counts = data._background_counts
-
-                # Gehrels weighting, a little bit better approximation when statistic is low
-                # (and inconsequential when statistic is high)
-
-                background_errors = 1 + np.sqrt(background_counts + 0.75)
-
-            elif data._background_noise_model == 'ideal':
-
-                background_counts = data._scaled_background_counts
-
-                background_errors = np.zeros_like(background_counts)
-
-            elif data._background_noise_model == 'gaussian':
-
-                background_counts = data._background_counts
-
-                background_errors = data._back_count_errors
-
-            elif data._background_noise_model is None:
-
-                raise NotImplementedError("do not have this model yet")
-
-            else:
-
-                raise RuntimeError("This is a bug")
-
-        else:
-
-            if data._background_noise_model is None:
-                # Observed counts
-                observed_counts = data._observed_counts
-
-                cnt_err = data._observed_count_errors
-
-
-
-
-        # calculate all the correct quantites
-
-        if data._background_noise_model is not None:
-
-            scale_factor = data._observed_spectrum.scale_factor / data._background_spectrum.scale_factor
-
-            # since we compare to the model rate... background subtract but with proper propagation
-            src_rate = (observed_counts / data.exposure - (background_counts / data.background_exposure) * scale_factor)
-
-            src_rate_err = np.sqrt((cnt_err / data.exposure) ** 2 +
-                                   ((background_errors / data.background_exposure) * scale_factor) ** 2)
-
-        else:
-
-            # since we compare to the model rate... background subtract but with proper propagation
-            src_rate = (observed_counts / data.exposure)
-
-            src_rate_err = cnt_err / data.exposure
 
 
         # rebin on the source rate
@@ -307,9 +245,9 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         # Residuals
 
         # we need to get the rebinned counts
-        rebinned_observed_counts, = this_rebinner.rebin(observed_counts)
+        rebinned_observed_counts, = this_rebinner.rebin(data.observed_counts)
 
-        rebinned_observed_count_errors, = this_rebinner.rebin_errors(cnt_err)
+        rebinned_observed_count_errors, = this_rebinner.rebin_errors(data.observed_count_errors)
 
         # the rebinned counts expected from the model
         rebinned_model_counts = new_model_rate * data.exposure
@@ -317,8 +255,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         # and also the rebinned background
 
         if data._background_noise_model is not None:
-            rebinned_background_counts, = this_rebinner.rebin(background_counts)
-            rebinned_background_errors, = this_rebinner.rebin_errors(background_errors)
+            rebinned_background_counts, = this_rebinner.rebin(data.background_counts)
+            rebinned_background_errors, = this_rebinner.rebin_errors(data.background_count_errors)
 
             significance_calc = Significance(rebinned_observed_counts,
                                              rebinned_background_counts + rebinned_model_counts / data.scale_factor,
