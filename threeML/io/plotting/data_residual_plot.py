@@ -7,18 +7,32 @@ from threeML.config.config import threeML_config
 
 class ResidualPlot(object):
 
-    def __init__(self,**kwargs):
+    def __init__(self,show_residuals=True,**kwargs):
         """
 
         :param kwargs:
         """
 
 
-        self._fig, (self._ax, self._ax1) = plt.subplots(2, 1, sharex=True,
-                                                        gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
+        if show_residuals:
+
+            self._fig, (self._ax, self._ax1) = plt.subplots(2, 1, sharex=True,
+                                                            gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
+
+
+        else:
+
+            self._fig, self._ax = plt.subplots(**kwargs)
+
+
+        self._show_residuals = show_residuals
 
 
 
+    @property
+    def show_residuals(self):
+
+        return self._show_residuals
 
 
     def add_model_step(self, xmin, xmax, xwidth, y, label, color='r'):
@@ -87,15 +101,19 @@ class ResidualPlot(object):
 
         #residuals = (expected_model_magnitudes - mag_errors) / mag_errors
 
-        self._ax1.axhline(0, linestyle='--', color='k')
-        self._ax1.errorbar(x,
-                     residuals,
-                     yerr=np.ones_like(residuals),
-                     capsize=0,
-                     fmt=threeML_config['residual plot']['error marker'],
-                     elinewidth=threeML_config['residual plot']['error line width'],
-                     markersize=threeML_config['residual plot']['error marker size'],
-                     color=color)
+        if self._show_residuals:
+
+            self._ax1.axhline(0, linestyle='--', color='k')
+
+
+            self._ax1.errorbar(x,
+                         residuals,
+                         yerr=np.ones_like(residuals),
+                         capsize=0,
+                         fmt=threeML_config['residual plot']['error marker'],
+                         elinewidth=threeML_config['residual plot']['error line width'],
+                         markersize=threeML_config['residual plot']['error marker size'],
+                         color=color)
 
 
     def finalize(self, xlabel='x', ylabel='y',xscale='log',yscale='log', show_legend=True,invert_y=False):
@@ -124,14 +142,15 @@ class ResidualPlot(object):
 
             self._ax.set_yscale(yscale)
 
+        if self._show_residuals:
 
-        self._ax1.set_xscale(xscale)
+            self._ax1.set_xscale(xscale)
 
-        locator = MaxNLocator(prune='upper', nbins=5)
-        self._ax1.yaxis.set_major_locator(locator)
+            locator = MaxNLocator(prune='upper', nbins=5)
+            self._ax1.yaxis.set_major_locator(locator)
 
-        self._ax1.set_xlabel(xlabel)
-        self._ax1.set_ylabel("Residuals\n($\sigma$)")
+            self._ax1.set_xlabel(xlabel)
+            self._ax1.set_ylabel("Residuals\n($\sigma$)")
 
 
 

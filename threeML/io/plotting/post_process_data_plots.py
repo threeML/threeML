@@ -91,6 +91,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     # Legend is on by default
     show_legend = True
 
+    show_residuals = True
+
     # Default colors
 
     data_colors = cmap_intervals(len(data_keys), data_cmap)
@@ -100,6 +102,12 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     if 'show_legend' in kwargs:
         show_legend = bool(kwargs.pop('show_legend'))
+
+    if 'show_residuals' in kwargs:
+        show_residuals= bool(kwargs.pop('show_residuals'))
+
+
+
 
     if 'step' in kwargs:
         step = bool(kwargs.pop('step'))
@@ -153,7 +161,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     #fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
-    residual_plot = ResidualPlot(**kwargs)
+    residual_plot = ResidualPlot(show_residuals=show_residuals,**kwargs)
 
     # go thru the detectors
     for key, data_color, model_color, min_rate in zip(data_keys, data_colors, model_colors, min_rates):
