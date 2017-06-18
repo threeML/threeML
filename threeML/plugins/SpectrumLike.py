@@ -1232,6 +1232,11 @@ class SpectrumLike(PluginPrototype):
         self._nuisance_parameter.fix = True
 
     @property
+    def mask(self):
+
+        return self._mask
+
+    @property
     def scale_factor(self):
         """
         Ratio between the source and the background exposure and area
