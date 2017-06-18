@@ -1,16 +1,12 @@
 import collections
 import numpy
+import dill
 import scipy.optimize
 import scipy.stats
 import matplotlib.pyplot as plt
-from matplotlib.colors import BoundaryNorm
 
-from threeML.io.rich_display import display
 import numpy as np
-import pandas as pd
-import uncertainties
 import astromodels.core.model
-
 
 from threeML.minimizer import minimization
 from threeML.exceptions import custom_exceptions
@@ -18,9 +14,9 @@ from threeML.io.table import Table
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
 from threeML.config.config import threeML_config
-from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.analysis_results import MLEResults
 from threeML.utils.stats_tools import aic, bic
+from threeML.io.results_table import ResultsTable
 
 
 from astromodels import ModelAssertionViolation
@@ -36,6 +32,8 @@ class ReducingNumberOfSteps(Warning):
 
 class NotANumberInLikelihood(Warning):
     pass
+
+
 
 
 
@@ -83,11 +81,14 @@ class JointLikelihood(object):
         # function
         self.ncalls = 0
 
-        # Pre-defined minimizer is Minuit
+        # Pre-defined minimizer
+        default_minimizer = minimization.LocalMinimization(threeML_config['mle']['default minimizer'])
 
-        self.set_minimizer(threeML_config['mle']['default minimizer'],
-                           threeML_config['mle']['default minimizer algorithm'],
-                           threeML_config['mle']['default minimizer callback'])
+        if threeML_config['mle']['default minimizer algorithm'] is not None:
+
+            default_minimizer.set_algorithm(threeML_config['mle']['default minimizer algorithm'])
+
+        self.set_minimizer(default_minimizer)
 
         # Initial set of free parameters
 
@@ -197,67 +198,48 @@ class JointLikelihood(object):
 
         else:
 
-            # Now fix sensible values for parameters deltas
-
-            for k, v in self._free_parameters.items():
-
-                if v.min_value is None and v.max_value is None:
-
-                    # No boundaries, use 20% of value as initial delta
-
-                    if abs(v.delta) < abs(v.value) * 0.2:
-
-                        v.delta = abs(v.value) * 0.2
-
-                elif v.min_value is not None:
-
-                    if v.max_value is not None:
-
-                        # Bounded in both directions. Use 1/20 of the total range of variations as delta
-
-                        v.delta = (v.max_value - v.min_value) / 20.0
-
-                    else:
-
-                        # Bounded only in the negative direction. Make sure we are not at the boundary
-                        if np.isclose(v.value, v.min_value, abs(v.value) / 20):
-
-                            custom_warnings.warn("The current value of parameter %s is very close to "
-                                                 "its lower bound when starting the fit. Fixing it" % v.name)
-
-                            v.value = v.value + 0.1 * abs(v.value)
-
-                            v.delta = 0.05 * abs(v.value)
-
-                        else:
-
-                            v.delta = min(v.delta, (v.value - v.min_value) / 2.0)
-
-                else:
-
-                    if v.max_value is not None:
-
-                        # Bounded only in the positive direction
-                        # Bounded only in the negative direction. Make sure we are not at the boundary
-                        if np.isclose(v.value, v.max_value, abs(v.value) / 20):
-
-                            custom_warnings.warn("The current value of parameter %s is very close to "
-                                                 "its upper bound when starting the fit. Fixing it" % v.name)
-
-                            v.value = v.value - 0.1 * abs(v.value)
-
-                            v.delta = 0.05 * abs(v.value)
-
-                        else:
-
-                            v.delta = min(v.delta, (v.max_value - v.value) / 2.0)
-
-
-
             # Instance the minimizer
 
-            self._minimizer = self._get_minimizer(self.minus_log_like_profile,
-                                                  self._free_parameters)
+            # If we have a global minimizer, use that first (with no covariance)
+            if isinstance(self._minimizer_type, minimization.GlobalMinimization):
+
+                # Do global minimization first
+
+                global_minimizer = self._get_minimizer(self.minus_log_like_profile, self._free_parameters)
+
+                xs, global_log_likelihood_minimum = global_minimizer.minimize(compute_covar=False)
+
+                print("\n\nResults after global minimizer (before secondary optimization):")
+
+                # Gather global results
+                paths = []
+                values = []
+                errors = []
+                units = []
+
+                for par in self._free_parameters.values():
+
+                    paths.append(par.path)
+                    values.append(par.value)
+                    errors.append(0)
+                    units.append(par.unit)
+
+                global_results = ResultsTable(paths, values, errors, errors, units)
+
+                global_results.display()
+
+                print("\nTotal log-likelihood minimum: %.3f\n" % global_log_likelihood_minimum)
+
+                # Now set up secondary minimizer
+                self._minimizer = self._minimizer_type.get_second_minimization_instance(self.minus_log_like_profile,
+                                                                                        self._free_parameters)
+
+            else:
+
+                # Only local minimization to be performed
+
+                self._minimizer = self._get_minimizer(self.minus_log_like_profile,
+                                                      self._free_parameters)
 
             # Perform the fit
 
@@ -346,36 +328,19 @@ class JointLikelihood(object):
 
         # Print a table with the errors
 
-        data = []
-        name_length = 0
+        parameter_names = self._free_parameters.keys()
+        best_fit_values = map(lambda x: x.value, self._free_parameters.values())
+        negative_errors = [errors[k][0] for k in parameter_names]
+        positive_errors = [errors[k][1] for k in parameter_names]
+        units = [par.unit for par in self._free_parameters.values()]
 
-        for k, v in self._free_parameters.items():
-
-            # Format the value and the error with sensible significant
-            # numbers
-
-            neg_error = errors[k][0]
-
-            pos_error = errors[k][1]
-
-            pretty_string = uncertainty_formatter(v.value, v.value + neg_error, v.value + pos_error)
-
-            data.append([k, pretty_string, v.unit])
-
-            if len(k) > name_length:
-                name_length = len(k)
-
-        # Create and display the table
-
-        table = Table(rows=data,
-                      names=["Name", "Value", "Unit"],
-                      dtype=('S%i' % name_length, str, str))
+        results_table = ResultsTable(parameter_names, best_fit_values, negative_errors, positive_errors, units)
 
         if not quiet:
 
-            display(table)
+            results_table.display()
 
-        return table.to_pandas()
+        return results_table.frame
 
     def get_contours(self, param_1, param_1_minimum, param_1_maximum, param_1_n_steps,
                      param_2=None, param_2_minimum=None, param_2_maximum=None, param_2_n_steps=None,
@@ -713,7 +678,9 @@ class JointLikelihood(object):
 
         for i, parameter in enumerate(self._free_parameters.values()):
 
-            parameter.value = trial_values[i]
+            # Use the internal representation (see the Parameter class)
+
+            parameter._set_internal_value(trial_values[i])
 
         # Now profile out nuisance parameters and compute the new value
         # for the likelihood
@@ -761,93 +728,41 @@ class JointLikelihood(object):
 
         return summed_log_likelihood * (-1)
 
-    def set_minimizer(self, minimizer, algorithm=None, callback=None):
+    def set_minimizer(self, minimizer):
         """
         Set the minimizer to be used, among those available. At the moment these are supported:
 
         * ROOT
         * MINUIT (which means iminuit, default)
-        * PYOPT
-        * PAGMO (http://esa.github.io/pygmo/documentation)
+        * MULTINEST (require pymultinest)
+        * PAGMO (http://esa.github.io/pygmo2/documentation)
 
-        :param minimizer: the name of the new minimizer.
-        :param algorithm: (optional) for the PYOPT minimizer, specify the algorithm among those available. See a list at
-        http://www.pyopt.org/reference/optimizers.html . For the PAGMO algorithm, this is an instance of an algorithm
-        (see http://esa.github.io/pygmo/documentation/algorithms.html). For the other minimizers this is ignored.
-        :param callback: (optional) a function which receives the minimizer instance as argument, which perform further
-        setup before the minimizer is used for the fit. This is for example needed for the GRID minimizer to setup the
-        grid
+        :param minimizer: the name of the new minimizer or an instance of a LocalMinimization or a GlobalMinimization
+        class. Using the latter two classes allows for more choices and a better control of the details of the
+        minimization, like the choice of algorithms (if supported by the used minimizer)
         :return: (none)
         """
 
-        assert minimizer.upper() in minimization._minimizers, "Minimizer %s is not available on this system. Available " \
-                                                              "minimizers: " \
-                                                              "%s" % (minimizer,
-                                                                      ",".join(minimization._minimizers.keys()))
+        if isinstance(minimizer, minimization._Minimization):
 
-        if minimizer.upper() == "MINUIT":
-
-            self._minimizer_name = "MINUIT"
-            self._minimizer_algorithm = None
-
-        elif minimizer.upper() == "ROOT":
-
-            self._minimizer_name = "ROOT"
-            self._minimizer_algorithm = None
-
-        elif minimizer.upper() == "PYOPT":
-
-            assert algorithm is not None, "You have to provide an algorithm for the PYOPT minimizer. " \
-                                          "See http://www.pyopt.org/reference/optimizers.html"
-
-            self._minimizer_name = "PYOPT"
-
-            assert algorithm.upper() in minimization._pyopt_algorithms, "Provided algorithm not available. " \
-                                                                        "Available algorithms are: " \
-                                                                        "%s" % minimization._pyopt_algorithms.keys()
-            self._minimizer_algorithm = algorithm.upper()
-
-        elif minimizer.upper() == "MULTINEST":
-
-            self._minimizer_name = "MULTINEST"
-            self._minimizer_algorithm = None
-
-        elif minimizer.upper() == "GRID":
-
-            self._minimizer_name = "GRID"
-            self._minimizer_algorithm = None
-
-        elif minimizer.upper() == "PAGMO":
-
-            assert algorithm is not None, "You have to provide an instance of an algorithm for the PAGMO minimizer. " \
-                                          "See http://esa.github.io/pygmo/documentation/algorithms.html"
-
-            self._minimizer_name = "PAGMO"
-            self._minimizer_algorithm = algorithm
+            self._minimizer_type = minimizer
 
         else:
 
-            raise ValueError("Do not know minimizer %s. "
-                             "Available minimizers are: %s" % (minimizer, ",".join(minimization._minimizers.keys())))
+            assert minimizer.upper() in minimization._minimizers, \
+                "Minimizer %s is not available on this system. " \
+                "Available minimizers: %s" % (minimizer, ",".join(minimization._minimizers.keys()))
 
-        # Get the type
+            # The string can only specify a local minimization. This will return an error if that is not the case.
+            # In order to setup global optimization the user needs to use the GlobalMinimization factory directly
 
-        self._minimizer_type = minimization.get_minimizer(self._minimizer_name)
-
-        # Set the callback (default is None)
-        self._minimizer_callback = callback
+            self._minimizer_type = minimization.LocalMinimization(minimizer)
 
     def _get_minimizer(self, *args, **kwargs):
 
         # Get an instance of the minimizer
 
-        minimizer_instance = self._minimizer_type(*args, **kwargs)
-
-        # Set up the algorithm, if appropriate
-
-        if self._minimizer_algorithm:
-
-            minimizer_instance.set_algorithm(self._minimizer_algorithm)
+        minimizer_instance = self._minimizer_type.get_instance(*args, **kwargs)
 
         # Call the callback if one is set
 
@@ -859,7 +774,8 @@ class JointLikelihood(object):
 
     @property
     def minimizer_in_use(self):
-        return self._minimizer_name, self._minimizer_algorithm, self._minimizer_callback
+
+        return self._minimizer_type
 
     def restore_best_fit(self):
         """
