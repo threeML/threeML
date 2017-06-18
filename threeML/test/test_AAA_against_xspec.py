@@ -58,14 +58,9 @@ def get_matrix_elements():
 def test_OGIP_response_against_xspec():
 
     # Test for various photon indexes
-    for index in np.linspace(-2.0, 2.0, 10):
+    for index in [-0.5, 0.0, 0.5, 1.5, 2.0, 3.0, 4.0]:
 
-        if index == 1.0:
-
-            # This would make the integral of the power law different, so let's just
-            # skip it
-
-            continue
+        print("Processing index %s" % index)
 
         # First reset xspec
         xspec.AllData.clear()
@@ -92,8 +87,13 @@ def test_OGIP_response_against_xspec():
 
         # Exploit the fact that the power law integral is analytic
         powerlaw_integral = Powerlaw()
+        # Remove transformation
+        powerlaw_integral.K._transformation = None
+        powerlaw_integral.K.bounds = (None, None)
         powerlaw_integral.index = powerlaw.index.value + 1
         powerlaw_integral.K = powerlaw.K.value / (powerlaw.index.value + 1)
+
+        powerlaw_integral.display()
 
         integral_function = lambda e1, e2: powerlaw_integral(e2) - powerlaw_integral(e1)
 
@@ -198,6 +198,8 @@ def test_response_against_xspec():
 
         # Exploit the fact that the power law integral is analytic
         powerlaw_integral = Powerlaw()
+        powerlaw_integral.K._transformation = None
+        powerlaw_integral.K.bounds = (None, None)
         powerlaw_integral.index = powerlaw.index.value + 1
         powerlaw_integral.K = powerlaw.K.value / (powerlaw.index.value + 1)
 

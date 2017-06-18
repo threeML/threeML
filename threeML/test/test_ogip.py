@@ -25,48 +25,27 @@ __example_dir = os.path.join(__this_dir__, '../../examples')
 
 class AnalysisBuilder(object):
     def __init__(self, plugin):
-
         self._plugin = plugin
 
         self._shapes = {}
-        self._shapes['normal'] = Powerlaw()
-        self._shapes['cpl'] = Cutoff_powerlaw()
-        self._shapes['add'] = Powerlaw() + Cutoff_powerlaw
-        self._shapes['mult'] = Powerlaw() * Exponential_cutoff()
-        self._shapes['crazy'] = Exponential_cutoff() * (Powerlaw() + Powerlaw())
+        self._shapes['normal'] = Powerlaw
+        self._shapes['cpl'] = Cutoff_powerlaw
 
     @property
     def keys(self):
-
         return self._shapes.keys()
 
-    def build_point_source_jl(self):
+    def get_jl(self, key):
+        assert key in self._shapes
 
         data_list = DataList(self._plugin)
 
-        jls = {}
+        ps = PointSource('test', 0, 0, spectral_shape=self._shapes[key]())
+        model = Model(ps)
+        jl = JointLikelihood(model, data_list, verbose=False)
+        jl.set_minimizer("minuit")
 
-        for key in self._shapes.keys():
-            ps = PointSource('test', 0, 0, spectral_shape=self._shapes[key])
-            model = Model(ps)
-            jls[key] = JointLikelihood(model, data_list)
-
-        return jls
-
-    def build_point_source_bayes(self):
-
-        data_list = DataList(self._plugin)
-
-        jls = {}
-
-        for key in self._shapes.keys():
-            ps = PointSource('test', 0, 0, spectral_shape=self._shapes[key])
-            model = Model(ps)
-            jls[key] = JointLikelihood(model, data_list)
-
-        return jls
-
-
+        return jl
 
 
 def test_loading_a_generic_pha_file():
@@ -355,14 +334,12 @@ def test_simulating_data_sets():
         n_data_points = 128
         ogip.set_active_measurements("all")
 
-        ab = AnalysisBuilder(ogip)
-        ab.build_point_source_jl()
-
         assert ogip._n_synthetic_datasets == 0
 
-        new_ogip = ogip.get_simulated_dataset('sim')
+        ab = AnalysisBuilder(ogip)
+        _ = ab.get_jl('normal')
 
-        new_ogip.simulated_parameters
+        new_ogip = ogip.get_simulated_dataset('sim')
 
         assert new_ogip.name == 'sim'
         assert ogip._n_synthetic_datasets == 1
@@ -388,7 +365,7 @@ def test_simulating_data_sets():
         ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         ab = AnalysisBuilder(ogip)
-        ab.build_point_source_jl()
+        _ = ab.get_jl('normal')
 
         # Now check that generationing a lot of data sets works
 
@@ -405,25 +382,23 @@ def test_simulating_data_sets():
 
 def test_likelihood_ratio_test():
     with within_directory(__this_dir__):
-
         ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         ogip.set_active_measurements("all")
 
         ab = AnalysisBuilder(ogip)
-        ab.build_point_source_jl()
 
-        jls = ab.build_point_source_jl()
+        jl1 = ab.get_jl('normal')
 
-        for key in ['normal', 'cpl']:
+        res1, _ = jl1.fit(compute_covariance=True)
 
-            jl = jls[key]
+        jl2 = ab.get_jl('cpl')
+        res2, _ = jl2.fit(compute_covariance=True)
 
-            res, _ = jl.fit(compute_covariance=False)
-
-    lrt = LikelihoodRatioTest(jls['normal'], jls['cpl'])
+    lrt = LikelihoodRatioTest(jl1, jl2)
 
     null_hyp_prob, TS, data_frame, like_data_frame = lrt.by_mc(n_iterations=50, continue_on_failure=True)
+
 
 
 def test_xrt():

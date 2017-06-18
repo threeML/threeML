@@ -23,9 +23,6 @@ def test_filter_set():
         fs2 = FilterSet('a')
 
 
-    threeML_filter_library.instruments
-
-
 
 def test_photo_plugin():
 
@@ -51,7 +48,7 @@ def test_photo_plugin():
     jl = JointLikelihood(model, data_list)
 
     spec.piv = 1E0
-    spec.K.min_value = 0.
+    #spec.K.min_value = 0.
 
     #jl.set_minimizer('ROOT')
 

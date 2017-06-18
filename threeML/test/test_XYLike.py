@@ -62,7 +62,7 @@ def test_XYLike_chi2():
 
     # Verify that the fit converged where it should have
     #assert np.allclose(res[0]['value'].values, [0.83005902, 40.20040456, 62.78162993, 5.04082923, 0.27279872])
-    assert np.allclose(res[0]['value'].values,[0.82896119, 40.20269202, 62.80359114, 5.04080011, 0.27286713])
+    assert np.allclose(res[0]['value'].values,[0.82896119, 40.20269202, 62.80359114, 5.04080011, 0.27286713], rtol=0.05)
 
 
 def test_XYLike_poisson():
@@ -85,7 +85,7 @@ def test_XYLike_poisson():
     # Verify that the fit converged where it should have
 
     #print res[0]['value']
-    assert np.allclose(res[0]['value'], [0.783748,40.344599 , 71.560055, 4.989727 , 0.330570 ])
+    assert np.allclose(res[0]['value'], [0.783748,40.344599 , 71.560055, 4.989727 , 0.330570 ], rtol=0.05)
 
 
 def test_XYLike_assign_to_source():
@@ -125,7 +125,7 @@ def test_XYLike_assign_to_source():
     predicted_parameters = np.array([0.82896119, 40.20269202, 62.80359114, 5.04080011, 0.27286713])
 
     assert np.allclose([fitfun.a_1.value, fitfun.b_1.value, fitfun.F_2.value, fitfun.mu_2.value, fitfun.sigma_2.value],
-                       predicted_parameters)
+                       predicted_parameters, rtol=0.05)
 
     # Test that the likelihood does not change by changing the parameters of the other source
     log_like_before = jl.minus_log_like_profile(*predicted_parameters)
