@@ -32,6 +32,7 @@ from threeML.io.fits_file import fits, FITSFile, FITSExtension
 from threeML.io.rich_display import display
 from threeML.io.table import NumericMatrix, long_path_formatter
 from threeML.io.uncertainty_formatter import uncertainty_formatter
+from threeML.io.results_table import ResultsTable
 from threeML.version import __version__
 from threeML.random_variates import RandomVariates
 from threeML.io.calculate_flux import _calculate_point_source_flux
@@ -584,6 +585,74 @@ class _AnalysisResults(object):
 
         return self._statistical_measures.to_frame(name='statistical measures')
 
+    def _get_results_table(self, error_type, cl, covariance=None):
+
+        if error_type == "equal tail":
+
+            errors_gatherer = RandomVariates.equal_tail_confidence_interval
+
+        elif error_type == "hpd":
+
+            errors_gatherer = RandomVariates.highest_posterior_density_interval
+
+        elif error_type == "covariance":
+
+            assert covariance is not None, "If you use error_type='covariance' you have to provide a cov. matrix"
+
+            errors_gatherer = None
+
+        else:
+
+            raise ValueError("error_type must be either 'equal tail' or 'hpd'. Got %s" % error_type)
+
+        # Build the data frame
+        parameter_paths = []
+        values = []
+        negative_errors = []
+        positive_errors = []
+        units_dict = []
+
+        for i, this_par in enumerate(self._free_parameters.values()):
+
+            parameter_paths.append(this_par.path)
+
+            this_phys_q = self.get_variates(parameter_paths[-1])
+
+            values.append(this_phys_q.value)
+
+            units_dict.append(this_par.unit)
+
+            if error_type != "covariance":
+
+                low_bound, hi_bound = errors_gatherer(this_phys_q, cl)
+
+                negative_errors.append(low_bound - values[-1])
+
+                positive_errors.append(hi_bound - values[-1])
+
+            else:
+
+                std_dev = np.sqrt(covariance[i, i])
+
+                if this_par.has_transformation():
+
+                    best_fit_internal = this_par.transformation.forward(values[-1])
+
+                    _, neg_error = this_par.internal_to_external_delta(best_fit_internal, -std_dev)
+                    negative_errors.append(neg_error)
+
+                    _, pos_error = this_par.internal_to_external_delta(best_fit_internal, std_dev)
+                    positive_errors.append(pos_error)
+
+                else:
+
+                    negative_errors.append(-std_dev)
+                    positive_errors.append(std_dev)
+
+        results_table = ResultsTable(parameter_paths, values, negative_errors, positive_errors, units_dict)
+
+        return results_table
+
     def get_data_frame(self, error_type="equal tail", cl=0.68):
         """
         Returns a pandas DataFrame with the parameters and their errors, computed as specified in "error_type" and
@@ -599,81 +668,7 @@ class _AnalysisResults(object):
 
         # Gather the errors
 
-        if error_type == "equal tail":
-
-            errors_gatherer = RandomVariates.equal_tail_confidence_interval
-
-        elif error_type == "hpd":
-
-            errors_gatherer = RandomVariates.highest_posterior_density_interval
-
-        else:
-
-            raise ValueError("error_type must be either 'equal tail' or 'hpd'. Got %s" % error_type)
-
-        # Build the data frame
-        values_dict = pd.Series()
-        negative_error_dict = pd.Series()
-        positive_error_dict = pd.Series()
-        average_error_dict = pd.Series()
-        units_dict = pd.Series()
-
-        for this_par in self._free_parameters.values():
-            this_path = this_par.path
-
-            this_phys_q = self.get_variates(this_path)
-
-            values_dict[this_path] = this_phys_q.value
-
-            low_bound, hi_bound = errors_gatherer(this_phys_q, cl)
-
-            negative_error_dict[this_path] = low_bound - values_dict[this_path]
-            positive_error_dict[this_path] = hi_bound - values_dict[this_path]
-            average_error_dict[this_path] = (hi_bound - low_bound) / 2.0
-            units_dict[this_path] = this_par.unit
-
-        items = (('value', values_dict),
-                 ('negative_error', negative_error_dict),
-                 ('positive_error', positive_error_dict),
-                 ('error', average_error_dict),
-                 ('unit', units_dict))
-
-        data_frame = pd.DataFrame.from_items(items)
-
-        return data_frame
-
-    def _get_best_fit_table(self, error_type, cl):
-
-        fit_results = self.get_data_frame(error_type, cl)
-
-        # Now produce an ad-hoc display. We don't use the pandas display methods because
-        # we want to display uncertainties with the right number of significant numbers
-
-        data = (('Value', pd.Series()), ('Unit', pd.Series()))
-
-        for i, parameter_name in enumerate(fit_results.index.values):
-            value = fit_results.at[parameter_name, 'value']
-
-            negative_error = fit_results.at[parameter_name, 'negative_error']
-
-            positive_error = fit_results.at[parameter_name, 'positive_error']
-
-            unit = fit_results.at[parameter_name, 'unit']
-
-            # Format the value and the error with sensible significant
-            # numbers
-
-            pretty_string = uncertainty_formatter(value, negative_error + value, positive_error + value)
-
-            # Apply name formatter so long paths are shorten
-            this_shortened_name = long_path_formatter(parameter_name, 60)
-
-            data[0][1][this_shortened_name] = pretty_string
-            data[1][1][this_shortened_name] = unit
-
-        best_fit_table = pd.DataFrame.from_items(data)
-
-        return best_fit_table
+        return self._get_results_table(error_type, cl).frame
 
     def get_point_source_flux(self, ene_min, ene_max, sources=(), confidence_level=0.68,
                               flux_unit='erg/(s cm2)', use_components=False, components_to_use=(),
@@ -780,11 +775,11 @@ class BayesianResults(_AnalysisResults):
 
     def display(self, display_correlation=False, error_type="equal tail", cl=0.68):
 
-        best_fit_table = self._get_best_fit_table(error_type, cl)
+        best_fit_table = self._get_results_table(error_type, cl)
 
         print("Maximum a posteriori probability (MAP) point:\n")
 
-        display(best_fit_table)
+        best_fit_table.display()
 
         if display_correlation:
 
@@ -811,7 +806,7 @@ class BayesianResults(_AnalysisResults):
 
         :param renamed_parameters: a python dictionary of parameters to rename.
              Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
-             {'old label': 'new label'}
+             {'old label': 'new label'}, where 'old label' is the full path of the parameter
         :param kwargs: arguments to be passed to the corner function
         :return: a matplotlib.figure instance
         """
@@ -823,23 +818,21 @@ class BayesianResults(_AnalysisResults):
         labels = []
         priors = []
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+
             short_name = parameter_name.split(".")[-1]
 
             labels.append(short_name)
 
+            # If the user has provided custom names, use them
+
+            if renamed_parameters is not None:
+
+                if parameter.path in renamed_parameters:
+
+                    labels[-1] = renamed_parameters[parameter.path]
+
             priors.append(self._optimized_model.parameters[parameter_name].prior)
-
-        # Rename the parameters if needed.
-
-        if renamed_parameters is not None:
-
-            for old_label, new_label in renamed_parameters.iteritems():
-
-                for i, _ in enumerate(labels):
-
-                    if labels[i] == old_label:
-                        labels[i] = new_label
 
         # default arguments
         default_args = {'show_titles': True, 'title_fmt': ".2g", 'labels': labels,
@@ -1101,7 +1094,7 @@ class MLEResults(_AnalysisResults):
         covariance_matrix = np.array(covariance_matrix, float, copy=True)
 
         # Get the best fit value for each parameter
-        values = map(attrgetter("value"), optimized_model.free_parameters.values())
+        values = map(lambda x:x._get_internal_value(), optimized_model.free_parameters.values())
 
         # This is the expected shape for the covariance matrix
 
@@ -1132,8 +1125,8 @@ class MLEResults(_AnalysisResults):
 
         # Gather boundaries
         # NOTE: every None boundary will become nan thanks to the casting to float
-        low_bounds = np.array(map(attrgetter("min_value"), optimized_model.free_parameters.values()), float)
-        hi_bounds = np.array(map(attrgetter("max_value"), optimized_model.free_parameters.values()), float)
+        low_bounds = np.array(map(lambda x: x._get_internal_min_value(), optimized_model.free_parameters.values()), float)
+        hi_bounds = np.array(map(lambda x: x._get_internal_max_value(), optimized_model.free_parameters.values()), float)
 
         # Fix all nans
         low_bounds[np.isnan(low_bounds)] = -np.inf
@@ -1160,6 +1153,13 @@ class MLEResults(_AnalysisResults):
 
         # Now remove them
         samples = samples[to_be_kept_mask, :]
+
+        # Now transform in the external space
+        for i, parameter in enumerate(optimized_model.free_parameters.values()):
+
+            if parameter.has_transformation():
+
+                samples[:, i] = parameter.transformation.backward(samples[:, i])
 
         # Finally build the class
 
@@ -1189,50 +1189,17 @@ class MLEResults(_AnalysisResults):
 
         return self._get_correlation_matrix(self._covariance_matrix)
 
-    # We re-implement this because the error in this case is just the sqrt(cov[i][i]) and it
-    # is symmetric by contruction. However, when taking samples, the percentage could be different
-    def _get_best_fit_table(self, error_type, cl):
-
-        fit_results = self.get_data_frame(error_type, cl)
-
-        # Now produce an ad-hoc display. We don't use the pandas display methods because
-        # we want to display uncertainties with the right number of significant numbers
-
-        data = (('Value', pd.Series()), ('Unit', pd.Series()))
-
-        for i, parameter_name in enumerate(fit_results.index.values):
-            value = fit_results.at[parameter_name, 'value']
-
-            error = np.sqrt(self.covariance_matrix[i, i])
-
-            unit = fit_results.at[parameter_name, 'unit']
-
-            # Format the value and the error with sensible significant
-            # numbers
-
-            pretty_string = uncertainty_formatter(value, value - error, value + error)
-
-            # Apply name formatter so long paths are shorten
-            this_shortened_name = long_path_formatter(parameter_name, 40)
-
-            data[0][1][this_shortened_name] = pretty_string
-            data[1][1][this_shortened_name] = unit
-
-        best_fit_table = pd.DataFrame.from_items(data)
-
-        return best_fit_table
-
     def get_statistic_frame(self):
 
         return self._get_statistic_frame(name='-log(likelihood)')
 
-    def display(self, display_correlation=True, error_type="equal tail", cl=0.68):
+    def display(self, display_correlation=True, cl=0.68):
 
-        best_fit_table = self._get_best_fit_table(error_type, cl)
+        best_fit_table = self._get_results_table(error_type="covariance", cl=cl, covariance=self.covariance_matrix)
 
         print("Best fit values:\n")
 
-        display(best_fit_table)
+        best_fit_table.display()
 
         if display_correlation:
 
