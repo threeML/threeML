@@ -277,7 +277,16 @@ class ProfileLikelihood(object):
 
                         self._wrapper.set_fixed_values([step1, step2])
 
-                        _, this_log_like = self._optimizer.minimize(compute_covar=False)
+                        try:
+
+                            _, this_log_like = self._optimizer.minimize(compute_covar=False)
+
+                        except FitFailed:
+
+                            # If the user is stepping too far it might be that the fit fails. It is usually not a
+                            # problem
+
+                            this_log_like = np.nan
 
                     else:
 
