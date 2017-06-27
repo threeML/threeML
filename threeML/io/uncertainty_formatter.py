@@ -67,17 +67,11 @@ def uncertainty_formatter(value, low_bound, hi_bound):
 
     num1, unc1, exponent1 = get_uncertainty_tokens(x)
 
-    # Since we scaled to the order of magnitude of value, there shouldn't be any exponent
-
-    assert exponent1 is None
-
     # Repeat the same for the other error
 
     y = uncertainties.ufloat(scaled_value, abs(scaled_error_p))
 
     num2, unc2, exponent2 = get_uncertainty_tokens(y)
-
-    assert exponent2 is None
 
     # Choose the representation of the number with more digits
     # This is necessary for asymmetric intervals where one of the two errors is much larger in magnitude
