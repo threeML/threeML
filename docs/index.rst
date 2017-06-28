@@ -11,8 +11,7 @@ Contents:
 .. toctree::
     :maxdepth: 10
 
-    notebooks/Quickstart.ipynb
-    notebooks/The 3ML workflow.ipynb
+    intro
     notebooks/Building Plugins from TimeSeries.ipynb
     notebooks/Point source plotting.ipynb
 
