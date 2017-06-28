@@ -12,7 +12,7 @@ class AllFitFailed(RuntimeError):
 
 class GridMinimizer(GlobalMinimizer):
 
-    valid_setup_keys = ('grid', 'second_minimization')
+    valid_setup_keys = ('grid', 'second_minimization', 'callbacks')
 
     def __init__(self, function, parameters, verbosity=1):
 
@@ -52,6 +52,13 @@ class GridMinimizer(GlobalMinimizer):
 
         # Setup inner minimization
         self._2nd_minimization = user_setup_dict['second_minimization']
+
+        # If there are callbacks, set them up
+        if 'callbacks' in user_setup_dict:
+
+            for callback in user_setup_dict['callbacks']:
+
+                self.add_callback(callback)
 
     def add_callback(self, function):
         """

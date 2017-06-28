@@ -311,7 +311,7 @@ class _Minimization(object):
         self._minimizer_type = get_minimizer(minimizer_type=minimizer_type)
 
         self._algorithm = None
-        self._setup_dict = None
+        self._setup_dict = {}
 
     def setup(self, **setup_dict):
 

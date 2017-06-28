@@ -82,33 +82,9 @@ class PAGMOMinimizer(GlobalMinimizer):
 
                 self._setup_dict[key] = user_setup_dict[key]
 
-    def minimize(self, compute_covar=True):
-
-        try:
-
-            best_fit_values, final_value = self.evolve()
-
-        except:
-
-            raise
-
-        # Compute errors with the Hessian
-
-        if compute_covar:
-
-            covariance_matrix = self._compute_covariance_matrix(best_fit_values)
-
-        else:
-
-            covariance_matrix = None
-
-        self._store_fit_results(best_fit_values, final_value, covariance_matrix)
-
-        return best_fit_values, final_value
-
     # This cannot be part of a class, unfortunately, because of how PyGMO serialize objects
 
-    def evolve(self):
+    def _minimize(self):
 
         # Gather the setup
         islands = self._setup_dict['islands']
