@@ -14,7 +14,7 @@ The Multi-Mission Maximum Likelihood framework (3ML) provides a common high-leve
 Traditionally the Astrophysics community have been using frequentist techniques, but in recent years Bayesian methods and approaches have been gaining consensum and momentum. In 3ML both analysis are possible. Moreover, the 3ML Python interface allows for combinations with all available packages for data analysis and mining.
 
 .. toctree::
-    :maxdepth: 10
+    :maxdepth: 4
     :hidden:
 
     intro
