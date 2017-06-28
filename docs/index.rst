@@ -16,8 +16,10 @@ Traditionally the Astrophysics community have been using frequentist techniques,
     :hidden:
 
     intro
-    notebooks/Building Plugins from TimeSeries.ipynb
-    notebooks/Point source plotting.ipynb
+    notebooks/Minimization_tutorial.ipynb
+    Time_series
+    plotting
+    
 
 .. automodule:: threeML
     :members:
