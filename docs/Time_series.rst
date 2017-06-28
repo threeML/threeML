@@ -1,5 +1,5 @@
-Plotting
-========
+Time series
+===========
 
 Contents:
 
