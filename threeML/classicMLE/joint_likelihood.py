@@ -209,8 +209,6 @@ class JointLikelihood(object):
 
                 xs, global_log_likelihood_minimum = global_minimizer.minimize(compute_covar=False)
 
-                print("\n\nResults after global minimizer (before secondary optimization):")
-
                 # Gather global results
                 paths = []
                 values = []
@@ -226,9 +224,13 @@ class JointLikelihood(object):
 
                 global_results = ResultsTable(paths, values, errors, errors, units)
 
-                global_results.display()
+                if not quiet:
 
-                print("\nTotal log-likelihood minimum: %.3f\n" % global_log_likelihood_minimum)
+                    print("\n\nResults after global minimizer (before secondary optimization):")
+
+                    global_results.display()
+
+                    print("\nTotal log-likelihood minimum: %.3f\n" % global_log_likelihood_minimum)
 
                 # Now set up secondary minimizer
                 self._minimizer = self._minimizer_type.get_second_minimization_instance(self.minus_log_like_profile,
