@@ -3,9 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-==========================================================================
 .. image:: ../logo/logo.png
-==========================================================================
 
 Astrophysical sources are observed by different instruments at different wavelengths with an unprecedented quality. Putting all these data together to form a coherent view, however, is a very difficult task. Indeed, each instrument and data type has its own ad-hoc software and handling procedure, which present steep learning curves and do not talk to each other.
 
