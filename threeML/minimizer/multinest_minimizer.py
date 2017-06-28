@@ -5,19 +5,32 @@ import os
 import pymultinest
 from astromodels.functions.priors import Uniform_prior, Log_uniform_prior
 
-from threeML.minimizer.minimization import Minimizer
+from threeML.minimizer.minimization import GlobalMinimizer
 from threeML.io.file_utils import temporary_directory
 from threeML.io.suppress_stdout import suppress_stdout
 
-class MultinestMinimizer(Minimizer):
 
-    def __init__(self, function, parameters, ftol=1e3, verbosity=1):
+class MultinestMinimizer(GlobalMinimizer):
 
-        raise NotImplementedError("Not yet ported to new minimizer interface")
+    valid_setup_keys = ('second_minimization', 'live_points')
 
-        super(MultinestMinimizer, self).__init__(function, parameters, ftol, verbosity)
+    def __init__(self, function, parameters, verbosity=10, setup_dict=None):
 
-    def _setup(self):
+        super(MultinestMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
+
+    def _setup(self, user_setup_dict):
+
+        if user_setup_dict is None:
+
+            default_setup = {'live_points': max(100, self._Npar * 20)}
+
+            self._setup_dict = default_setup
+
+        else:
+
+            for key in user_setup_dict:
+
+                self._setup_dict[key] = user_setup_dict[key]
 
         # We need to wrap the function, because multinest maximizes instead of minimizing
 
@@ -74,7 +87,7 @@ class MultinestMinimizer(Minimizer):
 
         def prior(params, ndim, nparams):
 
-            for i, (parameter_name, parameter) in enumerate(self.parameters.iteritems()):
+            for i, (parameter_name, parameter) in enumerate(self.parameters.items()):
 
                 try:
 
@@ -93,7 +106,7 @@ class MultinestMinimizer(Minimizer):
 
         self._prior = prior
 
-    def minimize(self, compute_covar=True):
+    def _minimize(self):
         """
             Minimize the function using the Multinest sampler
          """
@@ -130,7 +143,7 @@ class MultinestMinimizer(Minimizer):
                                       n_dim,
                                       n_dim,
                                       outputfiles_basename=outputfiles_basename,
-                                      n_live_points=max(100, n_dim * 20),
+                                      n_live_points=self._setup_dict['live_points'],
                                       multimodal=True,
                                       resume=False)
 
@@ -161,15 +174,5 @@ class MultinestMinimizer(Minimizer):
         best_fit_values = _raw_samples[idx]
 
         minimum = func_values[idx] * (-1)
-
-        if compute_covar:
-
-            covariance_matrix = self._compute_covariance_matrix(best_fit_values)
-
-        else:
-
-            covariance_matrix = None
-
-        self._store_fit_results(best_fit_values, minimum, covariance_matrix)
 
         return best_fit_values, minimum

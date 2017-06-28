@@ -125,7 +125,9 @@ class MinuitMinimizer(LocalMinimizer):
 
         if user_setup_dict is not None:
 
-            self.minuit.tol = user_setup_dict['ftol']
+            if 'ftol' in user_setup_dict:
+
+                self.minuit.tol = user_setup_dict['ftol']
 
         else:
 
