@@ -79,6 +79,9 @@ echo "##########################################################"
 echo " Executing tests and coveralls"
 echo "##########################################################"
 
+# Need this for tests using parallel
+export PYTHONPATH=threeML/test:${PYTHONPATH}
+
 # Execute tests
 python -m pytest --ignore=threeML_env -vv --cov=threeML
 
