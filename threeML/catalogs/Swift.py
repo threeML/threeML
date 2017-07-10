@@ -310,9 +310,10 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
                     # just for Fermi GBM, lets get the trigger number
 
                     # TODO: add more instruments
-                    if obs == 'Fermi-LAT-GBM':
+                    if obs == 'Fermi-GBM':
 
-                        info = {'GCN': gcn, 'trigger number': self._get_fermiGBM_trigger_number_from_gcn(gcn)}
+
+                        info = {'GCN': gcn, 'trigger number': self._get_fermiGBM_trigger_number_from_gcn(str(gcn))}
 
                     else:
 
