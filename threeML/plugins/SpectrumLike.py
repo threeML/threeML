@@ -801,12 +801,17 @@ class SpectrumLike(PluginPrototype):
             # spectrum remain the same except for the rate and rate errors
 
             new_observation = self._observed_spectrum.clone(new_counts=randomized_source_counts,
-                                                            new_count_errors=randomized_source_count_err)
+                                                            new_count_errors=randomized_source_count_err,
+                                                            new_scale_factor=1.
+                                                            )
 
             if self._background_spectrum is not None:
 
                 new_background = self._background_spectrum.clone(new_counts=randomized_background_counts,
-                                                                 new_count_errors=randomized_background_count_err)
+                                                                 new_count_errors=randomized_background_count_err,
+                                                                 new_exposure=self._observed_spectrum.exposure, # because it was adjusted
+                                                                 new_scale_factor=1.
+                                                                 )
 
             else:
 

@@ -784,7 +784,7 @@ p
 
         return self._grouping
 
-    def clone(self, new_counts=None, new_count_errors=None, ):
+    def clone(self, new_counts=None, new_count_errors=None, new_exposure=None ,new_scale_factor=None ):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -795,6 +795,10 @@ p
         :return: new pha spectrum
         """
 
+        if new_exposure is None:
+
+            new_exposure = self.exposure
+
         if new_counts is None:
             new_counts = self.counts
             new_count_errors = self.count_errors
@@ -803,9 +807,10 @@ p
         if new_count_errors is None:
             stat_err = None
 
+
         else:
 
-            stat_err = new_count_errors/self.exposure
+            stat_err = new_count_errors/new_exposure
 
         if self._tstart is None:
 
@@ -819,7 +824,7 @@ p
 
 
 
-            telapse = self.exposure
+            telapse = new_exposure
 
         else:
 
@@ -827,6 +832,10 @@ p
 
         # create a new PHAII instance
 
+
+        if new_scale_factor is None:
+
+            new_scale_factor = self.scale_factor
 
 
         pha = PHAII(instrument_name=self.instrument,
@@ -838,8 +847,8 @@ p
                     stat_err=stat_err,
                     quality=self.quality.to_ogip(),
                     grouping=self.grouping,
-                    exposure=self.exposure,
-                    backscale=self.scale_factor,
+                    exposure=new_exposure,
+                    backscale=new_scale_factor,
                     respfile=None,
                     ancrfile=None,
                     is_poisson=self.is_poisson)
