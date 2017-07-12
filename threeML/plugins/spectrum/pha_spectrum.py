@@ -790,6 +790,9 @@ p
         parameters the same
 
 
+        :param new_exposure: the new exposure for the clone
+        :param new_scale_factor: the new scale factor for the clone
+
         :param new_counts: new counts for the spectrum
         :param new_count_errors: new errors from the spectrum
         :return: new pha spectrum
@@ -830,13 +833,14 @@ p
 
             telapse = self._tstop - tstart
 
-        # create a new PHAII instance
+
 
 
         if new_scale_factor is None:
 
             new_scale_factor = self.scale_factor
 
+        # create a new PHAII instance
 
         pha = PHAII(instrument_name=self.instrument,
                     telescope_name=self.mission,

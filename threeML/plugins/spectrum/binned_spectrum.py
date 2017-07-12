@@ -701,6 +701,9 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         parameters the same
 
 
+        :param new_sys_errors:
+        :param new_exposure:
+        :param new_scale_factor:
         :param new_counts: new counts for the spectrum
         :param new_count_errors: new errors from the spectrum
         :return:

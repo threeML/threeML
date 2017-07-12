@@ -800,6 +800,11 @@ class SpectrumLike(PluginPrototype):
             # member so as to build the appropriate spectrum type. All parameters of the current
             # spectrum remain the same except for the rate and rate errors
 
+            # the profile likelihood automatically adjust the background spectrum to the
+            # same exposure and scale as the observation
+            # therefore, we must  set the background simulation to have the exposure and scale
+            # of the observation
+
             new_observation = self._observed_spectrum.clone(new_counts=randomized_source_counts,
                                                             new_count_errors=randomized_source_count_err,
                                                             new_scale_factor=1.
@@ -810,7 +815,7 @@ class SpectrumLike(PluginPrototype):
                 new_background = self._background_spectrum.clone(new_counts=randomized_background_counts,
                                                                  new_count_errors=randomized_background_count_err,
                                                                  new_exposure=self._observed_spectrum.exposure, # because it was adjusted
-                                                                 new_scale_factor=1.
+                                                                 new_scale_factor=1. # because it was adjusted
                                                                  )
 
             else:
