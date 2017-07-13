@@ -507,17 +507,19 @@ def test_pha_write_no_bkg():
 
         ogip = OGIPLike('test_ogip', observation='test_pha_nobkg.pha{1}')
 
-        ogip.write_pha('test_write', overwrite=True)
+        ogip.write_pha('test_write_nobkg', overwrite=True)
 
-        written_ogip = OGIPLike('write_ogip', observation='test_write.pha{1}')
+        written_ogip = OGIPLike('write_ogip', observation='test_write_nobkg.pha{1}')
 
         pha_info = written_ogip.get_pha_files()
 
-        for key in ['pha', 'bak']:
-
+        for key in ['pha']:
             assert isinstance(pha_info[key], PHASpectrum)
 
-        assert pha_info['pha'].background_file == 'test_bak.pha{1}'
+        f = fits.open("test_write_nobkg.pha")
+        assert f['SPECTRUM'].data['BACKFILE'][0] == "NONE"
+
+        assert pha_info['pha'].background_file is None
         assert pha_info['pha'].ancillary_file is None
         assert pha_info['pha'].instrument == 'GBM_NAI_03'
         assert pha_info['pha'].mission == 'GLAST'

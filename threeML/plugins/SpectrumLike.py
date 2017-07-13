@@ -242,7 +242,9 @@ class SpectrumLike(PluginPrototype):
         # the user doesn't grab the instance
         # and try to modify things. protection
         info['pha'] = copy.copy(self._observed_spectrum)
-        info['bak'] = copy.copy(self._background_spectrum)
+
+        if self._background_spectrum is not None:
+            info['bak'] = copy.copy(self._background_spectrum)
 
         return info
 
@@ -925,7 +927,9 @@ class SpectrumLike(PluginPrototype):
         # only for the PHASpectrum subclass do we need to update the the grouping
         if isinstance(self._observed_spectrum, PHASpectrum):
             self._observed_spectrum.set_ogip_grouping(rebinner.grouping)
-            self._background_spectrum.set_ogip_grouping(rebinner.grouping)
+
+            if self._background_spectrum is not None:
+                self._background_spectrum.set_ogip_grouping(rebinner.grouping)
 
         self._apply_rebinner(rebinner)
 
