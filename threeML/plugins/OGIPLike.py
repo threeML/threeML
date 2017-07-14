@@ -50,19 +50,20 @@ class OGIPLike(DispersionSpectrumLike):
 
             # assert background is not None, "No background file provided, and the PHA file does not specify one."
 
+
         # Get a PHA instance with the background, we pass the response to get the energy bounds in the
         # histogram constructor. It is not saved to the background class
 
-        if isinstance(background, str) or isinstance(observation, PHAII):
-
-            bak = PHASpectrum(background, spectrum_number=spectrum_number, file_type='background',
-                              rsp_file=pha.response)
-
-        elif background is None:
+        if background is None:
 
             # in the case there is no background file
 
             bak = None
+
+        elif isinstance(background, str) or isinstance(observation, PHAII):
+
+            bak = PHASpectrum(background, spectrum_number=spectrum_number, file_type='background',
+                              rsp_file=pha.response)
 
         else:
 
