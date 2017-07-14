@@ -384,7 +384,7 @@ class BinnedSpectrum(Histogram):
 
         return self._instrument
 
-    def clone(self, new_counts=None, new_count_errors=None, new_exposure=None):
+    def clone(self, new_counts=None, new_count_errors=None, new_exposure=None, new_scale_factor=None):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -402,13 +402,17 @@ class BinnedSpectrum(Histogram):
         if new_exposure is None:
             new_exposure = self.exposure
 
+        if new_scale_factor is None:
+
+            new_scale_factor = self._scale_factor
+
         return BinnedSpectrum(counts=new_counts,
                               ebounds=ChannelSet.from_list_of_edges(self.edges),
                               exposure=new_exposure,
                               count_errors=new_count_errors,
                               sys_errors=self._sys_errors,
                               quality=self._quality,
-                              scale_factor=self._scale_factor,
+                              scale_factor=new_scale_factor,
                               is_poisson=self._is_poisson,
                               mission=self._mission,
                               instrument=self._instrument)
@@ -691,12 +695,15 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
                    scale_factor=1.,
                    is_poisson=is_poisson)
 
-    def clone(self, new_counts=None, new_count_errors=None, new_sys_errors=None, new_exposure=None):
+    def clone(self, new_counts=None, new_count_errors=None, new_sys_errors=None, new_exposure=None, new_scale_factor=None):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
 
 
+        :param new_sys_errors:
+        :param new_exposure:
+        :param new_scale_factor:
         :param new_counts: new counts for the spectrum
         :param new_count_errors: new errors from the spectrum
         :return:
@@ -712,13 +719,17 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         if new_exposure is None:
             new_exposure = self.exposure
 
+        if new_scale_factor is None:
+
+            new_scale_factor = self._scale_factor
+
         return BinnedSpectrumWithDispersion(counts=new_counts,
                                             exposure=new_exposure,
                                             response=self._rsp,
                                             count_errors=new_count_errors,
                                             sys_errors=new_sys_errors,
                                             quality=self._quality,
-                                            scale_factor=self._scale_factor,
+                                            scale_factor=new_scale_factor,
                                             is_poisson=self._is_poisson,
                                             mission=self._mission,
                                             instrument=self._instrument)
