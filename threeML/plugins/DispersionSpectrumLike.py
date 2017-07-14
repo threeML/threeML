@@ -76,7 +76,10 @@ class DispersionSpectrumLike(SpectrumLike):
         # the user doesn't grab the instance
         # and try to modify things. protection
         info['pha'] = copy.copy(self._observed_spectrum)
-        info['bak'] = copy.copy(self._background_spectrum)
+
+        if self._background_spectrum is not None:
+            info['bak'] = copy.copy(self._background_spectrum)
+
         info['rsp'] = copy.copy(self._rsp)
 
         return info
