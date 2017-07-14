@@ -9,32 +9,67 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 
 class ResidualPlot(object):
 
-    def __init__(self,show_residuals=True,**kwargs):
+    def __init__(self,**kwargs):
         """
 
-        :param kwargs:
+        :param show_residuals: to show the residuals
+        :param ratio_residuals: to use ratios instead of sigma
         """
 
 
         self._ratio_residuals = False
+        self._show_residuals = True
+
+
+        if 'show_residuals' in kwargs:
+
+            self._show_residuals = bool(kwargs.pop('show_residuals'))
 
         if 'ratio_residuals' in kwargs:
             self._ratio_residuals = bool(kwargs.pop('ratio_residuals'))
 
-        # turn on or off residuals
 
-        if show_residuals:
+        # this lets you overplot other fits
 
-            self._fig, (self._ax, self._ax1) = plt.subplots(2, 1, sharex=True,
-                                                            gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
+        if 'model_subplot' in kwargs:
+
+            model_subplot = kwargs.pop('model_subplot')
+
+            # turn on or off residuals
+
+            if self._show_residuals:
+
+                assert len(
+                    model_subplot) == 2, 'you have requested to overplot a model with residuals, but only provided one axis to plot'
+
+                self._ax, self._ax1 = model_subplot
+
+            else:
+
+                self._ax = model_subplot
+
+
+            self._fig = self._ax.get_figure()
+
+
+
+
+            # turn on or off residuals
 
 
         else:
 
-            self._fig, self._ax = plt.subplots(**kwargs)
+            if self._show_residuals:
 
+                self._fig, (self._ax, self._ax1) = plt.subplots(2, 1,
+                                                                sharex=True,
+                                                                gridspec_kw={'height_ratios': [2, 1]},
+                                                                **kwargs)
 
-        self._show_residuals = show_residuals
+            else:
+
+                self._fig, self._ax = plt.subplots(**kwargs)
+
 
 
 
@@ -80,7 +115,7 @@ class ResidualPlot(object):
         self._ax.plot(x,y,label=label,color=color,alpha=.8)
 
 
-    def add_data(self, x, y, residuals, label, xerr=None, yerr=None, residual_yerr=None, color='r'):
+    def add_data(self, x, y, residuals, label, xerr=None, yerr=None, residual_yerr=None, color='r', show_data=True):
         """
 
         :param x:
@@ -95,19 +130,21 @@ class ResidualPlot(object):
 
 
 
+        if show_data:
+            self._ax.errorbar(x,
+                        y,
+                        yerr=yerr,
+                        xerr=xerr,
+                        fmt=threeML_config['residual plot']['error marker'],
+                        markersize=threeML_config['residual plot']['error marker size'],
+                        linestyle='',
+                        elinewidth=threeML_config['residual plot']['error line width'],
+                        alpha=.9,
+                        capsize=0,
+                        label=label,
+                        color=color)
 
-        self._ax.errorbar(x,
-                    y,
-                    yerr=yerr,
-                    xerr=xerr,
-                    fmt=threeML_config['residual plot']['error marker'],
-                    markersize=threeML_config['residual plot']['error marker size'],
-                    linestyle='',
-                    elinewidth=threeML_config['residual plot']['error line width'],
-                    alpha=.9,
-                    capsize=0,
-                    label=label,
-                    color=color)
+
 
         #ax.plot(x, expected_model_magnitudes, label='%s Model' % data._name, color=model_color)
 

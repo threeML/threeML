@@ -73,12 +73,12 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             else:
 
-                custom_warnings.warn("Dataset %s is not of the OGIP kind. Cannot be plotted by "
-                                     "display_ogip_model_counts" % key)
+                custom_warnings.warn("Dataset %s is not of the SpectrumLike kind. Cannot be plotted by "
+                                     "display_spectrum_model_counts" % key)
 
     if not new_data_keys:
         RuntimeError(
-            'There were no valid OGIP data requested for plotting. Please use the detector names in the data list')
+            'There were no valid SpectrumLike data requested for plotting. Please use the detector names in the data list')
 
     data_keys = new_data_keys
 
@@ -100,16 +100,27 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     data_colors = cmap_intervals(len(data_keys), data_cmap)
     model_colors = cmap_intervals(len(data_keys), model_cmap)
 
+
+
+
     # Now override defaults according to the optional keywords, if present
+
+
+
+    if 'show_data' in kwargs:
+
+        show_data = bool(kwargs.pop('show_data'))
+
+    else:
+
+        show_data = True
+
 
     if 'show_legend' in kwargs:
         show_legend = bool(kwargs.pop('show_legend'))
 
     if 'show_residuals' in kwargs:
         show_residuals= bool(kwargs.pop('show_residuals'))
-
-
-
 
     if 'step' in kwargs:
         step = bool(kwargs.pop('step'))
@@ -177,7 +188,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     #fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
-    residual_plot = ResidualPlot(show_residuals=show_residuals,**kwargs)
+    residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
     # go thru the detectors
     for key, data_color, model_color, min_rate in zip(data_keys, data_colors, model_colors, min_rates):
@@ -323,7 +334,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                                yerr=new_err / new_chan_width,
                                xerr=delta_energy,
                                label=data._name,
-                               color=data_color)
+                               color=data_color,
+                               show_data=show_data)
 
         if step:
 
