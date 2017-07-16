@@ -47,13 +47,11 @@ def cmap_intervals(length=50, cmap='YlOrBr', start=None, stop=None):
                              'Vega20', 'Vega20b', 'Vega20c']:
 
 
-
-
         base_n_colors = cm.N
 
         cmap_list = cm(range(base_n_colors))
 
-        if base_n_colors< length:
+        if base_n_colors < length:
 
 
             factor = int(np.floor_divide(length,base_n_colors))
@@ -63,10 +61,6 @@ def cmap_intervals(length=50, cmap='YlOrBr', start=None, stop=None):
 
 
         return cmap_list
-
-
-
-
 
 
     crange = CMAP_RANGE.get(cmap, dict(start=0, stop=255))

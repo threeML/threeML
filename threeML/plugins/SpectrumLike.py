@@ -22,13 +22,18 @@ from threeML.utils.binner import Rebinner
 from threeML.utils.stats_tools import Significance
 from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum
 from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
+from threeML.io.plotting.data_residual_plot import ResidualPlot
 
 from threeML.config.config import threeML_config
+
+NO_REBIN = 1E-99
 
 __instrument_name = "General binned spectral data"
 
 # This defines the known noise models for source and/or background spectra
 _known_noise_models = ['poisson', 'gaussian', 'ideal']
+
+_default_plot_options = {}
 
 
 class SpectrumLike(PluginPrototype):
@@ -66,10 +71,10 @@ class SpectrumLike(PluginPrototype):
         self._observed_spectrum = observation  # type: BinnedSpectrum
 
         self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
-            
+
         if background is None:
 
-            self._background_spectrum =  None
+            self._background_spectrum = None
 
         else:
 
@@ -179,9 +184,6 @@ class SpectrumLike(PluginPrototype):
                 assert np.all(self._observed_count_errors[idx] == self._observed_counts[idx]), \
                     "Error in ovserved spectrum: if the error on the observation is zero, " \
                     "also the expected observation must be zero"
-
-
-
 
         # Initialize a mask that selects all the data.
         # We will initially use the quality mask for the PHA file
@@ -1055,7 +1057,7 @@ class SpectrumLike(PluginPrototype):
 
             assert new_model in _known_noise_models, "Noise model %s not recognized. " \
                                                      "Allowed models are: %s" % (
-                                                     new_model, ", ".join(_known_noise_models))
+                                                         new_model, ", ".join(_known_noise_models))
 
         self._background_noise_model = new_model
 
@@ -1261,13 +1263,10 @@ class SpectrumLike(PluginPrototype):
     def tstop(self):
         return self._tstop
 
-
     @property
     def expected_model_rate(self):
 
         return self._evaluate_model() * self._nuisance_parameter.value
-
-
 
     @property
     def observed_counts(self):
@@ -1310,7 +1309,6 @@ class SpectrumLike(PluginPrototype):
         background_counts = None
 
         if self._observation_noise_model == 'poisson':
-
 
             if self._background_noise_model == 'poisson':
 
@@ -1384,22 +1382,19 @@ class SpectrumLike(PluginPrototype):
             if self._background_noise_model is None:
                 background_errors = None
 
-
         return background_errors
-
-
-
 
     @property
     def source_rate(self):
-
 
         if self._background_noise_model is not None:
 
             scale_factor = self._observed_spectrum.scale_factor / self._background_spectrum.scale_factor
 
             # since we compare to the model rate... background subtract but with proper propagation
-            src_rate = (self.observed_counts / self.exposure - (self.background_counts / self.background_exposure) * scale_factor)
+            src_rate = (
+                self.observed_counts / self.exposure - (
+                self.background_counts / self.background_exposure) * scale_factor)
 
 
 
@@ -1407,7 +1402,6 @@ class SpectrumLike(PluginPrototype):
 
             # since we compare to the model rate... background subtract but with proper propagation
             src_rate = (self.observed_counts / self.exposure)
-
 
         return src_rate
 
@@ -1426,11 +1420,6 @@ class SpectrumLike(PluginPrototype):
             src_rate_err = self.observed_count_errors / self.exposure
 
         return src_rate_err
-
-
-
-
-
 
     @property
     def background_exposure(self):
@@ -1822,7 +1811,6 @@ class SpectrumLike(PluginPrototype):
         if not self._observed_spectrum.is_poisson:
             obs['total rate error'] = self._observed_spectrum.total_rate_error
 
-
         if self._background_spectrum is not None:
             obs['total bkg. rate'] = self._background_spectrum.total_rate
             if not self._background_spectrum.is_poisson:
@@ -1832,7 +1820,7 @@ class SpectrumLike(PluginPrototype):
 
         obs['exposure'] = self.exposure
         obs['is poisson'] = self._observed_spectrum.is_poisson
-        
+
         obs['significance'] = self.significance
 
         # obs['response'] = self._observed_spectrum.response_file
@@ -1856,3 +1844,197 @@ class SpectrumLike(PluginPrototype):
     def __repr__(self):
 
         return self._output().to_string()
+
+    def display_fit(self, data_color='k', model_color='r', step=True, show_data=True, show_residuals=True,
+                    ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None,
+                    **kwargs):
+
+        """
+
+        :param data_color: the color of the data
+        :param model_color: the color of the model
+        :param step: (bool) create a step count histogram or interpolate the model
+        :param show_data: (bool) show_the data with the model
+        :param show_residuals: (bool) shoe the residuals
+        :param ratio_residuals: (bool) use model ratio instead of residuals
+        :param show_legend: (bool) show legend
+        :param min_rate: the minimum rate per bin
+        :param model_label: (optional) the label to use for the model default is plugin name
+        :param model_subplot: (optional) axis or list of axes to plot to
+        :return:
+        """
+
+        if model_label is None:
+
+            model_label = "%s Model" % self._name
+
+
+        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
+
+        # energy_min, energy_max = self._rsp.ebounds[:-1], self._rsp.ebounds[1:]
+
+        energy_min, energy_max = np.array(self._observed_spectrum.edges[:-1]), np.array(
+            self._observed_spectrum.edges[1:])
+
+        chan_width = energy_max - energy_min
+
+        expected_model_rate = self.expected_model_rate
+
+        # figure out the type of data
+
+        src_rate = self.source_rate
+        src_rate_err = self.source_rate_error
+
+        # rebin on the source rate
+
+        # Create a rebinner if either a min_rate has been given, or if the current data set has no rebinned on its own
+
+        if (min_rate is not NO_REBIN) or (self._rebinner is None):
+
+            this_rebinner = Rebinner(src_rate, min_rate, self._mask)
+
+        else:
+
+            # Use the rebinner already in the data
+            this_rebinner = self._rebinner
+
+        # get the rebinned counts
+        new_rate, new_model_rate = this_rebinner.rebin(src_rate, expected_model_rate)
+        new_err, = this_rebinner.rebin_errors(src_rate_err)
+
+        # adjust channels
+        new_energy_min, new_energy_max = this_rebinner.get_new_start_and_stop(energy_min, energy_max)
+        new_chan_width = new_energy_max - new_energy_min
+
+        # mean_energy = np.mean([new_energy_min, new_energy_max], axis=0)
+
+        # For each bin find the weighted average of the channel center
+        mean_energy = []
+        delta_energy = [[], []]
+        mean_energy_unrebinned = (energy_max + energy_min) / 2.0
+
+        for e_min, e_max in zip(new_energy_min, new_energy_max):
+
+            # Find all channels in this rebinned bin
+            idx = (mean_energy_unrebinned >= e_min) & (mean_energy_unrebinned <= e_max)
+
+            # Find the rates for these channels
+            r = src_rate[idx]
+
+            if r.max() == 0:
+
+                # All empty, cannot weight
+                this_mean_energy = (e_min + e_max) / 2.0
+
+            else:
+
+                # Do the weighted average of the mean energies
+                weights = r / np.sum(r)
+
+                this_mean_energy = np.average(mean_energy_unrebinned[idx], weights=weights)
+
+            # Compute "errors" for X (which aren't really errors, just to mark the size of the bin)
+
+            delta_energy[0].append(this_mean_energy - e_min)
+            delta_energy[1].append(e_max - this_mean_energy)
+            mean_energy.append(this_mean_energy)
+
+        # Residuals
+
+        # we need to get the rebinned counts
+        rebinned_observed_counts, = this_rebinner.rebin(self.observed_counts)
+
+        rebinned_observed_count_errors, = this_rebinner.rebin_errors(self.observed_count_errors)
+
+        # the rebinned counts expected from the model
+        rebinned_model_counts = new_model_rate * self.exposure
+
+        # and also the rebinned background
+
+        if self._background_noise_model is not None:
+            rebinned_background_counts, = this_rebinner.rebin(self.background_counts)
+            rebinned_background_errors, = this_rebinner.rebin_errors(self.background_count_errors)
+
+            significance_calc = Significance(rebinned_observed_counts,
+                                             rebinned_background_counts + rebinned_model_counts / self.scale_factor,
+                                             self.scale_factor)
+
+        # Divide the various cases
+
+        if ratio_residuals:
+            residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_model_counts
+            residual_errors = rebinned_observed_count_errors / rebinned_model_counts
+
+        else:
+            residual_errors = None
+            if self._observation_noise_model == 'poisson':
+
+                if self._background_noise_model == 'poisson':
+
+                    # We use the Li-Ma formula to get the significance (sigma)
+
+                    residuals = significance_calc.li_and_ma()
+
+                elif self._background_noise_model == 'ideal':
+
+                    residuals = significance_calc.known_background()
+
+                elif self._background_noise_model == 'gaussian':
+
+                    residuals = significance_calc.li_and_ma_equivalent_for_gaussian_background(
+                        rebinned_background_errors)
+
+                else:
+
+                    raise RuntimeError("This is a bug")
+
+            else:
+
+                if self._background_noise_model is None:
+
+                    residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_observed_count_errors
+
+                else:
+
+                    raise NotImplementedError("Not yet implemented")
+
+        residual_plot.add_data(mean_energy,
+                               new_rate / new_chan_width,
+                               residuals,
+                               residual_yerr=residual_errors,
+                               yerr=new_err / new_chan_width,
+                               xerr=delta_energy,
+                               label=self._name,
+                               color=data_color,
+                               show_data=show_data)
+
+        if step:
+
+            residual_plot.add_model_step(new_energy_min,
+                                         new_energy_max,
+                                         new_chan_width,
+                                         new_model_rate,
+                                         label=model_label,
+                                         color=model_color)
+
+
+        else:
+
+            # We always plot the model un-rebinned here
+
+            # Mask the array so we don't plot the model where data have been excluded
+            # y = expected_model_rate / chan_width
+            y = np.ma.masked_where(~self._mask, expected_model_rate / chan_width)
+
+            x = np.mean([energy_min, energy_max], axis=0)
+
+            residual_plot.add_model(x,
+                                    y,
+                                    label=model_label,
+                                    color=model_color)
+
+        return residual_plot.finalize(xlabel="Energy\n(keV)",
+                                      ylabel="Net rate\n(counts s$^{-1}$ keV$^{-1}$)",
+                                      xscale='log',
+                                      yscale='log',
+                                      show_legend=show_legend)

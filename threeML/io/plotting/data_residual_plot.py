@@ -39,17 +39,19 @@ class ResidualPlot(object):
 
             if self._show_residuals:
 
+                assert type(model_subplot) == list, 'you must supply a list of axes to plot to residual'
+
                 assert len(
                     model_subplot) == 2, 'you have requested to overplot a model with residuals, but only provided one axis to plot'
 
-                self._ax, self._ax1 = model_subplot
+                self._data_axis, self._residual_axis = model_subplot
 
             else:
 
-                self._ax = model_subplot
+                self._data_axis = model_subplot
 
 
-            self._fig = self._ax.get_figure()
+            self._fig = self._data_axis.get_figure()
 
 
 
@@ -61,17 +63,34 @@ class ResidualPlot(object):
 
             if self._show_residuals:
 
-                self._fig, (self._ax, self._ax1) = plt.subplots(2, 1,
-                                                                sharex=True,
-                                                                gridspec_kw={'height_ratios': [2, 1]},
-                                                                **kwargs)
+                self._fig, (self._data_axis, self._residual_axis) = plt.subplots(2, 1,
+                                                                                 sharex=True,
+                                                                                 gridspec_kw={'height_ratios': [2, 1]},
+                                                                                 **kwargs)
 
             else:
 
-                self._fig, self._ax = plt.subplots(**kwargs)
+                self._fig, self._data_axis = plt.subplots(**kwargs)
 
 
 
+
+    @property
+    def figure(self):
+
+        return self._fig
+
+    @property
+    def data_axis(self):
+
+        return self._data_axis
+
+    @property
+    def residual_axis(self):
+
+        assert self._show_residuals, 'this plot has no residual axis'
+
+        return self._residual_axis
 
     @property
     def show_residuals(self):
@@ -99,7 +118,7 @@ class ResidualPlot(object):
 
         step_plot(np.asarray(zip(xmin, xmax)),
                   y / xwidth,
-                  self._ax, alpha=.8,
+                  self._data_axis, alpha=.8,
                   label=label, color=color)
 
     def add_model(self,x,y,label,color):
@@ -112,7 +131,7 @@ class ResidualPlot(object):
         :return:
         """
 
-        self._ax.plot(x,y,label=label,color=color,alpha=.8)
+        self._data_axis.plot(x, y, label=label, color=color, alpha=.8)
 
 
     def add_data(self, x, y, residuals, label, xerr=None, yerr=None, residual_yerr=None, color='r', show_data=True):
@@ -131,18 +150,18 @@ class ResidualPlot(object):
 
 
         if show_data:
-            self._ax.errorbar(x,
-                        y,
-                        yerr=yerr,
-                        xerr=xerr,
-                        fmt=threeML_config['residual plot']['error marker'],
-                        markersize=threeML_config['residual plot']['error marker size'],
-                        linestyle='',
-                        elinewidth=threeML_config['residual plot']['error line width'],
-                        alpha=.9,
-                        capsize=0,
-                        label=label,
-                        color=color)
+            self._data_axis.errorbar(x,
+                                     y,
+                                     yerr=yerr,
+                                     xerr=xerr,
+                                     fmt=threeML_config['residual plot']['error marker'],
+                                     markersize=threeML_config['residual plot']['error marker size'],
+                                     linestyle='',
+                                     elinewidth=threeML_config['residual plot']['error line width'],
+                                     alpha=.9,
+                                     capsize=0,
+                                     label=label,
+                                     color=color)
 
 
 
@@ -155,17 +174,17 @@ class ResidualPlot(object):
             if not self.ratio_residuals:
                 residual_yerr = np.ones_like(residuals)
 
-            self._ax1.axhline(0, linestyle='--', color='k')
+            self._residual_axis.axhline(0, linestyle='--', color='k')
 
 
-            self._ax1.errorbar(x,
-                         residuals,
-                         yerr=residual_yerr,
-                         capsize=0,
-                         fmt=threeML_config['residual plot']['error marker'],
-                         elinewidth=threeML_config['residual plot']['error line width'],
-                         markersize=threeML_config['residual plot']['error marker size'],
-                         color=color)
+            self._residual_axis.errorbar(x,
+                                         residuals,
+                                         yerr=residual_yerr,
+                                         capsize=0,
+                                         fmt=threeML_config['residual plot']['error marker'],
+                                         elinewidth=threeML_config['residual plot']['error line width'],
+                                         markersize=threeML_config['residual plot']['error marker size'],
+                                         color=color)
 
 
     def finalize(self, xlabel='x', ylabel='y',xscale='log',yscale='log', show_legend=True,invert_y=False):
@@ -181,38 +200,38 @@ class ResidualPlot(object):
 
 
         if show_legend:
-            self._ax.legend(fontsize='x-small', loc=0)
+            self._data_axis.legend(fontsize='x-small', loc=0)
 
-        self._ax.set_ylabel(ylabel)
+        self._data_axis.set_ylabel(ylabel)
 
-        self._ax.set_xscale(xscale)
+        self._data_axis.set_xscale(xscale)
         if yscale == 'log':
 
-            self._ax.set_yscale(yscale, nonposy='clip')
+            self._data_axis.set_yscale(yscale, nonposy='clip')
 
         else:
 
-            self._ax.set_yscale(yscale)
+            self._data_axis.set_yscale(yscale)
 
         if self._show_residuals:
 
-            self._ax1.set_xscale(xscale)
+            self._residual_axis.set_xscale(xscale)
 
             locator = MaxNLocator(prune='upper', nbins=5)
-            self._ax1.yaxis.set_major_locator(locator)
+            self._residual_axis.yaxis.set_major_locator(locator)
 
-            self._ax1.set_xlabel(xlabel)
+            self._residual_axis.set_xlabel(xlabel)
 
             if self.ratio_residuals:
                 custom_warnings.warn("Residuals plotted as ratios: beware that they are not statistical quantites, and can not be used to asses fit quality")
-                self._ax1.set_ylabel("Residuals\n(fraction of model)")
+                self._residual_axis.set_ylabel("Residuals\n(fraction of model)")
             else:
-                self._ax1.set_ylabel("Residuals\n($\sigma$)")
+                self._residual_axis.set_ylabel("Residuals\n($\sigma$)")
 
 
         else:
 
-            self._ax.set_xlabel(xlabel)
+            self._data_axis.set_xlabel(xlabel)
 
 
 
@@ -227,7 +246,7 @@ class ResidualPlot(object):
         self._fig.subplots_adjust(hspace=0)
 
         if invert_y:
-            self._ax.set_ylim(self._ax.get_ylim()[::-1])
+            self._data_axis.set_ylim(self._data_axis.get_ylim()[::-1])
 
 
         return self._fig

@@ -203,6 +203,15 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
+    if show_residuals:
+
+        axes = [residual_plot.data_axis,residual_plot.residual_axis]
+
+    else:
+
+        axes = residual_plot.data_axis
+
+
     # go thru the detectors
     for key, data_color, model_color, min_rate, model_label in zip(data_keys, data_colors, model_colors, min_rates, model_labels):
 
@@ -210,175 +219,23 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         data = analysis.data_list[key] # type: SpectrumLike
 
+        data.display_fit(data_color=data_color,
+                         model_color=model_color,
+                         min_rate=min_rate,
+                         step=step,
+                         show_residuals=show_residuals,
+                         show_data=show_data,
+                         show_legend=show_legend,
+                         ratio_residuals=ratio_residuals,
+                         model_label=model_label,
+                         model_subplot=axes
 
-        energy_min, energy_max = data._rsp.ebounds[:-1], data._rsp.ebounds[1:]
-
-        chan_width = energy_max - energy_min
-
-        # get the expected counts
-        # NOTE: _rsp.convolve() returns already the rate (counts / s)
-        expected_model_rate = data.expected_model_rate
-
-
-        # figure out the type of data
-
-        src_rate = data.source_rate
-        src_rate_err = data.source_rate_error
+                         )
 
 
-        # rebin on the source rate
-
-        # Create a rebinner if either a min_rate has been given, or if the current data set has no rebinned on its own
-
-        if (min_rate is not NO_REBIN) or (data._rebinner is None):
-
-            this_rebinner = Rebinner(src_rate, min_rate, data._mask)
-
-        else:
-
-            # Use the rebinner already in the data
-            this_rebinner = data._rebinner
-
-        # get the rebinned counts
-        new_rate, new_model_rate = this_rebinner.rebin(src_rate, expected_model_rate)
-        new_err, = this_rebinner.rebin_errors(src_rate_err)
-
-        # adjust channels
-        new_energy_min, new_energy_max = this_rebinner.get_new_start_and_stop(energy_min, energy_max)
-        new_chan_width = new_energy_max - new_energy_min
-
-        # mean_energy = np.mean([new_energy_min, new_energy_max], axis=0)
-
-        # For each bin find the weighted average of the channel center
-        mean_energy = []
-        delta_energy = [[], []]
-        mean_energy_unrebinned = (energy_max + energy_min) / 2.0
-
-        for e_min, e_max in zip(new_energy_min, new_energy_max):
-
-            # Find all channels in this rebinned bin
-            idx = (mean_energy_unrebinned >= e_min) & (mean_energy_unrebinned <= e_max)
-
-            # Find the rates for these channels
-            r = src_rate[idx]
-
-            if r.max() == 0:
-
-                # All empty, cannot weight
-                this_mean_energy = (e_min + e_max) / 2.0
-
-            else:
-
-                # Do the weighted average of the mean energies
-                weights = r / np.sum(r)
-
-                this_mean_energy = np.average(mean_energy_unrebinned[idx], weights=weights)
-
-            # Compute "errors" for X (which aren't really errors, just to mark the size of the bin)
-
-            delta_energy[0].append(this_mean_energy - e_min)
-            delta_energy[1].append(e_max - this_mean_energy)
-            mean_energy.append(this_mean_energy)
+        return residual_plot.figure
 
 
-        # Residuals
-
-        # we need to get the rebinned counts
-        rebinned_observed_counts, = this_rebinner.rebin(data.observed_counts)
-
-        rebinned_observed_count_errors, = this_rebinner.rebin_errors(data.observed_count_errors)
-
-        # the rebinned counts expected from the model
-        rebinned_model_counts = new_model_rate * data.exposure
-
-        # and also the rebinned background
-
-        if data._background_noise_model is not None:
-            rebinned_background_counts, = this_rebinner.rebin(data.background_counts)
-            rebinned_background_errors, = this_rebinner.rebin_errors(data.background_count_errors)
-
-            significance_calc = Significance(rebinned_observed_counts,
-                                             rebinned_background_counts + rebinned_model_counts / data.scale_factor,
-                                             data.scale_factor)
-
-
-        # Divide the various cases
-
-        if ratio_residuals:
-            residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_model_counts
-            residual_errors = rebinned_observed_count_errors / rebinned_model_counts
-        else:
-            residual_errors = None 
-            if data._observation_noise_model == 'poisson':
-
-                if data._background_noise_model == 'poisson':
-
-                    # We use the Li-Ma formula to get the significance (sigma)
-
-                    residuals = significance_calc.li_and_ma()
-
-                elif data._background_noise_model == 'ideal':
-
-                    residuals = significance_calc.known_background()
-
-                elif data._background_noise_model == 'gaussian':
-
-                    residuals = significance_calc.li_and_ma_equivalent_for_gaussian_background(rebinned_background_errors)
-
-                else:
-
-                    raise RuntimeError("This is a bug")
-
-            else:
-
-                if data._background_noise_model is None:
-
-                    residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_observed_count_errors
-
-                else:
-
-                    raise NotImplementedError("Not yet implemented")
-
-        residual_plot.add_data(mean_energy,
-                               new_rate / new_chan_width,
-                               residuals,
-                               residual_yerr=residual_errors,
-                               yerr=new_err / new_chan_width,
-                               xerr=delta_energy,
-                               label=data._name,
-                               color=data_color,
-                               show_data=show_data)
-
-        if step:
-
-            residual_plot.add_model_step(new_energy_min,
-                                         new_energy_max,
-                                         new_chan_width,
-                                         new_model_rate,
-                                         label=model_label,
-                                         color=model_color)
-
-
-        else:
-
-            # We always plot the model un-rebinned here
-
-            # Mask the array so we don't plot the model where data have been excluded
-            # y = expected_model_rate / chan_width
-            y = np.ma.masked_where(~data._mask, expected_model_rate / chan_width)
-
-            x = np.mean([energy_min, energy_max], axis=0)
-
-            residual_plot.add_model(x,
-                                    y,
-                                    label=model_label,
-                                    color=model_color)
-
-    return residual_plot.finalize(xlabel="Energy\n(keV)",
-                                  ylabel="Net rate\n(counts s$^{-1}$ keV$^{-1}$)",
-                                  xscale='log',
-                                  yscale='log',
-                                  show_legend=show_legend)
 
 
 
