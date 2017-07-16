@@ -219,18 +219,18 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         data = analysis.data_list[key] # type: SpectrumLike
 
-        data.display_fit(data_color=data_color,
-                         model_color=model_color,
-                         min_rate=min_rate,
-                         step=step,
-                         show_residuals=show_residuals,
-                         show_data=show_data,
-                         show_legend=show_legend,
-                         ratio_residuals=ratio_residuals,
-                         model_label=model_label,
-                         model_subplot=axes
+        data.display_model(data_color=data_color,
+                           model_color=model_color,
+                           min_rate=min_rate,
+                           step=step,
+                           show_residuals=show_residuals,
+                           show_data=show_data,
+                           show_legend=show_legend,
+                           ratio_residuals=ratio_residuals,
+                           model_label=model_label,
+                           model_subplot=axes
 
-                         )
+                           )
 
 
         return residual_plot.figure

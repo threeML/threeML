@@ -1845,11 +1845,20 @@ class SpectrumLike(PluginPrototype):
 
         return self._output().to_string()
 
-    def display_fit(self, data_color='k', model_color='r', step=True, show_data=True, show_residuals=True,
-                    ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None,
-                    **kwargs):
+    def display_model(self, data_color='k', model_color='r', step=True, show_data=True, show_residuals=True,
+                      ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None,
+                      **kwargs):
 
         """
+        Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying
+        a previous axis to 'model_subplot'.
+
+        Example usage:
+
+        fig = data.display_model()
+
+        fig2 = data2.display_model(model_subplot=fig.axes)
+
 
         :param data_color: the color of the data
         :param model_color: the color of the model
