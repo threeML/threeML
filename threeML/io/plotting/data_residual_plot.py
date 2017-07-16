@@ -56,13 +56,11 @@ class ResidualPlot(object):
 
                 except(AttributeError):
 
-                    assert len(model_subplot) == 1, 'The axes you have supplied is invalid'
-
                     # the user supplied a list of axes
 
                     self._data_axis = model_subplot[0]
 
-                    self._fig = self._data_axis.get_figure()
+            self._fig = self._data_axis.get_figure()
 
 
 
