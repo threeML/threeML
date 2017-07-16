@@ -42,6 +42,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     :param model_color: (optional) color for all folded models
     :param show_legend: (optional) if True (default), shows a legend
     :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
+    :param model_subplot: (optional) axe(s) to plot to for overplotting
     with linear interpolation between each bin
     :return: figure instance
 
@@ -186,12 +187,24 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         model_colors = [kwargs.pop('model_color')] * len(data_keys)
 
+
+    if 'model_labels' in kwargs:
+
+
+        model_labels = kwargs.pop('model_labels')
+
+        assert len(model_labels) == len(data_keys), 'you must have the same number of model labels as data sets'
+
+    else:
+
+        model_labels = ['%s Model' % analysis.data_list[key]._name for key in data_keys]
+
     #fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
     residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
     # go thru the detectors
-    for key, data_color, model_color, min_rate in zip(data_keys, data_colors, model_colors, min_rates):
+    for key, data_color, model_color, min_rate, model_label in zip(data_keys, data_colors, model_colors, min_rates, model_labels):
 
         # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
 
@@ -211,7 +224,6 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         src_rate = data.source_rate
         src_rate_err = data.source_rate_error
-
 
 
         # rebin on the source rate
@@ -343,7 +355,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                                          new_energy_max,
                                          new_chan_width,
                                          new_model_rate,
-                                         label='%s Model' % data._name,
+                                         label=model_label,
                                          color=model_color)
 
 
@@ -359,7 +371,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             residual_plot.add_model(x,
                                     y,
-                                    label='%s Model' % data._name,
+                                    label=model_label,
                                     color=model_color)
 
     return residual_plot.finalize(xlabel="Energy\n(keV)",
