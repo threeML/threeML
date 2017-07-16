@@ -33,9 +33,6 @@ __instrument_name = "General binned spectral data"
 # This defines the known noise models for source and/or background spectra
 _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
-_default_plot_options = {}
-
-
 class SpectrumLike(PluginPrototype):
     def __init__(self, name, observation, background, verbose=True):
         # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
