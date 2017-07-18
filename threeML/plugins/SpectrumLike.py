@@ -10,6 +10,8 @@ from astromodels.functions.priors import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
 from astromodels import clone_model
 
+from astromodels import Model, PointSource
+
 from threeML.io.rich_display import display
 from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
@@ -20,7 +22,7 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_b
 from threeML.plugins.OGIP.likelihood_functions import half_chi2
 from threeML.utils.binner import Rebinner
 from threeML.utils.stats_tools import Significance
-from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum
+from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
 from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 
@@ -232,6 +234,106 @@ class SpectrumLike(PluginPrototype):
         self._mask = self._observed_spectrum.quality.good
         # Apply the mask
         self._apply_mask_to_original_vectors()
+
+
+    @classmethod
+    def from_function(cls, name, source_function, energy_min, energy_max, source_err=None, source_sys_errors=None, background_function = None, background_err=None, background_sys_error=None, background_observation):
+
+
+
+        # construct the binned spectrum
+
+        channel_set = ChannelSet.from_starts_and_stops(energy_min, energy_max)
+
+        # this is just for construction
+
+        fake_data = np.ones(len(energy_min))
+
+        if source_err is None:
+
+            is_poisson = True
+
+        else:
+
+            assert len(source_err) == len(energy_min), 'source error array is not the same dimension as the energy array'
+
+            is_poisson = False
+
+        if source_sys_errors is not None:
+            assert len(source_sys_errors) == len(
+                energy_min), 'background  systematic error array is not the same dimension as the energy array'
+
+        observation = BinnedSpectrum(fake_data,
+                                     exposure=1.,
+                                     ebounds=channel_set.edges,
+                                     count_errors=source_err,
+                                     sys_errors=source_sys_errors,
+                                     quality=None,
+                                     scale_factor=1.,
+                                     is_poisson=is_poisson,
+                                     mission='fake mission',
+                                     instrument='fake instrument',
+                                     tstart=0.,
+                                     tstop=1.)
+
+        if background_function is not None:
+
+            fake_background = np.ones(len(energy_min))
+
+            if background_err is None:
+
+                is_poisson = True
+
+            else:
+
+                assert len(background_err) == len(
+                    energy_min), 'background error array is not the same dimension as the energy array'
+
+                is_poisson = False
+
+            if background_sys_error is not None:
+
+                assert len(background_sys_error) == len(energy_min), 'background  systematic error array is not the same dimension as the energy array'
+
+            background = BinnedSpectrum(fake_background,
+                                         exposure=1.,
+                                         ebounds=channel_set.edges,
+                                         count_errors=background_err,
+                                         sys_errors=background_sys_error,
+                                         quality=None,
+                                         scale_factor=1.,
+                                         is_poisson=is_poisson,
+                                         mission='fake mission',
+                                         instrument='fake instrument',
+                                         tstart=0.,
+                                         tstop=1.)
+
+
+            # now we have to generate the background counts
+
+
+
+        else:
+
+            background = None
+
+
+
+
+        speclike_gen = SpectrumLike('generator',observation,background)
+
+
+        xyl_gen = SpectrumLike("generator", x, y, yerr)
+
+        pts = PointSource("fake", 0.0, 0.0, function)
+
+        model = Model(pts)
+
+        xyl_gen.set_model(model)
+
+        return xyl_gen.get_simulated_dataset(name)
+
+
 
     def get_pha_files(self):
 
