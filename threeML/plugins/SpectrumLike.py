@@ -313,7 +313,7 @@ class SpectrumLike(PluginPrototype):
             # we treat the background as a simple observation with no
             # other background
 
-            background_gen = SpectrumLike('generator',tmp_background,None)
+            background_gen = SpectrumLike('generator',tmp_background,None,verbose=False)
 
             pts_background = PointSource("fake_background", 0.0, 0.0, background_function)
 
@@ -338,7 +338,7 @@ class SpectrumLike(PluginPrototype):
 
 
 
-        speclike_gen = SpectrumLike('generator',observation,background)
+        speclike_gen = SpectrumLike('generator',observation,background,verbose=False)
 
 
         pts = PointSource("fake", 0.0, 0.0, source_function)
