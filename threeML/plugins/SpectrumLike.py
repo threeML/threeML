@@ -35,6 +35,7 @@ __instrument_name = "General binned spectral data"
 # This defines the known noise models for source and/or background spectra
 _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
+
 class SpectrumLike(PluginPrototype):
     def __init__(self, name, observation, background, verbose=True):
         # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
@@ -235,13 +236,24 @@ class SpectrumLike(PluginPrototype):
         # Apply the mask
         self._apply_mask_to_original_vectors()
 
-
     @classmethod
-    def from_function(cls, name, source_function, energy_min, energy_max, source_err=None, source_sys_errors=None, background_function = None, background_err=None, background_sys_error=None):
+    def from_function(cls, name, source_function, energy_min, energy_max, source_errors=None, source_sys_errors=None,
+                      background_function=None, background_errors=None, background_sys_errors=None):
+        """
 
+        Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.
 
-
-        # construct the binned spectrum
+        :param name: simulkated data set name
+        :param source_function: astromodels function
+        :param energy_min: array of low energy bin edges
+        :param energy_max: array of high energy bin edges
+        :param source_errors: (optional) gaussian source errors
+        :param source_sys_errors: (optional) systematic source errors
+        :param background_function: (optional) astromodels background function
+        :param background_errors: (optional) gaussian background errors
+        :param background_sys_errors: (optional) background systematic errors
+        :return: simulated SpectrumLike plugin
+        """
 
         channel_set = ChannelSet.from_starts_and_stops(energy_min, energy_max)
 
@@ -249,13 +261,14 @@ class SpectrumLike(PluginPrototype):
 
         fake_data = np.ones(len(energy_min))
 
-        if source_err is None:
+        if source_errors is None:
 
             is_poisson = True
 
         else:
 
-            assert len(source_err) == len(energy_min), 'source error array is not the same dimension as the energy array'
+            assert len(source_errors) == len(
+                energy_min), 'source error array is not the same dimension as the energy array'
 
             is_poisson = False
 
@@ -266,7 +279,7 @@ class SpectrumLike(PluginPrototype):
         observation = BinnedSpectrum(fake_data,
                                      exposure=1.,
                                      ebounds=channel_set.edges,
-                                     count_errors=source_err,
+                                     count_errors=source_errors,
                                      sys_errors=source_sys_errors,
                                      quality=None,
                                      scale_factor=1.,
@@ -280,40 +293,39 @@ class SpectrumLike(PluginPrototype):
 
             fake_background = np.ones(len(energy_min))
 
-            if background_err is None:
+            if background_errors is None:
 
                 is_poisson = True
 
             else:
 
-                assert len(background_err) == len(
+                assert len(background_errors) == len(
                     energy_min), 'background error array is not the same dimension as the energy array'
 
                 is_poisson = False
 
-            if background_sys_error is not None:
-
-                assert len(background_sys_error) == len(energy_min), 'background  systematic error array is not the same dimension as the energy array'
+            if background_sys_errors is not None:
+                assert len(background_sys_errors) == len(
+                    energy_min), 'background  systematic error array is not the same dimension as the energy array'
 
             tmp_background = BinnedSpectrum(fake_background,
-                                         exposure=1.,
-                                         ebounds=channel_set.edges,
-                                         count_errors=background_err,
-                                         sys_errors=background_sys_error,
-                                         quality=None,
-                                         scale_factor=1.,
-                                         is_poisson=is_poisson,
-                                         mission='fake_mission',
-                                         instrument='fake_instrument',
-                                         tstart=0.,
-                                         tstop=1.)
-
+                                            exposure=1.,
+                                            ebounds=channel_set.edges,
+                                            count_errors=background_errors,
+                                            sys_errors=background_sys_errors,
+                                            quality=None,
+                                            scale_factor=1.,
+                                            is_poisson=is_poisson,
+                                            mission='fake_mission',
+                                            instrument='fake_instrument',
+                                            tstart=0.,
+                                            tstop=1.)
 
             # now we have to generate the background counts
             # we treat the background as a simple observation with no
             # other background
 
-            background_gen = SpectrumLike('generator',tmp_background,None,verbose=False)
+            background_gen = SpectrumLike('generator', tmp_background, None, verbose=False)
 
             pts_background = PointSource("fake_background", 0.0, 0.0, background_function)
 
@@ -326,20 +338,11 @@ class SpectrumLike(PluginPrototype):
             background = sim_background._observed_spectrum
 
 
-
-
-
-
-
         else:
 
             background = None
 
-
-
-
-        speclike_gen = SpectrumLike('generator',observation,background,verbose=False)
-
+        speclike_gen = SpectrumLike('generator', observation, background, verbose=False)
 
         pts = PointSource("fake", 0.0, 0.0, source_function)
 
@@ -348,8 +351,6 @@ class SpectrumLike(PluginPrototype):
         speclike_gen.set_model(model)
 
         return speclike_gen.get_simulated_dataset(name)
-
-
 
     def get_pha_files(self):
 
@@ -1531,7 +1532,7 @@ class SpectrumLike(PluginPrototype):
             # since we compare to the model rate... background subtract but with proper propagation
             src_rate = (
                 self.observed_counts / self.exposure - (
-                self.background_counts / self.background_exposure) * scale_factor)
+                    self.background_counts / self.background_exposure) * scale_factor)
 
 
 
@@ -2011,9 +2012,7 @@ class SpectrumLike(PluginPrototype):
         """
 
         if model_label is None:
-
             model_label = "%s Model" % self._name
-
 
         residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
