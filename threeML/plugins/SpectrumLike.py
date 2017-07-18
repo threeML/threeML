@@ -237,7 +237,7 @@ class SpectrumLike(PluginPrototype):
 
 
     @classmethod
-    def from_function(cls, name, source_function, energy_min, energy_max, source_err=None, source_sys_errors=None, background_function = None, background_err=None, background_sys_error=None, background_observation):
+    def from_function(cls, name, source_function, energy_min, energy_max, source_err=None, source_sys_errors=None, background_function = None, background_err=None, background_sys_error=None):
 
 
 
@@ -271,8 +271,8 @@ class SpectrumLike(PluginPrototype):
                                      quality=None,
                                      scale_factor=1.,
                                      is_poisson=is_poisson,
-                                     mission='fake mission',
-                                     instrument='fake instrument',
+                                     mission='fake_mission',
+                                     instrument='fake_instrument',
                                      tstart=0.,
                                      tstop=1.)
 
@@ -295,7 +295,7 @@ class SpectrumLike(PluginPrototype):
 
                 assert len(background_sys_error) == len(energy_min), 'background  systematic error array is not the same dimension as the energy array'
 
-            background = BinnedSpectrum(fake_background,
+            tmp_background = BinnedSpectrum(fake_background,
                                          exposure=1.,
                                          ebounds=channel_set.edges,
                                          count_errors=background_err,
@@ -303,13 +303,31 @@ class SpectrumLike(PluginPrototype):
                                          quality=None,
                                          scale_factor=1.,
                                          is_poisson=is_poisson,
-                                         mission='fake mission',
-                                         instrument='fake instrument',
+                                         mission='fake_mission',
+                                         instrument='fake_instrument',
                                          tstart=0.,
                                          tstop=1.)
 
 
             # now we have to generate the background counts
+            # we treat the background as a simple observation with no
+            # other background
+
+            background_gen = SpectrumLike('generator',tmp_background,None)
+
+            pts_background = PointSource("fake_background", 0.0, 0.0, background_function)
+
+            background_model = Model(pts_background)
+
+            background_gen.set_model(background_model)
+
+            sim_background = background_gen.get_simulated_dataset('fake')
+
+            background = sim_background._observed_spectrum
+
+
+
+
 
 
 
@@ -323,15 +341,13 @@ class SpectrumLike(PluginPrototype):
         speclike_gen = SpectrumLike('generator',observation,background)
 
 
-        xyl_gen = SpectrumLike("generator", x, y, yerr)
-
-        pts = PointSource("fake", 0.0, 0.0, function)
+        pts = PointSource("fake", 0.0, 0.0, source_function)
 
         model = Model(pts)
 
-        xyl_gen.set_model(model)
+        speclike_gen.set_model(model)
 
-        return xyl_gen.get_simulated_dataset(name)
+        return speclike_gen.get_simulated_dataset(name)
 
 
 
@@ -751,12 +767,34 @@ class SpectrumLike(PluginPrototype):
 
                     randomized_source_count_err = None
 
+
+                elif self.background_noise_model is None:
+
+                    # Randomize expectations for the source
+
+                    randomized_source_counts = np.random.poisson(source_model_counts)
+                    # randomized_source_rate = randomized_source_counts / self.exposure
+
+                    # No randomization for the background in this case
+
+                    randomized_background_counts = None
+
+                    randomized_background_count_err = None
+
+                    randomized_source_count_err = None
+
+
+
                 else:
 
                     raise RuntimeError(
                         "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
                             self._observation_noise_model,
                             self._background_noise_model))
+
+
+
+
 
             else:
 
