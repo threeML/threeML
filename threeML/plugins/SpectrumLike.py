@@ -1651,24 +1651,26 @@ class SpectrumLike(PluginPrototype):
         :return: the significance of the data over background per channel
         """
 
-        sig_obj = Significance(Non=self._current_observed_counts,
-                               Noff=self._current_background_counts,
-                               alpha=self.scale_factor)
+        with np.errstate(divide='ignore',invalid='ignore'):
 
-        if self._observed_spectrum.is_poisson and self._background_spectrum.is_poisson:
+            sig_obj = Significance(Non=self._current_observed_counts,
+                                   Noff=self._current_background_counts,
+                                   alpha=self.scale_factor)
 
-            # use simple li & ma
-            significance = sig_obj.li_and_ma()
+            if self._observed_spectrum.is_poisson and self._background_spectrum.is_poisson:
 
-        elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
+                # use simple li & ma
+                significance = sig_obj.li_and_ma()
 
-            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._current_back_count_errors)
+            elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
 
-        else:
+                significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._current_back_count_errors)
 
-            raise NotImplementedError("We haven't put in other significances yet")
+            else:
 
-        return significance
+                raise NotImplementedError("We haven't put in other significances yet")
+
+            return significance
 
     def write_pha(self):
 
@@ -1798,7 +1800,7 @@ class SpectrumLike(PluginPrototype):
         # Now plot and fade the non-used channels
         non_used_mask = (~self._mask)
 
-        if non_used_mask.sum() > 0:
+        if True:#non_used_mask.sum() > 0:
 
             # Get un-rebinned versions of all arrays, so we can directly apply the mask
             energy_min_unrebinned, energy_max_unrebinned = np.array(self._observed_spectrum.starts), np.array(
@@ -1807,21 +1809,25 @@ class SpectrumLike(PluginPrototype):
             observed_rate_unrebinned = self._observed_counts / self.exposure
             observed_rate_unrebinned_err = np.sqrt(self._observed_counts) / self.exposure
 
-            channel_plot(ax,
-                         energy_min_unrebinned[non_used_mask],
-                         energy_max_unrebinned[non_used_mask],
-                         observed_rate_unrebinned[non_used_mask],
-                         color=threeML_config['ogip']['counts color'], lw=1.5, alpha=1)
+            if non_used_mask.sum() > 0:
+
+                channel_plot(ax,
+                             energy_min_unrebinned[non_used_mask],
+                             energy_max_unrebinned[non_used_mask],
+                             observed_rate_unrebinned[non_used_mask],
+                             color=threeML_config['ogip']['counts color'], lw=1.5, alpha=1)
 
             if self._background_noise_model is not None:
 
                 background_rate_unrebinned = self._background_counts / self.background_exposure
                 background_rate_unrebinned_err = np.sqrt(self._background_counts) / self.background_exposure
 
-                channel_plot(ax, energy_min_unrebinned[non_used_mask],
-                             energy_max_unrebinned[non_used_mask],
-                             background_rate_unrebinned[non_used_mask],
-                             color=threeML_config['ogip']['background color'], alpha=.8)
+                if non_used_mask.sum() > 0:
+
+                    channel_plot(ax, energy_min_unrebinned[non_used_mask],
+                                 energy_max_unrebinned[non_used_mask],
+                                 background_rate_unrebinned[non_used_mask],
+                                 color=threeML_config['ogip']['background color'], alpha=.8)
             else:
 
                 background_rate_unrebinned = np.zeros_like(observed_rate_unrebinned)
@@ -1916,7 +1922,8 @@ class SpectrumLike(PluginPrototype):
                 if self._verbose:
                     print('channels below the significance threshold shown in red\n')
 
-                significance_mask = self.significance_per_channel < significance_level
+                with np.errstate(invalid='ignore'):
+                    significance_mask = self.significance_per_channel < significance_level
 
                 disjoint_patch_plot(ax,
                                     energy_min_unrebinned,
