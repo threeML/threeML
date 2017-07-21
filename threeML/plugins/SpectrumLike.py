@@ -236,9 +236,52 @@ class SpectrumLike(PluginPrototype):
         # Apply the mask
         self._apply_mask_to_original_vectors()
 
+
+    @classmethod
+    def _get_synthetic_plugin(cls,observation,background,source_function):
+
+        speclike_gen = cls('generator', observation, background, verbose=False)
+
+        pts = PointSource("fake", 0.0, 0.0, source_function)
+
+        model = Model(pts)
+
+        speclike_gen.set_model(model)
+
+        return speclike_gen
+
+    @staticmethod
+    def _build_fake_observation(fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs):
+        """
+        This is the fake observation builder for SpectrumLike which builds data
+        for a binned spectrum without dispersion. It must be overridden in child classes.
+
+        :param fake_data: series of values... they are ignored later
+        :param channel_set: a channel set
+        :param source_errors:
+        :param source_sys_errors:
+        :param is_poisson:
+        :return:
+        """
+
+        observation = BinnedSpectrum(fake_data,
+                                     exposure=1.,
+                                     ebounds=channel_set.edges,
+                                     count_errors=source_errors,
+                                     sys_errors=source_sys_errors,
+                                     quality=None,
+                                     scale_factor=1.,
+                                     is_poisson=is_poisson,
+                                     mission='fake_mission',
+                                     instrument='fake_instrument',
+                                     tstart=0.,
+                                     tstop=1.)
+
+        return observation
+
     @classmethod
     def from_function(cls, name, source_function, energy_min, energy_max, source_errors=None, source_sys_errors=None,
-                      background_function=None, background_errors=None, background_sys_errors=None):
+                      background_function=None, background_errors=None, background_sys_errors=None, **kwargs):
         """
 
         Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.
@@ -254,6 +297,7 @@ class SpectrumLike(PluginPrototype):
         :param background_sys_errors: (optional) background systematic errors
         :return: simulated SpectrumLike plugin
         """
+
 
         channel_set = ChannelSet.from_starts_and_stops(energy_min, energy_max)
 
@@ -276,18 +320,9 @@ class SpectrumLike(PluginPrototype):
             assert len(source_sys_errors) == len(
                 energy_min), 'background  systematic error array is not the same dimension as the energy array'
 
-        observation = BinnedSpectrum(fake_data,
-                                     exposure=1.,
-                                     ebounds=channel_set.edges,
-                                     count_errors=source_errors,
-                                     sys_errors=source_sys_errors,
-                                     quality=None,
-                                     scale_factor=1.,
-                                     is_poisson=is_poisson,
-                                     mission='fake_mission',
-                                     instrument='fake_instrument',
-                                     tstart=0.,
-                                     tstop=1.)
+        # call the class dependent observation builder
+
+        observation = cls._build_fake_observation(fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs)
 
         if background_function is not None:
 
@@ -342,15 +377,11 @@ class SpectrumLike(PluginPrototype):
 
             background = None
 
-        speclike_gen = SpectrumLike('generator', observation, background, verbose=False)
 
-        pts = PointSource("fake", 0.0, 0.0, source_function)
 
-        model = Model(pts)
+        generator = cls._get_synthetic_plugin(observation,background,source_function) # type: SpectrumLike
 
-        speclike_gen.set_model(model)
-
-        return speclike_gen.get_simulated_dataset(name)
+        return generator.get_simulated_dataset(name)
 
     def get_pha_files(self):
 

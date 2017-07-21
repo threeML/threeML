@@ -3,34 +3,29 @@ import pandas as pd
 import numpy as np
 
 from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, BinnedSpectrum
+from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, ChannelSet
 from threeML.plugins.OGIP.response import InstrumentResponse
 
 from astromodels import PointSource, Model
 
-
 __instrument_name = "General binned spectral data with energy dispersion"
+
 
 class DispersionSpectrumLike(SpectrumLike):
     def __init__(self, name, observation, background=None, verbose=True):
-
-
-        assert isinstance(observation, BinnedSpectrumWithDispersion), "observed spectrum is not an instance of BinnedSpectrumWithDispersion"
+        assert isinstance(observation,
+                          BinnedSpectrumWithDispersion), "observed spectrum is not an instance of BinnedSpectrumWithDispersion"
 
         assert observation.response is not None, "the observed spectrum does not have a response"
 
         # assign the response to the plugins
 
-        self._rsp = observation.response #type: InstrumentResponse
-
-
+        self._rsp = observation.response  # type: InstrumentResponse
 
         super(DispersionSpectrumLike, self).__init__(name=name,
                                                      observation=observation,
                                                      background=background,
                                                      verbose=verbose)
-
-
 
     def set_model(self, likelihoodModel):
         """
@@ -61,7 +56,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
         return self._rsp.convolve()
 
-    def get_simulated_dataset(self, new_name=None,**kwargs):
+    def get_simulated_dataset(self, new_name=None, **kwargs):
         """
         Returns another DispersionSpectrumLike instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
@@ -95,16 +90,14 @@ class DispersionSpectrumLike(SpectrumLike):
 
     @property
     def response(self):
-
         return self._rsp
 
     def _output(self):
         # type: () -> pd.Series
 
-        super_out = super(DispersionSpectrumLike, self)._output() #type: pd.Series
+        super_out = super(DispersionSpectrumLike, self)._output()  # type: pd.Series
 
-        the_df = pd.Series({'response':self._rsp.rsp_filename})
-
+        the_df = pd.Series({'response': self._rsp.rsp_filename})
 
         return super_out.append(the_df)
 
@@ -128,6 +121,38 @@ class DispersionSpectrumLike(SpectrumLike):
         ogiplike = OGIPLike.from_general_dispersion_spectrum(self)
         ogiplike.write_pha(file_name=filename, overwrite=overwrite, force_rsp_write=force_rsp_write)
 
+    @staticmethod
+    def _build_fake_observation(fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs):
+        """
+        This is the fake observation builder for SpectrumLike which builds data
+        for a binned spectrum without dispersion. It must be overridden in child classes.
+
+        :param fake_data: series of values... they are ignored later
+        :param channel_set: a channel set
+        :param source_errors:
+        :param source_sys_errors:
+        :param is_poisson:
+        :return:
+        """
+
+        assert 'response' in kwargs, 'A response was not provided. Cannor build synthetic observation'
+
+        response = kwargs.pop('response')
+
+        observation = BinnedSpectrumWithDispersion(fake_data,
+                                                   exposure=1.,
+                                                   response=response,
+                                                   count_errors=source_errors,
+                                                   sys_errors=source_sys_errors,
+                                                   quality=None,
+                                                   scale_factor=1.,
+                                                   is_poisson=is_poisson,
+                                                   mission='fake_mission',
+                                                   instrument='fake_instrument',
+                                                   tstart=0.,
+                                                   tstop=1.)
+
+        return observation
 
     @classmethod
     def from_function(cls, name, source_function, response, source_errors=None, source_sys_errors=None,
@@ -136,7 +161,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
         Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.
 
-        :param name: simulkated data set name
+        :param name: simulated data set name
         :param source_function: astromodels function
         :param response: 3ML Instrument response
         :param source_errors: (optional) gaussian source errors
@@ -144,104 +169,16 @@ class DispersionSpectrumLike(SpectrumLike):
         :param background_function: (optional) astromodels background function
         :param background_errors: (optional) gaussian background errors
         :param background_sys_errors: (optional) background systematic errors
-        :return: simulated SpectrumLike plugin
+        :return: simulated DispersionSpectrumLike plugin
         """
 
+        channel_set = ChannelSet.from_instrument_response(response)
 
+        energy_min, energy_max = channel_set.bin_stack.T
 
-        # this is just for construction
+        # pass the variables to the super class
 
-        n_energies = response.ebounds.shape[0]-1
-
-
-
-
-
-        fake_data = np.ones(n_energies)
-
-        if source_errors is None:
-
-            is_poisson = True
-
-        else:
-
-            assert len(source_errors) == n_energies, 'source error array is not the same dimension as the energy array'
-
-            is_poisson = False
-
-        if source_sys_errors is not None:
-            assert len(source_sys_errors) == n_energies, 'background  systematic error array is not the same dimension as the energy array'
-
-        observation = BinnedSpectrumWithDispersion(fake_data,
-                                     exposure=1.,
-                                     response=response,
-                                     count_errors=source_errors,
-                                     sys_errors=source_sys_errors,
-                                     quality=None,
-                                     scale_factor=1.,
-                                     is_poisson=is_poisson,
-                                     mission='fake_mission',
-                                     instrument='fake_instrument',
-                                     tstart=0.,
-                                     tstop=1.)
-
-        if background_function is not None:
-
-            fake_background = np.ones(n_energies)
-
-            if background_errors is None:
-
-                is_poisson = True
-
-            else:
-
-                assert len(background_errors) == n_energies, 'background error array is not the same dimension as the energy array'
-
-                is_poisson = False
-
-            if background_sys_errors is not None:
-                assert len(background_sys_errors) ==  n_energies, 'background  systematic error array is not the same dimension as the energy array'
-
-            tmp_background = BinnedSpectrum(fake_background,
-                                            exposure=1.,
-                                            ebounds=response.ebounds,
-                                            count_errors=background_errors,
-                                            sys_errors=background_sys_errors,
-                                            quality=None,
-                                            scale_factor=1.,
-                                            is_poisson=is_poisson,
-                                            mission='fake_mission',
-                                            instrument='fake_instrument',
-                                            tstart=0.,
-                                            tstop=1.)
-
-            # now we have to generate the background counts
-            # we treat the background as a simple observation with no
-            # other background
-
-            background_gen = SpectrumLike('generator', tmp_background, None, verbose=False)
-
-            pts_background = PointSource("fake_background", 0.0, 0.0, background_function)
-
-            background_model = Model(pts_background)
-
-            background_gen.set_model(background_model)
-
-            sim_background = background_gen.get_simulated_dataset('fake')
-
-            background = sim_background._observed_spectrum
-
-
-        else:
-
-            background = None
-
-        speclike_gen = cls('generator', observation, background, verbose=False)
-
-        pts = PointSource("fake", 0.0, 0.0, source_function)
-
-        model = Model(pts)
-
-        speclike_gen.set_model(model)
-
-        return speclike_gen.get_simulated_dataset(name)
+        return super(DispersionSpectrumLike, cls).from_function(name, source_function, energy_min, energy_max,
+                                                                source_errors, source_sys_errors,
+                                                                background_function, background_errors,
+                                                                background_sys_errors, response=response)
