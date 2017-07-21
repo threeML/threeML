@@ -35,6 +35,8 @@ class BayesianAnalysisWrap(BayesianAnalysis):
         self.likelihood_model.test.spectrum.main.shape.reset_tracking()
         self.likelihood_model.test.spectrum.main.shape.start_tracking()
 
+        kwargs['resume'] = False
+
         with use_astromodels_memoization(False):
 
             try:
