@@ -11,102 +11,205 @@ class ResidualPlot(object):
 
     def __init__(self,**kwargs):
         """
+        A class that makes data/residual plots
 
-        :param kwargs:
+        :param show_residuals: to show the residuals
+        :param ratio_residuals: to use ratios instead of sigma
+        :param model_subplot: and axis or list of axes to plot to rather than create a new one
         """
 
+
         self._ratio_residuals = False
+        self._show_residuals = True
+
+
+        if 'show_residuals' in kwargs:
+
+            self._show_residuals = bool(kwargs.pop('show_residuals'))
+
         if 'ratio_residuals' in kwargs:
             self._ratio_residuals = bool(kwargs.pop('ratio_residuals'))
 
-        self._fig, (self._ax, self._ax1) = plt.subplots(2, 1, sharex=True,
-                                                        gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
+        # this lets you overplot other fits
+
+        if 'model_subplot' in kwargs:
+
+            model_subplot = kwargs.pop('model_subplot')
+
+            # turn on or off residuals
+
+            if self._show_residuals:
+
+                assert type(model_subplot) == list, 'you must supply a list of axes to plot to residual'
+
+                assert len(
+                    model_subplot) == 2, 'you have requested to overplot a model with residuals, but only provided one axis to plot'
+
+                self._data_axis, self._residual_axis = model_subplot
+
+            else:
+
+                try:
+
+                    self._data_axis = model_subplot
+
+                    self._fig = self._data_axis.get_figure()
+
+                except(AttributeError):
+
+                    # the user supplied a list of axes
+
+                    self._data_axis = model_subplot[0]
+
+            # we will use the figure associated with
+            # the data axis
+
+            self._fig = self._data_axis.get_figure()
+
+
+
+        else:
+
+            # turn on or off residuals
+
+            if self._show_residuals:
+
+                self._fig, (self._data_axis, self._residual_axis) = plt.subplots(2, 1,
+                                                                                 sharex=True,
+                                                                                 gridspec_kw={'height_ratios': [2, 1]},
+                                                                                 **kwargs)
+
+            else:
+
+                self._fig, self._data_axis = plt.subplots(**kwargs)
+
+
+
+
+    @property
+    def figure(self):
+        """
+
+        :return: the figure instance
+        """
+
+        return self._fig
+
+    @property
+    def data_axis(self):
+        """
+
+        :return: the top or data axis
+        """
+
+        return self._data_axis
+
+    @property
+    def residual_axis(self):
+        """
+
+        :return: the bottom or residual axis
+        """
+
+
+        assert self._show_residuals, 'this plot has no residual axis'
+
+        return self._residual_axis
+
+    @property
+    def show_residuals(self):
+        return self._show_residuals
 
     @property
     def ratio_residuals(self):
         return self._ratio_residuals
 
-
-    def add_model_step(self, xmin, xmax, xwidth, y, label, color='r'):
+    def add_model_step(self, xmin, xmax, xwidth, y, label, color):
         """
+        Add a model but use discontinuous steps for the plotting.
 
-        :param xmin:
-        :param xmax:
-        :param xwidth:
-        :param y:
-        :param residuals:
-        :param label:
-        :param color:
-        :return:
+        :param xmin: the low end boundaries
+        :param xmax: the high end boundaries
+        :param xwidth: the width of the bins
+        :param y: the height of the bins
+        :param label: the label of the model
+        :param color: the color of the model
+        :return: None
         """
-
-
-
         step_plot(np.asarray(zip(xmin, xmax)),
                   y / xwidth,
-                  self._ax, alpha=.8,
-                  label=label, color=color)
+                  self._data_axis,
+                  alpha=.8,
+                  label=label,
+                  color=color)
 
     def add_model(self,x,y,label,color):
         """
+        Add a model and interpolate it across the energy span for the plotting.
 
-        :param x:
-        :param y:
-        :param label:
-        :param color:
+        :param x: the evaluation energies
+        :param y: the model values
+        :param label: the label of the model
+        :param color: the color of the model
+        :return: None
+        """
+        self._data_axis.plot(x, y, label=label, color=color, alpha=.8)
+
+
+    def add_data(self, x, y, residuals, label, xerr=None, yerr=None, residual_yerr=None, color='r', show_data=True):
+        """
+        Add the data for the this model
+
+        :param x: energy of the data
+        :param y: value of the data
+        :param residuals: the residuals for the data
+        :param label: label of the data
+        :param xerr: the error in energy (or bin width)
+        :param yerr: the errorbars of the data
+        :param color: color of the
         :return:
         """
 
-        self._ax.plot(x,y,label=label,color=color,alpha=.8)
+
+        # if we want to show the data
+
+        if show_data:
+            self._data_axis.errorbar(x,
+                                     y,
+                                     yerr=yerr,
+                                     xerr=xerr,
+                                     fmt=threeML_config['residual plot']['error marker'],
+                                     markersize=threeML_config['residual plot']['error marker size'],
+                                     linestyle='',
+                                     elinewidth=threeML_config['residual plot']['error line width'],
+                                     alpha=.9,
+                                     capsize=0,
+                                     label=label,
+                                     color=color)
 
 
-    def add_data(self, x, y, residuals, label, xerr=None, yerr=None, residual_yerr=None, color='r'):
-        """
+        # if we want to show the residuals
 
-        :param x:
-        :param y:
-        :param residuals:
-        :param label:
-        :param xerr:
-        :param yerr:
-        :param color:
-        :return:
-        """
+        if self._show_residuals:
 
+            # normal residuals from the likelihood
+
+            if not self.ratio_residuals:
+
+                residual_yerr = np.ones_like(residuals)
+
+            self._residual_axis.axhline(0, linestyle='--', color='k')
 
 
-
-        self._ax.errorbar(x,
-                    y,
-                    yerr=yerr,
-                    xerr=xerr,
-                    fmt=threeML_config['residual plot']['error marker'],
-                    markersize=threeML_config['residual plot']['error marker size'],
-                    linestyle='',
-                    elinewidth=threeML_config['residual plot']['error line width'],
-                    alpha=.9,
-                    capsize=0,
-                    label=label,
-                    color=color)
-
-        #ax.plot(x, expected_model_magnitudes, label='%s Model' % data._name, color=model_color)
-
-        #residuals = (expected_model_magnitudes - mag_errors) / mag_errors
-
-        if not self.ratio_residuals:
-            residual_yerr=np.ones_like(residuals)
-
-        self._ax1.axhline(0, linestyle='--', color='k')
-        self._ax1.errorbar(x,
-                     residuals,
-                     xerr=xerr,
-                     yerr=residual_yerr,
-                     capsize=0,
-                     fmt=threeML_config['residual plot']['error marker'],
-                     elinewidth=threeML_config['residual plot']['error line width'],
-                     markersize=threeML_config['residual plot']['error marker size'],
-                     color=color)
+            self._residual_axis.errorbar(x,
+                                         residuals,
+                                         yerr=residual_yerr,
+                                         capsize=0,
+                                         fmt=threeML_config['residual plot']['error marker'],
+                                         elinewidth=threeML_config['residual plot']['error line width'],
+                                         markersize=threeML_config['residual plot']['error marker size'],
+                                         color=color)
 
 
     def finalize(self, xlabel='x', ylabel='y',xscale='log',yscale='log', show_legend=True,invert_y=False):
@@ -122,32 +225,38 @@ class ResidualPlot(object):
 
 
         if show_legend:
-            self._ax.legend(fontsize='x-small', loc=0)
+            self._data_axis.legend(fontsize='x-small', loc=0)
 
-        self._ax.set_ylabel(ylabel)
+        self._data_axis.set_ylabel(ylabel)
 
-        self._ax.set_xscale(xscale)
+        self._data_axis.set_xscale(xscale)
         if yscale == 'log':
 
-            self._ax.set_yscale(yscale, nonposy='clip')
+            self._data_axis.set_yscale(yscale, nonposy='clip')
 
         else:
 
-            self._ax.set_yscale(yscale)
+            self._data_axis.set_yscale(yscale)
+
+        if self._show_residuals:
+
+            self._residual_axis.set_xscale(xscale)
+
+            locator = MaxNLocator(prune='upper', nbins=5)
+            self._residual_axis.yaxis.set_major_locator(locator)
+
+            self._residual_axis.set_xlabel(xlabel)
+
+            if self.ratio_residuals:
+                custom_warnings.warn("Residuals plotted as ratios: beware that they are not statistical quantites, and can not be used to asses fit quality")
+                self._residual_axis.set_ylabel("Residuals\n(fraction of model)")
+            else:
+                self._residual_axis.set_ylabel("Residuals\n($\sigma$)")
 
 
-        self._ax1.set_xscale(xscale)
-
-        locator = MaxNLocator(prune='upper', nbins=5)
-        self._ax1.yaxis.set_major_locator(locator)
-
-        self._ax1.set_xlabel(xlabel)
-
-        if self.ratio_residuals:
-            custom_warnings.warn("Residuals plotted as ratios: beware that they are not statistical quantites, and can not be used to asses fit quality")
-            self._ax1.set_ylabel("Residuals\n(fraction of model)")
         else:
-            self._ax1.set_ylabel("Residuals\n($\sigma$)")
+
+            self._data_axis.set_xlabel(xlabel)
 
 
 
@@ -162,7 +271,7 @@ class ResidualPlot(object):
         self._fig.subplots_adjust(hspace=0)
 
         if invert_y:
-            self._ax.set_ylim(self._ax.get_ylim()[::-1])
+            self._data_axis.set_ylim(self._data_axis.get_ylim()[::-1])
 
 
         return self._fig
