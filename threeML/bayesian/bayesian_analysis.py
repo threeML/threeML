@@ -803,7 +803,7 @@ class BayesianAnalysis(object):
         """
         :return: likelihood model (a Model instance)
         """
-        return self.likelihood_model
+        return self._likelihood_model
 
     @property
     def data_list(self):
