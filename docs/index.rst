@@ -17,9 +17,9 @@ Traditionally the Astrophysics community have been using frequentist techniques,
 
     intro
     notebooks/Minimization_tutorial.ipynb
-    notebooks/spectrum_tutorial.ipynb
-    Time_series
-    plotting
+    notebooks/Bayesian_tutorial.ipynb
+    plugins
+    features
     
 
 .. automodule:: threeML
