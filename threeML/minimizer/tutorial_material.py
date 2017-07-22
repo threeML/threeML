@@ -1,7 +1,7 @@
 # Leave these imports here, even though they look not used in the module, as they are used in the tutorial
 
 from threeML.minimizer.grid_minimizer import GridMinimizer
-from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
+#from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
 from threeML.minimizer.minuit_minimizer import MinuitMinimizer
 from threeML.minimizer.grid_minimizer import GridMinimizer
 
