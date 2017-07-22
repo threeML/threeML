@@ -122,7 +122,7 @@ def array_to_cmap(values, cmap, use_log=False):
     return rgb_colors
 
 
-def plot_likelihood_function(bayes, fig=None):
+def plot_likelihood_function(bayes, fig=None, show_prior = False):
     if fig is None:
 
         fig, sub = plt.subplots(1, 1)
@@ -143,7 +143,21 @@ def plot_likelihood_function(bayes, fig=None):
         bayes.likelihood_model.test.spectrum.main.shape.mu.value = mu
         log_like.append(-bayes._log_like(mu))
 
-    _ = sub.plot(mus, log_like, 'k')
+    _ = sub.plot(mus, log_like, 'k--',alpha=.8)
+
+    if show_prior:
+
+        prior = []
+
+        for mu in mus:
+
+            prior.append(-bayes._log_prior([mu]))
+
+        _ = sub.plot(mus, prior, 'r')
+
+
+
+
 
     _ = sub.set_xlabel(r"$\mu$")
     _ = sub.set_ylabel(r"$-\log{L(\mu)}$")
