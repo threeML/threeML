@@ -1,6 +1,7 @@
 import pytest
 import os
 
+from astropy.io import fits
 
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
@@ -488,6 +489,37 @@ def test_pha_write():
             assert isinstance(pha_info[key], PHASpectrum)
 
         assert pha_info['pha'].background_file == 'test_bak.pha{1}'
+        assert pha_info['pha'].ancillary_file is None
+        assert pha_info['pha'].instrument == 'GBM_NAI_03'
+        assert pha_info['pha'].mission == 'GLAST'
+        assert pha_info['pha'].is_poisson == True
+        assert pha_info['pha'].n_channels == len(pha_info['pha'].rates)
+
+
+
+def test_pha_write_no_bkg():
+    with within_directory(__this_dir__):
+
+        # custom remove background
+        f=fits.open("test.pha")
+        f['SPECTRUM'].data['BACKFILE']="NONE"
+        f.writeto("test_pha_nobkg.pha",overwrite=True)
+
+        ogip = OGIPLike('test_ogip', observation='test_pha_nobkg.pha{1}')
+
+        ogip.write_pha('test_write_nobkg', overwrite=True)
+
+        written_ogip = OGIPLike('write_ogip', observation='test_write_nobkg.pha{1}')
+
+        pha_info = written_ogip.get_pha_files()
+
+        for key in ['pha']:
+            assert isinstance(pha_info[key], PHASpectrum)
+
+        f = fits.open("test_write_nobkg.pha")
+        assert f['SPECTRUM'].data['BACKFILE'][0] == "NONE"
+
+        assert pha_info['pha'].background_file is None
         assert pha_info['pha'].ancillary_file is None
         assert pha_info['pha'].instrument == 'GBM_NAI_03'
         assert pha_info['pha'].mission == 'GLAST'

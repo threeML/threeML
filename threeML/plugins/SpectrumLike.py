@@ -10,6 +10,8 @@ from astromodels.functions.priors import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
 from astromodels import clone_model
 
+from astromodels import Model, PointSource
+
 from threeML.io.rich_display import display
 from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
@@ -20,10 +22,13 @@ from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_b
 from threeML.plugins.OGIP.likelihood_functions import half_chi2
 from threeML.utils.binner import Rebinner
 from threeML.utils.stats_tools import Significance
-from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum
+from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
 from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
+from threeML.io.plotting.data_residual_plot import ResidualPlot
 
 from threeML.config.config import threeML_config
+
+NO_REBIN = 1E-99
 
 __instrument_name = "General binned spectral data"
 
@@ -66,10 +71,10 @@ class SpectrumLike(PluginPrototype):
         self._observed_spectrum = observation  # type: BinnedSpectrum
 
         self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
-            
+
         if background is None:
 
-            self._background_spectrum =  None
+            self._background_spectrum = None
 
         else:
 
@@ -180,9 +185,6 @@ class SpectrumLike(PluginPrototype):
                     "Error in ovserved spectrum: if the error on the observation is zero, " \
                     "also the expected observation must be zero"
 
-
-
-
         # Initialize a mask that selects all the data.
         # We will initially use the quality mask for the PHA file
         # and set any quality greater than 0 to False. We want to save
@@ -234,6 +236,153 @@ class SpectrumLike(PluginPrototype):
         # Apply the mask
         self._apply_mask_to_original_vectors()
 
+
+    @classmethod
+    def _get_synthetic_plugin(cls,observation,background,source_function):
+
+        speclike_gen = cls('generator', observation, background, verbose=False)
+
+        pts = PointSource("fake", 0.0, 0.0, source_function)
+
+        model = Model(pts)
+
+        speclike_gen.set_model(model)
+
+        return speclike_gen
+
+    @staticmethod
+    def _build_fake_observation(fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs):
+        """
+        This is the fake observation builder for SpectrumLike which builds data
+        for a binned spectrum without dispersion. It must be overridden in child classes.
+
+        :param fake_data: series of values... they are ignored later
+        :param channel_set: a channel set
+        :param source_errors:
+        :param source_sys_errors:
+        :param is_poisson:
+        :return:
+        """
+
+        observation = BinnedSpectrum(fake_data,
+                                     exposure=1.,
+                                     ebounds=channel_set.edges,
+                                     count_errors=source_errors,
+                                     sys_errors=source_sys_errors,
+                                     quality=None,
+                                     scale_factor=1.,
+                                     is_poisson=is_poisson,
+                                     mission='fake_mission',
+                                     instrument='fake_instrument',
+                                     tstart=0.,
+                                     tstop=1.)
+
+        return observation
+
+    @classmethod
+    def from_function(cls, name, source_function, energy_min, energy_max, source_errors=None, source_sys_errors=None,
+                      background_function=None, background_errors=None, background_sys_errors=None, **kwargs):
+        """
+
+        Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.
+
+        :param name: simulkated data set name
+        :param source_function: astromodels function
+        :param energy_min: array of low energy bin edges
+        :param energy_max: array of high energy bin edges
+        :param source_errors: (optional) gaussian source errors
+        :param source_sys_errors: (optional) systematic source errors
+        :param background_function: (optional) astromodels background function
+        :param background_errors: (optional) gaussian background errors
+        :param background_sys_errors: (optional) background systematic errors
+        :return: simulated SpectrumLike plugin
+        """
+
+
+        channel_set = ChannelSet.from_starts_and_stops(energy_min, energy_max)
+
+        # this is just for construction
+
+        fake_data = np.ones(len(energy_min))
+
+        if source_errors is None:
+
+            is_poisson = True
+
+        else:
+
+            assert len(source_errors) == len(
+                energy_min), 'source error array is not the same dimension as the energy array'
+
+            is_poisson = False
+
+        if source_sys_errors is not None:
+            assert len(source_sys_errors) == len(
+                energy_min), 'background  systematic error array is not the same dimension as the energy array'
+
+        # call the class dependent observation builder
+
+        observation = cls._build_fake_observation(fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs)
+
+        if background_function is not None:
+
+            fake_background = np.ones(len(energy_min))
+
+            if background_errors is None:
+
+                is_poisson = True
+
+            else:
+
+                assert len(background_errors) == len(
+                    energy_min), 'background error array is not the same dimension as the energy array'
+
+                is_poisson = False
+
+            if background_sys_errors is not None:
+                assert len(background_sys_errors) == len(
+                    energy_min), 'background  systematic error array is not the same dimension as the energy array'
+
+            tmp_background = BinnedSpectrum(fake_background,
+                                            exposure=1.,
+                                            ebounds=channel_set.edges,
+                                            count_errors=background_errors,
+                                            sys_errors=background_sys_errors,
+                                            quality=None,
+                                            scale_factor=1.,
+                                            is_poisson=is_poisson,
+                                            mission='fake_mission',
+                                            instrument='fake_instrument',
+                                            tstart=0.,
+                                            tstop=1.)
+
+            # now we have to generate the background counts
+            # we treat the background as a simple observation with no
+            # other background
+
+            background_gen = SpectrumLike('generator', tmp_background, None, verbose=False)
+
+            pts_background = PointSource("fake_background", 0.0, 0.0, background_function)
+
+            background_model = Model(pts_background)
+
+            background_gen.set_model(background_model)
+
+            sim_background = background_gen.get_simulated_dataset('fake')
+
+            background = sim_background._observed_spectrum
+
+
+        else:
+
+            background = None
+
+
+
+        generator = cls._get_synthetic_plugin(observation,background,source_function) # type: SpectrumLike
+
+        return generator.get_simulated_dataset(name)
+
     def get_pha_files(self):
 
         info = {}
@@ -242,7 +391,9 @@ class SpectrumLike(PluginPrototype):
         # the user doesn't grab the instance
         # and try to modify things. protection
         info['pha'] = copy.copy(self._observed_spectrum)
-        info['bak'] = copy.copy(self._background_spectrum)
+
+        if self._background_spectrum is not None:
+            info['bak'] = copy.copy(self._background_spectrum)
 
         return info
 
@@ -650,12 +801,34 @@ class SpectrumLike(PluginPrototype):
 
                     randomized_source_count_err = None
 
+
+                elif self.background_noise_model is None:
+
+                    # Randomize expectations for the source
+
+                    randomized_source_counts = np.random.poisson(source_model_counts)
+                    # randomized_source_rate = randomized_source_counts / self.exposure
+
+                    # No randomization for the background in this case
+
+                    randomized_background_counts = None
+
+                    randomized_background_count_err = None
+
+                    randomized_source_count_err = None
+
+
+
                 else:
 
                     raise RuntimeError(
                         "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
                             self._observation_noise_model,
                             self._background_noise_model))
+
+
+
+
 
             else:
 
@@ -800,13 +973,23 @@ class SpectrumLike(PluginPrototype):
             # member so as to build the appropriate spectrum type. All parameters of the current
             # spectrum remain the same except for the rate and rate errors
 
+            # the profile likelihood automatically adjust the background spectrum to the
+            # same exposure and scale as the observation
+            # therefore, we must  set the background simulation to have the exposure and scale
+            # of the observation
+
             new_observation = self._observed_spectrum.clone(new_counts=randomized_source_counts,
-                                                            new_count_errors=randomized_source_count_err)
+                                                            new_count_errors=randomized_source_count_err,
+                                                            new_scale_factor=1.
+                                                            )
 
             if self._background_spectrum is not None:
 
                 new_background = self._background_spectrum.clone(new_counts=randomized_background_counts,
-                                                                 new_count_errors=randomized_background_count_err)
+                                                                 new_count_errors=randomized_background_count_err,
+                                                                 new_exposure=self._observed_spectrum.exposure, # because it was adjusted
+                                                                 new_scale_factor=1. # because it was adjusted
+                                                                 )
 
             else:
 
@@ -925,7 +1108,9 @@ class SpectrumLike(PluginPrototype):
         # only for the PHASpectrum subclass do we need to update the the grouping
         if isinstance(self._observed_spectrum, PHASpectrum):
             self._observed_spectrum.set_ogip_grouping(rebinner.grouping)
-            self._background_spectrum.set_ogip_grouping(rebinner.grouping)
+
+            if self._background_spectrum is not None:
+                self._background_spectrum.set_ogip_grouping(rebinner.grouping)
 
         self._apply_rebinner(rebinner)
 
@@ -1055,7 +1240,7 @@ class SpectrumLike(PluginPrototype):
 
             assert new_model in _known_noise_models, "Noise model %s not recognized. " \
                                                      "Allowed models are: %s" % (
-                                                     new_model, ", ".join(_known_noise_models))
+                                                         new_model, ", ".join(_known_noise_models))
 
         self._background_noise_model = new_model
 
@@ -1232,6 +1417,15 @@ class SpectrumLike(PluginPrototype):
         self._nuisance_parameter.fix = True
 
     @property
+    def mask(self):
+        """
+        The channel mask
+        :return:
+        """
+
+        return self._mask
+
+    @property
     def scale_factor(self):
         """
         Ratio between the source and the background exposure and area
@@ -1251,6 +1445,164 @@ class SpectrumLike(PluginPrototype):
     @property
     def tstop(self):
         return self._tstop
+
+    @property
+    def expected_model_rate(self):
+
+        return self._evaluate_model() * self._nuisance_parameter.value
+
+    @property
+    def observed_counts(self):
+        """
+
+        :return: the observed counts
+        """
+
+        return self._observed_counts
+
+    @property
+    def observed_count_errors(self):
+        """
+
+        :return: the observed counts errors
+        """
+
+        cnt_err = None
+
+        if self._observation_noise_model == 'poisson':
+
+            cnt_err = np.sqrt(self._observed_counts)
+
+        else:
+
+            if self._background_noise_model is None:
+                cnt_err = self._observed_count_errors
+
+                # calculate all the correct quantites
+
+        return cnt_err
+
+    @property
+    def background_counts(self):
+        """
+
+        :return: the observed background counts
+        """
+
+        background_counts = None
+
+        if self._observation_noise_model == 'poisson':
+
+            if self._background_noise_model == 'poisson':
+
+                background_counts = self._background_counts
+
+                # Gehrels weighting, a little bit better approximation when statistic is low
+                # (and inconsequential when statistic is high)
+
+            elif self._background_noise_model == 'ideal':
+
+                background_counts = self._scaled_background_counts
+
+            elif self._background_noise_model == 'gaussian':
+
+                background_counts = self._background_counts
+
+            elif self._background_noise_model is None:
+
+                raise NotImplementedError("do not have this model yet")
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            if self._background_noise_model is None:
+                # Observed counts
+                background_counts = None
+
+                # calculate all the correct quantites
+
+        return background_counts
+
+    @property
+    def background_count_errors(self):
+        """
+
+        :return: the observed background count errors
+        """
+
+        background_errors = None
+
+        if self._observation_noise_model == 'poisson':
+
+            if self._background_noise_model == 'poisson':
+
+                # Gehrels weighting, a little bit better approximation when statistic is low
+                # (and inconsequential when statistic is high)
+
+                background_errors = 1 + np.sqrt(self._background_counts + 0.75)
+
+            elif self._background_noise_model == 'ideal':
+
+                background_errors = np.zeros_like(self._scaled_background_counts)
+
+            elif self._background_noise_model == 'gaussian':
+
+                background_errors = self._back_count_errors
+
+            elif self._background_noise_model is None:
+
+                raise NotImplementedError("do not have this model yet")
+
+            else:
+
+                raise RuntimeError("This is a bug")
+
+        else:
+
+            if self._background_noise_model is None:
+                background_errors = None
+
+        return background_errors
+
+    @property
+    def source_rate(self):
+
+        if self._background_noise_model is not None:
+
+            scale_factor = self._observed_spectrum.scale_factor / self._background_spectrum.scale_factor
+
+            # since we compare to the model rate... background subtract but with proper propagation
+            src_rate = (
+                self.observed_counts / self.exposure - (
+                    self.background_counts / self.background_exposure) * scale_factor)
+
+
+
+        else:
+
+            # since we compare to the model rate... background subtract but with proper propagation
+            src_rate = (self.observed_counts / self.exposure)
+
+        return src_rate
+
+    @property
+    def source_rate_error(self):
+
+        if self._background_noise_model is not None:
+
+            scale_factor = self._observed_spectrum.scale_factor / self._background_spectrum.scale_factor
+
+            src_rate_err = np.sqrt((self.observed_count_errors / self.exposure) ** 2 +
+                                   ((self.background_count_errors / self.background_exposure) * scale_factor) ** 2)
+
+        else:
+
+            src_rate_err = self.observed_count_errors / self.exposure
+
+        return src_rate_err
 
     @property
     def background_exposure(self):
@@ -1344,24 +1696,26 @@ class SpectrumLike(PluginPrototype):
         :return: the significance of the data over background per channel
         """
 
-        sig_obj = Significance(Non=self._current_observed_counts,
-                               Noff=self._current_background_counts,
-                               alpha=self.scale_factor)
+        with np.errstate(divide='ignore',invalid='ignore'):
 
-        if self._observed_spectrum.is_poisson and self._background_spectrum.is_poisson:
+            sig_obj = Significance(Non=self._current_observed_counts,
+                                   Noff=self._current_background_counts,
+                                   alpha=self.scale_factor)
 
-            # use simple li & ma
-            significance = sig_obj.li_and_ma()
+            if self._observed_spectrum.is_poisson and self._background_spectrum.is_poisson:
 
-        elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
+                # use simple li & ma
+                significance = sig_obj.li_and_ma()
 
-            significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._current_back_count_errors)
+            elif self._observed_spectrum.is_poisson and not self._background_spectrum.is_poisson:
 
-        else:
+                significance = sig_obj.li_and_ma_equivalent_for_gaussian_background(self._current_back_count_errors)
 
-            raise NotImplementedError("We haven't put in other significances yet")
+            else:
 
-        return significance
+                raise NotImplementedError("We haven't put in other significances yet")
+
+            return significance
 
     def write_pha(self):
 
@@ -1491,7 +1845,7 @@ class SpectrumLike(PluginPrototype):
         # Now plot and fade the non-used channels
         non_used_mask = (~self._mask)
 
-        if non_used_mask.sum() > 0:
+        if True:#non_used_mask.sum() > 0:
 
             # Get un-rebinned versions of all arrays, so we can directly apply the mask
             energy_min_unrebinned, energy_max_unrebinned = np.array(self._observed_spectrum.starts), np.array(
@@ -1500,21 +1854,25 @@ class SpectrumLike(PluginPrototype):
             observed_rate_unrebinned = self._observed_counts / self.exposure
             observed_rate_unrebinned_err = np.sqrt(self._observed_counts) / self.exposure
 
-            channel_plot(ax,
-                         energy_min_unrebinned[non_used_mask],
-                         energy_max_unrebinned[non_used_mask],
-                         observed_rate_unrebinned[non_used_mask],
-                         color=threeML_config['ogip']['counts color'], lw=1.5, alpha=1)
+            if non_used_mask.sum() > 0:
+
+                channel_plot(ax,
+                             energy_min_unrebinned[non_used_mask],
+                             energy_max_unrebinned[non_used_mask],
+                             observed_rate_unrebinned[non_used_mask],
+                             color=threeML_config['ogip']['counts color'], lw=1.5, alpha=1)
 
             if self._background_noise_model is not None:
 
                 background_rate_unrebinned = self._background_counts / self.background_exposure
                 background_rate_unrebinned_err = np.sqrt(self._background_counts) / self.background_exposure
 
-                channel_plot(ax, energy_min_unrebinned[non_used_mask],
-                             energy_max_unrebinned[non_used_mask],
-                             background_rate_unrebinned[non_used_mask],
-                             color=threeML_config['ogip']['background color'], alpha=.8)
+                if non_used_mask.sum() > 0:
+
+                    channel_plot(ax, energy_min_unrebinned[non_used_mask],
+                                 energy_max_unrebinned[non_used_mask],
+                                 background_rate_unrebinned[non_used_mask],
+                                 color=threeML_config['ogip']['background color'], alpha=.8)
             else:
 
                 background_rate_unrebinned = np.zeros_like(observed_rate_unrebinned)
@@ -1609,7 +1967,8 @@ class SpectrumLike(PluginPrototype):
                 if self._verbose:
                     print('channels below the significance threshold shown in red\n')
 
-                significance_mask = self.significance_per_channel < significance_level
+                with np.errstate(invalid='ignore'):
+                    significance_mask = self.significance_per_channel < significance_level
 
                 disjoint_patch_plot(ax,
                                     energy_min_unrebinned,
@@ -1642,7 +2001,6 @@ class SpectrumLike(PluginPrototype):
         if not self._observed_spectrum.is_poisson:
             obs['total rate error'] = self._observed_spectrum.total_rate_error
 
-
         if self._background_spectrum is not None:
             obs['total bkg. rate'] = self._background_spectrum.total_rate
             if not self._background_spectrum.is_poisson:
@@ -1652,7 +2010,7 @@ class SpectrumLike(PluginPrototype):
 
         obs['exposure'] = self.exposure
         obs['is poisson'] = self._observed_spectrum.is_poisson
-        
+
         obs['significance'] = self.significance
 
         # obs['response'] = self._observed_spectrum.response_file
@@ -1676,3 +2034,204 @@ class SpectrumLike(PluginPrototype):
     def __repr__(self):
 
         return self._output().to_string()
+
+    def display_model(self, data_color='k', model_color='r', step=True, show_data=True, show_residuals=True,
+                      ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None,
+                      **kwargs):
+
+        """
+        Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying
+        a previous axis to 'model_subplot'.
+
+        Example usage:
+
+        fig = data.display_model()
+
+        fig2 = data2.display_model(model_subplot=fig.axes)
+
+
+        :param data_color: the color of the data
+        :param model_color: the color of the model
+        :param step: (bool) create a step count histogram or interpolate the model
+        :param show_data: (bool) show_the data with the model
+        :param show_residuals: (bool) shoe the residuals
+        :param ratio_residuals: (bool) use model ratio instead of residuals
+        :param show_legend: (bool) show legend
+        :param min_rate: the minimum rate per bin
+        :param model_label: (optional) the label to use for the model default is plugin name
+        :param model_subplot: (optional) axis or list of axes to plot to
+        :return:
+        """
+
+        if model_label is None:
+            model_label = "%s Model" % self._name
+
+        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
+
+        # energy_min, energy_max = self._rsp.ebounds[:-1], self._rsp.ebounds[1:]
+
+        energy_min, energy_max = np.array(self._observed_spectrum.edges[:-1]), np.array(
+            self._observed_spectrum.edges[1:])
+
+        chan_width = energy_max - energy_min
+
+        expected_model_rate = self.expected_model_rate
+
+        # figure out the type of data
+
+        src_rate = self.source_rate
+        src_rate_err = self.source_rate_error
+
+        # rebin on the source rate
+
+        # Create a rebinner if either a min_rate has been given, or if the current data set has no rebinned on its own
+
+        if (min_rate is not NO_REBIN) or (self._rebinner is None):
+
+            this_rebinner = Rebinner(src_rate, min_rate, self._mask)
+
+        else:
+
+            # Use the rebinner already in the data
+            this_rebinner = self._rebinner
+
+        # get the rebinned counts
+        new_rate, new_model_rate = this_rebinner.rebin(src_rate, expected_model_rate)
+        new_err, = this_rebinner.rebin_errors(src_rate_err)
+
+        # adjust channels
+        new_energy_min, new_energy_max = this_rebinner.get_new_start_and_stop(energy_min, energy_max)
+        new_chan_width = new_energy_max - new_energy_min
+
+        # mean_energy = np.mean([new_energy_min, new_energy_max], axis=0)
+
+        # For each bin find the weighted average of the channel center
+        mean_energy = []
+        delta_energy = [[], []]
+        mean_energy_unrebinned = (energy_max + energy_min) / 2.0
+
+        for e_min, e_max in zip(new_energy_min, new_energy_max):
+
+            # Find all channels in this rebinned bin
+            idx = (mean_energy_unrebinned >= e_min) & (mean_energy_unrebinned <= e_max)
+
+            # Find the rates for these channels
+            r = src_rate[idx]
+
+            if r.max() == 0:
+
+                # All empty, cannot weight
+                this_mean_energy = (e_min + e_max) / 2.0
+
+            else:
+
+                # Do the weighted average of the mean energies
+                weights = r / np.sum(r)
+
+                this_mean_energy = np.average(mean_energy_unrebinned[idx], weights=weights)
+
+            # Compute "errors" for X (which aren't really errors, just to mark the size of the bin)
+
+            delta_energy[0].append(this_mean_energy - e_min)
+            delta_energy[1].append(e_max - this_mean_energy)
+            mean_energy.append(this_mean_energy)
+
+        # Residuals
+
+        # we need to get the rebinned counts
+        rebinned_observed_counts, = this_rebinner.rebin(self.observed_counts)
+
+        rebinned_observed_count_errors, = this_rebinner.rebin_errors(self.observed_count_errors)
+
+        # the rebinned counts expected from the model
+        rebinned_model_counts = new_model_rate * self.exposure
+
+        # and also the rebinned background
+
+        if self._background_noise_model is not None:
+            rebinned_background_counts, = this_rebinner.rebin(self.background_counts)
+            rebinned_background_errors, = this_rebinner.rebin_errors(self.background_count_errors)
+
+            significance_calc = Significance(rebinned_observed_counts,
+                                             rebinned_background_counts + rebinned_model_counts / self.scale_factor,
+                                             self.scale_factor)
+
+        # Divide the various cases
+
+        if ratio_residuals:
+            residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_model_counts
+            residual_errors = rebinned_observed_count_errors / rebinned_model_counts
+
+        else:
+            residual_errors = None
+            if self._observation_noise_model == 'poisson':
+
+                if self._background_noise_model == 'poisson':
+
+                    # We use the Li-Ma formula to get the significance (sigma)
+
+                    residuals = significance_calc.li_and_ma()
+
+                elif self._background_noise_model == 'ideal':
+
+                    residuals = significance_calc.known_background()
+
+                elif self._background_noise_model == 'gaussian':
+
+                    residuals = significance_calc.li_and_ma_equivalent_for_gaussian_background(
+                        rebinned_background_errors)
+
+                else:
+
+                    raise RuntimeError("This is a bug")
+
+            else:
+
+                if self._background_noise_model is None:
+
+                    residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_observed_count_errors
+
+                else:
+
+                    raise NotImplementedError("Not yet implemented")
+
+        residual_plot.add_data(mean_energy,
+                               new_rate / new_chan_width,
+                               residuals,
+                               residual_yerr=residual_errors,
+                               yerr=new_err / new_chan_width,
+                               xerr=delta_energy,
+                               label=self._name,
+                               color=data_color,
+                               show_data=show_data)
+
+        if step:
+
+            residual_plot.add_model_step(new_energy_min,
+                                         new_energy_max,
+                                         new_chan_width,
+                                         new_model_rate,
+                                         label=model_label,
+                                         color=model_color)
+
+
+        else:
+
+            # We always plot the model un-rebinned here
+
+            # Mask the array so we don't plot the model where data have been excluded
+            # y = expected_model_rate / chan_width
+            y = np.ma.masked_where(~self._mask, expected_model_rate / chan_width)
+
+            x = np.mean([energy_min, energy_max], axis=0)
+
+            residual_plot.add_model(x,
+                                    y,
+                                    label=model_label,
+                                    color=model_color)
+
+        return residual_plot.finalize(xlabel="Energy\n(keV)",
+                                      ylabel="Net rate\n(counts s$^{-1}$ keV$^{-1}$)",
+                                      xscale='log',
+                                      yscale='log',
+                                      show_legend=show_legend)

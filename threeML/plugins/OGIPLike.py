@@ -50,19 +50,20 @@ class OGIPLike(DispersionSpectrumLike):
 
             # assert background is not None, "No background file provided, and the PHA file does not specify one."
 
+
         # Get a PHA instance with the background, we pass the response to get the energy bounds in the
         # histogram constructor. It is not saved to the background class
 
-        if isinstance(background, str) or isinstance(observation, PHAII):
-
-            bak = PHASpectrum(background, spectrum_number=spectrum_number, file_type='background',
-                              rsp_file=pha.response)
-
-        elif background is None:
+        if background is None:
 
             # in the case there is no background file
 
             bak = None
+
+        elif isinstance(background, str) or isinstance(observation, PHAII):
+
+            bak = PHASpectrum(background, spectrum_number=spectrum_number, file_type='background',
+                              rsp_file=pha.response)
 
         else:
 
@@ -90,6 +91,7 @@ class OGIPLike(DispersionSpectrumLike):
         # pass the response thru to the constructor
         return super(OGIPLike, self).get_simulated_dataset(new_name=new_name,
                                                            spectrum_number=1,
+                                                           response=self._rsp,
                                                            **kwargs)
 
     @property
@@ -149,6 +151,10 @@ class OGIPLike(DispersionSpectrumLike):
         background = pha_files['bak']
 
         observed_pha = PHASpectrum.from_dispersion_spectrum(observed, file_type='observed')
-        background_pha = PHASpectrum.from_dispersion_spectrum(background, file_type='background')
+
+        if background is None:
+            background_pha = None
+        else:
+            background_pha = PHASpectrum.from_dispersion_spectrum(background, file_type='background')
 
         return cls(dispersion_like.name, observation=observed_pha, background=background_pha)

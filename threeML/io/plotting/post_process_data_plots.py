@@ -38,8 +38,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     :param model_cmap: (str) (optional) the color map used to extract automatically the colors for the models
     :param data_colors: (optional) a tuple or list with the color for each dataset
     :param model_colors: (optional) a tuple or list with the color for each folded model
+    :param data_color: (optional) color for all datasets
+    :param model_color: (optional) color for all folded models
     :param show_legend: (optional) if True (default), shows a legend
     :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
+    :param model_subplot: (optional) axe(s) to plot to for overplotting
     with linear interpolation between each bin
     :return: figure instance
 
@@ -71,12 +74,12 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             else:
 
-                custom_warnings.warn("Dataset %s is not of the OGIP kind. Cannot be plotted by "
-                                     "display_ogip_model_counts" % key)
+                custom_warnings.warn("Dataset %s is not of the SpectrumLike kind. Cannot be plotted by "
+                                     "display_spectrum_model_counts" % key)
 
     if not new_data_keys:
         RuntimeError(
-            'There were no valid OGIP data requested for plotting. Please use the detector names in the data list')
+            'There were no valid SpectrumLike data requested for plotting. Please use the detector names in the data list')
 
     data_keys = new_data_keys
 
@@ -91,15 +94,34 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     # Legend is on by default
     show_legend = True
 
+    show_residuals = True
+
     # Default colors
 
     data_colors = cmap_intervals(len(data_keys), data_cmap)
     model_colors = cmap_intervals(len(data_keys), model_cmap)
 
+
+
+
     # Now override defaults according to the optional keywords, if present
+
+
+
+    if 'show_data' in kwargs:
+
+        show_data = bool(kwargs.pop('show_data'))
+
+    else:
+
+        show_data = True
+
 
     if 'show_legend' in kwargs:
         show_legend = bool(kwargs.pop('show_legend'))
+
+    if 'show_residuals' in kwargs:
+        show_residuals= bool(kwargs.pop('show_residuals'))
 
     if 'step' in kwargs:
         step = bool(kwargs.pop('step'))
@@ -144,6 +166,12 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         assert len(data_colors) >= len(data_keys), "You need to provide at least a number of data colors equal to the " \
                                                    "number of datasets"
 
+    elif 'data_color' in kwargs:
+
+        data_colors = [kwargs.pop('data_color')] * len(data_keys)
+
+
+
     if 'model_colors' in kwargs:
         model_colors = kwargs.pop('model_colors')
 
@@ -155,248 +183,59 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     if 'ratio_residuals' in kwargs:
         ratio_residuals = bool(kwargs['ratio_residuals'])
 
+    elif 'model_color' in kwargs:
+
+        model_colors = [kwargs.pop('model_color')] * len(data_keys)
+
+
+    if 'model_labels' in kwargs:
+
+
+        model_labels = kwargs.pop('model_labels')
+
+        assert len(model_labels) == len(data_keys), 'you must have the same number of model labels as data sets'
+
+    else:
+
+        model_labels = ['%s Model' % analysis.data_list[key]._name for key in data_keys]
+
     #fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
-    residual_plot = ResidualPlot(**kwargs)
+    residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
+
+    if show_residuals:
+
+        axes = [residual_plot.data_axis,residual_plot.residual_axis]
+
+    else:
+
+        axes = residual_plot.data_axis
+
 
     # go thru the detectors
-    for key, data_color, model_color, min_rate in zip(data_keys, data_colors, model_colors, min_rates):
+    for key, data_color, model_color, min_rate, model_label in zip(data_keys, data_colors, model_colors, min_rates, model_labels):
 
         # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
 
         data = analysis.data_list[key] # type: SpectrumLike
 
+        data.display_model(data_color=data_color,
+                           model_color=model_color,
+                           min_rate=min_rate,
+                           step=step,
+                           show_residuals=show_residuals,
+                           show_data=show_data,
+                           show_legend=show_legend,
+                           ratio_residuals=ratio_residuals,
+                           model_label=model_label,
+                           model_subplot=axes
 
-        energy_min, energy_max = data._rsp.ebounds[:-1], data._rsp.ebounds[1:]
+                           )
 
-        chan_width = energy_max - energy_min
 
-        # get the expected counts
-        # NOTE: _rsp.convolve() returns already the rate (counts / s)
-        expected_model_rate = data._evaluate_model() * data._nuisance_parameter.value
+        return residual_plot.figure
 
 
-        # figure out the type of data
-
-        if data._observation_noise_model == 'poisson':
-
-            # Observed counts
-            observed_counts = data._observed_counts
-
-            cnt_err = np.sqrt(observed_counts)
-
-            if data._background_noise_model == 'poisson':
-
-                background_counts = data._background_counts
-
-                # Gehrels weighting, a little bit better approximation when statistic is low
-                # (and inconsequential when statistic is high)
-
-                background_errors = 1 + np.sqrt(background_counts + 0.75)
-
-            elif data._background_noise_model == 'ideal':
-
-                background_counts = data._scaled_background_counts
-
-                background_errors = np.zeros_like(background_counts)
-
-            elif data._background_noise_model == 'gaussian':
-
-                background_counts = data._background_counts
-
-                background_errors = data._back_count_errors
-
-            elif data._background_noise_model is None:
-
-                raise NotImplementedError("do not have this model yet")
-
-            else:
-
-                raise RuntimeError("This is a bug")
-
-        else:
-
-            if data._background_noise_model is None:
-                # Observed counts
-                observed_counts = data._observed_counts
-
-                cnt_err = data._observed_count_errors
-
-
-
-
-        # calculate all the correct quantites
-
-        if data._background_noise_model is not None:
-
-            scale_factor = data._observed_spectrum.scale_factor / data._background_spectrum.scale_factor
-
-            # since we compare to the model rate... background subtract but with proper propagation
-            src_rate = (observed_counts / data.exposure - (background_counts / data.background_exposure) * scale_factor)
-
-            src_rate_err = np.sqrt((cnt_err / data.exposure) ** 2 +
-                                   ((background_errors / data.background_exposure) * scale_factor) ** 2)
-
-        else:
-
-            # since we compare to the model rate... background subtract but with proper propagation
-            src_rate = (observed_counts / data.exposure)
-
-            src_rate_err = cnt_err / data.exposure
-
-
-        # rebin on the source rate
-
-        # Create a rebinner if either a min_rate has been given, or if the current data set has no rebinned on its own
-
-        if (min_rate is not NO_REBIN) or (data._rebinner is None):
-
-            this_rebinner = Rebinner(src_rate, min_rate, data._mask)
-
-        else:
-
-            # Use the rebinner already in the data
-            this_rebinner = data._rebinner
-
-        # get the rebinned counts
-        new_rate, new_model_rate = this_rebinner.rebin(src_rate, expected_model_rate)
-        new_err, = this_rebinner.rebin_errors(src_rate_err)
-
-        # adjust channels
-        new_energy_min, new_energy_max = this_rebinner.get_new_start_and_stop(energy_min, energy_max)
-        new_chan_width = new_energy_max - new_energy_min
-
-        # mean_energy = np.mean([new_energy_min, new_energy_max], axis=0)
-
-        # For each bin find the weighted average of the channel center
-        mean_energy = []
-        delta_energy = [[], []]
-        mean_energy_unrebinned = (energy_max + energy_min) / 2.0
-
-        for e_min, e_max in zip(new_energy_min, new_energy_max):
-
-            # Find all channels in this rebinned bin
-            idx = (mean_energy_unrebinned >= e_min) & (mean_energy_unrebinned <= e_max)
-
-            # Find the rates for these channels
-            r = src_rate[idx]
-
-            if r.max() == 0:
-
-                # All empty, cannot weight
-                this_mean_energy = (e_min + e_max) / 2.0
-
-            else:
-
-                # Do the weighted average of the mean energies
-                weights = r / np.sum(r)
-
-                this_mean_energy = np.average(mean_energy_unrebinned[idx], weights=weights)
-
-            # Compute "errors" for X (which aren't really errors, just to mark the size of the bin)
-
-            delta_energy[0].append(this_mean_energy - e_min)
-            delta_energy[1].append(e_max - this_mean_energy)
-            mean_energy.append(this_mean_energy)
-
-
-        # Residuals
-
-        # we need to get the rebinned counts
-        rebinned_observed_counts, = this_rebinner.rebin(observed_counts)
-
-        rebinned_observed_count_errors, = this_rebinner.rebin_errors(cnt_err)
-
-        # the rebinned counts expected from the model
-        rebinned_model_counts = new_model_rate * data.exposure
-
-        # and also the rebinned background
-
-        if data._background_noise_model is not None:
-            rebinned_background_counts, = this_rebinner.rebin(background_counts)
-            rebinned_background_errors, = this_rebinner.rebin_errors(background_errors)
-
-            significance_calc = Significance(rebinned_observed_counts,
-                                             rebinned_background_counts + rebinned_model_counts / data.scale_factor,
-                                             data.scale_factor)
-
-
-        # Divide the various cases
-
-        if ratio_residuals:
-            residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_model_counts
-            residual_errors = rebinned_observed_count_errors / rebinned_model_counts
-        else:
-            residual_errors = None 
-            if data._observation_noise_model == 'poisson':
-
-                if data._background_noise_model == 'poisson':
-
-                    # We use the Li-Ma formula to get the significance (sigma)
-
-                    residuals = significance_calc.li_and_ma()
-
-                elif data._background_noise_model == 'ideal':
-
-                    residuals = significance_calc.known_background()
-
-                elif data._background_noise_model == 'gaussian':
-
-                    residuals = significance_calc.li_and_ma_equivalent_for_gaussian_background(rebinned_background_errors)
-
-                else:
-
-                    raise RuntimeError("This is a bug")
-
-            else:
-
-                if data._background_noise_model is None:
-
-                    residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_observed_count_errors
-
-                else:
-
-                    raise NotImplementedError("Not yet implemented")
-
-        residual_plot.add_data(mean_energy,
-                               new_rate / new_chan_width,
-                               residuals,
-                               residual_yerr=residual_errors,
-                               yerr=new_err / new_chan_width,
-                               xerr=delta_energy,
-                               label=data._name,
-                               color=data_color)
-
-        if step:
-
-            residual_plot.add_model_step(new_energy_min,
-                                         new_energy_max,
-                                         new_chan_width,
-                                         new_model_rate,
-                                         label='%s Model' % data._name,
-                                         color=model_color)
-
-
-        else:
-
-            # We always plot the model un-rebinned here
-
-            # Mask the array so we don't plot the model where data have been excluded
-            # y = expected_model_rate / chan_width
-            y = np.ma.masked_where(~data._mask, expected_model_rate / chan_width)
-
-            x = np.mean([energy_min, energy_max], axis=0)
-
-            residual_plot.add_model(x,
-                                    y,
-                                    label='%s Model' % data._name,
-                                    color=model_color)
-
-    return residual_plot.finalize(xlabel="Energy\n(keV)",
-                                  ylabel="Net rate\n(counts s$^{-1}$ keV$^{-1}$)",
-                                  xscale='log',
-                                  yscale='log',
-                                  show_legend=show_legend)
 
 
 
