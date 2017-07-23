@@ -19,6 +19,7 @@ from threeML.plugin_prototype import PluginPrototype, set_external_property
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
+from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_modeled_background
 from threeML.plugins.OGIP.likelihood_functions import half_chi2
 from threeML.utils.binner import Rebinner
 from threeML.utils.stats_tools import Significance
@@ -51,6 +52,8 @@ class SpectrumLike(PluginPrototype):
 
         # Just a toggle for verbosity
         self._verbose = bool(verbose)
+
+
 
         assert is_valid_variable_name(name), "Name %s is not a valid name for a plugin. You must use a name which is " \
                                              "a valid python identifier: no spaces, no operators (+,-,/,*), " \
@@ -87,6 +90,7 @@ class SpectrumLike(PluginPrototype):
         # Init everything else to None
         self._like_model = None
         self._rebinner = None
+        self._background_model = None
 
         # Now auto-probe the statistic to use
         if self._background_spectrum is not None:
@@ -1152,6 +1156,37 @@ class SpectrumLike(PluginPrototype):
 
         self._rebinner = None
 
+    def set_background_model(self, background_shape):
+
+
+
+        # we will create a point source for the background
+        # with this shape
+
+        bkg_ps = PointSource('background_model',0,0,spectral_shape=background_shape)
+
+        self._background_model = Model(bkg_ps)
+
+        # now extract the free parameters and set them to the nuissance list
+
+
+        new_nuisance_parameters = self._nuisance_parameters
+
+        for par_name, par in self._background_model.parameters.iteritems():
+
+
+            new_name = "%s_bkg_%s" %(self._name, par.name)
+
+
+            new_nuisance_parameters[new_name] = par
+
+        differential_flux, integral = self._get_diff_flux_and_integral(self._background_model)
+
+
+        self._background_integral_flux = integral
+
+
+
     def _get_expected_background_counts_scaled(self):
         """
         Get the background counts expected in the source interval and in the source region, based on the observed
@@ -1232,6 +1267,24 @@ class SpectrumLike(PluginPrototype):
 
         return np.sum(loglike), None
 
+    def _loglike_poisson_obs_poisson_modeled_bkg(self):
+
+
+
+        model_counts = self.get_model()
+
+        bkg_model_counts = self.get_background_model()
+
+        loglike, bkg_model = poisson_observed_poisson_modeled_background(self._current_observed_counts,
+                                                                         self._current_background_counts,
+                                                                         self.scale_factor,
+                                                                         model_counts,
+                                                                         bkg_model_counts)
+
+        return np.sum(loglike), bkg_model
+
+
+
     def _set_background_noise_model(self, new_model):
 
         # Do not make differences between upper and lower cases
@@ -1275,7 +1328,13 @@ class SpectrumLike(PluginPrototype):
 
             if self._background_noise_model == 'poisson':
 
-                loglike, _ = self._loglike_poisson_obs_poisson_bkg()
+                if self._background_model is None:
+
+                    loglike, _ = self._loglike_poisson_obs_poisson_bkg()
+
+                else:
+
+                    loglike, _ =self._loglike_poisson_obs_poisson_modeled_bkg()
 
             elif self._background_noise_model == 'ideal':
 
@@ -1311,13 +1370,13 @@ class SpectrumLike(PluginPrototype):
 
         # We assume there are no extended sources, since we cannot handle them here
 
-        assert self._like_model.get_number_of_extended_sources() == 0, "OGIP-like plugins do not support " \
+        assert self._like_model.get_number_of_extended_sources() == 0, "SpectrumLike plugins do not support " \
                                                                        "extended sources"
 
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
 
-        differential_flux, integral = self._get_diff_flux_and_integral()
+        differential_flux, integral = self._get_diff_flux_and_integral(self._like_model)
 
         self._integral_flux = integral
 
@@ -1331,6 +1390,8 @@ class SpectrumLike(PluginPrototype):
         """
 
         return np.array([self._integral_flux(emin, emax) for emin, emax in self._observed_spectrum.bin_stack])
+
+
 
     def get_model(self):
         """
@@ -1350,18 +1411,53 @@ class SpectrumLike(PluginPrototype):
 
         return self._nuisance_parameter.value * model
 
-    def _get_diff_flux_and_integral(self):
+    def _evaluate_background_model(self):
+        """
+        Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.
+        This can be overloaded to convolve the model with a response, for example
 
-        n_point_sources = self._like_model.get_number_of_point_sources()
+
+        :return:
+        """
+
+        return np.array([self._background_integral_flux(emin, emax) for emin, emax in self._background_spectrum.bin_stack])
+
+    def get_background_model(self):
+        """
+         The background model integrated over the energy bins. Note that it only returns the  model for the
+         currently active channels/measurements
+
+         :return: array of folded model
+         """
+
+        if self._rebinner is not None:
+
+            model, = self._rebinner.rebin(self._evaluate_background_model() * self._background_spectrum.exposure)
+
+        else:
+
+            model = self._evaluate_background_model()[self._mask] * self._background_spectrum.exposure
+
+        #TODO: should I use the constant here?
+
+        #return self._nuisance_parameter.value * model
+
+        return model
+
+
+    @staticmethod
+    def _get_diff_flux_and_integral(likelihood_model):
+
+        n_point_sources = likelihood_model.get_number_of_point_sources()
 
         # Make a function which will stack all point sources (OGIP do not support spatial dimension)
 
         def differential_flux(energies):
-            fluxes = self._like_model.get_point_source_fluxes(0, energies)
+            fluxes = likelihood_model.get_point_source_fluxes(0, energies)
 
             # If we have only one point source, this will never be executed
             for i in range(1, n_point_sources):
-                fluxes += self._like_model.get_point_source_fluxes(i, energies)
+                fluxes += likelihood_model.get_point_source_fluxes(i, energies)
 
             return fluxes
 
