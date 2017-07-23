@@ -162,3 +162,22 @@ def half_chi2(y, yerr, expectation):
     # the other likelihood functions. This way we can sum it with other likelihood functions.
 
     return 1/2.0 * (y-expectation)**2 / yerr**2
+
+
+def poisson_observed_poisson_modeled_background(observed_counts, background_counts, exposure_ratio, expected_model_counts, expected_background_counts):
+
+
+    log_likes_bkg = background_counts * np.log(expected_background_counts + 1e-100) - expected_background_counts - \
+                logfactorial(background_counts)
+
+
+
+    predicted_counts = exposure_ratio*expected_background_counts + expected_model_counts
+
+    log_likes_model = observed_counts * np.log(predicted_counts + 1e-100) - predicted_counts - \
+                logfactorial(observed_counts)
+
+    log_likes = log_likes_model + log_likes_bkg
+
+    return log_likes, expected_background_counts
+
