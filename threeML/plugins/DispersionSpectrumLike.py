@@ -44,7 +44,7 @@ class DispersionSpectrumLike(SpectrumLike):
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
 
-        differential_flux, integral = self._get_diff_flux_and_integral()
+        differential_flux, integral = self._get_diff_flux_and_integral(self._like_model)
 
         self._rsp.set_function(integral)
 

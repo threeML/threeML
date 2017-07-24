@@ -2131,6 +2131,16 @@ class SpectrumLike(PluginPrototype):
 
         return self._output().to_string()
 
+
+    def display_background_fit(self,data_color='k', model_color='r', step=True, show_data=True, show_residuals=True,
+                      ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None,
+                      **kwargs):
+
+
+        pass
+
+
+
     def display_model(self, data_color='k', model_color='r', step=True, show_data=True, show_residuals=True,
                       ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None,
                       **kwargs):
