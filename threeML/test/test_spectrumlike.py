@@ -51,6 +51,7 @@ def test_spectrumlike_fit():
 
     assert np.all(np.isclose([K_variates.mean(), kT_variates.mean()], [sim_K, sim_kT], atol=1 ))
 
+
 def test_dispersionspectrumlike_fit():
 
 
@@ -90,5 +91,50 @@ def test_dispersionspectrumlike_fit():
     assert np.all(np.isclose([K_variates.mean(), kT_variates.mean()], [sim_K, sim_kT], atol=1))
 
 
+
+
+def test_spectrum_like_with_background_model():
+    energies = np.logspace(1, 3, 51)
+
+    low_edge = energies[:-1]
+    high_edge = energies[1:]
+
+    sim_K = 1E-1
+    sim_kT = 20.
+
+    # get a blackbody source function
+    source_function = Blackbody(K=sim_K, kT=sim_kT)
+
+    # power law background function
+    background_function = Powerlaw(K=5, index=-1.5, piv=100.)
+
+    spectrum_generator = SpectrumLike.from_function('fake',
+                                                    source_function=source_function,
+                                                    background_function=background_function,
+                                                    energy_min=low_edge,
+                                                    energy_max=high_edge)
+
+    bb = Blackbody()
+
+    pl = Powerlaw()
+    pl.piv = 100
+
+    spectrum_generator.set_background_model(pl)
+
+    pts = PointSource('mysource', 0, 0, spectral_shape=bb)
+
+    model = Model(pts)
+
+    # MLE fitting
+
+    jl = JointLikelihood(model, DataList(spectrum_generator))
+
+    result = jl.fit()
+
+    K_variates = jl.results.get_variates('mysource.spectrum.main.Blackbody.K')
+
+    kT_variates = jl.results.get_variates('mysource.spectrum.main.Blackbody.kT')
+
+    assert np.all(np.isclose([K_variates.mean(), kT_variates.mean()], [sim_K, sim_kT], atol=1))
 
 
