@@ -167,14 +167,40 @@ def half_chi2(y, yerr, expectation):
 def poisson_observed_poisson_modeled_background(observed_counts, background_counts, exposure_ratio, expected_model_counts, expected_background_counts):
 
 
-    log_likes_bkg = background_counts * np.log(expected_background_counts + 1e-100) - expected_background_counts - \
+
+
+
+    log_likes_bkg = xlogy(background_counts,expected_background_counts) - expected_background_counts - \
                 logfactorial(background_counts)
 
 
 
     predicted_counts = exposure_ratio*expected_background_counts + expected_model_counts
 
-    log_likes_model = observed_counts * np.log(predicted_counts + 1e-100) - predicted_counts - \
+    log_likes_model = xlogy(observed_counts,predicted_counts) - predicted_counts - \
+                logfactorial(observed_counts)
+
+    log_likes = log_likes_model + log_likes_bkg
+
+    return log_likes, expected_background_counts
+
+
+def poisson_observed_gaussian_modeled_background(observed_counts, background_counts, exposure_ratio, expected_model_counts, expected_background_counts):
+
+
+    NotImplementedError('not ready yet')
+
+    # there are two cases corresponding to zero background counts and
+
+
+    log_likes_bkg = xlogy(background_counts,expected_background_counts) - expected_background_counts - \
+                logfactorial(background_counts)
+
+
+
+    predicted_counts = exposure_ratio*expected_background_counts + expected_model_counts
+
+    log_likes_model = xlogy(observed_counts,predicted_counts) - predicted_counts - \
                 logfactorial(observed_counts)
 
     log_likes = log_likes_model + log_likes_bkg
