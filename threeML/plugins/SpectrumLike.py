@@ -87,6 +87,7 @@ class SpectrumLike(PluginPrototype):
         # Init everything else to None
         self._like_model = None
         self._rebinner = None
+        self._source_name = None
 
         # Now auto-probe the statistic to use
         if self._background_spectrum is not None:
@@ -382,6 +383,21 @@ class SpectrumLike(PluginPrototype):
         generator = cls._get_synthetic_plugin(observation,background,source_function) # type: SpectrumLike
 
         return generator.get_simulated_dataset(name)
+
+
+    def assign_to_source(self, source_name):
+        """
+        Assign these data to the given source (instead of to the sum of all sources, which is the default)
+
+        :param source_name: name of the source (must be contained in the likelihood model)
+        :return: none
+        """
+
+        if self._like_model is not None:
+            assert self._source_name in self._like_model.sources, "Source %s is not contained in " \
+                                                                        "the likelihood model" % source_name
+
+        self._source_name = source_name
 
     def get_pha_files(self):
 
@@ -1352,26 +1368,48 @@ class SpectrumLike(PluginPrototype):
 
     def _get_diff_flux_and_integral(self):
 
-        n_point_sources = self._like_model.get_number_of_point_sources()
 
-        # Make a function which will stack all point sources (OGIP do not support spatial dimension)
+        if self._source_name is None:
 
-        def differential_flux(energies):
-            fluxes = self._like_model.get_point_source_fluxes(0, energies)
+            n_point_sources = self._like_model.get_number_of_point_sources()
 
-            # If we have only one point source, this will never be executed
-            for i in range(1, n_point_sources):
-                fluxes += self._like_model.get_point_source_fluxes(i, energies)
+            # Make a function which will stack all point sources (OGIP do not support spatial dimension)
 
-            return fluxes
+            def differential_flux(energies):
+                fluxes = self._like_model.get_point_source_fluxes(0, energies)
 
-        # The following integrates the diffFlux function using Simpson's rule
-        # This assume that the intervals e1,e2 are all small, which is guaranteed
-        # for any reasonable response matrix, given that e1 and e2 are Monte-Carlo
-        # energies. It also assumes that the function is smooth in the interval
-        # e1 - e2 and twice-differentiable, again reasonable on small intervals for
-        # decent models. It might fail for models with too sharp features, smaller
-        # than the size of the monte carlo interval.
+                # If we have only one point source, this will never be executed
+                for i in range(1, n_point_sources):
+                    fluxes += self._like_model.get_point_source_fluxes(i, energies)
+
+                return fluxes
+
+            # The following integrates the diffFlux function using Simpson's rule
+            # This assume that the intervals e1,e2 are all small, which is guaranteed
+            # for any reasonable response matrix, given that e1 and e2 are Monte-Carlo
+            # energies. It also assumes that the function is smooth in the interval
+            # e1 - e2 and twice-differentiable, again reasonable on small intervals for
+            # decent models. It might fail for models with too sharp features, smaller
+            # than the size of the monte carlo interval.
+
+
+
+        else:
+
+            # This SpectrumLike dataset refers to a specific source
+
+            # Note that we checked that self._source_name is in the model when the model was set
+
+            try:
+
+                def differtial_flux(energies):
+
+                    return self._like_model.sources[self._source_name](energies)
+
+            except KeyError:
+
+                raise KeyError("This XYLike plugin has been assigned to source %s, "
+                               "which does not exist in the current model" % self._source_name)
 
         def integral(e1, e2):
             # Simpson's rule
