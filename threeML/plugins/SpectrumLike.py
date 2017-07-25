@@ -394,7 +394,7 @@ class SpectrumLike(PluginPrototype):
         """
 
         if self._like_model is not None:
-            assert self._source_name in self._like_model.sources, "Source %s is not contained in " \
+            assert source_name in self._like_model.sources, "Source %s is not contained in " \
                                                                         "the likelihood model" % source_name
 
         self._source_name = source_name
@@ -1327,11 +1327,19 @@ class SpectrumLike(PluginPrototype):
 
         # We assume there are no extended sources, since we cannot handle them here
 
-        assert self._like_model.get_number_of_extended_sources() == 0, "OGIP-like plugins do not support " \
+        assert self._like_model.get_number_of_extended_sources() == 0, "SpectrumLike plugins do not support " \
                                                                        "extended sources"
+
+        # check if we set a source name that the source is in the model
+
+        if self._source_name is not None:
+            assert self._source_name in self._like_model.sources, "Source %s is not contained in " \
+                                                                  "the likelihood model" % self._source_name
 
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
+
+
 
         differential_flux, integral = self._get_diff_flux_and_integral()
 
@@ -1402,7 +1410,7 @@ class SpectrumLike(PluginPrototype):
 
             try:
 
-                def differtial_flux(energies):
+                def differential_flux(energies):
 
                     return self._like_model.sources[self._source_name](energies)
 
