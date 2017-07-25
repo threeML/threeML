@@ -283,6 +283,25 @@ class SpectrumLike(PluginPrototype):
 
         return observation
 
+
+    @classmethod
+    def from_background(cls,name,spectrum_like):
+
+
+
+        background_only_spectrum = copy.deepcopy(spectrum_like.)
+
+
+        background_spectrum_like = SpectrumLike()
+
+
+
+        return background_spectrum_like
+
+
+
+
+
     @classmethod
     def from_function(cls, name, source_function, energy_min, energy_max, source_errors=None, source_sys_errors=None,
                       background_function=None, background_errors=None, background_sys_errors=None, **kwargs):
@@ -1053,6 +1072,15 @@ class SpectrumLike(PluginPrototype):
         """
 
         return cls(*args, **kwargs)
+
+
+    @property
+    def background_spectrum(self):
+
+        assert self._background_spectrum is not None, 'This SpectrumLike instance has no background'
+
+        return self._background_spectrum
+
 
     @property
     def simulated_parameters(self):
