@@ -53,6 +53,9 @@ def test_assigning_source_name():
     jl = JointLikelihood(model, DataList(spectrum_generator))
 
 
+    _ = jl.fit()
+
+
     # after setting model
 
     pts = PointSource('good_name', 0, 0, spectral_shape=bb)
@@ -101,6 +104,32 @@ def test_assigning_source_name():
     with pytest.raises(AssertionError):
 
         jl = JointLikelihood(model, DataList(spectrum_generator))
+
+
+
+    #multisource model
+
+    spectrum_generator = SpectrumLike.from_function('fake',
+                                                    source_function=source_function,
+                                                    background_function=background_function,
+                                                    energy_min=low_edge,
+                                                    energy_max=high_edge)
+
+    ps1 = PointSource('ps1', 0, 0, spectral_shape=Blackbody())
+    ps2 = PointSource('ps2', 0, 0, spectral_shape=Powerlaw())
+
+    model = Model(ps1, ps2)
+
+    model.ps2.spectrum.main.Powerlaw.K.fix = True
+    model.ps2.spectrum.main.Powerlaw.index.fix = True
+
+    spectrum_generator.assign_to_source('ps1')
+
+    dl = DataList(spectrum_generator)
+
+    jl = JointLikelihood(model, dl)
+
+    _ = jl.fit()
     #
 
 
