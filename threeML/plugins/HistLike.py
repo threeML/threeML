@@ -71,7 +71,7 @@ class HistLike(XYLike):
 
         # Make a function which will stack all point sources (XYLike do not support spatial dimension)
 
-        expectation = self.get_model_flux()
+        expectation = self.get_model()
 
         if self._is_poisson:
 
@@ -89,7 +89,7 @@ class HistLike(XYLike):
 
             return np.sum(chi2_) * (-1)
 
-    def get_model_flux(self):
+    def get_model(self):
 
         _, integral_function = self._get_diff_flux_and_integral()
 
