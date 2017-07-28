@@ -114,12 +114,28 @@ def test_spectrum_like_with_background_model():
                                                     energy_min=low_edge,
                                                     energy_max=high_edge)
 
+
+    background_plugin = SpectrumLike.from_background('background',spectrum_generator)
+
+
     bb = Blackbody()
+
 
     pl = Powerlaw()
     pl.piv = 100
 
-    spectrum_generator.set_background_model(pl)
+    bkg_ps = PointSource('bkg',0,0,spectral_shape=pl)
+
+    bkg_model = Model(bkg_ps)
+
+    jl_bkg = JointLikelihood(bkg_model,DataList(background_plugin))
+
+    _ = jl_bkg.fit()
+
+
+
+
+    plugin_bkg_model = SpectrumLike('full',spectrum_generator.observed_spectrum,background=background_plugin)
 
     pts = PointSource('mysource', 0, 0, spectral_shape=bb)
 
@@ -127,7 +143,7 @@ def test_spectrum_like_with_background_model():
 
     # MLE fitting
 
-    jl = JointLikelihood(model, DataList(spectrum_generator))
+    jl = JointLikelihood(model, DataList(plugin_bkg_model))
 
     result = jl.fit()
 
