@@ -45,8 +45,7 @@ def poisson_log_likelihood_ideal_bkg(observed_counts, expected_bkg_counts, expec
 
     predicted_counts = expected_bkg_counts + expected_model_counts
 
-    log_likes = observed_counts * np.log(predicted_counts + 1e-100) - predicted_counts - \
-                logfactorial(observed_counts)
+    log_likes = xlogy(observed_counts, predicted_counts) - predicted_counts - logfactorial(observed_counts)
 
     return log_likes, expected_bkg_counts
 
@@ -162,48 +161,3 @@ def half_chi2(y, yerr, expectation):
     # the other likelihood functions. This way we can sum it with other likelihood functions.
 
     return 1/2.0 * (y-expectation)**2 / yerr**2
-
-
-def poisson_observed_poisson_modeled_background(observed_counts, background_counts, exposure_ratio, expected_model_counts, expected_background_counts):
-
-
-
-
-
-    log_likes_bkg = xlogy(background_counts,expected_background_counts) - expected_background_counts - \
-                logfactorial(background_counts)
-
-
-
-    predicted_counts = exposure_ratio*expected_background_counts + expected_model_counts
-
-    log_likes_model = xlogy(observed_counts,predicted_counts) - predicted_counts - \
-                logfactorial(observed_counts)
-
-    log_likes = log_likes_model + log_likes_bkg
-
-    return log_likes, expected_background_counts
-
-
-def poisson_observed_gaussian_modeled_background(observed_counts, background_counts, exposure_ratio, expected_model_counts, expected_background_counts):
-
-
-    NotImplementedError('not ready yet')
-
-    # there are two cases corresponding to zero background counts and
-
-
-    log_likes_bkg = xlogy(background_counts,expected_background_counts) - expected_background_counts - \
-                logfactorial(background_counts)
-
-
-
-    predicted_counts = exposure_ratio*expected_background_counts + expected_model_counts
-
-    log_likes_model = xlogy(observed_counts,predicted_counts) - predicted_counts - \
-                logfactorial(observed_counts)
-
-    log_likes = log_likes_model + log_likes_bkg
-
-    return log_likes, expected_background_counts
-
