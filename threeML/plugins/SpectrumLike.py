@@ -273,25 +273,27 @@ class SpectrumLike(PluginPrototype):
                 local_name = "bkg_%s_%s" % (par_name,name)
                 local_name = local_name.replace('.','_')
 
-                plugin_parameter = Parameter(local_name,
-                                value=parameter.value,
-                                min_value=parameter.min_value,
-                                max_value=parameter.max_value,
-                                delta=parameter.delta,
-                                free=parameter.free,
-                                desc="Background model %s for %s" % (par_name, name))
+                # plugin_parameter = Parameter(local_name,
+                #                 value=parameter.value,
+                #                 min_value=parameter.min_value,
+                #                 max_value=parameter.max_value,
+                #                 delta=parameter.delta,
+                #                 free=parameter.free,
+                #                 desc="Background model %s for %s" % (par_name, name))
+                #
+                #
+                # # link the background model parameter.
+                # # we will loose control over them in the
+                # # original plugin.
+                #
+                #
+                # self._background_plugin.likelihood_model.link(parameter,plugin_parameter)
+                #
+                # # add the parameter to the nuisance list
 
+                # nuisance_parameters[plugin_parameter.name] = plugin_parameter
 
-                # link the background model parameter.
-                # we will loose control over them in the
-                # original plugin.
-
-
-                self._background_plugin.likelihood_model.link(parameter,plugin_parameter)
-
-                # add the parameter to the nuisance list
-
-                nuisance_parameters[plugin_parameter.name] = plugin_parameter
+                nuisance_parameters[local_name] = parameter
 
                 # now get the background likelihood model
 
