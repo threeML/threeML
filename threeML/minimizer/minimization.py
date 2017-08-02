@@ -1,13 +1,10 @@
 import collections
 import math
-
 import numpy as np
 import pandas as pd
-from iminuit import Minuit
-
-from threeML.io.progress_bar import progress_bar
 import scipy.optimize
 
+from threeML.io.progress_bar import progress_bar
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
 
@@ -34,6 +31,10 @@ class ParameterIsNotFree(Exception):
     pass
 
 
+class FitFailed(Exception):
+    pass
+
+
 class MinimizerNotAvailable(Exception):
     pass
 
@@ -50,8 +51,7 @@ def get_minimizer(minimizer_type):
     """
     Return the requested minimizer *class* (not instance)
 
-    :param minimizer_type: MINUIT, ROOT, or PYOPT
-    :param minimizer_algorithm: algorithm (optional, use only for PYOPT)
+    :param minimizer_type: MINUIT, ROOT, PYOPT...
     :return: the class (i.e., the type) for the requested minimizer
     """
 
@@ -92,11 +92,16 @@ class FunctionWrapper(object):
 
     def set_fixed_values(self, new_fixed_values):
 
+        # Note that this will receive the fixed values in internal reference (after the transformations, if any)
+
         # A use [:] so there is an implicit check on the right size of new_fixed_values
 
         self._fixed_parameters_values[:] = new_fixed_values
 
     def __call__(self, *trial_values):
+
+        # Note that this function will receive the trial values in internal reference (after the transformations,
+        # if any)
 
         self._all_values[self._indexes_of_fixed_par] = self._fixed_parameters_values
         self._all_values[~self._indexes_of_fixed_par] = trial_values
@@ -104,140 +109,9 @@ class FunctionWrapper(object):
         return self._function(*self._all_values)
 
 
-class ContourWorker(object):
-
-    def __init__(self, function, minuit_values, minuit_args, minuit_param_1, minuit_param_2, name_to_position):
-
-        self._minuit_values = minuit_values
-
-        # Update the values for the parameters with the best fit one
-
-        for key, value in self._minuit_values.iteritems():
-            minuit_args[key] = value
-
-        # This is a likelihood
-        minuit_args['errordef'] = 0.5
-
-        # Disable printing by iminuit
-
-        minuit_args['print_level'] = 0
-
-        self._minuit_args = minuit_args
-
-        # Store the name of the parameters
-
-        self.minuit_param_1 = minuit_param_1
-        self.minuit_param_2 = minuit_param_2
-
-        # Store the function
-        self._function = function
-
-        # This is a dictionary which gives the ordinal place for a given parameter.
-        # It is used in the corner case where the function has only two parameters,
-        # to figure out which is the correct order
-
-        self.name_to_position = name_to_position
-
-    def _create_new_minuit_object(self, args):
-
-        # Now create the new minimizer
-
-        _contour_minuit = Minuit(self._function, **args)
-
-        _contour_minuit.tol = 100
-
-        return _contour_minuit
-
-    def __call__(self, args):
-
-        # Get the values for the parameters
-        # If we are stepping in only one direction, value_2 will be nan
-
-        value_1, value_2 = args
-
-        # NOTE: unfortunately iminuit does not allow to change the value of a fixed parameter after
-        # the creation of the Minuit class. Hence we need to create a new class each time,
-        # which sucks
-
-        # Create a copy of the init args for Minuit
-
-        this_minuit_args = dict(self._minuit_args)
-
-        # Now set the parameters under scrutiny to the current values
-
-        this_minuit_args[self.minuit_param_1] = value_1
-
-        if self.minuit_param_2 is not None:
-            this_minuit_args[self.minuit_param_2] = value_2
-
-        # Fix the parameters under scrutiny
-
-        for minuit_name in [self.minuit_param_1, self.minuit_param_2]:
-
-            if minuit_name is None:
-                # Only one parameter to analyze
-
-                continue
-
-            if minuit_name not in this_minuit_args.keys():
-
-                raise ParameterIsNotFree("Parameter %s is not a free parameter." % minuit_name)
-
-            else:
-
-                this_minuit_args['fix_%s' % minuit_name] = True
-
-        # Finally create a new minimizer
-        this_contour_minuit = self._create_new_minuit_object(this_minuit_args)
-
-        # Handle the corner case where there are no free parameters
-        # after fixing the two under scrutiny
-
-        if len(this_contour_minuit.list_of_vary_param()) == 0:
-
-            # All parameters are fixed, just return the likelihood function
-
-            if self.minuit_param_2 is None:
-
-                value = self._function(value_1)
-
-            else:
-
-                # This is needed because the user could specify the
-                # variables in a different order than what is specified in the calling sequence
-                # of f
-
-                this_variables = [0, 0]
-                this_variables[self.name_to_position[self.minuit_param_1]] = value_1
-                this_variables[self.name_to_position[self.minuit_param_2]] = value_2
-
-                value = self._function(*this_variables)
-
-            return value
-
-        try:
-
-            this_contour_minuit.migrad()
-
-        # In the following except I cannot catch specific exceptions because I don't exactly know which kind
-        # of exception migrad can raise...
-
-        except:
-
-            # In this context this is not such a big deal,
-            # because we might be so far from the minimum that
-            # the fit cannot converge
-
-            return FIT_FAILED
-
-        return this_contour_minuit.fval
-
-
 class ProfileLikelihood(object):
 
     def __init__(self, minimizer_instance, fixed_parameters):
-
-        self._original_minimizer = minimizer_instance
 
         self._fixed_parameters = fixed_parameters
 
@@ -245,11 +119,11 @@ class ProfileLikelihood(object):
 
         # Get some info from the original minimizer
 
-        self._function = self._original_minimizer.function
+        self._function = minimizer_instance.function
 
-        self._all_parameters = self._original_minimizer.parameters
+        # Note that here we have to use the original parameters (not the internal parameters)
 
-        ftol = self._original_minimizer.ftol
+        self._all_parameters = minimizer_instance.parameters
 
         # Create a copy of the dictionary of parameters
 
@@ -274,11 +148,11 @@ class ProfileLikelihood(object):
             # Create a copy of the optimizer with the new parameters (i.e., one or two
             # parameters fixed to their current values)
 
-            self._optimizer = type(self._original_minimizer)(self._wrapper, free_parameters, ftol, verbosity=0)
+            self._optimizer = type(minimizer_instance)(self._wrapper, free_parameters, verbosity=0)
 
-            if self._original_minimizer.algorithm_name is not None:
+            if minimizer_instance.algorithm_name is not None:
 
-                self._optimizer.set_algorithm(self._original_minimizer.algorithm_name)
+                self._optimizer.set_algorithm(minimizer_instance.algorithm_name)
 
         else:
 
@@ -287,6 +161,25 @@ class ProfileLikelihood(object):
 
             self._wrapper = None
             self._optimizer = None
+
+    def _transform_steps(self, parameter_name, steps):
+        """
+        If the parameter has a transformation, use it for the steps and return the transformed steps
+
+        :return: transformed steps
+        """
+
+        if self._all_parameters[parameter_name].has_transformation():
+
+            new_steps = self._all_parameters[parameter_name].transformation.forward(steps)
+
+            return new_steps
+
+        else:
+
+            # Nothing to do
+
+            return steps
 
     def step(self, steps1, steps2=None):
 
@@ -302,6 +195,13 @@ class ProfileLikelihood(object):
 
             param_2_name = self._fixed_parameters[1]
             param_2_idx = self._all_parameters.keys().index(param_2_name)
+
+            # Fix steps if needed
+            steps1 = self._transform_steps(param_1_name, steps1)
+
+            if steps2 is not None:
+
+                steps2 = self._transform_steps(param_2_name, steps2)
 
             if param_1_idx > param_2_idx:
 
@@ -377,7 +277,16 @@ class ProfileLikelihood(object):
 
                         self._wrapper.set_fixed_values([step1, step2])
 
-                        _, this_log_like = self._optimizer.minimize(compute_covar=False)
+                        try:
+
+                            _, this_log_like = self._optimizer.minimize(compute_covar=False)
+
+                        except FitFailed:
+
+                            # If the user is stepping too far it might be that the fit fails. It is usually not a
+                            # problem
+
+                            this_log_like = np.nan
 
                     else:
 
@@ -392,26 +301,117 @@ class ProfileLikelihood(object):
         return log_likes
 
 
+# This classes are used directly by the user to have better control on the minimizers.
+# They are actually factories
+
+class _Minimization(object):
+
+    def __init__(self, minimizer_type):
+
+        self._minimizer_type = get_minimizer(minimizer_type=minimizer_type)
+
+        self._algorithm = None
+        self._setup_dict = {}
+
+    def setup(self, **setup_dict):
+
+        valid_setup_keys = self._minimizer_type.valid_setup_keys
+
+        # Check that the setup has been specified well
+        for key in setup_dict.keys():
+
+            assert key in valid_setup_keys, "%s is not a valid setup parameter for this minimizer" % key
+
+        self._setup_dict = setup_dict
+
+    def set_algorithm(self, algorithm):
+
+        # Note that algorithm might be None
+
+        self._algorithm = algorithm
+
+
+class LocalMinimization(_Minimization):
+
+    def __init__(self, minimizer_type):
+
+        super(LocalMinimization, self).__init__(minimizer_type)
+
+        assert issubclass(self._minimizer_type,
+                          LocalMinimizer), "Minimizer %s is not a local minimizer" % minimizer_type
+
+    def get_instance(self, *args, **kwargs):
+
+        instance = self._minimizer_type(*args, **kwargs)
+
+        if self._algorithm is not None:
+
+            instance.set_algorithm(self._algorithm)
+
+        # Set up the minimizer
+        instance._setup(self._setup_dict)
+
+        return instance
+
+
+class GlobalMinimization(_Minimization):
+
+    def __init__(self, minimizer_type):
+
+        super(GlobalMinimization, self).__init__(minimizer_type)
+
+        assert issubclass(self._minimizer_type,
+                          GlobalMinimizer), "Minimizer %s is not a local minimizer" % minimizer_type
+
+        self._2nd_minimization = None
+
+    def setup(self, **setup_dict):
+
+        assert 'second_minimization' in setup_dict, "You have to provide a secondary minimizer during setup, " \
+                                                    "using the second_minimization keyword"
+
+        self._2nd_minimization = setup_dict['second_minimization']
+
+        super(GlobalMinimization, self).setup(**setup_dict)
+
+    def get_second_minimization_instance(self, *args, **kwargs):
+
+        return self._2nd_minimization.get_instance(*args, **kwargs)
+
+    def get_instance(self, *args, **kwargs):
+
+        instance = self._minimizer_type(*args, **kwargs)
+
+        if self._algorithm is not None:
+
+            instance.set_algorithm(self._algorithm)
+
+        # Set up the minimizer
+        instance._setup(self._setup_dict)
+
+        return instance
+
+
 class Minimizer(object):
 
-    def __init__(self, function, parameters, ftol=1e-3, verbosity=1):
+    def __init__(self, function, parameters, verbosity=1, setup_dict=None):
         """
 
         :param function: function to be minimized
         :param parameters: ordered dictionary of the FREE parameters in the fit. The order must be the same as
                in the calling sequence of the function to be minimized.
-        :param ftol: fractional tolerance to be used in the fit
         :param verbosity: control the verbosity of the output
+        :param type: type of the optimizer (use the enums LOCAL_OPTIMIZER or GLOBAL_OPTIMIZER)
         :return:
         """
 
         self._function = function
-        self._parameters = parameters
+        self._external_parameters = parameters
+        self._internal_parameters = self._update_internal_parameter_dictionary()
         self._Npar = len(self.parameters.keys())
-        self._ftol = ftol
         self._verbosity = verbosity
 
-        self._setup()
+        self._setup(setup_dict)
 
         self._fit_results = None
         self._covariance_matrix = None
@@ -419,6 +419,110 @@ class Minimizer(object):
 
         self._algorithm_name = None
         self._m_log_like_minimum = None
+
+        self._optimizer_type = str(type)
+
+    def _update_internal_parameter_dictionary(self):
+        """
+        Returns a dictionary parameter_name -> (current value, delta, minimum, maximum) in the internal frame
+        (if the parameter has a transformation set).
+
+        This should be used by the implementation of the minimizers to get the parameters to optimize.
+
+        :return: dictionary
+        """
+
+        # Prepare the dictionary for the parameters which will be used by iminuit
+
+        internal_parameter_dictionary = collections.OrderedDict()
+
+        # NOTE: we use the internal_ versions of value, min_value and max_value because they don't have
+        # units, and they are transformed to make the fit easier (for example in log scale)
+
+        # NOTE as well that as in the entire class here, the .parameters dictionary only contains free parameters,
+        # as only free parameters are passed to the constructor of the minimizer
+
+        for k, par in self.parameters.items():
+
+            current_name = par.path
+
+            current_value = par._get_internal_value()
+            current_delta = par._get_internal_delta()
+            current_min = par._get_internal_min_value()
+            current_max = par._get_internal_max_value()
+
+            # Now fix sensible values for parameters deltas
+
+            if current_min is None and current_max is None:
+
+                # No boundaries, use 2% of value as initial delta
+
+                if abs(current_delta) < abs(current_value) * 0.02 or not np.isfinite(current_delta):
+
+                    current_delta = abs(current_value) * 0.02
+
+            elif current_min is not None:
+
+                if current_max is not None:
+
+                    # Bounded in both directions. Use 20% of the value
+
+                    current_delta = abs(current_value) * 0.02
+
+                    # Make sure we do not violate the boundaries
+                    current_delta = min(current_delta,
+                                        abs(current_value - current_delta) / 10.0,
+                                        abs(current_value + current_delta) / 10.0)
+
+                else:
+
+                    # Bounded only in the negative direction. Make sure we are not at the boundary
+                    if np.isclose(current_value, current_min, abs(current_value) / 20):
+
+                        custom_warnings.warn("The current value of parameter %s is very close to "
+                                             "its lower bound when starting the fit. Fixing it" % par.name)
+
+                        current_value = current_value + 0.1 * abs(current_value)
+
+                        current_delta = 0.05 * abs(current_value)
+
+                    else:
+
+                        current_delta = min(current_delta, abs(current_value - current_min) / 10.0)
+
+            else:
+
+                if current_max is not None:
+
+                    # Bounded only in the positive direction
+                    # Bounded only in the negative direction. Make sure we are not at the boundary
+                    if np.isclose(current_value, current_max, abs(current_value) / 20):
+
+                        custom_warnings.warn("The current value of parameter %s is very close to "
+                                             "its upper bound when starting the fit. Fixing it" % par.name)
+
+                        current_value = current_value - 0.04 * abs(current_value)
+
+                        current_delta = 0.02 * abs(current_value)
+
+                    else:
+
+                        current_delta = min(current_delta, abs(current_max - current_value) / 2.0)
+
+            # Sometimes, if the value was 0, the delta could be 0 as well which would crash
+            # certain algorithms
+            if current_value == 0:
+
+                current_delta = 0.1
+
+            internal_parameter_dictionary[current_name] = (current_value,
+                                                           current_delta,
+                                                           current_min,
+                                                           current_max)
+
+
+
+        return internal_parameter_dictionary
 
     @property
     def function(self):
@@ -428,7 +532,7 @@ class Minimizer(object):
     @property
     def parameters(self):
 
-        return self._parameters
+        return self._external_parameters
 
     @property
     def Npar(self):
@@ -436,16 +540,11 @@ class Minimizer(object):
         return self._Npar
 
     @property
-    def ftol(self):
-
-        return self._ftol
-
-    @property
     def verbosity(self):
 
         return self._verbosity
 
-    def _setup(self):
+    def _setup(self, setup_dict):
 
         raise NotImplementedError("You have to implement this.")
 
@@ -455,6 +554,62 @@ class Minimizer(object):
         return self._algorithm_name
 
     def minimize(self, compute_covar=True):
+        """
+        Minimize objective function. This call _minimize, which is implemented by each subclass.
+
+        :param compute_covar:
+        :return: best fit values (in external reference) and minimum of the objective function
+        """
+
+        # Gather the best fit values from the minimizer and the covariance matrix (if provided)
+
+        try:
+
+            internal_best_fit_values, function_minimum = self._minimize()
+
+        except FitFailed:
+
+            raise
+
+        # Check that all values are finite
+
+        # Check that the best_fit_values are finite
+        if not np.all(np.isfinite(internal_best_fit_values)):
+
+            raise FitFailed("_Minimization apparently succeeded, "
+                            "but best fit values are not all finite: %s" % (internal_best_fit_values))
+
+        # Now set the internal values of the parameters to their best fit values and collect the
+        # values in external reference
+        external_best_fit_values = []
+
+        for i, parameter in enumerate(self.parameters.values()):
+
+            parameter._set_internal_value(internal_best_fit_values[i])
+
+            external_best_fit_values.append(parameter.value)
+
+        # Now compute the covariance matrix, if requested
+
+        if compute_covar:
+
+            covariance = self._compute_covariance_matrix(internal_best_fit_values)
+
+        else:
+
+            covariance = None
+
+        # Finally store everything
+
+        self._store_fit_results(internal_best_fit_values, function_minimum, covariance)
+
+        return external_best_fit_values, function_minimum
+
+
+    def _minimize(self):
+
+        # This should return the list of best fit parameters and the minimum of the function
+
         raise NotImplemented("This is the method of the base class. Must be implemented by the actual minimizer")
 
     def set_algorithm(self, algorithm):
@@ -475,6 +630,10 @@ class Minimizer(object):
             name = self.parameters.keys()[i]
 
             value = best_fit_values[i]
+
+            # Set the parameter to the best fit value (sometimes the optimization happen in a different thread/node,
+            # so we need to make sure that the parameter has the best fit value)
+            self.parameters.values()[i]._set_internal_value(value)
 
             if covariance_matrix is not None:
 
@@ -554,7 +713,10 @@ class Minimizer(object):
 
         for parameter_name, best_fit_value in zip(self.parameters.keys(), best_fit_values):
 
-            self.parameters[parameter_name].value = best_fit_value
+            self.parameters[parameter_name]._set_internal_value(best_fit_value)
+
+        # Regenerate the internal parameter dictionary with the new values
+        self._internal_parameters = self._update_internal_parameter_dictionary()
 
     def _compute_covariance_matrix(self, best_fit_values):
         """
@@ -569,16 +731,6 @@ class Minimizer(object):
 
         :return: the covariance matrix
         """
-
-        # Check that the best_fit_values are finite
-        if not np.all(np.isfinite(best_fit_values)):
-
-            custom_warnings.warn("Best fit is invalid (infinity or not-a-number in best fit values). Cannot compute "
-                                 "covariance.", CannotComputeCovariance)
-
-            n_dim = len(best_fit_values)
-
-            return np.zeros((n_dim, n_dim)) * np.nan
 
         minima = map(lambda parameter:parameter.min_value, self.parameters.values())
         maxima = map(lambda parameter: parameter.max_value, self.parameters.values())
@@ -624,7 +776,7 @@ class Minimizer(object):
 
         except:
 
-            custom_warnings.warn("Cannot invert Hessian matrix, looks like the matrix is singluar")
+            custom_warnings.warn("Cannot invert Hessian matrix, looks like the matrix is singular")
 
             n_dim = len(best_fit_values)
 
@@ -648,7 +800,17 @@ class Minimizer(object):
 
         return covariance_matrix
 
-    def _get_error(self, parameter_name, target_delta_log_like, sign=-1):
+    def _get_one_error(self, parameter_name, target_delta_log_like, sign=-1):
+        """
+        A generic procedure to numerically compute the error for the parameters. You can override this if the
+        minimizer provides its own method to compute the error of one parameter. If it provides a method to compute
+        all errors are once, override the _get_errors method instead.
+
+        :param parameter_name:
+        :param target_delta_log_like:
+        :param sign:
+        :return:
+        """
 
         # Since the procedure might find a better minimum, we can repeat it
         # up to a maximum of 10 times
@@ -663,17 +825,21 @@ class Minimizer(object):
 
             repeats += 1
 
+            # Restore best fit (which also updates the internal parameter dictionary)
+
             self.restore_best_fit()
 
-            best_fit_value = self.parameters[parameter_name].value
+            current_value, current_delta, current_min, current_max = self._internal_parameters[parameter_name]
+
+            best_fit_value = current_value
 
             if sign == -1:
 
-                extreme_allowed = self.parameters[parameter_name].min_value
+                extreme_allowed = current_min
 
             else:
 
-                extreme_allowed = self.parameters[parameter_name].max_value
+                extreme_allowed = current_max
 
             # If the parameter has no boundary in the direction we are sampling, put a hard limit on
             # 10 times the current value (to avoid looping forever)
@@ -805,14 +971,53 @@ class Minimizer(object):
         """
         Compute asymmetric errors using the profile likelihood method (slow, but accurate).
 
-        :return: a list with asymmetric errors for each parameter
+        :return: a dictionary with asymmetric errors for each parameter
+        """
+
+        # Restore best fit so error computation starts from there
+
+        self.restore_best_fit()
+
+        # Get errors
+
+        errors_dict = self._get_errors()
+
+        # Transform in external reference if needed
+
+        best_fit_values = self._fit_results['value']
+
+        for par_name, (negative_error, positive_error) in errors_dict.items():
+
+            parameter = self.parameters[par_name]
+
+            if parameter.has_transformation():
+
+                _, negative_error_external = parameter.internal_to_external_delta(best_fit_values[parameter.path],
+                                                                                  negative_error)
+
+                _, positive_error_external = parameter.internal_to_external_delta(best_fit_values[parameter.path],
+                                                                                  positive_error)
+
+                errors_dict[par_name] = (negative_error_external, positive_error_external)
+
+            else:
+
+                # No need to transform
+                pass
+
+        return errors_dict
+
+    def _get_errors(self):
+        """
+        Override this method if the minimizer provide a function to get all errors at once. If instead it provides
+        a method to get one error at the time, override the _get_one_error method
+
+        :return: a ordered dictionary parameter_path -> (negative_error, positive_error)
         """
 
         # TODO: options for other significance levels
 
         target_delta_log_like = 0.5
-
-        self.restore_best_fit()
 
         errors = collections.OrderedDict()
 
@@ -820,11 +1025,11 @@ class Minimizer(object):
 
             for parameter_name in self.parameters:
 
-                negative_error = self._get_error(parameter_name, target_delta_log_like, -1)
+                negative_error = self._get_one_error(parameter_name, target_delta_log_like, -1)
 
                 p.increase()
 
-                positive_error = self._get_error(parameter_name, target_delta_log_like, +1)
+                positive_error = self._get_one_error(parameter_name, target_delta_log_like, +1)
 
                 p.increase()
 
@@ -953,46 +1158,16 @@ class Minimizer(object):
             return param_1_steps, param_2_steps, np.array(results).reshape((param_1_steps.shape[0],
                                                                             param_2_steps.shape[0]))
 
-    # def print_fit_results(self):
-    #     """
-    #     Display the results of the last minimization.
-    #
-    #     :return: (none)
-    #     """
-    #
-    #     data = []
-    #
-    #     # Also store the maximum length to decide the length for the line
-    #
-    #     name_length = 0
-    #
-    #     for parameter_name in self._fit_results.index.values:
-    #
-    #         value = self._fit_results.at[parameter_name, 'value']
-    #
-    #         error = self._fit_results.at[parameter_name, 'error']
-    #
-    #         # Format the value and the error with sensible significant
-    #         # numbers
-    #         x = uncertainties.ufloat(value, error)
-    #
-    #         # Add some space around the +/- sign
-    #
-    #         rep = x.__str__().replace("+/-", " +/- ")
-    #
-    #         data.append([parameter_name, rep, self.parameters[parameter_name].unit])
-    #
-    #         if len(parameter_name) > name_length:
-    #
-    #             name_length = len(parameter_name)
-    #
-    #     table = Table(rows=data,
-    #                   names=["Name", "Best fit value", "Unit"],
-    #                   dtype=('S%i' % name_length, str, str))
-    #
-    #     display(table)
-    #
-    #     print("\nNOTE: errors on parameters are approximate. Use get_errors().\n")
+
+class LocalMinimizer(Minimizer):
+
+    pass
+
+
+class GlobalMinimizer(Minimizer):
+
+    pass
+
 
 # Check which minimizers are available
 

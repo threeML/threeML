@@ -100,7 +100,13 @@ class VERITASRun(object):
         self._renorm_hMigration()
 
         # Exposure is tOn*(1-tDeadTimeFracOn)
-        self._exposure = float(1 - self._tRunSummary['DeadTimeFracOn']) * float(self._tRunSummary['tOn'])
+        try:
+
+            self._exposure = float(1 - self._tRunSummary['DeadTimeFracOn']) * float(self._tRunSummary['tOn'])
+
+        except ValueError:
+
+            self._exposure = float(1 - self._tRunSummary['DeadtimeFrac']) * float(self._tRunSummary['tOn'])
 
         # Members for generating OGIP equivalents
 

@@ -9,6 +9,7 @@ from threeML.config.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.progress_bar import progress_bar
 from threeML.analysis_results import AnalysisResultsSet
+from threeML.minimizer.minimization import _Minimization, LocalMinimization
 
 from astromodels import Model
 import pandas as pd
@@ -78,14 +79,7 @@ class JointLikelihoodSet(object):
 
         # Default minimizer is minuit
 
-        self._minimizer = 'minuit'
-        self._algorithm = None
-        self._callback = None
-
-        # by default there is no second minimizer
-
-        self._2nd_minimizer = None
-        self._2nd_algorithm = None
+        self._minimization = LocalMinimization('minuit')
 
         # By default, crash if a fit fails
 
@@ -99,24 +93,12 @@ class JointLikelihoodSet(object):
 
         self._preprocessor = preprocessor
 
-    def set_minimizer(self, minimizer, algorithm=None, callback=None):
+    def set_minimizer(self, minimization):
 
-        self._minimizer = minimizer
-        self._algorithm = algorithm
-        self._callback = callback
+        assert isinstance(minimization, _Minimization), "The provided minimization must be either a LocalMinimization or a " \
+                                                     "GlobalMinimization instance"
 
-    def set_secondary_minimizer(self, minimizer, algorithm=None):
-        """
-        Set the secondary minimizer, which will run after the first has completed, so that the two minimizers are
-        run in a chain
-
-        :param minimizer:
-        :param algorithm:
-        :return:
-        """
-
-        self._2nd_minimizer = minimizer
-        self._2nd_algorithm = algorithm
+        self._minimization = minimization
 
     def worker(self, interval):
 
@@ -178,7 +160,7 @@ class JointLikelihoodSet(object):
     def _fitter(self, jl):
 
         # Set the minimizer
-        jl.set_minimizer(self._minimizer, self._algorithm, callback=self._callback)
+        jl.set_minimizer(self._minimization)
 
         try:
 
@@ -200,31 +182,6 @@ class JointLikelihoodSet(object):
             else:
 
                 raise
-
-        if self._2nd_minimizer is not None:
-
-            jl.set_minimizer(self._2nd_minimizer, self._2nd_algorithm)
-
-            try:
-
-                model_results, logl_results = jl.fit(quiet=True, compute_covariance=self._compute_covariance)
-
-            except Exception as e:
-
-                log.error("\n\n**** SECONDARY FIT FAILED! ***")
-                log.error("Reason:")
-                log.error(repr(e))
-                log.error("\n\n")
-
-                if self._continue_on_failure:
-
-                    # Return empty data frame
-
-                    return pd.DataFrame(), pd.DataFrame()
-
-                else:
-
-                    raise
 
         return model_results, logl_results
 

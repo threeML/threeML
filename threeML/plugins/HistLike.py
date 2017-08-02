@@ -3,7 +3,7 @@ import numpy as np
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.histogram import Histogram
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.plugins.OGIP.likelihood_functions import chi2
+from threeML.plugins.OGIP.likelihood_functions import half_chi2
 
 
 __instrument_name = "n.a."
@@ -83,7 +83,7 @@ class HistLike(XYLike):
 
             # Chi squared
 
-            chi2_ = chi2(self._y, self._yerr, expectation)
+            chi2_ = half_chi2(self._y, self._yerr, expectation)
 
             assert np.all(np.isfinite(chi2_))
 

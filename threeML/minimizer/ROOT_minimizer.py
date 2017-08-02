@@ -1,7 +1,29 @@
 import ROOT
 import numpy as np
 
-from threeML.minimizer.minimization import Minimizer, FIT_FAILED
+from threeML.minimizer.minimization import LocalMinimizer, FitFailed, CannotComputeCovariance
+from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
+
+# These are the status returned by Minuit
+#     status = 1    : Covariance was made pos defined
+#     status = 2    : Hesse is invalid
+#     status = 3    : Edm is above max
+#     status = 4    : Reached call limit
+#     status = 5    : Any other failure
+_status_translation = {1: 'Covariance was made pos. defined',
+                       2: 'Hesse is invalid',
+                       3: 'Edm is above maximum',
+                       4: 'Reached call limit',
+                       5: 'Unknown failure'}
+
+# Status for HESSE
+# status += 100*hesseStatus where hesse status is:
+# status = 1 : hesse failed
+# status = 2 : matrix inversion failed
+# status = 3 : matrix is not pos defined
+_hesse_status_translation = {100: 'HESSE failed',
+                             200: 'Covariance matrix inversion failed',
+                             300: 'Covariance matrix is not positive defined'}
 
 
 class FuncWrapper(ROOT.TPyMultiGenFunction):
@@ -22,81 +44,147 @@ class FuncWrapper(ROOT.TPyMultiGenFunction):
         return self.function(*new_args)
 
 
-class ROOTMinimizer(Minimizer):
+class ROOTMinimizer(LocalMinimizer):
 
-    def __init__(self, function, parameters, ftol=1e3, verbosity=0):
+    valid_setup_keys = ('ftol', 'max_function_calls', 'strategy')
 
-        super(ROOTMinimizer, self).__init__(function, parameters, ftol, verbosity)
+    def __init__(self, function, parameters, verbosity=0):
 
-    def _setup(self):
+        super(ROOTMinimizer, self).__init__(function, parameters, verbosity)
+
+    def _setup(self, user_setup_dict):
+
+        # Defaults
+
+        setup_dict = {'ftol': 0.01,
+                      'max_function_calls': 100000,
+                      'strategy': 1}
+
+        # Update defaults if needed
+        if user_setup_dict is not None:
+
+            for key in user_setup_dict:
+
+                setup_dict[key] = user_setup_dict[key]
 
         # Setup the minimizer algorithm
 
         self.functor = FuncWrapper(self.function, self.Npar)
         self.minimizer = ROOT.Math.Factory.CreateMinimizer("Minuit2", "Minimize")
         self.minimizer.Clear()
-        self.minimizer.SetMaxFunctionCalls(1000)
-        self.minimizer.SetTolerance(0.1)
+        self.minimizer.SetMaxFunctionCalls(setup_dict['max_function_calls'])
         self.minimizer.SetPrintLevel(self.verbosity)
-        # self.minimizer.SetStrategy(0)
+        self.minimizer.SetErrorDef(0.5)
+        self.minimizer.SetStrategy(setup_dict['strategy'])
+        self.minimizer.SetTolerance(setup_dict['ftol'])
 
         self.minimizer.SetFunction(self.functor)
+        self.minimizer.SetPrintLevel(int(self.verbosity))
 
-        for i, par in enumerate(self.parameters.values()):
+        # Set up the parameters in internal reference
 
-            if par.min_value is not None and par.max_value is not None:
+        for i, (par_name, (cur_value, cur_delta, cur_min, cur_max)) in enumerate(self._internal_parameters.items()):
 
-                self.minimizer.SetLimitedVariable(i, par.path, par.value,
-                                                  par.delta, par.min_value,
-                                                  par.max_value)
+            if cur_min is not None and cur_max is not None:
 
-            elif par.min_value is not None and par.max_value is None:
+                # Variable with lower and upper limit
+
+                self.minimizer.SetLimitedVariable(i, par_name, cur_value, cur_delta, cur_min, cur_max)
+
+            elif cur_min is not None and cur_max is None:
 
                 # Lower limited
-                self.minimizer.SetLowerLimitedVariable(i, par.path, par.value,
-                                                       par.delta, par.min_value)
+                self.minimizer.SetLowerLimitedVariable(i, par_name, cur_value, cur_delta, cur_min)
 
-            elif par.min_value is None and par.max_value is not None:
+            elif cur_min is None and cur_max is not None:
 
                 # upper limited
-                self.minimizer.SetUpperLimitedVariable(i, par.path, par.value,
-                                                       par.delta, par.max_value)
+                self.minimizer.SetUpperLimitedVariable(i, par_name, cur_value, cur_delta, cur_max)
 
             else:
 
                 # No limits
-                self.minimizer.SetVariable(i, par.path, par.value, par.delta)
+                self.minimizer.SetVariable(i, par_name, cur_value, cur_delta)
 
-    def minimize(self, compute_covar=True):
+    def _minimize(self, compute_covar=True):
 
-        self.minimizer.SetPrintLevel(int(self.verbosity))
+        # Minimize with MIGRAD
 
-        self.minimizer.Minimize()
+        success = self.minimizer.Minimize()
 
-        best_fit_values = np.array(map(lambda x: x[0], zip(self.minimizer.X(), range(self.Npar))))
+        if not success:
 
-        if compute_covar:
+            # Get status
+            status = self.minimizer.Status()
 
-            self.minimizer.Hesse()
+            if status in _status_translation:
 
-            # The ROOT Minimizer instance already got the covariance matrix,
-            # we just need to copy it
+                msg = "MIGRAD did not converge. Reason: %s (status: %i)" % (_status_translation[status], status)
 
-            covariance_matrix = np.zeros((self.Npar, self.Npar))
+            else:
 
-            for i in range(self.Npar):
+                msg = "MIGRAD failed with status %i " \
+                      "(see https://root.cern.ch/root/html/ROOT__Minuit2__Minuit2Minimizer.html)" % status
 
-                for j in range(self.Npar):
+            raise FitFailed(msg)
 
-                    covariance_matrix[i,j] = self.minimizer.CovMatrix(i,j)
-
-        else:
-
-            covariance_matrix = None
+        # Gather results
 
         minimum = self.minimizer.MinValue()
 
-        self._store_fit_results(best_fit_values, minimum, covariance_matrix)
+        best_fit_values = np.array(map(lambda x: x[0], zip(self.minimizer.X(), range(self.Npar))))
 
         return best_fit_values, minimum
+
+    def _compute_covariance_matrix(self, best_fit_values):
+
+        # Gather the current status so we can offset it later
+        status_before_hesse = self.minimizer.Status()
+
+        # Use Hesse to compute the covariance matrix accurately
+
+        self.minimizer.Hesse()
+
+        # Gather the current status and remove the offset so that we get the HESSE status
+        status_after_hesse = self.minimizer.Status() - status_before_hesse
+
+        if status_after_hesse > 0:
+
+            failure_reason = _hesse_status_translation[status_after_hesse]
+
+            raise CannotComputeCovariance("HESSE failed. Reason: %s (status: %i)" % (failure_reason,
+                                                                                     status_after_hesse))
+
+        # Gather the covariance matrix and return it
+
+        covariance_matrix = np.zeros((self.Npar, self.Npar))
+
+        for i in range(self.Npar):
+
+            for j in range(self.Npar):
+
+                covariance_matrix[i,j] = self.minimizer.CovMatrix(i,j)
+
+        return covariance_matrix
+
+    def _get_errors(self):
+
+        # Re-implement this in order to use MINOS
+
+        errors = DictWithPrettyPrint()
+
+        for i, par_name in enumerate(self.parameters):
+
+            err_low = ROOT.Double(0)
+            err_up = ROOT.Double(0)
+
+            self.minimizer.GetMinosError(i, err_low, err_up)
+
+            errors[par_name] = (err_low, err_up)
+
+        return errors
+
+        # GetMinosError(unsigned
+        # int
+        # i, double & errLow, double & errUp, int = 0)
 

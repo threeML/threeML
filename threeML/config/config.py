@@ -218,8 +218,6 @@ class Config(object):
 
         return type(val) == int or type(val) == float
 
-
-
     def _subs_values_with_none(self, d):
         """
         This remove all values from d and all nested dictionaries of d, substituing all values with None
@@ -298,7 +296,7 @@ class Config(object):
 
                               'optimizer': (self.is_optimizer, "one of scipy.optimize minimization methods (available: %s)"
                                             %", ".join(_optimize_methods)),
-                              'number'   : (self.is_number, "an int or float")
+                              'number'   : (self.is_number, "an int or float"),
                               }
 
             # Now that we know that the provided configuration have the right structure, let's check that
@@ -349,6 +347,14 @@ class Config(object):
             if isinstance(value, dict):
 
                 new[key] = self._get_copy_with_no_types(value)
+
+            else:
+
+                # Sometimes the user uses 'None' instead of None, which becomes the string
+                # 'None' instead of the object None. Let's fix transparently this
+                if new[key] == 'None':
+
+                    new[key] = None
 
         return new
 

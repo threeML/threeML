@@ -1,4 +1,23 @@
+# Custom warning
+import warnings
+import sys
+import time
+import re
+import math
+import subprocess
 from contextlib import contextmanager
+
+
+from threeML.config.config import threeML_config
+from threeML.io.progress_bar import progress_bar, multiple_progress_bars, CannotGenerateHTMLBar
+
+try:
+    from subprocess import DEVNULL # py3k
+except ImportError:
+    import os
+    DEVNULL = open(os.devnull, 'wb')
+
+# Check whether we have a parallel system or not
 
 has_parallel = False
 
@@ -25,31 +44,24 @@ else:
 
     has_parallel = True
 
-from threeML.config.config import threeML_config
-from threeML.io.progress_bar import progress_bar, multiple_progress_bars, CannotGenerateHTMLBar
-
-# Custom warning
-import warnings
-import exceptions
-
-import sys
-import time
-import re
-import math
 
 
-class NoParallelEnvironment(exceptions.UserWarning):
+class NoParallelEnvironment(UserWarning):
     pass
+
+
 
 # Set up the warnings module to always display our custom warning (otherwise it would only be displayed once)
 warnings.simplefilter('always', NoParallelEnvironment)
 
 @contextmanager
-def parallel_computation(profile=None):
+def parallel_computation(profile=None, start_cluster=True):
     """
     A context manager which turns on parallel execution temporarily
 
     :param profile: the profile to use, if different from the default
+    :param start_cluster: True or False. Whether to start a new cluster. If False, try to use an existing one for the
+    same profile
     :return:
     """
 
@@ -84,11 +96,70 @@ def parallel_computation(profile=None):
     # Here is where the content of the with parallel_computation statement gets
     # executed
 
+    # See if we need to start the ipyparallel cluster first
+
+    if start_cluster:
+
+        # Get the command line together
+
+        cmd_line = "ipcluster start"
+
+        if profile is not None:
+            cmd_line += " --profile=%s" % profile
+
+        print("We will start the ipyparallel cluster with this command line:")
+        print(cmd_line)
+
+    else:
+
+        cmd_line = None
+
     try:
+
+        if start_cluster:
+
+            # Start process asynchronously with Popen, suppressing all output
+
+            ipycluster_process = subprocess.Popen(cmd_line, shell=True, stdout=DEVNULL, stderr=subprocess.STDOUT)
+
+            rc = Client()
+
+            # Wait for the engines to become available
+
+            while True:
+
+                try:
+
+                    view = rc[:]
+
+                except:
+
+                    time.sleep(0.5)
+
+                    continue
+
+                else:
+
+                    print("%i engines are active" % (len(view)))
+
+                    break
 
         yield
 
     finally:
+
+        if start_cluster:
+
+            print("\nShutting down ipcluster...")
+
+            new_cmd_line = cmd_line.replace("start","stop")
+
+            subprocess.check_call(new_cmd_line, shell=True)
+
+            if ipycluster_process.poll():
+
+                ipycluster_process.terminate()
+                ipycluster_process.wait()
 
         # This gets executed in any case, even if there is an exception
 
@@ -96,6 +167,11 @@ def parallel_computation(profile=None):
         threeML_config['parallel']['use-parallel'] = old_state
 
         threeML_config['parallel']['IPython profile name'] = old_profile
+
+
+def is_parallel_computation_active():
+
+    return bool(threeML_config['parallel']['use-parallel'])
 
 
 if has_parallel:

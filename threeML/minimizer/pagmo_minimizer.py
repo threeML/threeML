@@ -1,55 +1,38 @@
-import PyGMO
-from PyGMO.problem import base
 import numpy as np
-import dill
-import sys
 
-from threeML.minimizer.minimization import Minimizer
+from threeML.minimizer.minimization import GlobalMinimizer
+from threeML.io.progress_bar import progress_bar
+from threeML.parallel.parallel_client import is_parallel_computation_active
 
-
-class WrapperUnpickler(object):
-
-    def __call__(self, dill_package, dim):
-
-        function = dill.loads(dill_package)
-
-        return PAGMOWrapper(function, dim=dim)
+import pygmo as pg
 
 
-class PAGMOWrapper(base):
+class PAGMOWrapper(object):
 
-    def __init__(self, function=None, parameters=None, dim=1):
+    def __init__(self, function, parameters, dim):
 
-        super(PAGMOWrapper, self).__init__(dim)
-
-        self.__dim = dim
+        self._dim_ = dim
 
         self._objective_function = function
 
-        if parameters is not None:
+        minima = []
+        maxima = []
 
-            minima = []
-            maxima = []
+        for param, (cur_value, cur_delta, cur_min, cur_max) in parameters.items():
 
-            for param in parameters.values():
+            if cur_min is None or cur_max is None:
 
-                min_val, max_val = param.bounds
+                raise RuntimeError("In order to use the PAGMO minimizer, you have to provide a minimum and a "
+                                   "maximum for all parameters in the model.")
 
-                if min_val is None or max_val is None:
+            minima.append(cur_min)
+            maxima.append(cur_max)
 
-                    raise RuntimeError("In order to use the PAGMO minimizer, you have to provide a minimum and a "
-                                       "maximum for all parameters in the model.")
+        self._minima = minima
+        self._maxima = maxima
+        self._parameters = parameters
 
-                minima.append(min_val)
-                maxima.append(max_val)
-
-            self.set_bounds(minima, maxima)
-
-            self._minima = minima
-            self._maxima = maxima
-
-    # Reimplement the virtual method that defines the objective function.
-    def _objfun_impl(self, x):
+    def fitness(self, x):
 
         val = self._objective_function(*x)
 
@@ -57,130 +40,155 @@ class PAGMOWrapper(base):
         # return tuples so that multi-objective optimization is also possible.
         return (val,)
 
-    # Finally we also reimplement a virtual method that adds some output to the __repr__ method
-    def human_readable_extra(self):
-        return "\n\t Problem dimension: " + str(self.__dim)
+    def get_bounds(self):
 
-    def __reduce__(self):
+        return (self._minima, self._maxima)
 
-        dill_package = dill.dumps(self._objective_function)
+    def get_name(self):
 
-        state = {'minima': self._minima, 'maxima': self._maxima}
-
-        return WrapperUnpickler(), (dill_package,self.__dim), state
-
-    def __setstate__(self, state):
-
-        self._minima = state['minima']
-        self._maxima = state['maxima']
-
-        self.set_bounds(self._minima, self._maxima)
+        return "JointLikelihood"
 
 
-class PAGMOMinimizer(Minimizer):
+class PAGMOMinimizer(GlobalMinimizer):
 
-    def __init__(self, function, parameters, ftol=1e-3, verbosity=10):
+    valid_setup_keys = ('islands', 'population_size', 'evolution_cycles', 'second_minimization', 'algorithm')
 
-        super(PAGMOMinimizer, self).__init__(function, parameters, ftol, verbosity)
+    def __init__(self, function, parameters, verbosity=10, setup_dict=None):
 
-        self._max_evolutions = 10000
-        self._evolution_step = 20
+        super(PAGMOMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
 
-    def _setup(self):
+    def _setup(self, user_setup_dict):
 
-        pass
+        if user_setup_dict is None:
 
-    def set_algorithm(self, algorithm_instance):
+            default_setup = {'islands': 8,
+                             'population_size': self._Npar * 20,
+                             'evolution_cycles': 1}
 
-        assert isinstance(algorithm_instance, PyGMO.algorithm._algorithm._base), "The algorithm must be an " \
-                                                                                 "instance of a PyGMO algorithm"
-
-        # Create an instance of the provided optimizer
-
-        self._algorithm_name = algorithm_instance.__class__.__name__
-
-        # By default the population number is 5 times the number of parameters
-
-        self._algorithm = algorithm_instance
-
-    def minimize(self, compute_covar=True):
-
-        try:
-
-            best_fit_values, final_value = evolve(self.function,
-                                                  self.parameters,
-                                                  self._algorithm,
-                                                  evolution_step=self._evolution_step,
-                                                  max_evolutions=self._max_evolutions,
-                                                  ftol=self.ftol)
-
-        except:
-
-            raise
-
-            exc_type, message, _ = sys.exc_info()
-
-            raise RuntimeError("Could not evolve the population. Exc. type: %s, message: %s" % (exc_type, message))
-
-        # Compute errors with the Hessian
-
-        if compute_covar:
-
-            covariance_matrix = self._compute_covariance_matrix(best_fit_values)
+            self._setup_dict = default_setup
 
         else:
 
-            covariance_matrix = None
+            assert 'algorithm' in user_setup_dict, "You have to provide a pygmo.algorithm instance using " \
+                                                   "the algorithm keyword"
 
-        self._store_fit_results(best_fit_values, final_value, covariance_matrix)
+            algorithm_instance = user_setup_dict['algorithm']
 
-        return best_fit_values, final_value
+            assert isinstance(algorithm_instance,
+                              pg.algorithm), "The algorithm must be an instance of a PyGMO algorithm"
 
-# This cannot be part of a class, unfortunately, because of how PyGMO serialize objects
+            # We can assume that the setup has been already checked against the setup_keys
+            for key in user_setup_dict:
 
-def evolve(function, parameters, algorithm, evolution_step=20, max_evolutions=1000, ftol=1e-3):
+                self._setup_dict[key] = user_setup_dict[key]
 
-    Npar = len(parameters)
+    # This cannot be part of a class, unfortunately, because of how PyGMO serialize objects
 
-    functor = PAGMOWrapper(function=function, parameters=parameters, dim=Npar)
+    def _minimize(self):
 
-    _island = PyGMO.island(algorithm, functor, Npar * 5)
+        # Gather the setup
+        islands = self._setup_dict['islands']
+        pop_size = self._setup_dict['population_size']
+        evolution_cycles = self._setup_dict['evolution_cycles']
 
-    # Get initial value
-    initial_value = _island.population.champion.f[0]
+        # Print some info
+        print("\nPAGMO setup:")
+        print("------------")
+        print("- Number of islands:            %i" % islands)
+        print("- Population size per island:   %i" % pop_size)
+        print("- Evolutions cycles per island: %i\n" % evolution_cycles)
 
-    # Keep evolving the population until the final value does not change by more than ftol
+        Npar = len(self._internal_parameters)
 
-    previous_iter_value = initial_value
+        wrapper = PAGMOWrapper(function=self.function, parameters=self._internal_parameters, dim=Npar)
 
-    final_value = 0
+        if is_parallel_computation_active():
 
-    for i in xrange(max_evolutions):
+            # kludge: we cannot live with ROOT, because the custom import hook (!!!) of ROOT breaks the pickling
+            # and unpickling of objects. We still did not find a workaround
+            try:
 
-        # Evolve the population a certain number of times
+                import ROOT
 
-        _island.evolve(evolution_step)
+            except:
 
-        # Check if we have improved, if not break out of the loop
+                # ok
+                pass
 
-        current_iter_value = _island.population.champion.f[0]
+            else:
 
-        if abs(previous_iter_value - current_iter_value) < ftol:
+                # We cannot work with ROOT
+                raise RuntimeError("Unfortunately, the parallel pygmo cannot live with ROOT. "
+                                   "ROOT has a custom import hook which breaks the pickling of objects. "
+                                   "Please remove ROOT from your PYTHONPATH or use the serial version of the PAGMO "
+                                   "minimizer")
 
-            # Converged
-            break
+            # use the archipelago, which uses the ipyparallel computation
+
+            archi = pg.archipelago(udi=pg.ipyparallel_island(), n=islands,
+                                   algo=self._setup_dict['algorithm'], prob=wrapper, pop_size=pop_size)
+            archi.wait()
+
+            # Display some info
+            print("\nSetup before parallel execution:")
+            print("--------------------------------\n")
+            print(archi)
+
+            # Evolve populations on islands
+            print("Evolving... (progress not available for parallel execution)")
+            archi.evolve()
+
+            # Wait for completion (evolve() is async)
+
+            archi.wait_check()
+
+            # Find best and worst islands
+
+            fOpts = np.array(map(lambda x:x[0], archi.get_champions_f()))
+            xOpts = archi.get_champions_x()
 
         else:
 
-            # Continue evolving
-            previous_iter_value = current_iter_value
+            # do not use ipyparallel. Evolve populations on islands serially
 
-    _island.join()
-    xOpt = _island.population.champion.x
-    fOpt = _island.population.champion.f[0]
+            xOpts = []
+            fOpts = np.zeros(islands)
 
-    # Transform to numpy.array
+            with progress_bar(iterations=islands, title="pygmo minimization") as p:
 
-    best_fit_values = np.array(xOpt)
+                for island_id in range(islands):
 
-    return best_fit_values, fOpt
+                    pop = pg.population(prob=wrapper, size=pop_size)
+
+                    for i in range(evolution_cycles):
+
+                        pop = self._setup_dict['algorithm'].evolve(pop)
+
+                    # Gather results
+
+                    xOpts.append(pop.champion_x)
+                    fOpts[island_id] = pop.champion_f[0]
+
+                    p.increase()
+
+        # Find best and worst islands
+
+        min_idx = fOpts.argmin()
+        max_idx = fOpts.argmax()
+
+        fOpt = fOpts[min_idx]
+        fWorse = fOpts[max_idx]
+        xOpt = np.array(xOpts)[min_idx]
+
+        # Some information
+        print("\nSummary of evolution:")
+        print("---------------------")
+        print("Best population has minimum %.3f" % (fOpt))
+        print("Worst population has minimum %.3f" % (fWorse))
+        print("")
+
+        # Transform to numpy.array
+
+        best_fit_values = np.array(xOpt)
+
+        return best_fit_values, fOpt

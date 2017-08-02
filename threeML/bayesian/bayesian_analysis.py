@@ -730,7 +730,7 @@ class BayesianAnalysis(object):
 
         if self.samples is not None:
 
-            return self._results.corner_plot_cc(parameters,renamed_parameters,figsize, **cc_kwargs)
+            return self._results.corner_plot_cc(parameters,renamed_parameters, figsize=figsize, **cc_kwargs)
 
         else:
 
@@ -797,6 +797,13 @@ class BayesianAnalysis(object):
             figures.append(figure)
 
         return figures
+
+    @property
+    def likelihood_model(self):
+        """
+        :return: likelihood model (a Model instance)
+        """
+        return self._likelihood_model
 
     @property
     def data_list(self):

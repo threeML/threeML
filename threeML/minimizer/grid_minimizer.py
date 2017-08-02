@@ -2,7 +2,7 @@ import collections
 import numpy as np
 import itertools
 
-from threeML.minimizer.minimization import Minimizer, get_minimizer
+from threeML.minimizer.minimization import GlobalMinimizer, get_minimizer
 from astromodels import Parameter
 
 
@@ -10,11 +10,12 @@ class AllFitFailed(RuntimeError):
     pass
 
 
-class GridMinimizer(Minimizer):
+class GridMinimizer(GlobalMinimizer):
 
-    def __init__(self, function, parameters, ftol=1e3, verbosity=1):
+    valid_setup_keys = ('grid', 'second_minimization', 'callbacks')
 
-        self._minimizer = None
+    def __init__(self, function, parameters, verbosity=1):
+
         self._grid = collections.OrderedDict()
 
         # Keep a copy of the original values for the parameters
@@ -25,27 +26,58 @@ class GridMinimizer(Minimizer):
 
             self._original_values[par_name] = par.value
 
-        super(GridMinimizer, self).__init__(function, parameters, ftol, verbosity)
+        super(GridMinimizer, self).__init__(function, parameters, verbosity)
 
-    def _setup(self):
+        # This list will contain callbacks, if any
+        self._callbacks = []
 
-        # Nothing special to do
+    def _setup(self, user_setup_dict):
 
-        pass
+        if user_setup_dict is None:
 
-    def set_algorithm(self, algorithm):
+            return
 
-        pass
+        # This minimizer MUST be set up with a grid, so we enforce that user_setup_dict is not None
+        assert user_setup_dict is not None, "You have to setup a grid for this minimizer"
 
-    def set_minimizer(self, minimizer_type):
+        assert 'grid' in user_setup_dict, "You have to setup a grid for this minimizer"
+
+        assert 'second_minimization' in user_setup_dict, "You have to set up a second minimizer"
+
+        # Setup grid
+
+        for parameter, grid in user_setup_dict['grid'].items():
+
+            self.add_parameter_to_grid(parameter, grid)
+
+        # Setup inner minimization
+        self._2nd_minimization = user_setup_dict['second_minimization']
+
+        # If there are callbacks, set them up
+        if 'callbacks' in user_setup_dict:
+
+            for callback in user_setup_dict['callbacks']:
+
+                self.add_callback(callback)
+
+    def add_callback(self, function):
         """
-        Sets the minimizer to use for each point in the grid
+        This adds a callback function which is called after each point in the grid has been used.
 
-        :param minimizer_type: one of the accepted minimizers
-        :return: None
+        :param function: a function receiving in input a tuple containing the point in the grid and the minimum of the
+        function reached starting from that point. The function should return nothing
+        :return: none
         """
 
-        self._minimizer = get_minimizer(minimizer_type)(self.function, self.parameters, self.ftol)
+        self._callbacks.append(function)
+
+    def remove_callbacks(self):
+        """
+        Remove all callbacks added with add_callback
+
+        :return: none
+        """
+        self._callbacks = []
 
     def add_parameter_to_grid(self, parameter, grid):
         """
@@ -81,19 +113,20 @@ class GridMinimizer(Minimizer):
 
         self._grid[parameter.path] = grid
 
-    def minimize(self, compute_covar=True):
+    def _minimize(self):
 
         assert len(self._grid) > 0, "You need to set up a grid using add_parameter_to_grid"
 
-        assert self._minimizer is not None, "You need to chose a minimizer using the set_minimizer method"
+        if self._2nd_minimization is None:
+
+            raise RuntimeError("You did not setup this global minimizer (GRID). You need to use the .setup() method")
 
         # For each point in the grid, perform a fit
 
         parameters = self._grid.keys()
 
         overall_minimum = 1e20
-        best_fit_values = None
-        covariance_matrix = None
+        internal_best_fit_values = None
 
         for values_tuple in itertools.product(*self._grid.values()):
 
@@ -111,13 +144,28 @@ class GridMinimizer(Minimizer):
 
                 self.parameters[parameters[i]].value = this_value
 
+            # Get a new instance of the minimizer. We need to do this instead of reusing an existing instance
+            # because some minimizers (like iminuit) keep internal track of their status, so that reusing
+            # a minimizer will create correlation between the different points
+            # NOTE: this line necessarily needs to be after the values of the parameters has been set to the
+            # point, because the init method of the minimizer instance will use those values to set the starting
+            # point for the fit
+
+            _minimizer = self._2nd_minimization.get_instance(self.function, self.parameters, verbosity=0)
+
             # Perform fit
 
             try:
 
-                this_best_fit_values, this_minimum = self._minimizer.minimize()
+                # We call _minimize() and not minimize() so that the best fit values are
+                # in the internal system.
+
+                this_best_fit_values_internal, this_minimum = _minimizer._minimize()
 
             except:
+
+                # A failure is not a problem here, only if all of the fit fail then we have a problem
+                # but this case is handled later
 
                 continue
 
@@ -126,13 +174,15 @@ class GridMinimizer(Minimizer):
             if this_minimum < overall_minimum:
 
                 overall_minimum = this_minimum
-                best_fit_values = this_best_fit_values
-                covariance_matrix = self._minimizer.covariance_matrix
+                internal_best_fit_values = this_best_fit_values_internal
 
-        if best_fit_values is None:
+            # Use callbacks (if any)
+            for callback in self._callbacks:
+
+                callback(values_tuple, this_minimum)
+
+        if internal_best_fit_values is None:
 
             raise AllFitFailed("All fit starting from values in the grid have failed!")
 
-        self._store_fit_results(best_fit_values, overall_minimum, covariance_matrix)
-
-        return best_fit_values, overall_minimum
+        return internal_best_fit_values, overall_minimum

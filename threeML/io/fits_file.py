@@ -141,7 +141,17 @@ class FITSExtension(object):
 
                 # Probe the format
 
-                format = _NUMPY_TO_FITS_CODE[np.array(test_value.value).dtype.type]
+                try:
+
+                    # Use the one already defined, if possible
+
+                    format = _NUMPY_TO_FITS_CODE[column_data.dtype.type]
+
+                except AttributeError:
+
+                    # Try to infer it. Note that this could unwillingly upscale a float16 to a float32, for example
+
+                    format = _NUMPY_TO_FITS_CODE[np.array(test_value.value).dtype.type]
 
                 # check if this is a vector of quantities
 

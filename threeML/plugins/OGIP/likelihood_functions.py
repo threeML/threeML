@@ -155,8 +155,10 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
     return log_likes, b
 
 
-def chi2(y, yerr, expectation):
+def half_chi2(y, yerr, expectation):
 
-    # This is chi2
+    # This is half of a chi2. The reason for the factor of two is that we need this to be the Gaussian likelihood,
+    # so that the delta log-like for an error of say 1 sigma is 0.5 and not 1 like it would be for
+    # the other likelihood functions. This way we can sum it with other likelihood functions.
 
-    return (y-expectation)**2 / yerr**2
+    return 1/2.0 * (y-expectation)**2 / yerr**2

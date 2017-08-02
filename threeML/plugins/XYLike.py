@@ -9,7 +9,7 @@ from threeML.plugin_prototype import PluginPrototype
 from astromodels import Model, PointSource
 
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.plugins.OGIP.likelihood_functions import chi2
+from threeML.plugins.OGIP.likelihood_functions import half_chi2
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
 from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
@@ -43,7 +43,7 @@ class XYLike(PluginPrototype):
 
             if not quiet:
 
-                print("Using chi2 statistic with the provided errors.")
+                print("Using Gaussian statistic (equivalent to chi^2) with the provided errors.")
 
             self._is_poisson = False
 
@@ -59,7 +59,7 @@ class XYLike(PluginPrototype):
 
             if not quiet:
 
-                print("Using unweighted chi2 statistic.")
+                print("Using unweighted Gaussian (equivalent to chi^2) statistic.")
 
         else:
 
@@ -264,10 +264,9 @@ class XYLike(PluginPrototype):
         :type likelihood_model_instance: astromodels.Model
         """
 
-        assert likelihood_model_instance.get_number_of_extended_sources() == 0, "Extended sources are not supported by " \
-                                                                             "XYLike plugin"
+        if likelihood_model_instance is None:
 
-        assert likelihood_model_instance.get_number_of_point_sources() > 0, "You have to have at least one point source"
+            return
 
         if self._source_name is not None:
 
@@ -327,7 +326,7 @@ class XYLike(PluginPrototype):
         else:
 
             # Chi squared
-            chi2_ = chi2(self._y, self._yerr, expectation)
+            chi2_ = half_chi2(self._y, self._yerr, expectation)
 
             assert np.all(np.isfinite(chi2_))
 
