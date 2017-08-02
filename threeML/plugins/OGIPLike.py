@@ -1,6 +1,8 @@
 import pandas as pd
 
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
+from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.plugins.XYLike import XYLike
 from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
 from threeML.plugins.OGIP.pha import PHAII
 from astromodels.utils.valid_variable import is_valid_variable_name
@@ -27,7 +29,10 @@ class OGIPLike(DispersionSpectrumLike):
         assert isinstance(background, str) or isinstance(background,
                                                          PHASpectrum) or (
                    background is None) or isinstance(background,
-                                                     PHAII), 'background must be a FITS file name or PHASpectrum or None'
+                                                     PHAII) or isinstance(background, SpectrumLike) or isinstance(background,XYLike),\
+                                                                                                        'background must be a FITS file name, PHASpectrum, a Plugin or None'
+
+
 
         if isinstance(observation, str) or isinstance(observation, PHAII):
 

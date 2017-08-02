@@ -423,9 +423,9 @@ class XYLike(PluginPrototype):
 
         return self.get_log_like()
 
-    def get_model_flux(self):
+    def get_model(self):
 
-        pass
+        return self._get_total_expectation()
 
 
     def fit(self, function, minimizer='minuit'):

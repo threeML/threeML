@@ -344,7 +344,7 @@ def display_histogram_fit(analysis, data=(), **kwargs):
 
         width = data.histogram.widths
 
-        expected_model = data.get_model_flux()
+        expected_model = data.get_model()
 
         mean_x = []
 

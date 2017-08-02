@@ -6,22 +6,23 @@ __instrument_name = "Swift XRT"
 # At the moment this is just another name for the GenericOGIPLike spectrum
 class SwiftXRTLike(OGIPLike):
 
-    def _get_diff_flux_and_integral(self):
+    @staticmethod
+    def _get_diff_flux_and_integral(likelihood_model):
 
         # In the XRT response matrix there are many many channels, so we can
         # use a very crude formula for the integral. This is why we override this
 
-        n_point_sources = self._like_model.get_number_of_point_sources()
+        n_point_sources = likelihood_model.get_number_of_point_sources()
 
         # Make a function which will stack all point sources (OGIP do not support spatial dimension)
 
         def differential_flux(energies):
 
-            fluxes = self._like_model.get_point_source_fluxes(0, energies)
+            fluxes = likelihood_model.get_point_source_fluxes(0, energies)
 
             # If we have only one point source, this will never be executed
             for i in range(1, n_point_sources):
-                fluxes += self._like_model.get_point_source_fluxes(i, energies)
+                fluxes += likelihood_model.get_point_source_fluxes(i, energies)
 
             return fluxes
 
