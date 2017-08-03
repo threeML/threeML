@@ -346,7 +346,7 @@ def cleanup_downloaded_GBM_data(detector_information_dict):
     print('\n')
 
 
-def download_GBM_daily_data(year,month,day, detectors=None, destination_directory='.', compress_tte=True):
+def download_GBM_daily_data(year,month,day, detectors=None, data_type=None,destination_directory='.', compress_tte=True):
     """
     Download the latest continuous GBM TTE and CSPEC for the specified day from theHEASARC server.  If the files already exist in your destination
     directory, they will be skipped in the download process. The output dictionary can be used
@@ -357,6 +357,7 @@ def download_GBM_daily_data(year,month,day, detectors=None, destination_director
     :param year: the year of the data
     :month: the month of the data eithera number 1-12 or an month 'feb' or 'february'
     :param day: day of the month
+    :param data_type: None= all or tte or cspec
     :param destination_directory: download directory
     :param compress_tte: compress the TTE files via gzip (default True)
     :return: a dictionary with information about the download
@@ -411,6 +412,8 @@ def download_GBM_daily_data(year,month,day, detectors=None, destination_director
 
     # Classify the files detector by detector
 
+    tte_info = {}
+
     for this_file in remote_file_list:
 
         # this_file is something like glg_tte_n9_bn100101988_v00.fit
@@ -427,9 +430,20 @@ def download_GBM_daily_data(year,month,day, detectors=None, destination_director
             # The "map" is necessary to transform the tokens to normal string (instead of unicode),
             # because u"b0" != "b0" as a key for a dictionary
 
-            _, file_type, detname, _, version_ext = map(str, tokens)
+            _, file_type, detname, time_tag, version_ext = map(str, tokens)
 
-        version, ext = version_ext.split(".")
+
+        try:
+            version, ext = version_ext.split(".")
+
+        except(ValueError):
+
+            # sometimes GBM randomly GZips the data... so we have to deal that
+
+            version,ext,fmt = version_ext.split('.')
+
+            compress_tte = False
+
 
         # We do not care here about the other files (posthist, spechist and so on),
         # nor about files which pertain to other detectors
@@ -440,7 +454,23 @@ def download_GBM_daily_data(year,month,day, detectors=None, destination_director
 
         else:
 
-            remote_files_info[detname][file_type] = this_file
+            if file_type == 'tte':
+
+                # the TTE files are broken into slices
+                # so we must account for that
+
+                if remote_files_info[detname][file_type] is None:
+
+                    remote_files_info[detname][file_type] = {}
+
+                remote_files_info[detname][file_type][time_tag] = this_file
+
+
+
+
+            else:
+
+                remote_files_info[detname][file_type] = this_file
 
     # Now download the files
 
@@ -448,23 +478,32 @@ def download_GBM_daily_data(year,month,day, detectors=None, destination_director
 
     _warned_tte = False
 
+
+
     for detector in remote_files_info.keys():
+
+
 
         remote_detector_info = remote_files_info[detector]
         local_detector_info = download_info[detector]
 
         # Get CSPEC file
-        local_detector_info['cspec'] = downloader.download(remote_detector_info['cspec'], destination_directory,
-                                                           progress=True)
+
+        if (data_type is None) or (data_type == 'cspec'):
+
+            local_detector_info['cspec'] = downloader.download(remote_detector_info['cspec'], destination_directory,
+                                                               progress=True)
 
         # Get TTE file (compressing it if requested)
-        if 'tte' in local_detector_info:
+        if (data_type is None) or (data_type=='tte') and ('tte' in local_detector_info):
 
-            local_detector_info['tte'] = downloader.download(remote_detector_info['tte'], destination_directory,
-                                                             progress=True, compress=compress_tte)
+            for time_tag in remote_detector_info['tte'].keys():
+
+                local_detector_info['tte'] = downloader.download(time_tag, destination_directory,
+                                                                 progress=True, compress=compress_tte)
 
         else:
-            if not _warned_tte:
+            if not _warned_tte or data_type=='tte':
 
                 print('Continuous TTE data does not exist for this day')
 
