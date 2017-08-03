@@ -862,7 +862,9 @@ class TimeSeriesBuilder(object):
                                                    start_time = polar_data.time.min(),
                                                    stop_time = polar_data.time.max(),
                                                    dead_time_fraction = polar_data.dead_time_fraction,
-                                                   verbose = verbose
+                                                   verbose = verbose,
+                                                   mission='Tiangong-2',
+                                                   instrument='POLAR'
                                                    )
 
         # pass to the super class
