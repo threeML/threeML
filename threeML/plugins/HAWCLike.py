@@ -425,73 +425,77 @@ class HAWCLike(PluginPrototype):
         for srcid in range(nsrc):
             ra, dec = self._model.get_point_source_position(srcid)
 
-            model = np.array(self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
-
-            signal = np.array(self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
-
-            bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
-
-            total = signal + bkg
-            
-            error = np.sqrt(total)
-
-            fig = plt.figure()
-
-            gs = gridspec.GridSpec(2, 1, height_ratios=[2, 1])
-            gs.update(hspace=0)
-
-            sub = plt.subplot(gs[0])
-
-            n_bins    = len(self._bin_list)
-            bin_index = np.arange(n_bins)
-
-            sub.errorbar(bin_index, total, yerr=error, capsize=0,
-                         color='black', label='Observation', fmt='.')
-
-            sub.plot(bin_index, model + bkg, label='Model + bkg')
-
-            plt.legend(bbox_to_anchor=(1.0, 1.0), loc="upper right",
-                       numpoints=1)
-
-            # Residuals
-
-            sub1 = plt.subplot(gs[1])
-
-            # Using model variance to account for low statistic
-
-            resid = (signal - model) / (error if pulls else model)
-
-            sub1.axhline(0, linestyle='--')
-
-            sub1.errorbar(
-                bin_index, resid,
-                yerr=np.zeros(error.shape) if pulls else error / model,
-                capsize=0, fmt='.'
-            )
-
-            x_limits = [-0.5, n_bins - 0.5]
-            sub.set_xlim(x_limits)
-
-            sub.set_yscale("log", nonposy='clip')
-
-            sub.set_ylabel("Counts per bin")
-
-            # sub1.set_xscale("log")
-
-            sub1.set_xlabel("Analysis bin")
-
-            sub1.set_ylabel(r"$\frac{{excess - "
-                            "mod.}}{{{}.}}$".format("err" if pulls else "mod"))
-
-            sub1.set_xlim(x_limits)
-
-            sub.set_xticks([])
-            sub1.set_xticks(bin_index)
-            sub1.set_xticklabels(self._bin_list)
-
-            figs.append(fig)
+            figs.append( display_point(self, ra, dec, radius, pulls) )
 
         return figs
+
+    def display_point(self, ra, dec, radius=0.5, pulls=False):
+
+        model = np.array(self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
+
+        signal = np.array(self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
+
+        bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
+
+        total = signal + bkg
+            
+        error = np.sqrt(total)
+
+        fig = plt.figure()
+
+        gs = gridspec.GridSpec(2, 1, height_ratios=[2, 1])
+        gs.update(hspace=0)
+
+        sub = plt.subplot(gs[0])
+
+        n_bins    = len(self._bin_list)
+        bin_index = np.arange(n_bins)
+
+        sub.errorbar(bin_index, total, yerr=error, capsize=0,
+                         color='black', label='Observation', fmt='.')
+
+        sub.plot(bin_index, model + bkg, label='Model + bkg')
+
+        plt.legend(bbox_to_anchor=(1.0, 1.0), loc="upper right",
+                       numpoints=1)
+
+        # Residuals
+
+        sub1 = plt.subplot(gs[1])
+
+        # Using model variance to account for low statistic
+
+        resid = (signal - model) / (error if pulls else model)
+
+        sub1.axhline(0, linestyle='--')
+
+        sub1.errorbar(
+            bin_index, resid,
+            yerr=np.zeros(error.shape) if pulls else error / model,
+            capsize=0, fmt='.'
+        )
+
+        x_limits = [-0.5, n_bins - 0.5]
+        sub.set_xlim(x_limits)
+
+        sub.set_yscale("log", nonposy='clip')
+
+        sub.set_ylabel("Counts per bin")
+
+        # sub1.set_xscale("log")
+
+        sub1.set_xlabel("Analysis bin")
+
+        sub1.set_ylabel(r"$\frac{{excess - "
+                            "mod.}}{{{}.}}$".format("err" if pulls else "mod"))
+
+        sub1.set_xlim(x_limits)
+
+        sub.set_xticks([])
+        sub1.set_xticks(bin_index)
+        sub1.set_xticklabels(self._bin_list)
+
+        return fig
 
     def write_model_map(self, fileName, poisson=False):
 
