@@ -424,7 +424,7 @@ class HAWCLike(PluginPrototype):
 
         for srcid in range(nsrc):
             ra, dec = self._model.get_point_source_position(srcid)
-            figs.append( self.display_point(self, ra, dec, radius, pulls) )
+            figs.append( self.display_point(ra, dec, radius, pulls) )
 
         return figs
 
