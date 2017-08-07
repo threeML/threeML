@@ -418,6 +418,15 @@ class HAWCLike(PluginPrototype):
 
     def display(self, radius=0.5, pulls=False):
 
+        """
+        Plot model&data/residuals vs HAWC analysis bins for all point sources in the model.
+
+        :param radius: Radius of disk around each source over which model/data are evaluated. Default 0.5.
+        :param pulls: Plot pulls ( [excess-model]/model ) rather than fractional difference ( [excess-model]/model )
+                      in lower panel (default: False).
+        :return: list of figures (one plot per point source).
+        """
+
         figs = []
 
         nsrc = self._model.get_number_of_point_sources()
@@ -428,7 +437,18 @@ class HAWCLike(PluginPrototype):
 
         return figs
 
-    def display_point(self, ra, dec, radius=0.5, pulls=False):
+    def display_residuals_at_position(self, ra, dec, radius=0.5, pulls=False):
+
+        """
+        Plot model&data/residuals vs HAWC analysis bins at arbitrary location.
+    
+        :param ra: R.A. of center of disk (in J2000) over which model/data are evaluated.
+        :param dec: Declination of center of disk.
+        :param radius: Radius of disk (in degrees). Default 0.5.
+        :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather than fractional difference ( [excess-model]/model )
+                      in lower panel (default: False).
+        :return: matplotlib-type figure.
+        """
 
         model = np.array(self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
 
@@ -495,6 +515,8 @@ class HAWCLike(PluginPrototype):
         sub1.set_xticklabels(self._bin_list)
 
         return fig
+
+
 
     def write_model_map(self, fileName, poisson=False):
 
