@@ -45,8 +45,7 @@ def poisson_log_likelihood_ideal_bkg(observed_counts, expected_bkg_counts, expec
 
     predicted_counts = expected_bkg_counts + expected_model_counts
 
-    log_likes = observed_counts * np.log(predicted_counts + 1e-100) - predicted_counts - \
-                logfactorial(observed_counts)
+    log_likes = xlogy(observed_counts, predicted_counts) - predicted_counts - logfactorial(observed_counts)
 
     return log_likes, expected_bkg_counts
 
