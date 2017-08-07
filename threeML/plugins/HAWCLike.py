@@ -422,7 +422,7 @@ class HAWCLike(PluginPrototype):
         Plot model&data/residuals vs HAWC analysis bins for all point sources in the model.
 
         :param radius: Radius of disk around each source over which model/data are evaluated. Default 0.5.
-        :param pulls: Plot pulls ( [excess-model]/model ) rather than fractional difference ( [excess-model]/model )
+        :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather than fractional difference ( [excess-model]/model )
                       in lower panel (default: False).
         :return: list of figures (one plot per point source).
         """
