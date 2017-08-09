@@ -19,6 +19,9 @@ echo "##########################################################"
 
 source /hawc_software/config_hawc.sh
 
+# Need this for tests using parallel
+export PYTHONPATH=threeML/test:${PYTHONPATH}
+
 # Test if we can import the hawc module (otherwise everything else is futile)
 python -c "import hawc"
 
@@ -78,9 +81,6 @@ export MPLBACKEND='Agg'
 echo "##########################################################"
 echo " Executing tests and coveralls"
 echo "##########################################################"
-
-# Need this for tests using parallel
-export PYTHONPATH=threeML/test:${PYTHONPATH}
 
 # Execute tests
 python -m pytest --ignore=threeML_env -vv --cov=threeML
