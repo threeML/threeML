@@ -20,10 +20,11 @@ echo "##########################################################"
 source /hawc_software/config_hawc.sh
 
 # Need this for tests using parallel
-export PYTHONPATH=threeML/test:${PYTHONPATH}
+export PYTHONPATH=/hawc_software/aerie/install/lib:/home/hawc/hawc_software/externals/2.02.02//External/root/5.34.32/lib/root:/home/hawc/hawc_software/externals/2.02.02/External/xcdf/2.10.00/lib:/home/hawc/hawc_software/externals/2.02.02//External/xcdf/2.10.00/lib:/home/hawc/hawc_software/externals/2.02.02//External/root/5.34.32/lib/root:/home/hawc/hawc_software/externals/2.02.02//External/xcdf/2.10.00/lib:/home/hawc/hawc_software/externals/2.02.02//External/root/5.34.32/lib/root:/travis_build_dir/threeML/test
 
 # Test if we can import the hawc module (otherwise everything else is futile)
 python -c "import hawc"
+python -c "from hawc import liff_3ML"
 
 echo "##########################################################"
 echo " Creating python virtual environment"
