@@ -221,7 +221,7 @@ def test_read_gbm_tte():
 
         assert nai3.bins.argsort() == range(len(nai3.bins))
 
-        assert len(nai3.bins) == 9
+        assert len(nai3.bins) == 5
 
         nai3.create_time_bins(start=0, stop=10, method='significance', sigma=40)
 
@@ -245,7 +245,7 @@ def test_reading_of_written_pha():
         with fits.open('test_from_nai3.rsp') as f:
 
             # 2 ext + 5 rsp ext
-            assert len(f) == 7
+            assert len(f) == 5
 
 
         # make sure we can read spectrum number
