@@ -1,33 +1,11 @@
 [![Build Status](https://travis-ci.org/giacomov/3ML.svg?branch=master)](https://travis-ci.org/giacomov/3ML)
 [![codecov](https://codecov.io/gh/giacomov/3ML/branch/master/graph/badge.svg)](https://codecov.io/gh/giacomov/3ML)
-[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/giacomov/3ml)
 [![Code Climate](https://codeclimate.com/github/giacomov/3ML/badges/gpa.svg)](https://codeclimate.com/github/giacomov/3ML)
 [![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 # The Multi-Mission Maximum Likelihood framework (3ML)
 
 A framework for multi-wavelength/multi-messenger analysis for astronomy/astrophysics.
-
-# Try-before-install
-You can try 3ML without installing or downloading anything on your computer. 
-
-Thanks to [mybinder.org](mybinder.org), we provide a notebook environment that you can access from your 
-web browser. With it you can run some of the basic examples and experiment on your own 
-using sample datasets available in the ```examples``` directory.
-
-Once in binder, simply navigate to the ```examples``` directory then click on the basic_test.ipynb notebook, 
-or create your own.
-
-If you are new or need a refresher on how to use the jupyter notebook, see 
-[[here](https://nbviewer.jupyter.org/github/ipython/ipython/blob/3.x/examples/Notebook/Notebook%20Basics.ipynb)].
-
-> NOTE: the test environment does not provide all functionalities. For example, 
-MULTINEST, Xspec models and parallel computation are not supported, and only the default
-minimizer ([iminuit](https://github.com/iminuit/iminuit)) is available.
-
-To start, click here: 
-
-[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/giacomov/3ml)
 
 # Installation
 
