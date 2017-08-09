@@ -54,7 +54,7 @@ echo "##########################################################"
 cd /travis_build_dir
 
 # Install 3ML (current checked out version)
-pip install .
+pip install . --upgrade
 
 echo "##########################################################"
 echo " Installing cthreeML"
