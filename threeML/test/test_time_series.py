@@ -245,7 +245,7 @@ def test_reading_of_written_pha():
         with fits.open('test_from_nai3.rsp') as f:
 
             # 2 ext + 5 rsp ext
-            assert len(f) == 5
+            assert len(f) == 7
 
 
         # make sure we can read spectrum number
