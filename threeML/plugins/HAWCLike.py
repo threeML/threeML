@@ -548,15 +548,11 @@ class HAWCLike(PluginPrototype):
         radii = np.array([ delta_r * (i+0.5) for i in range(0,n_radial_bins) ])
         
 
-        # spherical cap area: A = 2*pi*r^2*(1-cos(theta) )
-        # where r is the sphere's radius (here: 1, unit sphere)
-        # and theta is the angle between the center of the cap and its edge.
-        # Here, theta is given by the edges of the radial bins, i.e. [ r+delta_r for r in radii ].
-        # See https://en.wikipedia.org/wiki/Spherical_cap
-        # The area of each ring is then given by the differnence between two subseqent radial cap areas.
- 
-        area = 2.0*np.pi * (1.0 - np.cos( np.deg2rad( radii+0.5*delta_r ) ) )
+        # Use GetTopHatAreas to get the area of all pixels in a given circle.
+        # The area of each ring is then given by the differnence between two subseqent circle areas.
+        area = np.array( [self._theLikeHAWC.GetTopHatAreas(ra, dec, r+0.5*delta_r) for r in radii ] )
         area[1:] -= area[:-1] #convert to ring area 
+        area = area*(np.pi/180.)**2 #convert to sr
         
         model = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
         model[1:] -= model[:-1] #convert 'top hat' excesses into 'ring' excesses.
@@ -587,20 +583,18 @@ class HAWCLike(PluginPrototype):
 
                 
         #restrict all counts to the user-specified analysis bins.
+        area=area[:,good_bins]
         signal=signal[:,good_bins]
         model=model[:,good_bins]
         counts=counts[:,good_bins]
         bkg=bkg[:,good_bins]
- 
         
         #average over the analysis bins
-            
-        print counts.shape, model.shape, weight.shape
-
-        excess_data =  np.average( signal, weights=weight, axis=1 ) / area           
-        excess_error = np.sqrt( np.sum( counts*weight*weight, axis=1 )) / area
-        excess_model = np.average( model, weights=weight, axis=1 ) / area
-   
+        
+        excess_data =  np.average( signal/area , weights=weight, axis=1 )           
+        excess_error = np.sqrt( np.sum( counts*weight*weight/(area*area) , axis=1 )) 
+        excess_model = np.average( model/area , weights=weight, axis=1 )    
+        
         return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names, key=int)
 
 
