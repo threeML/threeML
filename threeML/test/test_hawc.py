@@ -38,7 +38,7 @@ _maptree_name = "maptree_256.root"
 _response_name = "detector_response.root"
 
 
-@skip_if_hawc_is_not_available
+#@skip_if_hawc_is_not_available
 def test_hawc_point_source_fit():
 
     # Ensure test environment is valid
@@ -128,7 +128,7 @@ def test_hawc_point_source_fit():
 
     spectrum.display()
 
-@skip_if_hawc_is_not_available
+#@skip_if_hawc_is_not_available
 def test_hawc_extended_source_fit():
 
     # Ensure test environment is valid
@@ -234,8 +234,8 @@ def test_hawc_extended_source_fit():
     shape.display()
     
     
-@skip_if_hawc_is_not_available
-def test_display_residuals():
+#@skip_if_hawc_is_not_available
+def test_hawc_display_residuals():
 
     # Ensure test environment is valid
 
