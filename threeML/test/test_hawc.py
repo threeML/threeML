@@ -293,5 +293,102 @@ def test_display_residuals():
     llh.display(radius=0.5)
     llh.display_residuals_at_position( source.position.ra.value, source.position.dec.value, radius = 0.5 )
     
+@skip_if_hawc_is_not_available
+def test_radial_profile():
+    # Ensure test environment is valid
+
+    assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
+
+    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
+
+    maptree = os.path.join(data_path, _maptree_name)
+    response = os.path.join(data_path, _response_name)
+
+    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
+
+    # The simulated source has this spectrum (credits for simulation: Colas Riviere):
+    # CutOffPowerLaw,3.15e-11,2.37,42.3
+    # at this position:
+    # 100,22
+
+    # Define the spectral and spatial models for the source
+    spectrum = Cutoff_powerlaw()
+    source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
+
+    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
+    spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
+
+    spectrum.piv = 1 * u.TeV
+    spectrum.piv.fix = True
+
+    spectrum.index = -2.37
+    spectrum.index.bounds = (-4, -1)
+
+    spectrum.xc = 42.3 * u.TeV
+    spectrum.xc.bounds = (1 * u.TeV, 100 * u.TeV)
+
+    # Set up a likelihood model using the source.
+    # Then create a HAWCLike object using the model, the maptree, and detector
+    # response.
+    lm = Model(source)
+    llh = HAWCLike("HAWC", maptree, response)
+    llh.set_active_measurements(1, 9)
+
+    # Double check the free parameters
+    print("Likelihood model:\n")
+    print(lm)
+
+    # Set up the likelihood and run the fit
+    print("Performing likelihood fit...\n")
+    datalist = DataList(llh)
+    jl = JointLikelihood(lm, datalist, verbose=True)
+
+    jl.set_minimizer("ROOT")
+
+    parameter_frame, like = jl.fit(compute_covariance=False)
+
+
+    correct_radii = [ 0.1,  0.3,  0.5,  0.7,  0.9,  1.1,  1.3,  1.5,  1.7,  1.9]
+    correct_model = [  1.00635816e+07,   3.77671396e+06,   6.52140500e+05,   1.39108253e+05,   4.95474715e+04,   2.14023029e+04,   1.06772849e+04,   5.25318866e+03,   2.33563298e+03,   9.49504012e+02]
+    correct_data = [  9.85388626e+06,   3.86417068e+06,  6.72710742e+05,   1.39626894e+05,   4.97488619e+04,   3.89451456e+04,  -5.81909772e+04,   1.26997077e+04,   4.58937031e+03,  -1.88383873e+04]
+    correct_error = [ 236050.10257665,   81412.05436244,   40652.3404534,    30430.46607895,   25915.97033859,   24532.79588011,   23840.33882012,   21953.01507234,   19910.52807621,   17519.43963043]
+    correct_bins = ['4', '5', '6', '7', '8', '9']
+
+    subtracted_data = [ -2.09695382e+05,   8.74567227e+04,   2.05702422e+04,   5.18641216e+02,   2.01390472e+02,   1.75428427e+04,  -6.88682621e+04,   7.44651905e+03,   2.25373733e+03,  -1.97878914e+04]
     
+    max_radius = 2.0
+    n_bins = 10
+    bins_to_use =  ['4', '5', '6', '7', '8', '9']
     
+    radii, excess_model, excess_data, excess_error, list_of_bin_names = llh.get_radial_profile( source.position.ra.value, source.position.dec.value,bins_to_use, max_radius, n_bins)
+   
+    assert len(radii) == n_bins
+    assert len(excess_model) == n_bins
+    assert len(excess_data) == n_bins
+    assert len(excess_error) == n_bins
+   
+    assert list_of_bin_names == correct_bins
+   
+    for i in range(0, n_bins):
+      assert is_within_tolerance( radii[i], correct_radii[i])
+      assert is_within_tolerance( excess_model[i], correct_model[i])
+      assert is_within_tolerance( excess_data[i], correct_data[i])
+      assert is_within_tolerance( excess_error[i], correct_error[i])
+      
+    
+    radii, excess_model, excess_data, excess_error, list_of_bin_names = llh.get_radial_profile( source.position.ra.value, source.position.dec.value,bins_to_use, max_radius, n_bins, lm)
+
+    assert len(radii) == n_bins
+    assert len(excess_model) == n_bins
+    assert len(excess_data) == n_bins
+    assert len(excess_error) == n_bins
+   
+    assert list_of_bin_names == correct_bins
+   
+    for i in range(0, n_bins):
+      assert is_within_tolerance( radii[i], correct_radii[i])
+      assert is_within_tolerance( excess_model[i], correct_model[i])
+      assert is_within_tolerance( excess_data[i], subtracted_data[i])
+      assert is_within_tolerance( excess_error[i], correct_error[i])
+     
+ 
