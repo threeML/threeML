@@ -2,6 +2,8 @@ import collections
 import os
 import sys
 
+from copy import deepcopy
+
 import matplotlib.pyplot as plt
 import numpy as np
 from astromodels import Parameter
@@ -533,7 +535,9 @@ class HAWCLike(PluginPrototype):
         
         :return: np arrays with the radii, model profile, data profile, data uncertainty, list of analysis bins used.
         """
-        
+
+        self._fill_model_cache()
+
         #default is to use bins 4-9
         if bin_list is None:
           bin_list = self._min_and_max_to_list( 4, 10 ) 
@@ -566,10 +570,15 @@ class HAWCLike(PluginPrototype):
         counts = signal + bkg
 
         if model_to_subtract is not None:
-          model_subtract = np.array( [model_to_subtract._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
-          model_to_subtract[1:] -= model_to_subtract[:-1]
-          signal -= model_to_subtract
- 
+          this_model = deepcopy(self._model)
+          self.set_model( model_to_subtract )
+          self._fill_model_cache()
+          model_subtract = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
+          model_subtract[1:] -= model_subtract[:-1]
+          signal -= model_subtract
+          self.set_model(this_model)
+          self._fill_model_cache()
+           
         # weights are calculated as expected number of gamma-rays / number of background counts.
         # here, use max_radius to evaluate the number of gamma-rays/bkg counts.
         # The weights do not depend on the radius, but fill a matrix anyway so there's no confusion when multiplying them to the data later.
@@ -582,7 +591,7 @@ class HAWCLike(PluginPrototype):
         weight = np.array( [ w/np.sum(w)  for r in radii ] )
 
                 
-        #restrict all counts to the user-specified analysis bins.
+        #restrict profiles to the user-specified analysis bins.
         area=area[:,good_bins]
         signal=signal[:,good_bins]
         model=model[:,good_bins]
@@ -612,7 +621,7 @@ class HAWCLike(PluginPrototype):
         
         :return: plot of data - background vs model radial profiles.
         """
-        
+
         radii, excess_model, excess_data, excess_error, list_of_bin_names = self.get_radial_profile( ra, dec, bin_list, max_radius, n_radial_bins, model_to_subtract )
         
         fig, ax = plt.subplots()
@@ -653,6 +662,8 @@ class HAWCLike(PluginPrototype):
         self._theLikeHAWC.WriteModelMap(fileName, poisson)
 
     def write_residual_map(self, fileName):
+ 
+        self._fill_model_cache()
 
         self._theLikeHAWC.WriteResidualMap(fileName)
 
