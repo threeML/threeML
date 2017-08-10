@@ -537,6 +537,7 @@ class HAWCLike(PluginPrototype):
         """
 
         self._fill_model_cache()
+        self.calc_TS()
 
         #default is to use bins 4-9
         if bin_list is None:
@@ -573,11 +574,13 @@ class HAWCLike(PluginPrototype):
           this_model = deepcopy(self._model)
           self.set_model( model_to_subtract )
           self._fill_model_cache()
+          self.calc_TS()
           model_subtract = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
           model_subtract[1:] -= model_subtract[:-1]
           signal -= model_subtract
           self.set_model(this_model)
           self._fill_model_cache()
+          self.calc_TS()
            
         # weights are calculated as expected number of gamma-rays / number of background counts.
         # here, use max_radius to evaluate the number of gamma-rays/bkg counts.
