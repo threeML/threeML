@@ -2,6 +2,8 @@ import collections
 import os
 import sys
 
+from copy import deepcopy
+
 import matplotlib.pyplot as plt
 import numpy as np
 from astromodels import Parameter
@@ -518,6 +520,143 @@ class HAWCLike(PluginPrototype):
 
 
 
+
+    def get_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
+
+        """
+        Calculates radial profiles of data - background & model.
+    
+        :param ra: R.A. of origin for radial profile.
+        :param dec: Declination of origin of radial profile.
+        :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
+        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius for the disk to calculate the gamma/hadron weights. Default: 3.0
+        :param n_radial_bins: Number of bins for the radial profile. Default: 30.
+        :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
+        
+        :return: np arrays with the radii, model profile, data profile, data uncertainty, list of analysis bins used.
+        """
+
+        self._fill_model_cache()
+        self.calc_TS()
+
+        #default is to use bins 4-9
+        if bin_list is None:
+          bin_list = self._min_and_max_to_list( 4, 10 ) 
+                
+        #Need to make sure we don't try to use bins that we don't have data etc. for.
+        good_bins = [bin in bin_list for bin in self._bin_list]
+
+        list_of_bin_names = set(bin_list) & set(self._bin_list)
+
+
+        delta_r = 1.0*max_radius / n_radial_bins 
+        radii = np.array([ delta_r * (i+0.5) for i in range(0,n_radial_bins) ])
+        
+
+        # Use GetTopHatAreas to get the area of all pixels in a given circle.
+        # The area of each ring is then given by the differnence between two subseqent circle areas.
+        area = np.array( [self._theLikeHAWC.GetTopHatAreas(ra, dec, r+0.5*delta_r) for r in radii ] )
+        area[1:] -= area[:-1] #convert to ring area 
+        area = area*(np.pi/180.)**2 #convert to sr
+        
+        model = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
+        model[1:] -= model[:-1] #convert 'top hat' excesses into 'ring' excesses.
+
+        signal = np.array( [self._theLikeHAWC.GetTopHatExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
+        signal[1:] -= signal[:-1]
+
+        bkg = np.array( [self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, r+0.5*delta_r) for r in radii ])
+        bkg[1:] -= bkg[:-1]
+
+        counts = signal + bkg
+
+        if model_to_subtract is not None:
+          this_model = deepcopy(self._model)
+          self.set_model( model_to_subtract )
+          self._fill_model_cache()
+          self.calc_TS()
+          model_subtract = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
+          model_subtract[1:] -= model_subtract[:-1]
+          signal -= model_subtract
+          self.set_model(this_model)
+          self._fill_model_cache()
+          self.calc_TS()
+           
+        # weights are calculated as expected number of gamma-rays / number of background counts.
+        # here, use max_radius to evaluate the number of gamma-rays/bkg counts.
+        # The weights do not depend on the radius, but fill a matrix anyway so there's no confusion when multiplying them to the data later.
+        # weight is normalized (sum of weights over the bins = 1).
+        
+        total_model = np.array( self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, max_radius) )[good_bins]
+        total_excess = np.array( self._theLikeHAWC.GetTopHatExcesses(ra, dec, max_radius) )[good_bins]
+        total_bkg = np.array( self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, max_radius) )[good_bins]
+        w=np.divide( total_model, total_bkg )
+        weight = np.array( [ w/np.sum(w)  for r in radii ] )
+
+                
+        #restrict profiles to the user-specified analysis bins.
+        area=area[:,good_bins]
+        signal=signal[:,good_bins]
+        model=model[:,good_bins]
+        counts=counts[:,good_bins]
+        bkg=bkg[:,good_bins]
+        
+        #average over the analysis bins
+        
+        excess_data =  np.average( signal/area , weights=weight, axis=1 )           
+        excess_error = np.sqrt( np.sum( counts*weight*weight/(area*area) , axis=1 )) 
+        excess_model = np.average( model/area , weights=weight, axis=1 )    
+        
+        return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names, key=int)
+
+
+    def plot_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
+
+        """
+        Plots radial profiles of data - background & model.
+    
+        :param ra: R.A. of origin for radial profile.
+        :param dec: Declination of origin of radial profile.
+        :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
+        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius for the disk to calculate the gamma/hadron weights. Default: 3.0
+        :param n_radial_bins: Number of bins for the radial profile. Default: 30.
+        :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
+        
+        :return: plot of data - background vs model radial profiles.
+        """
+
+        radii, excess_model, excess_data, excess_error, list_of_bin_names = self.get_radial_profile( ra, dec, bin_list, max_radius, n_radial_bins, model_to_subtract )
+        
+        fig, ax = plt.subplots()
+        
+        plt.errorbar(radii, excess_data, yerr=excess_error, capsize=0,
+                         color='black', label='Excess (data-bkg)', fmt='.')
+
+        plt.plot(radii, excess_model, label='Model')
+
+        plt.legend(bbox_to_anchor=(1.0, 1.0), loc="upper right",
+                       numpoints=1)
+
+        plt.axhline(0, linestyle='--')
+
+        x_limits = [0, max_radius]
+        plt.xlim = x_limits
+
+        plt.ylabel("Apparent radial excess [sr$^{-1}$]")
+        plt.xlabel("Distance from source at (%.2f$^{\circ}$, %.2f$^{\circ}$) [$^{\circ}$]" % ( ra, dec ) )
+        plt.title("Radial profile, bin%s %s"  % ("s" if len(list_of_bin_names)>1 else "", list_of_bin_names ) )
+  
+
+        ax.grid(True)
+        
+        plt.tight_layout()
+
+        return fig
+
+
+
+
+
     def write_model_map(self, fileName, poisson=False):
 
         # This is to make sure we have computed the sources (otherwise the following method WriteModelMap will fail
@@ -526,6 +665,8 @@ class HAWCLike(PluginPrototype):
         self._theLikeHAWC.WriteModelMap(fileName, poisson)
 
     def write_residual_map(self, fileName):
+ 
+        self._fill_model_cache()
 
         self._theLikeHAWC.WriteResidualMap(fileName)
 
