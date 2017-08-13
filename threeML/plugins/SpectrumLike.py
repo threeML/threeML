@@ -1778,8 +1778,8 @@ class SpectrumLike(PluginPrototype):
 
         return model
 
-    @staticmethod
-    def _get_diff_flux_and_integral(likelihood_model):
+
+    def _get_diff_flux_and_integral(self,likelihood_model):
 
         if self._source_name is None:
 
