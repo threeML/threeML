@@ -12,7 +12,29 @@ __instrument_name = "General binned spectral data with energy dispersion"
 
 
 class DispersionSpectrumLike(SpectrumLike):
-    def __init__(self, name, observation, background=None, verbose=True):
+    def __init__(self, name, observation, background=None, background_exposure=None,verbose=True):
+        """
+        A plugin for generic spectral data with energy dispersion, accepts an observed binned spectrum,
+        and a background binned spectrum or plugin with the background data.
+
+        In the case of a binned background spectrum, the background model is profiled
+        out and the appropriate profile-likelihood is used to fit the total spectrum. In this
+        case, caution must be used when there are zero background counts in bins as the
+        profiled background parameters (one per channel) will then have zero information from which to
+        constrain the background. It is recommended to bin the spectrum such that there is one background count
+        per channel.
+
+        If either an SpectrumLike or XYLike instance is provided as background, it is assumed that this is the
+        background data and the likelihood model from this plugin is used to simultaneously fit the background
+        and source.
+
+        :param name: the plugin name
+        :param observation: the observed spectrum
+        :param background: the background spectrum or a plugin from which the background will be modeled
+        :param background_exposure: (optional) adjust the background exposure of the modeled background data comes from and
+        XYLike plugin
+        :param verbose: turn on/off verbose logging
+                """
         assert isinstance(observation,
                           BinnedSpectrumWithDispersion), "observed spectrum is not an instance of BinnedSpectrumWithDispersion"
 
@@ -25,6 +47,7 @@ class DispersionSpectrumLike(SpectrumLike):
         super(DispersionSpectrumLike, self).__init__(name=name,
                                                      observation=observation,
                                                      background=background,
+                                                     background_exposure=background_exposure,
                                                      verbose=verbose)
 
     def set_model(self, likelihoodModel):
@@ -44,7 +67,7 @@ class DispersionSpectrumLike(SpectrumLike):
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
 
-        differential_flux, integral = self._get_diff_flux_and_integral()
+        differential_flux, integral = self._get_diff_flux_and_integral(self._like_model)
 
         self._rsp.set_function(integral)
 
