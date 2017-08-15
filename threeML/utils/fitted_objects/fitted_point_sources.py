@@ -209,7 +209,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
         # first extract the source
 
-        self._point_source = analysis_result.optimized_model.point_sources[source]
+        self._point_source = analysis_result.optimized_model.sources[source]
 
 
         # extract the components

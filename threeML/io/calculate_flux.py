@@ -11,7 +11,7 @@ import collections
 
 def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, flux_unit, use_components,
                                  components_to_use,
-                                 confidence_level, equal_tailed, differential, sources_to_use):
+                                 confidence_level, equal_tailed, differential, sources_to_use, include_extended):
     """
     helper function to pull out analysis details that are common to flux and plotting functions
 
@@ -26,6 +26,7 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
     :param fraction_of_samples:
     :param differential:
     :param sources_to_use:
+    :param include_extended:
     :return:
     """
 
@@ -38,8 +39,10 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
     bayes_sources = collections.OrderedDict()
 
     for analysis in analysis_results:
-
-        for source_name, source in analysis.optimized_model.point_sources.items():
+    
+        items = analysis.optimized_model.point_sources.items() if not include_extended else analysis.optimized_model.sources.items()
+        
+        for source_name, source in items:
 
             if source_name in sources_to_use or not sources_to_use:
 

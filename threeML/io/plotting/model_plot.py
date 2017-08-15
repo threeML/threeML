@@ -38,6 +38,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
     :param subplot: subplot to use
     :param xscale: 'log' or 'linear'
     :param yscale: 'log' or 'linear'
+    :param include_extendend: True or False, plot extendend source spectra.
     :return:
     """
 
@@ -68,7 +69,8 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                  'legend_kwargs': threeML_config['model plot']['point source plot']['legend style'],
                  'subplot': None,
                  'xscale':'log',
-                 'yscale':'log'
+                 'yscale':'log',
+                 'include_extended':True
 
                  }
 
@@ -122,7 +124,8 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
         _defaults['confidence_level'],
         _defaults['equal_tailed'],
         differential=True,
-        sources_to_use=_defaults['sources_to_use'])
+        sources_to_use=_defaults['sources_to_use'],
+        include_extended=_defaults['include_extended'])
 
     # we are now ready to plot.
     # all calculations have been made.
