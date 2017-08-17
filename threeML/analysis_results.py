@@ -13,6 +13,8 @@ from astromodels.core.my_yaml import my_yaml
 from astromodels.core.model_parser import ModelParser
 
 from corner import corner
+import matplotlib.pyplot as plt
+
 
 try:
 
@@ -1066,6 +1068,163 @@ class BayesianResults(_AnalysisResults):
         fig = cc.plot(**_default_plot_args)
 
         return fig
+
+    def plot_chains(self, thin=None):
+        """
+        Produce a plot of the series of samples for each parameter
+
+        :parameter thin: use only one sample every 'thin' samples
+        :return: a list of matplotlib.figure instances
+        """
+
+        figures = []
+        for i, parameter_name in enumerate(self._free_parameters.keys()):
+
+            figure, subplot = plt.subplots(1, 1)
+
+            if thin is None:
+
+                # Use all samples
+
+                subplot.plot(self.samples[i,:])
+
+            else:
+
+                assert isinstance(thin, int), "Thin must be a integer number"
+
+                subplot.plot(self.samples[i,::thin])
+
+            subplot.set_ylabel(parameter_name.replace(".", "\n"))
+
+            if thin is None:
+              subplot.set_xlabel("sample #")
+            else:
+              subplot.set_xlabel("sample # / %d" % thin)
+              
+            figure.tight_layout()
+            figures.append(figure)
+
+        return figures
+          
+    def convergence_plots(self, n_samples_in_each_subset, n_subsets):
+        """
+        Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same
+        values if the MCMC has converged to the posterior distribution.
+
+        The subsamples are taken with two different strategies: the first is to slide a fixed-size window, the second
+        is to take random samples from the chain (bootstrap)
+
+        :param n_samples_in_each_subset: number of samples in each subset
+        :param n_subsets: number of subsets to take for each strategy
+        :return: a matplotlib.figure instance
+        """
+
+        # Compute all the quantities
+
+        averages = {}
+        bootstrap_averages = {}
+
+        variances = {}
+        bootstrap_variances = {}
+
+        n_samples = self.samples.shape[1]
+
+        stepsize = n_samples // n_subsets
+
+        assert stepsize > 10, "Too few samples for this method to be effective"
+
+        print("Stepsize for sliding window is %s" % stepsize)
+
+        for j, parameter_name in enumerate(self._free_parameters.keys()):
+
+            this_samples = self.samples[j,:]
+            print this_samples.shape 
+
+            # First compute averages and variances using the sliding window
+
+            this_averages = []
+            this_variances = []
+
+            for i in range(n_subsets):
+
+                idx1 = i * stepsize
+                idx2 = idx1 + n_samples_in_each_subset
+
+                if idx2 > n_samples - 1:
+                    break
+
+                this_averages.append(np.average(this_samples[idx1: idx2]))
+                this_variances.append(np.std(this_samples[idx1: idx2]))
+
+            averages[parameter_name] = this_averages
+
+            variances[parameter_name] = this_variances
+
+            # Now choose random samples and do the same
+
+            this_bootstrap_averages = []
+            this_bootstrap_variances = []
+
+            for i in range(n_subsets):
+                samples = np.random.choice(this_samples, n_samples_in_each_subset)
+
+                this_bootstrap_averages.append(np.average(samples))
+                this_bootstrap_variances.append(np.std(samples))
+
+            bootstrap_averages[parameter_name] = this_bootstrap_averages
+            bootstrap_variances[parameter_name] = this_bootstrap_variances
+
+        # Now plot all these things
+
+        def plot_one_histogram(subplot, data, label):
+
+            nbins = int(self.freedman_diaconis_rule(data))
+
+            subplot.hist(data, nbins, label=label)
+
+            subplot.locator_params(nbins=4)
+
+        figures = []
+
+        for i, parameter_name in enumerate(self._free_parameters.keys()):
+            fig, subs = plt.subplots(1, 2, sharey=True)
+
+            fig.suptitle(parameter_name)
+
+            plot_one_histogram(subs[0], averages[parameter_name], 'sliding window')
+            plot_one_histogram(subs[0], bootstrap_averages[parameter_name], 'bootstrap')
+
+            subs[0].set_ylabel("N subsets")
+            subs[0].set_xlabel("Average")
+            
+            subs[0].legend()
+            
+            plot_one_histogram(subs[1], variances[parameter_name], 'sliding window')
+            plot_one_histogram(subs[1], bootstrap_variances[parameter_name], 'bootstrap')
+
+            subs[1].set_xlabel("Std. deviation")
+            fig.tight_layout()
+            figures.append(fig)
+
+        return figures
+
+    @staticmethod
+    def freedman_diaconis_rule(data):
+        """
+        Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data
+
+        :param data: an array of data
+        :return: the optimal number of bins
+        """
+
+        q25, q75 = np.percentile(data, [25.0, 75.0])
+        iqr = abs(q75 - q25)
+
+        binsize = 2 * iqr * pow(len(data), -1 / 3.0)
+
+        nbins = np.ceil((max(data) - min(data)) / binsize)
+
+        return nbins
 
 
 
