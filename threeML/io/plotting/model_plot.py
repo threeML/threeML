@@ -38,7 +38,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
     :param subplot: subplot to use
     :param xscale: 'log' or 'linear'
     :param yscale: 'log' or 'linear'
-    :param include_extendend: True or False, plot extendend source spectra.
+    :param include_extendend: True or False, also plot extendend source spectra.
     :return:
     """
 
@@ -70,7 +70,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                  'subplot': None,
                  'xscale':'log',
                  'yscale':'log',
-                 'include_extended':True
+                 'include_extended':False
 
                  }
 
