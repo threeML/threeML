@@ -1,0 +1,67 @@
+{% set name = "html2text" %}
+{% set version = "2016.9.19" %}
+{% set hash_type = "sha256" %}
+{% set hash_value = "554ef5fd6c6cf6e3e4f725a62a3e9ec86a0e4d33cd0928136d1c79dbeb7b2d55" %}
+
+package:
+  version: '{{ version }}'
+  name: '{{ name|lower }}'
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  '{{ hash_type }}': '{{ hash_value }}'
+  fn: '{{ name }}-{{ version }}.tar.gz'
+
+build:
+  entry_points:
+    - html2text=html2text.cli:main
+  number: 0
+  script: python setup.py install  --single-version-externally-managed --record=record.txt
+
+requirements:
+  run:
+    - python
+    - setuptools
+  build:
+    - python
+    - setuptools
+
+test:
+  imports:
+    - html2text
+  commands:
+    - html2text --help
+
+about:
+  dev_url: ''
+  description: "html2text\n=========\n\n|Build Status| |Coverage Status| |Downloads| |Version| |Wheel?| |Format|\n|License|\n\nhtml2text is a Python script that converts a page of HTML into clean,\neasy-to-read\
+    \ plain ASCII text. Better yet, that ASCII also happens to be\nvalid Markdown (a text-to-HTML format).\n\nUsage: ``html2text [(filename|url) [encoding]]``\n\n+---------------------------------------+------------------------------------+\n\
+    | Option                                | Description                        |\n+=======================================+====================================+\n| ``--version``                      \
+    \   | Show program's version number and  |\n|                                       | exit                               |\n+---------------------------------------+------------------------------------+\n\
+    | ``-h``, ``--help``                    | Show this help message and exit    |\n+---------------------------------------+------------------------------------+\n| ``--ignore-links``                 \
+    \   | Don't include any formatting for   |\n|                                       | links                              |\n+---------------------------------------+------------------------------------+\n\
+    | ``--escape-all``                      | Escape all special characters.     |\n|                                       | Output is less readable, but       |\n|                                    \
+    \   | avoids corner case formatting      |\n|                                       | issues.                            |\n+---------------------------------------+------------------------------------+\n\
+    | ``--reference-links``                 | Use reference links instead of     |\n|                                       | links to create markdown           |\n+---------------------------------------+------------------------------------+\n\
+    | ``--mark-code``                       | Mark preformatted and code blocks  |\n|                                       | with [code]...[/code]              |\n+---------------------------------------+------------------------------------+\n\
+    \nFor a complete list of options see the\n`docs <https://github.com/Alir3z4/html2text/blob/master/docs/usage.md>`__\n\nOr you can use it from within ``Python``:\n\n::\n\n    >>> import html2text\n \
+    \   >>>\n    >>> print(html2text.html2text(\"<p><strong>Zed's</strong> dead baby, <em>Zed's</em> dead.</p>\"))\n    **Zed's** dead baby, _Zed's_ dead.\n\nOr with some configuration options:\n\n::\n\n\
+    \    >>> import html2text\n    >>>\n    >>> h = html2text.HTML2Text()\n    >>> # Ignore converting links from HTML\n    >>> h.ignore_links = True\n    >>> print h.handle(\"<p>Hello, <a href='http://earth.google.com/'>world</a>!\"\
+    )\n    Hello, world!\n\n    >>> print(h.handle(\"<p>Hello, <a href='http://earth.google.com/'>world</a>!\"))\n\n    Hello, world!\n\n    >>> # Don't Ignore links anymore, I like links\n    >>> h.ignore_links\
+    \ = False\n    >>> print(h.handle(\"<p>Hello, <a href='http://earth.google.com/'>world</a>!\"))\n    Hello, [world](http://earth.google.com/)!\n\n*Originally written by Aaron Swartz. This code is distributed\
+    \ under the\nGPLv3.*\n\nHow to install\n--------------\n\n``html2text`` is available on pypi\nhttps://pypi.python.org/pypi/html2text\n\n::\n\n    $ pip install html2text\n\nHow to run unit tests\n---------------------\n\
+    \n::\n\n    PYTHONPATH=$PYTHONPATH:. coverage run --source=html2text setup.py test -v\n\nTo see the coverage results:\n\n::\n\n    coverage combine\n    coverage html\n\nthen open the ``./htmlcov/index.html``\
+    \ file in your browser.\n\nDocumentation\n-------------\n\nDocumentation lives\n`here <https://github.com/Alir3z4/html2text/blob/master/docs/usage.md>`__\n\n.. |Build Status| image:: https://secure.travis-ci.org/Alir3z4/html2text.png\n\
+    \   :target: http://travis-ci.org/Alir3z4/html2text\n.. |Coverage Status| image:: https://coveralls.io/repos/Alir3z4/html2text/badge.png\n   :target: https://coveralls.io/r/Alir3z4/html2text\n.. |Downloads|\
+    \ image:: http://badge.kloud51.com/pypi/d/html2text.png\n   :target: https://pypi.python.org/pypi/html2text/\n.. |Version| image:: http://badge.kloud51.com/pypi/v/html2text.png\n   :target: https://pypi.python.org/pypi/html2text/\n\
+    .. |Wheel?| image:: http://badge.kloud51.com/pypi/wheel/html2text.png\n   :target: https://pypi.python.org/pypi/html2text/\n.. |Format| image:: http://badge.kloud51.com/pypi/format/html2text.png\n \
+    \  :target: https://pypi.python.org/pypi/html2text/\n.. |License| image:: http://badge.kloud51.com/pypi/license/html2text.png\n   :target: https://pypi.python.org/pypi/html2text/"
+  license: GNU General Public License (GPL)
+  license_family: LGPL
+  summary: Turn HTML into equivalent Markdown-structured text.
+  home: https://github.com/Alir3z4/html2text/
+  license_file: ''
+  doc_url: ''
+
+extra:
+  recipe-maintainers: ''

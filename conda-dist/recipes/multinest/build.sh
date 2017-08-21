@@ -12,7 +12,7 @@ fi
 if [ "$(uname)" == "Linux" ]; then
 
     cd build
-    cmake -DCMAKE_INSTALL_PREFIX=${PREFIX} ..
+    cmake -DCMAKE_INSTALL_PREFIX=${PREFIX} -DLAPACK_LIBRARIES=${PREFIX}/lib/liblapack.so -DBLAS_LIBRARIES=${PREFIX}/lib/libcblas.so ..
     make
     make install
 
