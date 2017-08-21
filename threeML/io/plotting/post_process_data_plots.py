@@ -215,6 +215,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     # go thru the detectors
     for key, data_color, model_color, min_rate, model_label in zip(data_keys, data_colors, model_colors, min_rates, model_labels):
 
+
+
         # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
 
         data = analysis.data_list[key] # type: SpectrumLike
@@ -233,7 +235,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                            )
 
 
-        return residual_plot.figure
+    return residual_plot.figure
 
 
 
