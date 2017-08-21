@@ -1,0 +1,63 @@
+{% set name = "astropy-helpers" %}
+{% set version = "2.0.1" %}
+{% set hash_type = "sha256" %}
+{% set hash_value = "42427a1b3f027b2bfeb528610bc3d82d182053323b51a97403a4ce09fa3bbc82" %}
+
+package:
+  version: '{{ version }}'
+  name: '{{ name|lower }}'
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  '{{ hash_type }}': '{{ hash_value }}'
+  fn: '{{ name }}-{{ version }}.tar.gz'
+
+build:
+  number: 0
+  script: python setup.py install  --single-version-externally-managed --record=record.txt
+
+requirements:
+  run:
+    - python
+    - sphinx
+  build:
+    - python
+    - setuptools
+    - sphinx
+
+test:
+  imports:
+    - astropy_helpers
+    - astropy_helpers.commands
+    - astropy_helpers.compat
+    - astropy_helpers.extern
+    - astropy_helpers.extern.automodapi
+    - astropy_helpers.extern.numpydoc
+    - astropy_helpers.sphinx
+    - astropy_helpers.sphinx.ext
+    - astropy_helpers.sphinx.ext.tests
+
+about:
+  dev_url: ''
+  description: "astropy-helpers\n===============\n\n* Stable versions: https://pypi.org/project/astropy-helpers/\n* Development version, issue tracker: https://github.com/astropy/astropy-helpers\n\nThis\
+    \ project provides a Python package, ``astropy_helpers``, which includes\nmany build, installation, and documentation-related tools used by the Astropy\nproject, but packaged separately for use by other\
+    \ projects that wish to\nleverage this work.  The motivation behind this package and details of its\nimplementation are in the accepted \n`Astropy Proposal for Enhancement (APE) 4 <https://github.com/astropy/astropy-APEs/blob/master/APE4.rst>`_.\n\
+    \nThe ``astropy_helpers.extern`` sub-module includes modules developed elsewhere\nthat are bundled here for convenience. At the moment, this consists of the\nfollowing two sphinx extensions:\n\n* `numpydoc\
+    \ <https://github.com/numpy/numpydoc>`_, a Sphinx extension\n  developed as part of the Numpy project. This is used to parse docstrings\n  in Numpy format\n\n* `sphinx-automodapi <https://github.com/astropy/sphinx-automodapi>`_,\
+    \ a Sphinx\n  developed as part of the Astropy project. This used to be developed directly\n  in ``astropy-helpers`` but is now a standalone package.\n\nIssues with these sub-modules should be reported\
+    \ in their respective repositories,\nand we will regularly update the bundled versions to reflect the latest released\nversions.\n\n``astropy_helpers`` includes a special \"bootstrap\" module called\n\
+    ``ah_bootstrap.py`` which is intended to be used by a project's setup.py in\norder to ensure that the ``astropy_helpers`` package is available for\nbuild/installation.  This is similar to the ``ez_setup.py``\
+    \ module that is\nshipped with some projects to bootstrap `setuptools\n<https://bitbucket.org/pypa/setuptools>`_.\n\nAs described in APE4, the version numbers for ``astropy_helpers`` follow the\ncorresponding\
+    \ major/minor version of the `astropy core package\n<http://www.astropy.org/>`_, but with an independent sequence of micro (bugfix)\nversion numbers. Hence, the initial release is 0.4, in parallel with\
+    \ Astropy\nv0.4, which will be the first version  of Astropy to use ``astropy-helpers``.\n\nFor examples of how to implement ``astropy-helpers`` in a project,\nsee the ``setup.py`` and ``setup.cfg``\
+    \ files of the \n`Affiliated package template <https://github.com/astropy/package-template>`_.\n\n.. image:: https://travis-ci.org/astropy/astropy-helpers.svg\n    :target: https://travis-ci.org/astropy/astropy-helpers\n\
+    \n.. image:: https://coveralls.io/repos/astropy/astropy-helpers/badge.svg\n    :target: https://coveralls.io/r/astropy/astropy-helpers"
+  license: BSD License
+  license_family: BSD
+  summary: Utilities for building and installing Astropy, Astropy affiliated packages, and their respective documentation.
+  home: ' https://github.com/astropy/astropy-helpers'
+  license_file: ''
+  doc_url: ''
+
+extra:
+  recipe-maintainers: ''
