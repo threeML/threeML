@@ -7,15 +7,18 @@ source:
 
 requirements:
   build:
+    - python
     - cmake
-    - mpi4py
     - lapack
-    - libgfortran
+    - libgcc [osx]
+    - gcc [osx]
+    - libgfortran [linux]
 
   run:
-    - mpi4py
+    - python
     - lapack
-    - libgfortran
+    - libgcc [osx]
+    - libgfortran [linux]
 
 about:
   home: https://github.com/JohannesBuchner/MultiNest
