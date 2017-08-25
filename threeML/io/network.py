@@ -39,7 +39,7 @@ def internet_connection_is_active():
     else:
 
         # We have a proxy. We cannot connect straight to the DNS of Google, we need to tunnel through the proxy
-        # Since using raw sockets gets complicated and error prone, especially if the proxy as authentication tokens,
+        # Since using raw sockets gets complicated and error prone, especially if the proxy has authentication tokens,
         # we just try to reach google with a sensible timeout
         try:
 
