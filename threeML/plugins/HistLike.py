@@ -8,6 +8,7 @@ from threeML.plugins.OGIP.likelihood_functions import half_chi2
 
 __instrument_name = "n.a."
 
+
 class HistLike(XYLike):
 
     def __init__(self,name, histogram):
@@ -38,11 +39,11 @@ class HistLike(XYLike):
         # Make a function which will stack all point sources (HISTLike does not support spatial dimension)
 
         def differential_flux(energies):
-            fluxes = self._likelihood_model.get_point_source_fluxes(0, energies)
+            fluxes = self._likelihood_model.get_point_source_fluxes(0, energies, tag=self._tag)
 
             # If we have only one point source, this will never be executed
             for i in range(1, n_point_sources):
-                fluxes += self._likelihood_model.get_point_source_fluxes(i, energies)
+                fluxes += self._likelihood_model.get_point_source_fluxes(i, energies, tag=self._tag)
 
             return fluxes
 

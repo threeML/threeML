@@ -288,9 +288,11 @@ class XYLike(PluginPrototype):
 
             # Make a function which will stack all point sources (XYLike do not support spatial dimension)
 
-            expectation = np.sum(map(lambda source: source(self._x),
-                                 self._likelihood_model.point_sources.values()),
-                                 axis=0)
+            expectations = map(lambda source_id: self._likelihood_model.get_point_source_fluxes(source_id, self._x,
+                                                                                                tag=self._tag),
+                               range(n_point_sources)),
+
+            expectation = np.sum(expectations, axis=0)
 
         else:
 
