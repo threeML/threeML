@@ -13,9 +13,6 @@ from threeML.config.config import threeML_config
 from threeML.io.plotting.step_plot import step_plot
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 
-from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.plugins.PhotometryLike import PhotometryLike
-
 # This file contains plots which are plot in data space after a model has been
 # assigned to the plugin.
 
@@ -219,7 +216,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
 
-        data = analysis.data_list[key] # type: SpectrumLike
+        data = analysis.data_list[key] # type: threeML.plugins.SpectrumLike.SpectrumLike
 
         data.display_model(data_color=data_color,
                            model_color=model_color,
@@ -236,9 +233,6 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
 
     return residual_plot.figure
-
-
-
 
 
 def display_histogram_fit(analysis, data=(), **kwargs):
@@ -518,7 +512,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
         # Make sure it is a valid key
         if key in analysis.data_list.keys():
 
-            if isinstance(analysis.data_list[key], PhotometryLike):
+            if isinstance(analysis.data_list[key], threeML.plugins.PhotometryLike.PhotometryLike):
 
                 new_data_keys.append(key)
 
@@ -585,7 +579,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     for key, data_color, model_color in zip(data_keys, data_colors, model_colors):
 
 
-        data = analysis.data_list[key]  # type: PhotometryLike
+        data = analysis.data_list[key]  # type: threeML.plugins.PhotometryLike.PhotometryLike
 
 
         # get the expected counts
