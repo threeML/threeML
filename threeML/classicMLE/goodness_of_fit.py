@@ -72,8 +72,7 @@ class GoodnessOfFit(object):
 
         # Use the same minimizer as in the joint likelihood object
 
-        minimizer_name, algorithm, callback = self._jl_instance.minimizer_in_use
-        jl_set.set_minimizer(minimizer_name, algorithm, callback)
+        jl_set.set_minimizer(self._jl_instance.minimizer_in_use)
 
         # Run the set
         data_frame, like_data_frame = jl_set.go(continue_on_failure=continue_on_failure)
