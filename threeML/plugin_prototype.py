@@ -9,26 +9,26 @@ import functools
 from astromodels import IndependentVariable
 
 
-def set_external_property(method):
-    """
-    Sets external property values if they exist
-
-
-    :param method:
-    :return:
-    """
-
-    @functools.wraps(method)
-    def wrapper(instance, *args, **kwargs):
-
-        if instance._external_properties:
-
-            for property, value in instance._external_properties:
-                property.value = value
-
-        return method(instance, *args, **kwargs)
-
-    return wrapper
+# def set_external_property(method):
+#     """
+#     Sets external property values if they exist
+#
+#
+#     :param method:
+#     :return:
+#     """
+#
+#     @functools.wraps(method)
+#     def wrapper(instance, *args, **kwargs):
+#
+#         if instance._external_properties:
+#
+#             for property, value in instance._external_properties:
+#                 property.value = value
+#
+#         return method(instance, *args, **kwargs)
+#
+#     return wrapper
 
 
 class PluginPrototype(object):
@@ -103,11 +103,16 @@ class PluginPrototype(object):
         """
 
         warnings.warn(
-            "get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable", )
+            "get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are "
+            "unreliable", )
 
         return 1.
 
-    def tag(self, independent_variable, start, end=None):
+    def _get_tag(self):
+
+        return self._tag
+
+    def _set_tag(self, spec):
         """
         Tag this plugin with the provided independent variable and a start and end value.
 
@@ -122,6 +127,19 @@ class PluginPrototype(object):
         :return: none
         """
 
+        if len(spec) == 2:
+
+            independent_variable, start = spec
+            end = None
+
+        elif len(spec) == 3:
+
+            independent_variable, start, end = spec
+
+        else:
+
+            raise ValueError("Tag specification should be (independent_variable, start[, end])")
+
         # Let's do a lazy check
 
         if not isinstance(independent_variable, IndependentVariable):
@@ -131,6 +149,9 @@ class PluginPrototype(object):
                           "other problems." % type(independent_variable))
 
         self._tag = (independent_variable, start, end)
+
+    tag = property(_get_tag, _set_tag, doc="Gets/sets the tag for this instance, as (independent variable, start, "
+                                           "[end])")
 
     ######################################################################
     # The following methods must be implemented by each plugin
