@@ -288,11 +288,9 @@ class XYLike(PluginPrototype):
 
             # Make a function which will stack all point sources (XYLike do not support spatial dimension)
 
-            expectations = map(lambda source_id: self._likelihood_model.get_point_source_fluxes(source_id, self._x,
-                                                                                                tag=self._tag),
-                               range(n_point_sources)),
-
-            expectation = np.sum(expectations, axis=0)
+            expectation = np.sum(map(lambda source: source(self._x, tag=self._tag),
+                                     self._likelihood_model.point_sources.values()),
+                                 axis=0)
 
         else:
 
@@ -430,12 +428,13 @@ class XYLike(PluginPrototype):
         return self._get_total_expectation()
 
 
-    def fit(self, function, minimizer='minuit'):
+    def fit(self, function, minimizer='minuit', verbose=False):
         """
         Fit the data with the provided function (an astromodels function)
 
         :param function: astromodels function
         :param minimizer: the minimizer to use
+        :param verbose: print every step of the fit procedure
         :return: best fit results
         """
 
@@ -447,7 +446,7 @@ class XYLike(PluginPrototype):
 
         self.set_model(model)
 
-        self._joint_like_obj = JointLikelihood(model, DataList(self), verbose=False)
+        self._joint_like_obj = JointLikelihood(model, DataList(self), verbose=verbose)
 
         self._joint_like_obj.set_minimizer(minimizer)
 

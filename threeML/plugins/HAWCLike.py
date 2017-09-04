@@ -360,7 +360,7 @@ class HAWCLike(PluginPrototype):
             # The 1000.0 factor is due to the fact that this diff. flux here is in
             # 1 / (kev cm2 s) while LiFF needs it in 1 / (MeV cm2 s)
 
-            this_spectrum = self._model.get_point_source_fluxes(id, self._energies) * 1000.0
+            this_spectrum = self._model.get_point_source_fluxes(id, self._energies, tag=self._tag) * 1000.0
 
             this_ra, this_dec = self._model.get_point_source_position(id)
 

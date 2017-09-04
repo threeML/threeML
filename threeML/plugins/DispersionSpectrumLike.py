@@ -12,6 +12,7 @@ __instrument_name = "General binned spectral data with energy dispersion"
 
 
 class DispersionSpectrumLike(SpectrumLike):
+
     def __init__(self, name, observation, background=None, background_exposure=None,verbose=True):
         """
         A plugin for generic spectral data with energy dispersion, accepts an observed binned spectrum,
