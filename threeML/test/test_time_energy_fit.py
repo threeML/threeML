@@ -54,7 +54,9 @@ def test_energy_time_fit():
 
         xyl = XYLike("data%i" % i, x, y, y_err)
 
-        xyl.tag(time, time_tags[i])
+        xyl.tag = (time, time_tags[i])
+
+        assert xyl.tag == (time, time_tags[i], None)
 
         plugins.append(xyl)
 

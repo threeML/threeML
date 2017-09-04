@@ -302,7 +302,6 @@ def test_gbm_tte_joint_likelihood_fitting():
 
             assert jl.current_minimum is None
             assert jl.minimizer is None
-            assert jl.ncalls == 0
             assert jl.verbose == False
 
             res, _ = jl.fit()
@@ -310,7 +309,6 @@ def test_gbm_tte_joint_likelihood_fitting():
             assert jl.current_minimum is not None
 
             assert jl.minimizer is not None
-            assert jl.ncalls != 1
 
 
 def test_gbm_tte_bayesian_fitting():
