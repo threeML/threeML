@@ -391,4 +391,65 @@ def test_radial_profile():
       assert is_within_tolerance( excess_data[i], subtracted_data[i])
       assert is_within_tolerance( excess_error[i], correct_error[i])
      
- 
+
+def test_CommonNorm_fit():
+
+    assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
+
+    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
+
+    maptree = os.path.join(data_path, _maptree_name)
+    response = os.path.join(data_path, _response_name)
+
+    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
+    # The simulated source has this spectrum (credits for simulation: Colas Riviere):
+    # CutOffPowerLaw,3.15e-11,2.37,42.3
+    # at this position:
+    # 100,22
+
+    # Define the spectral and spatial models for the source
+    spectrum = Cutoff_powerlaw()
+    source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
+
+    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
+    spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
+    spectrum.K.fix = True
+
+    spectrum.piv = 1 * u.TeV
+    spectrum.piv.fix = True
+
+    spectrum.index = -2.37
+    spectrum.index.bounds = (-4, -1)
+    spectrum.index.free = False
+
+    spectrum.xc = 42.3 * u.TeV
+    spectrum.xc.bounds = (1 * u.TeV, 100 * u.TeV)
+    spectrum.xc.free = False
+
+    q = source(1 * u.keV)
+
+    assert np.isclose(q.value, 67.3458058177)
+
+    # Set up a likelihood model using the source.
+    # Then create a HAWCLike object using the model, the maptree, and detector
+    # response.
+    lm = Model(source)
+    llh = HAWCLike("HAWC", maptree, response)
+    llh.set_active_measurements(1, 9)
+
+    llh.activate_CommonNorm()
+
+    # Double check the free parameters
+    print("Likelihood model:\n")
+    print(lm)
+
+    # Set up the likelihood and run the fit
+    print("Performing likelihood fit...\n")
+    datalist = DataList(llh)
+    jl = JointLikelihood(lm, datalist, verbose=True)
+
+    jl.set_minimizer("ROOT")
+
+    parameter_frame, like = jl.fit(compute_covariance=False)
+
+    assert np.isclose(lm.HAWC_ComNorm.value, 1.02567968495, rtol=1e-2)
