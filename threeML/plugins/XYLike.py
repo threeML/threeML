@@ -224,9 +224,9 @@ class XYLike(PluginPrototype):
         :return: none
         """
 
-        if self._likelihood_model is not None:
+        if self._likelihood_model is not None and source_name is not None:
 
-            assert self._source_name in self._likelihood_model.sources, "Source %s is not contained in " \
+            assert source_name in self._likelihood_model.sources, "Source %s is not contained in " \
                                                                         "the likelihood model" % source_name
 
         self._source_name = source_name
