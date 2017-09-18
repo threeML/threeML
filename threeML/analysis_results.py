@@ -590,7 +590,7 @@ class _AnalysisResults(object):
 
         if error_type == "equal tail":
 
-            errors_gatherer = RandomVariates.equal_tail_confidence_interval
+            errors_gatherer = RandomVariates.equal_tail_interval
 
         elif error_type == "hpd":
 

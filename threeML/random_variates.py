@@ -149,7 +149,7 @@ class RandomVariates(np.ndarray):
 
         # Get representation for the equal-tail interval
 
-        min_bound, max_bound = self.equal_tail_confidence_interval(0.68)
+        min_bound, max_bound = self.equal_tail_interval(0.68)
 
         eqt_string = uncertainty_formatter(self.median, min_bound, max_bound)
 
