@@ -1067,6 +1067,22 @@ class BayesianResults(_AnalysisResults):
 
         return fig
 
+    def get_highest_density_posterior_interval(self,parameter_path,cl=0.68):
+        """
+
+        :param parameter_path: path of the parameter
+        :param cl: credible interval to obtain
+        :return: (low bound, high bound)
+        """
+
+
+        variates = self.get_variates(parameter_path)
+
+        return variates.highest_posterior_density_interval(cl)
+
+
+
+
 
 
 
