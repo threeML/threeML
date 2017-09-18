@@ -11,6 +11,7 @@ import astropy.units as u
 import astromodels
 from astromodels.core.my_yaml import my_yaml
 from astromodels.core.model_parser import ModelParser
+from astromodels.core.parameter import Parameter
 
 from corner import corner
 
@@ -589,7 +590,7 @@ class _AnalysisResults(object):
 
         if error_type == "equal tail":
 
-            errors_gatherer = RandomVariates.equal_tail_confidence_interval
+            errors_gatherer = RandomVariates.equal_tail_interval
 
         elif error_type == "hpd":
 
@@ -736,6 +737,31 @@ class _AnalysisResults(object):
             # Return the dataframe
             return bayes_results
 
+
+    def get_equal_tailed_interval(self,parameter,cl=0.68):
+        """
+
+        returns the equal tailed interval for the parameter
+
+        :param parameter_path: path of the parameter or parameter instance
+        :param cl: credible interval to obtain
+        :return: (low bound, high bound)
+        """
+
+        if isinstance(parameter,Parameter):
+
+
+            path = parameter.path
+
+        else:
+
+            path = parameter
+
+
+
+        variates = self.get_variates(path)
+
+        return variates.equal_tail_interval(cl)
 
 
 class BayesianResults(_AnalysisResults):
@@ -1066,6 +1092,34 @@ class BayesianResults(_AnalysisResults):
         fig = cc.plot(**_default_plot_args)
 
         return fig
+
+    def get_highest_density_posterior_interval(self,parameter,cl=0.68):
+        """
+
+        returns the highest density posterior interval for that parameter
+
+        :param parameter_path: path of the parameter or parameter instance
+        :param cl: credible interval to obtain
+        :return: (low bound, high bound)
+        """
+
+        if isinstance(parameter,Parameter):
+
+
+            path = parameter.path
+
+        else:
+
+            path = parameter
+
+
+
+        variates = self.get_variates(path)
+
+        return variates.highest_posterior_density_interval(cl)
+
+
+
 
 
 
