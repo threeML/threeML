@@ -346,7 +346,30 @@ class TimeSeriesBuilder(object):
 
             return np.array(sig_per_interval)
 
+    @property
+    def total_counts_per_interval(self):
 
+        if self._time_series.bins is not None:
+
+            total_counts = []
+
+            for (start, stop) in self._time_series.bins.bin_stack:
+
+                total_counts.append(self._time_series.counts_over_interval(start,stop))
+
+            return np.array(total_counts)
+
+    @property
+    def background_counts_per_interval(self):
+
+        if self._time_series.bins is not None:
+
+            total_counts = []
+
+            for (start, stop) in self._time_series.bins.bin_stack:
+                total_counts.append(self._time_series.get_total_poly_count(start,stop))
+
+            return np.array(total_counts)
 
 
     def read_bins(self, time_series_builder):
