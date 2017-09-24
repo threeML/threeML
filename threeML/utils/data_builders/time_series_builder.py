@@ -237,7 +237,7 @@ class TimeSeriesBuilder(object):
                 self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response,
                                                                                           use_poly=True)
 
-    def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False):
+    def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False, force_rsp_write=False):
         """
         Write PHA fits files from the selected bins. If writing from an event list, the
         bins are from create_time_bins. If using a pre-time binned time series, the bins are those
@@ -247,6 +247,7 @@ class TimeSeriesBuilder(object):
         :param start: optional start time of the bins
         :param stop: optional stop time of the bins
         :param overwrite: if the fits files should be overwritten
+        :param force_rsp_write: force the writing of RSPs
         :return: None
         """
 
@@ -260,7 +261,7 @@ class TimeSeriesBuilder(object):
 
         pha_writer = PHAWrite(*ogip_list)
 
-        pha_writer.write(file_name, overwrite=overwrite)
+        pha_writer.write(file_name, overwrite=overwrite, force_rsp_write=force_rsp_write)
 
     def get_background_parameters(self):
         """
