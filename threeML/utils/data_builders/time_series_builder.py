@@ -319,6 +319,34 @@ class TimeSeriesBuilder(object):
 
         return self._time_series.bins
 
+    @property
+    def significance_per_interval(self):
+
+        if self._time_series.bins is not None:
+
+            sig_per_interval = []
+
+
+            # go thru each interval and extract the significance
+
+            for (start, stop) in self._time_series.bins.bin_stack:
+
+
+                total_counts = self._time_series.counts_over_interval(start,stop)
+                bkg_counts = self._time_series.get_total_poly_count(start,stop)
+                bkg_error = self._time_series.get_total_poly_error(start,stop)
+
+                sig_calc = Significance(total_counts,bkg_counts)
+
+                sig_per_interval.append(sig_calc.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0])
+
+
+
+            return np.array(sig_per_interval)
+
+
+
+
     def read_bins(self, time_series_builder):
         """
 
