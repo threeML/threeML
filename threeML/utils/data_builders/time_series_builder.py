@@ -17,6 +17,7 @@ from threeML.plugins.OGIP.response import InstrumentResponse, InstrumentResponse
 from threeML.plugins.SpectrumLike import SpectrumLike, NegativeBackground
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.utils.time_interval import TimeIntervalSet
+from threeML.utils.stats_tools import Significance
 from threeML.io.progress_bar import progress_bar
 
 import copy
