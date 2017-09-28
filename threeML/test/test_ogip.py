@@ -58,8 +58,8 @@ def test_loading_a_generic_pha_file():
         assert ogip.name == 'test_ogip'
         assert ogip.n_data_points == sum(ogip._mask)
         assert sum(ogip._mask) == ogip.n_data_points
-        assert ogip.tstart is None
-        assert ogip.tstop is None
+        assert ogip.tstart == 0.
+        assert ogip.tstop == 9.95012
         assert 'cons_test_ogip' in ogip.nuisance_parameters
         assert ogip.nuisance_parameters['cons_test_ogip'].fix == True
         assert ogip.nuisance_parameters['cons_test_ogip'].free == False
@@ -348,8 +348,8 @@ def test_simulating_data_sets():
 
         assert new_ogip.n_data_points == sum(new_ogip._mask)
         assert sum(new_ogip._mask) == new_ogip.n_data_points
-        assert new_ogip.tstart is None
-        assert new_ogip.tstop is None
+        assert new_ogip.tstart == 0.
+
         assert 'cons_sim' in new_ogip.nuisance_parameters
         assert new_ogip.nuisance_parameters['cons_sim'].fix == True
         assert new_ogip.nuisance_parameters['cons_sim'].free == False
