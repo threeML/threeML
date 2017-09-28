@@ -40,7 +40,7 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
 class SpectrumLike(PluginPrototype):
-    def __init__(self, name, observation, background, verbose=True, background_exposure=None):
+    def __init__(self, name, observation, background, verbose=True, background_exposure=None, tstart=None, tstop=None):
         # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
         """
         A plugin for generic spectral data, accepts an observed binned spectrum,
@@ -335,8 +335,22 @@ class SpectrumLike(PluginPrototype):
         # This will be used to keep track of how many syntethic datasets have been generated
         self._n_synthetic_datasets = 0
 
-        self._tstart = None
-        self._tstop = None
+
+        if tstart is not None:
+
+            self._tstart = tstart
+
+        else:
+
+            self._tstart = observation.tstart
+
+        if tstop is not None:
+
+            self._tstop = tstop
+
+        else:
+
+            self._tstop = observation.tstop
 
         # This is so far not a simulated data set
         self._simulation_storage = None
