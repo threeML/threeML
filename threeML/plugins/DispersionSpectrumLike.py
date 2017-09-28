@@ -13,7 +13,7 @@ __instrument_name = "General binned spectral data with energy dispersion"
 
 class DispersionSpectrumLike(SpectrumLike):
 
-    def __init__(self, name, observation, background=None, background_exposure=None,verbose=True):
+    def __init__(self, name, observation, background=None, background_exposure=None,verbose=True, tstart=None, tstop=None):
         """
         A plugin for generic spectral data with energy dispersion, accepts an observed binned spectrum,
         and a background binned spectrum or plugin with the background data.
@@ -49,7 +49,9 @@ class DispersionSpectrumLike(SpectrumLike):
                                                      observation=observation,
                                                      background=background,
                                                      background_exposure=background_exposure,
-                                                     verbose=verbose)
+                                                     verbose=verbose,
+                                                     tstart=tstart,
+                                                     tstop=tstop)
 
     def set_model(self, likelihoodModel):
         """

@@ -477,14 +477,19 @@ class TimeSeriesBuilder(object):
                 return SpectrumLike(name=self._name,
                                     observation=self._observed_spectrum,
                                     background=self._background_spectrum,
-                                    verbose=self._verbose)
+                                    verbose=self._verbose,
+                                    tstart=self._tstart,
+                                    tstop=self._tstop)
 
             else:
 
                 return DispersionSpectrumLike(name=self._name,
                                               observation=self._observed_spectrum,
                                               background=self._background_spectrum,
-                                              verbose=self._verbose)
+                                              verbose=self._verbose,
+                                              tstart = self._tstart,
+                                              tstop = self._tstop
+                                              )
 
 
         else:
@@ -536,14 +541,18 @@ class TimeSeriesBuilder(object):
                             sl = SpectrumLike(name="%s%s%d" % (self._name, interval_name, i),
                                               observation=self._observed_spectrum,
                                               background=self._background_spectrum,
-                                              verbose=self._verbose)
+                                              verbose=self._verbose,
+                                              tstart=self._tstart,
+                                              tstop=self._tstop)
 
                         else:
 
                             sl = DispersionSpectrumLike(name="%s%s%d" % (self._name, interval_name, i),
                                                         observation=self._observed_spectrum,
                                                         background=self._background_spectrum,
-                                                        verbose=self._verbose)
+                                                        verbose=self._verbose,
+                                                        tstart=self._tstart,
+                                                        tstop=self._tstop)
 
                         list_of_speclikes.append(sl)
 
