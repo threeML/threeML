@@ -2245,6 +2245,11 @@ class SpectrumLike(PluginPrototype):
 
                 raise RuntimeError("This is a bug")
 
+                # convert to rates, ugly, yes
+
+            background_counts /= self._background_exposure
+            background_errors /= self._background_exposure
+
         # Gaussian observation
         else:
 
@@ -2280,10 +2285,7 @@ class SpectrumLike(PluginPrototype):
 
             background_label = '%sBackground' % modeled_label
 
-        # convert to rates, ugly, yes
 
-        background_counts/=self._background_exposure
-        background_errors /= self._background_exposure
 
 
 
