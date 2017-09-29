@@ -17,6 +17,7 @@ from threeML.plugins.OGIP.response import InstrumentResponse, InstrumentResponse
 from threeML.plugins.SpectrumLike import SpectrumLike, NegativeBackground
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.utils.time_interval import TimeIntervalSet
+from threeML.utils.stats_tools import Significance
 from threeML.io.progress_bar import progress_bar
 
 import copy
@@ -236,7 +237,7 @@ class TimeSeriesBuilder(object):
                 self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response,
                                                                                           use_poly=True)
 
-    def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False):
+    def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False, force_rsp_write=False):
         """
         Write PHA fits files from the selected bins. If writing from an event list, the
         bins are from create_time_bins. If using a pre-time binned time series, the bins are those
@@ -246,6 +247,7 @@ class TimeSeriesBuilder(object):
         :param start: optional start time of the bins
         :param stop: optional stop time of the bins
         :param overwrite: if the fits files should be overwritten
+        :param force_rsp_write: force the writing of RSPs
         :return: None
         """
 
@@ -259,7 +261,7 @@ class TimeSeriesBuilder(object):
 
         pha_writer = PHAWrite(*ogip_list)
 
-        pha_writer.write(file_name, overwrite=overwrite)
+        pha_writer.write(file_name, overwrite=overwrite, force_rsp_write=force_rsp_write)
 
     def get_background_parameters(self):
         """
@@ -318,6 +320,57 @@ class TimeSeriesBuilder(object):
     def bins(self):
 
         return self._time_series.bins
+
+    @property
+    def significance_per_interval(self):
+
+        if self._time_series.bins is not None:
+
+            sig_per_interval = []
+
+
+            # go thru each interval and extract the significance
+
+            for (start, stop) in self._time_series.bins.bin_stack:
+
+
+                total_counts = self._time_series.counts_over_interval(start,stop)
+                bkg_counts = self._time_series.get_total_poly_count(start,stop)
+                bkg_error = self._time_series.get_total_poly_error(start,stop)
+
+                sig_calc = Significance(total_counts,bkg_counts)
+
+                sig_per_interval.append(sig_calc.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0])
+
+
+
+            return np.array(sig_per_interval)
+
+    @property
+    def total_counts_per_interval(self):
+
+        if self._time_series.bins is not None:
+
+            total_counts = []
+
+            for (start, stop) in self._time_series.bins.bin_stack:
+
+                total_counts.append(self._time_series.counts_over_interval(start,stop))
+
+            return np.array(total_counts)
+
+    @property
+    def background_counts_per_interval(self):
+
+        if self._time_series.bins is not None:
+
+            total_counts = []
+
+            for (start, stop) in self._time_series.bins.bin_stack:
+                total_counts.append(self._time_series.get_total_poly_count(start,stop))
+
+            return np.array(total_counts)
+
 
     def read_bins(self, time_series_builder):
         """

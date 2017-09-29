@@ -306,7 +306,7 @@ class EventList(TimeSeries):
             bkg_selection = None
 
 
-        binned_light_curve_plot(time_bins=time_bins,
+        return binned_light_curve_plot(time_bins=time_bins,
                                 cnts=cnts,
                                 width=width,
                                 bkg=bkg,
