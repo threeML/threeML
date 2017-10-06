@@ -735,7 +735,7 @@ class TimeSeriesBuilder(object):
 
         else:
 
-            
+            assert isinstance(rsp_file, InstrumentResponse), 'The provided response is not a 3ML InstrumentResponse'
             rsp = rsp_file
 
         # pass to the super class
@@ -839,7 +839,7 @@ class TimeSeriesBuilder(object):
 
         else:
 
-
+            assert isinstance(rsp_file, InstrumentResponse), 'The provided response is not a 3ML InstrumentResponse'
             rsp = rsp_file
 
         # pass to the super class
