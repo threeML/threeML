@@ -525,6 +525,11 @@ class TimeSeriesBuilder(object):
 
             assert self._observed_spectrum is not None, 'Must have selected an active time interval'
 
+            if self._background_spectrum is None:
+
+                custom_warnings.warn('No bakckground selection has been made. This plugin will contain no background!')
+
+
             if self._response is None:
 
                 return SpectrumLike(name=self._name,
@@ -586,6 +591,10 @@ class TimeSeriesBuilder(object):
 
 
                     self.set_active_time_interval(interval.to_string())
+
+                    if self._background_spectrum is None:
+                        custom_warnings.warn(
+                            'No bakckground selection has been made. This plugin will contain no background!')
 
                     try:
 
@@ -683,44 +692,51 @@ class TimeSeriesBuilder(object):
                                            mission=gbm_tte_file.mission,
                                            verbose=verbose)
 
-        # we need to see if this is an RSP2
+        if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
 
-        test = re.match('^.*\.rsp2$', rsp_file)
+            # we need to see if this is an RSP2
 
-        # some GBM RSPs that are not marked RSP2 are in fact RSP2s
-        # we need to check
+            test = re.match('^.*\.rsp2$', rsp_file)
 
-        if test is None:
+            # some GBM RSPs that are not marked RSP2 are in fact RSP2s
+            # we need to check
 
-            with fits.open(rsp_file) as f:
+            if test is None:
 
-                # there should only be a header, ebounds and one spec rsp extension
+                with fits.open(rsp_file) as f:
 
-                if len(f) > 3:
+                    # there should only be a header, ebounds and one spec rsp extension
 
-                    # make test a dummy value to trigger the nest loop
+                    if len(f) > 3:
 
-                    test = -1
+                        # make test a dummy value to trigger the nest loop
 
-                    custom_warnings.warn('The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2')
+                        test = -1
 
-
-
-
+                        custom_warnings.warn('The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2')
 
 
-        if test is not None:
-
-            rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
-                                                       counts_getter=event_list.counts_over_interval,
-                                                       exposure_getter=event_list.exposure_over_interval,
-                                                       reference_time=gbm_tte_file.trigger_time)
 
 
+
+
+            if test is not None:
+
+                rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
+                                                           counts_getter=event_list.counts_over_interval,
+                                                           exposure_getter=event_list.exposure_over_interval,
+                                                           reference_time=gbm_tte_file.trigger_time)
+
+
+
+            else:
+
+                rsp = OGIPResponse(rsp_file)
 
         else:
 
-            rsp = OGIPResponse(rsp_file)
+            assert isinstance(rsp_file, InstrumentResponse), 'The provided response is not a 3ML InstrumentResponse'
+            rsp = rsp_file
 
         # pass to the super class
 
@@ -783,37 +799,48 @@ class TimeSeriesBuilder(object):
 
         # we need to see if this is an RSP2
 
-        test = re.match('^.*\.rsp2$', rsp_file)
 
-        # some GBM RSPs that are not marked RSP2 are in fact RSP2s
-        # we need to check
-
-        if test is None:
-
-            with fits.open(rsp_file) as f:
-
-                # there should only be a header, ebounds and one spec rsp extension
-
-                if len(f) > 3:
-                    # make test a dummy value to trigger the nest loop
-
-                    test = -1
-
-                    custom_warnings.warn(
-                        'The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2')
-
-        if test is not None:
-
-            rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
-                                                       counts_getter=event_list.counts_over_interval,
-                                                       exposure_getter=event_list.exposure_over_interval,
-                                                       reference_time=cdata.trigger_time)
+        if isinstance(rsp_file,str) or isinstance(rsp_file,unicode):
 
 
+            test = re.match('^.*\.rsp2$', rsp_file)
+
+            # some GBM RSPs that are not marked RSP2 are in fact RSP2s
+            # we need to check
+
+            if test is None:
+
+                with fits.open(rsp_file) as f:
+
+                    # there should only be a header, ebounds and one spec rsp extension
+
+                    if len(f) > 3:
+                        # make test a dummy value to trigger the nest loop
+
+                        test = -1
+
+                        custom_warnings.warn(
+                            'The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2')
+
+            if test is not None:
+
+                rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
+                                                           counts_getter=event_list.counts_over_interval,
+                                                           exposure_getter=event_list.exposure_over_interval,
+                                                           reference_time=cdata.trigger_time)
+
+
+
+
+
+            else:
+
+                rsp = OGIPResponse(rsp_file)
 
         else:
 
-            rsp = OGIPResponse(rsp_file)
+            assert isinstance(rsp_file, InstrumentResponse), 'The provided response is not a 3ML InstrumentResponse'
+            rsp = rsp_file
 
         # pass to the super class
 
