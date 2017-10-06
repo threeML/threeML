@@ -5,9 +5,9 @@ from astromodels import clone_model
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
 from threeML.data_list import DataList
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.OGIP.pha import PHAWrite
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.utils.OGIP import PHAWrite
 
 
 class LikelihoodRatioTest(object):

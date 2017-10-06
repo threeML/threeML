@@ -1,14 +1,15 @@
 __author__ = 'grburgess'
 
 import collections
-import re
-from threeML.exceptions.custom_exceptions import custom_warnings, deprecated
+
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
+import re
 
+from threeML.exceptions.custom_exceptions import deprecated
 from threeML.plugins.EventListLike import EventListLike
-from threeML.plugins.OGIP.response import InstrumentResponseSet
+from threeML.utils.OGIP import InstrumentResponseSet
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
 from threeML.utils.time_series.event_list import EventListWithDeadTime
 

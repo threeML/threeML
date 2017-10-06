@@ -1,17 +1,16 @@
-import numpy as np
-import os
-import warnings
 import collections
 
 import astropy.io.fits as fits
+import numpy as np
+import os
+import warnings
 
+from threeML.io.progress_bar import progress_bar
 from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, Quality
 from threeML.plugins.spectrum.binned_spectrum_set import BinnedSpectrumSet
-from threeML.plugins.OGIP.pha import PHAII
-from threeML.plugins.OGIP.response import OGIPResponse, InstrumentResponse
+from threeML.utils.OGIP import OGIPResponse, InstrumentResponse
+from threeML.utils.OGIP import PHAII
 from threeML.utils.time_interval import TimeIntervalSet
-from threeML.io.progress_bar import progress_bar
-
 
 _required_keywords = {}
 _required_keywords['observed'] = ("mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +

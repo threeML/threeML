@@ -1,24 +1,12 @@
 import pytest
-import os
-
-from astropy.io import fits
-
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
-from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.plugins.OGIP.response import OGIPResponse
-from threeML.data_list import DataList
-from threeML.classicMLE.likelihood_ratio_test import LikelihoodRatioTest
-from astromodels.core.model import Model
-from astromodels.functions.functions import Powerlaw, Exponential_cutoff, Cutoff_powerlaw
-from astromodels.sources.point_source import PointSource
-from threeML.plugins.SwiftXRTLike import SwiftXRTLike
-from threeML.plugins.OGIP.likelihood_functions import *
+
 from threeML import *
-
-
 from threeML.io.file_utils import within_directory
-
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins.SwiftXRTLike import SwiftXRTLike
+from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
+from threeML.utils.OGIP.likelihood_functions import *
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 __example_dir = os.path.join(__this_dir__, '../../examples')

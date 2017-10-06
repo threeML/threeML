@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
 
+from threeML.utils.OGIP import InstrumentResponse
 from threeML.utils.histogram import Histogram
 from threeML.utils.interval import Interval, IntervalSet
-from threeML.plugins.OGIP.response import InstrumentResponse
 from threeML.utils.stats_tools import sqrt_sum_of_squares
+
 
 class Channel(Interval):
 

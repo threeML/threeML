@@ -2,22 +2,19 @@ __author__='grburgess'
 
 import collections
 import copy
-import os
 
 import numpy as np
+import os
 import pandas as pd
 from pandas import HDFStore
 
-from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
-from threeML.io.progress_bar import progress_bar
-from threeML.io.rich_display import display
+from threeML.plugins.spectrum.binned_spectrum import Quality
 from threeML.utils.binner import TemporalBinner
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit, Polynomial
-from threeML.plugins.OGIP.response import InstrumentResponse
-from threeML.plugins.spectrum.binned_spectrum import Quality
+
 
 class ReducingNumberOfThreads(Warning):
     pass

@@ -1,12 +1,10 @@
 import copy
+
 import pandas as pd
-import numpy as np
 
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, ChannelSet
-from threeML.plugins.OGIP.response import InstrumentResponse
-
-from astromodels import PointSource, Model
+from threeML.utils.OGIP import InstrumentResponse
 
 __instrument_name = "General binned spectral data with energy dispersion"
 
