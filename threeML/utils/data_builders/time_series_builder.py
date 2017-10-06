@@ -525,6 +525,11 @@ class TimeSeriesBuilder(object):
 
             assert self._observed_spectrum is not None, 'Must have selected an active time interval'
 
+            if self._background_spectrum is None:
+
+                custom_warnings.warn_explicit('No bakckground selection has been made. This plugin will contain no background!')
+
+
             if self._response is None:
 
                 return SpectrumLike(name=self._name,
@@ -586,6 +591,10 @@ class TimeSeriesBuilder(object):
 
 
                     self.set_active_time_interval(interval.to_string())
+
+                    if self._background_spectrum is None:
+                        custom_warnings.warn_explicit(
+                            'No bakckground selection has been made. This plugin will contain no background!')
 
                     try:
 
