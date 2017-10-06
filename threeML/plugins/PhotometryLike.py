@@ -1,10 +1,10 @@
-import numpy as np
-import copy
 import collections
+import copy
+
+import numpy as np
 
 from threeML.plugins.XYLike import XYLike
-from threeML.plugins.photometry.filter_set import FilterSet
-
+from threeML.utils.photometry import FilterSet
 
 __instrument_name = "Generic photometric data"
 
