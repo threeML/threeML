@@ -10,8 +10,8 @@ from pandas import HDFStore
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
-from threeML.plugins.spectrum.binned_spectrum import Quality
 from threeML.utils.binner import TemporalBinner
+from threeML.utils.spectrum.binned_spectrum import Quality
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit, Polynomial
 

@@ -4,9 +4,9 @@ from astromodels.utils.valid_variable import is_valid_variable_name
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.plugins.XYLike import XYLike
-from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
 from threeML.utils.OGIP import PHAII
 from threeML.utils.OGIP import PHAWrite
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 __instrument_name = "All OGIP-compliant instruments"
 

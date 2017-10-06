@@ -5,8 +5,8 @@ from threeML import *
 from threeML.io.file_utils import within_directory
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SwiftXRTLike import SwiftXRTLike
-from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
 from threeML.utils.OGIP.likelihood_functions import *
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 __example_dir = os.path.join(__this_dir__, '../../examples')

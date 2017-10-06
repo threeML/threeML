@@ -1,13 +1,12 @@
 import numpy as np
 
-from threeML.utils.time_series.time_series import TimeSeries
-from threeML.plugins.spectrum.binned_spectrum_set import BinnedSpectrumSet
-from threeML.utils.time_interval import TimeIntervalSet
-from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.progress_bar import progress_bar
 from threeML.config.config import threeML_config
-from threeML.utils.time_series.polynomial import polyfit, Polynomial
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
+from threeML.io.progress_bar import progress_bar
+from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
+from threeML.utils.time_interval import TimeIntervalSet
+from threeML.utils.time_series.polynomial import polyfit
+from threeML.utils.time_series.time_series import TimeSeries
 
 
 class BinnedSpectrumSeries(TimeSeries):

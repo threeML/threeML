@@ -10,11 +10,11 @@ from threeML.io.progress_bar import progress_bar
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SpectrumLike import SpectrumLike, NegativeBackground
-from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion
 from threeML.utils.OGIP import InstrumentResponse, InstrumentResponseSet, OGIPResponse
 from threeML.utils.OGIP import PHAWrite
 from threeML.utils.data_builders.fermi.gbm_data import GBMTTEFile, GBMCdata
 from threeML.utils.data_builders.fermi.lat_data import LLEFile
+from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion
 from threeML.utils.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.binned_spectrum_series import BinnedSpectrumSeries

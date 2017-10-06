@@ -5,8 +5,8 @@ from astromodels import Powerlaw, PointSource, Model
 
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion, ChannelSet
 from threeML.utils.OGIP import OGIPResponse
+from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion, ChannelSet
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 

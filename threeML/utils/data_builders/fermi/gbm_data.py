@@ -1,14 +1,14 @@
 import collections
-import re
-import warnings
 
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
+import re
 import requests
+import warnings
 
 from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
-from threeML.plugins.spectrum.pha_spectrum import PHASpectrumSet
+from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 
 
 class GBMTTEFile(object):
