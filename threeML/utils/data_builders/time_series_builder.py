@@ -527,7 +527,7 @@ class TimeSeriesBuilder(object):
 
             if self._background_spectrum is None:
 
-                custom_warnings.warn_explicit('No bakckground selection has been made. This plugin will contain no background!')
+                custom_warnings.warn('No bakckground selection has been made. This plugin will contain no background!')
 
 
             if self._response is None:
@@ -593,7 +593,7 @@ class TimeSeriesBuilder(object):
                     self.set_active_time_interval(interval.to_string())
 
                     if self._background_spectrum is None:
-                        custom_warnings.warn_explicit(
+                        custom_warnings.warn(
                             'No bakckground selection has been made. This plugin will contain no background!')
 
                     try:
@@ -733,6 +733,11 @@ class TimeSeriesBuilder(object):
 
                 rsp = OGIPResponse(rsp_file)
 
+        else:
+
+            assert isinstance(rsp_file, InstrumentResponse), 'The provided response is not a 3ML InstrumentResponse'
+            rsp = rsp_file
+
         # pass to the super class
 
         return cls(name,
@@ -831,6 +836,11 @@ class TimeSeriesBuilder(object):
             else:
 
                 rsp = OGIPResponse(rsp_file)
+
+        else:
+
+            assert isinstance(rsp_file, InstrumentResponse), 'The provided response is not a 3ML InstrumentResponse'
+            rsp = rsp_file
 
         # pass to the super class
 
