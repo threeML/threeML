@@ -5,7 +5,7 @@ import os
 import warnings
 
 from threeML.io.fits_file import FITSExtension, FITSFile
-from threeML.utils.OGIP import EBOUNDS, SPECRESP_MATRIX
+from threeML.utils.OGIP.response import EBOUNDS, SPECRESP_MATRIX
 
 
 class PHAWrite(object):

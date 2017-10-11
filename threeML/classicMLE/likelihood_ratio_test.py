@@ -7,7 +7,7 @@ from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
 from threeML.data_list import DataList
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.utils.OGIP import PHAWrite
+from threeML.utils.OGIP.pha import PHAWrite
 
 
 class LikelihoodRatioTest(object):

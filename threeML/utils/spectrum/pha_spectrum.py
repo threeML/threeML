@@ -7,8 +7,8 @@ import warnings
 from threeML.plugins.spectrum.binned_spectrum_set import BinnedSpectrumSet
 
 from threeML.io.progress_bar import progress_bar
-from threeML.utils.OGIP import OGIPResponse, InstrumentResponse
-from threeML.utils.OGIP import PHAII
+from threeML.utils.OGIP.response import OGIPResponse, InstrumentResponse
+from threeML.utils.OGIP.pha import PHAII
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, Quality
 from threeML.utils.time_interval import TimeIntervalSet
 

@@ -3,7 +3,7 @@ import copy
 import pandas as pd
 
 from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.utils.OGIP import InstrumentResponse
+from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, ChannelSet
 
 __instrument_name = "General binned spectral data with energy dispersion"

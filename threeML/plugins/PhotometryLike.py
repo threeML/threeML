@@ -4,7 +4,7 @@ import copy
 import numpy as np
 
 from threeML.plugins.XYLike import XYLike
-from threeML.utils.photometry import FilterSet
+from threeML.utils.photometry.filter_set import FilterSet
 
 __instrument_name = "Generic photometric data"
 
