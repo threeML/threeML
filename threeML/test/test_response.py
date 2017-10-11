@@ -4,7 +4,7 @@ import pytest
 import warnings
 
 from threeML.io.package_data import get_path_of_data_file
-from threeML.utils.OGIP import InstrumentResponseSet, InstrumentResponse, OGIPResponse
+from threeML.utils.OGIP.response import InstrumentResponseSet, InstrumentResponse, OGIPResponse
 from threeML.utils.time_interval import TimeInterval
 
 
