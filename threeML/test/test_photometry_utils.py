@@ -1,7 +1,7 @@
 import pytest
 import speclite.filters as spec_filters
 from astromodels import *
-from threeML.plugins.photometry.filter_set import FilterSet, NotASpeclikeFilter
+from threeML.utils.photometry.filter_set import FilterSet, NotASpeclikeFilter
 
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
