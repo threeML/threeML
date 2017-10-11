@@ -1,5 +1,5 @@
 import pytest
-from threeML.plugins.OGIP.response import OGIPResponse
+from threeML.utils.OGIP.response import OGIPResponse
 
 from threeML import *
 from threeML.io.file_utils import within_directory
