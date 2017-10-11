@@ -4,12 +4,13 @@ import astropy.io.fits as fits
 import numpy as np
 import os
 import warnings
-from threeML.plugins.spectrum.binned_spectrum_set import BinnedSpectrumSet
+
 
 from threeML.io.progress_bar import progress_bar
 from threeML.utils.OGIP.response import OGIPResponse, InstrumentResponse
 from threeML.utils.OGIP.pha import PHAII
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, Quality
+from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
 from threeML.utils.time_interval import TimeIntervalSet
 
 _required_keywords = {}

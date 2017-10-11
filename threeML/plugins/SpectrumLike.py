@@ -10,11 +10,12 @@ from astromodels import clone_model
 from astromodels.core.parameter import Parameter
 from astromodels.functions.priors import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
-from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
+
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
-from threeML.io.plotting.data_residual_plot import ResidualPlot
+import threeML.io.plotting.data_residual_plot
 from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
 from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
@@ -2595,7 +2596,7 @@ class SpectrumLike(PluginPrototype):
         if model_label is None:
             model_label = "%s Model" % self._name
 
-        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
+        residual_plot = threeML.io.plotting.data_residual_plot.ResidualPlot(show_residuals=show_residuals, **kwargs)
 
         # energy_min, energy_max = self._rsp.ebounds[:-1], self._rsp.ebounds[1:]
 
