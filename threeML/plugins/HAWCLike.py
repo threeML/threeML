@@ -520,6 +520,14 @@ class HAWCLike(PluginPrototype):
 
         return fig
 
+    def get_number_of_data_points( self ):
+        """
+        
+        """
+        print self._theLikeHAWC.GetNumberOfPixels()
+        
+        pixels_per_bin =  np.array( self._theLikeHAWC.GetNumberOfPixels() )
+        return np.sum( pixels_per_bin )
 
 
 
