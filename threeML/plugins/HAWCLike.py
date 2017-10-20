@@ -659,6 +659,10 @@ class HAWCLike(PluginPrototype):
 
 
 
+    def write_map(self, fileName):
+
+        self._theLikeHAWC.WriteMap(fileName)
+
     def write_model_map(self, fileName, poisson=False):
 
         # This is to make sure we have computed the sources (otherwise the following method WriteModelMap will fail
