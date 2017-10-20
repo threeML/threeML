@@ -522,10 +522,9 @@ class HAWCLike(PluginPrototype):
 
     def get_number_of_data_points( self ):
         """
-        
-        """
-        print self._theLikeHAWC.GetNumberOfPixels()
-        
+        Number of data point = number of pixels.
+        Implemented in liff as the number of pixels in the ROI per analysis bin.
+        """        
         pixels_per_bin =  np.array( self._theLikeHAWC.GetNumberOfPixels() )
         return np.sum( pixels_per_bin )
 
