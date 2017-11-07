@@ -201,7 +201,7 @@ def test_error_propagation():
     # Make ratio with error 0
     res = p1 / p1
 
-    low_b, hi_b = res.equal_tail_confidence_interval()
+    low_b, hi_b = res.equal_tail_interval()
 
     assert low_b == 1
     assert hi_b == 1
@@ -235,7 +235,7 @@ def test_error_propagation():
 
     assert abs(new_variate.median - 130.0) < 20
 
-    low_b, hi_b = new_variate.equal_tail_confidence_interval()
+    low_b, hi_b = new_variate.equal_tail_interval()
 
     assert abs(low_b - 120) < 20
     assert abs(hi_b - 140) < 20

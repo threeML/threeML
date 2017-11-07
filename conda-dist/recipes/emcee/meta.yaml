@@ -1,0 +1,42 @@
+{% set name = "emcee" %}
+{% set version = "2.2.1" %}
+{% set hash_type = "sha256" %}
+{% set hash_value = "b83551e342b37311897906b3b8acf32979f4c5542e0a25786ada862d26241172" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  fn: '{{ name }}-{{ version }}.tar.gz'
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  '{{ hash_type }}': '{{ hash_value }}'
+
+build:
+  number: 0
+  script: python setup.py install  --single-version-externally-managed --record=record.txt
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - numpy
+  run:
+    - python
+    - numpy
+
+test:
+  imports:
+    - emcee
+
+about:
+  home: http://dan.iel.fm/emcee/
+  license: MIT License
+  license_family: MIT
+  license_file: ''
+  summary: Kick ass affine-invariant ensemble MCMC sampling
+  doc_url: ''
+  dev_url: ''
+
+extra:
+  recipe-maintainers: ''

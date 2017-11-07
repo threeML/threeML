@@ -17,7 +17,7 @@ from astromodels import Model, PointSource
 from threeML.io.rich_display import display
 from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
-from threeML.plugin_prototype import PluginPrototype, set_external_property
+from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
 from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
@@ -40,7 +40,7 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
 class SpectrumLike(PluginPrototype):
-    def __init__(self, name, observation, background, verbose=True, background_exposure=None):
+    def __init__(self, name, observation, background, verbose=True, background_exposure=None, tstart=None, tstop=None):
         # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
         """
         A plugin for generic spectral data, accepts an observed binned spectrum,
@@ -122,6 +122,7 @@ class SpectrumLike(PluginPrototype):
         # Init everything else to None
         self._like_model = None
         self._rebinner = None
+        self._source_name = None
 
         # Now auto-probe the statistic to use
         if self._background_spectrum is not None:
@@ -334,8 +335,22 @@ class SpectrumLike(PluginPrototype):
         # This will be used to keep track of how many syntethic datasets have been generated
         self._n_synthetic_datasets = 0
 
-        self._tstart = None
-        self._tstop = None
+
+        if tstart is not None:
+
+            self._tstart = tstart
+
+        else:
+
+            self._tstart = observation.tstart
+
+        if tstop is not None:
+
+            self._tstop = tstop
+
+        else:
+
+            self._tstop = observation.tstop
 
         # This is so far not a simulated data set
         self._simulation_storage = None
@@ -657,6 +672,21 @@ class SpectrumLike(PluginPrototype):
         generator = cls._get_synthetic_plugin(observation,background,source_function) # type: SpectrumLike
 
         return generator.get_simulated_dataset(name)
+
+
+    def assign_to_source(self, source_name):
+        """
+        Assign these data to the given source (instead of to the sum of all sources, which is the default)
+
+        :param source_name: name of the source (must be contained in the likelihood model)
+        :return: none
+        """
+
+        if self._like_model is not None:
+            assert source_name in self._like_model.sources, "Source %s is not contained in " \
+                                                                        "the likelihood model" % source_name
+
+        self._source_name = source_name
 
 
     @property
@@ -1607,7 +1637,6 @@ class SpectrumLike(PluginPrototype):
     observation_noise_model = property(_get_observation_noise_model, _set_observation_noise_model,
                                        doc="Sets/gets the noise model for the background spectrum")
 
-    @set_external_property
     def get_log_like(self):
 
         if self._observation_noise_model == 'poisson':
@@ -1683,6 +1712,12 @@ class SpectrumLike(PluginPrototype):
         assert self._like_model.get_number_of_extended_sources() == 0, "SpectrumLike plugins do not support " \
                                                                        "extended sources"
 
+        # check if we set a source name that the source is in the model
+
+        if self._source_name is not None:
+            assert self._source_name in self._like_model.sources, "Source %s is not contained in " \
+                                                                  "the likelihood model" % self._source_name
+
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
 
@@ -1729,7 +1764,10 @@ class SpectrumLike(PluginPrototype):
         :return:
         """
 
-        return np.array([self._background_integral_flux(emin, emax) for emin, emax in self._observed_spectrum.bin_stack])
+        return np.array(
+            [self._background_integral_flux(emin, emax) for emin, emax in self._observed_spectrum.bin_stack])
+
+
 
     def get_background_model(self):
         """
@@ -1753,22 +1791,40 @@ class SpectrumLike(PluginPrototype):
 
         return model
 
+    def _get_diff_flux_and_integral(self, likelihood_model):
 
-    @staticmethod
-    def _get_diff_flux_and_integral(likelihood_model):
+        if self._source_name is None:
 
-        n_point_sources = likelihood_model.get_number_of_point_sources()
+            n_point_sources = likelihood_model.get_number_of_point_sources()
 
-        # Make a function which will stack all point sources (OGIP do not support spatial dimension)
+            # Make a function which will stack all point sources (OGIP do not support spatial dimension)
 
-        def differential_flux(energies):
-            fluxes = likelihood_model.get_point_source_fluxes(0, energies)
+            def differential_flux(energies):
+                fluxes = likelihood_model.get_point_source_fluxes(0, energies, tag=self._tag)
 
-            # If we have only one point source, this will never be executed
-            for i in range(1, n_point_sources):
-                fluxes += likelihood_model.get_point_source_fluxes(i, energies)
+                # If we have only one point source, this will never be executed
+                for i in range(1, n_point_sources):
+                    fluxes += likelihood_model.get_point_source_fluxes(i, energies, tag=self._tag)
 
-            return fluxes
+                return fluxes
+
+
+        else:
+
+            # This SpectrumLike dataset refers to a specific source
+
+            # Note that we checked that self._source_name is in the model when the model was set
+
+            try:
+
+                def differential_flux(energies):
+
+                    return likelihood_model.sources[self._source_name](energies, tag=self._tag)
+
+            except KeyError:
+
+                raise KeyError("This XYLike plugin has been assigned to source %s, "
+                               "which does not exist in the current model" % self._source_name)
 
         # The following integrates the diffFlux function using Simpson's rule
         # This assume that the intervals e1,e2 are all small, which is guaranteed
@@ -2203,6 +2259,11 @@ class SpectrumLike(PluginPrototype):
 
                 raise RuntimeError("This is a bug")
 
+                # convert to rates, ugly, yes
+
+            background_counts /= self._background_exposure
+            background_errors /= self._background_exposure
+
         # Gaussian observation
         else:
 
@@ -2229,14 +2290,14 @@ class SpectrumLike(PluginPrototype):
         if scale_background:
 
 
-            background_counts *= self._total_scale_factor
-            background_errors *= self._total_scale_factor
+            background_counts *= self._area_ratio
+            background_errors *= self._area_ratio
 
             background_label = 'Scaled %sBackground' % modeled_label
 
         else:
 
-            background_label = '$sBackground' % modeled_label
+            background_label = '%sBackground' % modeled_label
 
 
 

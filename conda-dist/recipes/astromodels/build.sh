@@ -2,7 +2,15 @@
 
 if [ "$(uname)" == "Darwin" ]; then
     
-    LDFLAGS="-lXS -lXSFunctions -lXSModel -lXSUtil" pip install -v .
+    if [ -z ${HEASOFT+x} ]; then
+
+        pip install -v .
+    
+    else
+ 
+        LDFLAGS="-lXS -lXSFunctions -lXSModel -lXSUtil" pip install -v .
+    
+    fi
     
 fi
 

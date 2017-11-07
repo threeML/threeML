@@ -264,7 +264,6 @@ def test_lle_joint_likelihood_fitting():
 
             assert jl.current_minimum is None
             assert jl.minimizer is None
-            assert jl.ncalls == 0
             assert jl.verbose == False
 
 

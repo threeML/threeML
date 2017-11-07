@@ -57,6 +57,7 @@ class PHAWrite(object):
 
         self._pseudo_time = 0.
 
+
         self._spec_iterator = 1
 
     def write(self, outfile_name, overwrite=True, force_rsp_write=False):
@@ -103,6 +104,8 @@ class PHAWrite(object):
 
         # grab the ogip pha info
         pha_info = ogip.get_pha_files()
+
+
 
 
         first_channel = pha_info['rsp'].first_channel

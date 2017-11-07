@@ -17,6 +17,7 @@ from threeML.plugins.OGIP.response import InstrumentResponse, InstrumentResponse
 from threeML.plugins.SpectrumLike import SpectrumLike, NegativeBackground
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.utils.time_interval import TimeIntervalSet
+from threeML.utils.stats_tools import Significance
 from threeML.io.progress_bar import progress_bar
 
 import copy
@@ -236,7 +237,7 @@ class TimeSeriesBuilder(object):
                 self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response,
                                                                                           use_poly=True)
 
-    def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False):
+    def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False, force_rsp_write=False):
         """
         Write PHA fits files from the selected bins. If writing from an event list, the
         bins are from create_time_bins. If using a pre-time binned time series, the bins are those
@@ -246,6 +247,7 @@ class TimeSeriesBuilder(object):
         :param start: optional start time of the bins
         :param stop: optional stop time of the bins
         :param overwrite: if the fits files should be overwritten
+        :param force_rsp_write: force the writing of RSPs
         :return: None
         """
 
@@ -259,7 +261,7 @@ class TimeSeriesBuilder(object):
 
         pha_writer = PHAWrite(*ogip_list)
 
-        pha_writer.write(file_name, overwrite=overwrite)
+        pha_writer.write(file_name, overwrite=overwrite, force_rsp_write=force_rsp_write)
 
     def get_background_parameters(self):
         """
@@ -318,6 +320,57 @@ class TimeSeriesBuilder(object):
     def bins(self):
 
         return self._time_series.bins
+
+    @property
+    def significance_per_interval(self):
+
+        if self._time_series.bins is not None:
+
+            sig_per_interval = []
+
+
+            # go thru each interval and extract the significance
+
+            for (start, stop) in self._time_series.bins.bin_stack:
+
+
+                total_counts = self._time_series.counts_over_interval(start,stop)
+                bkg_counts = self._time_series.get_total_poly_count(start,stop)
+                bkg_error = self._time_series.get_total_poly_error(start,stop)
+
+                sig_calc = Significance(total_counts,bkg_counts)
+
+                sig_per_interval.append(sig_calc.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0])
+
+
+
+            return np.array(sig_per_interval)
+
+    @property
+    def total_counts_per_interval(self):
+
+        if self._time_series.bins is not None:
+
+            total_counts = []
+
+            for (start, stop) in self._time_series.bins.bin_stack:
+
+                total_counts.append(self._time_series.counts_over_interval(start,stop))
+
+            return np.array(total_counts)
+
+    @property
+    def background_counts_per_interval(self):
+
+        if self._time_series.bins is not None:
+
+            total_counts = []
+
+            for (start, stop) in self._time_series.bins.bin_stack:
+                total_counts.append(self._time_series.get_total_poly_count(start,stop))
+
+            return np.array(total_counts)
+
 
     def read_bins(self, time_series_builder):
         """
@@ -472,19 +525,29 @@ class TimeSeriesBuilder(object):
 
             assert self._observed_spectrum is not None, 'Must have selected an active time interval'
 
+            if self._background_spectrum is None:
+
+                custom_warnings.warn('No bakckground selection has been made. This plugin will contain no background!')
+
+
             if self._response is None:
 
                 return SpectrumLike(name=self._name,
                                     observation=self._observed_spectrum,
                                     background=self._background_spectrum,
-                                    verbose=self._verbose)
+                                    verbose=self._verbose,
+                                    tstart=self._tstart,
+                                    tstop=self._tstop)
 
             else:
 
                 return DispersionSpectrumLike(name=self._name,
                                               observation=self._observed_spectrum,
                                               background=self._background_spectrum,
-                                              verbose=self._verbose)
+                                              verbose=self._verbose,
+                                              tstart = self._tstart,
+                                              tstop = self._tstop
+                                              )
 
 
         else:
@@ -529,6 +592,10 @@ class TimeSeriesBuilder(object):
 
                     self.set_active_time_interval(interval.to_string())
 
+                    if self._background_spectrum is None:
+                        custom_warnings.warn(
+                            'No bakckground selection has been made. This plugin will contain no background!')
+
                     try:
 
                         if self._response is None:
@@ -536,14 +603,18 @@ class TimeSeriesBuilder(object):
                             sl = SpectrumLike(name="%s%s%d" % (self._name, interval_name, i),
                                               observation=self._observed_spectrum,
                                               background=self._background_spectrum,
-                                              verbose=self._verbose)
+                                              verbose=self._verbose,
+                                              tstart=self._tstart,
+                                              tstop=self._tstop)
 
                         else:
 
                             sl = DispersionSpectrumLike(name="%s%s%d" % (self._name, interval_name, i),
                                                         observation=self._observed_spectrum,
                                                         background=self._background_spectrum,
-                                                        verbose=self._verbose)
+                                                        verbose=self._verbose,
+                                                        tstart=self._tstart,
+                                                        tstop=self._tstop)
 
                         list_of_speclikes.append(sl)
 
@@ -621,44 +692,51 @@ class TimeSeriesBuilder(object):
                                            mission=gbm_tte_file.mission,
                                            verbose=verbose)
 
-        # we need to see if this is an RSP2
+        if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
 
-        test = re.match('^.*\.rsp2$', rsp_file)
+            # we need to see if this is an RSP2
 
-        # some GBM RSPs that are not marked RSP2 are in fact RSP2s
-        # we need to check
+            test = re.match('^.*\.rsp2$', rsp_file)
 
-        if test is None:
+            # some GBM RSPs that are not marked RSP2 are in fact RSP2s
+            # we need to check
 
-            with fits.open(rsp_file) as f:
+            if test is None:
 
-                # there should only be a header, ebounds and one spec rsp extension
+                with fits.open(rsp_file) as f:
 
-                if len(f) > 3:
+                    # there should only be a header, ebounds and one spec rsp extension
 
-                    # make test a dummy value to trigger the nest loop
+                    if len(f) > 3:
 
-                    test = -1
+                        # make test a dummy value to trigger the nest loop
 
-                    custom_warnings.warn('The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2')
+                        test = -1
 
-
-
-
+                        custom_warnings.warn('The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2')
 
 
-        if test is not None:
-
-            rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
-                                                       counts_getter=event_list.counts_over_interval,
-                                                       exposure_getter=event_list.exposure_over_interval,
-                                                       reference_time=gbm_tte_file.trigger_time)
 
 
+
+
+            if test is not None:
+
+                rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
+                                                           counts_getter=event_list.counts_over_interval,
+                                                           exposure_getter=event_list.exposure_over_interval,
+                                                           reference_time=gbm_tte_file.trigger_time)
+
+
+
+            else:
+
+                rsp = OGIPResponse(rsp_file)
 
         else:
 
-            rsp = OGIPResponse(rsp_file)
+            assert isinstance(rsp_file, InstrumentResponse), 'The provided response is not a 3ML InstrumentResponse'
+            rsp = rsp_file
 
         # pass to the super class
 
@@ -721,37 +799,48 @@ class TimeSeriesBuilder(object):
 
         # we need to see if this is an RSP2
 
-        test = re.match('^.*\.rsp2$', rsp_file)
 
-        # some GBM RSPs that are not marked RSP2 are in fact RSP2s
-        # we need to check
-
-        if test is None:
-
-            with fits.open(rsp_file) as f:
-
-                # there should only be a header, ebounds and one spec rsp extension
-
-                if len(f) > 3:
-                    # make test a dummy value to trigger the nest loop
-
-                    test = -1
-
-                    custom_warnings.warn(
-                        'The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2')
-
-        if test is not None:
-
-            rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
-                                                       counts_getter=event_list.counts_over_interval,
-                                                       exposure_getter=event_list.exposure_over_interval,
-                                                       reference_time=cdata.trigger_time)
+        if isinstance(rsp_file,str) or isinstance(rsp_file,unicode):
 
 
+            test = re.match('^.*\.rsp2$', rsp_file)
+
+            # some GBM RSPs that are not marked RSP2 are in fact RSP2s
+            # we need to check
+
+            if test is None:
+
+                with fits.open(rsp_file) as f:
+
+                    # there should only be a header, ebounds and one spec rsp extension
+
+                    if len(f) > 3:
+                        # make test a dummy value to trigger the nest loop
+
+                        test = -1
+
+                        custom_warnings.warn(
+                            'The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2')
+
+            if test is not None:
+
+                rsp = InstrumentResponseSet.from_rsp2_file(rsp2_file=rsp_file,
+                                                           counts_getter=event_list.counts_over_interval,
+                                                           exposure_getter=event_list.exposure_over_interval,
+                                                           reference_time=cdata.trigger_time)
+
+
+
+
+
+            else:
+
+                rsp = OGIPResponse(rsp_file)
 
         else:
 
-            rsp = OGIPResponse(rsp_file)
+            assert isinstance(rsp_file, InstrumentResponse), 'The provided response is not a 3ML InstrumentResponse'
+            rsp = rsp_file
 
         # pass to the super class
 

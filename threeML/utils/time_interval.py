@@ -1,5 +1,8 @@
 from threeML.utils.interval import Interval, IntervalSet
+from threeML.io.rich_display import display
 
+import collections
+import pandas as pd
 
 
 
@@ -131,3 +134,45 @@ class TimeIntervalSet(IntervalSet):
         new_set = self.new([time_interval - number for time_interval in self._intervals])
 
         return new_set
+
+    def _create_pandas(self):
+
+        time_interval_dict = collections.OrderedDict()
+
+        time_interval_dict['Start'] = []
+        time_interval_dict['Stop'] = []
+        time_interval_dict['Duration'] = []
+        time_interval_dict['Midpoint'] = []
+
+
+
+        for i, interval in enumerate(self._intervals):
+
+
+            time_interval_dict['Start'].append(interval.start)
+            time_interval_dict['Stop'].append(interval.stop)
+            time_interval_dict['Duration'].append(interval.duration)
+            time_interval_dict['Midpoint'].append(interval.half_time)
+
+        df = pd.DataFrame(data=time_interval_dict)
+
+        return df
+
+
+
+    def display(self):
+        """
+        Display the time intervals
+
+        :return: None
+        """
+
+        display(self._create_pandas())
+
+
+    def __repr__(self):
+
+        return self._create_pandas().to_string()
+
+
+

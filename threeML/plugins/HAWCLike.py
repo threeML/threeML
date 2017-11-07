@@ -10,6 +10,7 @@ from astromodels import Parameter
 from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 from hawc import liff_3ML
 from matplotlib import gridspec
+from threeML.exceptions.custom_exceptions import custom_warnings
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.plugin_prototype import PluginPrototype
@@ -20,19 +21,21 @@ defaultMaxChannel = 9
 __instrument_name = "HAWC"
 
 
+class NoFullSky(RuntimeWarning):
+
+    pass
+
+
 class HAWCLike(PluginPrototype):
 
-    def __init__(self, name, maptree, response, n_transits=None, **kwargs):
+    def __init__(self, name, maptree, response, n_transits=None, fullsky=False):
 
         # This controls if the likeHAWC class should load the entire
         # map or just a small disc around a source (faster).
         # Default is the latter, which is way faster. LIFF will decide
         # autonomously which ROI to use depending on the source model
 
-        self._fullsky = False
-
-        if 'fullsky' in kwargs.keys():
-            self._fullsky = bool(kwargs['fullsky'])
+        self._fullsky = bool(fullsky)
 
         # Sanitize files in input (expand variables and so on)
 
@@ -68,8 +71,10 @@ class HAWCLike(PluginPrototype):
                                                    defaultMaxChannel)
 
         # By default the fit of the CommonNorm is deactivated
-
-        self.deactivate_CommonNorm()
+        # NOTE: this flag sets the internal common norm minimization of LiFF, not
+        # the common norm as nuisance parameter (which is controlled by activate_CommonNorm() and
+        # deactivate_CommonNorm()
+        self._fit_commonNorm = False
 
         # This is to keep track of whether the user defined a ROI or not
 
@@ -93,7 +98,19 @@ class HAWCLike(PluginPrototype):
         
         return [str(n) for n in xrange(min_channel, max_channel + 1)]
 
+    def _check_fullsky(self, method_name):
+
+        if not self._fullsky:
+
+            custom_warnings.warn("Attempting to use method %s, but fullsky=False during construction. "
+                                 "This might fail. If it does, specify `fullsky=True` when instancing "
+                                 "the plugin and try again." % method_name,
+                                 NoFullSky)
+
+
     def set_ROI(self, ra, dec, radius, fixed_ROI=False, galactic=False):
+
+        self._check_fullsky("set_ROI")
 
         self._roi_ra = ra
         self._roi_dec = dec
@@ -105,6 +122,8 @@ class HAWCLike(PluginPrototype):
 
     def set_strip_ROI(self, rastart, rastop, decstart, decstop, fixed_ROI=False, galactic=False):
 
+        self._check_fullsky("set_ROI")
+
         self._roi_ra = [rastart, rastop]
         self._roi_dec = [decstart, decstop]
 
@@ -113,6 +132,8 @@ class HAWCLike(PluginPrototype):
 
     def set_polygon_ROI(self, ralist, declist, fixed_ROI=False, galactic=False):
 
+        self._check_fullsky("set_ROI")
+
         self._roi_ra = ralist
         self._roi_dec = declist
 
@@ -120,6 +141,8 @@ class HAWCLike(PluginPrototype):
         self._roi_galactic = galactic
 
     def set_template_ROI(self, fitsname, threshold, fixed_ROI=False):
+
+        self._check_fullsky("set_ROI")
 
         self._roi_ra = None
 
@@ -244,36 +267,6 @@ class HAWCLike(PluginPrototype):
                                                       self._bin_list,
                                                       self._fullsky)
 
-
-
-            if self._fullsky:
-
-                if self._roi_ra is not None:
-
-                    if not isinstance(self._roi_ra, list):
-
-                        self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._roi_radius, self._fixed_ROI, self._roi_galactic)
-
-                    elif len(self._roi_ra) == 2:
-
-                        self._theLikeHAWC.SetROI(self._roi_ra[0], self._roi_ra[1], self._roi_dec[0], self._roi_dec[1], self._fixed_ROI, self._roi_galactic)
-
-                    elif len(self._roi_ra) > 2:
-
-                        self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._fixed_ROI, self._roi_galactic)
-
-                    else:
-
-                        raise RuntimeError("Only one point is found, use set_ROI(float ra, float dec, float radius, bool fixedROI, bool galactic).")
-
-                elif self._roi_fits is not None:
-
-                    self._theLikeHAWC.SetROI(self._roi_fits, self._roi_threshold, self._fixed_ROI)
-
-                else:
-
-                    raise RuntimeError("You have to define a ROI with the setROI method")
-
         except:
 
             print("Could not instance the LikeHAWC class from LIFF. " +
@@ -284,6 +277,41 @@ class HAWCLike(PluginPrototype):
         else:
 
             self._instanced = True
+
+        # If fullsky=True, the user *must* use one of the set_ROI methods
+
+        if self._fullsky:
+
+            if self._roi_ra is None and self._roi_fits is None:
+
+                raise RuntimeError("You have to define a ROI with the setROI method")
+
+        # Now if an ROI is set, try to use it
+
+        if self._roi_ra is not None:
+
+            if not isinstance(self._roi_ra, list):
+
+                self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._roi_radius, self._fixed_ROI,
+                                         self._roi_galactic)
+
+            elif len(self._roi_ra) == 2:
+
+                self._theLikeHAWC.SetROI(self._roi_ra[0], self._roi_ra[1], self._roi_dec[0], self._roi_dec[1],
+                                         self._fixed_ROI, self._roi_galactic)
+
+            elif len(self._roi_ra) > 2:
+
+                self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._fixed_ROI, self._roi_galactic)
+
+            else:
+
+                raise RuntimeError(
+                    "Only one point is found, use set_ROI(float ra, float dec, float radius, bool fixedROI, bool galactic).")
+
+        elif self._roi_fits is not None:
+
+            self._theLikeHAWC.SetROI(self._roi_fits, self._roi_threshold, self._fixed_ROI)
 
         # Now set a callback in the CommonNorm parameter, so that if the user or the fit
         # engine or the Bayesian sampler change the CommonNorm value, the change will be
@@ -306,11 +334,11 @@ class HAWCLike(PluginPrototype):
 
     def activate_CommonNorm(self):
 
-        self.fitCommonNorm = True
+        self._nuisance_parameters.values()[0].free = True
 
     def deactivate_CommonNorm(self):
 
-        self.fitCommonNorm = False
+        self._nuisance_parameters.values()[0].free = False
 
     def _fill_model_cache(self):
 
@@ -360,7 +388,7 @@ class HAWCLike(PluginPrototype):
             # The 1000.0 factor is due to the fact that this diff. flux here is in
             # 1 / (kev cm2 s) while LiFF needs it in 1 / (MeV cm2 s)
 
-            this_spectrum = self._model.get_point_source_fluxes(id, self._energies) * 1000.0
+            this_spectrum = self._model.get_point_source_fluxes(id, self._energies, tag=self._tag) * 1000.0
 
             this_ra, this_dec = self._model.get_point_source_position(id)
 
@@ -383,7 +411,7 @@ class HAWCLike(PluginPrototype):
 
         self._fill_model_cache()
 
-        logL = self._theLikeHAWC.getLogLike(self.fitCommonNorm)
+        logL = self._theLikeHAWC.getLogLike(self._fit_commonNorm)
 
         return logL
 
@@ -396,7 +424,7 @@ class HAWCLike(PluginPrototype):
 
         self._fill_model_cache()
 
-        TS = self._theLikeHAWC.calcTS(self.fitCommonNorm)
+        TS = self._theLikeHAWC.calcTS(self._fit_commonNorm)
 
         return TS
 
@@ -410,7 +438,7 @@ class HAWCLike(PluginPrototype):
 
     def inner_fit(self):
 
-        self._theLikeHAWC.SetBackgroundNormFree(self.fitCommonNorm)
+        self._theLikeHAWC.SetBackgroundNormFree(self._fit_commonNorm)
 
         logL = self.get_log_like()
 
