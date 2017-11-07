@@ -224,9 +224,9 @@ class XYLike(PluginPrototype):
         :return: none
         """
 
-        if self._likelihood_model is not None:
+        if self._likelihood_model is not None and source_name is not None:
 
-            assert self._source_name in self._likelihood_model.sources, "Source %s is not contained in " \
+            assert source_name in self._likelihood_model.sources, "Source %s is not contained in " \
                                                                         "the likelihood model" % source_name
 
         self._source_name = source_name
@@ -288,8 +288,8 @@ class XYLike(PluginPrototype):
 
             # Make a function which will stack all point sources (XYLike do not support spatial dimension)
 
-            expectation = np.sum(map(lambda source: source(self._x),
-                                 self._likelihood_model.point_sources.values()),
+            expectation = np.sum(map(lambda source: source(self._x, tag=self._tag),
+                                     self._likelihood_model.point_sources.values()),
                                  axis=0)
 
         else:
@@ -381,7 +381,7 @@ class XYLike(PluginPrototype):
 
         """
 
-        new_xy = type(self)(name, x, y, yerr, poisson_data=self._is_poisson)
+        new_xy = type(self)(name, x, y, yerr, poisson_data=self._is_poisson, quiet=True)
 
         # apply the current mask
 
@@ -423,17 +423,18 @@ class XYLike(PluginPrototype):
 
         return self.get_log_like()
 
-    def get_model_flux(self):
+    def get_model(self):
 
-        pass
+        return self._get_total_expectation()
 
 
-    def fit(self, function, minimizer='minuit'):
+    def fit(self, function, minimizer='minuit', verbose=False):
         """
         Fit the data with the provided function (an astromodels function)
 
         :param function: astromodels function
         :param minimizer: the minimizer to use
+        :param verbose: print every step of the fit procedure
         :return: best fit results
         """
 
@@ -445,7 +446,7 @@ class XYLike(PluginPrototype):
 
         self.set_model(model)
 
-        self._joint_like_obj = JointLikelihood(model, DataList(self), verbose=False)
+        self._joint_like_obj = JointLikelihood(model, DataList(self), verbose=verbose)
 
         self._joint_like_obj.set_minimizer(minimizer)
 

@@ -246,7 +246,7 @@ def test_gbm_binning():
 
         assert nai3.bins.argsort() == range(len(nai3.bins))
 
-        assert len(nai3.bins) == 9
+        assert len(nai3.bins) == 5
 
         nai3.create_time_bins(start=0, stop=10, method='significance', sigma=40)
 
@@ -302,7 +302,6 @@ def test_gbm_tte_joint_likelihood_fitting():
 
             assert jl.current_minimum is None
             assert jl.minimizer is None
-            assert jl.ncalls == 0
             assert jl.verbose == False
 
             res, _ = jl.fit()
@@ -310,7 +309,6 @@ def test_gbm_tte_joint_likelihood_fitting():
             assert jl.current_minimum is not None
 
             assert jl.minimizer is not None
-            assert jl.ncalls != 1
 
 
 def test_gbm_tte_bayesian_fitting():

@@ -1,0 +1,73 @@
+{% set name = "pbr" %}
+{% set version = "3.1.1" %}
+{% set hash_type = "sha256" %}
+{% set hash_value = "05f61c71aaefc02d8e37c0a3eeb9815ff526ea28b3b76324769e6158d7f95be1" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  fn: '{{ name }}-{{ version }}.tar.gz'
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  '{{ hash_type }}': '{{ hash_value }}'
+
+build:
+  number: 0
+  entry_points:
+    - pbr = pbr.cmd.main:main
+  script: python setup.py install  --single-version-externally-managed --record=record.txt
+
+requirements:
+  build:
+    - python
+    - setuptools
+  run:
+    - python
+    - setuptools
+
+test:
+  imports:
+    - pbr
+    - pbr.cmd
+    - pbr.hooks
+    - pbr.tests
+  commands:
+    - pbr --help
+  requires:
+    - coverage !=4.4,>=4.0
+    - fixtures >=3.0.0
+    - hacking !=0.13.0,<0.14,>=0.12.0
+    - mock >=2.0
+    - oslosphinx >=4.7.0
+    - python-subunit >=0.0.18
+    - six >=1.9.0
+    - sphinx !=1.6.1,>=1.5.1
+    - testrepository >=0.0.18
+    - testresources >=0.2.4
+    - testscenarios >=0.4
+    - testtools >=1.4.0
+    - virtualenv >=13.1.0
+
+about:
+  home: http://docs.openstack.org/developer/pbr/
+  license: Apache Software License
+  license_family: APACHE
+  license_file: ''
+  summary: Python Build Reasonableness
+  description: "Introduction\n============\n\n.. image:: https://img.shields.io/pypi/v/pbr.svg\n    :target: https://pypi.python.org/pypi/pbr/\n    :alt: Latest Version\n\n.. image:: https://img.shields.io/pypi/dm/pbr.svg\n\
+    \    :target: https://pypi.python.org/pypi/pbr/\n    :alt: Downloads\n\nPBR is a library that injects some useful and sensible default behaviors\ninto your setuptools run. It started off life as the\
+    \ chunks of code that\nwere copied between all of the `OpenStack`_ projects. Around the time that\nOpenStack hit 18 different projects each with at least 3 active branches,\nit seemed like a good time\
+    \ to make that code into a proper reusable library.\n\nPBR is only mildly configurable. The basic idea is that there's a decent\nway to run things and if you do, you should reap the rewards, because\
+    \ then\nit's simple and repeatable. If you want to do things differently, cool! But\nyou've already got the power of Python at your fingertips, so you don't\nreally need PBR.\n\nPBR builds on top of\
+    \ the work that `d2to1`_ started to provide for declarative\nconfiguration. `d2to1`_ is itself an implementation of the ideas behind\n`distutils2`_. Although `distutils2`_ is now abandoned in favor\
+    \ of work towards\n`PEP 426`_ and Metadata 2.0, declarative config is still a great idea and\nspecifically important in trying to distribute setup code as a library\nwhen that library itself will alter\
+    \ how the setup is processed. As Metadata\n2.0 and other modern Python packaging PEPs come out, PBR aims to support\nthem as quickly as possible.\n\n* License: Apache License, Version 2.0\n* Documentation:\
+    \ http://docs.openstack.org/developer/pbr\n* Source: http://git.openstack.org/cgit/openstack-dev/pbr\n* Bugs: http://bugs.launchpad.net/pbr\n* Change Log: https://docs.openstack.org/developer/pbr/history.html\n\
+    \n.. _d2to1: https://pypi.python.org/pypi/d2to1\n.. _distutils2: https://pypi.python.org/pypi/Distutils2\n.. _PEP 426: http://legacy.python.org/dev/peps/pep-0426/\n.. _OpenStack: https://www.openstack.org/\n\
+    \n\n\n"
+  doc_url: ''
+  dev_url: ''
+
+extra:
+  recipe-maintainers: ''

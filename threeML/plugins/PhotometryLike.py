@@ -166,7 +166,6 @@ class PhotometryLike(XYLike):
 
         # reconstruct the plugin with selected data
 
-
         super(PhotometryLike, self).__init__(name=self.name,
                                              x=self._filter_set.effective_wavelength[self._mask],  # dummy x values
                                              y=self._magnitudes[self._mask],
@@ -188,12 +187,12 @@ class PhotometryLike(XYLike):
 
         def differential_flux(energies):
 
-            for i in xrange(n_point_sources):
-                fluxes = self._likelihood_model.get_point_source_fluxes(0, energies)
+            fluxes = self._likelihood_model.get_point_source_fluxes(0, energies, tag=self._tag)
 
-                # If we have only one point source, this will never be executed
-                for i in range(1, n_point_sources):
-                    fluxes += self._likelihood_model.get_point_source_fluxes(i, energies)
+            # If we have only one point source, this will never be executed
+            for i in range(1, n_point_sources):
+
+                fluxes += self._likelihood_model.get_point_source_fluxes(i, energies, tag=self._tag)
 
             return fluxes
 

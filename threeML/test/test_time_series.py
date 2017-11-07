@@ -221,7 +221,7 @@ def test_read_gbm_tte():
 
         assert nai3.bins.argsort() == range(len(nai3.bins))
 
-        assert len(nai3.bins) == 9
+        assert len(nai3.bins) == 5
 
         nai3.create_time_bins(start=0, stop=10, method='significance', sigma=40)
 

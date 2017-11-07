@@ -1,0 +1,48 @@
+{% set name = "corner" %}
+{% set version = "2.0.1" %}
+{% set hash_type = "sha256" %}
+{% set hash_value = "102e22797ee75d1432b6dc66aa2850f61388996ece66fd6600508742d2a7b88f" %}
+
+package:
+  version: '{{ version }}'
+  name: '{{ name|lower }}'
+
+source:
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  '{{ hash_type }}': '{{ hash_value }}'
+  fn: '{{ name }}-{{ version }}.tar.gz'
+
+build:
+  number: 0
+  script: python setup.py install  --single-version-externally-managed --record=record.txt
+
+requirements:
+  run:
+    - python
+    - numpy
+    - matplotlib
+  build:
+    - python
+    - setuptools
+    - numpy
+    - matplotlib
+
+test:
+  imports:
+    - corner
+
+about:
+  dev_url: ''
+  description: "corner.py\n=========\n\n.. image:: http://img.shields.io/travis/dfm/corner.py/master.svg?style=flat\n    :target: https://travis-ci.org/dfm/corner.py\n.. image:: https://coveralls.io/repos/github/dfm/corner.py/badge.svg?branch=master&style=flat\n\
+    \    :target: https://coveralls.io/github/dfm/corner.py?branch=master&style=flat\n.. image:: http://img.shields.io/badge/license-BSD-blue.svg?style=flat\n    :target: https://github.com/dfm/corner.py/blob/master/LICENSE\n\
+    .. image:: https://zenodo.org/badge/4729/dfm/corner.py.svg?style=flat\n    :target: https://zenodo.org/badge/latestdoi/4729/dfm/corner.py\n.. image:: http://joss.theoj.org/papers/10.21105/joss.00024/status.svg?style=flat\n\
+    \    :target: http://dx.doi.org/10.21105/joss.00024\n\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\nRead `the documentation <http://corner.readthedocs.io/>`_.\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  license: BSD License
+  license_family: BSD
+  summary: Make some beautiful corner plots of samples.
+  home: https://github.com/dfm/corner.py
+  license_file: ''
+  doc_url: ''
+
+extra:
+  recipe-maintainers: ''

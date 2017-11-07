@@ -1,0 +1,71 @@
+{% set name = "pyscaffold" %}
+{% set version = "2.4.4" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  fn: '{{ name }}-{{ version }}.tar.gz'
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+
+build:
+  number: 0
+  script: python setup.py install  --single-version-externally-managed --record=record.txt
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - six
+    - pbr
+    - setuptools_scm
+  run:
+    - python
+    - six
+    - pbr
+    - setuptools_scm
+
+about:
+  home: The package home page
+  license: BSD License
+  license_family: BSD
+  license_file: ''
+  summary: Summary of the package
+  description: ".. image:: https://travis-ci.org/blue-yonder/pyscaffold.svg?branch=master\n    :target: https://travis-ci.org/blue-yonder/pyscaffold\n.. image:: https://coveralls.io/repos/blue-yonder/pyscaffold/badge.png\n\
+    \    :target: https://coveralls.io/r/blue-yonder/pyscaffold\n.. image:: https://requires.io/github/blue-yonder/pyscaffold/requirements.png?branch=master\n    :target: https://requires.io/github/blue-yonder/pyscaffold/requirements/?branch=master\n\
+    \    :alt: Requirements Status\n.. image:: https://badges.gitter.im/Join%20Chat.svg\n    :alt: Join the chat at https://gitter.im/blue-yonder/pyscaffold\n    :target: https://gitter.im/blue-yonder/pyscaffold?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge\n\
+    \n|\n\n.. image:: http://pyscaffold.readthedocs.org/en/latest/_images/logo.png\n    :height: 512px\n    :width: 512px\n    :scale: 60 %\n    :alt: PyScaffold logo\n    :align: center\n\n|\n\nPyScaffold\
+    \ helps you to easily setup a new Python project, it is as easy as::\n\n    putup my_project\n\nThis will create a new folder ``my_project`` containing a perfect *project\ntemplate* with everything\
+    \ you need for some serious coding.\n\nType ``putup -h`` to learn about more configuration options. PyScaffold assumes\nthat you have `Git  <http://git-scm.com/>`_ installed and set up on your PC,\n\
+    meaning at least your name and email configured.\nThe project template in ``my_project`` provides you with following features:\n\n\nConfiguration & Packaging\n=========================\n\nAll configuration\
+    \ can be done in ``setup.cfg`` like changing the description,\nurl, classifiers and even console scripts of your project. That means in most\ncases it is not necessary to tamper with ``setup.py``.\n\
+    \nIn order to build a source, binary or wheel distribution, just run\n``python setup.py sdist``, ``python setup.py bdist`` or\n``python setup.py bdist_wheel``.\n\n.. rubric:: Package and Files Data\n\
+    \nAdditional data, e.g. images and text files, inside your package can be\nconfigured under the ``[files]`` section in ``setup.cfg``. It is not necessary\nto have a ``MANIFEST.in`` file for this to\
+    \ work.\n\nComplete Git Integration\n========================\n\nYour project is already an initialised Git repository and ``setup.py`` uses\nthe information of tags to infer the version of your project\
+    \ with the help of\n`setuptools_scm <https://pypi.python.org/pypi/setuptools_scm/>`_.\nTo use this feature you need to tag with the format ``MAJOR.MINOR[.PATCH]``\n, e.g. ``0.0.1`` or ``0.1``.\nRun\
+    \ ``python setup.py --version`` to retrieve the current `PEP440\n<http://www.python.org/dev/peps/pep-0440/>`_-compliant version. This version\nwill be used when building a package and is also accessible\
+    \ through\n``my_project.__version__``.\n\nUnleash the power of Git by using its `pre-commit hooks\n<http://pre-commit.com/>`_. This feature is available through the\n``--with-pre-commit`` flag. After\
+    \ your project's scaffold was generated, make\nsure pre-commit is installed, e.g. ``pip install pre-commit``, then just run\n``pre-commit install``.\n\nIt goes unsaid that also a default ``.gitignore``\
+    \ file is provided that is well\nadjusted for Python projects and the most common tools.\n\n\nSphinx Documentation\n====================\n\nBuild the documentation with ``python setup.py docs`` and\
+    \ run doctests with\n``python setup.py doctest``. Start editing the file ``docs/index.rst`` to\nextend the documentation. The documentation also works with `Read the Docs\n<https://readthedocs.org/>`_.\n\
+    \nThe `Numpy and Google style docstrings \n<http://sphinx-doc.org/latest/ext/napoleon.html>`_ are activated by default.\nJust make sure Sphinx 1.3 or above is installed.\n\n\nUnittest & Coverage\n===================\n\
+    \nRun ``python setup.py test`` to run all unittests defined in the subfolder\n``tests`` with the help of `py.test <http://pytest.org/>`_ and\n`pytest-runner <https://pypi.python.org/pypi/pytest-runner>`_.\
+    \ Some sane\ndefault flags for py.test are already defined in the ``[pytest]`` section of\n``setup.cfg``. The py.test plugin\n`pytest-cov <https://github.com/schlamar/pytest-cov>`_ is used to automatically\n\
+    generate a coverage report. It is also possible to provide additional\nparameters and flags on the commandline, e.g., type::\n\n    python setup.py test --addopts -h\n\nto show the help of py.test.\n\
+    \n.. rubric:: JUnit and Coverage HTML/XML\n\nFor usage with a continuous integration software JUnit and Coverage XML output\ncan be activated in ``setup.cfg``. Use the flag ``--with-travis`` to generate\n\
+    templates of the `Travis <https://travis-ci.org/>`_ configuration files\n``.travis.yml`` and ``tests/travis_install.sh`` which even features the\ncoverage and stats system `Coveralls <https://coveralls.io/>`_.\n\
+    In order to use the virtualenv management and test tool `Tox\n<https://tox.readthedocs.org/>`_ the flag ``--with-tox`` can be specified.\n\n\nManagement of Requirements & Licenses\n=====================================\n\
+    \nAdd the requirements of your project to ``requirements.txt`` and\n``test-requirements.txt`` which will be automatically used by ``setup.py``.\nThis also allows you to easily customize a plain virtual\
+    \ environment with::\n\n    pip install -r requirements.txt -r test-requirements.txt\n\nAll licenses from `choosealicense.com <http://choosealicense.com/>`_ can be\neasily selected with the help of\
+    \ the ``--license`` flag.\n\n\nDjango & Cookiecutter\n=====================\n\nCreate a `Django project <https://www.djangoproject.com/>`_ with the flag\n``--with-django`` which is equivalent to\n``django-admin.py\
+    \ startproject my_project`` enhanced by PyScaffold's features.\n\nWith the help of `Cookiecutter <https://cookiecutter.readthedocs.org/>`_ it\nis possible to customize your project setup. Just use the\
+    \ flag\n``--with-cookiecutter TEMPLATE`` to use a cookiecutter template which will be\nrefined by PyScaffold afterwards.\n\n\nEasy Updating\n=============\n\nKeep your project's scaffold up-to-date\
+    \ by applying\n``putput --update my_project`` when a new version of PyScaffold was released.\nAn update will only overwrite files that are not often altered by users like\nsetup.py. To update all files\
+    \ use ``--update --force``.\nAn existing project that was not setup with PyScaffold can be converted with\n``putup --force existing_project``. The force option is completely safe to use\nsince the git\
+    \ repository of the existing project is not touched!"
+  doc_url: ''
+  dev_url: ''
+
+extra:
+  recipe-maintainers: ''

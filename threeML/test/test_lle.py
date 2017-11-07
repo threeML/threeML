@@ -211,7 +211,7 @@ def test_lle_binning():
 
         lle.create_time_bins(start=0, stop=10, method='bayesblocks', p0=.1)
 
-        assert len(lle.bins) == 6
+        assert len(lle.bins) == 5
 
         assert lle.bins.argsort() == range(len(lle.bins))
         lle.create_time_bins(start=0, stop=10, method='significance', sigma=10)
@@ -264,7 +264,6 @@ def test_lle_joint_likelihood_fitting():
 
             assert jl.current_minimum is None
             assert jl.minimizer is None
-            assert jl.ncalls == 0
             assert jl.verbose == False
 
 

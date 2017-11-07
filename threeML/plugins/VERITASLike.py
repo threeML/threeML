@@ -212,77 +212,18 @@ class VERITASRun(object):
 
         print(repr)
 
-    # def _build_response(self):
-    #
-    #     # Interpolate the effective area on the same bins of the migration matrix
-    #     # NOTE: these are mid energies in log space
-    #     mid_energies = (10**self._log_mc_energies[1:] + 10**self._log_mc_energies[:-1]) / 2.0  #type: np.ndarray
-    #
-    #     log_mid_energies = np.log10(mid_energies)
-    #
-    #     interpolated_effective_area = np.interp(log_mid_energies,
-    #                                             self._log_eff_area_energies, self._eff_area,
-    #                                             left=0, right=0)
-    #
-    #     # Transform to cm2 from m2
-    #     interpolated_effective_area *= 1e4
-    #
-    #     self._interpolated_effective_area = interpolated_effective_area
-    #
-    #     # Get response matrix, which is effective area times energy dispersion
-    #     # matrix = self._hMigration * interpolated_effective_area
-    #
-    #     matrix = self._hMigration
-    #
-    #     # Put a lower limit different than zero to avoid problems downstream when convolving a model with the response
-    #
-    #     # Energies in VERITAS files are in TeV, we need them in keV
-    #
-    #     response = InstrumentResponse(matrix, (10**self._log_recon_energies) * 1e9, (10**self._log_mc_energies) * 1e9)
-    #
-    #     return response
-    #
-    # def get_spectrum(self):
-    #
-    #     spectrum = BinnedSpectrumWithDispersion(counts=self._counts,
-    #                                             exposure=self._exposure,
-    #                                             response=self._response,
-    #                                             is_poisson=True,
-    #                                             mission=self._mission,
-    #                                             instrument=self._instrument)
-    #
-    #     return spectrum
-    #
-    # def get_background_spectrum(self):
-    #
-    #     # Renormalization for the background (on_area / off_area), so this is usually < 1
-    #     bkg_renorm = self._bkg_renorm
-    #
-    #     # by renormalizing the exposure of the background we account for the fact that the area is larger
-    #     # (it is equivalent to introducing a renormalization)
-    #     renormed_exposure = self._exposure / bkg_renorm
-    #
-    #     background_spectrum = BinnedSpectrum(counts=self._bkg_counts,
-    #                                          exposure=renormed_exposure,
-    #                                          ebounds=self._response.ebounds,
-    #                                          is_poisson=True,
-    #                                          mission=self._mission,
-    #                                          instrument=self._instrument)
-    #
-    #     return background_spectrum
-
-    def _get_diff_flux_and_integral(self, like_model):
+    def _get_diff_flux_and_integral(self, like_model, tag=None):
 
         n_point_sources = like_model.get_number_of_point_sources()
 
         # Make a function which will stack all point sources (OGIP do not support spatial dimension)
 
         def differential_flux(energies):
-            fluxes = like_model.get_point_source_fluxes(0, energies)
+            fluxes = like_model.get_point_source_fluxes(0, energies, tag=tag)
 
             # If we have only one point source, this will never be executed
             for i in range(1, n_point_sources):
-                fluxes += like_model.get_point_source_fluxes(i, energies)
+                fluxes += like_model.get_point_source_fluxes(i, energies, tag=tag)
 
             return fluxes
 
@@ -330,10 +271,10 @@ class VERITASRun(object):
 
         return np.array(integrals)
 
-    def get_log_like(self, like_model, fast=True):
+    def get_log_like(self, like_model, tag=None, fast=True):
 
         # Reweight the response matrix
-        diff_flux, integral = self._get_diff_flux_and_integral(like_model)
+        diff_flux, integral = self._get_diff_flux_and_integral(like_model, tag=tag)
 
         e1 = 10**self._log_mc_energies[:-1]
         e2 = 10**self._log_mc_energies[1:]
@@ -464,7 +405,7 @@ class VERITASLike(PluginPrototype):
 
         for run in self._runs_like.values():
 
-            total += run.get_log_like(self._likelihood_model)[0]
+            total += run.get_log_like(self._likelihood_model, tag=self._tag)[0]
 
         return total
 

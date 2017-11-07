@@ -117,9 +117,9 @@ class RandomVariates(np.ndarray):
 
         return hpd_left_bound, hpd_right_bound
 
-    def equal_tail_confidence_interval(self, cl=0.68):
+    def equal_tail_interval(self, cl=0.68):
         """
-        Returns the equal tail confidence interval, i.e., an interval centered on the median of the distribution with
+        Returns the equal tail interval, i.e., an interval centered on the median of the distribution with
         the same probability on the right and on the left of the mean.
 
         If the distribution of the parameter is Gaussian and cl=0.68, this is equivalent to the 1 sigma confidence
@@ -149,7 +149,7 @@ class RandomVariates(np.ndarray):
 
         # Get representation for the equal-tail interval
 
-        min_bound, max_bound = self.equal_tail_confidence_interval(0.68)
+        min_bound, max_bound = self.equal_tail_interval(0.68)
 
         eqt_string = uncertainty_formatter(self.median, min_bound, max_bound)
 

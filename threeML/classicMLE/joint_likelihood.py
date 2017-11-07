@@ -34,9 +34,6 @@ class NotANumberInLikelihood(Warning):
     pass
 
 
-
-
-
 class JointLikelihood(object):
 
     def __init__(self, likelihood_model, data_list, verbose=False):
@@ -79,7 +76,7 @@ class JointLikelihood(object):
 
         # This is to keep track of the number of calls to the likelihood
         # function
-        self.ncalls = 0
+        self._ncalls = 0
 
         # Pre-defined minimizer
         default_minimizer = minimization.LocalMinimization(threeML_config['mle']['default minimizer'])
@@ -659,7 +656,7 @@ class JointLikelihood(object):
         """
 
         # Keep track of the number of calls
-        self.ncalls += 1
+        self._ncalls += 1
 
         # Transform the trial values in a numpy array
 

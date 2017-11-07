@@ -289,7 +289,7 @@ class VariatesContainer(object):
 
             for val in self._values:
 
-                error = val.equal_tail_confidence_interval(self._cl)
+                error = val.equal_tail_interval(self._cl)
                 upper_error.append(error[1])
                 lower_error.append(error[0])
 

@@ -192,7 +192,7 @@ class FermiLATLike(PluginPrototype):
         # of the model (in keV)
         self.emin = 1e4
         self.emax = 5e8
-        self.Nenergies = 1200
+        self.Nenergies = 200
 
         # This is the limit on the effective area correction factor,
         # which is a multiplicative factor in front of the whole model
@@ -357,7 +357,7 @@ class FermiLATLike(PluginPrototype):
 
         for id, srcName in enumerate(self.likelihoodModel.point_sources.keys()):
 
-            values = self.likelihoodModel.get_point_source_fluxes(id, energies)
+            values = self.likelihoodModel.get_point_source_fluxes(id, energies, tag=self._tag)
 
             gtlikeSrcModel = self.like[srcName]
 
@@ -521,7 +521,9 @@ class FermiLATLike(PluginPrototype):
         return nuisanceParameters
 
     def getNuisanceParameterValue(self, paramName):
-        src, pname = paramName.split("_")
+
+        src, pname = paramName.split("_")[-2:]
+
         return self.like.model[src].funcs['Spectrum'].getParam(pname).getValue()
 
 

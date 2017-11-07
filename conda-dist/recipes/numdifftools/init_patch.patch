@@ -1,0 +1,17 @@
+--- numdifftools/__init__.py	2016-07-21 11:02:22.000000000 +0000
++++ numdifftools/__init__.py.new	2017-08-21 17:20:13.760942924 +0000
+@@ -1,13 +1,9 @@
+-import pkg_resources
+ from .info import __doc__
+ from .core import *
+ from . import extrapolation, limits, step_generators
+ 
+ from numpy.testing import Tester
+-try:
+-    __version__ = pkg_resources.get_distribution(__name__).version
+-except pkg_resources.DistributionNotFound:
+-    __version__ = 'unknown'
++__version__ = '0.9.20'
+ 
+ 
+ test = Tester(raise_warnings="release").test

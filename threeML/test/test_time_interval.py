@@ -146,6 +146,11 @@ def test_time_interval_constructor_set():
         ts6 = TimeIntervalSet.from_starts_and_stops([-2, -1, 0, 1], [-1, 0, 1])
 
 
+    # test display
+
+    ts5.display()
+
+
 
 
 
