@@ -222,7 +222,7 @@ from threeML.utils.data_builders import *
 from threeML.catalogs import *
 
 # Import GBM  downloader
-from threeML.plugins.Fermi_GBM.download_GBM_data import download_GBM_trigger_data, cleanup_downloaded_GBM_data
+from threeML.plugins.Fermi_GBM.download_GBM_data import download_GBM_trigger_data, cleanup_downloaded_GBM_data, download_GBM_daily_data
 
 # Import LAT downloader
 from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data

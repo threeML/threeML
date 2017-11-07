@@ -68,3 +68,72 @@ def test_download_GBM_data():
         download_GBM_trigger_data(trigger_name='080916009',
                                   detectors=['not_a_detector'],
                                   destination_directory=temp_dir)
+
+
+@skip_if_internet_is_not_available
+@pytest.mark.xfail
+def test_download_GBM_daily_data():
+    # test good trigger names
+
+
+    good_year = 2014
+
+    bad_year = 1905
+
+    good_months = [1,'jan']
+
+    bad_month = 13
+
+    good_day = 1
+    bad_day = 89
+
+
+    which_detector = 'n1'
+
+    for i, month in enumerate(good_months):
+
+        temp_dir = '_download_temp'
+
+        dl_info = download_GBM_daily_data(year=good_year,
+                                            month=month,
+                                            day=good_day,
+                                            detectors=[which_detector],
+                                            destination_directory=temp_dir)
+
+        assert os.path.exists(dl_info[which_detector]['cspec'])
+        assert os.path.exists(dl_info[which_detector]['tte'])
+
+        # we can rely on the non-repeat download to go fast
+
+        if i == len(good_months) - 1:
+            shutil.rmtree(temp_dir)
+
+    # Now test that bad names block us
+
+    with pytest.raises(AssertionError):
+
+        download_GBM_daily_data(year=bad_year,
+                                  month=good_months[0],
+                                  day=good_day,
+                                  detectors=[which_detector],
+                                  destination_directory=temp_dir)
+
+
+    with pytest.raises(AssertionError):
+
+        download_GBM_daily_data(year=good_year,
+                                  month=bad_month,
+                                  day=good_day,
+                                  detectors=[which_detector],
+                                  destination_directory=temp_dir)
+
+    with pytest.raises(AssertionError):
+
+        download_GBM_daily_data(year=good_year,
+                                month=good_months[1],
+                                day=bad_day,
+                                detectors=[which_detector],
+                                destination_directory=temp_dir)
+
+
+
