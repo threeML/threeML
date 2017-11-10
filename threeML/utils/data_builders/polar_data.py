@@ -18,6 +18,18 @@ class POLARData(object):
         :param rsp_file: path to rsp file
         """
 
+
+
+        with open_ROOT_file(rsp_file) as f:
+            matrix = th2_to_arrays(f.Get('rsp'))[-1]
+            ebounds = th2_to_arrays(f.Get('EM_bounds'))[-1]
+            mc_low = th2_to_arrays(f.Get('ER_low'))[-1]
+            mc_high = th2_to_arrays(f.Get('ER_high'))[-1]
+
+
+
+        mc_energies = np.append(mc_low, mc_high[-1])
+
         # open the event file
         with open_ROOT_file(polar_root_file) as f:
             tmp = tree_to_ndarray(f.Get('polar_out'))
@@ -29,24 +41,21 @@ class POLARData(object):
 
             # non-zero ADC channels are invalid
             idx = pha >= 0
-            pha = pha[idx]
+            #pha = pha[idx]
+
+            idx2 = (pha <= ebounds.max()) & (pha >= ebounds.min())
+
+            pha = pha[idx2 & idx]
 
             # get the dead time fraction
-            self._dead_time_fraction = tmp['dead_ratio'][idx]
+            self._dead_time_fraction = tmp['dead_ratio'][idx & idx2]
 
             # get the arrival time, in tunix of the events
-            self._time = tmp['tunix'][idx] - reference_time
+            self._time = tmp['tunix'][idx & idx2] - reference_time
 
             # digitize the ADC channels into bins
             # these bins are preliminary
 
-        with open_ROOT_file(rsp_file) as f:
-            matrix = th2_to_arrays(f.Get('rsp'))[-1]
-            ebounds = th2_to_arrays(f.Get('EM_bounds'))[-1]
-            mc_low = th2_to_arrays(f.Get('ER_low'))[-1]
-            mc_high = th2_to_arrays(f.Get('ER_high'))[-1]
-
-        mc_energies = np.append(mc_low, mc_high[-1])
 
         # build the POLAR response
 

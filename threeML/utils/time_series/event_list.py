@@ -265,6 +265,8 @@ class EventList(TimeSeries):
 
                 # capture the exposure
 
+
+
                 width.append(this_width)
 
                 # capture the bkg *rate*
@@ -391,6 +393,10 @@ class EventList(TimeSeries):
         cnts, bins = np.histogram(total_poly_events,
                                   bins=these_bins)
 
+
+
+
+
         # Find the mean time of the bins and calculate the exposure in each bin
         mean_time = []
         exposure_per_bin = []
@@ -453,6 +459,7 @@ class EventList(TimeSeries):
 
                 cnts, bins = np.histogram(current_events,
                                           bins=these_bins)
+
 
 
                 # Put data to fit in an x vector and y vector

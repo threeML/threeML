@@ -945,6 +945,8 @@ class TimeSeriesBuilder(object):
 
         # Create the the event list
 
+
+
         event_list = EventListWithDeadTimeFraction(arrival_times=polar_data.time,
                                                    energies = polar_data.pha,
                                                    n_channels = polar_data.n_channels,
@@ -952,6 +954,7 @@ class TimeSeriesBuilder(object):
                                                    stop_time = polar_data.time.max(),
                                                    dead_time_fraction = polar_data.dead_time_fraction,
                                                    verbose = verbose,
+                                                   first_channel=1,
                                                    mission='Tiangong-2',
                                                    instrument='POLAR'
                                                    )
