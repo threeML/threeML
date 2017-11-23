@@ -2,11 +2,6 @@
 # Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
 import os
 
-# Finally import the serialization machinery
-from .io.serialization import *
-
-from .exceptions.custom_exceptions import custom_warnings
-
 if os.environ.get('DISPLAY') is None:
 
     custom_warnings.warn("No DISPLAY variable set. Using backend for graphics without display (Agg)")
@@ -14,6 +9,10 @@ if os.environ.get('DISPLAY') is None:
     import matplotlib as mpl
     mpl.use('Agg')
 
+# Finally import the serialization machinery
+from .io.serialization import *
+
+from .exceptions.custom_exceptions import custom_warnings
 
 import glob
 import imp
