@@ -940,7 +940,7 @@ class BayesianResults(_AnalysisResults):
             cc_kwargs = threeML_config['bayesian']['chain consumer style']
 
         cc.configure(**cc_kwargs)
-        fig = cc.plot(parameters=parameters, **_default_plot_args)
+        fig = cc.plotter.plot(parameters=parameters, **_default_plot_args)
 
         return fig
 
