@@ -1,5 +1,8 @@
 #!/bin/bash
 
+CC=${PREFIX}/bin/gcc
+CXX=${PREFIX}/bin/g++
+
 if [ "$(uname)" == "Darwin" ]; then
     
     if [ -z ${HEASOFT+x} ]; then
@@ -16,6 +19,6 @@ fi
 
 if [ "$(uname)" == "Linux" ]; then
 
-    pip install -v .
+    LDFLAGS="-L${PREFIX} -lgfortran" pip install -v .
 
 fi

@@ -1,13 +1,16 @@
 package:
   name: astromodels
-  version: "0.4.1"
+  version: "0.5.0"
 
 source:
   git_url: https://github.com/giacomov/astromodels.git
 
 requirements:
+
   build:
-    - python
+    - toolchain
+    - gcc
+    - python x.x
     - setuptools
     - numpy
     - pyyaml
@@ -19,8 +22,12 @@ requirements:
     - pandas
     - html2text
     - xspec-modelsonly
+    - libgfortran
+    - dill
+    - algopy
+    
   run:
-    - python
+    - python x.x
     - numpy
     - pyyaml
     - astropy
@@ -31,6 +38,11 @@ requirements:
     - pandas
     - html2text
     - xspec-modelsonly
+    - libgfortran
+    - dill
+    - algopy
+    - libgcc
+
 test:
   # Python imports
   imports:
@@ -46,4 +58,8 @@ about:
   home: https://github.com/giacomov/astromodels
   license: BSD-3
   summary: 'Astromodels contains models to be used in likelihood or Bayesian analysis in astronomy'
-  license_family: OTHER
+  license_family: BSD
+
+extra:
+  recipe-maintainers:
+    - giacomov

@@ -1,20 +1,15 @@
-{% set data = load_setup_py_data() %}
-
 package:
   name: threeml
-  version: {{ data.get('version') }}
+  version: "0.4.0"
 
 source:
-  #git_url: https://github.com/giacomov/3ML.git
-  path: ../../../
-
-build:
-   noarch_python: True
+  git_url: https://github.com/giacomov/3ML.git
 
 requirements:
+  
   build:
-    - python
-    - setuptools
+    - python x.x
+    - toolchain
     - numpy >=1.6
     - scipy >=0.18
     - emcee
@@ -33,12 +28,12 @@ requirements:
     - pymultinest
     - cthreeml
     - ipywidgets
-    - ipython <6.0
+    - ipython
     - ipyparallel
+    - py
 
   run:
-    - python
-    - setuptools
+    - python x.x
     - numpy >=1.6
     - scipy >=0.18
     - emcee
@@ -57,28 +52,24 @@ requirements:
     - pymultinest
     - cthreeml
     - ipywidgets
-    - ipython <6.0
+    - ipython
     - ipyparallel
     - xz
+    - py
 
 test:
   # Python imports
-  imports:
-    - threeML
-    - threeML.bayesian
-    - threeML.catalogs
-    - threeML.classicMLE
-    - threeML.config
-    - threeML.exceptions
-    - threeML.io
-    - threeML.minimizer
-    - threeML.parallel
-    - threeML.plugins
-    - threeML.utils
+  commands:
+    - python -c 'import os;os.environ["MPLBACKEND"]="Agg";from threeML import *'
+
 
 about:
   home: https://github.com/giacomov/3ML
   license: BSD-3
   summary: 'The Multi-Mission Maximum Likelihood framework'
   license_family: BSD
+
+extra:
+  recipe-maintainers:
+    - giacomov
 

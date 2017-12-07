@@ -7,54 +7,46 @@
 
 A framework for multi-wavelength/multi-messenger analysis for astronomy/astrophysics.
 
+# Acknowledgements 
+3ML makes use of the Spanish Virtual Observatory's Filter Profile servce (http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NIRT).
+
+If you use these profiles in your research, please consider citing them:
+
+This research has made use of the SVO Filter Profile Service (http://svo2.cab.inta-csic.es/theory/fps/) supported from the Spanish MINECO through grant AyA2014-55216
+and we would appreciate if you could include the following references in your publication:
+
+The SVO Filter Profile Service. Rodrigo, C., Solano, E., Bayo, A. http://ivoa.net/documents/Notes/SVOFPS/index.html
+The Filter Profile Service Access Protocol. Rodrigo, C., Solano, E. http://ivoa.net/documents/Notes/SVOFPSDAL/index.html
+
 # Installation
 
-## Automatic script (suggested)
+## Conda installation (suggested)
 
-We provide a script which automates the installation process. It creates a python 
-virtual environment which contains all the packages required to run 3ML. 
+[Conda](https://conda.io/docs/) is a platform independent package manager. It allows to install 3ML (and a lot of other software) without the need
+to compile anything, and in a completely separate environment from your system and your system python.
 
-> A virtual
-environment is a directory which contains the files needed for a set of packages 
-(in this case 3ML and its 
-dependencies) to work. By using it, we avoid touching any pre-existing python 
-environment you have. If something goes wrong, we can just remove the directory 
-containing the python virtual environment and restart, without ever touching the 
-system python. A virtual environment must be activated before use, as demonstrated
-below. After activation, running ```pip install [package]``` will install the package
-within the virtual environment.
+### If you don't know Conda
 
-#### Pre-requisites for the script
+If you are not familiar with conda, install 3ML with the automatic script which will take care of everything:
 
-You likely have these already. However, spend a few minutes making sure to avoid 
-problems down the line. You need:
- 
-1. a working python 2.7 environment (python3 is not 
-supported yet because many of the mission packages, like the Fermi Science Tools, need 
-python2.7). This is installed by default on most modern operating systems.
+1. Download the script from [here](https://github.com/giacomov/3ML/blob/master/install_3ML.sh)
+2. Run the script with `bash install_3ML.sh`
+3. The script will install 3ML and then create a `threeML_init.sh` script and a `threeML_init.csh` script. Source the former if you are using Bash
+(`source threeML_init.sh`) and the second one if you are using Csh/Tcsh (`source threeML_init.csh`).
 
-2. The python package ```virtualenv```. Verify that you can run this command:
-    ```bash
-    > virtualenv --version
-    ```
-    If the command does not exist, you can install virtualenv by running 
-    ```sudo pip install virtualenv```. If you do 
-    not have administrative priviliges, you can still install it with 
-    ```pip install --user virtualenv```, but then you need to add ```~/.local/bin``` to your
-    ```PATH``` environment variable.
+### If you already know Conda 
 
-3. The ```git``` versioning system. You can obtain this from your operating system 
-provider.
+If you are familiar with Conda and you already have it installed, you can install threeML by creating an environment with:
 
-Before continuing, make sure that these 3 commands work and provide an output similar
-to what presented here (versions might of course be a little different):
 ```bash
-> python --version
-Python 2.7.12
-> virtualenv --version
-15.1.0
-> git --version
-git version 2.7.4
+conda create --name threeML -c conda-forge python=2.7 numpy scipy matplotlib
+```
+
+then activating your environment and installing 3ML as:
+
+```bash
+source activate threeML
+conda install -c conda-forge -c threeml threeml
 ```
 
 ### Other dependencies
@@ -86,85 +78,12 @@ before running the script, otherwise some of the functionalities will not work.
     ```
     If it doesn't, you need to configure and set up the Fermi Science Tools.
 
-* XSPEC models: to use Xspec models within 3ML, you need to have a working Xspec 
-installation. Make sure that this works:
-    ```bash
-    > echo exit | xspec
-    
-    		XSPEC version: 12.9.0n
-    	Build Date/Time: Sat Sep 17 00:43:48 2016
-    
-    XSPEC12>exit
-     XSPEC: quit
-    ```
-
 * ROOT: ROOT is not required by 3ML, but it provides the Minuit2 minimizer which can 
 be used in 3ML. If you have ROOT, make sure that this works before running the script:
     ```bash
     > root-config --version
     5.34/36
     ```
-
-* MULTINEST: you need to download and compile [multinest](https://github.com/JohannesBuchner/MultiNest) , 
-then *after running the 3ML installation script*, you need to run *within the virtual 
-environment* ```pip install pymultinest```
-
-
-### Download and run the script
-
-Download the installation script with:
-```bash
-> python -c "import urllib ; urllib.urlretrieve('https://raw.githubusercontent.com/giacomov/3ML/master/install_3ML.py','install_3ML.py')"
-```
-You can also access it directly from [this link](https://raw.githubusercontent.com/giacomov/3ML/master/install_3ML.py).
-
-Run the script:
-```bash
-> python install_3ML.py
-```
-and follow the instructions.
-
-The script will install astromodels, 3ML and (if the setup script will find 
-boost::python) cthreeML. Note that if you have AERIE installed and set up, boost::python
-is included and cthreeML will be installed by default.
-
-### Using 3ML
-Before you can run 3ML, you need to activate the virtual environment. Assuming you used
-the default name, this is achieved with:
-```bash
-> source ~/3ML_env/bin/activate
-```
-You should see that the prompt changes to something like:
-```bash
-(3ML_env) >
-```
-
-For performance optimization, you can also set these env. variables *after activating
-the virtual environment*:
-```bash
-(3ML_env) > export OMP_NUM_THREADS=1
-(3ML_env) > export MKL_NUM_THREADS=1
-(3ML_env) > export NUMEXPR_NUM_THREADS=1
-```
-
-It is probably a good idea to place these instructions in a init script that you can
-source, or in your .bashrc file.
-
-This is a minimal example of such file, which we can call activate_3ML.sh:
-```bash
-source ~/3ML_env/bin/activate
-export OMP_NUM_THREADS=1
-export MKL_NUM_THREADS=1
-export NUMEXPR_NUM_THREADS=1
-```
-
-
-
-You can now use 3ML.
-
-> NOTE: of course, before activating the virtual environment you need to repeat all 
-the steps needed to configure the software you want to use in 3ML (AERIE, the
-Fermi Science Tools, Xspec...).
 
 ## Install using pip (advanced)
 
@@ -197,24 +116,13 @@ In order to use the HAWC plugin, you will also need to install cthreeML (run thi
 environment, you can still install the packages by adding the ```--user``` option at the
 end of each ```pip``` command.
 
-#### Tips for Mac users
+### Tips for Mac users
 The following paths need to be added to you DYLD_LIBRARY path if you have FORTRAN installed via these package managers:
 
 * Homebrew: DYLD_LIBRARY_PATH=/usr/local/lib/gcc/<version number>:$DYLD_LIBRARY_PATH
 * Fink: DYLD_LIBRARY_PATH=/sw/lib/gcc<version number>/lib:$DYLD_LIBRARY_PATH
 
 Please inform us if you have problems related to your FORTRAN distribution.
-
-### Acknowledgements 
-3ML makes use of the Spanish Virtual Observatory's Filter Profile servce (http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NIRT).
-
-If you use these profiles in your research, please consider citing them:
-
-This research has made use of the SVO Filter Profile Service (http://svo2.cab.inta-csic.es/theory/fps/) supported from the Spanish MINECO through grant AyA2014-55216
-and we would appreciate if you could include the following references in your publication:
-
-The SVO Filter Profile Service. Rodrigo, C., Solano, E., Bayo, A. http://ivoa.net/documents/Notes/SVOFPS/index.html
-The Filter Profile Service Access Protocol. Rodrigo, C., Solano, E. http://ivoa.net/documents/Notes/SVOFPSDAL/index.html
 
 
 ### Citing 3ML

@@ -1,7 +1,5 @@
 {% set name = "astropy-helpers" %}
-{% set version = "2.0.1" %}
-{% set hash_type = "sha256" %}
-{% set hash_value = "42427a1b3f027b2bfeb528610bc3d82d182053323b51a97403a4ce09fa3bbc82" %}
+{% set version = "2.0.2" %}
 
 package:
   version: '{{ version }}'
@@ -9,7 +7,6 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  '{{ hash_type }}': '{{ hash_value }}'
   fn: '{{ name }}-{{ version }}.tar.gz'
 
 build:
@@ -17,13 +14,18 @@ build:
   script: python setup.py install  --single-version-externally-managed --record=record.txt
 
 requirements:
-  run:
-    - python
-    - sphinx
+    
   build:
+  
     - python
     - setuptools
     - sphinx
+    - astropy
+
+  run:
+    - python
+    - sphinx
+    - astropy
 
 test:
   imports:
@@ -60,4 +62,6 @@ about:
   doc_url: ''
 
 extra:
-  recipe-maintainers: ''
+
+  recipe-maintainers:
+    - giacomov
