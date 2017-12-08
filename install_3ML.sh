@@ -387,6 +387,9 @@ which python
 python --version
 EOM
 
+source activate threeML
+
 mv activate.csh $CONDA_PREFIX/bin
 mv deactivate.csh $CONDA_PREFIX/bin
 
+source deactivate
