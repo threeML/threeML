@@ -29,7 +29,7 @@ to compile anything, and in a completely separate environment from your system a
 
 If you are not familiar with conda, install 3ML with the automatic script which will take care of everything:
 
-1. Download the script from [here](https://github.com/giacomov/3ML/blob/master/install_3ML.sh)
+1. Download the script from [here](https://raw.githubusercontent.com/giacomov/3ML/master/install_3ML.sh)
 2. Run the script with `bash install_3ML.sh`
 3. The script will install 3ML and then create a `threeML_init.sh` script and a `threeML_init.csh` script. Source the former if you are using Bash
 (`source threeML_init.sh`) and the second one if you are using Csh/Tcsh (`source threeML_init.csh`).
