@@ -1,6 +1,9 @@
 Installation
 ============
 
+.. toctree::
+   :maxdepth: 2
+
 Conda installation (suggested)
 ------------------------------
 
@@ -9,8 +12,8 @@ Conda installation (suggested)
 and in a completely separate environment from your system and your
 system python.
 
-If you don’t know Conda
-~~~~~~~~~~~~~~~~~~~~~~~
+If you do not know Conda
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you are not familiar with conda, install 3ML with the automatic
 script which will take care of everything:
@@ -57,20 +60,32 @@ functionalities will not work.
         Aerie version: 2.04.00
         Build type: Debug
 
-   If it doesn’t, you need to set up the HAWC environment (refer to the
+   If it does not, you need to set up the HAWC environment (refer to the
    appropriate documentation)
 
 -  Fermi Science Tools for Fermi/LAT analysis: make sure that this
    works:
-   ``bash   > gtirfs   ...   P8R2_TRANSIENT100_V6::EDISP0   P8R2_TRANSIENT100_V6::EDISP1   ...``
-   If it doesn’t, you need to configure and set up the Fermi Science
+   
+   .. code:: bash
+       
+       > gtirfs   
+       ...   
+       P8R2_TRANSIENT100_V6::EDISP0   
+       P8R2_TRANSIENT100_V6::EDISP1   
+       ...
+   
+   If it does not, you need to configure and set up the Fermi Science
    Tools.
 
 -  ROOT: ROOT is not required by 3ML, but it provides the Minuit2
    minimizer which can be used in 3ML. If you have ROOT, make sure that
    this works before running the script:
-   ``bash   > root-config --version   5.34/36``
-
+   
+   .. code:: bash
+       
+       > root-config --version
+       5.34/36
+   
 Install using pip (advanced)
 ----------------------------
 
@@ -96,7 +111,9 @@ then:
 In order to use the HAWC plugin, you will also need to install cthreeML
 (run this *after* setting up the HAWC environment):
 
-\```bash > pip install git+https://github.com/giacomov/
+.. code:: bash
+    
+    > pip install git+https://github.com/giacomov/
 
 .. _Conda: https://conda.io/docs/
 .. _here: https://raw.githubusercontent.com/giacomov/3ML/master/install_3ML.sh
