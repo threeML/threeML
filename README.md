@@ -1,6 +1,5 @@
 [![Build Status](https://travis-ci.org/giacomov/3ML.svg?branch=master)](https://travis-ci.org/giacomov/3ML)
 [![codecov](https://codecov.io/gh/giacomov/3ML/branch/master/graph/badge.svg)](https://codecov.io/gh/giacomov/3ML)
-[![Code Climate](https://codeclimate.com/github/giacomov/3ML/badges/gpa.svg)](https://codeclimate.com/github/giacomov/3ML)
 [![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 # The Multi-Mission Maximum Likelihood framework (3ML)
