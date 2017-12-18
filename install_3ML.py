@@ -228,8 +228,10 @@ if __name__ == "__main__":
 
         f.write("#/bin/bash\n")
         f.write("source %s/bin/activate\n" % env_path)
-        f.write('pip install numpy scipy matplotlib iminuit astropy "ipython<6.0" ipyparallel --upgrade\n')
-        f.write("pip install git+https://github.com/giacomov/3ML.git --upgrade\n")
+        f.write('pip install numpy scipy matplotlib iminuit astropy "ipython<6.0" ipyparallel healpy pyfits --upgrade\n')
+        f.write('pip install chainconsumer --upgrade\n')
+        f.write("pip install . --upgrade\n")
+        # f.write("pip install git+https://github.com/giacomov/3ML.git --upgrade\n")
         f.write("pip install git+https://github.com/giacomov/astromodels.git --upgrade\n")
         f.write("pip install git+https://github.com/giacomov/cthreeML.git || "
                 "echo '\n\nNOTE: could not install cthreeML. Probably boost python is not available' \n")
