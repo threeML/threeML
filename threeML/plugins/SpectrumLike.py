@@ -2568,8 +2568,8 @@ class SpectrumLike(PluginPrototype):
 
         return self._output().to_string()
 
-    def display_model(self, data_color='k', model_color='r', step=True, show_data=True, show_residuals=True,
-                      ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None,
+    def display_model(self, data_color='k', model_color='r', step=True, show_data=True, show_model=True, show_residuals=True,
+                      ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None, xscale='log', yscale='log',log_axis=None,
                       **kwargs):
 
         """
@@ -2587,17 +2587,44 @@ class SpectrumLike(PluginPrototype):
         :param model_color: the color of the model
         :param step: (bool) create a step count histogram or interpolate the model
         :param show_data: (bool) show_the data with the model
+        :param show_model: (optional) plot data with or without model
         :param show_residuals: (bool) shoe the residuals
         :param ratio_residuals: (bool) use model ratio instead of residuals
         :param show_legend: (bool) show legend
         :param min_rate: the minimum rate per bin
         :param model_label: (optional) the label to use for the model default is plugin name
         :param model_subplot: (optional) axis or list of axes to plot to
-        :return:
+        :param xscale: 'log' or 'linear'
+        :param yscale: 'log' or 'linear'
+        :param log_axes: (True or False) override xscale and yscale
+        :return: figure
         """
 
         if model_label is None:
             model_label = "%s Model" % self._name
+
+        # if 'show_model' in kwargs:
+        #     with_model = bool(kwargs.pop('with_model'))
+
+        if log_axis is not None:
+
+            if log_axis:
+
+                xscale='log'
+                yscale='log'
+
+            else:
+
+                xscale = 'linear'
+                yscale = 'linear'
+
+
+
+
+
+
+
+
 
         residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
@@ -2752,35 +2779,37 @@ class SpectrumLike(PluginPrototype):
                                color=data_color,
                                show_data=show_data)
 
-        if step:
+        if show_model:
 
-            residual_plot.add_model_step(new_energy_min,
-                                         new_energy_max,
-                                         new_chan_width,
-                                         new_model_rate,
-                                         label=model_label,
-                                         color=model_color)
+            if step:
+
+                residual_plot.add_model_step(new_energy_min,
+                                             new_energy_max,
+                                             new_chan_width,
+                                             new_model_rate,
+                                             label=model_label,
+                                             color=model_color)
 
 
-        else:
+            else:
 
-            # We always plot the model un-rebinned here
+                # We always plot the model un-rebinned here
 
-            # Mask the array so we don't plot the model where data have been excluded
-            # y = expected_model_rate / chan_width
-            y = np.ma.masked_where(~self._mask, expected_model_rate / chan_width)
+                # Mask the array so we don't plot the model where data have been excluded
+                # y = expected_model_rate / chan_width
+                y = np.ma.masked_where(~self._mask, expected_model_rate / chan_width)
 
-            x = np.mean([energy_min, energy_max], axis=0)
+                x = np.mean([energy_min, energy_max], axis=0)
 
-            residual_plot.add_model(x,
-                                    y,
-                                    label=model_label,
-                                    color=model_color)
+                residual_plot.add_model(x,
+                                        y,
+                                        label=model_label,
+                                        color=model_color)
 
         return residual_plot.finalize(xlabel="Energy\n(keV)",
                                       ylabel="Net rate\n(counts s$^{-1}$ keV$^{-1}$)",
-                                      xscale='log',
-                                      yscale='log',
+                                      xscale=xscale,
+                                      yscale=yscale,
                                       show_legend=show_legend)
 
 

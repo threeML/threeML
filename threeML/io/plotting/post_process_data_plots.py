@@ -40,6 +40,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     :param show_legend: (optional) if True (default), shows a legend
     :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
     :param model_subplot: (optional) axe(s) to plot to for overplotting
+    :param with_model: (optional) plot data with or without model
     with linear interpolation between each bin
     :return: figure instance
 
@@ -93,6 +94,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     show_residuals = True
 
+    with_model = True
+
     # Default colors
 
     data_colors = cmap_intervals(len(data_keys), data_cmap)
@@ -119,6 +122,37 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     if 'show_residuals' in kwargs:
         show_residuals= bool(kwargs.pop('show_residuals'))
+
+    if 'show_model' in kwargs:
+
+        show_model = bool(kwargs.pop('show_model'))
+
+
+    #deal with plot axes scales
+
+    if 'xscale' in kwargs:
+
+        xscale = kwargs.pop('xscale')
+
+    else:
+
+        xscale='log'
+
+    if 'yscale' in kwargs:
+
+        yscale = kwargs.pop('yscale')
+
+    else:
+
+        yscale = 'log'
+
+    if 'log_axes' in kwargs:
+
+        log_axes = kwargs.pop('log_axes')
+
+    else:
+
+        log_axes = None
 
     if 'step' in kwargs:
         step = bool(kwargs.pop('step'))
@@ -227,7 +261,12 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                            show_legend=show_legend,
                            ratio_residuals=ratio_residuals,
                            model_label=model_label,
-                           model_subplot=axes
+                           model_subplot=axes,
+                           show_model = show_model,
+                           xscale=xscale,
+                           yscale=yscale,
+                           log_axis=log_axes
+
 
                            )
 
