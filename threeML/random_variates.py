@@ -1,6 +1,6 @@
 import numpy as np
 
-from threeML.io.uncertainty_formatter import uncertainty_formatter
+from threeML.io.uncertainty_formatter import uncertainty_formatter, interval_to_errors
 from threeML.exceptions.custom_exceptions import custom_warnings
 
 
@@ -135,8 +135,7 @@ class RandomVariates(np.ndarray):
 
         low_bound, hi_bound = self.highest_posterior_density_interval(cl)
 
-        error_plus = hi_bound - self.median
-        error_minus = self.median - low_bound
+        error_minus, error_plus = interval_to_errors(self.median, low_bound, hi_bound)
 
         if error_minus != error_minus:
 
@@ -171,8 +170,7 @@ class RandomVariates(np.ndarray):
 
         low_bound, hi_bound = self.equal_tail_interval(cl)
 
-        error_plus = hi_bound - self.median
-        error_minus = self.median - low_bound
+        error_minus, error_plus = interval_to_errors(self.median, low_bound, hi_bound)
 
         if error_minus != error_minus:
 
