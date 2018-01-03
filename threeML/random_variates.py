@@ -137,7 +137,7 @@ class RandomVariates(np.ndarray):
 
         error_minus, error_plus = interval_to_errors(self.median, low_bound, hi_bound)
 
-        if error_minus != error_minus:
+        if error_minus != error_plus:
 
             if not allow_asymmetric:
 
@@ -172,7 +172,7 @@ class RandomVariates(np.ndarray):
 
         error_minus, error_plus = interval_to_errors(self.median, low_bound, hi_bound)
 
-        if error_minus != error_minus:
+        if error_minus != error_plus:
 
             if not allow_asymmetric:
 
