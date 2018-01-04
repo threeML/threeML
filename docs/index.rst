@@ -21,6 +21,7 @@ Traditionally the Astrophysics community have been using frequentist techniques,
     notebooks/Bayesian_tutorial.ipynb
     notebooks/Time-energy-fit.ipynb
     plugins
+    modeling
     features
     
 
