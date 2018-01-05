@@ -1,7 +1,7 @@
 Modeling
 ========
 
-3ML is based on a plugin system. This means that For each instrument/datum, there is a plugin that holds the data, reads a model, and returns a likelihood.
+
 
 Contents:
 
