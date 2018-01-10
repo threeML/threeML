@@ -1,5 +1,5 @@
 {% set name = "speclite" %}
-{% set version = "0.5" %}
+{% set version = "0.7" %}
 
 package:
   version: '{{ version }}'
@@ -13,30 +13,30 @@ build:
   number: 0
 
 requirements:
-  run:
-    - python
-    - numpy
-    - matplotlib
-    - astropy
-    - scipy
 
   build:
-    - python
+    - python x.x
     - setuptools
     - astropy-helpers
     - numpy
     - matplotlib
+
+  run:
+    - python x.x
+    - numpy
+    - matplotlib
+    - astropy
+    - scipy
 
 test:
   imports:
     - speclite
 
 about:
-  dev_url: ''
   license: BSD License
   license_family: BSD
-  license_file: ''
-  doc_url: ''
+  summary: 'This package provides a set of lightweight utilities for working with spectroscopic data in astronomy. Based on the astropy affiliated package template.'
 
 extra:
-  recipe-maintainers: ''
+  recipe-maintainers:
+    - giacomov

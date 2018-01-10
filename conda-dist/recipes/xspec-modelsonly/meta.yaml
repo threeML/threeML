@@ -1,0 +1,32 @@
+package:
+   name: xspec-modelsonly
+   version: "6.22.1"
+
+source:
+  md5: 0abea9e1609fcdc2c3e3ada92043d17b
+  url: https://heasarc.gsfc.nasa.gov/FTP/software/lheasoft/release/xspec-modelsonly-v6.22.1.tar.gz 
+  fn: xspec-modelsonly-v6.22.1.tar.gz
+  
+build:
+  number: 0
+
+requirements:
+ 
+ build: 
+   - toolchain
+   - gcc
+   - cfitsio
+   - ccfits
+   - wcslib
+   - readline
+   - perl
+   - libgfortran
+ 
+ run:
+   - cfitsio
+   - ccfits
+   - wcslib
+   - readline
+   - libgfortran
+   - libgcc
+

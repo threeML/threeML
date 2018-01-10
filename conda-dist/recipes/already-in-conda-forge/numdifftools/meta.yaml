@@ -1,0 +1,50 @@
+{% set name = "numdifftools" %}
+{% set version = "0.9.20" %}
+{% set hash_type = "sha256" %}
+{% set hash_value = "a6af9a28851cc9a207720d949b34b6ac70f0bccb365d9df3c6ef3ffd91176257" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  fn: '{{ name }}-{{ version }}.tar.gz'
+  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  '{{ hash_type }}': '{{ hash_value }}'
+  patches:
+      - setup_py.patch
+      - init_patch.patch
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - python x.x
+    - setuptools
+    - pyscaffold
+    
+  run:
+    - python x.x
+    - setuptools
+    - pyscaffold
+    - numpy
+    - scipy
+
+test:
+  imports:
+    - numdifftools
+
+about:
+  home: The package home page
+  license: BSD License
+  license_family: BSD
+  license_file: ''
+  summary: "Numerical differentiation in python"
+  description: "Numdifftools is a suite of tools written in _Python to solve automatic numerical differentiation problems in one or more variables. Finite differences are used in an adaptive manner, coupled with a Richardson extrapolation methodology to provide a maximally accurate result. The user can configure many options like; changing the order of the method or the extrapolation, even allowing the user to specify whether complex-step, central, forward or backward differences are used."
+  doc_url: ''
+  dev_url: ''
+
+extra:
+  recipe-maintainers:
+    - giacomov
