@@ -8,4 +8,5 @@ Contents:
    :maxdepth: 2
 
    notebooks/gof_lrt.ipynb
+   notebooks/synthetic_spectra.ipynb
 
