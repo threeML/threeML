@@ -124,7 +124,6 @@ setup(
         'astromodels>=0.4.0',
         'corner>=1.0.2',
         'pandas',
-        'html2text',
         'requests',
         'speclite',
         'ipython<6.0'

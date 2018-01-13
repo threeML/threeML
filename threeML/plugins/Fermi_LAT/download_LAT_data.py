@@ -1,5 +1,4 @@
 import HTMLParser
-import html2text
 import re
 import socket
 import time
@@ -249,30 +248,6 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
         html = " ".join(lines).strip()
 
     os.remove(temporaryFileName)
-
-    text = html2text.html2text(html.encode('utf-8').strip()).split("\n")  # type: list
-
-    if "".join(text).replace(" ", "") == "":
-
-        raise RuntimeError("Problems with the download. Empty answer from the LAT server. Normally this means that "
-                           "the server is ingesting new data, please retry in half an hour or so.")
-
-    # Remove useless lines from the text
-
-    text = filter(lambda x: x.find("[") < 0 and
-                            x.find("]") < 0 and
-                            x.find("#") < 0 and
-                            x.find("* ") < 0 and
-                            x.find("+") < 0 and
-                            x.find("Skip navigation") < 0, text)
-
-    # Remove empty lines
-
-    text = filter(lambda x: len(x.replace(" ", "")) > 1, text)
-
-    if " ".join(text).find("down due to maintenance") >= 0:
-
-        raise RuntimeError("LAT Data server looks down due to maintenance.")
 
     # Extract data from the response
 

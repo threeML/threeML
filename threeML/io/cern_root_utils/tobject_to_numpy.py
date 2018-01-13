@@ -2,9 +2,9 @@ import root_numpy
 import numpy as np
 
 
-def tree_to_ndarray(tree):
+def tree_to_ndarray(tree, *args, **kwargs):
 
-    return root_numpy.tree2array(tree)  # type: np.ndarray
+    return root_numpy.tree2array(tree, *args, **kwargs)  # type: np.ndarray
 
 
 def tgraph_to_arrays(tgraph):

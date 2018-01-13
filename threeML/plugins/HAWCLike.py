@@ -10,6 +10,7 @@ from astromodels import Parameter
 from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 from hawc import liff_3ML
 from matplotlib import gridspec
+from threeML.exceptions.custom_exceptions import custom_warnings
 
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.plugin_prototype import PluginPrototype
@@ -20,19 +21,21 @@ defaultMaxChannel = 9
 __instrument_name = "HAWC"
 
 
+class NoFullSky(RuntimeWarning):
+
+    pass
+
+
 class HAWCLike(PluginPrototype):
 
-    def __init__(self, name, maptree, response, n_transits=None, **kwargs):
+    def __init__(self, name, maptree, response, n_transits=None, fullsky=False):
 
         # This controls if the likeHAWC class should load the entire
         # map or just a small disc around a source (faster).
         # Default is the latter, which is way faster. LIFF will decide
         # autonomously which ROI to use depending on the source model
 
-        self._fullsky = False
-
-        if 'fullsky' in kwargs.keys():
-            self._fullsky = bool(kwargs['fullsky'])
+        self._fullsky = bool(fullsky)
 
         # Sanitize files in input (expand variables and so on)
 
@@ -95,7 +98,19 @@ class HAWCLike(PluginPrototype):
         
         return [str(n) for n in xrange(min_channel, max_channel + 1)]
 
+    def _check_fullsky(self, method_name):
+
+        if not self._fullsky:
+
+            custom_warnings.warn("Attempting to use method %s, but fullsky=False during construction. "
+                                 "This might fail. If it does, specify `fullsky=True` when instancing "
+                                 "the plugin and try again." % method_name,
+                                 NoFullSky)
+
+
     def set_ROI(self, ra, dec, radius, fixed_ROI=False, galactic=False):
+
+        self._check_fullsky("set_ROI")
 
         self._roi_ra = ra
         self._roi_dec = dec
@@ -107,6 +122,8 @@ class HAWCLike(PluginPrototype):
 
     def set_strip_ROI(self, rastart, rastop, decstart, decstop, fixed_ROI=False, galactic=False):
 
+        self._check_fullsky("set_ROI")
+
         self._roi_ra = [rastart, rastop]
         self._roi_dec = [decstart, decstop]
 
@@ -115,6 +132,8 @@ class HAWCLike(PluginPrototype):
 
     def set_polygon_ROI(self, ralist, declist, fixed_ROI=False, galactic=False):
 
+        self._check_fullsky("set_ROI")
+
         self._roi_ra = ralist
         self._roi_dec = declist
 
@@ -122,6 +141,8 @@ class HAWCLike(PluginPrototype):
         self._roi_galactic = galactic
 
     def set_template_ROI(self, fitsname, threshold, fixed_ROI=False):
+
+        self._check_fullsky("set_ROI")
 
         self._roi_ra = None
 
@@ -246,36 +267,6 @@ class HAWCLike(PluginPrototype):
                                                       self._bin_list,
                                                       self._fullsky)
 
-
-
-            if self._fullsky:
-
-                if self._roi_ra is not None:
-
-                    if not isinstance(self._roi_ra, list):
-
-                        self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._roi_radius, self._fixed_ROI, self._roi_galactic)
-
-                    elif len(self._roi_ra) == 2:
-
-                        self._theLikeHAWC.SetROI(self._roi_ra[0], self._roi_ra[1], self._roi_dec[0], self._roi_dec[1], self._fixed_ROI, self._roi_galactic)
-
-                    elif len(self._roi_ra) > 2:
-
-                        self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._fixed_ROI, self._roi_galactic)
-
-                    else:
-
-                        raise RuntimeError("Only one point is found, use set_ROI(float ra, float dec, float radius, bool fixedROI, bool galactic).")
-
-                elif self._roi_fits is not None:
-
-                    self._theLikeHAWC.SetROI(self._roi_fits, self._roi_threshold, self._fixed_ROI)
-
-                else:
-
-                    raise RuntimeError("You have to define a ROI with the setROI method")
-
         except:
 
             print("Could not instance the LikeHAWC class from LIFF. " +
@@ -286,6 +277,41 @@ class HAWCLike(PluginPrototype):
         else:
 
             self._instanced = True
+
+        # If fullsky=True, the user *must* use one of the set_ROI methods
+
+        if self._fullsky:
+
+            if self._roi_ra is None and self._roi_fits is None:
+
+                raise RuntimeError("You have to define a ROI with the setROI method")
+
+        # Now if an ROI is set, try to use it
+
+        if self._roi_ra is not None:
+
+            if not isinstance(self._roi_ra, list):
+
+                self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._roi_radius, self._fixed_ROI,
+                                         self._roi_galactic)
+
+            elif len(self._roi_ra) == 2:
+
+                self._theLikeHAWC.SetROI(self._roi_ra[0], self._roi_ra[1], self._roi_dec[0], self._roi_dec[1],
+                                         self._fixed_ROI, self._roi_galactic)
+
+            elif len(self._roi_ra) > 2:
+
+                self._theLikeHAWC.SetROI(self._roi_ra, self._roi_dec, self._fixed_ROI, self._roi_galactic)
+
+            else:
+
+                raise RuntimeError(
+                    "Only one point is found, use set_ROI(float ra, float dec, float radius, bool fixedROI, bool galactic).")
+
+        elif self._roi_fits is not None:
+
+            self._theLikeHAWC.SetROI(self._roi_fits, self._roi_threshold, self._fixed_ROI)
 
         # Now set a callback in the CommonNorm parameter, so that if the user or the fit
         # engine or the Bayesian sampler change the CommonNorm value, the change will be
