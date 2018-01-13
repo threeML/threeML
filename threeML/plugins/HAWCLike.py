@@ -427,6 +427,19 @@ class HAWCLike(PluginPrototype):
         TS = self._theLikeHAWC.calcTS(self._fit_commonNorm)
 
         return TS
+    
+    def calc_p_value(self, ra, dec, radius):
+    
+        '''
+        Return a p-value for the fit by integrating over a top hat in each bin
+        and comparing observed and expected counts.
+        
+        :param ra: Right ascension in degrees of top-hat center.
+        :param dec: Declination in degrees of top-hat center.
+        :param radius: List of top-hat radii in degrees (one per analysis bin).
+        '''
+        
+        return self._theLikeHAWC.calcPValue(ra, dec, radius)
 
     def get_nuisance_parameters(self):
         '''
@@ -451,7 +464,7 @@ class HAWCLike(PluginPrototype):
         """
         Plot model&data/residuals vs HAWC analysis bins for all point sources in the model.
 
-        :param radius: Radius of disk around each source over which model/data are evaluated. Default 0.5.
+        :param radius: Radius of disk around each source over which model/data are evaluated. Default 0.5. Can also be a list with one element per analysis bin.
         :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather than fractional difference ( [excess-model]/model )
                       in lower panel (default: False).
         :return: list of figures (one plot per point source).
@@ -460,8 +473,8 @@ class HAWCLike(PluginPrototype):
         figs = []
 
         nsrc = self._model.get_number_of_point_sources()
-
-        for srcid in range(nsrc):
+        
+        for srcid in xrange(nsrc):
             ra, dec = self._model.get_point_source_position(srcid)
             figs.append( self.display_residuals_at_position(ra, dec, radius, pulls) )
 
@@ -474,17 +487,48 @@ class HAWCLike(PluginPrototype):
     
         :param ra: R.A. of center of disk (in J2000) over which model/data are evaluated.
         :param dec: Declination of center of disk.
-        :param radius: Radius of disk (in degrees). Default 0.5.
+        :param radius: Radius of disk around each source over which model/data are evaluated. Default 0.5. Can also be a list with one element per analysis bin.
         :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather than fractional difference ( [excess-model]/model )
                       in lower panel (default: False).
         :return: matplotlib-type figure.
         """
 
-        model = np.array(self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
+        n_bins    = len(self._bin_list)
+        bin_index = np.arange(n_bins)
 
-        signal = np.array(self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
+        if hasattr(radius, "__getitem__"):
+            n_radii = len(radius)
+            if n_radii != n_bins:
+                raise RuntimeError(
+                    "Number of radii ({}) must match number of bins "
+                    "({}).".format(n_radii, n_bins)
+                )
+        else:
+            radius = [radius for i in bin_index]
 
-        bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
+        model = np.array(
+            [
+                self._theLikeHAWC.GetTopHatExpectedExcesses(
+                    ra, dec, radius[i]
+                )[i] for i in bin_index
+            ]
+        )
+        
+        signal = np.array(
+            [
+                self._theLikeHAWC.GetTopHatExcesses(
+                    ra, dec, radius[i]
+                )[i] for i in bin_index
+            ]
+        )
+        
+        bkg = np.array(
+            [
+                self._theLikeHAWC.GetTopHatBackgrounds(
+                    ra, dec, radius[i]
+                )[i] for i in bin_index
+            ]
+        )
 
         total = signal + bkg
             
@@ -496,9 +540,6 @@ class HAWCLike(PluginPrototype):
         gs.update(hspace=0)
 
         sub = plt.subplot(gs[0])
-
-        n_bins    = len(self._bin_list)
-        bin_index = np.arange(n_bins)
 
         sub.errorbar(bin_index, total, yerr=error, capsize=0,
                          color='black', label='Observation', fmt='.')
@@ -545,9 +586,6 @@ class HAWCLike(PluginPrototype):
         sub1.set_xticklabels(self._bin_list)
 
         return fig
-
-
-
 
     def get_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
 
@@ -637,7 +675,6 @@ class HAWCLike(PluginPrototype):
         
         return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names, key=int)
 
-
     def plot_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
 
         """
@@ -680,10 +717,6 @@ class HAWCLike(PluginPrototype):
         plt.tight_layout()
 
         return fig
-
-
-
-
 
     def write_model_map(self, fileName, poisson=False):
 
