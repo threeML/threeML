@@ -1,35 +1,32 @@
 import collections
 import copy
 from contextlib import contextmanager
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-
-
+from astromodels import Model, PointSource
+from astromodels import clone_model
 from astromodels.core.parameter import Parameter
 from astromodels.functions.priors import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
-from astromodels import clone_model
 
-from astromodels import Model, PointSource
-
-from threeML.io.rich_display import display
-from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
-from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
-from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
-from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
-from threeML.plugins.OGIP.likelihood_functions import half_chi2
-from threeML.plugins.XYLike import XYLike
-from threeML.utils.binner import Rebinner
-from threeML.utils.stats_tools import Significance
-from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
-from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
-from threeML.io.plotting.data_residual_plot import ResidualPlot
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 from threeML.config.config import threeML_config
+from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
+import threeML.io.plotting.data_residual_plot
+from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
+from threeML.io.rich_display import display
+from threeML.plugin_prototype import PluginPrototype
+from threeML.plugins.XYLike import XYLike
+from threeML.utils.OGIP.likelihood_functions import half_chi2
+from threeML.utils.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
+from threeML.utils.OGIP.likelihood_functions import poisson_observed_gaussian_background
+from threeML.utils.OGIP.likelihood_functions import poisson_observed_poisson_background
+from threeML.utils.binner import Rebinner
+from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
+from threeML.utils.stats_tools import Significance
 
 NO_REBIN = 1E-99
 
@@ -2599,7 +2596,7 @@ class SpectrumLike(PluginPrototype):
         if model_label is None:
             model_label = "%s Model" % self._name
 
-        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
+        residual_plot = threeML.io.plotting.data_residual_plot.ResidualPlot(show_residuals=show_residuals, **kwargs)
 
         # energy_min, energy_max = self._rsp.ebounds[:-1], self._rsp.ebounds[1:]
 
