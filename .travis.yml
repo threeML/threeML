@@ -7,10 +7,13 @@ before_install:
 - docker pull giacomov/hawc-docker
 - docker ps -a
 - ls $TRAVIS_BUILD_DIR
+before_script:
+  # Make sure stdout is in blocking mode. Otherwise builds will fail due to large writes to stdout
+  # See: https://github.com/travis-ci/travis-ci/issues/4704. If this gets fixed, this line can be removed.
+  - python3 -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
 script:
 - docker run --rm -it -e user_id=`id -u` -v $TRAVIS_BUILD_DIR:/travis_build_dir giacomov/hawc-docker
-  /bin/bash -c "source /travis_build_dir/test_inside_docker.sh"
-- ./push_new_version.sh
+  /bin/bash -c "source /travis_build_dir/test_inside_docker.sh" && ./push_new_version.sh
 env:
   global:
     secure: PtgPfyMs5IhDUrNwEhO/GHWi8a/7FBK40eiOVOHGEFM2flkLojLd1+xWsqOSgzxfSGxcF5Odnp6PEemzvfMqtuFLnraMMD7ZetRkEgxkP54ULQGMZoRm4J5qHlZFm5/bEi3ZWk7FyTDFtHDpHWYk9xy/v3QAp2jc3JVeUqni6SvTY2pza5g6JqCuTHj1rAycAiTRlRcKdhM0TdVho5h6ulH5KjhV/YI8UabMGo9OACkSEXrp2lpuv5uvn/Tra+TnRG5rbQCrPFyczEkMalcnKWMsyxRM/lVtbM/ZtVupCes9wP1SBBUpgz8+YiqSkuDTFNMRJ5d4suZt3DEXhh9/H32EhFAKC6qYsT3pYUxnZJHIGpjVCUt6Qp07dWZugtqbfMShmygvGIGvFArzYlu2ibFS2T/ICu69UzZWy6CIwgrLMh3VQkP0MESvD+zRqzxJ8wI/vxOWsF0vbC8jBV4/7m1UIwt2DcDM2O93i5h5iN7fA8gELvdSxv37ClqWVNkzgk0p3ARzdFu5NEaPaXv1bmOPAyu9CwDAb66wOAlfg8O5cB5xTHzEgXnjiiqraUQwGVKLRgJP9G9eVPn7CYaGDIH303mJxMG7PZMVglZ1MTemN4EJIPvpsJVFD4wMOUf/1UiI9TUXNRhIRs0NsqOICA7Nky1P748zRzsNvvxvSvY=
