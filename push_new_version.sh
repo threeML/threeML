@@ -28,4 +28,8 @@ if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
     increment_version
     commit_and_push
 
+else
+    
+    echo "This is a pull request. Not incrementing version."
+
 fi
