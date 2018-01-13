@@ -40,7 +40,7 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
 class SpectrumLike(PluginPrototype):
-    def __init__(self, name, observation, background, verbose=True, background_exposure=None, tstart=None, tstop=None):
+    def __init__(self, name, observation, background=None, verbose=True, background_exposure=None, tstart=None, tstop=None):
         # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
         """
         A plugin for generic spectral data, accepts an observed binned spectrum,
@@ -385,7 +385,7 @@ class SpectrumLike(PluginPrototype):
 
             self._area_ratio = 1.
             self._exposure_ratio = 1.
-            self._background_exposure = None
+            self._background_exposure = 1.
             self._background_scale_factor = None
 
         else:
