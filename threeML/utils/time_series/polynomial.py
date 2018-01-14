@@ -170,7 +170,61 @@ class Polynomial(object):
 
         return np.sqrt(err2)
 
+
 class PolyLogLikelihood(object):
+
+    def __init__(self, model, exposure):
+
+        self._model = model
+        self._parameters = model.coefficients
+        self._exposure = exposure
+
+        # build the covariance call
+        self._build_cov_call()
+
+
+
+    def _evaluate_logM(self, M):
+        # Evaluate the logarithm with protection for negative or small
+        # numbers, using a smooth linear extrapolation (better than just a sharp
+        # cutoff)
+        tiny = np.float64(np.finfo(M[0]).tiny)
+
+        non_tiny_mask = (M > 2.0 * tiny)
+
+        tink_mask = np.logical_not(non_tiny_mask)
+
+        if tink_mask.sum() > 0:
+            logM = np.zeros(len(M))
+            logM[tink_mask] = np.abs(M[tink_mask]) / tiny + np.log(tiny) - 1
+            logM[non_tiny_mask] = np.log(M[non_tiny_mask])
+
+        else:
+
+            logM = np.log(M)
+
+        return logM
+
+    def _fix_precision(self, v):
+        """
+          Round extremely small number inside v to the smallest usable
+          number of the type corresponding to v. This is to avoid warnings
+          and errors like underflows or overflows in math operations.
+        """
+        tiny = np.float64(np.finfo(v[0]).tiny)
+        zero_mask = (np.abs(v) <= tiny) # type: np.ndarray
+        if zero_mask.sum() > 0:
+            v[zero_mask] = np.sign(v[zero_mask]) * tiny
+
+        return v, tiny
+
+
+    def _build_cov_call(self):
+
+        raise NotImplementedError('must be built in subclass')
+
+
+class PolyBinnedLogLikelihood(PolyLogLikelihood):
     """
     Implements a Poisson likelihood (i.e., the Cash statistic). Mind that this is not
     the Castor statistic (Cstat). The difference between the two is a constant given
@@ -181,12 +235,17 @@ class PolyLogLikelihood(object):
     def __init__(self, x, y, model, exposure):
         self._bin_centers = x
         self._counts = y
-        self._model = model
-        self._parameters = model.coefficients
-        self._exposure = exposure
+
+        self._non_zero_mask = self._counts > 0
+
+        super(PolyBinnedLogLikelihood,self).__init__(model, exposure)
+
+    def _build_cov_call(self):
 
         def cov_call(*parameters):
+
             self._model.coefficients = parameters
+
             M = self._model(self._bin_centers) * self._exposure
             M_fixed, tiny = self._fix_precision(M)
 
@@ -194,7 +253,7 @@ class PolyLogLikelihood(object):
             # with zero
 
             negative_mask = (M < 0)
-            if (len(negative_mask.nonzero()[0]) > 0):
+            if negative_mask.sum() > 0:
                 M[negative_mask] = 0.0
 
             # Poisson loglikelihood statistic (Cash) is:
@@ -208,36 +267,17 @@ class PolyLogLikelihood(object):
 
             d_times_logM = np.zeros(len(self._counts))
 
-            non_zero_mask = (self._counts > 0)
 
-            d_times_logM[non_zero_mask] = self._counts[non_zero_mask] * logM[non_zero_mask]
+            d_times_logM[self._non_zero_mask] = self._counts[self._non_zero_mask] * logM[self._non_zero_mask]
 
             log_likelihood = np.sum(M_fixed - d_times_logM)
 
             return log_likelihood
 
+
         self.cov_call = cov_call
 
-    def _evaluate_logM(self, M):
-        # Evaluate the logarithm with protection for negative or small
-        # numbers, using a smooth linear extrapolation (better than just a sharp
-        # cutoff)
-        tiny = np.float64(np.finfo(M[0]).tiny)
 
-        non_tiny_mask = (M > 2.0 * tiny)
-
-        tink_mask = np.logical_not(non_tiny_mask)
-
-        if (len(tink_mask.nonzero()[0]) > 0):
-            logM = np.zeros(len(M))
-            logM[tink_mask] = np.abs(M[tink_mask]) / tiny + np.log(tiny) - 1
-            logM[non_tiny_mask] = np.log(M[non_tiny_mask])
-
-        else:
-
-            logM = np.log(M)
-
-        return logM
 
     def __call__(self, parameters):
         """
@@ -255,7 +295,7 @@ class PolyLogLikelihood(object):
         # with zero
 
         negative_mask = (M < 0)
-        if (len(negative_mask.nonzero()[0]) > 0):
+        if (negative_mask.sum() > 0):
             M[negative_mask] = 0.0
 
         # Poisson loglikelihood statistic (Cash) is:
@@ -267,31 +307,18 @@ class PolyLogLikelihood(object):
         # whatever value has log(M_i). Thus, initialize the whole vector v = {v_i}
         # to zero, then overwrite the elements corresponding to D_i > 0
 
-        d_times_logM = np.zeros(len(self._counts))
+        d_times_logM = np.zeros_like(self._counts)
 
-        non_zero_mask = (self._counts > 0)
 
-        d_times_logM[non_zero_mask] = self._counts[non_zero_mask] * logM[non_zero_mask]
+        d_times_logM[self._non_zero_mask] = self._counts[self._non_zero_mask] * logM[self._non_zero_mask]
 
         log_likelihood = np.sum(M_fixed - d_times_logM)
 
         return log_likelihood
 
-    def _fix_precision(self, v):
-        """
-          Round extremely small number inside v to the smallest usable
-          number of the type corresponding to v. This is to avoid warnings
-          and errors like underflows or overflows in math operations.
-        """
-        tiny = np.float64(np.finfo(v[0]).tiny)
-        zero_mask = (np.abs(v) <= tiny)
-        if (len(zero_mask.nonzero()[0]) > 0):
-            v[zero_mask] = np.sign(v[zero_mask]) * tiny
-
-        return v, tiny
 
 
-class PolyUnbinnedLogLikelihood(object):
+class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
     """
     Implements a Poisson likelihood (i.e., the Cash statistic). Mind that this is not
     the Castor statistic (Cstat). The difference between the two is a constant given
@@ -300,13 +327,14 @@ class PolyUnbinnedLogLikelihood(object):
     """
 
     def __init__(self, events, model, t_start, t_stop, exposure):
-        self._events = events
 
-        self._model = model
-        self._parameters = model.coefficients
-        self._exposure = exposure
+        self._events = events
         self._t_start = t_start  # list of starts
         self._t_stop = t_stop
+
+        super(PolyUnbinnedLogLikelihood, self).__init__(model, exposure)
+
+    def _build_cov_call(self):
 
         def cov_call(*parameters):
 
@@ -328,7 +356,7 @@ class PolyUnbinnedLogLikelihood(object):
             # with zero
             negative_mask = (M < 0)
 
-            if (len(negative_mask.nonzero()[0]) > 0):
+            if negative_mask.sum() > 0:
                 M[negative_mask] = 0.0
 
             # Poisson loglikelihood statistic  is:
@@ -342,22 +370,7 @@ class PolyUnbinnedLogLikelihood(object):
 
         self.cov_call = cov_call
 
-    def _evaluate_logM(self, M):
-        # Evaluate the logarithm with protection for negative or small
-        # numbers, using a smooth linear extrapolation (better than just a sharp
-        # cutoff)
-        tiny = np.float64(np.finfo(M[0]).tiny)
 
-        nontinyMask = (M > 2.0 * tiny)
-        tinyMask = np.logical_not(nontinyMask)
-
-        if (len(tinyMask.nonzero()[0]) > 0):
-            logM = np.zeros(len(M))
-            logM[tinyMask] = np.abs(M[tinyMask]) / tiny + np.log(tiny) - 1
-            logM[nontinyMask] = np.log(M[nontinyMask])
-        else:
-            logM = np.log(M)
-        return logM
 
     def __call__(self, parameters):
         """
@@ -382,7 +395,7 @@ class PolyUnbinnedLogLikelihood(object):
         # with zero
         negative_mask = (M < 0)
 
-        if (len(negative_mask.nonzero()[0]) > 0):
+        if (negative_mask.sum() > 0):
             M[negative_mask] = 0.0
 
         # Poisson loglikelihood statistic  is:
@@ -394,19 +407,6 @@ class PolyUnbinnedLogLikelihood(object):
 
         return -log_likelihood
 
-    def _fix_precision(self, v):
-        """
-          Round extremely small number inside v to the smallest usable
-          number of the type corresponding to v. This is to avoid warnings
-          and errors like underflows or overflows in math operations.
-        """
-        tiny = np.float64(np.finfo(v[0]).tiny)
-        zero_mask = (np.abs(v) <= tiny)
-        if (len(zero_mask.nonzero()[0]) > 0):
-            v[zero_mask] = np.sign(v[zero_mask]) * tiny
-
-        return v, tiny
-
 
 
 def polyfit(x, y, grade, exposure):
@@ -414,8 +414,8 @@ def polyfit(x, y, grade, exposure):
 
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
-    non_zero_mask = (y > 0)
-    n_non_zero = len(non_zero_mask.nonzero()[0])
+    non_zero_mask = y > 0
+    n_non_zero = non_zero_mask.sum()
     if n_non_zero == 0:
         # No data, nothing to do!
         return Polynomial([0.0]), 0.0
@@ -440,7 +440,7 @@ def polyfit(x, y, grade, exposure):
 
     negative_mask = (M < 0)
 
-    if len(negative_mask.nonzero()[0]) > 0:
+    if negative_mask.sum() > 0:
         # Least square fit failed to converge to a meaningful solution
         # Reset the initialGuess to reasonable value
         initial_guess[0] = np.mean(y)
@@ -448,7 +448,7 @@ def polyfit(x, y, grade, exposure):
         initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
 
     # Improve the solution using a logLikelihood statistic (Cash statistic)
-    log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
+    log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
 
     # Check that we have enough non-empty bins to fit this grade of polynomial,
     # otherwise lower the grade
@@ -459,7 +459,7 @@ def polyfit(x, y, grade, exposure):
         while (dof < 2 and len(initial_guess) > 1):
             initial_guess = initial_guess[:-1]
             polynomial = Polynomial(initial_guess)
-            log_likelihood = PolyLogLikelihood(x, y, polynomial, exposure)
+            log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
 
     # Try to improve the fit with the log-likelihood
 
@@ -556,88 +556,3 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
 
 
     return final_polynomial, min_log_likelihood
-#
-# def fit_global_and_determine_optimum_grade(cnts, bins, exposure):
-#     """
-#     Provides the ability to find the optimum polynomial grade for *binned* counts by fitting the
-#     total (all channels) to 0-4 order polynomials and then comparing them via a likelihood ratio test.
-#
-#
-#     :param cnts: counts per bin
-#     :param bins: the bins used
-#     :param exposure: exposure per bin
-#     :return: polynomial grade
-#     """
-#
-#     min_grade = 0
-#     max_grade = 4
-#     log_likelihoods = []
-#
-#     for grade in range(min_grade, max_grade + 1):
-#         polynomial, log_like = polyfit(bins, cnts, grade, exposure)
-#
-#         log_likelihoods.append(log_like)
-#
-#     # Found the best one
-#     delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
-#
-#
-#
-#     delta_threshold = 9.0
-#
-#     mask = (delta_loglike >= delta_threshold)
-#
-#     if (len(mask.nonzero()[0]) == 0):
-#
-#         # best grade is zero!
-#         best_grade = 0
-#
-#     else:
-#
-#         best_grade = mask.nonzero()[0][-1] + 1
-#
-#     return best_grade
-
-
-# def unbinned_fit_global_and_determine_optimum_grade(events, exposure,t_start, t_stop):
-#     """
-#     Provides the ability to find the optimum polynomial grade for *unbinned* events by fitting the
-#     total (all channels) to 0-4 order polynomials and then comparing them via a likelihood ratio test.
-#
-#
-#     :param events: an event list
-#     :param exposure: the exposure per event
-#     :return: polynomial grade
-#     """
-#
-#     # Fit the sum of all the channels to determine the optimal polynomial
-#     # grade
-#
-#
-#     min_grade = 0
-#     max_grade = 4
-#     log_likelihoods = []
-#
-#
-#     for grade in range(min_grade, max_grade + 1):
-#         polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure)
-#
-#         log_likelihoods.append(log_like)
-#
-#     # Found the best one
-#     delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
-#
-#     delta_threshold = 9.0
-#
-#     mask = (delta_loglike >= delta_threshold)
-#
-#     if (len(mask.nonzero()[0]) == 0):
-#
-#         # best grade is zero!
-#         best_grade = 0
-#
-#     else:
-#
-#         best_grade = mask.nonzero()[0][-1] + 1
-#
-#     return best_grade
