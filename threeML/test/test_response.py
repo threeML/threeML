@@ -1,11 +1,11 @@
-import pytest
 import numpy as np
-import warnings
 import os
+import pytest
+import warnings
 
-from threeML.plugins.OGIP.response import InstrumentResponseSet, InstrumentResponse, OGIPResponse
-from threeML.utils.time_interval import TimeInterval
 from threeML.io.package_data import get_path_of_data_file
+from threeML.utils.OGIP.response import InstrumentResponseSet, InstrumentResponse, OGIPResponse
+from threeML.utils.time_interval import TimeInterval
 
 
 def get_matrix_elements():
