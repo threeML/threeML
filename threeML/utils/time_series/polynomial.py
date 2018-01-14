@@ -295,7 +295,7 @@ class PolyBinnedLogLikelihood(PolyLogLikelihood):
         # with zero
 
         negative_mask = (M < 0)
-        if (len(negative_mask.nonzero()[0]) > 0):
+        if (negative_mask.sum() > 0):
             M[negative_mask] = 0.0
 
         # Poisson loglikelihood statistic (Cash) is:
@@ -440,7 +440,7 @@ def polyfit(x, y, grade, exposure):
 
     negative_mask = (M < 0)
 
-    if negative_mask.sum()[0] > 0:
+    if negative_mask.sum() > 0:
         # Least square fit failed to converge to a meaningful solution
         # Reset the initialGuess to reasonable value
         initial_guess[0] = np.mean(y)
