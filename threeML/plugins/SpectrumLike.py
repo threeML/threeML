@@ -27,6 +27,7 @@ from threeML.utils.OGIP.likelihood_functions import poisson_observed_poisson_bac
 from threeML.utils.binner import Rebinner
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
 from threeML.utils.stats_tools import Significance
+from threeML.utils.string_utils import dash_separated_string_to_tuple
 
 NO_REBIN = 1E-99
 
@@ -842,7 +843,7 @@ class SpectrumLike(PluginPrototype):
 
             for arg in args:
 
-                selections = arg.replace(" ", "").split("-")
+                selections = dash_separated_string_to_tuple(arg)
 
                 # We need to find out if it is a channel or and energy being requested
 
@@ -880,7 +881,7 @@ class SpectrumLike(PluginPrototype):
 
             for arg in exclude:
 
-                selections = arg.replace(" ", "").split("-")
+                selections = dash_separated_string_to_tuple(arg)
 
                 # We need to find out if it is a channel or and energy being requested
 
