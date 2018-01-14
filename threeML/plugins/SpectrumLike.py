@@ -18,13 +18,13 @@ from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_p
 from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.XYLike import XYLike
-from threeML.utils.OGIP.likelihood_functions import half_chi2
-from threeML.utils.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.utils.OGIP.likelihood_functions import poisson_observed_gaussian_background
-from threeML.utils.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.utils.binner import Rebinner
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
+from threeML.utils.statistics.likelihood_functions import half_chi2
+from threeML.utils.statistics.likelihood_functions import poisson_log_likelihood_ideal_bkg
+from threeML.utils.statistics.likelihood_functions import poisson_observed_gaussian_background
+from threeML.utils.statistics.likelihood_functions import poisson_observed_poisson_background
 from threeML.utils.statistics.stats_tools import Significance
 
 NO_REBIN = 1E-99
