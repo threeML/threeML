@@ -214,6 +214,9 @@ from .utils.step_parameter_generator import step_generator
 
 from .parallel.parallel_client import parallel_computation
 
+#
+from threeML.io.uncertainty_formatter import interval_to_errors
+
 
 # Import optical filters
 #from threeML.plugins.photometry.filter_factory import threeML_filter_library
