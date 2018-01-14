@@ -259,7 +259,7 @@ class PoissonObservedGaussianBackgroundLikelihood(SpectrumLikelihood):
         # We cannot generate variates with zero sigma. They variates from those channel will always be zero
         # This is a limitation of this whole idea. However, remember that by construction an error of zero
         # it is only allowed when the background counts are zero as well.
-        idx = (self._back_count_errors > 0)
+        idx = (self._spectrum_plugin.background_count_errors > 0)
 
         randomized_background_counts = np.zeros_like(background_model_counts)
 
