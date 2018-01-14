@@ -1,7 +1,7 @@
 import numpy as np
 
-from threeML.io.uncertainty_formatter import uncertainty_formatter, interval_to_errors
-from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.uncertainty_formatter import uncertainty_formatter
+
 
 
 class RandomVariates(np.ndarray):
@@ -117,76 +117,6 @@ class RandomVariates(np.ndarray):
         hpd_right_bound = ordered[idx_of_minimum + index_of_rightmost_possibility]
 
         return hpd_left_bound, hpd_right_bound
-
-    def highest_posterior_density_sigma(self, cl=0.68, allow_asymmetric=False):
-        """
-
-        Returns the highest posterior density sigma IF the error is symmetric. 
-        If the error is asymemtric, this will raise a run time error unless
-        the allow_asymmetric flag is set to true, in which case the upper and lower
-        error are returned 
-
-        :param cl: confidence level (0 < cl < 1)
-        :param allow_asymmetric: allow for the return of an upper and lower bound
-        :return: 
-        """
-
-        # get the interval
-
-        low_bound, hi_bound = self.highest_posterior_density_interval(cl)
-
-        error_minus, error_plus = interval_to_errors(self.median, low_bound, hi_bound)
-
-        if error_minus != error_plus:
-
-            if not allow_asymmetric:
-
-                raise RuntimeError('The error is asymmetric')
-
-            else:
-
-                custom_warnings.warn('Asymmetric error being returned as tuple')
-
-                return error_minus, error_plus
-
-        else:
-
-            return error_minus
-
-
-    def equal_tail_sigma(self, cl=0.68, allow_asymmetric=False):
-        """
-        
-        Returns the equal tail sigma IF the error is symmetric. 
-        If the error is asymemtric, this will raise a run time error unless
-        the allow_asymmetric flag is set to true, in which case the upper and lower
-        error are returned 
-        
-        :param cl: confidence level (0 < cl < 1)
-        :return: 
-        """
-
-        # get the interval
-
-        low_bound, hi_bound = self.equal_tail_interval(cl)
-
-        error_minus, error_plus = interval_to_errors(self.median, low_bound, hi_bound)
-
-        if error_minus != error_plus:
-
-            if not allow_asymmetric:
-
-                raise RuntimeError('The error is asymmetric')
-
-            else:
-
-                custom_warnings.warn('Asymmetric error being returned as tuple')
-
-                return error_minus, error_plus
-
-        else:
-
-            return error_minus
 
 
     def equal_tail_interval(self, cl=0.68):
