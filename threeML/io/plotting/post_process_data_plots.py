@@ -125,6 +125,10 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         show_model = bool(kwargs.pop('show_model'))
 
+    else:
+
+        show_model = True
+
 
     #deal with plot axes scales
 

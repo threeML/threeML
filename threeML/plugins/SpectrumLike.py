@@ -16,6 +16,7 @@ from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
 
+from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
 from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
