@@ -103,7 +103,7 @@ class SpectrumLike(PluginPrototype):
 
                 self._background_plugin = background
 
-                self.background_noise_model = 'modeled'
+
 
 
             else:
@@ -267,6 +267,8 @@ class SpectrumLike(PluginPrototype):
         # to link all those parameters to new nuisance parameters
 
         if self._background_plugin is not None:
+
+            self.background_noise_model = 'modeled'
 
             for par_name, parameter in self._background_plugin.likelihood_model.parameters.iteritems():
 

@@ -10,6 +10,12 @@ import numpy as np
 class SpectrumLikelihood(object):
 
     def __init__(self, spectrum_plugin):
+        """
+        
+        A class to hold the likelihood call and randomization of spectrum counts
+        
+        :param spectrum_plugin: the spectrum plugin to call
+        """
 
         self._spectrum_plugin = spectrum_plugin
 
@@ -294,6 +300,9 @@ likelihood_lookup = {'poisson':{'poisson' : PoissonObservedPoissonBackgroundLike
 
                                 },
 
-                     'gaussian':{None : GaussianObservedLikelihood}
+                     'gaussian':{None : GaussianObservedLikelihood},
+
+                     None:{None:None}
+
 
                      }
