@@ -11,7 +11,7 @@ from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.OGIP.pha import PHAII
 from threeML.utils.OGIP.pha import PHAWrite
-from threeML.utils.stats_tools import Significance
+from threeML.utils.statistics.stats_tools import Significance
 
 __instrument_name = "Generic EventList data"
 

@@ -11,11 +11,9 @@ from astromodels.core.parameter import Parameter
 from astromodels.functions.priors import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
 
-from threeML.utils.spectrum.pha_spectrum import PHASpectrum
-
+import threeML.io.plotting.data_residual_plot
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
-import threeML.io.plotting.data_residual_plot
 from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
 from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
@@ -26,7 +24,8 @@ from threeML.utils.OGIP.likelihood_functions import poisson_observed_gaussian_ba
 from threeML.utils.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.utils.binner import Rebinner
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
-from threeML.utils.stats_tools import Significance
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
+from threeML.utils.statistics.stats_tools import Significance
 
 NO_REBIN = 1E-99
 
