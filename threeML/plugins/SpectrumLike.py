@@ -1018,291 +1018,300 @@ class SpectrumLike(PluginPrototype):
 
             source_model_counts = self._evaluate_model() * self.exposure
 
+            randomized_source_counts = self._likelihood.get_randomized_source_counts(source_model_counts)
+            randomized_source_count_err = self._likelihood.get_randomized_source_errors()
+            randomized_background_counts = self._likelihood.get_randomized_background_counts()
+            randomized_background_count_err = self._likelihood.get_randomized_background_errors()
+
             # NOTE: we use the unmasked versions because we need to generate ALL data, so that the user can change
             # selections afterwards
-
-            if self._observation_noise_model == 'poisson':
-
-                # We need to generate Poisson variates from the model to get the signal, and from the background
-                # to get the new background
-
-                # Now depending on the background noise model, generate randomized values for the background
-
-                if self._background_noise_model == 'poisson':
-
-                    # Since we use a profile likelihood, the background model is conditional on the source model, so let's
-                    # get it from the likelihood function
-                    _, background_model_counts = self._loglike_poisson_obs_poisson_bkg()
-
-                    # Now randomize the expectations
-
-                    # Randomize expectations for the source
-
-                    randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
-                    # randomized_source_rate = randomized_source_counts / self.exposure
-
-                    # Randomize expectations for the background
-
-                    randomized_background_counts = np.random.poisson(background_model_counts)
-                    # randomized_background_rate = randomized_background_counts / self.background_exposure
-
-                    randomized_background_count_err = None
-
-                    randomized_source_count_err = None
-
-                elif self._background_noise_model == 'ideal':
-
-                    # Randomize expectations for the source
-
-                    randomized_source_counts = np.random.poisson(source_model_counts + self._background_counts)
-                    # randomized_source_rate = randomized_source_counts / self.exposure
-
-                    # No randomization for the background in this case
-
-                    randomized_background_counts = self._background_counts
-
-                    randomized_background_count_err = None
-
-                    randomized_source_count_err = None
-
-                elif self._background_noise_model == 'gaussian':
-
-                    # Since we use a profile likelihood, the background model is conditional on the source model, so let's
-                    # get it from the likelihood function
-                    _, background_model_counts = self._loglike_poisson_obs_gaussian_bkg()
-
-                    # Randomize expectations for the source
-
-                    randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
-                    # randomized_source_rate = randomized_source_counts / self.exposure
-
-                    # Now randomize the expectations.
-
-                    # We cannot generate variates with zero sigma. They variates from those channel will always be zero
-                    # This is a limitation of this whole idea. However, remember that by construction an error of zero
-                    # it is only allowed when the background counts are zero as well.
-                    idx = (self._back_count_errors > 0)
-
-                    randomized_background_counts = np.zeros_like(background_model_counts)
-
-                    randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
-                                                                         scale=self._back_count_errors[idx])
-
-                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_background_counts < 0)  # type: np.ndarray
-
-                    negative_background_n = np.sum(idx)
-
-                    if negative_background_n > 0:
-                        custom_warnings.warn("Generated background has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_background_n))
-
-                        randomized_background_counts[idx] = 0
-
-                    # Now compute rates and errors
-
-                    # randomized_background_rate = randomized_background_counts / self.background_exposure
-
-                    randomized_background_count_err = copy.copy(self._back_count_errors)
-
-                    randomized_source_count_err = None
-
-
-                elif self.background_noise_model is None:
-
-                    if self._background_plugin is None:
-
-                        # Randomize expectations for the source
-
-                        randomized_source_counts = np.random.poisson(source_model_counts)
-                        # randomized_source_rate = randomized_source_counts / self.exposure
-
-                        # No randomization for the background in this case
-
-                        randomized_background_counts = None
-
-                        randomized_background_count_err = None
-
-                        randomized_source_count_err = None
-
-                    else:
-
-                        # first generate random source counts from the plugin
-
-                        synthetic_background_plugin = self._background_plugin.get_simulated_dataset('bkg_%s'%new_name) # type: SpectrumLike
-
-                        randomized_source_counts = np.random.poisson(source_model_counts + synthetic_background_plugin.observed_counts)
-
-                        randomized_background_counts = None
-
-                        randomized_background_count_err = None
-
-                        randomized_source_count_err = None
-
-                        if not synthetic_background_plugin.observed_spectrum.is_poisson:
-
-                            randomized_background_count_err = synthetic_background_plugin.observed_count_errors
-
-
-                else:
-
-                    raise RuntimeError(
-                        "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
-                            self._observation_noise_model,
-                            self._background_noise_model))
-
-
-
-
-
-            else:
-
-                # We need to generate Gaussian variates from the model to get the signal, and from the background
-                # to get the new background
-
-                # Now depending on the background noise model, generate randomized values for the background
-
-                if self._background_noise_model == 'poisson':
-
-                    raise RuntimeError(
-                        "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
-                            self._observation_noise_model,
-                            self._background_noise_model))
-
-                elif self._background_noise_model == 'ideal':
-
-                    # Randomize expectations for the source
-
-                    idx = (self._observed_count_errors > 0)
-
-                    randomized_source_counts = np.zeros_like(source_model_counts)
-
-                    randomized_source_counts[idx] = np.random.normal(
-                        loc=source_model_counts[idx] + self._background_counts[idx],
-                        scale=self._observed_count_errors)
-
-                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_source_counts < 0)  # type: np.ndarray
-
-                    negative_source_n = np.sum(idx)
-
-                    if negative_source_n > 0:
-                        custom_warnings.warn("Generated source has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_source_n))
-
-                        randomized_source_counts[idx] = 0
-
-                    randomized_source_count_err = copy.copy(self._observed_count_errors)
-
-                    # No randomization for the background in this case
-
-                    randomized_background_counts = self._background_counts
-
-                    randomized_background_count_err = None
-
-                elif self._background_noise_model == 'gaussian':
-
-                    # Since we use a profile likelihood, the background model is conditional on the source model, so let's
-                    # get it from the likelihood function
-                    _, background_model_counts = self._loglike_poisson_obs_gaussian_bkg()
-
-                    # Randomize expectations for the source
-
-                    idx = (self._observed_count_errors > 0)
-
-                    randomized_source_counts = np.zeros_like(source_model_counts)
-
-                    randomized_source_counts[idx] = np.random.normal(
-                        loc=source_model_counts[idx] + background_model_counts[idx],
-                        scale=self._observed_count_errors)
-
-                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_source_counts < 0)  # type: np.ndarray
-
-                    negative_source_n = np.sum(idx)
-
-                    if negative_source_n > 0:
-                        custom_warnings.warn("Generated source has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_source_n))
-
-                        randomized_source_counts[idx] = 0
-
-                    randomized_source_count_err = copy.copy(self._observed_count_errors)
-
-                    # Now randomize the expectations.
-
-                    # We cannot generate variates with zero sigma. They variates from those channel will always be zero
-                    # This is a limitation of this whole idea. However, remember that by construction an error of zero
-                    # it is only allowed when the background counts are zero as well.
-                    idx = (self._back_count_errors > 0)
-
-                    randomized_background_counts = np.zeros_like(background_model_counts)
-
-                    randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
-                                                                         scale=self._back_count_errors[idx])
-
-                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_background_counts < 0)  # type: np.ndarray
-
-                    negative_background_n = np.sum(idx)
-
-                    if negative_background_n > 0:
-                        custom_warnings.warn("Generated background has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_background_n))
-
-                        randomized_background_counts[idx] = 0
-
-                    # Now compute rates and errors
-
-                    # randomized_background_rate = randomized_background_counts / self.background_exposure
-
-                    randomized_background_count_err = copy.copy(self._back_count_errors)
-
-                elif self.background_noise_model is None:
-
-                    idx = (self._observed_count_errors > 0)
-
-                    randomized_source_counts = np.zeros_like(source_model_counts)
-
-                    randomized_source_counts[idx] = np.random.normal(loc=source_model_counts[idx],
-                                                                     scale=self._observed_count_errors)
-
-                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_source_counts < 0)  # type: np.ndarray
-
-                    negative_source_n = np.sum(idx)
-
-                    if negative_source_n > 0:
-                        custom_warnings.warn("Generated source has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_source_n))
-
-                        randomized_source_counts[idx] = 0
-
-                    randomized_source_count_err = copy.copy(self._observed_count_errors)
-
-                    randomized_background_counts = None
-
-                else:
-
-                    raise RuntimeError(
-                        "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
-                            self._observation_noise_model,
-                            self._background_noise_model))
-
-            # create new source and background spectra
-            # the children of BinnedSpectra must properly override the new_spectrum
-            # member so as to build the appropriate spectrum type. All parameters of the current
-            # spectrum remain the same except for the rate and rate errors
-
-            # the profile likelihood automatically adjust the background spectrum to the
-            # same exposure and scale as the observation
-            # therefore, we must  set the background simulation to have the exposure and scale
-            # of the observation
+            #
+            #
+            #
+            #
+            # if self._observation_noise_model == 'poisson':
+            #
+            #     # We need to generate Poisson variates from the model to get the signal, and from the background
+            #     # to get the new background
+            #
+            #     # Now depending on the background noise model, generate randomized values for the background
+            #
+            #     if self._background_noise_model == 'poisson':
+            #
+            #         # Since we use a profile likelihood, the background model is conditional on the source model, so let's
+            #         # get it from the likelihood function
+            #
+            #         _, background_model_counts = self._likelihood.get_log_likelihood()
+            #
+            #         # Now randomize the expectations
+            #
+            #         # Randomize expectations for the source
+            #
+            #         randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
+            #         # randomized_source_rate = randomized_source_counts / self.exposure
+            #
+            #         # Randomize expectations for the background
+            #
+            #         randomized_background_counts = np.random.poisson(background_model_counts)
+            #         # randomized_background_rate = randomized_background_counts / self.background_exposure
+            #
+            #         randomized_background_count_err = None
+            #
+            #         randomized_source_count_err = None
+            #
+            #     elif self._background_noise_model == 'ideal':
+            #
+            #         # Randomize expectations for the source
+            #
+            #         randomized_source_counts = np.random.poisson(source_model_counts + self._background_counts)
+            #         # randomized_source_rate = randomized_source_counts / self.exposure
+            #
+            #         # No randomization for the background in this case
+            #
+            #         randomized_background_counts = self._background_counts
+            #
+            #         randomized_background_count_err = None
+            #
+            #         randomized_source_count_err = None
+            #
+            #     elif self._background_noise_model == 'gaussian':
+            #
+            #         # Since we use a profile likelihood, the background model is conditional on the source model, so let's
+            #         # get it from the likelihood function
+            #         _, background_model_counts = self._loglike_poisson_obs_gaussian_bkg()
+            #
+            #         # Randomize expectations for the source
+            #
+            #         randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
+            #         # randomized_source_rate = randomized_source_counts / self.exposure
+            #
+            #         # Now randomize the expectations.
+            #
+            #         # We cannot generate variates with zero sigma. They variates from those channel will always be zero
+            #         # This is a limitation of this whole idea. However, remember that by construction an error of zero
+            #         # it is only allowed when the background counts are zero as well.
+            #         idx = (self._back_count_errors > 0)
+            #
+            #         randomized_background_counts = np.zeros_like(background_model_counts)
+            #
+            #         randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
+            #                                                              scale=self._back_count_errors[idx])
+            #
+            #         # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+            #
+            #         idx = (randomized_background_counts < 0)  # type: np.ndarray
+            #
+            #         negative_background_n = np.sum(idx)
+            #
+            #         if negative_background_n > 0:
+            #             custom_warnings.warn("Generated background has negative counts "
+            #                                  "in %i channels. Fixing them to zero" % (negative_background_n))
+            #
+            #             randomized_background_counts[idx] = 0
+            #
+            #         # Now compute rates and errors
+            #
+            #         # randomized_background_rate = randomized_background_counts / self.background_exposure
+            #
+            #         randomized_background_count_err = copy.copy(self._back_count_errors)
+            #
+            #         randomized_source_count_err = None
+            #
+            #
+            #     elif self.background_noise_model is None:
+            #
+            #
+            #
+            #         # Randomize expectations for the source
+            #
+            #         randomized_source_counts = np.random.poisson(source_model_counts)
+            #         # randomized_source_rate = randomized_source_counts / self.exposure
+            #
+            #         # No randomization for the background in this case
+            #
+            #         randomized_background_counts = None
+            #
+            #         randomized_background_count_err = None
+            #
+            #         randomized_source_count_err = None
+            #
+            #     elif self.background_noise_model is 'modeled':
+            #
+            #         # first generate random source counts from the plugin
+            #
+            #         synthetic_background_plugin = self._background_plugin.get_simulated_dataset('bkg_%s'%new_name) # type: SpectrumLike
+            #
+            #         randomized_source_counts = np.random.poisson(source_model_counts + synthetic_background_plugin.observed_counts)
+            #
+            #         randomized_background_counts = None
+            #
+            #         randomized_background_count_err = None
+            #
+            #         randomized_source_count_err = None
+            #
+            #         if not synthetic_background_plugin.observed_spectrum.is_poisson:
+            #
+            #             randomized_background_count_err = synthetic_background_plugin.observed_count_errors
+            #
+            #
+            #     else:
+            #
+            #         raise RuntimeError(
+            #             "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
+            #                 self._observation_noise_model,
+            #                 self._background_noise_model))
+            #
+            #
+            #
+            #
+            #
+            # else:
+            #
+            #     # We need to generate Gaussian variates from the model to get the signal, and from the background
+            #     # to get the new background
+            #
+            #     # Now depending on the background noise model, generate randomized values for the background
+            #
+            #     if self._background_noise_model == 'poisson':
+            #
+            #         raise RuntimeError(
+            #             "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
+            #                 self._observation_noise_model,
+            #                 self._background_noise_model))
+            #
+            #     elif self._background_noise_model == 'ideal':
+            #
+            #         # Randomize expectations for the source
+            #
+            #         idx = (self._observed_count_errors > 0)
+            #
+            #         randomized_source_counts = np.zeros_like(source_model_counts)
+            #
+            #         randomized_source_counts[idx] = np.random.normal(
+            #             loc=source_model_counts[idx] + self._background_counts[idx],
+            #             scale=self._observed_count_errors)
+            #
+            #         # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+            #
+            #         idx = (randomized_source_counts < 0)  # type: np.ndarray
+            #
+            #         negative_source_n = np.sum(idx)
+            #
+            #         if negative_source_n > 0:
+            #             custom_warnings.warn("Generated source has negative counts "
+            #                                  "in %i channels. Fixing them to zero" % (negative_source_n))
+            #
+            #             randomized_source_counts[idx] = 0
+            #
+            #         randomized_source_count_err = copy.copy(self._observed_count_errors)
+            #
+            #         # No randomization for the background in this case
+            #
+            #         randomized_background_counts = self._background_counts
+            #
+            #         randomized_background_count_err = None
+            #
+            #     elif self._background_noise_model == 'gaussian':
+            #
+            #         # Since we use a profile likelihood, the background model is conditional on the source model, so let's
+            #         # get it from the likelihood function
+            #         _, background_model_counts = self._loglike_poisson_obs_gaussian_bkg()
+            #
+            #         # Randomize expectations for the source
+            #
+            #         idx = (self._observed_count_errors > 0)
+            #
+            #         randomized_source_counts = np.zeros_like(source_model_counts)
+            #
+            #         randomized_source_counts[idx] = np.random.normal(
+            #             loc=source_model_counts[idx] + background_model_counts[idx],
+            #             scale=self._observed_count_errors)
+            #
+            #         # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+            #
+            #         idx = (randomized_source_counts < 0)  # type: np.ndarray
+            #
+            #         negative_source_n = np.sum(idx)
+            #
+            #         if negative_source_n > 0:
+            #             custom_warnings.warn("Generated source has negative counts "
+            #                                  "in %i channels. Fixing them to zero" % (negative_source_n))
+            #
+            #             randomized_source_counts[idx] = 0
+            #
+            #         randomized_source_count_err = copy.copy(self._observed_count_errors)
+            #
+            #         # Now randomize the expectations.
+            #
+            #         # We cannot generate variates with zero sigma. They variates from those channel will always be zero
+            #         # This is a limitation of this whole idea. However, remember that by construction an error of zero
+            #         # it is only allowed when the background counts are zero as well.
+            #         idx = (self._back_count_errors > 0)
+            #
+            #         randomized_background_counts = np.zeros_like(background_model_counts)
+            #
+            #         randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
+            #                                                              scale=self._back_count_errors[idx])
+            #
+            #         # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+            #
+            #         idx = (randomized_background_counts < 0)  # type: np.ndarray
+            #
+            #         negative_background_n = np.sum(idx)
+            #
+            #         if negative_background_n > 0:
+            #             custom_warnings.warn("Generated background has negative counts "
+            #                                  "in %i channels. Fixing them to zero" % (negative_background_n))
+            #
+            #             randomized_background_counts[idx] = 0
+            #
+            #         # Now compute rates and errors
+            #
+            #         # randomized_background_rate = randomized_background_counts / self.background_exposure
+            #
+            #         randomized_background_count_err = copy.copy(self._back_count_errors)
+            #
+            #     elif self.background_noise_model is None:
+            #
+            #         idx = (self._observed_count_errors > 0)
+            #
+            #         randomized_source_counts = np.zeros_like(source_model_counts)
+            #
+            #         randomized_source_counts[idx] = np.random.normal(loc=source_model_counts[idx],
+            #                                                          scale=self._observed_count_errors)
+            #
+            #         # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
+            #
+            #         idx = (randomized_source_counts < 0)  # type: np.ndarray
+            #
+            #         negative_source_n = np.sum(idx)
+            #
+            #         if negative_source_n > 0:
+            #             custom_warnings.warn("Generated source has negative counts "
+            #                                  "in %i channels. Fixing them to zero" % (negative_source_n))
+            #
+            #             randomized_source_counts[idx] = 0
+            #
+            #         randomized_source_count_err = copy.copy(self._observed_count_errors)
+            #
+            #         randomized_background_counts = None
+            #
+            #     else:
+            #
+            #         raise RuntimeError(
+            #             "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
+            #                 self._observation_noise_model,
+            #                 self._background_noise_model))
+            #
+            # # create new source and background spectra
+            # # the children of BinnedSpectra must properly override the new_spectrum
+            # # member so as to build the appropriate spectrum type. All parameters of the current
+            # # spectrum remain the same except for the rate and rate errors
+            #
+            # # the profile likelihood automatically adjust the background spectrum to the
+            # # same exposure and scale as the observation
+            # # therefore, we must  set the background simulation to have the exposure and scale
+            # # of the observation
 
             new_observation = self._observed_spectrum.clone(new_counts=randomized_source_counts,
                                                             new_count_errors=randomized_source_count_err,
@@ -1320,7 +1329,7 @@ class SpectrumLike(PluginPrototype):
             elif self._background_plugin is not None:
 
 
-                new_background = synthetic_background_plugin
+                new_background = self._likelihood.synthetic_background_plugin
 
             else:
 
@@ -1704,7 +1713,6 @@ class SpectrumLike(PluginPrototype):
 
         return np.array(
             [self._background_integral_flux(emin, emax) for emin, emax in self._observed_spectrum.bin_stack])
-
 
     def get_background_model(self):
         """
