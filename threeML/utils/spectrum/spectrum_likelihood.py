@@ -230,7 +230,7 @@ class PoissonObservedGaussianBackgroundLikelihood(SpectrumLikelihood):
 
         loglike, bkg_model = poisson_observed_gaussian_background(self._spectrum_plugin.current_observed_counts,
                                                                   self._spectrum_plugin.current_background_counts,
-                                                                  self._spectrum_plugin.current_back_count_errors,
+                                                                  self._spectrum_plugin.current_background_count_errors,
                                                                   expected_model_counts)
 
         return np.sum(loglike), bkg_model
@@ -264,7 +264,7 @@ class PoissonObservedGaussianBackgroundLikelihood(SpectrumLikelihood):
         randomized_background_counts = np.zeros_like(background_model_counts)
 
         randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
-                                                             scale=self._spectrum_plugin.back_count_errors[idx])
+                                                             scale=self._spectrum_plugin.background_count_errors[idx])
 
         # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
 
