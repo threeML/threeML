@@ -1,10 +1,9 @@
 import numpy as np
 
 from threeML.plugins.XYLike import XYLike
+from threeML.utils.OGIP.likelihood_functions import half_chi2
+from threeML.utils.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.utils.histogram import Histogram
-from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.plugins.OGIP.likelihood_functions import half_chi2
-
 
 __instrument_name = "n.a."
 

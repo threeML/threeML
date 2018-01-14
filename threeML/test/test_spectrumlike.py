@@ -1,17 +1,12 @@
-from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.io.package_data import get_path_of_data_file
-from threeML.plugins.OGIP.response import OGIPResponse
-from threeML import JointLikelihood, DataList
-
+import numpy as np
+import pytest
 from astromodels import Blackbody, Powerlaw, Model, PointSource
 
-import numpy as np
-
-import pytest
-
-
-
+from threeML import JointLikelihood, DataList
+from threeML.io.package_data import get_path_of_data_file
+from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
+from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.utils.OGIP.response import OGIPResponse
 
 
 def test_assigning_source_name():

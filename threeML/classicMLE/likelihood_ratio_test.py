@@ -1,13 +1,16 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
 from astromodels import clone_model
 
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
 from threeML.data_list import DataList
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.OGIP.pha import PHAWrite
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.utils.OGIP.pha import PHAWrite
 
 
 class LikelihoodRatioTest(object):
@@ -123,12 +126,87 @@ class LikelihoodRatioTest(object):
 
         null_hyp_prob = np.sum(idx) / float(n_iterations)
 
+
+        # save these for later
+        self._null_hyp_prob = null_hyp_prob
+        self._TS_distribution = TS
+
         # Save the sims to phas if requested
         if self._save_pha:
 
             self._process_saved_data()
 
         return null_hyp_prob, TS, data_frame, like_data_frame
+
+    def plot_TS_distribution(self, show_chi2=True, scale=1.,**hist_kwargs):
+        """
+        
+        :param show_chi2: 
+        :param scale: 
+        :param hist_kwargs: 
+        :return: 
+        """
+
+
+        fig, ax = plt.subplots()
+
+        counts, bins, _ = ax.hist(self._TS_distribution, density=True, label='monte carlo', **hist_kwargs)
+
+
+
+        ax.axvline(self._reference_TS,color='r',ls='--',label='Ref. TS')
+
+
+        if show_chi2:
+
+            x_plot = np.linspace(bins[0],bins[-1], 100,)
+
+            # get the difference in number of free parameters
+
+            dof = len(self._joint_likelihood_instance1.likelihood_model.free_parameters) - len(self._joint_likelihood_instance0.likelihood_model.free_parameters)
+
+            assert dof >= 0, 'The difference in the number of parameters between the alternative and null models is negative!'
+
+
+            chi2 = stats.chi2.pdf(x_plot,dof)
+
+            if scale ==1.:
+
+                _scale=''
+            else:
+
+                _scale='%.1f' % scale
+
+            label = r'$%s\chi^{2}_{%d}$'%(_scale,dof)
+
+            ax.plot(x_plot, scale * chi2, label=label)
+
+
+
+        ax.set_yscale('log')
+
+        ax.set_xlabel('TS')
+        ax.set_ylabel('Probability distribution')
+
+        return fig
+
+
+
+
+    @property
+    def reference_TS(self):
+
+        return self._reference_TS
+
+    @property
+    def TS_distribution(self):
+
+        return self._TS_distribution
+
+    @property
+    def null_hypothesis_probability(self):
+
+        return self._null_hyp_prob
 
     def _process_saved_data(self):
         """
