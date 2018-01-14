@@ -1530,7 +1530,7 @@ class SpectrumLike(PluginPrototype):
         return self._current_scaled_background_counts
 
     @property
-    def current_background_count_errors(self):
+    def current_back_count_errors(self):
         return self._current_back_count_errors
 
     @property
