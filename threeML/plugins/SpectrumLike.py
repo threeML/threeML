@@ -11,7 +11,8 @@ from astromodels.core.parameter import Parameter
 from astromodels.functions.priors import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
 
-import threeML.io.plotting.data_residual_plot
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
+
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
 from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
@@ -20,13 +21,11 @@ from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.binner import Rebinner
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
-from threeML.utils.spectrum.pha_spectrum import PHASpectrum
-from threeML.utils.statistics.likelihood_functions import half_chi2
-from threeML.utils.statistics.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.utils.statistics.likelihood_functions import poisson_observed_gaussian_background
-from threeML.utils.statistics.likelihood_functions import poisson_observed_poisson_background
-from threeML.utils.statistics.stats_tools import Significance
 
+from threeML.utils.string_utils import dash_separated_string_to_tuple
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
+
+from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.spectrum.spectrum_likelihood import likelihood_lookup
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 
@@ -839,7 +838,7 @@ class SpectrumLike(PluginPrototype):
 
             for arg in args:
 
-                selections = arg.replace(" ", "").split("-")
+                selections = dash_separated_string_to_tuple(arg)
 
                 # We need to find out if it is a channel or and energy being requested
 
@@ -877,7 +876,7 @@ class SpectrumLike(PluginPrototype):
 
             for arg in exclude:
 
-                selections = arg.replace(" ", "").split("-")
+                selections = dash_separated_string_to_tuple(arg)
 
                 # We need to find out if it is a channel or and energy being requested
 

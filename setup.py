@@ -116,6 +116,7 @@ setup(
         'scipy >=0.18',
         'emcee',
         'astropy>=1.3.3',
+        'astroquery',
         'matplotlib',
         'uncertainties',
         'pyyaml',
