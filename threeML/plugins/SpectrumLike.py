@@ -27,12 +27,16 @@ from threeML.utils.statistics.likelihood_functions import poisson_observed_gauss
 from threeML.utils.statistics.likelihood_functions import poisson_observed_poisson_background
 from threeML.utils.statistics.stats_tools import Significance
 
+from threeML.utils.spectrum.spectrum_likelihood import likelihood_lookup
+from threeML.io.plotting.data_residual_plot import ResidualPlot
+
+
 NO_REBIN = 1E-99
 
 __instrument_name = "General binned spectral data"
 
 # This defines the known noise models for source and/or background spectra
-_known_noise_models = ['poisson', 'gaussian', 'ideal']
+_known_noise_models = ['poisson', 'gaussian', 'ideal', 'modeled']
 
 
 class SpectrumLike(PluginPrototype):
@@ -73,6 +77,9 @@ class SpectrumLike(PluginPrototype):
         assert isinstance(observation,
                           BinnedSpectrum), "The observed spectrum is not an instance of BinnedSpectrum"
 
+        self._background_noise_model = None
+        self._observation_noise_model = None
+
         # Precomputed observed (for speed)
 
         self._observed_spectrum = observation  # type: BinnedSpectrum
@@ -97,7 +104,7 @@ class SpectrumLike(PluginPrototype):
 
                 self._background_plugin = background
 
-
+                self.background_noise_model = 'modeled'
 
 
             else:
@@ -270,25 +277,6 @@ class SpectrumLike(PluginPrototype):
                 local_name = "bkg_%s_%s" % (par_name,name)
                 local_name = local_name.replace('.','_')
 
-                # plugin_parameter = Parameter(local_name,
-                #                 value=parameter.value,
-                #                 min_value=parameter.min_value,
-                #                 max_value=parameter.max_value,
-                #                 delta=parameter.delta,
-                #                 free=parameter.free,
-                #                 desc="Background model %s for %s" % (par_name, name))
-                #
-                #
-                # # link the background model parameter.
-                # # we will loose control over them in the
-                # # original plugin.
-                #
-                #
-                # self._background_plugin.likelihood_model.link(parameter,plugin_parameter)
-                #
-                # # add the parameter to the nuisance list
-
-                # nuisance_parameters[plugin_parameter.name] = plugin_parameter
 
                 nuisance_parameters[local_name] = parameter
 
@@ -359,6 +347,11 @@ class SpectrumLike(PluginPrototype):
         # calculate all scalings between area and exposure
 
         self._precalculations()
+
+        # now create a likelihood object for the call
+        # we pass the current object over as well
+
+        self._likelihood = likelihood_lookup[self.observation_noise_model][self.background_noise_model](self)
 
 
 
@@ -495,6 +488,11 @@ class SpectrumLike(PluginPrototype):
         assert self._background_spectrum is not None, 'This SpectrumLike instance has no background'
 
         return self._background_spectrum
+
+    @property
+    def background_plugin(self):
+
+        return self._background_plugin
 
 
     @property
@@ -1510,6 +1508,26 @@ class SpectrumLike(PluginPrototype):
 
         return bkg_counts
 
+    @property
+    def current_observed_counts(self):
+        return self._current_observed_counts
+
+    @property
+    def current_background_counts(self):
+        return self._current_background_counts
+
+    @property
+    def current_scaled_background_counts(self):
+        return self._current_scaled_background_counts
+
+    @property
+    def current_background_count_errors(self):
+        return self._current_back_count_errors
+
+    @property
+    def current_observed_count_errors(self):
+        return self._current_observed_count_errors
+
     def _loglike_gaussian_obs_no_bkg(self):
 
         model_counts = self.get_model()
@@ -1607,7 +1625,13 @@ class SpectrumLike(PluginPrototype):
                                                      "Allowed models are: %s" % (
                                                          new_model, ", ".join(_known_noise_models))
 
+
+
         self._background_noise_model = new_model
+
+        # reset the likelihood
+
+        self._likelihood = likelihood_lookup[self._observation_noise_model][new_model](self)
 
     def _get_background_noise_model(self):
 
@@ -1626,6 +1650,10 @@ class SpectrumLike(PluginPrototype):
 
         self._observation_noise_model = new_model
 
+        # reset the likelihood
+
+        self._likelihood = likelihood_lookup[new_model][self._background_noise_model](self)
+
     def _get_observation_noise_model(self):
 
         return self._observation_noise_model
@@ -1635,58 +1663,60 @@ class SpectrumLike(PluginPrototype):
 
     def get_log_like(self):
 
-        if self._observation_noise_model == 'poisson':
+        # if self._observation_noise_model == 'poisson':
+        #
+        #     if self._background_noise_model == 'poisson':
+        #
+        #         if self._background_plugin is None:
+        #
+        #             loglike, _ = self._loglike_poisson_obs_poisson_bkg()
+        #
+        #         else:
+        #
+        #             #first get the log like for the observation
+        #
+        #             loglike, _ =self._loglike_poisson_obs_modeled_bkg()
+        #
+        #             # now get the likelihood from the background
+        #             # we do not care about the form of the likelihood
+        #             # because the background plugin should handle it
+        #
+        #             bkg_loglike = self._background_plugin.get_log_like()
+        #
+        #             # sum them
+        #
+        #             loglike += bkg_loglike
+        #
+        #
+        #     elif self._background_noise_model == 'ideal':
+        #
+        #         loglike, _ = self._loglike_poisson_obs_ideal_bkg()
+        #
+        #     elif self._background_noise_model == 'gaussian':
+        #
+        #         loglike, _ = self._loglike_poisson_obs_gaussian_bkg()
+        #
+        #     elif self._background_noise_model is None:
+        #
+        #         if self._background_plugin is None:
+        #
+        #             loglike, _ =self._loglike_poisson_obs_no_bkg()
+        #
+        #
+        #         else:
+        #
+        #             loglike, _ = self._loglike_poisson_obs_modeled_bkg()
+        #
+        #     else:
+        #
+        #         raise RuntimeError("This is a bug")
+        #
+        # else:
+        #
+        #     if self._background_noise_model is None:
+        #         loglike = self._loglike_gaussian_obs_no_bkg()
 
-            if self._background_noise_model == 'poisson':
-
-                if self._background_plugin is None:
-
-                    loglike, _ = self._loglike_poisson_obs_poisson_bkg()
-
-                else:
-
-                    #first get the log like for the observation
-
-                    loglike, _ =self._loglike_poisson_obs_modeled_bkg()
-
-                    # now get the likelihood from the background
-                    # we do not care about the form of the likelihood
-                    # because the background plugin should handle it
-
-                    bkg_loglike = self._background_plugin.get_log_like()
-
-                    # sum them
-
-                    loglike += bkg_loglike
-
-
-            elif self._background_noise_model == 'ideal':
-
-                loglike, _ = self._loglike_poisson_obs_ideal_bkg()
-
-            elif self._background_noise_model == 'gaussian':
-
-                loglike, _ = self._loglike_poisson_obs_gaussian_bkg()
-
-            elif self._background_noise_model is None:
-
-                if self._background_plugin is None:
-
-                    loglike, _ =self._loglike_poisson_obs_no_bkg()
-
-
-                else:
-
-                    loglike, _ = self._loglike_poisson_obs_modeled_bkg()
-
-            else:
-
-                raise RuntimeError("This is a bug")
-
-        else:
-
-            if self._background_noise_model is None:
-                loglike = self._loglike_gaussian_obs_no_bkg()
+        loglike, _ = self._likelihood.get_log_likelihood()
 
         return loglike
 
@@ -1732,7 +1762,6 @@ class SpectrumLike(PluginPrototype):
 
         return np.array([self._integral_flux(emin, emax) for emin, emax in self._observed_spectrum.bin_stack])
 
-
     def get_model(self):
         """
         The model integrated over the energy bins. Note that it only returns the  model for the
@@ -1762,7 +1791,6 @@ class SpectrumLike(PluginPrototype):
 
         return np.array(
             [self._background_integral_flux(emin, emax) for emin, emax in self._observed_spectrum.bin_stack])
-
 
 
     def get_background_model(self):
@@ -1881,7 +1909,6 @@ class SpectrumLike(PluginPrototype):
         """
 
         return self._mask
-
 
 
     @property
@@ -2492,9 +2519,13 @@ class SpectrumLike(PluginPrototype):
         ax.set_xlim(left=self._observed_spectrum.absolute_start, right=self._observed_spectrum.absolute_stop)
         ax.legend()
 
-        def __repr__(self):
+        return fig
 
-            return self._output().to_string()
+
+
+    def __repr__(self):
+
+        return self._output().to_string()
 
     def _output(self):
         # type: () -> pd.Series
@@ -2595,7 +2626,7 @@ class SpectrumLike(PluginPrototype):
         if model_label is None:
             model_label = "%s Model" % self._name
 
-        residual_plot = threeML.io.plotting.data_residual_plot.ResidualPlot(show_residuals=show_residuals, **kwargs)
+        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
         # energy_min, energy_max = self._rsp.ebounds[:-1], self._rsp.ebounds[1:]
 
