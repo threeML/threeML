@@ -28,7 +28,7 @@ import os
 
 from astromodels import Powerlaw
 from threeML.io.package_data import get_path_of_data_file
-from threeML.plugins.OGIP.response import InstrumentResponse, OGIPResponse
+from threeML.utils.OGIP.response import InstrumentResponse, OGIPResponse
 
 
 skip_if_pyxspec_is_not_available = pytest.mark.skipif(not has_pyxspec,

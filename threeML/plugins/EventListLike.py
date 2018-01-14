@@ -1,18 +1,17 @@
 __author__ = 'grburgess'
 
+import copy
+
 import numpy as np
 
-from threeML.io.file_utils import file_existing_and_readable
-from threeML.plugins.OGIP.pha import PHAII
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.exceptions.custom_exceptions import deprecated
+from threeML.io.file_utils import file_existing_and_readable
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.OGIP.pha import PHAWrite
+from threeML.utils.OGIP.pha import PHAII
+from threeML.utils.OGIP.pha import PHAWrite
 from threeML.utils.stats_tools import Significance
-
-from threeML.exceptions.custom_exceptions import deprecated
-
-import copy
 
 __instrument_name = "Generic EventList data"
 

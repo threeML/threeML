@@ -1,35 +1,33 @@
 import collections
 import copy
 from contextlib import contextmanager
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-
-
-
+from astromodels import Model, PointSource
+from astromodels import clone_model
 from astromodels.core.parameter import Parameter
 from astromodels.functions.priors import Uniform_prior
 from astromodels.utils.valid_variable import is_valid_variable_name
-from astromodels import clone_model
 
-from astromodels import Model, PointSource
-
-from threeML.io.rich_display import display
-from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
-from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
-from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.plugins.OGIP.likelihood_functions import poisson_observed_gaussian_background
-from threeML.plugins.OGIP.likelihood_functions import poisson_observed_poisson_background
-from threeML.plugins.OGIP.likelihood_functions import half_chi2
-from threeML.plugins.XYLike import XYLike
-from threeML.utils.binner import Rebinner
-from threeML.utils.stats_tools import Significance
-from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
-from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
-from threeML.io.plotting.data_residual_plot import ResidualPlot
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 from threeML.config.config import threeML_config
+from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
+
+from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
+from threeML.io.rich_display import display
+from threeML.plugin_prototype import PluginPrototype
+from threeML.plugins.XYLike import XYLike
+from threeML.utils.OGIP.likelihood_functions import half_chi2
+from threeML.utils.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
+from threeML.utils.OGIP.likelihood_functions import poisson_observed_gaussian_background
+from threeML.utils.OGIP.likelihood_functions import poisson_observed_poisson_background
+from threeML.utils.binner import Rebinner
+from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
+from threeML.utils.stats_tools import Significance
+from threeML.utils.string_utils import dash_separated_string_to_tuple
 
 NO_REBIN = 1E-99
 
@@ -40,7 +38,7 @@ _known_noise_models = ['poisson', 'gaussian', 'ideal']
 
 
 class SpectrumLike(PluginPrototype):
-    def __init__(self, name, observation, background, verbose=True, background_exposure=None, tstart=None, tstop=None):
+    def __init__(self, name, observation, background=None, verbose=True, background_exposure=None, tstart=None, tstop=None):
         # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
         """
         A plugin for generic spectral data, accepts an observed binned spectrum,
@@ -385,7 +383,7 @@ class SpectrumLike(PluginPrototype):
 
             self._area_ratio = 1.
             self._exposure_ratio = 1.
-            self._background_exposure = None
+            self._background_exposure = 1.
             self._background_scale_factor = None
 
         else:
@@ -845,7 +843,7 @@ class SpectrumLike(PluginPrototype):
 
             for arg in args:
 
-                selections = arg.replace(" ", "").split("-")
+                selections = dash_separated_string_to_tuple(arg)
 
                 # We need to find out if it is a channel or and energy being requested
 
@@ -883,7 +881,7 @@ class SpectrumLike(PluginPrototype):
 
             for arg in exclude:
 
-                selections = arg.replace(" ", "").split("-")
+                selections = dash_separated_string_to_tuple(arg)
 
                 # We need to find out if it is a channel or and energy being requested
 
@@ -2602,6 +2600,7 @@ class SpectrumLike(PluginPrototype):
 
         if model_label is None:
             model_label = "%s Model" % self._name
+
 
         # if 'show_model' in kwargs:
         #     with_model = bool(kwargs.pop('with_model'))

@@ -99,6 +99,7 @@ def sqrt_sum_of_squares(arg):
 
     return np.sqrt( np.square(arg).sum() )
 
+
 class PoissonResiduals(object):
     """
     This class implements a way to compute residuals for a Poisson distribution mapping them to residuals of a standard

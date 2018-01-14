@@ -5,15 +5,13 @@ from matplotlib.ticker import MaxNLocator
 import threeML.plugins.SpectrumLike
 import threeML.plugins.PhotometryLike
 import threeML.plugins.HistLike
-from threeML.utils.binner import Rebinner
-from threeML.utils.stats_tools import Significance
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 from threeML.io.plotting.step_plot import step_plot
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 
-# This file contains plots which are plot in data space after a model has been
+# This file contains plots which are plotted in data space after a model has been
 # assigned to the plugin.
 
 NO_REBIN = 1e-99

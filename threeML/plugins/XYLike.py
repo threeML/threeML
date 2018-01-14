@@ -1,18 +1,16 @@
-from threeML.plugin_prototype import PluginPrototype
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 import copy
 
-from threeML.plugin_prototype import PluginPrototype
-
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from astromodels import Model, PointSource
 
-from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.plugins.OGIP.likelihood_functions import half_chi2
+from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
+from threeML.plugin_prototype import PluginPrototype
+from threeML.utils.OGIP.likelihood_functions import half_chi2
+from threeML.utils.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
 
 __instrument_name = "n.a."
 
