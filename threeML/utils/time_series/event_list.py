@@ -101,7 +101,52 @@ class EventList(TimeSeries):
 
             raise RuntimeError('This EventList has no binning specified')
 
-  
+    def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
+        """
+
+       Interface to the temporal binner's significance binning model
+
+        :param start: start of the interval to bin on
+        :param stop:  stop of the interval ot bin on
+        :param sigma: sigma-level of the bins
+        :param mask: (bool) use the energy mask to decide on ,significance
+        :param min_counts:  minimum number of counts per bin
+        :return:
+        """
+
+        if mask is not None:
+
+            # create phas to check
+            phas = np.arange(self._first_channel, self._n_channels)[mask]
+
+            this_mask = np.zeros_like(self._arrival_times, dtype=np.bool)
+
+            for channel in phas:
+                this_mask = np.logical_or(this_mask, self._energies == channel)
+
+            events = self._arrival_times[this_mask]
+
+        else:
+
+            events = copy.copy(self._arrival_times)
+
+        events = events[np.logical_and(events <= stop, events >= start)]
+
+
+
+        tmp_bkg_getter = lambda a, b: self.get_total_poly_count(a, b, mask)
+        tmp_err_getter = lambda a, b: self.get_total_poly_error(a, b, mask)
+
+        # self._temporal_binner.bin_by_significance(tmp_bkg_getter,
+        #                                           background_error_getter=tmp_err_getter,
+        #                                           sigma_level=sigma,
+        #                                           min_counts=min_counts)
+
+        self._temporal_binner = TemporalBinner.bin_by_significance(events,
+                                                                   tmp_bkg_getter,
+                                                                   background_error_getter=tmp_err_getter,
+                                                                   sigma_level=sigma,
+                                                                   min_counts=min_counts)
 
     def bin_by_constant(self, start, stop, dt=1):
         """
