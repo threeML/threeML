@@ -596,5 +596,5 @@ def test_hawc_get_number_of_data_points():
     datalist = DataList(llh)
     jl = JointLikelihood(lm, datalist, verbose=True)
 
-    assert np.isclose(llh.get_number_of_data_points(), 13428.0, rtol=1e-12)
+    assert llh.get_number_of_data_points() == 13428
 

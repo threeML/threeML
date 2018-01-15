@@ -552,7 +552,7 @@ class HAWCLike(PluginPrototype):
         Implemented in liff as the number of pixels in the ROI per analysis bin.
         """        
         pixels_per_bin =  np.array( self._theLikeHAWC.GetNumberOfPixels() )
-        return np.sum( pixels_per_bin )
+        return int(np.sum( pixels_per_bin ))
 
 
 
