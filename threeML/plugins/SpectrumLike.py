@@ -2236,6 +2236,7 @@ class SpectrumLike(PluginPrototype):
 
         if (min_rate is not NO_REBIN) or (self._rebinner is None):
 
+
             this_rebinner = Rebinner(src_rate, min_rate, self._mask)
 
         else:
@@ -2260,6 +2261,7 @@ class SpectrumLike(PluginPrototype):
 
         for e_min, e_max in zip(new_energy_min, new_energy_max):
 
+
             # Find all channels in this rebinned bin
             idx = (mean_energy_unrebinned >= e_min) & (mean_energy_unrebinned <= e_max)
 
@@ -2271,12 +2273,20 @@ class SpectrumLike(PluginPrototype):
                 # All empty, cannot weight
                 this_mean_energy = (e_min + e_max) / 2.0
 
+
             else:
+
+                # negative source rates are causing the energy bin means to
+                # go outside of the boundaries. so, we just set them to zero
+
+                idx_neg = r < 0.
+                r[idx_neg] = 0.
 
                 # Do the weighted average of the mean energies
                 weights = r / np.sum(r)
 
                 this_mean_energy = np.average(mean_energy_unrebinned[idx], weights=weights)
+
 
             # Compute "errors" for X (which aren't really errors, just to mark the size of the bin)
 
@@ -2356,6 +2366,10 @@ class SpectrumLike(PluginPrototype):
                 else:
 
                     raise NotImplementedError("Not yet implemented")
+
+
+
+
 
         residual_plot.add_data(mean_energy,
                                new_rate / new_chan_width,
