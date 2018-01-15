@@ -288,7 +288,7 @@ class PoissonObservedGaussianBackgroundLikelihood(SpectrumLikelihood):
 
     def get_randomized_background_errors(self):
 
-        return copy.copy(self._spectrum_plugin.back_count_errors)
+        return copy.copy(self._spectrum_plugin.background_count_errors)
 
 
 likelihood_lookup = {'poisson':{'poisson' : PoissonObservedPoissonBackgroundLikelihood,
