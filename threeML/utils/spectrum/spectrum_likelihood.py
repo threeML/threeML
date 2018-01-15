@@ -7,6 +7,13 @@ from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackgr
 import copy
 import numpy as np
 
+
+
+
+# These classes provide likelihood evaluation to SpectrumLike and children
+
+
+
 class SpectrumLikelihood(object):
 
     def __init__(self, spectrum_plugin):

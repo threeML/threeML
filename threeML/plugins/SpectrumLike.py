@@ -351,8 +351,15 @@ class SpectrumLike(PluginPrototype):
 
         # now create a likelihood object for the call
         # we pass the current object over as well
+        # the likelihood object is opaque to the class and
+        # keeps a pointer of the plugin inside so that the current
+        # counts, bkg, etc. are always up to date
+        # This way, when evaluating the likelihood,
+        # no checks are involved because the apropriate
+        # noise models are pre-selected
 
-        self._likelihood = likelihood_lookup[self.observation_noise_model][self.background_noise_model](self)
+
+        self._likelihood_evaluator = likelihood_lookup[self.observation_noise_model][self.background_noise_model](self)
 
 
 
@@ -1019,10 +1026,14 @@ class SpectrumLike(PluginPrototype):
 
             source_model_counts = self._evaluate_model() * self.exposure
 
-            randomized_source_counts = self._likelihood.get_randomized_source_counts(source_model_counts)
-            randomized_source_count_err = self._likelihood.get_randomized_source_errors()
-            randomized_background_counts = self._likelihood.get_randomized_background_counts()
-            randomized_background_count_err = self._likelihood.get_randomized_background_errors()
+            # The likelihood evaluator keeps track of the proper likelihood needed to randomize
+            # quantities. It properly returns None if needed. This avoids multiple checks and dupilcate
+            # code for the MANY cases we can have. As new cases are added, this code will adapt.
+
+            randomized_source_counts = self._likelihood_evaluator.get_randomized_source_counts(source_model_counts)
+            randomized_source_count_err = self._likelihood_evaluator.get_randomized_source_errors()
+            randomized_background_counts = self._likelihood_evaluator.get_randomized_background_counts()
+            randomized_background_count_err = self._likelihood_evaluator.get_randomized_background_errors()
 
 
             # create new source and background spectra
@@ -1051,7 +1062,7 @@ class SpectrumLike(PluginPrototype):
             elif self._background_plugin is not None:
 
 
-                new_background = self._likelihood.synthetic_background_plugin
+                new_background = self._likelihood_evaluator.synthetic_background_plugin
 
             else:
 
@@ -1275,7 +1286,7 @@ class SpectrumLike(PluginPrototype):
 
         # reset the likelihood
 
-        self._likelihood = likelihood_lookup[self._observation_noise_model][new_model](self)
+        self._likelihood_evaluator = likelihood_lookup[self._observation_noise_model][new_model](self)
 
     def _get_background_noise_model(self):
 
@@ -1296,7 +1307,7 @@ class SpectrumLike(PluginPrototype):
 
         # reset the likelihood
 
-        self._likelihood = likelihood_lookup[new_model][self._background_noise_model](self)
+        self._likelihood_evaluator = likelihood_lookup[new_model][self._background_noise_model](self)
 
     def _get_observation_noise_model(self):
 
@@ -1306,8 +1317,14 @@ class SpectrumLike(PluginPrototype):
                                        doc="Sets/gets the noise model for the background spectrum")
 
     def get_log_like(self):
+        """
+        Calls the likelihood from the pre-setup likelihood evaluator that "knows" of the currently set
+        noise models
+        
+        :return: 
+        """
 
-        loglike, _ = self._likelihood.get_log_likelihood()
+        loglike, _ = self._likelihood_evaluator.get_log_likelihood()
 
         return loglike
 
