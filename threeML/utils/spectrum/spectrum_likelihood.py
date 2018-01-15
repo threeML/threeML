@@ -130,7 +130,7 @@ class PoissonObservedModeledBackgroundLikelihood(SpectrumLikelihood):
                                                       background_model_counts,
                                                       model_counts)
 
-        bkg_log_like, _ = self._spectrum_plugin.background_plugin.get_log_like()
+        bkg_log_like = self._spectrum_plugin.background_plugin.get_log_like()
 
         total_log_like = np.sum(loglike) + bkg_log_like
 
