@@ -124,7 +124,7 @@ class PoissonObservedModeledBackgroundLikelihood(SpectrumLikelihood):
 
         # we scale the background model to the observation
 
-        background_model_counts = self._spectrum_plugin.get_background_model() * self._spectrum_plugin._scale_factor
+        background_model_counts = self._spectrum_plugin.get_background_model() * self._spectrum_plugin.scale_factor
 
         loglike, _ = poisson_log_likelihood_ideal_bkg(self._spectrum_plugin.current_observed_counts,
                                                       background_model_counts,
