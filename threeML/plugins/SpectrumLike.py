@@ -2656,6 +2656,14 @@ class SpectrumLike(PluginPrototype):
 
             else:
 
+                # negative src rates cause the energy mean to
+                # go outside of the bounds. So we fix negative rates to
+                # zero when computing the mean 
+
+                idx_negative = r<0.
+
+                r[idx_negative] =0.
+
                 # Do the weighted average of the mean energies
                 weights = r / np.sum(r)
 
