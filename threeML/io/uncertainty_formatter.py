@@ -3,6 +3,24 @@ import re
 import numpy as np
 
 
+def interval_to_errors(value, low_bound, hi_bound):
+    """
+    Convert error intervals to errors
+    
+    :param value: central value 
+    :param low_bound: interval low bound
+    :param hi_bound: interval high bound
+    :return: (error minus, error plus)
+    """
+
+    error_plus = hi_bound - value
+    error_minus = value - low_bound
+
+    return error_minus, error_plus
+
+
+
+
 def get_uncertainty_tokens(x):
     """
     Split the given uncertainty in number, error and exponent.
@@ -41,8 +59,8 @@ def uncertainty_formatter(value, low_bound, hi_bound):
 
     # Get the errors (instead of the boundaries)
 
-    error_m = low_bound - value
-    error_p = hi_bound - value
+    error_m, error_p = interval_to_errors(value, low_bound, hi_bound)
+
 
     # Compute the sign of the errors
     # NOTE: sometimes value is not within low_bound - hi_bound, so these sign might not always
