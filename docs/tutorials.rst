@@ -9,4 +9,4 @@ Contents:
 
    notebooks/gof_lrt.ipynb
    notebooks/synthetic_spectra.ipynb
-
+   notebooks/joint_BAT_gbm_demo.ipynb
