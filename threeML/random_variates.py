@@ -3,6 +3,7 @@ import numpy as np
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 
 
+
 class RandomVariates(np.ndarray):
     """
     A subclass of np.array which is meant to contain samples for one parameter. This class contains methods to easily
@@ -116,6 +117,7 @@ class RandomVariates(np.ndarray):
         hpd_right_bound = ordered[idx_of_minimum + index_of_rightmost_possibility]
 
         return hpd_left_bound, hpd_right_bound
+
 
     def equal_tail_interval(self, cl=0.68):
         """

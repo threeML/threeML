@@ -199,8 +199,10 @@ from data_list import DataList
 
 
 
-from .io.plotting import *
-
+from threeML.io.plotting.model_plot import plot_point_source_spectra
+from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
+from threeML.io.plotting.post_process_data_plots import display_spectrum_model_counts, display_histogram_fit, \
+    display_photometry_model_magnitudes
 
 # Import the joint likelihood set
 from .classicMLE.joint_likelihood_set import JointLikelihoodSet, JointLikelihoodSetAnalyzer
@@ -213,6 +215,9 @@ from .io.calculate_flux import calculate_point_source_flux
 from .utils.step_parameter_generator import step_generator
 
 from .parallel.parallel_client import parallel_computation
+
+#
+from threeML.io.uncertainty_formatter import interval_to_errors
 
 
 # Import optical filters
