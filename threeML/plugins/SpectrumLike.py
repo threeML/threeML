@@ -76,48 +76,19 @@ class SpectrumLike(PluginPrototype):
         assert isinstance(observation,
                           BinnedSpectrum), "The observed spectrum is not an instance of BinnedSpectrum"
 
-        self._background_noise_model = None
-        self._observation_noise_model = None
-
         # Precomputed observed (for speed)
 
         self._observed_spectrum = observation  # type: BinnedSpectrum
 
         self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
 
-        # initialize the background plugin to None
+        # initialize the background
 
-        self._background_plugin = None
-        self._background_spectrum = None
+        background_parameters = self._background_setup(background, observation)
 
-        if background is not None:
+        # unpack the parameters
 
-
-            # If this is a plugin created from a background
-            # we extract the observed spectrum (it should not have a background...
-            #  it is a background)
-
-            # we are explicitly violating duck-typing
-
-            if isinstance(background, SpectrumLike) or isinstance(background, XYLike):
-
-                self._background_plugin = background
-
-
-
-
-            else:
-
-                assert isinstance(background, BinnedSpectrum), "The background spectrum is not an instance of BinnedSpectrum"
-
-                assert observation.n_channels == background.n_channels, "Data file and background file have different " \
-                                                                    "number of channels"
-
-                self._background_spectrum = background  # type: BinnedSpectrum
-
-                self._background_counts = self._background_spectrum.counts  # type: np.ndarray
-
-                self._scaled_background_counts = self._get_expected_background_counts_scaled()  # type: np.ndarray
+        self._background_spectrum, self._background_plugin, self._background_counts, self._scaled_background_counts = background_parameters
 
 
 
@@ -126,102 +97,12 @@ class SpectrumLike(PluginPrototype):
         self._rebinner = None
         self._source_name = None
 
-        # Now auto-probe the statistic to use
-        if self._background_spectrum is not None:
+        # probe the noise models and then setup the appropriate count errors
 
-            if self._observed_spectrum.is_poisson:
-
-                self._observed_count_errors = None
-
-                if self._background_spectrum.is_poisson:
-
-                    self.observation_noise_model = 'poisson'
-                    self.background_noise_model = 'poisson'
-
-                    self._back_count_errors = None
-
-                    assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
-
-                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
-                        "Error in background spectrum: negative counts!")
-
-                else:
-
-                    self.observation_noise_model = 'poisson'
-                    self.background_noise_model = 'gaussian'
-
-                    self._back_count_errors = self._background_spectrum.count_errors  # type: np.ndarray
-
-                    idx = (self._back_count_errors == 0)  # type: np.ndarray
-
-                    assert np.all(self._back_count_errors[idx] == self._background_counts[idx]), \
-                        "Error in background spectrum: if the error on the background is zero, " \
-                        "also the expected background must be zero"
-
-                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
-                        "Error in background spectrum: negative background!")
-
-            else:
-
-                if self._background_spectrum.is_poisson:
-
-                    raise NotImplementedError("We currently do not support Gaussian observation and Poisson background")
+        self._observation_noise_model, self._background_noise_model = self._probe_noise_models()
 
 
-                else:
-
-                    self.observation_noise_model = 'gaussian'
-                    self.background_noise_model = 'gaussian'
-
-                    self._back_count_errors = self._background_spectrum.count_errors  # type: np.ndarray
-
-                    self._observed_count_errors = self._observed_spectrum.count_errors  # type: np.ndarray
-
-                    idx = (self._back_count_errors == 0)  # type: np.ndarray
-
-                    assert np.all(self._back_count_errors[idx] == self._background_counts[idx]), \
-                        "Error in background spectrum: if the error on the background is zero, " \
-                        "also the expected background must be zero"
-
-                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
-                        "Error in background spectrum: negative background!")
-
-                    idx = (self._observed_count_errors == 0)  # type: np.ndarray
-
-                    assert np.all(self._observed_count_errors[idx] == self._observed_counts[idx]), \
-                        "Error in ovserved spectrum: if the error on the observation is zero, " \
-                        "also the expected observation must be zero"
-
-
-        else:
-
-            # this is the case for no background
-
-            self._background_counts = None
-            self._back_count_errors = None
-            self._scaled_background_counts = None
-
-            if self._observed_spectrum.is_poisson:
-
-                self._observed_count_errors = None
-
-                assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
-
-                self.observation_noise_model = 'poisson'
-                self.background_noise_model = None
-
-            else:
-
-                self.observation_noise_model = 'gaussian'
-                self.background_noise_model = None
-
-                self._observed_count_errors = self._observed_spectrum.count_errors  # type: np.ndarray
-
-                idx = (self._observed_count_errors == 0)  # type: np.ndarray
-
-                assert np.all(self._observed_count_errors[idx] == self._observed_counts[idx]), \
-                    "Error in ovserved spectrum: if the error on the observation is zero, " \
-                    "also the expected observation must be zero"
+        self._observed_count_errors, self._back_count_errors = self._count_errors_initialization()
 
         # Initialize a mask that selects all the data.
         # We will initially use the quality mask for the PHA file
@@ -231,25 +112,6 @@ class SpectrumLike(PluginPrototype):
 
 
         self._mask = np.asarray(np.ones(self._observed_spectrum.n_channels), np.bool)
-
-        # Print the autoprobed noise models
-        if self._verbose:
-
-            if self._background_plugin is not None:
-                print('Background modeled from plugin: %s' % self._background_plugin.name)
-
-                bkg_noise = self._background_plugin.observation_noise_model
-
-            else:
-
-                bkg_noise = self.background_noise_model
-
-
-
-            print("Auto-probed noise models:")
-            print("- observation: %s" % self.observation_noise_model)
-            print("- background: %s" % bkg_noise)
-
 
 
         # Now create the nuisance parameter for the effective area correction, which is fixed
@@ -268,7 +130,7 @@ class SpectrumLike(PluginPrototype):
 
         if self._background_plugin is not None:
 
-            self.background_noise_model = 'modeled'
+            self._background_noise_model = 'modeled'
 
             for par_name, parameter in self._background_plugin.likelihood_model.parameters.iteritems():
 
@@ -355,13 +217,208 @@ class SpectrumLike(PluginPrototype):
         # keeps a pointer of the plugin inside so that the current
         # counts, bkg, etc. are always up to date
         # This way, when evaluating the likelihood,
-        # no checks are involved because the apropriate
+        # no checks are involved because the appropriate
         # noise models are pre-selected
 
 
         self._likelihood_evaluator = likelihood_lookup[self.observation_noise_model][self.background_noise_model](self)
 
 
+    def _count_errors_initialization(self):
+        """
+        compute the  count errors for the observed and background spectra
+        
+        
+        :return:  (observed_count_errors, background_count errors)
+        """
+
+        count_errors_lookup = {'poisson': {'poisson': (None, None),
+                                           'gassian': (None, self._background_spectrum.count_errors),
+                                           None: (None, None) },
+
+                               # gaussian source
+
+                              'guassian': {'gaussian': (self._observed_spectrum.count_errors , self._background_spectrum.count_errors ),
+                                           None: (self._observed_spectrum.count_errors, None) }
+                               }
+
+        try:
+
+            error_tuple = count_errors_lookup[self._observation_noise_model][self._background_noise_model] #type: tuple
+
+        except(KeyError):
+
+            RuntimeError('The noise combination of source: %s, background: %s  is not supported' % (self._observation_noise_model, self._background_noise_model))
+
+
+        for errors, counts, name in zip(error_tuple, [self._observed_counts, self._background_counts],['observed', 'background']):
+
+            # if the errors are not None then we want to make sure they make sense
+            if errors is not None:
+
+                zero_idx = (errors == 0) #type: np.ndarray
+
+                # check that zero error => zero counts
+                assert np.all(errors[zero_idx] == counts[zero_idx]), \
+                    "Error in %s spectrum: if the error on the background is zero, " \
+                    "also the expected %s must be zero" %name
+
+        observed_count_errors, background_count_errors = error_tuple
+
+        return observed_count_errors, background_count_errors
+
+
+    def _probe_noise_models(self):
+
+        """
+        
+        probe the noise models
+        
+        
+        
+        
+        :return: (observation_noise_model, background_noise_model)
+        """
+
+        observation_noise_model, background_noise_model = None, None
+
+        # Now auto-probe the statistic to use
+        if self._background_spectrum is not None:
+
+            if self._observed_spectrum.is_poisson:
+
+                self._observed_count_errors = None
+
+                if self._background_spectrum.is_poisson:
+
+                    observation_noise_model = 'poisson'
+                    background_noise_model = 'poisson'
+
+
+
+                    assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
+
+                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                        "Error in background spectrum: negative counts!")
+
+                else:
+
+                    observation_noise_model = 'poisson'
+                    background_noise_model = 'gaussian'
+
+
+                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                        "Error in background spectrum: negative background!")
+
+            else:
+
+                if self._background_spectrum.is_poisson:
+
+                    raise NotImplementedError("We currently do not support Gaussian observation and Poisson background")
+
+
+                else:
+
+                    observation_noise_model = 'gaussian'
+                    background_noise_model = 'gaussian'
+
+
+                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                        "Error in background spectrum: negative background!")
+
+
+
+
+        else:
+
+            # this is the case for no background
+
+            self._background_counts = None
+            self._back_count_errors = None
+            self._scaled_background_counts = None
+
+            if self._observed_spectrum.is_poisson:
+
+                self._observed_count_errors = None
+
+                assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
+
+                self.observation_noise_model = 'poisson'
+                self.background_noise_model = None
+
+            else:
+
+                self.observation_noise_model = 'gaussian'
+                self.background_noise_model = None
+
+        # Print the auto-probed noise models
+        if self._verbose:
+
+            if self._background_plugin is not None:
+                print('Background modeled from plugin: %s' % self._background_plugin.name)
+
+                bkg_noise = self._background_plugin.observation_noise_model
+
+            else:
+
+                bkg_noise = background_noise_model
+
+            print("Auto-probed noise models:")
+            print("- observation: %s" % observation_noise_model)
+            print("- background: %s" % bkg_noise)
+
+        return observation_noise_model, background_noise_model
+
+    def _background_setup(self, background, observation):
+        """
+        
+        :param background: background arguments (spectrum or plugin)
+        :param observation: observed spectrum 
+        :return: (background_spectrum, background_plugin, background_counts, scaled_background_counts)
+        """
+
+        # setup up defaults as none
+
+        background_plugin = None
+        background_spectrum = None
+        background_counts = None
+        scaled_background_counts = None
+
+
+        if background is not None:
+
+            # If this is a plugin created from a background
+            # we extract the observed spectrum (it should not have a background...
+            #  it is a background)
+
+            # we are explicitly violating duck-typing
+
+            if isinstance(background, SpectrumLike) or isinstance(background, XYLike):
+
+                self._background_plugin = background
+
+
+
+
+            else:
+
+                # if the background is not a plugin then we need to make sure it is a spectrum
+                # and that the spectrum is the same size as the observation
+
+                assert isinstance(background,
+                                  BinnedSpectrum), "The background spectrum is not an instance of BinnedSpectrum"
+
+                assert observation.n_channels == background.n_channels, "Data file and background file have different " \
+                                                                        "number of channels"
+
+                background_spectrum = background  # type: BinnedSpectrum
+
+                background_counts = self._background_spectrum.counts  # type: np.ndarray
+
+                scaled_background_counts = self._get_expected_background_counts_scaled()  # type: np.ndarray
+
+
+        return background_spectrum, background_plugin, background_counts, scaled_background_counts
 
     def _precalculations(self):
         """
