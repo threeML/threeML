@@ -275,7 +275,7 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
     def get_randomized_background_errors(self):
         return copy.copy(self._spectrum_plugin.background_count_errors)
 
-    
+
 
 statistic_lookup = {'poisson': {'poisson': PoissonObservedPoissonBackgroundStatistic,
                                 'gaussian': PoissonObservedGaussianBackgroundStatistic,

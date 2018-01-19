@@ -132,7 +132,7 @@ class SpectrumLike(PluginPrototype):
 
             self._background_noise_model = 'modeled'
 
-            for par_name, parameter in self._background_plugin.likelihood_model.parameters.iteritems():
+            for par_name, parameter in self._background_plugin.likelihood_model.parameters.items():
 
 
                 # create a new parameters that is like the one from the background model
@@ -1346,6 +1346,9 @@ class SpectrumLike(PluginPrototype):
 
         self._likelihood_evaluator = statistic_lookup[self._observation_noise_model][new_model](self)
 
+        custom_warnings.warn('You are setting the background noise model to something that is not specified in the spectrum.\
+         Verify that this makes statistical sense.')
+
     def _get_background_noise_model(self):
 
         return self._background_noise_model
@@ -1366,6 +1369,9 @@ class SpectrumLike(PluginPrototype):
         # reset the likelihood
 
         self._likelihood_evaluator = statistic_lookup[new_model][self._background_noise_model](self)
+
+        custom_warnings.warn('You are setting the observation noise model to something that is not specified in the spectrum.\
+                 Verify that this makes statistical sense.')
 
     def _get_observation_noise_model(self):
 
