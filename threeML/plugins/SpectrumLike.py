@@ -231,13 +231,26 @@ class SpectrumLike(PluginPrototype):
         :return:  (observed_count_errors, background_count errors)
         """
 
+
+
+        # if there is not a background the dictionary
+        # will crash, so we need to do a small check
+
+
+        tmp_bkg_count_errors = None
+
+
+        if self._background_spectrum is not None:
+
+            tmp_bkg_count_errors = self._background_spectrum.count_errors
+
         count_errors_lookup = {'poisson': {'poisson': (None, None),
-                                           'gaussian': (None, self._background_spectrum.count_errors),
+                                           'gaussian': (None, tmp_bkg_count_errors),
                                            None: (None, None) },
 
                                # gaussian source
 
-                              'gaussian': {'gaussian': (self._observed_spectrum.count_errors , self._background_spectrum.count_errors ),
+                              'gaussian': {'gaussian': (self._observed_spectrum.count_errors , tmp_bkg_count_errors),
                                            None: (self._observed_spectrum.count_errors, None) }
                                }
 
