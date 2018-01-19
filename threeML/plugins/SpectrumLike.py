@@ -341,13 +341,13 @@ class SpectrumLike(PluginPrototype):
 
                 assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
 
-                self.observation_noise_model = 'poisson'
-                self.background_noise_model = None
+                observation_noise_model = 'poisson'
+                background_noise_model = None
 
             else:
 
-                self.observation_noise_model = 'gaussian'
-                self.background_noise_model = None
+                observation_noise_model = 'gaussian'
+                background_noise_model = None
 
         # Print the auto-probed noise models
         if self._verbose:
