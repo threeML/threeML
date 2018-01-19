@@ -232,12 +232,12 @@ class SpectrumLike(PluginPrototype):
         """
 
         count_errors_lookup = {'poisson': {'poisson': (None, None),
-                                           'gassian': (None, self._background_spectrum.count_errors),
+                                           'gaussian': (None, self._background_spectrum.count_errors),
                                            None: (None, None) },
 
                                # gaussian source
 
-                              'guassian': {'gaussian': (self._observed_spectrum.count_errors , self._background_spectrum.count_errors ),
+                              'gaussian': {'gaussian': (self._observed_spectrum.count_errors , self._background_spectrum.count_errors ),
                                            None: (self._observed_spectrum.count_errors, None) }
                                }
 
