@@ -26,7 +26,7 @@ from threeML.utils.string_utils import dash_separated_string_to_tuple
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 from threeML.utils.statistics.stats_tools import Significance
-from threeML.utils.spectrum.spectrum_likelihood import likelihood_lookup
+from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 
 
@@ -221,8 +221,7 @@ class SpectrumLike(PluginPrototype):
         # noise models are pre-selected
 
 
-        self._likelihood_evaluator = likelihood_lookup[self.observation_noise_model][self.background_noise_model](self)
-
+        self._likelihood_evaluator = statistic_lookup[self.observation_noise_model][self.background_noise_model](self)
 
     def _count_errors_initialization(self):
         """
@@ -266,7 +265,6 @@ class SpectrumLike(PluginPrototype):
         observed_count_errors, background_count_errors = error_tuple
 
         return observed_count_errors, background_count_errors
-
 
     def _probe_noise_models(self):
 
@@ -377,6 +375,9 @@ class SpectrumLike(PluginPrototype):
         :return: (background_spectrum, background_plugin, background_counts, scaled_background_counts)
         """
 
+
+        # this is only called during once during construction
+
         # setup up defaults as none
 
         background_plugin = None
@@ -395,9 +396,7 @@ class SpectrumLike(PluginPrototype):
 
             if isinstance(background, SpectrumLike) or isinstance(background, XYLike):
 
-                self._background_plugin = background
-
-
+                background_plugin = background
 
 
             else:
@@ -413,9 +412,11 @@ class SpectrumLike(PluginPrototype):
 
                 background_spectrum = background  # type: BinnedSpectrum
 
-                background_counts = self._background_spectrum.counts  # type: np.ndarray
+                background_counts = background_spectrum.counts  # type: np.ndarray
 
-                scaled_background_counts = self._get_expected_background_counts_scaled()  # type: np.ndarray
+                # this assumes the observed spectrum is already set!
+
+                scaled_background_counts = self._get_expected_background_counts_scaled(background_spectrum)  # type: np.ndarray
 
 
         return background_spectrum, background_plugin, background_counts, scaled_background_counts
@@ -1283,7 +1284,7 @@ class SpectrumLike(PluginPrototype):
 
         self._rebinner = None
 
-    def _get_expected_background_counts_scaled(self):
+    def _get_expected_background_counts_scaled(self, background_spectrum):
         """
         Get the background counts expected in the source interval and in the source region, based on the observed
         background.
@@ -1297,13 +1298,13 @@ class SpectrumLike(PluginPrototype):
         # background spectrum. It is used for example for the typical aperture-photometry method used in
         # X-ray astronomy, where the background region has a different size with respect to the source region
 
-        scale_factor = self._observed_spectrum.scale_factor / self._background_spectrum.scale_factor
+        scale_factor = self._observed_spectrum.scale_factor / background_spectrum.scale_factor
 
         # The expected number of counts is the rate in the background file multiplied by its exposure, renormalized
         # by the scale factor.
         # (see http://heasarc.gsfc.nasa.gov/docs/asca/abc_backscal.html)
 
-        bkg_counts = self._background_spectrum.rates * self._observed_spectrum.exposure * scale_factor
+        bkg_counts = background_spectrum.rates * self._observed_spectrum.exposure * scale_factor
 
         return bkg_counts
 
@@ -1343,7 +1344,7 @@ class SpectrumLike(PluginPrototype):
 
         # reset the likelihood
 
-        self._likelihood_evaluator = likelihood_lookup[self._observation_noise_model][new_model](self)
+        self._likelihood_evaluator = statistic_lookup[self._observation_noise_model][new_model](self)
 
     def _get_background_noise_model(self):
 
@@ -1364,7 +1365,7 @@ class SpectrumLike(PluginPrototype):
 
         # reset the likelihood
 
-        self._likelihood_evaluator = likelihood_lookup[new_model][self._background_noise_model](self)
+        self._likelihood_evaluator = statistic_lookup[new_model][self._background_noise_model](self)
 
     def _get_observation_noise_model(self):
 
@@ -1381,7 +1382,7 @@ class SpectrumLike(PluginPrototype):
         :return: 
         """
 
-        loglike, _ = self._likelihood_evaluator.get_log_likelihood()
+        loglike, _ = self._likelihood_evaluator.get_current_value()
 
         return loglike
 
