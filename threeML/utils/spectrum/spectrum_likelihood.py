@@ -1,20 +1,20 @@
+import copy
+
+import numpy as np
+
+from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.utils.statistics.likelihood_functions import half_chi2
 from threeML.utils.statistics.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.utils.statistics.likelihood_functions import poisson_observed_gaussian_background
 from threeML.utils.statistics.likelihood_functions import poisson_observed_poisson_background
-from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
-
-import copy
-import numpy as np
-
-
 
 
 # These classes provide likelihood evaluation to SpectrumLike and children
 
+_known_noise_models = {}
 
 
-class SpectrumLikelihood(object):
+class BinnedStatistic(object):
 
     def __init__(self, spectrum_plugin):
         """
@@ -27,10 +27,9 @@ class SpectrumLikelihood(object):
         self._spectrum_plugin = spectrum_plugin
 
 
-    def get_log_likelihood(self):
 
+    def get_current_value(self):
         RuntimeError('must be implemented in subclass')
-
 
     def get_randomized_source_counts(self, source_model_counts):
         return None
@@ -45,23 +44,17 @@ class SpectrumLikelihood(object):
         return None
 
 
-
-class GaussianObservedLikelihood(SpectrumLikelihood):
-
-
-    def get_log_likelihood(self):
-
+class GaussianObservedStatistic(BinnedStatistic):
+    def get_current_value(self):
         chi2_ = half_chi2(self._spectrum_plugin.current_observed_counts,
-                           self._spectrum_plugin.current_observed_count_errors,
-                           self._spectrum_plugin.get_model() )
+                          self._spectrum_plugin.current_observed_count_errors,
+                          self._spectrum_plugin.get_model())
 
         assert np.all(np.isfinite(chi2_))
 
         return np.sum(chi2_) * (-1), None
 
-
     def get_randomized_source_counts(self, source_model_counts):
-
         idx = (self._spectrum_plugin.observed_count_errors > 0)
 
         randomized_source_counts = np.zeros_like(source_model_counts)
@@ -84,14 +77,11 @@ class GaussianObservedLikelihood(SpectrumLikelihood):
         return randomized_source_counts
 
     def get_randomized_source_errors(self):
-
         return self._spectrum_plugin.observed_count_errors
 
 
-class PoissonObservedIdealBackgroundLikelihood(SpectrumLikelihood):
-
-    def get_log_likelihood(self):
-
+class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
+    def get_current_value(self):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
@@ -107,11 +97,11 @@ class PoissonObservedIdealBackgroundLikelihood(SpectrumLikelihood):
         # Randomize expectations for the source
         # we want the unscalled background counts
 
-        #TODO: check with giacomo if this is correct!
+        # TODO: check with giacomo if this is correct!
 
         randomized_source_counts = np.random.poisson(source_model_counts + self._spectrum_plugin._background_counts)
 
-        return  randomized_source_counts
+        return randomized_source_counts
 
     def get_randomized_background_counts(self):
         # No randomization for the background in this case
@@ -120,10 +110,9 @@ class PoissonObservedIdealBackgroundLikelihood(SpectrumLikelihood):
 
         return randomized_background_counts
 
-class PoissonObservedModeledBackgroundLikelihood(SpectrumLikelihood):
 
-    def get_log_likelihood(self):
-
+class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
+    def get_current_value(self):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
@@ -148,15 +137,12 @@ class PoissonObservedModeledBackgroundLikelihood(SpectrumLikelihood):
 
         self._synthetic_background_plugin = self._spectrum_plugin.background_plugin.get_simulated_dataset()
 
-        randomized_source_counts = np.random.poisson(source_model_counts + self._synthetic_background_plugin.observed_counts)
-
-
+        randomized_source_counts = np.random.poisson(
+            source_model_counts + self._synthetic_background_plugin.observed_counts)
 
         return randomized_source_counts
 
     def get_randomized_background_errors(self):
-
-
         randomized_background_count_err = None
 
         if not self._synthetic_background_plugin.observed_spectrum.is_poisson:
@@ -166,13 +152,11 @@ class PoissonObservedModeledBackgroundLikelihood(SpectrumLikelihood):
 
     @property
     def synthetic_background_plugin(self):
-
         return self._synthetic_background_plugin
 
-class PoissonObservedNoBackgroundLikelihood(SpectrumLikelihood):
 
-    def get_log_likelihood(self):
-
+class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
+    def get_current_value(self):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
@@ -196,9 +180,9 @@ class PoissonObservedNoBackgroundLikelihood(SpectrumLikelihood):
 
         return randomized_source_counts
 
-class PoissonObservedPoissonBackgroundLikelihood(SpectrumLikelihood):
 
-    def get_log_likelihood(self):
+class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
+    def get_current_value(self):
         # Scale factor between source and background spectrum
 
         model_counts = self._spectrum_plugin.get_model()
@@ -210,12 +194,11 @@ class PoissonObservedPoissonBackgroundLikelihood(SpectrumLikelihood):
 
         return np.sum(loglike), bkg_model
 
-
     def get_randomized_source_counts(self, source_model_counts):
         # Since we use a profile likelihood, the background model is conditional on the source model, so let's
         # get it from the likelihood function
 
-        _, background_model_counts = self.get_log_likelihood()
+        _, background_model_counts = self.get_current_value()
 
         # Now randomize the expectations
 
@@ -226,19 +209,17 @@ class PoissonObservedPoissonBackgroundLikelihood(SpectrumLikelihood):
         return randomized_source_counts
 
     def get_randomized_background_counts(self):
-
         # Randomize expectations for the background
 
-        _, background_model_counts = self.get_log_likelihood()
+        _, background_model_counts = self.get_current_value()
 
         randomized_background_counts = np.random.poisson(background_model_counts)
 
         return randomized_background_counts
 
-class PoissonObservedGaussianBackgroundLikelihood(SpectrumLikelihood):
 
-    def get_log_likelihood(self):
-
+class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
+    def get_current_value(self):
         expected_model_counts = self._spectrum_plugin.get_model()
 
         loglike, bkg_model = poisson_observed_gaussian_background(self._spectrum_plugin.current_observed_counts,
@@ -252,7 +233,7 @@ class PoissonObservedGaussianBackgroundLikelihood(SpectrumLikelihood):
         # Since we use a profile likelihood, the background model is conditional on the source model, so let's
         # get it from the likelihood function
 
-        _, background_model_counts = self.get_log_likelihood()
+        _, background_model_counts = self.get_current_value()
 
         # Now randomize the expectations
 
@@ -262,12 +243,10 @@ class PoissonObservedGaussianBackgroundLikelihood(SpectrumLikelihood):
 
         return randomized_source_counts
 
-
     def get_randomized_background_counts(self):
-
         # Now randomize the expectations.
 
-        _, background_model_counts = self.get_log_likelihood()
+        _, background_model_counts = self.get_current_value()
 
         # We cannot generate variates with zero sigma. They variates from those channel will always be zero
         # This is a limitation of this whole idea. However, remember that by construction an error of zero
@@ -294,22 +273,20 @@ class PoissonObservedGaussianBackgroundLikelihood(SpectrumLikelihood):
         return randomized_background_counts
 
     def get_randomized_background_errors(self):
-
         return copy.copy(self._spectrum_plugin.background_count_errors)
 
+    
 
-likelihood_lookup = {'poisson':{'poisson' : PoissonObservedPoissonBackgroundLikelihood,
-                                'gaussian': PoissonObservedGaussianBackgroundLikelihood,
-                                'ideal' : PoissonObservedIdealBackgroundLikelihood,
-                                 None : PoissonObservedNoBackgroundLikelihood,
-                                'modeled': PoissonObservedModeledBackgroundLikelihood
-
+statistic_lookup = {'poisson': {'poisson': PoissonObservedPoissonBackgroundStatistic,
+                                'gaussian': PoissonObservedGaussianBackgroundStatistic,
+                                'ideal': PoissonObservedIdealBackgroundStatistic,
+                                None: PoissonObservedNoBackgroundStatistic,
+                                'modeled': PoissonObservedModeledBackgroundStatistic
 
                                 },
 
-                     'gaussian':{None : GaussianObservedLikelihood},
+                    'gaussian': {None: GaussianObservedStatistic},
 
-                     None:{None:None}
+                    None: {None: None}
 
-
-                     }
+                    }
