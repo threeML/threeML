@@ -7,7 +7,9 @@ from threeML.io.package_data import get_path_of_data_file
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.utils.OGIP.response import OGIPResponse
-
+from threeML.exceptions.custom_exceptions import NegativeBackground
+import warnings
+warnings.simplefilter('ignore')
 
 def test_assigning_source_name():
 
@@ -270,5 +272,107 @@ def test_spectrum_like_with_background_model():
     kT_variates = jl.results.get_variates('mysource.spectrum.main.Blackbody.kT')
 
     assert np.all(np.isclose([K_variates.mean(), kT_variates.mean()], [sim_K, sim_kT], rtol=0.5))
+
+
+def test_all_statistics():
+
+
+
+    energies = np.logspace(1, 3, 51)
+
+    low_edge = energies[:-1]
+    high_edge = energies[1:]
+
+    # get a blackbody source function
+    source_function = Blackbody(K=9E-2, kT=20)
+
+    # power law background function
+    background_function = Powerlaw(K=1, index=-1.5, piv=100.)
+
+
+
+
+    pts = PointSource('mysource', 0, 0, spectral_shape=source_function)
+
+    model = Model(pts)
+
+    # test Poisson no bkg
+
+    spectrum_generator = SpectrumLike.from_function('fake',
+                                                    source_function=source_function,
+                                                    energy_min=low_edge,
+                                                    energy_max=high_edge)
+    spectrum_generator.set_model(model)
+
+
+    spectrum_generator.get_log_like()
+
+
+    # test Poisson w/ Poisson bkg
+
+    spectrum_generator = SpectrumLike.from_function('fake',
+                                                    source_function=source_function,
+                                                    background_function=background_function,
+                                                    energy_min=low_edge,
+                                                    energy_max=high_edge)
+
+    spectrum_generator.set_model(model)
+
+    spectrum_generator.get_log_like()
+
+
+    spectrum_generator._background_counts = -np.ones_like(spectrum_generator._background_counts)
+
+    with pytest.raises(NegativeBackground):
+        spectrum_generator._probe_noise_models()
+
+
+    # test Poisson w/ ideal bkg
+
+    spectrum_generator.background_noise_model = 'ideal'
+
+    spectrum_generator.get_log_like()
+
+    # test Poisson w/ gauss bkg
+
+    # test Poisson w/ Poisson bkg
+
+    spectrum_generator = SpectrumLike.from_function('fake',
+                                                    source_function=source_function,
+                                                    background_function=background_function,
+                                                    background_errors=0.1 * background_function(low_edge),
+                                                    energy_min=low_edge,
+                                                    energy_max=high_edge)
+
+    spectrum_generator.set_model(model)
+
+    spectrum_generator.get_log_like()
+
+    # test Gaussian w/ no bkg
+
+    spectrum_generator = SpectrumLike.from_function('fake',
+                                                    source_function=source_function,
+                                                    source_errors=0.5 * source_function(low_edge),
+                                                    energy_min=low_edge,
+                                                    energy_max=high_edge)
+
+    spectrum_generator.set_model(model)
+
+    spectrum_generator.get_log_like()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
