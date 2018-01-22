@@ -113,7 +113,7 @@ In order to use the HAWC plugin, you will also need to install cthreeML
 
 .. code:: bash
     
-    > pip install git+https://github.com/giacomov/
+    > pip install git+https://github.com/giacomov/cthreeML.git
 
 .. _Conda: https://conda.io/docs/
 .. _here: https://raw.githubusercontent.com/giacomov/3ML/master/install_3ML.sh
