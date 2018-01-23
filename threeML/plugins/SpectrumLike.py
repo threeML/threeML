@@ -15,26 +15,27 @@ from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings, NegativeBackground
-import threeML.io.plotting.data_residual_plot
 from threeML.io.plotting.light_curve_plots import channel_plot, disjoint_patch_plot
 from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.XYLike import XYLike
-from threeML.utils.OGIP.likelihood_functions import half_chi2
-from threeML.utils.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.utils.OGIP.likelihood_functions import poisson_observed_gaussian_background
-from threeML.utils.OGIP.likelihood_functions import poisson_observed_poisson_background
 from threeML.utils.binner import Rebinner
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
-from threeML.utils.stats_tools import Significance
+
 from threeML.utils.string_utils import dash_separated_string_to_tuple
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
+
+from threeML.utils.statistics.stats_tools import Significance
+from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
+from threeML.io.plotting.data_residual_plot import ResidualPlot
+
 
 NO_REBIN = 1E-99
 
 __instrument_name = "General binned spectral data"
 
 # This defines the known noise models for source and/or background spectra
-_known_noise_models = ['poisson', 'gaussian', 'ideal']
+_known_noise_models = ['poisson', 'gaussian', 'ideal', 'modeled']
 
 
 class SpectrumLike(PluginPrototype):
@@ -81,39 +82,13 @@ class SpectrumLike(PluginPrototype):
 
         self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
 
-        # initialize the background plugin to None
+        # initialize the background
 
-        self._background_plugin = None
-        self._background_spectrum = None
+        background_parameters = self._background_setup(background, observation)
 
-        if background is not None:
+        # unpack the parameters
 
-
-            # If this is a plugin created from a background
-            # we extract the observed spectrum (it should not have a background...
-            #  it is a background)
-
-            # we are explicitly violating duck-typing
-
-            if isinstance(background, SpectrumLike) or isinstance(background, XYLike):
-
-                self._background_plugin = background
-
-
-
-
-            else:
-
-                assert isinstance(background, BinnedSpectrum), "The background spectrum is not an instance of BinnedSpectrum"
-
-                assert observation.n_channels == background.n_channels, "Data file and background file have different " \
-                                                                    "number of channels"
-
-                self._background_spectrum = background  # type: BinnedSpectrum
-
-                self._background_counts = self._background_spectrum.counts  # type: np.ndarray
-
-                self._scaled_background_counts = self._get_expected_background_counts_scaled()  # type: np.ndarray
+        self._background_spectrum, self._background_plugin, self._background_counts, self._scaled_background_counts = background_parameters
 
 
 
@@ -122,102 +97,12 @@ class SpectrumLike(PluginPrototype):
         self._rebinner = None
         self._source_name = None
 
-        # Now auto-probe the statistic to use
-        if self._background_spectrum is not None:
+        # probe the noise models and then setup the appropriate count errors
 
-            if self._observed_spectrum.is_poisson:
-
-                self._observed_count_errors = None
-
-                if self._background_spectrum.is_poisson:
-
-                    self.observation_noise_model = 'poisson'
-                    self.background_noise_model = 'poisson'
-
-                    self._back_count_errors = None
-
-                    assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
-
-                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
-                        "Error in background spectrum: negative counts!")
-
-                else:
-
-                    self.observation_noise_model = 'poisson'
-                    self.background_noise_model = 'gaussian'
-
-                    self._back_count_errors = self._background_spectrum.count_errors  # type: np.ndarray
-
-                    idx = (self._back_count_errors == 0)  # type: np.ndarray
-
-                    assert np.all(self._back_count_errors[idx] == self._background_counts[idx]), \
-                        "Error in background spectrum: if the error on the background is zero, " \
-                        "also the expected background must be zero"
-
-                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
-                        "Error in background spectrum: negative background!")
-
-            else:
-
-                if self._background_spectrum.is_poisson:
-
-                    raise NotImplementedError("We currently do not support Gaussian observation and Poisson background")
+        self._observation_noise_model, self._background_noise_model = self._probe_noise_models()
 
 
-                else:
-
-                    self.observation_noise_model = 'gaussian'
-                    self.background_noise_model = 'gaussian'
-
-                    self._back_count_errors = self._background_spectrum.count_errors  # type: np.ndarray
-
-                    self._observed_count_errors = self._observed_spectrum.count_errors  # type: np.ndarray
-
-                    idx = (self._back_count_errors == 0)  # type: np.ndarray
-
-                    assert np.all(self._back_count_errors[idx] == self._background_counts[idx]), \
-                        "Error in background spectrum: if the error on the background is zero, " \
-                        "also the expected background must be zero"
-
-                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
-                        "Error in background spectrum: negative background!")
-
-                    idx = (self._observed_count_errors == 0)  # type: np.ndarray
-
-                    assert np.all(self._observed_count_errors[idx] == self._observed_counts[idx]), \
-                        "Error in ovserved spectrum: if the error on the observation is zero, " \
-                        "also the expected observation must be zero"
-
-
-        else:
-
-            # this is the case for no background
-
-            self._background_counts = None
-            self._back_count_errors = None
-            self._scaled_background_counts = None
-
-            if self._observed_spectrum.is_poisson:
-
-                self._observed_count_errors = None
-
-                assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
-
-                self.observation_noise_model = 'poisson'
-                self.background_noise_model = None
-
-            else:
-
-                self.observation_noise_model = 'gaussian'
-                self.background_noise_model = None
-
-                self._observed_count_errors = self._observed_spectrum.count_errors  # type: np.ndarray
-
-                idx = (self._observed_count_errors == 0)  # type: np.ndarray
-
-                assert np.all(self._observed_count_errors[idx] == self._observed_counts[idx]), \
-                    "Error in ovserved spectrum: if the error on the observation is zero, " \
-                    "also the expected observation must be zero"
+        self._observed_count_errors, self._back_count_errors = self._count_errors_initialization()
 
         # Initialize a mask that selects all the data.
         # We will initially use the quality mask for the PHA file
@@ -227,25 +112,6 @@ class SpectrumLike(PluginPrototype):
 
 
         self._mask = np.asarray(np.ones(self._observed_spectrum.n_channels), np.bool)
-
-        # Print the autoprobed noise models
-        if self._verbose:
-
-            if self._background_plugin is not None:
-                print('Background modeled from plugin: %s' % self._background_plugin.name)
-
-                bkg_noise = self._background_plugin.observation_noise_model
-
-            else:
-
-                bkg_noise = self.background_noise_model
-
-
-
-            print("Auto-probed noise models:")
-            print("- observation: %s" % self.observation_noise_model)
-            print("- background: %s" % bkg_noise)
-
 
 
         # Now create the nuisance parameter for the effective area correction, which is fixed
@@ -264,7 +130,9 @@ class SpectrumLike(PluginPrototype):
 
         if self._background_plugin is not None:
 
-            for par_name, parameter in self._background_plugin.likelihood_model.parameters.iteritems():
+            self._background_noise_model = 'modeled'
+
+            for par_name, parameter in self._background_plugin.likelihood_model.parameters.items():
 
 
                 # create a new parameters that is like the one from the background model
@@ -272,25 +140,6 @@ class SpectrumLike(PluginPrototype):
                 local_name = "bkg_%s_%s" % (par_name,name)
                 local_name = local_name.replace('.','_')
 
-                # plugin_parameter = Parameter(local_name,
-                #                 value=parameter.value,
-                #                 min_value=parameter.min_value,
-                #                 max_value=parameter.max_value,
-                #                 delta=parameter.delta,
-                #                 free=parameter.free,
-                #                 desc="Background model %s for %s" % (par_name, name))
-                #
-                #
-                # # link the background model parameter.
-                # # we will loose control over them in the
-                # # original plugin.
-                #
-                #
-                # self._background_plugin.likelihood_model.link(parameter,plugin_parameter)
-                #
-                # # add the parameter to the nuisance list
-
-                # nuisance_parameters[plugin_parameter.name] = plugin_parameter
 
                 nuisance_parameters[local_name] = parameter
 
@@ -362,7 +211,228 @@ class SpectrumLike(PluginPrototype):
 
         self._precalculations()
 
+        # now create a likelihood object for the call
+        # we pass the current object over as well
+        # the likelihood object is opaque to the class and
+        # keeps a pointer of the plugin inside so that the current
+        # counts, bkg, etc. are always up to date
+        # This way, when evaluating the likelihood,
+        # no checks are involved because the appropriate
+        # noise models are pre-selected
 
+
+        self._likelihood_evaluator = statistic_lookup[self.observation_noise_model][self.background_noise_model](self)
+
+    def _count_errors_initialization(self):
+        """
+        compute the  count errors for the observed and background spectra
+        
+        
+        :return:  (observed_count_errors, background_count errors)
+        """
+
+
+
+        # if there is not a background the dictionary
+        # will crash, so we need to do a small check
+
+
+        tmp_bkg_count_errors = None
+
+
+        if self._background_spectrum is not None:
+
+            tmp_bkg_count_errors = self._background_spectrum.count_errors
+
+        count_errors_lookup = {'poisson': {'poisson': (None, None),
+                                           'gaussian': (None, tmp_bkg_count_errors),
+                                           None: (None, None) },
+
+                               # gaussian source
+
+                              'gaussian': {'gaussian': (self._observed_spectrum.count_errors , tmp_bkg_count_errors),
+                                           None: (self._observed_spectrum.count_errors, None) }
+                               }
+
+        try:
+
+            error_tuple = count_errors_lookup[self._observation_noise_model][self._background_noise_model] #type: tuple
+
+        except(KeyError):
+
+            RuntimeError('The noise combination of source: %s, background: %s  is not supported' % (self._observation_noise_model, self._background_noise_model))
+
+
+        for errors, counts, name in zip(error_tuple, [self._observed_counts, self._background_counts],['observed', 'background']):
+
+            # if the errors are not None then we want to make sure they make sense
+            if errors is not None:
+
+                zero_idx = (errors == 0) #type: np.ndarray
+
+                # check that zero error => zero counts
+                assert np.all(errors[zero_idx] == counts[zero_idx]), \
+                    "Error in %s spectrum: if the error on the background is zero, " \
+                    "also the expected %s must be zero" %name
+
+        observed_count_errors, background_count_errors = error_tuple
+
+        return observed_count_errors, background_count_errors
+
+    def _probe_noise_models(self):
+
+        """
+        
+        probe the noise models
+        
+        
+        
+        
+        :return: (observation_noise_model, background_noise_model)
+        """
+
+        observation_noise_model, background_noise_model = None, None
+
+        # Now auto-probe the statistic to use
+        if self._background_spectrum is not None:
+
+            if self._observed_spectrum.is_poisson:
+
+                self._observed_count_errors = None
+
+                if self._background_spectrum.is_poisson:
+
+                    observation_noise_model = 'poisson'
+                    background_noise_model = 'poisson'
+
+
+
+                    assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
+
+                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                        "Error in background spectrum: negative counts!")
+
+                else:
+
+                    observation_noise_model = 'poisson'
+                    background_noise_model = 'gaussian'
+
+
+                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                        "Error in background spectrum: negative background!")
+
+            else:
+
+                if self._background_spectrum.is_poisson:
+
+                    raise NotImplementedError("We currently do not support Gaussian observation and Poisson background")
+
+
+                else:
+
+                    observation_noise_model = 'gaussian'
+                    background_noise_model = 'gaussian'
+
+
+                    if not np.all(self._background_counts >= 0): raise NegativeBackground(
+                        "Error in background spectrum: negative background!")
+
+
+
+
+        else:
+
+            # this is the case for no background
+
+            self._background_counts = None
+            self._back_count_errors = None
+            self._scaled_background_counts = None
+
+            if self._observed_spectrum.is_poisson:
+
+                self._observed_count_errors = None
+
+                assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
+
+                observation_noise_model = 'poisson'
+                background_noise_model = None
+
+            else:
+
+                observation_noise_model = 'gaussian'
+                background_noise_model = None
+
+        # Print the auto-probed noise models
+        if self._verbose:
+
+            if self._background_plugin is not None:
+                print('Background modeled from plugin: %s' % self._background_plugin.name)
+
+                bkg_noise = self._background_plugin.observation_noise_model
+
+            else:
+
+                bkg_noise = background_noise_model
+
+            print("Auto-probed noise models:")
+            print("- observation: %s" % observation_noise_model)
+            print("- background: %s" % bkg_noise)
+
+        return observation_noise_model, background_noise_model
+
+    def _background_setup(self, background, observation):
+        """
+        
+        :param background: background arguments (spectrum or plugin)
+        :param observation: observed spectrum 
+        :return: (background_spectrum, background_plugin, background_counts, scaled_background_counts)
+        """
+
+
+        # this is only called during once during construction
+
+        # setup up defaults as none
+
+        background_plugin = None
+        background_spectrum = None
+        background_counts = None
+        scaled_background_counts = None
+
+
+        if background is not None:
+
+            # If this is a plugin created from a background
+            # we extract the observed spectrum (it should not have a background...
+            #  it is a background)
+
+            # we are explicitly violating duck-typing
+
+            if isinstance(background, SpectrumLike) or isinstance(background, XYLike):
+
+                background_plugin = background
+
+
+            else:
+
+                # if the background is not a plugin then we need to make sure it is a spectrum
+                # and that the spectrum is the same size as the observation
+
+                assert isinstance(background,
+                                  BinnedSpectrum), "The background spectrum is not an instance of BinnedSpectrum"
+
+                assert observation.n_channels == background.n_channels, "Data file and background file have different " \
+                                                                        "number of channels"
+
+                background_spectrum = background  # type: BinnedSpectrum
+
+                background_counts = background_spectrum.counts  # type: np.ndarray
+
+                # this assumes the observed spectrum is already set!
+
+                scaled_background_counts = self._get_expected_background_counts_scaled(background_spectrum)  # type: np.ndarray
+
+
+        return background_spectrum, background_plugin, background_counts, scaled_background_counts
 
     def _precalculations(self):
         """
@@ -497,6 +567,11 @@ class SpectrumLike(PluginPrototype):
         assert self._background_spectrum is not None, 'This SpectrumLike instance has no background'
 
         return self._background_spectrum
+
+    @property
+    def background_plugin(self):
+
+        return self._background_plugin
 
 
     @property
@@ -1022,281 +1097,15 @@ class SpectrumLike(PluginPrototype):
 
             source_model_counts = self._evaluate_model() * self.exposure
 
-            # NOTE: we use the unmasked versions because we need to generate ALL data, so that the user can change
-            # selections afterwards
+            # The likelihood evaluator keeps track of the proper likelihood needed to randomize
+            # quantities. It properly returns None if needed. This avoids multiple checks and dupilcate
+            # code for the MANY cases we can have. As new cases are added, this code will adapt.
+
+            randomized_source_counts = self._likelihood_evaluator.get_randomized_source_counts(source_model_counts)
+            randomized_source_count_err = self._likelihood_evaluator.get_randomized_source_errors()
+            randomized_background_counts = self._likelihood_evaluator.get_randomized_background_counts()
+            randomized_background_count_err = self._likelihood_evaluator.get_randomized_background_errors()
 
-            if self._observation_noise_model == 'poisson':
-
-                # We need to generate Poisson variates from the model to get the signal, and from the background
-                # to get the new background
-
-                # Now depending on the background noise model, generate randomized values for the background
-
-                if self._background_noise_model == 'poisson':
-
-                    # Since we use a profile likelihood, the background model is conditional on the source model, so let's
-                    # get it from the likelihood function
-                    _, background_model_counts = self._loglike_poisson_obs_poisson_bkg()
-
-                    # Now randomize the expectations
-
-                    # Randomize expectations for the source
-
-                    randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
-                    # randomized_source_rate = randomized_source_counts / self.exposure
-
-                    # Randomize expectations for the background
-
-                    randomized_background_counts = np.random.poisson(background_model_counts)
-                    # randomized_background_rate = randomized_background_counts / self.background_exposure
-
-                    randomized_background_count_err = None
-
-                    randomized_source_count_err = None
-
-                elif self._background_noise_model == 'ideal':
-
-                    # Randomize expectations for the source
-
-                    randomized_source_counts = np.random.poisson(source_model_counts + self._background_counts)
-                    # randomized_source_rate = randomized_source_counts / self.exposure
-
-                    # No randomization for the background in this case
-
-                    randomized_background_counts = self._background_counts
-
-                    randomized_background_count_err = None
-
-                    randomized_source_count_err = None
-
-                elif self._background_noise_model == 'gaussian':
-
-                    # Since we use a profile likelihood, the background model is conditional on the source model, so let's
-                    # get it from the likelihood function
-                    _, background_model_counts = self._loglike_poisson_obs_gaussian_bkg()
-
-                    # Randomize expectations for the source
-
-                    randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
-                    # randomized_source_rate = randomized_source_counts / self.exposure
-
-                    # Now randomize the expectations.
-
-                    # We cannot generate variates with zero sigma. They variates from those channel will always be zero
-                    # This is a limitation of this whole idea. However, remember that by construction an error of zero
-                    # it is only allowed when the background counts are zero as well.
-                    idx = (self._back_count_errors > 0)
-
-                    randomized_background_counts = np.zeros_like(background_model_counts)
-
-                    randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
-                                                                         scale=self._back_count_errors[idx])
-
-                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_background_counts < 0)  # type: np.ndarray
-
-                    negative_background_n = np.sum(idx)
-
-                    if negative_background_n > 0:
-                        custom_warnings.warn("Generated background has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_background_n))
-
-                        randomized_background_counts[idx] = 0
-
-                    # Now compute rates and errors
-
-                    # randomized_background_rate = randomized_background_counts / self.background_exposure
-
-                    randomized_background_count_err = copy.copy(self._back_count_errors)
-
-                    randomized_source_count_err = None
-
-
-                elif self.background_noise_model is None:
-
-                    if self._background_plugin is None:
-
-                        # Randomize expectations for the source
-
-                        randomized_source_counts = np.random.poisson(source_model_counts)
-                        # randomized_source_rate = randomized_source_counts / self.exposure
-
-                        # No randomization for the background in this case
-
-                        randomized_background_counts = None
-
-                        randomized_background_count_err = None
-
-                        randomized_source_count_err = None
-
-                    else:
-
-                        # first generate random source counts from the plugin
-
-                        synthetic_background_plugin = self._background_plugin.get_simulated_dataset('bkg_%s'%new_name) # type: SpectrumLike
-
-                        randomized_source_counts = np.random.poisson(source_model_counts + synthetic_background_plugin.observed_counts)
-
-                        randomized_background_counts = None
-
-                        randomized_background_count_err = None
-
-                        randomized_source_count_err = None
-
-                        if not synthetic_background_plugin.observed_spectrum.is_poisson:
-
-                            randomized_background_count_err = synthetic_background_plugin.observed_count_errors
-
-
-                else:
-
-                    raise RuntimeError(
-                        "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
-                            self._observation_noise_model,
-                            self._background_noise_model))
-
-
-
-
-
-            else:
-
-                # We need to generate Gaussian variates from the model to get the signal, and from the background
-                # to get the new background
-
-                # Now depending on the background noise model, generate randomized values for the background
-
-                if self._background_noise_model == 'poisson':
-
-                    raise RuntimeError(
-                        "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
-                            self._observation_noise_model,
-                            self._background_noise_model))
-
-                elif self._background_noise_model == 'ideal':
-
-                    # Randomize expectations for the source
-
-                    idx = (self._observed_count_errors > 0)
-
-                    randomized_source_counts = np.zeros_like(source_model_counts)
-
-                    randomized_source_counts[idx] = np.random.normal(
-                        loc=source_model_counts[idx] + self._background_counts[idx],
-                        scale=self._observed_count_errors)
-
-                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_source_counts < 0)  # type: np.ndarray
-
-                    negative_source_n = np.sum(idx)
-
-                    if negative_source_n > 0:
-                        custom_warnings.warn("Generated source has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_source_n))
-
-                        randomized_source_counts[idx] = 0
-
-                    randomized_source_count_err = copy.copy(self._observed_count_errors)
-
-                    # No randomization for the background in this case
-
-                    randomized_background_counts = self._background_counts
-
-                    randomized_background_count_err = None
-
-                elif self._background_noise_model == 'gaussian':
-
-                    # Since we use a profile likelihood, the background model is conditional on the source model, so let's
-                    # get it from the likelihood function
-                    _, background_model_counts = self._loglike_poisson_obs_gaussian_bkg()
-
-                    # Randomize expectations for the source
-
-                    idx = (self._observed_count_errors > 0)
-
-                    randomized_source_counts = np.zeros_like(source_model_counts)
-
-                    randomized_source_counts[idx] = np.random.normal(
-                        loc=source_model_counts[idx] + background_model_counts[idx],
-                        scale=self._observed_count_errors)
-
-                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_source_counts < 0)  # type: np.ndarray
-
-                    negative_source_n = np.sum(idx)
-
-                    if negative_source_n > 0:
-                        custom_warnings.warn("Generated source has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_source_n))
-
-                        randomized_source_counts[idx] = 0
-
-                    randomized_source_count_err = copy.copy(self._observed_count_errors)
-
-                    # Now randomize the expectations.
-
-                    # We cannot generate variates with zero sigma. They variates from those channel will always be zero
-                    # This is a limitation of this whole idea. However, remember that by construction an error of zero
-                    # it is only allowed when the background counts are zero as well.
-                    idx = (self._back_count_errors > 0)
-
-                    randomized_background_counts = np.zeros_like(background_model_counts)
-
-                    randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
-                                                                         scale=self._back_count_errors[idx])
-
-                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_background_counts < 0)  # type: np.ndarray
-
-                    negative_background_n = np.sum(idx)
-
-                    if negative_background_n > 0:
-                        custom_warnings.warn("Generated background has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_background_n))
-
-                        randomized_background_counts[idx] = 0
-
-                    # Now compute rates and errors
-
-                    # randomized_background_rate = randomized_background_counts / self.background_exposure
-
-                    randomized_background_count_err = copy.copy(self._back_count_errors)
-
-                elif self.background_noise_model is None:
-
-                    idx = (self._observed_count_errors > 0)
-
-                    randomized_source_counts = np.zeros_like(source_model_counts)
-
-                    randomized_source_counts[idx] = np.random.normal(loc=source_model_counts[idx],
-                                                                     scale=self._observed_count_errors)
-
-                    # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
-
-                    idx = (randomized_source_counts < 0)  # type: np.ndarray
-
-                    negative_source_n = np.sum(idx)
-
-                    if negative_source_n > 0:
-                        custom_warnings.warn("Generated source has negative counts "
-                                             "in %i channels. Fixing them to zero" % (negative_source_n))
-
-                        randomized_source_counts[idx] = 0
-
-                    randomized_source_count_err = copy.copy(self._observed_count_errors)
-
-                    randomized_background_counts = None
-
-                else:
-
-                    raise RuntimeError(
-                        "This is a bug. The combination of source (%s) and background (%s) noise models does not exist" % (
-                            self._observation_noise_model,
-                            self._background_noise_model))
 
             # create new source and background spectra
             # the children of BinnedSpectra must properly override the new_spectrum
@@ -1324,7 +1133,7 @@ class SpectrumLike(PluginPrototype):
             elif self._background_plugin is not None:
 
 
-                new_background = synthetic_background_plugin
+                new_background = self._likelihood_evaluator.synthetic_background_plugin
 
             else:
 
@@ -1488,7 +1297,7 @@ class SpectrumLike(PluginPrototype):
 
         self._rebinner = None
 
-    def _get_expected_background_counts_scaled(self):
+    def _get_expected_background_counts_scaled(self, background_spectrum):
         """
         Get the background counts expected in the source interval and in the source region, based on the observed
         background.
@@ -1502,102 +1311,35 @@ class SpectrumLike(PluginPrototype):
         # background spectrum. It is used for example for the typical aperture-photometry method used in
         # X-ray astronomy, where the background region has a different size with respect to the source region
 
-        scale_factor = self._observed_spectrum.scale_factor / self._background_spectrum.scale_factor
+        scale_factor = self._observed_spectrum.scale_factor / background_spectrum.scale_factor
 
         # The expected number of counts is the rate in the background file multiplied by its exposure, renormalized
         # by the scale factor.
         # (see http://heasarc.gsfc.nasa.gov/docs/asca/abc_backscal.html)
 
-        bkg_counts = self._background_spectrum.rates * self._observed_spectrum.exposure * scale_factor
+        bkg_counts = background_spectrum.rates * self._observed_spectrum.exposure * scale_factor
 
         return bkg_counts
 
-    def _loglike_gaussian_obs_no_bkg(self):
+    @property
+    def current_observed_counts(self):
+        return self._current_observed_counts
 
-        model_counts = self.get_model()
+    @property
+    def current_background_counts(self):
+        return self._current_background_counts
 
-        chi2_ = half_chi2(self._current_observed_counts,
-                          self._current_observed_count_errors,
-                          model_counts)
+    @property
+    def current_scaled_background_counts(self):
+        return self._current_scaled_background_counts
 
-        assert np.all(np.isfinite(chi2_))
+    @property
+    def current_background_count_errors(self):
+        return self._current_back_count_errors
 
-        return np.sum(chi2_) * (-1)
-
-    def _loglike_gaussian_obs_gaussian_bkg(self):
-
-        raise NotImplementedError("We need to add chi2")
-        model_counts = self.get_model()
-
-        # loglike, bkg_model = chi2()
-
-    def _loglike_poisson_obs_poisson_bkg(self):
-
-        # Scale factor between source and background spectrum
-
-        model_counts = self.get_model()
-
-        loglike, bkg_model = poisson_observed_poisson_background(self._current_observed_counts,
-                                                                 self._current_background_counts,
-                                                                 self._total_scale_factor,
-                                                                 model_counts)
-
-        return np.sum(loglike), bkg_model
-
-    def _loglike_poisson_obs_gaussian_bkg(self):
-
-        expected_model_counts = self.get_model()
-
-        loglike, bkg_model = poisson_observed_gaussian_background(self._current_observed_counts,
-                                                                  self._current_background_counts,
-                                                                  self._current_back_count_errors,
-                                                                  expected_model_counts)
-
-        return np.sum(loglike), bkg_model
-
-    def _loglike_poisson_obs_ideal_bkg(self):
-
-        # In this likelihood the background becomes part of the model, which means that
-        # the uncertainty in the background is completely neglected
-
-        model_counts = self.get_model()
-
-        loglike, _ = poisson_log_likelihood_ideal_bkg(self._current_observed_counts,
-                                                      self._current_scaled_background_counts,
-                                                      model_counts)
-
-        return np.sum(loglike), None
-
-    def _loglike_poisson_obs_modeled_bkg(self):
-
-        # In this likelihood the background becomes is modeled and the
-        # uncertainty in the background is handled in the full likeihood
-
-        model_counts = self.get_model()
-
-        # we scale the background model to the observation
-
-        background_model_counts = self.get_background_model() * self._total_scale_factor
-
-        loglike, _ = poisson_log_likelihood_ideal_bkg(self._current_observed_counts,
-                                                      background_model_counts,
-                                                      model_counts)
-
-        return np.sum(loglike), None
-
-    def _loglike_poisson_obs_no_bkg(self):
-        # In this likelihood the background becomes is modeled and the
-        # uncertainty in the background is handled in the full likeihood
-
-        model_counts = self.get_model()
-
-        background_model_counts = np.zeros_like(model_counts)
-
-        loglike, _ = poisson_log_likelihood_ideal_bkg(self._current_observed_counts,
-                                                      background_model_counts,
-                                                      model_counts)
-
-        return np.sum(loglike), None
+    @property
+    def current_observed_count_errors(self):
+        return self._current_observed_count_errors
 
     def _set_background_noise_model(self, new_model):
 
@@ -1609,7 +1351,16 @@ class SpectrumLike(PluginPrototype):
                                                      "Allowed models are: %s" % (
                                                          new_model, ", ".join(_known_noise_models))
 
+
+
         self._background_noise_model = new_model
+
+        # reset the likelihood
+
+        self._likelihood_evaluator = statistic_lookup[self._observation_noise_model][new_model](self)
+
+        custom_warnings.warn('You are setting the background noise model to something that is not specified in the spectrum.\
+         Verify that this makes statistical sense.')
 
     def _get_background_noise_model(self):
 
@@ -1628,6 +1379,13 @@ class SpectrumLike(PluginPrototype):
 
         self._observation_noise_model = new_model
 
+        # reset the likelihood
+
+        self._likelihood_evaluator = statistic_lookup[new_model][self._background_noise_model](self)
+
+        custom_warnings.warn('You are setting the observation noise model to something that is not specified in the spectrum.\
+                 Verify that this makes statistical sense.')
+
     def _get_observation_noise_model(self):
 
         return self._observation_noise_model
@@ -1636,59 +1394,14 @@ class SpectrumLike(PluginPrototype):
                                        doc="Sets/gets the noise model for the background spectrum")
 
     def get_log_like(self):
+        """
+        Calls the likelihood from the pre-setup likelihood evaluator that "knows" of the currently set
+        noise models
+        
+        :return: 
+        """
 
-        if self._observation_noise_model == 'poisson':
-
-            if self._background_noise_model == 'poisson':
-
-                if self._background_plugin is None:
-
-                    loglike, _ = self._loglike_poisson_obs_poisson_bkg()
-
-                else:
-
-                    #first get the log like for the observation
-
-                    loglike, _ =self._loglike_poisson_obs_modeled_bkg()
-
-                    # now get the likelihood from the background
-                    # we do not care about the form of the likelihood
-                    # because the background plugin should handle it
-
-                    bkg_loglike = self._background_plugin.get_log_like()
-
-                    # sum them
-
-                    loglike += bkg_loglike
-
-
-            elif self._background_noise_model == 'ideal':
-
-                loglike, _ = self._loglike_poisson_obs_ideal_bkg()
-
-            elif self._background_noise_model == 'gaussian':
-
-                loglike, _ = self._loglike_poisson_obs_gaussian_bkg()
-
-            elif self._background_noise_model is None:
-
-                if self._background_plugin is None:
-
-                    loglike, _ =self._loglike_poisson_obs_no_bkg()
-
-
-                else:
-
-                    loglike, _ = self._loglike_poisson_obs_modeled_bkg()
-
-            else:
-
-                raise RuntimeError("This is a bug")
-
-        else:
-
-            if self._background_noise_model is None:
-                loglike = self._loglike_gaussian_obs_no_bkg()
+        loglike, _ = self._likelihood_evaluator.get_current_value()
 
         return loglike
 
@@ -1734,7 +1447,6 @@ class SpectrumLike(PluginPrototype):
 
         return np.array([self._integral_flux(emin, emax) for emin, emax in self._observed_spectrum.bin_stack])
 
-
     def get_model(self):
         """
         The model integrated over the energy bins. Note that it only returns the  model for the
@@ -1764,8 +1476,6 @@ class SpectrumLike(PluginPrototype):
 
         return np.array(
             [self._background_integral_flux(emin, emax) for emin, emax in self._observed_spectrum.bin_stack])
-
-
 
     def get_background_model(self):
         """
@@ -1883,8 +1593,6 @@ class SpectrumLike(PluginPrototype):
         """
 
         return self._mask
-
-
 
     @property
     def tstart(self):
@@ -2080,7 +1788,6 @@ class SpectrumLike(PluginPrototype):
             src_rate_err = self.observed_count_errors / self._observed_spectrum.exposure
 
         return src_rate_err
-
 
     @property
     def quality(self):
@@ -2494,9 +2201,13 @@ class SpectrumLike(PluginPrototype):
         ax.set_xlim(left=self._observed_spectrum.absolute_start, right=self._observed_spectrum.absolute_stop)
         ax.legend()
 
-        def __repr__(self):
+        return fig
 
-            return self._output().to_string()
+
+
+    def __repr__(self):
+
+        return self._output().to_string()
 
     def _output(self):
         # type: () -> pd.Series
@@ -2597,12 +2308,12 @@ class SpectrumLike(PluginPrototype):
         if model_label is None:
             model_label = "%s Model" % self._name
 
-        residual_plot = threeML.io.plotting.data_residual_plot.ResidualPlot(show_residuals=show_residuals, **kwargs)
+        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
         # energy_min, energy_max = self._rsp.ebounds[:-1], self._rsp.ebounds[1:]
 
-        energy_min, energy_max = np.array(self._observed_spectrum.edges[:-1]), np.array(
-            self._observed_spectrum.edges[1:])
+        energy_min = np.array(self._observed_spectrum.edges[:-1])
+        energy_max = np.array(self._observed_spectrum.edges[1:])
 
         chan_width = energy_max - energy_min
 
@@ -2618,6 +2329,7 @@ class SpectrumLike(PluginPrototype):
         # Create a rebinner if either a min_rate has been given, or if the current data set has no rebinned on its own
 
         if (min_rate is not NO_REBIN) or (self._rebinner is None):
+
 
             this_rebinner = Rebinner(src_rate, min_rate, self._mask)
 
@@ -2643,6 +2355,7 @@ class SpectrumLike(PluginPrototype):
 
         for e_min, e_max in zip(new_energy_min, new_energy_max):
 
+
             # Find all channels in this rebinned bin
             idx = (mean_energy_unrebinned >= e_min) & (mean_energy_unrebinned <= e_max)
 
@@ -2654,7 +2367,9 @@ class SpectrumLike(PluginPrototype):
                 # All empty, cannot weight
                 this_mean_energy = (e_min + e_max) / 2.0
 
+
             else:
+
 
                 # negative src rates cause the energy mean to
                 # go outside of the bounds. So we fix negative rates to
@@ -2668,6 +2383,7 @@ class SpectrumLike(PluginPrototype):
                 weights = r / np.sum(r)
 
                 this_mean_energy = np.average(mean_energy_unrebinned[idx], weights=weights)
+
 
             # Compute "errors" for X (which aren't really errors, just to mark the size of the bin)
 
@@ -2747,6 +2463,10 @@ class SpectrumLike(PluginPrototype):
                 else:
 
                     raise NotImplementedError("Not yet implemented")
+
+
+
+
 
         residual_plot.add_data(mean_energy,
                                new_rate / new_chan_width,

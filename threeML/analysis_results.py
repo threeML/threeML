@@ -1,18 +1,16 @@
+import collections
 import datetime
 import functools
 import inspect
 import math
-from operator import attrgetter
-import collections
-import numpy as np
-import pandas as pd
-import astropy.units as u
 
 import astromodels
-from astromodels.core.my_yaml import my_yaml
+import astropy.units as u
+import numpy as np
+import pandas as pd
 from astromodels.core.model_parser import ModelParser
+from astromodels.core.my_yaml import my_yaml
 from astromodels.core.parameter import Parameter
-
 from corner import corner
 
 try:
@@ -31,13 +29,12 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import fits, FITSFile, FITSExtension
 from threeML.io.rich_display import display
-from threeML.io.table import NumericMatrix, long_path_formatter
+from threeML.io.table import NumericMatrix
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.io.results_table import ResultsTable
 from threeML.version import __version__
 from threeML.random_variates import RandomVariates
 from threeML.io.calculate_flux import _calculate_point_source_flux
-from threeML.utils.stats_tools import dic
 from threeML.config.config import threeML_config
 
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute

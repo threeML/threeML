@@ -1,12 +1,12 @@
 import pytest
-from threeML.utils.OGIP.response import OGIPResponse
 
 from threeML import *
 from threeML.io.file_utils import within_directory
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SwiftXRTLike import SwiftXRTLike
-from threeML.utils.OGIP.likelihood_functions import *
+from threeML.utils.OGIP.response import OGIPResponse
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
+from threeML.utils.statistics.likelihood_functions import *
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 __example_dir = os.path.join(__this_dir__, '../../examples')

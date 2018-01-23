@@ -37,7 +37,7 @@ from threeML.config.config import threeML_config
 from threeML.io.progress_bar import progress_bar
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
 from threeML.analysis_results import BayesianResults
-from threeML.utils.stats_tools import aic, bic, dic
+from threeML.utils.statistics.stats_tools import aic, bic, dic
 
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 

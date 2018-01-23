@@ -9,8 +9,8 @@ from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
 from threeML.plugin_prototype import PluginPrototype
-from threeML.utils.OGIP.likelihood_functions import half_chi2
-from threeML.utils.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
+from threeML.utils.statistics.likelihood_functions import half_chi2
+from threeML.utils.statistics.likelihood_functions import poisson_log_likelihood_ideal_bkg
 
 __instrument_name = "n.a."
 

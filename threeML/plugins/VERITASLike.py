@@ -11,7 +11,7 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.cern_root_utils.io_utils import get_list_of_keys, open_ROOT_file
 from threeML.io.cern_root_utils.tobject_to_numpy import tgraph_to_arrays, th2_to_arrays, tree_to_ndarray
 from threeML.plugin_prototype import PluginPrototype
-from threeML.utils.OGIP.likelihood_functions import poisson_observed_poisson_background
+from threeML.utils.statistics.likelihood_functions import poisson_observed_poisson_background
 
 __instrument_name = "VERITAS"
 

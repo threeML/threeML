@@ -68,6 +68,10 @@ def test_bayes_constructor():
 
     fig = bayes.corner_plot()
 
+    # test multinest
+
+    #bayes.sample_multinest(n_live_points=20)
+
 
 
 def test_bayes_plots():

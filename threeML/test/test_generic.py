@@ -1,8 +1,6 @@
-import pytest
-
 from threeML import *
-from threeML.utils.stats_tools import PoissonResiduals, Significance
 from threeML.utils.cartesian import cartesian
+from threeML.utils.statistics.stats_tools import PoissonResiduals, Significance
 
 
 def test_step_generator_setup():
