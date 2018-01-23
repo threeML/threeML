@@ -56,9 +56,9 @@ project = u'The Multi-Mission Maximum Likelihood framework'
 copyright = u'2017, G.Vianello'
 author = u'G.Vianello'
 
-html_theme_options = {
-    'navigation_depth': 4,
-}
+# html_theme_options = {
+#     'navigation_depth': 4,
+# }
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
