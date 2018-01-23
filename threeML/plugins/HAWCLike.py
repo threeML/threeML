@@ -551,8 +551,14 @@ class HAWCLike(PluginPrototype):
         Number of data point = number of pixels.
         Implemented in liff as the number of pixels in the ROI per analysis bin.
         """        
-        pixels_per_bin =  np.array( self._theLikeHAWC.GetNumberOfPixels() )
-        return int(np.sum( pixels_per_bin ))
+        try:
+            pixels_per_bin =  np.array( self._theLikeHAWC.GetNumberOfPixels() )
+            return int(np.sum( pixels_per_bin ))
+        except AttributeError:
+            warnings.warn(
+              "_theLikeHAWC.GetNumberOfPixels() not available, values for statistical measurements such as AIC or BIC are unreliable. Please update your aerie version." )
+            return 1
+
 
 
 
