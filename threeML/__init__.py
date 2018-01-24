@@ -231,8 +231,7 @@ from threeML.catalogs import *
 
 # Import GBM  downloader
 
-# Import LAT downloader
-from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
+from threeML.utils.data_download.Fermi_GBM.download_GBM_data import download_GBM_trigger_data
 
 # Import LLE downloader
 
