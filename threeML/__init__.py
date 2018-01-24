@@ -230,13 +230,11 @@ from threeML.utils.data_builders import *
 from threeML.catalogs import *
 
 # Import GBM  downloader
-from threeML.plugins.Fermi_GBM.download_GBM_data import download_GBM_trigger_data, cleanup_downloaded_GBM_data
 
 # Import LAT downloader
-from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
 
 # Import LLE downloader
-from threeML.plugins.Fermi_LAT.download_LLE_data import download_LLE_trigger_data, cleanup_downloaded_LLE_data
 
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config
@@ -246,7 +244,7 @@ import astropy.units as u
 import os
 
 # Import the LAT data downloader
-from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
 
 # Import the results loader
 from threeML.analysis_results import load_analysis_results
