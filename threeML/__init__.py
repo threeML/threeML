@@ -234,6 +234,7 @@ from threeML.catalogs import *
 from threeML.utils.data_download.Fermi_GBM.download_GBM_data import download_GBM_trigger_data
 
 # Import LLE downloader
+from threeML.utils.data_download.Fermi_LAT.download_LLE_data import download_LLE_trigger_data
 
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config
