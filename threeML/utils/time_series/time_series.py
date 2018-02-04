@@ -10,9 +10,9 @@ from pandas import HDFStore
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
-from threeML.utils.binner import TemporalBinner
+
 from threeML.utils.spectrum.binned_spectrum import Quality
-from threeML.utils.time_interval import TimeIntervalSet
+from threeML.utils.time_interval import TimeIntervalSet, TimeInterval
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit, Polynomial
 
 
@@ -321,7 +321,14 @@ class TimeSeries(object):
         poly_intervals = TimeIntervalSet.from_strings(*time_intervals)
 
         # adjust the selections to the data
-        for time_interval in poly_intervals:
+
+        new_intervals = []
+
+        for i,time_interval in enumerate(poly_intervals):
+
+            keep_interval = True
+
+
             t1 = time_interval.start_time
             t2 = time_interval.stop_time
 
@@ -331,7 +338,11 @@ class TimeSeries(object):
                     "The time interval %f-%f started before the first arrival time (%f), so we are changing the intervals to %f-%f" % (
                     t1, t2, self._start_time, self._start_time, t2))
 
-                t1 = self._start_time
+                t1 = self._start_time# + 1
+
+
+
+
 
             if t2 > self._stop_time:
 
@@ -339,13 +350,25 @@ class TimeSeries(object):
                     "The time interval %f-%f ended after the last arrival time (%f), so we are changing the intervals to %f-%f" % (
                         t1, t2, self._stop_time, t1, self._stop_time))
 
-                t2 = self._stop_time
+                t2 = self._stop_time# - 1.
+
+
 
             if  (self._stop_time <= t1) or (t2 <= self._start_time):
                 custom_warnings.warn(
                     "The time interval %f-%f is out side of the arrival times and will be dropped" % (
                         t1, t2))
-                continue
+
+                keep_interval = False
+
+            if keep_interval:
+
+                new_intervals.append('%f-%f' %(t1,t2))
+
+
+        # make new intervals after checks
+
+        poly_intervals = TimeIntervalSet.from_strings(*new_intervals)
 
         # set the poly intervals as an attribute
 
