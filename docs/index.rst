@@ -24,6 +24,7 @@ Traditionally the Astrophysics community have been using frequentist techniques,
     modeling
     features
     tutorials
+    faq
     
 
 .. automodule:: threeML
