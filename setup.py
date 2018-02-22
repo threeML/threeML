@@ -8,7 +8,9 @@ import glob
 from setuptools import setup
 
 # Get the version number
-execfile('threeML/version.py')
+with open("threeML/version.py") as f:
+    version_code = compile(f.read(), "threeML/version.py", 'exec')
+    exec(version_code)
 
 # Now a global __version__ is available
 
