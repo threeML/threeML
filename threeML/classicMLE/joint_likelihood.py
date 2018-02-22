@@ -4,6 +4,7 @@ import dill
 import scipy.optimize
 import scipy.stats
 import matplotlib.pyplot as plt
+import sys
 
 import numpy as np
 import astromodels.core.model
@@ -722,6 +723,7 @@ class JointLikelihood(object):
 
         if self.verbose:
             print("Trying with parameters %s, resulting in logL = %s" % (trial_values, summed_log_likelihood))
+            sys.stdout.flush()
 
         # Return the minus log likelihood
 
