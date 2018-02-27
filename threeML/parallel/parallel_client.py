@@ -6,6 +6,7 @@ import re
 import math
 import subprocess
 from contextlib import contextmanager
+import multiprocessing
 
 
 from threeML.config.config import threeML_config
@@ -105,6 +106,7 @@ def parallel_computation(profile=None, start_cluster=True):
         cmd_line = "ipcluster start"
 
         if profile is not None:
+
             cmd_line += " --profile=%s" % profile
 
         print("We will start the ipyparallel cluster with this command line:")
@@ -206,7 +208,7 @@ if has_parallel:
 
             return len(self.direct_view())
 
-        def interactive_map(self, worker, items_to_process, ordered=True):
+        def interactive_map(self, worker, items_to_process, ordered=True, chunk_size=None):
             """
             Subdivide the work among the active engines, taking care of dividing it among them
 
@@ -214,6 +216,8 @@ if has_parallel:
             :param items_to_process: the items to apply the function to
             :param ordered: whether to keep the order of output (default: True). Using False can be much faster, but
             you need to have a way to re-estabilish the order if you care about it, after the fact.
+            :param chunk_size: determine how many items should an engine process before reporting back. Use None for
+            an automatic choice.
             :return: a AsyncResult object
             """
 
@@ -244,11 +248,16 @@ if has_parallel:
 
                 n_active_engines = n_total_engines
 
-                chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
+                if chunk_size is None:
 
-            return lview.imap(worker, items_to_process, chunksize=chunk_size, ordered=ordered)
+                    chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
 
-        def execute_with_progress_bar(self, worker, items):
+            # We need this to keep the instance alive
+            self._current_amr = lview.imap(worker, items_to_process, chunksize=chunk_size, ordered=ordered)
+
+            return self._current_amr
+
+        def execute_with_progress_bar(self, worker, items, chunk_size=None):
 
             # Let's make a wrapper which will allow us to recover the order
             def wrapper(x):
@@ -259,15 +268,16 @@ if has_parallel:
 
             items_wrapped = [(i, item) for i, item in enumerate(items)]
 
-            amr = self.interactive_map(wrapper, items_wrapped, ordered=False)
-
-            results = []
-
             n_iterations = len(items)
 
             with progress_bar(n_iterations) as p:
 
+                amr = self.interactive_map(wrapper, items_wrapped, ordered=False, chunk_size=chunk_size)
+
+                results = []
+
                 for i, res in enumerate(amr):
+
                     results.append(res)
 
                     p.increase()
