@@ -1,25 +1,22 @@
 import collections
+
+import astromodels.core.model
+import matplotlib.pyplot as plt
 import numpy
-import dill
+import numpy as np
 import scipy.optimize
 import scipy.stats
-import matplotlib.pyplot as plt
-
-import numpy as np
-import astromodels.core.model
-
-from threeML.minimizer import minimization
-from threeML.exceptions import custom_exceptions
-from threeML.io.table import Table
-from threeML.parallel.parallel_client import ParallelClient
-from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
-from threeML.config.config import threeML_config
-from threeML.analysis_results import MLEResults
-from threeML.utils.stats_tools import aic, bic
-from threeML.io.results_table import ResultsTable
-
-
 from astromodels import ModelAssertionViolation
+
+from threeML.analysis_results import MLEResults
+from threeML.config.config import threeML_config
+from threeML.exceptions import custom_exceptions
+from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
+from threeML.io.results_table import ResultsTable
+from threeML.io.table import Table
+from threeML.minimizer import minimization
+from threeML.parallel.parallel_client import ParallelClient
+from threeML.utils.statistics.stats_tools import aic, bic
 
 
 class ReducingNumberOfThreads(Warning):

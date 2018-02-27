@@ -8,7 +8,9 @@ import glob
 from setuptools import setup
 
 # Get the version number
-execfile('threeML/version.py')
+with open("threeML/version.py") as f:
+    version_code = compile(f.read(), "threeML/version.py", 'exec')
+    exec(version_code)
 
 # Now a global __version__ is available
 
@@ -66,10 +68,12 @@ setup(
               'threeML/utils/time_series',
               'threeML/utils/data_builders',
               'threeML/utils/data_builders/fermi',
+              'threeML/utils/data_download',
+              'threeML/utils/data_download/Fermi_LAT',
+              'threeML/utils/data_download/Fermi_GBM',
               'threeML/utils/fitted_objects',
+              'threeML/utils/statistics',
               'threeML/plugins',
-              'threeML/plugins/Fermi_LAT',
-              'threeML/plugins/Fermi_GBM',
               'threeML/classicMLE',
               'threeML/catalogs',
               'threeML/io',

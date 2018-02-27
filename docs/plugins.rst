@@ -9,6 +9,7 @@ Contents:
 .. toctree::
    :maxdepth: 4
 
+   notebooks/custom_plugins.ipynb
    notebooks/spectrum_tutorial.ipynb
    notebooks/Building_Plugins_from_TimeSeries.ipynb
    notebooks/Background_modeling.ipynb
