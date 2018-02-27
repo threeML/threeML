@@ -6,7 +6,7 @@ import re
 import math
 import subprocess
 from contextlib import contextmanager
-import multiprocessing
+from distutils.spawn import find_executable
 
 
 from threeML.config.config import threeML_config
@@ -103,72 +103,79 @@ def parallel_computation(profile=None, start_cluster=True):
 
         # Get the command line together
 
-        cmd_line = "ipcluster start"
+        # First find out path of ipcluster
+        ipcluster_path = find_executable("ipcluster")
+
+        cmd_line = [ipcluster_path, "start"]
 
         if profile is not None:
 
-            cmd_line += " --profile=%s" % profile
+            cmd_line.append(" --profile=%s" % profile)
 
-        print("We will start the ipyparallel cluster with this command line:")
-        print(cmd_line)
+        # Start process asynchronously with Popen, suppressing all output
+        print("Starting ipyparallel cluster with this command line:")
+        print(" ".join(cmd_line))
 
-    else:
+        ipycluster_process = subprocess.Popen(cmd_line)
 
-        cmd_line = None
+        rc = Client()
 
-    try:
+        # Wait for the engines to become available
 
-        if start_cluster:
+        while True:
 
-            # Start process asynchronously with Popen, suppressing all output
+            try:
 
-            ipycluster_process = subprocess.Popen(cmd_line, shell=True, stdout=DEVNULL, stderr=subprocess.STDOUT)
+                view = rc[:]
 
-            rc = Client()
+            except:
 
-            # Wait for the engines to become available
+                time.sleep(0.5)
 
-            while True:
+                continue
 
-                try:
+            else:
 
-                    view = rc[:]
+                print("%i engines are active" % (len(view)))
 
-                except:
+                break
 
-                    time.sleep(0.5)
+        # Do whatever we need to do
+        try:
 
-                    continue
+            yield
 
-                else:
+        finally:
 
-                    print("%i engines are active" % (len(view)))
-
-                    break
-
-        yield
-
-    finally:
-
-        if start_cluster:
+            # This gets executed in any case, even if there is an exception
 
             print("\nShutting down ipcluster...")
 
-            new_cmd_line = cmd_line.replace("start","stop")
+            cmd_line[1] = "stop"
 
-            subprocess.check_call(new_cmd_line, shell=True)
+            print("Using command line %s" % " ".join(cmd_line))
 
-            if ipycluster_process.poll():
+            stopping_process = subprocess.Popen(cmd_line)
 
-                ipycluster_process.terminate()
-                ipycluster_process.wait()
+            # Wait until the child has exited
+            while ipycluster_process.poll() is None:
 
-        # This gets executed in any case, even if there is an exception
+                # Cluster is still running, let's wait a little
+                time.sleep(0.5)
 
-        # Revert back
-        threeML_config['parallel']['use-parallel'] = old_state
+            # Wait for the stopping process to close
+            stopping_process.wait()
 
-        threeML_config['parallel']['IPython profile name'] = old_profile
+    else:
+
+        # Using an already started cluster
+
+        yield
+
+    # Revert back
+    threeML_config['parallel']['use-parallel'] = old_state
+
+    threeML_config['parallel']['IPython profile name'] = old_profile
 
 
 def is_parallel_computation_active():
