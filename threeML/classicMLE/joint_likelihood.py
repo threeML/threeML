@@ -190,6 +190,11 @@ class JointLikelihood(object):
 
             custom_warnings.warn("There is no free parameter in the current model", RuntimeWarning)
 
+            # Create the minimizer anyway because it will be needed by the following code
+
+            self._minimizer = self._get_minimizer(self.minus_log_like_profile,
+                                                  self._free_parameters)
+
             # Store the "minimum", which is just the current value
             self._current_minimum = float(self.minus_log_like_profile([]))
 
@@ -252,10 +257,10 @@ class JointLikelihood(object):
 
             self._current_minimum = float(log_likelihood_minimum)
 
-        # Now collect the values for the likelihood for the various datasets
+            # First restore best fit (to make sure we compute the likelihood at the right point in the following)
+            self._minimizer.restore_best_fit()
 
-        # First restore best fit (to make sure we compute the likelihood at the right point)
-        self._minimizer.restore_best_fit()
+        # Now collect the values for the likelihood for the various datasets
 
         # Fill the dictionary with the values of the -log likelihood (dataset by dataset)
 
