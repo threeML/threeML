@@ -19,14 +19,20 @@ python -c "from hawc import liff_3ML"
 echo "##########################################################"
 echo " Setting up test environment"
 echo "##########################################################"
-source activate test_env
 
-conda install -y pytest pytest-cov coveralls codecov \
+conda install --name test_env -y \
+                 pytest pytest-cov coveralls codecov \
                  ipyparallel astropy numdifftools pandas \
                  pytables zlib=1.2.8 dill emcee astroquery \
                  uncertainties pyyaml iminuit corner \
                  requests speclite ipython boost=1.63 \
                  pymultinest pygmo
+
+source activate test_env
+
+# This is just to create the profile files, otherwise
+# ipyparallel will fail because ~/.ipython would not exist
+ipython -c "exit()"
 
 echo "##########################################################"
 echo " Installing astromodels"
@@ -42,16 +48,17 @@ echo " Installing 3ML"
 echo "##########################################################"
 
 # Install 3ML (current checked out version)
+cd /travis_build_dir
 pip install . --upgrade --no-deps
 
 echo "##########################################################"
 echo " Installing cthreeML"
 echo "##########################################################"
 
-pip install git+https://github.com/giacomov/cthreeML.git
+pip install git+https://github.com/giacomov/cthreeML.git --no-deps
 
 echo "##########################################################"
-echo " Setting up HAWC data path and try import HAWC plugin"
+echo " Setting up HAWC data path and try importing HAWC plugin"
 echo "##########################################################"
 
 export HAWC_3ML_TEST_DATA_DIR=/hawc_test_data
@@ -68,6 +75,10 @@ echo " Executing tests and coveralls"
 echo "##########################################################"
 
 # Execute tests
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+
 python -m pytest --ignore=threeML_env -vv --cov=threeML
 
 
