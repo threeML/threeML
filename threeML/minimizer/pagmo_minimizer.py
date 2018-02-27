@@ -106,22 +106,22 @@ class PAGMOMinimizer(GlobalMinimizer):
 
             # kludge: we cannot live with ROOT, because the custom import hook (!!!) of ROOT breaks the pickling
             # and unpickling of objects. We still did not find a workaround
-            try:
-
-                import ROOT
-
-            except:
-
-                # ok
-                pass
-
-            else:
-
-                # We cannot work with ROOT
-                raise RuntimeError("Unfortunately, the parallel pygmo cannot live with ROOT. "
-                                   "ROOT has a custom import hook which breaks the pickling of objects. "
-                                   "Please remove ROOT from your PYTHONPATH or use the serial version of the PAGMO "
-                                   "minimizer")
+            # try:
+            #
+            #     import ROOT
+            #
+            # except:
+            #
+            #     # ok
+            #     pass
+            #
+            # else:
+            #
+            #     # We cannot work with ROOT
+            #     raise RuntimeError("Unfortunately, the parallel pygmo cannot live with ROOT. "
+            #                        "ROOT has a custom import hook which breaks the pickling of objects. "
+            #                        "Please remove ROOT from your PYTHONPATH or use the serial version of the PAGMO "
+            #                        "minimizer")
 
             # use the archipelago, which uses the ipyparallel computation
 
