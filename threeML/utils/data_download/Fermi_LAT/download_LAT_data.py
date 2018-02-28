@@ -304,7 +304,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         try:
 
-            _ = urllib.urlretrieve(http_address.replace("http","https"), fakeName, )
+            _ = urllib.urlretrieve(http_address, fakeName, )
 
         except socket.timeout:
 
