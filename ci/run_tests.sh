@@ -88,4 +88,3 @@ python -m pytest --ignore=threeML_env -vv --cov=threeML
 #
 ## Execute the coverage analysis
 codecov -t 96594ad1-4ad3-4355-b177-dcb163cfc128
-EOF
