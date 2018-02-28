@@ -6,6 +6,7 @@ import re
 import math
 import subprocess
 from contextlib import contextmanager
+import signal
 from distutils.spawn import find_executable
 
 
@@ -151,20 +152,9 @@ def parallel_computation(profile=None, start_cluster=True):
 
             print("\nShutting down ipcluster...")
 
-            cmd_line[1] = "stop"
+            ipycluster_process.send_signal(signal.SIGINT)
 
-            print("Using command line %s" % " ".join(cmd_line))
-
-            stopping_process = subprocess.Popen(cmd_line)
-
-            # Wait until the child has exited
-            while ipycluster_process.poll() is None:
-
-                # Cluster is still running, let's wait a little
-                time.sleep(0.5)
-
-            # Wait for the stopping process to close
-            stopping_process.wait()
+            ipycluster_process.wait()
 
     else:
 
