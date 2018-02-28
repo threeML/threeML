@@ -376,6 +376,7 @@ def test_hawc_display_residuals():
 
 
 @skip_if_hawc_is_not_available
+@pytest.mark.xfail
 def test_radial_profile():
     # Ensure test environment is valid
 
