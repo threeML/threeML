@@ -96,47 +96,6 @@ def do_analysis(minimizer):
     check_results(fit_results)
 
 
-@skip_if_pygmo_is_not_available
-def test_parallel_pagmo():
-
-    with parallel_computation():
-
-        if has_root:
-
-            # At the moment we cannot use the parallel pagmo in an environment which has ROOT available,
-            # because the ROOT custom import hook (!!!) breaks things in pickle when pagmo tries to serialize
-            # objects.
-
-            with pytest.raises(RuntimeError):
-
-                test_pagmo()
-
-        else:
-
-            # Everything works fine without ROOT...
-
-            test_pagmo()
-
-
-@skip_if_pygmo_is_not_available
-def test_pagmo():
-
-    jl = get_joint_likelihood()
-
-    pagmo = GlobalMinimization("PAGMO")
-    minuit = LocalMinimization("minuit")
-
-    algo = pygmo.algorithm(pygmo.bee_colony(gen=100))
-
-    pagmo.setup(islands=4, population_size=20, evolution_cycles=1, second_minimization=minuit, algorithm=algo)
-
-    jl.set_minimizer(pagmo)
-
-    fit_results, like_frame = jl.fit()
-
-    check_results(fit_results)
-
-
 def test_minuit_simple():
 
     do_analysis("minuit")
@@ -180,3 +139,30 @@ def test_grid():
     fit_results, like_frame = jl.fit()
 
     check_results(fit_results)
+
+
+@skip_if_pygmo_is_not_available
+def test_pagmo():
+
+    jl = get_joint_likelihood()
+
+    pagmo = GlobalMinimization("PAGMO")
+    minuit = LocalMinimization("minuit")
+
+    algo = pygmo.algorithm(pygmo.bee_colony(gen=100))
+
+    pagmo.setup(islands=4, population_size=20, evolution_cycles=1, second_minimization=minuit, algorithm=algo)
+
+    jl.set_minimizer(pagmo)
+
+    fit_results, like_frame = jl.fit()
+
+    check_results(fit_results)
+
+
+@skip_if_pygmo_is_not_available
+def test_parallel_pagmo():
+
+    with parallel_computation():
+
+        test_pagmo()
