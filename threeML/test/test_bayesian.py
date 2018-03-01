@@ -70,7 +70,7 @@ def test_bayes_constructor():
 
     # test multinest
 
-    #bayes.sample_multinest(n_live_points=20)
+    bayes.sample_multinest(n_live_points=20)
 
 
 
