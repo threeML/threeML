@@ -72,6 +72,8 @@ def test_bayes_constructor():
 
     bayes.sample_multinest(n_live_points=20)
 
+    # test parallel temp
+    bayes.sample_parallel_tempering(n_temps=2, n_walkers=10, burn_in=2, n_samples=50, quiet=False)
 
 
 def test_bayes_plots():
