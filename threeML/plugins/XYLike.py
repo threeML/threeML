@@ -11,7 +11,7 @@ from threeML.data_list import DataList
 from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.likelihood_functions import half_chi2
 from threeML.utils.statistics.likelihood_functions import poisson_log_likelihood_ideal_bkg
-
+from threeML.exceptions.custom_exceptions import custom_warnings
 __instrument_name = "n.a."
 
 
@@ -123,6 +123,8 @@ class XYLike(PluginPrototype):
 
                 # This is a dataframe generate with the to_dataframe method, which uses -99 to indicate that the
                 # data are Poisson
+
+
                 return cls(name, x=x, y=y, poisson=True)
 
             else:
@@ -171,7 +173,7 @@ class XYLike(PluginPrototype):
             # are Poisson distributed. We use instead a value of -99 for the error, to indicate that the data
             # are Poisson
 
-            yerr_series = pd.Series.from_array(np.zeros_like(self.x) * (-99), name='yerr')
+            yerr_series = pd.Series.from_array(np.ones_like(self.x) * (-99), name='yerr')
 
         else:
 
