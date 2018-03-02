@@ -6,6 +6,9 @@ import scipy.stats
 from astromodels import Powerlaw
 from threeML.plugins.XYLike import XYLike
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
 
 def test_goodness_of_fit():
 

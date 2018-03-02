@@ -5,6 +5,10 @@ from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
 from threeML.io.calculate_flux import _calculate_point_source_flux
 import astropy.units as u
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
+
 def make_simple_model():
     triggerName = 'bn090217206'
     ra = 204.9

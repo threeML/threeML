@@ -4,7 +4,9 @@ from threeML.plugins.OGIPLike import OGIPLike
 import os
 import pytest
 
+from threeML.utils.initalize_testing import initialize_testing
 
+initialize_testing()
 
 
 def get_model_and_datalist(with_prior=True):

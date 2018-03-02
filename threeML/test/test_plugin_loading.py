@@ -7,6 +7,10 @@ import os
 from threeML.io.file_utils import within_directory
 
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
+
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
 

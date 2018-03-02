@@ -9,6 +9,9 @@ from threeML.io.plotting.post_process_data_plots import display_photometry_model
 from threeML.plugins.PhotometryLike import PhotometryLike
 from threeML.utils.photometry.filter_library import threeML_filter_library
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
 
 def get_plugin():
 

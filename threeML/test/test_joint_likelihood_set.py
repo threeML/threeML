@@ -1,7 +1,9 @@
 import pytest
 from threeML import *
 from threeML.plugins.OGIPLike import OGIPLike
+from threeML.utils.initalize_testing import initialize_testing
 
+initialize_testing()
 
 def get_data(id):
 
