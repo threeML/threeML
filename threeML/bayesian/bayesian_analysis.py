@@ -277,7 +277,7 @@ class BayesianAnalysis(object):
 
         """
 
-        free_parameters = self._likelihood_model.getFreeParameters()
+        free_parameters = self._likelihood_model.free_parameters
 
         n_dim = len(free_parameters.keys())
 
