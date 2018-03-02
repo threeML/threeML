@@ -1,6 +1,9 @@
 from threeML import *
 from threeML.plugins.OGIPLike import OGIPLike
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
 
 def test_a_basic_analysis_from_start_to_finish():
     triggerName = 'bn090217206'

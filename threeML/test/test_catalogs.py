@@ -6,7 +6,9 @@ from threeML.io.network import internet_connection_is_active
 skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
                                                        reason="No active internet connection")
 
+from threeML.utils.initalize_testing import initialize_testing
 
+initialize_testing()
 
 
 @skip_if_internet_is_not_available

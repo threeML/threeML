@@ -7,6 +7,10 @@ from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.utils.OGIP.response import OGIPResponse
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion, ChannelSet
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
+
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 

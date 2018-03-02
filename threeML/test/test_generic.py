@@ -2,6 +2,9 @@ from threeML import *
 from threeML.utils.cartesian import cartesian
 from threeML.utils.statistics.stats_tools import PoissonResiduals, Significance
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
 
 def test_step_generator_setup():
     ra, dec = 0, 0

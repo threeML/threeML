@@ -5,6 +5,9 @@ from threeML.plugins.XYLike import XYLike
 from threeML.data_list import DataList
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
 
 def test_energy_time_fit():
 

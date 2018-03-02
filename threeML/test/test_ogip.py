@@ -11,6 +11,10 @@ from threeML.utils.statistics.likelihood_functions import *
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 __example_dir = os.path.join(__this_dir__, '../../examples')
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
+
 
 class AnalysisBuilder(object):
     def __init__(self, plugin):
