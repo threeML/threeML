@@ -125,7 +125,7 @@ class XYLike(PluginPrototype):
                 # data are Poisson
 
 
-                return cls(name, x=x, y=y, poisson=True)
+                return cls(name, x=x, y=y, poisson_data=True)
 
             else:
 
