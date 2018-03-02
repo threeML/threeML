@@ -133,7 +133,7 @@ class XYLike(PluginPrototype):
 
         else:
 
-            return cls(name, x=x, y=y, poisson=True)
+            return cls(name, x=x, y=y, poisson_data=True)
 
     @classmethod
     def from_text_file(cls, name, filename):
