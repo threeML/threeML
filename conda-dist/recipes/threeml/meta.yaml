@@ -8,6 +8,11 @@ source:
 #    git_url: https://github.com/giacomov/3ML.git
   path: ../../../
 
+build:
+  script: python -m pip install --no-deps --ignore-installed .
+  skip: true  # [win]
+  skip: true  # [py3k]
+
 requirements:
   
   build:
@@ -23,12 +28,13 @@ requirements:
     - dill
     - iminuit >=1.2
     - astromodels
+    - astroquery
     - corner >=1.0.2
     - pandas
     - requests
     - speclite
     - pymultinest
-    - cthreeml
+    - pygmo
     - ipywidgets
     - ipython
     - ipyparallel
@@ -46,12 +52,13 @@ requirements:
     - dill
     - iminuit >=1.2
     - astromodels
+    - astroquery
     - corner >=1.0.2
     - pandas
     - requests
     - speclite
     - pymultinest
-    - cthreeml
+    - pygmo
     - ipywidgets
     - ipython
     - ipyparallel

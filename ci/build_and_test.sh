@@ -33,11 +33,24 @@ conda config --set anaconda_upload no
 # Make sure conda-forge is the first channel
 conda config --add channels conda-forge
 
-# Create test environment
-conda create --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION pytest codecov pytest-cov git
 
-# Activate test environment
-source activate test_env
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+
+    # in the hawc docker container we have a configuration file
+
+    source ${SOFTWARE_BASE}/config_hawc.sh
+    source activate test_env
+    conda install -c conda-forge pytest codecov pytest-cov git --no-update-deps
+else
+
+    # Create and activate test environment on Mac
+
+    conda create --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION root5 pytest codecov pytest-cov git
+
+    # Activate test environment
+    source activate test_env
+
+fi
 
 # Build package
 
@@ -49,8 +62,25 @@ CONDA_BUILD_PATH=$(conda build conda-dist/recipes/threeml --output -c conda-forg
 # Install it
 conda install --use-local -c conda-forge -c threeml threeml xspec-modelsonly-lite
 
+# We re-install cthreeML to make sure that it uses versions of boost compatible
+# with what is installed in the container
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+
+    export CFLAGS="-m64 -I${CONDA_PREFIX}/include"
+    export CXXFLAGS="-DBOOST_MATH_DISABLE_FLOAT128 -m64 -I${CONDA_PREFIX}/include"
+    pip install git+https://github.com/giacomov/cthreeML.git --no-deps --upgrade
+
+    # Make sure we can load the HAWC plugin
+    python -c "from threeML.plugins.HAWCLike import HAWCLike"
+    python -c "import os; print(os.environ['HAWC_3ML_TEST_DATA_DIR'])"
+
+fi
+
 # Run tests
-cd threeml/test
+cd threeML/test
+
+# This is needed for ipyparallel to find the test modules
+export PYTHONPATH=`pwd`:${PYTHONPATH}
 python -m pytest --ignore=threeML_env -vv --cov=threeML
 
 # Codecov needs to run in the main git repo
@@ -67,7 +97,7 @@ fi
 if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
         conda install -c conda-forge anaconda-client
-        anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${CONDA_BUILD_PATH}/*.tar.bz2 --force
+        anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${CONDA_BUILD_PATH}/threeml*.tar.bz2 --force
 
 else
 

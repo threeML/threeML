@@ -80,7 +80,8 @@ setup(
               'threeML/io/plotting',
               'threeML/io/cern_root_utils',
               'threeML/parallel',
-              'threeML/config'
+              'threeML/config',
+              'threeML/test'
               ],
 
     version=__version__,
