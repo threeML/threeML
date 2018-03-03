@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import scipy.integrate as integrate
 
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.histogram import Histogram
@@ -46,15 +48,15 @@ class HistLike(XYLike):
 
             return fluxes
 
-        # The following integrates the diffFlux function using Simpson's rule
-        # This assume that the intervals e1,e2 are all small, which is guaranteed
-        # for any reasonable response matrix, given that e1 and e2 are Monte-Carlo
-        # energies. It also assumes that the function is smooth in the interval
-        # e1 - e2 and twice-differentiable, again reasonable on small intervals for
-        # decent models. It might fail for models with too sharp features, smaller
-        # than the size of the monte carlo interval.
+
 
         def integral(e1, e2):
+
+            #return integrate.quad(differential_flux, e1, e2)[0]
+
+
+
+
             # Simpson's rule
 
             return (e2 - e1) / 6.0 * (differential_flux(e1)
@@ -98,6 +100,28 @@ class HistLike(XYLike):
 
         return model
 
+
+    def plot(self, x_label='x', y_label='y', x_scale='linear', y_scale='linear'):
+
+        fig, sub = plt.subplots(1,1)
+
+        sub.errorbar(self.x, self.y, yerr=self.yerr, fmt='.')
+
+        sub.set_xscale(x_scale)
+        sub.set_yscale(y_scale)
+
+        sub.set_xlabel(x_label)
+        sub.set_ylabel(y_label)
+
+        if self._likelihood_model is not None:
+
+            flux = self._likelihood_model.get_total_flux(self.x)
+
+            sub.plot(self.x, flux, '--', label='model')
+
+            sub.legend(loc=0)
+
+        return fig
 
 
     @property
