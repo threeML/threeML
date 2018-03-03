@@ -1,14 +1,17 @@
+{% set name = "threeml" %}
+
 package:
-  name: threeml
-  version: "0.4.0"
+  name: {{ name }}
+  version: {{ os.environ.get('PKG_VERSION') }}
 
 source:
-  git_url: https://github.com/giacomov/3ML.git
+#    git_url: https://github.com/giacomov/3ML.git
+  path: ../../../
 
 requirements:
   
   build:
-    - python x.x
+    - python
     - toolchain
     - numpy >=1.6
     - scipy >=0.18
@@ -19,7 +22,7 @@ requirements:
     - pyyaml
     - dill
     - iminuit >=1.2
-    - astromodels >=0.4
+    - astromodels
     - corner >=1.0.2
     - pandas
     - requests
@@ -32,7 +35,7 @@ requirements:
     - py
 
   run:
-    - python x.x
+    - python
     - numpy >=1.6
     - scipy >=0.18
     - emcee
@@ -42,7 +45,7 @@ requirements:
     - pyyaml
     - dill
     - iminuit >=1.2
-    - astromodels >=0.4
+    - astromodels
     - corner >=1.0.2
     - pandas
     - requests
