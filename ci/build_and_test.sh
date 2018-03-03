@@ -53,11 +53,11 @@ else
 fi
 
 # Build package
-
-conda build -c conda-forge -c threeml --python=$TRAVIS_PYTHON_VERSION conda-dist/recipes/threeml
+cd conda-dist/recipes/threeml
+conda build -c conda-forge -c threeml --python=$TRAVIS_PYTHON_VERSION .
 
 # Figure out where is the package
-CONDA_BUILD_PATH=$(conda build conda-dist/recipes/threeml --output -c conda-forge -c threeml --python=2.7 | rev | cut -f2- -d"/" | rev)
+CONDA_BUILD_PATH=$(conda build . --output -c conda-forge -c threeml --python=2.7 | rev | cut -f2- -d"/" | rev)
 
 # Install it
 conda install --use-local -c conda-forge -c threeml threeml xspec-modelsonly-lite
@@ -77,7 +77,7 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 fi
 
 # Run tests
-cd threeML/test
+cd ~/my_work_dir/threeML/test
 
 # This is needed for ipyparallel to find the test modules
 export PYTHONPATH=`pwd`:${PYTHONPATH}
