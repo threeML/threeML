@@ -13,6 +13,11 @@ from threeML.plugins.OGIPLike import OGIPLike
 
 import astropy.io.fits as fits
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
+
+
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 __example_dir = os.path.join(__this_dir__, '../../examples')
 
@@ -27,6 +32,7 @@ def is_within_tolerance(truth, value, relative_tolerance=0.01):
     else:
 
         return False
+
 
 
 def test_event_list_constructor():

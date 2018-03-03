@@ -4,7 +4,9 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
 from threeML.utils.binner import NotEnoughData
 
+from threeML.utils.initalize_testing import initialize_testing
 
+initialize_testing()
 
 def test_OGIP_plotting():
     # In[2]:

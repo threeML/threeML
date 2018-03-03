@@ -8,6 +8,9 @@ from threeML import BayesianAnalysis, Uniform_prior, Log_uniform_prior
 from threeML.analysis_results import MLEResults, load_analysis_results, AnalysisResultsSet
 from astromodels import Line, Gaussian
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
 
 _cache = {}
 

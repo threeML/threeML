@@ -8,6 +8,10 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML import LocalMinimization, GlobalMinimization
 from threeML import parallel_computation
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
+
 try:
 
     import ROOT

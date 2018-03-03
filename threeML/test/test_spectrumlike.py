@@ -11,6 +11,10 @@ from threeML.exceptions.custom_exceptions import NegativeBackground
 import warnings
 warnings.simplefilter('ignore')
 
+from threeML.utils.initalize_testing import initialize_testing
+
+initialize_testing()
+
 def test_assigning_source_name():
 
     energies = np.logspace(1, 3, 51)
