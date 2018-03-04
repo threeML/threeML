@@ -4,7 +4,6 @@ from matplotlib.ticker import MaxNLocator
 
 import threeML.plugins.SpectrumLike
 import threeML.plugins.PhotometryLike
-#import threeML.plugins.HistLike
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config

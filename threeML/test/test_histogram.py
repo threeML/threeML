@@ -2,8 +2,7 @@ import pytest
 from threeML.utils.interval import IntervalSet
 from threeML.utils.histogram import Histogram
 from threeML import *
-from threeML.plugins.HistLike import HistLike
-from threeML.io.plotting.post_process_data_plots import display_histogram_fit
+
 
 from threeML.io.file_utils import within_directory
 import numpy as np
