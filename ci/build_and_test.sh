@@ -76,6 +76,21 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
 fi
 
+########### FIXME
+# This is a kludge around a pymultinest bug
+# (it cannot find multinest if not in LD_LIBRARY_PATH
+# or DYLD_LIBRARY_PATH)
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+
+    export LD_LIBRARY_PATH=${CONDA_PREFIX}/lib
+
+else
+
+    export DYLD_LIBRARY_PATH=${CONDA_PREFIX}/lib
+
+fi
+
+
 # Run tests
 cd ~/my_work_dir/threeML/test
 
