@@ -96,6 +96,14 @@ cd ~/my_work_dir/threeML/test
 
 # This is needed for ipyparallel to find the test modules
 export PYTHONPATH=`pwd`:${PYTHONPATH}
+
+# Make matplotlib non-interactive (otherwise it will crash
+# all the tests)
+export MPLBACKEND='Agg'
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export NUMEXPR_NUM_THREADS=1
+
 python -m pytest --ignore=threeML_env -vv --cov=threeML
 
 # Codecov needs to run in the main git repo
