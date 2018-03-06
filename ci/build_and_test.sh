@@ -43,10 +43,6 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     conda install -c conda-forge pytest codecov pytest-cov git --no-update-deps
 else
 
-    # Create and activate test environment on Mac
-
-    conda create --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION root5 pytest codecov pytest-cov git
-
     # Activate test environment
     source activate test_env
 
@@ -60,7 +56,7 @@ conda build -c conda-forge -c threeml --python=$TRAVIS_PYTHON_VERSION .
 CONDA_BUILD_PATH=$(conda build . --output -c conda-forge -c threeml --python=2.7 | rev | cut -f2- -d"/" | rev)
 
 # Install it
-conda install --use-local -c conda-forge -c threeml threeml xspec-modelsonly-lite
+conda install --use-local -c threeml -c conda-forge threeml xspec-modelsonly-lite
 
 # We re-install cthreeML to make sure that it uses versions of boost compatible
 # with what is installed in the container

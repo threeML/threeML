@@ -22,9 +22,16 @@ before_install:
           wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -O miniconda.sh
           bash miniconda.sh -b -p $HOME/miniconda
           export PATH="$HOME/miniconda/bin:$PATH"
+
+          # Install conda-build
           conda install -y conda-build
+
+          # Make sure conda-forge is first channel
           conda config --add channels conda-forge
-          
+
+          # Create test environment
+          conda create --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION root5 pytest codecov pytest-cov git
+
         fi
 
 before_script:
