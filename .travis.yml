@@ -29,6 +29,8 @@ before_install:
           # Make sure conda-forge is first channel
           conda config --add channels conda-forge
 
+          conda config --set always_yes true
+
           # Create test environment
           conda create --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION root5 pytest codecov pytest-cov git
 
