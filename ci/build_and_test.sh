@@ -102,6 +102,18 @@ export NUMEXPR_NUM_THREADS=1
 
 python -m pytest --ignore=threeML_env -vv --cov=threeML
 
+unset PYTHONPATH
+
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+
+    unset LD_LIBRARY_PATH
+
+else
+
+    unset DYLD_LIBRARY_PATH
+
+fi
+
 # Codecov needs to run in the main git repo
 
 # Upload coverage measurements if we are on Linux
@@ -115,7 +127,10 @@ fi
 # If we are on the master branch upload to the channel
 if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
-        conda install -c conda-forge anaconda-client
+        source activate root
+
+        conda install anaconda-client
+
         anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${CONDA_BUILD_PATH}/threeml*.tar.bz2 --force
 
 else
