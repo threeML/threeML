@@ -675,7 +675,7 @@ class _AnalysisResults(object):
 
     def get_point_source_flux(self, ene_min, ene_max, sources=(), confidence_level=0.68,
                               flux_unit='erg/(s cm2)', use_components=False, components_to_use=(),
-                              sum_sources=False):
+                              sum_sources=False, include_extended=False):
         """
 
         :param ene_min: minimum energy (an astropy quantity, like 1.0 * u.keV. You can also use a frequency, like
@@ -689,6 +689,8 @@ class _AnalysisResults(object):
         :param use_components: plot the components of each source (default: False)
         :param components_to_use: (optional) list of string names of the components to plot: including 'total'
         :param sum_sources: (optional) if True, also the sum of all sources will be plotted
+        :param include_extended: (optional) if True, plot extended source spectra (spatially integrated) as well.
+        
         :return:
         """
 
@@ -706,7 +708,7 @@ class _AnalysisResults(object):
             'components_to_use': components_to_use,
             'sources_to_use': sources,
             'sum_sources': sum_sources,
-
+            'include_extended': include_extended
         }
 
         mle_results, bayes_results = _calculate_point_source_flux(_ene_min, _ene_max, self, **_params)
