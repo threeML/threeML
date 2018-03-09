@@ -72,16 +72,12 @@ else
 
 fi
 
-
 # Run tests
-cd ~/my_work_dir/threeML/test
+cd ~/my_work_dir/
 
 # This is needed for ipyparallel to find the test modules
-export PYTHONPATH=`pwd`:${PYTHONPATH}
+export PYTHONPATH=`pwd`/threeML/test:${PYTHONPATH}
 
-# The __init__.py in the test directory confuses codecov, let's
-# remove it
-rm -rf __init__.py
 
 # Make matplotlib non-interactive (otherwise it will crash
 # all the tests)
@@ -106,8 +102,9 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
 fi
 
-python -m pytest --ignore=threeML_env -vv --cov=threeML
+python -m pytest -vv --cov=threeML
 
+# Unset PYTHONPATH and LD_LIBRARY_PATH because they conflict with anaconda client
 unset PYTHONPATH
 
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
