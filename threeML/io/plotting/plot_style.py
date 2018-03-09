@@ -107,6 +107,10 @@ class PlotStyle(object):
     def save(self, name, overwrite=False):
         """
         Save the style with the provided name, so it will be made available also in future sessions of 3ML.
+
+        :param name: the name to give to the new style
+        :param overwrite: whether to overwrite an existing style with the same name or not
+        :return: the path of the YAML file in which the style has been saved for future use
         """
 
         # Make sure name is legal
@@ -120,17 +124,6 @@ class PlotStyle(object):
 
         defined_styles = _discover_styles()
 
-        # This is the name that the file will have if the writing is successful
-
-        this_file_name = "%s.yml" % name
-
-        # Check whether it exists already.
-
-        if this_file_name in defined_styles and not overwrite:
-            raise IOError("Style %s already exists. Use 'overwrite=True' to overwrite it." % name)
-
-        # At this point, either the file is new or we are overwriting, so we can open with "w+"
-
         # Prepare dictionary to be written
         d = {}
         d['matplotlib_base_style'] = self._matplotlib_base_style
@@ -138,8 +131,13 @@ class PlotStyle(object):
         d['threeml_style'] = self._threeml_style
 
         # Write it
+        # Save in the style directory
+        this_path = os.path.join(_get_styles_directory(), "%s.yml" % name)
 
-        this_path = os.path.join(_get_styles_directory(), this_file_name)
+        # Check whether it exists already.
+
+        if this_path in defined_styles and not overwrite:
+            raise IOError("Style %s already exists. Use 'overwrite=True' to overwrite it." % name)
 
         # If necessary, create the styles directory (needed the first time that the user
         # save a custom style)
@@ -147,11 +145,18 @@ class PlotStyle(object):
 
             os.makedirs(_get_styles_directory())
 
+        # At this point, either the file is new or we are overwriting, so we can open with "w+"
         with open(this_path, "w+") as f:
 
             yaml.dump(d, f)
 
         print("Successfully written style into %s" % this_path)
+
+        # Refresh the list of defined styles so the new style can be used immediately
+        _refresh_defined_styles()
+
+        # Return the path
+        return this_path
 
     @staticmethod
     def _raise_unknown_element(item):
@@ -310,7 +315,15 @@ def _load_styles():
 def get_available_plotting_styles():
     return defined_styles.keys()
 
-
+# Load them on import
 defined_styles = _load_styles()
 
 current_style = defined_styles['default']
+
+
+# This is used to refresh the list on demand
+def _refresh_defined_styles():
+
+    global defined_styles
+
+    defined_styles = _load_styles()

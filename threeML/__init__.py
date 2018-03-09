@@ -250,7 +250,7 @@ from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT
 from threeML.analysis_results import load_analysis_results
 
 # Import the plot_style context manager and the function to create new styles
-from .io.plotting.plot_style import plot_style, create_new_plotting_style
+from .io.plotting.plot_style import plot_style, create_new_plotting_style, get_available_plotting_styles
 
 # Check that the number of threads is set to 1 for all multi-thread libraries
 # otherwise numpy operations will be way slower than what they could be, since
