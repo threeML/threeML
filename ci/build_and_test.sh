@@ -79,6 +79,10 @@ cd ~/my_work_dir/threeML/test
 # This is needed for ipyparallel to find the test modules
 export PYTHONPATH=`pwd`:${PYTHONPATH}
 
+# The __init__.py in the test directory confuses codecov, let's
+# remove it
+rm -rf __init__.py
+
 # Make matplotlib non-interactive (otherwise it will crash
 # all the tests)
 export MPLBACKEND='Agg'
