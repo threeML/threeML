@@ -58,31 +58,17 @@ CONDA_BUILD_PATH=$(conda build . --output -c conda-forge -c threeml --python=2.7
 # Install it
 conda install --use-local -c threeml -c conda-forge threeml xspec-modelsonly-lite
 
-# We re-install cthreeML to make sure that it uses versions of boost compatible
-# with what is installed in the container
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-
-    export CFLAGS="-m64 -I${CONDA_PREFIX}/include"
-    export CXXFLAGS="-DBOOST_MATH_DISABLE_FLOAT128 -m64 -I${CONDA_PREFIX}/include"
-    pip install git+https://github.com/giacomov/cthreeML.git --no-deps --upgrade
-
-    # Make sure we can load the HAWC plugin
-    python -c "from threeML.plugins.HAWCLike import HAWCLike"
-    python -c "import os; print(os.environ['HAWC_3ML_TEST_DATA_DIR'])"
-
-fi
-
 ########### FIXME
 # This is a kludge around a pymultinest bug
 # (it cannot find multinest if not in LD_LIBRARY_PATH
 # or DYLD_LIBRARY_PATH)
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
-    export LD_LIBRARY_PATH=${CONDA_PREFIX}/lib
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${CONDA_PREFIX}/lib
 
 else
 
-    export DYLD_LIBRARY_PATH=${CONDA_PREFIX}/lib
+    export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${CONDA_PREFIX}/lib
 
 fi
 
@@ -99,6 +85,22 @@ export MPLBACKEND='Agg'
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
+
+# Before running the test, if we are on linux, install cthreeml and verify that
+# we can actually import the HAWC plugin
+# We re-install cthreeML to make sure that it uses versions of boost compatible
+# with what is installed in the container
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+
+    export CFLAGS="-m64 -I${CONDA_PREFIX}/include"
+    export CXXFLAGS="-DBOOST_MATH_DISABLE_FLOAT128 -m64 -I${CONDA_PREFIX}/include"
+    pip install git+https://github.com/giacomov/cthreeML.git --no-deps --upgrade
+
+    # Make sure we can load the HAWC plugin
+    python -c "from threeML.plugins.HAWCLike import HAWCLike"
+    python -c "import os; print(os.environ['HAWC_3ML_TEST_DATA_DIR'])"
+
+fi
 
 python -m pytest --ignore=threeML_env -vv --cov=threeML
 
