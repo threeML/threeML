@@ -1,88 +1,55 @@
-from threeML import DataList, BayesianAnalysis, Uniform_prior, Log_uniform_prior
-from threeML import Model, Powerlaw, PointSource
-from threeML.plugins.OGIPLike import OGIPLike
-import os
+from threeML import BayesianAnalysis, Uniform_prior, Log_uniform_prior
+import numpy as np
 import pytest
 
-from threeML.utils.initalize_testing import initialize_testing
 
-initialize_testing()
+def remove_priors(model):
 
+    for parameter in model:
 
-def get_model_and_datalist(with_prior=True):
-
-    triggerName = 'bn090217206'
-    ra = 204.9
-    dec = -8.4
-
-    # Data are in the current directory
-
-    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../examples'))
-
-    # Create an instance of the GBM plugin for each detector
-    # Data files
-    obsSpectrum = os.path.join(datadir, "bn090217206_n6_srcspectra.pha{1}")
-    bakSpectrum = os.path.join(datadir, "bn090217206_n6_bkgspectra.bak{1}")
-    rspFile = os.path.join(datadir, "bn090217206_n6_weightedrsp.rsp{1}")
-
-    # Plugin instance
-    NaI6 = OGIPLike("NaI6", obsSpectrum, bakSpectrum, rspFile)
-
-    # Choose energies to use (in this case, I exclude the energy
-    # range from 30 to 40 keV to avoid the k-edge, as well as anything above
-    # 950 keV, where the calibration is uncertain)
-    NaI6.set_active_measurements("10.0-30.0", "40.0-950.0")
-
-    datalist = DataList(NaI6)
-
-    powerlaw = Powerlaw()
-
-    model = Model(PointSource(triggerName, ra, dec, spectral_shape=powerlaw))
-
-    if with_prior:
-
-        powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-        powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
-
-    return model, datalist
+        parameter.prior = None
 
 
+def set_priors(model):
 
+    powerlaw = model.bn090217206.spectrum.main.Powerlaw
 
-def get_bayesian_analysis():
-
-    model, datalist = get_model_and_datalist()
-
-
-    bayes = BayesianAnalysis(model, datalist)
-
-
-    return bayes
+    powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
 
 
 def check_results(fit_results):
 
+    expected_results = [2.531028, -1.1831566000728451]
 
-    assert abs(fit_results['value']['bn090217206.spectrum.main.Powerlaw.K'] - 2.531028) < 1e-1
-    assert abs(fit_results['value']['bn090217206.spectrum.main.Powerlaw.index'] + 1.1831566000728451) < 1e-1
+    assert np.isclose(fit_results['value']['bn090217206.spectrum.main.Powerlaw.K'],
+                      expected_results[0], rtol=0.1)
+
+    assert np.isclose(fit_results['value']['bn090217206.spectrum.main.Powerlaw.index'],
+                      expected_results[1], rtol=0.1)
 
 
-def test_bayes_constructor():
 
-    # before setting priors, cannot create bayes
+def test_bayes_constructor(fitted_joint_likelihood_bn090217206_nai):
 
-    model, datalist = get_model_and_datalist(with_prior=False)
+    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
+    datalist = jl.data_list
+    model = jl.likelihood_model
 
+    jl.restore_best_fit()
+
+    # Priors might have been set by other tests, let's make sure they are
+    # removed so we can test the error
+    remove_priors(model)
     with pytest.raises(RuntimeError):
 
-        bayes = BayesianAnalysis(model, datalist)
+        _ = BayesianAnalysis(model, datalist)
 
-    model, datalist = get_model_and_datalist(with_prior=True)
-
-
+    set_priors(model)
 
     bayes = BayesianAnalysis(model, datalist)
 
+    # This should raise since we didn't sample yet
     with pytest.raises(RuntimeError):
 
         bayes.corner_plot()
@@ -90,31 +57,16 @@ def test_bayes_constructor():
 
 def test_emcee():
 
-    bayes = get_bayesian_analysis()
+    # This has been already tested in the fixtures (see conftest.py)
 
-    n_walkers = 50
-    burn_in = 300
-    n_samples = 500
-
-    samples = bayes.sample(n_walkers=n_walkers, burn_in=burn_in, n_samples=n_samples)
-
-    assert bayes.raw_samples.shape == (n_walkers * n_samples, 2)
+    pass
 
 
-    res = bayes.results.get_data_frame()
+def test_multinest(completed_bn090217206_bayesian_analysis):
 
-    check_results(res)
-
-
-
-def test_multinest():
-
-
-    bayes = get_bayesian_analysis()
-
+    bayes, _ = completed_bn090217206_bayesian_analysis
 
     bayes.sample_multinest(n_live_points=400)
-
 
     res = bayes.results.get_data_frame()
 
@@ -132,17 +84,9 @@ def test_multinest():
 #
 #
 
-def test_bayes_plots():
+def test_bayes_plots(completed_bn090217206_bayesian_analysis):
 
-
-    bayes = get_bayesian_analysis()
-
-    n_walkers = 50
-    burn_in = 10
-    n_samples=100
-
-
-    samples = bayes.sample(n_walkers=n_walkers, burn_in=burn_in, n_samples=n_samples)
+    bayes, samples = completed_bn090217206_bayesian_analysis
 
     bayes.corner_plot()
 
@@ -154,6 +98,5 @@ def test_bayes_plots():
         bayes.convergence_plots(n_samples_in_each_subset=100,n_subsets=2000)
 
     bayes.convergence_plots(n_samples_in_each_subset=10, n_subsets=5)
-
 
     bayes.plot_chains()

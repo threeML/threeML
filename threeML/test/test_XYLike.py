@@ -1,9 +1,6 @@
 from threeML import *
 from threeML.plugins.XYLike import XYLike
 
-from threeML.utils.initalize_testing import initialize_testing
-
-initialize_testing()
 
 def get_signal():
     # Generate a test signal
@@ -64,9 +61,7 @@ def test_XYLike_chi2():
     res = xy.fit(fitfun)
 
     # Verify that the fit converged where it should have
-    #assert np.allclose(res[0]['value'].values, [0.83005902, 40.20040456, 62.78162993, 5.04082923, 0.27279872])
     assert np.allclose(res[0]['value'].values,[0.82896119, 40.20269202, 62.80359114, 5.04080011, 0.27286713], rtol=0.05)
-
 
     # test not setting yerr
 
@@ -227,7 +222,11 @@ def test_XYLike_txt():
 
     new_xy = XYLike.from_text_file('txt', fname)
 
-    assert xy.is_poisson
+    assert new_xy.is_poisson
+
+    # Remove files
+    os.remove('test_txt.txt')
+    os.remove('test_txt_poisson.txt')
 
 
 def test_xy_plot():

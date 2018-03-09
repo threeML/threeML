@@ -1,12 +1,6 @@
 import pytest
-
-
-
 from threeML import *
 
-from threeML.utils.initalize_testing import initialize_testing
-
-initialize_testing()
 
 try:
 

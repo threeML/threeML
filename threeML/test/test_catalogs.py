@@ -6,10 +6,6 @@ from threeML.io.network import internet_connection_is_active
 skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
                                                        reason="No active internet connection")
 
-from threeML.utils.initalize_testing import initialize_testing
-
-initialize_testing()
-
 
 @skip_if_internet_is_not_available
 @pytest.mark.xfail
@@ -23,7 +19,6 @@ def test_gbm_catalog():
     assert gbm_catalog.dec_center == 0.0
 
     gbm_catalog.search_around_source('Crab', 5.0)
-
 
     models = ['band','comp','plaw','sbpl']
     intervals = ['peak','fluence']
@@ -98,9 +93,6 @@ def test_swift_catalog():
 
 
     _ = swift_catalog.query_sources('GRB 050525A')
-
-
-
 
     for mission in swift_catalog.other_observing_instruments:
 

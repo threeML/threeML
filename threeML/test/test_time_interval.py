@@ -3,9 +3,6 @@ import pytest
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 from threeML.utils.interval import IntervalsDoNotOverlap, IntervalsNotContiguous
 
-from threeML.utils.initalize_testing import initialize_testing
-
-initialize_testing()
 
 def test_time_interval_constructor():
 
@@ -18,9 +15,9 @@ def test_time_interval_constructor():
 
     with pytest.raises(RuntimeError):
 
-        t = TimeInterval(10.0, -10.0, swap_if_inverted=False)
+        _ = TimeInterval(10.0, -10.0, swap_if_inverted=False)
 
-    t = TimeInterval(-10.0, 10.0, swap_if_inverted=True)
+    _ = TimeInterval(-10.0, 10.0, swap_if_inverted=True)
 
 
 def test_time_interval_repr():
