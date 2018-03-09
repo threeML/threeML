@@ -177,13 +177,14 @@ class BayesianAnalysis(object):
 
         return self._marginal_likelihood
 
-    def sample(self, n_walkers, burn_in, n_samples, quiet=False):
+    def sample(self, n_walkers, burn_in, n_samples, quiet=False, seed=None):
         """
         Sample the posterior with the Goodman & Weare's Affine Invariant Markov chain Monte Carlo
         :param n_walkers:
         :param burn_in:
         :param n_samples:
         :param quiet: if False, do not print results
+        :param seed: if provided, it is used to seed the random numbers generator before the MCMC
 
         :return: MCMC samples
 
@@ -220,6 +221,11 @@ class BayesianAnalysis(object):
 
                 sampler = emcee.EnsembleSampler(n_walkers, n_dim,
                                                 self.get_posterior)
+
+            # If a seed is provided, set the random number seed
+            if seed is not None:
+
+                sampler._random.seed(seed)
 
             # Sample the burn-in
             pos, prob, state = sampling_procedure(title="Burn-in", p0=p0, sampler=sampler, n_samples=burn_in)
