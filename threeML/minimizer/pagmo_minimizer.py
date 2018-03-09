@@ -1,5 +1,5 @@
 import numpy as np
-import astropy.units as u
+import os
 from threeML.minimizer.minimization import GlobalMinimizer
 from threeML.io.progress_bar import progress_bar
 from threeML.parallel.parallel_client import is_parallel_computation_active
@@ -117,11 +117,28 @@ class PAGMOMinimizer(GlobalMinimizer):
 
             # Evolve populations on islands
             print("Evolving... (progress not available for parallel execution)")
+
+            # For some weird reason, ipyparallel looks for _winreg on Linux (where does
+            # not exist, being a Windows module). Let's mock it with an empty module'
+            mocked = False
+            if os.path.exists("_winreg.py") is False:
+
+                with open("_winreg.py", "w+") as f:
+
+                    f.write("pass")
+
+                mocked = True
+
             archi.evolve()
 
             # Wait for completion (evolve() is async)
 
             archi.wait_check()
+
+            # Now remove _winreg.py if needed
+            if mocked:
+
+                os.remove("_winreg.py")
 
             # Find best and worst islands
 
