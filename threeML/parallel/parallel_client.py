@@ -29,18 +29,7 @@ try:
 
 except ImportError:
 
-    # Try with the old ipython, which contained the parallel code
-    try:
-
-        from IPython.parallel import Client
-
-    except ImportError:
-
-        has_parallel = False
-
-    else:
-
-        has_parallel = True
+    has_parallel = False
 
 else:
 
