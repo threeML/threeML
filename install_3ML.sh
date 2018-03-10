@@ -1,5 +1,41 @@
 #!/bin/bash
 
+# Process options
+INSTALL_XSPEC="no"
+INSTALL_XS_LITE="no"
+INSTALL_ROOT="no"
+BATCH="no"
+
+while [ "${1:-}" != "" ]; do
+    case "$1" in
+      "--with-xspec")
+        INSTALL_XSPEC="yes"
+        ;;
+      "--with-xspec-lite")
+        INSTALL_XS_LITE="yes"
+        ;;
+      "--with-root")
+        INSTALL_ROOT="yes"
+        ;;
+      "--batch")
+        BATCH="yes"
+        ;;
+      "-h" | "--help")
+        echo "install_3ML.sh [--with-xspec] [--with-root] [-h] [--help] [--batch]" && exit 0
+        ;;
+    esac
+    shift
+  done
+
+# (xspec-lite is an hidden option on purpose, it is only meant to be used by Travis)
+
+echo "Options:"
+echo "--------"
+echo "Installing xspec:                              "${INSTALL_XSPEC}
+echo "Installing root :                              "${INSTALL_ROOT}
+echo "Batch execution (assume yes to all questions): "${BATCH}
+echo ""
+
 # Make a small download script in Python to avoid dependencies on 
 # utilities such as wget
 rm __download.py >& /dev/null
@@ -60,7 +96,11 @@ echo "Running on ${os_guessed}"
 
 # Function to install conda if needed
 install_conda() {
-    
+
+    line
+    echo "Installing conda"
+    line
+
     # Make sure bunzip2 is installed (it's needed by the conda installer)
     if which bunzip2 >& /dev/null ; then
         
@@ -126,7 +166,6 @@ export PATH=${PATH}
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
-source deactivate
 source activate threeML
 
 EOM
@@ -169,17 +208,22 @@ if conda --version >& /dev/null ; then
 else
 
     echo "I did not find a conda installation."
-    echo "If you do have an installation of conda and you want to use that, answer 'no' to the next question (the script will exit), make sure the 'conda' executable is in your PATH and then re-run the script."
-    echo "If you do not have conda, then answer yes to the following question and I'll download it for you (it's free)"
-    
-    while true; do
-        read -p "Do you wish to install Conda ? (yes/no) " yn
-        case    $yn in
-            [Yy]* ) break;;
-            [Nn]* ) exit;;
-            * ) echo "Please answer yes or no.";;
-        esac
-    done
+
+    if [[ "${BATCH}" == "no" ]]; then
+
+        echo "If you do have an installation of conda and you want to use that, answer 'no' to the next question (the script will exit), make sure the 'conda' executable is in your PATH and then re-run the script."
+        echo "If you do not have conda, then answer yes to the following question and I'll download it for you (it's free)"
+
+        while true; do
+            read -p "Do you wish to install Conda ? (yes/no) " yn
+            case    $yn in
+                [Yy]* ) break;;
+                [Nn]* ) exit;;
+                * ) echo "Please answer yes or no.";;
+            esac
+        done
+
+    fi
     
     # If we are here, we need to install conda
     
@@ -193,19 +237,33 @@ line
 echo "Installing 3ML"
 line
 
+PACKAGES_TO_INSTALL="threeml"
+
+if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
+
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly"
+
+fi
+
+if [[ "${INSTALL_XS_LITE}" == "yes" ]]; then
+
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly-lite"
+
+fi
+
+if [[ "${INSTALL_ROOT}" == "yes" ]]; then
+
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} root5"
+
+fi
+
 # Now we have conda installed, let's install 3ML
 
 export PATH=${conda_path}/bin:${PATH}
 
 source deactivate
 
-conda create --name threeML -y -c conda-forge python=2.7 numpy scipy matplotlib
-
-source activate threeML
-
-conda install -y -c conda-forge -c threeml threeml
-
-source deactivate
+conda create --name threeML -y -c conda-forge -c threeml python=2.7 numpy scipy matplotlib ${PACKAGES_TO_INSTALL}
 
 line
 echo "Generating setup scripts"
