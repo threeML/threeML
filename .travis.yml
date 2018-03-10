@@ -13,27 +13,40 @@ osx_image: xcode6.4
 
 before_install:
   - |
-        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
-          docker pull giacomov/hawc-docker
+        if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
+
+            # A cron build. We install 3ML as a user would do (no docker, no nothing)
+
+            echo "Running within a Cron build."
 
         else
 
-          # Install Miniconda
-          wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -O miniconda.sh
-          bash miniconda.sh -b -p $HOME/miniconda
-          export PATH="$HOME/miniconda/bin:$PATH"
+            # A normal test
 
-          # Install conda-build
-          conda install -y conda-build
+            if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
-          # Make sure conda-forge is first channel
-          conda config --add channels conda-forge
+                docker pull giacomov/hawc-docker
 
-          conda config --set always_yes true
+            else
 
-          # Create test environment
-          conda create --name test_env -c conda-forge python=2.7.9 pygmo=2 root5 pytest codecov pytest-cov git
+              # Install Miniconda
+              wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -O miniconda.sh
+              bash miniconda.sh -b -p $HOME/miniconda
+              export PATH="$HOME/miniconda/bin:$PATH"
+
+              # Install conda-build
+              conda install -y conda-build
+
+              # Make sure conda-forge is first channel
+              conda config --add channels conda-forge
+
+              conda config --set always_yes true
+
+              # Create test environment
+              conda create --name test_env -c conda-forge python=2.7.9 pygmo=2 root5 pytest codecov pytest-cov git
+
+            fi
 
         fi
 
@@ -45,23 +58,65 @@ before_script:
 script:
 
   - |
-        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
-          docker run -e TRAVIS_PYTHON_VERSION=2.7 \
-                     -e TRAVIS_BRANCH \
-                     -e CONDA_UPLOAD_TOKEN \
-                     -e TRAVIS_OS_NAME \
-                     -e TRAVIS_BUILD_NUMBER \
-                     -e TRAVIS_BUILD_DIR \
-                     -v ${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR} \
-                     -it --rm -e user_id=`id -u` \
-                     giacomov/hawc-docker \
-                     /bin/bash -c "source ${TRAVIS_BUILD_DIR}/ci/build_and_test.sh"
+        if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
+
+            # A cron build. We install 3ML as a user would do by using the install_3ML script
+
+            bash install_3ML.sh --batch
+
+            source threeML_init.sh
+
+            # Now run the tests
+            export MPLBACKEND='Agg'
+            export OMP_NUM_THREADS=1
+            export MKL_NUM_THREADS=1
+            export NUMEXPR_NUM_THREADS=1
+
+            pytest -vv --pyargs threeML
+
+            # Now remove the venv and start from scratch installing also root and xspec
+            source deactivate
+
+            conda config --set always_yes true
+            conda uninstall --name threeML --all
+
+            bash install_3ML.sh --batch --with-xspec-lite --with-root
+
+            source threeML_init.sh
+
+            # Now run the tests
+            export MPLBACKEND='Agg'
+            export OMP_NUM_THREADS=1
+            export MKL_NUM_THREADS=1
+            export NUMEXPR_NUM_THREADS=1
+
+            pytest -vv --pyargs threeML
+
+            # Now that we are here with everything installed, let's also test astromodels
+            pytest -vv --pyargs astromodels
+
         else
 
-           chmod u+x ci/build_and_test.sh
-           export TRAVIS_PYTHON_VERSION=2.7
-           ./ci/build_and_test.sh
+            if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+
+              docker run -e TRAVIS_PYTHON_VERSION=2.7 \
+                         -e TRAVIS_BRANCH \
+                         -e CONDA_UPLOAD_TOKEN \
+                         -e TRAVIS_OS_NAME \
+                         -e TRAVIS_BUILD_NUMBER \
+                         -e TRAVIS_BUILD_DIR \
+                         -v ${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR} \
+                         -it --rm -e user_id=`id -u` \
+                         giacomov/hawc-docker \
+                         /bin/bash -c "source ${TRAVIS_BUILD_DIR}/ci/build_and_test.sh"
+            else
+
+               chmod u+x ci/build_and_test.sh
+               export TRAVIS_PYTHON_VERSION=2.7
+               ./ci/build_and_test.sh
+
+            fi
 
         fi
 
