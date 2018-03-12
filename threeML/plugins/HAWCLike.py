@@ -428,6 +428,19 @@ class HAWCLike(PluginPrototype):
 
         return TS
 
+    def calc_p_value(self, ra, dec, radius):
+
+        """
+        Return a p-value for the fit by integrating over a top hat in each bin
+        and comparing observed and expected counts.
+
+        :param ra: Right ascension in degrees of top-hat center.
+        :param dec: Declination in degrees of top-hat center.
+        :param radius: List of top-hat radii in degrees (one per analysis bin).
+        """
+
+        return self._theLikeHAWC.calcPValue(ra, dec, radius)
+
     def get_nuisance_parameters(self):
         '''
         Return a list of nuisance parameters. Return an empty list if there
@@ -452,6 +465,7 @@ class HAWCLike(PluginPrototype):
         Plot model&data/residuals vs HAWC analysis bins for all point sources in the model.
 
         :param radius: Radius of disk around each source over which model/data are evaluated. Default 0.5.
+        Can also be a list with one element per analysis bin.
         :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather than fractional difference ( [excess-model]/model )
                       in lower panel (default: False).
         :return: list of figures (one plot per point source).
@@ -474,17 +488,42 @@ class HAWCLike(PluginPrototype):
     
         :param ra: R.A. of center of disk (in J2000) over which model/data are evaluated.
         :param dec: Declination of center of disk.
-        :param radius: Radius of disk (in degrees). Default 0.5.
+        :param radius: Radius of disk (in degrees). Default 0.5. Can also be a list with one element per analysis bin.
         :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather than fractional difference ( [excess-model]/model )
                       in lower panel (default: False).
         :return: matplotlib-type figure.
         """
 
-        model = np.array(self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
+        n_bins = len(self._bin_list)
+        bin_index = np.arange(n_bins)
 
-        signal = np.array(self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
+        if hasattr(radius, "__getitem__"):
 
-        bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
+            # One radius per bin
+            
+            radius = list(radius)
+
+            n_radii = len(radius)
+
+            if n_radii != n_bins:
+
+                raise RuntimeError("Number of radii ({}) must match number of bins ({}).".format(n_radii, n_bins))
+
+            model = np.array([self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius[i])[i] for i in bin_index])
+
+            signal = np.array([self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius[i])[i] for i in bin_index])
+
+            bkg = np.array([self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius[i])[i] for i in bin_index])
+
+        else:
+
+            # Same radius for all bins
+
+            model = np.array(self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
+
+            signal = np.array(self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
+
+            bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
 
         total = signal + bkg
             
@@ -570,7 +609,8 @@ class HAWCLike(PluginPrototype):
         :param ra: R.A. of origin for radial profile.
         :param dec: Declination of origin of radial profile.
         :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
-        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius for the disk to calculate the gamma/hadron weights. Default: 3.0
+        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius
+        for the disk to calculate the gamma/hadron weights. Default: 3.0
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
         
@@ -659,7 +699,8 @@ class HAWCLike(PluginPrototype):
         :param ra: R.A. of origin for radial profile.
         :param dec: Declination of origin of radial profile.
         :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
-        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius for the disk to calculate the gamma/hadron weights. Default: 3.0
+        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius for the disk
+        to calculate the gamma/hadron weights. Default: 3.0
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
         
