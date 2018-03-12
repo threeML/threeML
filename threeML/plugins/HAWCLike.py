@@ -500,7 +500,7 @@ class HAWCLike(PluginPrototype):
         if hasattr(radius, "__getitem__"):
 
             # One radius per bin
-            
+
             radius = list(radius)
 
             n_radii = len(radius)
@@ -598,9 +598,6 @@ class HAWCLike(PluginPrototype):
               "_theLikeHAWC.GetNumberOfPixels() not available, values for statistical measurements such as AIC or BIC are unreliable. Please update your aerie version." )
             return 1
 
-
-
-
     def get_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
 
         """
@@ -690,7 +687,6 @@ class HAWCLike(PluginPrototype):
         
         return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names, key=int)
 
-
     def plot_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
 
         """
@@ -734,10 +730,6 @@ class HAWCLike(PluginPrototype):
         plt.tight_layout()
 
         return fig
-
-
-
-
 
     def write_model_map(self, fileName, poisson=False):
 
