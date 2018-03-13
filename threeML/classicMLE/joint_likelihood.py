@@ -1,5 +1,5 @@
 import collections
-
+import sys
 import astromodels.core.model
 import matplotlib.pyplot as plt
 import numpy
@@ -242,7 +242,9 @@ class JointLikelihood(object):
                 self._minimizer = self._get_minimizer(self.minus_log_like_profile,
                                                       self._free_parameters)
 
-            # Perform the fit
+            # Perform the fit, but first flush stdout (so if we have verbose=True the messages there will follow
+            # what is already in the buffer)
+            sys.stdout.flush()
 
             xs, log_likelihood_minimum = self._minimizer.minimize(compute_covar=compute_covariance)
 
@@ -723,7 +725,8 @@ class JointLikelihood(object):
             return minimization.FIT_FAILED
 
         if self.verbose:
-            print("Trying with parameters %s, resulting in logL = %s" % (trial_values, summed_log_likelihood))
+            sys.stderr.write("trial values: %s -> logL = %s\n" % (trial_values, summed_log_likelihood))
+
 
         # Return the minus log likelihood
 
