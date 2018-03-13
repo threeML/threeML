@@ -167,7 +167,7 @@ class JointLikelihood(object):
 
         self._free_parameters = self._likelihood_model.free_parameters
 
-    def fit(self, quiet=False, compute_covariance=True):
+    def fit(self, quiet=False, compute_covariance=True, n_samples=5000):
         """
         Perform a fit of the current likelihood model on the datasets
 
@@ -298,7 +298,7 @@ class JointLikelihood(object):
 
         # Now instance an analysis results class
         self._analysis_results = MLEResults(self.likelihood_model, self._minimizer.covariance_matrix,
-                                            minus_log_likelihood_values,statistical_measures=statistical_measures)
+                                            minus_log_likelihood_values,statistical_measures=statistical_measures, n_samples=n_samples)
 
         # Show the results
 
