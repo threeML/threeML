@@ -12,35 +12,60 @@ Conda installation (suggested)
 and in a completely separate environment from your system and your
 system python.
 
-If you do not know Conda
-~~~~~~~~~~~~~~~~~~~~~~~~
+Suggested method
+~~~~~~~~~~~~~~~~
 
-If you are not familiar with conda, install 3ML with the automatic
-script which will take care of everything:
+Install 3ML with the automatic script which will take care of everything:
 
 1. Download the script from `here`_
-2. Run the script with ``bash install_3ML.sh``
+2. Run the script. If you plan to use XSpec models use
+``bash install_3ML.sh --with-xspec``. If you want to use the HAWC plugin, the VERITAS plugin or other features
+of 3ML needing ROOT, use ``--with-root``. Of course you can use both options at the same time:
+``bash install_3ML.sh --with-root --with-xspec``. If you do not need either, you can use just
+``bash install_3ML.sh``. The script will download Miniconda if needed (or use your existing conda installation),
+create a new environment for 3ML, and install all the needed software in such environment. Thanks to this, the 3ML
+installation will not change anything on your system and can be removed by removing the `threeML`
+conda environment (``conda uninstall --name threeML --all``).
 3. The script will install 3ML and then create a ``threeML_init.sh``
-   script and a ``threeML_init.csh`` script. Source the former if you
-   are using Bash (``source threeML_init.sh``) and the second one if you
+   script and a ``threeML_init.csh`` script in the directory where you launched it.
+   These scripts can be moved anywhere. Source the former if you
+   are using Bash (``source threeML_init.sh``) and the latter if you
    are using Csh/Tcsh (``source threeML_init.csh``).
 
-If you already know Conda
-~~~~~~~~~~~~~~~~~~~~~~~~~
+In order to use the HAWC plugin, you will also need to install cthreeML
+(run this *after* setting up the HAWC environment):
+
+.. code:: bash
+    > source threeML_init.sh
+    > [setup HAWC environment as usual]
+    > export CFLAGS="-m64 -I${CONDA_PREFIX}/include"
+    > export CXXFLAGS="-DBOOST_MATH_DISABLE_FLOAT128 -m64 -I${CONDA_PREFIX}/include"
+    > pip install git+https://github.com/giacomov/cthreeML.git --no-deps --upgrade
+
+Manual method
+~~~~~~~~~~~~~
 
 If you are familiar with Conda and you already have it installed, you
-can install threeML by creating an environment with:
+can install threeML on your own. Start by creating an environment (highly suggested) with:
 
 .. code:: bash
 
     conda create --name threeML -c conda-forge python=2.7 numpy scipy matplotlib
 
-then activating your environment and installing 3ML as:
+Then activate your environment and install 3ML as:
 
 .. code:: bash
 
     source activate threeML
     conda install -c conda-forge -c threeml threeml
+
+If you need XSpec support and/or ROOT support, you need to install also the respective packages ``root5``
+and ``xspec-modelsonly`` with:
+
+.. code:: bash
+
+    source activate threeML
+    conda install -c conda-forge -c threeml [package]
 
 Other dependencies
 ~~~~~~~~~~~~~~~~~~
@@ -78,7 +103,7 @@ functionalities will not work.
    Tools.
 
 -  ROOT: ROOT is not required by 3ML, but it provides the Minuit2
-   minimizer which can be used in 3ML. If you have ROOT, make sure that
+   minimizer which can be used in 3ML. If you already have ROOT, make sure that
    this works before running the script:
    
    .. code:: bash
