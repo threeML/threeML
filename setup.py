@@ -132,7 +132,7 @@ setup(
         'pandas',
         'requests',
         'speclite',
-        'ipython<6.0'
+        'ipython<=5.9'
     ])
 
 # Check for optional dependencies
