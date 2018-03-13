@@ -18,10 +18,10 @@ of 3ML needing ROOT, use ``--with-root``. Of course you can use both options at 
 ``bash install_3ML.sh``. The script will download Miniconda if needed (or use your existing conda installation),
 create a new environment for 3ML, and install all the needed software in such environment. Thanks to this, the 3ML
 installation will not change anything on your system and can be removed by removing the `threeML`
-conda environment (``conda uninstall --name threeML --all``).
+conda environment (``conda uninstall --name threeML --all``)
 3. The script will install 3ML and then create a ``threeML_init.sh`` script and a ``threeML_init.csh`` script
 in the directory where you launched it. These scripts can be moved anywhere. Source the former if you are using
-Bash (``source threeML_init.sh``) and the latter if you are using Csh/Tcsh (``source threeML_init.csh``).
+Bash (``source threeML_init.sh``) and the latter if you are using Csh/Tcsh (``source threeML_init.csh``)
 
 In order to use the HAWC plugin, you will also need to install cthreeML
 (run this *after* setting up the HAWC environment):
