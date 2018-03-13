@@ -441,6 +441,17 @@ class HAWCLike(PluginPrototype):
 
         return self._theLikeHAWC.calcPValue(ra, dec, radius)
 
+    def write_map(self, file_name):
+        """
+        Write the HEALPiX data map in memory to disk. This method is useful if a source has been simulated and injected
+        into the data. If not, the produced map will be just a copy of the input map.
+
+        :param file_name: name for the output map
+        :return: None
+        """
+
+        self._theLikeHAWC.WriteMap(file_name)
+
     def get_nuisance_parameters(self):
         '''
         Return a list of nuisance parameters. Return an empty list if there

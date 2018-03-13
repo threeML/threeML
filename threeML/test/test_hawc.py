@@ -499,3 +499,21 @@ def test_hawc_get_number_of_data_points(hawc_point_source_fitted_joint_like):
 
     assert llh.get_number_of_data_points() == 13428
 
+
+@skip_if_hawc_is_not_available
+def test_hawc_write_map(hawc_point_source_fitted_joint_like):
+
+    # Ensure test environment is valid
+
+    assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
+
+    jl, parameter_frame, like = hawc_point_source_fitted_joint_like
+    llh = jl.data_list['HAWC']
+
+    file_name = "__hawc_map.root"
+
+    llh.write_map(file_name)
+
+    assert os.path.exists(file_name)
+
+    os.remove(file_name)
