@@ -4,18 +4,11 @@ Installation
 .. toctree::
    :maxdepth: 2
 
-Conda installation (suggested)
-------------------------------
-
-`Conda`_ is a platform independent package manager. It allows to install
-3ML (and a lot of other software) without the need to compile anything,
-and in a completely separate environment from your system and your
-system python.
-
 Suggested method
 ~~~~~~~~~~~~~~~~
 
-Install 3ML with the automatic script which will take care of everything:
+Install 3ML with the automatic script which will take care of everything. The script uses `Conda`_ , which is a
+platform independent package manager.
 
 1. Download the script from `here`_
 2. Run the script. If you plan to use XSpec models use
@@ -36,6 +29,7 @@ In order to use the HAWC plugin, you will also need to install cthreeML
 (run this *after* setting up the HAWC environment):
 
 .. code:: bash
+
     > source threeML_init.sh
     > [setup HAWC environment as usual]
     > export CFLAGS="-m64 -I${CONDA_PREFIX}/include"
