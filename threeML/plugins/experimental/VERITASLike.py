@@ -1,16 +1,16 @@
-__author__ = 'giacomov'
-
 import collections
 
 import ROOT
-import astromodels
 import numpy as np
-import scipy.integrate
 
-from threeML.exceptions.custom_exceptions import custom_warnings
+import scipy.integrate
+import astromodels
+
 from threeML.io.cern_root_utils.io_utils import get_list_of_keys, open_ROOT_file
 from threeML.io.cern_root_utils.tobject_to_numpy import tgraph_to_arrays, th2_to_arrays, tree_to_ndarray
 from threeML.plugin_prototype import PluginPrototype
+from threeML.exceptions.custom_exceptions import custom_warnings
+
 from threeML.utils.statistics.likelihood_functions import poisson_observed_poisson_background
 
 __instrument_name = "VERITAS"
@@ -77,7 +77,8 @@ class VERITASRun(object):
 
             self._dE = (10 ** self._log_mc_energies[1:] - 10 ** self._log_mc_energies[:-1])
             self._mc_energies_c = (10 ** self._log_mc_energies[1:] + 10 ** self._log_mc_energies[:-1]) / 2.0
-
+            self._recon_energies_c = (10 ** self._log_recon_energies[1:] + 10 ** self._log_recon_energies[:-1]) / 2.0
+	
             self._n_chan = self._log_recon_energies.shape[0] - 1
 
             # Remove all nans by substituting them with 0.0
@@ -89,7 +90,7 @@ class VERITASRun(object):
             self._log_eff_area_energies, self._eff_area = tgraph_to_arrays(tgraph)
 
             # Transform the effective area to cm2 (it is in m2 in the file)
-            self._eff_area *= 1e4
+            self._eff_area *= 1e8 #This value is for VEGAS, because VEGAS effective area is in cm2
 
             # Transform energies to keV
             self._log_eff_area_energies += 9
@@ -97,14 +98,8 @@ class VERITASRun(object):
         # Now use the effective area provided in the file to renormalize the migration matrix appropriately
         self._renorm_hMigration()
 
-        # Exposure is tOn*(1-tDeadTimeFracOn)
-        try:
-
-            self._exposure = float(1 - self._tRunSummary['DeadTimeFracOn']) * float(self._tRunSummary['tOn'])
-
-        except ValueError:
-
-            self._exposure = float(1 - self._tRunSummary['DeadtimeFrac']) * float(self._tRunSummary['tOn'])
+        # Exposure is tOn*(1-tDeadtimeFrac)
+        self._exposure = float(1 - self._tRunSummary['DeadTimeFracOn']) * float(self._tRunSummary['tOn'])
 
         # Members for generating OGIP equivalents
 
@@ -126,10 +121,10 @@ class VERITASRun(object):
 
         self._bkg_renorm = float(self._tRunSummary['OffNorm'])
 
-        # Use above 300 GeV
-
-        self._first_chan = 61
-        self._last_chan = 110
+        self._start_energy = np.log10(175E6)#175 GeV in keV
+        self._end_energy = np.log10(18E9)#18 TeV in keV
+        self._first_chan = (np.abs(self._log_recon_energies-self._start_energy)).argmin()
+        self._last_chan = (np.abs(self._log_recon_energies-self._end_energy)).argmin()
 
     def _renorm_hMigration(self):
 
@@ -146,28 +141,39 @@ class VERITASRun(object):
         mc_e1 = 10 ** self._log_mc_energies[:-1]
         mc_e2 = 10 ** self._log_mc_energies[1:]
 
-        expectation = self._simulated_spectrum(self._mc_energies_c) * (mc_e2 - mc_e1)
+
+        rc_e1 = 10 ** self._log_recon_energies[:-1]
+        rc_e2 = 10 ** self._log_recon_energies[1:]
+
+        expectation = self._simulated_spectrum(self._recon_energies_c) * (rc_e2 - rc_e1)
 
         # Get the unnormalized effective area
 
-        new_v = v / expectation
 
         # Compute the renormalization based on the energy range from 200 GeV to 1 TeV
 
-        emin = 0.5 * 1e9
+        emin = 0.2 * 1e9
         emax = 1 * 1e9
 
-        idx = (self._mc_energies_c > emin) & (self._mc_energies_c < emax)
-        avg1 = np.average(new_v[idx])
+        #idx = (self._mc_energies_c > emin) & (self._mc_energies_c < emax)
+        #avg1 = np.average(new_v[idx])
 
-        idx = (energies_eff > emin) & (energies_eff < emax)
-        avg2 = np.average(self._eff_area[idx])
+	
+        #idx = (energies_eff > emin) & (energies_eff < emax)
+        #avg2 = np.average(self._eff_area[idx])
 
-        renorm = avg1 / avg2
+        #renorm = avg1 / avg2
 
-        # Renormalize the migration matrix
+	    #Added by for bin by bin normalization
+        v_new = np.sum(self._hMigration, axis=1)
+        new_v = v_new / expectation
+        avg1_new = new_v
+        avg2_new = np.interp(self._recon_energies_c, energies_eff, self._eff_area)
+        renorm_new = avg1_new/avg2_new
+        hMigration_new = self._hMigration/renorm_new[:, None]
+        hMigration_new[~np.isfinite(hMigration_new)] = 0
 
-        self._hMigration = self._hMigration / renorm
+        self._hMigration = hMigration_new
 
     @staticmethod
     def _bin_counts_log(counts, log_bins):
@@ -210,18 +216,19 @@ class VERITASRun(object):
 
         print(repr)
 
-    def _get_diff_flux_and_integral(self, like_model, tag=None):
+
+    def _get_diff_flux_and_integral(self, like_model):
 
         n_point_sources = like_model.get_number_of_point_sources()
 
         # Make a function which will stack all point sources (OGIP do not support spatial dimension)
 
         def differential_flux(energies):
-            fluxes = like_model.get_point_source_fluxes(0, energies, tag=tag)
+            fluxes = like_model.get_point_source_fluxes(0, energies)
 
             # If we have only one point source, this will never be executed
             for i in range(1, n_point_sources):
-                fluxes += like_model.get_point_source_fluxes(i, energies, tag=tag)
+                fluxes += like_model.get_point_source_fluxes(i, energies)
 
             return fluxes
 
@@ -245,7 +252,7 @@ class VERITASRun(object):
     @staticmethod
     def _simulated_spectrum(x):
 
-        return (x)**(-2.0)
+        return (x)**(-2.45)
 
     @staticmethod
     def _simulated_spectrum_f(e1, e2):
@@ -269,10 +276,10 @@ class VERITASRun(object):
 
         return np.array(integrals)
 
-    def get_log_like(self, like_model, tag=None, fast=True):
+    def get_log_like(self, like_model, fast=True):
 
         # Reweight the response matrix
-        diff_flux, integral = self._get_diff_flux_and_integral(like_model, tag=tag)
+        diff_flux, integral = self._get_diff_flux_and_integral(like_model)
 
         e1 = 10**self._log_mc_energies[:-1]
         e2 = 10**self._log_mc_energies[1:]
@@ -286,7 +293,6 @@ class VERITASRun(object):
             sim_spectrum = self._simulated_spectrum_f(e1, e2) / dE # 1 / keV cm2 s
 
         else:
-
             this_spectrum = diff_flux(self._mc_energies_c)
 
             sim_spectrum = self._simulated_spectrum(self._mc_energies_c)
@@ -303,8 +309,8 @@ class VERITASRun(object):
 
         log_like, _ = poisson_observed_poisson_background(self._counts, self._bkg_counts, self._bkg_renorm,
                                                           n_pred)
-
         log_like_tot = np.sum(log_like[self._first_chan: self._last_chan + 1])  # type: float
+
 
         # print("%s: obs: %s, npred: %s, bkg: %s (%s), npred + bkg: %s -> %.2f" % (self._run_name,
         #                                                              np.sum(self._counts),
@@ -403,7 +409,7 @@ class VERITASLike(PluginPrototype):
 
         for run in self._runs_like.values():
 
-            total += run.get_log_like(self._likelihood_model, tag=self._tag)[0]
+            total += run.get_log_like(self._likelihood_model)[0]
 
         return total
 
