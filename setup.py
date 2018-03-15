@@ -81,7 +81,8 @@ setup(
               'threeML/io/cern_root_utils',
               'threeML/parallel',
               'threeML/config',
-              'threeML/test'
+              'threeML/test',
+              'threeML/plugins/experimental'
               ],
 
     version=__version__,
