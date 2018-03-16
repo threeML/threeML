@@ -106,6 +106,7 @@ script:
                          -e TRAVIS_OS_NAME \
                          -e TRAVIS_BUILD_NUMBER \
                          -e TRAVIS_BUILD_DIR \
+                         -e TRAVIS_EVENT_TYPE \
                          -v ${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR} \
                          -it --rm -e user_id=`id -u` \
                          giacomov/hawc-docker \
