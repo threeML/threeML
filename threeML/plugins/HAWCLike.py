@@ -645,18 +645,22 @@ class HAWCLike(PluginPrototype):
         # Use GetTopHatAreas to get the area of all pixels in a given circle.
         # The area of each ring is then given by the differnence between two subseqent circle areas.
         area = np.array( [self._theLikeHAWC.GetTopHatAreas(ra, dec, r+0.5*delta_r) for r in radii ] )
-        area[1:] -= area[:-1] #convert to ring area 
+        temp = area[1:] - area[:-1] 
+        area[1:] = temp #convert to ring area 
         area = area*(np.pi/180.)**2 #convert to sr
         
         model = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
-        model[1:] -= model[:-1] #convert 'top hat' excesses into 'ring' excesses.
+        temp = model[1:] - model[:-1] #convert 'top hat' excesses into 'ring' excesses.
+        model[1:] = temp
 
         signal = np.array( [self._theLikeHAWC.GetTopHatExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
-        signal[1:] -= signal[:-1]
+        temp = signal[1:] - signal[:-1]
+        signal[1:] = temp
 
         bkg = np.array( [self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, r+0.5*delta_r) for r in radii ])
-        bkg[1:] -= bkg[:-1]
-
+        temp = bkg[1:] - bkg[:-1]
+        bkg[1:] = temp
+        
         counts = signal + bkg
 
         if model_to_subtract is not None:
@@ -665,7 +669,8 @@ class HAWCLike(PluginPrototype):
           self._fill_model_cache()
           self.calc_TS()
           model_subtract = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
-          model_subtract[1:] -= model_subtract[:-1]
+          temp = model_subtract[1:] - model_subtract[:-1]
+          model_subtract[1:] = temp
           signal -= model_subtract
           self.set_model(this_model)
           self._fill_model_cache()

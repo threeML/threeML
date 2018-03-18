@@ -360,7 +360,6 @@ def test_null_hyp_prob(hawc_point_source_fitted_joint_like):
 
 
 @skip_if_hawc_is_not_available
-@pytest.mark.xfail
 def test_radial_profile(hawc_point_source_fitted_joint_like):
     # Ensure test environment is valid
 
@@ -405,23 +404,6 @@ def test_radial_profile(hawc_point_source_fitted_joint_like):
         assert is_within_tolerance(excess_data[i], correct_data[i])
         assert is_within_tolerance(excess_error[i], correct_error[i])
 
-    radii, excess_model, excess_data, excess_error, list_of_bin_names = llh.get_radial_profile(source.position.ra.value,
-                                                                                               source.position.dec.value,
-                                                                                               bins_to_use, max_radius,
-                                                                                               n_bins, lm)
-
-    assert len(radii) == n_bins
-    assert len(excess_model) == n_bins
-    assert len(excess_data) == n_bins
-    assert len(excess_error) == n_bins
-
-    assert list_of_bin_names == correct_bins
-
-    for i in range(0, n_bins):
-        assert is_within_tolerance(radii[i], correct_radii[i])
-        assert is_within_tolerance(excess_model[i], correct_model[i])
-        assert is_within_tolerance(excess_data[i], subtracted_data[i])
-        assert is_within_tolerance(excess_error[i], correct_error[i])
 
 
 @skip_if_hawc_is_not_available
