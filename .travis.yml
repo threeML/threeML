@@ -1,16 +1,128 @@
 sudo: required
-language: python
+
+language: generic
+
 services:
-- docker
+
+    - docker
+
+os:
+    - linux
+    - osx
+osx_image: xcode6.4
+
 before_install:
-- pip install codecov
-- docker pull giacomov/hawc-docker
-- docker ps -a
-- ls $TRAVIS_BUILD_DIR
+  - |
+
+        if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
+
+            # A cron build. We install 3ML as a user would do (no docker, no nothing)
+
+            echo "Running within a Cron build."
+
+        else
+
+            # A normal test
+
+            if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+
+                docker pull giacomov/hawc-docker
+
+            else
+
+              # Install Miniconda
+              wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -O miniconda.sh
+              bash miniconda.sh -b -p $HOME/miniconda
+              export PATH="$HOME/miniconda/bin:$PATH"
+
+              # Install conda-build
+              conda install -y conda-build
+
+              # Make sure conda-forge is first channel
+              conda config --add channels conda-forge
+
+              conda config --set always_yes true
+
+              # Create test environment
+              conda create --name test_env -c conda-forge python=2.7.9 pygmo=2 root5 pytest codecov pytest-cov git
+
+            fi
+
+        fi
+
+before_script:
+
+  - python -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL);
+    fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
+
 script:
-- docker run --rm -it -e user_id=`id -u` -v $TRAVIS_BUILD_DIR:/travis_build_dir giacomov/hawc-docker
-  /bin/bash -c "source /travis_build_dir/test_inside_docker.sh"
-- ./push_new_version.sh
+
+  - |
+
+        if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
+
+            # A cron build. We install 3ML as a user would do by using the install_3ML script
+
+            bash install_3ML.sh --batch
+
+            source threeML_init.sh
+
+            # Now run the tests
+            export MPLBACKEND='Agg'
+            export OMP_NUM_THREADS=1
+            export MKL_NUM_THREADS=1
+            export NUMEXPR_NUM_THREADS=1
+
+            pytest -vv --pyargs threeML
+
+            # Now remove the venv and start from scratch installing also root and xspec
+            source deactivate
+
+            conda config --set always_yes true
+            conda uninstall --name threeML --all
+
+            bash install_3ML.sh --batch --with-xspec-lite --with-root
+
+            source threeML_init.sh
+
+            # Now run the tests
+            export MPLBACKEND='Agg'
+            export OMP_NUM_THREADS=1
+            export MKL_NUM_THREADS=1
+            export NUMEXPR_NUM_THREADS=1
+
+            pytest -vv --pyargs threeML
+
+            # Now that we are here with everything installed, let's also test astromodels
+            pytest -vv --pyargs astromodels
+
+        else
+
+            if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+
+              docker run -e TRAVIS_PYTHON_VERSION=2.7 \
+                         -e TRAVIS_BRANCH \
+                         -e CONDA_UPLOAD_TOKEN \
+                         -e TRAVIS_OS_NAME \
+                         -e TRAVIS_BUILD_NUMBER \
+                         -e TRAVIS_BUILD_DIR \
+                         -e TRAVIS_EVENT_TYPE \
+                         -v ${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR} \
+                         -it --rm -e user_id=`id -u` \
+                         giacomov/hawc-docker \
+                         /bin/bash -c "source ${TRAVIS_BUILD_DIR}/ci/build_and_test.sh"
+            else
+
+               chmod u+x ci/build_and_test.sh
+               export TRAVIS_PYTHON_VERSION=2.7
+               ./ci/build_and_test.sh
+
+            fi
+
+        fi
+
 env:
-  global:
-    secure: PtgPfyMs5IhDUrNwEhO/GHWi8a/7FBK40eiOVOHGEFM2flkLojLd1+xWsqOSgzxfSGxcF5Odnp6PEemzvfMqtuFLnraMMD7ZetRkEgxkP54ULQGMZoRm4J5qHlZFm5/bEi3ZWk7FyTDFtHDpHWYk9xy/v3QAp2jc3JVeUqni6SvTY2pza5g6JqCuTHj1rAycAiTRlRcKdhM0TdVho5h6ulH5KjhV/YI8UabMGo9OACkSEXrp2lpuv5uvn/Tra+TnRG5rbQCrPFyczEkMalcnKWMsyxRM/lVtbM/ZtVupCes9wP1SBBUpgz8+YiqSkuDTFNMRJ5d4suZt3DEXhh9/H32EhFAKC6qYsT3pYUxnZJHIGpjVCUt6Qp07dWZugtqbfMShmygvGIGvFArzYlu2ibFS2T/ICu69UzZWy6CIwgrLMh3VQkP0MESvD+zRqzxJ8wI/vxOWsF0vbC8jBV4/7m1UIwt2DcDM2O93i5h5iN7fA8gELvdSxv37ClqWVNkzgk0p3ARzdFu5NEaPaXv1bmOPAyu9CwDAb66wOAlfg8O5cB5xTHzEgXnjiiqraUQwGVKLRgJP9G9eVPn7CYaGDIH303mJxMG7PZMVglZ1MTemN4EJIPvpsJVFD4wMOUf/1UiI9TUXNRhIRs0NsqOICA7Nky1P748zRzsNvvxvSvY=
+
+  matrix:
+
+  - secure: PISjXVvxqmm196utoCI/Dcbn8U4GBLqSipdVEvt5J7FDKa7Ttl6ITxPMsqWZaK58NWcNKRA2xREStOMGB4TVhnnmkMsgrR1o77NCEFNC05Q/bh2RTAASHMNPAMIP5mLPToG/0gygWNviOx9atupIsfgyjscdL7ABzWWKNSwTGPwZsfRya8sLQFzz9DRhmaGIckReetN5XEc/jxg3D3+RWcL2BmDsG1akGt77PFkQ5CnQgvrzZMV9UMFLGfWVKwmI/UuBcZ0ANYWfIEbg3JWD2cDSOEI8cXZ5gSU5KykBV5OkoC1za92XCiuX7aWOVHXUQR3w1iIjCkf5pFzLIU+EwHjRFlggMfLRg7VSEdUzng/IIkORzgM82dmOHquu0PBywXGF9z8gRE8UZVZdnaw4l4IE1hJQF/GV7sqMdpzQlM2CIZTakVHHj7fSVbHz4CA1lREIFGyCuf0ItUdNzHquzLvJPqgohGfx8337CY0JPlelZHp1lsN5HcgitibN8a44E+zd+Kh5w7twgpD3tz8bQLrga9nyYHXlTUyF+ugBq1qmwYiqPDy/UoemqRu1Pzl/l3Co72U10P4/3qHKopaOZf0AxN7r00IN1lAA4XxtXH9/fVmbN1A58HlcTqRObSWsTzCA5eBv7NqVhpM7iO1Fz6RLlpcI67fOcp97soysmz0=

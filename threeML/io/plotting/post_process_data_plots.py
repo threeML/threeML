@@ -4,16 +4,13 @@ from matplotlib.ticker import MaxNLocator
 
 import threeML.plugins.SpectrumLike
 import threeML.plugins.PhotometryLike
-import threeML.plugins.HistLike
-from threeML.utils.binner import Rebinner
-from threeML.utils.stats_tools import Significance
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
 from threeML.io.plotting.step_plot import step_plot
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 
-# This file contains plots which are plot in data space after a model has been
+# This file contains plots which are plotted in data space after a model has been
 # assigned to the plugin.
 
 NO_REBIN = 1e-99
@@ -235,239 +232,6 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     return residual_plot.figure
 
 
-def display_histogram_fit(analysis, data=(), **kwargs):
-    if not data:
-
-        data_keys = analysis.data_list.keys()
-
-    else:
-
-        data_keys = data
-
-    # Now we want to make sure that we only grab OGIP plugins
-
-    new_data_keys = []
-
-    for key in data_keys:
-
-        # Make sure it is a valid key
-        if key in analysis.data_list.keys():
-
-            if isinstance(analysis.data_list[key], threeML.plugins.HistLike.HistLike):
-
-                new_data_keys.append(key)
-
-            else:
-
-                custom_warnings.warn("Dataset %s is not of the HistLike kind. Cannot be plotted by "
-                                     "display_histogram_fit" % key)
-
-    if not new_data_keys:
-        RuntimeError(
-            'There were no valid HistLike data requested for plotting. Please use the names in the data list')
-
-    data_keys = new_data_keys
-
-    # default settings
-
-    # Default is to show the model with steps
-    step = True
-
-    data_cmap = plt.get_cmap(threeML_config['ogip']['data plot cmap'])  # plt.cm.rainbow
-    model_cmap = plt.get_cmap(threeML_config['ogip']['model plot cmap'])  # plt.cm.nipy_spectral_r
-
-    # Legend is on by default
-    show_legend = True
-
-    log_axes = False
-
-    # Default colors
-
-    data_colors = map(lambda x: data_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
-    model_colors = map(lambda x: model_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
-
-    # Now override defaults according to the optional keywords, if present
-
-    if 'show_legend' in kwargs:
-        show_legend = bool(kwargs.pop('show_legend'))
-
-    if 'step' in kwargs:
-        step = bool(kwargs.pop('step'))
-
-    if 'log_axes' in kwargs:
-        log_axes = True
-
-    if 'data_cmap' in kwargs:
-        data_cmap = plt.get_cmap(kwargs.pop('data_cmap'))
-        data_colors = map(lambda x: data_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
-
-    if 'model_cmap' in kwargs:
-        model_cmap = kwargs.pop('model_cmap')
-        model_colors = map(lambda x: model_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
-
-    if 'data_colors' in kwargs:
-        data_colors = kwargs.pop('data_colors')
-
-        assert len(data_colors) >= len(data_keys), "You need to provide at least a number of data colors equal to the " \
-                                                   "number of datasets"
-
-    if 'model_colors' in kwargs:
-        model_colors = kwargs.pop('model_colors')
-
-        assert len(model_colors) >= len(
-            data_keys), "You need to provide at least a number of model colors equal to the " \
-                        "number of datasets"
-
-    fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
-
-    # go thru the detectors
-    for key, data_color, model_color in zip(data_keys, data_colors, model_colors):
-
-        data = analysis.data_list[key]
-
-        x_min, x_max = data.histogram.absolute_start, data.histogram.absolute_stop
-
-        # Observed counts
-        observed_counts = data.histogram.contents
-
-        if data.is_poisson:
-
-            cnt_err = np.sqrt(observed_counts)
-
-        elif data.has_errors:
-
-            cnt_err = data.histogram.errors
-
-        width = data.histogram.widths
-
-        expected_model = data.get_model()
-
-        mean_x = []
-
-        # For each bin find the weighted average of the channel center
-
-        delta_x = [[], []]
-
-        for bin in data.histogram:
-
-            # Find all channels in this rebinned bin
-            idx = (data.histogram.mid_points >= bin.start) & (data.histogram.mid_points <= bin.stop)
-
-            # Find the rates for these channels
-            r = expected_model[idx]
-
-            if r.max() == 0:
-
-                # All empty, cannot weight
-                this_mean = bin.mid_point
-
-            else:
-
-                # Do the weighted average of the mean energies
-                weights = r / np.sum(r)
-
-                this_mean = np.average(data.histogram.mid_points[idx], weights=weights)
-
-            # Compute "errors" for X (which aren't really errors, just to mark the size of the bin)
-
-            delta_x[0].append(this_mean - bin.start)
-            delta_x[1].append(bin.stop - this_mean)
-            mean_x.append(this_mean)
-
-        if data.has_errors:
-
-            ax.errorbar(mean_x,
-                        data.histogram.contents / width,
-                        yerr=cnt_err / width,
-                        xerr=delta_x,
-                        fmt='.',
-                        markersize=3,
-                        linestyle='',
-                        # elinewidth=.5,
-                        alpha=.9,
-                        capsize=0,
-                        label=data._name,
-                        color=data_color)
-
-        else:
-
-            ax.errorbar(mean_x,
-                        data.histogram.contents / width,
-                        xerr=delta_x,
-                        fmt='.',
-                        markersize=3,
-                        linestyle='',
-                        # elinewidth=.5,
-                        alpha=.9,
-                        capsize=0,
-                        label=data._name,
-                        color=data_color)
-
-        if step:
-
-            step_plot(data.histogram.bin_stack,
-                      expected_model / width,
-                      ax, alpha=.8,
-                      label='%s Model' % data._name, color=model_color)
-
-        else:
-
-            ax.plot(data.histogram.mid_points, expected_model / width, alpha=.8, label='%s Model' % data._name,
-                    color=model_color)
-
-        if data.is_poisson:
-
-            # this is not correct I believe
-
-            residuals = data.histogram.contents - expected_model
-
-        else:
-
-            if data.has_errors:
-
-                residuals = (data.histogram.contents - expected_model) / data.histogram.errors
-
-            else:
-
-                residuals = data.histogram.contents - expected_model
-
-        ax1.axhline(0, linestyle='--', color='k')
-        ax1.errorbar(mean_x,
-                     residuals,
-                     yerr=np.ones_like(residuals),
-                     capsize=0,
-                     fmt='.',
-                     markersize=3,
-                     color=data_color)
-
-    if show_legend:
-        ax.legend(fontsize='x-small', loc=0)
-
-    ax.set_ylabel("Y")
-
-    if log_axes:
-        ax.set_xscale('log')
-        ax.set_yscale('log', nonposy='clip')
-
-        ax1.set_xscale("log")
-
-    locator = MaxNLocator(prune='upper', nbins=5)
-    ax1.yaxis.set_major_locator(locator)
-
-    ax1.set_xlabel("X")
-    ax1.set_ylabel("Residuals\n($\sigma$)")
-
-    # This takes care of making space for all labels around the figure
-
-    fig.tight_layout()
-
-    # Now remove the space between the two subplots
-    # NOTE: this must be placed *after* tight_layout, otherwise it will be ineffective
-
-    fig.subplots_adjust(hspace=0)
-
-    return fig
-
 
 def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     """
@@ -626,6 +390,239 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
 
 
-
+# def display_histogram_fit(analysis, data=(), **kwargs):
+#     if not data:
+#
+#         data_keys = analysis.data_list.keys()
+#
+#     else:
+#
+#         data_keys = data
+#
+#     # Now we want to make sure that we only grab OGIP plugins
+#
+#     new_data_keys = []
+#
+#     for key in data_keys:
+#
+#         # Make sure it is a valid key
+#         if key in analysis.data_list.keys():
+#
+#             if isinstance(analysis.data_list[key], threeML.plugins.HistLike.HistLike):
+#
+#                 new_data_keys.append(key)
+#
+#             else:
+#
+#                 custom_warnings.warn("Dataset %s is not of the HistLike kind. Cannot be plotted by "
+#                                      "display_histogram_fit" % key)
+#
+#     if not new_data_keys:
+#         RuntimeError(
+#             'There were no valid HistLike data requested for plotting. Please use the names in the data list')
+#
+#     data_keys = new_data_keys
+#
+#     # default settings
+#
+#     # Default is to show the model with steps
+#     step = True
+#
+#     data_cmap = plt.get_cmap(threeML_config['ogip']['data plot cmap'])  # plt.cm.rainbow
+#     model_cmap = plt.get_cmap(threeML_config['ogip']['model plot cmap'])  # plt.cm.nipy_spectral_r
+#
+#     # Legend is on by default
+#     show_legend = True
+#
+#     log_axes = False
+#
+#     # Default colors
+#
+#     data_colors = map(lambda x: data_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
+#     model_colors = map(lambda x: model_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
+#
+#     # Now override defaults according to the optional keywords, if present
+#
+#     if 'show_legend' in kwargs:
+#         show_legend = bool(kwargs.pop('show_legend'))
+#
+#     if 'step' in kwargs:
+#         step = bool(kwargs.pop('step'))
+#
+#     if 'log_axes' in kwargs:
+#         log_axes = True
+#
+#     if 'data_cmap' in kwargs:
+#         data_cmap = plt.get_cmap(kwargs.pop('data_cmap'))
+#         data_colors = map(lambda x: data_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
+#
+#     if 'model_cmap' in kwargs:
+#         model_cmap = kwargs.pop('model_cmap')
+#         model_colors = map(lambda x: model_cmap(x), np.linspace(0.0, 1.0, len(data_keys)))
+#
+#     if 'data_colors' in kwargs:
+#         data_colors = kwargs.pop('data_colors')
+#
+#         assert len(data_colors) >= len(data_keys), "You need to provide at least a number of data colors equal to the " \
+#                                                    "number of datasets"
+#
+#     if 'model_colors' in kwargs:
+#         model_colors = kwargs.pop('model_colors')
+#
+#         assert len(model_colors) >= len(
+#             data_keys), "You need to provide at least a number of model colors equal to the " \
+#                         "number of datasets"
+#
+#     fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
+#
+#     # go thru the detectors
+#     for key, data_color, model_color in zip(data_keys, data_colors, model_colors):
+#
+#         data = analysis.data_list[key]
+#
+#         x_min, x_max = data.histogram.absolute_start, data.histogram.absolute_stop
+#
+#         # Observed counts
+#         observed_counts = data.histogram.contents
+#
+#         if data.is_poisson:
+#
+#             cnt_err = np.sqrt(observed_counts)
+#
+#         elif data.has_errors:
+#
+#             cnt_err = data.histogram.errors
+#
+#         width = data.histogram.widths
+#
+#         expected_model = data.get_model()
+#
+#         mean_x = []
+#
+#         # For each bin find the weighted average of the channel center
+#
+#         delta_x = [[], []]
+#
+#         for bin in data.histogram:
+#
+#             # Find all channels in this rebinned bin
+#             idx = (data.histogram.mid_points >= bin.start) & (data.histogram.mid_points <= bin.stop)
+#
+#             # Find the rates for these channels
+#             r = expected_model[idx]
+#
+#             if r.max() == 0:
+#
+#                 # All empty, cannot weight
+#                 this_mean = bin.mid_point
+#
+#             else:
+#
+#                 # Do the weighted average of the mean energies
+#                 weights = r / np.sum(r)
+#
+#                 this_mean = np.average(data.histogram.mid_points[idx], weights=weights)
+#
+#             # Compute "errors" for X (which aren't really errors, just to mark the size of the bin)
+#
+#             delta_x[0].append(this_mean - bin.start)
+#             delta_x[1].append(bin.stop - this_mean)
+#             mean_x.append(this_mean)
+#
+#         if data.has_errors:
+#
+#             ax.errorbar(mean_x,
+#                         data.histogram.contents / width,
+#                         yerr=cnt_err / width,
+#                         xerr=delta_x,
+#                         fmt='.',
+#                         markersize=3,
+#                         linestyle='',
+#                         # elinewidth=.5,
+#                         alpha=.9,
+#                         capsize=0,
+#                         label=data._name,
+#                         color=data_color)
+#
+#         else:
+#
+#             ax.errorbar(mean_x,
+#                         data.histogram.contents / width,
+#                         xerr=delta_x,
+#                         fmt='.',
+#                         markersize=3,
+#                         linestyle='',
+#                         # elinewidth=.5,
+#                         alpha=.9,
+#                         capsize=0,
+#                         label=data._name,
+#                         color=data_color)
+#
+#         if step:
+#
+#             step_plot(data.histogram.bin_stack,
+#                       expected_model / width,
+#                       ax, alpha=.8,
+#                       label='%s Model' % data._name, color=model_color)
+#
+#         else:
+#
+#             ax.plot(data.histogram.mid_points, expected_model / width, alpha=.8, label='%s Model' % data._name,
+#                     color=model_color)
+#
+#         if data.is_poisson:
+#
+#             # this is not correct I believe
+#
+#             residuals = data.histogram.contents - expected_model
+#
+#         else:
+#
+#             if data.has_errors:
+#
+#                 residuals = (data.histogram.contents - expected_model) / data.histogram.errors
+#
+#             else:
+#
+#                 residuals = data.histogram.contents - expected_model
+#
+#         ax1.axhline(0, linestyle='--', color='k')
+#         ax1.errorbar(mean_x,
+#                      residuals,
+#                      yerr=np.ones_like(residuals),
+#                      capsize=0,
+#                      fmt='.',
+#                      markersize=3,
+#                      color=data_color)
+#
+#     if show_legend:
+#         ax.legend(fontsize='x-small', loc=0)
+#
+#     ax.set_ylabel("Y")
+#
+#     if log_axes:
+#         ax.set_xscale('log')
+#         ax.set_yscale('log', nonposy='clip')
+#
+#         ax1.set_xscale("log")
+#
+#     locator = MaxNLocator(prune='upper', nbins=5)
+#     ax1.yaxis.set_major_locator(locator)
+#
+#     ax1.set_xlabel("X")
+#     ax1.set_ylabel("Residuals\n($\sigma$)")
+#
+#     # This takes care of making space for all labels around the figure
+#
+#     fig.tight_layout()
+#
+#     # Now remove the space between the two subplots
+#     # NOTE: this must be placed *after* tight_layout, otherwise it will be ineffective
+#
+#     fig.subplots_adjust(hspace=0)
+#
+#     return fig
+#
+#
 
 

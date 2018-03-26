@@ -33,3 +33,5 @@ def open_ROOT_file(filename):
     finally:
 
         f.Close()
+
+        del f

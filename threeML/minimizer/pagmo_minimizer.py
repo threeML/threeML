@@ -1,5 +1,5 @@
 import numpy as np
-
+import os
 from threeML.minimizer.minimization import GlobalMinimizer
 from threeML.io.progress_bar import progress_bar
 from threeML.parallel.parallel_client import is_parallel_computation_active
@@ -100,28 +100,9 @@ class PAGMOMinimizer(GlobalMinimizer):
 
         Npar = len(self._internal_parameters)
 
-        wrapper = PAGMOWrapper(function=self.function, parameters=self._internal_parameters, dim=Npar)
-
         if is_parallel_computation_active():
 
-            # kludge: we cannot live with ROOT, because the custom import hook (!!!) of ROOT breaks the pickling
-            # and unpickling of objects. We still did not find a workaround
-            try:
-
-                import ROOT
-
-            except:
-
-                # ok
-                pass
-
-            else:
-
-                # We cannot work with ROOT
-                raise RuntimeError("Unfortunately, the parallel pygmo cannot live with ROOT. "
-                                   "ROOT has a custom import hook which breaks the pickling of objects. "
-                                   "Please remove ROOT from your PYTHONPATH or use the serial version of the PAGMO "
-                                   "minimizer")
+            wrapper = PAGMOWrapper(function=self.function, parameters=self._internal_parameters, dim=Npar)
 
             # use the archipelago, which uses the ipyparallel computation
 
@@ -136,11 +117,28 @@ class PAGMOMinimizer(GlobalMinimizer):
 
             # Evolve populations on islands
             print("Evolving... (progress not available for parallel execution)")
+
+            # For some weird reason, ipyparallel looks for _winreg on Linux (where does
+            # not exist, being a Windows module). Let's mock it with an empty module'
+            mocked = False
+            if os.path.exists("_winreg.py") is False:
+
+                with open("_winreg.py", "w+") as f:
+
+                    f.write("pass")
+
+                mocked = True
+
             archi.evolve()
 
             # Wait for completion (evolve() is async)
 
             archi.wait_check()
+
+            # Now remove _winreg.py if needed
+            if mocked:
+
+                os.remove("_winreg.py")
 
             # Find best and worst islands
 
@@ -150,6 +148,8 @@ class PAGMOMinimizer(GlobalMinimizer):
         else:
 
             # do not use ipyparallel. Evolve populations on islands serially
+
+            wrapper = PAGMOWrapper(function=self.function, parameters=self._internal_parameters, dim=Npar)
 
             xOpts = []
             fOpts = np.zeros(islands)

@@ -1,4 +1,4 @@
-__author__ = "djJfunk <J. Michael Burgess>"
+__author__ = "grburgess <J. Michael Burgess>"
 
 from astromodels.functions.functions import DiracDelta, StepFunctionUpper
 import numpy as np

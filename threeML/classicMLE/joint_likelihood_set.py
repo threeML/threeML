@@ -9,7 +9,7 @@ from threeML.config.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.progress_bar import progress_bar
 from threeML.analysis_results import AnalysisResultsSet
-from threeML.minimizer.minimization import _Minimization, LocalMinimization
+from threeML.minimizer.minimization import _Minimization, LocalMinimization, _minimizers
 
 from astromodels import Model
 import pandas as pd
@@ -93,12 +93,24 @@ class JointLikelihoodSet(object):
 
         self._preprocessor = preprocessor
 
-    def set_minimizer(self, minimization):
+    def set_minimizer(self, minimizer):
 
-        assert isinstance(minimization, _Minimization), "The provided minimization must be either a LocalMinimization or a " \
-                                                     "GlobalMinimization instance"
+        if isinstance(minimizer, _Minimization):
 
-        self._minimization = minimization
+            self._minimization = minimizer
+
+        else:
+
+            assert minimizer.upper() in _minimizers, \
+                "Minimizer %s is not available on this system. " \
+                "Available minimizers: %s" % (minimizer, ",".join(_minimizers.keys()))
+
+            # The string can only specify a local minimization. This will return an error if that is not the case.
+            # In order to setup global optimization the user needs to use the GlobalMinimization factory directly
+
+            self._minimization = LocalMinimization(minimizer)
+
+        self._minimization = minimizer
 
     def worker(self, interval):
 

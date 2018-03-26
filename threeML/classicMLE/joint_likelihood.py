@@ -1,25 +1,22 @@
 import collections
+import sys
+import astromodels.core.model
+import matplotlib.pyplot as plt
 import numpy
-import dill
+import numpy as np
 import scipy.optimize
 import scipy.stats
-import matplotlib.pyplot as plt
-
-import numpy as np
-import astromodels.core.model
-
-from threeML.minimizer import minimization
-from threeML.exceptions import custom_exceptions
-from threeML.io.table import Table
-from threeML.parallel.parallel_client import ParallelClient
-from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
-from threeML.config.config import threeML_config
-from threeML.analysis_results import MLEResults
-from threeML.utils.stats_tools import aic, bic
-from threeML.io.results_table import ResultsTable
-
-
 from astromodels import ModelAssertionViolation
+
+from threeML.analysis_results import MLEResults
+from threeML.config.config import threeML_config
+from threeML.exceptions import custom_exceptions
+from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
+from threeML.io.results_table import ResultsTable
+from threeML.io.table import Table
+from threeML.minimizer import minimization
+from threeML.parallel.parallel_client import ParallelClient
+from threeML.utils.statistics.stats_tools import aic, bic
 
 
 class ReducingNumberOfThreads(Warning):
@@ -170,7 +167,7 @@ class JointLikelihood(object):
 
         self._free_parameters = self._likelihood_model.free_parameters
 
-    def fit(self, quiet=False, compute_covariance=True):
+    def fit(self, quiet=False, compute_covariance=True, n_samples=5000):
         """
         Perform a fit of the current likelihood model on the datasets
 
@@ -189,6 +186,11 @@ class JointLikelihood(object):
         if len(self._free_parameters) == 0:
 
             custom_warnings.warn("There is no free parameter in the current model", RuntimeWarning)
+
+            # Create the minimizer anyway because it will be needed by the following code
+
+            self._minimizer = self._get_minimizer(self.minus_log_like_profile,
+                                                  self._free_parameters)
 
             # Store the "minimum", which is just the current value
             self._current_minimum = float(self.minus_log_like_profile([]))
@@ -240,7 +242,9 @@ class JointLikelihood(object):
                 self._minimizer = self._get_minimizer(self.minus_log_like_profile,
                                                       self._free_parameters)
 
-            # Perform the fit
+            # Perform the fit, but first flush stdout (so if we have verbose=True the messages there will follow
+            # what is already in the buffer)
+            sys.stdout.flush()
 
             xs, log_likelihood_minimum = self._minimizer.minimize(compute_covar=compute_covariance)
 
@@ -252,10 +256,10 @@ class JointLikelihood(object):
 
             self._current_minimum = float(log_likelihood_minimum)
 
-        # Now collect the values for the likelihood for the various datasets
+            # First restore best fit (to make sure we compute the likelihood at the right point in the following)
+            self._minimizer.restore_best_fit()
 
-        # First restore best fit (to make sure we compute the likelihood at the right point)
-        self._minimizer.restore_best_fit()
+        # Now collect the values for the likelihood for the various datasets
 
         # Fill the dictionary with the values of the -log likelihood (dataset by dataset)
 
@@ -294,7 +298,7 @@ class JointLikelihood(object):
 
         # Now instance an analysis results class
         self._analysis_results = MLEResults(self.likelihood_model, self._minimizer.covariance_matrix,
-                                            minus_log_likelihood_values,statistical_measures=statistical_measures)
+                                            minus_log_likelihood_values,statistical_measures=statistical_measures, n_samples=n_samples)
 
         # Show the results
 
@@ -801,7 +805,8 @@ class JointLikelihood(object):
             return minimization.FIT_FAILED
 
         if self.verbose:
-            print("Trying with parameters %s, resulting in logL = %s" % (trial_values, summed_log_likelihood))
+            sys.stderr.write("trial values: %s -> logL = %s\n" % (trial_values, summed_log_likelihood))
+
 
         # Return the minus log likelihood
 

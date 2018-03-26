@@ -1,6 +1,6 @@
 import pytest
-
 from threeML import *
+
 
 try:
 
@@ -36,6 +36,64 @@ def is_within_tolerance(truth, value, relative_tolerance=0.01):
 
 _maptree_name = "maptree_256.root"
 _response_name = "detector_response.root"
+
+
+@pytest.fixture(scope="session")
+def hawc_point_source_fitted_joint_like():
+
+    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
+
+    maptree = os.path.join(data_path, _maptree_name)
+    response = os.path.join(data_path, _response_name)
+
+    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
+
+    # The simulated source has this spectrum (credits for simulation: Colas Riviere):
+    # CutOffPowerLaw,3.15e-11,2.37,42.3
+    # at this position:
+    # 100,22
+
+    # Define the spectral and spatial models for the source
+    spectrum = Cutoff_powerlaw()
+    source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
+
+    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
+    spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
+
+    spectrum.piv = 1 * u.TeV
+    spectrum.piv.fix = True
+
+    spectrum.index = -2.37
+    spectrum.index.bounds = (-4, -1)
+
+    spectrum.xc = 42.3 * u.TeV
+    spectrum.xc.bounds = (1 * u.TeV, 100 * u.TeV)
+
+    q = source(1 * u.keV)
+
+    assert np.isclose(q.value, 67.3458058177)
+
+    # Set up a likelihood model using the source.
+    # Then create a HAWCLike object using the model, the maptree, and detector
+    # response.
+    lm = Model(source)
+    llh = HAWCLike("HAWC", maptree, response)
+    llh.set_active_measurements(1, 9)
+
+    # Double check the free parameters
+    print("Likelihood model:\n")
+    print(lm)
+
+    # Set up the likelihood and run the fit
+    print("Performing likelihood fit...\n")
+    datalist = DataList(llh)
+    jl = JointLikelihood(lm, datalist, verbose=True)
+
+    jl.set_minimizer("ROOT")
+
+    parameter_frame, like = jl.fit(compute_covariance=False)
+
+    return jl, parameter_frame, like
 
 
 @skip_if_hawc_is_not_available
@@ -111,69 +169,21 @@ def test_hawc_fullsky_options():
     print("Likelihood model:\n")
     print(lm)
 
-    # Set up the likelihood and run the fit
+    # Set up the likelihood
     print("Performing likelihood fit...\n")
     datalist = DataList(llh)
 
     jl = JointLikelihood(lm, datalist, verbose=False)
 
+
 @skip_if_hawc_is_not_available
-def test_hawc_point_source_fit():
+def test_hawc_point_source_fit(hawc_point_source_fitted_joint_like):
     # Ensure test environment is valid
 
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
 
-    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
-
-    maptree = os.path.join(data_path, _maptree_name)
-    response = os.path.join(data_path, _response_name)
-
-    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
-
-    # The simulated source has this spectrum (credits for simulation: Colas Riviere):
-    # CutOffPowerLaw,3.15e-11,2.37,42.3
-    # at this position:
-    # 100,22
-
-    # Define the spectral and spatial models for the source
-    spectrum = Cutoff_powerlaw()
-    source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
-
-    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
-    spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
-
-    spectrum.piv = 1 * u.TeV
-    spectrum.piv.fix = True
-
-    spectrum.index = -2.37
-    spectrum.index.bounds = (-4, -1)
-
-    spectrum.xc = 42.3 * u.TeV
-    spectrum.xc.bounds = (1 * u.TeV, 100 * u.TeV)
-
-    q = source(1 * u.keV)
-
-    assert np.isclose(q.value, 67.3458058177)
-
-    # Set up a likelihood model using the source.
-    # Then create a HAWCLike object using the model, the maptree, and detector
-    # response.
-    lm = Model(source)
-    llh = HAWCLike("HAWC", maptree, response)
-    llh.set_active_measurements(1, 9)
-
-    # Double check the free parameters
-    print("Likelihood model:\n")
-    print(lm)
-
-    # Set up the likelihood and run the fit
-    print("Performing likelihood fit...\n")
-    datalist = DataList(llh)
-    jl = JointLikelihood(lm, datalist, verbose=True)
-
-    jl.set_minimizer("ROOT")
-
-    parameter_frame, like = jl.fit(compute_covariance=False)
+    jl, parameter_frame, like = hawc_point_source_fitted_joint_like
+    spectrum = jl.likelihood_model.TestSource.spectrum.main.shape
 
     # Check that we have converged to the right solution
     # (the true value of course are not exactly the value simulated,
@@ -188,7 +198,7 @@ def test_hawc_point_source_fit():
 
     # Print up the TS, significance, and fit parameters, and then plot stuff
     print("\nTest statistic:")
-    TS = llh.calc_TS()
+    TS = jl.data_list['HAWC'].calc_TS()
     sigma = np.sqrt(TS)
 
     print("Test statistic: %g" % TS)
@@ -313,120 +323,52 @@ def test_hawc_extended_source_fit():
 
     spectrum.display()
     shape.display()
+    
 
 
 @skip_if_hawc_is_not_available
-def test_hawc_display_residuals():
+def test_hawc_display_residuals(hawc_point_source_fitted_joint_like):
     # Ensure test environment is valid
 
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
 
-    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
-
-    maptree = os.path.join(data_path, _maptree_name)
-    response = os.path.join(data_path, _response_name)
-
-    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
-
-    # The simulated source has this spectrum (credits for simulation: Colas Riviere):
-    # CutOffPowerLaw,3.15e-11,2.37,42.3
-    # at this position:
-    # 100,22
-
-    # Define the spectral and spatial models for the source
-    spectrum = Cutoff_powerlaw()
-    source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
-
-    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
-    spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
-
-    spectrum.piv = 1 * u.TeV
-    spectrum.piv.fix = True
-
-    spectrum.index = -2.37
-    spectrum.index.bounds = (-4, -1)
-
-    spectrum.xc = 42.3 * u.TeV
-    spectrum.xc.bounds = (1 * u.TeV, 100 * u.TeV)
-
-    # Set up a likelihood model using the source.
-    # Then create a HAWCLike object using the model, the maptree, and detector
-    # response.
-    lm = Model(source)
-    llh = HAWCLike("HAWC", maptree, response)
-    llh.set_active_measurements(1, 9)
-
-    # Double check the free parameters
-    print("Likelihood model:\n")
-    print(lm)
-
-    # Set up the likelihood and run the fit
-    print("Performing likelihood fit...\n")
-    datalist = DataList(llh)
-    jl = JointLikelihood(lm, datalist, verbose=True)
-
-    jl.set_minimizer("ROOT")
-
-    parameter_frame, like = jl.fit(compute_covariance=False)
+    jl, parameter_frame, like = hawc_point_source_fitted_joint_like
+    source = jl.likelihood_model.TestSource
 
     # Check the 'display' functions (plot model&data/residuals vs analysis bins)
+    llh = jl.data_list['HAWC']
     llh.display(radius=0.5)
     llh.display_residuals_at_position(source.position.ra.value, source.position.dec.value, radius=0.5)
 
+    # Now check the bin-dependent radius
+    llh.display_residuals_at_position(source.position.ra.value, source.position.dec.value, radius=[0.5] * 9)
+
 
 @skip_if_hawc_is_not_available
-def test_radial_profile():
+def test_null_hyp_prob(hawc_point_source_fitted_joint_like):
+
     # Ensure test environment is valid
 
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
 
-    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
+    jl, parameter_frame, like = hawc_point_source_fitted_joint_like
+    source = jl.likelihood_model.TestSource
+    llh = jl.data_list['HAWC']
+    p_value = llh.calc_p_value(source.position.ra.value, source.position.dec.value, radius=[0.5] * 9)
 
-    maptree = os.path.join(data_path, _maptree_name)
-    response = os.path.join(data_path, _response_name)
+    assert np.isclose(p_value, 0.88173524636, rtol=0.1)
 
-    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
 
-    # The simulated source has this spectrum (credits for simulation: Colas Riviere):
-    # CutOffPowerLaw,3.15e-11,2.37,42.3
-    # at this position:
-    # 100,22
+@skip_if_hawc_is_not_available
+def test_radial_profile(hawc_point_source_fitted_joint_like):
+    # Ensure test environment is valid
 
-    # Define the spectral and spatial models for the source
-    spectrum = Cutoff_powerlaw()
-    source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
+    assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
 
-    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
-    spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
-
-    spectrum.piv = 1 * u.TeV
-    spectrum.piv.fix = True
-
-    spectrum.index = -2.37
-    spectrum.index.bounds = (-4, -1)
-
-    spectrum.xc = 42.3 * u.TeV
-    spectrum.xc.bounds = (1 * u.TeV, 100 * u.TeV)
-
-    # Set up a likelihood model using the source.
-    # Then create a HAWCLike object using the model, the maptree, and detector
-    # response.
-    lm = Model(source)
-    llh = HAWCLike("HAWC", maptree, response)
-    llh.set_active_measurements(1, 9)
-
-    # Double check the free parameters
-    print("Likelihood model:\n")
-    print(lm)
-
-    # Set up the likelihood and run the fit
-    print("Performing likelihood fit...\n")
-    datalist = DataList(llh)
-    jl = JointLikelihood(lm, datalist, verbose=True)
-
-    jl.set_minimizer("ROOT")
-
-    parameter_frame, like = jl.fit(compute_covariance=False)
+    jl, parameter_frame, like = hawc_point_source_fitted_joint_like
+    source = jl.likelihood_model.TestSource
+    llh = jl.data_list['HAWC']
+    lm = jl.likelihood_model
 
     correct_radii = [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9]
     correct_model = [1.00635816e+07, 3.77671396e+06, 6.52140500e+05, 1.39108253e+05, 4.95474715e+04, 2.14023029e+04,
@@ -462,23 +404,6 @@ def test_radial_profile():
         assert is_within_tolerance(excess_data[i], correct_data[i])
         assert is_within_tolerance(excess_error[i], correct_error[i])
 
-    radii, excess_model, excess_data, excess_error, list_of_bin_names = llh.get_radial_profile(source.position.ra.value,
-                                                                                               source.position.dec.value,
-                                                                                               bins_to_use, max_radius,
-                                                                                               n_bins, lm)
-
-    assert len(radii) == n_bins
-    assert len(excess_model) == n_bins
-    assert len(excess_data) == n_bins
-    assert len(excess_error) == n_bins
-
-    assert list_of_bin_names == correct_bins
-
-    for i in range(0, n_bins):
-        assert is_within_tolerance(radii[i], correct_radii[i])
-        assert is_within_tolerance(excess_model[i], correct_model[i])
-        assert is_within_tolerance(excess_data[i], subtracted_data[i])
-        assert is_within_tolerance(excess_error[i], correct_error[i])
 
 
 @skip_if_hawc_is_not_available
@@ -542,3 +467,35 @@ def test_CommonNorm_fit():
     parameter_frame, like = jl.fit(compute_covariance=False)
 
     assert np.isclose(lm.HAWC_ComNorm.value, 1.02567968495, rtol=1e-2)
+
+    
+@skip_if_hawc_is_not_available
+def test_hawc_get_number_of_data_points(hawc_point_source_fitted_joint_like):
+
+    # Ensure test environment is valid
+
+    assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
+
+    jl, parameter_frame, like = hawc_point_source_fitted_joint_like
+    llh = jl.data_list['HAWC']
+
+    assert llh.get_number_of_data_points() == 13428
+
+
+@skip_if_hawc_is_not_available
+def test_hawc_write_map(hawc_point_source_fitted_joint_like):
+
+    # Ensure test environment is valid
+
+    assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
+
+    jl, parameter_frame, like = hawc_point_source_fitted_joint_like
+    llh = jl.data_list['HAWC']
+
+    file_name = "__hawc_map.root"
+
+    llh.write_map(file_name)
+
+    assert os.path.exists(file_name)
+
+    os.remove(file_name)

@@ -14,13 +14,17 @@ Traditionally the Astrophysics community have been using frequentist techniques,
 .. toctree::
     :maxdepth: 5
     :hidden:
-
+    
+    installation
     intro
     notebooks/Minimization_tutorial.ipynb
     notebooks/Bayesian_tutorial.ipynb
     notebooks/Time-energy-fit.ipynb
     plugins
+    modeling
     features
+    tutorials
+    faq
     
 
 .. automodule:: threeML

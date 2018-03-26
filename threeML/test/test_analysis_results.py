@@ -19,95 +19,6 @@ poiss_sig = [44, 43, 38, 25, 51, 37, 46, 47, 55, 36, 40, 32, 46, 37, 44, 42, 50,
              96, 74, 43, 49, 43, 51, 27, 32, 35, 42, 43, 49, 38, 43, 59, 54, 50, 40, 50, 57, 55, 47, 38, 64]
 
 
-def _get_mle_analysis_results():
-
-    global _cache
-
-    if 'ar' in _cache:
-
-        return _cache['ar']
-
-    y = np.array(poiss_sig)
-
-    xy = XYLike("test", x, y, poisson_data=True)
-
-    fitfun = Line() + Gaussian()
-
-    fitfun.a_1.bounds = (-10, 10.0)
-    fitfun.b_1.bounds = (-100, 100.0)
-    fitfun.F_2 = 60.0
-    fitfun.F_2.bounds = (1e-3, 200.0)
-    fitfun.mu_2 = 5.0
-    fitfun.mu_2.bounds = (0.0, 100.0)
-    fitfun.sigma_2.bounds = (1e-3, 10.0)
-
-    model = Model(PointSource('fake',0.0, 0.0, fitfun))
-
-    data = DataList(xy)
-
-    jl = JointLikelihood(model, data)
-    _ = jl.fit()
-
-    ar = jl.results
-
-    # Cache it so we don't continue doing it
-    _cache['ar'] = ar
-
-    return ar
-
-
-def _get_bayes_analysis_results():
-
-    global _cache
-
-    if 'arb' in _cache:
-
-        return _cache['arb']
-
-    y = np.array(poiss_sig)
-
-    xy = XYLike("test", x, y, poisson_data=True)
-
-    fitfun = Line() + Gaussian()
-
-    fitfun.a_1.bounds = (-10, 10.0)
-    fitfun.b_1.bounds = (-100, 100.0)
-    fitfun.F_2 = 60.0
-    fitfun.F_2.bounds = (1e-3, 200.0)
-    fitfun.mu_2 = 5.0
-    fitfun.mu_2.bounds = (0.0, 100.0)
-    fitfun.sigma_2.bounds = (1e-3, 10.0)
-
-    model = Model(PointSource('fake',0.0, 0.0, fitfun))
-
-    data = DataList(xy)
-
-    # Exactly the same can be done for a Bayesian analysis
-    # Let's run it first
-
-    ar = _get_mle_analysis_results()
-
-    for parameter in ar.optimized_model:
-
-        model[parameter.path].value = parameter.value
-
-    model.fake.spectrum.main.composite.a_1.set_uninformative_prior(Uniform_prior)
-    model.fake.spectrum.main.composite.b_1.set_uninformative_prior(Uniform_prior)
-    model.fake.spectrum.main.composite.F_2.set_uninformative_prior(Log_uniform_prior)
-    model.fake.spectrum.main.composite.mu_2.set_uninformative_prior(Uniform_prior)
-    model.fake.spectrum.main.composite.sigma_2.set_uninformative_prior(Log_uniform_prior)
-
-    bs = BayesianAnalysis(model, data)
-
-    _ = bs.sample(20, 100, 1000)
-
-    arb = bs.results
-
-    _cache['arb'] = arb
-
-    return arb
-
-
 def _results_are_same(res1, res2, bayes=False):
 
     # Check that they are the same
@@ -141,11 +52,13 @@ def _results_are_same(res1, res2, bayes=False):
     assert np.allclose(s1.values, s2.values)
 
 
+def test_analysis_results_input_output(xy_fitted_joint_likelihood):
 
+    jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
 
-def test_analysis_results_input_output():
+    jl.restore_best_fit()
 
-    ar = _get_mle_analysis_results()  # type: MLEResults
+    ar = jl.results  # type: MLEResults
 
     temp_file = "__test_mle.fits"
 
@@ -158,10 +71,18 @@ def test_analysis_results_input_output():
     _results_are_same(ar, ar_reloaded)
 
 
-def test_analysis_set_input_output():
+def test_analysis_set_input_output(xy_fitted_joint_likelihood):
 
-    ar = _get_mle_analysis_results()
-    ar2 = _get_mle_analysis_results()
+    # Collect twice the same analysis results just to see if we can
+    # save them in a file as set of results
+
+    jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
+
+    jl.restore_best_fit()
+
+    ar = jl.results  # type: MLEResults
+
+    ar2 = jl.results
 
     analysis_set = AnalysisResultsSet([ar, ar2])
 
@@ -183,14 +104,19 @@ def test_analysis_set_input_output():
         _results_are_same(res1, res2)
 
 
-def test_error_propagation():
+def test_error_propagation(xy_fitted_joint_likelihood):
 
-    ar = _get_mle_analysis_results()
+    jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
+
+    jl.restore_best_fit()
+
+    ar = jl.results  # type: MLEResults
 
     # You can use the results for propagating errors non-linearly for analytical functions
     p1 = ar.get_variates("fake.spectrum.main.composite.a_1")
     p2 = ar.get_variates("fake.spectrum.main.composite.b_1")
 
+    # Test the printing
     print(p1)
     print(p2)
 
@@ -241,9 +167,11 @@ def test_error_propagation():
     assert abs(hi_b - 140) < 20
 
 
-def test_bayesian_input_output():
+def test_bayesian_input_output(xy_completed_bayesian_analysis):
 
-    rb1 = _get_bayes_analysis_results()
+    bs, _ = xy_completed_bayesian_analysis
+
+    rb1 = bs.results
 
     temp_file = "_test_bayes.fits"
 
@@ -256,9 +184,11 @@ def test_bayesian_input_output():
     _results_are_same(rb1, rb2, bayes=True)
 
 
-def test_corner_plotting():
+def test_corner_plotting(xy_completed_bayesian_analysis):
 
-    ar = _get_bayes_analysis_results()
+    bs, _ = xy_completed_bayesian_analysis
+
+    ar = bs.results
 
     ar.corner_plot()
 

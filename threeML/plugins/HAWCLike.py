@@ -428,6 +428,30 @@ class HAWCLike(PluginPrototype):
 
         return TS
 
+    def calc_p_value(self, ra, dec, radius):
+
+        """
+        Return a p-value for the fit by integrating over a top hat in each bin
+        and comparing observed and expected counts.
+
+        :param ra: Right ascension in degrees of top-hat center.
+        :param dec: Declination in degrees of top-hat center.
+        :param radius: List of top-hat radii in degrees (one per analysis bin).
+        """
+
+        return self._theLikeHAWC.calcPValue(ra, dec, radius)
+
+    def write_map(self, file_name):
+        """
+        Write the HEALPiX data map in memory to disk. This method is useful if a source has been simulated and injected
+        into the data. If not, the produced map will be just a copy of the input map.
+
+        :param file_name: name for the output map
+        :return: None
+        """
+
+        self._theLikeHAWC.WriteMap(file_name)
+
     def get_nuisance_parameters(self):
         '''
         Return a list of nuisance parameters. Return an empty list if there
@@ -452,6 +476,7 @@ class HAWCLike(PluginPrototype):
         Plot model&data/residuals vs HAWC analysis bins for all point sources in the model.
 
         :param radius: Radius of disk around each source over which model/data are evaluated. Default 0.5.
+        Can also be a list with one element per analysis bin.
         :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather than fractional difference ( [excess-model]/model )
                       in lower panel (default: False).
         :return: list of figures (one plot per point source).
@@ -474,17 +499,42 @@ class HAWCLike(PluginPrototype):
     
         :param ra: R.A. of center of disk (in J2000) over which model/data are evaluated.
         :param dec: Declination of center of disk.
-        :param radius: Radius of disk (in degrees). Default 0.5.
+        :param radius: Radius of disk (in degrees). Default 0.5. Can also be a list with one element per analysis bin.
         :param pulls: Plot pulls ( [excess-model]/uncertainty ) rather than fractional difference ( [excess-model]/model )
                       in lower panel (default: False).
         :return: matplotlib-type figure.
         """
 
-        model = np.array(self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
+        n_bins = len(self._bin_list)
+        bin_index = np.arange(n_bins)
 
-        signal = np.array(self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
+        if hasattr(radius, "__getitem__"):
 
-        bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
+            # One radius per bin
+
+            radius = list(radius)
+
+            n_radii = len(radius)
+
+            if n_radii != n_bins:
+
+                raise RuntimeError("Number of radii ({}) must match number of bins ({}).".format(n_radii, n_bins))
+
+            model = np.array([self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius[i])[i] for i in bin_index])
+
+            signal = np.array([self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius[i])[i] for i in bin_index])
+
+            bkg = np.array([self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius[i])[i] for i in bin_index])
+
+        else:
+
+            # Same radius for all bins
+
+            model = np.array(self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, radius))
+
+            signal = np.array(self._theLikeHAWC.GetTopHatExcesses(ra, dec, radius))
+
+            bkg = np.array(self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, radius))
 
         total = signal + bkg
             
@@ -546,8 +596,18 @@ class HAWCLike(PluginPrototype):
 
         return fig
 
-
-
+    def get_number_of_data_points( self ):
+        """
+        Number of data point = number of pixels.
+        Implemented in liff as the number of pixels in the ROI per analysis bin.
+        """        
+        try:
+            pixels_per_bin =  np.array( self._theLikeHAWC.GetNumberOfPixels() )
+            return int(np.sum( pixels_per_bin ))
+        except AttributeError:
+            warnings.warn(
+              "_theLikeHAWC.GetNumberOfPixels() not available, values for statistical measurements such as AIC or BIC are unreliable. Please update your aerie version." )
+            return 1
 
     def get_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
 
@@ -557,7 +617,8 @@ class HAWCLike(PluginPrototype):
         :param ra: R.A. of origin for radial profile.
         :param dec: Declination of origin of radial profile.
         :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
-        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius for the disk to calculate the gamma/hadron weights. Default: 3.0
+        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius
+        for the disk to calculate the gamma/hadron weights. Default: 3.0
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
         
@@ -584,18 +645,22 @@ class HAWCLike(PluginPrototype):
         # Use GetTopHatAreas to get the area of all pixels in a given circle.
         # The area of each ring is then given by the differnence between two subseqent circle areas.
         area = np.array( [self._theLikeHAWC.GetTopHatAreas(ra, dec, r+0.5*delta_r) for r in radii ] )
-        area[1:] -= area[:-1] #convert to ring area 
+        temp = area[1:] - area[:-1] 
+        area[1:] = temp #convert to ring area 
         area = area*(np.pi/180.)**2 #convert to sr
         
         model = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
-        model[1:] -= model[:-1] #convert 'top hat' excesses into 'ring' excesses.
+        temp = model[1:] - model[:-1] #convert 'top hat' excesses into 'ring' excesses.
+        model[1:] = temp
 
         signal = np.array( [self._theLikeHAWC.GetTopHatExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
-        signal[1:] -= signal[:-1]
+        temp = signal[1:] - signal[:-1]
+        signal[1:] = temp
 
         bkg = np.array( [self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, r+0.5*delta_r) for r in radii ])
-        bkg[1:] -= bkg[:-1]
-
+        temp = bkg[1:] - bkg[:-1]
+        bkg[1:] = temp
+        
         counts = signal + bkg
 
         if model_to_subtract is not None:
@@ -604,7 +669,8 @@ class HAWCLike(PluginPrototype):
           self._fill_model_cache()
           self.calc_TS()
           model_subtract = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
-          model_subtract[1:] -= model_subtract[:-1]
+          temp = model_subtract[1:] - model_subtract[:-1]
+          model_subtract[1:] = temp
           signal -= model_subtract
           self.set_model(this_model)
           self._fill_model_cache()
@@ -637,7 +703,6 @@ class HAWCLike(PluginPrototype):
         
         return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names, key=int)
 
-
     def plot_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
 
         """
@@ -646,7 +711,8 @@ class HAWCLike(PluginPrototype):
         :param ra: R.A. of origin for radial profile.
         :param dec: Declination of origin of radial profile.
         :param bin_list: List of analysis bins over which to average; if None, use HAWC default (bins 4-9).
-        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius for the disk to calculate the gamma/hadron weights. Default: 3.0
+        :param max_radius: Radius up to which the radial profile is evaluated; also used as the radius for the disk
+        to calculate the gamma/hadron weights. Default: 3.0
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
         
@@ -680,10 +746,6 @@ class HAWCLike(PluginPrototype):
         plt.tight_layout()
 
         return fig
-
-
-
-
 
     def write_model_map(self, fileName, poisson=False):
 
