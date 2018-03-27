@@ -77,14 +77,6 @@ class FITSFile(object):
 
     def writeto(self, *args, **kwargs):
 
-        if 'overwrite' in kwargs:
-
-            # For some reason HDUList has clobber, not overwrite. If we got that keyword,
-            # substitute it
-
-            kwargs['clobber'] = kwargs['overwrite']
-            kwargs.pop('overwrite')
-
         self._hdu_list.writeto(*args, **kwargs)
 
     # Update the docstring to be the same as the method we are wrapping
@@ -165,9 +157,10 @@ class FITSExtension(object):
 
             elif isinstance(test_value, str):
 
-                # Get maximum length
+                # Get maximum length, but make 1 as minimum length so if the column is completely made up of empty
+                # string we still can work
 
-                max_string_length = len(max(column_data, key=len))
+                max_string_length = max(len(max(column_data, key=len)), 1)
 
                 format = '%iA' % max_string_length
 
