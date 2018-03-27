@@ -1197,18 +1197,6 @@ else:
 
 try:
 
-    from threeML.minimizer.pyOpt_minimizer import PyOptMinimizer, _pyopt_algorithms
-
-except ImportError:
-
-    custom_warnings.warn("pyOpt minimizer not available", ImportWarning)
-
-else:
-
-    _minimizers["PYOPT"] = PyOptMinimizer
-
-try:
-
     from threeML.minimizer.multinest_minimizer import MultinestMinimizer
 
 except ImportError:
