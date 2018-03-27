@@ -725,7 +725,7 @@ class JointLikelihood(object):
             return minimization.FIT_FAILED
 
         if self.verbose:
-            sys.stderr.write("trial values: %s -> logL = %s\n" % (trial_values, summed_log_likelihood))
+            sys.stderr.write("trial values: %s -> logL = %.3f\n" % (trial_values, summed_log_likelihood))
 
 
         # Return the minus log likelihood
