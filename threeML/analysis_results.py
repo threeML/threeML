@@ -116,7 +116,7 @@ def _load_one_results(fits_extension):
 
         # Get covariance matrix
 
-        covariance_matrix = fits_extension.data.field("COVARIANCE").T
+        covariance_matrix = np.atleast_2d(fits_extension.data.field("COVARIANCE").T)
 
         # Instance and return
 
