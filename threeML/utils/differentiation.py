@@ -1,6 +1,5 @@
 import numdifftools as nd
 import numpy as np
-
 from astromodels import SettingOutOfBounds
 
 
@@ -67,12 +66,12 @@ def _get_wrapper(function, point, minima, maxima):
 
             distance_to_max = np.inf
 
-        # Delta is the minimum between 3% of the value, and 1/2.5 times the minimum
+        # Delta is the minimum between 0.03% of the value, and 1/2.5 times the minimum
         # distance to either boundary. 1/2 of that factor is due to the fact that numdifftools uses
         # twice the delta to compute the differential, and the 0.5 is due to the fact that we don't want
         # to go exactly equal to the boundary
 
-        scaled_deltas[i] = min([0.03 * abs(scaled_point[i]), distance_to_max / 2.5, distance_to_min / 2.5])
+        scaled_deltas[i] = min([0.0003 * abs(scaled_point[i]), distance_to_max / 2.5, distance_to_min / 2.5])
 
     def wrapper(x):
 
@@ -97,7 +96,7 @@ def get_jacobian(function, point, minima, maxima):
 
     wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(function, point, minima, maxima)
 
-    # Compute the Hessian matrix at best_fit_values
+    # Compute the Jacobian matrix at best_fit_values
 
     jacobian_vector = nd.Jacobian(wrapper, scaled_deltas)(scaled_point)
 
@@ -105,7 +104,7 @@ def get_jacobian(function, point, minima, maxima):
 
     jacobian_vector = np.array(jacobian_vector)
 
-    # Now correct back the Hessian for the scales
+    # Now correct back the Jacobian for the scales
 
     jacobian_vector /= orders_of_magnitude
 
