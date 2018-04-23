@@ -56,7 +56,7 @@ class ROOTMinimizer(LocalMinimizer):
 
         # Defaults
 
-        setup_dict = {'ftol': 0.01,
+        setup_dict = {'ftol': 1.0,
                       'max_function_calls': 100000,
                       'strategy': 1}
 
