@@ -2,12 +2,12 @@ import collections
 import sys
 import astromodels.core.model
 import matplotlib.pyplot as plt
-import numpy
 import numpy as np
+import pandas as pd
 import scipy.optimize
 import scipy.stats
 from astromodels import ModelAssertionViolation
-
+from astromodels import clone_model
 from threeML.analysis_results import MLEResults
 from threeML.config.config import threeML_config
 from threeML.exceptions import custom_exceptions
@@ -33,13 +33,15 @@ class NotANumberInLikelihood(Warning):
 
 class JointLikelihood(object):
 
-    def __init__(self, likelihood_model, data_list, verbose=False):
+    def __init__(self, likelihood_model, data_list, verbose=False, record=True):
         """
         Implement a joint likelihood analysis.
 
         :param likelihood_model: the model for the likelihood analysis
         :param data_list: the list of data sets (plugin instances) to be used in this analysis
         :param verbose: (True or False) print every step in the -log likelihood minimization
+        :param record: it records every call to the log likelihood function during minimization. The recorded values
+        can be retrieved as a pandas DataFrame using the .fit_trace property
         :return:
         """
 
@@ -73,7 +75,9 @@ class JointLikelihood(object):
 
         # This is to keep track of the number of calls to the likelihood
         # function
+        self._record = bool(record)
         self._ncalls = 0
+        self._record_calls = {}
 
         # Pre-defined minimizer
         default_minimizer = minimization.LocalMinimization(threeML_config['mle']['default minimizer'])
@@ -182,6 +186,10 @@ class JointLikelihood(object):
 
         self._update_free_parameters()
 
+        # Empty the call recorder
+        self._record_calls = {}
+        self._ncalls = 0
+
         # Check if we have free parameters, otherwise simply return the value of the log like
         if len(self._free_parameters) == 0:
 
@@ -193,7 +201,7 @@ class JointLikelihood(object):
                                                   self._free_parameters)
 
             # Store the "minimum", which is just the current value
-            self._current_minimum = float(self.minus_log_like_profile([]))
+            self._current_minimum = float(self.minus_log_like_profile())
 
         else:
 
@@ -496,18 +504,18 @@ class JointLikelihood(object):
             if param_2 is None:
 
                 # One array
-                pcc = numpy.zeros(param_1_n_steps)
+                pcc = np.zeros(param_1_n_steps)
 
-                pa = numpy.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
+                pa = np.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
                 pb = None
 
             else:
 
-                pcc = numpy.zeros((param_1_n_steps, param_2_n_steps))
+                pcc = np.zeros((param_1_n_steps, param_2_n_steps))
 
                 # Prepare the two axes of the parameter space
-                pa = numpy.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
-                pb = numpy.linspace(param_2_minimum, param_2_maximum, param_2_n_steps)
+                pa = np.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
+                pb = np.linspace(param_2_minimum, param_2_maximum, param_2_n_steps)
 
             # Define the parallel worker which will go through the computation
 
@@ -637,7 +645,7 @@ class JointLikelihood(object):
 
                 idx = cc.argmin()
 
-                aidx, bidx = numpy.unravel_index(idx, cc.shape)
+                aidx, bidx = np.unravel_index(idx, cc.shape)
 
                 print("\nFound a better minimum: %s with %s = %s and %s = %s. Run again your fit starting from here."
                       % (cc.min(), param_1, a[aidx], param_2, b[bidx]))
@@ -664,14 +672,14 @@ class JointLikelihood(object):
 
         # Transform the trial values in a numpy array
 
-        trial_values = numpy.array(trial_values)
+        trial_values = np.array(trial_values)
 
         # Check that there are no nans within the trial values
 
         # This is the fastest way to check for any nan
         # (try other methods if you don't believe me)
 
-        if not numpy.isfinite(numpy.dot(trial_values, trial_values.T)):
+        if not np.isfinite(np.dot(trial_values, trial_values.T)):
             # There are nans, something weird is going on. Return FIT_FAILED so the engine
             # stays away from this (or fail)
 
@@ -725,12 +733,21 @@ class JointLikelihood(object):
             return minimization.FIT_FAILED
 
         if self.verbose:
-            sys.stderr.write("trial values: %s -> logL = %.3f\n" % (trial_values, summed_log_likelihood))
+            sys.stderr.write("trial values: %s -> logL = %.3f\n" % (",".join(map(lambda x:"%.5g" % x, trial_values)),
+                                                                    summed_log_likelihood))
 
+        # Record this call
+        if self._record:
+
+            self._record_calls[tuple(trial_values)] = summed_log_likelihood
 
         # Return the minus log likelihood
 
         return summed_log_likelihood * (-1)
+
+    @property
+    def fit_trace(self):
+        return pd.DataFrame(self._record_calls)
 
     def set_minimizer(self, minimizer):
         """
@@ -980,3 +997,53 @@ class JointLikelihood(object):
         sub.set_ylabel(name1)
 
         return fig
+
+    def compute_TS(self, source_name, alt_hyp_mlike_df):
+        """
+        Computes the Likelihood Ratio Test statistic (TS) for the provided source
+
+        :param source_name: name for the source
+        :param alt_hyp_mlike_df: likelihood dataframe (it is the second output of the .fit() method)
+        :return: a DataFrame containing the null hypothesis and the alternative hypothesis -log(likelihood) values and
+        the value for TS for the source for each loaded dataset
+        """
+
+        assert source_name in self._likelihood_model, "Source %s is not in the current model" % source_name
+
+        # Clone model
+        model_clone = clone_model(self._likelihood_model)
+
+        # Remove this source from the model
+        _ = model_clone.remove_source(source_name)
+
+        # Fit
+        another_jl = JointLikelihood(model_clone, self._data_list)
+
+        # We do not need the covariance matrix, just the likelihood value
+        _, null_hyp_mlike_df = another_jl.fit(quiet=True, compute_covariance=False, n_samples=1)
+
+        # Compute TS for all datasets
+        TSs = []
+        alt_hyp_mlikes = []
+        null_hyp_mlikes = []
+
+        for dataset in self._data_list.values():
+
+            this_name = dataset.get_name()
+
+            null_hyp_mlike = null_hyp_mlike_df.loc[this_name, '-log(likelihood)']
+            alt_hyp_mlike = alt_hyp_mlike_df.loc[this_name, '-log(likelihood)']
+
+            this_TS = 2 * (null_hyp_mlike - alt_hyp_mlike)
+
+            TSs.append(this_TS)
+            alt_hyp_mlikes.append(alt_hyp_mlike)
+            null_hyp_mlikes.append(null_hyp_mlike)
+
+        TS_df = pd.DataFrame(index=self._data_list.keys())
+
+        TS_df['Null hyp.'] = null_hyp_mlikes
+        TS_df['Alt. hyp.'] = alt_hyp_mlikes
+        TS_df['TS'] = TSs
+
+        return TS_df
