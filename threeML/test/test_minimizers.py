@@ -108,3 +108,12 @@ def test_parallel_pagmo(joint_likelihood_bn090217206_nai):
     with parallel_computation():
 
         test_pagmo(joint_likelihood_bn090217206_nai)
+
+
+def test_scipy(joint_likelihood_bn090217206_nai):
+
+    minim = LocalMinimization("scipy")
+
+    minim.setup(tol=0.01, algorithm='L-BFGS-B')
+
+    do_analysis(joint_likelihood_bn090217206_nai, minim)
