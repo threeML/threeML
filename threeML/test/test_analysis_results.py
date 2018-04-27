@@ -1,12 +1,13 @@
 import pytest
 import os
 import numpy as np
+import astropy.units as u
 
 from threeML.plugins.XYLike import XYLike
 from threeML import Model, DataList, JointLikelihood, PointSource
 from threeML import BayesianAnalysis, Uniform_prior, Log_uniform_prior
 from threeML.analysis_results import MLEResults, load_analysis_results, AnalysisResultsSet
-from astromodels import Line, Gaussian
+from astromodels import Line, Gaussian, Powerlaw
 
 
 _cache = {}
@@ -192,6 +193,56 @@ def test_corner_plotting(xy_completed_bayesian_analysis):
 
     ar.corner_plot()
 
+def test_one_free_parameter_input_output():
+
+    fluxUnit = 1. / (u.TeV * u.cm**2 * u.s)
+
+    temp_file = "__test_mle.fits"
+    
+    spectrum=Powerlaw()
+    source = PointSource( "tst", ra=100 , dec=20, spectral_shape=spectrum)
+    model = Model(source)
+
+    spectrum.piv = 7*u.TeV      
+    spectrum.index = -2.3
+    spectrum.K = 1e-15*fluxUnit  
+
+    spectrum.piv.fix = True
+
+    #two free parameters (one with units)
+    spectrum.index.fix = False
+    spectrum.K.fix = False
+    cov_matrix = np.diag([0.001]*2)
+    ar = MLEResults(model, cov_matrix, {})  
+    
+    ar.write_to(temp_file, overwrite=True)
+    ar_reloaded = load_analysis_results(temp_file)
+    os.remove(temp_file)
+    _results_are_same(ar, ar_reloaded)
+   
+    #one free parameter with units
+    spectrum.index.fix = True
+    spectrum.K.fix = False
+    cov_matrix = np.diag([0.001]*1)
+    ar = MLEResults(model, cov_matrix, {})  
+    
+    ar.write_to(temp_file, overwrite=True)
+    ar_reloaded = load_analysis_results(temp_file)
+    os.remove(temp_file)
+    _results_are_same(ar, ar_reloaded)
+  
+   
+    #one free parameter without units
+    spectrum.index.fix = False
+    spectrum.K.fix = True
+    cov_matrix = np.diag([0.001]*1)
+    ar = MLEResults(model, cov_matrix, {})  
+    
+    ar.write_to(temp_file, overwrite=True)
+    ar_reloaded = load_analysis_results(temp_file)
+    os.remove(temp_file)
+    _results_are_same(ar, ar_reloaded)
+  
 
 
 
