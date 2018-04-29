@@ -141,6 +141,26 @@ class RandomVariates(np.ndarray):
 
     # np.ndarray already has a mean() and a std() methods
 
+
+    def _get_limit(self, lim, which):
+        """
+        returns the upper/lower limit for a parameter
+        :param cl: credible interval to obtain
+        :return: the limit
+        """
+
+        limit=1.0 - lim
+
+        return self.equal_tail_interval(cl=1-2*limit)[which]
+
+
+    def lower_limit(self, ll=0.9):
+        return self._get_limit(ll,0)
+
+    def upper_limit(self, ul=0.9):
+        return self._get_limit(ul,1)
+
+
     def __repr__(self):
 
         # Get representation for the HPD
