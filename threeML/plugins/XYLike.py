@@ -31,7 +31,7 @@ class XYLike(PluginPrototype):
 
         # If there are specified errors, use those (assume Gaussian statistic)
         # otherwise make sure that the user specified poisson_error = True and use
-        # Poisson statistic
+        # Posson statistic
 
         if yerr is not None:
 
@@ -403,7 +403,7 @@ class XYLike(PluginPrototype):
 
         if self._likelihood_model is not None:
 
-            flux = self._likelihood_model.get_total_flux(self.x)
+            flux = self._get_total_expectation()
 
             sub.plot(self.x, flux, '--', label='model')
 
