@@ -403,7 +403,7 @@ class XYLike(PluginPrototype):
 
         if self._likelihood_model is not None:
 
-            flux = self._likelihood_model.get_total_flux(self.x)
+            flux = self._get_total_expectation()
 
             sub.plot(self.x, flux, '--', label='model')
 
