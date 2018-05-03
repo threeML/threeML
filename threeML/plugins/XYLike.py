@@ -31,7 +31,7 @@ class XYLike(PluginPrototype):
 
         # If there are specified errors, use those (assume Gaussian statistic)
         # otherwise make sure that the user specified poisson_error = True and use
-        # Posson statistic
+        # Poisson statistic
 
         if yerr is not None:
 
