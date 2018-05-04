@@ -108,14 +108,10 @@ def parallel_computation(profile=None, start_cluster=True):
 
         ipycluster_process = subprocess.Popen(cmd_line)
 
-        rc = Client(timeout=30)
+        rc = Client()
 
         # Wait for the engines to become available
 
-        # Start with a wait time of 2 seconds
-        time.sleep(2.0)
-
-        # Then retry every 0.5 s
         while True:
 
             try:
@@ -134,8 +130,6 @@ def parallel_computation(profile=None, start_cluster=True):
 
                 break
 
-        rc.close()
-
         # Do whatever we need to do
         try:
 
@@ -150,9 +144,6 @@ def parallel_computation(profile=None, start_cluster=True):
             ipycluster_process.send_signal(signal.SIGINT)
 
             ipycluster_process.wait()
-
-            # Give the time to the engines to shut down
-            time.sleep(2.0)
 
     else:
 

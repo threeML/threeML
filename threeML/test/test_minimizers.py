@@ -105,7 +105,7 @@ def test_pagmo(joint_likelihood_bn090217206_nai):
 @skip_if_pygmo_is_not_available
 def test_parallel_pagmo(joint_likelihood_bn090217206_nai):
 
-    with parallel_computation():
+    with parallel_computation(start_cluster=False):
 
         test_pagmo(joint_likelihood_bn090217206_nai)
 
