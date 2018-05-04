@@ -21,7 +21,7 @@ class ScipyMinimizer(LocalMinimizer):
 
         if user_setup_dict is None:
 
-            default_setup = {'algorithm': 'L-BFGS-B', 'tol': 0.001}
+            default_setup = {'algorithm': 'L-BFGS-B', 'tol': 0.0001}
 
             self._setup_dict = default_setup
 
@@ -62,22 +62,22 @@ class ScipyMinimizer(LocalMinimizer):
 
             x0.append(cur_value)
 
-            bounds.append((cur_min, cur_max))
-
             # scipy's algorithms will always try to evaluate the function exactly at the boundaries, which will
             # fail because the Jacobian is not defined there... let's fix this by using a slightly larger or smaller
-            # minimum and maximum
-
-            if cur_min is not None:
-
-                cur_min = cur_min + 0.005 * abs(cur_min)
-
-            if cur_max is not None:
-
-                cur_max = cur_max - 0.005 * abs(cur_max)
+            # minimum and maximum within the scipy algorithm than the real boundaries (saved in minima and maxima)
 
             minima.append(cur_min)
             maxima.append(cur_max)
+
+            if cur_min is not None:
+
+                cur_min = cur_min + 0.00005 * abs(cur_min)
+
+            if cur_max is not None:
+
+                cur_max = cur_max - 0.00005 * abs(cur_max)
+
+            bounds.append((cur_min, cur_max))
 
         def wrapper(x):
 
