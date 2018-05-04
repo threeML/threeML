@@ -1,12 +1,5 @@
 from threeML import *
 from conftest import data_list_bn090217206_nai6, get_grb_model
-import pytest
-import sys
-
-# This defines a decorator which can be applied to single tests to
-# skip them if the condition is not met
-skip_on_mac = pytest.mark.skipif(sys.platform.startswith('darwin'), reason="On Mac")
-
 
 
 # Define two dummy functions to return always the same model and the same
@@ -28,7 +21,6 @@ def test_joint_likelihood_set():
     jlset.go(compute_covariance=False)
 
 
-@skip_on_mac
 def test_joint_likelihood_set_parallel():
 
     jlset = JointLikelihoodSet(data_getter=get_data, model_getter=get_model, n_iterations=10)
