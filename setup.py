@@ -141,7 +141,8 @@ setup(
                 'pytest',],
             'docs': [
                 'sphinx >= 1.4',
-                'sphinx_rtd_theme']}
+                'sphinx_rtd_theme',
+                'nbsphinx']}
 
     ) # End of setup()
 
