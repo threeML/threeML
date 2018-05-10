@@ -134,7 +134,16 @@ setup(
         'requests',
         'speclite',
         'ipython<=5.9'
-    ])
+    ],
+
+    extras_require={
+            'tests': [
+                'pytest',],
+            'docs': [
+                'sphinx >= 1.4',
+                'sphinx_rtd_theme']}
+
+    ) # End of setup()
 
 # Check for optional dependencies
 
