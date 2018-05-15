@@ -298,14 +298,18 @@ class XYLike(PluginPrototype):
 
             # Note that we checked that self._source_name is in the model when the model was set
 
-            try:
+            if self._source_name in self._likelihood_model.point_sources:
+            
+                expectation = self._likelihood_model.point_sources[self._source_name](self._x)
 
-                expectation = self._likelihood_model.sources[self._source_name](self._x)
+            elif self._source_name in self._likelihood_model.extended_sources:
+            
+                expectation = self._likelihood_model.extended_sources[self._source_name].get_total_flux(self._x)
 
-            except KeyError:
+            else:
 
                 raise KeyError("This XYLike plugin has been assigned to source %s, "
-                               "which does not exist in the current model" % self._source_name)
+                               "which is neither a point soure not an extended source in the current model" % self._source_name)
 
         return expectation
 
