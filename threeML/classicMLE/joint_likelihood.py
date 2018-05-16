@@ -54,24 +54,7 @@ class JointLikelihood(object):
 
         self._data_list = data_list
 
-        for dataset in self._data_list.values():
-
-            dataset.set_model(self._likelihood_model)
-
-            # Now get the nuisance parameters from the data and add them to the model
-            # NOTE: it is important that this is *after* the setting of the model, as some
-            # plugins might need to adjust the number of nuisance parameters depending on the
-            # likelihood model
-
-            for parameter_name, parameter in dataset.nuisance_parameters.items():
-
-                # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
-                # of the same plugin will overwrite each other's nuisance parameters
-
-                assert dataset.name in parameter_name, "This is a bug of the plugin for %s: nuisance parameters " \
-                                                       "must contain the instance name" % type(dataset)
-
-                self._likelihood_model.add_external_parameter(parameter)
+        self._assign_model_to_data(self._likelihood_model)
 
         # This is to keep track of the number of calls to the likelihood
         # function
@@ -103,6 +86,27 @@ class JointLikelihood(object):
         self._minimizer_callback = None
 
         self._analysis_results = None
+
+    def _assign_model_to_data(self, model):
+
+        for dataset in self._data_list.values():
+
+            dataset.set_model(model)
+
+            # Now get the nuisance parameters from the data and add them to the model
+            # NOTE: it is important that this is *after* the setting of the model, as some
+            # plugins might need to adjust the number of nuisance parameters depending on the
+            # likelihood model
+
+            for parameter_name, parameter in dataset.nuisance_parameters.items():
+
+                # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
+                # of the same plugin will overwrite each other's nuisance parameters
+
+                assert dataset.name in parameter_name, "This is a bug of the plugin for %s: nuisance parameters " \
+                                                       "must contain the instance name" % type(dataset)
+
+                self._likelihood_model.add_external_parameter(parameter)
 
     @property
     def likelihood_model(self):
@@ -1045,5 +1049,8 @@ class JointLikelihood(object):
         TS_df['Null hyp.'] = null_hyp_mlikes
         TS_df['Alt. hyp.'] = alt_hyp_mlikes
         TS_df['TS'] = TSs
+
+        # Reassign the original likelihood model to the datasets
+        self._assign_model_to_data(self._likelihood_model)
 
         return TS_df
