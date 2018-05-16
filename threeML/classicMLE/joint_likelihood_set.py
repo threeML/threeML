@@ -23,11 +23,6 @@ class JointLikelihoodSet(object):
 
         self._data_getter = data_getter
 
-        # Test it here, so we don't need to do it in the worker (which would slow down things)
-        data_test = self._data_getter(0)  # type: DataList
-
-        assert isinstance(data_test, DataList), "The data_getter should return a DataList instance"
-
         # Now get the first model(s) and see whether there is one or more models
         # Then, we make a wrapper if it returns only one model, so that we will not need to specialize
         # the worker, as it will be able to assume that self._model_getter always returns a list of models
