@@ -194,7 +194,7 @@ if has_parallel:
 
             return len(self.direct_view())
 
-        def interactive_map(self, worker, items_to_process, ordered=True, chunk_size=None):
+        def _interactive_map(self, worker, items_to_process, ordered=True, chunk_size=None):
             """
             Subdivide the work among the active engines, taking care of dividing it among them
 
@@ -258,7 +258,7 @@ if has_parallel:
 
             with progress_bar(n_iterations) as p:
 
-                amr = self.interactive_map(wrapper, items_wrapped, ordered=False, chunk_size=chunk_size)
+                amr = self._interactive_map(wrapper, items_wrapped, ordered=False, chunk_size=chunk_size)
 
                 results = []
 
@@ -270,96 +270,6 @@ if has_parallel:
 
             # Reorder the list according to the id
             return map(lambda x:x[1], sorted(results, key=lambda x:x[0]))
-
-        @staticmethod
-        def fetch_progress_from_progress_bars(ar):
-
-            while not ar.ready():
-
-                stdouts = ar.stdout
-
-                if not any(stdouts):
-
-                    continue
-
-                percentage_completed_engines = []
-
-                for stdout in ar.stdout:
-
-                    # Default value is 0
-
-                    percentage_completed_engines.append(0)
-
-                    if stdout:
-
-                        idx = stdout.find('[')
-
-                        if idx < 0:
-
-                            continue
-
-                        # Find the progress bar (if any)
-                        tokens = re.findall('(\[[^\r^\)]+[\r\)]|\[.+completed.+\Z)', stdout[idx:][-1000:])
-
-                        if len(tokens) > 0:
-
-                            last_progress_bar = tokens[-1]
-
-                            # Now extract the progress
-                            percentage_completed = re.match('\[[\*\s]+([0-9]*(\.[0-9]+)?)\s?%[\*\s]+',
-                                                            last_progress_bar)
-
-                            if percentage_completed is None:
-
-                                sys.stderr.write("\nCould not understand progress bar from engine: %s" %
-                                                 last_progress_bar)
-
-                            else:
-
-                                percentage_completed_engines[-1] = float(percentage_completed.groups()[0])
-
-                yield percentage_completed_engines
-
-        def wait_watching_progress(self, ar, dt=5.0):
-            """
-            Report progress from the different engines
-
-            :param ar:
-            :param dt:
-            :return:
-            """
-
-            n_engines = self.get_number_of_engines()
-
-            print("Found %s engines" % n_engines)
-
-            try:
-
-                with multiple_progress_bars(iterations=100, n=n_engines) as bars:
-
-                    # We are in the notebook, display a report of all the engines
-
-                    for progress in self.fetch_progress_from_progress_bars(ar):
-
-                        for i in range(n_engines):
-
-                            bars[i].animate(progress[i])
-
-                        time.sleep(dt)
-
-            except CannotGenerateHTMLBar:
-
-                # Fall back to text progress and one bar
-
-                with progress_bar(100) as bar:
-
-                    progress = self.fetch_progress_from_progress_bars(ar)
-
-                    global_progress = sum(progress) / float(n_engines)
-
-                    bar.animate(global_progress)
-
-                    time.sleep(dt)
 
 
 else:
