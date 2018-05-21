@@ -555,68 +555,19 @@ class JointLikelihood(object):
 
                 return ccc
 
-            # Get a balanced view of the engines
-
-            lview = client.load_balanced_view()
-            # lview.block = True
-
-            # Distribute the work among the engines and start it, but return immediately the control
-            # to the main thread
-
-            amr = lview.map_async(worker, range(n_engines))
-
-            client.wait_watching_progress(amr, 10)
-
-            # print progress
-
-            # progress = ProgressBar(n_engines)
-            #
-            # # This loop will check from time to time the status of the computation, which is happening on
-            # # different threads, and update the progress bar
-            #
-            # while not amr.ready():
-            #     # Check and report the status of the computation every second
-            #
-            #     time.sleep(1 + np.random.uniform(0, 1))
-            #
-            #     # if (debug):
-            #     #     stdouts = amr.stdout
-            #     #
-            #     #     # clear_output doesn't do much in terminal environments
-            #     #     for stdout, stderr in zip(amr.stdout, amr.stderr):
-            #     #         if stdout:
-            #     #             print "%s" % (stdout[-1000:])
-            #     #         if stderr:
-            #     #             print "%s" % (stderr[-1000:])
-            #     #     sys.stdout.flush()
-            #
-            #     progress.animate(amr.progress - 1)
-            #
-            # # Always display 100% at the end
-            #
-            # progress.animate(n_engines - 1)
-
-            # Add a new line after the progress bar
-            print("\n")
-
-            # print("Serial time: %1.f (speed-up: %.1f)" %(amr.serial_time, float(amr.serial_time) / amr.wall_time))
-
-            # Get the results. This will raise exceptions if something wrong happened during the computation.
-            # We don't catch it so that the user will be aware of that
-
-            res = amr.get()
-
             # Now re-assemble the vector of results taking the different parts from the engines
 
-            for i in range(n_engines):
+            all_results = client.execute_with_progress_bar(worker, range(n_engines), chunk_size=1)
+
+            for i, these_results in enumerate(all_results):
 
                 if param_2 is None:
 
-                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps] = res[i][:, 0]
+                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps] = these_results[:, 0]
 
                 else:
 
-                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps, :] = res[i]
+                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps, :] = these_results
 
             # Give the results the names that the following code expect. These are kept separate for debugging
             # purposes
@@ -755,12 +706,7 @@ class JointLikelihood(object):
 
     def set_minimizer(self, minimizer):
         """
-        Set the minimizer to be used, among those available. At the moment these are supported:
-
-        * ROOT
-        * MINUIT (which means iminuit, default)
-        * MULTINEST (require pymultinest)
-        * PAGMO (http://esa.github.io/pygmo2/documentation)
+        Set the minimizer to be used, among those available.
 
         :param minimizer: the name of the new minimizer or an instance of a LocalMinimization or a GlobalMinimization
         class. Using the latter two classes allows for more choices and a better control of the details of the
@@ -958,37 +904,6 @@ class JointLikelihood(object):
 
         fig = plt.figure()
         sub = fig.add_subplot(111)
-
-        # Show the contours with square axis
-
-        # NOTE: suppress the UnicodeWarning, which is due to a small problem in matplotlib
-
-        # with custom_warnings.catch_warnings():
-        #
-        #     # Cause all warnings to always be triggered.
-        #     custom_warnings.simplefilter("ignore", UnicodeWarning)
-        #
-        #     im = sub.imshow(cc,
-        #                     cmap=palette,
-        #                     extent=[b.min(), b.max(), a.min(), a.max()],
-        #                     aspect=float(b.max() - b.min()) / (a.max() - a.min()),
-        #                     origin='lower',
-        #                     norm=BoundaryNorm(bounds, 256),
-        #                     interpolation='bicubic',
-        #                     vmax=(self._current_minimum + delta_chi2).max())
-
-        # Plot the color bar with the sigmas
-        # cb = fig.colorbar(im, boundaries=bounds[:-1])
-        # lbounds = [0]
-        # lbounds.extend(bounds[:-1])
-        # cb.set_ticks(lbounds)
-        # ll = ['']
-        # ll.extend(map(lambda x: r'%i $\sigma$' % x, sigmas))
-        # cb.set_ticklabels(ll)
-
-        # Align the labels to the end of the color level
-        # for t in cb.ax.get_yticklabels():
-        #     t.set_verticalalignment('baseline')
 
         # Draw the line contours
         sub.contour(b, a, cc, self._current_minimum + delta_chi2,
