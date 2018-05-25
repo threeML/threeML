@@ -56,7 +56,7 @@ conda build -c conda-forge -c threeml --python=$TRAVIS_PYTHON_VERSION .
 CONDA_BUILD_PATH=$(conda build . --output -c conda-forge -c threeml --python=2.7 | rev | cut -f2- -d"/" | rev)
 
 # Install it
-conda install --use-local -c threeml -c conda-forge threeml xspec-modelsonly-lite
+conda install --use-local -c threeml -c conda-forge pygmo=2.7 threeml xspec-modelsonly-lite
 
 ########### FIXME
 # This is a kludge around a pymultinest bug
