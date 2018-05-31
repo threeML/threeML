@@ -732,8 +732,8 @@ class Minimizer(object):
         :return: the covariance matrix
         """
 
-        minima = map(lambda parameter:parameter.min_value, self.parameters.values())
-        maxima = map(lambda parameter: parameter.max_value, self.parameters.values())
+        minima = map(lambda parameter:parameter._get_internal_min_value(), self.parameters.values())
+        maxima = map(lambda parameter: parameter._get_internal_max_value(), self.parameters.values())
 
         # Check whether some of the minima or of the maxima are None. If they are, set them
         # to a value 1000 times smaller or larger respectively than the best fit.
@@ -1197,18 +1197,6 @@ else:
 
 try:
 
-    from threeML.minimizer.pyOpt_minimizer import PyOptMinimizer, _pyopt_algorithms
-
-except ImportError:
-
-    custom_warnings.warn("pyOpt minimizer not available", ImportWarning)
-
-else:
-
-    _minimizers["PYOPT"] = PyOptMinimizer
-
-try:
-
     from threeML.minimizer.multinest_minimizer import MultinestMinimizer
 
 except ImportError:
@@ -1230,6 +1218,18 @@ except ImportError:
 else:
 
     _minimizers["PAGMO"] = PAGMOMinimizer
+
+try:
+
+    from threeML.minimizer.scipy_minimizer import ScipyMinimizer
+
+except ImportError:
+
+    custom_warnings.warn("Scipy minimizer is not available", ImportWarning)
+
+else:
+
+    _minimizers["SCIPY"] = ScipyMinimizer
 
 # Check that we have at least one minimizer available
 

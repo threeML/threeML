@@ -2,22 +2,19 @@ __author__='grburgess'
 
 import collections
 import copy
-import os
 
 import numpy as np
+import os
 import pandas as pd
 from pandas import HDFStore
 
-from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
-from threeML.io.progress_bar import progress_bar
-from threeML.io.rich_display import display
-from threeML.utils.binner import TemporalBinner
-from threeML.utils.time_interval import TimeIntervalSet
+
+from threeML.utils.spectrum.binned_spectrum import Quality
+from threeML.utils.time_interval import TimeIntervalSet, TimeInterval
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit, Polynomial
-from threeML.plugins.OGIP.response import InstrumentResponse
-from threeML.plugins.spectrum.binned_spectrum import Quality
+
 
 class ReducingNumberOfThreads(Warning):
     pass
@@ -225,98 +222,7 @@ class TimeSeries(object):
 
             raise RuntimeError('This EventList has no binning specified')
 
-    def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
-        """
-
-       Interface to the temporal binner's significance binning model
-
-        :param start: start of the interval to bin on
-        :param stop:  stop of the interval ot bin on
-        :param sigma: sigma-level of the bins
-        :param mask: (bool) use the energy mask to decide on significance
-        :param min_counts:  minimum number of counts per bin
-        :return:
-        """
-
-        if mask is not None:
-
-            # create phas to check
-            phas = np.arange(self._first_channel, self._n_channels)[mask]
-
-            this_mask = np.zeros_like(self._arrival_times, dtype=np.bool)
-
-            for channel in phas:
-                this_mask = np.logical_or(this_mask, self._energies == channel)
-
-            events = self._arrival_times[this_mask]
-
-        else:
-
-            events = copy.copy(self._arrival_times)
-
-        events = events[np.logical_and(events <= stop, events >= start)]
-
-
-
-        tmp_bkg_getter = lambda a, b: self.get_total_poly_count(a, b, mask)
-        tmp_err_getter = lambda a, b: self.get_total_poly_error(a, b, mask)
-
-        # self._temporal_binner.bin_by_significance(tmp_bkg_getter,
-        #                                           background_error_getter=tmp_err_getter,
-        #                                           sigma_level=sigma,
-        #                                           min_counts=min_counts)
-
-        self._temporal_binner = TemporalBinner.bin_by_significance(events,
-                                                                   tmp_bkg_getter,
-                                                                   background_error_getter=tmp_err_getter,
-                                                                   sigma_level=sigma,
-                                                                   min_counts=min_counts)
-
-    def bin_by_constant(self, start, stop, dt=1):
-        """
-        Interface to the temporal binner's constant binning mode
-
-        :param start: start time of the bins
-        :param stop: stop time of the bins
-        :param dt: temporal spacing of the bins
-        :return:
-        """
-
-        events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
-
-        self._temporal_binner = TemporalBinner.bin_by_constant(events, dt)
-
-    def bin_by_custom(self, start, stop):
-        """
-        Interface to temporal binner's custom bin mode
-
-
-        :param start: start times of the bins
-        :param stop:  stop times of the bins
-        :return:
-        """
-
-        self._temporal_binner = TemporalBinner.bin_by_custom(start, stop)
-        #self._temporal_binner.bin_by_custom(start, stop)
-
-    def bin_by_bayesian_blocks(self, start, stop, p0, use_background=False):
-
-        events = self._arrival_times[np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)]
-
-        #self._temporal_binner = TemporalBinner(events)
-
-        if use_background:
-
-            integral_background = lambda t: self.get_total_poly_count(start, t)
-
-            self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(events,
-                                                                          p0,
-                                                                          bkg_integral_distribution=integral_background)
-
-        else:
-
-            self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(events,
-                                                                          p0)
+  
 
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
@@ -415,31 +321,57 @@ class TimeSeries(object):
         poly_intervals = TimeIntervalSet.from_strings(*time_intervals)
 
         # adjust the selections to the data
-        for time_interval in poly_intervals:
+
+        new_intervals = []
+
+        for i,time_interval in enumerate(poly_intervals):
+
+
+
             t1 = time_interval.start_time
             t2 = time_interval.stop_time
 
-            if t1 < self._start_time:
-
-                custom_warnings.warn(
-                    "The time interval %f-%f started before the first arrival time (%f), so we are changing the intervals to %f-%f" % (
-                    t1, t2, self._start_time, self._start_time, t2))
-
-                t1 = self._start_time
-
-            if t2 > self._stop_time:
-
-                custom_warnings.warn(
-                    "The time interval %f-%f ended after the last arrival time (%f), so we are changing the intervals to %f-%f" % (
-                        t1, t2, self._stop_time, t1, self._stop_time))
-
-                t2 = self._stop_time
-
-            if  (self._stop_time <= t1) or (t2 <= self._start_time):
+            if (self._stop_time <= t1) or (t2 <= self._start_time):
                 custom_warnings.warn(
                     "The time interval %f-%f is out side of the arrival times and will be dropped" % (
                         t1, t2))
-                continue
+
+              
+
+
+            else:
+
+                if t1 < self._start_time:
+
+                    custom_warnings.warn(
+                        "The time interval %f-%f started before the first arrival time (%f), so we are changing the intervals to %f-%f" % (
+                        t1, t2, self._start_time, self._start_time, t2))
+
+                    t1 = self._start_time# + 1
+
+
+
+
+
+                if t2 > self._stop_time:
+
+                    custom_warnings.warn(
+                        "The time interval %f-%f ended after the last arrival time (%f), so we are changing the intervals to %f-%f" % (
+                            t1, t2, self._stop_time, t1, self._stop_time))
+
+                    t2 = self._stop_time# - 1.
+
+
+
+
+
+
+                new_intervals.append('%f-%f' %(t1,t2))
+
+
+        # make new intervals after checks
+
+        poly_intervals = TimeIntervalSet.from_strings(*new_intervals)
 
         # set the poly intervals as an attribute
 

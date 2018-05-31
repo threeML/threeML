@@ -4,114 +4,14 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
 from threeML.io.calculate_flux import _calculate_point_source_flux
 import astropy.units as u
+import matplotlib.pyplot as plt
 
-def make_simple_model():
-    triggerName = 'bn090217206'
-    ra = 204.9
-    dec = -8.4
-    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../examples'))
-    obsSpectrum = os.path.join(datadir, "bn090217206_n6_srcspectra.pha{1}")
-    bakSpectrum = os.path.join(datadir, "bn090217206_n6_bkgspectra.bak{1}")
-    rspFile = os.path.join(datadir, "bn090217206_n6_weightedrsp.rsp{1}")
-    NaI6 = OGIPLike("NaI6", obsSpectrum, bakSpectrum, rspFile)
-    NaI6.set_active_measurements("10.0-30.0", "40.0-950.0")
-    data_list = DataList(NaI6)
-    powerlaw = Powerlaw()
-    GRB = PointSource(triggerName, ra, dec, spectral_shape=powerlaw)
-    model = Model(GRB)
-
-    powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-    powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+from threeML.io.package_data import get_path_of_data_dir
 
 
+# Init some globals
 
-    return model, data_list
-
-
-def make_components_model():
-
-    triggerName = 'bn090217206'
-    ra = 204.9
-    dec = -8.4
-    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../examples'))
-    obsSpectrum = os.path.join(datadir, "bn090217206_n6_srcspectra.pha{1}")
-    bakSpectrum = os.path.join(datadir, "bn090217206_n6_bkgspectra.bak{1}")
-    rspFile = os.path.join(datadir, "bn090217206_n6_weightedrsp.rsp{1}")
-    NaI6 = OGIPLike("NaI6", obsSpectrum, bakSpectrum, rspFile)
-    NaI6.set_active_measurements("10.0-30.0", "40.0-950.0")
-    data_list = DataList(NaI6)
-    powerlaw = Powerlaw() + Blackbody()
-    GRB = PointSource(triggerName, ra, dec, spectral_shape=powerlaw)
-    model = Model(GRB)
-
-    powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-    powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
-
-    powerlaw.K_2.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-    powerlaw.kT_2.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
-
-    return model, data_list
-
-def make_dless_components_model():
-
-    triggerName = 'bn090217206'
-    ra = 204.9
-    dec = -8.4
-    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../examples'))
-    obsSpectrum = os.path.join(datadir, "bn090217206_n6_srcspectra.pha{1}")
-    bakSpectrum = os.path.join(datadir, "bn090217206_n6_bkgspectra.bak{1}")
-    rspFile = os.path.join(datadir, "bn090217206_n6_weightedrsp.rsp{1}")
-    NaI6 = OGIPLike("NaI6", obsSpectrum, bakSpectrum, rspFile)
-    NaI6.set_active_measurements("10.0-30.0", "40.0-950.0")
-    data_list = DataList(NaI6)
-    powerlaw = Powerlaw()*Constant()
-    GRB = PointSource(triggerName, ra, dec, spectral_shape=powerlaw)
-    model = Model(GRB)
-
-    powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-    powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
-    powerlaw.k_2 =1.
-    powerlaw.k_2.fix = True
-
-    #powerlaw.K_2.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-    #powerlaw.xc_2.prior = Log_uniform_prior(lower_bound=100, upper_bound=1000)
-
-    return model, data_list
-
-
-simple_model, simple_data = make_simple_model()
-
-complex_model, complex_data = make_components_model()
-# prepare mle
-
-dless_model, dless_data = make_dless_components_model()
-
-jl_simple = JointLikelihood(simple_model,simple_data)
-
-jl_simple.fit()
-
-jl_complex = JointLikelihood(complex_model,complex_data)
-
-jl_complex.fit()
-
-jl_dless = JointLikelihood(dless_model,dless_data)
-
-jl_dless.fit()
-
-
-bayes_simple = BayesianAnalysis(simple_model, simple_data)
-
-bayes_simple.sample(10,10,20)
-
-bayes_complex = BayesianAnalysis(complex_model, complex_data)
-
-
-bayes_complex.sample(10,10,20)
-
-bayes_dless = BayesianAnalysis(dless_model, dless_data)
-
-bayes_dless.sample(10,10,20)
-
+datadir = os.path.abspath(os.path.join(get_path_of_data_dir(), "datasets", "bn090217206"))
 
 good_d_flux_units =['1/(cm2 s keV)', 'erg/(cm2 s keV)', 'erg2/(cm2 s keV)']
 
@@ -123,21 +23,106 @@ good_energy_units = ['keV', 'Hz', 'nm']
 
 bad_flux_units = ['g']
 
+def make_simple_model():
 
-analysis_to_test = [jl_simple.results,
-                    jl_complex.results,
-                    jl_dless.results,
-                    bayes_simple.results,
-                    bayes_complex.results,
-                    bayes_dless.results]
+    triggerName = 'bn090217206'
+    ra = 204.9
+    dec = -8.4
+
+    powerlaw = Powerlaw()
+    GRB = PointSource(triggerName, ra, dec, spectral_shape=powerlaw)
+    model = Model(GRB)
+
+    powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+
+    return model
 
 
+def make_components_model():
+
+    triggerName = 'bn090217206'
+    ra = 204.9
+    dec = -8.4
+
+    powerlaw = Powerlaw() + Blackbody()
+    GRB = PointSource(triggerName, ra, dec, spectral_shape=powerlaw)
+    model = Model(GRB)
+
+    powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+
+    powerlaw.K_2.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    powerlaw.kT_2.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+
+    return model
 
 
+def make_dless_components_model():
+
+    triggerName = 'bn090217206'
+    ra = 204.9
+    dec = -8.4
+
+    powerlaw = Powerlaw()*Constant()
+    GRB = PointSource(triggerName, ra, dec, spectral_shape=powerlaw)
+    model = Model(GRB)
+
+    powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+    powerlaw.k_2 =1.
+    powerlaw.k_2.fix = True
+
+    return model
 
 
+@pytest.fixture
+def analysis_to_test(data_list_bn090217206_nai6):
 
-def test_fitted_point_source_plotting():
+    simple_model = make_simple_model()
+
+    complex_model = make_components_model()
+    # prepare mle
+
+    dless_model = make_dless_components_model()
+
+    jl_simple = JointLikelihood(simple_model, data_list_bn090217206_nai6)
+
+    jl_simple.fit()
+
+    jl_complex = JointLikelihood(complex_model,data_list_bn090217206_nai6)
+
+    jl_complex.fit()
+
+    jl_dless = JointLikelihood(dless_model, data_list_bn090217206_nai6)
+
+    jl_dless.fit()
+
+
+    bayes_simple = BayesianAnalysis(simple_model, data_list_bn090217206_nai6)
+
+    bayes_simple.sample(10,10,20)
+
+    bayes_complex = BayesianAnalysis(complex_model, data_list_bn090217206_nai6)
+
+
+    bayes_complex.sample(10,10,20)
+
+    bayes_dless = BayesianAnalysis(dless_model, data_list_bn090217206_nai6)
+
+    bayes_dless.sample(10,10,20)
+
+    analysis_to_test = [jl_simple.results,
+                        jl_complex.results,
+                        jl_dless.results,
+                        bayes_simple.results,
+                        bayes_complex.results,
+                        bayes_dless.results]
+
+    return analysis_to_test
+
+
+def test_fitted_point_source_plotting(analysis_to_test):
 
 
     plot_keywords = {'use_components': True,
@@ -172,9 +157,11 @@ def test_fitted_point_source_plotting():
                 with pytest.raises(InvalidUnitError):
                     _=plot_point_source_spectra(x,flux_unit=bad_flux_units[0])
 
+            plt.close('all')
 
 
-def test_fitted_point_source_flux_calculations():
+
+def test_fitted_point_source_flux_calculations(analysis_to_test):
 
 
     flux_keywords = {'use_components': True,
@@ -190,7 +177,7 @@ def test_fitted_point_source_flux_calculations():
     _calculate_point_source_flux(1, 10, analysis_to_test[-2], **flux_keywords)
 
 
-def test_units_on_energy_range():
+def test_units_on_energy_range(analysis_to_test):
 
 
     _ = plot_point_source_spectra(analysis_to_test[0],ene_min=1.*u.keV, ene_max=1*u.MeV)

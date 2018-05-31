@@ -1,19 +1,19 @@
 # We import matplotlib first, because we need control on the backend
 # Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
 import os
+import warnings
+
+if os.environ.get('DISPLAY') is None:
+
+    warnings.warn("No DISPLAY variable set. Using backend for graphics without display (Agg)")
+
+    import matplotlib as mpl
+    mpl.use('Agg')
 
 # Finally import the serialization machinery
 from .io.serialization import *
 
 from .exceptions.custom_exceptions import custom_warnings
-
-if os.environ.get('DISPLAY') is None:
-
-    custom_warnings.warn("No DISPLAY variable set. Using backend for graphics without display (Agg)")
-
-    import matplotlib as mpl
-    mpl.use('Agg')
-
 
 import glob
 import imp
@@ -197,12 +197,17 @@ from .bayesian.bayesian_analysis import BayesianAnalysis
 
 from data_list import DataList
 
+
+
+from threeML.io.plotting.model_plot import plot_point_source_spectra
+from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
+from threeML.io.plotting.post_process_data_plots import display_spectrum_model_counts, \
+    display_photometry_model_magnitudes
+
 # Import the joint likelihood set
 from .classicMLE.joint_likelihood_set import JointLikelihoodSet, JointLikelihoodSetAnalyzer
 from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from .classicMLE.goodness_of_fit import GoodnessOfFit
-
-from .io.plotting import *
 
 from .io.calculate_flux import calculate_point_source_flux
 
@@ -210,6 +215,9 @@ from .io.calculate_flux import calculate_point_source_flux
 from .utils.step_parameter_generator import step_generator
 
 from .parallel.parallel_client import parallel_computation
+
+#
+from threeML.io.uncertainty_formatter import interval_to_errors
 
 
 # Import optical filters
@@ -222,13 +230,11 @@ from threeML.utils.data_builders import *
 from threeML.catalogs import *
 
 # Import GBM  downloader
-from threeML.plugins.Fermi_GBM.download_GBM_data import download_GBM_trigger_data, cleanup_downloaded_GBM_data
 
-# Import LAT downloader
-from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+from threeML.utils.data_download.Fermi_GBM.download_GBM_data import download_GBM_trigger_data
 
 # Import LLE downloader
-from threeML.plugins.Fermi_LAT.download_LLE_data import download_LLE_trigger_data, cleanup_downloaded_LLE_data
+from threeML.utils.data_download.Fermi_LAT.download_LLE_data import download_LLE_trigger_data
 
 # Now read the configuration and make it available as threeML_config
 from .config.config import threeML_config
@@ -238,11 +244,13 @@ import astropy.units as u
 import os
 
 # Import the LAT data downloader
-from threeML.plugins.Fermi_LAT.download_LAT_data import download_LAT_data
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
 
 # Import the results loader
 from threeML.analysis_results import load_analysis_results
 
+# Import the plot_style context manager and the function to create new styles
+from .io.plotting.plot_style import plot_style, create_new_plotting_style, get_available_plotting_styles
 
 # Check that the number of threads is set to 1 for all multi-thread libraries
 # otherwise numpy operations will be way slower than what they could be, since

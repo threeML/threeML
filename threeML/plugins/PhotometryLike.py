@@ -1,10 +1,10 @@
-import numpy as np
-import copy
 import collections
+import copy
+
+import numpy as np
 
 from threeML.plugins.XYLike import XYLike
-from threeML.plugins.photometry.filter_set import FilterSet
-
+from threeML.utils.photometry.filter_set import FilterSet
 
 __instrument_name = "Generic photometric data"
 
@@ -110,67 +110,67 @@ class PhotometryLike(XYLike):
     def magnitude_errors(self):
         return self._magnitude_errors
 
-    def set_active_filters(self, *filter_names):
-        """
-        set the active filters to be used in the fit
-        :param filter_names: filter names ot be set active
-        :return:
-        """
-
-        # scroll through the known filter names
-
-        for i, name in enumerate(self._filter_set.filter_names):
-
-            for select_name in filter_names:
-
-                # if one of the filters is hit, then activate it
-
-                if name == select_name:
-                    self._mask[i] = True
-
-
-        print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
-                                                                    len(self._mask),
-                                                                    ', '.join(
-                                                                        self._filter_set.filter_names[self._mask])))
-
-        # reconstruct the plugin with selected data
-
-        super(PhotometryLike, self).__init__(name=self.name,
-                                             x=self._filter_set.effective_wavelength[self._mask],  # dummy x values
-                                             y=self._magnitudes[self._mask],
-                                             yerr=self._magnitude_errors[self._mask],
-                                             poisson_data=False)
-
-    def set_inactive_filters(self, *filter_names):
-        """
-        set filters to be excluded from the fit
-        :param filter_names: filter names ot be set inactive
-        :return:
-        """
-
-        # scroll through the known filter names
-
-
-        for i, name in enumerate(self._filter_set.filter_names):
-
-            for select_name in filter_names:
-
-                if name == select_name:
-                    self._mask[i] = False
-
-        print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
-                                                                    len(self._mask),
-                                                                    ', '.join(
-                                                                        self._filter_set.filter_names[self._mask])))
-
-        # reconstruct the plugin with selected data
-
-        super(PhotometryLike, self).__init__(name=self.name,
-                                             x=self._filter_set.effective_wavelength[self._mask],  # dummy x values
-                                             y=self._magnitudes[self._mask],
-                                             yerr=self._magnitude_errors[self._mask],
-                                             poisson_data=False)
+    # def set_active_filters(self, *filter_names):
+    #     """
+    #     set the active filters to be used in the fit
+    #     :param filter_names: filter names ot be set active
+    #     :return:
+    #     """
+    #
+    #     # scroll through the known filter names
+    #
+    #     for i, name in enumerate(self._filter_set.filter_names):
+    #
+    #         for select_name in filter_names:
+    #
+    #             # if one of the filters is hit, then activate it
+    #
+    #             if name == select_name:
+    #                 self._mask[i] = True
+    #
+    #
+    #     print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
+    #                                                                 len(self._mask),
+    #                                                                 ', '.join(
+    #                                                                     self._filter_set.filter_names[self._mask])))
+    #
+    #     # reconstruct the plugin with selected data
+    #
+    #     super(PhotometryLike, self).__init__(name=self.name,
+    #                                          x=self._filter_set.effective_wavelength[self._mask],  # dummy x values
+    #                                          y=self._magnitudes[self._mask],
+    #                                          yerr=self._magnitude_errors[self._mask],
+    #                                          poisson_data=False)
+    #
+    # def set_inactive_filters(self, *filter_names):
+    #     """
+    #     set filters to be excluded from the fit
+    #     :param filter_names: filter names ot be set inactive
+    #     :return:
+    #     """
+    #
+    #     # scroll through the known filter names
+    #
+    #
+    #     for i, name in enumerate(self._filter_set.filter_names):
+    #
+    #         for select_name in filter_names:
+    #
+    #             if name == select_name:
+    #                 self._mask[i] = False
+    #
+    #     print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
+    #                                                                 len(self._mask),
+    #                                                                 ', '.join(
+    #                                                                     self._filter_set.filter_names[self._mask])))
+    #
+    #     # reconstruct the plugin with selected data
+    #
+    #     super(PhotometryLike, self).__init__(name=self.name,
+    #                                          x=self._filter_set.effective_wavelength[self._mask],  # dummy x values
+    #                                          y=self._magnitudes[self._mask],
+    #                                          yerr=self._magnitude_errors[self._mask],
+    #                                          poisson_data=False)
 
     def set_model(self, likelihood_model):
         """

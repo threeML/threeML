@@ -1,8 +1,6 @@
 import os
-
 import numpy as np
 import pytest
-
 from threeML.io.file_utils import within_directory
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.event_list import EventListWithDeadTime, EventList
@@ -10,28 +8,14 @@ from threeML.utils.data_builders.time_series_builder import TimeSeriesBuilder
 from threeML.io.file_utils import within_directory
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
-
+from conftest import get_test_datasets_directory
 import astropy.io.fits as fits
 
-__this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
-__example_dir = os.path.join(__this_dir__, '../../examples')
-
-
-def is_within_tolerance(truth, value, relative_tolerance=0.01):
-    assert truth != 0
-
-    if abs((truth - value) / truth) <= relative_tolerance:
-
-        return True
-
-    else:
-
-        return False
+datasets_directory = get_test_datasets_directory()
 
 
 def test_event_list_constructor():
     dummy_times = np.linspace(0, 10, 10)
-    dummy_deadtime = np.zeros_like(dummy_times)
     dummy_energy = np.zeros_like(dummy_times)
     start = 0
     stop = 10
@@ -66,11 +50,9 @@ def test_event_list_constructor():
 
     assert evt_list._mission == 'UNKNOWN'
 
+
 def test_unbinned_fit():
-
-    with within_directory(__this_dir__):
-
-
+    with within_directory(datasets_directory):
         start, stop = 0, 50
 
         poly = [1]
@@ -97,23 +79,22 @@ def test_unbinned_fit():
 
         evt_list.__repr__()
 
+
 def test_binned_fit():
-    with within_directory(__this_dir__):
+    with within_directory(datasets_directory):
         start, stop = 0, 50
 
         poly = [1]
 
-
-
         arrival_times = np.loadtxt('test_event_data.txt')
 
         evt_list = EventListWithDeadTime(arrival_times=arrival_times,
-                             energies=np.zeros_like(arrival_times),
-                             n_channels=1,
-                             start_time=arrival_times[0],
-                             stop_time=arrival_times[-1],
-                             dead_time=np.zeros_like(arrival_times)
-                             )
+                                         energies=np.zeros_like(arrival_times),
+                                         n_channels=1,
+                                         start_time=arrival_times[0],
+                                         stop_time=arrival_times[-1],
+                                         dead_time=np.zeros_like(arrival_times)
+                                         )
 
         evt_list.set_polynomial_fit_interval("%f-%f" % (start + 1, stop - 1), unbinned=False)
 
@@ -121,55 +102,48 @@ def test_binned_fit():
 
         results = evt_list.get_poly_info()['coefficients']
 
-        assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0,1])
-
+        assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
 
         assert evt_list._poly_counts.sum() > 0
 
         evt_list.__repr__()
 
-def test_read_gbm_cspec():
 
-    with within_directory(__example_dir):
+def test_read_gbm_cspec():
+    with within_directory(datasets_directory):
         data_dir = os.path.join('gbm', 'bn080916009')
 
         nai3 = TimeSeriesBuilder.from_gbm_cspec_or_ctime('NAI3',
-                                              os.path.join(data_dir, "glg_cspec_n3_bn080916009_v01.pha"),
-                                              rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
-                                              poly_order=-1)
-
-
+                                                         os.path.join(data_dir, "glg_cspec_n3_bn080916009_v01.pha"),
+                                                         rsp_file=os.path.join(data_dir,
+                                                                               "glg_cspec_n3_bn080916009_v00.rsp2"),
+                                                         poly_order=-1)
 
         nai3.set_active_time_interval('0-1')
-        nai3.set_background_interval('-200--10','100-200')
-
+        nai3.set_background_interval('-200--10', '100-200')
 
         speclike = nai3.to_spectrumlike()
 
-        assert isinstance(speclike,DispersionSpectrumLike)
+        assert isinstance(speclike, DispersionSpectrumLike)
 
-        nai3.write_pha_from_binner('test_from_nai3',start=0, stop=2, overwrite=True)
+        nai3.write_pha_from_binner('test_from_nai3', start=0, stop=2, overwrite=True)
+
 
 def test_read_gbm_tte():
-    with within_directory(__example_dir):
-
+    with within_directory(datasets_directory):
         data_dir = os.path.join('gbm', 'bn080916009')
 
         nai3 = TimeSeriesBuilder.from_gbm_tte('NAI3',
-                                             os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
-                                             rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
-                                             poly_order=-1)
-
-
+                                              os.path.join(data_dir, "glg_tte_n3_bn080916009_v01.fit.gz"),
+                                              rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
+                                              poly_order=-1)
 
         nai3.set_active_time_interval('0-1')
-        nai3.set_background_interval('-20--10','100-200')
-
+        nai3.set_background_interval('-20--10', '100-200')
 
         speclike = nai3.to_spectrumlike()
 
-        assert isinstance(speclike,DispersionSpectrumLike)
-
+        assert isinstance(speclike, DispersionSpectrumLike)
 
         # test binning
 
@@ -234,40 +208,30 @@ def test_read_gbm_tte():
         nai3.write_pha_from_binner('test_from_nai3', overwrite=True)
 
 
-
 def test_reading_of_written_pha():
-    with within_directory(__example_dir):
-
-
-
+    with within_directory(datasets_directory):
         # check the number of items written
 
         with fits.open('test_from_nai3.rsp') as f:
-
             # 2 ext + 5 rsp ext
             assert len(f) == 7
 
-
         # make sure we can read spectrum number
 
-        ogip = OGIPLike('test',observation='test_from_nai3.pha',spectrum_number=1)
-        ogip = OGIPLike('test', observation='test_from_nai3.pha', spectrum_number=2)
+        _ = OGIPLike('test', observation='test_from_nai3.pha', spectrum_number=1)
+        _ = OGIPLike('test', observation='test_from_nai3.pha', spectrum_number=2)
 
-
-
+        os.remove('test_from_nai3.pha')
 
 
 def test_read_lle():
-    with within_directory(__example_dir):
+    with within_directory(datasets_directory):
         data_dir = 'lat'
 
-
         lle = TimeSeriesBuilder.from_lat_lle('lle', os.path.join(data_dir, "gll_lle_bn080916009_v10.fit"),
-                              os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
-                              rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
-                              poly_order=-1)
-
-
+                                             os.path.join(data_dir, "gll_pt_bn080916009_v10.fit"),
+                                             rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
+                                             poly_order=-1)
 
         lle.view_lightcurve()
 
@@ -279,15 +243,12 @@ def test_read_lle():
 
         assert isinstance(speclike, DispersionSpectrumLike)
 
-
         # will test background with lle data
 
 
         old_coefficients, old_errors = lle.get_background_parameters()
 
         old_tmin_list = lle._time_series.poly_intervals
-
-
 
         lle.save_background('temp_lle', overwrite=True)
 
@@ -296,33 +257,12 @@ def test_read_lle():
                                              rsp_file=os.path.join(data_dir, "gll_cspec_bn080916009_v10.rsp"),
                                              restore_background='temp_lle.h5')
 
-
-
-
-
         new_coefficients, new_errors = lle.get_background_parameters()
 
         new_tmin_list = lle._time_series.poly_intervals
-
 
         assert new_coefficients == old_coefficients
 
         assert new_errors == old_errors
 
-
-
         assert old_tmin_list == new_tmin_list
-
-
-
-
-
-
-
-
-
-
-
-
-
-

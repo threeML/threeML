@@ -1,107 +1,124 @@
 from threeML import *
-from threeML.plugins.OGIPLike import OGIPLike
 
 
-def test_a_basic_analysis_from_start_to_finish():
-    triggerName = 'bn090217206'
-    ra = 204.9
-    dec = -8.4
+def test_basic_analsis_results(fitted_joint_likelihood_bn090217206_nai):
 
-    # Data are in the current directory
+    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
 
-    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../examples'))
+    jl.restore_best_fit()
 
-    # Create an instance of the GBM plugin for each detector
-    # Data files
-    obsSpectrum = os.path.join(datadir, "bn090217206_n6_srcspectra.pha{1}")
-    bakSpectrum = os.path.join(datadir, "bn090217206_n6_bkgspectra.bak{1}")
-    rspFile = os.path.join(datadir, "bn090217206_n6_weightedrsp.rsp{1}")
+    expected = [2.531028, -1.1831566000728451]
 
-    # Plugin instance
-    NaI6 = OGIPLike("NaI6", obsSpectrum, bakSpectrum, rspFile)
+    assert np.allclose(fit_results['value'], expected, rtol=0.1)
 
-    # Choose energies to use (in this case, I exclude the energy
-    # range from 30 to 40 keV to avoid the k-edge, as well as anything above
-    # 950 keV, where the calibration is uncertain)
-    NaI6.set_active_measurements("10.0-30.0", "40.0-950.0")
 
-    NaI6.display_rsp()
+def test_basic_analysis_get_errors(fitted_joint_likelihood_bn090217206_nai):
 
-    # This declares which data we want to use. In our case, all that we have already created.
+    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
 
-    data_list = DataList(NaI6)
+    jl.restore_best_fit()
 
-    powerlaw = Powerlaw()
+    err = jl.get_errors()
 
-    GRB = PointSource(triggerName, ra, dec, spectral_shape=powerlaw)
+    assert np.allclose(err['negative_error'], [-0.196, -0.0148], rtol=1e-1)
 
-    model = Model(GRB)
 
-    jl = JointLikelihood(model, data_list, verbose=False)
+def test_basic_analysis_contour_1d(fitted_joint_likelihood_bn090217206_nai):
 
-    fit_results, like_frame = jl.fit()
+    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
 
-    assert abs(fit_results['value']['bn090217206.spectrum.main.Powerlaw.K'] - 2.531028) < 1e-2
-    assert abs(fit_results['value']['bn090217206.spectrum.main.Powerlaw.index'] + 1.1831566000728451) < 1e-2
+    jl.restore_best_fit()
 
-    res = jl.get_errors()
+    powerlaw = jl.likelihood_model.bn090217206.spectrum.main.Powerlaw
 
     res = jl.get_contours(powerlaw.index, -1.3, -1.1, 20)
 
-    res = jl.get_contours(powerlaw.index, -1.25, -1.1, 60, powerlaw.K, 1.8, 3.4, 60)
+    expected_result = np.array([-1.3, -1.28947368, -1.27894737, -1.26842105, -1.25789474,
+                                -1.24736842, -1.23684211, -1.22631579, -1.21578947, -1.20526316,
+                                -1.19473684, -1.18421053, -1.17368421, -1.16315789, -1.15263158,
+                                -1.14210526, -1.13157895, -1.12105263, -1.11052632, -1.1])
+
+    assert np.allclose(res[0], expected_result, rtol=0.1)
 
 
-    powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-    powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+def test_basic_analysis_contour_2d(fitted_joint_likelihood_bn090217206_nai):
 
-    bayes = BayesianAnalysis(model, data_list)
+    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
 
-    samples = bayes.sample(n_walkers=50, burn_in=10, n_samples=10)
+    jl.restore_best_fit()
 
-    fig = bayes.corner_plot()
+    powerlaw = jl.likelihood_model.bn090217206.spectrum.main.Powerlaw
 
+    res = jl.get_contours(powerlaw.index, -1.25, -1.1, 30, powerlaw.K, 1.8, 3.4, 30)
 
+    exp_p1, exp_p2 = (np.array([-1.25, -1.24482759, -1.23965517, -1.23448276, -1.22931034,
+                                -1.22413793, -1.21896552, -1.2137931, -1.20862069, -1.20344828,
+                                -1.19827586, -1.19310345, -1.18793103, -1.18275862, -1.17758621,
+                                -1.17241379, -1.16724138, -1.16206897, -1.15689655, -1.15172414,
+                                -1.14655172, -1.14137931, -1.1362069, -1.13103448, -1.12586207,
+                                -1.12068966, -1.11551724, -1.11034483, -1.10517241, -1.1]),
+                      np.array([1.8, 1.85517241, 1.91034483, 1.96551724, 2.02068966,
+                                2.07586207, 2.13103448, 2.1862069, 2.24137931, 2.29655172,
+                                2.35172414, 2.40689655, 2.46206897, 2.51724138, 2.57241379,
+                                2.62758621, 2.68275862, 2.73793103, 2.79310345, 2.84827586,
+                                2.90344828, 2.95862069, 3.0137931, 3.06896552, 3.12413793,
+                                3.17931034, 3.23448276, 3.28965517, 3.34482759, 3.4]))
 
-
-def test_a_basic_multicomp_analysis_from_start_to_finish():
-    triggerName = 'bn090217206'
-    ra = 204.9
-    dec = -8.4
-
-    datadir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../examples'))
-
-    obsSpectrum = os.path.join(datadir, "bn090217206_n6_srcspectra.pha{1}")
-    bakSpectrum = os.path.join(datadir, "bn090217206_n6_bkgspectra.bak{1}")
-    rspFile = os.path.join(datadir, "bn090217206_n6_weightedrsp.rsp{1}")
-
-    # Plugin instance
-    NaI6 = OGIPLike("NaI6", obsSpectrum, bakSpectrum, rspFile)
-
-    NaI6.set_active_measurements("10.0-30.0", "40.0-950.0")
-
-    data_list = DataList(NaI6)
-
-    powerlaw = Powerlaw() + Blackbody()
-
-    GRB = PointSource(triggerName, ra, dec, spectral_shape=powerlaw)
-
-    model = Model(GRB)
-
-    jl = JointLikelihood(model, data_list, verbose=False)
-
-    fit_results, like_frame = jl.fit()
+    assert np.allclose(res[0], exp_p1, rtol=0.1)
+    assert np.allclose(res[1], exp_p2, rtol=0.1)
 
 
+def test_basic_bayesian_analysis_results(completed_bn090217206_bayesian_analysis):
+
+    bayes, samples = completed_bn090217206_bayesian_analysis
+
+    expected = (2.3224550250817337, 2.73429304662902)
+
+    res = bayes.results.get_equal_tailed_interval('bn090217206.spectrum.main.Powerlaw.K')
+
+    assert np.allclose(res, expected, rtol=0.1)
 
 
-    powerlaw.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-    powerlaw.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
-    powerlaw.K_2.prior = Log_uniform_prior(lower_bound=1E-20, upper_bound=10)
-    powerlaw.kT_2.prior = Log_uniform_prior(lower_bound=1E0, upper_bound=1E3)
+def test_bayes_corner_plot(completed_bn090217206_bayesian_analysis):
 
-    bayes = BayesianAnalysis(model, data_list)
+    bayes, samples = completed_bn090217206_bayesian_analysis
 
-    samples = bayes.sample(n_walkers=50, burn_in=10, n_samples=10)
+    # Only testing that this doesn't crash
+
+    _ = bayes.corner_plot()
+
+
+def test_basic_analsis_multicomp_results(fitted_joint_likelihood_bn090217206_nai_multicomp):
+
+    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai_multicomp
+
+    jl.restore_best_fit()
+
+    expected = np.array([ 1.88098173e+00, -1.20057690e+00,  6.50915964e-06,  4.35643006e+01])
+
+    assert np.allclose(fit_results['value'].values, expected, rtol=0.1)
+
+
+def test_basic_bayesian_analysis_results_multicomp(completed_bn090217206_bayesian_analysis_multicomp):
+
+    bayes, samples = completed_bn090217206_bayesian_analysis_multicomp
+
+    frame = bayes.results.get_data_frame()
+
+    expected_central_values = np.array([1.90814527e+00, -1.20941618e+00,  6.45755638e-06,  4.36948057e+01])
+    expected_negative_errors = np.array([-3.31654188e-01, -3.50052035e-02, -1.75167951e-06, -4.15481924e+00])
+    expected_positive_errors = np.array([3.25795920e-01, 3.41993703e-02, 1.88006611e-06, 4.26438042e+00])
+
+    assert np.allclose(frame['value'].values, expected_central_values, rtol=0.1)
+    assert np.allclose(frame['negative_error'].values, expected_negative_errors, rtol=0.1)
+    assert np.allclose(frame['positive_error'].values, expected_positive_errors, rtol=0.1)
+
+
+def test_bayes_multicomp_corner_plot(completed_bn090217206_bayesian_analysis_multicomp):
+
+    bayes, samples = completed_bn090217206_bayesian_analysis_multicomp
+
+    # Only testing that this doesn't crash
 
     fig = bayes.corner_plot()
 

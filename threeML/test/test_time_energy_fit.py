@@ -86,4 +86,4 @@ def test_energy_time_fit():
 
     # Make sure we are within 10% of the expected result
 
-    assert np.allclose(best_fit_parameters['value'].values, [0.23, -1.2, -2.0], rtol=0.1)
+    assert np.allclose(best_fit_parameters['value'].values, [0.25496115, -1.2282951 , -2.01508341], rtol=0.1)

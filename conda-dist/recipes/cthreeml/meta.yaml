@@ -7,23 +7,35 @@ source:
 
 requirements:
   build:
-    - python
-    - setuptools
-    - boost
+    - toolchain
+    - python x.x
+    - boost <1.65
     - numpy
+    - gcc
 
   run:
-    - python
-    - boost
+    - python x.x
+    - boost <1.65
     - numpy
+    - libgcc
 
 test:
+  commands:
+  
+    - conda inspect linkages -p $PREFIX cthreeml  # [not win]
+    - conda inspect objects -p $PREFIX cthreeml  # [osx]
+
   imports:
-    - cthreeML
+    - cthreeML.pyModelInterfaceCache
+
 
 about:
   home: https://github.com/giacomov/cthreeML
   license: BSD-3
   summary: 'The C/C++ bridge for the Multi-Mission Maximum Likelihood framework (github.com/giacomov/3ML)'
   license_family: BSD
+
+extra:
+  recipe-maintainers:
+    - giacomov
 
