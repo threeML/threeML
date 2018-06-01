@@ -4,8 +4,7 @@ import astropy.io.fits as fits
 import numpy as np
 import re
 
-from threeML.utils.time_series.time_series import TimeSeries
-from threeML.io.file_utils import file_existing_and_readable
+
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.io.progress_bar import progress_bar
@@ -14,14 +13,18 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SpectrumLike import SpectrumLike, NegativeBackground
 from threeML.utils.OGIP.pha import PHAWrite
 from threeML.utils.OGIP.response import InstrumentResponse, InstrumentResponseSet, OGIPResponse
-from threeML.utils.data_builders.fermi.gbm_data import GBMTTEFile, GBMCdata
-from threeML.utils.data_builders.fermi.lat_data import LLEFile
+
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.binned_spectrum_series import BinnedSpectrumSeries
-from threeML.utils.time_series.event_list import EventListWithDeadTime, EventListWithLiveTime, EventList
+from threeML.utils.time_series.event_list import EventListWithDeadTime, EventListWithLiveTime, EventList, EventListWithDeadTimeFraction
 from threeML.utils.time_series.time_series import TimeSeries
+
+
+from threeML.utils.data_builders.fermi.gbm_data import GBMTTEFile, GBMCdata
+from threeML.utils.data_builders.fermi.lat_data import LLEFile
+from threeML.utils.data_builders.polar_data import POLARData
 
 
 class BinningMethodError(RuntimeError):

@@ -2,7 +2,7 @@ import numpy as np
 
 from threeML.io.cern_root_utils.io_utils import open_ROOT_file
 from threeML.io.cern_root_utils.tobject_to_numpy import tree_to_ndarray, th2_to_arrays
-from threeML.plugins.OGIP.response import InstrumentResponse
+from threeML.utils.OGIP.response import InstrumentResponse
 
 
 
