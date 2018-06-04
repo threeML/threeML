@@ -25,10 +25,36 @@ else:
 
     has_chainconsumer = True
 
+try:
+
+    # see if we have mpi and/or are using parallel
+
+    from mpi4py import MPI
+    if MPI.COMM_WORLD.Get_size() > 1: # need parallel capabilities
+        using_mpi = True
+
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+
+    else:
+
+        using_mpi = False
+except:
+
+    using_mpi = False
+
+
+
+
+
+
+
+
 import numpy as np
 import collections
 import math
 import os
+import time
 
 import matplotlib.pyplot as plt
 
@@ -394,35 +420,61 @@ class BayesianAnalysis(object):
                                       **kwargs)
 
         # Use PyMULTINEST analyzer to gather parameter info
-        multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
-                                                          outputfiles_basename=chain_name)
 
-        # Get the log. likelihood values from the chain
-        self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
+        process_fit = False
 
-        self._sampler = sampler
+        if using_mpi:
 
-        self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
+            # if we are running in parallel and this is not the
+            # first engine, then we want to wait and let everything finish
 
-        # now get the log probability
+            if rank !=0:
 
-        self._log_probability_values = np.array(map(lambda samples: self.get_posterior(samples), self._raw_samples))
+                time.sleep(5)
+                process_fit = False
 
-        self._build_samples_dictionary()
+            else:
 
-        self._marginal_likelihood = multinest_analyzer.get_stats()['global evidence'] / np.log(10.)
+                time.sleep(5)
 
-        self._build_results()
+                process_fit = True
 
-        # Display results
-        if not quiet:
-            self._results.display()
+        else:
 
-        # now get the marginal likelihood
+            process_fit = True
 
 
+        if process_fit:
 
-        return self.samples
+            multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
+                                                              outputfiles_basename=chain_name)
+
+            # Get the log. likelihood values from the chain
+            self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
+
+            self._sampler = sampler
+
+            self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
+
+            # now get the log probability
+
+            self._log_probability_values = np.array(map(lambda samples: self.get_posterior(samples), self._raw_samples))
+
+            self._build_samples_dictionary()
+
+            self._marginal_likelihood = multinest_analyzer.get_stats()['global evidence'] / np.log(10.)
+
+            self._build_results()
+
+            # Display results
+            if not quiet:
+                self._results.display()
+
+            # now get the marginal likelihood
+
+
+
+            return self.samples
 
     def _build_samples_dictionary(self):
         """
