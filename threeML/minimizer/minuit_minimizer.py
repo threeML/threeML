@@ -48,12 +48,12 @@ class MinuitMinimizer(LocalMinimizer):
     # minuit. This makes the implementation a little bit more cumbersome, but more adaptable if we want
     # to switch back to the bare bone SEAL minuit
 
-    def __init__(self, function, parameters, verbosity=0):
+    def __init__(self, function, parameters, verbosity=0, setup_dict=None):
 
         # This will contain the results of the last call to Migrad
         self._last_migrad_results = None
 
-        super(MinuitMinimizer, self).__init__(function, parameters, verbosity)
+        super(MinuitMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
 
     def _setup(self, user_setup_dict):
 

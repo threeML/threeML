@@ -2,12 +2,12 @@ import collections
 import sys
 import astromodels.core.model
 import matplotlib.pyplot as plt
-import numpy
 import numpy as np
+import pandas as pd
 import scipy.optimize
 import scipy.stats
 from astromodels import ModelAssertionViolation
-
+from astromodels import clone_model
 from threeML.analysis_results import MLEResults
 from threeML.config.config import threeML_config
 from threeML.exceptions import custom_exceptions
@@ -33,13 +33,15 @@ class NotANumberInLikelihood(Warning):
 
 class JointLikelihood(object):
 
-    def __init__(self, likelihood_model, data_list, verbose=False):
+    def __init__(self, likelihood_model, data_list, verbose=False, record=True):
         """
         Implement a joint likelihood analysis.
 
         :param likelihood_model: the model for the likelihood analysis
         :param data_list: the list of data sets (plugin instances) to be used in this analysis
         :param verbose: (True or False) print every step in the -log likelihood minimization
+        :param record: it records every call to the log likelihood function during minimization. The recorded values
+        can be retrieved as a pandas DataFrame using the .fit_trace property
         :return:
         """
 
@@ -52,28 +54,13 @@ class JointLikelihood(object):
 
         self._data_list = data_list
 
-        for dataset in self._data_list.values():
-
-            dataset.set_model(self._likelihood_model)
-
-            # Now get the nuisance parameters from the data and add them to the model
-            # NOTE: it is important that this is *after* the setting of the model, as some
-            # plugins might need to adjust the number of nuisance parameters depending on the
-            # likelihood model
-
-            for parameter_name, parameter in dataset.nuisance_parameters.items():
-
-                # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
-                # of the same plugin will overwrite each other's nuisance parameters
-
-                assert dataset.name in parameter_name, "This is a bug of the plugin for %s: nuisance parameters " \
-                                                       "must contain the instance name" % type(dataset)
-
-                self._likelihood_model.add_external_parameter(parameter)
+        self._assign_model_to_data(self._likelihood_model)
 
         # This is to keep track of the number of calls to the likelihood
         # function
+        self._record = bool(record)
         self._ncalls = 0
+        self._record_calls = {}
 
         # Pre-defined minimizer
         default_minimizer = minimization.LocalMinimization(threeML_config['mle']['default minimizer'])
@@ -99,6 +86,27 @@ class JointLikelihood(object):
         self._minimizer_callback = None
 
         self._analysis_results = None
+
+    def _assign_model_to_data(self, model):
+
+        for dataset in self._data_list.values():
+
+            dataset.set_model(model)
+
+            # Now get the nuisance parameters from the data and add them to the model
+            # NOTE: it is important that this is *after* the setting of the model, as some
+            # plugins might need to adjust the number of nuisance parameters depending on the
+            # likelihood model
+
+            for parameter_name, parameter in dataset.nuisance_parameters.items():
+
+                # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
+                # of the same plugin will overwrite each other's nuisance parameters
+
+                assert dataset.name in parameter_name, "This is a bug of the plugin for %s: nuisance parameters " \
+                                                       "must contain the instance name" % type(dataset)
+
+                self._likelihood_model.add_external_parameter(parameter)
 
     @property
     def likelihood_model(self):
@@ -182,6 +190,10 @@ class JointLikelihood(object):
 
         self._update_free_parameters()
 
+        # Empty the call recorder
+        self._record_calls = {}
+        self._ncalls = 0
+
         # Check if we have free parameters, otherwise simply return the value of the log like
         if len(self._free_parameters) == 0:
 
@@ -193,7 +205,7 @@ class JointLikelihood(object):
                                                   self._free_parameters)
 
             # Store the "minimum", which is just the current value
-            self._current_minimum = float(self.minus_log_like_profile([]))
+            self._current_minimum = float(self.minus_log_like_profile())
 
         else:
 
@@ -496,18 +508,18 @@ class JointLikelihood(object):
             if param_2 is None:
 
                 # One array
-                pcc = numpy.zeros(param_1_n_steps)
+                pcc = np.zeros(param_1_n_steps)
 
-                pa = numpy.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
+                pa = np.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
                 pb = None
 
             else:
 
-                pcc = numpy.zeros((param_1_n_steps, param_2_n_steps))
+                pcc = np.zeros((param_1_n_steps, param_2_n_steps))
 
                 # Prepare the two axes of the parameter space
-                pa = numpy.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
-                pb = numpy.linspace(param_2_minimum, param_2_maximum, param_2_n_steps)
+                pa = np.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
+                pb = np.linspace(param_2_minimum, param_2_maximum, param_2_n_steps)
 
             # Define the parallel worker which will go through the computation
 
@@ -543,68 +555,19 @@ class JointLikelihood(object):
 
                 return ccc
 
-            # Get a balanced view of the engines
-
-            lview = client.load_balanced_view()
-            # lview.block = True
-
-            # Distribute the work among the engines and start it, but return immediately the control
-            # to the main thread
-
-            amr = lview.map_async(worker, range(n_engines))
-
-            client.wait_watching_progress(amr, 10)
-
-            # print progress
-
-            # progress = ProgressBar(n_engines)
-            #
-            # # This loop will check from time to time the status of the computation, which is happening on
-            # # different threads, and update the progress bar
-            #
-            # while not amr.ready():
-            #     # Check and report the status of the computation every second
-            #
-            #     time.sleep(1 + np.random.uniform(0, 1))
-            #
-            #     # if (debug):
-            #     #     stdouts = amr.stdout
-            #     #
-            #     #     # clear_output doesn't do much in terminal environments
-            #     #     for stdout, stderr in zip(amr.stdout, amr.stderr):
-            #     #         if stdout:
-            #     #             print "%s" % (stdout[-1000:])
-            #     #         if stderr:
-            #     #             print "%s" % (stderr[-1000:])
-            #     #     sys.stdout.flush()
-            #
-            #     progress.animate(amr.progress - 1)
-            #
-            # # Always display 100% at the end
-            #
-            # progress.animate(n_engines - 1)
-
-            # Add a new line after the progress bar
-            print("\n")
-
-            # print("Serial time: %1.f (speed-up: %.1f)" %(amr.serial_time, float(amr.serial_time) / amr.wall_time))
-
-            # Get the results. This will raise exceptions if something wrong happened during the computation.
-            # We don't catch it so that the user will be aware of that
-
-            res = amr.get()
-
             # Now re-assemble the vector of results taking the different parts from the engines
 
-            for i in range(n_engines):
+            all_results = client.execute_with_progress_bar(worker, range(n_engines), chunk_size=1)
+
+            for i, these_results in enumerate(all_results):
 
                 if param_2 is None:
 
-                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps] = res[i][:, 0]
+                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps] = these_results[:, 0]
 
                 else:
 
-                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps, :] = res[i]
+                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps, :] = these_results
 
             # Give the results the names that the following code expect. These are kept separate for debugging
             # purposes
@@ -637,7 +600,7 @@ class JointLikelihood(object):
 
                 idx = cc.argmin()
 
-                aidx, bidx = numpy.unravel_index(idx, cc.shape)
+                aidx, bidx = np.unravel_index(idx, cc.shape)
 
                 print("\nFound a better minimum: %s with %s = %s and %s = %s. Run again your fit starting from here."
                       % (cc.min(), param_1, a[aidx], param_2, b[bidx]))
@@ -744,14 +707,14 @@ class JointLikelihood(object):
 
         # Transform the trial values in a numpy array
 
-        trial_values = numpy.array(trial_values)
+        trial_values = np.array(trial_values)
 
         # Check that there are no nans within the trial values
 
         # This is the fastest way to check for any nan
         # (try other methods if you don't believe me)
 
-        if not numpy.isfinite(numpy.dot(trial_values, trial_values.T)):
+        if not np.isfinite(np.dot(trial_values, trial_values.T)):
             # There are nans, something weird is going on. Return FIT_FAILED so the engine
             # stays away from this (or fail)
 
@@ -805,21 +768,25 @@ class JointLikelihood(object):
             return minimization.FIT_FAILED
 
         if self.verbose:
-            sys.stderr.write("trial values: %s -> logL = %.3f\n" % (trial_values, summed_log_likelihood))
+            sys.stderr.write("trial values: %s -> logL = %.3f\n" % (",".join(map(lambda x:"%.5g" % x, trial_values)),
+                                                                    summed_log_likelihood))
 
+        # Record this call
+        if self._record:
+
+            self._record_calls[tuple(trial_values)] = summed_log_likelihood
 
         # Return the minus log likelihood
 
         return summed_log_likelihood * (-1)
 
+    @property
+    def fit_trace(self):
+        return pd.DataFrame(self._record_calls)
+
     def set_minimizer(self, minimizer):
         """
-        Set the minimizer to be used, among those available. At the moment these are supported:
-
-        * ROOT
-        * MINUIT (which means iminuit, default)
-        * MULTINEST (require pymultinest)
-        * PAGMO (http://esa.github.io/pygmo2/documentation)
+        Set the minimizer to be used, among those available.
 
         :param minimizer: the name of the new minimizer or an instance of a LocalMinimization or a GlobalMinimization
         class. Using the latter two classes allows for more choices and a better control of the details of the
@@ -1020,37 +987,6 @@ class JointLikelihood(object):
         fig = plt.figure()
         sub = fig.add_subplot(111)
 
-        # Show the contours with square axis
-
-        # NOTE: suppress the UnicodeWarning, which is due to a small problem in matplotlib
-
-        # with custom_warnings.catch_warnings():
-        #
-        #     # Cause all warnings to always be triggered.
-        #     custom_warnings.simplefilter("ignore", UnicodeWarning)
-        #
-        #     im = sub.imshow(cc,
-        #                     cmap=palette,
-        #                     extent=[b.min(), b.max(), a.min(), a.max()],
-        #                     aspect=float(b.max() - b.min()) / (a.max() - a.min()),
-        #                     origin='lower',
-        #                     norm=BoundaryNorm(bounds, 256),
-        #                     interpolation='bicubic',
-        #                     vmax=(self._current_minimum + delta_chi2).max())
-
-        # Plot the color bar with the sigmas
-        # cb = fig.colorbar(im, boundaries=bounds[:-1])
-        # lbounds = [0]
-        # lbounds.extend(bounds[:-1])
-        # cb.set_ticks(lbounds)
-        # ll = ['']
-        # ll.extend(map(lambda x: r'%i $\sigma$' % x, sigmas))
-        # cb.set_ticklabels(ll)
-
-        # Align the labels to the end of the color level
-        # for t in cb.ax.get_yticklabels():
-        #     t.set_verticalalignment('baseline')
-
         # Draw the line contours
         sub.contour(b, a, cc, self._current_minimum + delta_chi2,
                     colors=(threeML_config['mle']['contour level 1'], threeML_config['mle']['contour level 2'],
@@ -1064,3 +1000,56 @@ class JointLikelihood(object):
         plt.tight_layout()
 
         return fig
+
+    def compute_TS(self, source_name, alt_hyp_mlike_df):
+        """
+        Computes the Likelihood Ratio Test statistic (TS) for the provided source
+
+        :param source_name: name for the source
+        :param alt_hyp_mlike_df: likelihood dataframe (it is the second output of the .fit() method)
+        :return: a DataFrame containing the null hypothesis and the alternative hypothesis -log(likelihood) values and
+        the value for TS for the source for each loaded dataset
+        """
+
+        assert source_name in self._likelihood_model, "Source %s is not in the current model" % source_name
+
+        # Clone model
+        model_clone = clone_model(self._likelihood_model)
+
+        # Remove this source from the model
+        _ = model_clone.remove_source(source_name)
+
+        # Fit
+        another_jl = JointLikelihood(model_clone, self._data_list)
+
+        # We do not need the covariance matrix, just the likelihood value
+        _, null_hyp_mlike_df = another_jl.fit(quiet=True, compute_covariance=False, n_samples=1)
+
+        # Compute TS for all datasets
+        TSs = []
+        alt_hyp_mlikes = []
+        null_hyp_mlikes = []
+
+        for dataset in self._data_list.values():
+
+            this_name = dataset.get_name()
+
+            null_hyp_mlike = null_hyp_mlike_df.loc[this_name, '-log(likelihood)']
+            alt_hyp_mlike = alt_hyp_mlike_df.loc[this_name, '-log(likelihood)']
+
+            this_TS = 2 * (null_hyp_mlike - alt_hyp_mlike)
+
+            TSs.append(this_TS)
+            alt_hyp_mlikes.append(alt_hyp_mlike)
+            null_hyp_mlikes.append(null_hyp_mlike)
+
+        TS_df = pd.DataFrame(index=self._data_list.keys())
+
+        TS_df['Null hyp.'] = null_hyp_mlikes
+        TS_df['Alt. hyp.'] = alt_hyp_mlikes
+        TS_df['TS'] = TSs
+
+        # Reassign the original likelihood model to the datasets
+        self._assign_model_to_data(self._likelihood_model)
+
+        return TS_df

@@ -83,14 +83,34 @@ class GridMinimizer(GlobalMinimizer):
         """
         Add a parameter to the grid
 
-        :param parameter: an instance of a parameter
+        :param parameter: an instance of a parameter or a parameter path
         :param grid: a list (or a numpy.array) with the values the parameter is supposed to take during the grid search
         :return: None
         """
 
-        assert isinstance(parameter, Parameter)
+        if isinstance(parameter, Parameter):
 
-        assert parameter in self.parameters.values(), "Parameter %s is not part of the current model" % parameter.name
+            assert parameter in self.parameters.values(), "Parameter %s is not part of the " \
+                                                          "current model" % parameter.name
+
+        else:
+
+            # Assume parameter is a path
+            parameter_path = str(parameter)
+
+            # Make a list of paths for the parameters
+            v = self.parameters.values()
+            parameters_paths = map(lambda x:x.path, v)
+
+            try:
+
+                idx = parameters_paths.index(parameter_path)
+
+            except ValueError:
+
+                raise ValueError("Could not find parameter %s in current model" % parameter_path)
+
+            parameter = v[idx]
 
         grid = np.array(grid)
 
