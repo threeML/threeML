@@ -125,7 +125,7 @@ class ResidualPlot(object):
     def ratio_residuals(self):
         return self._ratio_residuals
 
-    def add_model_step(self, xmin, xmax, xwidth, y, label, color):
+    def add_model_step(self, xmin, xmax, xwidth, y, label, **kwargs):
         """
         Add a model but use discontinuous steps for the plotting.
 
@@ -137,14 +137,15 @@ class ResidualPlot(object):
         :param color: the color of the model
         :return: None
         """
+
+
         step_plot(np.asarray(zip(xmin, xmax)),
                   y / xwidth,
                   self._data_axis,
-                  alpha=.8,
                   label=label,
-                  color=color)
+                  **kwargs)
 
-    def add_model(self,x,y,label,color):
+    def add_model(self,x,y,label,**kwargs):
         """
         Add a model and interpolate it across the energy span for the plotting.
 
@@ -154,10 +155,10 @@ class ResidualPlot(object):
         :param color: the color of the model
         :return: None
         """
-        self._data_axis.plot(x, y, label=label, color=color, alpha=.8)
+        self._data_axis.plot(x, y, label=label, **kwargs)
 
 
-    def add_data(self, x, y, residuals, label, xerr=None, yerr=None, residual_yerr=None, color='r', show_data=True):
+    def add_data(self, x, y, residuals, label, xerr=None, yerr=None, residual_yerr=None, show_data=True, **kwargs):
         """
         Add the data for the this model
 
@@ -179,14 +180,10 @@ class ResidualPlot(object):
                                      y,
                                      yerr=yerr,
                                      xerr=xerr,
-                                     fmt=threeML_config['residual plot']['error marker'],
-                                     markersize=threeML_config['residual plot']['error marker size'],
-                                     linestyle='',
-                                     elinewidth=threeML_config['residual plot']['error line width'],
-                                     alpha=.9,
-                                     capsize=0,
                                      label=label,
-                                     color=color)
+                                     **kwargs
+
+                                     )
 
 
         # if we want to show the residuals
@@ -205,11 +202,8 @@ class ResidualPlot(object):
             self._residual_axis.errorbar(x,
                                          residuals,
                                          yerr=residual_yerr,
-                                         capsize=0,
-                                         fmt=threeML_config['residual plot']['error marker'],
-                                         elinewidth=threeML_config['residual plot']['error line width'],
-                                         markersize=threeML_config['residual plot']['error marker size'],
-                                         color=color)
+                                         **kwargs
+                                      )
 
 
     def finalize(self, xlabel='x', ylabel='y',xscale='log',yscale='log', show_legend=True,invert_y=False):

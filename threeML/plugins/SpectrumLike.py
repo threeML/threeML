@@ -2278,7 +2278,8 @@ class SpectrumLike(PluginPrototype):
         return self._output().to_string()
 
     def display_model(self, data_color='k', model_color='r', step=True, show_data=True, show_residuals=True,
-                      ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None,
+                      ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None, model_kwargs = None,
+                      data_kwargs=None,
                       **kwargs):
 
         """
@@ -2305,6 +2306,44 @@ class SpectrumLike(PluginPrototype):
         :return:
         """
 
+        _default_model_kwargs = dict(color=model_color, alpha=1.)
+
+        _default_data_kwargs = dict(color=data_color, alpha=1.,
+                                    fmt=threeML_config['residual plot']['error marker'],
+                                    markersize=threeML_config['residual plot']['error marker size'],
+                                    linestyle='',
+                                    elinewidth=threeML_config['residual plot']['error line width'],
+                                    capsize=0
+                                    )
+
+        if model_kwargs is not None:
+
+            assert type(model_kwargs) == dict, 'model_kwargs must be a dict'
+
+            for k,v in model_kwargs.items():
+
+                if k in _default_model_kwargs:
+
+                    _default_model_kwargs[k] = v
+
+                else:
+
+                    _default_model_kwargs[k] = v
+
+        if data_kwargs is not None:
+
+            assert type(data_kwargs) == dict, 'data_kwargs must be a dict'
+
+            for k, v in data_kwargs.items():
+
+                if k in _default_data_kwargs:
+
+                    _default_data_kwargs[k] = v
+
+                else:
+
+                    _default_data_kwargs[k] = v
+
         if model_label is None:
             model_label = "%s Model" % self._name
 
@@ -2317,7 +2356,9 @@ class SpectrumLike(PluginPrototype):
 
         chan_width = energy_max - energy_min
 
+
         expected_model_rate = self.expected_model_rate
+
 
         # figure out the type of data
 
@@ -2475,17 +2516,21 @@ class SpectrumLike(PluginPrototype):
                                yerr=new_err / new_chan_width,
                                xerr=delta_energy,
                                label=self._name,
-                               color=data_color,
-                               show_data=show_data)
+                               show_data=show_data,
+                               **_default_data_kwargs
+                               )
 
         if step:
+
+
 
             residual_plot.add_model_step(new_energy_min,
                                          new_energy_max,
                                          new_chan_width,
                                          new_model_rate,
                                          label=model_label,
-                                         color=model_color)
+                                         **_default_model_kwargs
+                                         )
 
 
         else:
@@ -2501,7 +2546,8 @@ class SpectrumLike(PluginPrototype):
             residual_plot.add_model(x,
                                     y,
                                     label=model_label,
-                                    color=model_color)
+                                    **_default_model_kwargs
+                                    )
 
         return residual_plot.finalize(xlabel="Energy\n(keV)",
                                       ylabel="Net rate\n(counts s$^{-1}$ keV$^{-1}$)",
