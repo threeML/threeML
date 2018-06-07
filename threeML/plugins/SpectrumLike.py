@@ -2303,8 +2303,13 @@ class SpectrumLike(PluginPrototype):
         :param min_rate: the minimum rate per bin
         :param model_label: (optional) the label to use for the model default is plugin name
         :param model_subplot: (optional) axis or list of axes to plot to
+        :param model_kwargs: plotting kwargs affecting the plotting of the model
+        :param data_kwargs:  plotting kwargs affecting the plotting of the data and residuls
         :return:
         """
+
+
+        # set up the default plotting
 
         _default_model_kwargs = dict(color=model_color, alpha=1.)
 

@@ -134,7 +134,7 @@ class ResidualPlot(object):
         :param xwidth: the width of the bins
         :param y: the height of the bins
         :param label: the label of the model
-        :param color: the color of the model
+        :param **kwargs: any kwargs passed to plot
         :return: None
         """
 
@@ -152,7 +152,7 @@ class ResidualPlot(object):
         :param x: the evaluation energies
         :param y: the model values
         :param label: the label of the model
-        :param color: the color of the model
+        :param **kwargs: any kwargs passed to plot
         :return: None
         """
         self._data_axis.plot(x, y, label=label, **kwargs)
@@ -168,7 +168,7 @@ class ResidualPlot(object):
         :param label: label of the data
         :param xerr: the error in energy (or bin width)
         :param yerr: the errorbars of the data
-        :param color: color of the
+        :param **kwargs: any kwargs passed to plot
         :return:
         """
 
