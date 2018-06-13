@@ -188,13 +188,13 @@ def test_hawc_point_source_fit(hawc_point_source_fitted_joint_like):
     # Check that we have converged to the right solution
     # (the true value of course are not exactly the value simulated,
     # they are just the point where the fit should converge)
-    assert is_within_tolerance(3.07920784548e-20,
+    assert is_within_tolerance(3.3246428894535895e-20,
                                parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.K'])
     assert is_within_tolerance(-2.33736923856,
                                parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.index'])
-    assert is_within_tolerance(41889862104.0, parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.xc'])
+    assert is_within_tolerance(37478522636.504425, parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.xc'])
 
-    assert is_within_tolerance(55979.423676, like['-log(likelihood)']['HAWC'])
+    assert is_within_tolerance(55979.424031, like['-log(likelihood)']['HAWC'])
 
     # Print up the TS, significance, and fit parameters, and then plot stuff
     print("\nTest statistic:")
@@ -214,7 +214,7 @@ def test_hawc_point_source_fit(hawc_point_source_fitted_joint_like):
 
     print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
-    assert is_within_tolerance(3.00657105936e-11, diff_flux_TeV.value)
+    assert is_within_tolerance(3.2371079347638675e-11, diff_flux_TeV.value)
 
     spectrum.display()
 
@@ -294,12 +294,12 @@ def test_hawc_extended_source_fit():
     # Check that we have converged to the right solution
     # (the true value of course are not exactly the value simulated,
     # they are just the point where the fit should converge)
-    assert is_within_tolerance(4.64056469931e-20, parameter_frame['value']['ExtSource.spectrum.main.Cutoff_powerlaw.K'])
+    assert is_within_tolerance(4.7805737823025172e-20, parameter_frame['value']['ExtSource.spectrum.main.Cutoff_powerlaw.K'])
     assert is_within_tolerance(-2.44931279819,
                                parameter_frame['value']['ExtSource.spectrum.main.Cutoff_powerlaw.index'])
-    assert is_within_tolerance(1.45222982526, parameter_frame['value']['ExtSource.Disk_on_sphere.radius'])
+    assert is_within_tolerance(1.4273457159139373, parameter_frame['value']['ExtSource.Disk_on_sphere.radius'])
 
-    assert is_within_tolerance(186389.106099, like['-log(likelihood)']['HAWC'])
+    assert is_within_tolerance(186389.581117, like['-log(likelihood)']['HAWC'])
 
     # Print up the TS, significance, and fit parameters, and then plot stuff
     print("\nTest statistic:")
@@ -319,7 +319,7 @@ def test_hawc_extended_source_fit():
 
     print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
-    assert is_within_tolerance(4.53214528088e-11, diff_flux_TeV.value)
+    assert is_within_tolerance(4.66888328668e-11, diff_flux_TeV.value)
 
     spectrum.display()
     shape.display()
@@ -466,7 +466,7 @@ def test_CommonNorm_fit():
 
     parameter_frame, like = jl.fit(compute_covariance=False)
 
-    assert np.isclose(lm.HAWC_ComNorm.value, 1.02567968495, rtol=1e-2)
+    assert np.isclose(lm.HAWC_ComNorm.value, 1.0756519971562115, rtol=1e-2)
 
     
 @skip_if_hawc_is_not_available
