@@ -628,9 +628,9 @@ class HAWCLike(PluginPrototype):
         self._fill_model_cache()
         self.calc_TS()
 
-        #default is to use bins 4-9
+        #default is to use all active bins
         if bin_list is None:
-          bin_list = self._min_and_max_to_list( 4, 10 ) 
+          bin_list = self._bin_list
                 
         #Need to make sure we don't try to use bins that we don't have data etc. for.
         good_bins = [bin in bin_list for bin in self._bin_list]
@@ -701,7 +701,7 @@ class HAWCLike(PluginPrototype):
         excess_error = np.sqrt( np.sum( counts*weight*weight/(area*area) , axis=1 )) 
         excess_model = np.average( model/area , weights=weight, axis=1 )    
         
-        return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names, key=int)
+        return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names)
 
     def plot_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
 
@@ -737,13 +737,24 @@ class HAWCLike(PluginPrototype):
         plt.xlim = x_limits
 
         plt.ylabel("Apparent radial excess [sr$^{-1}$]")
-        plt.xlabel("Distance from source at (%.2f$^{\circ}$, %.2f$^{\circ}$) [$^{\circ}$]" % ( ra, dec ) )
-        plt.title("Radial profile, bin%s %s"  % ("s" if len(list_of_bin_names)>1 else "", list_of_bin_names ) )
+        plt.xlabel("Distance from source at (%.2f$^{\circ}$, %.2f$^{\circ}$) [$^{\circ}$]" % ( ra, dec ) ) 
+                
+        if len(list_of_bin_names) == 1:
+          title = "Radial profile, bin {0}".format( list_of_bin_names[0] )
+        else:
+          tmptitle =  "Radial profile, bins   {0}".format( list_of_bin_names )
+          width = 84
+          title = '\n'.join(tmptitle[i:i+width] for i in xrange(0, len(tmptitle), width))
+
+        plt.title(title)
   
 
         ax.grid(True)
         
-        plt.tight_layout()
+        try:
+          plt.tight_layout()
+        except:
+          pass
 
         return fig
 
