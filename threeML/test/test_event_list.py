@@ -2,13 +2,13 @@ import os
 
 import numpy as np
 import pytest
-
+from conftest import get_test_datasets_directory
 from threeML.io.file_utils import within_directory
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.event_list import EventListWithDeadTime, EventList
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
-
+datasets_dir = get_test_datasets_directory()
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
@@ -24,7 +24,6 @@ def is_within_tolerance(truth, value, relative_tolerance=0.01):
 
 def test_event_list_constructor():
     dummy_times = np.linspace(0, 10, 10)
-    dummy_deadtime = np.zeros_like(dummy_times)
     dummy_energy = np.zeros_like(dummy_times)
     start = 0
     stop = 10
@@ -60,12 +59,9 @@ def test_event_list_constructor():
     assert evt_list._mission == 'UNKNOWN'
 
 
-
-
 def test_unbinned_fit():
 
-    with within_directory(__this_dir__):
-
+    with within_directory(datasets_dir):
 
         start, stop = 0, 50
 
@@ -94,14 +90,11 @@ def test_unbinned_fit():
         evt_list.__repr__()
 
 
-
 def test_binned_fit():
-    with within_directory(__this_dir__):
+    with within_directory(datasets_dir):
         start, stop = 0, 50
 
         poly = [1]
-
-
 
         arrival_times = np.loadtxt('test_event_data.txt')
 

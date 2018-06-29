@@ -1,27 +1,15 @@
 import pytest
-import os
-
-from astropy.io import fits
-
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.spectrum.pha_spectrum import PHASpectrum
-from threeML.classicMLE.joint_likelihood import JointLikelihood
-from threeML.plugins.OGIP.response import OGIPResponse
-from threeML.data_list import DataList
-from threeML.classicMLE.likelihood_ratio_test import LikelihoodRatioTest
-from astromodels.core.model import Model
-from astromodels.functions.functions import Powerlaw, Exponential_cutoff, Cutoff_powerlaw
-from astromodels.sources.point_source import PointSource
-from threeML.plugins.SwiftXRTLike import SwiftXRTLike
-from threeML.plugins.OGIP.likelihood_functions import *
+from conftest import get_test_datasets_directory
 from threeML import *
-
-
 from threeML.io.file_utils import within_directory
-
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins.SwiftXRTLike import SwiftXRTLike
+from threeML.utils.OGIP.response import OGIPResponse
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
+from threeML.utils.statistics.likelihood_functions import *
 
 __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
-__example_dir = os.path.join(__this_dir__, '../../examples')
+__example_dir = get_test_datasets_directory()
 
 
 class AnalysisBuilder(object):
@@ -50,7 +38,8 @@ class AnalysisBuilder(object):
 
 
 def test_loading_a_generic_pha_file():
-    with within_directory(__this_dir__):
+
+    with within_directory(__example_dir):
         ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         pha_info = ogip.get_pha_files()
@@ -70,8 +59,10 @@ def test_loading_a_generic_pha_file():
 
         ogip.__repr__()
 
+
 def test_loading_a_loose_ogip_pha_file():
-    with within_directory(__this_dir__):
+
+    with within_directory(__example_dir):
         ogip = OGIPLike('test_ogip', observation='example_integral.pha')
 
         pha_info = ogip.get_pha_files()
@@ -92,7 +83,8 @@ def test_loading_a_loose_ogip_pha_file():
         ogip.__repr__()
 
 def test_loading_bad_keywords_file():
-    with within_directory(__this_dir__):
+
+    with within_directory(__example_dir):
         pha_fn='example_integral_spi.pha'
         rsp_fn='example_integral_spi.rsp'
 
@@ -104,7 +96,7 @@ def test_loading_bad_keywords_file():
         ogip.__repr__()
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
-    with within_directory(__this_dir__):
+    with within_directory(__example_dir):
 
         ogip = OGIPLike('test_ogip', observation='test.pha{1}')
         ogip.set_active_measurements('all')
@@ -171,7 +163,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_file_name():
 
 
 def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
-    with within_directory(__this_dir__):
+    with within_directory(__example_dir):
         ogip = OGIPLike('test_ogip', observation='test.pha', spectrum_number=1)
         ogip.set_active_measurements('all')
 
@@ -235,7 +227,7 @@ def test_pha_files_in_generic_ogip_constructor_spec_number_in_arguments():
 
 
 def test_ogip_energy_selection():
-    with within_directory(__this_dir__):
+    with within_directory(__example_dir):
         ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         assert sum(ogip._mask) == sum(ogip.quality.good)
@@ -288,7 +280,7 @@ def test_ogip_energy_selection():
 
 
 def test_ogip_rebinner():
-    with within_directory(__this_dir__):
+    with within_directory(__example_dir):
         ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         n_data_points = 128
@@ -315,7 +307,7 @@ def test_ogip_rebinner():
 
 
 def test_various_effective_area():
-    with within_directory(__this_dir__):
+    with within_directory(__example_dir):
         ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         ogip.use_effective_area_correction()
@@ -325,7 +317,7 @@ def test_various_effective_area():
         )
 
 def test_simulating_data_sets():
-    with within_directory(__this_dir__):
+    with within_directory(__example_dir):
 
         ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
@@ -382,7 +374,7 @@ def test_simulating_data_sets():
 
 
 def test_likelihood_ratio_test():
-    with within_directory(__this_dir__):
+    with within_directory(__example_dir):
         ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
         ogip.set_active_measurements("all")
@@ -474,7 +466,7 @@ def test_swift_gbm():
 
 
 def test_pha_write():
-    with within_directory(__this_dir__):
+    with within_directory(__example_dir):
 
         ogip = OGIPLike('test_ogip', observation='test.pha{1}')
 
@@ -498,7 +490,7 @@ def test_pha_write():
 
 
 def test_pha_write_no_bkg():
-    with within_directory(__this_dir__):
+    with within_directory(__example_dir):
 
         # custom remove background
         f=fits.open("test.pha")

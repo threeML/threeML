@@ -1,20 +1,23 @@
-{% set data = load_setup_py_data() %}
+{% set name = "threeml" %}
 
 package:
-  name: threeml
-  version: {{ data.get('version') }}
+  name: {{ name }}
+  version: {{ os.environ.get('PKG_VERSION') }}
 
 source:
-  #git_url: https://github.com/giacomov/3ML.git
+#    git_url: https://github.com/giacomov/3ML.git
   path: ../../../
 
 build:
-   noarch_python: True
+  script: python -m pip install --no-deps --ignore-installed .
+  skip: true  # [win]
+  skip: true  # [py3k]
 
 requirements:
+  
   build:
     - python
-    - setuptools
+    - toolchain
     - numpy >=1.6
     - scipy >=0.18
     - emcee
@@ -24,21 +27,21 @@ requirements:
     - pyyaml
     - dill
     - iminuit >=1.2
-    - astromodels >=0.4
+    - astromodels
+    - astroquery
     - corner >=1.0.2
     - pandas
-    - html2text
     - requests
     - speclite
     - pymultinest
-    - cthreeml
+    - pygmo >=2.4
     - ipywidgets
-    - ipython <6.0
+    - ipython
     - ipyparallel
+    - py
 
   run:
     - python
-    - setuptools
     - numpy >=1.6
     - scipy >=0.18
     - emcee
@@ -48,37 +51,33 @@ requirements:
     - pyyaml
     - dill
     - iminuit >=1.2
-    - astromodels >=0.4
+    - astromodels
+    - astroquery
     - corner >=1.0.2
     - pandas
-    - html2text
     - requests
     - speclite
     - pymultinest
-    - cthreeml
+    - pygmo >=2.4
     - ipywidgets
-    - ipython <6.0
+    - ipython
     - ipyparallel
     - xz
+    - py
 
-test:
-  # Python imports
-  imports:
-    - threeML
-    - threeML.bayesian
-    - threeML.catalogs
-    - threeML.classicMLE
-    - threeML.config
-    - threeML.exceptions
-    - threeML.io
-    - threeML.minimizer
-    - threeML.parallel
-    - threeML.plugins
-    - threeML.utils
+#test:
+#  # Python imports
+#  commands:
+#    - python -c 'import os;os.environ["MPLBACKEND"]="Agg";from threeML import *'
+
 
 about:
   home: https://github.com/giacomov/3ML
   license: BSD-3
   summary: 'The Multi-Mission Maximum Likelihood framework'
   license_family: BSD
+
+extra:
+  recipe-maintainers:
+    - giacomov
 

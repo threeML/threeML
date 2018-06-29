@@ -8,7 +8,7 @@ import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 
 from threeML.exceptions.custom_exceptions import custom_warnings, ConfigurationFileCorrupt
-from threeML.io.package_data import get_path_of_data_file
+from threeML.io.package_data import get_path_of_data_file, get_path_of_user_dir
 
 _config_file_name = 'threeML_config.yml'
 
@@ -58,7 +58,7 @@ class Config(object):
 
         # Check if the user has a user-supplied config file under .threeML
 
-        user_config_path = os.path.join(os.path.expanduser('~'), '.threeML', _config_file_name)
+        user_config_path = os.path.join(get_path_of_user_dir(), _config_file_name)
 
         if os.path.exists(user_config_path):
 

@@ -1,17 +1,24 @@
+import numpy as np
+import os
 import pytest
-from threeML.plugins.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion, ChannelSet
-from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.plugins.OGIP.response import OGIPResponse
 from astromodels import Powerlaw, PointSource, Model
 
-import numpy as np
+from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
+from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.utils.OGIP.response import OGIPResponse
+from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion, ChannelSet
+from conftest import get_test_datasets_directory
 
-import os
 
-__this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
+@pytest.fixture(scope="module")
+def loaded_response():
 
-__example_dir = os.path.join(__this_dir__, '../../examples')
+    rsp = OGIPResponse(os.path.join(get_test_datasets_directory(),
+                                    'bn090217206',
+                                    'bn090217206_n6_weightedrsp.rsp'))
+
+    return rsp
+
 
 def test_spectrum_constructor():
 
@@ -28,7 +35,6 @@ def test_spectrum_constructor():
 
     assert np.all(obs_spectrum.counts == obs_spectrum.rates)
     assert np.all(bkg_spectrum.counts == bkg_spectrum.rates)
-
 
     specLike = SpectrumLike('fake', observation=obs_spectrum, background=bkg_spectrum)
     specLike.set_model(model)
@@ -65,6 +71,7 @@ def test_spectrum_constructor():
     with pytest.raises(AssertionError):
         specLike.rebin_on_background(min_number_of_counts=1E-1)
 
+
 def test_spectrum_constructor_no_background():
 
     ebounds = ChannelSet.from_list_of_edges(np.array([0,1,2,3,4,5]))
@@ -77,13 +84,16 @@ def test_spectrum_constructor_no_background():
 
     specLike.__repr__()
 
+
 def addition_proof_simple(x,y,z):
     assert x.counts[3] + y.counts[3] == z.counts[3]
+
 
 def addition_proof_weighted(x,y,z):
     assert (x.rates[3]/x.rate_errors[3]**2 + y.rates[3]/y.rate_errors[3]**2) / \
            (1/x.rate_errors[3]**2 + 1/y.rate_errors[3]**2) \
            == z.rates[3]/z.exposure 
+
 
 def spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,addition,addition_proof):
     obs_spectrum = addition(obs_spectrum_1, obs_spectrum_2)
@@ -132,8 +142,9 @@ def test_spectrum_clone():
     obs_spectrum.clone()
 
 
-def test_dispersion_spectrum_constructor():
-    rsp = OGIPResponse(os.path.join(__example_dir, 'bn090217206_n6_weightedrsp.rsp'))
+def test_dispersion_spectrum_constructor(loaded_response):
+
+    rsp = loaded_response
 
     pl = Powerlaw()
 
@@ -150,8 +161,15 @@ def test_dispersion_spectrum_constructor():
 
     specLike.write_pha('test_from_dispersion', overwrite=True)
 
-def test_dispersion_spectrum_addition_poisson():
-    rsp = OGIPResponse(os.path.join(__example_dir, 'bn090217206_n6_weightedrsp.rsp'))
+    assert os.path.exists('test_from_dispersion.pha')
+    assert os.path.exists('test_from_dispersion_bak.pha')
+
+    os.remove('test_from_dispersion.pha')
+    os.remove('test_from_dispersion_bak.pha')
+
+def test_dispersion_spectrum_addition_poisson(loaded_response):
+
+    rsp = loaded_response
     ebounds = ChannelSet.from_instrument_response(rsp)
 
     obs_spectrum_1 = BinnedSpectrumWithDispersion(counts=np.ones(len(ebounds)),exposure=1, response=rsp, is_poisson=True)
@@ -161,8 +179,9 @@ def test_dispersion_spectrum_addition_poisson():
     spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x+y,addition_proof_simple)
     #spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x.add_inverse_variance_weighted(y),addition_proof_weighted)
 
-def test_dispersion_spectrum_addition():
-    rsp = OGIPResponse(os.path.join(__example_dir, 'bn090217206_n6_weightedrsp.rsp'))
+def test_dispersion_spectrum_addition(loaded_response):
+
+    rsp = loaded_response
     ebounds = ChannelSet.from_instrument_response(rsp)
 
     obs_spectrum_1 = BinnedSpectrumWithDispersion(counts=np.ones(len(ebounds)),count_errors=np.ones(len(ebounds)),exposure=1, response=rsp, is_poisson=False)
@@ -173,8 +192,9 @@ def test_dispersion_spectrum_addition():
     spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,lambda x,y:x.add_inverse_variance_weighted(y),addition_proof_weighted)
 
 
-def test_dispersion_spectrum_clone():
-    rsp = OGIPResponse(os.path.join(__example_dir, 'bn090217206_n6_weightedrsp.rsp'))
+def test_dispersion_spectrum_clone(loaded_response):
+
+    rsp = loaded_response
 
     obs_spectrum = BinnedSpectrumWithDispersion(counts=np.ones(128), exposure=1, response=rsp, is_poisson=True)
 

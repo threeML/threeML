@@ -10,8 +10,6 @@ from threeML.io.calculate_flux import _setup_analysis_dictionaries, _collect_sum
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 
 
-
-
 def plot_point_source_spectra(*analysis_results, **kwargs):
     """
 
@@ -47,7 +45,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
     _defaults = {'fit_cmap': threeML_config['model plot']['point source plot']['fit cmap'],
                  'contour_cmap': threeML_config['model plot']['point source plot']['contour cmap'],
-                 'contour_colors' : None,
+                 'contour_colors': None,
                  'fit_colors': None,
                  'confidence_level': 0.68,
                  'equal_tailed': True,
@@ -67,39 +65,29 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                  'show_legend': True,
                  'legend_kwargs': threeML_config['model plot']['point source plot']['legend style'],
                  'subplot': None,
-                 'xscale':'log',
-                 'yscale':'log'
+                 'xscale': 'log',
+                 'yscale': 'log'
 
                  }
-
-
 
     for key, value in kwargs.iteritems():
 
         if key in _defaults:
-
             _defaults[key] = value
 
     if isinstance(_defaults['ene_min'], u.Quantity):
-
         assert isinstance(_defaults['ene_max'], u.Quantity), 'both energy arguments must be Quantities'
 
     if isinstance(_defaults['ene_max'], u.Quantity):
-
         assert isinstance(_defaults['ene_min'], u.Quantity), 'both energy arguments must be Quantities'
 
     if isinstance(_defaults['ene_max'], u.Quantity):
 
-
-        energy_range = np.linspace(_defaults['ene_min'], _defaults['ene_max'],_defaults['num_ene']) # type: u.Quantity
+        energy_range = np.linspace(_defaults['ene_min'], _defaults['ene_max'], _defaults['num_ene'])  # type: u.Quantity
 
         _defaults['energy_unit'] = energy_range.unit
 
-
         if _defaults['xscale'] == 'log':
-
-
-
             energy_range = np.logspace(np.log10(energy_range.min().value),
                                        np.log10(energy_range.max().value),
                                        _defaults['num_ene']) * energy_range.unit
@@ -109,8 +97,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
         energy_range = np.logspace(np.log10(_defaults['ene_min']),
                                    np.log10(_defaults['ene_max']),
                                    _defaults['num_ene']) * u.Unit(_defaults['energy_unit'])
-
-
 
     mle_analyses, bayesian_analyses, num_sources_to_plot, duplicate_keys = _setup_analysis_dictionaries(
         analysis_results,
@@ -127,37 +113,33 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
     # we are now ready to plot.
     # all calculations have been made.
 
-
-
     # if we are not going to sum sources
 
     if not _defaults['sum_sources']:
 
         if _defaults['fit_colors'] is None:
 
-            color_fit = cmap_intervals(num_sources_to_plot+1, _defaults['fit_cmap'])
+            color_fit = cmap_intervals(num_sources_to_plot + 1, _defaults['fit_cmap'])
 
 
         else:
 
             # duck typing
-            if isinstance(_defaults['fit_colors'],str):
+            if isinstance(_defaults['fit_colors'], str):
 
-                color_fit = [_defaults['fit_colors']]*num_sources_to_plot
+                color_fit = [_defaults['fit_colors']] * num_sources_to_plot
 
-            elif isinstance(_defaults['fit_colors'],list):
+            elif isinstance(_defaults['fit_colors'], list):
 
-                assert len(_defaults['fit_colors']) == num_sources_to_plot,\
-                    'list of colors (%d) must be the same length as sources ot plot (%s)'%(len(_defaults['fit_colors']),num_sources_to_plot)
+                assert len(_defaults['fit_colors']) == num_sources_to_plot, \
+                    'list of colors (%d) must be the same length as sources ot plot (%s)' % (
+                    len(_defaults['fit_colors']), num_sources_to_plot)
 
                 color_fit = _defaults['fit_colors']
 
-
-
         if _defaults['contour_colors'] is None:
 
-
-            color_contour = cmap_intervals(num_sources_to_plot+1, _defaults['contour_cmap'])
+            color_contour = cmap_intervals(num_sources_to_plot + 1, _defaults['contour_cmap'])
 
         else:
 
@@ -170,7 +152,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                 assert len(_defaults['contour_colors']) == num_sources_to_plot, \
                     'list of colors (%d) must be the same length as sources ot plot (%s)' % (
-                    len(_defaults['contour_colors']), num_sources_to_plot)
+                        len(_defaults['contour_colors']), num_sources_to_plot)
 
                 color_contour = _defaults['fit_colors']
 
@@ -192,8 +174,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
         for key in mle_analyses.keys():
 
-
-
             # we won't assume to plot the total until the end
 
             plot_total = False
@@ -207,8 +187,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                     plot_total = True
 
                 for component in mle_analyses[key]['components'].keys():
-
-
 
                     positive_error = None
                     negative_error = None
@@ -224,7 +202,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                         best_fit = mle_analyses[key]['components'][component].median
 
                     if _defaults['show_contours']:
-
                         positive_error = mle_analyses[key]['components'][component].upper_error
                         negative_error = mle_analyses[key]['components'][component].lower_error
 
@@ -241,7 +218,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                     if key in duplicate_keys:
                         label = "%s: MLE" % label
 
-
                     if mle_analyses[key]['components'][component].is_dimensionless:
 
                         plotter.add_dimensionless_model(energy_range=energy_range,
@@ -255,15 +231,12 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                     else:
 
                         plotter.add_model(energy_range=energy_range,
-                                                        best_fit=best_fit,
-                                                        color=color_fit[color_itr],
-                                                        upper_error=positive_error,
-                                                        lower_error=negative_error,
-                                                        contour_color=color_contour[color_itr],
-                                                        label=label)
-
-
-
+                                          best_fit=best_fit,
+                                          color=color_fit[color_itr],
+                                          upper_error=positive_error,
+                                          lower_error=negative_error,
+                                          contour_color=color_contour[color_itr],
+                                          label=label)
 
                     color_itr += 1
 
@@ -283,7 +256,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                 else:
 
                     best_fit = mle_analyses[key]['fitted point source'].median
-
 
                 if _defaults['show_contours']:
 
@@ -306,8 +278,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                 if key in duplicate_keys:
                     label = "%s: MLE" % label
 
-
-
                 plotter.add_model(energy_range=energy_range,
                                   best_fit=best_fit,
                                   color=color_fit[color_itr],
@@ -316,20 +286,15 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                                   contour_color=color_contour[color_itr],
                                   label=label)
 
-
-
                 color_itr += 1
 
         # we will do the exact same thing for the bayesian analyses
 
         for key in bayesian_analyses.keys():
 
-
             plot_total = False
 
             if _defaults['use_components']:
-
-
 
                 if (not bayesian_analyses[key]['components'].keys()) or ('total' in _defaults['components_to_use']):
                     plot_total = True
@@ -348,7 +313,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                         best_fit = bayesian_analyses[key]['components'][component].median
 
                     if _defaults['show_contours']:
-
                         positive_error = bayesian_analyses[key]['components'][component].upper_error
                         negative_error = bayesian_analyses[key]['components'][component].lower_error
 
@@ -396,8 +360,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                     best_fit = bayesian_analyses[key]['fitted point source'].median
 
-
-
                 positive_error = None
                 negative_error = None
 
@@ -418,10 +380,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                                   contour_color=color_contour[color_itr],
                                   label=label)
 
-
-
-
-
                 color_itr += 1
 
 
@@ -430,22 +388,19 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
     else:
         # now we sum sources instead
 
-
         # we keep MLE and Bayes apart because it makes no
         # sense to sum them together
 
         total_analysis_mle, component_sum_dict_mle, num_sources_to_plot = _collect_sums_into_dictionaries(mle_analyses,
-                                                                                                          _defaults['use_components'],
-                                                                                                          _defaults['components_to_use'])
-
-
-
+                                                                                                          _defaults[
+                                                                                                              'use_components'],
+                                                                                                          _defaults[
+                                                                                                              'components_to_use'])
 
         total_analysis_bayes, component_sum_dict_bayes, num_sources_to_plot_bayes = _collect_sums_into_dictionaries(
             bayesian_analyses,
             _defaults['use_components'],
             _defaults['components_to_use'])
-
 
         num_sources_to_plot += num_sources_to_plot_bayes
 
@@ -480,12 +435,10 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                     best_fit = summed_analysis.median
 
-
                 positive_error = None
                 negative_error = None
 
                 if _defaults['show_contours']:
-
                     positive_error = summed_analysis.upper_error
 
                     negative_error = summed_analysis.lower_error
@@ -493,8 +446,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                     neg_mask = negative_error <= 0
 
                     # replace with small number
-
-
 
                     negative_error[neg_mask] = min(best_fit) * 0.9
 
@@ -518,14 +469,12 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                                       contour_color=color_contour[color_itr],
                                       label="%s: MLE" % component)
 
-
                 color_itr += 1
 
         if total_analysis_mle:
 
             # we will sum and plot the total
             # analysis
-
 
             summed_analysis = sum(total_analysis_mle)
 
@@ -537,12 +486,10 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                 best_fit = summed_analysis.median
 
-
             positive_error = None
             negative_error = None
 
             if _defaults['show_contours']:
-
                 positive_error = best_fit + summed_analysis.upper_error
 
                 negative_error = best_fit - summed_analysis.lower_error
@@ -553,8 +500,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                 negative_error[neg_mask] = min(best_fit) * 0.9
 
-
-
             plotter.add_model(energy_range=energy_range,
                               best_fit=best_fit,
                               color=color_fit[color_itr],
@@ -562,8 +507,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                               lower_error=negative_error,
                               contour_color=color_contour[color_itr],
                               label="total: MLE")
-
-
 
             color_itr += 1
 
@@ -587,7 +530,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                 negative_error = None
 
                 if _defaults['show_contours']:
-
                     positive_error = summed_analysis.upper_error
 
                     negative_error = summed_analysis.lower_error
@@ -612,15 +554,12 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                                       contour_color=color_contour[color_itr],
                                       label="%s: Bayesian" % component)
 
-
-
                 color_itr += 1
 
         if total_analysis_bayes:
 
             # we will sum and plot the total
             # analysis
-
 
             summed_analysis = sum(total_analysis_bayes)
 
@@ -636,7 +575,6 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
             negative_error = None
 
             if _defaults['show_contours']:
-
                 positive_error = summed_analysis.upper_error
 
                 negative_error = summed_analysis.lower_error
@@ -649,20 +587,15 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                               contour_color=color_contour[color_itr],
                               label="total: Bayesian")
 
-
-
-
-
         color_itr += 1
 
-    return plotter.finalize()
-
+    return plotter.finalize(_defaults)
 
 
 class SpectralContourPlot(object):
 
-
-    def __init__(self,n_total, xscale='log', yscale='log', show_legend=True,plot_kwargs=None,contour_kwargs=None, legend_kwargs=None, emin=None,emax=None, subplot=None):
+    def __init__(self, n_total, xscale='log', yscale='log', show_legend=True, plot_kwargs=None, contour_kwargs=None,
+                 legend_kwargs=None, emin=None, emax=None, subplot=None):
 
         self._n_total = n_total
 
@@ -683,60 +616,49 @@ class SpectralContourPlot(object):
 
             self._fig = self._ax.get_figure()
 
-
         self._ax_right = None
         self._n_plotted = 0
 
         self._xscale = xscale
         self._yscale = yscale
 
+    def add_model(self, energy_range, best_fit, color, upper_error=None, lower_error=None, contour_color=None,
+                  label='model'):
 
-    def add_model(self, energy_range, best_fit, color, upper_error=None, lower_error=None, contour_color=None, label = 'model'):
-
-        self._ax.plot(energy_range, best_fit,color=color,label=label,**self._plot_kwargs)
-
+        self._ax.plot(energy_range, best_fit, color=color, label=label, **self._plot_kwargs)
 
         if (upper_error is not None) and (lower_error is not None):
-
             self._ax.fill_between(energy_range,
-                                lower_error,
-                                upper_error,
-                                facecolor=contour_color,
-                                **self._contour_kwargs)
+                                  lower_error,
+                                  upper_error,
+                                  facecolor=contour_color,
+                                  **self._contour_kwargs)
 
+    def add_dimensionless_model(self, energy_range, best_fit, color, upper_error=None, lower_error=None,
+                                contour_color=None, label='model'):
 
-    def add_dimensionless_model(self, energy_range, best_fit, color, upper_error=None, lower_error=None, contour_color=None, label = 'model'):
-
-        if self._n_total >1:
+        if self._n_total > 1:
 
             if self._ax_right is None:
-
                 self._ax_right = self._ax.twinx()
 
             self._ax_right.plot(energy_range, best_fit, color=color, label=label, **self._plot_kwargs)
 
             if (upper_error is not None) and (lower_error is not None):
                 self._ax_right.fill_between(energy_range,
-                                      lower_error,
-                                      upper_error,
-                                      facecolor=contour_color,
-                                      **self._contour_kwargs)
+                                            lower_error,
+                                            upper_error,
+                                            facecolor=contour_color,
+                                            **self._contour_kwargs)
 
         else:
 
-            self.add_model(energy_range,best_fit,color,upper_error,lower_error,contour_color,label)
+            self.add_model(energy_range, best_fit, color, upper_error, lower_error, contour_color, label)
 
-
-
-
-    def finalize(self):
-
+    def finalize(self, _defaults):
 
         self._ax.set_xscale(self._xscale)
         self._ax.set_yscale(self._yscale)
-
-
-
 
         if self._show_legend:
 
@@ -750,13 +672,18 @@ class SpectralContourPlot(object):
             if self._show_legend:
                 self._ax_right.legend(**self._legend_kwargs)
 
+        self._ax.set_xlim([self._emin, self._emax])
 
-        self._ax.set_xlim(self._emin,self._emax)
+        if isinstance(self._emin, u.Quantity) and self._show_legend:
 
+            # This workaround is needed because of a bug in astropy that would break the plotting of the legend
+            # (see issue #7504 in the Astropy github repo)
+
+            eemin = self._emin.to(self._ax.xaxis.get_units()).value
+            eemax = self._emax.to(self._ax.xaxis.get_units()).value
+
+            self._ax.set_xlim([eemin, eemax])
+
+            self._ax.xaxis.converter = None
 
         return self._fig
-
-
-
-
-

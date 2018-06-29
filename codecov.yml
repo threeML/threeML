@@ -1,8 +1,3 @@
-#
-# This codecov.yml is the default configuration for
-# all repositories on Codecov. You may adjust the settings
-# below in your own codecov.yml in your repository.
-#
 coverage:
   precision: 2
   round: down
@@ -13,7 +8,11 @@ coverage:
     project: true
     patch: true
     changes: false
-
+  ignore:
+    - **/tutorial_material.py
+    - threeML/test/.*
+    - threeML/plugins/experimental/.*
+    - **/__init__.py
 comment:
   layout: "header, diff"
   behavior: default  # update if exists else create new

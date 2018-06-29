@@ -6,6 +6,8 @@ import re
 import math
 import subprocess
 from contextlib import contextmanager
+import signal
+from distutils.spawn import find_executable
 
 
 from threeML.config.config import threeML_config
@@ -27,18 +29,7 @@ try:
 
 except ImportError:
 
-    # Try with the old ipython, which contained the parallel code
-    try:
-
-        from IPython.parallel import Client
-
-    except ImportError:
-
-        has_parallel = False
-
-    else:
-
-        has_parallel = True
+    has_parallel = False
 
 else:
 
@@ -102,71 +93,68 @@ def parallel_computation(profile=None, start_cluster=True):
 
         # Get the command line together
 
-        cmd_line = "ipcluster start"
+        # First find out path of ipcluster
+        ipcluster_path = find_executable("ipcluster")
+
+        cmd_line = [ipcluster_path, "start"]
 
         if profile is not None:
-            cmd_line += " --profile=%s" % profile
 
-        print("We will start the ipyparallel cluster with this command line:")
-        print(cmd_line)
+            cmd_line.append(" --profile=%s" % profile)
 
-    else:
+        # Start process asynchronously with Popen, suppressing all output
+        print("Starting ipyparallel cluster with this command line:")
+        print(" ".join(cmd_line))
 
-        cmd_line = None
+        ipycluster_process = subprocess.Popen(cmd_line)
 
-    try:
+        rc = Client()
 
-        if start_cluster:
+        # Wait for the engines to become available
 
-            # Start process asynchronously with Popen, suppressing all output
+        while True:
 
-            ipycluster_process = subprocess.Popen(cmd_line, shell=True, stdout=DEVNULL, stderr=subprocess.STDOUT)
+            try:
 
-            rc = Client()
+                view = rc[:]
 
-            # Wait for the engines to become available
+            except:
 
-            while True:
+                time.sleep(0.5)
 
-                try:
+                continue
 
-                    view = rc[:]
+            else:
 
-                except:
+                print("%i engines are active" % (len(view)))
 
-                    time.sleep(0.5)
+                break
 
-                    continue
+        # Do whatever we need to do
+        try:
 
-                else:
+            yield
 
-                    print("%i engines are active" % (len(view)))
+        finally:
 
-                    break
-
-        yield
-
-    finally:
-
-        if start_cluster:
+            # This gets executed in any case, even if there is an exception
 
             print("\nShutting down ipcluster...")
 
-            new_cmd_line = cmd_line.replace("start","stop")
+            ipycluster_process.send_signal(signal.SIGINT)
 
-            subprocess.check_call(new_cmd_line, shell=True)
+            ipycluster_process.wait()
 
-            if ipycluster_process.poll():
+    else:
 
-                ipycluster_process.terminate()
-                ipycluster_process.wait()
+        # Using an already started cluster
 
-        # This gets executed in any case, even if there is an exception
+        yield
 
-        # Revert back
-        threeML_config['parallel']['use-parallel'] = old_state
+    # Revert back
+    threeML_config['parallel']['use-parallel'] = old_state
 
-        threeML_config['parallel']['IPython profile name'] = old_profile
+    threeML_config['parallel']['IPython profile name'] = old_profile
 
 
 def is_parallel_computation_active():
@@ -206,7 +194,7 @@ if has_parallel:
 
             return len(self.direct_view())
 
-        def interactive_map(self, worker, items_to_process, ordered=True):
+        def _interactive_map(self, worker, items_to_process, ordered=True, chunk_size=None):
             """
             Subdivide the work among the active engines, taking care of dividing it among them
 
@@ -214,6 +202,8 @@ if has_parallel:
             :param items_to_process: the items to apply the function to
             :param ordered: whether to keep the order of output (default: True). Using False can be much faster, but
             you need to have a way to re-estabilish the order if you care about it, after the fact.
+            :param chunk_size: determine how many items should an engine process before reporting back. Use None for
+            an automatic choice.
             :return: a AsyncResult object
             """
 
@@ -244,11 +234,16 @@ if has_parallel:
 
                 n_active_engines = n_total_engines
 
-                chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
+                if chunk_size is None:
 
-            return lview.imap(worker, items_to_process, chunksize=chunk_size, ordered=ordered)
+                    chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
 
-        def execute_with_progress_bar(self, worker, items):
+            # We need this to keep the instance alive
+            self._current_amr = lview.imap(worker, items_to_process, chunksize=chunk_size, ordered=ordered)
+
+            return self._current_amr
+
+        def execute_with_progress_bar(self, worker, items, chunk_size=None):
 
             # Let's make a wrapper which will allow us to recover the order
             def wrapper(x):
@@ -259,111 +254,22 @@ if has_parallel:
 
             items_wrapped = [(i, item) for i, item in enumerate(items)]
 
-            amr = self.interactive_map(wrapper, items_wrapped, ordered=False)
-
-            results = []
-
             n_iterations = len(items)
 
             with progress_bar(n_iterations) as p:
 
+                amr = self._interactive_map(wrapper, items_wrapped, ordered=False, chunk_size=chunk_size)
+
+                results = []
+
                 for i, res in enumerate(amr):
+
                     results.append(res)
 
                     p.increase()
 
             # Reorder the list according to the id
             return map(lambda x:x[1], sorted(results, key=lambda x:x[0]))
-
-        @staticmethod
-        def fetch_progress_from_progress_bars(ar):
-
-            while not ar.ready():
-
-                stdouts = ar.stdout
-
-                if not any(stdouts):
-
-                    continue
-
-                percentage_completed_engines = []
-
-                for stdout in ar.stdout:
-
-                    # Default value is 0
-
-                    percentage_completed_engines.append(0)
-
-                    if stdout:
-
-                        idx = stdout.find('[')
-
-                        if idx < 0:
-
-                            continue
-
-                        # Find the progress bar (if any)
-                        tokens = re.findall('(\[[^\r^\)]+[\r\)]|\[.+completed.+\Z)', stdout[idx:][-1000:])
-
-                        if len(tokens) > 0:
-
-                            last_progress_bar = tokens[-1]
-
-                            # Now extract the progress
-                            percentage_completed = re.match('\[[\*\s]+([0-9]*(\.[0-9]+)?)\s?%[\*\s]+',
-                                                            last_progress_bar)
-
-                            if percentage_completed is None:
-
-                                sys.stderr.write("\nCould not understand progress bar from engine: %s" %
-                                                 last_progress_bar)
-
-                            else:
-
-                                percentage_completed_engines[-1] = float(percentage_completed.groups()[0])
-
-                yield percentage_completed_engines
-
-        def wait_watching_progress(self, ar, dt=5.0):
-            """
-            Report progress from the different engines
-
-            :param ar:
-            :param dt:
-            :return:
-            """
-
-            n_engines = self.get_number_of_engines()
-
-            print("Found %s engines" % n_engines)
-
-            try:
-
-                with multiple_progress_bars(iterations=100, n=n_engines) as bars:
-
-                    # We are in the notebook, display a report of all the engines
-
-                    for progress in self.fetch_progress_from_progress_bars(ar):
-
-                        for i in range(n_engines):
-
-                            bars[i].animate(progress[i])
-
-                        time.sleep(dt)
-
-            except CannotGenerateHTMLBar:
-
-                # Fall back to text progress and one bar
-
-                with progress_bar(100) as bar:
-
-                    progress = self.fetch_progress_from_progress_bars(ar)
-
-                    global_progress = sum(progress) / float(n_engines)
-
-                    bar.animate(global_progress)
-
-                    time.sleep(dt)
 
 
 else:
