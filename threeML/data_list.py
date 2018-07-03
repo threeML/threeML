@@ -52,5 +52,3 @@ class DataList(object):
 
         return self._inner_dictionary.values()
 
-
-pass

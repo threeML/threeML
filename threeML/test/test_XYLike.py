@@ -61,8 +61,19 @@ def test_XYLike_chi2():
     res = xy.fit(fitfun)
 
     # Verify that the fit converged where it should have
-    #assert np.allclose(res[0]['value'].values, [0.83005902, 40.20040456, 62.78162993, 5.04082923, 0.27279872])
     assert np.allclose(res[0]['value'].values,[0.82896119, 40.20269202, 62.80359114, 5.04080011, 0.27286713], rtol=0.05)
+
+    # test not setting yerr
+
+    xy = XYLike("test", x, y)
+
+    assert np.all(xy.yerr == np.ones_like(y))
+
+    fitfun = Line() + Gaussian()
+    fitfun.F_2 = 60.0
+    fitfun.mu_2 = 4.5
+
+    res = xy.fit(fitfun)
 
 
 def test_XYLike_poisson():
@@ -147,3 +158,96 @@ def test_XYLike_assign_to_source():
     log_like_after = jl.minus_log_like_profile(*predicted_parameters)
 
     assert log_like_before != log_like_after
+
+
+def test_XYLike_dataframe():
+
+
+    yerr = np.array(gauss_sigma)
+    y = np.array(gauss_signal)
+
+    # chi2 version
+
+    xy = XYLike("test", x, y, yerr)
+
+    df = xy.to_dataframe()
+
+    # read back in dataframe
+
+    new_xy = XYLike.from_dataframe('df', df)
+
+    assert not xy.is_poisson
+
+    # poisson version
+
+    xy = XYLike("test", x, y, poisson_data=True)
+
+    df = xy.to_dataframe()
+
+    # read back in dataframe
+
+    new_xy = XYLike.from_dataframe('df', df, poisson=True)
+
+    assert xy.is_poisson
+
+def test_XYLike_txt():
+
+
+    yerr = np.array(gauss_sigma)
+    y = np.array(gauss_signal)
+
+    # chi2 version
+
+    xy = XYLike("test", x, y, yerr)
+
+    fname = 'test_txt.txt'
+
+    xy.to_txt(fname)
+
+    # read back in txt file
+
+    new_xy = XYLike.from_text_file('txt', fname )
+
+    assert not xy.is_poisson
+
+    # poisson version
+
+    xy = XYLike("test", x, y, poisson_data=True)
+
+    fname = 'test_txt_poisson.txt'
+
+    xy.to_txt(fname)
+
+    # read back in txt file
+
+    new_xy = XYLike.from_text_file('txt', fname)
+
+    assert new_xy.is_poisson
+
+    # Remove files
+    os.remove('test_txt.txt')
+    os.remove('test_txt_poisson.txt')
+
+
+def test_xy_plot():
+    # Get fake data with Gaussian noise
+
+    yerr = np.array(gauss_sigma)
+    y = np.array(gauss_signal)
+
+    # Fit
+
+    xy = XYLike("test", x, y, yerr)
+
+    xy.plot()
+
+    fitfun = Line() + Gaussian()
+    fitfun.F_2 = 60.0
+    fitfun.mu_2 = 4.5
+
+    res = xy.fit(fitfun)
+
+    xy.plot()
+
+
+

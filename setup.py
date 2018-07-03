@@ -8,7 +8,9 @@ import glob
 from setuptools import setup
 
 # Get the version number
-execfile('threeML/version.py')
+with open("threeML/version.py") as f:
+    version_code = compile(f.read(), "threeML/version.py", 'exec')
+    exec(version_code)
 
 # Now a global __version__ is available
 
@@ -59,24 +61,28 @@ setup(
               'threeML/exceptions',
               'threeML/bayesian',
               'threeML/minimizer',
+              'threeML/utils',
+              'threeML/utils/OGIP',
+              'threeML/utils/spectrum',
+              'threeML/utils/photometry',
+              'threeML/utils/time_series',
+              'threeML/utils/data_builders',
+              'threeML/utils/data_builders/fermi',
+              'threeML/utils/data_download',
+              'threeML/utils/data_download/Fermi_LAT',
+              'threeML/utils/data_download/Fermi_GBM',
+              'threeML/utils/fitted_objects',
+              'threeML/utils/statistics',
               'threeML/plugins',
-              'threeML/plugins/OGIP',
-              'threeML/plugins/spectrum',
-              'threeML/plugins/Fermi_LAT',
-              'threeML/plugins/Fermi_GBM',
-              'threeML/plugins/photometry',
               'threeML/classicMLE',
               'threeML/catalogs',
               'threeML/io',
               'threeML/io/plotting',
               'threeML/io/cern_root_utils',
-              'threeML/utils',
-              'threeML/utils/time_series',
-              'threeML/utils/data_builders',
-              'threeML/utils/data_builders/fermi',
-              'threeML/utils/fitted_objects',
               'threeML/parallel',
-              'threeML/config'
+              'threeML/config',
+              'threeML/test',
+              'threeML/plugins/experimental'
               ],
 
     version=__version__,
@@ -116,6 +122,7 @@ setup(
         'scipy >=0.18',
         'emcee',
         'astropy>=1.3.3',
+        'astroquery',
         'matplotlib',
         'uncertainties',
         'pyyaml',
@@ -124,11 +131,20 @@ setup(
         'astromodels>=0.4.0',
         'corner>=1.0.2',
         'pandas',
-        'html2text',
         'requests',
         'speclite',
-        'ipython<6.0'
-    ])
+        'ipython<=5.9'
+    ],
+
+    extras_require={
+            'tests': [
+                'pytest',],
+            'docs': [
+                'sphinx >= 1.4',
+                'sphinx_rtd_theme',
+                'nbsphinx']}
+
+    ) # End of setup()
 
 # Check for optional dependencies
 

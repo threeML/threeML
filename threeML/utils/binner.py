@@ -1,10 +1,10 @@
 import numpy as np
-import warnings
 
-from threeML.utils.stats_tools import Significance
-from threeML.utils.time_interval import TimeIntervalSet
 from threeML.io.progress_bar import progress_bar
 from threeML.utils.bayesian_blocks import bayesian_blocks
+from threeML.utils.statistics.stats_tools import Significance
+from threeML.utils.time_interval import TimeIntervalSet
+
 
 class NotEnoughData(RuntimeError):
     pass

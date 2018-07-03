@@ -1,6 +1,5 @@
 import numdifftools as nd
 import numpy as np
-
 from astromodels import SettingOutOfBounds
 
 
@@ -20,7 +19,13 @@ def _get_wrapper(function, point, minima, maxima):
 
     n_dim = point.shape[0]
 
-    orders_of_magnitude = 10**np.ceil(np.log10(np.abs(point))) # type: np.ndarray
+    # Find order of magnitude of each coordinate. If one of the coordinates is exactly zero we need
+    # to treat it differently
+    idx = (point == 0.0)
+
+    orders_of_magnitude = np.zeros_like(point)
+    orders_of_magnitude[idx] = 1.0
+    orders_of_magnitude[~idx] = 10**np.ceil(np.log10(np.abs(point[~idx]))) # type: np.ndarray
 
     scaled_point = point / orders_of_magnitude
     scaled_minima = minima / orders_of_magnitude
@@ -67,12 +72,18 @@ def _get_wrapper(function, point, minima, maxima):
 
             distance_to_max = np.inf
 
-        # Delta is the minimum between 3% of the value, and 1/2.5 times the minimum
+        # Delta is the minimum between 0.03% of the value, and 1/2.5 times the minimum
         # distance to either boundary. 1/2 of that factor is due to the fact that numdifftools uses
         # twice the delta to compute the differential, and the 0.5 is due to the fact that we don't want
         # to go exactly equal to the boundary
 
-        scaled_deltas[i] = min([0.03 * abs(scaled_point[i]), distance_to_max / 2.5, distance_to_min / 2.5])
+        if scaled_point[i] == 0.0:
+
+            scaled_deltas[i] = min([1e-5, distance_to_max / 2.5, distance_to_min / 2.5])
+
+        else:
+
+            scaled_deltas[i] = min([0.003 * abs(scaled_point[i]), distance_to_max / 2.5, distance_to_min / 2.5])
 
     def wrapper(x):
 
@@ -97,19 +108,18 @@ def get_jacobian(function, point, minima, maxima):
 
     wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(function, point, minima, maxima)
 
-    # Compute the Hessian matrix at best_fit_values
-
-    jacobian_vector = nd.Jacobian(wrapper, scaled_deltas)(scaled_point)
+    # Compute the Jacobian matrix at best_fit_values
+    jacobian_vector = nd.Jacobian(wrapper, scaled_deltas, method='central')(scaled_point)
 
     # Transform it to numpy matrix
 
     jacobian_vector = np.array(jacobian_vector)
 
-    # Now correct back the Hessian for the scales
+    # Now correct back the Jacobian for the scales
 
     jacobian_vector /= orders_of_magnitude
 
-    return jacobian_vector
+    return jacobian_vector[0]
 
 
 def get_hessian(function, point, minima, maxima):

@@ -1,19 +1,17 @@
-from threeML.plugin_prototype import PluginPrototype
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 import copy
 
-from threeML.plugin_prototype import PluginPrototype
-
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from astromodels import Model, PointSource
 
-from threeML.plugins.OGIP.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.plugins.OGIP.likelihood_functions import half_chi2
+from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
-
+from threeML.plugin_prototype import PluginPrototype
+from threeML.utils.statistics.likelihood_functions import half_chi2
+from threeML.utils.statistics.likelihood_functions import poisson_log_likelihood_ideal_bkg
+from threeML.exceptions.custom_exceptions import custom_warnings
 __instrument_name = "n.a."
 
 
@@ -125,7 +123,9 @@ class XYLike(PluginPrototype):
 
                 # This is a dataframe generate with the to_dataframe method, which uses -99 to indicate that the
                 # data are Poisson
-                return cls(name, x=x, y=y, poisson=True)
+
+
+                return cls(name, x=x, y=y, poisson_data=True)
 
             else:
 
@@ -135,7 +135,7 @@ class XYLike(PluginPrototype):
 
         else:
 
-            return cls(name, x=x, y=y, poisson=True)
+            return cls(name, x=x, y=y, poisson_data=True)
 
     @classmethod
     def from_text_file(cls, name, filename):
@@ -173,7 +173,7 @@ class XYLike(PluginPrototype):
             # are Poisson distributed. We use instead a value of -99 for the error, to indicate that the data
             # are Poisson
 
-            yerr_series = pd.Series.from_array(np.zeros_like(self.x) * (-99), name='yerr')
+            yerr_series = pd.Series.from_array(np.ones_like(self.x) * (-99), name='yerr')
 
         else:
 
@@ -403,7 +403,7 @@ class XYLike(PluginPrototype):
 
         if self._likelihood_model is not None:
 
-            flux = self._likelihood_model.get_total_flux(self.x)
+            flux = self._get_total_expectation()
 
             sub.plot(self.x, flux, '--', label='model')
 

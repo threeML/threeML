@@ -1,8 +1,6 @@
-import pytest
-
 from threeML import *
-from threeML.utils.stats_tools import PoissonResiduals, Significance
 from threeML.utils.cartesian import cartesian
+from threeML.utils.statistics.stats_tools import PoissonResiduals, Significance
 
 
 def test_step_generator_setup():
@@ -26,15 +24,12 @@ def test_step_generator_setup():
 
 def test_poisson_classes():
 
-
     net = 100
     Noff = 1000
     Non = Noff + net
     alpha = 1
 
     expected = alpha * Noff
-
-
 
     pr = PoissonResiduals(Non=Non,Noff=Noff,alpha=alpha)
 

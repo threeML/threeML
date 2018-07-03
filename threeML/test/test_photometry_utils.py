@@ -1,12 +1,46 @@
 import pytest
+import speclite.filters as spec_filters
 from astromodels import *
+from threeML.utils.photometry.filter_set import FilterSet, NotASpeclikeFilter
+
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
 from threeML.io.plotting.post_process_data_plots import display_photometry_model_magnitudes
-from threeML.plugins.photometry.filter_set import FilterSet, NotASpeclikeFilter
-from threeML.plugins.photometry.filter_library import threeML_filter_library
-import speclite.filters as spec_filters
 from threeML.plugins.PhotometryLike import PhotometryLike
+from threeML.utils.photometry.filter_library import threeML_filter_library
+
+
+def get_plugin():
+
+
+    grond = PhotometryLike('GROND',
+                           filters=threeML_filter_library.ESO.GROND,
+                           g=(19.92, .1),
+                           r=(19.75, .1),
+                           i=(19.65, .1),
+                           z=(19.56, .1),
+                           J=(19.38, .1),
+                           H=(19.22, .1),
+                           K=(19.07, .1))
+
+    return grond
+
+
+def get_model_and_datalist():
+
+    grond = get_plugin()
+
+    spec = Powerlaw()  # * XS_zdust() * XS_zdust()
+
+    datalist = DataList(grond)
+
+    model = Model(PointSource('grb', 0, 0, spectral_shape=spec))
+
+    return model, datalist
+
+
+
+
 
 def test_filter_set():
 
@@ -24,7 +58,8 @@ def test_filter_set():
 
 
 
-def test_photo_plugin():
+
+def test_constructor():
 
 
     grond = PhotometryLike('GROND',
@@ -37,24 +72,47 @@ def test_photo_plugin():
                            H=(19.22, .1),
                            K=(19.07, .1))
 
+    assert not grond.is_poisson
+
+
+
     grond.display_filters()
 
-    spec = Powerlaw()  # * XS_zdust() * XS_zdust()
 
-    data_list = DataList(grond)
 
-    model = Model(PointSource('grb', 0, 0, spectral_shape=spec))
 
-    jl = JointLikelihood(model, data_list)
 
-    spec.piv = 1E0
-    #spec.K.min_value = 0.
 
-    #jl.set_minimizer('ROOT')
+def test_fit():
 
-    _ = jl.fit()
+    model, datalist= get_model_and_datalist()
+
+    jl = JointLikelihood(model, datalist)
+
+    jl.fit()
 
     _ = display_photometry_model_magnitudes(jl)
+
+
+# def test_filter_selection():
+#
+#     pi = get_plugin()
+#
+#     n_filters_original = sum(pi._mask)
+#
+#     original_fnames = pi._filter_set.filter_names
+#
+#     pi.set_inactive_filters(*original_fnames)
+#
+#     assert sum(pi._mask) == 0
+#
+#     pi.set_active_filters(*original_fnames)
+#
+#     assert sum(pi._mask) == n_filters_original
+#
+
+
+
 
 
 
