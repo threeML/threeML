@@ -609,7 +609,7 @@ class HAWCLike(PluginPrototype):
               "_theLikeHAWC.GetNumberOfPixels() not available, values for statistical measurements such as AIC or BIC are unreliable. Please update your aerie version." )
             return 1
 
-    def get_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
+    def get_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None, subtract_model_from_model = False ):
 
         """
         Calculates radial profiles of data - background & model.
@@ -621,6 +621,7 @@ class HAWCLike(PluginPrototype):
         for the disk to calculate the gamma/hadron weights. Default: 3.0
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
+        :param subtract_model_from_model: If True and model_to_subtract is not None, subtract model from model too. Default: False.
         
         :return: np arrays with the radii, model profile, data profile, data uncertainty, list of analysis bins used.
         """
@@ -630,7 +631,7 @@ class HAWCLike(PluginPrototype):
 
         #default is to use all active bins
         if bin_list is None:
-          bin_list = self._bin_list
+            bin_list = self._bin_list
                 
         #Need to make sure we don't try to use bins that we don't have data etc. for.
         good_bins = [bin in bin_list for bin in self._bin_list]
@@ -664,17 +665,19 @@ class HAWCLike(PluginPrototype):
         counts = signal + bkg
 
         if model_to_subtract is not None:
-          this_model = deepcopy(self._model)
-          self.set_model( model_to_subtract )
-          self._fill_model_cache()
-          self.calc_TS()
-          model_subtract = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
-          temp = model_subtract[1:] - model_subtract[:-1]
-          model_subtract[1:] = temp
-          signal -= model_subtract
-          self.set_model(this_model)
-          self._fill_model_cache()
-          self.calc_TS()
+            this_model = deepcopy(self._model)
+            self.set_model( model_to_subtract )
+            self._fill_model_cache()
+            self.calc_TS()
+            model_subtract = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
+            temp = model_subtract[1:] - model_subtract[:-1]
+            model_subtract[1:] = temp
+            signal -= model_subtract
+            if subtract_model_from_model:
+                model -=  model_subtract
+            self.set_model(this_model)
+            self._fill_model_cache()
+            self.calc_TS()
            
         # weights are calculated as expected number of gamma-rays / number of background counts.
         # here, use max_radius to evaluate the number of gamma-rays/bkg counts.
@@ -703,7 +706,7 @@ class HAWCLike(PluginPrototype):
         
         return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names)
 
-    def plot_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
+    def plot_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None, subtract_model_from_model = False ):
 
         """
         Plots radial profiles of data - background & model.
@@ -715,11 +718,12 @@ class HAWCLike(PluginPrototype):
         to calculate the gamma/hadron weights. Default: 3.0
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
+        :param subtract_model_from_model: If True and model_to_subtract is not None, subtract model from model too. Default: False.
         
         :return: plot of data - background vs model radial profiles.
         """
 
-        radii, excess_model, excess_data, excess_error, list_of_bin_names = self.get_radial_profile( ra, dec, bin_list, max_radius, n_radial_bins, model_to_subtract )
+        radii, excess_model, excess_data, excess_error, list_of_bin_names = self.get_radial_profile( ra, dec, bin_list, max_radius, n_radial_bins, model_to_subtract, subtract_model_from_model )
         
         fig, ax = plt.subplots()
         
@@ -740,11 +744,11 @@ class HAWCLike(PluginPrototype):
         plt.xlabel("Distance from source at (%.2f$^{\circ}$, %.2f$^{\circ}$) [$^{\circ}$]" % ( ra, dec ) ) 
                 
         if len(list_of_bin_names) == 1:
-          title = "Radial profile, bin {0}".format( list_of_bin_names[0] )
+            title = "Radial profile, bin {0}".format( list_of_bin_names[0] )
         else:
-          tmptitle =  "Radial profile, bins   {0}".format( list_of_bin_names )
-          width = 84
-          title = '\n'.join(tmptitle[i:i+width] for i in xrange(0, len(tmptitle), width))
+            tmptitle =  "Radial profile, bins   {0}".format( list_of_bin_names )
+            width = 84
+            title = '\n'.join(tmptitle[i:i+width] for i in xrange(0, len(tmptitle), width))
 
         plt.title(title)
   
@@ -752,9 +756,9 @@ class HAWCLike(PluginPrototype):
         ax.grid(True)
         
         try:
-          plt.tight_layout()
+            plt.tight_layout()
         except:
-          pass
+            pass
 
         return fig
 
