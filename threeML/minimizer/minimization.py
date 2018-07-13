@@ -237,7 +237,7 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros_like(steps1)
 
-        with progress_bar(len(steps1)) as p:
+        with progress_bar(len(steps1), title='Profiling likelihood') as p:
 
             for i, step in enumerate(steps1):
 
@@ -265,7 +265,7 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros((len(steps1), len(steps2)))
 
-        with progress_bar(len(steps1) * len(steps2)) as p:
+        with progress_bar(len(steps1) * len(steps2), title='Profiling likelihood') as p:
 
             for i, step1 in enumerate(steps1):
 
@@ -1021,7 +1021,7 @@ class Minimizer(object):
 
         errors = collections.OrderedDict()
 
-        with progress_bar(2 * len(self.parameters)) as p:
+        with progress_bar(2 * len(self.parameters), title='Computing errors') as p:
 
             for parameter_name in self.parameters:
 
