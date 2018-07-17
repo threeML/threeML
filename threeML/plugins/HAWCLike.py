@@ -438,7 +438,10 @@ class HAWCLike(PluginPrototype):
         :param dec: Declination in degrees of top-hat center.
         :param radius: List of top-hat radii in degrees (one per analysis bin).
         """
-
+        
+        #make sure the model maps are filled correctly.
+        self.calc_TS()
+        
         return self._theLikeHAWC.calcPValue(ra, dec, radius)
 
     def write_map(self, file_name):
@@ -450,6 +453,9 @@ class HAWCLike(PluginPrototype):
         :return: None
         """
 
+        #make sure the model maps are filled correctly.
+        self.calc_TS()
+        
         self._theLikeHAWC.WriteMap(file_name)
 
     def get_nuisance_parameters(self):
@@ -505,6 +511,9 @@ class HAWCLike(PluginPrototype):
         :return: matplotlib-type figure.
         """
 
+        #make sure the model maps are filled correctly.
+        self.calc_TS()
+        
         n_bins = len(self._bin_list)
         bin_index = np.arange(n_bins)
 
@@ -626,9 +635,9 @@ class HAWCLike(PluginPrototype):
         :return: np arrays with the radii, model profile, data profile, data uncertainty, list of analysis bins used.
         """
 
-        self._fill_model_cache()
+        #make sure the model maps are filled correctly.
         self.calc_TS()
-
+        
         #default is to use all active bins
         if bin_list is None:
             bin_list = self._bin_list
@@ -764,14 +773,15 @@ class HAWCLike(PluginPrototype):
 
     def write_model_map(self, fileName, poisson=False):
 
-        # This is to make sure we have computed the sources (otherwise the following method WriteModelMap will fail
-        self._fill_model_cache()
-
+        #make sure the model maps are filled correctly.
+        self.calc_TS()
+        
         self._theLikeHAWC.WriteModelMap(fileName, poisson)
 
     def write_residual_map(self, fileName):
  
-        self._fill_model_cache()
-
+        #make sure the model maps are filled correctly.
+        self.calc_TS()
+        
         self._theLikeHAWC.WriteResidualMap(fileName)
 
