@@ -226,7 +226,7 @@ class XYLike(PluginPrototype):
 
         if self._likelihood_model is not None and source_name is not None:
 
-            assert source_name in self._likelihood_model.sources, "Source %s is not contained in " \
+            assert source_name in self._likelihood_model.point_sources, "Source %s is not a point source in " \
                                                                         "the likelihood model" % source_name
 
         self._source_name = source_name
@@ -271,9 +271,9 @@ class XYLike(PluginPrototype):
         if self._source_name is not None:
 
             # Make sure that the source is in the model
-            assert self._source_name in likelihood_model_instance.sources, \
+            assert self._source_name in likelihood_model_instance.point_sources, \
                                                 "This XYLike plugin refers to the source %s, " \
-                                                "but that source is not in the likelihood model" % (self._source_name)
+                                                "but that source is not a point source in the likelihood model" % (self._source_name)
 
         self._likelihood_model = likelihood_model_instance
 
@@ -302,14 +302,10 @@ class XYLike(PluginPrototype):
             
                 expectation = self._likelihood_model.point_sources[self._source_name](self._x)
 
-            elif self._source_name in self._likelihood_model.extended_sources:
-            
-                expectation = self._likelihood_model.extended_sources[self._source_name].get_total_flux(self._x)
-
             else:
 
                 raise KeyError("This XYLike plugin has been assigned to source %s, "
-                               "which is neither a point soure not an extended source in the current model" % self._source_name)
+                               "which is not a point soure in the current model" % self._source_name)
 
         return expectation
 
