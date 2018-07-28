@@ -85,6 +85,16 @@ class XYLike(PluginPrototype):
 
     @classmethod
     def from_function(cls, name, function, x, yerr, **kwargs):
+        """
+        Generate an XYLike plugin from an astromodels function instance
+        
+        :param name: name of plugin
+        :param function: astromodels function instance
+        :param x: where to simulate
+        :param yerr: y errors or None for Poisson data
+        :param kwargs: kwargs from xylike constructor
+        :return: XYLike plugin
+        """
 
         y = function(x)
 
