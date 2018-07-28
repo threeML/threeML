@@ -84,11 +84,11 @@ class XYLike(PluginPrototype):
         self._source_name = source_name
 
     @classmethod
-    def from_function(cls, name, function, x, yerr):
+    def from_function(cls, name, function, x, yerr, **kwargs):
 
         y = function(x)
 
-        xyl_gen = XYLike("generator", x, y, yerr)
+        xyl_gen = XYLike("generator", x, y, yerr, **kwargs)
 
         pts = PointSource("fake", 0.0, 0.0, function)
 
