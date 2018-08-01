@@ -1,5 +1,6 @@
 import logging
 import numpy as np
+import warnings
 
 log = logging.getLogger(__name__)
 
@@ -134,7 +135,12 @@ class JointLikelihoodSet(object):
 
             # Prepare a joint likelihood and fit it
 
-            jl = JointLikelihood(this_model, this_data)
+            with warnings.catch_warnings():
+
+                warnings.simplefilter("ignore", RuntimeWarning)
+
+                jl = JointLikelihood(this_model, this_data)
+
             this_parameter_frame, this_like_frame = self._fitter(jl)
 
             # Append results
@@ -221,7 +227,7 @@ class JointLikelihoodSet(object):
 
             results = []
 
-            with progress_bar(self._n_iterations) as p:
+            with progress_bar(self._n_iterations, title='Goodness of fit computation') as p:
 
                 for i in range(self._n_iterations):
 

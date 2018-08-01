@@ -34,6 +34,13 @@ def is_within_tolerance(truth, value, relative_tolerance=0.01):
         return False
 
 
+def is_null_within_tolerance(value, absolute_tolerance):
+    if abs(value) <= absolute_tolerance:
+        return True
+    else:
+        return False
+
+
 _maptree_name = "maptree_256.root"
 _response_name = "detector_response.root"
 
@@ -188,13 +195,13 @@ def test_hawc_point_source_fit(hawc_point_source_fitted_joint_like):
     # Check that we have converged to the right solution
     # (the true value of course are not exactly the value simulated,
     # they are just the point where the fit should converge)
-    assert is_within_tolerance(3.07920784548e-20,
+    assert is_within_tolerance(3.3246428894535895e-20,
                                parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.K'])
     assert is_within_tolerance(-2.33736923856,
                                parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.index'])
-    assert is_within_tolerance(41889862104.0, parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.xc'])
+    assert is_within_tolerance(37478522636.504425, parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.xc'])
 
-    assert is_within_tolerance(55979.423676, like['-log(likelihood)']['HAWC'])
+    assert is_within_tolerance(55979.424031, like['-log(likelihood)']['HAWC'])
 
     # Print up the TS, significance, and fit parameters, and then plot stuff
     print("\nTest statistic:")
@@ -214,7 +221,7 @@ def test_hawc_point_source_fit(hawc_point_source_fitted_joint_like):
 
     print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
-    assert is_within_tolerance(3.00657105936e-11, diff_flux_TeV.value)
+    assert is_within_tolerance(3.2371079347638675e-11, diff_flux_TeV.value)
 
     spectrum.display()
 
@@ -294,12 +301,12 @@ def test_hawc_extended_source_fit():
     # Check that we have converged to the right solution
     # (the true value of course are not exactly the value simulated,
     # they are just the point where the fit should converge)
-    assert is_within_tolerance(4.64056469931e-20, parameter_frame['value']['ExtSource.spectrum.main.Cutoff_powerlaw.K'])
+    assert is_within_tolerance(4.7805737823025172e-20, parameter_frame['value']['ExtSource.spectrum.main.Cutoff_powerlaw.K'])
     assert is_within_tolerance(-2.44931279819,
                                parameter_frame['value']['ExtSource.spectrum.main.Cutoff_powerlaw.index'])
-    assert is_within_tolerance(1.45222982526, parameter_frame['value']['ExtSource.Disk_on_sphere.radius'])
+    assert is_within_tolerance(1.4273457159139373, parameter_frame['value']['ExtSource.Disk_on_sphere.radius'])
 
-    assert is_within_tolerance(186389.106099, like['-log(likelihood)']['HAWC'])
+    assert is_within_tolerance(186389.581117, like['-log(likelihood)']['HAWC'])
 
     # Print up the TS, significance, and fit parameters, and then plot stuff
     print("\nTest statistic:")
@@ -319,7 +326,7 @@ def test_hawc_extended_source_fit():
 
     print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
-    assert is_within_tolerance(4.53214528088e-11, diff_flux_TeV.value)
+    assert is_within_tolerance(4.66888328668e-11, diff_flux_TeV.value)
 
     spectrum.display()
     shape.display()
@@ -371,16 +378,16 @@ def test_radial_profile(hawc_point_source_fitted_joint_like):
     lm = jl.likelihood_model
 
     correct_radii = [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9]
-    correct_model = [1.00635816e+07, 3.77671396e+06, 6.52140500e+05, 1.39108253e+05, 4.95474715e+04, 2.14023029e+04,
-                     1.06772849e+04, 5.25318866e+03, 2.33563298e+03, 9.49504012e+02]
-    correct_data = [9.85388626e+06, 3.86417068e+06, 6.72710742e+05, 1.39626894e+05, 4.97488619e+04, 3.89451456e+04,
-                    -5.81909772e+04, 1.26997077e+04, 4.58937031e+03, -1.88383873e+04]
-    correct_error = [236050.10257665, 81412.05436244, 40652.3404534, 30430.46607895, 25915.97033859, 24532.79588011,
-                     23840.33882012, 21953.01507234, 19910.52807621, 17519.43963043]
+    correct_model = [1.006176e+07, 3.775266e+06, 6.518357e+05, 1.390542e+05, 4.952657e+04, 2.139160e+04,
+                     1.067152e+04, 5.250257e+03, 2.334314e+03, 9.489685e+02]
+    correct_data = [9.851449e+06, 3.862865e+06, 6.724352e+05, 1.395860e+05, 4.972864e+04, 3.894414e+04,
+                    -5.817591e+04, 1.270122e+04, 4.575470e+03, -1.882920e+04]
+    correct_error = [2.360076e+05, 8.138953e+04, 4.063915e+04, 3.042109e+04, 2.590773e+04, 2.452525e+04,
+                     2.383261e+04, 2.194618e+04, 1.990404e+04, 1.751396e+04, ]
+
     correct_bins = ['4', '5', '6', '7', '8', '9']
 
-    subtracted_data = [-2.09695382e+05, 8.74567227e+04, 2.05702422e+04, 5.18641216e+02, 2.01390472e+02, 1.75428427e+04,
-                       -6.88682621e+04, 7.44651905e+03, 2.25373733e+03, -1.97878914e+04]
+    subtracted_data = [ d-m for m,d in zip(correct_model, correct_data) ]
 
     max_radius = 2.0
     n_bins = 10
@@ -390,6 +397,14 @@ def test_radial_profile(hawc_point_source_fitted_joint_like):
                                                                                                source.position.dec.value,
                                                                                                bins_to_use, max_radius,
                                                                                                n_bins)
+
+    # Un-comment the next lines to re-generate the "correct_" values if needed
+    # print 'model, data, error:'
+    # for v in [excess_model, excess_data, excess_error]:
+    #     print '[',
+    #     for vv in v:
+    #         print '%e,' %vv,
+    #     print ']'
 
     assert len(radii) == n_bins
     assert len(excess_model) == n_bins
@@ -404,6 +419,27 @@ def test_radial_profile(hawc_point_source_fitted_joint_like):
         assert is_within_tolerance(excess_data[i], correct_data[i])
         assert is_within_tolerance(excess_error[i], correct_error[i])
 
+
+    # Now again subtracting the model from data and model
+    radii, excess_model, excess_data, excess_error, list_of_bin_names = llh.get_radial_profile(source.position.ra.value,
+                                                                                               source.position.dec.value,
+                                                                                               bins_to_use, max_radius,
+                                                                                               n_bins,
+                                                                                               model_to_subtract=lm,
+                                                                                               subtract_model_from_model=True)
+
+    assert len(radii) == n_bins
+    assert len(excess_model) == n_bins
+    assert len(excess_data) == n_bins
+    assert len(excess_error) == n_bins
+
+    assert list_of_bin_names == correct_bins
+
+    for i in range(0, n_bins):
+        assert is_within_tolerance(radii[i], correct_radii[i])
+        assert is_null_within_tolerance(excess_model[i], 0.01 * correct_model[i])
+        assert is_within_tolerance(excess_data[i], correct_data[i]-correct_model[i])
+        assert is_within_tolerance(excess_error[i], correct_error[i])
 
 
 @skip_if_hawc_is_not_available
@@ -466,7 +502,7 @@ def test_CommonNorm_fit():
 
     parameter_frame, like = jl.fit(compute_covariance=False)
 
-    assert np.isclose(lm.HAWC_ComNorm.value, 1.02567968495, rtol=1e-2)
+    assert np.isclose(lm.HAWC_ComNorm.value, 1.0756519971562115, rtol=1e-2)
 
     
 @skip_if_hawc_is_not_available
