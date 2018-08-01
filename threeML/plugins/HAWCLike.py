@@ -328,6 +328,7 @@ class HAWCLike(PluginPrototype):
 
         self._energies = np.array(self._theLikeHAWC.GetEnergies(False)) * 1000.0
         
+        #make sure the model maps etc. get filled
         self.get_log_like()
 
     def _CommonNormCallback(self, commonNorm_parameter):
