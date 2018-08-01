@@ -84,11 +84,21 @@ class XYLike(PluginPrototype):
         self._source_name = source_name
 
     @classmethod
-    def from_function(cls, name, function, x, yerr):
+    def from_function(cls, name, function, x, yerr, **kwargs):
+        """
+        Generate an XYLike plugin from an astromodels function instance
+        
+        :param name: name of plugin
+        :param function: astromodels function instance
+        :param x: where to simulate
+        :param yerr: y errors or None for Poisson data
+        :param kwargs: kwargs from xylike constructor
+        :return: XYLike plugin
+        """
 
         y = function(x)
 
-        xyl_gen = XYLike("generator", x, y, yerr)
+        xyl_gen = XYLike("generator", x, y, yerr, **kwargs)
 
         pts = PointSource("fake", 0.0, 0.0, function)
 
