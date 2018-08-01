@@ -327,6 +327,9 @@ class HAWCLike(PluginPrototype):
         # (note that the output is in MeV, while we need keV)
 
         self._energies = np.array(self._theLikeHAWC.GetEnergies(False)) * 1000.0
+        
+        #make sure the model maps etc. get filled
+        self.get_log_like()
 
     def _CommonNormCallback(self, commonNorm_parameter):
 
@@ -438,7 +441,7 @@ class HAWCLike(PluginPrototype):
         :param dec: Declination in degrees of top-hat center.
         :param radius: List of top-hat radii in degrees (one per analysis bin).
         """
-
+        
         return self._theLikeHAWC.calcPValue(ra, dec, radius)
 
     def write_map(self, file_name):
@@ -449,7 +452,7 @@ class HAWCLike(PluginPrototype):
         :param file_name: name for the output map
         :return: None
         """
-
+        
         self._theLikeHAWC.WriteMap(file_name)
 
     def get_nuisance_parameters(self):
@@ -504,7 +507,7 @@ class HAWCLike(PluginPrototype):
                       in lower panel (default: False).
         :return: matplotlib-type figure.
         """
-
+        
         n_bins = len(self._bin_list)
         bin_index = np.arange(n_bins)
 
@@ -625,10 +628,7 @@ class HAWCLike(PluginPrototype):
         
         :return: np arrays with the radii, model profile, data profile, data uncertainty, list of analysis bins used.
         """
-
-        self._fill_model_cache()
-        self.calc_TS()
-
+                
         #default is to use all active bins
         if bin_list is None:
             bin_list = self._bin_list
@@ -667,8 +667,6 @@ class HAWCLike(PluginPrototype):
         if model_to_subtract is not None:
             this_model = deepcopy(self._model)
             self.set_model( model_to_subtract )
-            self._fill_model_cache()
-            self.calc_TS()
             model_subtract = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
             temp = model_subtract[1:] - model_subtract[:-1]
             model_subtract[1:] = temp
@@ -676,8 +674,6 @@ class HAWCLike(PluginPrototype):
             if subtract_model_from_model:
                 model -=  model_subtract
             self.set_model(this_model)
-            self._fill_model_cache()
-            self.calc_TS()
            
         # weights are calculated as expected number of gamma-rays / number of background counts.
         # here, use max_radius to evaluate the number of gamma-rays/bkg counts.
@@ -763,15 +759,10 @@ class HAWCLike(PluginPrototype):
         return fig
 
     def write_model_map(self, fileName, poisson=False):
-
-        # This is to make sure we have computed the sources (otherwise the following method WriteModelMap will fail
-        self._fill_model_cache()
-
+        
         self._theLikeHAWC.WriteModelMap(fileName, poisson)
 
     def write_residual_map(self, fileName):
- 
-        self._fill_model_cache()
-
+        
         self._theLikeHAWC.WriteResidualMap(fileName)
 
