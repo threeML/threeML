@@ -24,8 +24,17 @@ from threeML.utils.time_series.time_series import TimeSeries
 
 from threeML.utils.data_builders.fermi.gbm_data import GBMTTEFile, GBMCdata
 from threeML.utils.data_builders.fermi.lat_data import LLEFile
-from threeML.utils.data_builders.polar_data import POLARData
 
+try:
+    
+    from polarpy.polar_data import POLARData
+
+    has_polarpy = True
+
+except(ImportError):
+
+    has_polarpy = False
+    
 
 class BinningMethodError(RuntimeError):
     pass
@@ -932,16 +941,21 @@ class TimeSeriesBuilder(object):
         raise NotImplementedError('Reading from a generic PHAII file is not yet supportedgb')
 
     @classmethod
-    def from_polar(cls, name, polar_root_file, rsp_file,
+    def from_polar(cls, name, polar_hdf5_file,
         restore_background = None,
         trigger_time = 0.,
         poly_order = -1, unbinned = True, verbose = True):
 
+
+        if not has_polarpy:
+
+            raise RuntimeError('The polarpy module is not installed')
+        
         #self._default_unbinned = unbinned
 
         # extract the polar varaibles
 
-        polar_data = POLARData(polar_root_file, trigger_time, rsp_file)
+        polar_data = POLARData(polar_hdf5_file, trigger_time)
 
         # Create the the event list
 
