@@ -37,7 +37,7 @@ def ceildiv(a, b):
 
 
 class EventList(TimeSeries):
-    def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None,native_quality=None,
+    def __init__(self, arrival_times, energies, n_channels, scattering_angles = None, start_time=None, stop_time=None,native_quality=None,
                  first_channel=0, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,
@@ -53,6 +53,7 @@ class EventList(TimeSeries):
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
         :param  energies: list of event energies or pha channels
+        :param scattering_angles: the event_scattering angles if they exist
         :param native_quality: native pha quality flags
         :param mission:
         :param instrument:
@@ -71,6 +72,17 @@ class EventList(TimeSeries):
 
         self._arrival_times = np.asarray(arrival_times)
         self._energies = np.asarray(energies)
+
+        if scattering_angles is not None:
+
+            # this will ensure that any operations done on time will also translate to
+            # the scattering angles
+            
+            assert len(scattering_angles) == len(energies), 'the number of scattering_angles and energies is not equal'
+
+        self._scattering_angles = scattering_angles
+            
+
         self._temporal_binner = None
 
         assert self._arrival_times.shape[0] == self._energies.shape[
@@ -91,6 +103,11 @@ class EventList(TimeSeries):
     def energies(self):
         return self._energies
 
+    @property
+    def scattering_angles(self):
+        return self._scattering_angles
+        
+    
     @property
     def bins(self):
 
@@ -569,7 +586,7 @@ class EventList(TimeSeries):
 
 
 class EventListWithDeadTime(EventList):
-    def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time=None,
+    def __init__(self, arrival_times, energies, n_channels, scattering_angles=None, start_time=None, stop_time=None, dead_time=None,
                  first_channel=0, quality=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         An EventList where the exposure is calculated via and array of dead times per event. Summing these dead times over an
@@ -593,7 +610,7 @@ class EventListWithDeadTime(EventList):
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, quality,first_channel,
+        EventList.__init__(self, arrival_times, energies, n_channels, scattering_angles ,start_time, stop_time, quality,first_channel,
                            ra, dec,
                            mission, instrument, verbose)
 
@@ -723,7 +740,7 @@ class EventListWithDeadTime(EventList):
         self._active_dead_time = total_dead_time
 
 class EventListWithDeadTimeFraction(EventList):
-    def __init__(self, arrival_times, energies, n_channels, start_time=None, stop_time=None, dead_time_fraction=None,
+    def __init__(self, arrival_times, energies, n_channels, scattering_angles=None, start_time=None, stop_time=None, dead_time_fraction=None,
                  first_channel=0, quality=None , ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         An EventList where the exposure is calculated via and array dead time fractions per event .
@@ -741,6 +758,7 @@ class EventListWithDeadTimeFraction(EventList):
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
         :param  energies: list of event energies or pha channels
+        :param  scattering_angles: scattering_angles of the events
         :param  mission: mission name
         :param  instrument: instrument name
         :param  verbose: verbose level
@@ -748,7 +766,7 @@ class EventListWithDeadTimeFraction(EventList):
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time, quality,first_channel,
+        EventList.__init__(self, arrival_times, energies, n_channels, scattering_angles, start_time, stop_time, quality,first_channel,
                            ra, dec,
                            mission, instrument, verbose)
 
@@ -879,7 +897,7 @@ class EventListWithDeadTimeFraction(EventList):
 
 
 class EventListWithLiveTime(EventList):
-    def __init__(self, arrival_times, energies, n_channels, live_time, live_time_starts, live_time_stops,
+    def __init__(self, arrival_times, energies, n_channels, live_time, live_time_starts, live_time_stops, scattering_angles = None,
                  start_time=None, stop_time=None, quality=None,
                  first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
@@ -889,6 +907,7 @@ class EventListWithLiveTime(EventList):
 
         :param  arrival_times: list of event arrival times
         :param  energies: list of event energies or pha channels
+        :param scattering_angles: scattering angles of the events
         :param live_time: array of livetime fractions
         :param live_time_starts: start of livetime fraction bins
         :param live_time_stops:  stop of livetime fraction bins
@@ -905,7 +924,7 @@ class EventListWithLiveTime(EventList):
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, start_time, stop_time,quality ,first_channel,
+        EventList.__init__(self, arrival_times, energies, n_channels, scattering_angles, start_time, stop_time,quality ,first_channel,
                            ra, dec,
                            mission, instrument, verbose)
 

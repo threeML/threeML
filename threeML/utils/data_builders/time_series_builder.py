@@ -957,12 +957,13 @@ class TimeSeriesBuilder(object):
 
         polar_data = POLARData(polar_hdf5_file, trigger_time)
 
+
+        
         # Create the the event list
-
-
 
         event_list = EventListWithDeadTimeFraction(arrival_times=polar_data.time,
                                                    energies = polar_data.pha,
+                                                   scattering_angles = None,
                                                    n_channels = polar_data.n_channels,
                                                    start_time = polar_data.time.min(),
                                                    stop_time = polar_data.time.max(),
@@ -973,6 +974,13 @@ class TimeSeriesBuilder(object):
                                                    instrument='POLAR'
                                                    )
 
+
+
+
+        # here is where in the future we will add the scattering angles
+        # into the event list
+
+        
         # pass to the super class
 
 

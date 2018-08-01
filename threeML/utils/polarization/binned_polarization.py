@@ -77,7 +77,40 @@ class BinnedModulationCurve(BinnedSpectrum):
                                                     tstart=None,
                                                     tstop=None)
 
+    @classmethod
+    def from_time_series(cls, time_series, use_poly=False):
+        """
 
+        :param time_series:
+        :param use_poly:
+        :return:
+        """
+
+
+        pha_information = time_series.get_information_dict(use_poly)
+
+        is_poisson = True
+
+        if use_poly:
+            is_poisson = False
+
+        return cls(instrument=pha_information['instrument'],
+                   mission=pha_information['telescope'],
+                   tstart=pha_information['tstart'],
+                   tstop=pha_information['tstart'] + pha_information['telapse'],
+                   #channel=pha_information['channel'],
+                   counts =pha_information['counts'],
+                   count_errors=pha_information['counts error'],
+                   quality=pha_information['quality'],
+                   #grouping=pha_information['grouping'],
+                   exposure=pha_information['exposure'],
+                   response=response,
+                   scale_factor=1.,
+                   is_poisson=is_poisson)
+
+
+
+        
     def clone(self, new_counts=None, new_count_errors=None, new_exposure=None, new_scale_factor=None):
         """
         make a new spectrum with new counts and errors and all other
