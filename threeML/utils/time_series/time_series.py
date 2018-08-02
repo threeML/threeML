@@ -290,6 +290,18 @@ class TimeSeries(object):
 
         raise RuntimeError("Must be implemented in sub class")
 
+
+    def count_per_channel_over_interval(self, start, stop):
+        """
+
+        :param start:
+        :param stop:
+        :return:
+        """
+
+
+        raise RuntimeError("Must be implemented in sub class")
+
     def set_polynomial_fit_interval(self, *time_intervals, **options):
         """Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
@@ -405,7 +417,7 @@ class TimeSeries(object):
 
             self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 
-    def get_information_dict(self, use_poly=False):
+    def get_information_dict(self, use_poly=False, extract=False):
         """
         Return a PHAContainer that can be read by different builders
 
@@ -414,7 +426,11 @@ class TimeSeries(object):
         if not self._time_selection_exists:
             raise RuntimeError('No time selection exists! Cannot calculate rates')
 
-        if use_poly:
+        if extract:
+
+            pass
+        
+        elif use_poly:
 
             is_poisson = False
 
