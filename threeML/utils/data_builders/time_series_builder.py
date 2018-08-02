@@ -97,6 +97,7 @@ class TimeSeriesBuilder(object):
         self._active_interval = None
         self._observed_spectrum = None
         self._background_spectrum = None
+        self._measured_background_spectrum = None
 
         self._time_series.poly_order = poly_order
 
@@ -111,18 +112,6 @@ class TimeSeriesBuilder(object):
 
                 if verbose:
                     print('Successfully restored fit from %s'%restore_poly_fit)
-
-                # In theory this will automatically get the poly counts if a
-                # time interval already exists
-                #
-                # if self._response is None:
-                #
-                #     self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=True)
-                #
-                # else:
-                #     self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
-                #                                                                               self._response,
-                #                                                                               use_poly=True)
 
 
             else:
@@ -196,12 +185,23 @@ class TimeSeriesBuilder(object):
 
             if self._response is None:
 
-                self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=True)
+                raise NotImplementedError('We have not put this in yet')
+
+                #self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=True)
 
             else:
 
                 self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
-                                                                                          self._response, use_poly=True)
+                                                                                          self._response,
+                                                                                          use_poly=True,
+                                                                                          extract=False
+                                                                                          )
+
+                self._measured_background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
+                                                                                                   self._response,
+                                                                                                   use_poly=False,
+                                                                                                   extract=True,
+                                                                                                   )
 
         self._tstart = self._time_series.time_intervals.absolute_start_time
         self._tstop = self._time_series.time_intervals.absolute_stop_time
@@ -238,16 +238,36 @@ class TimeSeriesBuilder(object):
 
             if self._response is None:
 
-                self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=True)
+                raise NotImplementedError('Not yet implemented for non-dispersed measurements')
+                #
+                # self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series,
+                #                                                             use_poly=True,
+                #                                                             extract = False
+                #
+                #
+                #                                                             )
+                #
+                # self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series,
+                #                                                             use_poly=False,
+                #                                                             extract=True)
 
             else:
 
                 # we do not need to worry about the interval of the response if it is a set. only the ebounds are extracted here
 
-                self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response,
-                                                                                          use_poly=True)
+                self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
+                                                                                          self._response,
+                                                                                          use_poly=True,
+                                                                                          extract=False
+                                                                                          )
 
-    def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False, force_rsp_write=False):
+                self._measured_background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
+                                                                                                   self._response,
+                                                                                                   use_poly=False,
+                                                                                                   extract=True,
+                                                                                                   )
+
+    def write_pha_from_binner(self, file_name, start=None, stop=None, overwrite=False, force_rsp_write=False, extract_measured_background=False):
         """
         Write PHA fits files from the selected bins. If writing from an event list, the
         bins are from create_time_bins. If using a pre-time binned time series, the bins are those
@@ -258,6 +278,7 @@ class TimeSeriesBuilder(object):
         :param stop: optional stop time of the bins
         :param overwrite: if the fits files should be overwritten
         :param force_rsp_write: force the writing of RSPs
+        :param extract_measured_background: Use the selected background rather than a polynomial fit to the background
         :return: None
         """
 
@@ -265,7 +286,8 @@ class TimeSeriesBuilder(object):
 
         ogip_list = [OGIPLike.from_general_dispersion_spectrum(sl) for sl in self.to_spectrumlike(from_bins=True,
                                                                                                   start=start,
-                                                                                                  stop=stop)]
+                                                                                                  stop=stop,
+                                                                                                  extract_measured_background=extract_measured_background)]
 
         # write out the PHAII file
 
@@ -516,7 +538,7 @@ class TimeSeriesBuilder(object):
             print('Created %d bins via %s'% (len(self._time_series.bins), method))
 
 
-    def to_spectrumlike(self, from_bins=False, start=None, stop=None, interval_name='_interval'):
+    def to_spectrumlike(self, from_bins=False, start=None, stop=None, interval_name='_interval', extract_measured_background=False):
         """
         Create plugin(s) from either the current active selection or the time bins.
         If creating from an event list, the
@@ -526,25 +548,41 @@ class TimeSeriesBuilder(object):
         :param from_bins: choose to create plugins from the time bins
         :param start: optional start time of the bins
         :param stop: optional stop time of the bins
-
+        :param extract_measured_background: Use the selected background rather than a polynomial fit to the background
+        :param interval_name: the name of the interval
         :return: SpectrumLike plugin(s)
         """
 
+
+        # we can use either the modeled or the measured background. In theory, all the information
+        # in the background spectrum should propagate to the likelihood
+
+        if extract_measured_background:
+
+            this_background_spectrum = self._measured_background_spectrum
+
+        else:
+
+
+            this_background_spectrum = self._background_spectrum
+
         # this is for a single interval
+
+
         if not from_bins:
 
             assert self._observed_spectrum is not None, 'Must have selected an active time interval'
 
-            if self._background_spectrum is None:
+            if this_background_spectrum is None:
 
-                custom_warnings.warn('No bakckground selection has been made. This plugin will contain no background!')
+                custom_warnings.warn('No background selection has been made. This plugin will contain no background!')
 
 
             if self._response is None:
 
                 return SpectrumLike(name=self._name,
                                     observation=self._observed_spectrum,
-                                    background=self._background_spectrum,
+                                    background=this_background_spectrum,
                                     verbose=self._verbose,
                                     tstart=self._tstart,
                                     tstop=self._tstop)
@@ -553,7 +591,7 @@ class TimeSeriesBuilder(object):
 
                 return DispersionSpectrumLike(name=self._name,
                                               observation=self._observed_spectrum,
-                                              background=self._background_spectrum,
+                                              background=this_background_spectrum,
                                               verbose=self._verbose,
                                               tstart = self._tstart,
                                               tstop = self._tstop
@@ -602,7 +640,7 @@ class TimeSeriesBuilder(object):
 
                     self.set_active_time_interval(interval.to_string())
 
-                    if self._background_spectrum is None:
+                    if this_background_spectrum is None:
                         custom_warnings.warn(
                             'No bakckground selection has been made. This plugin will contain no background!')
 
@@ -612,7 +650,7 @@ class TimeSeriesBuilder(object):
 
                             sl = SpectrumLike(name="%s%s%d" % (self._name, interval_name, i),
                                               observation=self._observed_spectrum,
-                                              background=self._background_spectrum,
+                                              background=this_background_spectrum,
                                               verbose=self._verbose,
                                               tstart=self._tstart,
                                               tstop=self._tstop)
@@ -621,7 +659,7 @@ class TimeSeriesBuilder(object):
 
                             sl = DispersionSpectrumLike(name="%s%s%d" % (self._name, interval_name, i),
                                                         observation=self._observed_spectrum,
-                                                        background=self._background_spectrum,
+                                                        background=this_background_spectrum,
                                                         verbose=self._verbose,
                                                         tstart=self._tstart,
                                                         tstop=self._tstop)
