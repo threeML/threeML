@@ -290,7 +290,7 @@ class TimeSeriesBuilder(object):
 
         # we simply create a bunch of dispersion plugins and convert them to OGIP
 
-        assert isinstance(self._container_type, BinnedSpectrum), 'You are trying to create PHA files from an incompatible data type'
+       
 
         ogip_list = [OGIPLike.from_general_dispersion_spectrum(sl) for sl in self.to_spectrumlike(from_bins=True,
                                                                                                   start=start,
@@ -566,7 +566,7 @@ class TimeSeriesBuilder(object):
         # in the background spectrum should propagate to the likelihood
 
 
-        assert isinstance(self._container_type, BinnedSpectrum), 'You are attempting to create a SpectrumLike plugin from the wrong data type'
+        assert isinstance(self._observed_spectrum, BinnedSpectrum), 'You are attempting to create a SpectrumLike plugin from the wrong data type'
 
         if extract_measured_background:
 
