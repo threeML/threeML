@@ -140,15 +140,15 @@ def uncertainty_formatter(value, low_bound, hi_bound):
 
         if expon == 0:
 
-            return "%.3f %s" % (float(num), repr1)
+            return "%s %s" % (num, repr1)
 
         elif expon == 1:
 
-            return "(%.3f %s) x 10" % (float(num), repr1)
+            return "(%s %s) x 10" % (num, repr1)
 
         else:
 
-            return "(%.3f %s) x 10^%s" % (float(num), repr1, expon)
+            return "(%s %s) x 10^%s" % (num, repr1, expon)
 
 
 def _sign(number):
