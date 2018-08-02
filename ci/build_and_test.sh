@@ -138,8 +138,15 @@ else
             source activate root
 
             conda install anaconda-client
-
-            anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml /Users/travis/miniconda/conda-bld/*/*.tar.bz2 --force
-
+            
+            if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+                
+                anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml /opt/conda/conda-bld/linux-64/*.tar.bz2 --force
+            
+            else
+            
+                anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml /Users/travis/miniconda/conda-bld/osx-64/*.tar.bz2 --force
+            
+            fi
         fi
 fi
