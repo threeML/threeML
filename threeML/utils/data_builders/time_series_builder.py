@@ -20,7 +20,7 @@ from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.binned_spectrum_series import BinnedSpectrumSeries
 from threeML.utils.time_series.event_list import EventListWithDeadTime, EventListWithLiveTime, EventList, EventListWithDeadTimeFraction
 from threeML.utils.time_series.time_series import TimeSeries
-
+from threeML.utils.histogram import Histogram
 
 from threeML.utils.data_builders.fermi.gbm_data import GBMTTEFile, GBMCdata
 from threeML.utils.data_builders.fermi.lat_data import LLEFile
@@ -42,7 +42,7 @@ class BinningMethodError(RuntimeError):
 
 class TimeSeriesBuilder(object):
     def __init__(self, name, time_series, response=None,
-                 poly_order=-1, unbinned=True, verbose=True, restore_poly_fit=None):
+                 poly_order=-1, unbinned=True, verbose=True, restore_poly_fit=None, container_type=BinnedSpectrumWithDispersion):
         """
         Class for handling generic time series data including binned and event list
         series. Depending on the data, this class builds either a  SpectrumLike or
@@ -62,7 +62,12 @@ class TimeSeriesBuilder(object):
 
         assert isinstance(time_series, TimeSeries), "must be a TimeSeries instance"
 
+        assert issubclass(container_type,Histogram), 'must be a subclass of Histogram'
+
+
         self._name = name
+
+        self._container_type = container_type
 
         self._time_series = time_series  # type: TimeSeries
 
@@ -169,14 +174,14 @@ class TimeSeriesBuilder(object):
 
         if self._response is None:
 
-            self._observed_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=False)
+            self._observed_spectrum = self._container_type.from_time_series(self._time_series, use_poly=False)
 
         else:
 
             if self._rsp_is_weighted:
                 self._response = self._weighted_rsp.weight_by_counts(*self._time_series.time_intervals.to_string().split(','))
 
-            self._observed_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series, self._response,
+            self._observed_spectrum = self._container_type.from_time_series(self._time_series, self._response,
                                                                                     use_poly=False)
 
         self._active_interval = intervals
@@ -191,13 +196,13 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
+                self._background_spectrum = self._container_type.from_time_series(self._time_series,
                                                                                           self._response,
                                                                                           use_poly=True,
                                                                                           extract=False
                                                                                           )
 
-                self._measured_background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
+                self._measured_background_spectrum = self._container_type.from_time_series(self._time_series,
                                                                                                    self._response,
                                                                                                    use_poly=False,
                                                                                                    extract=True,
@@ -240,14 +245,14 @@ class TimeSeriesBuilder(object):
 
                 raise NotImplementedError('Not yet implemented for non-dispersed measurements')
                 #
-                # self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series,
+                # self._background_spectrum = self._container_type.from_time_series(self._time_series,
                 #                                                             use_poly=True,
                 #                                                             extract = False
                 #
                 #
                 #                                                             )
                 #
-                # self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series,
+                # self._background_spectrum = self._container_type.from_time_series(self._time_series,
                 #                                                             use_poly=False,
                 #                                                             extract=True)
 
@@ -255,13 +260,13 @@ class TimeSeriesBuilder(object):
 
                 # we do not need to worry about the interval of the response if it is a set. only the ebounds are extracted here
 
-                self._background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
+                self._background_spectrum = self._container_type.from_time_series(self._time_series,
                                                                                           self._response,
                                                                                           use_poly=True,
                                                                                           extract=False
                                                                                           )
 
-                self._measured_background_spectrum = BinnedSpectrumWithDispersion.from_time_series(self._time_series,
+                self._measured_background_spectrum = self._container_type.from_time_series(self._time_series,
                                                                                                    self._response,
                                                                                                    use_poly=False,
                                                                                                    extract=True,
@@ -283,6 +288,8 @@ class TimeSeriesBuilder(object):
         """
 
         # we simply create a bunch of dispersion plugins and convert them to OGIP
+
+        assert isinstance(self._container_type, BinnedSpectrum), 'You are trying to create PHA files from an incompatible data type'
 
         ogip_list = [OGIPLike.from_general_dispersion_spectrum(sl) for sl in self.to_spectrumlike(from_bins=True,
                                                                                                   start=start,
@@ -557,6 +564,9 @@ class TimeSeriesBuilder(object):
         # we can use either the modeled or the measured background. In theory, all the information
         # in the background spectrum should propagate to the likelihood
 
+
+        assert isinstance(self._container_type, BinnedSpectrum), 'You are attempting to create a SpectrumLike plugin from the wrong data type'
+
         if extract_measured_background:
 
             this_background_spectrum = self._measured_background_spectrum
@@ -730,7 +740,7 @@ class TimeSeriesBuilder(object):
         # Create the the event list
 
         event_list = EventListWithDeadTime(arrival_times=gbm_tte_file.arrival_times - gbm_tte_file.trigger_time,
-                                           energies=gbm_tte_file.energies,
+                                           measurement=gbm_tte_file.energies,
                                            n_channels=gbm_tte_file.n_channels,
                                            start_time=gbm_tte_file.tstart - gbm_tte_file.trigger_time,
                                            stop_time=gbm_tte_file.tstop - gbm_tte_file.trigger_time,
@@ -947,7 +957,7 @@ class TimeSeriesBuilder(object):
 
         event_list = EventListWithLiveTime(
             arrival_times=lat_lle_file.arrival_times - lat_lle_file.trigger_time,
-            energies=lat_lle_file.energies,
+            measurement=lat_lle_file.energies,
             n_channels=lat_lle_file.n_channels,
             live_time=lat_lle_file.livetime,
             live_time_starts=lat_lle_file.livetime_start - lat_lle_file.trigger_time,
@@ -979,10 +989,10 @@ class TimeSeriesBuilder(object):
         raise NotImplementedError('Reading from a generic PHAII file is not yet supportedgb')
 
     @classmethod
-    def from_polar(cls, name, polar_hdf5_file,
-        restore_background = None,
-        trigger_time = 0.,
-        poly_order = -1, unbinned = True, verbose = True):
+    def from_polar_spectrum(cls, name, polar_hdf5_file,
+                            restore_background = None,
+                            trigger_time = 0.,
+                            poly_order = -1, unbinned = True, verbose = True):
 
 
         if not has_polarpy:
@@ -1000,8 +1010,7 @@ class TimeSeriesBuilder(object):
         # Create the the event list
 
         event_list = EventListWithDeadTimeFraction(arrival_times=polar_data.time,
-                                                   energies = polar_data.pha,
-                                                   scattering_angles = None,
+                                                   measurement= polar_data.pha,
                                                    n_channels = polar_data.n_channels,
                                                    start_time = polar_data.time.min(),
                                                    stop_time = polar_data.time.max(),
@@ -1014,14 +1023,45 @@ class TimeSeriesBuilder(object):
 
 
 
+        return cls(name,
+                   event_list,
+                   response=polar_data.rsp,
+                   poly_order=poly_order,
+                   unbinned=unbinned,
+                   verbose=verbose,
+                   restore_poly_fit=restore_background)
 
-        # here is where in the future we will add the scattering angles
-        # into the event list
+    @classmethod
+    def from_polar_polarization(cls, name, polar_hdf5_file,
+                            restore_background=None,
+                            trigger_time=0.,
+                            poly_order=-1, unbinned=True, verbose=True):
 
-        
-        # pass to the super class
 
+        raise NotImplementedError('working on this')
 
+        if not has_polarpy:
+            raise RuntimeError('The polarpy module is not installed')
+
+        # self._default_unbinned = unbinned
+
+        # extract the polar varaibles
+
+        polar_data = POLARData(polar_hdf5_file, trigger_time)
+
+        # Create the the event list
+
+        event_list = EventListWithDeadTimeFraction(arrival_times=polar_data.time,
+                                                   measurement=polar_data.scattering_angles,
+                                                   n_channels=polar_data.n_channels,
+                                                   start_time=polar_data.time.min(),
+                                                   stop_time=polar_data.time.max(),
+                                                   dead_time_fraction=polar_data.dead_time_fraction,
+                                                   verbose=verbose,
+                                                   first_channel=1,
+                                                   mission='Tiangong-2',
+                                                   instrument='POLAR'
+                                                   )
 
         return cls(name,
                    event_list,
@@ -1030,3 +1070,4 @@ class TimeSeriesBuilder(object):
                    unbinned=unbinned,
                    verbose=verbose,
                    restore_poly_fit=restore_background)
+
