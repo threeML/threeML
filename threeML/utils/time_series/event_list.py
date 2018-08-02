@@ -37,7 +37,7 @@ def ceildiv(a, b):
 
 
 class EventList(TimeSeries):
-    def __init__(self, arrival_times, energies, n_channels, scattering_angles = None, start_time=None, stop_time=None,native_quality=None,
+    def __init__(self, arrival_times, measurement, n_channels, start_time=None, stop_time=None, native_quality=None,
                  first_channel=0, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,
@@ -52,8 +52,7 @@ class EventList(TimeSeries):
         :param  first_channel: where detchans begin indexing
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
-        :param  energies: list of event energies or pha channels
-        :param scattering_angles: the event_scattering angles if they exist
+        :param  measurement: list of event energies or pha channels
         :param native_quality: native pha quality flags
         :param mission:
         :param instrument:
@@ -71,23 +70,13 @@ class EventList(TimeSeries):
 
 
         self._arrival_times = np.asarray(arrival_times)
-        self._energies = np.asarray(energies)
-
-        if scattering_angles is not None:
-
-            # this will ensure that any operations done on time will also translate to
-            # the scattering angles
-            
-            assert len(scattering_angles) == len(energies), 'the number of scattering_angles and energies is not equal'
-
-        self._scattering_angles = scattering_angles
-            
+        self._measurement = np.asarray(measurement)
 
         self._temporal_binner = None
 
-        assert self._arrival_times.shape[0] == self._energies.shape[
+        assert self._arrival_times.shape[0] == self._measurement.shape[
             0], "Arrival time (%d) and energies (%d) have different shapes" % (
-            self._arrival_times.shape[0], self._energies.shape[0])
+            self._arrival_times.shape[0], self._measurement.shape[0])
 
     @property
     def n_events(self):
@@ -100,12 +89,9 @@ class EventList(TimeSeries):
 
 
     @property
-    def energies(self):
-        return self._energies
+    def measurement(self):
+        return self._measurement
 
-    @property
-    def scattering_angles(self):
-        return self._scattering_angles
         
     
     @property
@@ -139,7 +125,7 @@ class EventList(TimeSeries):
             this_mask = np.zeros_like(self._arrival_times, dtype=np.bool)
 
             for channel in phas:
-                this_mask = np.logical_or(this_mask, self._energies == channel)
+                this_mask = np.logical_or(this_mask, self._measurement == channel)
 
             events = self._arrival_times[this_mask]
 
@@ -356,7 +342,7 @@ class EventList(TimeSeries):
         selection = self._select_events(start,stop)
 
         for i, channel in enumerate(channels):
-            channel_mask = self._energies[selection] == channel
+            channel_mask = self._measurement[selection] == channel
 
             counts_per_channel[i] += channel_mask.sum()
 
@@ -414,7 +400,7 @@ class EventList(TimeSeries):
         # For the channel energies we will need to down select again.
         # We can go ahead and do this to avoid repeated computations
 
-        total_poly_energies = self._energies[poly_mask]
+        total_poly_energies = self._measurement[poly_mask]
 
         # This calculation removes the unselected portion of the light curve
         # so that we are not fitting zero counts. It will be used in the channel calculations
@@ -551,7 +537,7 @@ class EventList(TimeSeries):
         # For the channel energies we will need to down select again.
         # We can go ahead and do this to avoid repeated computations
 
-        total_poly_energies = self._energies[poly_mask]
+        total_poly_energies = self._measurement[poly_mask]
 
         # Now we will find the the best poly order unless the use specified one
         # The total cnts (over channels) is binned to .1 sec intervals
@@ -604,7 +590,7 @@ class EventList(TimeSeries):
 
 
 class EventListWithDeadTime(EventList):
-    def __init__(self, arrival_times, energies, n_channels, scattering_angles=None, start_time=None, stop_time=None, dead_time=None,
+    def __init__(self, arrival_times, measurement, n_channels, start_time=None, stop_time=None, dead_time=None,
                  first_channel=0, quality=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         An EventList where the exposure is calculated via and array of dead times per event. Summing these dead times over an
@@ -620,7 +606,7 @@ class EventListWithDeadTime(EventList):
         :param  quality: native pha quality flags
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
-        :param  energies: list of event energies or pha channels
+        :param  measurement: list of event energies or pha channels
         :param  mission: mission name
         :param  instrument: instrument name
         :param  verbose: verbose level
@@ -628,9 +614,9 @@ class EventListWithDeadTime(EventList):
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, scattering_angles ,start_time, stop_time, quality,first_channel,
-                           ra, dec,
-                           mission, instrument, verbose)
+        super(EventListWithDeadTime, self).__init__(arrival_times, measurement, n_channels, start_time, stop_time, quality, first_channel,
+                                                    ra, dec,
+                                                    mission, instrument, verbose)
 
         if dead_time is not None:
 
@@ -703,7 +689,7 @@ class EventListWithDeadTime(EventList):
 
         for chan in range(self._first_channel, self._n_channels + self._first_channel):
 
-            channel_mask = self._energies == chan
+            channel_mask = self._measurement == chan
             counts_mask = np.logical_and(channel_mask, time_mask)
             total_counts = len(self._arrival_times[counts_mask])
 
@@ -758,8 +744,8 @@ class EventListWithDeadTime(EventList):
         self._active_dead_time = total_dead_time
 
 class EventListWithDeadTimeFraction(EventList):
-    def __init__(self, arrival_times, energies, n_channels, scattering_angles=None, start_time=None, stop_time=None, dead_time_fraction=None,
-                 first_channel=0, quality=None , ra=None, dec=None, mission=None, instrument=None, verbose=True):
+    def __init__(self, arrival_times, measurement, n_channels, start_time=None, stop_time=None, dead_time_fraction=None,
+                 first_channel=0, quality=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
         An EventList where the exposure is calculated via and array dead time fractions per event .
         Summing these dead times over an
@@ -775,7 +761,7 @@ class EventListWithDeadTimeFraction(EventList):
         :param  quality: native pha quality flags
         :param  rsp_file: the response file corresponding to these events
         :param  arrival_times: list of event arrival times
-        :param  energies: list of event energies or pha channels
+        :param  measurement: list of event energies or pha channels
         :param  scattering_angles: scattering_angles of the events
         :param  mission: mission name
         :param  instrument: instrument name
@@ -784,9 +770,9 @@ class EventListWithDeadTimeFraction(EventList):
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, scattering_angles, start_time, stop_time, quality,first_channel,
-                           ra, dec,
-                           mission, instrument, verbose)
+        super(EventListWithDeadTimeFraction, self).__init__(arrival_times, measurement, n_channels, start_time, stop_time, quality, first_channel,
+                                                            ra, dec,
+                                                            mission, instrument, verbose)
 
         if dead_time_fraction is not None:
 
@@ -860,7 +846,7 @@ class EventListWithDeadTimeFraction(EventList):
         tmp_counts = []  # Temporary list to hold the total counts per chan
 
         for chan in range(self._first_channel, self._n_channels + self._first_channel):
-            channel_mask = self._energies == chan
+            channel_mask = self._measurement == chan
             counts_mask = np.logical_and(channel_mask, time_mask)
             total_counts = len(self._arrival_times[counts_mask])
 
@@ -915,7 +901,7 @@ class EventListWithDeadTimeFraction(EventList):
 
 
 class EventListWithLiveTime(EventList):
-    def __init__(self, arrival_times, energies, n_channels, live_time, live_time_starts, live_time_stops, scattering_angles = None,
+    def __init__(self, arrival_times, measurement, n_channels, live_time, live_time_starts, live_time_stops,
                  start_time=None, stop_time=None, quality=None,
                  first_channel=0, rsp_file=None, ra=None, dec=None, mission=None, instrument=None, verbose=True):
         """
@@ -924,8 +910,7 @@ class EventListWithLiveTime(EventList):
 
 
         :param  arrival_times: list of event arrival times
-        :param  energies: list of event energies or pha channels
-        :param scattering_angles: scattering angles of the events
+        :param  measurement: list of event energies or pha channels
         :param live_time: array of livetime fractions
         :param live_time_starts: start of livetime fraction bins
         :param live_time_stops:  stop of livetime fraction bins
@@ -942,10 +927,6 @@ class EventListWithLiveTime(EventList):
         :param  dec:
         """
 
-        EventList.__init__(self, arrival_times, energies, n_channels, scattering_angles, start_time, stop_time,quality ,first_channel,
-                           ra, dec,
-                           mission, instrument, verbose)
-
         assert len(live_time) == len(
             live_time_starts), "Live time fraction (%d) and live time start (%d) have different shapes" % (
             len(live_time), len(live_time_starts))
@@ -953,6 +934,13 @@ class EventListWithLiveTime(EventList):
         assert len(live_time) == len(
             live_time_stops), "Live time fraction (%d) and live time stop (%d) have different shapes" % (
             len(live_time), len(live_time_stops))
+
+
+        super(EventListWithLiveTime, self).__init__(arrival_times, measurement, n_channels, start_time, stop_time, quality, first_channel,
+                                                    ra, dec,
+                                                    mission, instrument, verbose)
+
+
 
         self._live_time = np.asarray(live_time)
         self._live_time_starts = np.asarray(live_time_starts)
@@ -1071,7 +1059,7 @@ class EventListWithLiveTime(EventList):
         tmp_counts = []  # Temporary list to hold the total counts per chan
 
         for chan in range(self._first_channel, self._n_channels + self._first_channel):
-            channel_mask = self._energies == chan
+            channel_mask = self._measurement == chan
             counts_mask = np.logical_and(channel_mask, time_mask)
             total_counts = len(self._arrival_times[counts_mask])
 

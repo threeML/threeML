@@ -48,8 +48,7 @@ class BinnedModulationCurve(BinnedSpectrum):
     def __init__(self, counts, exposure, abounds, count_errors=None, sys_errors=None, quality=None, scale_factor=1.,
                  is_poisson=False, mission=None, instrument=None, tstart=None, tstop=None):
         """
-        A general binned histogram of either Poisson or non-Poisson rates. While the input is in counts, 3ML spectra work
-        in rates, so this class uses the exposure to construct the rates from the counts.
+        A binned modulation curve
 
         :param counts: an array of counts
         :param exposure: the exposure for the counts
@@ -63,22 +62,23 @@ class BinnedModulationCurve(BinnedSpectrum):
         :param instrument: the instrument name
         """
 
+        assert np.min(abounds) >= 0 and np.max(abounds) <= 360. , 'The scattering angles have invalid bounds'
 
         super(BinnedModulationCurve, self).__init__(counts,
                                                     exposure,
                                                     abounds,
-                                                    count_errors=None,
-                                                    sys_errors=None,
-                                                    quality=None,
-                                                    scale_factor=1.,
-                                                    is_poisson=False,
-                                                    mission=None,
-                                                    instrument=None,
-                                                    tstart=None,
-                                                    tstop=None)
+                                                    count_errors=count_errors,
+                                                    sys_errors=sys_errors,
+                                                    quality=quality,
+                                                    scale_factor=scale_factor,
+                                                    is_poisson=is_poisson,
+                                                    mission=mission,
+                                                    instrument=instrument,
+                                                    tstart=tstart,
+                                                    tstop=tstop)
 
     @classmethod
-    def from_time_series(cls, time_series, use_poly=False):
+    def from_time_series(cls, time_series, use_poly=False, extract=False):
         """
 
         :param time_series:
@@ -86,8 +86,9 @@ class BinnedModulationCurve(BinnedSpectrum):
         :return:
         """
 
+        assert not (use_poly and extract), 'You cannot use both at the same time'
 
-        pha_information = time_series.get_information_dict(use_poly)
+        pha_information = time_series.get_information_dict(use_poly,extract)
 
         is_poisson = True
 
@@ -98,13 +99,10 @@ class BinnedModulationCurve(BinnedSpectrum):
                    mission=pha_information['telescope'],
                    tstart=pha_information['tstart'],
                    tstop=pha_information['tstart'] + pha_information['telapse'],
-                   #channel=pha_information['channel'],
                    counts =pha_information['counts'],
                    count_errors=pha_information['counts error'],
                    quality=pha_information['quality'],
-                   #grouping=pha_information['grouping'],
                    exposure=pha_information['exposure'],
-                   response=response,
                    scale_factor=1.,
                    is_poisson=is_poisson)
 

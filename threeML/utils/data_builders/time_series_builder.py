@@ -15,6 +15,7 @@ from threeML.utils.OGIP.pha import PHAWrite
 from threeML.utils.OGIP.response import InstrumentResponse, InstrumentResponseSet, OGIPResponse
 
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion
+from threeML.utils.polarization.binned_polarization import BinnedModulationCurve
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.binned_spectrum_series import BinnedSpectrumSeries
@@ -573,7 +574,6 @@ class TimeSeriesBuilder(object):
 
         else:
 
-
             this_background_spectrum = self._background_spectrum
 
         # this is for a single interval
@@ -748,7 +748,8 @@ class TimeSeriesBuilder(object):
                                            first_channel=0,
                                            instrument=gbm_tte_file.det_name,
                                            mission=gbm_tte_file.mission,
-                                           verbose=verbose)
+                                           verbose=verbose,
+                                                                                      )
 
         if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
 
@@ -804,7 +805,9 @@ class TimeSeriesBuilder(object):
                    poly_order=poly_order,
                    unbinned=unbinned,
                    verbose=verbose,
-                   restore_poly_fit=restore_background)
+                   restore_poly_fit=restore_background,
+                   container_type=BinnedSpectrumWithDispersion
+                   )
 
     @classmethod
     def from_gbm_cspec_or_ctime(cls, name, cspec_or_ctime_file, rsp_file, restore_background=None,
@@ -908,7 +911,9 @@ class TimeSeriesBuilder(object):
                    poly_order=poly_order,
                    unbinned=False,
                    verbose=verbose,
-                   restore_poly_fit=restore_background)
+                   restore_poly_fit=restore_background,
+                   container_type=BinnedSpectrumWithDispersion
+                   )
 
     @classmethod
     def from_lat_lle(cls, name, lle_file, ft2_file, rsp_file, restore_background=None,
@@ -981,7 +986,9 @@ class TimeSeriesBuilder(object):
                    poly_order=poly_order,
                    unbinned=unbinned,
                    verbose=verbose,
-                   restore_poly_fit=restore_background)
+                   restore_poly_fit=restore_background,
+                   container_type=BinnedSpectrumWithDispersion
+                   )
 
     @classmethod
     def from_phaII(cls):
@@ -1029,7 +1036,9 @@ class TimeSeriesBuilder(object):
                    poly_order=poly_order,
                    unbinned=unbinned,
                    verbose=verbose,
-                   restore_poly_fit=restore_background)
+                   restore_poly_fit=restore_background,
+                   container_type=BinnedSpectrumWithDispersion
+                   )
 
     @classmethod
     def from_polar_polarization(cls, name, polar_hdf5_file,
@@ -1070,4 +1079,12 @@ class TimeSeriesBuilder(object):
                    unbinned=unbinned,
                    verbose=verbose,
                    restore_poly_fit=restore_background)
+
+    def to_polarlike(self, from_bins=False, start=None, stop=None, interval_name='_interval', extract_measured_background=False):
+
+        assert has_polarpy, 'you must have the polarpy module installed'
+
+        assert isinstance(self._container_type,
+                          BinnedModulationCurve), 'You are attempting to create a SpectrumLike plugin from the wrong data type'
+
 
