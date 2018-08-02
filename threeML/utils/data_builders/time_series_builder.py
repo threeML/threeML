@@ -290,7 +290,7 @@ class TimeSeriesBuilder(object):
 
         # we simply create a bunch of dispersion plugins and convert them to OGIP
 
-       
+
 
         ogip_list = [OGIPLike.from_general_dispersion_spectrum(sl) for sl in self.to_spectrumlike(from_bins=True,
                                                                                                   start=start,
