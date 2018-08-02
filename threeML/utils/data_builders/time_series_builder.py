@@ -534,7 +534,8 @@ class TimeSeriesBuilder(object):
         :param from_bins: choose to create plugins from the time bins
         :param start: optional start time of the bins
         :param stop: optional stop time of the bins
-
+        :param extract_measured_background: Use the selected background rather than a polynomial fit to the background
+        :param interval_name: the name of the interval
         :return: SpectrumLike plugin(s)
         """
 
