@@ -671,10 +671,10 @@ class _AnalysisResults(object):
         return self._get_results_table(error_type, cl).frame
 
 
-    def get_point_source_flux(self, **kwargs):
+    def get_point_source_flux(self, *args, **kwargs):
                               
         custom_warnings.warn("get_point_source_flux() has been replaced by get_flux()")
-        return self.get_flux(**kwargs)
+        return self.get_flux(*args, **kwargs)
 
     def get_flux(self, ene_min, ene_max, sources=(), confidence_level=0.68,
                               flux_unit='erg/(s cm2)', use_components=False, components_to_use=(),
