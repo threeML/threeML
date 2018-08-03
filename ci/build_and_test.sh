@@ -52,9 +52,6 @@ fi
 cd conda-dist/recipes/threeml
 conda build -c conda-forge -c threeml --python=$TRAVIS_PYTHON_VERSION .
 
-# Figure out where is the package
-CONDA_BUILD_PATH=$(conda build . --output -c conda-forge -c threeml --python=2.7 | rev | cut -f2- -d"/" | rev)
-
 # Install it
 conda install --use-local -c threeml -c conda-forge pygmo=2.4 threeml xspec-modelsonly-lite
 
@@ -141,8 +138,15 @@ else
             source activate root
 
             conda install anaconda-client
-
-            anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${CONDA_BUILD_PATH}/threeml*.tar.bz2 --force
-
+            
+            if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+                
+                anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml /opt/conda/conda-bld/linux-64/*.tar.bz2 --force
+            
+            else
+            
+                anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml /Users/travis/miniconda/conda-bld/osx-64/*.tar.bz2 --force
+            
+            fi
         fi
 fi
