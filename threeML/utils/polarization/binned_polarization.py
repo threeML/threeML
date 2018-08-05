@@ -78,7 +78,7 @@ class BinnedModulationCurve(BinnedSpectrum):
                                                     tstop=tstop)
 
     @property
-    def abounds(def):
+    def abounds(self):
         return self._ebounds
 
         
