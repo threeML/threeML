@@ -62,7 +62,7 @@ class BinnedModulationCurve(BinnedSpectrum):
         :param instrument: the instrument name
         """
 
-        assert np.min(abounds) >= 0 and np.max(abounds) <= 360. , 'The scattering angles have invalid bounds'
+#        assert np.min(abounds) >= 0 and np.max(abounds) <= 360. , 'The scattering angles have invalid bounds'
 
         super(BinnedModulationCurve, self).__init__(counts,
                                                     exposure,
