@@ -122,6 +122,7 @@ def test_read_gbm_cspec():
         nai3.set_active_time_interval('0-1')
         nai3.set_background_interval('-200--10', '100-200')
 
+
         speclike = nai3.to_spectrumlike()
 
         assert isinstance(speclike, DispersionSpectrumLike)
