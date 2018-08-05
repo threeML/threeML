@@ -77,6 +77,11 @@ class BinnedModulationCurve(BinnedSpectrum):
                                                     tstart=tstart,
                                                     tstop=tstop)
 
+    @property
+    def abounds(def):
+        return self._ebounds
+
+        
     @classmethod
     def from_time_series(cls, time_series, use_poly=False, extract=False):
         """
