@@ -62,7 +62,7 @@ class BinnedModulationCurve(BinnedSpectrum):
         :param instrument: the instrument name
         """
 
-#        assert np.min(abounds) >= 0 and np.max(abounds) <= 360. , 'The scattering angles have invalid bounds'
+        assert np.min(abounds) >= 0 and np.max(abounds) <= 360. , 'The scattering angles have invalid bounds'
 
         super(BinnedModulationCurve, self).__init__(counts,
                                                     exposure,
@@ -137,14 +137,14 @@ class BinnedModulationCurve(BinnedSpectrum):
             new_scale_factor = self._scale_factor
 
         return BinnedModulationCurve(counts=new_counts,
-                              abounds=ScatteringChannelSet.from_list_of_edges(self.edges),
-                              exposure=new_exposure,
-                              count_errors=new_count_errors,
-                              sys_errors=self._sys_errors,
-                              quality=self._quality,
-                              scale_factor=new_scale_factor,
-                              is_poisson=self._is_poisson,
-                              mission=self._mission,
-                              instrument=self._instrument)
+                                     abounds=self.edges,
+                                     exposure=new_exposure,
+                                     count_errors=new_count_errors,
+                                     sys_errors=self._sys_errors,
+                                     quality=self._quality,
+                                     scale_factor=new_scale_factor,
+                                     is_poisson=self._is_poisson,
+                                     mission=self._mission,
+                                     instrument=self._instrument)
 
 
