@@ -1105,6 +1105,10 @@ class TimeSeriesBuilder(object):
 
             this_background_spectrum = self._background_spectrum
 
+
+        if isinstance(self._response,str):
+            self._response = PolarResponse(self._response)
+        
         if not from_bins:
 
             assert self._observed_spectrum is not None, 'Must have selected an active time interval'
@@ -1144,7 +1148,7 @@ class TimeSeriesBuilder(object):
 
             # now we make one response to save time
 
-            response = PolarResponse(self._response)
+
 
             
             # get the bins from the time series
@@ -1184,7 +1188,7 @@ class TimeSeriesBuilder(object):
                         pl = PolarLike(name="%s%s%d" % (self._name, interval_name, i),
                                        observation=self._observed_spectrum,
                                        background=this_background_spectrum,
-                                       response=response,
+                                       response=self._response,
                                        verbose=self._verbose,
                         #               tstart=self._tstart,
                         #               tstop=self._tstop
