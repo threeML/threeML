@@ -29,7 +29,8 @@ from threeML.utils.data_builders.fermi.lat_data import LLEFile
 try:
     
     from polarpy.polar_data import POLARData
-
+    from polarpy.polarlike import PolarLike
+    from polarpy.polar_response import PolarResponse
     has_polarpy = True
 
 except(ImportError):
@@ -76,7 +77,7 @@ class TimeSeriesBuilder(object):
 
         if response is not None:
             assert isinstance(response, InstrumentResponse) or isinstance(response,
-                                                                          InstrumentResponseSet), 'Response must be an instance of InstrumentResponse'
+                                                                          InstrumentResponseSet) or isinstance(response, str), 'Response must be an instance of InstrumentResponse'
 
         # deal with RSP weighting if need be
 
@@ -191,9 +192,17 @@ class TimeSeriesBuilder(object):
 
             if self._response is None:
 
-                raise NotImplementedError('We have not put this in yet')
 
-                #self._background_spectrum = BinnedSpectrum.from_time_series(self._time_series, use_poly=True)
+
+                self._background_spectrum = self._container_type.from_time_series(self._time_series,
+                                                                                  use_poly=True,
+                                                                                  extract=False
+                )
+
+                self._measured_background_spectrum = self._container_type.from_time_series(self._time_series,
+                                                                                           use_poly=False,
+                                                                                           extract=True,
+                )
 
             else:
 
@@ -244,18 +253,18 @@ class TimeSeriesBuilder(object):
 
             if self._response is None:
 
-                raise NotImplementedError('Not yet implemented for non-dispersed measurements')
-                #
-                # self._background_spectrum = self._container_type.from_time_series(self._time_series,
-                #                                                             use_poly=True,
-                #                                                             extract = False
-                #
-                #
-                #                                                             )
-                #
-                # self._background_spectrum = self._container_type.from_time_series(self._time_series,
-                #                                                             use_poly=False,
-                #                                                             extract=True)
+
+                
+                self._background_spectrum = self._container_type.from_time_series(self._time_series,
+                                                                            use_poly=True,
+                                                                            extract = False
+                
+                
+                                                                            )
+                
+                self._measured_background_spectrum = self._container_type.from_time_series(self._time_series,
+                                                                            use_poly=False,
+                                                                            extract=True)
 
             else:
 
@@ -410,6 +419,7 @@ class TimeSeriesBuilder(object):
                 total_counts.append(self._time_series.get_total_poly_count(start,stop))
 
             return np.array(total_counts)
+
 
 
     def read_bins(self, time_series_builder):
@@ -1010,7 +1020,7 @@ class TimeSeriesBuilder(object):
 
         # extract the polar varaibles
 
-        polar_data = POLARData(polar_hdf5_file, trigger_time)
+        polar_data = POLARData(polar_hdf5_file,polar_hdf5_response=None ,reference_time=trigger_time)
 
 
         
@@ -1041,13 +1051,10 @@ class TimeSeriesBuilder(object):
                    )
 
     @classmethod
-    def from_polar_polarization(cls, name, polar_hdf5_file,
+    def from_polar_polarization(cls, name, polar_hdf5_file,polar_hdf5_response,
                             restore_background=None,
                             trigger_time=0.,
                             poly_order=-1, unbinned=True, verbose=True):
-
-
-        raise NotImplementedError('working on this')
 
         if not has_polarpy:
             raise RuntimeError('The polarpy module is not installed')
@@ -1056,35 +1063,154 @@ class TimeSeriesBuilder(object):
 
         # extract the polar varaibles
 
-        polar_data = POLARData(polar_hdf5_file, trigger_time)
+        polar_data = POLARData(polar_hdf5_file, polar_hdf5_response ,trigger_time)
 
         # Create the the event list
 
-        event_list = EventListWithDeadTimeFraction(arrival_times=polar_data.time,
+        event_list = EventListWithDeadTimeFraction(arrival_times=polar_data.scattering_angle_time,
                                                    measurement=polar_data.scattering_angles,
-                                                   n_channels=polar_data.n_channels,
-                                                   start_time=polar_data.time.min(),
-                                                   stop_time=polar_data.time.max(),
-                                                   dead_time_fraction=polar_data.dead_time_fraction,
+                                                   n_channels=polar_data.n_scattering_bins,
+                                                   start_time=polar_data.scattering_angle_time.min(),
+                                                   stop_time=polar_data.scattering_angle_time.max(),
+                                                   dead_time_fraction=polar_data.scattering_angle_dead_time_fraction,
                                                    verbose=verbose,
                                                    first_channel=1,
                                                    mission='Tiangong-2',
-                                                   instrument='POLAR'
+                                                   instrument='POLAR',
+                                                   edges=polar_data.scattering_edges
                                                    )
 
         return cls(name,
                    event_list,
-                   response=polar_data.rsp,
+                   response=polar_hdf5_response,
                    poly_order=poly_order,
                    unbinned=unbinned,
                    verbose=verbose,
-                   restore_poly_fit=restore_background)
+                   restore_poly_fit=restore_background,
+                   container_type=BinnedModulationCurve )
 
     def to_polarlike(self, from_bins=False, start=None, stop=None, interval_name='_interval', extract_measured_background=False):
 
         assert has_polarpy, 'you must have the polarpy module installed'
 
-        assert isinstance(self._container_type,
-                          BinnedModulationCurve), 'You are attempting to create a SpectrumLike plugin from the wrong data type'
+        assert issubclass(self._container_type, BinnedModulationCurve), 'You are attempting to create a POLARLike plugin from the wrong data type'
 
+
+        
+        if extract_measured_background:
+
+            this_background_spectrum = self._measured_background_spectrum
+
+        else:
+
+            this_background_spectrum = self._background_spectrum
+
+        if not from_bins:
+
+            assert self._observed_spectrum is not None, 'Must have selected an active time interval'
+
+            if this_background_spectrum is None:
+
+                custom_warnings.warn('No background selection has been made. This plugin will contain no background!')
+
+
+            return PolarLike(name=self._name,
+                             observation=self._observed_spectrum,
+                             background=this_background_spectrum,
+                             response=self._response,
+                             verbose=self._verbose,
+            #                 tstart=self._tstart,
+            #                 tstop=self._tstop
+            )
+
+
+
+        else:
+
+            # this is for a set of intervals.
+
+            assert self._time_series.bins is not None, 'This time series does not have any bins!'
+
+            # save the original interval if there is one
+            old_interval = copy.copy(self._active_interval)
+            old_verbose = copy.copy(self._verbose)
+
+            # we will keep it quiet to keep from being annoying
+
+            self._verbose = False
+
+            list_of_polarlikes = []
+
+
+            # now we make one response to save time
+
+            response = PolarResponse(self._response)
+
+            
+            # get the bins from the time series
+            # for event lists, these are from created bins
+            # for binned spectra sets, these are the native bines
+
+
+            these_bins = self._time_series.bins  # type: TimeIntervalSet
+
+            if start is not None:
+                assert stop is not None, 'must specify a start AND a stop time'
+
+            if stop is not None:
+                assert stop is not None, 'must specify a start AND a stop time'
+
+                these_bins = these_bins.containing_interval(start, stop, inner=False)
+
+
+
+           # loop through the intervals and create spec likes
+
+            with progress_bar(len(these_bins), title='Creating plugins') as p:
+
+                for i, interval in enumerate(these_bins):
+
+
+                    self.set_active_time_interval(interval.to_string())
+
+                    if this_background_spectrum is None:
+                        custom_warnings.warn(
+                            'No bakckground selection has been made. This plugin will contain no background!')
+
+                    try:
+
+                       
+
+                        pl = PolarLike(name="%s%s%d" % (self._name, interval_name, i),
+                                       observation=self._observed_spectrum,
+                                       background=this_background_spectrum,
+                                       response=response,
+                                       verbose=self._verbose,
+                        #               tstart=self._tstart,
+                        #               tstop=self._tstop
+                        )
+
+                       
+
+                        list_of_polarlikes.append(pl)
+
+                    except(NegativeBackground):
+
+                        custom_warnings.warn('Something is wrong with interval %s. skipping.' % interval)
+
+                    p.increase()
+
+            # restore the old interval
+
+            if old_interval is not None:
+
+               self.set_active_time_interval(*old_interval)
+
+            else:
+
+               self._active_interval = None
+
+            self._verbose = old_verbose
+
+            return list_of_polarlikes
 

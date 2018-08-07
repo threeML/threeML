@@ -178,7 +178,8 @@ class BinnedSpectrum(Histogram):
 
             ebounds = ChannelSet.from_list_of_edges(ebounds) #type: ChannelSet
 
-
+        self._ebounds = ebounds
+        
         if count_errors is not None:
 
             assert not self._is_poisson, "Read count errors but spectrum marked Poisson"
