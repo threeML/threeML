@@ -663,6 +663,14 @@ class TimeSeriesBuilder(object):
 
                     assert isinstance(self._observed_spectrum, BinnedSpectrum), 'You are attempting to create a SpectrumLike plugin from the wrong data type'
 
+                    if extract_measured_background:
+
+                        this_background_spectrum = self._measured_background_spectrum
+
+                    else:
+
+                        this_background_spectrum = self._background_spectrum
+
                     
                     if this_background_spectrum is None:
                         custom_warnings.warn(
