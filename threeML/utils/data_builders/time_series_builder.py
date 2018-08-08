@@ -1147,6 +1147,7 @@ class TimeSeriesBuilder(object):
 
             assert self._time_series.bins is not None, 'This time series does not have any bins!'
 
+            
             # save the original interval if there is one
             old_interval = copy.copy(self._active_interval)
             old_verbose = copy.copy(self._verbose)
@@ -1189,6 +1190,17 @@ class TimeSeriesBuilder(object):
 
                     self.set_active_time_interval(interval.to_string())
 
+
+                    if extract_measured_background:
+
+                        this_background_spectrum = self._measured_background_spectrum
+
+                    else:
+                        
+                        this_background_spectrum = self._background_spectrum
+
+
+                    
                     if this_background_spectrum is None:
                         custom_warnings.warn(
                             'No bakckground selection has been made. This plugin will contain no background!')
