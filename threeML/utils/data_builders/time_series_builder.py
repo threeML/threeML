@@ -576,7 +576,6 @@ class TimeSeriesBuilder(object):
         # in the background spectrum should propagate to the likelihood
 
 
-        assert isinstance(self._observed_spectrum, BinnedSpectrum), 'You are attempting to create a SpectrumLike plugin from the wrong data type'
 
         if extract_measured_background:
 
@@ -592,6 +591,8 @@ class TimeSeriesBuilder(object):
         if not from_bins:
 
             assert self._observed_spectrum is not None, 'Must have selected an active time interval'
+
+            assert isinstance(self._observed_spectrum, BinnedSpectrum), 'You are attempting to create a SpectrumLike plugin from the wrong data type'
 
             if this_background_spectrum is None:
 
@@ -660,6 +661,9 @@ class TimeSeriesBuilder(object):
 
                     self.set_active_time_interval(interval.to_string())
 
+                    assert isinstance(self._observed_spectrum, BinnedSpectrum), 'You are attempting to create a SpectrumLike plugin from the wrong data type'
+
+                    
                     if this_background_spectrum is None:
                         custom_warnings.warn(
                             'No bakckground selection has been made. This plugin will contain no background!')
