@@ -9,7 +9,7 @@ from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
 from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins import XYLike
+from threeML.plugins.XYLike import XYLike
 from threeML.utils.statistics.likelihood_functions import half_chi2
 from threeML.utils.statistics.likelihood_functions import poisson_log_likelihood_ideal_bkg
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -20,7 +20,7 @@ class UnresolvedExtendedXYLike(XYLike):
 
     def __init__(self, name, x, y, yerr=None, poisson_data=False, quiet=False, source_name=None):
 
-        super(UnresolvedXYLike, self).__init__(name, nuisance_parameters)        
+        super(UnresolvedExtendedXYLike, self).__init__(name, x, y, yerr, poisson_data, quiet, source_name)        
 
     def assign_to_source(self, source_name):
         """
