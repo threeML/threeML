@@ -79,14 +79,6 @@ def test_basic_bayesian_analysis_results(completed_bn090217206_bayesian_analysis
     assert np.allclose(res, expected, rtol=0.1)
 
 
-def test_bayes_corner_plot(completed_bn090217206_bayesian_analysis):
-
-    bayes, samples = completed_bn090217206_bayesian_analysis
-
-    # Only testing that this doesn't crash
-
-    _ = bayes.corner_plot()
-
 
 def test_basic_analsis_multicomp_results(fitted_joint_likelihood_bn090217206_nai_multicomp):
 
@@ -113,12 +105,4 @@ def test_basic_bayesian_analysis_results_multicomp(completed_bn090217206_bayesia
     assert np.allclose(frame['negative_error'].values, expected_negative_errors, rtol=0.1)
     assert np.allclose(frame['positive_error'].values, expected_positive_errors, rtol=0.1)
 
-
-def test_bayes_multicomp_corner_plot(completed_bn090217206_bayesian_analysis_multicomp):
-
-    bayes, samples = completed_bn090217206_bayesian_analysis_multicomp
-
-    # Only testing that this doesn't crash
-
-    fig = bayes.corner_plot()
 
