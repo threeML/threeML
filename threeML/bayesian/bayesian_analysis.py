@@ -462,7 +462,7 @@ class BayesianAnalysis(object):
 
             # now get the log probability
 
-            self._log_probability_values = np.array(map(lambda samples: self.get_posterior(samples), self._raw_samples))
+            self._log_probability_values = self._log_like_values +  np.array([self._log_prior(samples) for samples in self._raw_samples])
 
             self._build_samples_dictionary()
 
