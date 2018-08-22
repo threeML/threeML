@@ -608,7 +608,7 @@ class HAWCLike(PluginPrototype):
             pixels_per_bin =  np.array( self._theLikeHAWC.GetNumberOfPixels() )
             return int(np.sum( pixels_per_bin ))
         except AttributeError:
-            warnings.warn(
+            custom_warnings.warn(
               "_theLikeHAWC.GetNumberOfPixels() not available, values for statistical measurements such as AIC or BIC are unreliable. Please update your aerie version." )
             return 1
 
