@@ -93,6 +93,7 @@ class Quality(object):
 
     @classmethod
     def from_ogip(cls, ogip_quality):
+        ogip_quality = np.atleast_1d(ogip_quality)
         good = ogip_quality == 0
         warn = ogip_quality == 2
         bad = np.logical_and(~good, ~warn)
