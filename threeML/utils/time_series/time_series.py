@@ -745,6 +745,14 @@ class TimeSeries(object):
 
         self._poly_fit_exists = True
 
+        self._poly_exposure = 0.
+        for i, time_interval in enumerate(self._poly_intervals):
+
+            t1 = time_interval.start_time
+            t2 = time_interval.stop_time
+        
+            self._poly_exposure += self.exposure_over_interval(t1,t2)
+        
         if self._time_selection_exists:
             self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 
