@@ -524,7 +524,7 @@ class BinnedSpectrum(Histogram):
         return pd.DataFrame(out_dict)
     
     @classmethod
-    def from_time_series(cls, time_series, use_poly=False, from_model=False):
+    def from_time_series(cls, time_series, use_poly=False, from_model=False, **kwargs):
         """
 
         :param time_series:
@@ -668,7 +668,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         return self._rsp
 
     @classmethod
-    def from_time_series(cls, time_series, response, use_poly=False, extract=False):
+    def from_time_series(cls, time_series, response=None, use_poly=False, extract=False):
         """
 
         :param time_series:

@@ -188,34 +188,23 @@ class TimeSeriesBuilder(object):
 
         self._active_interval = intervals
 
+
+        # re-get the background if there was a time selection
+        
         if self._time_series.poly_fit_exists:
 
-            if self._response is None:
 
+            self._background_spectrum = self._container_type.from_time_series(self._time_series,
+                                                                              response=self._response,
+                                                                              use_poly=True,
+                                                                              extract=False
+            )
 
-                self._background_spectrum = self._container_type.from_time_series(self._time_series,
-                                                                                  use_poly=True,
-                                                                                  extract=False
-                )
-
-                self._measured_background_spectrum = self._container_type.from_time_series(self._time_series,
-                                                                                           use_poly=False,
-                                                                                           extract=True,
-                )
-
-            else:
-
-                self._background_spectrum = self._container_type.from_time_series(self._time_series,
-                                                                                          self._response,
-                                                                                          use_poly=True,
-                                                                                          extract=False
-                                                                                          )
-
-                self._measured_background_spectrum = self._container_type.from_time_series(self._time_series,
-                                                                                           self._response,
-                                                                                           use_poly=False,
-                                                                                           extract=True,
-                )
+            self._measured_background_spectrum = self._container_type.from_time_series(self._time_series,
+                                                                                       response=self._response,
+                                                                                       use_poly=False,
+                                                                                       extract=True,
+            )
 
         self._tstart = self._time_series.time_intervals.absolute_start_time
         self._tstop = self._time_series.time_intervals.absolute_stop_time
