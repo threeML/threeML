@@ -686,9 +686,6 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
             is_poisson = False
 
 
-
-
-
         return cls(instrument=pha_information['instrument'],
                    mission=pha_information['telescope'],
                    tstart=pha_information['tstart'],
