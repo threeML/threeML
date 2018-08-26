@@ -754,7 +754,8 @@ class TimeSeries(object):
 
             self._poly_selected_counts.append(self.count_per_channel_over_interval(t1,t2))
             self._poly_exposure += self.exposure_over_interval(t1,t2)
-        
+
+        self._poly_selected_counts = np.sum(self._poly_selected_counts, axis=0)
         if self._time_selection_exists:
             self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 
