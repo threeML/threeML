@@ -746,11 +746,13 @@ class TimeSeries(object):
         self._poly_fit_exists = True
 
         self._poly_exposure = 0.
+        self._poly_selected_counts = []
         for i, time_interval in enumerate(self._poly_intervals):
 
             t1 = time_interval.start_time
             t2 = time_interval.stop_time
-        
+
+            self._poly_selected_counts.append(self.count_per_channel_over_interval(t1,t2))
             self._poly_exposure += self.exposure_over_interval(t1,t2)
         
         if self._time_selection_exists:
