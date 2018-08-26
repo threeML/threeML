@@ -193,7 +193,6 @@ class TimeSeriesBuilder(object):
             if self._response is None:
 
 
-
                 self._background_spectrum = self._container_type.from_time_series(self._time_series,
                                                                                   use_poly=True,
                                                                                   extract=False
@@ -213,10 +212,10 @@ class TimeSeriesBuilder(object):
                                                                                           )
 
                 self._measured_background_spectrum = self._container_type.from_time_series(self._time_series,
-                                                                                                   self._response,
-                                                                                                   use_poly=False,
-                                                                                                   extract=True,
-                                                                                                   )
+                                                                                           self._response,
+                                                                                           use_poly=False,
+                                                                                           extract=True,
+                )
 
         self._tstart = self._time_series.time_intervals.absolute_start_time
         self._tstop = self._time_series.time_intervals.absolute_stop_time
