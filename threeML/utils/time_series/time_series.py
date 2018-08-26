@@ -745,6 +745,9 @@ class TimeSeries(object):
 
         self._poly_fit_exists = True
 
+
+        # we must go thru and collect the polynomial exposure and counts
+        # so that they be extracted if needed
         self._poly_exposure = 0.
         self._poly_selected_counts = []
         for i, time_interval in enumerate(self._poly_intervals):
