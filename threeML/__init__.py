@@ -1,5 +1,9 @@
 # We import matplotlib first, because we need control on the backend
 # Indeed, if no DISPLAY variable is set, matplotlib 2.0 crashes (at the moment, 05/26/2017)
+import pandas as pd
+
+pd.set_option('max_columns', None)
+
 import os
 import warnings
 
