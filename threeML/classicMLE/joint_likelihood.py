@@ -289,7 +289,7 @@ class JointLikelihood(object):
 
             ml = dataset.inner_fit() * (-1)
 
-            minus_log_likelihood_values[dataset.get_name()] = ml
+            minus_log_likelihood_values[dataset.name] = ml
 
             total += ml
 
@@ -948,7 +948,7 @@ class JointLikelihood(object):
 
         for dataset in self._data_list.values():
 
-            this_name = dataset.get_name()
+            this_name = dataset.name
 
             null_hyp_mlike = null_hyp_mlike_df.loc[this_name, '-log(likelihood)']
             alt_hyp_mlike = alt_hyp_mlike_df.loc[this_name, '-log(likelihood)']
