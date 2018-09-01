@@ -208,9 +208,16 @@ class HAWCLike(PluginPrototype):
                              "will not be effective until you create a new JointLikelihood or Bayesian" +
                              "instance")
 
-    def set_active_measurements(self, minChannel, maxChannel):
+    def set_active_measurements(self, minChannel=None, maxChannel=None, bin_list=None):
     
-        self.set_bin_list(self._min_and_max_to_list(minChannel, maxChannel))
+        if bin_list is not None:
+            assert minChannel is None and maxChannel is None, 'bin_list provided, thus neither minChannel nor ' \
+                'maxChannel should be set'
+            self.set_bin_list(bin_list)
+        else:
+            assert minChannel is not None and maxChannel is not None, 'bin_list not provided, thus both minChannel ' \
+                'and maxChannel should be set'
+            self.set_bin_list(self._min_and_max_to_list(minChannel, maxChannel))
 
     def set_model(self, likelihood_model_instance):
         """

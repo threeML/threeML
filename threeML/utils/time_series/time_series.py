@@ -65,12 +65,9 @@ class TimeSeries(object):
         # we haven't made selections yet
 
         self._time_intervals = None
-
+        self._poly_intervals = None
         self._counts = None
         self._exposure = None
-
-        # polynomial info
-        self._poly_intervals = None
         self._poly_counts = None
         self._poly_count_err = None
         self._poly_selected_counts= None
@@ -78,7 +75,7 @@ class TimeSeries(object):
 
         # ebounds for objects w/o a response
         self._edges  = edges
-        
+
         if native_quality is not None:
             assert len(
                 native_quality) == n_channels, "the native quality has length %d but you specified there were %d channels" % (
@@ -465,7 +462,7 @@ class TimeSeries(object):
 
 
 
-            
+
         if self._native_quality is None:
 
             quality = np.zeros_like(counts, dtype=int)
@@ -487,7 +484,7 @@ class TimeSeries(object):
         container_dict['rate error'] = rate_err
 
         container_dict['edges'] = self._edges
-        
+
         # check to see if we already have a quality object
 
         if isinstance(quality, Quality):
@@ -698,6 +695,7 @@ class TimeSeries(object):
             print("\nSaved fitted background to %s.\n" % filename)
 
     def restore_fit(self, filename):
+
 
         filename_sanitized = sanitize_filename(filename)
 

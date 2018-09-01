@@ -27,7 +27,7 @@ from threeML.utils.data_builders.fermi.gbm_data import GBMTTEFile, GBMCdata
 from threeML.utils.data_builders.fermi.lat_data import LLEFile
 
 try:
-    
+
     from polarpy.polar_data import POLARData
     from polarpy.polarlike import PolarLike
     from polarpy.polar_response import PolarResponse
@@ -36,7 +36,7 @@ try:
 except(ImportError):
 
     has_polarpy = False
-    
+
 
 class BinningMethodError(RuntimeError):
     pass
@@ -190,7 +190,7 @@ class TimeSeriesBuilder(object):
 
 
         # re-get the background if there was a time selection
-        
+
         if self._time_series.poly_fit_exists:
 
 
@@ -242,14 +242,14 @@ class TimeSeriesBuilder(object):
             if self._response is None:
 
 
-                
+
                 self._background_spectrum = self._container_type.from_time_series(self._time_series,
                                                                             use_poly=True,
                                                                             extract = False
-                
-                
+
+
                                                                             )
-                
+
                 self._measured_background_spectrum = self._container_type.from_time_series(self._time_series,
                                                                             use_poly=False,
                                                                             extract=True)
@@ -659,7 +659,7 @@ class TimeSeriesBuilder(object):
 
                         this_background_spectrum = self._background_spectrum
 
-                    
+
                     if this_background_spectrum is None:
                         custom_warnings.warn(
                             'No bakckground selection has been made. This plugin will contain no background!')
@@ -1015,7 +1015,7 @@ class TimeSeriesBuilder(object):
         if not has_polarpy:
 
             raise RuntimeError('The polarpy module is not installed')
-        
+
         #self._default_unbinned = unbinned
 
         # extract the polar varaibles
@@ -1023,7 +1023,7 @@ class TimeSeriesBuilder(object):
         polar_data = POLARData(polar_hdf5_file,polar_hdf5_response=None ,reference_time=trigger_time)
 
 
-        
+
         # Create the the event list
 
         event_list = EventListWithDeadTimeFraction(arrival_times=polar_data.time,
@@ -1096,7 +1096,7 @@ class TimeSeriesBuilder(object):
         assert issubclass(self._container_type, BinnedModulationCurve), 'You are attempting to create a POLARLike plugin from the wrong data type'
 
 
-        
+
         if extract_measured_background:
 
             this_background_spectrum = self._measured_background_spectrum
@@ -1108,7 +1108,7 @@ class TimeSeriesBuilder(object):
 
         if isinstance(self._response,str):
             self._response = PolarResponse(self._response)
-        
+
         if not from_bins:
 
             assert self._observed_spectrum is not None, 'Must have selected an active time interval'
@@ -1135,7 +1135,7 @@ class TimeSeriesBuilder(object):
 
             assert self._time_series.bins is not None, 'This time series does not have any bins!'
 
-            
+
             # save the original interval if there is one
             old_interval = copy.copy(self._active_interval)
             old_verbose = copy.copy(self._verbose)
@@ -1151,7 +1151,7 @@ class TimeSeriesBuilder(object):
 
 
 
-            
+
             # get the bins from the time series
             # for event lists, these are from created bins
             # for binned spectra sets, these are the native bines
@@ -1184,18 +1184,18 @@ class TimeSeriesBuilder(object):
                         this_background_spectrum = self._measured_background_spectrum
 
                     else:
-                        
+
                         this_background_spectrum = self._background_spectrum
 
 
-                    
+
                     if this_background_spectrum is None:
                         custom_warnings.warn(
                             'No bakckground selection has been made. This plugin will contain no background!')
 
                     try:
 
-                       
+
 
                         pl = PolarLike(name="%s%s%d" % (self._name, interval_name, i),
                                        observation=self._observed_spectrum,
@@ -1206,7 +1206,7 @@ class TimeSeriesBuilder(object):
                         #               tstop=self._tstop
                         )
 
-                       
+
 
                         list_of_polarlikes.append(pl)
 
