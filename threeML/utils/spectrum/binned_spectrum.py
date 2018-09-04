@@ -522,7 +522,7 @@ class BinnedSpectrum(Histogram):
         return pd.DataFrame(out_dict)
     
     @classmethod
-    def from_time_series(cls, time_series, use_poly=False):
+    def from_time_series(cls, time_series, use_poly=False, from_model=False):
         """
 
         :param time_series:
@@ -666,7 +666,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         return self._rsp
 
     @classmethod
-    def from_time_series(cls, time_series, response, use_poly=False):
+    def from_time_series(cls, time_series, response, use_poly=False, extract=False):
         """
 
         :param time_series:
@@ -674,13 +674,18 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         :return:
         """
 
+        assert not (use_poly and extract), 'cannot extract background counts and use the poly'
 
-        pha_information = time_series.get_information_dict(use_poly)
+        pha_information = time_series.get_information_dict(use_poly, extract)
 
         is_poisson = True
 
         if use_poly:
             is_poisson = False
+
+
+
+
 
         return cls(instrument=pha_information['instrument'],
                    mission=pha_information['telescope'],

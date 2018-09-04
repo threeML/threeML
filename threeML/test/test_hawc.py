@@ -104,6 +104,23 @@ def hawc_point_source_fitted_joint_like():
 
 
 @skip_if_hawc_is_not_available
+def test_set_active_measurements():
+
+    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
+
+    maptree = os.path.join(data_path, _maptree_name)
+    response = os.path.join(data_path, _response_name)
+
+    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
+
+    llh = HAWCLike("HAWC", maptree, response)
+    # Test one way
+    llh.set_active_measurements(1, 9)
+    # Test the other way
+    llh.set_active_measurements(bin_list=['4','5','6','7','8','9'])
+
+
+@skip_if_hawc_is_not_available
 def test_hawc_fullsky_options():
 
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
