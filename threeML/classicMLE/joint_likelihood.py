@@ -939,7 +939,7 @@ class JointLikelihood(object):
         another_jl = JointLikelihood(model_clone, self._data_list)
 
         # Use the same minimizer as the parent object
-        another_jl.set_minimizer(self.minimizer)
+        another_jl.set_minimizer(self.minimizer_in_use)
 
         # We do not need the covariance matrix, just the likelihood value
         _, null_hyp_mlike_df = another_jl.fit(quiet=True, compute_covariance=False, n_samples=1)
