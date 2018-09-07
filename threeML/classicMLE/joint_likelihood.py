@@ -289,7 +289,7 @@ class JointLikelihood(object):
 
             ml = dataset.inner_fit() * (-1)
 
-            minus_log_likelihood_values[dataset.get_name()] = ml
+            minus_log_likelihood_values[dataset.name] = ml
 
             total += ml
 
@@ -938,6 +938,9 @@ class JointLikelihood(object):
         # Fit
         another_jl = JointLikelihood(model_clone, self._data_list)
 
+        # Use the same minimizer as the parent object
+        another_jl.set_minimizer(self.minimizer_in_use)
+
         # We do not need the covariance matrix, just the likelihood value
         _, null_hyp_mlike_df = another_jl.fit(quiet=True, compute_covariance=False, n_samples=1)
 
@@ -948,7 +951,7 @@ class JointLikelihood(object):
 
         for dataset in self._data_list.values():
 
-            this_name = dataset.get_name()
+            this_name = dataset.name
 
             null_hyp_mlike = null_hyp_mlike_df.loc[this_name, '-log(likelihood)']
             alt_hyp_mlike = alt_hyp_mlike_df.loc[this_name, '-log(likelihood)']

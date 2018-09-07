@@ -2,7 +2,8 @@ import collections
 import numpy as np
 import itertools
 
-from threeML.minimizer.minimization import GlobalMinimizer, get_minimizer
+from threeML.minimizer.minimization import GlobalMinimizer
+from threeML.io.progress_bar import progress_bar
 from astromodels import Parameter
 
 
@@ -119,14 +120,14 @@ class GridMinimizer(GlobalMinimizer):
         # Check that the grid is legal
         if parameter.max_value is not None:
 
-            assert grid.max() <= parameter.max_value, "The maximum value in the grid (%s) is above the maximum " \
+            assert grid.max() < parameter.max_value, "The maximum value in the grid (%s) is above the maximum " \
                                                       "legal value (%s) for parameter %s" %(grid.max(),
                                                                                             parameter.max_value,
                                                                                             parameter.name)
 
         if parameter.min_value is not None:
 
-            assert grid.min() >= parameter.min_value, "The minimum value in the grid (%s) is above the minimum legal " \
+            assert grid.min() > parameter.min_value, "The minimum value in the grid (%s) is above the minimum legal " \
                                                       "value (%s) for parameter %s" % (grid.min(),
                                                                                        parameter.min_value,
                                                                                        parameter.name)
@@ -148,58 +149,64 @@ class GridMinimizer(GlobalMinimizer):
         overall_minimum = 1e20
         internal_best_fit_values = None
 
-        for values_tuple in itertools.product(*self._grid.values()):
+        n_iterations = np.prod([x.shape for x in self._grid.values()])
 
-            # Reset everything to the original values, so that the fit will always start
-            # from there, instead that from the values obtained in the last iterations, which
-            # might have gone completely awry
+        with progress_bar(n_iterations, title='Grid minimization') as progress:
 
-            for par_name, par_value in self._original_values.items():
+            for values_tuple in itertools.product(*self._grid.values()):
 
-                self.parameters[par_name].value = par_value
+                # Reset everything to the original values, so that the fit will always start
+                # from there, instead that from the values obtained in the last iterations, which
+                # might have gone completely awry
 
-            # Now set the parameters in the grid to their starting values
+                for par_name, par_value in self._original_values.items():
 
-            for i, this_value in enumerate(values_tuple):
+                    self.parameters[par_name].value = par_value
 
-                self.parameters[parameters[i]].value = this_value
+                # Now set the parameters in the grid to their starting values
 
-            # Get a new instance of the minimizer. We need to do this instead of reusing an existing instance
-            # because some minimizers (like iminuit) keep internal track of their status, so that reusing
-            # a minimizer will create correlation between the different points
-            # NOTE: this line necessarily needs to be after the values of the parameters has been set to the
-            # point, because the init method of the minimizer instance will use those values to set the starting
-            # point for the fit
+                for i, this_value in enumerate(values_tuple):
 
-            _minimizer = self._2nd_minimization.get_instance(self.function, self.parameters, verbosity=0)
+                    self.parameters[parameters[i]].value = this_value
 
-            # Perform fit
+                # Get a new instance of the minimizer. We need to do this instead of reusing an existing instance
+                # because some minimizers (like iminuit) keep internal track of their status, so that reusing
+                # a minimizer will create correlation between the different points
+                # NOTE: this line necessarily needs to be after the values of the parameters has been set to the
+                # point, because the init method of the minimizer instance will use those values to set the starting
+                # point for the fit
 
-            try:
+                _minimizer = self._2nd_minimization.get_instance(self.function, self.parameters, verbosity=0)
 
-                # We call _minimize() and not minimize() so that the best fit values are
-                # in the internal system.
+                # Perform fit
 
-                this_best_fit_values_internal, this_minimum = _minimizer._minimize()
+                try:
 
-            except:
+                    # We call _minimize() and not minimize() so that the best fit values are
+                    # in the internal system.
 
-                # A failure is not a problem here, only if all of the fit fail then we have a problem
-                # but this case is handled later
+                    this_best_fit_values_internal, this_minimum = _minimizer._minimize()
 
-                continue
+                except:
 
-            # If this minimum is the overall minimum, save the result
+                    # A failure is not a problem here, only if all of the fit fail then we have a problem
+                    # but this case is handled later
 
-            if this_minimum < overall_minimum:
+                    continue
 
-                overall_minimum = this_minimum
-                internal_best_fit_values = this_best_fit_values_internal
+                # If this minimum is the overall minimum, save the result
 
-            # Use callbacks (if any)
-            for callback in self._callbacks:
+                if this_minimum < overall_minimum:
 
-                callback(values_tuple, this_minimum)
+                    overall_minimum = this_minimum
+                    internal_best_fit_values = this_best_fit_values_internal
+
+                # Use callbacks (if any)
+                for callback in self._callbacks:
+
+                    callback(values_tuple, this_minimum)
+
+                progress.increase()
 
         if internal_best_fit_values is None:
 

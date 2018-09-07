@@ -122,9 +122,18 @@ def test_read_gbm_cspec():
         nai3.set_active_time_interval('0-1')
         nai3.set_background_interval('-200--10', '100-200')
 
+
         speclike = nai3.to_spectrumlike()
 
         assert isinstance(speclike, DispersionSpectrumLike)
+
+        assert not speclike.background_spectrum.is_poisson
+
+        speclike = nai3.to_spectrumlike(extract_measured_background=True)
+
+        assert isinstance(speclike, DispersionSpectrumLike)
+
+        assert speclike.background_spectrum.is_poisson
 
         nai3.write_pha_from_binner('test_from_nai3', start=0, stop=2, overwrite=True)
 
@@ -141,9 +150,23 @@ def test_read_gbm_tte():
         nai3.set_active_time_interval('0-1')
         nai3.set_background_interval('-20--10', '100-200')
 
+
+
+
         speclike = nai3.to_spectrumlike()
 
         assert isinstance(speclike, DispersionSpectrumLike)
+
+
+        assert not speclike.background_spectrum.is_poisson
+
+        speclike = nai3.to_spectrumlike(extract_measured_background=True)
+
+        assert isinstance(speclike, DispersionSpectrumLike)
+
+        assert speclike.background_spectrum.is_poisson
+
+
 
         # test binning
 

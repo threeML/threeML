@@ -328,6 +328,24 @@ class EventList(TimeSeries):
 
         return self._select_events(start, stop).sum()
 
+    def count_per_channel_over_interval(self, start, stop):
+
+        channels = range(self._first_channel, self._n_channels + self._first_channel)
+
+        counts_per_channel = np.zeros(len(channels))
+
+        selection = self._select_events(start,stop)
+
+        for i, channel in enumerate(channels):
+            channel_mask = self._energies[selection] == channel
+
+            counts_per_channel[i] += channel_mask.sum()
+
+
+        return counts_per_channel
+
+
+
     def _select_events(self, start, stop):
         """
         return an index of the selected events
