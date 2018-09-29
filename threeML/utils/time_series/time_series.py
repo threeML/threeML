@@ -33,7 +33,7 @@ def ceildiv(a, b):
 
 class TimeSeries(object):
     def __init__(self, start_time, stop_time, n_channels, native_quality=None,
-                 first_channel=1, ra=None, dec=None, mission=None, instrument=None, verbose=True):
+                 first_channel=1, ra=None, dec=None, mission=None, instrument=None, verbose=True, edges=None):
         """
         The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,
         temporal polynomial fitting, temporal binning, and exposure calculations (in subclasses). Once events are selected
@@ -49,6 +49,7 @@ class TimeSeries(object):
         :param  arrival_times: list of event arrival times
         :param  energies: list of event energies or pha channels
         :param native_quality: native pha quality flags
+        :param edges: The histogram boundaries if not specified by a response
         :param mission:
         :param instrument:
         :param verbose:
@@ -71,6 +72,9 @@ class TimeSeries(object):
         self._poly_count_err = None
         self._poly_selected_counts= None
         self._poly_exposure = None
+
+        # ebounds for objects w/o a response
+        self._edges  = edges
 
         if native_quality is not None:
             assert len(
@@ -456,6 +460,9 @@ class TimeSeries(object):
 
             exposure = self._exposure
 
+
+
+
         if self._native_quality is None:
 
             quality = np.zeros_like(counts, dtype=int)
@@ -475,6 +482,8 @@ class TimeSeries(object):
         container_dict['counts error'] = counts_err
         container_dict['rates'] = rates
         container_dict['rate error'] = rate_err
+
+        container_dict['edges'] = self._edges
 
         # check to see if we already have a quality object
 
@@ -687,6 +696,7 @@ class TimeSeries(object):
 
     def restore_fit(self, filename):
 
+
         filename_sanitized = sanitize_filename(filename)
 
         with HDFStore(filename_sanitized) as store:
@@ -733,6 +743,20 @@ class TimeSeries(object):
 
         self._poly_fit_exists = True
 
+
+        # we must go thru and collect the polynomial exposure and counts
+        # so that they be extracted if needed
+        self._poly_exposure = 0.
+        self._poly_selected_counts = []
+        for i, time_interval in enumerate(self._poly_intervals):
+
+            t1 = time_interval.start_time
+            t2 = time_interval.stop_time
+
+            self._poly_selected_counts.append(self.count_per_channel_over_interval(t1,t2))
+            self._poly_exposure += self.exposure_over_interval(t1,t2)
+
+        self._poly_selected_counts = np.sum(self._poly_selected_counts, axis=0)
         if self._time_selection_exists:
             self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 

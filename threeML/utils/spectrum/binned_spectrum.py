@@ -93,6 +93,7 @@ class Quality(object):
 
     @classmethod
     def from_ogip(cls, ogip_quality):
+        ogip_quality = np.atleast_1d(ogip_quality)
         good = ogip_quality == 0
         warn = ogip_quality == 2
         bad = np.logical_and(~good, ~warn)
@@ -178,6 +179,7 @@ class BinnedSpectrum(Histogram):
 
             ebounds = ChannelSet.from_list_of_edges(ebounds) #type: ChannelSet
 
+        self._ebounds = ebounds
 
         if count_errors is not None:
 
@@ -522,7 +524,7 @@ class BinnedSpectrum(Histogram):
         return pd.DataFrame(out_dict)
     
     @classmethod
-    def from_time_series(cls, time_series, use_poly=False, from_model=False):
+    def from_time_series(cls, time_series, use_poly=False, from_model=False, **kwargs):
         """
 
         :param time_series:
@@ -666,7 +668,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         return self._rsp
 
     @classmethod
-    def from_time_series(cls, time_series, response, use_poly=False, extract=False):
+    def from_time_series(cls, time_series, response=None, use_poly=False, extract=False):
         """
 
         :param time_series:
@@ -682,6 +684,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
 
         if use_poly:
             is_poisson = False
+
 
 
 
