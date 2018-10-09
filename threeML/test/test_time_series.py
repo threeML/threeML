@@ -21,7 +21,7 @@ def test_event_list_constructor():
     stop = 10
 
     evt_list = EventList(arrival_times=dummy_times,
-                         energies=dummy_energy,
+                         measurement=dummy_energy,
                          n_channels=1,
                          start_time=start,
                          stop_time=stop)
@@ -60,7 +60,7 @@ def test_unbinned_fit():
         arrival_times = np.loadtxt('test_event_data.txt')
 
         evt_list = EventListWithDeadTime(arrival_times=arrival_times,
-                                         energies=np.zeros_like(arrival_times),
+                                         measurement=np.zeros_like(arrival_times),
                                          n_channels=1,
                                          start_time=arrival_times[0],
                                          stop_time=arrival_times[-1],
@@ -89,7 +89,7 @@ def test_binned_fit():
         arrival_times = np.loadtxt('test_event_data.txt')
 
         evt_list = EventListWithDeadTime(arrival_times=arrival_times,
-                                         energies=np.zeros_like(arrival_times),
+                                         measurement=np.zeros_like(arrival_times),
                                          n_channels=1,
                                          start_time=arrival_times[0],
                                          stop_time=arrival_times[-1],

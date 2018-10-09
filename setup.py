@@ -64,6 +64,7 @@ setup(
               'threeML/utils',
               'threeML/utils/OGIP',
               'threeML/utils/spectrum',
+              'threeML/utils/polarization',
               'threeML/utils/photometry',
               'threeML/utils/time_series',
               'threeML/utils/data_builders',

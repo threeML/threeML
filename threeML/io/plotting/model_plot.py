@@ -125,7 +125,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
         else:
 
             # duck typing
-            if isinstance(_defaults['fit_colors'], str):
+            if isinstance(_defaults['fit_colors'], (str, unicode)):
 
                 color_fit = [_defaults['fit_colors']] * num_sources_to_plot
 
@@ -137,6 +137,10 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
 
                 color_fit = _defaults['fit_colors']
 
+            else:
+                raise ValueError('Can not setup color, wrong type:', type(_defaults['fit_colors']))
+
+
         if _defaults['contour_colors'] is None:
 
             color_contour = cmap_intervals(num_sources_to_plot + 1, _defaults['contour_cmap'])
@@ -144,7 +148,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
         else:
 
             # duck typing
-            if isinstance(_defaults['contour_colors'], str):
+            if isinstance(_defaults['contour_colors'], (str, unicode)):
 
                 color_contour = [_defaults['contour_colors']] * num_sources_to_plot
 
@@ -155,6 +159,9 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                         len(_defaults['contour_colors']), num_sources_to_plot)
 
                 color_contour = _defaults['fit_colors']
+
+            else:
+                raise ValueError('Can not setup contour color, wrong type:', type(_defaults['contour_colors']))
 
         color_itr = 0
 
