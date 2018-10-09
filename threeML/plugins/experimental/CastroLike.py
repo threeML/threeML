@@ -298,9 +298,19 @@ class CastroLike(PluginPrototype):
 
         return xxs, xxerrs
 
-    def plot(self, plot_model=True, n_points=1000):
+    def plot(self, plot_model=True, n_points=1000, fig=None, sub=None):
 
-        fig, sub = plt.subplots()
+        if fig is None:
+
+            fig, sub = plt.subplots()
+
+        else:
+
+            if sub is None:
+
+                assert len(fig.axes) > 0
+
+                sub = fig.axes[0]
 
         xs, xerrs = self._plot(self._active_containers, sub, 'blue')
 
