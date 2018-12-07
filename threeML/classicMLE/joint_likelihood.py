@@ -614,6 +614,86 @@ class JointLikelihood(object):
 
         return a, b, cc, fig
 
+    def plot_all_contours( self, nsteps_1d, nsteps_2d = 0, n_sigma = 5, log_norm = True):
+    
+        figs = []
+        names = []
+        
+        res = self.get_errors(False)
+        
+        
+        if nsteps_1d >= 0:
+          for param in self._likelihood_model.free_parameters:
+            print param
+
+            center = res["value"][param]
+            do_log = (False,)
+            lower = center + res["negative_error"][param] * n_sigma
+            upper = center + res["positive_error"][param] * n_sigma
+           
+            if log_norm and self._likelihood_model.free_parameters[param].is_normalization:
+              do_log = (True,)
+              lower = center * (1.0 + res["negative_error"][param]/center)**n_sigma
+              upper = center * (1.0 + res["positive_error"][param]/center)**n_sigma
+            
+            
+            lower = max( self.likelihood_model[param].bounds[0], lower)
+            upper = min( self.likelihood_model[param].bounds[1], upper)
+            
+            #print param, lower, center, upper 
+            
+            try:
+              a,b,cc, fig = self.get_contours( param, lower, upper, nsteps_1d, log=do_log)
+              figs.append( fig )
+              names.append( param)
+            except Exception as e:
+              print e
+
+        if nsteps_2d >= 0:
+    
+          for param_1 in self._likelihood_model.free_parameters:
+
+            do_log = ( False, False)
+            center_1 = res["value"][param_1]
+            lower_1 = center_1 + res["negative_error"][param_1] * n_sigma
+            upper_1 = center_1 + res["positive_error"][param_1] * n_sigma
+
+            if log_norm and self._likelihood_model.free_parameters[param_1].is_normalization:
+              do_log = (True, False)
+              lower_1 = center_1 * (1.0 + res["negative_error"][param_1]/center_1)**n_sigma
+              upper_1 = center_1 * (1.0 + res["positive_error"][param_1]/center_1)**n_sigma
+         
+            lower_1 = max( self.likelihood_model[param_1].bounds[0], lower_1)
+            upper_1 = min( self.likelihood_model[param_1].bounds[1], upper_1)
+            
+            for param_2 in self._likelihood_model.free_parameters:
+            
+              if param_2 <= param_1:
+                continue
+              print param_1, param_2
+              center_2 = res["value"][param_2]
+              lower_2 = center_2 + res["negative_error"][param_2] * n_sigma
+              upper_2 = center_2 + res["positive_error"][param_2] * n_sigma
+
+              if log_norm and self._likelihood_model.free_parameters[param_2].is_normalization:
+                do_log = (do_log[0],True)
+                lower_2 = center_2 * (1.0 + res["negative_error"][param_2]/center_2)**n_sigma
+                upper_2 = center_2 * (1.0 + res["positive_error"][param_2]/center_2)**n_sigma
+        
+              lower_2 = max( self.likelihood_model[param_2].bounds[0], lower_2)
+              upper_2 = min( self.likelihood_model[param_2].bounds[1], upper_2)
+              
+              #print param_1, lower_1, center_1, upper_1 
+              #print param_2, lower_2, center_2, upper_2 
+              try:
+                a,b,cc, fig = self.get_contours( param_1, lower_1, upper_1, nsteps_2d, param_2, lower_2, upper_2, nsteps_2d, log= do_log)
+                figs.append( fig )
+                names.append( "%s-%s" % (param_1, param_2) )
+              except Exception as e:
+                print e
+        return figs, names
+
+
     def minus_log_like_profile(self, *trial_values):
         """
         Return the minus log likelihood for a given set of trial values
@@ -846,6 +926,8 @@ class JointLikelihood(object):
 
         sub.set_xlabel(name1)
         sub.set_ylabel("-log( likelihood )")
+  
+        plt.tight_layout()
 
         return fig
 
@@ -914,6 +996,8 @@ class JointLikelihood(object):
 
         sub.set_xlabel(name2)
         sub.set_ylabel(name1)
+
+        plt.tight_layout()
 
         return fig
 

@@ -4,13 +4,19 @@ import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy.visualization import quantity_support
+import  warnings
 
 from threeML.config.config import threeML_config
 from threeML.io.calculate_flux import _setup_analysis_dictionaries, _collect_sums_into_dictionaries
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 
-
 def plot_point_source_spectra(*analysis_results, **kwargs):
+
+    warnings.warn("plot_point_source_spectra() has been replaced by plot_spectra().")
+    return plot_spectra(*analysis_results, **kwargs)
+
+
+def plot_spectra(*analysis_results, **kwargs):
     """
 
     plotting routine for fitted point source spectra
@@ -36,6 +42,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
     :param subplot: subplot to use
     :param xscale: 'log' or 'linear'
     :param yscale: 'log' or 'linear'
+    :param include_extendend: True or False, also plot extendend source spectra.
     :return:
     """
 
@@ -66,8 +73,8 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
                  'legend_kwargs': threeML_config['model plot']['point source plot']['legend style'],
                  'subplot': None,
                  'xscale': 'log',
-                 'yscale': 'log'
-
+                 'yscale': 'log',
+                 'include_extended':False
                  }
 
     for key, value in kwargs.iteritems():
@@ -108,7 +115,8 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
         _defaults['confidence_level'],
         _defaults['equal_tailed'],
         differential=True,
-        sources_to_use=_defaults['sources_to_use'])
+        sources_to_use=_defaults['sources_to_use'],
+        include_extended=_defaults['include_extended'] )
 
     # we are now ready to plot.
     # all calculations have been made.

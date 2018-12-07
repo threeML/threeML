@@ -597,30 +597,7 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        figures = []
-
-        for parameter_name in self._free_parameters.keys():
-
-            figure, subplot = plt.subplots(1, 1)
-
-            if thin is None:
-
-                # Use all samples
-
-                subplot.plot(self.samples[parameter_name])
-
-            else:
-
-                assert isinstance(thin, int), "Thin must be a integer number"
-
-                subplot.plot(self.samples[parameter_name][::thin])
-
-            subplot.set_ylabel(parameter_name.replace(".", "\n"))
-            subplot.set_xlabel("sample #")
-
-            figures.append(figure)
-
-        return figures
+        return self._results.plot_chains( thin )
 
     @property
     def likelihood_model(self):
@@ -650,109 +627,8 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        # Compute all the quantities
-
-        averages = {}
-        bootstrap_averages = {}
-
-        variances = {}
-        bootstrap_variances = {}
-
-        n_samples = self._raw_samples[:, 0].shape[0]
-
-        stepsize = n_samples // n_subsets
-
-        assert stepsize > 10, "Too few samples for this method to be effective"
-
-        print("Stepsize for sliding window is %s" % stepsize)
-
-        for parameter_name in self._free_parameters.keys():
-
-            this_samples = self.samples[parameter_name]
-
-            # First compute averages and variances using the sliding window
-
-            this_averages = []
-            this_variances = []
-
-            for i in range(n_subsets):
-
-                idx1 = i * stepsize
-                idx2 = idx1 + n_samples_in_each_subset
-
-                if idx2 > n_samples - 1:
-                    break
-
-                this_averages.append(np.average(this_samples[idx1: idx2]))
-                this_variances.append(np.std(this_samples[idx1: idx2]))
-
-            averages[parameter_name] = this_averages
-
-            variances[parameter_name] = this_variances
-
-            # Now choose random samples and do the same
-
-            this_bootstrap_averages = []
-            this_bootstrap_variances = []
-
-            for i in range(n_subsets):
-                samples = np.random.choice(self.samples[parameter_name], n_samples)
-
-                this_bootstrap_averages.append(np.average(samples))
-                this_bootstrap_variances.append(np.std(samples))
-
-            bootstrap_averages[parameter_name] = this_bootstrap_averages
-            bootstrap_variances[parameter_name] = this_bootstrap_variances
-
-        # Now plot all these things
-
-        def plot_one_histogram(subplot, data, label):
-
-            nbins = int(self.freedman_diaconis_rule(data))
-
-            subplot.hist(data, nbins, label=label)
-
-            subplot.locator_params(nbins=4)
-
-        figures = []
-
-        for i, parameter_name in enumerate(self._free_parameters.keys()):
-            fig, subs = plt.subplots(1, 2, sharey=True)
-
-            fig.suptitle(parameter_name)
-
-            plot_one_histogram(subs[0], averages[parameter_name], 'sliding window')
-            plot_one_histogram(subs[0], bootstrap_averages[parameter_name], 'bootstrap')
-
-            subs[0].set_ylabel("N subsets")
-            subs[0].set_xlabel("Average")
-
-            plot_one_histogram(subs[1], variances[parameter_name], 'sliding window')
-            plot_one_histogram(subs[1], bootstrap_variances[parameter_name], 'bootstrap')
-
-            subs[1].set_xlabel("Std. deviation")
-
-            figures.append(fig)
-
-        return figures
-
-    @staticmethod
-    def freedman_diaconis_rule(data):
-        """
-        Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data
-
-        :param data: an array of data
-        :return: the optimal number of bins
-        """
-
-        q25, q75 = np.percentile(data, [25.0, 75.0])
-        iqr = abs(q75 - q25)
-
-        binsize = 2 * iqr * pow(len(data), -1 / 3.0)
-
-        nbins = np.ceil((max(data) - min(data)) / binsize)
-
-        return nbins
+        return self._results.convergence_plots( n_samples_in_each_subset, n_subsets)
+        
 
     def restore_median_fit(self):
         """
