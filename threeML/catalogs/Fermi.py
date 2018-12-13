@@ -597,8 +597,8 @@ class ModelFrom3FGL(Model):
 
                 else:
 
-                    for par in src.spectrum.main.parameters:
-                        src.spectrum.main.parameters[par].free = free
+                    for par in src.spectrum.main.shape.parameters:
+                        src.spectrum.main.shape.parameters[par].free = free
 
 
 class FermiLATSourceCatalog(VirtualObservatoryCatalog):
