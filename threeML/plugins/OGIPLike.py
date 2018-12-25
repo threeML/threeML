@@ -162,4 +162,4 @@ class OGIPLike(DispersionSpectrumLike):
         else:
             background_pha = PHASpectrum.from_dispersion_spectrum(background, file_type='background')
 
-        return cls(dispersion_like.name, observation=observed_pha, background=background_pha)
+        return cls(dispersion_like.name, observation=observed_pha, background=background_pha, verbose=False)
