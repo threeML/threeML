@@ -528,7 +528,7 @@ class TemporalBinner(TimeIntervalSet):
 
             if 'duplicate' in str(e):
 
-                warnings.warn('There where possible duplicate time tags in the data. We will try to run a different algorithm')
+                custom_warnings.warn('There where possible duplicate time tags in the data. We will try to run a different algorithm')
             
                 final_edges = bayesian_blocks_not_unique(arrival_times, arrival_times[0], arrival_times[-1], p0)
 
