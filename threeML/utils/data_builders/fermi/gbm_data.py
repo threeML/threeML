@@ -35,7 +35,10 @@ class GBMTTEFile(object):
         # but first we must check that there are NO duplicated events
         # and then warn the user
 
-        assert len(self._events) == len(np.unique(self._events)), 'The TTE file %s contains duplicate time tags and is thus invalid. Contact the FSSC ' % ttefile
+         if not len(self._events) == len(np.unique(self._events)):
+
+
+             warnings.warn('The TTE file %s contains duplicate time tags and is thus invalid. Contact the FSSC ' % ttefile)
 
         
         
