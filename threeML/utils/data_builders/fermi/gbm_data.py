@@ -27,6 +27,19 @@ class GBMTTEFile(object):
         self._events = tte['EVENTS'].data['TIME']
         self._pha = tte['EVENTS'].data['PHA']
 
+        # the GBM TTE data are not always sorted in TIME.
+        # we will now do this for you. We should at some
+        # point check with NASA if this is on purpose.
+
+        # sorting in time
+        sort_idx = self._events.argsort()
+
+        # now sort both time and energy
+
+        self._events = self._events[sort_idx]
+        self._pha = self._pha[sort_idx]
+        
+        
         try:
             self._trigger_time = tte['PRIMARY'].header['TRIGTIME']
 
