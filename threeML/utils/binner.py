@@ -4,7 +4,7 @@ from threeML.io.progress_bar import progress_bar
 from threeML.utils.bayesian_blocks import bayesian_blocks, bayesian_blocks_not_unique
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
-
+from threeML.exceptions.custom_exceptions import custom_warnings
 
 class NotEnoughData(RuntimeError):
     pass
