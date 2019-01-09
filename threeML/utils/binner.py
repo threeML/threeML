@@ -1,10 +1,10 @@
 import numpy as np
 
 from threeML.io.progress_bar import progress_bar
-from threeML.utils.bayesian_blocks import bayesian_blocks
+from threeML.utils.bayesian_blocks import bayesian_blocks, bayesian_blocks_not_unique
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
-
+from threeML.exceptions.custom_exceptions import custom_warnings
 
 class NotEnoughData(RuntimeError):
     pass
@@ -520,8 +520,19 @@ class TemporalBinner(TimeIntervalSet):
 
         """
 
-        final_edges = bayesian_blocks(arrival_times, arrival_times[0], arrival_times[-1], p0, bkg_integral_distribution)
+        try:
+        
+            final_edges = bayesian_blocks(arrival_times, arrival_times[0], arrival_times[-1], p0, bkg_integral_distribution)
 
+        except Exception as e:
+
+            if 'duplicate' in str(e):
+
+                custom_warnings.warn('There where possible duplicate time tags in the data. We will try to run a different algorithm')
+            
+                final_edges = bayesian_blocks_not_unique(arrival_times, arrival_times[0], arrival_times[-1], p0)
+
+            
         starts = np.asarray(final_edges)[:-1]
         stops = np.asarray(final_edges)[1:]
 

@@ -27,6 +27,33 @@ class GBMTTEFile(object):
         self._events = tte['EVENTS'].data['TIME']
         self._pha = tte['EVENTS'].data['PHA']
 
+        # the GBM TTE data are not always sorted in TIME.
+        # we will now do this for you. We should at some
+        # point check with NASA if this is on purpose.
+
+
+        # but first we must check that there are NO duplicated events
+        # and then warn the user
+
+        if not len(self._events) == len(np.unique(self._events)):
+
+
+            warnings.warn('The TTE file %s contains duplicate time tags and is thus invalid. Contact the FSSC ' % ttefile)
+
+        
+        
+        # sorting in time
+        sort_idx = self._events.argsort()
+
+
+        if not np.alltrue(self._events[sort_idx] == self._events):
+        
+            # now sort both time and energy
+            warnings.warn('The TTE file %s was not sorted in time but contains no duplicate events. We will sort the times, but use caution with this file. Contact the FSSC.')
+            self._events = self._events[sort_idx]
+            self._pha = self._pha[sort_idx]
+        
+        
         try:
             self._trigger_time = tte['PRIMARY'].header['TRIGTIME']
 
