@@ -42,7 +42,7 @@ def plot_spectra(*analysis_results, **kwargs):
     :param subplot: subplot to use
     :param xscale: 'log' or 'linear'
     :param yscale: 'log' or 'linear'
-    :param include_extendend: True or False, also plot extendend source spectra.
+    :param include_extended: True or False, also plot extended source spectra.
     :return:
     """
 
