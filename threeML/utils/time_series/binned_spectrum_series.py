@@ -52,6 +52,15 @@ class BinnedSpectrumSeries(TimeSeries):
 
         return self._binned_spectrum_set.time_intervals
 
+    @property
+    def binned_spectrum_set(self):
+        """                                                                                                                                                                                                                                                                   
+        returns the spectrum set                                                                                                                                                                                                                                              
+        :return: binned_spectrum_set                                                                                                                                                                                                                                          
+        """
+
+        return self._binned_spectrum_set
+    
     def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False):
         # type: (float, float, float, bool) -> None
 
