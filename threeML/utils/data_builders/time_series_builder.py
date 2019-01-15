@@ -359,6 +359,16 @@ class TimeSeriesBuilder(object):
         return self._time_series.bins
 
     @property
+    def time_series(self):
+        """                                                                                                                                                                                                                                                                   
+        returns the time_series                                                                                                                                                                                                                                               
+        :return: time_series                                                                                                                                                                                                                                                  
+        """
+
+        return self._time_series
+
+    
+    @property
     def significance_per_interval(self):
 
         if self._time_series.bins is not None:
