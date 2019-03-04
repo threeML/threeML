@@ -395,8 +395,28 @@ class BayesianAnalysis(object):
         for s in tmp[:-1]:
             mcmc_chains_out_dir += s + '/'
 
-        if not os.path.exists(mcmc_chains_out_dir):
-            os.makedirs(mcmc_chains_out_dir)
+        if using_mpi:
+
+            # if we are running in parallel and this is not the
+            # first engine, then we want to wait and let everything finish
+
+            if rank != 0:
+
+                # let these guys take a break
+                time.sleep(1)
+
+            else:
+
+                # create mcmc chains directory only on first engine
+
+                if not os.path.exists(mcmc_chains_out_dir):
+                    os.makedirs(mcmc_chains_out_dir)
+
+        else:
+            
+            if not os.path.exists(mcmc_chains_out_dir):
+                os.makedirs(mcmc_chains_out_dir)
+
 
         print("\nSampling\n")
         print("MULTINEST has its own convergence criteria... you will have to wait blindly for it to finish")
