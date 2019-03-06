@@ -64,7 +64,7 @@ class LATLikelihoodParameter(object):
 
         else:
 
-            out_string += ' %s' % self._current_value
+            out_string += " '%s'" % self._current_value
 
         return out_string
 
@@ -329,6 +329,9 @@ class TransientLATDataBuilder(object):
         run GtBurst to produce the files needed for the FermiLATLike plugin
         """
 
+
+        assert has_fermitools, 'You do not have the fermitools installed and cannot run GtBurst'
+        
         # This is not the cleanest way to do this, but at the moment I see
         # no way around it as I do not want to rewrite the fermitools
 
