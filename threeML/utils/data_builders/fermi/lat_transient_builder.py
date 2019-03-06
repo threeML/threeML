@@ -4,6 +4,8 @@ import pandas as pd
 import site
 import subprocess
 
+import yaml
+
 try:
     from GtBurst import IRFS
     irfs = IRFS.IRFS.keys()
@@ -287,6 +289,29 @@ class TransientLATDataBuilder(object):
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
 
+    def _proccess_keywords(self, **kwargs):
+        """
+        processes the keywords from a dictionary 
+        likely loaded from a yaml config
+
+        :returns: 
+        :rtype: 
+
+        """
+        
+
+        for k,v in kwargs.items():
+
+            if k in self._parameters:
+
+                self._parameters[k].value = v
+
+            else:
+                # add warning that there is something strange in the configuration
+                pass
+            
+
+        
         
     def __setattr__(self, name, value):
         """
@@ -363,6 +388,45 @@ class TransientLATDataBuilder(object):
 
         print(df)
 
+    def save_configuration(self, filename):
+        """FIXME! briefly describe function
 
+        :param filename: 
+        :returns: 
+        :rtype: 
+
+        """
+        
+        data = collections.OrderedDict()
+
+        for k,v in self._parameters:
+
+            if v.is_set:
+
+                data[k] = v.get_disp_value()
+        
+        with open(filename, 'w') as outfile:
+            yaml.dump(data, outfile, default_flow_style=False)
+
+
+
+    @classmethod
+    def from_saved_configuration(cls,triggername, config_file):
+        """FIXME! briefly describe function
+
+        :param cls: 
+        :param triggername: 
+        :param config_file: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        with open(config_file,'r') as stream:
+            loaded_config = yaml.safeload(stream)
+
+        return cls(triggername, **loaded_config)
+        
+        
 
 
