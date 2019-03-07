@@ -614,3 +614,78 @@ class TransientLATDataBuilder(object):
             loaded_config = yaml.safe_load(stream)
 
         return cls(triggername, **loaded_config)
+
+    def _create_lat_observations_from_run(self):
+        """
+        After a run of gtburst, this collects the all the relevant files from
+        each inteval and turns them into LAT observations.
+
+
+        :rtype: 
+
+        """
+
+        # scroll thru the intervals that were created
+
+        # place them in LAT observations
+
+        # attach them to dictionary
+
+        # dir = the interval
+
+        lat_observations = []
+
+        # need a strategy to collect the intervals
+        intervals = []
+
+        for i in intervals:
+
+            event_file = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername)
+            ft2_file = os.path.join(interval, 'gll_ft2_tr_bn%s_v00_filt.fit' % self._triggername)
+            exposure_map = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_expomap.fit' % self._triggername)
+            livetime_cube = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_ltcube.fit' % self._triggername)
+
+            # now create a LAT observation object
+            this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube)
+
+            lat_observations.append(this_obs)
+
+        return lat_observations
+
+
+class LATObservation(object):
+
+    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube):
+        """
+        A container to formalize the storage of Fermi LAT 
+        observation files
+
+        :param event_file: 
+        :param ft2_file: 
+        :param exposure_map: 
+        :param livetime_cube: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        self._event_file = event_file
+        self._ft2_file = ft2_file
+        self._exposure_map = exposure_map
+        self._livetime_cube = livetime_cube
+
+    @property
+    def event_file(self):
+        return self._event_file
+
+    @property
+    def ft2_file(self):
+        return self._ft2_file
+
+    @property
+    def exposure_map(self):
+        return self._exposure_map
+
+    @property
+    def livetime_cube(self):
+        return self._livetime_cube
