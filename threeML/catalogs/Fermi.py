@@ -493,9 +493,9 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
 
-        this_spectrum.index = float(catalog_entry['powerlaw_index']) * -1
+        this_spectrum.index = float(catalog_entry['pl_index']) * -1
         this_spectrum.index.fix = fix
-        this_spectrum.K = float(catalog_entry['flux_density']) / (u.cm ** 2 * u.s * u.MeV)
+        this_spectrum.K = float(catalog_entry['pl_flux_density']) / (u.cm ** 2 * u.s * u.MeV)
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (this_spectrum.K.value / 1000.0, this_spectrum.K.value * 1000)
         this_spectrum.piv = float(catalog_entry['pivot_energy']) * u.MeV
@@ -506,12 +506,12 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
 
-        this_spectrum.alpha = float(catalog_entry['spectral_index']) * -1
+        this_spectrum.alpha = float(catalog_entry['lp_index']) * -1
         this_spectrum.alpha.fix = fix
-        this_spectrum.beta = float(catalog_entry['beta'])
+        this_spectrum.beta = float(catalog_entry['lp_beta'])
         this_spectrum.beta.fix = fix
         this_spectrum.piv = float(catalog_entry['pivot_energy']) * u.MeV
-        this_spectrum.K = float(catalog_entry['flux_density']) / (u.cm ** 2 * u.s * u.MeV)
+        this_spectrum.K = float(catalog_entry['lp_flux_density']) / (u.cm ** 2 * u.s * u.MeV)
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (this_spectrum.K.value / 1000.0, this_spectrum.K.value * 1000)
 
@@ -521,30 +521,33 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
 
-        this_spectrum.index = float(catalog_entry['spectral_index']) * -1
+        this_spectrum.index = float(catalog_entry['plec_index']) * -1
         this_spectrum.index.fix = fix
         this_spectrum.piv = float(catalog_entry['pivot_energy']) * u.MeV
-        this_spectrum.K = float(catalog_entry['flux_density']) / (u.cm ** 2 * u.s * u.MeV)
+        this_spectrum.K = float(catalog_entry['plec_flux_density']) / (u.cm ** 2 * u.s * u.MeV)
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (this_spectrum.K.value / 1000.0, this_spectrum.K.value * 1000)
         this_spectrum.xc = float(catalog_entry['cutoff']) * u.MeV
         this_spectrum.xc.fix = fix
 
-    elif spectrum_type == 'PLSuperExpCutoff':
-
+    elif spectrum_type == 'PLSuperExpCutoff2':
+        # This is the new definition, from the 4FGL catalog.
         this_spectrum = Super_cutoff_powerlaw()
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
-
-        this_spectrum.index = float(catalog_entry['spectral_index']) * -1
+        a  = float(catalog_entry['plec_exp_factor'])
+        E0 = float(catalog_entry['pivot_energy'])
+        b  = float(catalog_entry['plec_exp_index'])
+        conv=math.exp(a * E0 ** b)
+        this_spectrum.index = float(catalog_entry['plec_index']) * -1
         this_spectrum.index.fix = fix
-        this_spectrum.gamma = float(catalog_entry['exp_index'])
+        this_spectrum.gamma = b
         this_spectrum.gamma.fix = fix
-        this_spectrum.piv = float(catalog_entry['pivot_energy']) * u.MeV
-        this_spectrum.K = float(catalog_entry['flux_density']) / (u.cm ** 2 * u.s * u.MeV)
+        this_spectrum.piv = E0 * u.MeV
+        this_spectrum.K   = conv * float(catalog_entry['plec_flux_density']) / (u.cm ** 2 * u.s * u.MeV)
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (this_spectrum.K.value / 1000.0, this_spectrum.K.value * 1000)
-        this_spectrum.xc = float(catalog_entry['cutoff']) * u.MeV
+        this_spectrum.xc = a ** (-1./b) * u.MeV
         this_spectrum.xc.fix = fix
 
     else:
@@ -685,22 +688,21 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
         # Loop over the table and build a source for each entry
         sources = []
-
+        source_names=[]
         for name, row in self._last_query_results.T.iteritems():
-
             if name[-1] == 'e':
                 # Extended source
                 custom_warnings.warn("Source %s is extended, support for extended source is not here yet. I will ignore"
                                      "it" % name)
 
             # If there is an association and use_association is True, use that name, otherwise the 3FGL name
-            if row['assoc_name_1'] != '' and use_association_name:
+            if row['assoc_name'] != '' and use_association_name:
 
-                this_name = row['assoc_name_1']
+                this_name = row['assoc_name']
 
                 # The crab is the only source which is present more than once in the 3FGL
 
-                if this_name == "Crab":
+                if this_name == 'Crab Nebula':
 
                     if name[-1] == 'i':
 
@@ -713,12 +715,19 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
                     else:
 
                         this_name = "Crab_pulsar"
-
             else:
 
                 this_name = name
 
+            # in the 4FGL name there are more sources with the same name: this nwill avod any duplicates:
+            i=1
+            while this_name in source_names:
+                this_name+=str(i)
+                i+=1
+                pass
             # By default all sources are fixed. The user will free the one he/she will need
+
+            source_names.append(this_name)
 
             this_source = _get_point_source_from_3fgl(this_name, row, fix=True)
 
