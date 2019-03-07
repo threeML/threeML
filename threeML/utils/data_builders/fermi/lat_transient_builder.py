@@ -29,11 +29,12 @@ class LATLikelihoodParameter(object):
 
         A container for the parameters that are needed by GtBurst
 
-        :param name: 
-        :param help_string: 
-        :param default_value: 
-        :param allowed_values: 
-        :param is_number: 
+        :param name: the parameter name 
+        :param help_string: the help string
+        :param default_value: a default value if needed
+        :param allowed_values: the values allowed for input
+        :param is_number: if this is a number
+        :param is_bool: if this is a bool
         :returns: 
         :rtype: 
 
@@ -47,9 +48,6 @@ class LATLikelihoodParameter(object):
         self._help_string = help_string
         self._is_set = False
 
-    
-
-        
         # if there is a default value, lets go ahead and set it
 
         if default_value is not None:
@@ -75,8 +73,7 @@ class LATLikelihoodParameter(object):
 
                 # we remove the string
                 out_string = ''
-            
-            
+
         else:
 
             out_string += " '%s'" % self._current_value
@@ -140,7 +137,7 @@ class TransientLATDataBuilder(object):
         and produce the required files for the FermiLATLike 
         plugin
 
-        :param triggername: 
+        :param triggername: the trigger name in YYMMDDXXX fermi format
         :returns: 
         :rtype: 
 
@@ -472,21 +469,18 @@ class TransientLATDataBuilder(object):
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name,
-            default_value = False,
+            default_value=False,
             help_string="Whether to remove the FITS files of every interval in order to save disk space",
-            is_bool = True,
+            is_bool=True,
             is_number=False)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
-
-
 
         # Now if there are keywords from a configuration to read,
         # lets do it
 
         self._proccess_keywords(**init_values)
 
-        
     def _proccess_keywords(self, **kwargs):
         """
         processes the keywords from a dictionary 
@@ -592,7 +586,7 @@ class TransientLATDataBuilder(object):
 
         # create a temporary dict to hold
         # the set values
-        
+
         data = {}
 
         for k, v in self._parameters.items():
