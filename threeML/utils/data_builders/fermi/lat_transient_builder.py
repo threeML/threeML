@@ -166,12 +166,16 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
+        ##################################
+
         name = 'dec'
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name, help_string="Dec. of the object (J2000)", is_number=True)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+
+        ##################################
 
         name = 'roi'
 
@@ -180,12 +184,16 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
+        ##################################
+
         name = 'tstarts'
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name, help_string="Comma-separated list of start times (with respect to trigger)", is_number=False)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+
+        ##################################
 
         name = 'tstops'
 
@@ -194,12 +202,16 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
+        ##################################
+
         name = 'zmax'
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name, default_value=100., help_string="Zenith cut", is_number=True)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+
+        ##################################
 
         name = 'emin'
 
@@ -208,12 +220,16 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
+        ##################################
+
         name = 'emax'
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name, default_value=100000., help_string="Maximum energy for the analysis", is_number=True)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+
+        ##################################
 
         name = 'irf'
 
@@ -226,6 +242,8 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
+        ##################################
+
         name = 'galactic_model'
 
         self._parameters[name] = LATLikelihoodParameter(
@@ -236,6 +254,8 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
+        ##################################
+
         name = 'particle_model'
 
         self._parameters[name] = LATLikelihoodParameter(
@@ -245,6 +265,8 @@ class TransientLATDataBuilder(object):
             allowed_values=['auto', 'isotr with pow spectrum', 'isotr template', 'none', 'bkge'])
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+
+        ##################################
 
         name = 'tsmin'
 
@@ -257,6 +279,8 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
+        ##################################
+
         name = 'strategy'
 
         self._parameters[name] = LATLikelihoodParameter(
@@ -268,12 +292,16 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
+        ##################################
+
         name = 'thetamax'
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name, default_value=180., help_string="Theta cut", is_number=True)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+
+        ##################################
 
         name = 'spectralfiles'
 
@@ -286,6 +314,8 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
+        ##################################
+
         name = 'liketype'
 
         self._parameters[name] = LATLikelihoodParameter(
@@ -296,6 +326,8 @@ class TransientLATDataBuilder(object):
             is_number=False)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+
+        ##################################
 
         name = 'optimizeposition'
 
@@ -308,6 +340,8 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
+        ##################################
+
         name = 'datarepository'
 
         self._parameters[name] = LATLikelihoodParameter(
@@ -317,6 +351,8 @@ class TransientLATDataBuilder(object):
             is_number=False)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
+
+        ##################################
 
         name = 'ltcube'
 
@@ -428,8 +464,6 @@ class TransientLATDataBuilder(object):
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
-
-        
     def _proccess_keywords(self, **kwargs):
         """
         processes the keywords from a dictionary 
