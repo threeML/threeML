@@ -462,6 +462,7 @@ threefgl_types = {
     'snr': 'supernova remnant',
     'spp': 'special case - potential association with SNR or PWN',
     'ssrq': 'soft spectrum radio quasar',
+    'unk':'unknown',
     '': 'unknown'
 }
 
@@ -641,12 +642,12 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         return answer
 
     def apply_format(self, table):
-
         def translate(key):
             if (key.lower() == 'psr'):
                 return threefgl_types[key]
-            else:
-                return threefgl_types[key.lower()]
+            if key.lower() in threefgl_types.keys():
+                return threefgl_types[key.lower()]            
+            return 'unknown'
 
         # Translate the 3 letter code to a more informative category, according
         # to the dictionary above
@@ -658,7 +659,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
             new_table = table['name',
                               'source_type',
                               'ra', 'dec',
-                              'assoc_name_1',
+                              'assoc_name',
                               'tevcat_assoc',
                               'Search_Offset']
 
@@ -672,7 +673,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
             new_table = table['name',
                               'source_type',
                               'ra', 'dec',
-                              'assoc_name_1',
+                              'assoc_name',
                               'tevcat_assoc']
 
             return new_table.group_by('name')
