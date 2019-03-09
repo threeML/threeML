@@ -22,7 +22,7 @@ export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__ver
 echo "Building ${PKG_VERSION} ..."
 
 # Update conda
-conda update --yes -q conda #conda-build
+#conda update --yes -q conda #conda-build
 
 # Answer yes to all questions (non-interactive)
 conda config --set always_yes true
