@@ -22,7 +22,7 @@ export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__ver
 echo "Building ${PKG_VERSION} ..."
 
 # Update conda
-conda update --yes -q conda #conda-build
+#conda update --yes -q conda #conda-build
 
 # Answer yes to all questions (non-interactive)
 conda config --set always_yes true
@@ -40,7 +40,7 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
     source ${SOFTWARE_BASE}/config_hawc.sh
     source activate test_env
-    conda install -c conda-forge pytest=3.10 codecov pytest-cov git --no-update-deps
+    conda install -c conda-forge pytest=3.8 codecov pytest-cov git --no-update-deps
 else
 
     # Activate test environment
