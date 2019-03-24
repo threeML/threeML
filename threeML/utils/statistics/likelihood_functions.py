@@ -1,7 +1,7 @@
 import numpy as np
 from threeML.plugins.gammaln import logfactorial
 from math import log
-
+from numba import jit, njit, prange
 
 def regularized_log(vector):
     """
@@ -14,6 +14,7 @@ def regularized_log(vector):
     return np.where(vector > 0, np.log(vector), 0)
 
 
+@njit(fastmath=True, parallel=True)
 def xlogy(x, y):
     """
     A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine
@@ -24,7 +25,18 @@ def xlogy(x, y):
     :return:
     """
 
-    return np.where(x > 0, x * np.log(y), 0)
+    out = np.empty_like(x)
+    
+    n = len(x)
+    for i in prange(n):
+        if x[i] > 0:
+            out[i] = x[i] * np.log(y[i])
+            
+        else:
+            out[i] = 0.
+
+    return out
+
 
 
 def poisson_log_likelihood_ideal_bkg(observed_counts, expected_bkg_counts, expected_model_counts):
@@ -113,12 +125,13 @@ def poisson_observed_poisson_background(observed_counts, background_counts, expo
 
     return loglike, B_mle * alpha
 
-
+@jit
 def poisson_observed_gaussian_background(observed_counts, background_counts, background_error, expected_model_counts):
 
     # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
     # observed counts. It is a profile likelihood.
 
+    observed_counts = observed_counts.astype(np.int64)
     MB = background_counts + expected_model_counts
     s2 = background_error ** 2 # type: np.ndarray
 
