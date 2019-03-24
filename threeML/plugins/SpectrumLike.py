@@ -1531,7 +1531,7 @@ class SpectrumLike(PluginPrototype):
 
             except KeyError:
 
-                raise KeyError("This XYLike plugin has been assigned to source %s, "
+                raise KeyError("This SpectrumLike plugin has been assigned to source %s, "
                                "which does not exist in the current model" % self._source_name)
 
         # The following integrates the diffFlux function using Simpson's rule
