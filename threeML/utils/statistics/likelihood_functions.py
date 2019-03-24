@@ -14,7 +14,7 @@ def regularized_log(vector):
     return np.where(vector > 0, np.log(vector), 0)
 
 
-@njit(fastmath=True, parallel=True)
+@njit(fastmath=True, parallel=False)
 def xlogy(x, y):
     """
     A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine
@@ -25,15 +25,12 @@ def xlogy(x, y):
     :return:
     """
 
-    out = np.empty_like(x)
+    out = np.zeros_like(x)
     
     n = len(x)
-    for i in prange(n):
+    for i in range(n):
         if x[i] > 0:
-            out[i] = x[i] * np.log(y[i])
-            
-        else:
-            out[i] = 0.
+            out[i] = x[i] * log(y[i])           
 
     return out
 
@@ -131,7 +128,7 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
     # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
     # observed counts. It is a profile likelihood.
 
-    observed_counts = observed_counts.astype(np.int64)
+#    observed_counts = observed_counts.astype(np.int64)
     MB = background_counts + expected_model_counts
     s2 = background_error ** 2 # type: np.ndarray
 

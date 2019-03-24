@@ -298,6 +298,8 @@ class SpectrumLike(PluginPrototype):
 
             if self._observed_spectrum.is_poisson:
 
+                self._observed_counts = self._observed_counts.astype(np.int64)
+
                 self._observed_count_errors = None
 
                 if self._background_spectrum.is_poisson:
@@ -312,6 +314,8 @@ class SpectrumLike(PluginPrototype):
                     if not np.all(self._background_counts >= 0): raise NegativeBackground(
                         "Error in background spectrum: negative counts!")
 
+
+                    
                 else:
 
                     observation_noise_model = 'poisson'
