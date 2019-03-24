@@ -126,7 +126,7 @@ setup(
         'astroquery',
         'matplotlib',
         'uncertainties',
-        'pyyaml',
+        'pyyaml==3.13',
         'dill',
         'iminuit>=1.2',
         'astromodels>=0.4.0',
