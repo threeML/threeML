@@ -1,7 +1,12 @@
 import numpy as np
 from threeML.plugins.gammaln import logfactorial
-from math import log
+from math import log, sqrt, pi
+
 from numba import jit, njit, prange
+
+_log_pi_2 = log(2 * pi)
+
+
 
 def regularized_log(vector):
     """
@@ -33,6 +38,24 @@ def xlogy(x, y):
             out[i] = x[i] * log(y[i])           
 
     return out
+
+
+@njit(fastmath=True, parallel=False)
+def xlogy_one(x, y):
+    """
+    A function which is 0 if x is 0, and x * log(y) otherwise. This is to fix the fact that for a machine
+    0 * log(inf) is nan, instead of 0.
+
+    :param x:
+    :param y:
+    :return:
+    """
+    if x > 0:
+        return x*log(y)
+    else:
+        return 0.
+
+
 
 
 
@@ -122,44 +145,48 @@ def poisson_observed_poisson_background(observed_counts, background_counts, expo
 
     return loglike, B_mle * alpha
 
-@jit
+@njit(fastmath=True)
 def poisson_observed_gaussian_background(observed_counts, background_counts, background_error, expected_model_counts):
 
     # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
     # observed counts. It is a profile likelihood.
 
-#    observed_counts = observed_counts.astype(np.int64)
-    MB = background_counts + expected_model_counts
-    s2 = background_error ** 2 # type: np.ndarray
+    log_likes = np.empty_like(expected_model_counts,dtype=np.float64)
+    b =  np.empty_like(expected_model_counts,dtype=np.float64)
+    n = len(background_counts)
 
-    b = 0.5 * (np.sqrt(MB ** 2 - 2 * s2 * (MB - 2 * observed_counts) + background_error ** 4)
-               + background_counts - expected_model_counts - s2) # type: np.ndarray
+    for idx in range(n):
 
-    # Now there are two branches: when the background is 0 we are in the normal situation of a pure
-    # Poisson likelihood, while when the background is not zero we use the profile likelihood
+        MB = background_counts[idx] + expected_model_counts[idx]
+        s2 = background_error[idx] + background_error[idx] # type: np.ndarray
 
-    # NOTE: bkgErr can be 0 only when also bkgCounts = 0
-    # Also it is evident from the expression above that when bkgCounts = 0 and bkgErr=0 also b=0
+        b[idx] = 0.5 * (sqrt(MB ** 2 - 2 * s2 * (MB - 2 * observed_counts[idx]) + s2*s2)
+                   + background_counts[idx] - expected_model_counts[idx] - s2) # type: np.ndarray
 
-    # Let's do the branch with background > 0 first
+        # Now there are two branches: when the background is 0 we are in the normal situation of a pure
+        # Poisson likelihood, while when the background is not zero we use the profile likelihood
 
-    idx = background_counts > 0
+        # NOTE: bkgErr can be 0 only when also bkgCounts = 0
+        # Also it is evident from the expression above that when bkgCounts = 0 and bkgErr=0 also b=0
 
-    log_likes = np.empty_like(expected_model_counts)
+        # Let's do the branch with background > 0 first
 
-    log_likes[idx] = (-(b[idx] - background_counts[idx]) ** 2 / (2 * s2[idx])
-                      + observed_counts[idx] * np.log(b[idx] + expected_model_counts[idx])
-                      - b[idx] - expected_model_counts[idx] - logfactorial(observed_counts[idx])
-                      - 0.5 * log(2 * np.pi) - np.log(background_error[idx]))
 
-    # Let's do the other branch
+        if background_counts[idx] > 0:
 
-    nidx = ~idx
+            log_likes[idx] = (-(b[idx] - background_counts[idx]) ** 2 / (2 * s2)
+                              + observed_counts[idx] * log(b[idx] + expected_model_counts[idx])
+                              - b[idx] - expected_model_counts[idx] - logfactorial(observed_counts[idx])
+                              - 0.5 * _log_pi_2  - log(background_error[idx]))
 
-    # the 1e-100 in the log is to avoid zero divisions
-    # This is the Poisson likelihood with no background
-    log_likes[nidx] = xlogy(observed_counts[nidx], expected_model_counts[nidx]) - \
-                      expected_model_counts[nidx] - logfactorial(observed_counts[nidx])
+        # Let's do the other branch
+
+        else:
+
+            # the 1e-100 in the log is to avoid zero divisions
+            # This is the Poisson likelihood with no background
+            log_likes[idx] = xlogy_one(observed_counts[idx], expected_model_counts[idx]) - \
+                              expected_model_counts[idx] - logfactorial(observed_counts[idx])
 
     return log_likes, b
 
