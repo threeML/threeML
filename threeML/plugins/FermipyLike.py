@@ -82,11 +82,8 @@ def _get_fermipy_instance(configuration, likelihood_model):
     irfs = evclass_irf[int(configuration['selection']['evclass'])]
 
     if 'gtlike' in configuration and 'irfs' in configuration['gtlike']:
-
-        assert irfs.upper() == configuration['gtlike']['irfs'].upper(), \
-            "Evclass points to IRFS %s, while you specified %s into he " \
-            "configuration" % (irfs, configuration['gtlike']['irfs'])
-
+        if irfs.upper() != configuration['gtlike']['irfs'].upper():
+            irfs=configuration['gtlike']['irfs']
     else:
 
         if not 'gtlike' in configuration:
