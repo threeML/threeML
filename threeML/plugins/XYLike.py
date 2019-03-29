@@ -399,25 +399,46 @@ class XYLike(PluginPrototype):
 
         return new_xy
 
-    def plot(self, x_label='x', y_label='y', x_scale='linear', y_scale='linear'):
+    def plot(self, x_label='x', y_label='y', x_scale='linear', y_scale='linear', ax=None):
+        """
+        Plot the data and model if a model has been set. 
 
-        fig, sub = plt.subplots(1,1)
+        :param x_label:  the label of the x-axis 
+        :param y_label: the label of the y-axis
+        :param x_scale: the scale of the x-axis linear/log
+        :param y_scale: the scale of the y-axis linear/log
+        :param ax: provided matplotlib ax to plot to. If none is provided, one will be created
+        :returns: 
+        :rtype: 
 
-        sub.errorbar(self.x, self.y, yerr=self.yerr, fmt='.')
+        """
+        
 
-        sub.set_xscale(x_scale)
-        sub.set_yscale(y_scale)
+        # create an fig, ax if none is provided
+        if ax is None:
 
-        sub.set_xlabel(x_label)
-        sub.set_ylabel(y_label)
+            fig, ax = plt.subplots(1,1)
+
+        else:
+
+            fig = ax.get_figure()
+            
+
+        ax.errorbar(self.x, self.y, yerr=self.yerr, fmt='.')
+
+        ax.set_xscale(x_scale)
+        ax.set_yscale(y_scale)
+
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
 
         if self._likelihood_model is not None:
 
             flux = self._get_total_expectation()
 
-            sub.plot(self.x, flux, '--', label='model')
+            ax.plot(self.x, flux, '--', label='model')
 
-            sub.legend(loc=0)
+            ax.legend(loc=0)
 
         return fig
 
