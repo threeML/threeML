@@ -3,6 +3,11 @@ import os
 import pandas as pd
 import site
 import subprocess
+from glob import glob
+import re
+import uuid
+import shutil
+
 
 import yaml
 
@@ -271,7 +276,7 @@ class TransientLATDataBuilder(object):
             name=name,
             help_string="Particle model",
             is_number=False,
-            allowed_values=['auto', 'isotr with pow spectrum', 'isotr template', 'none', 'bkge'])
+            allowed_values=['isotr with pow spectrum', 'isotr template', 'none', 'bkge'])
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
@@ -537,7 +542,7 @@ class TransientLATDataBuilder(object):
 
         return cmd_str
 
-    def run(self):
+    def run(self, include_previous_intervals=False, recompute_intervals=False):
         """
         run GtBurst to produce the files needed for the FermiLATLike plugin
         """
@@ -554,9 +559,99 @@ class TransientLATDataBuilder(object):
 
         site_pkg = site.getsitepackages()[0]
 
+
+        # see what we already have 
+        
+        intervals_before_run = glob('interval*-*')
+
+        if recompute_intervals:
+
+            if intervals_before_run:
+
+                # ok, perhaps the user wants to recompute intervals in this folder.
+                #  We will move the old intervals to a tmp directory
+                # so that they are not lost
+            
+                
+                print('You have choosen to recompute the time intervals in this folder')
+
+                tmp_dir = 'tmp_%s' % str(uuid.uuid4())
+
+                print('The older entries will be moved to %s' %tmp_dir)
+
+                os.mkdir(tmp_dir)
+
+                for interval in intervals_before_run:
+                
+                    shutil.move(interval, tmp_dir)
+            
+
+                # now remove these
+                intervals_before_run = []
+
+        if include_previous_intervals:
+
+            intervals_before_run = []
+        
+
+        # run this baby
+        
         subprocess.call(os.path.join(site_pkg, cmd), shell=True)
 
-    def display(self):
+
+        return self._create_lat_observations_from_run(intervals_before_run)
+
+
+    def _create_lat_observations_from_run(self, intervals_before_run):
+        """
+        After a run of gtburst, this collects the all the relevant files from
+        each inteval and turns them into LAT observations.
+
+
+        :rtype: 
+
+        """
+
+        # scroll thru the intervals that were created
+
+        # place them in LAT observations
+
+        # attach them to dictionary
+
+        # dir = the interval
+
+        lat_observations = []
+
+        # need a strategy to collect the intervals
+        intervals = glob('interval*-*')
+
+        for interval in intervals:
+
+            print(interval)
+
+            if interval in intervals_before_run:
+
+                print('%s existed before this run,\n it will not be auto included in the list,\n but you can manually see grab the data.')
+            else:
+
+                tstart, tstop = [float(x) for x in re.match('^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval).groups()]
+
+                event_file = os.path.abspath(os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername))
+                ft2_file = os.path.abspath(os.path.join(interval, 'gll_ft2_tr_bn%s_v00_filt.fit' % self._triggername))
+                exposure_map = os.path.abspath(os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_expomap.fit' % self._triggername))
+                livetime_cube = os.path.abspath(os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_ltcube.fit' % self._triggername))
+
+                # now create a LAT observation object
+                this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop)
+
+                lat_observations.append(this_obs)
+
+        return lat_observations
+
+    
+
+        
+    def display(self, get=False):
         """
         Display the currently set parameters
         """
@@ -573,6 +668,16 @@ class TransientLATDataBuilder(object):
 
         print(df)
 
+        if get:
+
+            return df
+
+    def __repr__(self):
+
+        return self.display(get=True).to_string()
+
+
+        
     def save_configuration(self, filename):
         """
         Save the current configuration to a yaml 
@@ -615,47 +720,10 @@ class TransientLATDataBuilder(object):
 
         return cls(triggername, **loaded_config)
 
-    def _create_lat_observations_from_run(self):
-        """
-        After a run of gtburst, this collects the all the relevant files from
-        each inteval and turns them into LAT observations.
-
-
-        :rtype: 
-
-        """
-
-        # scroll thru the intervals that were created
-
-        # place them in LAT observations
-
-        # attach them to dictionary
-
-        # dir = the interval
-
-        lat_observations = []
-
-        # need a strategy to collect the intervals
-        intervals = []
-
-        for i in intervals:
-
-            event_file = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername)
-            ft2_file = os.path.join(interval, 'gll_ft2_tr_bn%s_v00_filt.fit' % self._triggername)
-            exposure_map = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_expomap.fit' % self._triggername)
-            livetime_cube = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_ltcube.fit' % self._triggername)
-
-            # now create a LAT observation object
-            this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube)
-
-            lat_observations.append(this_obs)
-
-        return lat_observations
-
 
 class LATObservation(object):
 
-    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube):
+    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop):
         """
         A container to formalize the storage of Fermi LAT 
         observation files
@@ -664,6 +732,8 @@ class LATObservation(object):
         :param ft2_file: 
         :param exposure_map: 
         :param livetime_cube: 
+        :param tstart:
+        :param tstop:
         :returns: 
         :rtype: 
 
@@ -673,7 +743,11 @@ class LATObservation(object):
         self._ft2_file = ft2_file
         self._exposure_map = exposure_map
         self._livetime_cube = livetime_cube
-
+        self._tstart = tstart
+        self._tstop = tstop
+        
+        
+        
     @property
     def event_file(self):
         return self._event_file
@@ -689,3 +763,27 @@ class LATObservation(object):
     @property
     def livetime_cube(self):
         return self._livetime_cube
+
+    @property
+    def tstart(self):
+        return self._tstart
+
+    @property
+    def tstop(self):
+        return self.tstop
+    
+
+    def __repr__(self):
+
+
+        output = collections.OrderedDict()
+
+        output['time interval'] = '%.3f-%.3f' %(self._tstart, self._tstop)
+        output['event_file'] = self._event_file
+        output['ft2_file'] = self._ft2_file
+        output['exposure_map'] = self._exposure_map
+        output['livetime_cube'] = self._livetime_cube
+
+        df = pd.Series(output)
+
+        return df.to_string()
