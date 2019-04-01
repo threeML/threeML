@@ -85,7 +85,7 @@ class LikelihoodModelConverter(object):
 
         gal = LikelihoodComponent.GalaxyAndExtragalacticDiffuse(
             self.irfs, ra, dec, 2.5 * roi, cutout_name=self._unique_filename)
-        gal.source.spectrum.Value.max = 1.5
+        gal.source.spectrum.Value.max = 3.5 # changed by jmb is it correct?
         gal.source.spectrum.Value.min = 0.5
         gal.source.spectrum.setAttributes()
 
