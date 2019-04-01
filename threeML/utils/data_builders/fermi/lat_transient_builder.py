@@ -8,7 +8,6 @@ import re
 import uuid
 import shutil
 
-
 import yaml
 
 try:
@@ -26,10 +25,9 @@ except (ImportError):
 
     has_fermitools = False
 
-
 from threeML.io.file_utils import file_existing_and_readable
 
-    
+
 class LATLikelihoodParameter(object):
 
     def __init__(self, name, help_string, default_value=None, allowed_values=None, is_number=True, is_bool=False):
@@ -291,8 +289,7 @@ class TransientLATDataBuilder(object):
             name=name,
             default_value=20.,
             help_string="Minimum TS to consider a detection",
-            is_number=True,
-        )
+            is_number=True,)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
@@ -439,8 +436,7 @@ class TransientLATDataBuilder(object):
         self._parameters[name] = LATLikelihoodParameter(
             name=name,
             default_value=None,
-            help_string=
-            "A TS map specification of the type half_size,n_side. For example: \n 0.5,8' makes a TS map 1 deg x 1 deg with 64 points",
+            help_string="A TS map specification of the type half_size,n_side. For example: \n 0.5,8' makes a TS map 1 deg x 1 deg with 64 points",
             is_number=False)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
@@ -562,9 +558,8 @@ class TransientLATDataBuilder(object):
 
         site_pkg = site.getsitepackages()[0]
 
-
         # see what we already have 
-        
+
         intervals_before_run = glob('interval*-*')
 
         if recompute_intervals:
@@ -574,20 +569,18 @@ class TransientLATDataBuilder(object):
                 # ok, perhaps the user wants to recompute intervals in this folder.
                 #  We will move the old intervals to a tmp directory
                 # so that they are not lost
-            
-                
+
                 print('You have choosen to recompute the time intervals in this folder')
 
                 tmp_dir = 'tmp_%s' % str(uuid.uuid4())
 
-                print('The older entries will be moved to %s' %tmp_dir)
+                print('The older entries will be moved to %s' % tmp_dir)
 
                 os.mkdir(tmp_dir)
 
                 for interval in intervals_before_run:
-                
+
                     shutil.move(interval, tmp_dir)
-            
 
                 # now remove these
                 intervals_before_run = []
@@ -595,15 +588,12 @@ class TransientLATDataBuilder(object):
         if include_previous_intervals:
 
             intervals_before_run = []
-        
 
         # run this baby
-        
+
         subprocess.call(os.path.join(site_pkg, cmd), shell=True)
 
-
         return self._create_lat_observations_from_run(intervals_before_run)
-
 
     def _create_lat_observations_from_run(self, intervals_before_run):
         """
@@ -630,14 +620,16 @@ class TransientLATDataBuilder(object):
 
         for interval in intervals:
 
-            
-
             if interval in intervals_before_run:
 
-                print('%s existed before this run,\n it will not be auto included in the list,\n but you can manually see grab the data.')
+                print(
+                    '%s existed before this run,\n it will not be auto included in the list,\n but you can manually see grab the data.'
+                )
             else:
 
-                tstart, tstop = [float(x) for x in re.match('^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval).groups()]
+                tstart, tstop = [
+                    float(x) for x in re.match('^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval).groups()
+                ]
 
                 event_file = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername)
 
@@ -650,7 +642,8 @@ class TransientLATDataBuilder(object):
                     print('The ft2 file does not exist. Please examine!')
                     print('we will grab the data file for you.')
 
-                    base_ft2_file = os.path.join('%s'self.datarepository.get_disp_value(), 'bn%s' % self._triggername, 'gll_ft2_tr_bn%s_v00.fit' % self._triggername)
+                    base_ft2_file = os.path.join('%s' % self.datarepository.get_disp_value(), 'bn%s' %
+                                                 self._triggername, 'gll_ft2_tr_bn%s_v00.fit' % self._triggername)
 
                     assert file_existing_and_readable(base_ft2_file), 'Cannot find any FT2 files!'
 
@@ -665,14 +658,11 @@ class TransientLATDataBuilder(object):
                 if not file_existing_and_readable(exposure_map):
                     print('The exposure map does not exist. Please examine!')
 
-
                 livetime_cube = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_ltcube.fit' % self._triggername)
 
                 if not file_existing_and_readable(livetime_cube):
                     print('The livetime_cube does not exist. Please examine!')
 
-
-                
                 # now create a LAT observation object
                 this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop)
 
@@ -680,9 +670,6 @@ class TransientLATDataBuilder(object):
 
         return lat_observations
 
-    
-
-        
     def display(self, get=False):
         """
         Display the currently set parameters
@@ -708,8 +695,6 @@ class TransientLATDataBuilder(object):
 
         return self.display(get=True).to_string()
 
-
-        
     def save_configuration(self, filename):
         """
         Save the current configuration to a yaml 
@@ -777,9 +762,7 @@ class LATObservation(object):
         self._livetime_cube = livetime_cube
         self._tstart = tstart
         self._tstop = tstop
-        
-        
-        
+
     @property
     def event_file(self):
         return self._event_file
@@ -803,14 +786,12 @@ class LATObservation(object):
     @property
     def tstop(self):
         return self.tstop
-    
 
     def __repr__(self):
 
-
         output = collections.OrderedDict()
 
-        output['time interval'] = '%.3f-%.3f' %(self._tstart, self._tstop)
+        output['time interval'] = '%.3f-%.3f' % (self._tstart, self._tstop)
         output['event_file'] = self._event_file
         output['ft2_file'] = self._ft2_file
         output['exposure_map'] = self._exposure_map
