@@ -249,7 +249,7 @@ import os
 
 # Import the LAT data downloader
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
-
+from threeML.utils.data_builders.fermi.lat_transient_builder import TransientLATDataBuilder
 # Import the results loader
 from threeML.analysis_results import load_analysis_results
 
