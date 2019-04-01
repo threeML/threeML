@@ -640,10 +640,39 @@ class TransientLATDataBuilder(object):
                 tstart, tstop = [float(x) for x in re.match('^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval).groups()]
 
                 event_file = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername)
+
+                if not file_existing_and_readable(event_file):
+                    print('The event file does not exist. Please examine!')
+
                 ft2_file = os.path.join(interval, 'gll_ft2_tr_bn%s_v00_filt.fit' % self._triggername)
+
+                if not file_existing_and_readable(ft2_file):
+                    print('The ft2 file does not exist. Please examine!')
+                    print('we will grab the data file for you.')
+
+                    base_ft2_file = os.path.join('%s'self.datarepository.get_disp_value(), 'bn%s' % self._triggername, 'gll_ft2_tr_bn%s_v00.fit' % self._triggername)
+
+                    assert file_existing_and_readable(base_ft2_file), 'Cannot find any FT2 files!'
+
+                    shutil.copy(base_ft2_file, interval)
+
+                    ft2_file = os.path.join(interval, 'gll_ft2_tr_bn%s_v00.fit' % self._triggername)
+
+                    print('copied %s to %s' % (base_ft2_file, ft2_file))
+
                 exposure_map = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_expomap.fit' % self._triggername)
+
+                if not file_existing_and_readable(exposure_map):
+                    print('The exposure map does not exist. Please examine!')
+
+
                 livetime_cube = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_ltcube.fit' % self._triggername)
 
+                if not file_existing_and_readable(livetime_cube):
+                    print('The livetime_cube does not exist. Please examine!')
+
+
+                
                 # now create a LAT observation object
                 this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop)
 
