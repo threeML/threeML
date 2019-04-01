@@ -42,9 +42,7 @@ class LikelihoodModelConverter(object):
 
     def set_file_spectrum_energies(self, emin_kev, emax_kev, nEnergies):
 
-        self.energies_kev = numpy.logspace(numpy.log10(emin_kev),
-                                          numpy.log10(emax_kev),
-                                          nEnergies)
+        self.energies_kev = numpy.logspace(numpy.log10(emin_kev), numpy.log10(emax_kev), nEnergies)
 
     def write_xml(self, xmlfile, ra, dec, roi):
 
@@ -74,7 +72,7 @@ class LikelihoodModelConverter(object):
 
         iso = LikelihoodComponent.IsotropicTemplate(self.irfs)
 
-        iso.source.spectrum.Normalization.max = 3.5  # changed by JMB... is it right?
+        iso.source.spectrum.Normalization.max = 3.5    # changed by JMB... is it right?
         iso.source.spectrum.Normalization.min = 0.5
         iso.source.spectrum.setAttributes()
 
@@ -85,7 +83,7 @@ class LikelihoodModelConverter(object):
 
         gal = LikelihoodComponent.GalaxyAndExtragalacticDiffuse(
             self.irfs, ra, dec, 2.5 * roi, cutout_name=self._unique_filename)
-        gal.source.spectrum.Value.max = 3.5 # changed by jmb is it correct?
+        gal.source.spectrum.Value.max = 3.5    # changed by jmb is it correct?
         gal.source.spectrum.Value.min = 0.5
         gal.source.spectrum.setAttributes()
 
@@ -103,12 +101,11 @@ class LikelihoodModelConverter(object):
 
         name = self.likelihood_model.get_point_source_name(ip)
 
-        values = self.likelihood_model.get_point_source_fluxes(ip,
-                                                              self.energies_kev)
+        values = self.likelihood_model.get_point_source_fluxes(ip, self.energies_kev)
 
-        tempName = "__%s_%s.txt" % (name, get_random_unique_name())
+        temp_name = "__%s_%s.txt" % (name, get_random_unique_name())
 
-        with open(tempName, "w+") as f:
+        with open(temp_name, "w+") as f:
             for e, v in zip(self.energies_kev, values):
                 # Gtlike needs energies in MeV and fluxes in ph/MeV/cm2)
 
@@ -121,16 +118,14 @@ class LikelihoodModelConverter(object):
         # This is convoluted, but that's the ST way of doing things...
         # The final product is a class with a writeXml method
 
-        src = '\n'.join((('<source name= "%s" ' % name) + 'type="PointSource">',
-                         '   <spectrum type="PowerLaw2"/>',
+        src = '\n'.join((('<source name= "%s" ' % name) + 'type="PointSource">', '   <spectrum type="PowerLaw2"/>',
                          '   <!-- point source units are cm^-2 s^-1 MeV^-1 -->',
-                         '   <spatialModel type="SkyDirFunction"/>',
-                         '</source>\n'))
+                         '   <spatialModel type="SkyDirFunction"/>', '</source>\n'))
         src = FuncFactory.minidom.parseString(src).getElementsByTagName('source')[0]
         src = FuncFactory.Source(src)
 
         src.spectrum = FuncFactory.FileFunction()
-        src.spectrum.file = tempName
+        src.spectrum.file = temp_name
         src.spectrum.parameters['Normalization'].value = 1.0
         src.spectrum.parameters['Normalization'].max = 1.1
         src.spectrum.parameters['Normalization'].min = 0.9
@@ -150,27 +145,48 @@ class LikelihoodModelConverter(object):
         src.spatialModel.setAttributes()
         src.setAttributes()
 
-        return MyPointSource(src, name, tempName)
+        return MyPointSource(src, name, temp_name)
 
 
 class FermiLATUnpickler(object):
 
-    def __call__(self, name, eventFile, ft2File, livetimeCube, kind, exposureMap, likelihood_model, innerMinimization):
+    def __call__(self, name, event_file, ft2_file, livetime_cube_file, kind, exposure_map_file, likelihood_model,
+                 inner_minimization):
 
-        instance = FermiLATLike(name, eventFile, ft2File, livetimeCube, kind, exposureMap)
+        instance = FermiLATLike(name, event_file, ft2_file, livetime_cube_file, kind, exposure_map_file)
 
-        instance.setInnerMinimization(innerMinimization)
+        instance.set_inner_minimization(inner_minimization)
 
         instance.set_model(likelihood_model)
 
         return instance
 
 
-
 class FermiLATLike(PluginPrototype):
 
-    def __init__(self, name, eventFile, ft2File, livetimeCube, kind, exposureMap=None,
-                 sourceMaps=None, binnedExpoMap=None):
+    def __init__(self,
+                 name,
+                 event_file,
+                 ft2_file,
+                 livetime_cube_file,
+                 kind,
+                 exposure_map_file=None,
+                 source_maps=None,
+                 binned_expo_map=None):
+        """FIXME! briefly describe function
+
+        :param name: 
+        :param event_file: 
+        :param ft2_file: 
+        :param livetime_cubefile: 
+        :param kind: 
+        :param exposure_map_file: 
+        :param source_maps: 
+        :param binned_expo_map: 
+        :returns: 
+        :rtype: 
+
+        """
 
         # Initially the nuisance parameters dict is empty, as we don't know yet
         # the likelihood model. They will be updated in set_model
@@ -179,21 +195,21 @@ class FermiLATLike(PluginPrototype):
 
         # Read the ROI cut
         cc = pyLike.RoiCuts()
-        cc.readCuts(eventFile, "EVENTS")
+        cc.readCuts(event_file, "EVENTS")
         self.ra, self.dec, self.rad = cc.roiCone()
 
         # Read the IRF selection
-        c = pyLike.Cuts(eventFile, "EVENTS")
+        c = pyLike.Cuts(event_file, "EVENTS")
         self.irf = c.CALDB_implied_irfs()
 
-        self.ft2File = ft2File
-        self.livetimeCube = livetimeCube
+        self._ft2_file = ft2_file
+        self._livetime_cube_file = livetime_cube_file
 
         # These are the boundaries and the number of energies for the computation
         # of the model (in keV)
         self.emin = 1e4
         self.emax = 5e8
-        self.Nenergies = 200
+        self.n_energies = 200
 
         # This is the limit on the effective area correction factor,
         # which is a multiplicative factor in front of the whole model
@@ -203,12 +219,12 @@ class FermiLATLike(PluginPrototype):
         # where for example a [new limit] of 0.2 allow for an effective
         # area correction up to +/- 20 %
 
-        self.effCorrLimit = 0.1
+        self.eff_corr_limit = 0.1
 
         if (kind.upper() != "UNBINNED" and kind.upper() != "BINNED"):
 
-            raise RuntimeError("Accepted values for the kind parameter are: " +
-                               "binned, unbinned. You specified: %s" % (kind))
+            raise RuntimeError("Accepted values for the kind parameter are: " + "binned, unbinned. You specified: %s" %
+                               (kind))
 
         else:
 
@@ -216,33 +232,35 @@ class FermiLATLike(PluginPrototype):
 
         if (kind.upper() == 'UNBINNED'):
 
-            assert exposureMap is not None, "You have to provide an exposure map"
+            assert exposure_map_file is not None, "You have to provide an exposure map"
 
-            self.eventFile = eventFile
-            self.exposureMap = exposureMap
+            self._event_file = event_file
+            self._exposure_map_file = exposure_map_file
             # Read the files and generate the pyLikelihood object
-            self.obs = UnbinnedAnalysis.UnbinnedObs(self.eventFile,
-                                                    self.ft2File,
-                                                    expMap=self.exposureMap,
-                                                    expCube=self.livetimeCube,
-                                                    irfs=self.irf)
+            self.obs = UnbinnedAnalysis.UnbinnedObs(
+                self._event_file,
+                self._ft2_file,
+                expMap=self._exposure_map_file,
+                expCube=self._livetime_cube_file,
+                irfs=self.irf)
 
         elif (kind.upper() == "BINNED"):
 
-            assert sourceMaps is not None, "You have to provide a source map"
-            assert binnedExpoMap is not None, "You have to provided a (binned) exposure map"
+            assert source_maps is not None, "You have to provide a source map"
+            assert binned_expo_map is not None, "You have to provided a (binned) exposure map"
 
-            self.sourceMaps = sourceMaps
-            self.binnedExpoMap = binnedExpoMap
+            self._source_maps = source_maps
+            self._binned_expo_map = binned_expo_map
 
-            self.obs = BinnedAnalysis.BinnedObs(srcMaps=self.sourceMaps,
-                                                expCube=self.livetimeCube,
-                                                binnedExpMap=self.binnedExpoMap,
-                                                irfs=self.irf)
+            self.obs = BinnedAnalysis.BinnedObs(
+                srcMaps=self._source_maps,
+                expCube=self._livetime_cube_file,
+                binnedExpMap=self._binned_expo_map,
+                irfs=self.irf)
         pass
 
         # Activate inner minimization by default
-        self.setInnerMinimization(True)
+        self.set_inner_minimization(True)
 
     pass
 
@@ -254,30 +272,25 @@ class FermiLATLike(PluginPrototype):
 
         with suppress_stdout():
 
-            self.lmc = LikelihoodModelConverter(likelihood_model,
-                                                self.irf)
+            self.lmc = LikelihoodModelConverter(likelihood_model, self.irf)
 
-            self.lmc.set_file_spectrum_energies(self.emin, self.emax, self.Nenergies)
+            self.lmc.set_file_spectrum_energies(self.emin, self.emax, self.n_energies)
 
             xmlFile = '%s.xml' % get_random_unique_name()
 
             temp_files = self.lmc.write_xml(xmlFile, self.ra, self.dec, self.rad)
 
         if (self.kind == "BINNED"):
-            self.like = BinnedAnalysis.BinnedAnalysis(self.obs,
-                                                      xmlFile,
-                                                      optimizer='DRMNFB')
+            self._like = BinnedAnalysis.BinnedAnalysis(self.obs, xmlFile, optimizer='DRMNFB')
 
         else:
 
-            self.like = UnbinnedAnalysis.UnbinnedAnalysis(self.obs,
-                                                          xmlFile,
-                                                          optimizer='DRMNFB')
+            self._like = UnbinnedAnalysis.UnbinnedAnalysis(self.obs, xmlFile, optimizer='DRMNFB')
 
         self.likelihood_model = likelihood_model
 
         # Here we need also to compute the logLike value, so that the model
-        # in the XML file will be chanded if needed
+        # in the XML file will be changed if needed
         dumb = self.get_log_like()
 
         # Since now the Galactic template is in RAM, we can remove the temporary file
@@ -290,10 +303,9 @@ class FermiLATLike(PluginPrototype):
             os.remove(temp_file)
 
         # Build the list of the nuisance parameters
-        new_nuisance_parameters = self._setNuisanceParameters()
+        new_nuisance_parameters = self._set_nuisance_parameters()
 
         self.update_nuisance_parameters(new_nuisance_parameters)
-
 
     def get_name(self):
         '''
@@ -301,7 +313,7 @@ class FermiLATLike(PluginPrototype):
         '''
         return self.name
 
-    def setInnerMinimization(self, s):
+    def set_inner_minimization(self, s):
 
         self.fit_nuisance_params = bool(s)
 
@@ -319,7 +331,7 @@ class FermiLATLike(PluginPrototype):
 
         return self.get_log_like()
 
-    def _updateGtlikeModel(self):
+    def _update_gtlike_model(self):
         '''
         #Slow! But no other options at the moment
         self.like.writeXml(self.xmlModel)
@@ -328,13 +340,13 @@ class FermiLATLike(PluginPrototype):
 
         energies = self.lmc.energies_kev
 
-        for id, srcName in enumerate(self.likelihood_model.point_sources.keys()):
+        for id, src_name in enumerate(self.likelihood_model.point_sources.keys()):
 
             values = self.likelihood_model.get_point_source_fluxes(id, energies, tag=self._tag)
 
-            gtlikeSrcModel = self.like[srcName]
+            gtlike_src_model = self._like[src_name]
 
-            my_function = gtlikeSrcModel.getSrcFuncs()['Spectrum']
+            my_function = gtlike_src_model.getSrcFuncs()['Spectrum']
             my_file_function = pyLike.FileFunction_cast(my_function)
 
             my_file_function.setParam("Normalization", 1)
@@ -344,11 +356,11 @@ class FermiLATLike(PluginPrototype):
             capped_values = numpy.minimum(numpy.maximum(values * 1000, 1e-25), 1e5)
 
             my_file_function.setSpectrum(energies / 1000.0, capped_values)
-            gtlikeSrcModel.setSpectrum(my_file_function)
+            gtlike_src_model.setSpectrum(my_file_function)
 
             # TODO: extended sources
 
-        self.like.syncSrcParams()
+        self._like.syncSrcParams()
 
     def get_log_like(self):
         '''
@@ -356,24 +368,24 @@ class FermiLATLike(PluginPrototype):
         parameters stored in the ModelManager instance
         '''
 
-        self._updateGtlikeModel()
+        self._update_gtlike_model()
 
         if self.fit_nuisance_params:
 
             for parameter in self.nuisance_parameters:
-                self.setNuisanceParameterValue(parameter, self.nuisance_parameters[parameter].value)
+                self.set_nuisance_parameter_value(parameter, self.nuisance_parameters[parameter].value)
 
-            self.like.syncSrcParams()
-            
-        log_like = self.like.logLike.value()
+            self._like.syncSrcParams()
 
-        return log_like - logfactorial(self.like.total_nobs())
+        log_like = self._like.logLike.value()
+
+        return log_like - logfactorial(self._like.total_nobs())
+
     #
     def __reduce__(self):
 
-        return FermiLATUnpickler(), (self.name, self.eventFile, self.ft2File,
-                                     self.livetimeCube, self.kind, self.exposureMap, self.likelihood_model,
-                                     self.fit_nuisance_params)
+        return FermiLATUnpickler(), (self.name, self._event_file, self._ft2_file, self._livetime_cube_file, self.kind,
+                                     self._exposure_map_file, self.likelihood_model, self.fit_nuisance_params)
 
     # def __setstate__(self, likelihood_model):
     #
@@ -381,7 +393,7 @@ class FermiLATLike(PluginPrototype):
     #
     #     self.set_model(likelihood_model)
 
-    def getModelAndData(self):
+    def get_model_and_data(self):
 
         fake = numpy.array([])
 
@@ -391,136 +403,131 @@ class FermiLATLike(PluginPrototype):
 
     def display(self):
 
-        e1 = self.like.energies[:-1]
-        e2 = self.like.energies[1:]
+        e1 = self._like.energies[:-1]
+        e2 = self._like.energies[1:]
 
         ec = (e1 + e2) / 2.0
         de = (e2 - e1) / 2.0
 
-        sum_model = numpy.zeros_like(self.like._srcCnts(self.like.sourceNames()[0]))
+        sum_model = numpy.zeros_like(self._like._srcCnts(self._like.sourceNames()[0]))
 
-        fig = plt.figure()
+        fig, (data_axis, residual_axis) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]})
 
-        gs = gridspec.GridSpec(2, 1, height_ratios=[2, 1])
-        gs.update(hspace=0)
+      
 
-        sub = plt.subplot(gs[0])
+        for source_name in self._like.sourceNames():
+            sum_model = sum_model + self._like._srcCnts(source_name)
 
-        for sourceName in self.like.sourceNames():
-            sum_model = sum_model + self.like._srcCnts(sourceName)
+            data_axis.plot(ec, self._like._srcCnts(source_name), label=source_name)
 
-            sub.plot(ec, self.like._srcCnts(sourceName), label=sourceName)
+        data_axis.plot(ec, sum_model, label='Total Model')
 
-        sub.plot(ec, sum_model, label='Total Model')
+        data_axis.errorbar(ec, self._like.nobs, xerr=de, yerr=numpy.sqrt(self._like.nobs), fmt='.', label='Counts')
 
-        sub.errorbar(ec, self.like.nobs, xerr=de,
-                     yerr=numpy.sqrt(self.like.nobs),
-                     fmt='.', label='Counts')
-
-        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, numpoints=1)
+        data_axis.legend(bbox_to_anchor=(1.05, 1), loc=2, numpoints=1)
 
         # Residuals
 
-        sub1 = plt.subplot(gs[1])
-
         # Using model variance to account for low statistic
 
-        resid = (self.like.nobs - sum_model) / sum_model
+        resid = (self._like.nobs - sum_model) / sum_model
 
-        sub1.axhline(0, linestyle='--')
-        sub1.errorbar(ec, resid, xerr=de,
-                      yerr=numpy.sqrt(self.like.nobs) / sum_model,
-                      capsize=0, fmt='.')
+        residual_axis.axhline(0, linestyle='--')
+        residual_axis.errorbar(ec, resid, xerr=de, yerr=numpy.sqrt(self._like.nobs) / sum_model, capsize=0, fmt='.')
 
-        sub.set_xscale("log")
-        sub.set_yscale("log", nonposy='clip')
+        data_axis.set_xscale("log")
+        data_axis.set_yscale("log", nonposy='clip')
 
-        sub.set_ylabel("Counts per bin")
+        data_axis.set_ylabel("Counts per bin")
 
-        sub1.set_xscale("log")
+        residual_axis.set_xscale("log")
 
-        sub1.set_xlabel("Energy (MeV)")
-        sub1.set_ylabel("(data - mo.) / mo.")
+        residual_axis.set_xlabel("Energy (MeV)")
+        residual_axis.set_ylabel("(data - mo.) / mo.")
 
-        sub.set_xticks([])
+        data_axis.set_xticks([])
 
+        fig.tight_layout()
+
+        # Now remove the space between the two subplots
+        # NOTE: this must be placed *after* tight_layout, otherwise it will be ineffective
+
+        fig.subplots_adjust(hspace=0)
+
+        
         return fig
 
-    def _setNuisanceParameters(self):
+    def _set_nuisance_parameters(self):
 
         # Get the list of the sources
-        sources = list(self.like.model.srcNames)
+        sources = list(self._like.model.srcNames)
 
-        freeParamNames = []
-        for srcName in sources:
+        free_param_names = []
+        for src_name in sources:
             thisNamesV = pyLike.StringVector()
-            thisSrc = self.like.logLike.getSource(srcName)
+            thisSrc = self._like.logLike.getSource(src_name)
             thisSrc.spectrum().getFreeParamNames(thisNamesV)
-            thisNames = map(lambda x: "%s_%s" % (srcName, x), thisNamesV)
-            freeParamNames.extend(thisNames)
+            thisNames = map(lambda x: "%s_%s" % (src_name, x), thisNamesV)
+            free_param_names.extend(thisNames)
         pass
 
-        nuisanceParameters = collections.OrderedDict()
+        nuisance_parameters = collections.OrderedDict()
 
-        for name in freeParamNames:
+        for name in free_param_names:
 
-            value = self.getNuisanceParameterValue(name)
-            bounds = self.getNuisanceParameterBounds(name)
-            delta = self.getNuisanceParameterDelta(name)
+            value = self.get_nuisance_parameter_value(name)
+            bounds = self.get_nuisance_parameter_bounds(name)
+            delta = self.get_nuisance_parameter_delta(name)
 
-            nuisanceParameters["%s_%s" % (self.name, name)] = Parameter("%s_%s" % (self.name, name),
-                                                                        value,
-                                                                        min_value=bounds[0],
-                                                                        max_value=bounds[1],
-                                                                        delta=delta)
+            nuisance_parameters["%s_%s" % (self.name, name)] = Parameter(
+                "%s_%s" % (self.name, name), value, min_value=bounds[0], max_value=bounds[1], delta=delta)
 
-            nuisanceParameters["%s_%s" % (self.name, name)].free = self.fit_nuisance_params
+            nuisance_parameters["%s_%s" % (self.name, name)].free = self.fit_nuisance_params
 
-        return nuisanceParameters
+        return nuisance_parameters
 
-    def _get_nuisance_param(self, paramName):
+    def _get_nuisance_parameter(self, param_name):
 
-        tokens = paramName.split("_")
+        tokens = param_name.split("_")
 
         pname = tokens[-1]
 
         src = "_".join(tokens[:-1])
 
-        like_src = self.like.model[src]
+        like_src = self._like.model[src]
 
         if like_src is None:
 
             src = "_".join(tokens[1:-1])
 
-            like_src = self.like.model[src]
+            like_src = self._like.model[src]
 
         assert like_src is not None
 
         return like_src.funcs['Spectrum'].getParam(pname)
 
-    def setNuisanceParameterValue(self, paramName, value):
+    def set_nuisance_parameter_value(self, paramName, value):
 
-        p = self._get_nuisance_param(paramName)
+        p = self._get_nuisance_parameter(paramName)
 
         p.setValue(value)
 
-    def getNuisanceParameterValue(self, paramName):
+    def get_nuisance_parameter_value(self, paramName):
 
-        p = self._get_nuisance_param(paramName)
+        p = self._get_nuisance_parameter(paramName)
 
         return p.getValue()
 
-    def getNuisanceParameterBounds(self, paramName):
+    def get_nuisance_parameter_bounds(self, paramName):
 
-        p = self._get_nuisance_param(paramName)
+        p = self._get_nuisance_parameter(paramName)
 
         return list(p.getBounds())
 
-    def getNuisanceParameterDelta(self, paramName):
+    def get_nuisance_parameter_delta(self, paramName):
 
-        p = self._get_nuisance_param(paramName)
+        p = self._get_nuisance_parameter(paramName)
 
         value = p.getValue()
 
         return value / 100.0
-
