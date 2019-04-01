@@ -27,6 +27,9 @@ except (ImportError):
     has_fermitools = False
 
 
+from threeML.io.file_utils import file_existing_and_readable
+
+    
 class LATLikelihoodParameter(object):
 
     def __init__(self, name, help_string, default_value=None, allowed_values=None, is_number=True, is_bool=False):
@@ -627,7 +630,7 @@ class TransientLATDataBuilder(object):
 
         for interval in intervals:
 
-            print(interval)
+            
 
             if interval in intervals_before_run:
 
@@ -636,10 +639,10 @@ class TransientLATDataBuilder(object):
 
                 tstart, tstop = [float(x) for x in re.match('^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval).groups()]
 
-                event_file = os.path.abspath(os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername))
-                ft2_file = os.path.abspath(os.path.join(interval, 'gll_ft2_tr_bn%s_v00_filt.fit' % self._triggername))
-                exposure_map = os.path.abspath(os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_expomap.fit' % self._triggername))
-                livetime_cube = os.path.abspath(os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_ltcube.fit' % self._triggername))
+                event_file = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername)
+                ft2_file = os.path.join(interval, 'gll_ft2_tr_bn%s_v00_filt.fit' % self._triggername)
+                exposure_map = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_expomap.fit' % self._triggername)
+                livetime_cube = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_ltcube.fit' % self._triggername)
 
                 # now create a LAT observation object
                 this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop)
