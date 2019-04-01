@@ -34,51 +34,51 @@ class MyPointSource(LikelihoodComponent.GenericSource):
 
 class LikelihoodModelConverter(object):
 
-    def __init__(self, likelihoodModel, irfs):
+    def __init__(self, likelihood_model, irfs):
 
-        self.likelihoodModel = likelihoodModel
+        self.likelihood_model = likelihood_model
 
         self.irfs = irfs
 
-    def setFileSpectrumEnergies(self, emin_kev, emax_kev, nEnergies):
+    def set_file_spectrum_energies(self, emin_kev, emax_kev, nEnergies):
 
-        self.energiesKeV = numpy.logspace(numpy.log10(emin_kev),
+        self.energies_kev = numpy.logspace(numpy.log10(emin_kev),
                                           numpy.log10(emax_kev),
                                           nEnergies)
 
-    def writeXml(self, xmlfile, ra, dec, roi):
+    def write_xml(self, xmlfile, ra, dec, roi):
 
         # Loop through all the sources in the likelihood model and generate a FileSpectrum
         # for all of them. This is necessary to allow the FermiLATLike class
         # to update the spectrum in pyLikelihood without having to write and read a .xml file
         # on the disk
 
-        allSourcesForPyLike = []
+        all_sources_for_pylike = []
         temp_files = []
 
-        nPtsrc = self.likelihoodModel.get_number_of_point_sources()
+        n_pt_src = self.likelihood_model.get_number_of_point_sources()
 
         for ip in range(nPtsrc):
 
-            this_src = self._makeFileSpectrum(ip)
+            this_src = self._make_file_spectrum(ip)
 
-            allSourcesForPyLike.append(this_src)
+            all_sources_for_pylike.append(this_src)
             temp_files.append(this_src.temp_file)
 
         # Now the same for extended sources
 
-        nExtSrc = self.likelihoodModel.get_number_of_extended_sources()
+        n_ext_src = self.likelihood_model.get_number_of_extended_sources()
 
-        if (nExtSrc > 0):
+        if (n_ext_src > 0):
             raise NotImplemented("Cannot support extended sources yet!")
 
         iso = LikelihoodComponent.IsotropicTemplate(self.irfs)
 
-        iso.source.spectrum.Normalization.max = 1.5
+        iso.source.spectrum.Normalization.max = 3.5  # changed by JMB... is it right?
         iso.source.spectrum.Normalization.min = 0.5
         iso.source.spectrum.setAttributes()
 
-        allSourcesForPyLike.append(iso)
+        all_sources_for_pylike.append(iso)
 
         # Get a temporary filename which is guaranteed to be unique
         self._unique_filename = get_random_unique_name()
@@ -89,27 +89,27 @@ class LikelihoodModelConverter(object):
         gal.source.spectrum.Value.min = 0.5
         gal.source.spectrum.setAttributes()
 
-        allSourcesForPyLike.append(gal)
+        all_sources_for_pylike.append(gal)
 
         # Now generate the xml file with also the Galactic and Isotropic diffuse
         # templates
         xml = LikelihoodComponent.LikelihoodModel()
-        xml.addSources(*allSourcesForPyLike)
+        xml.addSources(*all_sources_for_pylike)
         xml.writeXML(xmlfile)
 
         return temp_files
 
-    def _makeFileSpectrum(self, ip):
+    def _make_file_spectrum(self, ip):
 
-        name = self.likelihoodModel.get_point_source_name(ip)
+        name = self.likelihood_model.get_point_source_name(ip)
 
-        values = self.likelihoodModel.get_point_source_fluxes(ip,
-                                                              self.energiesKeV)
+        values = self.likelihood_model.get_point_source_fluxes(ip,
+                                                              self.energies_kev)
 
         tempName = "__%s_%s.txt" % (name, get_random_unique_name())
 
         with open(tempName, "w+") as f:
-            for e, v in zip(self.energiesKeV, values):
+            for e, v in zip(self.energies_kev, values):
                 # Gtlike needs energies in MeV and fluxes in ph/MeV/cm2)
 
                 f.write("%s %s\n" % (e / 1000.0, v * 1000.0))
@@ -143,7 +143,7 @@ class LikelihoodModelConverter(object):
         src.deleteChildElements('spatialModel')
         src.node.appendChild(src.spatialModel.node)
 
-        ra, dec = self.likelihoodModel.get_point_source_position(ip)
+        ra, dec = self.likelihood_model.get_point_source_position(ip)
 
         src.spatialModel.RA.value = ra
         src.spatialModel.DEC.value = dec
@@ -155,13 +155,13 @@ class LikelihoodModelConverter(object):
 
 class FermiLATUnpickler(object):
 
-    def __call__(self, name, eventFile, ft2File, livetimeCube, kind, exposureMap, likelihoodModel, innerMinimization):
+    def __call__(self, name, eventFile, ft2File, livetimeCube, kind, exposureMap, likelihood_model, innerMinimization):
 
         instance = FermiLATLike(name, eventFile, ft2File, livetimeCube, kind, exposureMap)
 
         instance.setInnerMinimization(innerMinimization)
 
-        instance.set_model(likelihoodModel)
+        instance.set_model(likelihood_model)
 
         return instance
 
@@ -246,7 +246,7 @@ class FermiLATLike(PluginPrototype):
 
     pass
 
-    def set_model(self, likelihoodModel):
+    def set_model(self, likelihood_model):
         '''
         Set the model to be used in the joint minimization.
         Must be a LikelihoodModel instance.
@@ -254,14 +254,14 @@ class FermiLATLike(PluginPrototype):
 
         with suppress_stdout():
 
-            self.lmc = LikelihoodModelConverter(likelihoodModel,
+            self.lmc = LikelihoodModelConverter(likelihood_model,
                                                 self.irf)
 
-            self.lmc.setFileSpectrumEnergies(self.emin, self.emax, self.Nenergies)
+            self.lmc.set_file_spectrum_energies(self.emin, self.emax, self.Nenergies)
 
             xmlFile = '%s.xml' % get_random_unique_name()
 
-            temp_files = self.lmc.writeXml(xmlFile, self.ra, self.dec, self.rad)
+            temp_files = self.lmc.write_xml(xmlFile, self.ra, self.dec, self.rad)
 
         if (self.kind == "BINNED"):
             self.like = BinnedAnalysis.BinnedAnalysis(self.obs,
@@ -274,7 +274,7 @@ class FermiLATLike(PluginPrototype):
                                                           xmlFile,
                                                           optimizer='DRMNFB')
 
-        self.likelihoodModel = likelihoodModel
+        self.likelihood_model = likelihood_model
 
         # Here we need also to compute the logLike value, so that the model
         # in the XML file will be chanded if needed
@@ -326,11 +326,11 @@ class FermiLATLike(PluginPrototype):
         self.like.logLike.reReadXml(self.xmlModel)
         '''
 
-        energies = self.lmc.energiesKeV
+        energies = self.lmc.energies_kev
 
-        for id, srcName in enumerate(self.likelihoodModel.point_sources.keys()):
+        for id, srcName in enumerate(self.likelihood_model.point_sources.keys()):
 
-            values = self.likelihoodModel.get_point_source_fluxes(id, energies, tag=self._tag)
+            values = self.likelihood_model.get_point_source_fluxes(id, energies, tag=self._tag)
 
             gtlikeSrcModel = self.like[srcName]
 
@@ -372,14 +372,14 @@ class FermiLATLike(PluginPrototype):
     def __reduce__(self):
 
         return FermiLATUnpickler(), (self.name, self.eventFile, self.ft2File,
-                                     self.livetimeCube, self.kind, self.exposureMap, self.likelihoodModel,
+                                     self.livetimeCube, self.kind, self.exposureMap, self.likelihood_model,
                                      self.fit_nuisance_params)
 
-    # def __setstate__(self, likelihoodModel):
+    # def __setstate__(self, likelihood_model):
     #
     #     import pdb;pdb.set_trace()
     #
-    #     self.set_model(likelihoodModel)
+    #     self.set_model(likelihood_model)
 
     def getModelAndData(self):
 
