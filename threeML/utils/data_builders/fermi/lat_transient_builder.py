@@ -289,7 +289,8 @@ class TransientLATDataBuilder(object):
             name=name,
             default_value=20.,
             help_string="Minimum TS to consider a detection",
-            is_number=True,)
+            is_number=True,
+        )
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
@@ -436,7 +437,8 @@ class TransientLATDataBuilder(object):
         self._parameters[name] = LATLikelihoodParameter(
             name=name,
             default_value=None,
-            help_string="A TS map specification of the type half_size,n_side. For example: \n 0.5,8' makes a TS map 1 deg x 1 deg with 64 points",
+            help_string=
+            "A TS map specification of the type half_size,n_side. For example: \n 0.5,8' makes a TS map 1 deg x 1 deg with 64 points",
             is_number=False)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
@@ -558,7 +560,7 @@ class TransientLATDataBuilder(object):
 
         site_pkg = site.getsitepackages()[0]
 
-        # see what we already have 
+        # see what we already have
 
         intervals_before_run = glob('interval*-*')
 
@@ -642,8 +644,9 @@ class TransientLATDataBuilder(object):
                     print('The ft2 file does not exist. Please examine!')
                     print('we will grab the data file for you.')
 
-                    base_ft2_file = os.path.join('%s' % self.datarepository.get_disp_value(), 'bn%s' %
-                                                 self._triggername, 'gll_ft2_tr_bn%s_v00.fit' % self._triggername)
+                    base_ft2_file = os.path.join('%s' % self.datarepository.get_disp_value(),
+                                                 'bn%s' % self._triggername,
+                                                 'gll_ft2_tr_bn%s_v00.fit' % self._triggername)
 
                     assert file_existing_and_readable(base_ft2_file), 'Cannot find any FT2 files!'
 
