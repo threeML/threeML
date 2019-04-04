@@ -56,7 +56,7 @@ class LikelihoodModelConverter(object):
 
         n_pt_src = self.likelihood_model.get_number_of_point_sources()
 
-        for ip in range(nPtsrc):
+        for ip in range(n_pt_src):
 
             this_src = self._make_file_spectrum(ip)
 
