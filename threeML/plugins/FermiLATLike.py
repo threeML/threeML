@@ -25,6 +25,15 @@ __instrument_name = "Fermi LAT (standard classes)"
 class MyPointSource(LikelihoodComponent.GenericSource):
 
     def __init__(self, source, name, temp_file):
+        """FIXME! briefly describe function
+
+        :param source: 
+        :param name: 
+        :param temp_file: 
+        :returns: 
+        :rtype: 
+
+        """
         self.source = source
         self.source.name = name
         self.temp_file = temp_file
@@ -35,16 +44,45 @@ class MyPointSource(LikelihoodComponent.GenericSource):
 class LikelihoodModelConverter(object):
 
     def __init__(self, likelihood_model, irfs):
+        """FIXME! briefly describe function
+
+        :param likelihood_model: 
+        :param irfs: 
+        :returns: 
+        :rtype: 
+
+        """
+        
 
         self.likelihood_model = likelihood_model
 
         self.irfs = irfs
 
     def set_file_spectrum_energies(self, emin_kev, emax_kev, nEnergies):
+        """FIXME! briefly describe function
+
+        :param emin_kev: 
+        :param emax_kev: 
+        :param nEnergies: 
+        :returns: 
+        :rtype: 
+
+        """
 
         self.energies_kev = numpy.logspace(numpy.log10(emin_kev), numpy.log10(emax_kev), nEnergies)
 
     def write_xml(self, xmlfile, ra, dec, roi):
+        """FIXME! briefly describe function
+
+        :param xmlfile: 
+        :param ra: 
+        :param dec: 
+        :param roi: 
+        :returns: 
+        :rtype: 
+
+        """
+        
 
         # Loop through all the sources in the likelihood model and generate a FileSpectrum
         # for all of them. This is necessary to allow the FermiLATLike class
@@ -98,6 +136,13 @@ class LikelihoodModelConverter(object):
         return temp_files
 
     def _make_file_spectrum(self, ip):
+        """FIXME! briefly describe function
+
+        :param ip: 
+        :returns: 
+        :rtype: 
+
+        """
 
         name = self.likelihood_model.get_point_source_name(ip)
 
@@ -152,6 +197,20 @@ class FermiLATUnpickler(object):
 
     def __call__(self, name, event_file, ft2_file, livetime_cube_file, kind, exposure_map_file, likelihood_model,
                  inner_minimization):
+        """FIXME! briefly describe function
+
+        :param name: 
+        :param event_file: 
+        :param ft2_file: 
+        :param livetime_cube_file: 
+        :param kind: 
+        :param exposure_map_file: 
+        :param likelihood_model: 
+        :param inner_minimization: 
+        :returns: 
+        :rtype: 
+
+        """
 
         instance = FermiLATLike(name, event_file, ft2_file, livetime_cube_file, kind, exposure_map_file)
 
