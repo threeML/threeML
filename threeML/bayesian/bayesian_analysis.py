@@ -499,22 +499,21 @@ class BayesianAnalysis(object):
 
             return self.samples
 
-    def sample_dynesty(self, sampler_type='dynamic', quiet=False, **dynesty_kwargs):
+    def sample_dynesty(self, sampler_type='dynamic', quiet=False, dynesty_kwargs={}, run_kwargs={}):
         """
-        sample with dynesty (https://dynesty.readthedocs.io/en/latest/index.html)
-        
+
         select between nested and dynamic nested samplers. The kwargs for dynesty
         must be set by the user. 
 
-
         :param sampler_type: 'nested' or 'dynamic'
         :param quiet: print fit result or not
+        :param dynesty_kwargs: keywords for the given sampler 
+        :param run_kwargs: keywords for the runs
         :returns: results
         :rtype: 
 
         """
-
-        assert sampler_type.lower() in ['dynamic', 'nested'], 'sampler_type must be dynamic or nested'
+         assert sampler_type.lower() in ['dynamic', 'nested'], 'sampler_type must be dynamic or nested'
 
         if sampler_type.lower() == 'dynamic':
 
@@ -554,7 +553,7 @@ class BayesianAnalysis(object):
 
             # now run it
 
-            self._sampler.run_nested()
+            self._sampler.run_nested(**run_kwargs)
 
             # now extract everything
 
@@ -567,7 +566,7 @@ class BayesianAnalysis(object):
 
             self._build_samples_dictionary()
 
-            self._marginal_likelihood = self._sampler.results['logz'] / np.log(10.)
+            self._marginal_likelihood = self._sampler.results['logz'][-1] / np.log(10.)
 
             self._build_results()
 
