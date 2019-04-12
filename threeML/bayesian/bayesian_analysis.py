@@ -515,6 +515,20 @@ class BayesianAnalysis(object):
             sampler_class = dynesty.NestedSampler
 
 
+        self._update_free_parameters()
+
+        n_dim = len(self._free_parameters.keys())
+
+        # MULTINEST has a convergence criteria and therefore, there is no way
+        # to determine progress
+
+        sampling_procedure = sample_without_progress
+
+        # MULTINEST uses a different call signiture for
+        # sampling so we construct callbakcs
+        loglike, multinest_prior = self._construct_multinest_posterior()
+
+            
         with use_astromodels_memoization(False):
 
             if threeML_config['parallel']['use-parallel']:
@@ -785,6 +799,67 @@ class BayesianAnalysis(object):
 
         return loglike, prior
 
+
+    def _construct_dynesty_posterior(self):
+        """
+        Construct the likelihood and prior for dynesty.
+
+        for info see: https://dynesty.readthedocs.io/en/latest/crashcourse.html
+
+        """
+
+        # First update the free parameters (in case the user changed them after the construction of the class)
+        self._update_free_parameters()
+
+        def loglike(trial_values):
+
+            # NOTE: the _log_like function DOES NOT assign trial_values to the parameters
+
+            for i, parameter in enumerate(self._free_parameters.values()):
+                parameter.value = trial_values[i]
+
+            log_like = self._log_like(trial_values)
+
+            if self.verbose:
+                n_par = len(self._free_parameters)
+
+                print(
+                "Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
+                                                           log_like))
+
+            return log_like
+
+        # Now construct the prior
+        # dynesty priors are defined on the unit cube
+        # and should return the value in the bounds... not the
+        # probability. Therefore, we must make some transforms
+
+        def prior(uparams):
+
+            params = []
+            
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+                try:
+
+                    # get the param in real space from unit space
+                    params[i] = parameter.prior.from_unit_cube(uparams[i])
+
+                except AttributeError:
+
+                    raise RuntimeError("The prior you are trying to use for parameter %s is "
+                                       "not compatible with multinest" % parameter_name)
+            return params
+        # Give a test run to the prior to check that it is working. If it crashes while multinest is going
+        # it will not stop dynesty from running and generate thousands of exceptions (argh!)
+        n_dim = len(self._free_parameters)
+
+        _ = prior([0.5]*n_dim)
+
+        return loglike, prior
+
+
+    
     def _get_starting_points(self, n_walkers, variance=0.1):
 
         # Generate the starting points for the walkers by getting random
