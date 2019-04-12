@@ -1,5 +1,6 @@
 import emcee
 import emcee.utils
+import dynesty
 
 try:
 
@@ -430,7 +431,7 @@ class BayesianAnalysis(object):
             raise RuntimeError("If you want to run multinest in parallell you need to use an ad-hoc method")
 
         else:
-
+            
             sampler = pymultinest.run(loglike,
                                       multinest_prior,
                                       n_dim,
@@ -500,6 +501,30 @@ class BayesianAnalysis(object):
 
             return self.samples
 
+
+    def sample_dynesty_nested(self, sampler_type='dynamic', **dynesty_kwargs):
+
+        assert sampler_type.lower() in ['dynamic', 'nested'], 'sampler_type must be dynamic or nested'
+
+        if sampler_type.lower() == 'dynamic':
+
+            sampler_class = dynesty.DynamicNestedSampler
+
+        else:
+
+            sampler_class = dynesty.NestedSampler
+
+
+        with use_astromodels_memoization(False):
+
+            if threeML_config['parallel']['use-parallel']:
+
+                c = ParallelClient()
+                view = c[:]
+                
+        
+
+        
     def _build_samples_dictionary(self):
         """
         Build the dictionary to access easily the samples by parameter
