@@ -11,7 +11,7 @@ import collections
 
 def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, flux_unit, use_components,
                                  components_to_use,
-                                 confidence_level, equal_tailed, differential, sources_to_use):
+                                 confidence_level, equal_tailed, differential, sources_to_use, include_extended):
     """
     helper function to pull out analysis details that are common to flux and plotting functions
 
@@ -26,6 +26,7 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
     :param fraction_of_samples:
     :param differential:
     :param sources_to_use:
+    :param include_extended:
     :return:
     """
 
@@ -38,8 +39,10 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
     bayes_sources = collections.OrderedDict()
 
     for analysis in analysis_results:
-
-        for source_name, source in analysis.optimized_model.point_sources.items():
+    
+        items = analysis.optimized_model.point_sources.items() if not include_extended else analysis.optimized_model.sources.items()
+        
+        for source_name, source in items:
 
             if source_name in sources_to_use or not sources_to_use:
 
@@ -501,7 +504,8 @@ def _calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
     :param use_components: (optional) True or False to plot the spectral components
     :param components_to_use: (optional) list of string names of the components to plot: including 'total'
     will also plot the total spectrum
-
+    :param include_extended: (optional) if True, plot extended source spectra (spatially integrated) as well.
+    
     :return: mle_dataframe, bayes_dataframe
     """
 
@@ -517,7 +521,7 @@ def _calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
         'components_to_use': [],
         'sources_to_use': [],
         'sum_sources': False,
-
+        'include_extended': False
     }
 
     for key, value in kwargs.items():
@@ -538,7 +542,8 @@ def _calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
                                                                          _defaults['confidence_level'],
                                                                          _defaults['equal_tailed'],
                                                                          differential=False,
-                                                                         sources_to_use=_defaults['sources_to_use'])
+                                                                         sources_to_use=_defaults['sources_to_use'],
+                                                                         include_extended=_defaults['include_extended'])
 
     out = []
 

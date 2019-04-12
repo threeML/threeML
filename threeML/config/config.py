@@ -31,7 +31,7 @@ class Config(object):
 
             try:
 
-                configuration = yaml.safe_load(f)
+                configuration = yaml.load(f, Loader=yaml.SafeLoader)
 
             except:
 
@@ -64,7 +64,7 @@ class Config(object):
 
             with open(user_config_path) as f:
 
-                configuration = yaml.safe_load(f)
+                configuration = yaml.load(f, Loader=yaml.SafeLoader)
 
                 # Test if the local/configuration is ok
 

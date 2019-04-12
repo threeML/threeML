@@ -48,15 +48,15 @@ class ROOTMinimizer(LocalMinimizer):
 
     valid_setup_keys = ('ftol', 'max_function_calls', 'strategy')
 
-    def __init__(self, function, parameters, verbosity=0):
+    def __init__(self, function, parameters, verbosity=0, setup_dict=None):
 
-        super(ROOTMinimizer, self).__init__(function, parameters, verbosity)
+        super(ROOTMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
 
     def _setup(self, user_setup_dict):
 
         # Defaults
 
-        setup_dict = {'ftol': 0.01,
+        setup_dict = {'ftol': 1.0,
                       'max_function_calls': 100000,
                       'strategy': 1}
 

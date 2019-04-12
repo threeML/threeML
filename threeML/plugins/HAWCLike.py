@@ -208,9 +208,16 @@ class HAWCLike(PluginPrototype):
                              "will not be effective until you create a new JointLikelihood or Bayesian" +
                              "instance")
 
-    def set_active_measurements(self, minChannel, maxChannel):
+    def set_active_measurements(self, minChannel=None, maxChannel=None, bin_list=None):
     
-        self.set_bin_list(self._min_and_max_to_list(minChannel, maxChannel))
+        if bin_list is not None:
+            assert minChannel is None and maxChannel is None, 'bin_list provided, thus neither minChannel nor ' \
+                'maxChannel should be set'
+            self.set_bin_list(bin_list)
+        else:
+            assert minChannel is not None and maxChannel is not None, 'bin_list not provided, thus both minChannel ' \
+                'and maxChannel should be set'
+            self.set_bin_list(self._min_and_max_to_list(minChannel, maxChannel))
 
     def set_model(self, likelihood_model_instance):
         """
@@ -327,6 +334,9 @@ class HAWCLike(PluginPrototype):
         # (note that the output is in MeV, while we need keV)
 
         self._energies = np.array(self._theLikeHAWC.GetEnergies(False)) * 1000.0
+        
+        #make sure the model maps etc. get filled
+        self.get_log_like()
 
     def _CommonNormCallback(self, commonNorm_parameter):
 
@@ -438,7 +448,7 @@ class HAWCLike(PluginPrototype):
         :param dec: Declination in degrees of top-hat center.
         :param radius: List of top-hat radii in degrees (one per analysis bin).
         """
-
+        
         return self._theLikeHAWC.calcPValue(ra, dec, radius)
 
     def write_map(self, file_name):
@@ -449,7 +459,7 @@ class HAWCLike(PluginPrototype):
         :param file_name: name for the output map
         :return: None
         """
-
+        
         self._theLikeHAWC.WriteMap(file_name)
 
     def get_nuisance_parameters(self):
@@ -504,7 +514,7 @@ class HAWCLike(PluginPrototype):
                       in lower panel (default: False).
         :return: matplotlib-type figure.
         """
-
+        
         n_bins = len(self._bin_list)
         bin_index = np.arange(n_bins)
 
@@ -605,11 +615,11 @@ class HAWCLike(PluginPrototype):
             pixels_per_bin =  np.array( self._theLikeHAWC.GetNumberOfPixels() )
             return int(np.sum( pixels_per_bin ))
         except AttributeError:
-            warnings.warn(
+            custom_warnings.warn(
               "_theLikeHAWC.GetNumberOfPixels() not available, values for statistical measurements such as AIC or BIC are unreliable. Please update your aerie version." )
             return 1
 
-    def get_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
+    def get_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None, subtract_model_from_model = False ):
 
         """
         Calculates radial profiles of data - background & model.
@@ -621,16 +631,14 @@ class HAWCLike(PluginPrototype):
         for the disk to calculate the gamma/hadron weights. Default: 3.0
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
+        :param subtract_model_from_model: If True and model_to_subtract is not None, subtract model from model too. Default: False.
         
         :return: np arrays with the radii, model profile, data profile, data uncertainty, list of analysis bins used.
         """
-
-        self._fill_model_cache()
-        self.calc_TS()
-
-        #default is to use bins 4-9
+                
+        #default is to use all active bins
         if bin_list is None:
-          bin_list = self._min_and_max_to_list( 4, 10 ) 
+            bin_list = self._bin_list
                 
         #Need to make sure we don't try to use bins that we don't have data etc. for.
         good_bins = [bin in bin_list for bin in self._bin_list]
@@ -664,17 +672,15 @@ class HAWCLike(PluginPrototype):
         counts = signal + bkg
 
         if model_to_subtract is not None:
-          this_model = deepcopy(self._model)
-          self.set_model( model_to_subtract )
-          self._fill_model_cache()
-          self.calc_TS()
-          model_subtract = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
-          temp = model_subtract[1:] - model_subtract[:-1]
-          model_subtract[1:] = temp
-          signal -= model_subtract
-          self.set_model(this_model)
-          self._fill_model_cache()
-          self.calc_TS()
+            this_model = deepcopy(self._model)
+            self.set_model( model_to_subtract )
+            model_subtract = np.array( [self._theLikeHAWC.GetTopHatExpectedExcesses(ra, dec, r+0.5*delta_r) for r in radii ] )
+            temp = model_subtract[1:] - model_subtract[:-1]
+            model_subtract[1:] = temp
+            signal -= model_subtract
+            if subtract_model_from_model:
+                model -=  model_subtract
+            self.set_model(this_model)
            
         # weights are calculated as expected number of gamma-rays / number of background counts.
         # here, use max_radius to evaluate the number of gamma-rays/bkg counts.
@@ -701,9 +707,9 @@ class HAWCLike(PluginPrototype):
         excess_error = np.sqrt( np.sum( counts*weight*weight/(area*area) , axis=1 )) 
         excess_model = np.average( model/area , weights=weight, axis=1 )    
         
-        return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names, key=int)
+        return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names)
 
-    def plot_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None ):
+    def plot_radial_profile(self, ra, dec, bin_list = None, max_radius=3.0, n_radial_bins = 30, model_to_subtract = None, subtract_model_from_model = False ):
 
         """
         Plots radial profiles of data - background & model.
@@ -715,11 +721,12 @@ class HAWCLike(PluginPrototype):
         to calculate the gamma/hadron weights. Default: 3.0
         :param n_radial_bins: Number of bins for the radial profile. Default: 30.
         :param model_to_subtract: Another model that is to be subtracted from the data excess. Default: None.
+        :param subtract_model_from_model: If True and model_to_subtract is not None, subtract model from model too. Default: False.
         
         :return: plot of data - background vs model radial profiles.
         """
 
-        radii, excess_model, excess_data, excess_error, list_of_bin_names = self.get_radial_profile( ra, dec, bin_list, max_radius, n_radial_bins, model_to_subtract )
+        radii, excess_model, excess_data, excess_error, list_of_bin_names = self.get_radial_profile( ra, dec, bin_list, max_radius, n_radial_bins, model_to_subtract, subtract_model_from_model )
         
         fig, ax = plt.subplots()
         
@@ -737,26 +744,32 @@ class HAWCLike(PluginPrototype):
         plt.xlim = x_limits
 
         plt.ylabel("Apparent radial excess [sr$^{-1}$]")
-        plt.xlabel("Distance from source at (%.2f$^{\circ}$, %.2f$^{\circ}$) [$^{\circ}$]" % ( ra, dec ) )
-        plt.title("Radial profile, bin%s %s"  % ("s" if len(list_of_bin_names)>1 else "", list_of_bin_names ) )
+        plt.xlabel("Distance from source at (%.2f$^{\circ}$, %.2f$^{\circ}$) [$^{\circ}$]" % ( ra, dec ) ) 
+                
+        if len(list_of_bin_names) == 1:
+            title = "Radial profile, bin {0}".format( list_of_bin_names[0] )
+        else:
+            tmptitle =  "Radial profile, bins   {0}".format( list_of_bin_names )
+            width = 84
+            title = '\n'.join(tmptitle[i:i+width] for i in xrange(0, len(tmptitle), width))
+
+        plt.title(title)
   
 
         ax.grid(True)
         
-        plt.tight_layout()
+        try:
+            plt.tight_layout()
+        except:
+            pass
 
         return fig
 
     def write_model_map(self, fileName, poisson=False):
-
-        # This is to make sure we have computed the sources (otherwise the following method WriteModelMap will fail
-        self._fill_model_cache()
-
+        
         self._theLikeHAWC.WriteModelMap(fileName, poisson)
 
     def write_residual_map(self, fileName):
- 
-        self._fill_model_cache()
-
+        
         self._theLikeHAWC.WriteResidualMap(fileName)
 

@@ -1,5 +1,4 @@
 from threeML.minimizer.minimization import LocalMinimizer, CannotComputeErrors, FitFailed, CannotComputeCovariance
-from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.detect_notebook import is_inside_notebook
 
 from iminuit import Minuit
@@ -48,12 +47,12 @@ class MinuitMinimizer(LocalMinimizer):
     # minuit. This makes the implementation a little bit more cumbersome, but more adaptable if we want
     # to switch back to the bare bone SEAL minuit
 
-    def __init__(self, function, parameters, verbosity=0):
+    def __init__(self, function, parameters, verbosity=0, setup_dict=None):
 
         # This will contain the results of the last call to Migrad
         self._last_migrad_results = None
 
-        super(MinuitMinimizer, self).__init__(function, parameters, verbosity)
+        super(MinuitMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
 
     def _setup(self, user_setup_dict):
 
@@ -96,28 +95,30 @@ class MinuitMinimizer(LocalMinimizer):
 
         iminuit_init_parameters['frontend'] = _get_frontend()
 
-        # We need to make a function with the parameters as explicit
-        # variables in the calling sequence, so that Minuit will be able
-        # to probe the parameter's names
-        var_spelled_out = ",".join(variable_names_for_iminuit)
+        iminuit_init_parameters['forced_parameters'] = variable_names_for_iminuit
 
-        # A dictionary to keep a way to convert from var. name to
-        # variable position in the function calling sequence
-        # (will use this in contours)
-
-        self.name_to_position = {k: i for i, k in enumerate(variable_names_for_iminuit)}
-
-        # Write and compile the code for such function
-
-        code = 'def _f(self, %s):\n  return self.function(%s)' % (var_spelled_out, var_spelled_out)
-        exec code
-
-        # Add the function just created as a method of the class
-        # so it will be able to use the 'self' pointer
-        add_method(self, _f, "_f")
+        # # We need to make a function with the parameters as explicit
+        # # variables in the calling sequence, so that Minuit will be able
+        # # to probe the parameter's names
+        # var_spelled_out = ",".join(variable_names_for_iminuit)
+        #
+        # # A dictionary to keep a way to convert from var. name to
+        # # variable position in the function calling sequence
+        # # (will use this in contours)
+        #
+        # self.name_to_position = {k: i for i, k in enumerate(variable_names_for_iminuit)}
+        #
+        # # Write and compile the code for such function
+        #
+        # code = 'def _f(self, %s):\n  return self.function(%s)' % (var_spelled_out, var_spelled_out)
+        # exec code
+        #
+        # # Add the function just created as a method of the class
+        # # so it will be able to use the 'self' pointer
+        # add_method(self, _f, "_f")
 
         # Finally we can instance the Minuit class
-        self.minuit = Minuit(self._f, **iminuit_init_parameters)
+        self.minuit = Minuit(self.function, **iminuit_init_parameters)
 
         # Make sure we got this right (some versions of iminuit does not understand the keyword in the setup)
 

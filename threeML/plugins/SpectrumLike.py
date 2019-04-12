@@ -2277,38 +2277,18 @@ class SpectrumLike(PluginPrototype):
 
         return self._output().to_string()
 
-    def display_model(self, data_color='k', model_color='r', step=True, show_data=True, show_residuals=True,
-                      ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None,
-                      **kwargs):
 
+    def _construct_counts_arrays(self, min_rate, ratio_residuals):
         """
-        Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying
-        a previous axis to 'model_subplot'.
 
-        Example usage:
+        Build new arrays before or after a fit of rebinned data/model
+        values. We keep this seperated from the plotting code because
+        it is cleaner and allows us to extract these quantites independently
 
-        fig = data.display_model()
-
-        fig2 = data2.display_model(model_subplot=fig.axes)
-
-
-        :param data_color: the color of the data
-        :param model_color: the color of the model
-        :param step: (bool) create a step count histogram or interpolate the model
-        :param show_data: (bool) show_the data with the model
-        :param show_residuals: (bool) shoe the residuals
-        :param ratio_residuals: (bool) use model ratio instead of residuals
-        :param show_legend: (bool) show legend
-        :param min_rate: the minimum rate per bin
-        :param model_label: (optional) the label to use for the model default is plugin name
-        :param model_subplot: (optional) axis or list of axes to plot to
+        :param min_rate:
+        :param ratio_residuals:
         :return:
         """
-
-        if model_label is None:
-            model_label = "%s Model" % self._name
-
-        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
         # energy_min, energy_max = self._rsp.ebounds[:-1], self._rsp.ebounds[1:]
 
@@ -2317,7 +2297,9 @@ class SpectrumLike(PluginPrototype):
 
         chan_width = energy_max - energy_min
 
+
         expected_model_rate = self.expected_model_rate
+
 
         # figure out the type of data
 
@@ -2373,7 +2355,7 @@ class SpectrumLike(PluginPrototype):
 
                 # negative src rates cause the energy mean to
                 # go outside of the bounds. So we fix negative rates to
-                # zero when computing the mean 
+                # zero when computing the mean
 
                 idx_negative = r<0.
 
@@ -2464,28 +2446,135 @@ class SpectrumLike(PluginPrototype):
 
                     raise NotImplementedError("Not yet implemented")
 
+        # construct a dict with all the new quantities
+        # so that we can extract them for plotting
+
+        rebinned_quantities = dict(new_rate=new_rate,
+                                   new_err=new_err,
+                                   new_chan_width=new_chan_width,
+                                   new_energy_min=new_energy_min,
+                                   new_energy_max=new_energy_max,
+                                   mean_energy=mean_energy,
+                                   residuals=residuals,
+                                   residual_errors=residual_errors,
+                                   delta_energy=delta_energy,
+                                   expected_model_rate=expected_model_rate,
+                                   energy_min=energy_min,
+                                   energy_max=energy_max,
+                                   new_model_rate = new_model_rate,
+                                   chan_width=chan_width
+        )
 
 
+        return rebinned_quantities
+
+    def display_model(self, data_color='k', model_color='r', step=True, show_data=True, show_residuals=True,
+                      ratio_residuals=False, show_legend=True, min_rate=1E-99, model_label=None, model_kwargs = None,
+                      data_kwargs=None,
+                      **kwargs):
+
+        """
+        Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying
+        a previous axis to 'model_subplot'.
+
+        Example usage:
+
+        fig = data.display_model()
+
+        fig2 = data2.display_model(model_subplot=fig.axes)
 
 
-        residual_plot.add_data(mean_energy,
-                               new_rate / new_chan_width,
-                               residuals,
-                               residual_yerr=residual_errors,
-                               yerr=new_err / new_chan_width,
-                               xerr=delta_energy,
+        :param data_color: the color of the data
+        :param model_color: the color of the model
+        :param step: (bool) create a step count histogram or interpolate the model
+        :param show_data: (bool) show_the data with the model
+        :param show_residuals: (bool) shoe the residuals
+        :param ratio_residuals: (bool) use model ratio instead of residuals
+        :param show_legend: (bool) show legend
+        :param min_rate: the minimum rate per bin
+        :param model_label: (optional) the label to use for the model default is plugin name
+        :param model_subplot: (optional) axis or list of axes to plot to
+        :param model_kwargs: plotting kwargs affecting the plotting of the model
+        :param data_kwargs:  plotting kwargs affecting the plotting of the data and residuls
+        :return:
+        """
+
+
+        # set up the default plotting
+
+        _default_model_kwargs = dict(color=model_color, alpha=1.)
+
+        _default_data_kwargs = dict(color=data_color, alpha=1.,
+                                    fmt=threeML_config['residual plot']['error marker'],
+                                    markersize=threeML_config['residual plot']['error marker size'],
+                                    linestyle='',
+                                    elinewidth=threeML_config['residual plot']['error line width'],
+                                    capsize=0
+                                    )
+
+        if model_kwargs is not None:
+
+            assert type(model_kwargs) == dict, 'model_kwargs must be a dict'
+
+            for k,v in model_kwargs.items():
+
+                if k in _default_model_kwargs:
+
+                    _default_model_kwargs[k] = v
+
+                else:
+
+                    _default_model_kwargs[k] = v
+
+        if data_kwargs is not None:
+
+            assert type(data_kwargs) == dict, 'data_kwargs must be a dict'
+
+            for k, v in data_kwargs.items():
+
+                if k in _default_data_kwargs:
+
+                    _default_data_kwargs[k] = v
+
+                else:
+
+                    _default_data_kwargs[k] = v
+
+        if model_label is None:
+            model_label = "%s Model" % self._name
+
+        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
+
+        # compute the values for the plotting
+
+        rebinned_quantities = self._construct_counts_arrays(min_rate, ratio_residuals)
+
+        weighted_data = rebinned_quantities['new_rate'] / rebinned_quantities['new_chan_width']
+        weighted_error = rebinned_quantities['new_err'] / rebinned_quantities['new_chan_width']
+
+
+        residual_plot.add_data(rebinned_quantities['mean_energy'],
+                               weighted_data,
+                               rebinned_quantities['residuals'],
+                               residual_yerr = rebinned_quantities['residual_errors'],
+                               yerr = weighted_error,
+                               xerr=rebinned_quantities['delta_energy'],
                                label=self._name,
-                               color=data_color,
-                               show_data=show_data)
+                               show_data=show_data,
+                               **_default_data_kwargs
+                               )
 
+        # a step historgram
         if step:
 
-            residual_plot.add_model_step(new_energy_min,
-                                         new_energy_max,
-                                         new_chan_width,
-                                         new_model_rate,
+
+            residual_plot.add_model_step(rebinned_quantities['new_energy_min'],
+                                         rebinned_quantities['new_energy_max'],
+                                         rebinned_quantities['new_chan_width'],
+                                         rebinned_quantities['new_model_rate'],
                                          label=model_label,
-                                         color=model_color)
+                                         **_default_model_kwargs
+                                         )
 
 
         else:
@@ -2494,14 +2583,17 @@ class SpectrumLike(PluginPrototype):
 
             # Mask the array so we don't plot the model where data have been excluded
             # y = expected_model_rate / chan_width
-            y = np.ma.masked_where(~self._mask, expected_model_rate / chan_width)
+            y = np.ma.masked_where(~self._mask,
+                                   rebinned_quantities['expected_model_rate'] / rebinned_quantities['chan_width'])
 
-            x = np.mean([energy_min, energy_max], axis=0)
+            x = np.mean([rebinned_quantities['energy_min'],
+                         rebinned_quantities['energy_max']], axis=0)
 
             residual_plot.add_model(x,
                                     y,
                                     label=model_label,
-                                    color=model_color)
+                                    **_default_model_kwargs
+                                    )
 
         return residual_plot.finalize(xlabel="Energy\n(keV)",
                                       ylabel="Net rate\n(counts s$^{-1}$ keV$^{-1}$)",

@@ -280,8 +280,22 @@ class Significance(object):
         return sign * np.sqrt(2 * (one + two))
 
     def li_and_ma_equivalent_for_gaussian_background(self, sigma_b):
+        """
+        Compute the significance using the formula from Vianello 2018
+        (https://iopscience.iop.org/article/10.3847/1538-4365/aab780/meta),
+        which is appropriate when the observation is Poisson distributed but
+        the background has been modeled and thus has Gaussian distributed errors.
 
+        :param sigma_b: The gaussian 1 sigma errors on the background  
+        :return:
+
+        """
+        
         # This is a computation I need to publish (G. Vianello)
+
+        # Actually, you did (and beat J. Michael!) For details on this computation
+        
+        
 
         b = self.expected
         o = self.Non

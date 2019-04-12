@@ -84,11 +84,21 @@ class XYLike(PluginPrototype):
         self._source_name = source_name
 
     @classmethod
-    def from_function(cls, name, function, x, yerr):
+    def from_function(cls, name, function, x, yerr, **kwargs):
+        """
+        Generate an XYLike plugin from an astromodels function instance
+        
+        :param name: name of plugin
+        :param function: astromodels function instance
+        :param x: where to simulate
+        :param yerr: y errors or None for Poisson data
+        :param kwargs: kwargs from xylike constructor
+        :return: XYLike plugin
+        """
 
         y = function(x)
 
-        xyl_gen = XYLike("generator", x, y, yerr)
+        xyl_gen = XYLike("generator", x, y, yerr, **kwargs)
 
         pts = PointSource("fake", 0.0, 0.0, function)
 
@@ -226,7 +236,7 @@ class XYLike(PluginPrototype):
 
         if self._likelihood_model is not None and source_name is not None:
 
-            assert source_name in self._likelihood_model.sources, "Source %s is not contained in " \
+            assert source_name in self._likelihood_model.point_sources, "Source %s is not a point source in " \
                                                                         "the likelihood model" % source_name
 
         self._source_name = source_name
@@ -271,9 +281,9 @@ class XYLike(PluginPrototype):
         if self._source_name is not None:
 
             # Make sure that the source is in the model
-            assert self._source_name in likelihood_model_instance.sources, \
+            assert self._source_name in likelihood_model_instance.point_sources, \
                                                 "This XYLike plugin refers to the source %s, " \
-                                                "but that source is not in the likelihood model" % (self._source_name)
+                                                "but that source is not a point source in the likelihood model" % (self._source_name)
 
         self._likelihood_model = likelihood_model_instance
 
@@ -298,14 +308,14 @@ class XYLike(PluginPrototype):
 
             # Note that we checked that self._source_name is in the model when the model was set
 
-            try:
+            if self._source_name in self._likelihood_model.point_sources:
+            
+                expectation = self._likelihood_model.point_sources[self._source_name](self._x)
 
-                expectation = self._likelihood_model.sources[self._source_name](self._x)
-
-            except KeyError:
+            else:
 
                 raise KeyError("This XYLike plugin has been assigned to source %s, "
-                               "which does not exist in the current model" % self._source_name)
+                               "which is not a point soure in the current model" % self._source_name)
 
         return expectation
 
@@ -403,7 +413,7 @@ class XYLike(PluginPrototype):
 
         if self._likelihood_model is not None:
 
-            flux = self._likelihood_model.get_total_flux(self.x)
+            flux = self._get_total_expectation()
 
             sub.plot(self.x, flux, '--', label='model')
 

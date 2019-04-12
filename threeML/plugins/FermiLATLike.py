@@ -134,6 +134,7 @@ class LikelihoodModelConverter(object):
         src.spectrum.parameters['Normalization'].value = 1.0
         src.spectrum.parameters['Normalization'].max = 1.1
         src.spectrum.parameters['Normalization'].min = 0.9
+        src.spectrum.parameters['Normalization'].free = False
         src.spectrum.setAttributes()
         src.deleteChildElements('spectrum')
         src.node.appendChild(src.spectrum.node)
@@ -302,11 +303,11 @@ class FermiLATLike(PluginPrototype):
 
     def setInnerMinimization(self, s):
 
-        self.innerMinimization = bool(s)
+        self.fit_nuisance_params = bool(s)
 
         for parameter in self.nuisance_parameters:
 
-            self.nuisance_parameters[parameter].free = self.innerMinimization
+            self.nuisance_parameters[parameter].free = self.fit_nuisance_params
 
     def inner_fit(self):
         '''
@@ -315,36 +316,8 @@ class FermiLATLike(PluginPrototype):
         parameters, i.e., the parameters belonging only to the model for this
         particular detector
         '''
-        self._updateGtlikeModel()
 
-        if not self.innerMinimization:
-
-            log_like = self.like.logLike.value()
-
-        else:
-
-            try:
-                # Use .optimize instead of .fit because we don't need the errors
-                # (.optimize is faster than .fit)
-                self.like.optimize(0)
-            except:
-                # This is necessary because sometimes fitting algorithms go and explore extreme region of the
-                # parameter space, which might turn out to give strange model shapes and therefore
-                # problems in the likelihood fit
-                print("Warning: failed likelihood fit (probably parameters are too extreme).")
-                return 1e5
-            else:
-                # Update the value for the nuisance parameters
-                for par in self.nuisance_parameters.values():
-                    newValue = self.getNuisanceParameterValue(par.name)
-                    par.value = newValue
-                pass
-
-                log_like = self.like.logLike.value()
-
-        return log_like - logfactorial(self.like.total_nobs())
-
-    pass
+        return self.get_log_like()
 
     def _updateGtlikeModel(self):
         '''
@@ -382,24 +355,25 @@ class FermiLATLike(PluginPrototype):
         Return the value of the log-likelihood with the current values for the
         parameters stored in the ModelManager instance
         '''
+
         self._updateGtlikeModel()
-        try:
 
-            value = self.like.logLike.value()
+        if self.fit_nuisance_params:
 
-        except:
+            for parameter in self.nuisance_parameters:
+                self.setNuisanceParameterValue(parameter, self.nuisance_parameters[parameter].value)
 
-            raise
+            self.like.syncSrcParams()
+            
+        log_like = self.like.logLike.value()
 
-        return value - logfactorial(self.like.total_nobs())
-
-    pass
+        return log_like - logfactorial(self.like.total_nobs())
     #
     def __reduce__(self):
 
         return FermiLATUnpickler(), (self.name, self.eventFile, self.ft2File,
                                      self.livetimeCube, self.kind, self.exposureMap, self.likelihoodModel,
-                                     self.innerMinimization)
+                                     self.fit_nuisance_params)
 
     # def __setstate__(self, likelihoodModel):
     #
@@ -500,39 +474,53 @@ class FermiLATLike(PluginPrototype):
                                                                         max_value=bounds[1],
                                                                         delta=delta)
 
-            nuisanceParameters["%s_%s" % (self.name, name)].free = self.innerMinimization
-
-            # Prepare a callback which will set the parameter value in the pyLikelihood object if it gets
-            # changed
-            # def this_callback(parameter):
-            #
-            #     _, src, pname = parameter.name.split("_")
-            #
-            #     try:
-            #
-            #         self.like.model[src].funcs['Spectrum'].getParam(pname).setValue(parameter.value)
-            #
-            #     except:
-            #
-            #         import pdb;pdb.set_trace()
-            #
-            # nuisanceParameters["%s_%s" % (self.name, name)].add_callback(this_callback)
+            nuisanceParameters["%s_%s" % (self.name, name)].free = self.fit_nuisance_params
 
         return nuisanceParameters
 
+    def _get_nuisance_param(self, paramName):
+
+        tokens = paramName.split("_")
+
+        pname = tokens[-1]
+
+        src = "_".join(tokens[:-1])
+
+        like_src = self.like.model[src]
+
+        if like_src is None:
+
+            src = "_".join(tokens[1:-1])
+
+            like_src = self.like.model[src]
+
+        assert like_src is not None
+
+        return like_src.funcs['Spectrum'].getParam(pname)
+
+    def setNuisanceParameterValue(self, paramName, value):
+
+        p = self._get_nuisance_param(paramName)
+
+        p.setValue(value)
+
     def getNuisanceParameterValue(self, paramName):
 
-        src, pname = paramName.split("_")[-2:]
+        p = self._get_nuisance_param(paramName)
 
-        return self.like.model[src].funcs['Spectrum'].getParam(pname).getValue()
-
+        return p.getValue()
 
     def getNuisanceParameterBounds(self, paramName):
-        src, pname = paramName.split("_")
-        return list(self.like.model[src].funcs['Spectrum'].getParam(pname).getBounds())
+
+        p = self._get_nuisance_param(paramName)
+
+        return list(p.getBounds())
 
     def getNuisanceParameterDelta(self, paramName):
-        src, pname = paramName.split("_")
-        value = self.like.model[src].funcs['Spectrum'].getParam(pname).getValue()
+
+        p = self._get_nuisance_param(paramName)
+
+        value = p.getValue()
+
         return value / 100.0
 

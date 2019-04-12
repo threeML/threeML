@@ -22,7 +22,7 @@ export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__ver
 echo "Building ${PKG_VERSION} ..."
 
 # Update conda
-conda update --yes -q conda #conda-build
+#conda update --yes -q conda #conda-build
 
 # Answer yes to all questions (non-interactive)
 conda config --set always_yes true
@@ -40,7 +40,7 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
     source ${SOFTWARE_BASE}/config_hawc.sh
     source activate test_env
-    conda install -c conda-forge pytest codecov pytest-cov git --no-update-deps
+    conda install -c conda-forge pytest=3.8 codecov pytest-cov git --no-update-deps
 else
 
     # Activate test environment
@@ -52,11 +52,8 @@ fi
 cd conda-dist/recipes/threeml
 conda build -c conda-forge -c threeml --python=$TRAVIS_PYTHON_VERSION .
 
-# Figure out where is the package
-CONDA_BUILD_PATH=$(conda build . --output -c conda-forge -c threeml --python=2.7 | rev | cut -f2- -d"/" | rev)
-
 # Install it
-conda install --use-local -c threeml -c conda-forge threeml xspec-modelsonly-lite
+conda install --use-local -c threeml -c conda-forge pygmo=2.4 threeml xspec-modelsonly-lite
 
 ########### FIXME
 # This is a kludge around a pymultinest bug
@@ -141,8 +138,15 @@ else
             source activate root
 
             conda install anaconda-client
-
-            anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${CONDA_BUILD_PATH}/threeml*.tar.bz2 --force
-
+            
+            if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+                
+                anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml /opt/conda/conda-bld/linux-64/*.tar.bz2 --force
+            
+            else
+            
+                anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml /Users/travis/miniconda/conda-bld/osx-64/*.tar.bz2 --force
+            
+            fi
         fi
 fi

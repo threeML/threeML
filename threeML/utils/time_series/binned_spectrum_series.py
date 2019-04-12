@@ -13,9 +13,7 @@ class BinnedSpectrumSeries(TimeSeries):
 
     def __init__(self,binned_spectrum_set,first_channel=1, ra=None, dec=None,
                  mission=None, instrument=None, verbose=True):
-        # type: (BinnedSpectrumSet, int, str, float, float, str, str, bool) -> None
         """
-
         :param binned_spectrum_set:
         :param first_channel:
         :param rsp_file:
@@ -54,6 +52,15 @@ class BinnedSpectrumSeries(TimeSeries):
 
         return self._binned_spectrum_set.time_intervals
 
+    @property
+    def binned_spectrum_set(self):
+        """                                                                                                                                                                                                                                                                   
+        returns the spectrum set                                                                                                                                                                                                                                              
+        :return: binned_spectrum_set                                                                                                                                                                                                                                          
+        """
+
+        return self._binned_spectrum_set
+    
     def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False):
         # type: (float, float, float, bool) -> None
 
@@ -144,10 +151,36 @@ class BinnedSpectrumSeries(TimeSeries):
 
         for idx in np.where(bins)[0]:
 
+            # sum over channels because we just want the total counts
+
             total_counts += self._binned_spectrum_set[idx].counts.sum()
 
 
         return total_counts
+
+
+    def count_per_channel_over_interval(self, start, stop):
+        """
+        return the number of counts in the selected interval
+        :param start: start of interval
+        :param stop:  stop of interval
+        :return:
+        """
+
+        # this will be a boolean list and the sum will be the
+        # number of events
+
+        bins = self._select_bins(start, stop)
+
+        total_counts = np.zeros(self._n_channels)
+
+        for idx in np.where(bins)[0]:
+
+            # don't sum over channels because we want the spectrum
+            total_counts += self._binned_spectrum_set[idx].counts
+
+        return total_counts
+
 
     def _select_bins(self, start, stop):
         """

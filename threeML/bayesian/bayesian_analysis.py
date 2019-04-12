@@ -25,10 +25,36 @@ else:
 
     has_chainconsumer = True
 
+try:
+
+    # see if we have mpi and/or are using parallel
+
+    from mpi4py import MPI
+    if MPI.COMM_WORLD.Get_size() > 1: # need parallel capabilities
+        using_mpi = True
+
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+
+    else:
+
+        using_mpi = False
+except:
+
+    using_mpi = False
+
+
+
+
+
+
+
+
 import numpy as np
 import collections
 import math
 import os
+import time
 
 import matplotlib.pyplot as plt
 
@@ -369,8 +395,28 @@ class BayesianAnalysis(object):
         for s in tmp[:-1]:
             mcmc_chains_out_dir += s + '/'
 
-        if not os.path.exists(mcmc_chains_out_dir):
-            os.makedirs(mcmc_chains_out_dir)
+        if using_mpi:
+
+            # if we are running in parallel and this is not the
+            # first engine, then we want to wait and let everything finish
+
+            if rank != 0:
+
+                # let these guys take a break
+                time.sleep(1)
+
+            else:
+
+                # create mcmc chains directory only on first engine
+
+                if not os.path.exists(mcmc_chains_out_dir):
+                    os.makedirs(mcmc_chains_out_dir)
+
+        else:
+            
+            if not os.path.exists(mcmc_chains_out_dir):
+                os.makedirs(mcmc_chains_out_dir)
+
 
         print("\nSampling\n")
         print("MULTINEST has its own convergence criteria... you will have to wait blindly for it to finish")
@@ -394,35 +440,65 @@ class BayesianAnalysis(object):
                                       **kwargs)
 
         # Use PyMULTINEST analyzer to gather parameter info
-        multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
-                                                          outputfiles_basename=chain_name)
 
-        # Get the log. likelihood values from the chain
-        self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
+        process_fit = False
 
-        self._sampler = sampler
+        if using_mpi:
 
-        self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
+            # if we are running in parallel and this is not the
+            # first engine, then we want to wait and let everything finish
 
-        # now get the log probability
+            if rank !=0:
 
-        self._log_probability_values = np.array(map(lambda samples: self.get_posterior(samples), self._raw_samples))
+                # let these guys take a break
+                time.sleep(5)
 
-        self._build_samples_dictionary()
+                # these engines do not need to read
+                process_fit = False
 
-        self._marginal_likelihood = multinest_analyzer.get_stats()['global evidence'] / np.log(10.)
+            else:
 
-        self._build_results()
+                # wait for a moment to allow it all to turn off
+                time.sleep(5)
 
-        # Display results
-        if not quiet:
-            self._results.display()
+                process_fit = True
 
-        # now get the marginal likelihood
+        else:
+
+            process_fit = True
+
+
+        if process_fit:
+
+            multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
+                                                              outputfiles_basename=chain_name)
+
+            # Get the log. likelihood values from the chain
+            self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
+
+            self._sampler = sampler
+
+            self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
+
+            # now get the log probability
+
+            self._log_probability_values = self._log_like_values +  np.array([self._log_prior(samples) for samples in self._raw_samples])
+
+            self._build_samples_dictionary()
+
+            self._marginal_likelihood = multinest_analyzer.get_stats()['global evidence'] / np.log(10.)
+
+            self._build_results()
+
+            # Display results
+            if not quiet:
+                self._results.display()
+
+            # now get the marginal likelihood
 
 
 
-        return self.samples
+            return self.samples
 
     def _build_samples_dictionary(self):
         """
@@ -533,85 +609,6 @@ class BayesianAnalysis(object):
         return self._sampler
 
 
-
-
-    def corner_plot(self, renamed_parameters=None, **kwargs):
-        """
-        Produce the corner plot showing the marginal distributions in one and two directions.
-
-        :param renamed_parameters: a python dictionary of parameters to rename.
-             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
-             {'old label': 'new label'}
-        :param kwargs: arguments to be passed to the corner function
-        :return: a matplotlib.figure instance
-        """
-
-
-        DeprecationWarning('Please use <bayesian_analysis>.results.corner_plot. This feature will be removed in the future.')
-
-        if self.samples is not None:
-
-            return self._results.corner_plot(renamed_parameters, **kwargs)
-
-        else:
-
-            raise RuntimeError("You have to run the sampler first, using the sample() method")
-
-    def corner_plot_cc(self, parameters=None, renamed_parameters=None, figsize='PAGE', **cc_kwargs):
-        """
-        Corner plots using chainconsumer which allows for nicer plotting of
-        marginals
-        see: https://samreay.github.io/ChainConsumer/chain_api.html#chainconsumer.ChainConsumer.configure
-        for all options
-        :param parameters: list of parameters to plot
-        :param renamed_parameters: a python dictionary of parameters to rename.
-             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
-             {'old label': 'new label'}
-        :param **cc_kwargs: chainconsumer general keyword arguments
-        :return fig:
-        """
-
-        DeprecationWarning(
-            'Please use <bayesian_analysis>.results.corner_plot_cc. This feature will be removed in the future.')
-
-
-        if self.samples is not None:
-
-            return self._results.corner_plot_cc(parameters,renamed_parameters, figsize=figsize, **cc_kwargs)
-
-        else:
-
-            raise RuntimeError("You have to run the sampler first, using the sample() method")
-
-
-
-    def compare_posterior(self, *other_fits, **kwargs):
-        """
-        Create a corner plot from many different bayesian fits which allow for co-plotting of parameters marginals.
-
-        :param other_fits: other fitted Bayesian analysis objects
-        :param parameters: parameters to plot
-        :param renamed_parameters: a python dictionary of parameters to rename.
-             Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
-             {'old label': 'new label'}
-        :param kwargs: chain consumer kwargs
-        :return:
-
-        Returns:
-
-        """
-
-
-
-        if self.samples is not None:
-            return self._results.comparison_corner_plot(self, *other_fits, **kwargs)
-
-        else:
-
-            raise RuntimeError("You have to run the sampler first, using the sample() method")
-
-
-
     def plot_chains(self, thin=None):
         """
         Produce a plot of the series of samples for each parameter
@@ -620,30 +617,7 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        figures = []
-
-        for parameter_name in self._free_parameters.keys():
-
-            figure, subplot = plt.subplots(1, 1)
-
-            if thin is None:
-
-                # Use all samples
-
-                subplot.plot(self.samples[parameter_name])
-
-            else:
-
-                assert isinstance(thin, int), "Thin must be a integer number"
-
-                subplot.plot(self.samples[parameter_name][::thin])
-
-            subplot.set_ylabel(parameter_name.replace(".", "\n"))
-            subplot.set_xlabel("sample #")
-
-            figures.append(figure)
-
-        return figures
+        return self._results.plot_chains( thin )
 
     @property
     def likelihood_model(self):
@@ -673,109 +647,8 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        # Compute all the quantities
-
-        averages = {}
-        bootstrap_averages = {}
-
-        variances = {}
-        bootstrap_variances = {}
-
-        n_samples = self._raw_samples[:, 0].shape[0]
-
-        stepsize = n_samples // n_subsets
-
-        assert stepsize > 10, "Too few samples for this method to be effective"
-
-        print("Stepsize for sliding window is %s" % stepsize)
-
-        for parameter_name in self._free_parameters.keys():
-
-            this_samples = self.samples[parameter_name]
-
-            # First compute averages and variances using the sliding window
-
-            this_averages = []
-            this_variances = []
-
-            for i in range(n_subsets):
-
-                idx1 = i * stepsize
-                idx2 = idx1 + n_samples_in_each_subset
-
-                if idx2 > n_samples - 1:
-                    break
-
-                this_averages.append(np.average(this_samples[idx1: idx2]))
-                this_variances.append(np.std(this_samples[idx1: idx2]))
-
-            averages[parameter_name] = this_averages
-
-            variances[parameter_name] = this_variances
-
-            # Now choose random samples and do the same
-
-            this_bootstrap_averages = []
-            this_bootstrap_variances = []
-
-            for i in range(n_subsets):
-                samples = np.random.choice(self.samples[parameter_name], n_samples)
-
-                this_bootstrap_averages.append(np.average(samples))
-                this_bootstrap_variances.append(np.std(samples))
-
-            bootstrap_averages[parameter_name] = this_bootstrap_averages
-            bootstrap_variances[parameter_name] = this_bootstrap_variances
-
-        # Now plot all these things
-
-        def plot_one_histogram(subplot, data, label):
-
-            nbins = int(self.freedman_diaconis_rule(data))
-
-            subplot.hist(data, nbins, label=label)
-
-            subplot.locator_params(nbins=4)
-
-        figures = []
-
-        for i, parameter_name in enumerate(self._free_parameters.keys()):
-            fig, subs = plt.subplots(1, 2, sharey=True)
-
-            fig.suptitle(parameter_name)
-
-            plot_one_histogram(subs[0], averages[parameter_name], 'sliding window')
-            plot_one_histogram(subs[0], bootstrap_averages[parameter_name], 'bootstrap')
-
-            subs[0].set_ylabel("N subsets")
-            subs[0].set_xlabel("Average")
-
-            plot_one_histogram(subs[1], variances[parameter_name], 'sliding window')
-            plot_one_histogram(subs[1], bootstrap_variances[parameter_name], 'bootstrap')
-
-            subs[1].set_xlabel("Std. deviation")
-
-            figures.append(fig)
-
-        return figures
-
-    @staticmethod
-    def freedman_diaconis_rule(data):
-        """
-        Returns the number of bins from the Freedman-Diaconis rule for a histogram of the given data
-
-        :param data: an array of data
-        :return: the optimal number of bins
-        """
-
-        q25, q75 = np.percentile(data, [25.0, 75.0])
-        iqr = abs(q75 - q25)
-
-        binsize = 2 * iqr * pow(len(data), -1 / 3.0)
-
-        nbins = np.ceil((max(data) - min(data)) / binsize)
-
-        return nbins
+        return self._results.convergence_plots( n_samples_in_each_subset, n_subsets)
+        
 
     def restore_median_fit(self):
         """

@@ -64,6 +64,7 @@ setup(
               'threeML/utils',
               'threeML/utils/OGIP',
               'threeML/utils/spectrum',
+              'threeML/utils/polarization',
               'threeML/utils/photometry',
               'threeML/utils/time_series',
               'threeML/utils/data_builders',
@@ -125,7 +126,7 @@ setup(
         'astroquery',
         'matplotlib',
         'uncertainties',
-        'pyyaml',
+        'pyyaml==3.13',
         'dill',
         'iminuit>=1.2',
         'astromodels>=0.4.0',
@@ -134,7 +135,17 @@ setup(
         'requests',
         'speclite',
         'ipython<=5.9'
-    ])
+    ],
+
+    extras_require={
+            'tests': [
+                'pytest',],
+            'docs': [
+                'sphinx >= 1.4',
+                'sphinx_rtd_theme',
+                'nbsphinx']}
+
+    ) # End of setup()
 
 # Check for optional dependencies
 

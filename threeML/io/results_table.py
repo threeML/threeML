@@ -35,13 +35,12 @@ class ResultsTable(object):
                 negative_error_s[this_path] = 10 ** (values[i] + negative_errors[i]) - values_s[this_path]
                 positive_error_s[this_path] = 10 ** (values[i] + positive_errors[i]) - values_s[this_path]
 
-        items = (('value', values_s),
-                 ('negative_error', negative_error_s),
-                 ('positive_error', positive_error_s),
-                 ('error', (np.abs(negative_error_s.values) + positive_error_s.values)/2.0),
-                 ('unit', units_s))
-
-        self._data_frame = pd.DataFrame.from_items(items)
+        self._data_frame = pd.DataFrame()
+        self._data_frame['value'] = values_s
+        self._data_frame['negative_error'] = negative_error_s
+        self._data_frame['positive_error'] = positive_error_s
+        self._data_frame['error'] = (np.abs(negative_error_s.values) + positive_error_s.values)/2.0
+        self._data_frame['unit'] = units_s
 
     @property
     def frame(self):

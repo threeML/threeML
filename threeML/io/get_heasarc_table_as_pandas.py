@@ -6,6 +6,7 @@ import astropy.io.votable as votable
 from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make, file_existing_and_readable
 import warnings
 import yaml
+import codecs
 
 
 def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_days=1):
@@ -99,7 +100,21 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
             urllib.urlretrieve(heasarc_url, filename=file_name_sanatized)
 
+        except(IOError):
 
+            warnings.warn('The cache is outdated but the internet cannot be reached. Please check your connection')
+
+        else:
+
+            # Make sure the lines are interpreted as Unicode (otherwise some characters will fail)
+            with open(file_name_sanatized) as table_file:
+
+                new_lines = map(lambda x: x.decode("utf-8", errors="ignore"), table_file.readlines())
+
+            # now write the decoded lines back to the file
+            with codecs.open(file_name_sanatized, "w+", "utf-8") as table_file:
+
+                table_file.write("".join(new_lines))
 
             # save the time that we go this table
 
@@ -116,10 +131,6 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
                 yaml_dict['cache time'] = seconds_in_day * cache_time_days
 
                 yaml.dump(yaml_dict, stream=cache, default_flow_style=False)
-
-        except(IOError):
-
-            warnings.warn('The cache is outdated but the internet cannot be reached. Please check your connection')
 
     # use astropy routines to read the votable
     with warnings.catch_warnings():

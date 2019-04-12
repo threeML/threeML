@@ -237,7 +237,7 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros_like(steps1)
 
-        with progress_bar(len(steps1)) as p:
+        with progress_bar(len(steps1), title='Profiling likelihood') as p:
 
             for i, step in enumerate(steps1):
 
@@ -265,7 +265,7 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros((len(steps1), len(steps2)))
 
-        with progress_bar(len(steps1) * len(steps2)) as p:
+        with progress_bar(len(steps1) * len(steps2), title='Profiling likelihood') as p:
 
             for i, step1 in enumerate(steps1):
 
@@ -732,8 +732,8 @@ class Minimizer(object):
         :return: the covariance matrix
         """
 
-        minima = map(lambda parameter:parameter.min_value, self.parameters.values())
-        maxima = map(lambda parameter: parameter.max_value, self.parameters.values())
+        minima = map(lambda parameter:parameter._get_internal_min_value(), self.parameters.values())
+        maxima = map(lambda parameter: parameter._get_internal_max_value(), self.parameters.values())
 
         # Check whether some of the minima or of the maxima are None. If they are, set them
         # to a value 1000 times smaller or larger respectively than the best fit.
@@ -1021,7 +1021,7 @@ class Minimizer(object):
 
         errors = collections.OrderedDict()
 
-        with progress_bar(2 * len(self.parameters)) as p:
+        with progress_bar(2 * len(self.parameters), title='Computing errors') as p:
 
             for parameter_name in self.parameters:
 
@@ -1218,6 +1218,18 @@ except ImportError:
 else:
 
     _minimizers["PAGMO"] = PAGMOMinimizer
+
+try:
+
+    from threeML.minimizer.scipy_minimizer import ScipyMinimizer
+
+except ImportError:
+
+    custom_warnings.warn("Scipy minimizer is not available", ImportWarning)
+
+else:
+
+    _minimizers["SCIPY"] = ScipyMinimizer
 
 # Check that we have at least one minimizer available
 

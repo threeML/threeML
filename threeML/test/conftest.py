@@ -6,6 +6,26 @@ from threeML.io.package_data import get_path_of_data_dir
 from threeML.data_list import DataList
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.XYLike import XYLike
+import subprocess
+import time
+import signal
+
+
+# Set up an ipyparallel cluster for the tests to use
+@pytest.fixture(scope="session", autouse=True)
+def setup_ipcluster():
+
+    ipycluster_process = subprocess.Popen(['ipcluster', 'start', '-n', '2'])
+
+    time.sleep(5.0)
+
+    yield ipycluster_process
+
+    ipycluster_process.send_signal(signal.SIGINT)
+
+    time.sleep(10.0)
+
+    ipycluster_process.kill()
 
 
 # This is run automatically before *every* test (autouse=True)

@@ -21,7 +21,7 @@ def test_event_list_constructor():
     stop = 10
 
     evt_list = EventList(arrival_times=dummy_times,
-                         energies=dummy_energy,
+                         measurement=dummy_energy,
                          n_channels=1,
                          start_time=start,
                          stop_time=stop)
@@ -60,7 +60,7 @@ def test_unbinned_fit():
         arrival_times = np.loadtxt('test_event_data.txt')
 
         evt_list = EventListWithDeadTime(arrival_times=arrival_times,
-                                         energies=np.zeros_like(arrival_times),
+                                         measurement=np.zeros_like(arrival_times),
                                          n_channels=1,
                                          start_time=arrival_times[0],
                                          stop_time=arrival_times[-1],
@@ -89,7 +89,7 @@ def test_binned_fit():
         arrival_times = np.loadtxt('test_event_data.txt')
 
         evt_list = EventListWithDeadTime(arrival_times=arrival_times,
-                                         energies=np.zeros_like(arrival_times),
+                                         measurement=np.zeros_like(arrival_times),
                                          n_channels=1,
                                          start_time=arrival_times[0],
                                          stop_time=arrival_times[-1],
@@ -118,13 +118,29 @@ def test_read_gbm_cspec():
                                                          rsp_file=os.path.join(data_dir,
                                                                                "glg_cspec_n3_bn080916009_v00.rsp2"),
                                                          poly_order=-1)
-
+        
         nai3.set_active_time_interval('0-1')
-        nai3.set_background_interval('-200--10', '100-200')
+        
+        assert not nai3.time_series.poly_fit_exists
+
+        assert nai3.time_series.binned_spectrum_set.n_channels>0
+
+        nai3.set_background_interval('-20--10', '100-200')
+
+        assert nai3.time_series.poly_fit_exists
+
 
         speclike = nai3.to_spectrumlike()
 
         assert isinstance(speclike, DispersionSpectrumLike)
+
+        assert not speclike.background_spectrum.is_poisson
+
+        speclike = nai3.to_spectrumlike(extract_measured_background=True)
+
+        assert isinstance(speclike, DispersionSpectrumLike)
+
+        assert speclike.background_spectrum.is_poisson
 
         nai3.write_pha_from_binner('test_from_nai3', start=0, stop=2, overwrite=True)
 
@@ -141,9 +157,23 @@ def test_read_gbm_tte():
         nai3.set_active_time_interval('0-1')
         nai3.set_background_interval('-20--10', '100-200')
 
+
+
+
         speclike = nai3.to_spectrumlike()
 
         assert isinstance(speclike, DispersionSpectrumLike)
+
+
+        assert not speclike.background_spectrum.is_poisson
+
+        speclike = nai3.to_spectrumlike(extract_measured_background=True)
+
+        assert isinstance(speclike, DispersionSpectrumLike)
+
+        assert speclike.background_spectrum.is_poisson
+
+
 
         # test binning
 

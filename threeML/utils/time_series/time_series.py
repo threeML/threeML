@@ -1,18 +1,16 @@
-__author__='grburgess'
+__author__ = 'grburgess'
 
 import collections
-import copy
+import os
 
 import numpy as np
-import os
 import pandas as pd
 from pandas import HDFStore
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
-
 from threeML.utils.spectrum.binned_spectrum import Quality
-from threeML.utils.time_interval import TimeIntervalSet, TimeInterval
+from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit, Polynomial
 
 
@@ -34,8 +32,8 @@ def ceildiv(a, b):
 
 
 class TimeSeries(object):
-    def __init__(self, start_time,stop_time, n_channels ,native_quality=None,
-                 first_channel=1, ra=None, dec=None, mission=None, instrument=None, verbose=True):
+    def __init__(self, start_time, stop_time, n_channels, native_quality=None,
+                 first_channel=1, ra=None, dec=None, mission=None, instrument=None, verbose=True, edges=None):
         """
         The EventList is a container for event data that is tagged in time and in PHA/energy. It handles event selection,
         temporal polynomial fitting, temporal binning, and exposure calculations (in subclasses). Once events are selected
@@ -51,6 +49,7 @@ class TimeSeries(object):
         :param  arrival_times: list of event arrival times
         :param  energies: list of event energies or pha channels
         :param native_quality: native pha quality flags
+        :param edges: The histogram boundaries if not specified by a response
         :param mission:
         :param instrument:
         :param verbose:
@@ -63,20 +62,24 @@ class TimeSeries(object):
         self._first_channel = first_channel
         self._native_quality = native_quality
 
-
         # we haven't made selections yet
 
         self._time_intervals = None
         self._poly_intervals = None
         self._counts = None
+        self._exposure = None
         self._poly_counts = None
-        self._poly_count_err= None
+        self._poly_count_err = None
+        self._poly_selected_counts= None
+        self._poly_exposure = None
 
+        # ebounds for objects w/o a response
+        self._edges  = edges
 
         if native_quality is not None:
-
-            assert len(native_quality) == n_channels, "the native quality has length %d but you specified there were %d channels"%(len(native_quality), n_channels)
-
+            assert len(
+                native_quality) == n_channels, "the native quality has length %d but you specified there were %d channels" % (
+            len(native_quality), n_channels)
 
         self._start_time = start_time
 
@@ -103,8 +106,6 @@ class TimeSeries(object):
         else:
 
             self._mission = mission
-
-
 
         self._user_poly_order = -1
         self._time_selection_exists = False
@@ -222,8 +223,6 @@ class TimeSeries(object):
 
             raise RuntimeError('This EventList has no binning specified')
 
-  
-
     def __set_poly_order(self, value):
         """ Set poly order only in allowed range and redo fit """
 
@@ -290,6 +289,16 @@ class TimeSeries(object):
 
         raise RuntimeError("Must be implemented in sub class")
 
+    def count_per_channel_over_interval(self, start, stop):
+        """
+
+        :param start:
+        :param stop:
+        :return:
+        """
+
+        raise RuntimeError("Must be implemented in sub class")
+
     def set_polynomial_fit_interval(self, *time_intervals, **options):
         """Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
@@ -324,9 +333,11 @@ class TimeSeries(object):
 
         new_intervals = []
 
-        for i,time_interval in enumerate(poly_intervals):
+        self._poly_selected_counts = []
 
+        self._poly_exposure = 0.
 
+        for i, time_interval in enumerate(poly_intervals):
 
             t1 = time_interval.start_time
             t2 = time_interval.stop_time
@@ -336,42 +347,36 @@ class TimeSeries(object):
                     "The time interval %f-%f is out side of the arrival times and will be dropped" % (
                         t1, t2))
 
-              
+
 
 
             else:
 
                 if t1 < self._start_time:
-
                     custom_warnings.warn(
                         "The time interval %f-%f started before the first arrival time (%f), so we are changing the intervals to %f-%f" % (
-                        t1, t2, self._start_time, self._start_time, t2))
+                            t1, t2, self._start_time, self._start_time, t2))
 
-                    t1 = self._start_time# + 1
-
-
-
-
+                    t1 = self._start_time  # + 1
 
                 if t2 > self._stop_time:
-
                     custom_warnings.warn(
                         "The time interval %f-%f ended after the last arrival time (%f), so we are changing the intervals to %f-%f" % (
                             t1, t2, self._stop_time, t1, self._stop_time))
 
-                    t2 = self._stop_time# - 1.
+                    t2 = self._stop_time  # - 1.
+
+                new_intervals.append('%f-%f' % (t1, t2))
 
 
-
-
-
-
-                new_intervals.append('%f-%f' %(t1,t2))
-
+                self._poly_selected_counts.append(self.count_per_channel_over_interval(t1,t2))
+                self._poly_exposure += self.exposure_over_interval(t1,t2)
 
         # make new intervals after checks
 
         poly_intervals = TimeIntervalSet.from_strings(*new_intervals)
+
+        self._poly_selected_counts = np.sum(self._poly_selected_counts, axis=0)
 
         # set the poly intervals as an attribute
 
@@ -402,10 +407,9 @@ class TimeSeries(object):
         # recalculate the selected counts
 
         if self._time_selection_exists:
-
             self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 
-    def get_information_dict(self, use_poly=False):
+    def get_information_dict(self, use_poly=False, extract=False):
         """
         Return a PHAContainer that can be read by different builders
 
@@ -414,7 +418,18 @@ class TimeSeries(object):
         if not self._time_selection_exists:
             raise RuntimeError('No time selection exists! Cannot calculate rates')
 
-        if use_poly:
+        if extract:
+
+            is_poisson = True
+
+            counts_err = None
+            counts = self._poly_selected_counts
+            rates = self._counts / self._poly_exposure
+            rate_err = None
+            exposure = self._poly_exposure
+
+
+        elif use_poly:
 
             is_poisson = False
 
@@ -422,6 +437,7 @@ class TimeSeries(object):
             counts = self._poly_counts
             rate_err = self._poly_count_err / self._exposure
             rates = self._poly_counts / self._exposure
+            exposure = self._exposure
 
             # removing negative counts
 
@@ -441,6 +457,10 @@ class TimeSeries(object):
             counts = self._counts
             rates = self._counts / self._exposure
             rate_err = None
+
+            exposure = self._exposure
+
+
 
 
         if self._native_quality is None:
@@ -463,6 +483,8 @@ class TimeSeries(object):
         container_dict['rates'] = rates
         container_dict['rate error'] = rate_err
 
+        container_dict['edges'] = self._edges
+
         # check to see if we already have a quality object
 
         if isinstance(quality, Quality):
@@ -474,10 +496,10 @@ class TimeSeries(object):
             container_dict['quality'] = Quality.from_ogip(quality)
 
         # TODO: make sure the grouping makes sense
-        container_dict['backfile']='NONE'
+        container_dict['backfile'] = 'NONE'
         container_dict['grouping'] = np.ones(self._n_channels)
-        container_dict['exposure'] = self._exposure
-        #container_dict['response'] = self._response
+        container_dict['exposure'] = exposure
+        # container_dict['response'] = self._response
 
         return container_dict
 
@@ -486,7 +508,6 @@ class TimeSeries(object):
         Examine the currently selected info as well other things.
 
         """
-
 
         return self._output().to_string()
 
@@ -570,14 +591,12 @@ class TimeSeries(object):
         # Fit the sum of all the channels to determine the optimal polynomial
         # grade
 
-
         min_grade = 0
         max_grade = 4
         log_likelihoods = []
 
         t_start = self._poly_intervals.start_times
         t_stop = self._poly_intervals.stop_times
-
 
         for grade in range(min_grade, max_grade + 1):
             polynomial, log_like = unbinned_polyfit(events, grade, t_start, t_stop, exposure)
@@ -622,10 +641,7 @@ class TimeSeries(object):
 
         filename = os.path.splitext(filename)
 
-
-
         filename = "%s.h5" % filename[0]
-
 
         filename_sanitized = sanitize_filename(filename)
 
@@ -669,16 +685,14 @@ class TimeSeries(object):
             df_coeff.to_hdf(store, 'coefficients')
             df_err.to_hdf(store, 'covariance')
 
-
-
             store.get_storer('coefficients').attrs.metadata = {'poly_order': self._optimal_polynomial_grade,
-                                                               'poly_selections': zip(self._poly_intervals.start_times,self._poly_intervals.stop_times),
-                                                               'unbinned':self._unbinned,
-                                                               'fit_method':self._fit_method_info['fit method']}
+                                                               'poly_selections': zip(self._poly_intervals.start_times,
+                                                                                      self._poly_intervals.stop_times),
+                                                               'unbinned': self._unbinned,
+                                                               'fit_method': self._fit_method_info['fit method']}
 
         if self._verbose:
-
-            print("\nSaved fitted background to %s.\n"% filename)
+            print("\nSaved fitted background to %s.\n" % filename)
 
     def restore_fit(self, filename):
 
@@ -689,8 +703,6 @@ class TimeSeries(object):
 
             coefficients = store['coefficients']
 
-
-
             covariance = store['covariance']
 
             self._polynomials = []
@@ -698,7 +710,6 @@ class TimeSeries(object):
             # create new polynomials
 
             for i in range(len(coefficients)):
-
                 coeff = np.array(coefficients.loc[i])
 
                 # make sure we get the right order
@@ -707,22 +718,16 @@ class TimeSeries(object):
 
                 coeff = coeff[np.isfinite(coeff)]
 
-                cov  = covariance.loc[i]
-
-
+                cov = covariance.loc[i]
 
                 self._polynomials.append(Polynomial.from_previous_fit(coeff, cov))
-
-
-
-
 
             metadata = store.get_storer('coefficients').attrs.metadata
 
             self._optimal_polynomial_grade = metadata['poly_order']
             poly_selections = np.array(metadata['poly_selections'])
 
-            self._poly_intervals = TimeIntervalSet.from_starts_and_stops(poly_selections[:,0],poly_selections[:,1])
+            self._poly_intervals = TimeIntervalSet.from_starts_and_stops(poly_selections[:, 0], poly_selections[:, 1])
             self._unbinned = metadata['unbinned']
 
             if self._unbinned:
@@ -734,13 +739,25 @@ class TimeSeries(object):
 
             self._fit_method_info['fit method'] = metadata['fit_method']
 
-
         # go thru and count the counts!
 
         self._poly_fit_exists = True
 
-        if self._time_selection_exists:
 
+        # we must go thru and collect the polynomial exposure and counts
+        # so that they be extracted if needed
+        self._poly_exposure = 0.
+        self._poly_selected_counts = []
+        for i, time_interval in enumerate(self._poly_intervals):
+
+            t1 = time_interval.start_time
+            t2 = time_interval.stop_time
+
+            self._poly_selected_counts.append(self.count_per_channel_over_interval(t1,t2))
+            self._poly_exposure += self.exposure_over_interval(t1,t2)
+
+        self._poly_selected_counts = np.sum(self._poly_selected_counts, axis=0)
+        if self._time_selection_exists:
             self.set_active_time_intervals(*self._time_intervals.to_string().split(','))
 
     def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False):
