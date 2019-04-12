@@ -31,7 +31,7 @@ try:
     # see if we have mpi and/or are using parallel
 
     from mpi4py import MPI
-    if MPI.COMM_WORLD.Get_size() > 1: # need parallel capabilities
+    if MPI.COMM_WORLD.Get_size() > 1:    # need parallel capabilities
         using_mpi = True
 
         comm = MPI.COMM_WORLD
@@ -43,13 +43,6 @@ try:
 except:
 
     using_mpi = False
-
-
-
-
-
-
-
 
 import numpy as np
 import collections
@@ -67,6 +60,17 @@ from threeML.analysis_results import BayesianResults
 from threeML.utils.statistics.stats_tools import aic, bic, dic
 
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
+
+
+class DynestyPool(object):
+    """A simple wrapper for `dview`."""
+
+    def __init__(self, dview):
+        self.dview = dview
+        self.size = nprocs
+
+    def map(self, function, tasks):
+        return self.dview.map_sync(function, tasks)
 
 
 def sample_with_progress(title, p0, sampler, n_samples, **kwargs):
@@ -94,6 +98,7 @@ def sample_without_progress(p0, sampler, n_samples, title=None, **kwargs):
 
 
 class BayesianAnalysis(object):
+
     def __init__(self, likelihood_model, data_list, **kwargs):
         """
         Bayesian analysis.
@@ -236,9 +241,7 @@ class BayesianAnalysis(object):
                 c = ParallelClient()
                 view = c[:]
 
-                sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                                self.get_posterior,
-                                                pool=view)
+                sampler = emcee.EnsembleSampler(n_walkers, n_dim, self.get_posterior, pool=view)
 
                 # Sampling with progress in parallel is super-slow, so let's
                 # use the non-interactive one
@@ -246,8 +249,7 @@ class BayesianAnalysis(object):
 
             else:
 
-                sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                                self.get_posterior)
+                sampler = emcee.EnsembleSampler(n_walkers, n_dim, self.get_posterior)
 
             # If a seed is provided, set the random number seed
             if seed is not None:
@@ -333,8 +335,7 @@ class BayesianAnalysis(object):
 
         print("\nSampling\n")
 
-        _ = sample_with_progress("Sampling", p, sampler, n_samples,
-                                 lnprob0=lnprob, lnlike0=lnlike)
+        _ = sample_with_progress("Sampling", p, sampler, n_samples, lnprob0=lnprob, lnlike0=lnlike)
 
         self._sampler = sampler
 
@@ -414,10 +415,9 @@ class BayesianAnalysis(object):
                     os.makedirs(mcmc_chains_out_dir)
 
         else:
-            
+
             if not os.path.exists(mcmc_chains_out_dir):
                 os.makedirs(mcmc_chains_out_dir)
-
 
         print("\nSampling\n")
         print("MULTINEST has its own convergence criteria... you will have to wait blindly for it to finish")
@@ -431,14 +431,15 @@ class BayesianAnalysis(object):
             raise RuntimeError("If you want to run multinest in parallell you need to use an ad-hoc method")
 
         else:
-            
-            sampler = pymultinest.run(loglike,
-                                      multinest_prior,
-                                      n_dim,
-                                      n_dim,
-                                      outputfiles_basename=chain_name,
-                                      n_live_points=n_live_points,
-                                      **kwargs)
+
+            sampler = pymultinest.run(
+                loglike,
+                multinest_prior,
+                n_dim,
+                n_dim,
+                outputfiles_basename=chain_name,
+                n_live_points=n_live_points,
+                **kwargs)
 
         # Use PyMULTINEST analyzer to gather parameter info
 
@@ -449,7 +450,7 @@ class BayesianAnalysis(object):
             # if we are running in parallel and this is not the
             # first engine, then we want to wait and let everything finish
 
-            if rank !=0:
+            if rank != 0:
 
                 # let these guys take a break
                 time.sleep(5)
@@ -468,11 +469,9 @@ class BayesianAnalysis(object):
 
             process_fit = True
 
-
         if process_fit:
 
-            multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
-                                                              outputfiles_basename=chain_name)
+            multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim, outputfiles_basename=chain_name)
 
             # Get the log. likelihood values from the chain
             self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
@@ -483,7 +482,8 @@ class BayesianAnalysis(object):
 
             # now get the log probability
 
-            self._log_probability_values = self._log_like_values +  np.array([self._log_prior(samples) for samples in self._raw_samples])
+            self._log_probability_values = self._log_like_values + np.array(
+                [self._log_prior(samples) for samples in self._raw_samples])
 
             self._build_samples_dictionary()
 
@@ -497,12 +497,22 @@ class BayesianAnalysis(object):
 
             # now get the marginal likelihood
 
-
-
             return self.samples
 
+    def sample_dynesty(self, sampler_type='dynamic', quiet=False, **dynesty_kwargs):
+        """
+        sample with dynesty (https://dynesty.readthedocs.io/en/latest/index.html)
+        
+        select between nested and dynamic nested samplers. The kwargs for dynesty
+        must be set by the user. 
 
-    def sample_dynesty_nested(self, sampler_type='dynamic', **dynesty_kwargs):
+
+        :param sampler_type: 'nested' or 'dynamic'
+        :param quiet: print fit result or not
+        :returns: results
+        :rtype: 
+
+        """
 
         assert sampler_type.lower() in ['dynamic', 'nested'], 'sampler_type must be dynamic or nested'
 
@@ -514,31 +524,59 @@ class BayesianAnalysis(object):
 
             sampler_class = dynesty.NestedSampler
 
-
         self._update_free_parameters()
 
         n_dim = len(self._free_parameters.keys())
 
-        # MULTINEST has a convergence criteria and therefore, there is no way
-        # to determine progress
-
         sampling_procedure = sample_without_progress
 
-        # MULTINEST uses a different call signiture for
+        # dynesty uses a different call signiture for
         # sampling so we construct callbakcs
-        loglike, multinest_prior = self._construct_multinest_posterior()
+        loglike, dynesty_prior = self._construct_dynesty_posterior()
 
-            
         with use_astromodels_memoization(False):
 
             if threeML_config['parallel']['use-parallel']:
 
                 c = ParallelClient()
                 view = c[:]
-                
-        
 
-        
+                ## remap the map_sync
+
+                pool = DynestyPool(view)
+
+                dynesty_kwargs['pool'] = pool
+
+                # we let the use setup the pool args
+
+            # create the class
+            self._sampler = sampler_class(loglike, dynesty_prior, ndim=n_dim, **dynesty_kwargs)
+
+            # now run it
+
+            self._sampler.run_nested()
+
+            # now extract everything
+
+            self._raw_samples = self._sampler.results['samples']
+
+            self._log_like_values = self._sampler.results['logl']
+
+            self._log_probability_values = self._log_like_values + np.array(
+                [self._log_prior(samples) for samples in self._raw_samples])
+
+            self._build_samples_dictionary()
+
+            self._marginal_likelihood = self._sampler.results['logz'] / np.log(10.)
+
+            self._build_results()
+
+            if not quiet:
+
+                self._results.display()
+
+            return self.samples
+
     def _build_samples_dictionary(self):
         """
         Build the dictionary to access easily the samples by parameter
@@ -580,7 +618,6 @@ class BayesianAnalysis(object):
 
         for dataset in self._data_list.values():
 
-
             log_posterior = dataset.get_log_like() + log_prior
 
             log_posteriors[dataset.name] = log_posterior
@@ -589,15 +626,14 @@ class BayesianAnalysis(object):
 
             total_log_posterior += log_posterior
 
-
         # compute the statistical measures
 
         statistical_measures = collections.OrderedDict()
 
         # compute the point estimates
 
-        statistical_measures['AIC'] = aic(total_log_posterior,len(self._free_parameters),total_n_data_points)
-        statistical_measures['BIC'] = bic(total_log_posterior,len(self._free_parameters),total_n_data_points)
+        statistical_measures['AIC'] = aic(total_log_posterior, len(self._free_parameters), total_n_data_points)
+        statistical_measures['BIC'] = bic(total_log_posterior, len(self._free_parameters), total_n_data_points)
 
         this_dic, pdic = dic(self)
 
@@ -610,13 +646,12 @@ class BayesianAnalysis(object):
 
             statistical_measures['log(Z)'] = self._marginal_likelihood
 
-
         #TODO: add WAIC
-
 
         # Instance the result
 
-        self._results = BayesianResults(self._likelihood_model, self._raw_samples, log_posteriors,statistical_measures=statistical_measures)
+        self._results = BayesianResults(
+            self._likelihood_model, self._raw_samples, log_posteriors, statistical_measures=statistical_measures)
 
     @property
     def raw_samples(self):
@@ -647,7 +682,6 @@ class BayesianAnalysis(object):
 
         return self._sampler
 
-
     def plot_chains(self, thin=None):
         """
         Produce a plot of the series of samples for each parameter
@@ -656,7 +690,7 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        return self._results.plot_chains( thin )
+        return self._results.plot_chains(thin)
 
     @property
     def likelihood_model(self):
@@ -686,8 +720,7 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        return self._results.convergence_plots( n_samples_in_each_subset, n_subsets)
-        
+        return self._results.convergence_plots(n_samples_in_each_subset, n_subsets)
 
     def restore_median_fit(self):
         """
@@ -767,9 +800,8 @@ class BayesianAnalysis(object):
             if self.verbose:
                 n_par = len(self._free_parameters)
 
-                print(
-                "Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
-                                                           log_like))
+                print("Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
+                                                                 log_like))
 
             return log_like
 
@@ -799,7 +831,6 @@ class BayesianAnalysis(object):
 
         return loglike, prior
 
-
     def _construct_dynesty_posterior(self):
         """
         Construct the likelihood and prior for dynesty.
@@ -823,9 +854,8 @@ class BayesianAnalysis(object):
             if self.verbose:
                 n_par = len(self._free_parameters)
 
-                print(
-                "Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
-                                                           log_like))
+                print("Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
+                                                                 log_like))
 
             return log_like
 
@@ -836,8 +866,8 @@ class BayesianAnalysis(object):
 
         def prior(uparams):
 
-            params = []
-            
+            params = np.empty_like(uparams)
+
             for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
 
                 try:
@@ -848,18 +878,17 @@ class BayesianAnalysis(object):
                 except AttributeError:
 
                     raise RuntimeError("The prior you are trying to use for parameter %s is "
-                                       "not compatible with multinest" % parameter_name)
+                                       "not compatible with dynesty" % parameter_name)
             return params
+
         # Give a test run to the prior to check that it is working. If it crashes while multinest is going
         # it will not stop dynesty from running and generate thousands of exceptions (argh!)
         n_dim = len(self._free_parameters)
 
-        _ = prior([0.5]*n_dim)
+        _ = prior([0.5] * n_dim)
 
         return loglike, prior
 
-
-    
     def _get_starting_points(self, n_walkers, variance=0.1):
 
         # Generate the starting points for the walkers by getting random
@@ -931,8 +960,7 @@ class BayesianAnalysis(object):
         if not np.isfinite(log_like):
             # Issue warning
 
-            custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values,
-                                 LikelihoodIsInfinite)
+            custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values, LikelihoodIsInfinite)
 
             return -np.inf
 

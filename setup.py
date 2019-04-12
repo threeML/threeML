@@ -134,7 +134,8 @@ setup(
         'pandas',
         'requests',
         'speclite',
-        'ipython<=5.9'
+        'ipython<=5.9',
+        'dynesty'
     ],
 
     extras_require={
