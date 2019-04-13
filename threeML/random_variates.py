@@ -133,13 +133,35 @@ class RandomVariates(np.ndarray):
 
         assert 0 < cl < 1, "Confidence level must be 0 < cl < 1"
 
-        half_cl = cl / 2.0 * 100.0
+        half_cl = cl / 2.0 
 
-        low_bound, hi_bound = np.percentile(np.asarray(self), [50.0 - half_cl, 50.0 + half_cl])
+        low_bound, hi_bound = self._quantile([0.5-half_cl, 0.5+half_cl])
+        #np.percentile(np.asarray(self), [50.0 - half_cl, 50.0 + half_cl])
 
         return float(low_bound), float(hi_bound)
 
-    # np.ndarray already has a mean() and a std() methods
+    def _quantile(self, q=0.5):
+
+        q = np.asarray(q)
+
+        if q.shape == ():
+            assert(0<q<1), "Quantile must be 0 < q < 1"
+        else:
+            for Q in q:
+                assert(0<Q<1), "All Quantiles must be 0 < q < 1"
+
+        quant = np.quantile(np.asarray(self), q)
+
+        return quant
+
+    def get_quantile(self, q=0.5):
+        """
+        Returns the q-th quantile of the parameter
+        :param q: Quantile (0 < cl < 1) 
+        :return: parameter value at q-th quantile
+        """
+
+        return _quantile(q)
 
     def __repr__(self):
 
