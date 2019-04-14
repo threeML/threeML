@@ -1,7 +1,7 @@
 import emcee
 import emcee.utils
 import dynesty
-from dynesty.utils import resample_equal
+import nestle
 
 try:
 
@@ -514,7 +514,7 @@ class BayesianAnalysis(object):
         :rtype: 
 
         """
-         assert sampler_type.lower() in ['dynamic', 'nested'], 'sampler_type must be dynamic or nested'
+        assert sampler_type.lower() in ['dynamic', 'nested'], 'sampler_type must be dynamic or nested'
 
         if sampler_type.lower() == 'dynamic':
 
@@ -562,14 +562,38 @@ class BayesianAnalysis(object):
 
             # draw posterior samples
             weights = np.exp(results['logwt'] - results['logz'][-1])
-            samples_dynesty = resample_equal(results['samples'], weights)
+
+            SQRTEPS = math.sqrt(float(np.finfo(np.float64).eps))
+
+            rstate = np.random
+
+            if abs(np.sum(weights) - 1.) > SQRTEPS:  # same tol as in np.random.choice.
+                raise ValueError("Weights do not sum to 1.")
+
+            
+            # Make N subdivisions and choose positions with a consistent random offset.
+            nsamples = len(weights)
+            positions = (rstate.random() + np.arange(nsamples)) / nsamples
+
+            # Resample the data.
+            idx = np.zeros(nsamples, dtype=np.int)
+            cumulative_sum = np.cumsum(weights)
+            i, j = 0, 0
+            while i < nsamples:
+                if positions[i] < cumulative_sum[j]:
+                    idx[i] = j
+                    i += 1
+                else:
+                    j += 1
+            
+            samples_dynesty = results['samples'][idx]
 
             
             self._raw_samples = samples_dynesty
 
             # now do the same for the log likes
             
-            logl_dynesty = resample_equal(results['logl'], weights)
+            logl_dynesty = results['logl'][idx]
             
             self._log_like_values = logl_dynesty
 
@@ -588,6 +612,54 @@ class BayesianAnalysis(object):
 
             return self.samples
 
+
+    def sample_nestle(self, quiet=False, progress=True, method='single', **kwargs):
+
+        self._update_free_parameters()
+
+        n_dim = len(self._free_parameters.keys())
+
+        sampling_procedure = sample_without_progress
+
+        # nestle the sample method as dynesty
+        # sampling so we construct callbakcs
+        loglike, nestle_prior = self._construct_dynesty_posterior()
+
+        with use_astromodels_memoization(False):
+
+            results = nestle.sample(loglike, nestle_prior, n_dim, method = method, **kwargs)
+            
+        # re-scale weights to have a maximum of one
+        nweights = results.weights/np.max(results.weights)
+
+        # get the probability of keeping a sample from the weights
+        keepidx = np.where(np.random.rand(len(nweights)) < nweights)[0]
+
+        # get the posterior samples
+        samples_nestle = results.samples[keepidx,:]
+
+        self._raw_samples = samples_nestle
+
+        self._log_like_values = results.logl[keepidx]
+        
+        self._log_probability_values = self._log_like_values + np.array(
+                [self._log_prior(samples) for samples in self._raw_samples])
+
+        self._build_samples_dictionary()
+
+        self._marginal_likelihood = results.logz / np.log(10.)
+
+        self._build_results()
+
+        if not quiet:
+            
+            self._results.display()
+
+        return self.samples
+
+        
+
+        
     def _build_samples_dictionary(self):
         """
         Build the dictionary to access easily the samples by parameter

@@ -135,7 +135,8 @@ setup(
         'requests',
         'speclite',
         'ipython<=5.9',
-        'dynesty'
+        'dynesty',
+        'nestle'
     ],
 
     extras_require={
