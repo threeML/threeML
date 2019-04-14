@@ -1,6 +1,7 @@
 import emcee
 import emcee.utils
 import dynesty
+from dynesty.utils import resample_equal
 
 try:
 
@@ -557,9 +558,20 @@ class BayesianAnalysis(object):
 
             # now extract everything
 
-            self._raw_samples = self._sampler.results['samples']
+            results = self._sampler.results
 
-            self._log_like_values = self._sampler.results['logl']
+            # draw posterior samples
+            weights = np.exp(results['logwt'] - results['logz'][-1])
+            samples_dynesty = resample_equal(results['samples'], weights)
+
+            
+            self._raw_samples = samples_dynesty
+
+            # now do the same for the log likes
+            
+            logl_dynesty = resample_equal(results['logl'], weights)
+            
+            self._log_like_values = logl_dynesty
 
             self._log_probability_values = self._log_like_values + np.array(
                 [self._log_prior(samples) for samples in self._raw_samples])
