@@ -430,14 +430,14 @@ class BayesianAnalysis(object):
             raise RuntimeError("If you want to run multinest in parallell you need to use an ad-hoc method")
 
         else:
-            with use_astromodels_memoization(False):
-                sampler = pymultinest.run(loglike,
-                                          multinest_prior,
-                                          n_dim,
-                                          n_dim,
-                                          outputfiles_basename=chain_name,
-                                          n_live_points=n_live_points,
-                                          **kwargs)
+
+            sampler = pymultinest.run(loglike,
+                                      multinest_prior,
+                                      n_dim,
+                                      n_dim,
+                                      outputfiles_basename=chain_name,
+                                      n_live_points=n_live_points,
+                                      **kwargs)
 
         # Use PyMULTINEST analyzer to gather parameter info
 
