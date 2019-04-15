@@ -7,7 +7,6 @@ from numba import jit, njit, prange
 _log_pi_2 = log(2 * pi)
 
 
-
 def regularized_log(vector):
     """
     A function which is log(vector) where vector > 0, and zero otherwise.
@@ -31,11 +30,11 @@ def xlogy(x, y):
     """
 
     out = np.zeros_like(x)
-    
+
     n = len(x)
     for i in range(n):
         if x[i] > 0:
-            out[i] = x[i] * log(y[i])           
+            out[i] = x[i] * log(y[i])
 
     return out
 
@@ -51,12 +50,9 @@ def xlogy_one(x, y):
     :return:
     """
     if x > 0:
-        return x*log(y)
+        return x * log(y)
     else:
         return 0.
-
-
-
 
 
 def poisson_log_likelihood_ideal_bkg(observed_counts, expected_bkg_counts, expected_model_counts):
@@ -96,8 +92,8 @@ def poisson_observed_poisson_background_xs(observed_counts, background_counts, e
     # Compute the nuisance background parameter
 
     first_term = exposure_ratio * (observed_counts + background_counts) - (1 + exposure_ratio) * expected_model_counts
-    second_term = np.sqrt(first_term ** 2 + 4 * exposure_ratio * (exposure_ratio + 1)
-                          * background_counts * expected_model_counts)
+    second_term = np.sqrt(first_term**2 + 4 * exposure_ratio * (exposure_ratio + 1) * background_counts *
+                          expected_model_counts)
 
     background_nuisance_parameter = (first_term + second_term) / (2 * exposure_ratio * (exposure_ratio + 1))
 
@@ -106,20 +102,20 @@ def poisson_observed_poisson_background_xs(observed_counts, background_counts, e
     # we regularize the log so it will not give NaN if expected_model_counts and background_nuisance_parameter are both
     # zero. For any good model this should also mean observed_counts = 0, btw.
 
-    second_term = - xlogy(observed_counts, expected_model_counts + exposure_ratio * background_nuisance_parameter)
+    second_term = -xlogy(observed_counts, expected_model_counts + exposure_ratio * background_nuisance_parameter)
 
-    third_term = - xlogy(background_counts, background_nuisance_parameter)
+    third_term = -xlogy(background_counts, background_nuisance_parameter)
 
     ppstat = 2 * (first_term + second_term + third_term)
 
-    ppstat += 2 * (- observed_counts + xlogy(observed_counts, observed_counts)
-                   - background_counts + xlogy(background_counts, background_counts))
+    ppstat += 2 * (-observed_counts + xlogy(observed_counts, observed_counts) - background_counts + xlogy(
+        background_counts, background_counts))
 
     # assert np.isfinite(ppstat).all()
 
     return ppstat * (-1)
 
-
+@njit(fastmath=True)
 def poisson_observed_poisson_background(observed_counts, background_counts, exposure_ratio, expected_model_counts):
 
     # TODO: check this with simulations
@@ -127,23 +123,35 @@ def poisson_observed_poisson_background(observed_counts, background_counts, expo
     # Just a name change to make writing formulas a little easier
 
     alpha = exposure_ratio
-    b = background_counts
-    o = observed_counts
-    M = expected_model_counts
+    #b = background_counts
+    #o = observed_counts
+    # M = expected_model_counts
+
+    loglike = np.empty_like(expected_model_counts, dtype=np.float64)
+    B_mle = np.empty_like(expected_model_counts, dtype=np.float64)
 
     # Nuisance parameter for Poisson likelihood
     # NOTE: B_mle is zero when b is zero!
 
-    sqr = np.sqrt(4 * (alpha + alpha ** 2) * b * M + ((alpha + 1) * M - alpha * (o + b)) ** 2)
+    n = len(o)
 
-    B_mle = 1 / (2.0 * alpha * (1+alpha)) * (alpha * (o + b) - (alpha+1) * M + sqr)
+    for idx in range(n):
 
-    # Profile likelihood
+        o_plus_b = observed_counts[idx] + background_counts[idx]
 
-    loglike = xlogy(o, alpha*B_mle + M) + xlogy(b, B_mle) - (alpha+1) * B_mle - M - \
-              logfactorial(b) - logfactorial(o)
+        sqr = np.sqrt(4 * (alpha + alpha**2) * background_counts[idx] * expected_model_counts[idx] + ((
+            alpha + 1) * expected_model_counts[idx] - alpha * (o_plus_b))**2)
+
+        B_mle[idx] = 1 / (2.0 * alpha * (1 + alpha)) * (alpha * (o_plus_b) -
+                                                        (alpha + 1) * expected_model_counts[idx] + sqr)
+
+        # Profile likelihood
+
+        loglike[idx] = xlogy_one(observed_counts[idx], alpha*B_mle[idx] + expected_model_counts[idx]) + xlogy_one(background_counts[idx], B_mle[idx]) - (alpha+1) * B_mle[idx] - expected_model_counts[idx] - \
+              logfactorial(background_counts[idx]) - logfactorial(observed_counts[idx])
 
     return loglike, B_mle * alpha
+
 
 @njit(fastmath=True)
 def poisson_observed_gaussian_background(observed_counts, background_counts, background_error, expected_model_counts):
@@ -151,17 +159,17 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
     # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
     # observed counts. It is a profile likelihood.
 
-    log_likes = np.empty_like(expected_model_counts,dtype=np.float64)
-    b =  np.empty_like(expected_model_counts,dtype=np.float64)
+    log_likes = np.empty_like(expected_model_counts, dtype=np.float64)
+    b = np.empty_like(expected_model_counts, dtype=np.float64)
     n = len(background_counts)
 
     for idx in range(n):
 
         MB = background_counts[idx] + expected_model_counts[idx]
-        s2 = background_error[idx] + background_error[idx] # type: np.ndarray
+        s2 = background_error[idx] + background_error[idx]    # type: np.ndarray
 
-        b[idx] = 0.5 * (sqrt(MB ** 2 - 2 * s2 * (MB - 2 * observed_counts[idx]) + s2*s2)
-                   + background_counts[idx] - expected_model_counts[idx] - s2) # type: np.ndarray
+        b[idx] = 0.5 * (sqrt(MB**2 - 2 * s2 * (MB - 2 * observed_counts[idx]) + s2 * s2) + background_counts[idx] -
+                        expected_model_counts[idx] - s2)    # type: np.ndarray
 
         # Now there are two branches: when the background is 0 we are in the normal situation of a pure
         # Poisson likelihood, while when the background is not zero we use the profile likelihood
@@ -171,13 +179,11 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
 
         # Let's do the branch with background > 0 first
 
-
         if background_counts[idx] > 0:
 
-            log_likes[idx] = (-(b[idx] - background_counts[idx]) ** 2 / (2 * s2)
-                              + observed_counts[idx] * log(b[idx] + expected_model_counts[idx])
-                              - b[idx] - expected_model_counts[idx] - logfactorial(observed_counts[idx])
-                              - 0.5 * _log_pi_2  - log(background_error[idx]))
+            log_likes[idx] = (-(b[idx] - background_counts[idx])**2 / (2 * s2) + observed_counts[idx] *
+                              log(b[idx] + expected_model_counts[idx]) - b[idx] - expected_model_counts[idx] -
+                              logfactorial(observed_counts[idx]) - 0.5 * _log_pi_2 - log(background_error[idx]))
 
         # Let's do the other branch
 
@@ -197,4 +203,4 @@ def half_chi2(y, yerr, expectation):
     # so that the delta log-like for an error of say 1 sigma is 0.5 and not 1 like it would be for
     # the other likelihood functions. This way we can sum it with other likelihood functions.
 
-    return 1/2.0 * (y-expectation)**2 / yerr**2
+    return 1 / 2.0 * (y - expectation)**2 / yerr**2
