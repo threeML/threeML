@@ -1,8 +1,8 @@
 import numpy as np
-from threeML.plugins.gammaln import logfactorial
+from threeML.utils.statistics.gammaln import logfactorial
 from math import log, sqrt, pi
 
-from numba import jit, njit, prange
+from numba import njit
 
 _log_pi_2 = log(2 * pi)
 
@@ -168,7 +168,7 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
         MB = background_counts[idx] + expected_model_counts[idx]
         s2 = background_error[idx] * background_error[idx]    # type: np.ndarray
 
-        b[idx] = 0.5 * (sqrt(MB**2 - 2 * s2 * (MB - 2 * observed_counts[idx]) + s2 * s2) + background_counts[idx] -
+        b[idx] = 0.5 * (sqrt(MB*MB - 2 * s2 * (MB - 2 * observed_counts[idx]) + s2 * s2) + background_counts[idx] -
                         expected_model_counts[idx] - s2)    # type: np.ndarray
 
         # Now there are two branches: when the background is 0 we are in the normal situation of a pure
