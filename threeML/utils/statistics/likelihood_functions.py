@@ -166,7 +166,7 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
     for idx in range(n):
 
         MB = background_counts[idx] + expected_model_counts[idx]
-        s2 = background_error[idx] + background_error[idx]    # type: np.ndarray
+        s2 = background_error[idx] * background_error[idx]    # type: np.ndarray
 
         b[idx] = 0.5 * (sqrt(MB**2 - 2 * s2 * (MB - 2 * observed_counts[idx]) + s2 * s2) + background_counts[idx] -
                         expected_model_counts[idx] - s2)    # type: np.ndarray
