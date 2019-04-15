@@ -1,4 +1,3 @@
-from scipy.special import gammaln
 from math import lgamma
 from numba import vectorize, int64, float64
 
