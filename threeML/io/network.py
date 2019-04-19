@@ -20,36 +20,38 @@ def internet_connection_is_active():
         # Service: domain (DNS/TCP)
 
         host = "8.8.8.8"
-        port = 53
 
         try:
 
             socket.setdefaulttimeout(timeout)
-            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, 53))
+            return True
+            
         except Exception as ex:
 
             print(ex.message)
-            return False
 
-        else:
-
-            return True
-
-    else:
-
-        # We have a proxy. We cannot connect straight to the DNS of Google, we need to tunnel through the proxy
-        # Since using raw sockets gets complicated and error prone, especially if the proxy has authentication tokens,
-        # we just try to reach google with a sensible timeout
+        #port 53 doesn't work on MacOS, try port 443.
         try:
-
-            _ = requests.get("http://google.com", timeout=timeout)
-
+        
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, 443))
+            return True
+  
         except Exception as ex:
 
             print(ex.message)
-            return False
+ 
+    
+    # Last attempt. We either have a proxy, or the above failed.
+    # With a proxy, we cannot connect straight to the DNS of Google, we need to tunnel through the proxy
+    # Since using raw sockets gets complicated and error prone, especially if the proxy has authentication tokens,
+    # we just try to reach google with a sensible timeout
+    try:
 
-        else:
+        _ = requests.get("http://google.com", timeout=timeout)
+        return true
 
-            return True
+    except Exception as ex:
+
+        print(ex.message)
+        return False
