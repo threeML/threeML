@@ -144,12 +144,6 @@ class RandomVariates(np.ndarray):
 
         q = np.asarray(q)
 
-        if q.shape == ():
-            assert(0<=q and q<=1), "Quantile must be 0 <= q <= 1"
-        else:
-            for Q in q:
-                assert(0<=Q and Q<=1), "All Quantiles must be 0 <= q <= 1"
-
         quant = np.percentile(np.asarray(self), q*100.0)
 
         return quant
