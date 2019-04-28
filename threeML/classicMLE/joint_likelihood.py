@@ -921,7 +921,7 @@ class JointLikelihood(object):
 
         # Fix the axis to cover from the minimum to the 3 sigma line
         ylow = np.min(np.array([logL.min(),lmin]))
-        ax.set_ylim([ylow - 2, 2 * delta_chi2[-1]])
+        ax.set_ylim([ylow - delta_chi2.min(), 2 * delta_chi2[-1]])
 
         plt.legend(loc=0, frameon=True)
 
