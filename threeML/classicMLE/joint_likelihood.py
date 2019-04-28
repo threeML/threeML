@@ -873,6 +873,9 @@ class JointLikelihood(object):
         :return: a figure containing the likelihood profile
         """
 
+        lmin = self._current_minimum
+        logL = cc - lmin
+        
         # plot 1,2 and 3 sigma horizontal lines
 
         sigmas = [1, 2, 3]
@@ -896,18 +899,16 @@ class JointLikelihood(object):
         # noinspection PyTypeChecker
         delta_chi2 = np.array(scipy.stats.chi2.ppf(probabilities, 1) / 2.0)  # two-sided!
 
-        fig = plt.figure()
-        sub = fig.add_subplot(111)
+        fig, ax = plt.subplots()
 
         # Neutralize values of the loglike too high
         # (fit failed)
         idx = (cc == minimization.FIT_FAILED)
 
-        sub.plot(a[~idx], cc[~idx], lw=2, color=threeML_config['mle']['profile color'])
+        ax.plot(a[~idx], logL[~idx], lw=2, color=threeML_config['mle']['profile color'])
 
         # Now plot the failed fits as "x"
-
-        sub.plot(a[idx], [cc.min()] * a[idx].shape[0], 'x', c='red', markersize=2)
+        ax.plot(a[idx], [logL.min()] * a[idx].shape[0], 'x', c='red', markersize=2)
 
         # Decide colors
         colors = [threeML_config['mle']['profile level 1'],
@@ -915,17 +916,17 @@ class JointLikelihood(object):
                   threeML_config['mle']['profile level 3']]
 
         for s, d, c in zip(sigmas, delta_chi2, colors):
-            sub.axhline(self._current_minimum + d, linestyle='--',
-                        color=c, label=r'%s $\sigma$' % s, lw=2)
+            ax.axhline( d, linestyle='--',
+                        color=c, label=r"{0} $\sigma$".format(s), lw=2)
 
         # Fix the axis to cover from the minimum to the 3 sigma line
-        sub.set_ylim([self._current_minimum - delta_chi2[0],
-                      self._current_minimum + (delta_chi2[-1] * 2)])
+        ylow = np.min(np.array([logL.min(),lmin]))
+        ax.set_ylim([ylow - 2, 2 * delta_chi2[-1]])
 
         plt.legend(loc=0, frameon=True)
 
-        sub.set_xlabel(name1)
-        sub.set_ylabel("-log( likelihood )")
+        ax.set_xlabel(name1)
+        ax.set_ylabel("-log( likelihood ) - {0:0.3f}".format(lmin))
   
         plt.tight_layout()
 
