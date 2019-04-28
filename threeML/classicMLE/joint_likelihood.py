@@ -919,8 +919,8 @@ class JointLikelihood(object):
             ax.axhline( d, linestyle='--', color=c, label=r"${0} \sigma$".format(s), lw=2)
 
         # Fix the axis to cover from the minimum to the 3 sigma line
-        ylow = np.array([logL.min(),lmin]).min() - delta_chi2.min()
-        ax.set_ylim([ylow , 2 * delta_chi2[-1]])
+        like_low = np.array([logL.min(),lmin]).min() 
+        ax.set_ylim([like_low - delta_chi2.min() , 5/3. * delta_chi2.max() ] )
 
         plt.legend(loc=0, frameon=True)
 
