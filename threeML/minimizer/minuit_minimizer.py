@@ -2,8 +2,8 @@ from threeML.minimizer.minimization import LocalMinimizer, CannotComputeErrors, 
 from threeML.io.detect_notebook import is_inside_notebook
 
 from iminuit import Minuit
-from iminuit.frontends.console import ConsoleFrontend
-from iminuit.frontends.html import HtmlFrontend
+#from iminuit.frontends.console import ConsoleFrontend
+#from iminuit.frontends.html import HtmlFrontend
 import collections
 import numpy as np
 
@@ -22,20 +22,20 @@ def add_method(self, method, name=None):
     setattr(self.__class__, name, method)
 
 
-def _get_frontend():
-    """
-    Returns the appropriate frontend (HTML for notebook and Console for the console)
+# def _get_frontend():
+#     """
+#     Returns the appropriate frontend (HTML for notebook and Console for the console)
 
-    :return:
-    """
+#     :return:
+#     """
 
-    if is_inside_notebook():
+#     if is_inside_notebook():
 
-        return HtmlFrontend()
+#         return HtmlFrontend()
 
-    else:
+#     else:
 
-        return ConsoleFrontend()
+#         return ConsoleFrontend()
 
 
 class MinuitMinimizer(LocalMinimizer):
@@ -93,7 +93,7 @@ class MinuitMinimizer(LocalMinimizer):
 
         iminuit_init_parameters['print_level'] = self.verbosity
 
-        iminuit_init_parameters['frontend'] = _get_frontend()
+#        iminuit_init_parameters['frontend'] = _get_frontend()
 
         iminuit_init_parameters['forced_parameters'] = variable_names_for_iminuit
 
