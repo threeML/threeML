@@ -5,6 +5,18 @@ import nestle
 
 try:
 
+    import mininest
+
+except:
+
+    has_mininest = False
+
+else:
+
+    has_mininest = True
+
+try:
+
     import pymultinest
 
 except:
@@ -500,6 +512,148 @@ class BayesianAnalysis(object):
 
             return self.samples
 
+    def sample_mininest(self, n_live_points, chain_name="chains/fit-", quiet=False, **kwargs):
+        """
+        Sample the posterior with MULTINEST nested sampling (Feroz & Hobson)
+
+        :param: n_live_points: number of MULTINEST livepoints
+        :param: chain_names: where to stor the multinest incremental output
+        :param: quiet: Whether or not to should results
+        :param: **kwargs (pyMULTINEST kwords)
+
+        :return: MCMC samples
+
+        """
+
+        assert has_pymultinest, "You don't have pymultinest installed, so you cannot run the Multinest sampler"
+
+        self._update_free_parameters()
+
+        n_dim = len(self._free_parameters.keys())
+
+        # MULTINEST has a convergence criteria and therefore, there is no way
+        # to determine progress
+
+        sampling_procedure = sample_without_progress
+
+        # MULTINEST uses a different call signiture for
+        # sampling so we construct callbakcs
+        loglike, multinest_prior = self._construct_multinest_posterior()
+
+        # We need to check if the MCMC
+        # chains will have a place on
+        # the disk to write and if not,
+        # create one
+
+        mcmc_chains_out_dir = ""
+        tmp = chain_name.split('/')
+        for s in tmp[:-1]:
+            mcmc_chains_out_dir += s + '/'
+
+        if using_mpi:
+
+            # if we are running in parallel and this is not the
+            # first engine, then we want to wait and let everything finish
+
+            if rank != 0:
+
+                # let these guys take a break
+                time.sleep(1)
+
+            else:
+
+                # create mcmc chains directory only on first engine
+
+                if not os.path.exists(mcmc_chains_out_dir):
+                    os.makedirs(mcmc_chains_out_dir)
+
+        else:
+
+            if not os.path.exists(mcmc_chains_out_dir):
+                os.makedirs(mcmc_chains_out_dir)
+
+        print("\nSampling\n")
+        print("MULTINEST has its own convergence criteria... you will have to wait blindly for it to finish")
+        print("If INS is enabled, one can monitor the likelihood in the terminal for completion information")
+
+        # Multinest must be run parallel via an external method
+        # see the demo in the examples folder!!
+
+        if threeML_config['parallel']['use-parallel']:
+
+            raise RuntimeError("If you want to run multinest in parallell you need to use an ad-hoc method")
+
+        else:
+
+            sampler = mininest.ReactiveNestedSampler(
+                self._free_parameters.keys(),
+                loglike,
+                transform=mininest_prior,
+                log_dir=chain_name,
+                min_num_live_points=n_live_points,
+                append_run_num=resume,
+                **kwargs)
+
+        # Use PyMULTINEST analyzer to gather parameter info
+
+        process_fit = False
+
+        if using_mpi:
+
+            # if we are running in parallel and this is not the
+            # first engine, then we want to wait and let everything finish
+
+            if rank != 0:
+
+                # let these guys take a break
+                time.sleep(5)
+
+                # these engines do not need to read
+                process_fit = False
+
+            else:
+
+                # wait for a moment to allow it all to turn off
+                time.sleep(5)
+
+                process_fit = True
+
+        else:
+
+            process_fit = True
+
+        if process_fit:
+
+            multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim, outputfiles_basename=chain_name)
+
+            # Get the log. likelihood values from the chain
+            self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
+
+            self._sampler = sampler
+
+            self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
+
+            # now get the log probability
+
+            self._log_probability_values = self._log_like_values + np.array(
+                [self._log_prior(samples) for samples in self._raw_samples])
+
+            self._build_samples_dictionary()
+
+            self._marginal_likelihood = multinest_analyzer.get_stats()['global evidence'] / np.log(10.)
+
+            self._build_results()
+
+            # Display results
+            if not quiet:
+                self._results.display()
+
+            # now get the marginal likelihood
+
+            return self.samples
+
+
+        
     def sample_dynesty(self, sampler_type='dynamic', quiet=False, dynesty_kwargs={}, run_kwargs={}):
         """
 
