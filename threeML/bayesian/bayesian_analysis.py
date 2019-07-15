@@ -4,8 +4,8 @@ import dynesty
 import nestle
 
 try:
+    from mininest.solvecompat import pymultinest_solve_compat as mn_solve
 
-    import mininest
 
 except:
 
@@ -512,7 +512,7 @@ class BayesianAnalysis(object):
 
             return self.samples
 
-    def sample_mininest(self, n_live_points, chain_name="chains/fit-", quiet=False, **kwargs):
+    def sample_mininest(self, n_live_points, chain_name="chains/fit-", resume=False, quiet=False, **kwargs):
         """
         Sample the posterior with MULTINEST nested sampling (Feroz & Hobson)
 
@@ -538,7 +538,7 @@ class BayesianAnalysis(object):
 
         # MULTINEST uses a different call signiture for
         # sampling so we construct callbakcs
-        loglike, multinest_prior = self._construct_multinest_posterior()
+        loglike, mininest_prior = self._construct_mininest_posterior()
 
         # We need to check if the MCMC
         # chains will have a place on
@@ -585,13 +585,13 @@ class BayesianAnalysis(object):
 
         else:
 
-            sampler = mininest.ReactiveNestedSampler(
-                self._free_parameters.keys(),
-                loglike,
-                transform=mininest_prior,
-                log_dir=chain_name,
-                min_num_live_points=n_live_points,
-                append_run_num=resume,
+            sampler = mn_solve(
+                LogLikelihood=loglike,
+                Prior=mininest_prior,
+                n_dims=n_dim,
+                outputfiles_basename=chain_name,
+                n_live_points=n_live_points,
+                resume=resume,
                 **kwargs)
 
         # Use PyMULTINEST analyzer to gather parameter info
@@ -624,14 +624,14 @@ class BayesianAnalysis(object):
 
         if process_fit:
 
-            multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim, outputfiles_basename=chain_name)
+            ws = sampler['weighted_samples']
 
             # Get the log. likelihood values from the chain
-            self._log_like_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]
+            self._log_like_values = ws['L']
 
             self._sampler = sampler
 
-            self._raw_samples = multinest_analyzer.get_equal_weighted_posterior()[:, :-1]
+            self._raw_samples = ws['samples']
 
             # now get the log probability
 
@@ -1066,8 +1066,65 @@ class BayesianAnalysis(object):
 
         _ = prior([0.5] * n_dim, n_dim, [])
 
+
         return loglike, prior
 
+    def _construct_mininest_posterior(self):
+        """
+        pymultinest becomes confused with the self pointer. We therefore ceate callbacks
+        that pymultinest can understand.
+
+        Here, we construct the prior and log. likelihood for multinest on the unit cube
+        """
+
+        # First update the free parameters (in case the user changed them after the construction of the class)
+        self._update_free_parameters()
+
+        n_dims = len(self._free_parameters.values())
+        
+        def loglike(trial_values):
+
+            # NOTE: the _log_like function DOES NOT assign trial_values to the parameters
+
+            for i, parameter in enumerate(self._free_parameters.values()):
+                parameter.value = trial_values[i]
+
+            log_like = self._log_like(trial_values)
+
+            if self.verbose:
+                n_par = len(self._free_parameters)
+
+                print("Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
+                                                                 log_like))
+
+            return log_like
+
+        # Now construct the prior
+        # MULTINEST priors are defined on the unit cube
+        # and should return the value in the bounds... not the
+        # probability. Therefore, we must make some transforms
+
+        def prior(params):
+
+            out = np.zeros(n_dims)
+            
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+
+                try:
+
+                    out[i] = parameter.prior.from_unit_cube(params[i])
+
+                except AttributeError:
+
+                    raise RuntimeError("The prior you are trying to use for parameter %s is "
+                                       "not compatible with multinest" % parameter_name)
+            return out
+
+        return loglike, prior
+
+
+
+    
     def _construct_dynesty_posterior(self):
         """
         Construct the likelihood and prior for dynesty.
