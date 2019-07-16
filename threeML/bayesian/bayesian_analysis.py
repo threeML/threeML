@@ -592,6 +592,7 @@ class BayesianAnalysis(object):
                 outputfiles_basename=chain_name,
                 n_live_points=n_live_points,
                 resume=resume,
+                paramnames=self._free_parameters.keys(),
                 **kwargs)
 
         # Use PyMULTINEST analyzer to gather parameter info
