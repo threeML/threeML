@@ -4,7 +4,7 @@ import dynesty
 import nestle
 
 try:
-    from mininest.solvecompat import pymultinest_solve_compat as mn_solve
+    from mininest.integrator import ReactiveNestedSampler
 
 
 except:
@@ -512,7 +512,7 @@ class BayesianAnalysis(object):
 
             return self.samples
 
-    def sample_mininest(self, n_live_points, chain_name="chains/fit-", resume=False, quiet=False, **kwargs):
+    def sample_mininest(self, min_num_live_points, chain_name="chains/fit-", resume=False, quiet=False, verbose=False,  **kwargs):
         """
         Sample the posterior with MULTINEST nested sampling (Feroz & Hobson)
 
@@ -540,6 +540,10 @@ class BayesianAnalysis(object):
         # sampling so we construct callbakcs
         loglike, mininest_prior = self._construct_mininest_posterior()
 
+
+
+
+        
         # We need to check if the MCMC
         # chains will have a place on
         # the disk to write and if not,
@@ -585,18 +589,41 @@ class BayesianAnalysis(object):
 
         else:
 
-            sampler = mn_solve(
-                LogLikelihood=loglike,
-                Prior=mininest_prior,
-                n_dims=n_dim,
-                outputfiles_basename=chain_name,
-                n_live_points=n_live_points,
-                resume=resume,
-                paramnames=self._free_parameters.keys(),
+            min_ess = kwargs.pop('min_ess', 400)
+            frac_remain = kwargs.pop('frac_remain', 0.01)
+            dlogz = kwargs.pop('dlogz',0.5)
+            max_iter = kwargs.pop('max_iter',0.)
+            
+            
+            
+            if not verbose:
+                kwargs['viz_callback'] = False
+
+            sampler = ReactiveNestedSampler(
+                loglike=loglike,
+                transform=mininest_prior,
+                log_dir=chain_name,
+                min_num_live_points = min_num_live_points,
+                append_run_num= not resume,
+                show_status = verbose,
+                param_names=self._free_parameters.keys(),
                 **kwargs)
 
         # Use PyMULTINEST analyzer to gather parameter info
 
+
+        
+        sampler.run(dlogz=dlogz,
+                    max_iters=max_iter if max_iter > 0 else None,
+                    min_ess=min_ess,
+                    frac_remain=frac_remain
+                    
+
+
+        )
+
+        
+        
         process_fit = False
 
         if using_mpi:
@@ -625,14 +652,50 @@ class BayesianAnalysis(object):
 
         if process_fit:
 
-            ws = sampler['weighted_samples']
+            
 
+            results = sampler.results
+            
+            ws = results['weighted_samples']
+
+            weights = ws['w']
+            
+            
             # Get the log. likelihood values from the chain
-            self._log_like_values = ws['L']
+
+
+            SQRTEPS = (float(np.finfo(np.float64).eps))**0.5
+            if abs(np.sum(weights) - 1.) > SQRTEPS:  # same tol as in np.random.choice.
+                raise ValueError("weights do not sum to 1")
+
+
+
+            rstate = np.random
+
+            N = len(weights)
+
+            # make N subdivisions, and choose positions with a consistent random offset
+            positions = (rstate.random() + np.arange(N)) / N
+
+            idx = np.zeros(N, dtype=np.int)
+            cumulative_sum = np.cumsum(weights)
+            i, j = 0, 0
+            while i < N:
+                if positions[i] < cumulative_sum[j]:
+                    idx[i] = j
+                    i += 1
+                else:
+                    j += 1
+            
+            
+
+
+
+            self._log_like_values = ws['L'][idx]
 
             self._sampler = sampler
 
-            self._raw_samples = ws['samples']
+            self._raw_samples = ws['v'][idx]
 
             # now get the log probability
 
@@ -641,7 +704,7 @@ class BayesianAnalysis(object):
 
             self._build_samples_dictionary()
 
-            self._marginal_likelihood = multinest_analyzer.get_stats()['global evidence'] / np.log(10.)
+            self._marginal_likelihood = results['logz']
 
             self._build_results()
 
@@ -1087,18 +1150,22 @@ class BayesianAnalysis(object):
 
             # NOTE: the _log_like function DOES NOT assign trial_values to the parameters
 
-            for i, parameter in enumerate(self._free_parameters.values()):
-                parameter.value = trial_values[i]
+            log_likes = np.zeros(len(trial_values))
 
-            log_like = self._log_like(trial_values)
+            for i in range(len(trial_values)):
+            
+                for j, parameter in enumerate(self._free_parameters.values()):
+                    parameter.value = trial_values[i, j]
 
-            if self.verbose:
-                n_par = len(self._free_parameters)
+                    log_likes[i] = self._log_like(trial_values[i, :])
 
-                print("Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
-                                                                 log_like))
+                if self.verbose:
+                    n_par = len(self._free_parameters)
 
-            return log_like
+                    print("Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
+                                                                     log_like))
+
+            return log_likes
 
         # Now construct the prior
         # MULTINEST priors are defined on the unit cube
@@ -1107,13 +1174,13 @@ class BayesianAnalysis(object):
 
         def prior(params):
 
-            out = np.zeros(n_dims)
+            out = np.zeros((len(params), n_dims ))
             
-            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
 
                 try:
 
-                    out[i] = parameter.prior.from_unit_cube(params[i])
+                    out[:, i] = parameter.prior.from_unit_cube(params[:, i])
 
                 except AttributeError:
 
@@ -1233,8 +1300,8 @@ class BayesianAnalysis(object):
         try:
 
             # Loop over each dataset and get the likelihood values for each set
-
-            log_like_values = map(lambda dataset: dataset.get_log_like(), self._data_list.values())
+            log_like_values = [ dataset.get_log_like() for dataset in self._data_list.values() ]
+#            log_like_values = map(lambda dataset: dataset.get_log_like(), self._data_list.values())
 
         except ModelAssertionViolation:
 
