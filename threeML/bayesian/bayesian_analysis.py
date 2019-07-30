@@ -1158,7 +1158,7 @@ class BayesianAnalysis(object):
                 for j, parameter in enumerate(self._free_parameters.values()):
                     parameter.value = trial_values[i, j]
 
-                    log_likes[i] = self._log_like(trial_values[i, :])
+                log_likes[i] = self._log_like(trial_values[i, :])
 
                 if self.verbose:
                     n_par = len(self._free_parameters)
