@@ -606,6 +606,7 @@ class BayesianAnalysis(object):
                 min_num_live_points = min_num_live_points,
                 append_run_num= not resume,
                 show_status = verbose,
+                draw_multiple=False,
                 param_names=self._free_parameters.keys(),
                 **kwargs)
 
