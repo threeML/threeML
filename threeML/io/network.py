@@ -49,7 +49,7 @@ def internet_connection_is_active():
     try:
 
         _ = requests.get("http://google.com", timeout=timeout)
-        return true
+        return True
 
     except Exception as ex:
 
