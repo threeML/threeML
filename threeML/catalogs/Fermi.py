@@ -530,8 +530,10 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.xc = float(catalog_entry['cutoff']) * u.MeV
         this_spectrum.xc.fix = fix
 
-    elif spectrum_type == 'PLSuperExpCutoff2':
+    elif spectrum_type in ['PLSuperExpCutoff', 'PLSuperExpCutoff2']:
         # This is the new definition, from the 4FGL catalog.
+        # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
+        # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
         this_spectrum = Super_cutoff_powerlaw()
 
         this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
@@ -552,7 +554,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
 
     else:
 
-        raise NotImplementedError("Spectrum type %s is not a valid 3FGL type" % spectrum_type)
+        raise NotImplementedError("Spectrum type %s is not a valid 4FGL type" % spectrum_type)
 
     return this_source
 
