@@ -2,7 +2,7 @@
 
 if [ "$(uname)" == "Linux" ]; then
     
-    docker run -v `pwd`/../:/3ML --rm -it quay.io/pypa/manylinux1_x86_64 bash -c "source /3ML/conda-dist/build_inside_container.sh"
+    docker run -v `pwd`/../:/threeml --rm -it quay.io/pypa/manylinux1_x86_64 bash -c "source /threeml/conda-dist/build_inside_container.sh"
 
 else
     

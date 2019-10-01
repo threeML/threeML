@@ -30,7 +30,7 @@ def test_FermipyLike():
 
     model = lat_catalog.get_model()
 
-    assert model.get_number_of_point_sources() == 90
+    assert model.get_number_of_point_sources() == 133
 
     # Let's free all the normalizations within 3 deg from the center
     model.free_point_sources_within_radius(3.0, normalization_only=True)
@@ -40,13 +40,13 @@ def test_FermipyLike():
     # but then let's fix the sync and the IC components of the Crab
     # (cannot fit them with just one day of data)
     # (these two methods are equivalent)
-    model['Crab_IC.spectrum.main.Powerlaw.K'].fix = True
-    model.Crab_synch.spectrum.main.Powerlaw.K.fix = True
+    model['Crab_IC.spectrum.main.Log_parabola.K'].fix = True
+    model.Crab_synch.spectrum.main.shape.K.fix = True
 
     assert len(model.free_parameters) == 3
 
     # However, let's free the index of the Crab
-    model.PSR_J0534p2200.spectrum.main.Cutoff_powerlaw.index.free = True
+    model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index.free = True
 
     assert len(model.free_parameters) == 4
 
