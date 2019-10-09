@@ -34,7 +34,7 @@ conda config --set anaconda_upload no
 conda config --add channels conda-forge
 
 
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 
     # in the hawc docker container we have a configuration file
 
