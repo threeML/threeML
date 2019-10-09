@@ -87,7 +87,7 @@ export NUMEXPR_NUM_THREADS=1
 # we can actually import the HAWC plugin
 # We re-install cthreeML to make sure that it uses versions of boost compatible
 # with what is installed in the container
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 
     export CFLAGS="-m64 -I${CONDA_PREFIX}/include"
     export CXXFLAGS="-DBOOST_MATH_DISABLE_FLOAT128 -m64 -I${CONDA_PREFIX}/include"
