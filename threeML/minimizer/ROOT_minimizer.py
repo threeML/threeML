@@ -70,7 +70,7 @@ class ROOTMinimizer(LocalMinimizer):
         # Setup the minimizer algorithm
 
         self.functor = FuncWrapper(self.function, self.Npar)
-        self.minimizer = ROOT.Math.Factory.CreateMinimizer("Minuit2", "Minimize")
+        self.minimizer = ROOT.Minuit2.Minuit2Minimizer("Minimize")
         self.minimizer.Clear()
         self.minimizer.SetMaxFunctionCalls(setup_dict['max_function_calls'])
         self.minimizer.SetPrintLevel(self.verbosity)

@@ -1,7 +1,5 @@
 sudo: required
 language: generic
-services:
-- docker
 os:
 - linux
 - osx
@@ -18,6 +16,8 @@ before_install:
   else
 
       # A normal test
+      XSPECVER="12.10.1b"
+      xspec_channel=xspec/channel/dev
 
       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
@@ -26,10 +26,7 @@ before_install:
         wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
 
       else
-
-        # Install Miniconda
-        wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -O miniconda.sh
-
+        wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh
       fi
 
       bash miniconda.sh -b -p $HOME/miniconda
@@ -40,11 +37,12 @@ before_install:
 
       # Make sure conda-forge is first channel
       conda config --add channels conda-forge
+      conda config --add channels ${xspec_channel}
 
       conda config --set always_yes true
 
       # Create test environment
-      conda create --name test_env -c conda-forge python=2.7 pygmo=2 root5 pytest=3.6 codecov pytest-cov git numpy=1.15
+      conda create --name test_env -c conda-forge python=2.7 pygmo=2 root5 pytest=3.6 codecov pytest-cov git numpy=1.15 ${XSPEC} astropy
 
   fi
 before_script:
@@ -91,28 +89,9 @@ script:
       pytest -vv --pyargs astromodels
 
   else
-
-      if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
-
-        docker run -e TRAVIS_PYTHON_VERSION=2.7 \
-                   -e TRAVIS_BRANCH \
-                   -e CONDA_UPLOAD_TOKEN \
-                   -e TRAVIS_OS_NAME \
-                   -e TRAVIS_BUILD_NUMBER \
-                   -e TRAVIS_BUILD_DIR \
-                   -e TRAVIS_EVENT_TYPE \
-                   -v ${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR} \
-                   -it --rm -e user_id=`id -u` \
-                   giacomov/hawc-docker \
-                   /bin/bash -c "source ${TRAVIS_BUILD_DIR}/ci/build_and_test.sh"
-      else
-
-         chmod u+x ci/build_and_test.sh
-         export TRAVIS_PYTHON_VERSION=2.7
-         ./ci/build_and_test.sh
-
-      fi
-
+      chmod u+x ci/build_and_test.sh
+      export TRAVIS_PYTHON_VERSION=2.7
+      ./ci/build_and_test.sh
   fi
 env:
   matrix:

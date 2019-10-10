@@ -19,10 +19,14 @@ python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file three
 
 export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
 
+XSPECVER="12.10.1b"
+xspec_channel=xspec/channel/dev
+
 echo "Building ${PKG_VERSION} ..."
+echo "Python version: ${TRAVIS_PYTHON_VERSION}"
 
 # Update conda
-conda update --yes -q conda #conda-build
+conda update --yes -q conda conda-build
 
 # Answer yes to all questions (non-interactive)
 conda config --set always_yes true
@@ -49,8 +53,13 @@ else
 fi
 
 # Build package
-cd conda-dist/recipes/threeml
-conda build -c conda-forge -c threeml --python=$TRAVIS_PYTHON_VERSION .
+
+if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    conda build --python=$TRAVIS_PYTHON_VERSION conda-dist/recipes/threeml
+else
+    # there is some strange error about the prefix length
+    conda build --no-build-id --python=$TRAVIS_PYTHON_VERSION conda-dist/recipes/threeml
+fi
 
 # Install it
 conda install --use-local -c threeml -c conda-forge threeml
@@ -59,7 +68,7 @@ conda install --use-local -c threeml -c conda-forge threeml
 # This is a kludge around a pymultinest bug
 # (it cannot find multinest if not in LD_LIBRARY_PATH
 # or DYLD_LIBRARY_PATH)
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 
     export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${CONDA_PREFIX}/lib
 
@@ -127,26 +136,45 @@ fi
 # If we are on the master branch upload to the channel
 if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]]; then
 
-        echo "This is a pull request, not uploading to Conda channel"
+    echo "This is a pull request, not uploading to Conda channel"
 
 else
+    if [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
 
-        if [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
+        echo "This is a push to TRAVIS_BRANCH=${TRAVIS_BRANCH}"
 
-            echo "This is a push, uploading to Conda channel"
+        if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
 
-            source activate root
+            conda install -c anaconda-client
 
-            conda install anaconda-client
-            
+            echo "Uploading ${CONDA_BUILD_PATH}"
+
             if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-                
-                anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml /opt/conda/conda-bld/linux-64/*.tar.bz2 --force
-            
+
+                    anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${HOME}/miniconda/conda-bld/linux-64/*.tar.bz2 --force
+
             else
-            
-                anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml /Users/travis/miniconda/conda-bld/osx-64/*.tar.bz2 --force
-            
+
+                    anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${HOME}/miniconda/conda-bld/*/*.tar.bz2 --force
             fi
         fi
+    fi
+    if [[ "${TRAVIS_EVENT_TYPE}" == "removeme" ]]; then
+
+        echo "This is a push, uploading to Conda channel"
+
+        source activate root
+
+        conda install anaconda-client
+            
+        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+                
+            anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${HOME}/conda-bld/linux-64/*.tar.bz2 --force
+            
+        else
+            
+            anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${HOME}/miniconda/conda-bld/osx-64/*.tar.bz2 --force
+            
+        fi
+    fi
 fi

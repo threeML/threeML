@@ -1,20 +1,57 @@
 #!/usr/bin/env bash
-
-export TRAVIS_PYTHON_VERSION=2.7
-export TRAVIS_OS_NAME=linux
-export TRAVIS_BUILD_NUMBER=0
-ENVNAME=test_env2_$TRAVIS_PYTHON_VERSION
-
 # Make sure we fail in case of errors
 set -e
+
+TRAVIS_OS_NAME="unknown"
+
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+
+        # Linux
+
+        TRAVIS_OS_NAME="linux"
+
+
+elif [[ "$OSTYPE" == darwin* ]]; then
+
+        # Mac OSX
+
+        TRAVIS_OS_NAME="osx"
+
+
+elif [[ "$OSTYPE" == "cygwin" ]]; then
+
+        # POSIX compatibility layer and Linux environment emulation for Windows
+
+        TRAVIS_OS_NAME="linux"
+
+else
+
+        # Unknown.
+
+        echo "Could not guess your OS. Exiting."
+
+        exit 1
+
+fi
+
+echo "Running on ${TRAVIS_OS_NAME}"
+
+TRAVIS_PYTHON_VERSION=2.7
+TRAVIS_BUILD_NUMBER=0
+
+export TRAVIS_BUILD_NUMBER=0
+ENVNAME=threeML_test_$TRAVIS_PYTHON_VERSION
 
 # Environment
 libgfortranver="3.0"
 NUMPYVER=1.15
 MATPLOTLIBVER=2
-UPDATE_CONDA=true
+UPDATE_CONDA=false
+XSPECVER="12.10.1b"
+xspec_channel=xspec/channel/dev
 
-if [[ ${TRAVIS_OS_NAME} == linux ]];
+
+if [[ ${TRAVIS_OS_NAME} == "linux" ]];
 then
     miniconda_os=Linux
     compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
@@ -26,9 +63,6 @@ else  # osx
     # We also need to pin down ncurses, for now only on macos.
     xorg="xorg-libx11 ncurses=5"
 fi
-
-
-
 
 # Get the version in the __version__ environment variable
 python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
@@ -49,11 +83,16 @@ then
     conda config --add channels conda-forge
 fi
 
+conda config --add channels ${xspec_channel}
+
 # Figure out requested dependencies
 if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
 if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
+if [ -n "${XSPECVER}" ];
+ then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
+fi
 
-echo "dependencies: ${MATPLOTLIB} ${NUMPY}"
+echo "dependencies: ${MATPLOTLIB} ${NUMPY} ${XSPEC}"
 
 # Answer yes to all questions (non-interactive)
 conda config --set always_yes true
@@ -63,7 +102,7 @@ conda config --set anaconda_upload no
 
 # Create test environment
 echo "Create test environment..."
-conda create --yes --name $ENVNAME -c conda-forge python=$TRAVIS_PYTHON_VERSION pytest codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} astropy ${compilers}\
+conda create --yes --name $ENVNAME -c conda-forge python=$TRAVIS_PYTHON_VERSION root5 pytest=3.6 codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers}\
   libgfortran=${libgfortranver}
 
 # Make sure conda-forge is the first channel
@@ -74,8 +113,8 @@ conda config --add channels defaults
 # Activate test environment
 echo "Activate test environment..."
 
-source $HOME/work/fermi/miniconda3/etc/profile.d/conda.sh
-conda activate $ENVNAME
+#source $HOME/work/fermi/miniconda3/etc/profile.d/conda.sh
+source activate $ENVNAME
 
 # Build package
 echo "Build package..."
