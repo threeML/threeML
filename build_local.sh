@@ -106,9 +106,12 @@ conda create --yes --name $ENVNAME -c conda-forge python=$TRAVIS_PYTHON_VERSION 
   libgfortran=${libgfortranver}
 
 # Make sure conda-forge is the first channel
+
 conda config --add channels conda-forge
 
 conda config --add channels defaults
+
+conda config --add channels threeml
 
 # Activate test environment
 echo "Activate test environment..."
