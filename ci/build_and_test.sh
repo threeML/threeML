@@ -75,6 +75,8 @@ conda config --add channels conda-forge
 
 conda config --add channels defaults
 
+conda config --add channels threeml
+
 if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 
     # in the hawc docker container we have a configuration file
