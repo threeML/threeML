@@ -14,19 +14,49 @@ cp -R ${TRAVIS_BUILD_DIR}/* my_work_dir/
 
 cd my_work_dir
 
+if [[ ${TRAVIS_OS_NAME} == linux ]];
+then
+    miniconda_os=Linux
+    compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+else  # osx
+    miniconda_os=MacOSX
+    compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+
+    # On macOS we also need the conda libx11 libraries used to build xspec
+    # We also need to pin down ncurses, for now only on macos.
+    xorg="xorg-libx11 ncurses=5"
+fi
+
+
 # Get the version in the __version__ environment variable
 python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
 
 export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
 
+echo "HOME= ${HOME}"
+echo "Building ${PKG_VERSION} ..."
+echo "Python version: ${TRAVIS_PYTHON_VERSION}"
+
+libgfortranver="3.0"
+NUMPYVER=1.15
+MATPLOTLIBVER=2
 XSPECVER="12.10.1b"
 xspec_channel=xspec/channel/dev
 
 echo "Building ${PKG_VERSION} ..."
 echo "Python version: ${TRAVIS_PYTHON_VERSION}"
 
-# Update conda
 conda update --yes -q conda conda-build
+
+conda config --add channels ${xspec_channel}
+
+# Figure out requested dependencies
+if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
+if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
+if [ -n "${XSPECVER}" ];
+ then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
+fi
+echo "dependencies: ${MATPLOTLIB} ${NUMPY}  ${XSPEC}"
 
 # Answer yes to all questions (non-interactive)
 conda config --set always_yes true
@@ -34,9 +64,16 @@ conda config --set always_yes true
 # We will upload explicitly at the end, if successful
 conda config --set anaconda_upload no
 
+
+# Create test environment
+conda create --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION root5 pytest=3.6 codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers}\
+  libgfortran=${libgfortranver}
+
 # Make sure conda-forge is the first channel
+
 conda config --add channels conda-forge
 
+conda config --add channels defaults
 
 if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 
@@ -68,15 +105,11 @@ conda install --use-local -c threeml -c conda-forge threeml
 # This is a kludge around a pymultinest bug
 # (it cannot find multinest if not in LD_LIBRARY_PATH
 # or DYLD_LIBRARY_PATH)
-if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
-
-    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${CONDA_PREFIX}/lib
-
-else
-
-    export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${CONDA_PREFIX}/lib
-
-fi
+#if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
+#    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${CONDA_PREFIX}/lib
+#else
+#    export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${CONDA_PREFIX}/lib
+#fi
 
 # Run tests
 cd ~/my_work_dir/
