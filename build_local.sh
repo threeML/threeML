@@ -103,27 +103,30 @@ conda config --set anaconda_upload no
 # Create test environment
 echo "Create test environment..."
 conda create --yes --name $ENVNAME -c conda-forge python=$TRAVIS_PYTHON_VERSION root5 pytest=3.6 codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers}\
-  libgfortran=${libgfortranver}
+  libgfortran=${libgfortranver} openblas-devel=0.3.6 openblas=0.2.20 blas=1.1
+  #blas=2.11
 
 # Make sure conda-forge is the first channel
-
-conda config --add channels conda-forge
 
 conda config --add channels defaults
 
 conda config --add channels threeml
 
+conda config --add channels conda-forge
+
 # Activate test environment
 echo "Activate test environment..."
 
 #source $HOME/work/fermi/miniconda3/etc/profile.d/conda.sh
+#conda activate $ENVNAME
 source activate $ENVNAME
 
 # Build package
 echo "Build package..."
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     conda build --python=$TRAVIS_PYTHON_VERSION conda-dist/recipes/threeml
-    conda index $HOME/work/fermi/miniconda3/conda-bld
+    #conda index $HOME/work/fermi/miniconda3/conda-bld
+    conda index $HOME/miniconda/conda-bld
 else
     # there is some strange error about the prefix length
     conda build --no-build-id --python=$TRAVIS_PYTHON_VERSION conda-dist/recipes/threeml
