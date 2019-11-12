@@ -37,19 +37,17 @@ fi
 echo "Running on ${TRAVIS_OS_NAME}"
 
 TRAVIS_PYTHON_VERSION=2.7
-TRAVIS_BUILD_NUMBER=0
-
-export TRAVIS_BUILD_NUMBER=0
+export TRAVIS_BUILD_NUMBER=2
 ENVNAME=threeML_test_$TRAVIS_PYTHON_VERSION
+USE_LOCAL=false
 
 # Environment
 libgfortranver="3.0"
 NUMPYVER=1.15
 MATPLOTLIBVER=2
 UPDATE_CONDA=false
-XSPECVER="12.10.1b"
-xspec_channel=xspec/channel/dev
-
+XSPECVER="6.22.1"
+xspec_channel=threeml
 
 if [[ ${TRAVIS_OS_NAME} == "linux" ]];
 then
@@ -71,19 +69,20 @@ export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__ver
 
 echo "Building ${PKG_VERSION} ..."
 echo "Python version: ${TRAVIS_PYTHON_VERSION}"
+echo "Use local is: ${USE_LOCAL}"
+
+if ${USE_LOCAL}; then
+    conda config --remove channels ${xspec_channel}
+    use_local="--use-local"
+else
+    conda config --add channels ${xspec_channel}
+fi
 
 if $UPDATE_CONDA ; then
     # Update conda
     echo "Update conda..."
     conda update --yes -q conda conda-build
 fi
-
-if [[ ${TRAVIS_OS_NAME} == osx ]];
-then
-    conda config --add channels conda-forge
-fi
-
-conda config --add channels ${xspec_channel}
 
 # Figure out requested dependencies
 if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
@@ -102,35 +101,31 @@ conda config --set anaconda_upload no
 
 # Create test environment
 echo "Create test environment..."
-conda create --yes --name $ENVNAME -c conda-forge python=$TRAVIS_PYTHON_VERSION root5 pytest=3.6 codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers}\
-  libgfortran=${libgfortranver} openblas-devel=0.3.6 openblas=0.2.20 blas=1.1
-  #blas=2.11
+conda create --yes --name $ENVNAME -c conda-forge ${use_local}python=$TRAVIS_PYTHON_VERSION pytest=3.6 codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy openblas-devel=0.3.6 tk=8.5.19 
+#libgfortran=${libgfortranver} ${compilers} 
+#openblas-devel=0.3.6 openblas=0.2.20 blas=1.1
 
 # Make sure conda-forge is the first channel
+conda config --add channels conda-forge
 
 conda config --add channels defaults
 
 conda config --add channels threeml
 
-conda config --add channels conda-forge
-
 # Activate test environment
 echo "Activate test environment..."
 
+source $CONDA_PREFIX/etc/profile.d/conda.sh
 #source $HOME/work/fermi/miniconda3/etc/profile.d/conda.sh
-#conda activate $ENVNAME
-source activate $ENVNAME
+conda activate $ENVNAME
 
 # Build package
 echo "Build package..."
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     conda build --python=$TRAVIS_PYTHON_VERSION conda-dist/recipes/threeml
-    #conda index $HOME/work/fermi/miniconda3/conda-bld
-    conda index $HOME/miniconda/conda-bld
 else
     # there is some strange error about the prefix length
     conda build --no-build-id --python=$TRAVIS_PYTHON_VERSION conda-dist/recipes/threeml
-    conda index $HOME/miniconda/conda-bld
 fi
 echo "======> installing..."
 conda install --use-local -c conda-forge -c threeml threeml

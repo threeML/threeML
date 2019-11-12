@@ -40,8 +40,8 @@ echo "Python version: ${TRAVIS_PYTHON_VERSION}"
 libgfortranver="3.0"
 NUMPYVER=1.15
 MATPLOTLIBVER=2
-XSPECVER="12.10.1b"
-xspec_channel=xspec/channel/dev
+XSPECVER="6.22.1"
+xspec_channel=threeml
 
 echo "Building ${PKG_VERSION} ..."
 echo "Python version: ${TRAVIS_PYTHON_VERSION}"
@@ -66,8 +66,7 @@ conda config --set anaconda_upload no
 
 
 # Create test environment
-conda create --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION root5 pytest=3.6 codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers}\
-  libgfortran=${libgfortranver}
+conda create --yes --name $ENVNAME -c conda-forge python=$TRAVIS_PYTHON_VERSION pytest=3.6 codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy openblas-devel=0.3.6 tk=8.5.19 
 
 # Make sure conda-forge is the first channel
 
@@ -101,7 +100,7 @@ else
 fi
 
 # Install it
-conda install --use-local -c threeml -c conda-forge threeml
+conda install --use-local -c conda-forge -c threeml threeml
 
 ########### FIXME
 # This is a kludge around a pymultinest bug

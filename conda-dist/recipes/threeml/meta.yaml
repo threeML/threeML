@@ -16,13 +16,17 @@ build:
 requirements:
   
   build:
+    # - {{ compiler('c') }}
+    # - {{ compiler('cxx') }}
+    # - {{ compiler('fortran') }}
     - python
+    #- setuptools
     #- toolchain
     - numpy >=1.6
-    - scipy >=0.18
+    #- scipy >=0.18
     - emcee
-    - astropy >=1.0.3
-    - matplotlib
+    #- astropy >=1.0.3
+    #- matplotlib
     - uncertainties
     - pyyaml==3.13
     - dill
@@ -30,16 +34,18 @@ requirements:
     - astromodels
     - astroquery
     - corner >=1.0.2
-    - pandas
+    #- pandas
     - requests
     - speclite
     - pymultinest
     - pygmo >=2.4
     - ipywidgets
-    - ipython
+    #- ipython
     - ipyparallel
     - py
     - pymultinest
+    - tk==8.5.19
+  
   run:
     - python
     - numpy >=1.6
@@ -65,6 +71,8 @@ requirements:
     - xz
     - py
     - pymultinest
+    - pytest <4
+    - numexpr 
 
 #test:
 #  # Python imports
