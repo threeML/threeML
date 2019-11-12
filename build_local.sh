@@ -99,18 +99,20 @@ conda config --set always_yes true
 # We will upload explicitly at the end, if successful
 conda config --set anaconda_upload no
 
-# Create test environment
-echo "Create test environment..."
-conda create --yes --name $ENVNAME -c conda-forge ${use_local}python=$TRAVIS_PYTHON_VERSION pytest=3.6 codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy openblas-devel=0.3.6 tk=8.5.19 
-#libgfortran=${libgfortranver} ${compilers} 
-#openblas-devel=0.3.6 openblas=0.2.20 blas=1.1
-
 # Make sure conda-forge is the first channel
+conda config --add channels conda-forge/label/cf201901
+
 conda config --add channels conda-forge
 
 conda config --add channels defaults
 
 conda config --add channels threeml
+
+# Create test environment
+echo "Create test environment..."
+conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION "pytest<4" codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy openblas-devel=0.3.6 tk=8.5.19
+#libgfortran=${libgfortranver}
+#openblas-devel=0.3.6 openblas=0.2.20 blas=1.1
 
 # Activate test environment
 echo "Activate test environment..."
@@ -141,8 +143,8 @@ export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
 # Run tests
-cd threeML/test
-python -m pytest -vv --cov=threeML # -k "not slow"
+# cd threeML/test
+# python -m pytest -vv --cov=threeML # -k "not slow"
 
 # Unset PYTHONPATH and LD_LIBRARY_PATH because they conflict with anaconda client
 unset PYTHONPATH
