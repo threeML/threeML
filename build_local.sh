@@ -143,8 +143,8 @@ export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 
 # Run tests
-# cd threeML/test
-# python -m pytest -vv --cov=threeML # -k "not slow"
+cd threeML/test
+python -m pytest -vv --cov=threeML # -k "not slow"
 
 # Unset PYTHONPATH and LD_LIBRARY_PATH because they conflict with anaconda client
 unset PYTHONPATH
