@@ -16,54 +16,61 @@ build:
 requirements:
   
   build:
+    # - {{ compiler('c') }}
+    # - {{ compiler('cxx') }}
+    # - {{ compiler('fortran') }}
     - python
+    #- setuptools
     #- toolchain
-    - numpy >=1.6
-    - scipy >=0.18
-    - emcee
-    - astropy >=1.0.3
-    - matplotlib
+    - numpy>=1.6
+    #- scipy >=0.18
+    - emcee>=3
+    #- astropy >=1.0.3
+    #- matplotlib
     - uncertainties
-    - pyyaml
+    - pyyaml==3.13
     - dill
-    - iminuit >=1.2
+    - iminuit>=1.2
     - astromodels
     - astroquery
-    - corner >=1.0.2
-    - pandas
+    - corner>=1.0.2
+    #- pandas
     - requests
     - speclite
     - pymultinest
-    - pygmo >=2.4
+    - pygmo>=2.4
     - ipywidgets
-    - ipython
+    #- ipython
     - ipyparallel
     - py
-
+    - tk==8.5.19
+  
   run:
     - python
-    - numpy >=1.6
-    - scipy >=0.18
-    - emcee
-    - astropy >=1.0.3
+    - numpy>=1.6
+    - scipy>=0.18
+    - emcee>=3
+    - astropy>=1.0.3
     - matplotlib
     - uncertainties
-    - pyyaml
+    - pyyaml==3.13
     - dill
-    - iminuit >=1.2
+    - iminuit>=1.2
     - astromodels
     - astroquery
-    - corner >=1.0.2
+    - corner>=1.0.2
     - pandas
     - requests
     - speclite
     - pymultinest
-    - pygmo >=2.4
+    - pygmo>=2.4
     - ipywidgets
     - ipython
     - ipyparallel
     - xz
     - py
+    - pytest<4
+    - numexpr 
 
 #test:
 #  # Python imports
