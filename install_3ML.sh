@@ -2,7 +2,7 @@
 
 # Process options
 INSTALL_XSPEC="no"
-INSTALL_XS_LITE="no"
+#INSTALL_XS_LITE="no"
 INSTALL_ROOT="no"
 BATCH="no"
 
@@ -11,9 +11,9 @@ while [ "${1:-}" != "" ]; do
       "--with-xspec")
         INSTALL_XSPEC="yes"
         ;;
-      "--with-xspec-lite")
-        INSTALL_XS_LITE="yes"
-        ;;
+#      "--with-xspec-lite")
+#        INSTALL_XS_LITE="yes"
+#        ;;
       "--with-root")
         INSTALL_ROOT="yes"
         ;;
@@ -237,19 +237,19 @@ line
 echo "Installing 3ML"
 line
 
-PACKAGES_TO_INSTALL="threeml"
+PACKAGES_TO_INSTALL="astromodels threeml"
 
 if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
 
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly=6.22.1"
 
 fi
 
-if [[ "${INSTALL_XS_LITE}" == "yes" ]]; then
-
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly-lite"
-
-fi
+#if [[ "${INSTALL_XS_LITE}" == "yes" ]]; then
+#
+#    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly-lite"
+#
+#fi
 
 if [[ "${INSTALL_ROOT}" == "yes" ]]; then
 
@@ -263,7 +263,17 @@ export PATH=${conda_path}/bin:${PATH}
 
 source deactivate
 
-conda create --name threeML -y -c conda-forge -c threeml python=2.7 numpy scipy matplotlib ${PACKAGES_TO_INSTALL}
+conda config --add channels threeml
+
+conda config --add channels conda-forge/label/cf201901
+
+conda config --add channels conda-forge
+
+conda config --add channels defaults
+
+#conda create --name threeML -y -c conda-forge -c threeml python=2.7 numpy scipy matplotlib ${PACKAGES_TO_INSTALL}
+
+conda create --yes --name -c conda-forge -c threeML python=$TRAVIS_PYTHON_VERSION ${PACKAGES_TO_INSTALL}
 
 line
 echo "Generating setup scripts"
