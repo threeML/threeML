@@ -49,7 +49,7 @@ script:
       pytest -vv --pyargs threeML
 
       # Now remove the venv and start from scratch installing also root and xspec
-      source deactivate
+      conda deactivate
 
       conda config --set always_yes true
       conda uninstall --name threeML --all

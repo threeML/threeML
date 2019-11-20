@@ -41,7 +41,7 @@ echo ""
 
 # Make a small download script in Python to avoid dependencies on 
 # utilities such as wget
-rm __download.py >& /dev/null
+#rm __download.py >& /dev/null
 
 cat > __download.py <<- EOM
 import sys
@@ -169,7 +169,7 @@ export PATH=${PATH}
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
-source activate threeML
+conda activate threeML
 
 EOM
 
@@ -204,7 +204,7 @@ if conda --version >& /dev/null ; then
     
     # Gather conda default environment path
     
-    conda_path=$(conda info | grep "default environment" | cut -f2 -d":" | cut -f2 -d" ")
+    conda_path=$(conda info | grep "base environment" | cut -f2 -d":" | cut -f2 -d" ")
     
     echo "Found an already existing installation of conda in ${conda_path}"
 
@@ -264,7 +264,8 @@ fi
 
 export PATH=${conda_path}/bin:${PATH}
 
-source deactivate
+source $conda_path/etc/profile.d/conda.sh
+conda deactivate
 
 conda config --add channels threeml
 
@@ -456,9 +457,13 @@ which python
 python --version
 EOM
 
-source activate threeML
+conda activate threeML
 
 mv activate.csh $CONDA_PREFIX/bin
 mv deactivate.csh $CONDA_PREFIX/bin
 
-source deactivate
+conda deactivate
+
+line
+echo "Done"
+line
