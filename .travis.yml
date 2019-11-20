@@ -33,6 +33,11 @@ script:
 - |2
 
   if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
+      
+      # Workaround to avoid build timeout
+      while sleep 500; do
+         echo "====[ $SECONDS seconds still running ]===="
+      done &
 
       # A cron build. We install 3ML as a user would do by using the install_3ML script
 
