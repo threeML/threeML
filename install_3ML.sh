@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Make sure we fail in case of errors
+set -e
+
 # Process options
 INSTALL_XSPEC="no"
 #INSTALL_XS_LITE="no"
@@ -271,9 +274,7 @@ conda config --add channels conda-forge
 
 conda config --add channels defaults
 
-#conda create --name threeML -y -c conda-forge -c threeml python=2.7 numpy scipy matplotlib ${PACKAGES_TO_INSTALL}
-
-conda create --yes --name -c conda-forge -c threeML python=$TRAVIS_PYTHON_VERSION ${PACKAGES_TO_INSTALL}
+conda create --yes --name threeML -c conda-forge -c threeML python=$TRAVIS_PYTHON_VERSION ${PACKAGES_TO_INSTALL}
 
 line
 echo "Generating setup scripts"
