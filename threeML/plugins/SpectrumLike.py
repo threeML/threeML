@@ -20,7 +20,7 @@ from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.binner import Rebinner
-from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
+from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet, BinnedSpectrumWithDispersion
 
 from threeML.utils.string_utils import dash_separated_string_to_tuple
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
@@ -28,6 +28,8 @@ from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.io.plotting.data_residual_plot import ResidualPlot
+
+from threeML.utils.OGIP.response import InstrumentResponse
 
 
 NO_REBIN = 1E-99
@@ -705,10 +707,13 @@ class SpectrumLike(PluginPrototype):
             if background_sys_errors is not None:
                 assert len(background_sys_errors) == len(
                     energy_min), 'background  systematic error array is not the same dimension as the energy array'
+            if 'response' in kwargs:
+                response=kwargs.pop('response')
+                fake_response = InstrumentResponse.create_dummy_response(response.ebounds,response.monte_carlo_energies) 
 
-            tmp_background = BinnedSpectrum(fake_background,
+            tmp_background = BinnedSpectrumWithDispersion(fake_background,
                                             exposure=1.,
-                                            ebounds=channel_set.edges,
+                                            response=fake_response,
                                             count_errors=background_errors,
                                             sys_errors=background_sys_errors,
                                             quality=None,
@@ -723,7 +728,9 @@ class SpectrumLike(PluginPrototype):
             # we treat the background as a simple observation with no
             # other background
 
-            background_gen = SpectrumLike('generator', tmp_background, None, verbose=False)
+
+
+            background_gen = cls('generator', tmp_background, None, verbose=False)
 
             pts_background = PointSource("fake_background", 0.0, 0.0, background_function)
 
