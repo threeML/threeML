@@ -13,6 +13,6 @@ conda config --set anaconda_upload yes
 
 source /root/miniconda/bin/activate
 
-cd /3ML/conda-dist/recipes
+cd /threeml/conda-dist/recipes
 
-conda build -c giacomov threeml
+conda build -c threeml threeml

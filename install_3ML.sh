@@ -118,13 +118,13 @@ install_conda() {
             
             # Linux
             
-            python __download.py https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh Miniconda2-latest.sh
+            python __download.py https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh Miniconda3-latest.sh
     
     elif [[ "$os_guessed" == "osx" ]]; then
             
             # Mac OSX
             
-            python __download.py https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh Miniconda2-latest.sh
+            python __download.py https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh Miniconda3-latest.sh
             
             
     else
@@ -137,7 +137,7 @@ install_conda() {
             
     fi
     
-    if bash Miniconda2-latest.sh -p ~/miniconda2 -b -u ; then
+    if bash Miniconda3-latest.sh -p ~/miniconda3 -b -u ; then
     
         echo "Installation of Conda successful"
     
@@ -149,7 +149,7 @@ install_conda() {
     
     fi
     
-    rm -rf Miniconda2-latest.sh
+    rm -rf Miniconda3-latest.sh
     
 }
 
@@ -227,7 +227,7 @@ else
     
     # If we are here, we need to install conda
     
-    conda_path=${HOME}/miniconda2
+    conda_path=${HOME}/miniconda
     
     install_conda
     
