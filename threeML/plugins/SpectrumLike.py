@@ -711,27 +711,45 @@ class SpectrumLike(PluginPrototype):
                 response=kwargs.pop('response')
                 fake_response = InstrumentResponse.create_dummy_response(response.ebounds,response.monte_carlo_energies) 
 
-            tmp_background = BinnedSpectrumWithDispersion(fake_background,
-                                            exposure=1.,
-                                            response=fake_response,
-                                            count_errors=background_errors,
-                                            sys_errors=background_sys_errors,
-                                            quality=None,
-                                            scale_factor=1.,
-                                            is_poisson=is_poisson,
-                                            mission='fake_mission',
-                                            instrument='fake_instrument',
-                                            tstart=0.,
-                                            tstop=1.)
+                tmp_background = BinnedSpectrumWithDispersion(fake_background,
+                                                exposure=1.,
+                                                response=fake_response,
+                                                count_errors=background_errors,
+                                                sys_errors=background_sys_errors,
+                                                quality=None,
+                                                scale_factor=1.,
+                                                is_poisson=is_poisson,
+                                                mission='fake_mission',
+                                                instrument='fake_instrument',
+                                                tstart=0.,
+                                                tstop=1.)
+
+
+
+
+                background_gen = cls('generator', tmp_background, None, verbose=False)
+
+            else:
+                tmp_background = BinnedSpectrum(fake_background,
+                                                exposure=1.,
+                                                count_errors=background_errors,
+                                                sys_errors=background_sys_errors,
+                                                quality=None,
+                                                scale_factor=1.,
+                                                is_poisson=is_poisson,
+                                                mission='fake_mission',
+                                                instrument='fake_instrument',
+                                                tstart=0.,
+                                                tstop=1.)
+
+
+
+
+                background_gen = SpectrumLike('generator', tmp_background, None, verbose=False)
 
             # now we have to generate the background counts
             # we treat the background as a simple observation with no
             # other background
-
-
-
-            background_gen = cls('generator', tmp_background, None, verbose=False)
-
             pts_background = PointSource("fake_background", 0.0, 0.0, background_function)
 
             background_model = Model(pts_background)
