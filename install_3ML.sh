@@ -7,6 +7,7 @@ set -e
 INSTALL_XSPEC="no"
 #INSTALL_XS_LITE="no"
 INSTALL_ROOT="no"
+INSTALL_FERMI="no"
 BATCH="no"
 
 while [ "${1:-}" != "" ]; do
@@ -20,11 +21,14 @@ while [ "${1:-}" != "" ]; do
       "--with-root")
         INSTALL_ROOT="yes"
         ;;
+      "--with-fermi")
+        INSTALL_FERMI="yes"
+        ;;
       "--batch")
         BATCH="yes"
         ;;
       "-h" | "--help")
-        echo "install_3ML.sh [--with-xspec] [--with-root] [-h] [--help] [--batch]" && exit 0
+        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [-h] [--help] [--batch]" && exit 0
         ;;
     esac
     shift
@@ -32,10 +36,12 @@ while [ "${1:-}" != "" ]; do
 
 # (xspec-lite is an hidden option on purpose, it is only meant to be used by Travis)
 
+echo ""
 echo "Options:"
 echo "--------"
 echo "Installing xspec:                              "${INSTALL_XSPEC}
 echo "Installing root :                              "${INSTALL_ROOT}
+echo "Installing fermi:                              "${INSTALL_FERMI}
 echo "Batch execution (assume yes to all questions): "${BATCH}
 echo ""
 
@@ -240,6 +246,19 @@ line
 echo "Installing 3ML"
 line
 
+export PATH=${conda_path}/bin:${PATH}
+
+source $conda_path/etc/profile.d/conda.sh
+conda deactivate
+
+conda config --add channels defaults
+
+conda config --add channels threeml
+
+conda config --add channels conda-forge/label/cf201901
+
+conda config --add channels conda-forge
+
 PACKAGES_TO_INSTALL="astromodels threeml"
 
 if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
@@ -260,22 +279,18 @@ if [[ "${INSTALL_ROOT}" == "yes" ]]; then
 
 fi
 
+if [[ "${INSTALL_FERMI}" == "yes" ]]; then
+
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools fermipy"
+
+    conda config --add channels conda-forge/label/cf201901
+    conda config --add channels fermi
+
+fi
+
 # Now we have conda installed, let's install 3ML
 
-export PATH=${conda_path}/bin:${PATH}
-
-source $conda_path/etc/profile.d/conda.sh
-conda deactivate
-
-conda config --add channels threeml
-
-conda config --add channels conda-forge/label/cf201901
-
-conda config --add channels conda-forge
-
-conda config --add channels defaults
-
-conda create --yes --name threeML -c conda-forge -c threeML python=$TRAVIS_PYTHON_VERSION ${PACKAGES_TO_INSTALL}
+conda create --yes --name threeML -c threeml python=$TRAVIS_PYTHON_VERSION ${PACKAGES_TO_INSTALL}
 
 line
 echo "Generating setup scripts"

@@ -40,40 +40,8 @@ script:
       done &
 
       # A cron build. We install 3ML as a user would do by using the install_3ML script
-
-      bash install_3ML.sh --batch
-
-      source threeML_init.sh
-
-      # Now run the tests
-      export MPLBACKEND='Agg'
-      export OMP_NUM_THREADS=1
-      export MKL_NUM_THREADS=1
-      export NUMEXPR_NUM_THREADS=1
-
-      pytest -vv --pyargs threeML
-
-      # Now remove the venv and start from scratch installing also root and xspec
-      conda deactivate
-
-      conda config --set always_yes true
-      conda uninstall --name threeML --all
-
-      bash install_3ML.sh --batch --with-xspec --with-root
-
-      source threeML_init.sh
-
-      # Now run the tests
-      export MPLBACKEND='Agg'
-      export OMP_NUM_THREADS=1
-      export MKL_NUM_THREADS=1
-      export NUMEXPR_NUM_THREADS=1
-
-      pytest -vv --pyargs threeML
-
-      # Now that we are here with everything installed, let's also test astromodels
-      pytest -vv --pyargs astromodels
-
+      chmod u+x ci/cron_install_and_test.sh
+      ./ci/cron_install_and_test.sh
   else
       chmod u+x ci/build_and_test.sh
       ./ci/build_and_test.sh
