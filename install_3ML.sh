@@ -254,9 +254,9 @@ conda config --add channels defaults
 
 conda config --add channels threeml
 
-conda config --add channels conda-forge/label/cf201901
-
 conda config --add channels conda-forge
+
+conda config --add channels conda-forge/label/cf201901
 
 PACKAGES_TO_INSTALL="astromodels threeml"
 
@@ -276,14 +276,14 @@ if [[ "${INSTALL_FERMI}" == "yes" ]]; then
 
     PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools fermipy"
 
-    conda config --add channels conda-forge/label/cf201901
+    #conda config --add channels conda-forge/label/cf201901
     conda config --add channels fermi
 
 fi
 
 # Now we have conda installed, let's install 3ML
 
-conda create --yes --name threeML -c threeml python=$TRAVIS_PYTHON_VERSION ${PACKAGES_TO_INSTALL}
+conda create --yes --name threeML python=$TRAVIS_PYTHON_VERSION ${PACKAGES_TO_INSTALL}
 
 line
 echo "Generating setup scripts"
