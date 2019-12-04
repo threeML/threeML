@@ -5,19 +5,19 @@ set -e
 
 # Process options
 INSTALL_XSPEC="no"
-#INSTALL_XS_LITE="no"
 INSTALL_ROOT="no"
 INSTALL_FERMI="no"
 BATCH="no"
+
+if [[ -z ${TRAVIS_PYTHON_VERSION} ]]; then 
+    export TRAVIS_PYTHON_VERSION="2.7"
+fi
 
 while [ "${1:-}" != "" ]; do
     case "$1" in
       "--with-xspec")
         INSTALL_XSPEC="yes"
         ;;
-#      "--with-xspec-lite")
-#        INSTALL_XS_LITE="yes"
-#        ;;
       "--with-root")
         INSTALL_ROOT="yes"
         ;;
@@ -34,15 +34,14 @@ while [ "${1:-}" != "" ]; do
     shift
   done
 
-# (xspec-lite is an hidden option on purpose, it is only meant to be used by Travis)
-
 echo ""
 echo "Options:"
 echo "--------"
 echo "Installing xspec:                              "${INSTALL_XSPEC}
-echo "Installing root :                              "${INSTALL_ROOT}
+echo "Installing root:                               "${INSTALL_ROOT}
 echo "Installing fermi:                              "${INSTALL_FERMI}
 echo "Batch execution (assume yes to all questions): "${BATCH}
+echo "Python version:                                "${TRAVIS_PYTHON_VERSION}
 echo ""
 
 # Make a small download script in Python to avoid dependencies on 
@@ -266,12 +265,6 @@ if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
     PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly=6.22.1"
 
 fi
-
-#if [[ "${INSTALL_XS_LITE}" == "yes" ]]; then
-#
-#    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly-lite"
-#
-#fi
 
 if [[ "${INSTALL_ROOT}" == "yes" ]]; then
 
