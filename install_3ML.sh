@@ -469,7 +469,7 @@ conda activate threeML
 
 # Workaround needed to meet the requirement on ccfits on linux systems
 if [[ "$os_guessed" == "linux" ]] && [[ "${INSTALL_XSPEC}" == "yes" ]]; then
-    conda install -c conda-forge ccfits=2.5
+    conda install --yes -c conda-forge ccfits=2.5
 fi
 
 mv activate.csh $CONDA_PREFIX/bin
