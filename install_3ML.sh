@@ -1,44 +1,52 @@
 #!/bin/bash
 
+# Make sure we fail in case of errors
+set -e
+
 # Process options
 INSTALL_XSPEC="no"
-INSTALL_XS_LITE="no"
 INSTALL_ROOT="no"
+INSTALL_FERMI="no"
 BATCH="no"
+
+if [[ -z ${TRAVIS_PYTHON_VERSION} ]]; then 
+    export TRAVIS_PYTHON_VERSION="2.7"
+fi
 
 while [ "${1:-}" != "" ]; do
     case "$1" in
       "--with-xspec")
         INSTALL_XSPEC="yes"
         ;;
-      "--with-xspec-lite")
-        INSTALL_XS_LITE="yes"
-        ;;
       "--with-root")
         INSTALL_ROOT="yes"
+        ;;
+      "--with-fermi")
+        INSTALL_FERMI="yes"
         ;;
       "--batch")
         BATCH="yes"
         ;;
       "-h" | "--help")
-        echo "install_3ML.sh [--with-xspec] [--with-root] [-h] [--help] [--batch]" && exit 0
+        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [-h] [--help] [--batch]" && exit 0
         ;;
     esac
     shift
   done
 
-# (xspec-lite is an hidden option on purpose, it is only meant to be used by Travis)
-
+echo ""
 echo "Options:"
 echo "--------"
 echo "Installing xspec:                              "${INSTALL_XSPEC}
-echo "Installing root :                              "${INSTALL_ROOT}
+echo "Installing root:                               "${INSTALL_ROOT}
+echo "Installing fermi:                              "${INSTALL_FERMI}
 echo "Batch execution (assume yes to all questions): "${BATCH}
+echo "Python version:                                "${TRAVIS_PYTHON_VERSION}
 echo ""
 
 # Make a small download script in Python to avoid dependencies on 
 # utilities such as wget
-rm __download.py >& /dev/null
+#rm __download.py >& /dev/null
 
 cat > __download.py <<- EOM
 import sys
@@ -201,7 +209,7 @@ if conda --version >& /dev/null ; then
     
     # Gather conda default environment path
     
-    conda_path=$(conda info | grep "default environment" | cut -f2 -d":" | cut -f2 -d" ")
+    conda_path=$(conda info | grep "base environment" | cut -f2 -d":" | cut -f2 -d" ")
     
     echo "Found an already existing installation of conda in ${conda_path}"
 
@@ -237,17 +245,24 @@ line
 echo "Installing 3ML"
 line
 
-PACKAGES_TO_INSTALL="threeml"
+export PATH=${conda_path}/bin:${PATH}
+
+source $conda_path/etc/profile.d/conda.sh
+conda deactivate
+
+conda config --add channels defaults
+
+conda config --add channels threeml
+
+conda config --add channels conda-forge
+
+conda config --add channels conda-forge/label/cf201901
+
+PACKAGES_TO_INSTALL="astromodels threeml"
 
 if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
 
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly"
-
-fi
-
-if [[ "${INSTALL_XS_LITE}" == "yes" ]]; then
-
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly-lite"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly=6.22.1"
 
 fi
 
@@ -257,13 +272,18 @@ if [[ "${INSTALL_ROOT}" == "yes" ]]; then
 
 fi
 
+if [[ "${INSTALL_FERMI}" == "yes" ]]; then
+
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools fermipy"
+
+    #conda config --add channels conda-forge/label/cf201901
+    conda config --add channels fermi
+
+fi
+
 # Now we have conda installed, let's install 3ML
 
-export PATH=${conda_path}/bin:${PATH}
-
-source deactivate
-
-conda create --name threeML -y -c conda-forge -c threeml python=2.7 numpy scipy matplotlib ${PACKAGES_TO_INSTALL}
+conda create --yes --name threeML python=$TRAVIS_PYTHON_VERSION ${PACKAGES_TO_INSTALL}
 
 line
 echo "Generating setup scripts"
@@ -445,9 +465,18 @@ which python
 python --version
 EOM
 
-source activate threeML
+conda activate threeML
+
+# Workaround needed to meet the requirement on ccfits on linux systems
+if [[ "$os_guessed" == "linux" ]] && [[ "${INSTALL_XSPEC}" == "yes" ]]; then
+    conda install --yes -c conda-forge ccfits=2.5
+fi
 
 mv activate.csh $CONDA_PREFIX/bin
 mv deactivate.csh $CONDA_PREFIX/bin
 
-source deactivate
+conda deactivate
+
+line
+echo "Done"
+line
