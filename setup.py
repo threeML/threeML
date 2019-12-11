@@ -98,9 +98,7 @@ setup(
 
     author_email='giacomo.vianello@gmail.com',
 
-    url='https://github.com/giacomov/3ML',
-
-    download_url='https://github.com/giacomov/3ML/archive/%s' % __version__,
+    url='https://github.com/threeML/threeML',
 
     keywords=['Likelihood', 'Multi-mission', '3ML', 'HAWC', 'Fermi', 'HESS', 'joint', 'fit', 'bayesian',
               'multi-wavelength'],
@@ -119,22 +117,27 @@ setup(
     include_package_data=True,
 
     install_requires=[
-        'numpy >= 1.6',
-        'scipy >=0.18',
-        'emcee',
+        'numpy>=1.6,<1.16',
+        'scipy>=0.18',
+        'emcee>=3',
         'astropy>=1.3.3',
-        'astroquery',
         'matplotlib',
         'uncertainties',
         'pyyaml==3.13',
         'dill',
         'iminuit>=1.2',
-        'astromodels>=0.4.0',
+        'astromodels',
+        'astroquery',
         'corner>=1.0.2',
         'pandas',
         'requests',
         'speclite',
-        'ipython<=5.9'
+        'pygmo>=2.4'
+        'ipython<=5.9',
+        'ipyparallel',
+        'xz',
+        'py',
+        'numexpr'
     ],
 
     extras_require={
