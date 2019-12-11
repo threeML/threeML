@@ -135,8 +135,8 @@ setup(
         'pygmo>=2.4'
         'ipython<=5.9',
         'ipyparallel',
-        'xz',
-        'py',
+        #'xz',
+        #'py',
         'numexpr'
     ],
 
