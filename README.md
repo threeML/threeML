@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/threeML/threeML.svg?branch=master)](https://travis-ci.org/threeML/threeML)
-[![codecov](https://codecov.io/gh/threeML/3ML/branch/master/graph/badge.svg)](https://codecov.io/gh/threeML/3ML)
+[![codecov](https://codecov.io/gh/threeML/threeML/branch/master/graph/badge.svg)](https://codecov.io/gh/threeML/threeML)
+
 [![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 # The Multi-Mission Maximum Likelihood framework (3ML)
