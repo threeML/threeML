@@ -127,12 +127,12 @@ setup(
         'dill',
         'iminuit>=1.2',
         'astromodels',
-        'astroquery',
+        'astroquery<0.4',
         'corner>=1.0.2',
         'pandas',
         'requests',
         'speclite',
-        'pygmo>=2.4'
+        'pygmo>=2.4,<=2.11.4'
         'ipython<=5.9',
         'ipyparallel',
         #'xz',

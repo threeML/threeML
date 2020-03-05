@@ -110,7 +110,7 @@ conda config --add channels threeml
 
 # Create test environment
 echo "Create test environment..."
-conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION "pytest<4" codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy openblas-devel=0.3.6 tk=8.5.19
+conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION "pytest<4" codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 pygmo=2.11.4
 #libgfortran=${libgfortranver}
 #openblas-devel=0.3.6 openblas=0.2.20 blas=1.1
 
