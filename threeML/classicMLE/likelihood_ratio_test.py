@@ -1,3 +1,4 @@
+from builtins import object
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -58,7 +59,7 @@ class LikelihoodRatioTest(object):
 
         new_datas = []
 
-        for dataset in self._joint_likelihood_instance0.data_list.values():
+        for dataset in list(self._joint_likelihood_instance0.data_list.values()):
 
             # Make sure that the active likelihood model is the null hypothesis
             # This is needed if the user has used the same DataList instance for both
@@ -217,7 +218,7 @@ class LikelihoodRatioTest(object):
         :return:
         """
 
-        for plugin in self._data_container[0].values():
+        for plugin in list(self._data_container[0].values()):
 
             assert isinstance(plugin, OGIPLike), 'Saving simulations is only supported for OGIP plugins currently'
 
@@ -225,7 +226,7 @@ class LikelihoodRatioTest(object):
         # so we do not use it
 
 
-        for key in self._data_container[0].keys():
+        for key in list(self._data_container[0].keys()):
 
             per_plugin_list = []
 
