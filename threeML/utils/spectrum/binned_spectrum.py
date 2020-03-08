@@ -585,8 +585,35 @@ class BinnedSpectrum(Histogram):
                                   new_count_errors=new_count_errors,
                                   new_exposure=new_exposure)
 
-        new_spectrum._tstart = min(self.tstart,other.tstart)
-        new_spectrum._tstop = max(self.tstop,other.tstop)
+        if self.tstart is None:
+            if other.tstart is None:
+                new_spectrum._tstart = None
+
+            else:
+
+                new_spectrum._tstart = other.tstart
+        elif other.tstart is None:
+
+            new_spectrum._tstart = self.tstart
+
+        else:
+            
+            new_spectrum._tstart = min(self.tstart,other.tstart)
+
+        if self.tstop is None:
+            if other.tstop is None:
+                new_spectrum._tstop = None
+
+            else:
+
+                new_spectrum._tstop = other.tstop
+        elif other.tstop is None:
+
+            new_spectrum._tstop = self.tstop
+
+        else:
+            
+            new_spectrum._tstop = min(self.tstop,other.tstop)
 
         return new_spectrum
 
@@ -618,8 +645,39 @@ class BinnedSpectrum(Histogram):
                                   new_count_errors=new_count_errors)
 
         new_spectrum._exposure = new_exposure 
-        new_spectrum._tstart = min(self.tstart,other.tstart)
-        new_spectrum._tstop = max(self.tstop,other.tstop)
+
+        if self.tstart is None:
+            if other.tstart is None:
+                new_spectrum._tstart = None
+
+            else:
+
+                new_spectrum._tstart = other.tstart
+        elif other.tstart is None:
+
+            new_spectrum._tstart = self.tstart
+
+        else:
+            
+            new_spectrum._tstart = min(self.tstart,other.tstart)
+
+        if self.tstop is None:
+            if other.tstop is None:
+                new_spectrum._tstop = None
+
+            else:
+
+                new_spectrum._tstop = other.tstop
+        elif other.tstop is None:
+
+            new_spectrum._tstop = self.tstop
+
+        else:
+            
+            new_spectrum._tstop = min(self.tstop,other.tstop)
+
+
+        
 
         return new_spectrum
 

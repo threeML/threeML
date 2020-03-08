@@ -22,7 +22,7 @@ def loaded_response():
 
 def test_spectrum_constructor():
 
-    ebounds = ChannelSet.from_list_of_edges(np.array([0,1,2,3,4,5]))
+    ebounds = ChannelSet.from_list_of_edges(np.array([1,2,3,4,5,6]))
 
     pl = Powerlaw()
 
