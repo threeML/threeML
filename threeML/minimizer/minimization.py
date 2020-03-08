@@ -625,15 +625,19 @@ class Minimizer(object):
         values = collections.OrderedDict()
         errors = collections.OrderedDict()
 
+        # to become compatible with python3
+        keys_list = list(self.parameters.keys())
+        parameters_list = list(self.parameters.values())
+        
         for i in range(self.Npar):
 
-            name = self.parameters.keys()[i]
+            name = keys_list[i]
 
             value = best_fit_values[i]
 
             # Set the parameter to the best fit value (sometimes the optimization happen in a different thread/node,
             # so we need to make sure that the parameter has the best fit value)
-            self.parameters.values()[i]._set_internal_value(value)
+            parameters_list[i]._set_internal_value(value)
 
             if covariance_matrix is not None:
 

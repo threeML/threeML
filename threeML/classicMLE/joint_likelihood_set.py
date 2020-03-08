@@ -249,7 +249,7 @@ class JointLikelihoodSet(object):
 
         for i in range(self._n_models):
 
-            this_model_results = map(lambda x: x[2][i], results)
+            this_model_results = [ x[2][i] for x in results ]
 
             self._all_results.append(AnalysisResultsSet(this_model_results))
 

@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import zip
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import numpy as np
 import pandas as pd
 
@@ -189,7 +194,7 @@ class BinnedSpectrum(Histogram):
 
             # convert counts to rate
 
-            rate_errors = count_errors / self._exposure
+            rate_errors = old_div(count_errors, self._exposure)
 
         else:
 
@@ -203,7 +208,7 @@ class BinnedSpectrum(Histogram):
 
         # convert rates to counts
 
-        rates = counts / self._exposure
+        rates = old_div(counts, self._exposure)
 
 
         if quality is not None:
@@ -465,14 +470,14 @@ class BinnedSpectrum(Histogram):
         sys_errors = None
         quality = None
 
-        if 'count_errors' in pandas_dataframe.keys():
+        if 'count_errors' in list(pandas_dataframe.keys()):
 
             count_errors = np.array(pandas_dataframe['count_errors'])
 
-        if 'sys_errors' in pandas_dataframe.keys():
+        if 'sys_errors' in list(pandas_dataframe.keys()):
             sys_errors = np.array(pandas_dataframe['sys_errors'])
 
-        if 'quality' in pandas_dataframe.keys():
+        if 'quality' in list(pandas_dataframe.keys()):
             quality = Quality(np.array(pandas_dataframe['quality']))
 
         return cls(counts=counts,
