@@ -8,7 +8,7 @@ from threeML.utils.data_builders.time_series_builder import TimeSeriesBuilder
 from threeML.io.file_utils import within_directory
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
-from conftest import get_test_datasets_directory
+from .conftest import get_test_datasets_directory
 import astropy.io.fits as fits
 
 datasets_directory = get_test_datasets_directory()

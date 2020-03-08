@@ -1,5 +1,5 @@
 from threeML import *
-from conftest import data_list_bn090217206_nai6, get_grb_model
+from .conftest import data_list_bn090217206_nai6, get_grb_model
 
 
 # Define two dummy functions to return always the same model and the same

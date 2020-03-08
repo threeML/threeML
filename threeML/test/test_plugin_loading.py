@@ -3,7 +3,7 @@ __author__ = 'drjfunk'
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SwiftXRTLike import SwiftXRTLike
 import os
-from conftest import get_test_datasets_directory
+from .conftest import get_test_datasets_directory
 from threeML.io.file_utils import within_directory
 
 #

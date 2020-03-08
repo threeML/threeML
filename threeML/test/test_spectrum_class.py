@@ -7,7 +7,7 @@ from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.utils.OGIP.response import OGIPResponse
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion, ChannelSet
-from conftest import get_test_datasets_directory
+from .conftest import get_test_datasets_directory
 
 
 @pytest.fixture(scope="module")

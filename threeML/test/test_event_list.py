@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 import pytest
-from conftest import get_test_datasets_directory
+from .conftest import get_test_datasets_directory
 from threeML.io.file_utils import within_directory
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.event_list import EventListWithDeadTime, EventList
