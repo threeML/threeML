@@ -48,6 +48,8 @@ class Quality(object):
 
         #total_length = len(quality)
 
+        quality = quality.astype(str)
+        
         n_elements = 1
         for dim in quality.shape:
 
@@ -57,7 +59,9 @@ class Quality(object):
         warn = quality == 'warn'
         bad  = quality == 'bad'
 
-        assert n_elements == good.sum() + warn.sum() + bad.sum(), 'quality can only contain "good", "warn", and "bad"'
+        
+        
+        assert n_elements == (good.sum() + warn.sum() + bad.sum()), 'quality can only contain "good", "warn", and "bad"'
 
         self._good = good
         self._warn = warn
