@@ -101,7 +101,7 @@ class GridMinimizer(GlobalMinimizer):
 
             # Make a list of paths for the parameters
             v = self.parameters.values()
-            parameters_paths = map(lambda x:x.path, v)
+            parameters_paths =[ x.path for x in v]
 
             try:
 
