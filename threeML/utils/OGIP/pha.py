@@ -1,3 +1,4 @@
+from builtins import object
 import astropy.io.fits as fits
 import astropy.units as u
 import numpy as np

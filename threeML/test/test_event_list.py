@@ -1,3 +1,5 @@
+from __future__ import division
+from past.utils import old_div
 import os
 
 import numpy as np
@@ -13,7 +15,7 @@ datasets_dir = get_test_datasets_directory()
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
 
-    if abs((truth - value) / truth) <= relative_tolerance:
+    if abs(old_div((truth - value), truth)) <= relative_tolerance:
 
         return True
 

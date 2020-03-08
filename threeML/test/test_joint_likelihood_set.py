@@ -1,3 +1,4 @@
+from __future__ import print_function
 from threeML import *
 from .conftest import data_list_bn090217206_nai6, get_grb_model
 

@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import print_function
+from builtins import zip
+from past.utils import old_div
 import pytest
 import os
 import numpy as np
@@ -123,10 +127,10 @@ def test_error_propagation(xy_fitted_joint_likelihood):
 
     res = p1 + p2
 
-    assert abs(res.value - (p1.value + p2.value)) / (p1.value + p2.value) < 0.01
+    assert old_div(abs(res.value - (p1.value + p2.value)), (p1.value + p2.value)) < 0.01
 
     # Make ratio with error 0
-    res = p1 / p1
+    res = old_div(p1, p1)
 
     low_b, hi_b = res.equal_tail_interval()
 
@@ -138,7 +142,7 @@ def test_error_propagation(xy_fitted_joint_likelihood):
 
     arguments = {}
 
-    for par in fitfun.parameters.values():
+    for par in list(fitfun.parameters.values()):
 
         if par.free:
 
