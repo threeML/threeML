@@ -342,13 +342,13 @@ class Config(object):
 
         #tmp = [ (key.split("(")[0].rstrip(), value) for key, value in d.items()]
         
-        return dict((key.split("(")[0].rstrip(), value) for key, value in list(d.items()))
+        return dict((key.split("(")[0].rstrip(), value) for key, value in d.items())
 
     def _get_copy_with_no_types(self, multilevelDict):
 
         new = self._remove_type(multilevelDict)
 
-        for key, value in list(new.items()):
+        for key, value in new.items():
 
             if isinstance(value, dict):
 
