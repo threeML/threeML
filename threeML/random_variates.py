@@ -36,7 +36,7 @@ class RandomVariates(np.ndarray):
         # This gets called at the end of any operation, where out_arr is the result of the operation
         # We need to update _orig_value so that the final results will have it
 
-        out_arr._orig_value = out_arr.median
+        out_arr._orig_value =  np.median( out_arr)
 
         # then just call the parent
         return np.ndarray.__array_wrap__(self, out_arr)

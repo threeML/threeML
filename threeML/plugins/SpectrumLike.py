@@ -1,4 +1,9 @@
 from __future__ import print_function
+from __future__ import division
+from builtins import zip
+from builtins import str
+from builtins import range
+from past.utils import old_div
 import collections
 import copy
 from contextlib import contextmanager
@@ -133,7 +138,7 @@ class SpectrumLike(PluginPrototype):
 
             self._background_noise_model = 'modeled'
 
-            for par_name, parameter in self._background_plugin.likelihood_model.parameters.items():
+            for par_name, parameter in list(self._background_plugin.likelihood_model.parameters.items()):
 
 
                 # create a new parameters that is like the one from the background model
@@ -488,9 +493,9 @@ class SpectrumLike(PluginPrototype):
                 self._background_exposure = self._background_spectrum.exposure
 
 
-            self._area_ratio = self._observed_spectrum.scale_factor / self._background_scale_factor
+            self._area_ratio = old_div(self._observed_spectrum.scale_factor, self._background_scale_factor)
 
-            self._exposure_ratio = self._observed_spectrum.exposure / self._background_exposure
+            self._exposure_ratio = old_div(self._observed_spectrum.exposure, self._background_exposure)
 
         self._total_scale_factor = self._area_ratio * self._exposure_ratio
 
@@ -1312,7 +1317,7 @@ class SpectrumLike(PluginPrototype):
         # background spectrum. It is used for example for the typical aperture-photometry method used in
         # X-ray astronomy, where the background region has a different size with respect to the source region
 
-        scale_factor = self._observed_spectrum.scale_factor / background_spectrum.scale_factor
+        scale_factor = old_div(self._observed_spectrum.scale_factor, background_spectrum.scale_factor)
 
         # The expected number of counts is the rate in the background file multiplied by its exposure, renormalized
         # by the scale factor.
@@ -1756,13 +1761,13 @@ class SpectrumLike(PluginPrototype):
         if (self._background_noise_model is not None) or (self._background_plugin is not None):
 
             # since we compare to the model rate... background subtract but with proper propagation
-            src_rate = (self.observed_counts / self._observed_spectrum.exposure - (self.background_counts / self._background_exposure) * self._area_ratio)
+            src_rate = (old_div(self.observed_counts, self._observed_spectrum.exposure) - (old_div(self.background_counts, self._background_exposure)) * self._area_ratio)
 
 
         else:
 
             # since we compare to the model rate... background subtract but with proper propagation
-            src_rate = (self.observed_counts / self._observed_spectrum.exposure)
+            src_rate = (old_div(self.observed_counts, self._observed_spectrum.exposure))
 
         return src_rate
 
@@ -1779,14 +1784,14 @@ class SpectrumLike(PluginPrototype):
         if (self._background_noise_model is not None) or (self._background_plugin is not None):
 
 
-            src_rate_err = np.sqrt((self.observed_count_errors / self._observed_spectrum.exposure) ** 2 +
-                                   ((self.background_count_errors / self._background_exposure) * self._area_ratio) ** 2)
+            src_rate_err = np.sqrt((old_div(self.observed_count_errors, self._observed_spectrum.exposure)) ** 2 +
+                                   ((old_div(self.background_count_errors, self._background_exposure)) * self._area_ratio) ** 2)
 
 
 
         else:
 
-            src_rate_err = self.observed_count_errors / self._observed_spectrum.exposure
+            src_rate_err = old_div(self.observed_count_errors, self._observed_spectrum.exposure)
 
         return src_rate_err
 
@@ -2035,8 +2040,8 @@ class SpectrumLike(PluginPrototype):
 
         if plot_errors:
             ax.errorbar(mean_chan,
-                        observed_counts / energy_width,
-                        yerr=cnt_err / energy_width,
+                        old_div(observed_counts, energy_width),
+                        yerr=old_div(cnt_err, energy_width),
                         fmt='',
                         # markersize=3,
                         linestyle='',
@@ -2048,8 +2053,8 @@ class SpectrumLike(PluginPrototype):
 
             if self._background_noise_model is not None:
                 ax.errorbar(mean_chan,
-                            background_counts / energy_width,
-                            yerr=background_errors / energy_width,
+                            old_div(background_counts, energy_width),
+                            yerr=old_div(background_errors, energy_width),
                             fmt='',
                             # markersize=3,
                             linestyle='',
@@ -2068,8 +2073,8 @@ class SpectrumLike(PluginPrototype):
             energy_min_unrebinned, energy_max_unrebinned = np.array(self._observed_spectrum.starts), np.array(
                 self._observed_spectrum.stops)
             energy_width_unrebinned = energy_max_unrebinned - energy_min_unrebinned
-            observed_rate_unrebinned = self._observed_counts / self.exposure
-            observed_rate_unrebinned_err = np.sqrt(self._observed_counts) / self.exposure
+            observed_rate_unrebinned = old_div(self._observed_counts, self.exposure)
+            observed_rate_unrebinned_err = old_div(np.sqrt(self._observed_counts), self.exposure)
 
             if non_used_mask.sum() > 0:
 
@@ -2081,8 +2086,8 @@ class SpectrumLike(PluginPrototype):
 
             if self._background_noise_model is not None:
 
-                background_rate_unrebinned = self._background_counts / self.background_exposure
-                background_rate_unrebinned_err = np.sqrt(self._background_counts) / self.background_exposure
+                background_rate_unrebinned = old_div(self._background_counts, self.background_exposure)
+                background_rate_unrebinned_err = old_div(np.sqrt(self._background_counts), self.background_exposure)
 
                 if non_used_mask.sum() > 0:
 
@@ -2099,8 +2104,8 @@ class SpectrumLike(PluginPrototype):
                 mean_chan_unrebinned = np.mean([energy_min_unrebinned, energy_max_unrebinned], axis=0)
 
                 ax.errorbar(mean_chan_unrebinned[non_used_mask],
-                            observed_rate_unrebinned[non_used_mask] / energy_width_unrebinned[non_used_mask],
-                            yerr=observed_rate_unrebinned_err[non_used_mask] / energy_width_unrebinned[non_used_mask],
+                            old_div(observed_rate_unrebinned[non_used_mask], energy_width_unrebinned[non_used_mask]),
+                            yerr=old_div(observed_rate_unrebinned_err[non_used_mask], energy_width_unrebinned[non_used_mask]),
                             fmt='',
                             # markersize=3,
                             linestyle='',
@@ -2112,9 +2117,9 @@ class SpectrumLike(PluginPrototype):
 
                 if self._background_noise_model is not None:
                     ax.errorbar(mean_chan_unrebinned[non_used_mask],
-                                background_rate_unrebinned[non_used_mask] / energy_width_unrebinned[non_used_mask],
-                                yerr=background_rate_unrebinned_err[non_used_mask] / energy_width_unrebinned[
-                                    non_used_mask],
+                                old_div(background_rate_unrebinned[non_used_mask], energy_width_unrebinned[non_used_mask]),
+                                yerr=old_div(background_rate_unrebinned_err[non_used_mask], energy_width_unrebinned[
+                                    non_used_mask]),
                                 fmt='',
                                 # markersize=3,
                                 linestyle='',
@@ -2126,11 +2131,11 @@ class SpectrumLike(PluginPrototype):
 
             # make some nice top and bottom plot ranges
 
-            top = max([max(background_rate_unrebinned / energy_width_unrebinned),
-                       max(observed_rate_unrebinned / energy_width_unrebinned)]) * 1.5
+            top = max([max(old_div(background_rate_unrebinned, energy_width_unrebinned)),
+                       max(old_div(observed_rate_unrebinned, energy_width_unrebinned))]) * 1.5
 
-            bottom = min([min(background_rate_unrebinned / energy_width_unrebinned),
-                          min(observed_rate_unrebinned / energy_width_unrebinned)]) * 0.8
+            bottom = min([min(old_div(background_rate_unrebinned, energy_width_unrebinned)),
+                          min(old_div(observed_rate_unrebinned, energy_width_unrebinned))]) * 0.8
 
             # plot the deselected regions
 
@@ -2258,7 +2263,7 @@ class SpectrumLike(PluginPrototype):
 
         # obs['response'] = self._observed_spectrum.response_file
 
-        return pd.Series(data=obs, index=obs.keys())
+        return pd.Series(data=obs, index=list(obs.keys()))
 
     def get_number_of_data_points(self):
         """
@@ -2363,7 +2368,7 @@ class SpectrumLike(PluginPrototype):
                 r[idx_negative] =0.
 
                 # Do the weighted average of the mean energies
-                weights = r / np.sum(r)
+                weights = old_div(r, np.sum(r))
 
                 this_mean_energy = np.average(mean_energy_unrebinned[idx], weights=weights)
 
@@ -2399,14 +2404,14 @@ class SpectrumLike(PluginPrototype):
 
 
         significance_calc = Significance(rebinned_observed_counts,
-                                         rebinned_background_counts + rebinned_model_counts / self._total_scale_factor,
+                                         rebinned_background_counts + old_div(rebinned_model_counts, self._total_scale_factor),
                                          self._total_scale_factor)
 
         # Divide the various cases
 
         if ratio_residuals:
-            residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_model_counts
-            residual_errors = rebinned_observed_count_errors / rebinned_model_counts
+            residuals = old_div((rebinned_observed_counts - rebinned_model_counts), rebinned_model_counts)
+            residual_errors = old_div(rebinned_observed_count_errors, rebinned_model_counts)
 
         else:
             residual_errors = None
@@ -2441,7 +2446,7 @@ class SpectrumLike(PluginPrototype):
 
                 if self._background_noise_model is None:
 
-                    residuals = (rebinned_observed_counts - rebinned_model_counts) / rebinned_observed_count_errors
+                    residuals = old_div((rebinned_observed_counts - rebinned_model_counts), rebinned_observed_count_errors)
 
                 else:
 
@@ -2517,7 +2522,7 @@ class SpectrumLike(PluginPrototype):
 
             assert type(model_kwargs) == dict, 'model_kwargs must be a dict'
 
-            for k,v in model_kwargs.items():
+            for k,v in list(model_kwargs.items()):
 
                 if k in _default_model_kwargs:
 
@@ -2531,7 +2536,7 @@ class SpectrumLike(PluginPrototype):
 
             assert type(data_kwargs) == dict, 'data_kwargs must be a dict'
 
-            for k, v in data_kwargs.items():
+            for k, v in list(data_kwargs.items()):
 
                 if k in _default_data_kwargs:
 
@@ -2550,8 +2555,8 @@ class SpectrumLike(PluginPrototype):
 
         rebinned_quantities = self._construct_counts_arrays(min_rate, ratio_residuals)
 
-        weighted_data = rebinned_quantities['new_rate'] / rebinned_quantities['new_chan_width']
-        weighted_error = rebinned_quantities['new_err'] / rebinned_quantities['new_chan_width']
+        weighted_data = old_div(rebinned_quantities['new_rate'], rebinned_quantities['new_chan_width'])
+        weighted_error = old_div(rebinned_quantities['new_err'], rebinned_quantities['new_chan_width'])
 
 
         residual_plot.add_data(rebinned_quantities['mean_energy'],
@@ -2585,7 +2590,7 @@ class SpectrumLike(PluginPrototype):
             # Mask the array so we don't plot the model where data have been excluded
             # y = expected_model_rate / chan_width
             y = np.ma.masked_where(~self._mask,
-                                   rebinned_quantities['expected_model_rate'] / rebinned_quantities['chan_width'])
+                                   old_div(rebinned_quantities['expected_model_rate'], rebinned_quantities['chan_width']))
 
             x = np.mean([rebinned_quantities['energy_min'],
                          rebinned_quantities['energy_max']], axis=0)
