@@ -283,3 +283,7 @@ for var in var_to_check:
 
         custom_warnings.warn("Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML" % var,
                              RuntimeWarning)
+
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
