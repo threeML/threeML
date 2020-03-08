@@ -1,3 +1,4 @@
+from builtins import object
 from astromodels import *
 
 #from astropy.vo.client.vos_catalog import VOSCatalog
@@ -171,7 +172,7 @@ class VirtualObservatoryCatalog(object):
 
         if valid_sources:
 
-            query_string = ' | '.join(map(lambda x: '(index == "%s")' % x, valid_sources))
+            query_string = ' | '.join(['(index == "%s")' % x for x in valid_sources])
 
             query_results = self._vo_dataframe.query(query_string)
 
