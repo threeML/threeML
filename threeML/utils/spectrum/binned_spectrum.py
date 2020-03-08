@@ -106,8 +106,6 @@ class Quality(object):
         quality = np.empty_like(ogip_quality,dtype='|S4')
         quality[:] = 'good'
 
-        # quality = np.array(['good' for i in xrange(len(ogip_quality))])
-
         #quality[good] = 'good'
         quality[warn] = 'warn'
         quality[bad] = 'bad'
@@ -139,7 +137,7 @@ class Quality(object):
         :return:
         """
 
-        quality = np.array(['good' for i in xrange(int(n_channels))])
+        quality = np.array(['good' for i in range(int(n_channels))])
 
         return cls(quality)
 

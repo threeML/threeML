@@ -96,7 +96,7 @@ class HAWCLike(PluginPrototype):
     @staticmethod
     def _min_and_max_to_list(min_channel, max_channel):
         
-        return [str(n) for n in xrange(min_channel, max_channel + 1)]
+        return [str(n) for n in range(min_channel, max_channel + 1)]
 
     def _check_fullsky(self, method_name):
 
@@ -751,7 +751,7 @@ class HAWCLike(PluginPrototype):
         else:
             tmptitle =  "Radial profile, bins   {0}".format( list_of_bin_names )
             width = 84
-            title = '\n'.join(tmptitle[i:i+width] for i in xrange(0, len(tmptitle), width))
+            title = '\n'.join(tmptitle[i:i+width] for i in range(0, len(tmptitle), width))
 
         plt.title(title)
   

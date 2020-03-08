@@ -1,5 +1,5 @@
 import pytest
-from conftest import get_test_datasets_directory
+from .conftest import get_test_datasets_directory
 from threeML import *
 from threeML.io.file_utils import within_directory
 from threeML.plugins.OGIPLike import OGIPLike

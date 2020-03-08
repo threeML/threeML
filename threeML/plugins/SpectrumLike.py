@@ -1004,7 +1004,7 @@ class SpectrumLike(PluginPrototype):
                 # so we need to figure out which channels these are where excluded
 
                 deselected_channels = []
-                for i in xrange(self._observed_spectrum.n_channels):
+                for i in range(self._observed_spectrum.n_channels):
 
                     if self._observed_spectrum.quality.bad[i] and self._mask[i]:
                         deselected_channels.append(i)

@@ -1024,7 +1024,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
 
         with progress_bar(num_spectra,title='Loading PHAII spectra') as p:
-            for i in xrange(num_spectra):
+            for i in range(num_spectra):
 
 
                 list_of_binned_spectra.append(BinnedSpectrumWithDispersion(counts=pha_information['counts'][i],

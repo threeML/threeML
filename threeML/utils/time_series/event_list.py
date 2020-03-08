@@ -403,7 +403,7 @@ class EventList(TimeSeries):
         # Find the mean time of the bins and calculate the exposure in each bin
         mean_time = []
         exposure_per_bin = []
-        for i in xrange(len(bins) - 1):
+        for i in range(len(bins) - 1):
             m = np.mean((bins[i], bins[i + 1]))
             mean_time.append(m)
 
