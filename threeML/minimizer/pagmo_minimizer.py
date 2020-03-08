@@ -1,3 +1,6 @@
+from __future__ import print_function
+from builtins import range
+from builtins import object
 import numpy as np
 import os
 from threeML.minimizer.minimization import GlobalMinimizer
@@ -142,7 +145,7 @@ class PAGMOMinimizer(GlobalMinimizer):
 
             # Find best and worst islands
 
-            fOpts = np.array(map(lambda x:x[0], archi.get_champions_f()))
+            fOpts = np.array([x[0] for x in archi.get_champions_f()])
             xOpts = archi.get_champions_x()
 
         else:

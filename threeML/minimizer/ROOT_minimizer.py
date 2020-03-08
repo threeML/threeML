@@ -1,3 +1,5 @@
+from builtins import zip
+from builtins import range
 import ROOT
 import numpy as np
 
@@ -39,7 +41,7 @@ class FuncWrapper(ROOT.TPyMultiGenFunction):
 
     def DoEval(self, args):
 
-        new_args = map(lambda i:args[i],range(self.dimensions))
+        new_args = [args[i] for i in range(self.dimensions)]
 
         return self.function(*new_args)
 
@@ -132,7 +134,7 @@ class ROOTMinimizer(LocalMinimizer):
 
         minimum = self.minimizer.MinValue()
 
-        best_fit_values = np.array(map(lambda x: x[0], zip(self.minimizer.X(), range(self.Npar))))
+        best_fit_values = np.array([x[0] for x in zip(self.minimizer.X(), list(range(self.Npar)))])
 
         return best_fit_values, minimum
 

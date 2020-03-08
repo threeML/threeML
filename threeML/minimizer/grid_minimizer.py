@@ -1,3 +1,4 @@
+from builtins import str
 import collections
 import numpy as np
 import itertools
@@ -91,7 +92,7 @@ class GridMinimizer(GlobalMinimizer):
 
         if isinstance(parameter, Parameter):
 
-            assert parameter in self.parameters.values(), "Parameter %s is not part of the " \
+            assert parameter in list(self.parameters.values()), "Parameter %s is not part of the " \
                                                           "current model" % parameter.name
 
         else:
@@ -100,7 +101,7 @@ class GridMinimizer(GlobalMinimizer):
             parameter_path = str(parameter)
 
             # Make a list of paths for the parameters
-            v = self.parameters.values()
+            v = list(self.parameters.values())
             parameters_paths =[ x.path for x in v]
 
             try:
@@ -144,16 +145,16 @@ class GridMinimizer(GlobalMinimizer):
 
         # For each point in the grid, perform a fit
 
-        parameters = self._grid.keys()
+        parameters = list(self._grid.keys())
 
         overall_minimum = 1e20
         internal_best_fit_values = None
 
-        n_iterations = np.prod([x.shape for x in self._grid.values()])
+        n_iterations = np.prod([x.shape for x in list(self._grid.values())])
 
         with progress_bar(n_iterations, title='Grid minimization') as progress:
 
-            for values_tuple in itertools.product(*self._grid.values()):
+            for values_tuple in itertools.product(*list(self._grid.values())):
 
                 # Reset everything to the original values, so that the fit will always start
                 # from there, instead that from the values obtained in the last iterations, which

@@ -202,7 +202,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     print("Query parameters:")
 
-    for k, v in list(query_parameters.items()):
+    for k, v in query_parameters.items():
 
         print("%30s = %s" % (k, v))
 
