@@ -336,7 +336,9 @@ class Config(object):
     @staticmethod
     def _remove_type(d):
 
-        return dict(map(lambda (key, value): (key.split("(")[0].rstrip(), value), d.items()))
+        #tmp = [ (key.split("(")[0].rstrip(), value) for key, value in d.items()]
+        
+        return dict((key.split("(")[0].rstrip(), value) for key, value in d.items())
 
     def _get_copy_with_no_types(self, multilevelDict):
 
