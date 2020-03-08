@@ -19,6 +19,7 @@ class RandomVariates(np.ndarray):
         # Add the value
         obj._orig_value = value
 
+        
         # Finally, we must return the newly created object:
         return obj
 
@@ -28,18 +29,18 @@ class RandomVariates(np.ndarray):
         if obj is None: return
 
         # Add the value
-
         self._orig_value = getattr(obj, '_orig_value', None)
-
-    def __array_wrap__(self, out_arr):
+        
+    def __array_wrap__(self, out_arr, context=None):
 
         # This gets called at the end of any operation, where out_arr is the result of the operation
         # We need to update _orig_value so that the final results will have it
+        
+        out_arr._orig_value =  out_arr.median
 
-        out_arr._orig_value =  np.median( out_arr)
-
+            
         # then just call the parent
-        return np.ndarray.__array_wrap__(self, out_arr)
+        return super(RandomVariates, self).__array_wrap__(out_arr, context)
 
     @property
     def median(self):
@@ -49,6 +50,25 @@ class RandomVariates(np.ndarray):
 
         return float(np.median(np.asarray(self)))
 
+    @property
+    def mean(self):
+        """Returns average value"""
+
+        return float(np.asarray(self).mean())
+
+    @property
+    def std(self):
+        """Returns sample std value"""
+
+        return float(np.asarray(self).std())
+
+    @property
+    def var(self):
+        """Returns sample variance value"""
+
+        return float(np.asarray(self).var())
+
+    
     @property
     def average(self):
         """Returns average value"""
