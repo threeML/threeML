@@ -63,7 +63,7 @@ class ResultsTable(object):
         new_frame = self._data_frame.copy(deep=True)  # type: pd.DataFrame
 
         # Add new column which will become the new index
-        new_frame['parameter'] = map(lambda x: key_formatter(x), new_frame.index.values)
+        new_frame['parameter'] =  [key_formatter(x) for x in new_frame.index.values]
 
         # Set it as the index
         new_frame.set_index('parameter', drop=True, inplace=True)
