@@ -23,7 +23,7 @@ import glob
 import imp
 import traceback
 
-from version import __version__
+
 
 # Import everything from astromodels
 from astromodels import *

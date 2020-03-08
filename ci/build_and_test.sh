@@ -29,9 +29,11 @@ fi
 
 
 # Get the version in the __version__ environment variable
-python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
+#python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
 
-export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
+#export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
+
+export PKG_VERSION=$(cd python -c "import versioneer;print(versioneer.gete_version()si)")
 
 echo "HOME= ${HOME}"
 echo "Building ${PKG_VERSION} ..."
