@@ -33,7 +33,7 @@ fi
 
 #export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
 
-export PKG_VERSION=$(cd python -c "import versioneer;print(versioneer.get_version())")
+export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
 
 echo "HOME= ${HOME}"
 echo "Building ${PKG_VERSION} ..."
