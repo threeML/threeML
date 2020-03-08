@@ -1,6 +1,6 @@
 import numpy
 import re
-from VirtualObservatoryCatalog import VirtualObservatoryCatalog
+from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance

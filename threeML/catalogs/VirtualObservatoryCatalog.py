@@ -3,9 +3,9 @@ from astromodels import *
 #from astropy.vo.client.vos_catalog import VOSCatalog
 from astroquery.vo_conesearch.vos_catalog import VOSCatalog
 from astroquery.vo_conesearch import conesearch
-#from astropy.vo.client import conesearch
+from astroquery.vo_conesearch.exceptions import VOSError
 
-from astropy.vo.client.exceptions import VOSError
+
 from astropy.coordinates.name_resolve import get_icrs_coordinates
 
 import astropy.table as astro_table

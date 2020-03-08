@@ -23,7 +23,7 @@ import glob
 import imp
 import traceback
 
-from version import __version__
+from .version import __version__
 
 # Import everything from astromodels
 from astromodels import *
@@ -199,7 +199,7 @@ from .bayesian.bayesian_analysis import BayesianAnalysis
 
 # Import the DataList class
 
-from data_list import DataList
+from .data_list import DataList
 
 
 
