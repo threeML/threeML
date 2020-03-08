@@ -508,7 +508,7 @@ class OGIPResponse(InstrumentResponse):
 
             m_start = 0
 
-            for j in range(n_grp[i]):
+            for j in range(np.squeeze(n_grp[i])):
 
                 # This np.squeeze call is needed because some files (for example from Fermi/GBM) contains a vector
                 # column for n_chan, even though all elements are of size 1
