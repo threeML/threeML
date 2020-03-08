@@ -624,7 +624,7 @@ class JointLikelihood(object):
         
         if nsteps_1d >= 0:
           for param in self._likelihood_model.free_parameters:
-            print param
+            
 
             center = res["value"][param]
             do_log = (False,)
@@ -647,7 +647,7 @@ class JointLikelihood(object):
               figs.append( fig )
               names.append( param)
             except Exception as e:
-              print e
+              print(e)
 
         if nsteps_2d >= 0:
     
@@ -670,7 +670,7 @@ class JointLikelihood(object):
             
               if param_2 <= param_1:
                 continue
-              print param_1, param_2
+              
               center_2 = res["value"][param_2]
               lower_2 = center_2 + res["negative_error"][param_2] * n_sigma
               upper_2 = center_2 + res["positive_error"][param_2] * n_sigma
@@ -683,14 +683,13 @@ class JointLikelihood(object):
               lower_2 = max( self.likelihood_model[param_2].bounds[0], lower_2)
               upper_2 = min( self.likelihood_model[param_2].bounds[1], upper_2)
               
-              #print param_1, lower_1, center_1, upper_1 
-              #print param_2, lower_2, center_2, upper_2 
+
               try:
                 a,b,cc, fig = self.get_contours( param_1, lower_1, upper_1, nsteps_2d, param_2, lower_2, upper_2, nsteps_2d, log= do_log)
                 figs.append( fig )
                 names.append( "%s-%s" % (param_1, param_2) )
               except Exception as e:
-                print e
+                print(e)
         return figs, names
 
 
