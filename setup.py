@@ -123,7 +123,7 @@ setup(
         'astropy>=1.3.3',
         'matplotlib',
         'uncertainties',
-        'pyyaml==3.13',
+        'pyyaml==5.1',
         'dill',
         'iminuit>=1.2',
         'astromodels',
