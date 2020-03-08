@@ -1169,7 +1169,7 @@ class BayesianResults(_AnalysisResults):
         for j, parameter_name in enumerate(self._free_parameters.keys()):
 
             this_samples = self.samples[j,:]
-            print this_samples.shape 
+            
 
             # First compute averages and variances using the sliding window
 
