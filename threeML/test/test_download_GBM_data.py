@@ -9,7 +9,6 @@ skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_i
                                                        reason="No active internet connection")
 
 
-d
 
 @skip_if_internet_is_not_available
 @pytest.mark.xfail
