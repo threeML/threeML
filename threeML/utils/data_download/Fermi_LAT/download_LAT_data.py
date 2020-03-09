@@ -208,7 +208,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     # POST encoding
 
-    postData = urllib.parse.urlencode(query_parameters)
+    postData = urllib.parse.urlencode(query_parameters).encode('utf-8')
     temporaryFileName = "__temp_query_result.html"
 
     # Remove temp file if present
@@ -234,7 +234,9 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         raise RuntimeError("Time out when connecting to the server. Check your internet connection, or that the "
                            "form at %s is accessible, then retry" % url)
-    except:
+    except Exception as e:
+
+        print(e)
 
         raise RuntimeError("Problems with the download. Check your internet connection, or that the "
                            "form at %s is accessible, then retry" % url)
@@ -247,7 +249,8 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         for line in htmlFile:
 
-            lines.append(line.encode('utf-8'))
+            #lines.append(line.encode('utf-8'))
+            lines.append(line)
 
         html = " ".join(lines).strip()
 
@@ -317,8 +320,10 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
             raise RuntimeError("Time out when connecting to the server. Check your internet connection, or that "
                                "you can access %s, then retry" % threeML_config['LAT']['query form'])
 
-        except:
+        except Exception as e:
 
+            print(e)
+            
             urllib.request.urlcleanup()
 
             raise RuntimeError("Problems with the download. Check your connection or that you can access "
