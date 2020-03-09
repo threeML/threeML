@@ -159,7 +159,21 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         data = urllib.request.urlopen(gcn_url)
 
-        string = ''.join(data.readlines()).replace('\n', '')
+        data_decode = []
+
+        for x in data.readlines():
+
+            try:
+
+                tmp = str(x, 'utf-8')
+
+                data_decode.append(tmp)
+
+            except(UnicodeDecodeError):
+
+                pass
+                    
+        string = ''.join(data_decode).replace('\n', '')
         try:
 
             trigger_number = re.search("trigger *\d* */ *(\d{9}|\d{6}\.\d{3})", string).group(1).replace('.', '')

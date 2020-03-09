@@ -110,13 +110,14 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
         else:
 
-            # Make sure the lines are interpreted as Unicode (otherwise some characters will fail)
+            # # Make sure the lines are interpreted as Unicode (otherwise some characters will fail)
             with open(file_name_sanatized) as table_file:
 
 
                 # might have to add this in for back compt J MICHAEL
                 
-                #new_lines = [x.decode("utf-8", errors="ignore") for x in table_file.readlines()]
+                #new_lines = [x. for x in table_file.readlines()]
+                
                 new_lines =  table_file.readlines()
 
             # now write the decoded lines back to the file
@@ -124,7 +125,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
                 table_file.write("".join(new_lines))
 
-            # save the time that we go this table
+    #        save the time that we go this table
 
             with open(cache_file_sanatized, 'w') as cache:
 
@@ -147,6 +148,9 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     table = vo_table.get_first_table().to_table(use_names_over_ids=True)
 
+    # make sure we do not use this as byte code
+    table.convert_bytestring_to_unicode()
+    
     # create a pandas table indexed by name
 
     pandas_df = table.to_pandas().set_index('name')

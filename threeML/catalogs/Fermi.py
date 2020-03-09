@@ -196,6 +196,8 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
             ra = row['ra']
             dec = row['dec']
 
+            #name = str(name, 'utf-8')
+            
             # get the proper 3ML model
 
             if model == 'band':

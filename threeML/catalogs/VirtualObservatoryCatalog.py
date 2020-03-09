@@ -88,7 +88,24 @@ class VirtualObservatoryCatalog(object):
 
                 table = votable.to_table()
 
-                self._last_query_results = table.to_pandas().set_index('name').sort_values("Search_Offset")
+                table.convert_bytestring_to_unicode()                
+                
+                pandas_df = table.to_pandas().set_index('name').sort_values("Search_Offset")
+
+                str_df = pandas_df.select_dtypes([np.object])
+                
+                str_df = str_df.stack().str.decode('utf-8').unstack()
+
+                for col in str_df:
+                    pandas_df[col] = str_df[col]
+                
+
+
+                new_index = [x.decode('utf-8') for x in pandas_df.index]
+
+                pandas_df.index = new_index
+                    
+                self._last_query_results = pandas_df
 
                 out = self.apply_format(table)
 

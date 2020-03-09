@@ -42,6 +42,52 @@ class RandomVariates(np.ndarray):
         # then just call the parent
         return super(RandomVariates, self).__array_wrap__(out_arr, context)
 
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+
+        # TODO: must make this return single numbers is needed
+
+        args = []
+        in_no = []
+        for i, input_ in enumerate(inputs):
+            if isinstance(input_, RandomVariates):
+                in_no.append(i)
+                args.append(input_.view(np.ndarray))
+            else:
+                args.append(input_)
+
+        outputs = kwargs.pop('out', None)
+        out_no = []
+
+        if outputs:
+            out_args = []
+            for j, output in enumerate(outputs):
+                if isinstance(output, RandomVariates):
+                    out_no.append(j)
+                    out_args.append(output.view(np.ndarray))
+                else:
+                    out_args.append(output)
+            kwargs['out'] = tuple(out_args)
+        else:
+            outputs = (None,) * ufunc.nout
+
+ 
+        results = super(RandomVariates, self).__array_ufunc__(ufunc, method,
+                                                 *args, **kwargs)
+        if results is NotImplemented:
+            return NotImplemented
+
+        if method == 'at':
+            return
+
+        if ufunc.nout == 1:
+            results = (results,)
+
+        results = tuple((np.asarray(result).view(RandomVariates)
+                         if output is None else output)
+                        for result, output in zip(results, outputs))
+ 
+        return results[0] if len(results) == 1 else results
+    
     @property
     def median(self):
         """Returns median value"""
@@ -50,11 +96,11 @@ class RandomVariates(np.ndarray):
 
         return float(np.median(np.asarray(self)))
 
-    @property
-    def mean(self):
-        """Returns average value"""
+    # @property
+    # def mean(self):
+    #     """Returns average value"""
 
-        return float(np.asarray(self).mean())
+    #     return float(np.asarray(self).mean())
 
     @property
     def std(self):
