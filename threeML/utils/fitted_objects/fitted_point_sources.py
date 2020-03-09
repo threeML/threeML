@@ -1,3 +1,7 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
+from builtins import object
 __author__ = 'grburgess'
 
 from astropy import units as u
@@ -46,7 +50,7 @@ class FluxConversion(object):
 
         # scroll thru conversions until one works
 
-        for k,v in self._flux_lookup.iteritems():
+        for k,v in self._flux_lookup.items():
 
 
             try:
@@ -127,8 +131,8 @@ class DifferentialFluxConversion(FluxConversion):
 
 
         self._flux_lookup = {"photon_flux":  1. / (u.keV * u.cm ** 2 * u.s),
-                             "energy_flux": u.erg / (u.keV * u.cm ** 2 * u.s),
-                             "nufnu_flux": u.erg**2 / (u.keV * u.cm ** 2 * u.s)}
+                             "energy_flux": old_div(u.erg, (u.keV * u.cm ** 2 * u.s)),
+                             "nufnu_flux": old_div(u.erg**2, (u.keV * u.cm ** 2 * u.s))}
 
 
 
@@ -162,8 +166,8 @@ class IntegralFluxConversion(FluxConversion):
          """
 
          self._flux_lookup = {"photon_flux": 1. / ( u.cm ** 2 * u.s),
-                             "energy_flux": u.erg / ( u.cm ** 2 * u.s),
-                             "nufnu_flux": u.erg**2 / ( u.cm ** 2 * u.s)}
+                             "energy_flux": old_div(u.erg, ( u.cm ** 2 * u.s)),
+                             "nufnu_flux": old_div(u.erg**2, ( u.cm ** 2 * u.s))}
 
          self._model_converter = {"photon_flux": lambda x: x * test_model(x),
                                      "energy_flux": lambda x: x * x * test_model(x),
@@ -243,7 +247,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
             model = self._point_source.spectrum.main.shape.evaluate_at
             parameters = self._point_source.spectrum.main.shape.parameters
             test_model = self._point_source.spectrum.main.shape
-            parameter_names = [par.name for par in self._point_source.spectrum.main.shape.parameters.values()]
+            parameter_names = [par.name for par in list(self._point_source.spectrum.main.shape.parameters.values())]
 
 
         energy_unit = u.Unit(energy_unit)
@@ -362,7 +366,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         names = [f.name for f in composite_model.functions]
 
         counts = collections.Counter(names)
-        for s, num in counts.items():
+        for s, num in list(counts.items()):
             if num > 1:  # ignore strings that only appear once
                 for suffix in range(1, num + 1):  # suffix starts at 1 and increases by 1 each time
                     names[names.index(s)] = "%s_n%i" % (s, suffix)  # replace each appearance of s
@@ -374,7 +378,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
             # extract the parameter names using the static_name property
             # because this is what the children will use in evaluate_at
 
-            parameter_names = [par.static_name for par in function.parameters.values()]
+            parameter_names = [par.static_name for par in list(function.parameters.values())]
 
             tmp_dict['parameter_names'] = parameter_names
 
