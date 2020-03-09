@@ -142,7 +142,7 @@ if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 
 fi
 
-python -m pytest -vv --cov=threeML
+python -m pytest -vv --disable-warnings --cov=threeML
 
 # Unset PYTHONPATH and LD_LIBRARY_PATH because they conflict with anaconda client
 unset PYTHONPATH
