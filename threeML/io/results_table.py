@@ -1,3 +1,4 @@
+from builtins import object
 import pandas as pd
 import numpy as np
 from threeML.io.table import long_path_formatter

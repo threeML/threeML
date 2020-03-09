@@ -1,3 +1,7 @@
+from __future__ import division
+from builtins import zip
+from builtins import object
+from past.utils import old_div
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import numpy as np
@@ -139,8 +143,8 @@ class ResidualPlot(object):
         """
 
 
-        step_plot(np.asarray(zip(xmin, xmax)),
-                  y / xwidth,
+        step_plot(np.asarray(list(zip(xmin, xmax))),
+                  old_div(y, xwidth),
                   self._data_axis,
                   label=label,
                   **kwargs)

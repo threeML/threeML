@@ -1,3 +1,5 @@
+from builtins import str
+from builtins import object
 from astropy.io import fits
 import numpy as np
 import astropy.units as u
@@ -67,7 +69,7 @@ class FITSFile(object):
 
             fits_extensions = list(fits_extensions)
 
-            hdu_list.extend(map(lambda x:x.hdu, fits_extensions))
+            hdu_list.extend([x.hdu for x in fits_extensions])
 
         # We embed instead of subclassing because the HDUList class has some weird interaction with the
         # __init__ and __new__ methods which makes difficult to do so (we couldn't figure it out)
@@ -253,6 +255,6 @@ class FITSExtension(object):
 
 
 
-        header_tuple = fits_extension.header.items()
+        header_tuple = list(fits_extension.header.items())
 
         return cls(data_tuple,header_tuple)
