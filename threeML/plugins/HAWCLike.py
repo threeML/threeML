@@ -1,4 +1,8 @@
 from __future__ import print_function
+from __future__ import division
+from builtins import str
+from builtins import range
+from past.utils import old_div
 import collections
 import os
 import sys
@@ -325,7 +329,7 @@ class HAWCLike(PluginPrototype):
         # engine or the Bayesian sampler change the CommonNorm value, the change will be
         # propagated to the LikeHAWC instance
 
-        self._nuisance_parameters.values()[0].add_callback(self._CommonNormCallback)
+        list(self._nuisance_parameters.values())[0].add_callback(self._CommonNormCallback)
 
         # Update to start the computation of positions and energies inside LiFF
 
@@ -345,11 +349,11 @@ class HAWCLike(PluginPrototype):
 
     def activate_CommonNorm(self):
 
-        self._nuisance_parameters.values()[0].free = True
+        list(self._nuisance_parameters.values())[0].free = True
 
     def deactivate_CommonNorm(self):
 
-        self._nuisance_parameters.values()[0].free = False
+        list(self._nuisance_parameters.values())[0].free = False
 
     def _fill_model_cache(self):
 
@@ -469,7 +473,7 @@ class HAWCLike(PluginPrototype):
         are no nuisance parameters
         '''
 
-        return self._nuisance_parameters.keys()
+        return list(self._nuisance_parameters.keys())
 
     def inner_fit(self):
 
@@ -477,7 +481,7 @@ class HAWCLike(PluginPrototype):
 
         logL = self.get_log_like()
 
-        self._nuisance_parameters.values()[0].value = self._theLikeHAWC.CommonNorm()
+        list(self._nuisance_parameters.values())[0].value = self._theLikeHAWC.CommonNorm()
 
         return logL
 
@@ -575,13 +579,13 @@ class HAWCLike(PluginPrototype):
 
         # Using model variance to account for low statistic
 
-        resid = (signal - model) / (error if pulls else model)
+        resid = old_div((signal - model), (error if pulls else model))
 
         sub1.axhline(0, linestyle='--')
 
         sub1.errorbar(
             bin_index, resid,
-            yerr=np.zeros(error.shape) if pulls else error / model,
+            yerr=np.zeros(error.shape) if pulls else old_div(error, model),
             capsize=0, fmt='.'
         )
 
@@ -647,7 +651,7 @@ class HAWCLike(PluginPrototype):
         list_of_bin_names = set(bin_list) & set(self._bin_list)
 
 
-        delta_r = 1.0*max_radius / n_radial_bins 
+        delta_r = old_div(1.0*max_radius, n_radial_bins) 
         radii = np.array([ delta_r * (i+0.5) for i in range(0,n_radial_bins) ])
         
 
@@ -692,7 +696,7 @@ class HAWCLike(PluginPrototype):
         total_excess = np.array( self._theLikeHAWC.GetTopHatExcesses(ra, dec, max_radius) )[good_bins]
         total_bkg = np.array( self._theLikeHAWC.GetTopHatBackgrounds(ra, dec, max_radius) )[good_bins]
         w=np.divide( total_model, total_bkg )
-        weight = np.array( [ w/np.sum(w)  for r in radii ] )
+        weight = np.array( [ old_div(w,np.sum(w))  for r in radii ] )
 
                 
         #restrict profiles to the user-specified analysis bins.
@@ -704,9 +708,9 @@ class HAWCLike(PluginPrototype):
         
         #average over the analysis bins
         
-        excess_data =  np.average( signal/area , weights=weight, axis=1 )           
-        excess_error = np.sqrt( np.sum( counts*weight*weight/(area*area) , axis=1 )) 
-        excess_model = np.average( model/area , weights=weight, axis=1 )    
+        excess_data =  np.average( old_div(signal,area) , weights=weight, axis=1 )           
+        excess_error = np.sqrt( np.sum( old_div(counts*weight*weight,(area*area)) , axis=1 )) 
+        excess_model = np.average( old_div(model,area) , weights=weight, axis=1 )    
         
         return radii, excess_model, excess_data, excess_error, sorted(list_of_bin_names)
 

@@ -1,4 +1,9 @@
 from __future__ import print_function
+from __future__ import division
+from builtins import zip
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import collections
 
 import ROOT
@@ -167,11 +172,11 @@ class VERITASRun(object):
 
 	    #Added by for bin by bin normalization
         v_new = np.sum(self._hMigration, axis=1)
-        new_v = v_new / expectation
+        new_v = old_div(v_new, expectation)
         avg1_new = new_v
         avg2_new = np.interp(self._recon_energies_c, energies_eff, self._eff_area)
-        renorm_new = avg1_new/avg2_new
-        hMigration_new = self._hMigration/renorm_new[:, None]
+        renorm_new = old_div(avg1_new,avg2_new)
+        hMigration_new = old_div(self._hMigration,renorm_new[:, None])
         hMigration_new[~np.isfinite(hMigration_new)] = 0
 
         self._hMigration = hMigration_new
@@ -258,7 +263,7 @@ class VERITASRun(object):
     @staticmethod
     def _simulated_spectrum_f(e1, e2):
 
-        integral_f = lambda x: -3.0 / (x**0.5)
+        integral_f = lambda x: old_div(-3.0, (x**0.5))
 
         return integral_f(e2) - integral_f(e1)
 
@@ -289,16 +294,16 @@ class VERITASRun(object):
 
         if not fast:
 
-            this_spectrum = self._integrate(diff_flux, e1, e2) / dE  # 1 / keV cm2 s
+            this_spectrum = old_div(self._integrate(diff_flux, e1, e2), dE)  # 1 / keV cm2 s
 
-            sim_spectrum = self._simulated_spectrum_f(e1, e2) / dE # 1 / keV cm2 s
+            sim_spectrum = old_div(self._simulated_spectrum_f(e1, e2), dE) # 1 / keV cm2 s
 
         else:
             this_spectrum = diff_flux(self._mc_energies_c)
 
             sim_spectrum = self._simulated_spectrum(self._mc_energies_c)
 
-        weight = this_spectrum / sim_spectrum  # type: np.ndarray
+        weight = old_div(this_spectrum, sim_spectrum)  # type: np.ndarray
 
         # print("Sum of weight: %s" % np.sum(weight))
 
@@ -344,7 +349,7 @@ class VERITASLike(PluginPrototype):
 
         # Get the names of all runs included
 
-        run_names = filter(lambda x: x.find("run") == 0, keys)
+        run_names = [x for x in keys if x.find("run") == 0]
 
         self._runs_like = collections.OrderedDict()
 
@@ -377,13 +382,13 @@ class VERITASLike(PluginPrototype):
 
     def rebin_on_background(self, *args, **kwargs):
 
-        for run in self._runs_like.values():
+        for run in list(self._runs_like.values()):
 
             run.rebin_on_background(*args, **kwargs)
 
     def rebin_on_source(self, *args, **kwargs):
 
-        for run in self._runs_like.values():
+        for run in list(self._runs_like.values()):
 
             run.rebin_on_source(*args, **kwargs)
 
@@ -408,7 +413,7 @@ class VERITASLike(PluginPrototype):
         # Collect the likelihood from each run
         total = 0
 
-        for run in self._runs_like.values():
+        for run in list(self._runs_like.values()):
 
             total += run.get_log_like(self._likelihood_model)[0]
 
