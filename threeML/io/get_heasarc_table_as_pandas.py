@@ -113,7 +113,11 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
             # Make sure the lines are interpreted as Unicode (otherwise some characters will fail)
             with open(file_name_sanatized) as table_file:
 
-                new_lines = [x.decode("utf-8", errors="ignore") for x in table_file.readlines()]
+
+                # might have to add this in for back compt J MICHAEL
+                
+                #new_lines = [x.decode("utf-8", errors="ignore") for x in table_file.readlines()]
+                new_lines =  table_file.readlines()
 
             # now write the decoded lines back to the file
             with codecs.open(file_name_sanatized, "w+", "utf-8") as table_file:
