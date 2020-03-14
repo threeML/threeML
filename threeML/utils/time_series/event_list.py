@@ -966,7 +966,7 @@ class EventListWithLiveTime(EventList):
 
         # see if it contains elements
 
-        if self._live_time[inside_idx]:
+        if self._live_time[inside_idx].size > 0:
 
             # we want to take a fraction of the live time covered
 

@@ -144,6 +144,7 @@ if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 
 fi
 
+# Run tests
 python -m pytest -vv --cov=threeML
 
 # Unset PYTHONPATH and LD_LIBRARY_PATH because they conflict with anaconda client
@@ -171,46 +172,24 @@ fi
 
 # If we are on the master branch upload to the channel
 if [[ "${TRAVIS_EVENT_TYPE}" == "pull_request" ]]; then
-
     echo "This is a pull request, not uploading to Conda channel"
 
-else
-    if [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
+elif [[ "${TRAVIS_EVENT_TYPE}" == "api" ]]; then
+    echo "This build was triggered via API"
 
-        echo "This is a push to TRAVIS_BRANCH=${TRAVIS_BRANCH}"
+elif [[ "${TRAVIS_EVENT_TYPE}" == "push" ]]; then
+    echo "This is a push to branch ${TRAVIS_BRANCH}"
 
-        if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+    echo "${TRAVIS_TAG}"
+    if [ -n "${TRAVIS_TAG}" ]; then
+        echo "This is the tag ${TRAVIS_TAG}"
+        conda install -c conda-forge anaconda-client
+        echo "Uploading ${CONDA_BUILD_PATH}"
 
-            conda install -c conda-forge anaconda-client
-
-            echo "Uploading ${CONDA_BUILD_PATH}"
-
-            if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-
-                    anaconda -v --show-traceback -t $CONDA_UPLOAD_TOKEN upload -u threeml ${HOME}/miniconda/conda-bld/linux-64/*.tar.bz2 --force
-
-            else
-
-                    anaconda -v --show-traceback -t $CONDA_UPLOAD_TOKEN upload -u threeml ${HOME}/miniconda/conda-bld/*/*.tar.bz2 --force
-            fi
-        fi
-    fi
-    if [[ "${TRAVIS_EVENT_TYPE}" == "removeme" ]]; then
-
-        echo "This is a push, uploading to Conda channel"
-
-        source activate root
-
-        conda install anaconda-client
-            
         if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-                
-            anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${HOME}/conda-bld/linux-64/*.tar.bz2 --force
-            
+                anaconda -v --show-traceback -t $CONDA_UPLOAD_TOKEN upload -u threeml ${HOME}/miniconda/conda-bld/linux-64/*.tar.bz2 --force
         else
-            
-            anaconda -t $CONDA_UPLOAD_TOKEN upload -u threeml ${HOME}/miniconda/conda-bld/osx-64/*.tar.bz2 --force
-            
+                anaconda -v --show-traceback -t $CONDA_UPLOAD_TOKEN upload -u threeml ${HOME}/miniconda/conda-bld/*/*.tar.bz2 --force
         fi
     fi
 fi
