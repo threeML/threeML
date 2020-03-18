@@ -33,18 +33,20 @@ requirements:
     - dill
     - iminuit>=1.2
     - astromodels
-    - astroquery<0.4
+    - astroquery<0.4 # [py2k]
+    - astroquery # [py3k]
     - corner>=1.0.2
     #- pandas
     - requests
     - speclite
     - pymultinest
-    - pygmo>=2.4,<=2.11.4
+    - pygmo>=2.4,<=2.11.4 # [py2k]
+    - pygmo>=2.4 # [py3k]
     - ipywidgets
     #- ipython
     - ipyparallel
     - py
-    - tk==8.5.19
+    - tk==8.5.19 # [py2k]
   
   run:
     - python
@@ -59,19 +61,22 @@ requirements:
     - dill
     - iminuit>=1.2
     - astromodels
-    - astroquery<0.4
+    - astroquery<0.4 # [py2k]
+    - astroquery # [py3k]
     - corner>=1.0.2
     - pandas
     - requests
     - speclite
     - pymultinest
-    - pygmo>=2.4,<=2.11.4
+    - pygmo>=2.4,<=2.11.4 # [py2k]
+    - pygmo>=2.4 # [py3k]
     - ipywidgets
     - ipython
     - ipyparallel
     - xz
     - py
-    - pytest<4
+    - pytest<4 # [py2k]
+    - pytest # [py3k]
     - numexpr
 
 #test:
