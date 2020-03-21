@@ -271,7 +271,7 @@ class ANALYSIS_RESULTS(FITSExtension):
                       ('NEGATIVE_ERROR', data_frame['negative_error'].values),
                       ('POSITIVE_ERROR', data_frame['positive_error'].values),
                       ('ERROR', data_frame['error'].values),
-                      ('UNIT', np.array(data_frame['unit'].values, str)),
+                      ('UNIT', np.array(data_frame['unit'].values, np.unicode_)),
                       ('COVARIANCE', covariance_matrix),
                       ('SAMPLES', samples)]
 

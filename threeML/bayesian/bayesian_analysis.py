@@ -274,7 +274,7 @@ class BayesianAnalysis(object):
         print("\nMean acceptance fraction: %s\n" % acc)
 
         self._sampler = sampler
-        self._raw_samples = sampler.flatchain
+        self._raw_samples = sampler.get_chain(flat=True)
 
         # Compute the corresponding values of the likelihood
 
@@ -283,11 +283,11 @@ class BayesianAnalysis(object):
 
         # Now we get the log posterior and we remove the log prior
 
-        self._log_like_values = sampler.flatlnprobability - log_prior
+        self._log_like_values = sampler.get_log_prob(flat=True) - log_prior
 
         # we also want to store the log probability
 
-        self._log_probability_values = sampler.flatlnprobability
+        self._log_probability_values = sampler.get_log_prob(flat=True)
 
         self._marginal_likelihood = None
 
@@ -344,7 +344,8 @@ class BayesianAnalysis(object):
 
         # Now build the _samples dictionary
 
-        self._raw_samples = sampler.flatchain.reshape(-1, sampler.flatchain.shape[-1])
+        self._raw_samples = sampler.get_chain(flat=True).reshape(-1,
+            sampler.get_chain(flat=True).shape[-1])
 
         self._log_probability_values = None
 

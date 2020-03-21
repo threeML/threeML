@@ -10,10 +10,10 @@ class ResultsTable(object):
 
     def __init__(self, parameter_paths, values, negative_errors, positive_errors, units):
 
-        values_s = pd.Series()
-        negative_error_s = pd.Series()
-        positive_error_s = pd.Series()
-        units_s = pd.Series()
+        values_s = pd.Series([], dtype=np.float64)
+        negative_error_s = pd.Series([], dtype=np.float64)
+        positive_error_s = pd.Series([], dtype=np.float64)
+        units_s = pd.Series([], dtype=np.float64)
 
         for i, this_path in enumerate(parameter_paths):
 
