@@ -1,6 +1,6 @@
 from builtins import object
 from astromodels import *
-
+import astropy
 #from astropy.vo.client.vos_catalog import VOSCatalog
 from astroquery.vo_conesearch.vos_catalog import VOSCatalog
 from astroquery.vo_conesearch import conesearch
@@ -85,8 +85,10 @@ class VirtualObservatoryCatalog(object):
             else:
 
                 # Download successful
-
-                table = votable.to_table()
+                table = votable
+                # Workaround to comply with newer versions of astroquery 
+                if isinstance(votable, astropy.io.votable.tree.Table):
+                    table = votable.to_table()
 
                 table.convert_bytestring_to_unicode()                
                 
