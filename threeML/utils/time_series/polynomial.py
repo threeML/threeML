@@ -450,7 +450,7 @@ def polyfit(x, y, grade, exposure):
         # Reset the initialGuess to reasonable value
         initial_guess[0] = np.mean(y)
         meanx = np.mean(x)
-        initial_guess = [old_div(abs(x[1]), pow(meanx, x[0])) for x in enumerate(initial_guess)]
+        initial_guess = [old_div(abs(i[1]), pow(meanx, i[0])) for i in enumerate(initial_guess)]
 
     # Improve the solution using a logLikelihood statistic (Cash statistic)
     log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
