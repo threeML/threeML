@@ -288,7 +288,7 @@ class InstrumentResponse(object):
 
         fits_file = RSP(self.monte_carlo_energies, self.ebounds, self.matrix, telescope_name, instrument_name)
 
-        fits_file.writeto(filename, clobber=overwrite)
+        fits_file.writeto(filename, overwrite=overwrite)
 
     @classmethod
     def create_dummy_response(cls, ebounds, monte_carlo_energies):

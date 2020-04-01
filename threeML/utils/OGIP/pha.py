@@ -307,7 +307,7 @@ class PHAWrite(object):
 
             rsp2 = FITSFile(fits_extensions=extensions)
 
-            rsp2.writeto("%s.rsp" % self._outfile_basename, clobber=True)
+            rsp2.writeto("%s.rsp" % self._outfile_basename, overwrite=True)
 
 def _atleast_2d_with_dtype(value,dtype=None):
 
