@@ -87,7 +87,7 @@ def data_list_bn090217206_nai6():
 
 # This is going to be run every time a test need it, so the jl object
 # is always "fresh"
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def joint_likelihood_bn090217206_nai(data_list_bn090217206_nai6):
 
     powerlaw = Powerlaw()
@@ -99,7 +99,7 @@ def joint_likelihood_bn090217206_nai(data_list_bn090217206_nai6):
     return jl
 
 # No need to keep refitting, so we fit once (scope=session)
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def fitted_joint_likelihood_bn090217206_nai(joint_likelihood_bn090217206_nai):
 
 
@@ -111,7 +111,7 @@ def fitted_joint_likelihood_bn090217206_nai(joint_likelihood_bn090217206_nai):
 
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_nai):
 
     jl, _, _ = fitted_joint_likelihood_bn090217206_nai
@@ -134,7 +134,7 @@ def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_
 
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def joint_likelihood_bn090217206_nai_multicomp(data_list_bn090217206_nai6):
 
     composite = Powerlaw() + Blackbody()
