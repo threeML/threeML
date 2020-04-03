@@ -81,7 +81,7 @@ conda config --add channels conda-forge/label/cf201901
 conda config --add channels conda-forge
 
 # Create test environment
-conda create --yes --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy
+conda create --yes --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy krb5=1.14.6 "pandas>=0.23"
 
 if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 
