@@ -134,7 +134,7 @@ def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_
 
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def joint_likelihood_bn090217206_nai_multicomp(data_list_bn090217206_nai6):
 
     composite = Powerlaw() + Blackbody()
