@@ -225,7 +225,7 @@ class ProfileLikelihood(object):
 
             param_1_name = self._fixed_parameters[0]
 
-            # Fix steps if needed
+            # Fix steps if needed.
             steps1 = self._transform_steps(param_1_name, steps1)
 
             return self._step1d(steps1)
