@@ -22,8 +22,8 @@ requirements:
     - python
     #- setuptools
     #- toolchain
-    - numpy>=1.6,<1.16 # [py<=py35]
-    - numpy # [py>py35]
+    - numpy>=1.6,<1.16 # [py2k]
+    - numpy # [py3k]
     #- scipy >=0.18
     - emcee>=3
     #- astropy >=1.0.3
@@ -39,8 +39,7 @@ requirements:
     #- pandas
     - requests
     - speclite
-    - pymultinest # [not py36]
-    - pymultinest<2.9 # [py==py36]
+    - pymultinest
     - pygmo>=2.4,<=2.11.4 # [py2k]
     - pygmo>=2.4 # [py3k]
     - ipywidgets
@@ -51,8 +50,8 @@ requirements:
   
   run:
     - python
-    - numpy>=1.6,<1.16 # [py<=py35]
-    - numpy # [py>py35]
+    - numpy>=1.6,<1.16 # [py2k]
+    - numpy # [py3k]
     - scipy>=0.18
     - emcee>=3
     - astropy>=1.0.3
@@ -68,8 +67,7 @@ requirements:
     - pandas>=0.23
     - requests
     - speclite
-    - pymultinest # [not py36]
-    - pymultinest<2.9 # [py==py36]
+    - pymultinest
     - pygmo>=2.4,<=2.11.4 # [py2k]
     - pygmo>=2.4 # [py3k]
     - ipywidgets
