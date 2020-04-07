@@ -36,7 +36,7 @@ fi
 
 echo "Running on ${TRAVIS_OS_NAME}"
 
-TRAVIS_PYTHON_VERSION=3.5
+TRAVIS_PYTHON_VERSION=3.7
 export TRAVIS_BUILD_NUMBER=2
 ENVNAME=threeML_test_$TRAVIS_PYTHON_VERSION
 USE_LOCAL=false
@@ -92,9 +92,9 @@ if [ -n "${XSPECVER}" ];
 fi
 
 if [[ ${TRAVIS_PYTHON_VERSION} == 2.7 ]]; then
-    PKG="pytest<4 openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 pygmo=2.11.4"
+    PKG="pytest<4 openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 ipopt<3.13 pygmo=2.11.4 emcee>=3 pandas>=0.23"
 else
-    PKG="pytest"
+    PKG="pytest pandas>=0.23"
 fi
 
 echo "dependencies: ${MATPLOTLIB} ${NUMPY} ${XSPEC}"
@@ -116,7 +116,7 @@ conda config --add channels conda-forge
 
 # Create test environment
 echo "Create test environment..."
-conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy krb5=1.14.6 "pandas>=0.23"
+conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy krb5=1.14.6
 
 #openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 pygmo=2.11.4 "pytest<4"
 #libgfortran=${libgfortranver}

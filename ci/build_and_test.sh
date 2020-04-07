@@ -58,9 +58,9 @@ if [ -n "${XSPECVER}" ];
 fi
 
 if [[ ${TRAVIS_PYTHON_VERSION} == 2.7 ]]; then
-    PKG="pytest<4 openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 pygmo=2.11.4"
+    PKG="pytest<4 openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 ipopt<3.13 pygmo=2.11.4 emcee>=3 pandas>=0.23"
 else
-    PKG="pytest"
+    PKG="pytest pandas>=0.23"
 fi
 
 echo "dependencies: ${MATPLOTLIB} ${NUMPY}  ${XSPEC}"
@@ -81,7 +81,7 @@ conda config --add channels conda-forge/label/cf201901
 conda config --add channels conda-forge
 
 # Create test environment
-conda create --yes --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy krb5=1.14.6 "pandas>=0.23"
+conda create --yes --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy krb5=1.14.6
 
 if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 
