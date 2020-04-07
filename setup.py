@@ -132,7 +132,7 @@ setup(
         'pandas',
         'requests',
         'speclite',
-#        'pygmo>=2.4,<=2.11.4',
+        'pygmo>=2.4',
         'ipython<=5.9',
         'ipyparallel',
         #'xz',
