@@ -8,10 +8,7 @@ INSTALL_XSPEC="no"
 INSTALL_ROOT="no"
 INSTALL_FERMI="no"
 BATCH="no"
-
-if [[ -z ${TRAVIS_PYTHON_VERSION} ]]; then 
-    export TRAVIS_PYTHON_VERSION="2.7"
-fi
+PYTHON_VERSION="3.7"
 
 while [ "${1:-}" != "" ]; do
     case "$1" in
@@ -27,12 +24,20 @@ while [ "${1:-}" != "" ]; do
       "--batch")
         BATCH="yes"
         ;;
+      "--python")
+        PYTHON_VERSION="$2"
+        ;;
       "-h" | "--help")
-        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [-h] [--help] [--batch]" && exit 0
+        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [--python {2.7 or 3.7}] [-h] [--help] [--batch]" && exit 0
         ;;
     esac
     shift
   done
+
+if [[ ${PYTHON_VERSION} != "2.7" ]] && [[ ${PYTHON_VERSION} != "3.7" ]]; then 
+    echo "WARNING: python version should 2.7 or 3.7. Setting to 3.7..."
+    export PYTHON_VERSION="3.7"
+fi
 
 echo ""
 echo "Options:"
@@ -41,7 +46,7 @@ echo "Installing xspec:                              "${INSTALL_XSPEC}
 echo "Installing root:                               "${INSTALL_ROOT}
 echo "Installing fermi:                              "${INSTALL_FERMI}
 echo "Batch execution (assume yes to all questions): "${BATCH}
-echo "Python version:                                "${TRAVIS_PYTHON_VERSION}
+echo "Python version:                                "${PYTHON_VERSION}
 echo ""
 
 # Make a small download script in Python to avoid dependencies on 
@@ -283,7 +288,7 @@ fi
 
 # Now we have conda installed, let's install 3ML
 
-conda create --yes --name threeML python=$TRAVIS_PYTHON_VERSION ${PACKAGES_TO_INSTALL}
+conda create --yes --name threeML python=$PYTHON_VERSION ${PACKAGES_TO_INSTALL}
 
 line
 echo "Generating setup scripts"
