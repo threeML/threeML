@@ -63,9 +63,11 @@ else  # osx
 fi
 
 # Get the version in the __version__ environment variable
-python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
+#python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
 
-export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
+#export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
+
+export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
 
 echo "Building ${PKG_VERSION} ..."
 echo "Python version: ${TRAVIS_PYTHON_VERSION}"
