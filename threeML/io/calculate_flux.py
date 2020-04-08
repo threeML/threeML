@@ -1,3 +1,4 @@
+from builtins import range
 __author__ = 'grburgess'
 
 # from threeML.io.rich_display import display
@@ -40,7 +41,7 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
     for analysis in analysis_results:
     
-        items = analysis.optimized_model.point_sources.items() if not include_extended else analysis.optimized_model.sources.items()
+        items = list(analysis.optimized_model.point_sources.items()) if not include_extended else list(analysis.optimized_model.sources.items())
         
         for source_name, source in items:
 
@@ -68,7 +69,7 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
                         comps = []
 
                     # duplicate components
-                    comps = ["%s_n%i" % (s, suffix) if num > 1 else s for s, num in collections.Counter(comps).items() for
+                    comps = ["%s_n%i" % (s, suffix) if num > 1 else s for s, num in list(collections.Counter(comps).items()) for
                      suffix in range(1, num + 1)]
 
 
@@ -100,7 +101,7 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
                     # duplicate components
                     comps = ["%s_n%i" % (s, suffix) if num > 1 else s for s, num in
-                             collections.Counter(comps).items() for
+                             list(collections.Counter(comps).items()) for
                              suffix in range(1, num + 1)]
 
                     bayesian_analyses[name] = {'source': source_name, 'analysis': analysis, 'component_names': comps}
@@ -111,7 +112,7 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
     # go through the MLE analysis and build up some fitted sources
 
-    for key in mle_analyses.keys():
+    for key in list(mle_analyses.keys()):
 
         # if we want to use this source
 
@@ -192,7 +193,7 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
     # repeat for the bayes analyses
 
-    for key in bayesian_analyses.keys():
+    for key in list(bayesian_analyses.keys()):
 
         # if we have a source to use
 
@@ -271,9 +272,9 @@ def _setup_analysis_dictionaries(analysis_results, energy_range, energy_unit, fl
 
     duplicate_keys = []
 
-    for key in mle_analyses.keys():
+    for key in list(mle_analyses.keys()):
 
-        if key in bayesian_analyses.keys():
+        if key in list(bayesian_analyses.keys()):
             duplicate_keys.append(key)
 
     return mle_analyses, bayesian_analyses, num_sources_to_use, duplicate_keys
@@ -294,7 +295,7 @@ def _collect_sums_into_dictionaries(analyses, use_components, components_to_use)
 
     num_sources_to_use = 0
 
-    for key in analyses.keys():
+    for key in list(analyses.keys()):
 
         # we won't assume to plot the total until the end
 
@@ -305,10 +306,10 @@ def _collect_sums_into_dictionaries(analyses, use_components, components_to_use)
             # append all the components we want to sum to their
             # own key
 
-            if (not analyses[key]['components'].keys()) or ('total' in components_to_use):
+            if (not list(analyses[key]['components'].keys())) or ('total' in components_to_use):
                 use_total = True
 
-            for component in analyses[key]['components'].keys():
+            for component in list(analyses[key]['components'].keys()):
                 component_sum_dict.setdefault(component, []).append(analyses[key]['components'][component])
 
         else:
@@ -322,7 +323,7 @@ def _collect_sums_into_dictionaries(analyses, use_components, components_to_use)
 
     if use_components:
 
-        for key, values in component_sum_dict.items():
+        for key, values in list(component_sum_dict.items()):
             num_sources_to_use += len(values)
 
     num_sources_to_use += len(total_analysis)
@@ -356,7 +357,7 @@ def _compute_output(analyses, _defaults, out):
     labels = []
 
     # go thru the mle analysis and get the fluxes
-    for key in analyses.keys():
+    for key in list(analyses.keys()):
 
         # we won't assume to plot the total until the end
 
@@ -367,10 +368,10 @@ def _compute_output(analyses, _defaults, out):
             # if this source has no components or none that we wish to plot
             # then we will get the total flux after this
 
-            if (not analyses[key]['components'].keys()) or ('total' in _defaults['components_to_use']):
+            if (not list(analyses[key]['components'].keys())) or ('total' in _defaults['components_to_use']):
                 get_total = True
 
-            for component in analyses[key]['components'].keys():
+            for component in list(analyses[key]['components'].keys()):
                 # extract the information and plot it
 
                 samples = analyses[key]['components'][component]
@@ -416,11 +417,11 @@ def _compute_output_with_components(_defaults, component_sum_dict, total_analysi
     p_errors = []
     labels = []
 
-    if _defaults['use_components'] and component_sum_dict.keys():
+    if _defaults['use_components'] and list(component_sum_dict.keys()):
 
         # we have components to calculate
 
-        for component, values in component_sum_dict.items():
+        for component, values in list(component_sum_dict.items()):
 
             summed_analysis = sum(values)
 
@@ -524,7 +525,7 @@ def _calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
         'include_extended': False
     }
 
-    for key, value in kwargs.items():
+    for key, value in list(kwargs.items()):
 
         if key in _defaults:
             _defaults[key] = value

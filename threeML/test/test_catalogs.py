@@ -8,7 +8,7 @@ skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_i
 
 
 @skip_if_internet_is_not_available
-@pytest.mark.xfail
+#@pytest.mark.xfail
 def test_gbm_catalog():
 
     gbm_catalog = FermiGBMBurstCatalog()
@@ -43,7 +43,7 @@ def test_gbm_catalog():
     _ = gbm_catalog.query_sources('GRB080916009')
 
 
-@pytest.mark.xfail
+#@pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_LAT_catalog():
     lat_catalog = FermiLATSourceCatalog()
@@ -57,7 +57,7 @@ def test_LAT_catalog():
     assert lat_catalog.ra_center == ra
     assert lat_catalog.dec_center == dec
 
-@pytest.mark.xfail
+#@pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_LLE_catalog():
     lle_catalog = FermiLLEBurstCatalog()
@@ -74,7 +74,7 @@ def test_LLE_catalog():
     _ = lle_catalog.query('trigger_type == "GRB"')
 
 
-@pytest.mark.xfail
+#@pytest.mark.xfail
 @skip_if_internet_is_not_available
 def test_swift_catalog():
 

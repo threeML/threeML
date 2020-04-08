@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import zip
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import numpy
 import collections
 import os
@@ -425,11 +430,11 @@ class FermiLATLike(PluginPrototype):
 
         # Using model variance to account for low statistic
 
-        resid = (self.like.nobs - sum_model) / sum_model
+        resid = old_div((self.like.nobs - sum_model), sum_model)
 
         sub1.axhline(0, linestyle='--')
         sub1.errorbar(ec, resid, xerr=de,
-                      yerr=numpy.sqrt(self.like.nobs) / sum_model,
+                      yerr=old_div(numpy.sqrt(self.like.nobs), sum_model),
                       capsize=0, fmt='.')
 
         sub.set_xscale("log")
@@ -456,7 +461,7 @@ class FermiLATLike(PluginPrototype):
             thisNamesV = pyLike.StringVector()
             thisSrc = self.like.logLike.getSource(srcName)
             thisSrc.spectrum().getFreeParamNames(thisNamesV)
-            thisNames = map(lambda x: "%s_%s" % (srcName, x), thisNamesV)
+            thisNames = ["%s_%s" % (srcName, x) for x in thisNamesV]
             freeParamNames.extend(thisNames)
         pass
 

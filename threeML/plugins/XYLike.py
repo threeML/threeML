@@ -1,3 +1,4 @@
+from __future__ import print_function
 import copy
 
 import matplotlib.pyplot as plt
@@ -162,7 +163,7 @@ class XYLike(PluginPrototype):
         :return:
         """
 
-        df = pd.DataFrame.from_csv(filename, sep=" ")
+        df = pd.read_csv(filename, sep=" ")
 
         return cls.from_dataframe(name, df)
 
@@ -174,8 +175,8 @@ class XYLike(PluginPrototype):
         :return: a pandas.DataFrame instance
         """
 
-        x_series = pd.Series.from_array(self.x, name='x')
-        y_series = pd.Series.from_array(self.y, name='y')
+        x_series = pd.Series(self.x, name='x')
+        y_series = pd.Series(self.y, name='y')
 
         if self._is_poisson:
 
@@ -183,11 +184,11 @@ class XYLike(PluginPrototype):
             # are Poisson distributed. We use instead a value of -99 for the error, to indicate that the data
             # are Poisson
 
-            yerr_series = pd.Series.from_array(np.ones_like(self.x) * (-99), name='yerr')
+            yerr_series = pd.Series(np.ones_like(self.x) * (-99), name='yerr')
 
         else:
 
-            yerr_series = pd.Series.from_array(self.yerr, name='yerr')
+            yerr_series = pd.Series(self.yerr, name='yerr')
 
         df = pd.concat((x_series, y_series, yerr_series), axis=1)
 
@@ -298,8 +299,7 @@ class XYLike(PluginPrototype):
 
             # Make a function which will stack all point sources (XYLike do not support spatial dimension)
 
-            expectation = np.sum(map(lambda source: source(self._x, tag=self._tag),
-                                     self._likelihood_model.point_sources.values()),
+            expectation = np.sum([source(self._x, tag=self._tag) for source in list(self._likelihood_model.point_sources.values())],
                                  axis=0)
 
         else:

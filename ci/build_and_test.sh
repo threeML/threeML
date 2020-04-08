@@ -43,7 +43,7 @@ libgfortranver="3.0"
 NUMPYVER=1.15
 MATPLOTLIBVER=2
 XSPECVER="6.22.1"
-xspec_channel=threeml
+xspec_channel=xspecmodels
 
 echo "Building ${PKG_VERSION} ..."
 echo "Python version: ${TRAVIS_PYTHON_VERSION}"
@@ -58,6 +58,13 @@ if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
 if [ -n "${XSPECVER}" ];
  then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
 fi
+
+if [[ ${TRAVIS_PYTHON_VERSION} == 2.7 ]]; then
+    PKG="pytest<4 openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 ipopt<3.13 pygmo=2.11.4 emcee>=3 pandas>=0.23"
+else
+    PKG="pytest pandas>=0.23"
+fi
+
 echo "dependencies: ${MATPLOTLIB} ${NUMPY}  ${XSPEC}"
 
 # Answer yes to all questions (non-interactive)
@@ -67,16 +74,16 @@ conda config --set always_yes true
 conda config --set anaconda_upload no
 
 # Make sure conda-forge is the first channel
-conda config --add channels conda-forge/label/cf201901
-
-conda config --add channels conda-forge
-
 conda config --add channels defaults
 
 conda config --add channels threeml
 
+conda config --add channels conda-forge/label/cf201901
+
+conda config --add channels conda-forge
+
 # Create test environment
-conda create --yes --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION "pytest<4" codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 pygmo=2.11.4
+conda create --yes --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy krb5=1.14.6
 
 if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 

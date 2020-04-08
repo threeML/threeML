@@ -1,3 +1,9 @@
+from __future__ import division
+from builtins import zip
+from builtins import str
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import collections
 import math
 import numpy as np
@@ -84,7 +90,7 @@ class FunctionWrapper(object):
 
         for i, parameter_name in enumerate(self._fixed_parameters_names):
 
-            this_index = self._all_parameters.keys().index(parameter_name)
+            this_index = list(self._all_parameters.keys()).index(parameter_name)
 
             self._indexes_of_fixed_par[this_index] = True
 
@@ -191,10 +197,10 @@ class ProfileLikelihood(object):
             # parameters dictionary)
 
             param_1_name = self._fixed_parameters[0]
-            param_1_idx = self._all_parameters.keys().index(param_1_name)
+            param_1_idx = list(self._all_parameters.keys()).index(param_1_name)
 
             param_2_name = self._fixed_parameters[1]
-            param_2_idx = self._all_parameters.keys().index(param_2_name)
+            param_2_idx = list(self._all_parameters.keys()).index(param_2_name)
 
             # Fix steps if needed
             steps1 = self._transform_steps(param_1_name, steps1)
@@ -318,7 +324,7 @@ class _Minimization(object):
         valid_setup_keys = self._minimizer_type.valid_setup_keys
 
         # Check that the setup has been specified well
-        for key in setup_dict.keys():
+        for key in list(setup_dict.keys()):
 
             assert key in valid_setup_keys, "%s is not a valid setup parameter for this minimizer" % key
 
@@ -408,7 +414,7 @@ class Minimizer(object):
         self._function = function
         self._external_parameters = parameters
         self._internal_parameters = self._update_internal_parameter_dictionary()
-        self._Npar = len(self.parameters.keys())
+        self._Npar = len(list(self.parameters.keys()))
         self._verbosity = verbosity
 
         self._setup(setup_dict)
@@ -477,7 +483,7 @@ class Minimizer(object):
                 else:
 
                     # Bounded only in the negative direction. Make sure we are not at the boundary
-                    if np.isclose(current_value, current_min, abs(current_value) / 20):
+                    if np.isclose(current_value, current_min, old_div(abs(current_value), 20)):
 
                         custom_warnings.warn("The current value of parameter %s is very close to "
                                              "its lower bound when starting the fit. Fixing it" % par.name)
@@ -496,7 +502,7 @@ class Minimizer(object):
 
                     # Bounded only in the positive direction
                     # Bounded only in the negative direction. Make sure we are not at the boundary
-                    if np.isclose(current_value, current_max, abs(current_value) / 20):
+                    if np.isclose(current_value, current_max, old_div(abs(current_value), 20)):
 
                         custom_warnings.warn("The current value of parameter %s is very close to "
                                              "its upper bound when starting the fit. Fixing it" % par.name)
@@ -625,15 +631,19 @@ class Minimizer(object):
         values = collections.OrderedDict()
         errors = collections.OrderedDict()
 
+        # to become compatible with python3
+        keys_list = list(self.parameters.keys())
+        parameters_list = list(self.parameters.values())
+        
         for i in range(self.Npar):
 
-            name = self.parameters.keys()[i]
+            name = keys_list[i]
 
             value = best_fit_values[i]
 
             # Set the parameter to the best fit value (sometimes the optimization happen in a different thread/node,
             # so we need to make sure that the parameter has the best fit value)
-            self.parameters.values()[i]._set_internal_value(value)
+            parameters_list[i]._set_internal_value(value)
 
             if covariance_matrix is not None:
 
@@ -679,7 +689,7 @@ class Minimizer(object):
 
                     if variance_i * variance_j > 0:
 
-                        self._correlation_matrix[i,j] = self._covariance_matrix[i,j] / (math.sqrt(variance_i * variance_j))
+                        self._correlation_matrix[i,j] = old_div(self._covariance_matrix[i,j], (math.sqrt(variance_i * variance_j)))
 
                     else:
 
@@ -711,7 +721,7 @@ class Minimizer(object):
 
         best_fit_values = self._fit_results['value'].values
 
-        for parameter_name, best_fit_value in zip(self.parameters.keys(), best_fit_values):
+        for parameter_name, best_fit_value in zip(list(self.parameters.keys()), best_fit_values):
 
             self.parameters[parameter_name]._set_internal_value(best_fit_value)
 
@@ -732,8 +742,8 @@ class Minimizer(object):
         :return: the covariance matrix
         """
 
-        minima = map(lambda parameter:parameter._get_internal_min_value(), self.parameters.values())
-        maxima = map(lambda parameter: parameter._get_internal_max_value(), self.parameters.values())
+        minima = [parameter._get_internal_min_value() for parameter in list(self.parameters.values())]
+        maxima = [parameter._get_internal_max_value() for parameter in list(self.parameters.values())]
 
         # Check whether some of the minima or of the maxima are None. If they are, set them
         # to a value 1000 times smaller or larger respectively than the best fit.
@@ -899,7 +909,7 @@ class Minimizer(object):
                                          "computation." % (this_log_like, parameter_name, trial),
                                          BetterMinimumDuringProfiling)
 
-                    xs = map(lambda x:x.value, self.parameters.values())
+                    xs = [x.value for x in list(self.parameters.values())]
 
                     self._store_fit_results(xs, this_log_like, None)
 
@@ -1087,7 +1097,7 @@ class Minimizer(object):
             p1log = False
             p2log = False
 
-            if 'log' in options.keys():
+            if 'log' in list(options.keys()):
 
                 assert len(options['log']) == n_dimensions, ("When specifying the 'log' option you have to provide a " +
                                                              "boolean for each dimension you are stepping on.")

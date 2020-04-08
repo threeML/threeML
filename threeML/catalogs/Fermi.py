@@ -1,6 +1,10 @@
+from __future__ import division
+from builtins import str
+from builtins import map
+from past.utils import old_div
 import numpy
 import re
-from VirtualObservatoryCatalog import VirtualObservatoryCatalog
+from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
@@ -99,10 +103,10 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         # Loop over the table and build a source for each entry
         sources = {}
 
-        for name, row in self._last_query_results.T.iteritems():
+        for name, row in self._last_query_results.T.items():
             # First we want to get the the detectors used in the SCAT file
 
-            idx = np.array(map(int, row['scat_detector_mask']), dtype=bool)
+            idx = np.array(list(map(int, row['scat_detector_mask'])), dtype=bool)
             detector_selection = self._gbm_detector_lookup[idx]
 
 
@@ -181,17 +185,19 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         available_intervals = {'fluence': 'flnc', 'peak': 'pflx'}
 
-        assert interval in available_intervals.keys(), 'interval not recognized. choices are %s' % (
-            ' ,'.join(available_intervals.keys()))
+        assert interval in list(available_intervals.keys()), 'interval not recognized. choices are %s' % (
+            ' ,'.join(list(available_intervals.keys())))
 
         sources = {}
         lh_model = None
 
-        for name, row in self._last_query_results.T.iteritems():
+        for name, row in self._last_query_results.T.items():
 
             ra = row['ra']
             dec = row['dec']
 
+            #name = str(name, 'utf-8')
+            
             # get the proper 3ML model
 
             if model == 'band':
@@ -303,7 +309,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
         amp = row[primary_string + 'ampl']
 
         # need to correct epeak to e cut
-        ecut = epeak / (2 - index)
+        ecut = old_div(epeak, (2 - index))
 
         cpl = Cutoff_powerlaw()
 
@@ -549,7 +555,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         this_spectrum.K   = conv * float(catalog_entry['plec_flux_density']) / (u.cm ** 2 * u.s * u.MeV)
         this_spectrum.K.fix = fix
         this_spectrum.K.bounds = (this_spectrum.K.value / 1000.0, this_spectrum.K.value * 1000)
-        this_spectrum.xc = a ** (-1./b) * u.MeV
+        this_spectrum.xc = a ** (old_div(-1.,b)) * u.MeV
         this_spectrum.xc.fix = fix
 
     else:
@@ -650,14 +656,14 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         def translate(key):
             if (key.lower() == 'psr'):
                 return threefgl_types[key]
-            if key.lower() in threefgl_types.keys():
+            if key.lower() in list(threefgl_types.keys()):
                 return threefgl_types[key.lower()]            
             return 'unknown'
 
         # Translate the 3 letter code to a more informative category, according
         # to the dictionary above
 
-        table['source_type'] = numpy.array(map(translate, table['source_type']))
+        table['source_type'] = numpy.array(list(map(translate, table['source_type'])))
 
         try:
 
@@ -691,7 +697,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         # Loop over the table and build a source for each entry
         sources = []
         source_names=[]
-        for name, row in self._last_query_results.T.iteritems():
+        for name, row in self._last_query_results.T.items():
             if name[-1] == 'e':
                 # Extended source
                 custom_warnings.warn("Source %s is extended, support for extended source is not here yet. I will ignore"

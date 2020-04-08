@@ -1,3 +1,4 @@
+from builtins import object
 import collections
 import numpy as np
 
@@ -36,7 +37,7 @@ class GoodnessOfFit(object):
 
         new_datas = []
 
-        for dataset in self._jl_instance.data_list.values():
+        for dataset in list(self._jl_instance.data_list.values()):
 
             new_data = dataset.get_simulated_dataset("%s_sim" % dataset.name)
 
@@ -86,7 +87,7 @@ class GoodnessOfFit(object):
 
         gof['total'] = np.sum(idx) / float(n_iterations)
 
-        for dataset in self._jl_instance.data_list.values():
+        for dataset in list(self._jl_instance.data_list.values()):
 
             sim_name = "%s_sim" % dataset.name
 

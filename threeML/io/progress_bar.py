@@ -1,5 +1,10 @@
 from __future__ import print_function
+from __future__ import division
 
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import sys, time
 import datetime
 from threeML.io.detect_notebook import is_inside_notebook
@@ -244,8 +249,8 @@ class ProgressBarBase(object):
 
         if self._scale != 1:
 
-            label_text = '%.2f / %.2f %s in %.1f s (%s remaining)' % (elapsed_iter / self._scale,
-                                                                      self._iterations / self._scale, self._units,
+            label_text = '%.2f / %.2f %s in %.1f s (%s remaining)' % (old_div(elapsed_iter, self._scale),
+                                                                      old_div(self._iterations, self._scale), self._units,
                                                                       delta_t,
                                                                       self._check_remaining_time(current_iteration,
                                                                                                  delta_t))

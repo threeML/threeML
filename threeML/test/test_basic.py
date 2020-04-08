@@ -1,7 +1,7 @@
 from threeML import *
 
 
-def test_basic_analsis_results(fitted_joint_likelihood_bn090217206_nai):
+def test_basic_analysis_results(fitted_joint_likelihood_bn090217206_nai):
 
     jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
 

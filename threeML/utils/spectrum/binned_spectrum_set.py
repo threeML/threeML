@@ -1,3 +1,4 @@
+from builtins import object
 import numpy as np
 
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum
