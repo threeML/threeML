@@ -82,7 +82,7 @@ setup(
         "threeML/plugins/experimental",
     ],
     cmdclass=versioneer.get_cmdclass(),
-v    version=versioneer.get_version(),
+    version=versioneer.get_version(),
     license="BSD-3",
     keywords=[
         "Likelihood",
