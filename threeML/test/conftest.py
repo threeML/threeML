@@ -62,7 +62,7 @@ def get_test_datasets_directory():
     return os.path.abspath(os.path.join(get_path_of_data_dir(), "datasets"))
 
 
-def _get_dataset():
+def get_dataset():
 
     datadir = os.path.join(get_test_datasets_directory(), "bn090217206")
 
@@ -75,10 +75,10 @@ def _get_dataset():
     return NaI6
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def data_list_bn090217206_nai6():
 
-    NaI6 = _get_dataset()
+    NaI6 = get_dataset()
 
     data_list = DataList(NaI6)
 
@@ -98,45 +98,20 @@ def joint_likelihood_bn090217206_nai(data_list_bn090217206_nai6):
 
     return jl
 
+# No need to keep refitting, so we fit once (scope=session)
 @pytest.fixture(scope="function")
-def joint_likelihood_bn090217206_nai_multicomp(data_list_bn090217206_nai6):
-
-    composite = Powerlaw() + Blackbody()
-
-    model = get_grb_model(composite)
-
-    jl = JointLikelihood(model, data_list_bn090217206_nai6, verbose=False)
-
-    return jl
+def fitted_joint_likelihood_bn090217206_nai(joint_likelihood_bn090217206_nai):
 
 
-# No need to keep refitting, so we fit once (scope=session)
-@pytest.fixture(scope="session")
-def fitted_joint_likelihood_bn090217206_nai():
-
-    data_list = data_list_bn090217206_nai6()
-
-    jl = joint_likelihood_bn090217206_nai(data_list)
+    jl = joint_likelihood_bn090217206_nai
 
     fit_results, like_frame = jl.fit()
 
     return jl, fit_results, like_frame
 
 
-# No need to keep refitting, so we fit once (scope=session)
-@pytest.fixture(scope="session")
-def fitted_joint_likelihood_bn090217206_nai_multicomp():
 
-    data_list = data_list_bn090217206_nai6()
-
-    jl = joint_likelihood_bn090217206_nai_multicomp(data_list)
-
-    fit_results, like_frame = jl.fit()
-
-    return jl, fit_results, like_frame
-
-
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_nai):
 
     jl, _, _ = fitted_joint_likelihood_bn090217206_nai
@@ -155,6 +130,35 @@ def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_
     samples = bayes.sample(n_walkers=50, burn_in=50, n_samples=100, seed=1234)
 
     return bayes, samples
+
+
+
+
+@pytest.fixture(scope="session")
+def joint_likelihood_bn090217206_nai_multicomp(data_list_bn090217206_nai6):
+
+    composite = Powerlaw() + Blackbody()
+
+    model = get_grb_model(composite)
+
+    jl = JointLikelihood(model, data_list_bn090217206_nai6, verbose=False)
+
+    return jl
+
+
+
+
+# No need to keep refitting, so we fit once (scope=session)
+@pytest.fixture(scope="session")
+def fitted_joint_likelihood_bn090217206_nai_multicomp(joint_likelihood_bn090217206_nai_multicomp):
+
+    jl = joint_likelihood_bn090217206_nai_multicomp
+
+    fit_results, like_frame = jl.fit()
+
+    return jl, fit_results, like_frame
+
+
 
 
 @pytest.fixture(scope="session")

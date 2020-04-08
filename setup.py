@@ -117,7 +117,7 @@ setup(
     include_package_data=True,
 
     install_requires=[
-        'numpy>=1.6,<1.16',
+        'numpy>=1.6',
         'scipy>=0.18',
         'emcee>=3',
         'astropy>=1.3.3',
@@ -132,7 +132,7 @@ setup(
         'pandas',
         'requests',
         'speclite',
-        'pygmo>=2.4,<=2.11.4',
+        #'pygmo>=2.4',
         'ipython<=5.9',
         'ipyparallel',
         #'xz',
@@ -156,6 +156,7 @@ optional_dependencies = {'cthreeML': [False,'needed by HAWC plugin'],
                          'pymultinest': [False, 'provides the Multinest sampler for Bayesian analysis'],
                          'pyOpt': [False, 'provides more optimizers'],
                          'ROOT': [False, 'provides the ROOT optimizer'],
+                         'pygmo': [False, 'provides the PAGMO optimizers'],
                          'ipywidgets': [False, 'provides widget for jypyter (like the HTML progress bar)']}
 
 for dep_name in optional_dependencies:

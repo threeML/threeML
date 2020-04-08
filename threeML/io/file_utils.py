@@ -1,3 +1,4 @@
+from builtins import str
 import os
 from contextlib import contextmanager
 import tempfile

@@ -1,5 +1,5 @@
 from threeML import *
-from threeML.utils.cartesian import cartesian
+#from threeML.utils.cartesian import cartesian
 from threeML.utils.statistics.stats_tools import PoissonResiduals, Significance
 
 
@@ -60,5 +60,5 @@ def test_poisson_classes():
     res = sig.li_and_ma_equivalent_for_gaussian_background(1)
 
 
-def test_cartesian():
-    cart = cartesian(([1, 2, 3], [1, 2, 3]))
+# def test_cartesian():
+#     cart = cartesian(([1, 2, 3], [1, 2, 3]))

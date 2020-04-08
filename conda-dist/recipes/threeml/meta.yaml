@@ -11,7 +11,7 @@ source:
 build:
   script: python -m pip install --no-deps --ignore-installed .
   skip: true  # [win]
-  skip: true  # [py3k]
+
 
 requirements:
   
@@ -22,7 +22,8 @@ requirements:
     - python
     #- setuptools
     #- toolchain
-    - numpy>=1.6,<1.16
+    - numpy>=1.6,<1.16 # [py2k]
+    - numpy # [py3k]
     #- scipy >=0.18
     - emcee>=3
     #- astropy >=1.0.3
@@ -32,22 +33,26 @@ requirements:
     - dill
     - iminuit>=1.2
     - astromodels
-    - astroquery<0.4
+    - astroquery<0.4 # [py2k]
+    - astroquery # [py3k]
     - corner>=1.0.2
     #- pandas
     - requests
     - speclite
     - pymultinest
-    - pygmo>=2.4,<=2.11.4
+    - pygmo>=2.4,<=2.11.4 # [py2k]
+    - pygmo>=2.4 # [py3k]
     - ipywidgets
     #- ipython
     - ipyparallel
     - py
-    - tk==8.5.19
+    - tk==8.5.19 # [py2k]
+    - ipopt<3.13 # [py2k]
   
   run:
     - python
-    - numpy>=1.6,<1.16
+    - numpy>=1.6,<1.16 # [py2k]
+    - numpy # [py3k]
     - scipy>=0.18
     - emcee>=3
     - astropy>=1.0.3
@@ -57,20 +62,24 @@ requirements:
     - dill
     - iminuit>=1.2
     - astromodels
-    - astroquery<0.4
+    - astroquery<0.4 # [py2k]
+    - astroquery # [py3k]
     - corner>=1.0.2
-    - pandas
+    - pandas>=0.23
     - requests
     - speclite
     - pymultinest
-    - pygmo>=2.4,<=2.11.4
+    - pygmo>=2.4,<=2.11.4 # [py2k]
+    - pygmo>=2.4 # [py3k]
     - ipywidgets
     - ipython
     - ipyparallel
     - xz
     - py
-    - pytest<4
+    - pytest<4 # [py2k]
+    - pytest # [py3k]
     - numexpr
+    - ipopt<3.13 # [py2k]
 
 #test:
 #  # Python imports

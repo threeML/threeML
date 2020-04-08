@@ -1,3 +1,5 @@
+from __future__ import print_function
+from builtins import object
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import contextlib
@@ -13,7 +15,7 @@ def check_legal_plot_style_name(style_name):
 
     if style_name not in defined_styles:
 
-        raise NameError("Style '%s' is not known. Valid styles: %s" % (style_name, ",".join(defined_styles.keys())))
+        raise NameError("Style '%s' is not known. Valid styles: %s" % (style_name, ",".join(list(defined_styles.keys()))))
 
 
 class PlotStyle(object):
@@ -313,7 +315,7 @@ def _load_styles():
 
 
 def get_available_plotting_styles():
-    return defined_styles.keys()
+    return list(defined_styles.keys())
 
 # Load them on import
 defined_styles = _load_styles()

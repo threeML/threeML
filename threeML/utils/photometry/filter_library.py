@@ -1,9 +1,13 @@
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import pandas as pd
 import os
 import yaml
 import astropy.io.votable as votable
 import astropy.units as u
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import xml.etree.ElementTree as ET
 import re
 from collections import defaultdict
@@ -77,7 +81,7 @@ class FilterLibrary(object):
 
             print('Loading optical filters')
 
-            for observatory, value in self._library.iteritems():
+            for observatory, value in self._library.items():
 
                 # create a node for the observatory
                 this_node = ObservatoryNode(value)
@@ -88,7 +92,7 @@ class FilterLibrary(object):
 
                 # now get the instruments
 
-                for instrument, value2 in value.iteritems():
+                for instrument, value2 in value.items():
 
 
                     # update the instruments
@@ -149,7 +153,7 @@ def add_svo_filter_to_speclite(observatory, instrument, ffilter, update=False):
                                                    "%s-%s.ecsv"%(to_valid_python_name(instrument),
                                                                              to_valid_python_name(ffilter)))) or update:
 
-        url_response = urllib2.urlopen(
+        url_response = urllib.request.urlopen(
             'http://svo2.cab.inta-csic.es/svo/theory/fps/fps.php?PhotCalID=%s/%s.%s/AB' % (observatory,
                                                                                            instrument,
                                                                                            ffilter))
@@ -233,7 +237,7 @@ def download_SVO_filters(filter_dict, update = False):
 
     svo_url = 'http://svo2.cab.inta-csic.es/svo/theory/fps/fps.php?'
 
-    url_response = urllib2.urlopen(svo_url)
+    url_response = urllib.request.urlopen(svo_url)
 
     # the normal VO parser cannot read the XML table
     # so we manually do it to obtain all the instrument names
@@ -264,7 +268,7 @@ def download_SVO_filters(filter_dict, update = False):
 
             obs = 'TwoMASS'
 
-        url_response = urllib2.urlopen('http://svo2.cab.inta-csic.es/svo/theory/fps/fps.php?Facility=%s' % obs)
+        url_response = urllib.request.urlopen('http://svo2.cab.inta-csic.es/svo/theory/fps/fps.php?Facility=%s' % obs)
 
         try:
 
@@ -314,7 +318,7 @@ def download_grond(filter_dict):
 
     grond_filter_url = "http://www.mpe.mpg.de/~jcg/GROND/GROND_filtercurves.txt"
 
-    url_response = urllib2.urlopen(grond_filter_url)
+    url_response = urllib.request.urlopen(grond_filter_url)
 
     grond_table  = pd.read_table(url_response)
 

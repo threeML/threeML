@@ -1,3 +1,6 @@
+from builtins import map
+from builtins import zip
+from builtins import object
 __author__ = "grburgess"
 
 import itertools
@@ -103,7 +106,7 @@ class GenericFittedSourceHandler(object):
 
         # because we might be using composite functions,
         # we have to keep track of parameter names in a non-elegant way
-        for par,name in zip(self._parameters.values(), self._parameter_names):
+        for par,name in zip(list(self._parameters.values()), self._parameter_names):
 
             if par.free:
 

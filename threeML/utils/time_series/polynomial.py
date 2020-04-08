@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import zip
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import numpy as np
 import scipy.optimize as opt
 import warnings
@@ -23,7 +28,7 @@ class Polynomial(object):
         self._coefficients = coefficients
         self._degree = len(coefficients) - 1
 
-        self._i_plus_1 = np.array(range(1, self._degree + 1 + 1), dtype=float)
+        self._i_plus_1 = np.array(list(range(1, self._degree + 1 + 1)), dtype=float)
 
         self._cov_matrix = np.zeros((self._degree + 1, self._degree + 1))
 
@@ -34,7 +39,7 @@ class Polynomial(object):
 
             integral_coeff = [0]
 
-            integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+            integral_coeff.extend([self._coefficients[i - 1] / float(i) for i in range(1, self._degree + 1 + 1)])
 
             self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
 
@@ -80,7 +85,7 @@ class Polynomial(object):
 
         integral_coeff = [0]
 
-        integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+        integral_coeff.extend([self._coefficients[i - 1] / float(i) for i in range(1, self._degree + 1 + 1)])
 
         self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
 
@@ -196,7 +201,7 @@ class PolyLogLikelihood(object):
 
         if tink_mask.sum() > 0:
             logM = np.zeros(len(M))
-            logM[tink_mask] = np.abs(M[tink_mask]) / tiny + np.log(tiny) - 1
+            logM[tink_mask] = old_div(np.abs(M[tink_mask]), tiny) + np.log(tiny) - 1
             logM[non_tiny_mask] = np.log(M[non_tiny_mask])
 
         else:
@@ -445,7 +450,7 @@ def polyfit(x, y, grade, exposure):
         # Reset the initialGuess to reasonable value
         initial_guess[0] = np.mean(y)
         meanx = np.mean(x)
-        initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
+        initial_guess = [old_div(abs(i[1]), pow(meanx, i[0])) for i in enumerate(initial_guess)]
 
     # Improve the solution using a logLikelihood statistic (Cash statistic)
     log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)

@@ -1,5 +1,8 @@
+from __future__ import division
+from __future__ import print_function
 # NOTE: XSpec must be loaded before any other plugin/package from threeML because otherwise it could
 # complain about conflicting CFITSIO libraries
+from past.utils import old_div
 import os
 
 if os.environ.get("HEADAS") is not None:
@@ -91,7 +94,7 @@ def test_OGIP_response_against_xspec():
         powerlaw_integral.K._transformation = None
         powerlaw_integral.K.bounds = (None, None)
         powerlaw_integral.index = powerlaw.index.value + 1
-        powerlaw_integral.K = powerlaw.K.value / (powerlaw.index.value + 1)
+        powerlaw_integral.K = old_div(powerlaw.K.value, (powerlaw.index.value + 1))
 
         powerlaw_integral.display()
 
@@ -201,7 +204,7 @@ def test_response_against_xspec():
         powerlaw_integral.K._transformation = None
         powerlaw_integral.K.bounds = (None, None)
         powerlaw_integral.index = powerlaw.index.value + 1
-        powerlaw_integral.K = powerlaw.K.value / (powerlaw.index.value + 1)
+        powerlaw_integral.K = old_div(powerlaw.K.value, (powerlaw.index.value + 1))
 
         integral_function = lambda e1, e2: powerlaw_integral(e2) - powerlaw_integral(e1)
 

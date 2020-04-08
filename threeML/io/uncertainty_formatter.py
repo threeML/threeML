@@ -1,3 +1,5 @@
+from __future__ import division
+from past.utils import old_div
 import uncertainties
 import re
 import numpy as np
@@ -73,9 +75,9 @@ def uncertainty_formatter(value, low_bound, hi_bound):
 
     order_of_magnitude = max([_order_of_magnitude(value), _order_of_magnitude(error_m), _order_of_magnitude(error_p)])
 
-    scaled_value = value / order_of_magnitude
-    scaled_error_m = error_m / order_of_magnitude
-    scaled_error_p = error_p / order_of_magnitude
+    scaled_value = old_div(value, order_of_magnitude)
+    scaled_error_m = old_div(error_m, order_of_magnitude)
+    scaled_error_p = old_div(error_p, order_of_magnitude)
 
     # Get the uncertainties instance of the scaled values/errors
 

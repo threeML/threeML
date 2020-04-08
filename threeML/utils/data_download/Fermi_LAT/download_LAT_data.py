@@ -1,8 +1,12 @@
-import HTMLParser
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+import html.parser
 import re
 import socket
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import os
 import glob
 
@@ -18,14 +22,14 @@ from threeML.io.download_from_http import ApacheDirectory
 socket.setdefaulttimeout(120)
 
 
-class DivParser(HTMLParser.HTMLParser):
+class DivParser(html.parser.HTMLParser):
     """
     Extract data from a <div></div> tag
     """
 
     def __init__(self, desiredDivName):
 
-        HTMLParser.HTMLParser.__init__(self)
+        html.parser.HTMLParser.__init__(self)
 
         self.recording = 0
         self.data = []
@@ -204,7 +208,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     # POST encoding
 
-    postData = urllib.urlencode(query_parameters)
+    postData = urllib.parse.urlencode(query_parameters).encode('utf-8')
     temporaryFileName = "__temp_query_result.html"
 
     # Remove temp file if present
@@ -219,18 +223,20 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     # This is to avoid caching
 
-    urllib.urlcleanup()
+    urllib.request.urlcleanup()
 
     # Get the form compiled
     try:
-        urllib.urlretrieve(url,
+        urllib.request.urlretrieve(url,
                            temporaryFileName,
                            lambda x, y, z: 0, postData)
     except socket.timeout:
 
         raise RuntimeError("Time out when connecting to the server. Check your internet connection, or that the "
                            "form at %s is accessible, then retry" % url)
-    except:
+    except Exception as e:
+
+        print(e)
 
         raise RuntimeError("Problems with the download. Check your internet connection, or that the "
                            "form at %s is accessible, then retry" % url)
@@ -243,7 +249,8 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         for line in htmlFile:
 
-            lines.append(line.encode('utf-8'))
+            #lines.append(line.encode('utf-8'))
+            lines.append(line)
 
         html = " ".join(lines).strip()
 
@@ -264,7 +271,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
         # Get line containing the time estimation
 
         estimatedTimeLine = \
-            filter(lambda x: x.find("The estimated time for your query to complete is") == 0, parser.data)[0]
+            [x for x in parser.data if x.find("The estimated time for your query to complete is") == 0][0]
 
         # Get the time estimate
 
@@ -280,7 +287,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         print("\nEstimated complete time for your query: %s seconds" % estimatedTimeForTheQuery)
 
-    http_address = filter(lambda x: x.find("https://fermi.gsfc.nasa.gov") >= 0, parser.data)[0]
+    http_address = [x for x in parser.data if x.find("https://fermi.gsfc.nasa.gov") >= 0][0]
 
     print("\nIf this download fails, you can find your data at %s (when ready)\n" % http_address)
 
@@ -304,18 +311,20 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
         try:
 
-            _ = urllib.urlretrieve(http_address, fakeName, )
+            _ = urllib.request.urlretrieve(http_address, fakeName, )
 
         except socket.timeout:
 
-            urllib.urlcleanup()
+            urllib.request.urlcleanup()
 
             raise RuntimeError("Time out when connecting to the server. Check your internet connection, or that "
                                "you can access %s, then retry" % threeML_config['LAT']['query form'])
 
-        except:
+        except Exception as e:
 
-            urllib.urlcleanup()
+            print(e)
+            
+            urllib.request.urlcleanup()
 
             raise RuntimeError("Problems with the download. Check your connection or that you can access "
                                "%s, then retry." % threeML_config['LAT']['query form'])
@@ -343,7 +352,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
             os.remove(fakeName)
 
-            urllib.urlcleanup()
+            urllib.request.urlcleanup()
             time.sleep(refreshTime)
 
             # Continue to next iteration
@@ -352,7 +361,7 @@ def download_LAT_data(ra, dec, radius, tstart, tstop, time_type, data_type='Phot
 
     if links != None:
 
-        filenames = map(lambda x: x.split('/')[-1], links)
+        filenames = [x.split('/')[-1] for x in links]
 
         print("\nDownloading FT1 and FT2 files...")
 

@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import zip
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import numpy as np
 from sherpa.astro import datastack
 from sherpa.models import TableModel
@@ -7,7 +12,7 @@ import matplotlib.pyplot as plt
 __instrument_name = "All OGIP compliant instruments"
 
 
-class Likelihood2SherpaTableModel():
+class Likelihood2SherpaTableModel(object):
     """Creates from a 3ML Likelihhod model a table model that can be used in sherpa.
     It should be used to convert a threeML.models.LikelihoodModel
     into a sherpa.models.TableModel such that values are evaluated
@@ -138,7 +143,7 @@ class SherpaLike(PluginPrototype):
         Not implemented yet.
         """
         # TODO implement nuisance parameters
-        return self.nuisanceParameters.keys()
+        return list(self.nuisanceParameters.keys())
 
     def inner_fit(self):
         """Inner fit. Just a hack to get it to work now.
@@ -176,8 +181,8 @@ class SherpaLike(PluginPrototype):
         axarr[0].plot(energies, bkg, label='background')
         axarr[0].plot(energies, tot, label='total model')
         leg = axarr[0].legend()
-        axarr[1].errorbar(energies[counts > 0], ((counts - tot) / tot)[counts > 0],
-                          xerr=np.zeros(len(energies[counts > 0])), yerr=(np.sqrt(counts) / tot)[counts > 0], fmt='ko',
+        axarr[1].errorbar(energies[counts > 0], (old_div((counts - tot), tot))[counts > 0],
+                          xerr=np.zeros(len(energies[counts > 0])), yerr=(old_div(np.sqrt(counts), tot))[counts > 0], fmt='ko',
                           capsize=0)
         axarr[1].plot(energies, np.zeros(len(energies)), color='k', linestyle='--')
         axarr[0].set_xscale('log')

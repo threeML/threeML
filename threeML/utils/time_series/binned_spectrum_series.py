@@ -1,3 +1,8 @@
+from __future__ import print_function
+from __future__ import division
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 import numpy as np
 
 from threeML.config.config import threeML_config
@@ -95,7 +100,7 @@ class BinnedSpectrumSeries(TimeSeries):
                 for poly in self.polynomials:
                     tmpbkg += poly.integral(tb.start_time, tb.stop_time)
 
-                bkg.append(tmpbkg / width[j])
+                bkg.append(old_div(tmpbkg, width[j]))
 
         else:
 
