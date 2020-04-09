@@ -2,6 +2,8 @@ from threeML import BayesianAnalysis, Uniform_prior, Log_uniform_prior
 import numpy as np
 import pytest
 
+_
+
 
 def remove_priors(model):
 
@@ -30,54 +32,66 @@ def check_results(fit_results):
 
 
 
-def test_bayes_constructor(fitted_joint_likelihood_bn090217206_nai):
+def test_bayes_constructor(bayes_fitter):
 
-    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
-    datalist = jl.data_list
-    model = jl.likelihood_model
-
-    jl.restore_best_fit()
-
-    # Priors might have been set by other tests, let's make sure they are
-    # removed so we can test the error
-    remove_priors(model)
-    with pytest.raises(RuntimeError):
-
-        _ = BayesianAnalysis(model, datalist)
-
-    set_priors(model)
-
-    bayes = BayesianAnalysis(model, datalist)
-
-
-def test_emcee():
+    assert bayes_fitter.sampler is None
+    assert bayes_fitter.results is None
+    assert bayes_fitter.samples is None
+    assert bayes_fitter.log_like_values is None
+    assert bayes_fitter.log_probability_values is None
+    
+def test_emcee(bayes_fitter):
 
     # This has been already tested in the fixtures (see conftest.py)
 
-    pass
+    
 
 
-def test_multinest(completed_bn090217206_bayesian_analysis):
+def test_multinest(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
     bayes, _ = completed_bn090217206_bayesian_analysis
 
-    bayes.sample_multinest(n_live_points=400)
+    bayes.set_sampler('multinest')
+    
+    bayes.sampler.setup(n_live_points=400)
 
+    bayes.sample()
+    
     res = bayes.results.get_data_frame()
 
     check_results(res)
 
-# def test_parallel_temp():
-#
-#     powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-#     powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
-#
-#     bayes = BayesianAnalysis(model, data_list)
-#
-#     # test parallel temp
-#     bayes.sample_parallel_tempering(n_temps=2, n_walkers=10, burn_in=2, n_samples=500, quiet=False)
-#
-#
+def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
+
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler('ultranest')
+    
+    bayes.sampler.setup()
+
+    bayes.sample()
+    
+    res = bayes.results.get_data_frame()
+
+    check_results(res)
+
+
+
+    
+def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
+
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler('zeus')
+    
+    bayes.sampler.setup(n_interations=200,n_walkers=20)
+
+    bayes.sample()
+    
+    res = bayes.results.get_data_frame()
+
+    check_results(res)
+
 
 def test_bayes_plots(completed_bn090217206_bayesian_analysis):
 

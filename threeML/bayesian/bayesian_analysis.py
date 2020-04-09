@@ -1,67 +1,21 @@
 from __future__ import print_function
 from __future__ import division
-from builtins import range
 from builtins import object
-from past.utils import old_div
-import emcee
-import emcee.utils
-
-
-try:
-
-    import chainconsumer
-
-except:
-
-    has_chainconsumer = False
-
-else:
-
-    has_chainconsumer = True
-
-try:
-
-    # see if we have mpi and/or are using parallel
-
-    from mpi4py import MPI
-    if MPI.COMM_WORLD.Get_size() > 1: # need parallel capabilities
-        using_mpi = True
-
-        comm = MPI.COMM_WORLD
-        rank = comm.Get_rank()
-
-    else:
-
-        using_mpi = False
-except:
-
-    using_mpi = False
-
-
-
-
-
-
 
 
 import numpy as np
-import collections
-import math
-import os
-import time
 
-import matplotlib.pyplot as plt
-
-from threeML.parallel.parallel_client import ParallelClient
-from threeML.config.config import threeML_config
-from threeML.io.progress_bar import progress_bar
-from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
-from threeML.analysis_results import BayesianResults
-from threeML.utils.statistics.stats_tools import aic, bic, dic
-from threeML.bayesian.sampler import Sampler
+from threeML.bayesian.multinest_sampler import MultiNestSampler
+from threeML.bayesian.zeus_sampler import ZeusSampler
+from threeML.bayesian.emcee_sampler import EmceeSampler
+from threeML.bayesian.ultranest_sampler import UltraNestSampler
 
 
-from astromodels import ModelAssertionViolation, use_astromodels_memoization
+_available_samplers = {}
+_available_samplers["multinest"] = MultiNestSampler
+_available_samplers["zeus"] = ZeusSampler
+_available_samplers["ultranest"] = UltraNestSampler
+_available_samplers["emcee"] = EmceeSampler
 
 
 class BayesianAnalysis(object):
@@ -77,11 +31,9 @@ class BayesianAnalysis(object):
 
         self._analysis_type = "bayesian"
 
-
-
         self._likelihood_model = likelihood_model
         self._data_list = data_list
-        
+
         # # Make sure that the current model is used in all data sets
         #
         # for dataset in self.data_list.values():
@@ -95,37 +47,33 @@ class BayesianAnalysis(object):
         self._log_like_values = None
         self._results = None
 
+        self._sampler = None
+
         # Get the initial list of free parameters, useful for debugging purposes
 
+    def set_sampler(self, sampler_name):
 
-    def set_sampler(self, sampler):
+        assert sampler_name in _available_samplers, (
+            "%s is not a valid sampler please choose from %s"
+            % (sampler_name, ",".join(list(_available_samplers.keys())))
+        )
 
-        assert isinstance(sampler, Sampler)
+        self._sampler = _available_samplers[sampler_name](
+            self._likelihood_model, self._data_list
+        )
 
-        self._sampler = sampler
-        self._sampler.register(self._likelihood_model, self._data_list)
-        
     @property
     def sampler(self):
 
         return self._sampler
 
-
-    def sample(self,quiet=False):
+    def sample(self, quiet=False):
         self._sampler.sample(quiet=quiet)
 
-        # attach everything locally
-        
-        self._results = self._sampler.sampler.results
-        self._samples = self._sampler.sampler.samples
-        self._raw_samples = self._sampler.sampler.raw_samples
-        self._log_like_values = self._sampler.sampler.log_like_values
-        self._results = self._sampler.sampler.results
-        
     @property
     def results(self):
 
-        return self._results
+        return self._sampler.results
 
     @property
     def analysis_type(self):
@@ -141,7 +89,7 @@ class BayesianAnalysis(object):
 
         :return: a vector of log. like values
         """
-        return self._log_like_values
+        return self._sampler.log_like_values
 
     @property
     def log_probability_values(self):
@@ -154,82 +102,17 @@ class BayesianAnalysis(object):
         :return: a vector of log probabilty values
         """
 
-        return self._log_probability_values
+        return self._sampler.log_probability_values
 
     @property
     def log_marginal_likelihood(self):
         """
-        Return the log marginal likelihood (evidence) if computed
+        Return the log marginal likelihood (evidence
+) if computed
         :return:
         """
 
-        return self._marginal_likelihood
-
-
-    def sample_parallel_tempering(self, n_temps, n_walkers, burn_in, n_samples, quiet=False):
-        """
-        Sample with parallel tempering
-
-        :param: n_temps
-        :param: n_walkers
-        :param: burn_in
-        :param: n_samples
-
-        :return: MCMC samples
-
-        """
-
-        free_parameters = self._likelihood_model.free_parameters
-
-        n_dim = len(list(free_parameters.keys()))
-
-        sampler = emcee.PTSampler(n_temps, n_walkers, n_dim, self._log_like, self._log_prior)
-
-        # Get one starting point for each temperature
-
-        p0 = np.empty((n_temps, n_walkers, n_dim))
-
-        for i in range(n_temps):
-            p0[i, :, :] = self._get_starting_points(n_walkers)
-
-        print("Running burn-in of %s samples...\n" % burn_in)
-
-        p, lnprob, lnlike = sample_with_progress("Burn-in", p0, sampler, burn_in)
-
-        # Reset sampler
-
-        sampler.reset()
-
-        print("\nSampling\n")
-
-        _ = sample_with_progress("Sampling", p, sampler, n_samples,
-                                 lnprob0=lnprob, lnlike0=lnlike)
-
-        self._sampler = sampler
-
-        # Now build the _samples dictionary
-
-        self._raw_samples = sampler.get_chain(flat=True).reshape(-1,
-            sampler.get_chain(flat=True).shape[-1])
-
-        self._log_probability_values = None
-
-        self._log_like_values = None
-
-        self._marginal_likelihood = None
-
-        self._build_samples_dictionary()
-
-        self._build_results()
-
-        # Display results
-        if not quiet:
-            self._results.display()
-
-        return self.samples
-
-
-
+        return self._sampler.marginal_likelihood
 
     @property
     def raw_samples(self):
@@ -240,7 +123,7 @@ class BayesianAnalysis(object):
         :return: the samples as returned by the sampler
         """
 
-        return self._raw_samples
+        return self._sampler.raw_samples
 
     @property
     def samples(self):
@@ -249,7 +132,7 @@ class BayesianAnalysis(object):
 
         :return: a dictionary with the samples from the posterior distribution for each parameter
         """
-        return self._samples
+        return self._sampler.samples
 
     @property
     def sampler(self):
@@ -260,7 +143,6 @@ class BayesianAnalysis(object):
 
         return self._sampler
 
-
     def plot_chains(self, thin=None):
         """
         Produce a plot of the series of samples for each parameter
@@ -269,7 +151,7 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        return self._results.plot_chains( thin )
+        return self._results.plot_chains(thin)
 
     @property
     def likelihood_model(self):
@@ -299,8 +181,7 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        return self._results.convergence_plots( n_samples_in_each_subset, n_subsets)
-        
+        return self._results.convergence_plots(n_samples_in_each_subset, n_subsets)
 
     def restore_median_fit(self):
         """
@@ -312,7 +193,6 @@ class BayesianAnalysis(object):
 
             mean_par = np.median(self._samples[parameter_name])
             parameter.value = mean_par
-
 
     @staticmethod
     def _calc_min_interval(x, alpha):
@@ -334,7 +214,7 @@ class BayesianAnalysis(object):
         interval_width = x[interval_idx_inc:] - x[:n_intervals]
 
         if len(interval_width) == 0:
-            raise ValueError('Too few elements for interval calculation')
+            raise ValueError("Too few elements for interval calculation")
 
         min_idx = np.argmin(interval_width)
         hdi_min = x[min_idx]

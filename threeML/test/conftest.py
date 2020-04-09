@@ -109,8 +109,41 @@ def fitted_joint_likelihood_bn090217206_nai(joint_likelihood_bn090217206_nai):
 
     return jl, fit_results, like_frame
 
+def set_priors(model):
+
+    powerlaw = model.bn090217206.spectrum.main.Powerlaw
+
+    powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+
+    def remove_priors(model):
+
+    for parameter in model:
+
+        parameter.prior = None
 
 
+@pytest.fixture(scope="function")
+def bayes_fitter(fitted_joint_likelihood_bn090217206_nai):
+    jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
+    datalist = jl.data_list
+    model = jl.likelihood_model
+
+    jl.restore_best_fit()
+
+    # Priors might have been set by other tests, let's make sure they are
+    # removed so we can test the error
+    remove_priors(model)
+    with pytest.raises(RuntimeError):
+
+        _ = BayesianAnalysis(model, datalist)
+
+    set_priors(model)
+
+    bayes = BayesianAnalysis(model, datalist)
+
+    return bayes
+    
 @pytest.fixture(scope="function")
 def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_nai):
 
@@ -131,7 +164,7 @@ def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_
 
     return bayes, samples
 
-
+2
 
 
 @pytest.fixture(scope="session")
@@ -181,9 +214,13 @@ def completed_bn090217206_bayesian_analysis_multicomp(fitted_joint_likelihood_bn
 
     bayes = BayesianAnalysis(model, data_list)
 
-    samples = bayes.sample(n_walkers=50, burn_in=50, n_samples=100, seed=1234)
+    bayes.set_sampler('emcee')
+    
+    bayes.sampler.setup(n_walkers=50, burn_in=50, n_samples=100, seed=1234)
+    
+    samples = bayes.sample()
 
-    return bayes, samples
+    return bayes, bayes.samples
 
 
 x = np.linspace(0, 10, 50)

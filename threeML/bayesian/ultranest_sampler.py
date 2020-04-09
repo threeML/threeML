@@ -151,10 +151,41 @@ class UltraNestSampler(UnitCubeSampler):
 
         if process_fit:
 
+            results = sampler.results
+
             self._sampler = sampler
 
-            self._raw_samples = self._sampler.results["samples"]
-            self._log_like_values = self._sampler.results["samples"][:, -1]
+            ws = results['weighted_samples']
+
+            weights = ws['w']
+
+            # Get the log. likelihood values from the chain
+
+            SQRTEPS = (float(np.finfo(np.float64).eps))**0.5
+            if abs(np.sum(weights) -
+                   1.) > SQRTEPS:  # same tol as in np.random.choice.
+                raise ValueError("weights do not sum to 1")
+
+            rstate = np.random
+
+            N = len(weights)
+
+            # make N subdivisions, and choose positions with a consistent random offset
+            positions = (rstate.random() + np.arange(N)) / N
+
+            idx = np.zeros(N, dtype=np.int)
+            cumulative_sum = np.cumsum(weights)
+            i, j = 0, 0
+            while i < N:
+                if positions[i] < cumulative_sum[j]:
+                    idx[i] = j
+                    i += 1
+                else:
+                    j += 1
+
+            self._log_like_values = ws['L'][idx]
+
+            self._raw_samples = ws['v'][idx]
 
             # now get the log probability
 
