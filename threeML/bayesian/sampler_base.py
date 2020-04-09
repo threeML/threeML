@@ -384,7 +384,7 @@ class UnitCubeSampler(SamplerBase):
 
         super(UnitCubeSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
-    def _construct_unitcube_posterior(self):
+    def _construct_unitcube_posterior(self, return_copy=False):
         """
 
         Here, we construct the prior and log. likelihood for multinest etc on the unit cube
@@ -393,7 +393,7 @@ class UnitCubeSampler(SamplerBase):
         # First update the free parameters (in case the user changed them after the construction of the class)
         self._update_free_parameters()
 
-        def loglike(trial_values, ndim, params):
+        def loglike(trial_values, ndim=None, params=None):
 
             # NOTE: the _log_like function DOES NOT assign trial_values to the parameters
 
@@ -417,27 +417,50 @@ class UnitCubeSampler(SamplerBase):
         # and should return the value in the bounds... not the
         # probability. Therefore, we must make some transforms
 
-        def prior(params, ndim, nparams):
+        if return_copy:
 
-            for i, (parameter_name, parameter) in enumerate(
-                self._free_parameters.items()
-            ):
+            def prior(cube):
+                params = cube.copy()
 
-                try:
+                for i, (parameter_name, parameter) in enumerate(
+                    self._free_parameters.items()
+                ):
 
-                    params[i] = parameter.prior.from_unit_cube(params[i])
+                    try:
 
-                except AttributeError:
+                        params[i] = parameter.prior.from_unit_cube(params[i])
 
-                    raise RuntimeError(
-                        "The prior you are trying to use for parameter %s is "
-                        "not compatible with sampling from a unitcube" % parameter_name
-                    )
+                    except AttributeError:
 
-        # Give a test run to the prior to check that it is working. If it crashes while multinest is going
-        # it will not stop multinest from running and generate thousands of exceptions (argh!)
-        n_dim = len(self._free_parameters)
+                        raise RuntimeError(
+                            "The prior you are trying to use for parameter %s is "
+                            "not compatible with sampling from a unitcube" % parameter_name
+                        )
+                return params
 
-        _ = prior([0.5] * n_dim, n_dim, [])
+        else:
+            def prior(params, ndim=None, nparams=None):
+
+                for i, (parameter_name, parameter) in enumerate(
+                    self._free_parameters.items()
+                ):
+
+                    try:
+
+                        params[i] = parameter.prior.from_unit_cube(params[i])
+
+                    except AttributeError:
+
+                        raise RuntimeError(
+                            "The prior you are trying to use for parameter %s is "
+                            "not compatible with sampling from a unitcube" % parameter_name
+                        )
+
+
+            # Give a test run to the prior to check that it is working. If it crashes while multinest is going
+            # it will not stop multinest from running and generate thousands of exceptions (argh!)
+            n_dim = len(self._free_parameters)
+
+            _ = prior([0.5] * n_dim, n_dim, [])
 
         return loglike, prior
