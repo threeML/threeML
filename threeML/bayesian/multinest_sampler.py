@@ -1,10 +1,11 @@
 import os
 import time
 
+import numpy as np
 import pymultinest
 
-from threeML.bayesian.sampler import UnitCubeSampler
-from threeML import threeML_config
+from threeML.bayesian.sampler_base import UnitCubeSampler
+from threeML.config.config import threeML_config
 
 
 try:
@@ -41,7 +42,7 @@ except:
 
 
 class MultiNestSampler(UnitCubeSampler):
-    def __init__(self, likelihood_model, data_list, **kwargs):
+    def __init__(self, likelihood_model=None, data_list=None, **kwargs):
 
         super(MultiNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
@@ -67,12 +68,15 @@ class MultiNestSampler(UnitCubeSampler):
         self._kwargs["n_live_points"] = n_live_points
         self._kwargs["outputfiles_basename"] = chain_name
         self._kwargs["importance_nested_sampling"] = importance_nested_sampling
-
+        self._kwargs["chain_name"] = chain_name
+        
         for k, v in kwargs.items():
 
             self._kwargs[k] = v
 
-    def sample(self):
+        self._is_setup = True
+            
+    def sample(self, quiet=False):
         """
         sample using the MultiNest numerical integration method
 
@@ -80,11 +84,20 @@ class MultiNestSampler(UnitCubeSampler):
         :rtype: 
 
         """
+        if not self._is_setup:
 
+            print("You forgot to setup the sampler!")
+            return 
+
+        
         assert (
             has_pymultinest
         ), "You don't have pymultinest installed, so you cannot run the Multinest sampler"
 
+
+        loud = not quiet
+
+        
         self._update_free_parameters()
 
         n_dim = len(list(self._free_parameters.keys()))
@@ -98,7 +111,7 @@ class MultiNestSampler(UnitCubeSampler):
         # the disk to write and if not,
         # create one
 
-        chain_name = self._kwargs["chain_name"]
+        chain_name = self._kwargs.pop("chain_name")
 
         mcmc_chains_out_dir = ""
         tmp = chain_name.split("/")
@@ -195,14 +208,13 @@ class MultiNestSampler(UnitCubeSampler):
 
             self._build_samples_dictionary()
 
-            self._marginal_likelihood = old_div(
-                multinest_analyzer.get_stats()["global evidence"], np.log(10.0)
-            )
+            self._marginal_likelihood = multinest_analyzer.get_stats()["global evidence"]/ np.log(10.0)
+            
 
             self._build_results()
 
             # Display results
-            if not self._quiet:
+            if loud:
                 self._results.display()
 
             # now get the marginal likelihood

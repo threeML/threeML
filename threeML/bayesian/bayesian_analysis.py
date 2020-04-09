@@ -58,32 +58,10 @@ from threeML.io.progress_bar import progress_bar
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
 from threeML.analysis_results import BayesianResults
 from threeML.utils.statistics.stats_tools import aic, bic, dic
+from threeML.bayesian.sampler import Sampler
+
 
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
-
-
-def sample_with_progress(title, p0, sampler, n_samples, **kwargs):
-    # Loop collecting n_samples samples
-
-    pos, prob, state = [None, None, None]
-
-    # This is only for producing the progress bar
-
-    with progress_bar(n_samples, title=title) as progress:
-        for i, result in enumerate(sampler.sample(p0, iterations=n_samples, **kwargs)):
-            # Show progress
-
-            progress.animate((i + 1))
-
-            # Get the vectors with the results
-
-            pos, prob, state = result
-
-    return pos, prob, state
-
-
-def sample_without_progress(p0, sampler, n_samples, title=None, **kwargs):
-    return sampler.run_mcmc(p0, n_samples, **kwargs)
 
 
 class BayesianAnalysis(object):
@@ -100,6 +78,10 @@ class BayesianAnalysis(object):
         self._analysis_type = "bayesian"
 
 
+
+        self._likelihood_model = likelihood_model
+        self._data_list = data_list
+        
         # # Make sure that the current model is used in all data sets
         #
         # for dataset in self.data_list.values():
@@ -117,6 +99,30 @@ class BayesianAnalysis(object):
 
         self._update_free_parameters()
 
+    def set_sampler(self, sampler):
+
+        assert isinstance(sampler, Sampler)
+
+        self._sampler = sampler
+        self._sampler.register(self._likelihood_model, self._data_list)
+        
+    @property
+    def sampler(self):
+
+        return self._sampler
+
+
+    def sample(self,quiet=False):
+        self._sampler.sample(quiet=quiet)
+
+        # attach everything locally
+        
+        self._results = self._sampler.sampler.results
+        self._samples = self._sampler.sampler.samples
+        self._raw_samples = self._sampler.sampler.raw_samples
+        self._log_like_values = self._sampler.sampler.log_like_values
+        self._results = self._sampler.sampler.results
+        
     @property
     def results(self):
 
@@ -160,98 +166,6 @@ class BayesianAnalysis(object):
 
         return self._marginal_likelihood
 
-    def sample(self, n_walkers, burn_in, n_samples, quiet=False, seed=None):
-        """
-        Sample the posterior with the Goodman & Weare's Affine Invariant Markov chain Monte Carlo
-        :param n_walkers:
-        :param burn_in:
-        :param n_samples:
-        :param quiet: if False, do not print results
-        :param seed: if provided, it is used to seed the random numbers generator before the MCMC
-
-        :return: MCMC samples
-
-        """
-
-        self._update_free_parameters()
-
-        n_dim = len(list(self._free_parameters.keys()))
-
-        # Get starting point
-
-        p0 = self._get_starting_points(n_walkers)
-
-        sampling_procedure = sample_with_progress
-
-        # Deactivate memoization in astromodels, which is useless in this case since we will never use twice the
-        # same set of parameters
-        with use_astromodels_memoization(False):
-
-            if threeML_config['parallel']['use-parallel']:
-
-                c = ParallelClient()
-                view = c[:]
-
-                sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                                self.get_posterior,
-                                                pool=view)
-
-                # Sampling with progress in parallel is super-slow, so let's
-                # use the non-interactive one
-                sampling_procedure = sample_without_progress
-
-            else:
-
-                sampler = emcee.EnsembleSampler(n_walkers, n_dim,
-                                                self.get_posterior)
-
-            # If a seed is provided, set the random number seed
-            if seed is not None:
-
-                sampler._random.seed(seed)
-
-            # Sample the burn-in
-            pos, prob, state = sampling_procedure(title="Burn-in", p0=p0, sampler=sampler, n_samples=burn_in)
-
-            # Reset sampler
-
-            sampler.reset()
-
-            # Run the true sampling
-
-            _ = sampling_procedure(title="Sampling", p0=pos, sampler=sampler, n_samples=n_samples, rstate0=state)
-
-        acc = np.mean(sampler.acceptance_fraction)
-
-        print("\nMean acceptance fraction: %s\n" % acc)
-
-        self._sampler = sampler
-        self._raw_samples = sampler.get_chain(flat=True)
-
-        # Compute the corresponding values of the likelihood
-
-        # First we need the prior
-        log_prior = [self._log_prior(x) for x in self._raw_samples]
-
-        # Now we get the log posterior and we remove the log prior
-
-        self._log_like_values = sampler.get_log_prob(flat=True) - log_prior
-
-        # we also want to store the log probability
-
-        self._log_probability_values = sampler.get_log_prob(flat=True)
-
-        self._marginal_likelihood = None
-
-        self._build_samples_dictionary()
-
-        self._build_results()
-
-        # Display results
-        if not quiet:
-            self._results.display()
-
-        return self.samples
 
     def sample_parallel_tempering(self, n_temps, n_walkers, burn_in, n_samples, quiet=False):
         """
@@ -400,112 +314,6 @@ class BayesianAnalysis(object):
             mean_par = np.median(self._samples[parameter_name])
             parameter.value = mean_par
 
-    def _update_free_parameters(self):
-        """
-        Update the dictionary of the current free parameters
-        :return:
-        """
-
-        self._free_parameters = self._likelihood_model.free_parameters
-
-    def get_posterior(self, trial_values):
-        """Compute the posterior for the normal sampler"""
-
-        # Assign this trial values to the parameters and
-        # store the corresponding values for the priors
-
-        # self._update_free_parameters()
-
-        assert len(self._free_parameters) == len(trial_values), ("Something is wrong. Number of free parameters "
-                                                                 "do not match the number of trial values.")
-
-        log_prior = 0
-
-        # with use_
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
-
-            prior_value = parameter.prior(trial_values[i])
-
-            if prior_value == 0:
-                # Outside allowed region of parameter space
-
-                return -np.inf
-
-            else:
-
-                parameter.value = trial_values[i]
-
-                log_prior += math.log10(prior_value)
-
-        log_like = self._log_like(trial_values)
-
-        # print("Log like is %s, log_prior is %s, for trial values %s" % (log_like, log_prior,trial_values))
-
-        return log_like + log_prior
-
-
-
-    def _log_prior(self, trial_values):
-        """Compute the sum of log-priors, used in the parallel tempering sampling"""
-
-        # Compute the sum of the log-priors
-
-        log_prior = 0
-
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
-
-            prior_value = parameter.prior(trial_values[i])
-
-            if prior_value == 0:
-                # Outside allowed region of parameter space
-
-                return -np.inf
-
-            else:
-
-                parameter.value = trial_values[i]
-
-                log_prior += math.log10(prior_value)
-
-        return log_prior
-
-    def _log_like(self, trial_values):
-        """Compute the log-likelihood"""
-
-        # Get the value of the log-likelihood for this parameters
-
-        try:
-
-            # Loop over each dataset and get the likelihood values for each set
-
-            log_like_values = [dataset.get_log_like() for dataset in list(self._data_list.values())]
-
-        except ModelAssertionViolation:
-
-            # Fit engine or sampler outside of allowed zone
-
-            return -np.inf
-
-        except:
-
-            # We don't want to catch more serious issues
-
-            raise
-
-        # Sum the values of the log-like
-
-        log_like = np.sum(log_like_values)
-
-        if not np.isfinite(log_like):
-            # Issue warning
-
-            custom_warnings.warn("Likelihood value is infinite for parameters %s" % trial_values,
-                                 LikelihoodIsInfinite)
-
-            return -np.inf
-
-        return log_like
 
     @staticmethod
     def _calc_min_interval(x, alpha):
@@ -541,26 +349,5 @@ class BayesianAnalysis(object):
         :param x: array containing MCMC samples
         :param alpha : Desired probability of type I error (defaults to 0.05)
         """
-
-        # Currently only 1D available.
-        # future addition will fix this
-
-        # Make a copy of trace
-        # x = x.copy()
-        # For multivariate node
-        # if x.ndim > 1:
-        # Transpose first, then sort
-        #    tx = np.transpose(x, list(range(x.ndim))[1:] + [0])
-        #    dims = np.shape(tx)
-        # Container list for intervals
-        #    intervals = np.resize(0.0, dims[:-1] + (2,))
-
-        #    sx = np.sort(tx[index])
-        # Append to list
-        #    intervals[index] = self._calc_min_interval(sx, alpha)
-        # Transpose back before returning
-        #    return np.array(intervals)
-        # else:
-        # Sort univariate node
         sx = np.sort(x)
         return np.array(self._calc_min_interval(sx, alpha))
