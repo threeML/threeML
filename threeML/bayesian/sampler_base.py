@@ -27,6 +27,22 @@ from threeML.utils.statistics.stats_tools import aic, bic, dic
 
 
 _available_samplers = {}
+_available_samplers["multinest"] = None
+
+
+class Sampler(object):
+    def __init__(self, sampler_name):
+
+        assert sampler_name in _available_samplers, (
+            "%s is not a valid sampler please choose from %s"
+            % (sampler_name, ",".join(list(_available_samplers.keys())))
+        )
+
+        self._sampler = _available_samplers[sampler_name]
+
+    @property
+    def sampler(self):
+        return self._sampler
 
 
 class SamplerBase(object, metaclass=abc.ABCMeta):
