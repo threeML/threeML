@@ -50,6 +50,7 @@ class MultiNestSampler(UnitCubeSampler):
         self,
         n_live_points,
         chain_name="chains/fit-",
+        resume=False,
         importance_nested_sampling=False,
         **kwargs
     ):
@@ -69,6 +70,7 @@ class MultiNestSampler(UnitCubeSampler):
         self._kwargs["outputfiles_basename"] = chain_name
         self._kwargs["importance_nested_sampling"] = importance_nested_sampling
         self._kwargs["chain_name"] = chain_name
+        self._kwargs["resume"] = resume
         
         for k, v in kwargs.items():
 

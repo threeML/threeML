@@ -97,7 +97,6 @@ class BayesianAnalysis(object):
 
         # Get the initial list of free parameters, useful for debugging purposes
 
-        self._update_free_parameters()
 
     def set_sampler(self, sampler):
 
