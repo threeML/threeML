@@ -32,26 +32,26 @@ class BayesianAnalysisWrap(BayesianAnalysis):
 
                 self.likelihood_model.test.spectrum.main.shape.stop_tracking()
 
-    def sample_multinest(self, *args, **kwargs):
+    # def sample_multinest(self, *args, **kwargs):
 
-        self.likelihood_model.test.spectrum.main.shape.reset_tracking()
-        self.likelihood_model.test.spectrum.main.shape.start_tracking()
+    #     self.likelihood_model.test.spectrum.main.shape.reset_tracking()
+    #     self.likelihood_model.test.spectrum.main.shape.start_tracking()
 
-        kwargs['resume'] = False
+    #     kwargs['resume'] = False
 
-        with use_astromodels_memoization(False):
+    #     with use_astromodels_memoization(False):
 
-            try:
+    #         try:
 
-                super(BayesianAnalysisWrap, self).sample_multinest(*args, **kwargs)
+    #             super(BayesianAnalysisWrap, self).sample_multinest(*args, **kwargs)
 
-            except:
+    #         except:
 
-                raise
+    #             raise
 
-            finally:
+    #         finally:
 
-                self.likelihood_model.test.spectrum.main.shape.stop_tracking()
+    #             self.likelihood_model.test.spectrum.main.shape.stop_tracking()
 
 
 def get_bayesian_analysis_object_simple_likelihood():
@@ -119,7 +119,7 @@ def array_to_cmap(values, cmap, use_log=False):
 
     cmap = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
 
-    rgb_colors = list(map(cmap.to_rgba, values))
+    rgb_colors = [cmap.to_rgba(v) for v in values]
 
     return rgb_colors
 
@@ -143,7 +143,7 @@ def plot_likelihood_function(bayes, fig=None, show_prior = False):
 
     for mu in mus:
         bayes.likelihood_model.test.spectrum.main.shape.mu.value = mu
-        log_like.append(-bayes._log_like(mu))
+        log_like.append(-bayes.sampler._log_like(mu))
 
     _ = sub.plot(mus, log_like, 'k--',alpha=.8)
 
@@ -153,7 +153,7 @@ def plot_likelihood_function(bayes, fig=None, show_prior = False):
 
         for mu in mus:
 
-            prior.append(-bayes._log_prior([mu]))
+            prior.append(-bayes.sampler._log_prior([mu]))
 
         _ = sub.plot(mus, prior, 'r')
 
@@ -188,8 +188,9 @@ def plot_sample_path(bayes,burn_in=None, truth=None):
     colors = array_to_cmap(time, 'viridis')
 
     for i, (qx, qy) in enumerate(zip(qx_, qy_)):
-        ax.scatter(qx, qy, c=colors[i], s=17, alpha=.4)
-        ax1.scatter(time[i], qx, color=colors[i], s=10)
+        ax.scatter(qx, qy, c=np.atleast_2d(colors[i]), s=17, alpha=.4)
+
+        ax1.scatter(time[i], qx, c=np.atleast_2d(colors[i]), s=10)
 
 
     if truth is not None:
