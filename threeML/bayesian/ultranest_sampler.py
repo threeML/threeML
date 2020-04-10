@@ -49,13 +49,15 @@ class UltraNestSampler(UnitCubeSampler):
         
         super(UltraNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
-    def setup(self, min_num_live_points=400, dlogz=0.5, chain_name=None, **kwargs):
+    def setup(self, min_num_live_points=400, dlogz=0.5, chain_name=None, wrapped_params=None, **kwargs):
 
         self._kwargs = {}
         self._kwargs["min_num_live_points"] = min_num_live_points
         self._kwargs["dlogz"] = dlogz
         self._kwargs["chain_name"] = chain_name
 
+        self._wrapped_params = wrapped_params
+        
         for k, v in kwargs.items():
 
             self._kwargs[k] = v
@@ -136,6 +138,7 @@ class UltraNestSampler(UnitCubeSampler):
                 transform=ultranest_prior,
                 log_dir=chain_name,
                 vectorized=False,
+                wrapped_params=self._wrapped_params
             )
 
             sampler.run(show_status=loud, **self._kwargs)
