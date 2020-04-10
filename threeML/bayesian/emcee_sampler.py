@@ -52,7 +52,7 @@ class EmceeSampler(MCMCSampler):
 
         # Get starting point
 
-        p0 = self._get_starting_points(self._n_walkers)
+        p0 = emcee.State(self._get_starting_points(self._n_walkers))
 
         # Deactivate memoization in astromodels, which is useless in this case since we will never use twice the
         # same set of parameters
@@ -84,13 +84,16 @@ class EmceeSampler(MCMCSampler):
             )
 
             # Reset sampler
+            
 
             sampler.reset()
 
+            state = emcee.State(pos, prob, random_state=state)
+            
             # Run the true sampling
 
             _ = sampler.run_mcmc(
-                initial_state=pos, nsteps=self._n_iterations, rstate0=state, progress=loud
+                initial_state=state, nsteps=self._n_iterations, progress=loud
             )
 
         acc = np.mean(sampler.acceptance_fraction)
