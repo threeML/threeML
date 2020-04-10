@@ -1,10 +1,24 @@
 import os
 import time
 import numpy as np
-import ultranest
+
 
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
+
+
+try:
+
+    import ultranest
+
+except:
+
+    has_ultranest = False
+
+else:
+
+    has_ultranest = True
+
 
 
 try:
@@ -28,8 +42,11 @@ except:
 
 
 class UltraNestSampler(UnitCubeSampler):
+
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
 
+        assert has_ultranest, "You must install UltraNest to use this sampler"
+        
         super(UltraNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(self, min_num_live_points=400, dlogz=0.5, chain_name=None, **kwargs):

@@ -85,36 +85,36 @@ def test_multinest(bayes_fitter, completed_bn090217206_bayesian_analysis):
     check_results(res)
 
 
-def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
+# def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
-    bayes, _ = completed_bn090217206_bayesian_analysis
+#     bayes, _ = completed_bn090217206_bayesian_analysis
 
-    bayes.set_sampler("ultranest")
+#     bayes.set_sampler("ultranest")
 
-    bayes.sampler.setup()
+#     bayes.sampler.setup()
 
-    bayes.sample()
+#     bayes.sample()
 
-    res = bayes.results.get_data_frame()
+#     res = bayes.results.get_data_frame()
 
-    check_results(res)
+#     check_results(res)
 
 
-def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
+# def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
-    bayes, _ = completed_bn090217206_bayesian_analysis
+#     bayes, _ = completed_bn090217206_bayesian_analysis
 
-    bayes.set_sampler("zeus")
+#     bayes.set_sampler("zeus")
 
-    bayes.sampler.setup(n_iterations=200, n_walkers=20)
+#     bayes.sampler.setup(n_iterations=200, n_walkers=20)
 
-    bayes.sample()
+#     bayes.sample()
 
-    res = bayes.results.get_data_frame()
+#     res = bayes.results.get_data_frame()
 
-    bayes.restore_median_fit()
+#     bayes.restore_median_fit()
 
-    check_results(res)
+#     check_results(res)
 
 
 def test_bayes_plots(completed_bn090217206_bayesian_analysis):

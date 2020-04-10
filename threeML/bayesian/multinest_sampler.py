@@ -44,6 +44,8 @@ except:
 class MultiNestSampler(UnitCubeSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
 
+        assert has_pymultinest, "You must install MultiNest to use this sampler"
+        
         super(MultiNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(

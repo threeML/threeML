@@ -1,11 +1,25 @@
 import numpy as np
-import zeus
+
 
 from threeML.bayesian.sampler_base import MCMCSampler
 from threeML.config.config import threeML_config
 
 from threeML.parallel.parallel_client import ParallelClient
 from astromodels import use_astromodels_memoization
+
+
+try:
+
+    import zeus
+
+except:
+
+    has_zeus = False
+
+else:
+
+    has_zeus = True
+
 
 
 try:
@@ -33,6 +47,8 @@ except:
 class ZeusSampler(MCMCSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
 
+        assert has_zeus, "You must install zeus-mcmc to use this sampler"
+        
         super(ZeusSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(self, n_iterations, n_burn_in=None, n_walkers=20, seed=None):
