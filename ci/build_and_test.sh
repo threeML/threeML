@@ -83,7 +83,7 @@ conda config --add channels conda-forge/label/cf201901
 conda config --add channels conda-forge
 
 # Create test environment
-conda create --yes --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy krb5=1.14.6
+conda create --yes --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy krb5=1.14.6 ultranest
 
 if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 

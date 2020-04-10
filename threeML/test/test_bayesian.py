@@ -2,6 +2,33 @@ from threeML import BayesianAnalysis, Uniform_prior, Log_uniform_prior
 import numpy as np
 import pytest
 
+try:
+    import ultranest
+except:
+    has_ultranest = False
+else:
+    has_ultranest = True
+skip_if_ultranest_is_not_available = pytest.mark.skipif(not has_ultranest,
+    reason="No ultranest available")
+
+try:
+    import pymultinest
+except:
+    has_pymultinest = False
+else:
+    has_pymultinest = True
+skip_if_pymultinest_is_not_available = pytest.mark.skipif(not has_pymultinest,
+    reason="No pymultinest available")
+
+try:
+    import zeus
+except:
+    has_zeus = False
+else:
+    has_zeus = True
+skip_if_zeus_is_not_available = pytest.mark.skipif(not has_zeus,
+    reason="No zeus available")
+
 
 def remove_priors(model):
 
@@ -70,6 +97,7 @@ def test_emcee(bayes_fitter):
     # This has been already tested in the fixtures (see conftest.py)
 
 
+@skip_if_pymultinest_is_not_available
 def test_multinest(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
     bayes, _ = completed_bn090217206_bayesian_analysis
@@ -85,36 +113,38 @@ def test_multinest(bayes_fitter, completed_bn090217206_bayesian_analysis):
     check_results(res)
 
 
-# def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
+@skip_if_ultranest_is_not_available
+def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
-#     bayes, _ = completed_bn090217206_bayesian_analysis
+    bayes, _ = completed_bn090217206_bayesian_analysis
 
-#     bayes.set_sampler("ultranest")
+    bayes.set_sampler("ultranest")
 
-#     bayes.sampler.setup()
+    bayes.sampler.setup()
 
-#     bayes.sample()
+    bayes.sample()
 
-#     res = bayes.results.get_data_frame()
+    res = bayes.results.get_data_frame()
 
-#     check_results(res)
+    check_results(res)
 
 
-# def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
+@skip_if_zeus_is_not_available
+def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
-#     bayes, _ = completed_bn090217206_bayesian_analysis
+    bayes, _ = completed_bn090217206_bayesian_analysis
 
-#     bayes.set_sampler("zeus")
+    bayes.set_sampler("zeus")
 
-#     bayes.sampler.setup(n_iterations=200, n_walkers=20)
+    bayes.sampler.setup(n_iterations=200, n_walkers=20)
 
-#     bayes.sample()
+    bayes.sample()
 
-#     res = bayes.results.get_data_frame()
+    res = bayes.results.get_data_frame()
 
-#     bayes.restore_median_fit()
+    bayes.restore_median_fit()
 
-#     check_results(res)
+    check_results(res)
 
 
 def test_bayes_plots(completed_bn090217206_bayesian_analysis):
