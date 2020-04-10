@@ -1,8 +1,5 @@
-from __future__ import division
 # Provides some universal statistical utilities and stats comparison tools
 
-from past.utils import old_div
-from builtins import object
 from math import sqrt
 
 import numpy as np
@@ -265,12 +262,12 @@ class Significance(object):
 
         idx = self.Non > 0
 
-        one[idx] = self.Non[idx] * np.log(old_div((1 + self.alpha), self.alpha) *
-                                          (old_div(self.Non[idx], (self.Non[idx] + self.Noff[idx]))))
+        one[idx] = self.Non[idx] * np.log((1 + self.alpha) / self.alpha *
+                                          (self.Non[idx] / (self.Non[idx] + self.Noff[idx])))
 
         two = np.zeros_like(self.Noff, dtype=float)
 
-        two[idx] = self.Noff[idx] * np.log((1 + self.alpha) * (old_div(self.Noff[idx], (self.Non[idx] + self.Noff[idx]))))
+        two[idx] = self.Noff[idx] * np.log((1 + self.alpha) * (self.Noff[idx] / (self.Non[idx] + self.Noff[idx])))
 
         if assign_sign:
 
@@ -305,7 +302,7 @@ class Significance(object):
 
         b0 = 0.5 * (np.sqrt(b ** 2 - 2 * sigma_b ** 2 * (b - 2 * o) + sigma_b ** 4) + b - sigma_b ** 2)
 
-        S = sqrt(2) * np.sqrt(o * np.log(old_div(o, b0)) + old_div((b0 - b) ** 2, (2 * sigma_b ** 2)) + b0 - o)
+        S = sqrt(2) * np.sqrt(o * np.log(o / b0) + (b0 - b) ** 2 / (2 * sigma_b ** 2) + b0 - o)
 
         sign = np.where(o > b, 1, -1)
 

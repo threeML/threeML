@@ -1,5 +1,3 @@
-from __future__ import print_function
-from builtins import range
 from threeML.minimizer.minimization import LocalMinimizer, CannotComputeErrors, FitFailed, CannotComputeCovariance
 from threeML.io.detect_notebook import is_inside_notebook
 
@@ -19,7 +17,7 @@ class MINOSFailed(Exception):
 
 def add_method(self, method, name=None):
     if name is None:
-        name = method.__name__
+        name = method.func_name
 
     setattr(self.__class__, name, method)
 

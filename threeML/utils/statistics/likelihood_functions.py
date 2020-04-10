@@ -1,5 +1,3 @@
-from __future__ import division
-from past.utils import old_div
 import numpy as np
 from threeML.plugins.gammaln import logfactorial
 from math import log
@@ -69,7 +67,7 @@ def poisson_observed_poisson_background_xs(observed_counts, background_counts, e
     second_term = np.sqrt(first_term ** 2 + 4 * exposure_ratio * (exposure_ratio + 1)
                           * background_counts * expected_model_counts)
 
-    background_nuisance_parameter = old_div((first_term + second_term), (2 * exposure_ratio * (exposure_ratio + 1)))
+    background_nuisance_parameter = (first_term + second_term) / (2 * exposure_ratio * (exposure_ratio + 1))
 
     first_term = expected_model_counts + (1 + exposure_ratio) * background_nuisance_parameter
 
@@ -106,7 +104,7 @@ def poisson_observed_poisson_background(observed_counts, background_counts, expo
 
     sqr = np.sqrt(4 * (alpha + alpha ** 2) * b * M + ((alpha + 1) * M - alpha * (o + b)) ** 2)
 
-    B_mle = old_div(1, (2.0 * alpha * (1+alpha))) * (alpha * (o + b) - (alpha+1) * M + sqr)
+    B_mle = 1 / (2.0 * alpha * (1+alpha)) * (alpha * (o + b) - (alpha+1) * M + sqr)
 
     # Profile likelihood
 
@@ -139,7 +137,7 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
 
     log_likes = np.empty_like(expected_model_counts)
 
-    log_likes[idx] = (old_div(-(b[idx] - background_counts[idx]) ** 2, (2 * s2[idx]))
+    log_likes[idx] = (-(b[idx] - background_counts[idx]) ** 2 / (2 * s2[idx])
                       + observed_counts[idx] * np.log(b[idx] + expected_model_counts[idx])
                       - b[idx] - expected_model_counts[idx] - logfactorial(observed_counts[idx])
                       - 0.5 * log(2 * np.pi) - np.log(background_error[idx]))
@@ -162,4 +160,4 @@ def half_chi2(y, yerr, expectation):
     # so that the delta log-like for an error of say 1 sigma is 0.5 and not 1 like it would be for
     # the other likelihood functions. This way we can sum it with other likelihood functions.
 
-    return old_div(1/2.0 * (y-expectation)**2, yerr**2)
+    return 1/2.0 * (y-expectation)**2 / yerr**2

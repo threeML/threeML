@@ -1,10 +1,7 @@
-from builtins import str
-from builtins import object
 from astropy.io import fits
 import numpy as np
 import astropy.units as u
 import pkg_resources
-import six
 
 # From https://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/c_user/node20.html
 # Codes for the data type of binary table columns and/or for the
@@ -70,7 +67,7 @@ class FITSFile(object):
 
             fits_extensions = list(fits_extensions)
 
-            hdu_list.extend([x.hdu for x in fits_extensions])
+            hdu_list.extend(map(lambda x:x.hdu, fits_extensions))
 
         # We embed instead of subclassing because the HDUList class has some weird interaction with the
         # __init__ and __new__ methods which makes difficult to do so (we couldn't figure it out)
@@ -158,7 +155,7 @@ class FITSExtension(object):
 
                 units = str(test_value.unit)
 
-            elif isinstance(test_value, six.string_types):
+            elif isinstance(test_value, str):
 
                 # Get maximum length, but make 1 as minimum length so if the column is completely made up of empty
                 # string we still can work
@@ -168,10 +165,11 @@ class FITSExtension(object):
                 format = '%iA' % max_string_length
 
             elif np.isscalar(test_value):
-            
+
                 format = _NUMPY_TO_FITS_CODE[np.array(test_value).dtype.type]
 
             elif isinstance(test_value, list) or isinstance(test_value, np.ndarray):
+
 
                 # Probably a column array
                 # Check that we can convert it to a proper numpy type
@@ -249,9 +247,12 @@ class FITSExtension(object):
         data_tuple = []
 
         for name in data.columns.names:
-        
+
+
             data_tuple.append((name,data[name]))
 
-        header_tuple = list(fits_extension.header.items())
+
+
+        header_tuple = fits_extension.header.items()
 
         return cls(data_tuple,header_tuple)

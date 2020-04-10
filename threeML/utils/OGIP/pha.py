@@ -1,4 +1,3 @@
-from builtins import object
 import astropy.io.fits as fits
 import astropy.units as u
 import numpy as np
@@ -307,7 +306,7 @@ class PHAWrite(object):
 
             rsp2 = FITSFile(fits_extensions=extensions)
 
-            rsp2.writeto("%s.rsp" % self._outfile_basename, overwrite=True)
+            rsp2.writeto("%s.rsp" % self._outfile_basename, clobber=True)
 
 def _atleast_2d_with_dtype(value,dtype=None):
 

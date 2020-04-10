@@ -170,7 +170,7 @@ def test_spectrumlike_fit():
 
     kT_variates = jl.results.get_variates('mysource.spectrum.main.Blackbody.kT')
 
-    assert np.all(np.isclose([K_variates.average, kT_variates.average], [sim_K, sim_kT], atol=1 ))
+    assert np.all(np.isclose([K_variates.mean(), kT_variates.mean()], [sim_K, sim_kT], atol=1 ))
 
 
 def test_dispersionspectrumlike_fit():
@@ -209,7 +209,7 @@ def test_dispersionspectrumlike_fit():
 
     kT_variates = jl.results.get_variates('mysource.spectrum.main.Blackbody.kT')
 
-    assert np.all(np.isclose([K_variates.average, kT_variates.average], [sim_K, sim_kT], atol=1))
+    assert np.all(np.isclose([K_variates.mean(), kT_variates.mean()], [sim_K, sim_kT], atol=1))
 
 
 
@@ -272,7 +272,7 @@ def test_spectrum_like_with_background_model():
 
     kT_variates = jl.results.get_variates('mysource.spectrum.main.Blackbody.kT')
 
-    assert np.all(np.isclose([K_variates.average, kT_variates.average], [sim_K, sim_kT], rtol=0.5))
+    assert np.all(np.isclose([K_variates.mean(), kT_variates.mean()], [sim_K, sim_kT], rtol=0.5))
 
 
 def test_all_statistics():

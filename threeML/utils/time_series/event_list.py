@@ -1,8 +1,3 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import zip
-from builtins import range
-from past.utils import old_div
 __author__ = 'grburgess'
 
 import collections
@@ -276,7 +271,7 @@ class EventList(TimeSeries):
 
                 # capture the bkg *rate*
 
-                bkg.append(old_div(tmpbkg, this_width))
+                bkg.append(tmpbkg / this_width)
 
         else:
 
@@ -332,7 +327,7 @@ class EventList(TimeSeries):
 
     def count_per_channel_over_interval(self, start, stop):
 
-        channels = list(range(self._first_channel, self._n_channels + self._first_channel))
+        channels = range(self._first_channel, self._n_channels + self._first_channel)
 
         counts_per_channel = np.zeros(len(channels))
 
@@ -408,7 +403,7 @@ class EventList(TimeSeries):
         # Find the mean time of the bins and calculate the exposure in each bin
         mean_time = []
         exposure_per_bin = []
-        for i in range(len(bins) - 1):
+        for i in xrange(len(bins) - 1):
             m = np.mean((bins[i], bins[i + 1]))
             mean_time.append(m)
 
@@ -445,7 +440,7 @@ class EventList(TimeSeries):
 
             self._optimal_polynomial_grade = self._user_poly_order
 
-        channels = list(range(self._first_channel, self._n_channels + self._first_channel))
+        channels = range(self._first_channel, self._n_channels + self._first_channel)
 
         polynomials = []
 
@@ -531,7 +526,7 @@ class EventList(TimeSeries):
 
             self._optimal_polynomial_grade = self._user_poly_order
 
-        channels = list(range(self._first_channel, self._n_channels + self._first_channel))
+        channels = range(self._first_channel, self._n_channels + self._first_channel)
 
         # Check whether we are parallelizing or not
 
@@ -971,13 +966,13 @@ class EventListWithLiveTime(EventList):
 
         # see if it contains elements
 
-        if self._live_time[inside_idx].size > 0:
+        if self._live_time[inside_idx]:
 
             # we want to take a fraction of the live time covered
 
             dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
 
-            fraction = old_div((stop - start), dt)
+            fraction = (stop - start) / dt
 
             total_livetime = self._live_time[inside_idx] * fraction
 
@@ -1003,7 +998,7 @@ class EventListWithLiveTime(EventList):
 
             distance_from_next_bin = self._live_time_stops[left_remainder_idx] - start
 
-            fraction = old_div(distance_from_next_bin, dt)
+            fraction = distance_from_next_bin / dt
 
             left_fractional_livetime = self._live_time[left_remainder_idx] * fraction
 
@@ -1017,7 +1012,7 @@ class EventListWithLiveTime(EventList):
 
             distance_from_next_bin = stop - self._live_time_starts[right_remainder_idx]
 
-            fraction = old_div(distance_from_next_bin, dt)
+            fraction = distance_from_next_bin / dt
 
             right_fractional_livetime = self._live_time[right_remainder_idx] * fraction
 

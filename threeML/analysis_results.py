@@ -1,10 +1,3 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import str
-from builtins import map
-from builtins import range
-from builtins import object
-from past.utils import old_div
 import collections
 import datetime
 import functools
@@ -41,7 +34,7 @@ from threeML.io.rich_display import display
 from threeML.io.table import NumericMatrix
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.io.results_table import ResultsTable
-from threeML import __version__
+from threeML.version import __version__
 from threeML.random_variates import RandomVariates
 from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.config.config import threeML_config
@@ -49,6 +42,7 @@ from threeML.config.config import threeML_config
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
 # them with normal characters when we write the keyword, and we substitute them back when we read it back
 _subs = (('\n', "_NEWLINE_"), ("'", "_QUOTE1_"), ('"', "_QUOTE2_"), ('{', "_PARO_"), ('}', "_PARC_"))
+
 
 def _escape_yaml_for_fits(yaml_code):
     for sub in _subs:
@@ -74,7 +68,7 @@ def load_analysis_results(fits_file):
 
     with fits.open(fits_file) as f:
 
-        n_results = [x.name for x in f].count('ANALYSIS_RESULTS')
+        n_results = map(lambda x: x.name, f).count('ANALYSIS_RESULTS')
 
         if n_results == 1:
 
@@ -100,7 +94,7 @@ def _load_one_results(fits_extension):
 
     measure_values = collections.OrderedDict()
 
-    for key in list(fits_extension.header.keys()):
+    for key in fits_extension.header.keys():
 
         if key.find("STAT") == 0:
             # Found a keyword with a statistic for a plugin
@@ -265,12 +259,12 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         # Prepare columns
 
-        data_tuple = [('NAME', list(free_parameters.keys())),
+        data_tuple = [('NAME', free_parameters.keys()),
                       ('VALUE', data_frame['value'].values),
                       ('NEGATIVE_ERROR', data_frame['negative_error'].values),
                       ('POSITIVE_ERROR', data_frame['positive_error'].values),
                       ('ERROR', data_frame['error'].values),
-                      ('UNIT', np.array(data_frame['unit'].values, np.unicode_)),
+                      ('UNIT', np.array(data_frame['unit'].values, str)),
                       ('COVARIANCE', covariance_matrix),
                       ('SAMPLES', samples)]
 
@@ -285,7 +279,7 @@ class ANALYSIS_RESULTS(FITSExtension):
         # Now add two keywords for each instrument
         stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
 
-        for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
+        for i, (plugin_instance_name, stat_value) in enumerate(stat_series.iteritems()):
             self.hdu.header.set("STAT%i" % i, stat_value, comment="Stat. value for plugin %i" % i)
             self.hdu.header.set("PN%i" % i, plugin_instance_name, comment="Name of plugin %i" % i)
 
@@ -293,7 +287,7 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         measure_series = analysis_results.statistical_measures # type: pd.Series
 
-        for i, (measure, measure_value) in enumerate(measure_series.items()):
+        for i, (measure, measure_value) in enumerate(measure_series.iteritems()):
             self.hdu.header.set("MEAS%i" % i, measure, comment="Measure type %i" % i)
             self.hdu.header.set("MV%i" % i, measure_value, comment="Measure value %i" % i)
 
@@ -325,7 +319,7 @@ class AnalysisResultsFITS(FITSFile):
 
         # Make one extension for each analysis results
 
-        results_ext = list(map(ANALYSIS_RESULTS, analysis_results))
+        results_ext = map(ANALYSIS_RESULTS, analysis_results)
 
         # Fix the EXTVER keyword (must be increasing among extensions with same name
         for i, res_ext in enumerate(results_ext):
@@ -390,7 +384,7 @@ class _AnalysisResults(object):
         self._free_parameters = self._optimized_model.free_parameters
 
         # Gather also the optimized values of the parameters
-        self._values = np.array([x.value for x in list(self._free_parameters.values())])
+        self._values = np.array(map(lambda x: x.value, self._free_parameters.values()))
 
         # Set the analysis type
         self._analysis_type = analysis_type
@@ -428,7 +422,7 @@ class _AnalysisResults(object):
         assert param_path in self._optimized_model.free_parameters, "Parameter %s is not a " \
                                                                     "free parameters of the model" % param_path
 
-        param_index = list(self._free_parameters.keys()).index(param_path)
+        param_index = self._free_parameters.keys().index(param_path)
 
         this_value = self._values[param_index]
 
@@ -477,7 +471,7 @@ class _AnalysisResults(object):
         # Get the arguments of function which have not been specified
         # in the calling sequence (the **kwargs dictionary)
         # (they will be excluded from the vectorization)
-        to_be_excluded = [item for item in arguments if item not in list(kwargs.keys())]
+        to_be_excluded = [item for item in arguments if item not in kwargs.keys()]
 
         # Vectorize the function
         vectorized = np.vectorize(function, excluded=to_be_excluded)
@@ -548,7 +542,7 @@ class _AnalysisResults(object):
 
                 if variance_i * variance_j > 0:
 
-                    correlation_matrix[i, j] = old_div(covariance[i, j], (math.sqrt(variance_i * variance_j)))
+                    correlation_matrix[i, j] = covariance[i, j] / (math.sqrt(variance_i * variance_j))
 
                 else:
 
@@ -568,7 +562,7 @@ class _AnalysisResults(object):
         logl_results = {}
 
         # Create a new ordered dict so we can add the total
-        optimal_statistic_values = collections.OrderedDict(iter(self._optimal_statistic_values.items()))
+        optimal_statistic_values = collections.OrderedDict(self._optimal_statistic_values.iteritems())
 
         # Add the total
         optimal_statistic_values['total'] = np.sum(self._optimal_statistic_values.values)
@@ -850,7 +844,7 @@ class BayesianResults(_AnalysisResults):
         :return: a matplotlib.figure instance
         """
 
-        assert len(list(self._free_parameters.keys())) == self._samples_transposed.T[0].shape[0], ("Mismatch between sample"
+        assert len(self._free_parameters.keys()) == self._samples_transposed.T[0].shape[0], ("Mismatch between sample"
                                                                                              " dimensions and number of free"
                                                                                              " parameters")
 
@@ -911,7 +905,7 @@ class BayesianResults(_AnalysisResults):
                               'filename': None,
                               'display': False,
                               'legend': None}
-        keys = list(cc_kwargs.keys())
+        keys = cc_kwargs.keys()
         for key in keys:
 
             if key in _default_plot_args:
@@ -920,7 +914,7 @@ class BayesianResults(_AnalysisResults):
         labels = []
         priors = []
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
             short_name = parameter_name.split(".")[-1]
 
             labels.append(short_name)
@@ -931,7 +925,7 @@ class BayesianResults(_AnalysisResults):
 
         if renamed_parameters is not None:
 
-            for old_label, new_label in renamed_parameters.items():
+            for old_label, new_label in renamed_parameters.iteritems():
 
                 for i, _ in enumerate(labels):
 
@@ -989,7 +983,7 @@ class BayesianResults(_AnalysisResults):
                               'display': False,
                               'legend': None}
 
-        keys = list(kwargs.keys())
+        keys = kwargs.keys()
 
         for key in keys:
 
@@ -1020,7 +1014,7 @@ class BayesianResults(_AnalysisResults):
         for j, other_fit in enumerate(other_fits):
 
             if other_fit.samples is not None:
-                assert len(list(other_fit._free_parameters.keys())) == other_fit.samples.T[0].shape[0], (
+                assert len(other_fit._free_parameters.keys()) == other_fit.samples.T[0].shape[0], (
                     "Mismatch between sample"
 
 
@@ -1031,7 +1025,7 @@ class BayesianResults(_AnalysisResults):
             labels_other = []
             # priors_other = []
 
-            for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.items()):
+            for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.iteritems()):
                 short_name = parameter_name.split(".")[-1]
 
                 labels_other.append(short_name)
@@ -1043,7 +1037,7 @@ class BayesianResults(_AnalysisResults):
 
             if renamed_parameters is not None:
 
-                for old_label, new_label in renamed_parameters.items():
+                for old_label, new_label in renamed_parameters.iteritems():
 
                     for i, _ in enumerate(labels_other):
 
@@ -1068,7 +1062,7 @@ class BayesianResults(_AnalysisResults):
         labels = []
         # priors = []
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
             short_name = parameter_name.split(".")[-1]
 
             labels.append(short_name)
@@ -1077,7 +1071,7 @@ class BayesianResults(_AnalysisResults):
 
         if renamed_parameters is not None:
 
-            for old_label, new_label in renamed_parameters.items():
+            for old_label, new_label in renamed_parameters.iteritems():
 
                 for i, _ in enumerate(labels):
 
@@ -1175,7 +1169,7 @@ class BayesianResults(_AnalysisResults):
         for j, parameter_name in enumerate(self._free_parameters.keys()):
 
             this_samples = self.samples[j,:]
-            
+            print this_samples.shape 
 
             # First compute averages and variances using the sliding window
 
@@ -1259,7 +1253,7 @@ class BayesianResults(_AnalysisResults):
 
         binsize = 2 * iqr * pow(len(data), -1 / 3.0)
 
-        nbins = np.ceil(old_div((max(data) - min(data)), binsize))
+        nbins = np.ceil((max(data) - min(data)) / binsize)
 
         return nbins
 
@@ -1317,7 +1311,7 @@ class MLEResults(_AnalysisResults):
         covariance_matrix = np.array(covariance_matrix, float, copy=True)
 
         # Get the best fit value for each parameter
-        values = [x._get_internal_value() for x in  list(optimized_model.free_parameters.values())]
+        values = map(lambda x:x._get_internal_value(), optimized_model.free_parameters.values())
 
         # This is the expected shape for the covariance matrix
 
@@ -1348,8 +1342,8 @@ class MLEResults(_AnalysisResults):
 
         # Gather boundaries
         # NOTE: every None boundary will become nan thanks to the casting to float
-        low_bounds = np.array([x._get_internal_min_value() for x in list(optimized_model.free_parameters.values())], float)
-        hi_bounds = np.array([x._get_internal_max_value() for x in list(optimized_model.free_parameters.values())], float)
+        low_bounds = np.array(map(lambda x: x._get_internal_min_value(), optimized_model.free_parameters.values()), float)
+        hi_bounds = np.array(map(lambda x: x._get_internal_max_value(), optimized_model.free_parameters.values()), float)
 
         # Fix all nans
         low_bounds[np.isnan(low_bounds)] = -np.inf
@@ -1555,7 +1549,7 @@ class AnalysisResultsSet(collections.Sequence):
             # The user didn't specify what this sequence is
 
             # Make the default sequence
-            frame_tuple = (('VALUE', list(range(len(self)))),)
+            frame_tuple = (('VALUE', range(len(self))),)
 
             self.characterize_sequence("unspecified", frame_tuple)
 

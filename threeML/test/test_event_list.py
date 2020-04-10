@@ -1,10 +1,8 @@
-from __future__ import division
-from past.utils import old_div
 import os
 
 import numpy as np
 import pytest
-from .conftest import get_test_datasets_directory
+from conftest import get_test_datasets_directory
 from threeML.io.file_utils import within_directory
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.event_list import EventListWithDeadTime, EventList
@@ -15,7 +13,7 @@ datasets_dir = get_test_datasets_directory()
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
 
-    if abs(old_div((truth - value), truth)) <= relative_tolerance:
+    if abs((truth - value) / truth) <= relative_tolerance:
 
         return True
 

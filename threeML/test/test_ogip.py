@@ -1,7 +1,5 @@
-from builtins import range
-from builtins import object
 import pytest
-from .conftest import get_test_datasets_directory
+from conftest import get_test_datasets_directory
 from threeML import *
 from threeML.io.file_utils import within_directory
 from threeML.plugins.OGIPLike import OGIPLike
@@ -24,7 +22,7 @@ class AnalysisBuilder(object):
 
     @property
     def keys(self):
-        return list(self._shapes.keys())
+        return self._shapes.keys()
 
     def get_jl(self, key):
         assert key in self._shapes

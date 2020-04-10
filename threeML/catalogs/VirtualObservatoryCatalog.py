@@ -1,12 +1,11 @@
-from builtins import object
 from astromodels import *
-import astropy
+
 #from astropy.vo.client.vos_catalog import VOSCatalog
 from astroquery.vo_conesearch.vos_catalog import VOSCatalog
 from astroquery.vo_conesearch import conesearch
-from astroquery.vo_conesearch.exceptions import VOSError
+#from astropy.vo.client import conesearch
 
-
+from astropy.vo.client.exceptions import VOSError
 from astropy.coordinates.name_resolve import get_icrs_coordinates
 
 import astropy.table as astro_table
@@ -85,29 +84,10 @@ class VirtualObservatoryCatalog(object):
             else:
 
                 # Download successful
-                table = votable
-                # Workaround to comply with newer versions of astroquery 
-                if isinstance(votable, astropy.io.votable.tree.Table):
-                    table = votable.to_table()
 
-                table.convert_bytestring_to_unicode()                
-                
-                pandas_df = table.to_pandas().set_index('name').sort_values("Search_Offset")
+                table = votable.to_table()
 
-                str_df = pandas_df.select_dtypes([np.object])
-                
-                str_df = str_df.stack().str.decode('utf-8').unstack()
-
-                for col in str_df:
-                    pandas_df[col] = str_df[col]
-                
-
-
-                new_index = [x.decode('utf-8') for x in pandas_df.index]
-
-                pandas_df.index = new_index
-                    
-                self._last_query_results = pandas_df
+                self._last_query_results = table.to_pandas().set_index('name').sort_values("Search_Offset")
 
                 out = self.apply_format(table)
 
@@ -191,7 +171,7 @@ class VirtualObservatoryCatalog(object):
 
         if valid_sources:
 
-            query_string = ' | '.join(['(index == "%s")' % x for x in valid_sources])
+            query_string = ' | '.join(map(lambda x: '(index == "%s")' % x, valid_sources))
 
             query_results = self._vo_dataframe.query(query_string)
 

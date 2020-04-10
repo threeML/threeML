@@ -1,9 +1,3 @@
-from __future__ import division
-from builtins import map
-from builtins import str
-from builtins import range
-from past.utils import old_div
-from builtins import object
 import astropy.io.fits as pyfits
 import numpy as np
 import warnings
@@ -288,7 +282,7 @@ class InstrumentResponse(object):
 
         fits_file = RSP(self.monte_carlo_energies, self.ebounds, self.matrix, telescope_name, instrument_name)
 
-        fits_file.writeto(filename, overwrite=overwrite)
+        fits_file.writeto(filename, clobber=overwrite)
 
     @classmethod
     def create_dummy_response(cls, ebounds, monte_carlo_energies):
@@ -514,7 +508,7 @@ class OGIPResponse(InstrumentResponse):
 
             m_start = 0
 
-            for j in range(np.squeeze(n_grp[i])):
+            for j in range(n_grp[i]):
 
                 # This np.squeeze call is needed because some files (for example from Fermi/GBM) contains a vector
                 # column for n_chan, even though all elements are of size 1
@@ -585,7 +579,7 @@ class OGIPResponse(InstrumentResponse):
 
         idx = (self.monte_carlo_energies > 0)
 
-        diff = old_div((self.monte_carlo_energies[idx] - arf_mc_channels[idx]), self.monte_carlo_energies[idx])
+        diff = (self.monte_carlo_energies[idx] - arf_mc_channels[idx]) / self.monte_carlo_energies[idx]
 
         if diff.max() > 0.01:
             raise IOError("The ARF and the RMF have one or more MC channels which differ by more than 1%")
@@ -622,7 +616,8 @@ class InstrumentResponseSet(object):
 
         # Create the corresponding list of coverage intervals
 
-        self._coverage_intervals = TimeIntervalSet([x.coverage_interval for x in self._matrix_list])
+        self._coverage_intervals = TimeIntervalSet(map(lambda x: x.coverage_interval,
+                                                       self._matrix_list))
 
         # Make sure that all matrices have coverage interval set
 
@@ -793,7 +788,7 @@ class InstrumentResponseSet(object):
         weights /= np.sum(weights)
 
         # Weight matrices
-        matrix = np.dot(np.array(list(map(attrgetter("matrix"), self._matrix_list))).T, weights.T).T
+        matrix = np.dot(np.array(map(attrgetter("matrix"), self._matrix_list)).T, weights.T).T
 
         # Now generate the instance of the response
 
@@ -825,7 +820,7 @@ class InstrumentResponseSet(object):
         # Now mark all responses which overlap with the interval of interest
         # NOTE: this is a mask of the same length as _matrix_list and _coverage_intervals
 
-        matrices_mask = [c_i.overlaps_with(interval_of_interest) for c_i in self._coverage_intervals]
+        matrices_mask = map(lambda c_i: c_i.overlaps_with(interval_of_interest), self._coverage_intervals)
 
         # Check that we have at least one matrix
 
@@ -893,8 +888,8 @@ class InstrumentResponseSet(object):
 
 
         # Lastly, check that there is no interruption in coverage (bad time intervals are *not* supported)
-        all_tstarts = np.array([x.start_time for x in effective_intervals])
-        all_tstops = np.array([x.stop_time for x in effective_intervals])
+        all_tstarts = np.array(map(lambda x:x.start_time, effective_intervals))
+        all_tstops = np.array(map(lambda x:x.stop_time, effective_intervals))
 
         if not np.all((all_tstops[:-1] == all_tstarts[1:])):
 
@@ -943,7 +938,7 @@ class EBOUNDS(FITSExtension):
 
         n_channels = len(energy_boundaries) - 1
 
-        data_tuple = (('CHANNEL', list(range(1, n_channels + 1))),
+        data_tuple = (('CHANNEL', range(1, n_channels + 1)),
                       ('E_MIN', energy_boundaries[:-1] * u.keV),
                       ('E_MAX', energy_boundaries[1:] * u.keV))
 

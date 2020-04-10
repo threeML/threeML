@@ -2,13 +2,11 @@
 Define the interface for a plugin class.
 """
 
-from builtins import object
 import abc
 from astromodels.utils.valid_variable import is_valid_variable_name
 import warnings
 import functools
 from astromodels import IndependentVariable
-from future.utils import with_metaclass
 
 
 # def set_external_property(method):
@@ -33,7 +31,9 @@ from future.utils import with_metaclass
 #     return wrapper
 
 
-class PluginPrototype(with_metaclass(abc.ABCMeta, object)):
+class PluginPrototype(object):
+    __metaclass__ = abc.ABCMeta
+
     def __init__(self, name, nuisance_parameters):
         assert is_valid_variable_name(name), "The name %s cannot be used as a name. You need to use a valid " \
                                              "python identifier: no spaces, cannot start with numbers, cannot contain " \

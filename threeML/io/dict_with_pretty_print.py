@@ -1,4 +1,3 @@
-from __future__ import print_function
 import yaml
 from threeML.io.rich_display import display
 import collections

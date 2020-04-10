@@ -1,4 +1,3 @@
-from builtins import range
 __author__ = "grburgess"
 
 import matplotlib.pyplot as plt
@@ -50,7 +49,7 @@ def cmap_intervals(length=50, cmap='YlOrBr', start=None, stop=None):
 
         base_n_colors = cm.N
 
-        cmap_list = cm(list(range(base_n_colors)))
+        cmap_list = cm(range(base_n_colors))
 
         if base_n_colors < length:
 

@@ -1,4 +1,3 @@
-from builtins import object
 import requests
 import re
 import os

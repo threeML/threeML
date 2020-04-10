@@ -1,5 +1,3 @@
-from __future__ import division
-from past.utils import old_div
 import pytest
 from threeML.utils.interval import IntervalSet
 from threeML.utils.histogram import Histogram
@@ -15,7 +13,7 @@ __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth !=0
 
-    if abs(old_div((truth - value), truth)) <= relative_tolerance:
+    if abs((truth - value) / truth) <= relative_tolerance:
 
         return True
 

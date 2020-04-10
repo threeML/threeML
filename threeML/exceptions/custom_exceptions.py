@@ -4,13 +4,16 @@ import functools
 
 # Monkeypatch the print of warning so we can customize them
 
-def my_format_warning(message, category, filename, lineo, line=None):
+def my_format_warning(message, category, *args):
     """
     Override the default showwarning to customize the appearance of warnings
     :return:
     """
-    # if message.message.find("may indicate binary incompatibility") >= 0:
-    #     return ''
+
+    if message.message.find("may indicate binary incompatibility") >= 0:
+
+        return ''
+
     return "\nWARNING %s: %s\n\n" % (category.__name__, message)
 
 

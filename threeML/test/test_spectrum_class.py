@@ -1,5 +1,3 @@
-from __future__ import division
-from past.utils import old_div
 import numpy as np
 import os
 import pytest
@@ -9,7 +7,7 @@ from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.utils.OGIP.response import OGIPResponse
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, BinnedSpectrumWithDispersion, ChannelSet
-from .conftest import get_test_datasets_directory
+from conftest import get_test_datasets_directory
 
 
 @pytest.fixture(scope="module")
@@ -24,7 +22,7 @@ def loaded_response():
 
 def test_spectrum_constructor():
 
-    ebounds = ChannelSet.from_list_of_edges(np.array([1,2,3,4,5,6]))
+    ebounds = ChannelSet.from_list_of_edges(np.array([0,1,2,3,4,5]))
 
     pl = Powerlaw()
 
@@ -92,9 +90,9 @@ def addition_proof_simple(x,y,z):
 
 
 def addition_proof_weighted(x,y,z):
-    assert old_div((old_div(x.rates[3],x.rate_errors[3]**2) + old_div(y.rates[3],y.rate_errors[3]**2)), \
-           (old_div(1,x.rate_errors[3]**2) + old_div(1,y.rate_errors[3]**2))) \
-           == old_div(z.rates[3],z.exposure) 
+    assert (x.rates[3]/x.rate_errors[3]**2 + y.rates[3]/y.rate_errors[3]**2) / \
+           (1/x.rate_errors[3]**2 + 1/y.rate_errors[3]**2) \
+           == z.rates[3]/z.exposure 
 
 
 def spectrum_addition(obs_spectrum_1,obs_spectrum_2,obs_spectrum_incompatible,addition,addition_proof):

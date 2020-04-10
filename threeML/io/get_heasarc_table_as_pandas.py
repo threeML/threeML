@@ -1,8 +1,4 @@
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
-import urllib.request, urllib.parse, urllib.error
+import urllib
 import os
 import astropy.time as astro_time
 import datetime
@@ -68,7 +64,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
             yaml_cache = yaml.safe_load(cache)
 
-            cached_time = astro_time.Time(datetime.datetime(*list(map(int, yaml_cache['last save'].split('-')))))
+            cached_time = astro_time.Time(datetime.datetime(*map(int, yaml_cache['last save'].split('-'))))
 
             # the second line how many seconds to keep the file around
 
@@ -102,7 +98,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
         try:
 
-            urllib.request.urlretrieve(heasarc_url, filename=file_name_sanatized)
+            urllib.urlretrieve(heasarc_url, filename=file_name_sanatized)
 
         except(IOError):
 
@@ -110,22 +106,17 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
         else:
 
-            # # Make sure the lines are interpreted as Unicode (otherwise some characters will fail)
+            # Make sure the lines are interpreted as Unicode (otherwise some characters will fail)
             with open(file_name_sanatized) as table_file:
 
-
-                # might have to add this in for back compt J MICHAEL
-                
-                #new_lines = [x. for x in table_file.readlines()]
-                
-                new_lines =  table_file.readlines()
+                new_lines = map(lambda x: x.decode("utf-8", errors="ignore"), table_file.readlines())
 
             # now write the decoded lines back to the file
             with codecs.open(file_name_sanatized, "w+", "utf-8") as table_file:
 
                 table_file.write("".join(new_lines))
 
-    #        save the time that we go this table
+            # save the time that we go this table
 
             with open(cache_file_sanatized, 'w') as cache:
 
@@ -148,9 +139,6 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     table = vo_table.get_first_table().to_table(use_names_over_ids=True)
 
-    # make sure we do not use this as byte code
-    table.convert_bytestring_to_unicode()
-    
     # create a pandas table indexed by name
 
     pandas_df = table.to_pandas().set_index('name')

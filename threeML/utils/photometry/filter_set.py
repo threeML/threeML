@@ -1,7 +1,3 @@
-from __future__ import division
-from builtins import zip
-from builtins import object
-from past.utils import old_div
 import speclite.filters as spec_filters
 import astropy.units as astro_units
 import numpy as np
@@ -131,7 +127,7 @@ class FilterSet(object):
         conversion_factor = (constants.c ** 2 * constants.h ** 2).to('keV2 * cm2')
 
         def wrapped_model(x):
-            return old_div(differential_flux(x) * conversion_factor, x ** 3)
+            return differential_flux(x) * conversion_factor / x ** 3
 
 
 
@@ -162,7 +158,7 @@ class FilterSet(object):
 
 
 
-            ratio.append((old_div(synthetic_flux,filter.ab_zeropoint.to('1/(cm2 s)'))).value)
+            ratio.append((synthetic_flux/filter.ab_zeropoint.to('1/(cm2 s)')).value)
 
 
 

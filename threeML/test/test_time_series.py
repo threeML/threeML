@@ -1,4 +1,3 @@
-from builtins import range
 import os
 import numpy as np
 import pytest
@@ -9,7 +8,7 @@ from threeML.utils.data_builders.time_series_builder import TimeSeriesBuilder
 from threeML.io.file_utils import within_directory
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
-from .conftest import get_test_datasets_directory
+from conftest import get_test_datasets_directory
 import astropy.io.fits as fits
 
 datasets_directory = get_test_datasets_directory()
@@ -220,17 +219,17 @@ def test_read_gbm_tte():
 
         assert len(nai3.bins) == 10
 
-        assert nai3.bins.argsort() == list(range(len(nai3.bins)))
+        assert nai3.bins.argsort() == range(len(nai3.bins))
 
         nai3.create_time_bins(start=0, stop=10, method='bayesblocks', p0=.1)
 
-        assert nai3.bins.argsort() == list(range(len(nai3.bins)))
+        assert nai3.bins.argsort() == range(len(nai3.bins))
 
         assert len(nai3.bins) == 5
 
         nai3.create_time_bins(start=0, stop=10, method='significance', sigma=40)
 
-        assert nai3.bins.argsort() == list(range(len(nai3.bins)))
+        assert nai3.bins.argsort() == range(len(nai3.bins))
 
         assert len(nai3.bins) == 5
 

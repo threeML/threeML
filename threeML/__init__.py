@@ -14,12 +14,6 @@ if os.environ.get('DISPLAY') is None:
     import matplotlib as mpl
     mpl.use('Agg')
 
-# Import version (this has to be placed before the import of serialization 
-# since __version__ needs to be defined at that stage)
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
-
 # Finally import the serialization machinery
 from .io.serialization import *
 
@@ -28,6 +22,8 @@ from .exceptions.custom_exceptions import custom_warnings
 import glob
 import imp
 import traceback
+
+from version import __version__
 
 # Import everything from astromodels
 from astromodels import *
@@ -203,7 +199,7 @@ from .bayesian.bayesian_analysis import BayesianAnalysis
 
 # Import the DataList class
 
-from .data_list import DataList
+from data_list import DataList
 
 
 

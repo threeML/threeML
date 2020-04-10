@@ -1,46 +1,75 @@
+sudo: required
+
 language: generic
+
 env:
   global:
   - secure: pkvNpm2ODc7INi5L8RqyqdVK73nN+WkQuTIzL52L+dcQIVaLqWupAK1zuBq6NeqQEgQcTvRFP5oCbsYLPYY5sBKpU/1WhS+UL9l9bmhYvYIgv1fyH7eH3PLuKEIGTaAVoMHFLStA+WHIuyK5UsmcZouVKn6vLQDK+XeZiyNxU3T2bONyabRDmc5JgdAjh4vdjrRupqq3CfZjaVCOnD+NBAYIHPZZnQc+9Dt6W9n9fjEO0B+2zi7NZEEP3dgeGsmws9M2wzbPJciWkFAOLBg66mPrSl7Vcl8KwVqWI9Wcb2/ogKU+CB0et4vwOdltBMdy29IRb0fxHrpP+sucHu32r9rWCAxdAXOdOgh5neYs/f8QSvk1BLaL1bNmMXe+APajFvukdxLUuYczX38rBjtXdrjrJRZ0Eyj8YK0g3r2HupbJ9FWM+adQKRYN2KV5yaqK6rpWa1/5XiNnfZYbQTbpdWSukNn48jTACDvhNwEDP9XeJ+CR7EOv4lc69wG+XHnv4Mr94TQvq9i4OKXCgh1kI7OGVNrcAyTX8sGDYlK4oc8TD0/aq7bzzGQmyBRQdEp2bKjVQo7lDE6g8baj+F1iw+8cfAJ1DjS/0brHTQpsTStBnWQWxEHOWtUitOKGoNkRxUaWgiAEq/npUr/UrrENPUuHsP1V48NXsG0vYLmr9mw=
   - secure: KBR7yxM33eyTSAFEUpP55oS9fq2MzcM3hlPaXpYQXOOZUFMjpSbmeBnDA3CozPS8oMCPqL6cS/cOxPXb4/XhWvQLcib8LIh5+iX9wmqWcJkpXXaZGPqe8mZ5x57GlspFTMSV3VzSzE2cLbCzuaGhmMCgwuue0BJPPEAaKLmiPfdA/gS2O6VvsLssTP+QqHybd3oqZE6DFVU9FW9O0g1q8QPS0tiaft0BeMMvzOLONgBU0shEuQ9S+gdUH/8qpyD4Uh+t3SzcRSTG5mGIG9Ke2DPTo8LUfveEg3o5wOfj3hvEionOPdBFV96M7JwV0a5g6xEPk1NbV6s6BwPgSN2fwoVSdwzhD2kPVMFqEBX8TliQFVrrbpK1z8y+4nTdjLfPLf+KtHfE2Twj9bxb1TyO26M1l8Vq9lqIMfqHzgI04S75IiLLmmRXOQRCKAFb1xsqn2kIkwnctGDb8AHvMdk10qrD2Ww6qls0WAp3IWvMZED+i1M3nGQeO2x5vDQQNWIZsx/QR/nGl7dW68mF8LwyTuE0hJyGG+SjH3IHUTPQKqkhy85npYQpNihUPtQGqIL6LSBh5GYC5SjEH93FLkCoxRo9z5e4MOMy1KBZT+y4H5XvAxKYDz44/FZVzEYhRSZ3OJsn0FogsuJv+bvQlSxXBEt1x9yzn7Pl62Sm7yrr05o=
-jobs:
+
+matrix:
   include:
-  - os: linux
-    python: 2.7
-    env: TRAVIS_PYTHON_VERSION=2.7
-  - os: osx
-    python: 2.7
-    env: TRAVIS_PYTHON_VERSION=2.7
-  - os: linux
-    python: 3.7
-    env: TRAVIS_PYTHON_VERSION=3.7
-  - os: osx
-    python: 3.7
-    env: TRAVIS_PYTHON_VERSION=3.7
+    - os: linux
+      python: 2.7
+      env: TRAVIS_PYTHON_VERSION=2.7
+    - os: osx
+      python: 2.7
+      env: TRAVIS_PYTHON_VERSION=2.7
+
 before_install:
-- |
-  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  else
-    # Install Miniconda
-    wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh
-  fi
-  bash miniconda.sh -b -p $HOME/miniconda
-  export PATH="$HOME/miniconda/bin:$PATH"
-  conda install -y conda-build
-  conda config --add channels conda-forge
+  - |
+       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+         wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+       else
+         # Install Miniconda
+         wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh
+       fi
+       bash miniconda.sh -b -p $HOME/miniconda
+       export PATH="$HOME/miniconda/bin:$PATH"
+       conda install -y conda-build
+       conda config --add channels conda-forge
+
 script:
-- "\nif [[ \"$TRAVIS_EVENT_TYPE\" == \"cron\" ]]; then\n    \n    # Workaround to
-  avoid build timeout\n    while sleep 500; do\n       echo \"====[ $SECONDS seconds
-  still running ]====\"\n    done &\n\n    # A cron build. We install 3ML as a user
-  would do by using the install_3ML script\n    chmod u+x ci/cron_install_and_test.sh\n
-  \   ./ci/cron_install_and_test.sh\nelse\n    chmod u+x ci/build_and_test.sh\n    ./ci/build_and_test.sh\nfi\n"
-deploy:
-  provider: pypi
-  user: "__token__"
-  distributions: sdist
-  skip_existing: true
-  on:
-    tags: true
-  password:
-    secure: Vb4TSGLjol1v1sb2Jh74N/kjiKUdb3aQlAsrQysBDORZ82zl79q/kEE8g3yYKBIzxTMGa/iS52Q4ZUpLALLNn5ADQEyNqGhem/ImmIQsRRw33S9yOS7upOJ5UvUPG3+oce8JWDWqSnOAupZUz9vTfaUiN6UrzKSuBwk4+WqK/c69P5nslsXo9PrmncEUiAP2DyDH6m2fNwqBQZdM8xFZLLO4YPTsnZotdWtYR6RAX2O4BWfOCA5acGj1p/XQwX91VQVJ4efC06bcjy6cYo9lkIumhkjaayhH21cFgxFhpg9hj8O9TbezXZ3N2kpGabDOtNsobZ8gcgEi9/LPvfsKCsI/HLBUSiPbyYOtbfvpL0xD0ZdCJYx+poST7k2A3Z8KK/YBkK2J4qH854YdIU9Jqyxp08I+Iyr566D72sGRmJXYJEXmjOqRwuULGO9sSjpbMJIFEUIEGVbcKO6YiZJmgYPeBsoxLzSKs2u+0ARapDisSeid1tkHgOzf9tMwjEe8eqOrOh9NUaC64ndoYPwzQwN0D7h+ZjYCehp2q2s9nJDoj1J8siBjlrOwP8hkMQqvrhWKJ0R7LJieBuNNQJY9mqBwZVTDdIT31uE3/IBgRWXwMjuiSWSYQynEgHY5ov259UYN4b+i93lHDztpgd+Ib0clYAS0bAIRLeINKG3hMzA=
+- |2
+
+  if [[ "$TRAVIS_EVENT_TYPE" == "cron" ]]; then
+
+      # A cron build. We install 3ML as a user would do by using the install_3ML script
+
+      bash install_3ML.sh --batch
+
+      source threeML_init.sh
+
+      # Now run the tests
+      export MPLBACKEND='Agg'
+      export OMP_NUM_THREADS=1
+      export MKL_NUM_THREADS=1
+      export NUMEXPR_NUM_THREADS=1
+
+      pytest -vv --pyargs threeML
+
+      # Now remove the venv and start from scratch installing also root and xspec
+      source deactivate
+
+      conda config --set always_yes true
+      conda uninstall --name threeML --all
+
+      bash install_3ML.sh --batch --with-xspec-lite --with-root
+
+      source threeML_init.sh
+
+      # Now run the tests
+      export MPLBACKEND='Agg'
+      export OMP_NUM_THREADS=1
+      export MKL_NUM_THREADS=1
+      export NUMEXPR_NUM_THREADS=1
+
+      pytest -vv --pyargs threeML
+
+      # Now that we are here with everything installed, let's also test astromodels
+      pytest -vv --pyargs astromodels
+
+  else
+      chmod u+x ci/build_and_test.sh
+      ./ci/build_and_test.sh
+  fi

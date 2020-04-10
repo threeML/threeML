@@ -1,6 +1,3 @@
-from __future__ import division
-from past.utils import old_div
-from builtins import object
 from threeML.plugin_prototype import PluginPrototype
 from threeML.exceptions.custom_exceptions import custom_warnings
 
@@ -180,11 +177,11 @@ class CastroLike(PluginPrototype):
 
     @property
     def start(self):
-        return min([x.start for x in self._active_containers])
+        return min(map(lambda x: x.start, self._active_containers))
 
     @property
     def stop(self):
-        return max([x.stop for x in self._active_containers])
+        return max(map(lambda x: x.stop, self._active_containers))
 
     @property
     def active_containers(self):
@@ -223,7 +220,7 @@ class CastroLike(PluginPrototype):
 
             length = interval_container.stop - interval_container.start
 
-            expected_flux = old_div(scipy.integrate.simps(yy, xx), length)
+            expected_flux = scipy.integrate.simps(yy, xx) / length
 
             this_log_l = interval_container(expected_flux)
 

@@ -1,9 +1,3 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import zip
-from builtins import range
-from builtins import object
-from past.utils import old_div
 import collections
 import sys
 import astromodels.core.model
@@ -95,7 +89,7 @@ class JointLikelihood(object):
 
     def _assign_model_to_data(self, model):
 
-        for dataset in list(self._data_list.values()):
+        for dataset in self._data_list.values():
 
             dataset.set_model(model)
 
@@ -232,7 +226,7 @@ class JointLikelihood(object):
                 errors = []
                 units = []
 
-                for par in list(self._free_parameters.values()):
+                for par in self._free_parameters.values():
 
                     paths.append(par.path)
                     values.append(par.value)
@@ -291,7 +285,7 @@ class JointLikelihood(object):
 
         total_number_of_data_points = 0
 
-        for dataset in list(self._data_list.values()):
+        for dataset in self._data_list.values():
 
             ml = dataset.inner_fit() * (-1)
 
@@ -349,11 +343,11 @@ class JointLikelihood(object):
 
         # Print a table with the errors
 
-        parameter_names = list(self._free_parameters.keys())
-        best_fit_values = [x.value for x in list(self._free_parameters.values())]
+        parameter_names = self._free_parameters.keys()
+        best_fit_values = map(lambda x: x.value, self._free_parameters.values())
         negative_errors = [errors[k][0] for k in parameter_names]
         positive_errors = [errors[k][1] for k in parameter_names]
-        units = [par.unit for par in list(self._free_parameters.values())]
+        units = [par.unit for par in self._free_parameters.values()]
 
         results_table = ResultsTable(parameter_names, best_fit_values, negative_errors, positive_errors, units)
 
@@ -538,7 +532,7 @@ class JointLikelihood(object):
 
                 # Re-create the minimizer
 
-                backup_freeParameters = [x.value for x in list(self._likelihood_model.free_parameters.values())]
+                backup_freeParameters = map(lambda x:x.value, self._likelihood_model.free_parameters.values())
 
                 this_minimizer = self._get_minimizer(self.minus_log_like_profile,
                                                      self._free_parameters)
@@ -555,7 +549,7 @@ class JointLikelihood(object):
 
                 # Restore best fit values
 
-                for val, par in zip(backup_freeParameters, list(self._likelihood_model.free_parameters.values())):
+                for val, par in zip(backup_freeParameters, self._likelihood_model.free_parameters.values()):
 
                     par.value = val
 
@@ -563,7 +557,7 @@ class JointLikelihood(object):
 
             # Now re-assemble the vector of results taking the different parts from the engines
 
-            all_results = client.execute_with_progress_bar(worker, list(range(n_engines)), chunk_size=1)
+            all_results = client.execute_with_progress_bar(worker, range(n_engines), chunk_size=1)
 
             for i, these_results in enumerate(all_results):
 
@@ -630,7 +624,7 @@ class JointLikelihood(object):
         
         if nsteps_1d >= 0:
           for param in self._likelihood_model.free_parameters:
-            
+            print param
 
             center = res["value"][param]
             do_log = (False,)
@@ -639,8 +633,8 @@ class JointLikelihood(object):
            
             if log_norm and self._likelihood_model.free_parameters[param].is_normalization:
               do_log = (True,)
-              lower = center * (1.0 + old_div(res["negative_error"][param],center))**n_sigma
-              upper = center * (1.0 + old_div(res["positive_error"][param],center))**n_sigma
+              lower = center * (1.0 + res["negative_error"][param]/center)**n_sigma
+              upper = center * (1.0 + res["positive_error"][param]/center)**n_sigma
             
             
             lower = max( self.likelihood_model[param].bounds[0], lower)
@@ -653,7 +647,7 @@ class JointLikelihood(object):
               figs.append( fig )
               names.append( param)
             except Exception as e:
-              print(e)
+              print e
 
         if nsteps_2d >= 0:
     
@@ -666,8 +660,8 @@ class JointLikelihood(object):
 
             if log_norm and self._likelihood_model.free_parameters[param_1].is_normalization:
               do_log = (True, False)
-              lower_1 = center_1 * (1.0 + old_div(res["negative_error"][param_1],center_1))**n_sigma
-              upper_1 = center_1 * (1.0 + old_div(res["positive_error"][param_1],center_1))**n_sigma
+              lower_1 = center_1 * (1.0 + res["negative_error"][param_1]/center_1)**n_sigma
+              upper_1 = center_1 * (1.0 + res["positive_error"][param_1]/center_1)**n_sigma
          
             lower_1 = max( self.likelihood_model[param_1].bounds[0], lower_1)
             upper_1 = min( self.likelihood_model[param_1].bounds[1], upper_1)
@@ -676,26 +670,27 @@ class JointLikelihood(object):
             
               if param_2 <= param_1:
                 continue
-              
+              print param_1, param_2
               center_2 = res["value"][param_2]
               lower_2 = center_2 + res["negative_error"][param_2] * n_sigma
               upper_2 = center_2 + res["positive_error"][param_2] * n_sigma
 
               if log_norm and self._likelihood_model.free_parameters[param_2].is_normalization:
                 do_log = (do_log[0],True)
-                lower_2 = center_2 * (1.0 + old_div(res["negative_error"][param_2],center_2))**n_sigma
-                upper_2 = center_2 * (1.0 + old_div(res["positive_error"][param_2],center_2))**n_sigma
+                lower_2 = center_2 * (1.0 + res["negative_error"][param_2]/center_2)**n_sigma
+                upper_2 = center_2 * (1.0 + res["positive_error"][param_2]/center_2)**n_sigma
         
               lower_2 = max( self.likelihood_model[param_2].bounds[0], lower_2)
               upper_2 = min( self.likelihood_model[param_2].bounds[1], upper_2)
               
-
+              #print param_1, lower_1, center_1, upper_1 
+              #print param_2, lower_2, center_2, upper_2 
               try:
                 a,b,cc, fig = self.get_contours( param_1, lower_1, upper_1, nsteps_2d, param_2, lower_2, upper_2, nsteps_2d, log= do_log)
                 figs.append( fig )
                 names.append( "%s-%s" % (param_1, param_2) )
               except Exception as e:
-                print(e)
+                print e
         return figs, names
 
 
@@ -738,7 +733,7 @@ class JointLikelihood(object):
 
         summed_log_likelihood = 0
 
-        for dataset in list(self._data_list.values()):
+        for dataset in self._data_list.values():
 
             try:
 
@@ -773,7 +768,7 @@ class JointLikelihood(object):
             return minimization.FIT_FAILED
 
         if self.verbose:
-            sys.stderr.write("trial values: %s -> logL = %.3f\n" % (",".join(["%.5g" % x for x in trial_values]),
+            sys.stderr.write("trial values: %s -> logL = %.3f\n" % (",".join(map(lambda x:"%.5g" % x, trial_values)),
                                                                     summed_log_likelihood))
 
         # Record this call
@@ -807,7 +802,7 @@ class JointLikelihood(object):
 
             assert minimizer.upper() in minimization._minimizers, \
                 "Minimizer %s is not available on this system. " \
-                "Available minimizers: %s" % (minimizer, ",".join(list(minimization._minimizers.keys())))
+                "Available minimizers: %s" % (minimizer, ",".join(minimization._minimizers.keys()))
 
             # The string can only specify a local minimization. This will return an error if that is not the case.
             # In order to setup global optimization the user needs to use the GlobalMinimization factory directly
@@ -853,7 +848,7 @@ class JointLikelihood(object):
         data = []
         max_length_of_name = 0
 
-        for k, v in parameters.items():
+        for k, v in parameters.iteritems():
 
             current_name = "%s_of_%s" % (k[1], k[0])
 
@@ -1038,7 +1033,7 @@ class JointLikelihood(object):
         alt_hyp_mlikes = []
         null_hyp_mlikes = []
 
-        for dataset in list(self._data_list.values()):
+        for dataset in self._data_list.values():
 
             this_name = dataset.name
 
@@ -1051,7 +1046,7 @@ class JointLikelihood(object):
             alt_hyp_mlikes.append(alt_hyp_mlike)
             null_hyp_mlikes.append(null_hyp_mlike)
 
-        TS_df = pd.DataFrame(index=list(self._data_list.keys()))
+        TS_df = pd.DataFrame(index=self._data_list.keys())
 
         TS_df['Null hyp.'] = null_hyp_mlikes
         TS_df['Alt. hyp.'] = alt_hyp_mlikes

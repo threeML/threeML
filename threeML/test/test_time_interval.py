@@ -1,5 +1,3 @@
-from __future__ import print_function
-from builtins import zip
 import pytest
 
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet

@@ -1,4 +1,3 @@
-from builtins import object
 import pandas as pd
 import numpy as np
 from threeML.io.table import long_path_formatter
@@ -10,10 +9,10 @@ class ResultsTable(object):
 
     def __init__(self, parameter_paths, values, negative_errors, positive_errors, units):
 
-        values_s = pd.Series([], dtype=np.float64)
-        negative_error_s = pd.Series([], dtype=np.float64)
-        positive_error_s = pd.Series([], dtype=np.float64)
-        units_s = pd.Series([], dtype=np.float64)
+        values_s = pd.Series()
+        negative_error_s = pd.Series()
+        positive_error_s = pd.Series()
+        units_s = pd.Series()
 
         for i, this_path in enumerate(parameter_paths):
 
@@ -64,7 +63,7 @@ class ResultsTable(object):
         new_frame = self._data_frame.copy(deep=True)  # type: pd.DataFrame
 
         # Add new column which will become the new index
-        new_frame['parameter'] =  [key_formatter(x) for x in new_frame.index.values]
+        new_frame['parameter'] = map(lambda x: key_formatter(x), new_frame.index.values)
 
         # Set it as the index
         new_frame.set_index('parameter', drop=True, inplace=True)

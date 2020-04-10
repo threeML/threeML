@@ -1,12 +1,7 @@
-from future import standard_library
-standard_library.install_aliases()
-from builtins import map
-from builtins import str
-from builtins import range
 import numpy as np
 import pandas as pd
 import re
-import urllib.request, urllib.error, urllib.parse
+import urllib2
 
 import astropy.table as astro_table
 
@@ -94,12 +89,12 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         :return:
         """
 
-        obs_inst_ = list(map(np.unique, [np.asarray(self._vo_dataframe.other_obs),
+        obs_inst_ = map(np.unique, [np.asarray(self._vo_dataframe.other_obs),
                                     np.asarray(self._vo_dataframe.other_obs2),
                                     np.asarray(self._vo_dataframe.other_obs3),
-                                    np.asarray(self._vo_dataframe.other_obs4)]))
+                                    np.asarray(self._vo_dataframe.other_obs4)])
 
-        self._other_observings_instruments = [x for x in np.unique(np.concatenate(obs_inst_)) if x != '']
+        self._other_observings_instruments = filter(lambda x: x != '', np.unique(np.concatenate(obs_inst_)))
 
     @property
     def other_observing_instruments(self):
@@ -157,23 +152,9 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         :return:
         """
 
-        data = urllib.request.urlopen(gcn_url)
+        data = urllib2.urlopen(gcn_url)
 
-        data_decode = []
-
-        for x in data.readlines():
-
-            try:
-
-                tmp = str(x, 'utf-8')
-
-                data_decode.append(tmp)
-
-            except(UnicodeDecodeError):
-
-                pass
-                    
-        string = ''.join(data_decode).replace('\n', '')
+        string = ''.join(data.readlines()).replace('\n', '')
         try:
 
             trigger_number = re.search("trigger *\d* */ *(\d{9}|\d{6}\.\d{3})", string).group(1).replace('.', '')
@@ -225,7 +206,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
         # Loop over the table and build a source for each entry
         sources = {}
 
-        for name, row in self._last_query_results.T.items():
+        for name, row in self._last_query_results.T.iteritems():
 
             # First we want to get the the detectors used in the SCAT file
 
@@ -272,7 +253,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
             sources[name] = obs_instrument
 
-        sources = pd.concat(list(map(pd.DataFrame, list(sources.values()))), keys=list(sources.keys()))
+        sources = pd.concat(map(pd.DataFrame, sources.values()), keys=sources.keys())
 
         return sources
 
@@ -288,7 +269,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         sources = {}
 
-        for name, row in self._last_query_results.T.items():
+        for name, row in self._last_query_results.T.iteritems():
 
             obs_instrument = {}
 
@@ -343,7 +324,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
             sources[name] = obs_instrument
 
         # build the data frame
-        sources = pd.concat(list(map(pd.DataFrame, list(sources.values()))), keys=list(sources.keys()))
+        sources = pd.concat(map(pd.DataFrame, sources.values()), keys=sources.keys())
 
         display(sources)
 

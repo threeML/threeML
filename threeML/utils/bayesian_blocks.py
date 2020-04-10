@@ -329,4 +329,4 @@ if __name__ == "__main__":
             f.write("%s\n" % (t))
 
     res = bayesian_blocks(tt, 0, 1000, 1e-3, None)
-    print(res)
+    print res

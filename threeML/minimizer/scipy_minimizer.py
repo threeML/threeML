@@ -1,4 +1,3 @@
-from builtins import zip
 import numpy as np
 
 from threeML.minimizer.minimization import LocalMinimizer, FitFailed

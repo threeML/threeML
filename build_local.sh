@@ -36,7 +36,7 @@ fi
 
 echo "Running on ${TRAVIS_OS_NAME}"
 
-TRAVIS_PYTHON_VERSION=3.7
+TRAVIS_PYTHON_VERSION=2.7
 export TRAVIS_BUILD_NUMBER=2
 ENVNAME=threeML_test_$TRAVIS_PYTHON_VERSION
 USE_LOCAL=false
@@ -47,7 +47,7 @@ NUMPYVER=1.15
 MATPLOTLIBVER=2
 UPDATE_CONDA=false
 XSPECVER="6.22.1"
-xspec_channel=xspecmodels
+xspec_channel=threeml
 
 if [[ ${TRAVIS_OS_NAME} == "linux" ]];
 then
@@ -63,11 +63,9 @@ else  # osx
 fi
 
 # Get the version in the __version__ environment variable
-#python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
+python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
 
-#export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
-
-export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
+export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
 
 echo "Building ${PKG_VERSION} ..."
 echo "Python version: ${TRAVIS_PYTHON_VERSION}"
@@ -93,12 +91,6 @@ if [ -n "${XSPECVER}" ];
  then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
 fi
 
-if [[ ${TRAVIS_PYTHON_VERSION} == 2.7 ]]; then
-    PKG="pytest<4 openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 ipopt<3.13 pygmo=2.11.4 emcee>=3 pandas>=0.23"
-else
-    PKG="pytest pandas>=0.23"
-fi
-
 echo "dependencies: ${MATPLOTLIB} ${NUMPY} ${XSPEC}"
 
 # Answer yes to all questions (non-interactive)
@@ -108,19 +100,17 @@ conda config --set always_yes true
 conda config --set anaconda_upload no
 
 # Make sure conda-forge is the first channel
-conda config --add channels defaults
-
-conda config --add channels threeml
-
 conda config --add channels conda-forge/label/cf201901
 
 conda config --add channels conda-forge
 
+conda config --add channels defaults
+
+conda config --add channels threeml
+
 # Create test environment
 echo "Create test environment..."
-conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy krb5=1.14.6
-
-#openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 pygmo=2.11.4 "pytest<4"
+conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION "pytest<4" codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy openblas-devel=0.3.6 tk=8.5.19
 #libgfortran=${libgfortranver}
 #openblas-devel=0.3.6 openblas=0.2.20 blas=1.1
 

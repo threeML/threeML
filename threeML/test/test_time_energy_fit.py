@@ -1,4 +1,3 @@
-from builtins import map
 import pytest
 
 from astromodels import *
@@ -42,7 +41,7 @@ def test_energy_time_fit():
 
     normalizations = 0.23 * time_tags ** (-1.2)
 
-    datasets = list(map(generate_one, normalizations))
+    datasets = map(generate_one, normalizations)
 
     # Now set up the fit and fit it
 

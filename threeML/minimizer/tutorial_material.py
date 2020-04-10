@@ -1,10 +1,5 @@
-from __future__ import division
 # Leave these imports here, even though they look not used in the module, as they are used in the tutorial
 
-from builtins import zip
-from builtins import map
-from builtins import range
-from past.utils import old_div
 from threeML.minimizer.grid_minimizer import GridMinimizer
 #from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
 from threeML.minimizer.minuit_minimizer import MinuitMinimizer
@@ -19,7 +14,6 @@ from astromodels import use_astromodels_memoization
 
 import matplotlib.pyplot as plt
 import numpy as np
-from future.utils import with_metaclass
 
 
 # You don't need to do this in a normal 3ML analysis
@@ -108,7 +102,7 @@ def plot_likelihood_function(jl, fig=None):
     # Let's have a look at the -log(L) by plotting it
 
     mus = np.arange(1, 100, 0.01)  # These are 1,2,3,4...99
-    _ = plt.plot(mus, list(map(jl.minus_log_like_profile, mus)))
+    _ = plt.plot(mus, map(jl.minus_log_like_profile, mus))
 
     _ = plt.xlabel(r"$\mu$")
     _ = plt.ylabel(r"$-\log{L(\mu)}$")
@@ -189,7 +183,7 @@ class CustomLikelihoodLike(PluginPrototype):
         """
 
         # Gather values
-        values = [x.value for x in list(self._free_parameters.values())]
+        values = map(lambda x:x.value, self._free_parameters.values())
 
         return -self._minus_log_l(*values)
 
@@ -200,7 +194,7 @@ class CustomLikelihoodLike(PluginPrototype):
         return 1
 
 
-class Simple(with_metaclass(FunctionMeta, Function1D)):
+class Simple(Function1D):
     """
     description :
 
@@ -223,6 +217,8 @@ class Simple(with_metaclass(FunctionMeta, Function1D)):
             max : 100
 
         """
+
+    __metaclass__ = FunctionMeta
 
     def _setup(self):
 
@@ -301,7 +297,7 @@ class Complex(Simple):
 
         for i in range(3):
 
-          self._gau += Gaussian(F=100.0 / (i+1), mu= 10 + (i * 25), sigma=old_div(5, (i+1)))
+          self._gau += Gaussian(F=100.0 / (i+1), mu= 10 + (i * 25), sigma=5 / (i+1))
 
         self._returned_values = []
         self._traversed_points = []

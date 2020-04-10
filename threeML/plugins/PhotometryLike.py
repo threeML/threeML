@@ -1,4 +1,3 @@
-from builtins import range
 import collections
 import copy
 
@@ -71,7 +70,7 @@ class PhotometryLike(XYLike):
 
         starting_mask = np.zeros(len(names), dtype=bool)
 
-        for band in list(data.keys()):
+        for band in data.keys():
 
             assert band in names, 'band %s is not a member of the filter set %s'%(band,'blah')
             starting_mask[ names.index(band)] = True

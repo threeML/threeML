@@ -11,7 +11,7 @@ source:
 build:
   script: python -m pip install --no-deps --ignore-installed .
   skip: true  # [win]
-
+  skip: true  # [py3k]
 
 requirements:
   
@@ -22,8 +22,7 @@ requirements:
     - python
     #- setuptools
     #- toolchain
-    - numpy>=1.6,<1.16 # [py2k]
-    - numpy # [py3k]
+    - numpy>=1.6
     #- scipy >=0.18
     - emcee>=3
     #- astropy >=1.0.3
@@ -33,26 +32,22 @@ requirements:
     - dill
     - iminuit>=1.2
     - astromodels
-    - astroquery<0.4 # [py2k]
-    - astroquery # [py3k]
+    - astroquery
     - corner>=1.0.2
     #- pandas
     - requests
     - speclite
     - pymultinest
-    - pygmo>=2.4,<=2.11.4 # [py2k]
-    - pygmo>=2.4 # [py3k]
+    - pygmo>=2.4
     - ipywidgets
     #- ipython
     - ipyparallel
     - py
-    - tk==8.5.19 # [py2k]
-    - ipopt<3.13 # [py2k]
+    - tk==8.5.19
   
   run:
     - python
-    - numpy>=1.6,<1.16 # [py2k]
-    - numpy # [py3k]
+    - numpy>=1.6
     - scipy>=0.18
     - emcee>=3
     - astropy>=1.0.3
@@ -62,24 +57,20 @@ requirements:
     - dill
     - iminuit>=1.2
     - astromodels
-    - astroquery<0.4 # [py2k]
-    - astroquery # [py3k]
+    - astroquery
     - corner>=1.0.2
-    - pandas>=0.23
+    - pandas
     - requests
     - speclite
     - pymultinest
-    - pygmo>=2.4,<=2.11.4 # [py2k]
-    - pygmo>=2.4 # [py3k]
+    - pygmo>=2.4
     - ipywidgets
     - ipython
     - ipyparallel
     - xz
     - py
-    - pytest<4 # [py2k]
-    - pytest # [py3k]
-    - numexpr
-    - ipopt<3.13 # [py2k]
+    - pytest<4
+    - numexpr 
 
 #test:
 #  # Python imports
@@ -88,7 +79,7 @@ requirements:
 
 
 about:
-  home: https://github.com/threeML/threeML
+  home: https://github.com/giacomov/3ML
   license: BSD-3
   summary: 'The Multi-Mission Maximum Likelihood framework'
   license_family: BSD
@@ -96,5 +87,4 @@ about:
 extra:
   recipe-maintainers:
     - giacomov
-    - ndilalla
 

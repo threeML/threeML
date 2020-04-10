@@ -19,7 +19,6 @@ class RandomVariates(np.ndarray):
         # Add the value
         obj._orig_value = value
 
-        
         # Finally, we must return the newly created object:
         return obj
 
@@ -29,65 +28,19 @@ class RandomVariates(np.ndarray):
         if obj is None: return
 
         # Add the value
+
         self._orig_value = getattr(obj, '_orig_value', None)
-        
-    def __array_wrap__(self, out_arr, context=None):
+
+    def __array_wrap__(self, out_arr):
 
         # This gets called at the end of any operation, where out_arr is the result of the operation
         # We need to update _orig_value so that the final results will have it
-        
-        out_arr._orig_value =  out_arr.median
 
-            
+        out_arr._orig_value = out_arr.median
+
         # then just call the parent
-        return super(RandomVariates, self).__array_wrap__(out_arr, context)
+        return np.ndarray.__array_wrap__(self, out_arr)
 
-    # def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
-
-    #     # TODO: must make this return single numbers is needed
-
-    #     args = []
-    #     in_no = []
-    #     for i, input_ in enumerate(inputs):
-    #         if isinstance(input_, RandomVariates):
-    #             in_no.append(i)
-    #             args.append(input_.view(np.ndarray))
-    #         else:
-    #             args.append(input_)
-
-    #     outputs = kwargs.pop('out', None)
-    #     out_no = []
-
-    #     if outputs:
-    #         out_args = []
-    #         for j, output in enumerate(outputs):
-    #             if isinstance(output, RandomVariates):
-    #                 out_no.append(j)
-    #                 out_args.append(output.view(np.ndarray))
-    #             else:
-    #                 out_args.append(output)
-    #         kwargs['out'] = tuple(out_args)
-    #     else:
-    #         outputs = (None,) * ufunc.nout
-
- 
-    #     results = super(RandomVariates, self).__array_ufunc__(ufunc, method,
-    #                                              *args, **kwargs)
-    #     if results is NotImplemented:
-    #         return NotImplemented
-
-    #     if method == 'at':
-    #         return
-
-    #     if ufunc.nout == 1:
-    #         results = (results,)
-
-    #     results = tuple((np.asarray(result).view(RandomVariates)
-    #                      if output is None else output)
-    #                     for result, output in zip(results, outputs))
- 
-    #     return results[0] if len(results) == 1 else results
-    
     @property
     def median(self):
         """Returns median value"""
@@ -96,25 +49,6 @@ class RandomVariates(np.ndarray):
 
         return float(np.median(np.asarray(self)))
 
-    # @property
-    # def mean(self):
-    #     """Returns average value"""
-
-    #     return float(np.asarray(self).mean())
-
-    @property
-    def std(self):
-        """Returns sample std value"""
-
-        return float(np.asarray(self).std())
-
-    @property
-    def var(self):
-        """Returns sample variance value"""
-
-        return float(np.asarray(self).var())
-
-    
     @property
     def average(self):
         """Returns average value"""

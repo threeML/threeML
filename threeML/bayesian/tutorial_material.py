@@ -1,5 +1,3 @@
-from builtins import zip
-from builtins import map
 from astromodels import Model, PointSource, Uniform_prior, Log_uniform_prior
 from threeML.data_list import DataList
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
@@ -119,7 +117,7 @@ def array_to_cmap(values, cmap, use_log=False):
 
     cmap = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
 
-    rgb_colors = list(map(cmap.to_rgba, values))
+    rgb_colors = map(cmap.to_rgba, values)
 
     return rgb_colors
 

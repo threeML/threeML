@@ -1,4 +1,3 @@
-from __future__ import print_function
 # This module handle the lazy dependence on IPython
 
 

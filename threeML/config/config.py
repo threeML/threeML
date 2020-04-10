@@ -1,13 +1,9 @@
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
 import os
 import shutil
 import re
 import pkg_resources
 import yaml
-import urllib.parse
+import urlparse
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 
@@ -115,7 +111,7 @@ class Config(object):
 
     def __getitem__(self, key):
 
-        if key in list(self._configuration.keys()):
+        if key in self._configuration.keys():
 
             return self._configuration[key]
 
@@ -167,7 +163,7 @@ class Config(object):
 
         try:
 
-            tokens = urllib.parse.urlparse(var)
+            tokens = urlparse.urlparse(var)
 
         except:
 
@@ -189,7 +185,7 @@ class Config(object):
 
         try:
 
-            tokens = urllib.parse.urlparse(var)
+            tokens = urlparse.urlparse(var)
 
         except:
 
@@ -340,9 +336,7 @@ class Config(object):
     @staticmethod
     def _remove_type(d):
 
-        #tmp = [ (key.split("(")[0].rstrip(), value) for key, value in d.items()]
-        
-        return dict((key.split("(")[0].rstrip(), value) for key, value in d.items())
+        return dict(map(lambda (key, value): (key.split("(")[0].rstrip(), value), d.items()))
 
     def _get_copy_with_no_types(self, multilevelDict):
 

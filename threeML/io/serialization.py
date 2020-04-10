@@ -1,5 +1,3 @@
-from future import standard_library
-standard_library.install_aliases()
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 
@@ -12,7 +10,7 @@ try:
 
 except ImportError:
 
-    import copyreg as copyreg #py2
+    import copy_reg as copyreg #py2
 
 
 # Serialization for JointLikelihood object

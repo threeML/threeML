@@ -1,4 +1,3 @@
-from builtins import object
 __author__ = 'grburgess'
 
 import astropy.units as u
@@ -78,7 +77,7 @@ def plot_spectra(*analysis_results, **kwargs):
                  'include_extended':False
                  }
 
-    for key, value in kwargs.items():
+    for key, value in kwargs.iteritems():
 
         if key in _defaults:
             _defaults[key] = value
@@ -134,7 +133,7 @@ def plot_spectra(*analysis_results, **kwargs):
         else:
 
             # duck typing
-            if isinstance(_defaults['fit_colors'], (str, str)):
+            if isinstance(_defaults['fit_colors'], (str, unicode)):
 
                 color_fit = [_defaults['fit_colors']] * num_sources_to_plot
 
@@ -157,7 +156,7 @@ def plot_spectra(*analysis_results, **kwargs):
         else:
 
             # duck typing
-            if isinstance(_defaults['contour_colors'], (str, str)):
+            if isinstance(_defaults['contour_colors'], (str, unicode)):
 
                 color_contour = [_defaults['contour_colors']] * num_sources_to_plot
 
@@ -188,7 +187,7 @@ def plot_spectra(*analysis_results, **kwargs):
                                       subplot=_defaults['subplot']
                                       )
 
-        for key in list(mle_analyses.keys()):
+        for key in mle_analyses.keys():
 
             # we won't assume to plot the total until the end
 
@@ -199,10 +198,10 @@ def plot_spectra(*analysis_results, **kwargs):
                 # if this source has no components or none that we wish to plot
                 # then we will plot the total spectrum after this
 
-                if (not list(mle_analyses[key]['components'].keys())) or ('total' in _defaults['components_to_use']):
+                if (not mle_analyses[key]['components'].keys()) or ('total' in _defaults['components_to_use']):
                     plot_total = True
 
-                for component in list(mle_analyses[key]['components'].keys()):
+                for component in mle_analyses[key]['components'].keys():
 
                     positive_error = None
                     negative_error = None
@@ -306,16 +305,16 @@ def plot_spectra(*analysis_results, **kwargs):
 
         # we will do the exact same thing for the bayesian analyses
 
-        for key in list(bayesian_analyses.keys()):
+        for key in bayesian_analyses.keys():
 
             plot_total = False
 
             if _defaults['use_components']:
 
-                if (not list(bayesian_analyses[key]['components'].keys())) or ('total' in _defaults['components_to_use']):
+                if (not bayesian_analyses[key]['components'].keys()) or ('total' in _defaults['components_to_use']):
                     plot_total = True
 
-                for component in list(bayesian_analyses[key]['components'].keys()):
+                for component in bayesian_analyses[key]['components'].keys():
 
                     positive_error = None
                     negative_error = None
@@ -435,11 +434,11 @@ def plot_spectra(*analysis_results, **kwargs):
         color_contour = cmap_intervals(num_sources_to_plot, _defaults['contour_cmap'])
         color_itr = 0
 
-        if _defaults['use_components'] and list(component_sum_dict_mle.keys()):
+        if _defaults['use_components'] and component_sum_dict_mle.keys():
 
             # we have components to plot
 
-            for component, values in component_sum_dict_mle.items():
+            for component, values in component_sum_dict_mle.iteritems():
 
                 summed_analysis = sum(values)
 
@@ -526,11 +525,11 @@ def plot_spectra(*analysis_results, **kwargs):
 
             color_itr += 1
 
-        if _defaults['use_components'] and list(component_sum_dict_bayes.keys()):
+        if _defaults['use_components'] and component_sum_dict_bayes.keys():
 
             # we have components to plot
 
-            for component, values in component_sum_dict_bayes.items():
+            for component, values in component_sum_dict_bayes.iteritems():
 
                 summed_analysis = sum(values)
 

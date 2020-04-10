@@ -1,6 +1,3 @@
-from __future__ import division
-from builtins import zip
-from past.utils import old_div
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MaxNLocator
@@ -50,7 +47,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     if not data:
 
-        data_keys = list(analysis.data_list.keys())
+        data_keys = analysis.data_list.keys()
 
     else:
 
@@ -63,7 +60,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     for key in data_keys:
 
         # Make sure it is a valid key
-        if key in list(analysis.data_list.keys()):
+        if key in analysis.data_list.keys():
 
             if isinstance(analysis.data_list[key], threeML.plugins.SpectrumLike.SpectrumLike):
 
@@ -264,7 +261,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
     if not data:
 
-        data_keys = list(analysis.data_list.keys())
+        data_keys = analysis.data_list.keys()
 
     else:
 
@@ -277,7 +274,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     for key in data_keys:
 
         # Make sure it is a valid key
-        if key in list(analysis.data_list.keys()):
+        if key in analysis.data_list.keys():
 
             if isinstance(analysis.data_list[key], threeML.plugins.PhotometryLike.PhotometryLike):
 
@@ -363,7 +360,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
         mag_errors= data.magnitude_errors[sort_idx]
         avg_wave_length = avg_wave_length[sort_idx]
 
-        residuals = old_div((expected_model_magnitudes - magnitudes), mag_errors)
+        residuals = (expected_model_magnitudes - magnitudes) / mag_errors
 
         widths = data._filter_set.wavelength_bounds.widths[sort_idx]
 

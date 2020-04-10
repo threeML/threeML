@@ -1,5 +1,3 @@
-from builtins import range
-from builtins import object
 import logging
 import numpy as np
 import warnings
@@ -101,7 +99,7 @@ class JointLikelihoodSet(object):
 
             assert minimizer.upper() in _minimizers, \
                 "Minimizer %s is not available on this system. " \
-                "Available minimizers: %s" % (minimizer, ",".join(list(_minimizers.keys())))
+                "Available minimizers: %s" % (minimizer, ",".join(_minimizers.keys()))
 
             # The string can only specify a local minimization. This will return an error if that is not the case.
             # In order to setup global optimization the user needs to use the GlobalMinimization factory directly
@@ -158,7 +156,7 @@ class JointLikelihoodSet(object):
 
             # Prepare the keys so that the first model will be indexed with model_0, the second model_1 and so on
 
-            keys = ["model_%i" % x for x in range(n_models)]
+            keys = map(lambda x: "model_%i" % x, range(n_models))
 
             # Concatenate all results in one frame for parameters and one for likelihood
 
@@ -220,7 +218,7 @@ class JointLikelihoodSet(object):
 
             client = ParallelClient(**options_for_parallel_computation)
 
-            results = client.execute_with_progress_bar(self.worker, list(range(self._n_iterations)))
+            results = client.execute_with_progress_bar(self.worker, range(self._n_iterations))
 
 
         else:
@@ -242,8 +240,8 @@ class JointLikelihoodSet(object):
 
         # Store the results in the data frames
 
-        parameter_frames = pd.concat([x[0] for x in results], keys=list(range(self._n_iterations)))
-        like_frames = pd.concat([x[1] for x in results], keys=list(range(self._n_iterations)))
+        parameter_frames = pd.concat(map(lambda x: x[0], results), keys=range(self._n_iterations))
+        like_frames = pd.concat(map(lambda x: x[1], results), keys=range(self._n_iterations))
 
         # Store a list with all results (this is a list of lists, each list contains the results for the different
         # iterations for the same model)
@@ -251,7 +249,7 @@ class JointLikelihoodSet(object):
 
         for i in range(self._n_models):
 
-            this_model_results = [ x[2][i] for x in results ]
+            this_model_results = map(lambda x: x[2][i], results)
 
             self._all_results.append(AnalysisResultsSet(this_model_results))
 

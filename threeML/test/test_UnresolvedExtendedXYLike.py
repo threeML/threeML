@@ -124,10 +124,10 @@ def test_UnresolvedExtendedXYLike_assign_to_source():
     exs1 = ExtendedSource("exs1", spatial_shape = shape, spectral_shape=fitfun)
     pts2 = PointSource("pts2", ra=2.5, dec=3.2, spectral_shape=fitfun2)
 
-    for parameter in list(fitfun2.parameters.values()):
+    for parameter in fitfun2.parameters.values():
         parameter.fix = True
         
-    for parameter in list(shape.parameters.values()):
+    for parameter in shape.parameters.values():
         parameter.fix = True
 
     model = Model(exs1, pts2)

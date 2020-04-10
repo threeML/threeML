@@ -1,6 +1,3 @@
-from __future__ import division
-from builtins import range
-from past.utils import old_div
 import collections
 
 import astropy.io.fits as fits
@@ -359,7 +356,7 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
                 # Read in the response
 
-        if isinstance(rsp_file, str) or isinstance(rsp_file, str):
+        if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
             rsp = OGIPResponse(rsp_file, arf_file=arf_file)
 
         else:
@@ -403,21 +400,21 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
             if not treat_as_time_series:
 
-                rates = old_div(data.field(data_column_name)[spectrum_number - 1, :], exposure)
+                rates = data.field(data_column_name)[spectrum_number - 1, :] / exposure
 
                 rate_errors = None
 
                 if not is_poisson:
-                    rate_errors = old_div(data.field("STAT_ERR")[spectrum_number - 1, :], exposure)
+                    rate_errors = data.field("STAT_ERR")[spectrum_number - 1, :] / exposure
 
             else:
 
-                rates = old_div(data.field(data_column_name), np.atleast_2d(exposure).T)
+                rates = data.field(data_column_name) / np.atleast_2d(exposure).T
 
                 rate_errors = None
 
                 if not is_poisson:
-                    rate_errors = old_div(data.field("STAT_ERR"), np.atleast_2d(exposure).T)
+                    rate_errors = data.field("STAT_ERR") / np.atleast_2d(exposure).T
 
         if "SYS_ERR" in data.columns.names:
 
@@ -549,12 +546,12 @@ def _read_pha_or_pha2_file(pha_file_or_instance, spectrum_number=None, file_type
 
         else:
 
-            rates = old_div(data.field(data_column_name), exposure)
+            rates = data.field(data_column_name) / exposure
 
             rate_errors = None
 
             if not is_poisson:
-                rate_errors = old_div(data.field("STAT_ERR"), exposure)
+                rate_errors = data.field("STAT_ERR") / exposure
 
         if "SYS_ERR" in data.columns.names:
 
@@ -816,7 +813,7 @@ p
 
         else:
 
-            stat_err = old_div(new_count_errors,new_exposure)
+            stat_err = new_count_errors/new_exposure
 
         if self._tstart is None:
 
@@ -849,8 +846,8 @@ p
                     telescope_name=self.mission,
                     tstart=tstart,
                     telapse=telapse,
-                    channel=list(range(1,len(self)+1)),
-                    rate=old_div(new_counts,self.exposure),
+                    channel=range(1,len(self)+1),
+                    rate=new_counts/self.exposure,
                     stat_err=stat_err,
                     quality=self.quality.to_ogip(),
                     grouping=self.grouping,
@@ -897,7 +894,7 @@ p
                     telescope_name=dispersion_spectrum.mission,
                     tstart=tstart,  # TODO: add this in so that we have proper time!
                     telapse=telapse,
-                    channel=list(range(1, len(dispersion_spectrum) + 1)),
+                    channel=range(1, len(dispersion_spectrum) + 1),
                     rate=dispersion_spectrum.rates,
                     stat_err=rate_errors,
                     quality=dispersion_spectrum.quality.to_ogip(),
@@ -1027,7 +1024,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
 
         with progress_bar(num_spectra,title='Loading PHAII spectra') as p:
-            for i in range(num_spectra):
+            for i in xrange(num_spectra):
 
 
                 list_of_binned_spectra.append(BinnedSpectrumWithDispersion(counts=pha_information['counts'][i],
@@ -1161,7 +1158,7 @@ p
 
         else:
 
-            stat_err = old_div(new_count_errors,self.exposure)
+            stat_err = new_count_errors/self.exposure
 
         # create a new PHAII instance
 
@@ -1169,8 +1166,8 @@ p
                     telescope_name=self.mission,
                     tstart=0,
                     telapse=self.exposure,
-                    channel=list(range(1,len(self)+1)),
-                    rate=old_div(new_counts,self.exposure),
+                    channel=range(1,len(self)+1),
+                    rate=new_counts/self.exposure,
                     stat_err=stat_err,
                     quality=self.quality.to_ogip(),
                     grouping=self.grouping,
@@ -1201,7 +1198,7 @@ p
                     telescope_name=dispersion_spectrum.mission,
                     tstart=dispersion_spectrum.tstart,
                     telapse=dispersion_spectrum.tstop - dispersion_spectrum.tstart,
-                    channel=list(range(1, len(dispersion_spectrum) + 1)),
+                    channel=range(1, len(dispersion_spectrum) + 1),
                     rate=dispersion_spectrum.rates,
                     stat_err=rate_errors,
                     quality=dispersion_spectrum.quality.to_ogip(),

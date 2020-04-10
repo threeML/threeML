@@ -269,7 +269,7 @@ if has_parallel:
                     p.increase()
 
             # Reorder the list according to the id
-            return list(map(lambda x:x[1], sorted(results, key=lambda x:x[0])))
+            return map(lambda x:x[1], sorted(results, key=lambda x:x[0]))
 
 
 else:

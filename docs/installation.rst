@@ -11,16 +11,14 @@ Install 3ML with the automatic script which will take care of everything. The sc
 platform independent package manager.
 
 1. Download the script from `here`_
-
-2. Run the script. If you plan to use XSPEC models use
+2. Run the script. If you plan to use XSpec models use
 ``bash install_3ML.sh --with-xspec``. If you want to use the HAWC plugin, the VERITAS plugin or other features
 of 3ML needing ROOT, use ``--with-root``. Of course you can use both options at the same time:
-``bash install_3ML.sh --with-root --with-xspec``. If you need the Fermi software (Science Tools and fermipy) you can install it using the ``--with-fermi`` option. If you do not need either, you can use just
+``bash install_3ML.sh --with-root --with-xspec``. If you do not need either, you can use just
 ``bash install_3ML.sh``. The script will download Miniconda if needed (or use your existing conda installation),
-create a new environment for 3ML (named `threeML`), and install all the needed software in such environment. Thanks to this, the 3ML
+create a new environment for 3ML, and install all the needed software in such environment. Thanks to this, the 3ML
 installation will not change anything on your system and can be removed by removing the `threeML`
 conda environment (``conda uninstall --name threeML --all``)
-
 3. The script will install 3ML and then create a ``threeML_init.sh`` script and a ``threeML_init.csh`` script
 in the directory where you launched it. These scripts can be moved anywhere. Source the former if you are using
 Bash (``source threeML_init.sh``) and the latter if you are using Csh/Tcsh (``source threeML_init.csh``)
@@ -34,7 +32,7 @@ In order to use the HAWC plugin, you will also need to install cthreeML
     > [setup HAWC environment as usual]
     > export CFLAGS="-m64 -I${CONDA_PREFIX}/include"
     > export CXXFLAGS="-DBOOST_MATH_DISABLE_FLOAT128 -m64 -I${CONDA_PREFIX}/include"
-    > pip install git+https://github.com/threeML/cthreeML.git --no-deps --upgrade
+    > pip install git+https://github.com/giacomov/cthreeML.git --no-deps --upgrade
 
 Manual method
 ~~~~~~~~~~~~~
@@ -51,35 +49,15 @@ Then activate your environment and install 3ML as:
 .. code:: bash
 
     source activate threeML
-    conda install -c conda-forge/label/cf201901 -c threeml threeml astromodels
+    conda install -c conda-forge -c threeml threeml
 
-If you need XSPEC support and/or ROOT support, you need to install also the respective packages ``root5``
+If you need XSpec support and/or ROOT support, you need to install also the respective packages ``root5``
 and ``xspec-modelsonly`` with:
 
 .. code:: bash
 
     source activate threeML
     conda install -c conda-forge -c threeml [package]
-
-It can happen, especially on Linux systems, that trying to import ``astromodels.xspec`` may result in the following error:
-
-.. code:: python
-
-    >>> import astromodels.xspec
-    Traceback (most recent call last):
-    File "<stdin>", line 1, in <module>
-    File "/home/miniconda3/envs/threeML/lib/python2.7/site-packages/astromodels/xspec/__init__.py", line 1, in <module>
-        from .factory import *
-    File "/home/miniconda3/envs/threeML/lib/python2.7/site-packages/astromodels/xspec/factory.py", line 18, in <module>
-        from astromodels.xspec import _xspec
-    ImportError: libCCfits.so.0: cannot open shared object file: No such file or directory
-
-In this event, what you have to do is to install the ``ccfits`` package from the ``conda-forge`` channel:
-
-.. code:: bash
-
-    source activate threeML
-    conda install -c conda-forge ccfits=2.5
 
 Other dependencies
 ~~~~~~~~~~~~~~~~~~
@@ -144,15 +122,15 @@ then:
 .. code:: bash
 
     > pip install numpy scipy ipython
-    > pip install git+https://github.com/threeML/threeML.git 
-    > pip install git+https://github.com/threeML/astromodels.git --upgrade
+    > pip install git+https://github.com/giacomov/3ML.git 
+    > pip install git+https://github.com/giacomov/astromodels.git --upgrade
 
 In order to use the HAWC plugin, you will also need to install cthreeML
 (run this *after* setting up the HAWC environment):
 
 .. code:: bash
     
-    > pip install git+https://github.com/threeML/cthreeML.git
+    > pip install git+https://github.com/giacomov/cthreeML.git
 
 .. _Conda: https://conda.io/docs/
-.. _here: https://raw.githubusercontent.com/threeML/threeML/master/install_3ML.sh
+.. _here: https://raw.githubusercontent.com/giacomov/3ML/master/install_3ML.sh

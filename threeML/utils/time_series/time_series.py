@@ -1,9 +1,3 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import zip
-from builtins import range
-from builtins import object
-from past.utils import old_div
 __author__ = 'grburgess'
 
 import collections
@@ -173,7 +167,7 @@ class TimeSeries(object):
             #
             # display(df_err)
 
-            pan = {'coefficients': df_coeff, 'error': df_err}
+            pan = pd.Panel({'coefficients': df_coeff, 'error': df_err})
 
             return pan
 
@@ -430,7 +424,7 @@ class TimeSeries(object):
 
             counts_err = None
             counts = self._poly_selected_counts
-            rates = old_div(self._counts, self._poly_exposure)
+            rates = self._counts / self._poly_exposure
             rate_err = None
             exposure = self._poly_exposure
 
@@ -441,8 +435,8 @@ class TimeSeries(object):
 
             counts_err = self._poly_count_err
             counts = self._poly_counts
-            rate_err = old_div(self._poly_count_err, self._exposure)
-            rates = old_div(self._poly_counts, self._exposure)
+            rate_err = self._poly_count_err / self._exposure
+            rates = self._poly_counts / self._exposure
             exposure = self._exposure
 
             # removing negative counts
@@ -461,7 +455,7 @@ class TimeSeries(object):
 
             counts_err = None
             counts = self._counts
-            rates = old_div(self._counts, self._exposure)
+            rates = self._counts / self._exposure
             rate_err = None
 
             exposure = self._exposure
@@ -535,7 +529,7 @@ class TimeSeries(object):
             info_dict['polynomial fit type'] = self._fit_method_info['bin type']
             info_dict['polynomial fit method'] = self._fit_method_info['fit method']
 
-        return pd.Series(info_dict, index=list(info_dict.keys()))
+        return pd.Series(info_dict, index=info_dict.keys())
 
     def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
         """
@@ -559,7 +553,7 @@ class TimeSeries(object):
             log_likelihoods.append(log_like)
 
         # Found the best one
-        delta_loglike = np.array([2 * (x[0] - x[1]) for x in zip(log_likelihoods[:-1], log_likelihoods[1:])])
+        delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
 
         # print("\ndelta log-likelihoods:")
 
@@ -610,7 +604,7 @@ class TimeSeries(object):
             log_likelihoods.append(log_like)
 
         # Found the best one
-        delta_loglike = np.array([2 * (x[0] - x[1]) for x in zip(log_likelihoods[:-1], log_likelihoods[1:])])
+        delta_loglike = np.array(map(lambda x: 2 * (x[0] - x[1]), zip(log_likelihoods[:-1], log_likelihoods[1:])))
 
         delta_threshold = 9.0
 
@@ -692,8 +686,8 @@ class TimeSeries(object):
             df_err.to_hdf(store, 'covariance')
 
             store.get_storer('coefficients').attrs.metadata = {'poly_order': self._optimal_polynomial_grade,
-                                                               'poly_selections': list(zip(self._poly_intervals.start_times,
-                                                                                      self._poly_intervals.stop_times)),
+                                                               'poly_selections': zip(self._poly_intervals.start_times,
+                                                                                      self._poly_intervals.stop_times),
                                                                'unbinned': self._unbinned,
                                                                'fit_method': self._fit_method_info['fit method']}
 

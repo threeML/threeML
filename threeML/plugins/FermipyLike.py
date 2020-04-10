@@ -1,5 +1,3 @@
-from __future__ import division
-from past.utils import old_div
 import astromodels
 import numpy as np
 import os
@@ -78,7 +76,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
     dec_center = float(configuration['selection']['dec'])
 
     roi_width = float(configuration['binning']['roiwidth'])
-    roi_radius = old_div(roi_width, np.sqrt(2.0))
+    roi_radius = roi_width / np.sqrt(2.0)
 
     # Get IRFS
     irfs = evclass_irf[int(configuration['selection']['evclass'])]
@@ -119,7 +117,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
     sources = []
 
     # point sources
-    for point_source in list(likelihood_model.point_sources.values()):  # type: astromodels.PointSource
+    for point_source in likelihood_model.point_sources.values():  # type: astromodels.PointSource
 
         this_source = {'Index': 2.56233, 'Scale': 572.78, 'Prefactor': 2.4090e-12}
         this_source['name'] = point_source.name
@@ -133,7 +131,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
         sources.append(this_source)
 
     # extended sources
-    for extended_source in list(likelihood_model.extended_sources.values()):  # type: astromodels.ExtendedSource
+    for extended_source in likelihood_model.extended_sources.values():  # type: astromodels.ExtendedSource
 
         raise NotImplementedError("Extended sources are not supported yet")
 
@@ -153,7 +151,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
 
     energies_keV = None
 
-    for point_source in list(likelihood_model.point_sources.values()):  # type: astromodels.PointSource
+    for point_source in likelihood_model.point_sources.values():  # type: astromodels.PointSource
 
         # Fix this source, so fermipy will not optimize by itself the parameters
         gta.free_source(point_source.name, False)
@@ -180,7 +178,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
         gta.set_source_dnde(point_source.name, dnde_per_MeV, False)
 
     # Same for extended source
-    for extended_source in list(likelihood_model.extended_sources.values()):  # type: astromodels.ExtendedSource
+    for extended_source in likelihood_model.extended_sources.values():  # type: astromodels.ExtendedSource
 
         raise NotImplementedError("Extended sources are not supported yet")
 
@@ -380,7 +378,7 @@ class FermipyLike(PluginPrototype):
 
         # Substitute all spectra for point sources with FileSpectrum, so that we will be able to control
         # them from 3ML
-        for point_source in list(self._likelihood_model.point_sources.values()):  # type: astromodels.PointSource
+        for point_source in self._likelihood_model.point_sources.values():  # type: astromodels.PointSource
 
             # Update this source only if it has free parameters (to gain time)
             if point_source.has_free_parameters():
@@ -400,7 +398,7 @@ class FermipyLike(PluginPrototype):
                 continue
 
         # Same for extended source
-        for extended_source in list(self._likelihood_model.extended_sources.values()):  # type: astromodels.ExtendedSource
+        for extended_source in self._likelihood_model.extended_sources.values():  # type: astromodels.ExtendedSource
 
             raise NotImplementedError("Extended sources are not supported yet")
 

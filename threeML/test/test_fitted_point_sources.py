@@ -1,4 +1,3 @@
-from builtins import zip
 import pytest
 from threeML import *
 from threeML.plugins.OGIPLike import OGIPLike
