@@ -2,6 +2,8 @@ import numpy as np
 import abc
 import collections
 import math
+from future.utils import with_metaclass
+
 
 try:
 
@@ -29,7 +31,7 @@ from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_wa
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
 
-class SamplerBase(object, metaclass=abc.ABCMeta):
+class SamplerBase(with_metaclass(abc.ABCMeta, object)):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
 
         self._samples = None
