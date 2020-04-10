@@ -215,7 +215,7 @@ def completed_bn090217206_bayesian_analysis_multicomp(
 
     bayes.set_sampler("emcee")
 
-    bayes.sampler.setup(n_walkers=50, n_burn_in=50, n_samples=100, seed=1234)
+    bayes.sampler.setup(n_walkers=50, n_burn_in=50, n_iterations=100, seed=1234)
 
     samples = bayes.sample()
 
