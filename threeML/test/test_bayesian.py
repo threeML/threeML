@@ -90,6 +90,8 @@ def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
     
     res = bayes.results.get_data_frame()
 
+    bayes.restore_median_fit()
+    
     check_results(res)
 
 
@@ -105,3 +107,5 @@ def test_bayes_plots(completed_bn090217206_bayesian_analysis):
     bayes.convergence_plots(n_samples_in_each_subset=10, n_subsets=5)
 
     bayes.plot_chains()
+
+    bayes.restore_median_fit()
