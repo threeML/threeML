@@ -43,6 +43,16 @@ except:
 
 class MultiNestSampler(UnitCubeSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
+        """
+        Implements the MultiNest sampler of https://github.com/farhanferoz/MultiNest
+        via the python wrapper of https://github.com/JohannesBuchner/PyMultiNest
+
+        :param likelihood_model: 
+        :param data_list: 
+        :returns: 
+        :rtype: 
+
+        """
 
         assert has_pymultinest, "You must install MultiNest to use this sampler"
         
@@ -57,7 +67,8 @@ class MultiNestSampler(UnitCubeSampler):
         **kwargs
     ):
         """
-        Setup the MultiNest Sampler
+        Setup the MultiNest Sampler. For details see:
+        
 
         :param n_live_points: number of live points for the evaluation
         :param chain_name: the chain name

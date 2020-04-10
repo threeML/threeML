@@ -28,11 +28,22 @@ except:
 from threeML.analysis_results import BayesianResults
 from threeML.utils.statistics.stats_tools import aic, bic, dic
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
-
-
+from astromodels.functions.function import ModelAssertionViolation
 
 class SamplerBase(with_metaclass(abc.ABCMeta, object)):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
+        """
+
+        The base class for all bayesian samplers. Provides a common interface
+        to access samples and byproducts of fits. 
+
+
+        :param likelihood_model: the likelihood model
+        :param data_list: the data list 
+        :returns: 
+        :rtype: 
+
+        """
 
         self._samples = None
         self._raw_samples = None
@@ -48,10 +59,31 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
             self._register_model_and_data(likelihood_model, data_list)
 
     def set_model_and_data(self, likelihood_model, data_list):
+        """
+
+        set the likelihood model and data list after instantiation
+
+        :param likelihood_model: the likelihood model
+        :param data_list: the data list
+        :returns: 
+        :rtype: 
+
+        """
 
         self._register_model_and_data(likelihood_model, data_list)
 
     def _register_model_and_data(self, likelihood_model, data_list):
+        """
+
+        make sure the model and data list are set up
+
+        :param likelihood_model: 
+        :param data_list: 
+        :returns: 
+        :rtype: 
+
+        """
+
         # Verify that all the free parameters have priors
         for parameter_name, parameter in likelihood_model.free_parameters.items():
 
@@ -184,6 +216,13 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
             self._samples[parameter_name] = self._raw_samples[:, i]
 
     def _build_results(self):
+        """
+        build the results after a fit is performed
+
+        :returns: 
+        :rtype: 
+
+        """
 
         # Find maximum of the log posterior
         idx = self._log_probability_values.argmax()

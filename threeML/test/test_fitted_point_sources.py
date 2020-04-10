@@ -105,18 +105,18 @@ def analysis_to_test(data_list_bn090217206_nai6):
     bayes_simple = BayesianAnalysis(simple_model, data_list_bn090217206_nai6)
 
     bayes_simple.set_sampler("emcee")
-    bayes_simple.sampler.setup(n_interations=10, n_burn_in=10, n_walkers=20)
+    bayes_simple.sampler.setup(n_iterations=10, n_burn_in=10, n_walkers=20)
     bayes_simple.sample()
 
     bayes_complex = BayesianAnalysis(complex_model, data_list_bn090217206_nai6)
 
-    bayes_complex.sampler.setup(n_interations=10, n_burn_in=10, n_walkers=20)
+    bayes_complex.sampler.setup(n_iterations=10, n_burn_in=10, n_walkers=20)
 
     bayes_complex.sample()
 
     bayes_dless = BayesianAnalysis(dless_model, data_list_bn090217206_nai6)
 
-    bayes_dless.sampler.setup(n_interations=10, n_burn_in=10, n_walkers=20)
+    bayes_dless.sampler.setup(n_iterations=10, n_burn_in=10, n_walkers=20)
 
     bayes_dless.sample()
 
