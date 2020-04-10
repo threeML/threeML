@@ -53,9 +53,13 @@ script:
       ./ci/build_and_test.sh
   fi
 
-#  after_success:
-#  - |
-#      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-#        chmod u+x ci/push_new_version.sh
-#        ./push_new_version.sh
-#      fi
+deploy:
+  provider: pypi
+  user: "__token__"
+  password:
+    secure: KlyYSpxgxR5LKd+xouGwady5yuKDlpeucB7P0FMBQduq2hd50jKJ+HPOungkN5R2htKzTrNy+cYSioNr/6RxXG6z4fBkG+rQvjUyX33az3k6Af/yDFUVtu1uYaWai+S04NIk1814JYH6rCmLpQeEvK6DPiiK67w1lV3hXqaGqS6CTFj7oB4KcpWtD35rPfu9iC4w1AUxSzO0VumdP3RwCH5zVmtf5QaoxzBJkqCV4duqIUdlEe1I/mg3yxkICFMZW9lZmkSb5lKSRMrNWsBZ7Gy25seBe3LMQSdpUwINMubSLmJgDccx9tMlld3+fOhpQx53aeU11xHYPHvKvNl5y+cxMGae2tdbcibvKKbHDrhgxacBag//SoVAoWYBLQnkeuUsCMMIaNUS0FnTlpXF/sAVTvyHhBeo+CIJ0TPp0BuqVyb7AObvdXRf2wRwIPBK553zJrqyPpDd3SzpkX4AX+tsoQCJzp/1DUZvNGZSXWMcJB/QICMWiOXk2uIzmtBoNWrpdC5ERGhUVwBy4aXboGMn9oI01utQO82u79GIv5FfWKNCy3AqrMazcRBpTVNs0y0y9JsQYTonkAiS60h0afpQEgSwf74h0acNReb6G1Ndmhe+vY80IgN30V1kIxT1wmGYIeFKKPthHIpG4WGTYwU5vGh/iG0769Bipl4um84=
+  distributions: sdist
+  skip_existing: true
+  on:
+    tags: true
+  

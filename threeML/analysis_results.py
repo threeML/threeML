@@ -41,7 +41,7 @@ from threeML.io.rich_display import display
 from threeML.io.table import NumericMatrix
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.io.results_table import ResultsTable
-from threeML.version import __version__
+from threeML import __version__
 from threeML.random_variates import RandomVariates
 from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.config.config import threeML_config
@@ -49,7 +49,6 @@ from threeML.config.config import threeML_config
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
 # them with normal characters when we write the keyword, and we substitute them back when we read it back
 _subs = (('\n', "_NEWLINE_"), ("'", "_QUOTE1_"), ('"', "_QUOTE2_"), ('{', "_PARO_"), ('}', "_PARC_"))
-
 
 def _escape_yaml_for_fits(yaml_code):
     for sub in _subs:
