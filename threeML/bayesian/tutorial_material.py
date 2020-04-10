@@ -32,26 +32,6 @@ class BayesianAnalysisWrap(BayesianAnalysis):
 
                 self.likelihood_model.test.spectrum.main.shape.stop_tracking()
 
-    # def sample_multinest(self, *args, **kwargs):
-
-    #     self.likelihood_model.test.spectrum.main.shape.reset_tracking()
-    #     self.likelihood_model.test.spectrum.main.shape.start_tracking()
-
-    #     kwargs['resume'] = False
-
-    #     with use_astromodels_memoization(False):
-
-    #         try:
-
-    #             super(BayesianAnalysisWrap, self).sample_multinest(*args, **kwargs)
-
-    #         except:
-
-    #             raise
-
-    #         finally:
-
-    #             self.likelihood_model.test.spectrum.main.shape.stop_tracking()
 
 
 def get_bayesian_analysis_object_simple_likelihood():
@@ -187,10 +167,12 @@ def plot_sample_path(bayes,burn_in=None, truth=None):
 
     colors = array_to_cmap(time, 'viridis')
 
-    for i, (qx, qy) in enumerate(zip(qx_, qy_)):
-        ax.scatter(qx, qy, c=np.atleast_2d(colors[i]), s=17, alpha=.4)
+    ax.scatter(qx_, qy_, c=np.atleast_2d(colors), s=17, alpha=.4)
+    ax1.scatter(time, qx_, c=np.atleast_2d(colors), s=10)
+    # for i, (qx, qy) in enumerate(zip(qx_, qy_)):
+    #     ax.scatter(qx, qy, c=np.atleast_2d(colors[i]), s=17, alpha=.4)
 
-        ax1.scatter(time[i], qx, c=np.atleast_2d(colors[i]), s=10)
+    #     ax1.scatter(time[i], qx, c=np.atleast_2d(colors[i]), s=10)
 
 
     if truth is not None:
