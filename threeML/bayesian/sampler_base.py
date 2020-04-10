@@ -28,7 +28,7 @@ except:
 from threeML.analysis_results import BayesianResults
 from threeML.utils.statistics.stats_tools import aic, bic, dic
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
-from astromodels import ModelAssertionViolation, use_astromodels_memoization
+
 
 
 class SamplerBase(with_metaclass(abc.ABCMeta, object)):
