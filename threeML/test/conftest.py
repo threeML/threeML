@@ -1,4 +1,10 @@
 import pytest
+import numpy as np
+import os
+import subprocess
+import time
+import signal
+
 from astromodels import *
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
@@ -6,16 +12,14 @@ from threeML.io.package_data import get_path_of_data_dir
 from threeML.data_list import DataList
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.XYLike import XYLike
-import subprocess
-import time
-import signal
-
+from astromodels import PointSource, Model, Uniform_prior, Log_uniform_prior
+from astromodels import Line, Gaussian, Blackbody, Powerlaw
 
 # Set up an ipyparallel cluster for the tests to use
 @pytest.fixture(scope="session", autouse=True)
 def setup_ipcluster():
 
-    ipycluster_process = subprocess.Popen(['ipcluster', 'start', '-n', '2'])
+    ipycluster_process = subprocess.Popen(["ipcluster", "start", "-n", "2"])
 
     time.sleep(5.0)
 
@@ -37,16 +41,12 @@ def reset_random_seed():
     np.random.seed(1234)
 
     # Suppress numpy warnings
-    np.seterr(over='ignore',
-              under='ignore',
-              divide='ignore',
-              invalid='ignore'
-              )
+    np.seterr(over="ignore", under="ignore", divide="ignore", invalid="ignore")
 
 
 def get_grb_model(spectrum):
 
-    triggerName = 'bn090217206'
+    triggerName = "bn090217206"
     ra = 204.9
     dec = -8.4
 
@@ -98,16 +98,17 @@ def joint_likelihood_bn090217206_nai(data_list_bn090217206_nai6):
 
     return jl
 
+
 # No need to keep refitting, so we fit once (scope=session)
 @pytest.fixture(scope="function")
 def fitted_joint_likelihood_bn090217206_nai(joint_likelihood_bn090217206_nai):
-
 
     jl = joint_likelihood_bn090217206_nai
 
     fit_results, like_frame = jl.fit()
 
     return jl, fit_results, like_frame
+
 
 def set_priors(model):
 
@@ -116,7 +117,8 @@ def set_priors(model):
     powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
     powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
 
-    def remove_priors(model):
+
+def remove_priors(model):
 
     for parameter in model:
 
@@ -131,19 +133,13 @@ def bayes_fitter(fitted_joint_likelihood_bn090217206_nai):
 
     jl.restore_best_fit()
 
-    # Priors might have been set by other tests, let's make sure they are
-    # removed so we can test the error
-    remove_priors(model)
-    with pytest.raises(RuntimeError):
-
-        _ = BayesianAnalysis(model, datalist)
-
     set_priors(model)
 
     bayes = BayesianAnalysis(model, datalist)
 
     return bayes
-    
+
+
 @pytest.fixture(scope="function")
 def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_nai):
 
@@ -160,9 +156,12 @@ def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_
 
     bayes = BayesianAnalysis(model, data_list)
 
-    samples = bayes.sample(n_walkers=50, burn_in=50, n_samples=100, seed=1234)
+    bayes.set_sampler('emcee')
+    bayes.sampler.setup(n_walkers=50, n_burn_in=50, n_iterations=100, seed=1234)
+    samples = bayes.sample()
 
     return bayes, samples
+
 
 2
 
@@ -179,11 +178,11 @@ def joint_likelihood_bn090217206_nai_multicomp(data_list_bn090217206_nai6):
     return jl
 
 
-
-
 # No need to keep refitting, so we fit once (scope=session)
 @pytest.fixture(scope="session")
-def fitted_joint_likelihood_bn090217206_nai_multicomp(joint_likelihood_bn090217206_nai_multicomp):
+def fitted_joint_likelihood_bn090217206_nai_multicomp(
+    joint_likelihood_bn090217206_nai_multicomp,
+):
 
     jl = joint_likelihood_bn090217206_nai_multicomp
 
@@ -192,10 +191,10 @@ def fitted_joint_likelihood_bn090217206_nai_multicomp(joint_likelihood_bn0902172
     return jl, fit_results, like_frame
 
 
-
-
 @pytest.fixture(scope="session")
-def completed_bn090217206_bayesian_analysis_multicomp(fitted_joint_likelihood_bn090217206_nai_multicomp):
+def completed_bn090217206_bayesian_analysis_multicomp(
+    fitted_joint_likelihood_bn090217206_nai_multicomp,
+):
 
     jl, _, _ = fitted_joint_likelihood_bn090217206_nai_multicomp
 
@@ -209,15 +208,15 @@ def completed_bn090217206_bayesian_analysis_multicomp(fitted_joint_likelihood_bn
 
     spectrum.index_1.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
     spectrum.K_1.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
-    spectrum.K_2.prior = Log_uniform_prior(lower_bound=1E-20, upper_bound=10)
-    spectrum.kT_2.prior = Log_uniform_prior(lower_bound=1E0, upper_bound=1E3)
+    spectrum.K_2.prior = Log_uniform_prior(lower_bound=1e-20, upper_bound=10)
+    spectrum.kT_2.prior = Log_uniform_prior(lower_bound=1e0, upper_bound=1e3)
 
     bayes = BayesianAnalysis(model, data_list)
 
-    bayes.set_sampler('emcee')
-    
+    bayes.set_sampler("emcee")
+
     bayes.sampler.setup(n_walkers=50, burn_in=50, n_samples=100, seed=1234)
-    
+
     samples = bayes.sample()
 
     return bayes, bayes.samples
@@ -225,8 +224,58 @@ def completed_bn090217206_bayesian_analysis_multicomp(fitted_joint_likelihood_bn
 
 x = np.linspace(0, 10, 50)
 
-poiss_sig = [44, 43, 38, 25, 51, 37, 46, 47, 55, 36, 40, 32, 46, 37, 44, 42, 50, 48, 52, 47, 39, 55, 80, 93, 123, 135,
-             96, 74, 43, 49, 43, 51, 27, 32, 35, 42, 43, 49, 38, 43, 59, 54, 50, 40, 50, 57, 55, 47, 38, 64]
+poiss_sig = [
+    44,
+    43,
+    38,
+    25,
+    51,
+    37,
+    46,
+    47,
+    55,
+    36,
+    40,
+    32,
+    46,
+    37,
+    44,
+    42,
+    50,
+    48,
+    52,
+    47,
+    39,
+    55,
+    80,
+    93,
+    123,
+    135,
+    96,
+    74,
+    43,
+    49,
+    43,
+    51,
+    27,
+    32,
+    35,
+    42,
+    43,
+    49,
+    38,
+    43,
+    59,
+    54,
+    50,
+    40,
+    50,
+    57,
+    55,
+    47,
+    38,
+    64,
+]
 
 
 @pytest.fixture(scope="session")
@@ -246,7 +295,7 @@ def xy_model_and_datalist():
     fitfun.mu_2.bounds = (0.0, 100.0)
     fitfun.sigma_2.bounds = (1e-3, 10.0)
 
-    model = Model(PointSource('fake', 0.0, 0.0, fitfun))
+    model = Model(PointSource("fake", 0.0, 0.0, fitfun))
 
     data = DataList(xy)
 
@@ -278,7 +327,9 @@ def xy_completed_bayesian_analysis(xy_fitted_joint_likelihood):
     model.fake.spectrum.main.composite.b_1.set_uninformative_prior(Uniform_prior)
     model.fake.spectrum.main.composite.F_2.set_uninformative_prior(Log_uniform_prior)
     model.fake.spectrum.main.composite.mu_2.set_uninformative_prior(Uniform_prior)
-    model.fake.spectrum.main.composite.sigma_2.set_uninformative_prior(Log_uniform_prior)
+    model.fake.spectrum.main.composite.sigma_2.set_uninformative_prior(
+        Log_uniform_prior
+    )
 
     bs = BayesianAnalysis(model, data)
 

@@ -34,6 +34,16 @@ class BayesianAnalysis(object):
         self._likelihood_model = likelihood_model
         self._data_list = data_list
 
+
+        for parameter_name, parameter in likelihood_model.free_parameters.items():
+
+            if not parameter.has_prior():
+                raise RuntimeError(
+                    "You need to define priors for all free parameters before instancing a "
+                    "Bayesian analysis"
+                )
+
+        
         # # Make sure that the current model is used in all data sets
         #
         # for dataset in self.data_list.values():
@@ -151,7 +161,7 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        return self._results.plot_chains(thin)
+        return self.results.plot_chains(thin)
 
     @property
     def likelihood_model(self):
@@ -181,52 +191,11 @@ class BayesianAnalysis(object):
         :return: a matplotlib.figure instance
         """
 
-        return self._results.convergence_plots(n_samples_in_each_subset, n_subsets)
+        return self.results.convergence_plots(n_samples_in_each_subset, n_subsets)
 
     def restore_median_fit(self):
         """
         Sets the model parameters to the mean of the marginal distributions
         """
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
-            # Add the samples for this parameter for this source
-
-            mean_par = np.median(self._samples[parameter_name])
-            parameter.value = mean_par
-
-    @staticmethod
-    def _calc_min_interval(x, alpha):
-        """
-        Internal method to determine the minimum interval of a given width
-        Assumes that x is sorted numpy array.
-        :param a: a numpy array containing samples
-        :param alpha: probability of type I error
-
-        :returns: list containing min and max HDI
-
-        """
-
-        n = len(x)
-        cred_mass = 1.0 - alpha
-
-        interval_idx_inc = int(np.floor(cred_mass * n))
-        n_intervals = n - interval_idx_inc
-        interval_width = x[interval_idx_inc:] - x[:n_intervals]
-
-        if len(interval_width) == 0:
-            raise ValueError("Too few elements for interval calculation")
-
-        min_idx = np.argmin(interval_width)
-        hdi_min = x[min_idx]
-        hdi_max = x[min_idx + interval_idx_inc]
-        return hdi_min, hdi_max
-
-    def _hpd(self, x, alpha=0.05):
-        """Calculate highest posterior density (HPD) of array for given alpha.
-        The HPD is the minimum width Bayesian credible interval (BCI).
-
-        :param x: array containing MCMC samples
-        :param alpha : Desired probability of type I error (defaults to 0.05)
-        """
-        sx = np.sort(x)
-        return np.array(self._calc_min_interval(sx, alpha))
+        self._sampler.restore_median_fit

@@ -36,6 +36,7 @@ class SamplerBase(object, metaclass=abc.ABCMeta):
         self._raw_samples = None
         self._sampler = None
         self._log_like_values = None
+        self._log_probability_values = None
         self._results = None
         self._is_setup = False
         self._is_registered = False
@@ -60,7 +61,7 @@ class SamplerBase(object, metaclass=abc.ABCMeta):
 
         # Process optional keyword parameters
 
-        self.verbose = False
+        self._verbose = False
 
         self._likelihood_model = likelihood_model
 
@@ -110,7 +111,6 @@ class SamplerBase(object, metaclass=abc.ABCMeta):
         """
         return self._samples
 
-    
     @property
     def raw_samples(self):
         """
@@ -122,7 +122,6 @@ class SamplerBase(object, metaclass=abc.ABCMeta):
 
         return self._raw_samples
 
-    
     @property
     def log_like_values(self):
         """
@@ -156,6 +155,17 @@ class SamplerBase(object, metaclass=abc.ABCMeta):
         """
 
         return self._marginal_likelihood
+
+    def restore_median_fit(self):
+        """
+        Sets the model parameters to the mean of the marginal distributions
+        """
+
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+            # Add the samples for this parameter for this source
+
+            mean_par = np.median(self._samples[parameter_name])
+            parameter.value = mean_par
 
     def _build_samples_dictionary(self):
         """
@@ -402,7 +412,7 @@ class UnitCubeSampler(SamplerBase):
 
             log_like = self._log_like(trial_values)
 
-            if self.verbose:
+            if self._verbose:
                 n_par = len(self._free_parameters)
 
                 print(
@@ -434,11 +444,13 @@ class UnitCubeSampler(SamplerBase):
 
                         raise RuntimeError(
                             "The prior you are trying to use for parameter %s is "
-                            "not compatible with sampling from a unitcube" % parameter_name
+                            "not compatible with sampling from a unitcube"
+                            % parameter_name
                         )
                 return params
 
         else:
+
             def prior(params, ndim=None, nparams=None):
 
                 for i, (parameter_name, parameter) in enumerate(
@@ -453,9 +465,9 @@ class UnitCubeSampler(SamplerBase):
 
                         raise RuntimeError(
                             "The prior you are trying to use for parameter %s is "
-                            "not compatible with sampling from a unitcube" % parameter_name
+                            "not compatible with sampling from a unitcube"
+                            % parameter_name
                         )
-
 
             # Give a test run to the prior to check that it is working. If it crashes while multinest is going
             # it will not stop multinest from running and generate thousands of exceptions (argh!)
