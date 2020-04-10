@@ -1,3 +1,4 @@
+from __future__ import print_function
 from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
@@ -138,7 +139,7 @@ def _get_latest_version(filenames):
 
     # Now we we go through and make selections
 
-    for key in vn_as_num.keys():
+    for key in list(vn_as_num.keys()):
 
         ext = np.array(extentions[key])
         vn = np.array(vn_as_num[key])
@@ -161,7 +162,7 @@ def cleanup_downloaded_LLE_data(detector_information_dict):
     :param detector_information_dict: the return dictionary from download_LLE_trigger_data
     """
 
-    for data_file in detector_information_dict.values():
+    for data_file in list(detector_information_dict.values()):
 
         print("Removing: %s"%data_file)
 

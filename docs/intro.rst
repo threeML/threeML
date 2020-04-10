@@ -7,4 +7,4 @@ Contents:
    :maxdepth: 2
    
    notebooks/Quickstart.ipynb
-   notebooks/The 3ML workflow.ipynb
+   notebooks/The_3ML_workflow.ipynb

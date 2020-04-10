@@ -1,3 +1,4 @@
+from builtins import object
 __author__ = 'grburgess'
 
 import astropy.io.fits as fits

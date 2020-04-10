@@ -1,3 +1,8 @@
+from __future__ import division
+from __future__ import print_function
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 import pytest
 from threeML import *
 
@@ -25,7 +30,7 @@ skip_if_hawc_is_not_available = pytest.mark.skipif((os.environ.get('HAWC_3ML_TES
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
 
-    if abs((truth - value) / truth) <= relative_tolerance:
+    if abs(old_div((truth - value), truth)) <= relative_tolerance:
 
         return True
 
@@ -64,7 +69,7 @@ def hawc_point_source_fitted_joint_like():
     spectrum = Cutoff_powerlaw()
     source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
 
-    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
+    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
 
     spectrum.piv = 1 * u.TeV
@@ -141,7 +146,7 @@ def test_hawc_fullsky_options():
     spectrum = Cutoff_powerlaw()
     source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
 
-    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
+    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
 
     spectrum.piv = 1 * u.TeV
@@ -234,7 +239,7 @@ def test_hawc_point_source_fit(hawc_point_source_fitted_joint_like):
     # Get the differential flux at 1 TeV
     diff_flux = spectrum(1 * u.TeV)
     # Convert it to 1 / (TeV cm2 s)
-    diff_flux_TeV = diff_flux.to(1 / (u.TeV * u.cm ** 2 * u.s))
+    diff_flux_TeV = diff_flux.to(old_div(1, (u.TeV * u.cm ** 2 * u.s)))
 
     print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
@@ -339,7 +344,7 @@ def test_hawc_extended_source_fit():
     # Get the differential flux at 1 TeV
     diff_flux = spectrum(1 * u.TeV)
     # Convert it to 1 / (TeV cm2 s)
-    diff_flux_TeV = diff_flux.to(1 / (u.TeV * u.cm ** 2 * u.s))
+    diff_flux_TeV = diff_flux.to(old_div(1, (u.TeV * u.cm ** 2 * u.s)))
 
     print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
@@ -478,7 +483,7 @@ def test_CommonNorm_fit():
     spectrum = Cutoff_powerlaw()
     source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
 
-    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
+    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
     spectrum.K.fix = True
 

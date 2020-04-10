@@ -1,3 +1,8 @@
+from __future__ import print_function
+from __future__ import division
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import emcee
 import emcee.utils
 
@@ -106,7 +111,7 @@ class BayesianAnalysis(object):
         self._analysis_type = "bayesian"
 
         # Verify that all the free parameters have priors
-        for parameter_name, parameter in likelihood_model.free_parameters.iteritems():
+        for parameter_name, parameter in likelihood_model.free_parameters.items():
 
             if not parameter.has_prior():
                 raise RuntimeError("You need to define priors for all free parameters before instancing a "
@@ -116,7 +121,7 @@ class BayesianAnalysis(object):
 
         self.verbose = False
 
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
 
             if k.lower() == "verbose":
                 self.verbose = bool(kwargs["verbose"])
@@ -125,7 +130,7 @@ class BayesianAnalysis(object):
 
         self._data_list = data_list
 
-        for dataset in self._data_list.values():
+        for dataset in list(self._data_list.values()):
 
             dataset.set_model(self._likelihood_model)
 
@@ -134,7 +139,7 @@ class BayesianAnalysis(object):
             # plugins might need to adjust the number of nuisance parameters depending on the
             # likelihood model
 
-            for parameter_name, parameter in dataset.nuisance_parameters.items():
+            for parameter_name, parameter in list(dataset.nuisance_parameters.items()):
                 # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
                 # of the same plugin will overwrite each other's nuisance parameters
 
@@ -218,7 +223,7 @@ class BayesianAnalysis(object):
 
         self._update_free_parameters()
 
-        n_dim = len(self._free_parameters.keys())
+        n_dim = len(list(self._free_parameters.keys()))
 
         # Get starting point
 
@@ -269,20 +274,20 @@ class BayesianAnalysis(object):
         print("\nMean acceptance fraction: %s\n" % acc)
 
         self._sampler = sampler
-        self._raw_samples = sampler.flatchain
+        self._raw_samples = sampler.get_chain(flat=True)
 
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
-        log_prior = map(lambda x: self._log_prior(x), self._raw_samples)
+        log_prior = [self._log_prior(x) for x in self._raw_samples]
 
         # Now we get the log posterior and we remove the log prior
 
-        self._log_like_values = sampler.flatlnprobability - log_prior
+        self._log_like_values = sampler.get_log_prob(flat=True) - log_prior
 
         # we also want to store the log probability
 
-        self._log_probability_values = sampler.flatlnprobability
+        self._log_probability_values = sampler.get_log_prob(flat=True)
 
         self._marginal_likelihood = None
 
@@ -311,7 +316,7 @@ class BayesianAnalysis(object):
 
         free_parameters = self._likelihood_model.free_parameters
 
-        n_dim = len(free_parameters.keys())
+        n_dim = len(list(free_parameters.keys()))
 
         sampler = emcee.PTSampler(n_temps, n_walkers, n_dim, self._log_like, self._log_prior)
 
@@ -339,7 +344,8 @@ class BayesianAnalysis(object):
 
         # Now build the _samples dictionary
 
-        self._raw_samples = sampler.flatchain.reshape(-1, sampler.flatchain.shape[-1])
+        self._raw_samples = sampler.get_chain(flat=True).reshape(-1,
+            sampler.get_chain(flat=True).shape[-1])
 
         self._log_probability_values = None
 
@@ -374,7 +380,7 @@ class BayesianAnalysis(object):
 
         self._update_free_parameters()
 
-        n_dim = len(self._free_parameters.keys())
+        n_dim = len(list(self._free_parameters.keys()))
 
         # MULTINEST has a convergence criteria and therefore, there is no way
         # to determine progress
@@ -486,7 +492,7 @@ class BayesianAnalysis(object):
 
             self._build_samples_dictionary()
 
-            self._marginal_likelihood = multinest_analyzer.get_stats()['global evidence'] / np.log(10.)
+            self._marginal_likelihood = old_div(multinest_analyzer.get_stats()['global evidence'], np.log(10.))
 
             self._build_results()
 
@@ -509,7 +515,7 @@ class BayesianAnalysis(object):
 
         self._samples = collections.OrderedDict()
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
             # Add the samples for this parameter for this source
 
             self._samples[parameter_name] = self._raw_samples[:, i]
@@ -539,7 +545,7 @@ class BayesianAnalysis(object):
 
         total_log_posterior = 0
 
-        for dataset in self._data_list.values():
+        for dataset in list(self._data_list.values()):
 
 
             log_posterior = dataset.get_log_like() + log_prior
@@ -655,7 +661,7 @@ class BayesianAnalysis(object):
         Sets the model parameters to the mean of the marginal distributions
         """
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
             # Add the samples for this parameter for this source
 
             mean_par = np.median(self._samples[parameter_name])
@@ -684,7 +690,7 @@ class BayesianAnalysis(object):
 
         # with use_
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
 
             prior_value = parameter.prior(trial_values[i])
 
@@ -729,7 +735,7 @@ class BayesianAnalysis(object):
                 n_par = len(self._free_parameters)
 
                 print(
-                "Trial values %s gave a log_like of %s" % (map(lambda i: "%.2g" % trial_values[i], range(n_par)),
+                "Trial values %s gave a log_like of %s" % (["%.2g" % trial_values[i] for i in range(n_par)],
                                                            log_like))
 
             return log_like
@@ -741,7 +747,7 @@ class BayesianAnalysis(object):
 
         def prior(params, ndim, nparams):
 
-            for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+            for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
 
                 try:
 
@@ -771,7 +777,7 @@ class BayesianAnalysis(object):
         p0 = []
 
         for i in range(n_walkers):
-            this_p0 = map(lambda x: x.get_randomized_value(variance), self._free_parameters.values())
+            this_p0 = [x.get_randomized_value(variance) for x in list(self._free_parameters.values())]
 
             p0.append(this_p0)
 
@@ -784,7 +790,7 @@ class BayesianAnalysis(object):
 
         log_prior = 0
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.iteritems()):
+        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
 
             prior_value = parameter.prior(trial_values[i])
 
@@ -810,7 +816,7 @@ class BayesianAnalysis(object):
 
             # Loop over each dataset and get the likelihood values for each set
 
-            log_like_values = map(lambda dataset: dataset.get_log_like(), self._data_list.values())
+            log_like_values = [dataset.get_log_like() for dataset in list(self._data_list.values())]
 
         except ModelAssertionViolation:
 

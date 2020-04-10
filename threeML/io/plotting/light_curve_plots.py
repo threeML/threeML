@@ -1,3 +1,7 @@
+from __future__ import division
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -25,10 +29,10 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
     """
     fig, ax = plt.subplots()
 
-    top = max(cnts / width) * 1.2
-    min_cnts = min(cnts[cnts > 0] / width[cnts > 0]) * 0.95
+    top = max(old_div(cnts, width)) * 1.2
+    min_cnts = min(old_div(cnts[cnts > 0], width[cnts > 0])) * 0.95
     bottom = min_cnts
-    mean_time = map(np.mean, time_bins)
+    mean_time = np.mean(time_bins, axis=1)
 
     all_masks = []
 
@@ -43,7 +47,7 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
 
     # first plot the full lightcurve
 
-    step_plot(time_bins, cnts / width, ax,
+    step_plot(time_bins, old_div(cnts, width), ax,
               color=light_curve_color, label="Light Curve")
 
     if selection is not None:
@@ -60,12 +64,12 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
         if len(all_masks) > 1:
 
             for mask in all_masks[1:]:
-                step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
+                step_plot(time_bins[mask], old_div(cnts[mask], width[mask]), ax,
                           color=selection_color,
                           fill=True,
                           fill_min=min_cnts)
 
-        step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
+        step_plot(time_bins[all_masks[0]], old_div(cnts[all_masks[0]], width[all_masks[0]]), ax,
                   color=selection_color,
                   fill=True,
                   fill_min=min_cnts, label="Selection")
@@ -85,13 +89,13 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
         if len(all_masks) > 1:
 
             for mask in all_masks[1:]:
-                step_plot(time_bins[mask], cnts[mask] / width[mask], ax,
+                step_plot(time_bins[mask], old_div(cnts[mask], width[mask]), ax,
                           color=background_selection_color,
                           fill=True,
                           alpha=.4,
                           fill_min=min_cnts)
 
-        step_plot(time_bins[all_masks[0]], cnts[all_masks[0]] / width[all_masks[0]], ax,
+        step_plot(time_bins[all_masks[0]], old_div(cnts[all_masks[0]], width[all_masks[0]]), ax,
                   color=background_selection_color,
                   fill=True,
                   fill_min=min_cnts,
@@ -117,10 +121,10 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
 
 
 def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
-    chans = np.array(zip(chan_min, chan_max))
+    chans = np.vstack([chan_min, chan_max]).T
     width = chan_max - chan_min
 
-    step_plot(chans, counts / width, ax, **kwargs)
+    step_plot(chans, old_div(counts, width), ax, **kwargs)
     ax.set_xscale('log')
     ax.set_yscale('log')
 
@@ -215,7 +219,7 @@ def plot_tte_lightcurve(tte_file, start=-10, stop=50, dt=1):
 
     width = np.diff(bins)
 
-    time_bins = np.array(zip(bins[:-1], bins[1:]))
+    time_bins = np.array(list(zip(bins[:-1], bins[1:])))
 
     # plot the light curve
 

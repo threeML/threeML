@@ -123,7 +123,7 @@ def test_XYLike_assign_to_source():
     pts1 = PointSource("pts1", ra=0.0, dec=0.0, spectral_shape=fitfun)
     pts2 = PointSource("pts2", ra=2.5, dec=3.2, spectral_shape=fitfun2)
 
-    for parameter in fitfun2.parameters.values():
+    for parameter in list(fitfun2.parameters.values()):
         parameter.fix = True
 
     model = Model(pts1, pts2)

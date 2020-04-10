@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import zip
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import numpy as np
 import pandas as pd
 
@@ -48,6 +53,8 @@ class Quality(object):
 
         #total_length = len(quality)
 
+        quality = quality.astype(str)
+        
         n_elements = 1
         for dim in quality.shape:
 
@@ -57,7 +64,9 @@ class Quality(object):
         warn = quality == 'warn'
         bad  = quality == 'bad'
 
-        assert n_elements == good.sum() + warn.sum() + bad.sum(), 'quality can only contain "good", "warn", and "bad"'
+        
+        
+        assert n_elements == (good.sum() + warn.sum() + bad.sum()), 'quality can only contain "good", "warn", and "bad"'
 
         self._good = good
         self._warn = warn
@@ -102,8 +111,6 @@ class Quality(object):
         quality = np.empty_like(ogip_quality,dtype='|S4')
         quality[:] = 'good'
 
-        # quality = np.array(['good' for i in xrange(len(ogip_quality))])
-
         #quality[good] = 'good'
         quality[warn] = 'warn'
         quality[bad] = 'bad'
@@ -135,7 +142,7 @@ class Quality(object):
         :return:
         """
 
-        quality = np.array(['good' for i in xrange(int(n_channels))])
+        quality = np.array(['good' for i in range(int(n_channels))])
 
         return cls(quality)
 
@@ -187,7 +194,7 @@ class BinnedSpectrum(Histogram):
 
             # convert counts to rate
 
-            rate_errors = count_errors / self._exposure
+            rate_errors = old_div(count_errors, self._exposure)
 
         else:
 
@@ -201,7 +208,7 @@ class BinnedSpectrum(Histogram):
 
         # convert rates to counts
 
-        rates = counts / self._exposure
+        rates = old_div(counts, self._exposure)
 
 
         if quality is not None:
@@ -463,14 +470,14 @@ class BinnedSpectrum(Histogram):
         sys_errors = None
         quality = None
 
-        if 'count_errors' in pandas_dataframe.keys():
+        if 'count_errors' in list(pandas_dataframe.keys()):
 
             count_errors = np.array(pandas_dataframe['count_errors'])
 
-        if 'sys_errors' in pandas_dataframe.keys():
+        if 'sys_errors' in list(pandas_dataframe.keys()):
             sys_errors = np.array(pandas_dataframe['sys_errors'])
 
-        if 'quality' in pandas_dataframe.keys():
+        if 'quality' in list(pandas_dataframe.keys()):
             quality = Quality(np.array(pandas_dataframe['quality']))
 
         return cls(counts=counts,
@@ -578,8 +585,35 @@ class BinnedSpectrum(Histogram):
                                   new_count_errors=new_count_errors,
                                   new_exposure=new_exposure)
 
-        new_spectrum._tstart = min(self.tstart,other.tstart)
-        new_spectrum._tstop = max(self.tstop,other.tstop)
+        if self.tstart is None:
+            if other.tstart is None:
+                new_spectrum._tstart = None
+
+            else:
+
+                new_spectrum._tstart = other.tstart
+        elif other.tstart is None:
+
+            new_spectrum._tstart = self.tstart
+
+        else:
+            
+            new_spectrum._tstart = min(self.tstart,other.tstart)
+
+        if self.tstop is None:
+            if other.tstop is None:
+                new_spectrum._tstop = None
+
+            else:
+
+                new_spectrum._tstop = other.tstop
+        elif other.tstop is None:
+
+            new_spectrum._tstop = self.tstop
+
+        else:
+            
+            new_spectrum._tstop = min(self.tstop,other.tstop)
 
         return new_spectrum
 
@@ -611,8 +645,39 @@ class BinnedSpectrum(Histogram):
                                   new_count_errors=new_count_errors)
 
         new_spectrum._exposure = new_exposure 
-        new_spectrum._tstart = min(self.tstart,other.tstart)
-        new_spectrum._tstop = max(self.tstop,other.tstop)
+
+        if self.tstart is None:
+            if other.tstart is None:
+                new_spectrum._tstart = None
+
+            else:
+
+                new_spectrum._tstart = other.tstart
+        elif other.tstart is None:
+
+            new_spectrum._tstart = self.tstart
+
+        else:
+            
+            new_spectrum._tstart = min(self.tstart,other.tstart)
+
+        if self.tstop is None:
+            if other.tstop is None:
+                new_spectrum._tstop = None
+
+            else:
+
+                new_spectrum._tstop = other.tstop
+        elif other.tstop is None:
+
+            new_spectrum._tstop = self.tstop
+
+        else:
+            
+            new_spectrum._tstop = min(self.tstop,other.tstop)
+
+
+        
 
         return new_spectrum
 
