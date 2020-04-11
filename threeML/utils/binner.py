@@ -6,6 +6,7 @@ from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.exceptions.custom_exceptions import custom_warnings
 
+
 class NotEnoughData(RuntimeError):
     pass
 
@@ -24,15 +25,20 @@ class Rebinner(object):
         total = np.sum(vector_to_rebin_on)
 
         if total < min_value_per_bin:
-            raise NotEnoughData("Vector total is %s, cannot rebin at %s per bin" % (total, min_value_per_bin))
+            raise NotEnoughData(
+                "Vector total is %s, cannot rebin at %s per bin"
+                % (total, min_value_per_bin)
+            )
 
         # Check if we have a mask, if not prepare a empty one
         if mask is not None:
 
             mask = np.array(mask, bool)
 
-            assert mask.shape[0] == len(vector_to_rebin_on), "The provided mask must have the same number of " \
-                                                             "elements as the vector to rebin on"
+            assert mask.shape[0] == len(vector_to_rebin_on), (
+                "The provided mask must have the same number of "
+                "elements as the vector to rebin on"
+            )
 
         else:
 
@@ -74,7 +80,7 @@ class Rebinner(object):
                     if n_grouped_bins > 1:
 
                         # group all these bins
-                        self._grouping[index - n_grouped_bins + 1: index] = -1
+                        self._grouping[index - n_grouped_bins + 1 : index] = -1
                         self._grouping[index] = 1
 
                     # reset the number of bins in this group
@@ -112,7 +118,7 @@ class Rebinner(object):
                     if n_grouped_bins > 1:
 
                         # group all these bins
-                        self._grouping[index - n_grouped_bins + 1: index] = -1
+                        self._grouping[index - n_grouped_bins + 1 : index] = -1
                         self._grouping[index] = 1
 
                     # reset the number of bins in this group
@@ -124,8 +130,9 @@ class Rebinner(object):
         if bin_open:
             self._stops.append(len(vector_to_rebin_on))
 
-        assert len(self._starts) == len(self._stops), "This is a bug: the starts and stops of the bins are not in " \
-                                                      "equal number"
+        assert len(self._starts) == len(self._stops), (
+            "This is a bug: the starts and stops of the bins are not in " "equal number"
+        )
 
         self._min_value_per_bin = min_value_per_bin
 
@@ -150,8 +157,10 @@ class Rebinner(object):
 
         for vector in vectors:
 
-            assert len(vector) == len(self._mask), "The vector to rebin must have the same number of elements of the" \
-                                                   "original (not-rebinned) vector"
+            assert len(vector) == len(self._mask), (
+                "The vector to rebin must have the same number of elements of the"
+                "original (not-rebinned) vector"
+            )
 
             # Transform in array because we need to use the mask
             vector_a = np.array(vector)
@@ -167,7 +176,14 @@ class Rebinner(object):
             # NOTE: we add 1e-100 because if both rebinned_vector and vector_a contains only 0, the check would
             # fail when it shouldn't
 
-            assert abs((np.sum(rebinned_vector) + 1e-100) / (np.sum(vector_a[self._mask]) + 1e-100) - 1) < 1e-4
+            assert (
+                abs(
+                    (np.sum(rebinned_vector) + 1e-100)
+                    / (np.sum(vector_a[self._mask]) + 1e-100)
+                    - 1
+                )
+                < 1e-4
+            )
 
             rebinned_vectors.append(np.array(rebinned_vector))
 
@@ -189,8 +205,10 @@ class Rebinner(object):
 
         for vector in vectors:  # type: np.ndarray[np.ndarray]
 
-            assert len(vector) == len(self._mask), "The vector to rebin must have the same number of elements of the" \
-                                                   "original (not-rebinned) vector"
+            assert len(vector) == len(self._mask), (
+                "The vector to rebin must have the same number of elements of the"
+                "original (not-rebinned) vector"
+            )
 
             rebinned_vector = []
 
@@ -250,7 +268,6 @@ class Rebinner(object):
         #     return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
 
 
-
 class TemporalBinner(TimeIntervalSet):
     """
     An extension of the TimeInterval set that includes binning capabilities
@@ -258,7 +275,16 @@ class TemporalBinner(TimeIntervalSet):
     """
 
     @classmethod
-    def bin_by_significance(cls, arrival_times, background_getter, background_error_getter=None, sigma_level=10, min_counts=1, tstart=None, tstop=None):
+    def bin_by_significance(
+        cls,
+        arrival_times,
+        background_getter,
+        background_error_getter=None,
+        sigma_level=10,
+        min_counts=1,
+        tstart=None,
+        tstop=None,
+    ):
         """
 
         Bin the data to a given significance level for a given background method and sigma
@@ -272,8 +298,6 @@ class TemporalBinner(TimeIntervalSet):
 
         :return:
         """
-
-
 
         if tstart is None:
 
@@ -314,15 +338,19 @@ class TemporalBinner(TimeIntervalSet):
 
         # first we need to see if the interval provided has enough counts
 
-        _, counts = TemporalBinner._select_events(arrival_times,current_start, arrival_times[-1])
+        _, counts = TemporalBinner._select_events(
+            arrival_times, current_start, arrival_times[-1]
+        )
 
         # if it does not, the flag for the big loop never gets set
-        end_all_search = not TemporalBinner._check_exceeds_sigma_interval(current_start,
-                                                                arrival_times[-1],
-                                                                counts,
-                                                                sigma_level,
-                                                                background_getter,
-                                                                background_error_getter)
+        end_all_search = not TemporalBinner._check_exceeds_sigma_interval(
+            current_start,
+            arrival_times[-1],
+            counts,
+            sigma_level,
+            background_getter,
+            background_error_getter,
+        )
 
         # We will start the search at the mid point of the whole interval
 
@@ -341,24 +369,28 @@ class TemporalBinner(TimeIntervalSet):
         # as long as we have not reached the end of the interval
         # the loop will run
         with progress_bar(arrival_times.shape[0]) as pbar:
-            while (not end_all_search):
+            while not end_all_search:
 
                 # start of the fast search
                 # we reset the flag for the interval
                 # having been decreased in the last pass
                 decreased_interval = False
 
-                while (not end_fast_search):
+                while not end_fast_search:
 
                     # we calculate the sigma of the current region
-                    _, counts = TemporalBinner._select_events(arrival_times,current_start, current_stop)
+                    _, counts = TemporalBinner._select_events(
+                        arrival_times, current_start, current_stop
+                    )
 
-                    sigma_exceeded = TemporalBinner._check_exceeds_sigma_interval(current_start,
-                                                                        current_stop,
-                                                                        counts,
-                                                                        sigma_level,
-                                                                        background_getter,
-                                                                        background_error_getter)
+                    sigma_exceeded = TemporalBinner._check_exceeds_sigma_interval(
+                        current_start,
+                        current_stop,
+                        counts,
+                        sigma_level,
+                        background_getter,
+                        background_error_getter,
+                    )
 
                     time_step = abs(current_stop - current_start)
 
@@ -381,7 +413,9 @@ class TemporalBinner(TimeIntervalSet):
                         else:
 
                             # unless, we would increase it too far
-                            if (current_stop + time_step * increase_factor) >= arrival_times[-1]:
+                            if (
+                                current_stop + time_step * increase_factor
+                            ) >= arrival_times[-1]:
 
                                 # mark where we are in the interval
                                 start_idx = searchsorted(arrival_times, current_stop)
@@ -432,8 +466,9 @@ class TemporalBinner(TimeIntervalSet):
 
                             bkg_error = background_error_getter(current_start, time)
 
-                            sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
-
+                            sigma = sig.li_and_ma_equivalent_for_gaussian_background(
+                                bkg_error
+                            )[0]
 
                         else:
 
@@ -466,12 +501,11 @@ class TemporalBinner(TimeIntervalSet):
                     # so lets kill the main search
                     end_all_search = True
 
-
-
-
         if not starts:
 
-            print("The requested sigma level could not be achieved in the interval. Try decreasing it.")
+            print(
+                "The requested sigma level could not be achieved in the interval. Try decreasing it."
+            )
 
         else:
 
@@ -521,23 +555,31 @@ class TemporalBinner(TimeIntervalSet):
         """
 
         try:
-        
-            final_edges = bayesian_blocks(arrival_times, arrival_times[0], arrival_times[-1], p0, bkg_integral_distribution)
+
+            final_edges = bayesian_blocks(
+                arrival_times,
+                arrival_times[0],
+                arrival_times[-1],
+                p0,
+                bkg_integral_distribution,
+            )
 
         except Exception as e:
 
-            if 'duplicate' in str(e):
+            if "duplicate" in str(e):
 
-                custom_warnings.warn('There where possible duplicate time tags in the data. We will try to run a different algorithm')
-            
-                final_edges = bayesian_blocks_not_unique(arrival_times, arrival_times[0], arrival_times[-1], p0)
+                custom_warnings.warn(
+                    "There where possible duplicate time tags in the data. We will try to run a different algorithm"
+                )
 
-            
+                final_edges = bayesian_blocks_not_unique(
+                    arrival_times, arrival_times[0], arrival_times[-1], p0
+                )
+
         starts = np.asarray(final_edges)[:-1]
         stops = np.asarray(final_edges)[1:]
 
-        return  cls.from_starts_and_stops(starts, stops)
-
+        return cls.from_starts_and_stops(starts, stops)
 
     @classmethod
     def bin_by_custom(cls, starts, stops):
@@ -550,12 +592,17 @@ class TemporalBinner(TimeIntervalSet):
         :return:
         """
 
-
         return cls.from_starts_and_stops(starts, stops)
 
     @staticmethod
-    def _check_exceeds_sigma_interval(start, stop, counts, sigma_level, background_getter,
-                                      background_error_getter=None):
+    def _check_exceeds_sigma_interval(
+        start,
+        stop,
+        counts,
+        sigma_level,
+        background_getter,
+        background_error_getter=None,
+    ):
 
         """
 
@@ -581,7 +628,6 @@ class TemporalBinner(TimeIntervalSet):
 
             sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
 
-
         else:
 
             sigma = sig.li_and_ma()[0]
@@ -597,7 +643,7 @@ class TemporalBinner(TimeIntervalSet):
             return False
 
     @staticmethod
-    def _select_events(arrival_times, start, stop ):
+    def _select_events(arrival_times, start, stop):
         """
         get the events and total counts over an interval
 
