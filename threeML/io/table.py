@@ -22,8 +22,8 @@ class Table(astropy.table.Table):
             show_name=show_name, show_unit=None, show_dtype=False)
                 
         out = '\n'.join(data_lines)
-        if astropy.table.six.PY2 and isinstance(out, astropy.table.six.text_type):
-            out = out.encode('utf-8')
+        # if astropy.table.six.PY2 and isinstance(out, astropy.table.six.text_type):
+        #     out = out.encode('utf-8')
 
         return out
 

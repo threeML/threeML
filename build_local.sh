@@ -96,7 +96,7 @@ fi
 if [[ ${TRAVIS_PYTHON_VERSION} == 2.7 ]]; then
     PKG="pytest<4 openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 ipopt<3.13 pygmo=2.11.4 emcee>=3 pandas>=0.23"
 else
-    PKG="pytest pandas>=0.23"
+    PKG="pytest pandas>=0.23 ultranest"
 fi
 
 echo "dependencies: ${MATPLOTLIB} ${NUMPY} ${XSPEC}"
