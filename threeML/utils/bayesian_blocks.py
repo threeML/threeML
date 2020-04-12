@@ -305,7 +305,7 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
 
     if (bkg_integral_distribution is not None):
 
-        final_edges = map(lambda x: lookup_table[x], edg)
+        final_edges = [lookup_table[x] for x in  edg]
 
     else:
 
