@@ -581,9 +581,6 @@ class TemporalBinner(TimeIntervalSet):
 
                 raise RuntimeError()
 
-            else:
-                print(e)
-                raise RuntimeError()
                 
         starts = np.asarray(final_edges)[:-1]
         stops = np.asarray(final_edges)[1:]
