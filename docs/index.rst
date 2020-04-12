@@ -17,6 +17,7 @@ Traditionally the Astrophysics community have been using frequentist techniques,
     
     installation
     intro
+    examples
     notebooks/Minimization_tutorial.ipynb
     notebooks/Bayesian_tutorial.ipynb
     notebooks/Time-energy-fit.ipynb
