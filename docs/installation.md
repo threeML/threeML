@@ -1,4 +1,6 @@
 # Installation
+3ML brings together multiple instrument and fitting software packages into a common framework. Thus, installing all the pieces can be a bit of a task for the user. In order to make this a less painless process, we have packaged most of the external dependencies into conda (see below). However, if you want more control over your install, 3ML is available on PyPI via pip. If you have issues with the installs, first check that you have properly installed all the external dependencies that *you* plan on using. Are their libraries accessible on you system's standard paths? If you think that you have everything setup properly and the install does not work for you, please [submit an issue](https://github.com/threeML/threeML/issues) and we will do our best to find a solution.
+
 
 ## Conda installation (suggested)
 
@@ -29,7 +31,27 @@ source activate threeML
 conda install -c conda-forge -c threeml threeml
 ```
 
-### Other dependencies
+## pip
+
+If you would like to install 3ML and astromodels on their own and have more control over which dependencies you would like to use. Please to the following
+
+1. It is highly recommended you work within a python virtual environment to keep you base python clean
+2. install astromodels
+
+```bash
+pip install astromodels
+```
+
+3. Install 3ML
+
+```bash
+pip install threeml
+```
+
+If you need to build other dependencies such as pagmo, multinest, XSPEC, etc., it is recommended you do this **before** installing astromodels!
+
+
+## Other dependencies
 
 You need to set up packages such as AERIE (for HAWC), or the Fermi Science Tools, 
 before running the script, otherwise some of the functionalities will not work.
