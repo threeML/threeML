@@ -34,6 +34,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
+    'sphinx_gallery.load_style',
 ]
 
 
@@ -292,3 +293,14 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+# nbsphinx_thumbnails = {
+#     'examples/scatter': 'examples/screenshot/scatter.png',
+#     'examples/volshow': 'examples/screenshot/volshow-head.png',
+#     'examples/mesh': 'examples/screenshot/mesh.png',
+#     'examples/animation': 'examples/screenshot/wave.gif',
+#     'examples/mcmc': 'examples/screenshot/mcmc.gif',
+#     'examples/bqplot': 'examples/screenshot/bqplot.png',
+#     'examples/bokeh': 'examples/screenshot/bokeh.png',
+#     'examples/scales': 'examples/screenshot/scales.png',
+#     'examples/moebius': 'examples/screenshot/moebius.png',
+#     'examples/bars': 'examples/screenshot/bars.gif',
