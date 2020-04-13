@@ -43,6 +43,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
+#    'sphinx_gallery.gen_gallery',
     'sphinx_gallery.load_style',
 ]
 
@@ -66,12 +67,12 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'The Multi-Mission Maximum Likelihood framework'
-copyright = u'2017--2019, G.Vianello'
+copyright = u'2017--2020, G.Vianello, J. M. Burgess, N. , N. Omodei'
 author = u'G.Vianello'
 
-html_theme_options = {
-    'navigation_depth': 4,
-}
+# html_theme_options = {
+#     'navigation_depth': 4,
+# }
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -304,6 +305,13 @@ texinfo_documents = [
 #texinfo_show_urls = 'footnote'
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
+
+# sphinx_gallery_conf = {
+#      'examples_dirs': 'examples',   # path to your example scripts
+#      'gallery_dirs': 'gallery_examples',  # path to where to save gallery generated output
+# }
+
+
 #texinfo_no_detailmenu = False
 # nbsphinx_thumbnails = {
 #     'examples/scatter': 'examples/screenshot/scatter.png',
