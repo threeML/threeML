@@ -118,6 +118,20 @@ exclude_patterns = ['_build', '**.ipynb_checkpoints']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
+html_theme = 'sphinx_rtd_theme'
+
+html_theme_options = {
+    'style_external_links': True,
+    # 'vcs_pageview_mode': 'edit',
+    'style_nav_header_background': '#0B4BA8',
+    #'only_logo': False,
+}
+
+html_logo = "media/logo.png"
+html_show_sourcelink = False
+html_favicon = "media/favicon.ico"
+
+
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
@@ -161,7 +175,7 @@ todo_include_todos = False
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -294,22 +308,6 @@ texinfo_documents = [
    author, 'TheMulti-MissionMaximumLikelihoodframework', 'One line description of project.',
    'Miscellaneous'),
 ]
-
-# Documents to append as an appendix to all manuals.
-#texinfo_appendices = []
-
-# If false, no module index is generated.
-#texinfo_domain_indices = True
-
-# How to display URL addresses: 'footnote', 'no', or 'inline'.
-#texinfo_show_urls = 'footnote'
-
-# If true, do not generate a @detailmenu in the "Top" node's menu.
-
-# sphinx_gallery_conf = {
-#      'examples_dirs': 'examples',   # path to your example scripts
-#      'gallery_dirs': 'gallery_examples',  # path to where to save gallery generated output
-# }
 
 
 #texinfo_no_detailmenu = False
