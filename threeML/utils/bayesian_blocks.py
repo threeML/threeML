@@ -11,7 +11,7 @@ from threeML.io.progress_bar import progress_bar
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("bayesian_blocks")
 
-__all__ = ['bayesian_blocks', 'bayesian_blocks_not_unique']
+__all__ = ["bayesian_blocks", "bayesian_blocks_not_unique"]
 
 
 def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
@@ -30,15 +30,15 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
 
     # Create initial cell edges (Voronoi tessellation) using the unique time stamps
 
-    edges = np.concatenate([[tstart],
-                            0.5 * (unique_t[1:] + unique_t[:-1]),
-                            [tstop]])
+    edges = np.concatenate([[tstart], 0.5 * (unique_t[1:] + unique_t[:-1]), [tstop]])
 
     # The last block length is 0 by definition
     block_length = tstop - edges
 
     if np.sum((block_length <= 0)) > 1:
-        raise RuntimeError("Events appears to be out of order! Check for order, or duplicated events.")
+        raise RuntimeError(
+            "Events appears to be out of order! Check for order, or duplicated events."
+        )
 
     N = unique_t.shape[0]
 
@@ -78,7 +78,7 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
 
     # Set numexpr precision to low (more than enough for us), which is
     # faster than high
-    oldaccuracy = numexpr.set_vml_accuracy_mode('low')
+    oldaccuracy = numexpr.set_vml_accuracy_mode("low")
     numexpr.set_num_threads(1)
     numexpr.set_vml_num_threads(1)
 
@@ -86,13 +86,13 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
 
         for R in range(N):
             br = block_length[R + 1]
-            T_k = block_length[:R + 1] - br
+            T_k = block_length[: R + 1] - br
 
             # N_k: number of elements in each block
             # This expression has been simplified for the case of
             # unbinned events (i.e., one element in each block)
             # It was:
-            N_k = cumsum(x[:R + 1][::-1])[::-1]
+            N_k = cumsum(x[: R + 1][::-1])[::-1]
             # Now it is:
             # N_k = arange(R + 1, 0, -1)
 
@@ -100,9 +100,11 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
             # This is the slowest part, which I'm speeding up by using
             # numexpr. It provides a ~40% gain in execution speed.
 
-            fit_vec = numexpr_evaluate('''N_k * log(N_k/ T_k) ''',
-                                       optimization='aggressive',
-                                       local_dict={'N_k': N_k, 'T_k': T_k})
+            fit_vec = numexpr_evaluate(
+                """N_k * log(N_k/ T_k) """,
+                optimization="aggressive",
+                local_dict={"N_k": N_k, "T_k": T_k},
+            )
 
             p = priors[R]
 
@@ -167,7 +169,9 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
 
         # Transforming the inhomogeneous Poisson process into an homogeneous one with rate 1,
         # by changing the time axis according to the background rate
-        logger.debug("Transforming the inhomogeneous Poisson process to a homogeneous one with rate 1...")
+        logger.debug(
+            "Transforming the inhomogeneous Poisson process to a homogeneous one with rate 1..."
+        )
         t = np.array(bkg_integral_distribution(tt))
         logger.debug("done")
 
@@ -182,15 +186,10 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
         tstop = ttstop
 
     # Create initial cell edges (Voronoi tessellation)
-    edges = np.concatenate([[t[0]],
-                            0.5 * (t[1:] + t[:-1]),
-                            [t[-1]]])
+    edges = np.concatenate([[t[0]], 0.5 * (t[1:] + t[:-1]), [t[-1]]])
 
     # Create the edges also in the original time system
-    edges_ = np.concatenate([[tt[0]],
-                             0.5 * (tt[1:] + tt[:-1]),
-                             [tt[-1]]])
-
+    edges_ = np.concatenate([[tt[0]], 0.5 * (tt[1:] + tt[:-1]), [tt[-1]]])
 
     # Create a lookup table to be able to transform back from the transformed system
     # to the original one
@@ -201,7 +200,9 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
 
     if np.sum((block_length <= 0)) > 1:
 
-        raise RuntimeError("Events appears to be out of order! Check for order, or duplicated events.")
+        raise RuntimeError(
+            "Events appears to be out of order! Check for order, or duplicated events."
+        )
 
     N = t.shape[0]
 
@@ -210,7 +211,7 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
     last = np.zeros(N, dtype=int)
 
     # eq. 21 from Scargle 2012
-    prior = 4 - np.log(73.53 * p0 * (N**-0.478))
+    prior = 4 - np.log(73.53 * p0 * (N ** -0.478))
 
     logger.debug("Finding blocks...")
 
@@ -224,7 +225,7 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
 
     # Set numexpr precision to low (more than enough for us), which is
     # faster than high
-    oldaccuracy = numexpr.set_vml_accuracy_mode('low')
+    oldaccuracy = numexpr.set_vml_accuracy_mode("low")
     numexpr.set_num_threads(1)
     numexpr.set_vml_num_threads(1)
 
@@ -235,20 +236,22 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
 
     # Pre-compute this
 
-    aranges = np.arange(N+1, 0, -1)
+    aranges = np.arange(N + 1, 0, -1)
 
     for R in range(N):
         br = block_length[R + 1]
-        T_k = block_length[:R + 1] - br  # this looks like it is not used, but it actually is,
-                                         # inside the numexpr expression
+        T_k = (
+            block_length[: R + 1] - br
+        )  # this looks like it is not used, but it actually is,
+        # inside the numexpr expression
 
         # N_k: number of elements in each block
         # This expression has been simplified for the case of
         # unbinned events (i.e., one element in each block)
         # It was:
-        #N_k = cumsum(x[:R + 1][::-1])[::-1]
+        # N_k = cumsum(x[:R + 1][::-1])[::-1]
         # Now it is:
-        N_k = aranges[N - R:]
+        N_k = aranges[N - R :]
         # where aranges has been pre-computed
 
         # Evaluate fitness function
@@ -260,12 +263,15 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
 
         if R == 0:
 
-            fit_vec = numexpr_evaluate('''N_k * log(N_k/ T_k) ''',
-                                       optimization='aggressive', local_dict={'N_k': N_k, 'T_k': T_k})
+            fit_vec = numexpr_evaluate(
+                """N_k * log(N_k/ T_k) """,
+                optimization="aggressive",
+                local_dict={"N_k": N_k, "T_k": T_k},
+            )
 
         else:
 
-            fit_vec = numexpr_re_evaluate(local_dict={'N_k': N_k, 'T_k': T_k})
+            fit_vec = numexpr_re_evaluate(local_dict={"N_k": N_k, "T_k": T_k})
 
         A_R = fit_vec - prior  # type: np.ndarray
 
@@ -303,9 +309,9 @@ def bayesian_blocks(tt, ttstart, ttstop, p0, bkg_integral_distribution=None):
 
     # Transform the found edges back into the original time system
 
-    if (bkg_integral_distribution is not None):
+    if bkg_integral_distribution is not None:
 
-        final_edges = [lookup_table[x] for x in  edg]
+        final_edges = [lookup_table[x] for x in edg]
 
     else:
 

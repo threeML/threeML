@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-#from threeML.utils.OGIP.response import InstrumentResponse
+# from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum
 from threeML.utils.histogram import Histogram
 from threeML.utils.interval import Interval, IntervalSet
@@ -9,7 +9,6 @@ from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares
 
 
 class ScatteringChannel(Interval):
-
     @property
     def channel_width(self):
 
@@ -29,7 +28,7 @@ class ScatteringChannelSet(IntervalSet):
         :param instrument_response:
         :return:
         """
-        raise NotImplementedError('Under Construction')
+        raise NotImplementedError("Under Construction")
 
         new_ebounds = cls.from_list_of_edges(instrument_response.ebounds)
 
@@ -45,19 +44,21 @@ class BinnedModulationCurve(BinnedSpectrum):
 
     INTERVAL_TYPE = ScatteringChannel
 
-    def __init__(self,
-                 counts,
-                 exposure,
-                 abounds,
-                 count_errors=None,
-                 sys_errors=None,
-                 quality=None,
-                 scale_factor=1.,
-                 is_poisson=False,
-                 mission=None,
-                 instrument=None,
-                 tstart=None,
-                 tstop=None):
+    def __init__(
+        self,
+        counts,
+        exposure,
+        abounds,
+        count_errors=None,
+        sys_errors=None,
+        quality=None,
+        scale_factor=1.0,
+        is_poisson=False,
+        mission=None,
+        instrument=None,
+        tstart=None,
+        tstop=None,
+    ):
         """
         A binned modulation curve
 
@@ -73,7 +74,9 @@ class BinnedModulationCurve(BinnedSpectrum):
         :param instrument: the instrument name
         """
 
-        assert np.min(abounds) >= 0 and np.max(abounds) <= 360., 'The scattering angles have invalid bounds'
+        assert (
+            np.min(abounds) >= 0 and np.max(abounds) <= 360.0
+        ), "The scattering angles have invalid bounds"
 
         super(BinnedModulationCurve, self).__init__(
             counts,
@@ -87,14 +90,17 @@ class BinnedModulationCurve(BinnedSpectrum):
             mission=mission,
             instrument=instrument,
             tstart=tstart,
-            tstop=tstop)
+            tstop=tstop,
+        )
 
     @property
     def abounds(self):
         return self._ebounds
 
     @classmethod
-    def from_time_series(cls, time_series, response=None ,use_poly=False, extract=False):
+    def from_time_series(
+        cls, time_series, response=None, use_poly=False, extract=False
+    ):
         """
 
         :param time_series:
@@ -102,7 +108,7 @@ class BinnedModulationCurve(BinnedSpectrum):
         :return:
         """
 
-        assert not (use_poly and extract), 'You cannot use both at the same time'
+        assert not (use_poly and extract), "You cannot use both at the same time"
 
         pha_information = time_series.get_information_dict(use_poly, extract)
 
@@ -111,23 +117,27 @@ class BinnedModulationCurve(BinnedSpectrum):
         if use_poly:
             is_poisson = False
 
-            
         return cls(
-            counts=pha_information['counts'],
-            exposure=pha_information['exposure'],
-            abounds = pha_information['edges'],
-            instrument=pha_information['instrument'],
-            mission=pha_information['telescope'],
-            tstart=pha_information['tstart'],
-            tstop=pha_information['tstart'] + pha_information['telapse'],
-       
-            count_errors=pha_information['counts error'],
-            quality=pha_information['quality'],
+            counts=pha_information["counts"],
+            exposure=pha_information["exposure"],
+            abounds=pha_information["edges"],
+            instrument=pha_information["instrument"],
+            mission=pha_information["telescope"],
+            tstart=pha_information["tstart"],
+            tstop=pha_information["tstart"] + pha_information["telapse"],
+            count_errors=pha_information["counts error"],
+            quality=pha_information["quality"],
+            scale_factor=1.0,
+            is_poisson=is_poisson,
+        )
 
-            scale_factor=1.,
-            is_poisson=is_poisson)
-
-    def clone(self, new_counts=None, new_count_errors=None, new_exposure=None, new_scale_factor=None):
+    def clone(
+        self,
+        new_counts=None,
+        new_count_errors=None,
+        new_exposure=None,
+        new_scale_factor=None,
+    ):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -159,6 +169,5 @@ class BinnedModulationCurve(BinnedSpectrum):
             scale_factor=new_scale_factor,
             is_poisson=self._is_poisson,
             mission=self._mission,
-            instrument=self._instrument)
-
-
+            instrument=self._instrument,
+        )

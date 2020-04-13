@@ -3,11 +3,13 @@ import pytest
 from threeML import *
 from threeML.io.network import internet_connection_is_active
 
-skip_if_internet_is_not_available = pytest.mark.skipif(not internet_connection_is_active(),
-                                                       reason="No active internet connection")
+skip_if_internet_is_not_available = pytest.mark.skipif(
+    not internet_connection_is_active(), reason="No active internet connection"
+)
 
-skip_if_fermipy_is_not_available = pytest.mark.skipif(not is_plugin_available("FermipyLike"),
-                                                      reason="No LAT environment installed")
+skip_if_fermipy_is_not_available = pytest.mark.skipif(
+    not is_plugin_available("FermipyLike"), reason="No LAT environment installed"
+)
 
 
 @skip_if_internet_is_not_available
@@ -40,7 +42,7 @@ def test_FermipyLike():
     # but then let's fix the sync and the IC components of the Crab
     # (cannot fit them with just one day of data)
     # (these two methods are equivalent)
-    model['Crab_IC.spectrum.main.Log_parabola.K'].fix = True
+    model["Crab_IC.spectrum.main.Log_parabola.K"].fix = True
     model.Crab_synch.spectrum.main.shape.K.fix = True
 
     assert len(model.free_parameters) == 3
@@ -52,15 +54,21 @@ def test_FermipyLike():
 
     # Download data from Jan 01 2010 to Jan 2 2010
 
-    tstart = '2010-01-01 00:00:00'
-    tstop = '2010-01-08 00:00:00'
+    tstart = "2010-01-01 00:00:00"
+    tstop = "2010-01-08 00:00:00"
 
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
 
-    evfile, scfile = download_LAT_data(ra, dec, 20.0,
-                                       tstart, tstop, time_type='Gregorian',
-                                       destination_directory='Crab_data')
+    evfile, scfile = download_LAT_data(
+        ra,
+        dec,
+        20.0,
+        tstart,
+        tstop,
+        time_type="Gregorian",
+        destination_directory="Crab_data",
+    )
 
     # Configuration for Fermipy
 

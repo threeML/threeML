@@ -21,11 +21,13 @@ def _get_wrapper(function, point, minima, maxima):
 
     # Find order of magnitude of each coordinate. If one of the coordinates is exactly zero we need
     # to treat it differently
-    idx = (point == 0.0)
+    idx = point == 0.0
 
     orders_of_magnitude = np.zeros_like(point)
     orders_of_magnitude[idx] = 1.0
-    orders_of_magnitude[~idx] = 10**np.ceil(np.log10(np.abs(point[~idx]))) # type: np.ndarray
+    orders_of_magnitude[~idx] = 10 ** np.ceil(
+        np.log10(np.abs(point[~idx]))
+    )  # type: np.ndarray
 
     scaled_point = point / orders_of_magnitude
     scaled_minima = minima / orders_of_magnitude
@@ -46,7 +48,9 @@ def _get_wrapper(function, point, minima, maxima):
 
         if scaled_value == scaled_min_value or scaled_value == scaled_max_value:
 
-            raise ParameterOnBoundary("Value for parameter number %s is on the boundary" % i)
+            raise ParameterOnBoundary(
+                "Value for parameter number %s is on the boundary" % i
+            )
 
         if not np.isnan(scaled_min_value):
 
@@ -83,11 +87,17 @@ def _get_wrapper(function, point, minima, maxima):
 
         else:
 
-            scaled_deltas[i] = min([0.003 * abs(scaled_point[i]), distance_to_max / 2.5, distance_to_min / 2.5])
+            scaled_deltas[i] = min(
+                [
+                    0.003 * abs(scaled_point[i]),
+                    distance_to_max / 2.5,
+                    distance_to_min / 2.5,
+                ]
+            )
 
     def wrapper(x):
 
-        scaled_back_x = x * orders_of_magnitude # type: np.ndarray
+        scaled_back_x = x * orders_of_magnitude  # type: np.ndarray
 
         try:
 
@@ -95,7 +105,9 @@ def _get_wrapper(function, point, minima, maxima):
 
         except SettingOutOfBounds:
 
-            raise CannotComputeHessian("Cannot compute Hessian, parameters out of bounds at %s" % scaled_back_x)
+            raise CannotComputeHessian(
+                "Cannot compute Hessian, parameters out of bounds at %s" % scaled_back_x
+            )
 
         else:
 
@@ -106,10 +118,14 @@ def _get_wrapper(function, point, minima, maxima):
 
 def get_jacobian(function, point, minima, maxima):
 
-    wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(function, point, minima, maxima)
+    wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(
+        function, point, minima, maxima
+    )
 
     # Compute the Jacobian matrix at best_fit_values
-    jacobian_vector = nd.Jacobian(wrapper, scaled_deltas, method='central')(scaled_point)
+    jacobian_vector = nd.Jacobian(wrapper, scaled_deltas, method="central")(
+        scaled_point
+    )
 
     # Transform it to numpy matrix
 
@@ -124,7 +140,9 @@ def get_jacobian(function, point, minima, maxima):
 
 def get_hessian(function, point, minima, maxima):
 
-    wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(function, point, minima, maxima)
+    wrapper, scaled_deltas, scaled_point, orders_of_magnitude, n_dim = _get_wrapper(
+        function, point, minima, maxima
+    )
 
     # Compute the Hessian matrix at best_fit_values
 
@@ -139,6 +157,6 @@ def get_hessian(function, point, minima, maxima):
 
         for j in range(n_dim):
 
-            hessian_matrix[i,j] /= orders_of_magnitude[i] * orders_of_magnitude[j]
+            hessian_matrix[i, j] /= orders_of_magnitude[i] * orders_of_magnitude[j]
 
     return hessian_matrix

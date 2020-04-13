@@ -3,11 +3,11 @@ import numpy as np
 
 
 def step_plot(xbins, y, ax, fill=False, fill_min=0, **kwargs):
-    '''
+    """
     Routine for plotting a in steps with the ability to fill the plot
     xbins is a 2D list of start and stop values.
     y are the values in the bins.
-    '''
+    """
 
     if fill:
 
@@ -61,4 +61,4 @@ def step_plot(xbins, y, ax, fill=False, fill_min=0, **kwargs):
 
         new_y = np.ma.masked_where(~np.isfinite(new_y), new_y)
 
-        ax.step(new_x, new_y, where='post',**kwargs)
+        ax.step(new_x, new_y, where="post", **kwargs)

@@ -6,4 +6,4 @@ def dash_separated_string_to_tuple(arg):
     :return: (a,b)
     """
 
-    return  arg.replace(" ", "").split("-")
+    return arg.replace(" ", "").split("-")

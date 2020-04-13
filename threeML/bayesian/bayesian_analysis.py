@@ -34,7 +34,6 @@ class BayesianAnalysis(object):
         self._likelihood_model = likelihood_model
         self._data_list = data_list
 
-
         for parameter_name, parameter in likelihood_model.free_parameters.items():
 
             if not parameter.has_prior():
@@ -43,7 +42,6 @@ class BayesianAnalysis(object):
                     "Bayesian analysis"
                 )
 
-        
         # # Make sure that the current model is used in all data sets
         #
         # for dataset in self.data_list.values():

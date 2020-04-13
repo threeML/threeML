@@ -9,6 +9,7 @@ from threeML.utils.photometry.filter_set import FilterSet
 
 __instrument_name = "Generic photometric data"
 
+
 class PhotometryLike(XYLike):
     def __init__(self, name, filters, **data):
         """
@@ -46,7 +47,6 @@ class PhotometryLike(XYLike):
         :param data: keyword args of band name and tuple(mag, mag error)
         """
 
-
         # convert names so that only the filters are present
         # speclite uses '-' to separate instrument and filter
 
@@ -54,16 +54,13 @@ class PhotometryLike(XYLike):
 
             # we have a filter sequence
 
-            names = [fname.split('-')[1] for fname in filters.names]
+            names = [fname.split("-")[1] for fname in filters.names]
 
-        except(AttributeError):
+        except (AttributeError):
 
             # we have a filter response
 
-            names = [filters.name.split('-')[1]]
-
-
-
+            names = [filters.name.split("-")[1]]
 
         # since we may only have a few of the  filters in use
         # we will mask the filters not needed. The will stay fixed
@@ -73,13 +70,15 @@ class PhotometryLike(XYLike):
 
         for band in list(data.keys()):
 
-            assert band in names, 'band %s is not a member of the filter set %s'%(band,'blah')
-            starting_mask[ names.index(band)] = True
+            assert band in names, "band %s is not a member of the filter set %s" % (
+                band,
+                "blah",
+            )
+            starting_mask[names.index(band)] = True
 
         # create a filter set and use only the bands that were specified
 
         self._filter_set = FilterSet(filters, starting_mask)
-
 
         self._magnitudes = np.zeros(self._filter_set.n_bands)
 
@@ -93,15 +92,15 @@ class PhotometryLike(XYLike):
             self._magnitudes[i] = data[band][0]
             self._magnitude_errors[i] = data[band][1]
 
-
         # pass thru to XYLike
 
-        super(PhotometryLike, self).__init__(name=name,
-                                             x=self._filter_set.effective_wavelength, # dummy x values
-                                             y=self._magnitudes,
-                                             yerr=self._magnitude_errors,
-                                             poisson_data=False)
-
+        super(PhotometryLike, self).__init__(
+            name=name,
+            x=self._filter_set.effective_wavelength,  # dummy x values
+            y=self._magnitudes,
+            yerr=self._magnitude_errors,
+            poisson_data=False,
+        )
 
     @property
     def magnitudes(self):
@@ -188,12 +187,16 @@ class PhotometryLike(XYLike):
 
         def differential_flux(energies):
 
-            fluxes = self._likelihood_model.get_point_source_fluxes(0, energies, tag=self._tag)
+            fluxes = self._likelihood_model.get_point_source_fluxes(
+                0, energies, tag=self._tag
+            )
 
             # If we have only one point source, this will never be executed
             for i in range(1, n_point_sources):
 
-                fluxes += self._likelihood_model.get_point_source_fluxes(i, energies, tag=self._tag)
+                fluxes += self._likelihood_model.get_point_source_fluxes(
+                    i, energies, tag=self._tag
+                )
 
             return fluxes
 
@@ -201,7 +204,7 @@ class PhotometryLike(XYLike):
 
     def _get_total_expectation(self):
 
-        return self._filter_set.ab_magnitudes()[self._mask]#.as_matrix()
+        return self._filter_set.ab_magnitudes()[self._mask]  # .as_matrix()
 
     def display_filters(self):
         """
@@ -231,13 +234,14 @@ class PhotometryLike(XYLike):
 
         for i, band in enumerate(self._filter_set.filter_names):
 
-            bands[band] = (y[i],yerr[i])
+            bands[band] = (y[i], yerr[i])
 
-        new_photo = PhotometryLike(name,filters=self._filter_set.speclite_filters, **bands)
+        new_photo = PhotometryLike(
+            name, filters=self._filter_set.speclite_filters, **bands
+        )
 
         # apply the current mask
 
         new_photo._mask = copy.copy(self._mask)
 
         return new_photo
-

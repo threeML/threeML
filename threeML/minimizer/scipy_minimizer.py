@@ -7,31 +7,34 @@ from threeML.utils.differentiation import get_jacobian
 import scipy.optimize
 
 
-_SUPPORTED_ALGORITHMS = ['L-BFGS-B', 'TNC', 'SLSQP']
+_SUPPORTED_ALGORITHMS = ["L-BFGS-B", "TNC", "SLSQP"]
 
 
 class ScipyMinimizer(LocalMinimizer):
 
-    valid_setup_keys = ('tol', 'algorithm')
+    valid_setup_keys = ("tol", "algorithm")
 
     def __init__(self, function, parameters, verbosity=10, setup_dict=None):
 
-        super(ScipyMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
+        super(ScipyMinimizer, self).__init__(
+            function, parameters, verbosity, setup_dict
+        )
 
     def _setup(self, user_setup_dict):
 
         if user_setup_dict is None:
 
-            default_setup = {'algorithm': 'L-BFGS-B', 'tol': 0.0001}
+            default_setup = {"algorithm": "L-BFGS-B", "tol": 0.0001}
 
             self._setup_dict = default_setup
 
         else:
 
-            if 'algorithm' in user_setup_dict:
+            if "algorithm" in user_setup_dict:
 
-                assert user_setup_dict['algorithm'] in _SUPPORTED_ALGORITHMS, \
-                    "Supported algorithms are %s" % (",".join(_SUPPORTED_ALGORITHMS))
+                assert (
+                    user_setup_dict["algorithm"] in _SUPPORTED_ALGORITHMS
+                ), "Supported algorithms are %s" % (",".join(_SUPPORTED_ALGORITHMS))
 
             # We can assume that the setup has been already checked against the setup_keys
             for key in user_setup_dict:
@@ -59,7 +62,9 @@ class ScipyMinimizer(LocalMinimizer):
         minima = []
         maxima = []
 
-        for i, (par_name, (cur_value, cur_delta, cur_min, cur_max)) in enumerate(self._internal_parameters.items()):
+        for i, (par_name, (cur_value, cur_delta, cur_min, cur_max)) in enumerate(
+            self._internal_parameters.items()
+        ):
 
             x0.append(cur_value)
 
@@ -102,18 +107,23 @@ class ScipyMinimizer(LocalMinimizer):
 
             return jacv
 
-        res = scipy.optimize.minimize(wrapper,
-                                      np.array(x0),
-                                      method=self._setup_dict['algorithm'],
-                                      bounds=bounds,
-                                      jac=jacobian,
-                                      tol=self._setup_dict['tol'])
+        res = scipy.optimize.minimize(
+            wrapper,
+            np.array(x0),
+            method=self._setup_dict["algorithm"],
+            bounds=bounds,
+            jac=jacobian,
+            tol=self._setup_dict["tol"],
+        )
 
         # Make sure the optimization worked
 
         if not res.success:
 
-            raise FitFailed("Could not converge. Message from solver: %s (status: %i)" % (res.message, res.status))
+            raise FitFailed(
+                "Could not converge. Message from solver: %s (status: %i)"
+                % (res.message, res.status)
+            )
 
         # Transform the result to numpy.array
 

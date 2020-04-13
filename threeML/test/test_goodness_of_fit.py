@@ -9,7 +9,6 @@ from threeML.plugins.XYLike import XYLike
 
 def test_goodness_of_fit():
 
-
     # Let's generate some data with y = Powerlaw(x)
 
     gen_function = Powerlaw()
@@ -19,9 +18,9 @@ def test_goodness_of_fit():
 
     x = np.logspace(0, 2, 50)
 
-    xyl_generator = XYLike.from_function("sim_data", function=gen_function,
-                                         x=x,
-                                         yerr=0.3 * gen_function(x))
+    xyl_generator = XYLike.from_function(
+        "sim_data", function=gen_function, x=x, yerr=0.3 * gen_function(x)
+    )
 
     y = xyl_generator.y
     y_err = xyl_generator.yerr
@@ -38,8 +37,8 @@ def test_goodness_of_fit():
     n_dof = len(xyl.x) - len(fit_function.free_parameters)
 
     # Get the observed value for chi2
-    obs_chi2 = 2 * like_values['-log(likelihood)']['data']
+    obs_chi2 = 2 * like_values["-log(likelihood)"]["data"]
 
     theoretical_gof = scipy.stats.chi2(n_dof).sf(obs_chi2)
 
-    assert np.isclose(theoretical_gof, gof['total'], rtol=0.1)
+    assert np.isclose(theoretical_gof, gof["total"], rtol=0.1)

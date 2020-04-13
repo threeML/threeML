@@ -30,6 +30,7 @@ from threeML.utils.statistics.stats_tools import aic, bic, dic
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
 from astromodels.functions.function import ModelAssertionViolation
 
+
 class SamplerBase(with_metaclass(abc.ABCMeta, object)):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
         """

@@ -5,9 +5,15 @@ import numpy as np
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.utils.statistics.likelihood_functions import half_chi2
-from threeML.utils.statistics.likelihood_functions import poisson_log_likelihood_ideal_bkg
-from threeML.utils.statistics.likelihood_functions import poisson_observed_gaussian_background
-from threeML.utils.statistics.likelihood_functions import poisson_observed_poisson_background
+from threeML.utils.statistics.likelihood_functions import (
+    poisson_log_likelihood_ideal_bkg,
+)
+from threeML.utils.statistics.likelihood_functions import (
+    poisson_observed_gaussian_background,
+)
+from threeML.utils.statistics.likelihood_functions import (
+    poisson_observed_poisson_background,
+)
 
 
 # These classes provide likelihood evaluation to SpectrumLike and children
@@ -16,7 +22,6 @@ _known_noise_models = {}
 
 
 class BinnedStatistic(object):
-
     def __init__(self, spectrum_plugin):
         """
         
@@ -27,10 +32,8 @@ class BinnedStatistic(object):
 
         self._spectrum_plugin = spectrum_plugin
 
-
-
     def get_current_value(self):
-        RuntimeError('must be implemented in subclass')
+        RuntimeError("must be implemented in subclass")
 
     def get_randomized_source_counts(self, source_model_counts):
         return None
@@ -47,31 +50,37 @@ class BinnedStatistic(object):
 
 class GaussianObservedStatistic(BinnedStatistic):
     def get_current_value(self):
-        chi2_ = half_chi2(self._spectrum_plugin.current_observed_counts,
-                          self._spectrum_plugin.current_observed_count_errors,
-                          self._spectrum_plugin.get_model())
+        chi2_ = half_chi2(
+            self._spectrum_plugin.current_observed_counts,
+            self._spectrum_plugin.current_observed_count_errors,
+            self._spectrum_plugin.get_model(),
+        )
 
         assert np.all(np.isfinite(chi2_))
 
         return np.sum(chi2_) * (-1), None
 
     def get_randomized_source_counts(self, source_model_counts):
-        idx = (self._spectrum_plugin.observed_count_errors > 0)
+        idx = self._spectrum_plugin.observed_count_errors > 0
 
         randomized_source_counts = np.zeros_like(source_model_counts)
 
-        randomized_source_counts[idx] = np.random.normal(loc=source_model_counts[idx],
-                                                         scale=self._spectrum_plugin.observed_count_errors[idx])
+        randomized_source_counts[idx] = np.random.normal(
+            loc=source_model_counts[idx],
+            scale=self._spectrum_plugin.observed_count_errors[idx],
+        )
 
         # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
 
-        idx = (randomized_source_counts < 0)  # type: np.ndarray
+        idx = randomized_source_counts < 0  # type: np.ndarray
 
         negative_source_n = np.sum(idx)
 
         if negative_source_n > 0:
-            custom_warnings.warn("Generated source has negative counts "
-                                 "in %i channels. Fixing them to zero" % (negative_source_n))
+            custom_warnings.warn(
+                "Generated source has negative counts "
+                "in %i channels. Fixing them to zero" % (negative_source_n)
+            )
 
             randomized_source_counts[idx] = 0
 
@@ -88,9 +97,11 @@ class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
 
         model_counts = self._spectrum_plugin.get_model()
 
-        loglike, _ = poisson_log_likelihood_ideal_bkg(self._spectrum_plugin.current_observed_counts,
-                                                      self._spectrum_plugin.current_scaled_background_counts,
-                                                      model_counts)
+        loglike, _ = poisson_log_likelihood_ideal_bkg(
+            self._spectrum_plugin.current_observed_counts,
+            self._spectrum_plugin.current_scaled_background_counts,
+            model_counts,
+        )
 
         return np.sum(loglike), None
 
@@ -100,7 +111,9 @@ class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
 
         # TODO: check with giacomo if this is correct!
 
-        randomized_source_counts = np.random.poisson(source_model_counts + self._spectrum_plugin._background_counts)
+        randomized_source_counts = np.random.poisson(
+            source_model_counts + self._spectrum_plugin._background_counts
+        )
 
         return randomized_source_counts
 
@@ -121,11 +134,16 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
 
         # we scale the background model to the observation
 
-        background_model_counts = self._spectrum_plugin.get_background_model() * self._spectrum_plugin.scale_factor
+        background_model_counts = (
+            self._spectrum_plugin.get_background_model()
+            * self._spectrum_plugin.scale_factor
+        )
 
-        loglike, _ = poisson_log_likelihood_ideal_bkg(self._spectrum_plugin.current_observed_counts,
-                                                      background_model_counts,
-                                                      model_counts)
+        loglike, _ = poisson_log_likelihood_ideal_bkg(
+            self._spectrum_plugin.current_observed_counts,
+            background_model_counts,
+            model_counts,
+        )
 
         bkg_log_like = self._spectrum_plugin.background_plugin.get_log_like()
 
@@ -136,10 +154,13 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
     def get_randomized_source_counts(self, source_model_counts):
         # first generate random source counts from the plugin
 
-        self._synthetic_background_plugin = self._spectrum_plugin.background_plugin.get_simulated_dataset()
+        self._synthetic_background_plugin = (
+            self._spectrum_plugin.background_plugin.get_simulated_dataset()
+        )
 
         randomized_source_counts = np.random.poisson(
-            source_model_counts + self._synthetic_background_plugin.observed_counts)
+            source_model_counts + self._synthetic_background_plugin.observed_counts
+        )
 
         return randomized_source_counts
 
@@ -147,7 +168,9 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
         randomized_background_count_err = None
 
         if not self._synthetic_background_plugin.observed_spectrum.is_poisson:
-            randomized_background_count_err = self._synthetic_background_plugin.observed_count_errors
+            randomized_background_count_err = (
+                self._synthetic_background_plugin.observed_count_errors
+            )
 
         return randomized_background_count_err
 
@@ -165,17 +188,17 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
 
         background_model_counts = np.zeros_like(model_counts)
 
-        loglike, _ = poisson_log_likelihood_ideal_bkg(self._spectrum_plugin.current_observed_counts,
-                                                      background_model_counts,
-                                                      model_counts)
+        loglike, _ = poisson_log_likelihood_ideal_bkg(
+            self._spectrum_plugin.current_observed_counts,
+            background_model_counts,
+            model_counts,
+        )
 
         return np.sum(loglike), None
 
     def get_randomized_source_counts(self, source_model_counts):
         # Randomize expectations for the source
         # we want the unscalled background counts
-
-
 
         randomized_source_counts = np.random.poisson(source_model_counts)
 
@@ -188,10 +211,12 @@ class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
 
         model_counts = self._spectrum_plugin.get_model()
 
-        loglike, bkg_model = poisson_observed_poisson_background(self._spectrum_plugin.current_observed_counts,
-                                                                 self._spectrum_plugin.current_background_counts,
-                                                                 self._spectrum_plugin.scale_factor,
-                                                                 model_counts)
+        loglike, bkg_model = poisson_observed_poisson_background(
+            self._spectrum_plugin.current_observed_counts,
+            self._spectrum_plugin.current_background_counts,
+            self._spectrum_plugin.scale_factor,
+            model_counts,
+        )
 
         return np.sum(loglike), bkg_model
 
@@ -205,7 +230,9 @@ class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
 
         # Randomize expectations for the source
 
-        randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
+        randomized_source_counts = np.random.poisson(
+            source_model_counts + background_model_counts
+        )
 
         return randomized_source_counts
 
@@ -223,10 +250,12 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
     def get_current_value(self):
         expected_model_counts = self._spectrum_plugin.get_model()
 
-        loglike, bkg_model = poisson_observed_gaussian_background(self._spectrum_plugin.current_observed_counts,
-                                                                  self._spectrum_plugin.current_background_counts,
-                                                                  self._spectrum_plugin.current_background_count_errors,
-                                                                  expected_model_counts)
+        loglike, bkg_model = poisson_observed_gaussian_background(
+            self._spectrum_plugin.current_observed_counts,
+            self._spectrum_plugin.current_background_counts,
+            self._spectrum_plugin.current_background_count_errors,
+            expected_model_counts,
+        )
 
         return np.sum(loglike), bkg_model
 
@@ -240,7 +269,9 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
 
         # Randomize expectations for the source
 
-        randomized_source_counts = np.random.poisson(source_model_counts + background_model_counts)
+        randomized_source_counts = np.random.poisson(
+            source_model_counts + background_model_counts
+        )
 
         return randomized_source_counts
 
@@ -252,22 +283,26 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
         # We cannot generate variates with zero sigma. They variates from those channel will always be zero
         # This is a limitation of this whole idea. However, remember that by construction an error of zero
         # it is only allowed when the background counts are zero as well.
-        idx = (self._spectrum_plugin.background_count_errors > 0)
+        idx = self._spectrum_plugin.background_count_errors > 0
 
         randomized_background_counts = np.zeros_like(background_model_counts)
 
-        randomized_background_counts[idx] = np.random.normal(loc=background_model_counts[idx],
-                                                             scale=self._spectrum_plugin.background_count_errors[idx])
+        randomized_background_counts[idx] = np.random.normal(
+            loc=background_model_counts[idx],
+            scale=self._spectrum_plugin.background_count_errors[idx],
+        )
 
         # Issue a warning if the generated background is less than zero, and fix it by placing it at zero
 
-        idx = (randomized_background_counts < 0)  # type: np.ndarray
+        idx = randomized_background_counts < 0  # type: np.ndarray
 
         negative_background_n = np.sum(idx)
 
         if negative_background_n > 0:
-            custom_warnings.warn("Generated background has negative counts "
-                                 "in %i channels. Fixing them to zero" % (negative_background_n))
+            custom_warnings.warn(
+                "Generated background has negative counts "
+                "in %i channels. Fixing them to zero" % (negative_background_n)
+            )
 
             randomized_background_counts[idx] = 0
 
@@ -277,17 +312,14 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
         return copy.copy(self._spectrum_plugin.background_count_errors)
 
 
-
-statistic_lookup = {'poisson': {'poisson': PoissonObservedPoissonBackgroundStatistic,
-                                'gaussian': PoissonObservedGaussianBackgroundStatistic,
-                                'ideal': PoissonObservedIdealBackgroundStatistic,
-                                None: PoissonObservedNoBackgroundStatistic,
-                                'modeled': PoissonObservedModeledBackgroundStatistic
-
-                                },
-
-                    'gaussian': {None: GaussianObservedStatistic},
-
-                    None: {None: None}
-
-                    }
+statistic_lookup = {
+    "poisson": {
+        "poisson": PoissonObservedPoissonBackgroundStatistic,
+        "gaussian": PoissonObservedGaussianBackgroundStatistic,
+        "ideal": PoissonObservedIdealBackgroundStatistic,
+        None: PoissonObservedNoBackgroundStatistic,
+        "modeled": PoissonObservedModeledBackgroundStatistic,
+    },
+    "gaussian": {None: GaussianObservedStatistic},
+    None: {None: None},
+}

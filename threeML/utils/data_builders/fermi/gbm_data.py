@@ -7,7 +7,9 @@ import re
 import requests
 import warnings
 
-from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
+from threeML.utils.fermi_relative_mission_time import (
+    compute_fermi_relative_mission_times,
+)
 from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 
 
@@ -24,58 +26,61 @@ class GBMTTEFile(object):
 
         tte = fits.open(ttefile)
 
-        self._events = tte['EVENTS'].data['TIME']
-        self._pha = tte['EVENTS'].data['PHA']
+        self._events = tte["EVENTS"].data["TIME"]
+        self._pha = tte["EVENTS"].data["PHA"]
 
         # the GBM TTE data are not always sorted in TIME.
         # we will now do this for you. We should at some
         # point check with NASA if this is on purpose.
-
 
         # but first we must check that there are NO duplicated events
         # and then warn the user
 
         if not len(self._events) == len(np.unique(self._events)):
 
+            warnings.warn(
+                "The TTE file %s contains duplicate time tags and is thus invalid. Contact the FSSC "
+                % ttefile
+            )
 
-            warnings.warn('The TTE file %s contains duplicate time tags and is thus invalid. Contact the FSSC ' % ttefile)
-
-        
-        
         # sorting in time
         sort_idx = self._events.argsort()
 
-
         if not np.alltrue(self._events[sort_idx] == self._events):
-        
+
             # now sort both time and energy
-            warnings.warn('The TTE file %s was not sorted in time but contains no duplicate events. We will sort the times, but use caution with this file. Contact the FSSC.')
+            warnings.warn(
+                "The TTE file %s was not sorted in time but contains no duplicate events. We will sort the times, but use caution with this file. Contact the FSSC."
+            )
             self._events = self._events[sort_idx]
             self._pha = self._pha[sort_idx]
-        
-        
-        try:
-            self._trigger_time = tte['PRIMARY'].header['TRIGTIME']
 
+        try:
+            self._trigger_time = tte["PRIMARY"].header["TRIGTIME"]
 
         except:
 
             # For continuous data
-            warnings.warn("There is no trigger time in the TTE file. Must be set manually or using MET relative times.")
+            warnings.warn(
+                "There is no trigger time in the TTE file. Must be set manually or using MET relative times."
+            )
 
             self._trigger_time = 0
 
-        self._start_events = tte['PRIMARY'].header['TSTART']
-        self._stop_events = tte['PRIMARY'].header['TSTOP']
+        self._start_events = tte["PRIMARY"].header["TSTART"]
+        self._stop_events = tte["PRIMARY"].header["TSTOP"]
 
-        self._utc_start = tte['PRIMARY'].header['DATE-OBS']
-        self._utc_stop = tte['PRIMARY'].header['DATE-END']
+        self._utc_start = tte["PRIMARY"].header["DATE-OBS"]
+        self._utc_stop = tte["PRIMARY"].header["DATE-END"]
 
-        self._n_channels = tte['EBOUNDS'].header['NAXIS2']
+        self._n_channels = tte["EBOUNDS"].header["NAXIS2"]
 
-        self._det_name = "%s_%s" % (tte['PRIMARY'].header['INSTRUME'], tte['PRIMARY'].header['DETNAM'])
+        self._det_name = "%s_%s" % (
+            tte["PRIMARY"].header["INSTRUME"],
+            tte["PRIMARY"].header["DETNAM"],
+        )
 
-        self._telescope = tte['PRIMARY'].header['TELESCOP']
+        self._telescope = tte["PRIMARY"].header["TELESCOP"]
 
         self._calculate_deadtime()
 
@@ -87,8 +92,10 @@ class GBMTTEFile(object):
     @trigger_time.setter
     def trigger_time(self, val):
 
-        assert self._start_events <= val <= self._stop_events, "Trigger time must be within the interval (%f,%f)" % (
-            self._start_events, self._stop_events)
+        assert self._start_events <= val <= self._stop_events, (
+            "Trigger time must be within the interval (%f,%f)"
+            % (self._start_events, self._stop_events)
+        )
 
         self._trigger_time = val
 
@@ -146,10 +153,10 @@ class GBMTTEFile(object):
 
         # From Meegan et al. (2009)
         # Dead time for overflow (note, overflow sometimes changes)
-        self._deadtime[overflow_mask] = 10.E-6  # s
+        self._deadtime[overflow_mask] = 10.0e-6  # s
 
         # Normal dead time
-        self._deadtime[~overflow_mask] = 2.E-6  # s
+        self._deadtime[~overflow_mask] = 2.0e-6  # s
 
     def _compute_mission_times(self):
 
@@ -168,8 +175,8 @@ class GBMTTEFile(object):
             time_in_sf=self._trigger_time,
             timesys_in="u",
             timesys_out="u",
-            apply_clock_offset="yes")
-
+            apply_clock_offset="yes",
+        )
 
         try:
 
@@ -177,7 +184,7 @@ class GBMTTEFile(object):
 
             mission_info = re.findall(pattern, content, re.S)
 
-            mission_dict['UTC'] = mission_info[0][-1]
+            mission_dict["UTC"] = mission_info[0][-1]
             mission_dict[mission_info[7][1]] = mission_info[7][2]  # LIGO
             mission_dict[mission_info[8][1]] = mission_info[8][2]  # NUSTAR
             mission_dict[mission_info[12][1]] = mission_info[12][2]  # RXTE
@@ -187,12 +194,12 @@ class GBMTTEFile(object):
 
         except:
 
-            warnings.warn("You do not have the requests library, cannot get time system from Heasarc "
-                          "at this point.")
+            warnings.warn(
+                "You do not have the requests library, cannot get time system from Heasarc "
+                "at this point."
+            )
 
             return None
-
-
 
         return mission_dict
 
@@ -213,11 +220,11 @@ class GBMTTEFile(object):
 
         fermi_dict = collections.OrderedDict()
 
-        fermi_dict['Fermi Trigger Time'] = "%.3f" % self._trigger_time
-        fermi_dict['Fermi MET OBS Start'] = "%.3f" % self._start_events
-        fermi_dict['Fermi MET OBS Stop'] = "%.3f" % self._stop_events
-        fermi_dict['Fermi UTC OBS Start'] = self._utc_start
-        fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
+        fermi_dict["Fermi Trigger Time"] = "%.3f" % self._trigger_time
+        fermi_dict["Fermi MET OBS Start"] = "%.3f" % self._start_events
+        fermi_dict["Fermi MET OBS Stop"] = "%.3f" % self._stop_events
+        fermi_dict["Fermi UTC OBS Start"] = self._utc_start
+        fermi_dict["Fermi UTC OBS Stop"] = self._utc_stop
 
         fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
 
@@ -230,38 +237,38 @@ class GBMTTEFile(object):
 
 
 class GBMCdata(object):
+    def __init__(self, cdata_file, rsp_file):
 
-    def __init__(self,cdata_file,rsp_file):
-
-        self.spectrum_set = PHASpectrumSet(cdata_file,rsp_file=rsp_file)
+        self.spectrum_set = PHASpectrumSet(cdata_file, rsp_file=rsp_file)
 
         cdata = fits.open(cdata_file)
 
-
         try:
-            self._trigger_time = cdata['PRIMARY'].header['TRIGTIME']
-
+            self._trigger_time = cdata["PRIMARY"].header["TRIGTIME"]
 
         except:
 
             # For continuous data
-            warnings.warn("There is no trigger time in the TTE file. Must be set manually or using MET relative times.")
+            warnings.warn(
+                "There is no trigger time in the TTE file. Must be set manually or using MET relative times."
+            )
 
             self._trigger_time = 0
 
-        self._start_events = cdata['PRIMARY'].header['TSTART']
-        self._stop_events = cdata['PRIMARY'].header['TSTOP']
+        self._start_events = cdata["PRIMARY"].header["TSTART"]
+        self._stop_events = cdata["PRIMARY"].header["TSTOP"]
 
-        self._utc_start = cdata['PRIMARY'].header['DATE-OBS']
-        self._utc_stop = cdata['PRIMARY'].header['DATE-END']
+        self._utc_start = cdata["PRIMARY"].header["DATE-OBS"]
+        self._utc_stop = cdata["PRIMARY"].header["DATE-END"]
 
-        self._n_channels = cdata['EBOUNDS'].header['NAXIS2']
+        self._n_channels = cdata["EBOUNDS"].header["NAXIS2"]
 
-        self._det_name = "%s_%s" % (cdata['PRIMARY'].header['INSTRUME'], cdata['PRIMARY'].header['DETNAM'])
+        self._det_name = "%s_%s" % (
+            cdata["PRIMARY"].header["INSTRUME"],
+            cdata["PRIMARY"].header["DETNAM"],
+        )
 
-        self._telescope = cdata['PRIMARY'].header['TELESCOP']
-
-
+        self._telescope = cdata["PRIMARY"].header["TELESCOP"]
 
     @property
     def trigger_time(self):
@@ -271,8 +278,10 @@ class GBMCdata(object):
     @trigger_time.setter
     def trigger_time(self, val):
 
-        assert self._start_events <= val <= self._stop_events, "Trigger time must be within the interval (%f,%f)" % (
-            self._start_events, self._stop_events)
+        assert self._start_events <= val <= self._stop_events, (
+            "Trigger time must be within the interval (%f,%f)"
+            % (self._start_events, self._stop_events)
+        )
 
         self._trigger_time = val
 
@@ -314,8 +323,6 @@ class GBMCdata(object):
 
         return self._det_name
 
-
-
     def _compute_mission_times(self):
 
         mission_dict = {}
@@ -333,9 +340,8 @@ class GBMCdata(object):
             time_in_sf=self._trigger_time,
             timesys_in="u",
             timesys_out="u",
-            apply_clock_offset="yes")
-
-
+            apply_clock_offset="yes",
+        )
 
         try:
 
@@ -343,7 +349,7 @@ class GBMCdata(object):
 
             mission_info = re.findall(pattern, content, re.S)
 
-            mission_dict['UTC'] = mission_info[0][-1]
+            mission_dict["UTC"] = mission_info[0][-1]
             mission_dict[mission_info[7][1]] = mission_info[7][2]  # LIGO
             mission_dict[mission_info[8][1]] = mission_info[8][2]  # NUSTAR
             mission_dict[mission_info[12][1]] = mission_info[12][2]  # RXTE
@@ -353,12 +359,12 @@ class GBMCdata(object):
 
         except:
 
-            warnings.warn("You do not have the requests library, cannot get time system from Heasarc "
-                          "at this point.")
+            warnings.warn(
+                "You do not have the requests library, cannot get time system from Heasarc "
+                "at this point."
+            )
 
             return None
-
-
 
         return mission_dict
 
@@ -379,11 +385,11 @@ class GBMCdata(object):
 
         fermi_dict = collections.OrderedDict()
 
-        fermi_dict['Fermi Trigger Time'] = "%.3f" % self._trigger_time
-        fermi_dict['Fermi MET OBS Start'] = "%.3f" % self._start_events
-        fermi_dict['Fermi MET OBS Stop'] = "%.3f" % self._stop_events
-        fermi_dict['Fermi UTC OBS Start'] = self._utc_start
-        fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
+        fermi_dict["Fermi Trigger Time"] = "%.3f" % self._trigger_time
+        fermi_dict["Fermi MET OBS Start"] = "%.3f" % self._start_events
+        fermi_dict["Fermi MET OBS Stop"] = "%.3f" % self._stop_events
+        fermi_dict["Fermi UTC OBS Start"] = self._utc_start
+        fermi_dict["Fermi UTC OBS Stop"] = self._utc_stop
 
         fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
 
@@ -393,4 +399,3 @@ class GBMCdata(object):
             fermi_df = fermi_df.append(mission_df)
 
         return fermi_df
-

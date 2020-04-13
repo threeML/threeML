@@ -21,7 +21,6 @@ else:
     has_zeus = True
 
 
-
 try:
 
     # see if we have mpi and/or are using parallel
@@ -48,7 +47,7 @@ class ZeusSampler(MCMCSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
 
         assert has_zeus, "You must install zeus-mcmc to use this sampler"
-        
+
         super(ZeusSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(self, n_iterations, n_burn_in=None, n_walkers=20, seed=None):

@@ -3,13 +3,13 @@ import os
 
 
 def get_path_of_data_file(data_file):
-    file_path = pkg_resources.resource_filename("threeML", 'data/%s' % data_file)
+    file_path = pkg_resources.resource_filename("threeML", "data/%s" % data_file)
 
     return file_path
 
 
 def get_path_of_data_dir():
-    file_path = pkg_resources.resource_filename("threeML", 'data')
+    file_path = pkg_resources.resource_filename("threeML", "data")
 
     return file_path
 
@@ -21,4 +21,4 @@ def get_path_of_user_dir():
     :return: an absolute path
     """
 
-    return os.path.abspath(os.path.expanduser('~/.threeML'))
+    return os.path.abspath(os.path.expanduser("~/.threeML"))

@@ -109,7 +109,7 @@ def test_time_interval_constructor_set():
     assert ts[1] == t2
 
     # Use strings
-    ts2 = TimeIntervalSet.from_strings("-10 - -5", "10 - 20", "20-30","-10--5")
+    ts2 = TimeIntervalSet.from_strings("-10 - -5", "10 - 20", "20-30", "-10--5")
 
     assert ts2[0].start_time == -10
     assert ts2[0].stop_time == -5
@@ -121,7 +121,7 @@ def test_time_interval_constructor_set():
     assert ts2[2].stop_time == 30
 
     # Use edges
-    ts3 = TimeIntervalSet.from_list_of_edges([-2,-1,0,1,2])
+    ts3 = TimeIntervalSet.from_list_of_edges([-2, -1, 0, 1, 2])
 
     assert ts3[0].start_time == -2
     assert ts3[0].stop_time == -1
@@ -133,7 +133,7 @@ def test_time_interval_constructor_set():
     assert ts3[2].stop_time == 1
 
     # Use start and stops
-    ts5 = TimeIntervalSet.from_starts_and_stops([-2, -1, 0, 1],  [-1, 0, 1, 2])
+    ts5 = TimeIntervalSet.from_starts_and_stops([-2, -1, 0, 1], [-1, 0, 1, 2])
 
     assert ts5[0].start_time == -2
     assert ts5[0].stop_time == -1
@@ -148,14 +148,9 @@ def test_time_interval_constructor_set():
 
         ts6 = TimeIntervalSet.from_starts_and_stops([-2, -1, 0, 1], [-1, 0, 1])
 
-
     # test display
 
     ts5.display()
-
-
-
-
 
 
 def test_time_interval_iterator_set():
@@ -167,7 +162,7 @@ def test_time_interval_iterator_set():
 
     for i, tt in enumerate(ts):
 
-        if i==0:
+        if i == 0:
 
             assert tt == t1
 
@@ -301,16 +296,17 @@ def test_time_interval_set_is_contiguous():
 
     assert new_ts.is_contiguous() == True
 
+
 def test_merging_set_intervals():
 
     # test that non overlapping intervals
     # do not result in a merge
 
     t1 = TimeInterval(-10.0, 0.0)
-    t2 = TimeInterval(5., 10.0)
+    t2 = TimeInterval(5.0, 10.0)
     t3 = TimeInterval(15.0, 20.0)
 
-    ts1 = TimeIntervalSet([t1,t2,t3])
+    ts1 = TimeIntervalSet([t1, t2, t3])
 
     ts2 = ts1.merge_intersecting_intervals(in_place=False)
 
@@ -322,7 +318,7 @@ def test_merging_set_intervals():
     # end merge works
 
     t1 = TimeInterval(-10.0, 0.0)
-    t2 = TimeInterval(5., 10.0)
+    t2 = TimeInterval(5.0, 10.0)
     t3 = TimeInterval(7.0, 20.0)
 
     ts1 = TimeIntervalSet([t1, t2, t3])
@@ -331,12 +327,12 @@ def test_merging_set_intervals():
 
     assert len(ts2) == 2
     assert t1 == ts2[0]
-    assert TimeInterval(5.0,20.0) == ts2[1]
+    assert TimeInterval(5.0, 20.0) == ts2[1]
 
     # begin merge works
 
     t1 = TimeInterval(-10.0, 0.0)
-    t2 = TimeInterval(-5., 10.0)
+    t2 = TimeInterval(-5.0, 10.0)
     t3 = TimeInterval(15, 20.0)
 
     ts1 = TimeIntervalSet([t1, t2, t3])
@@ -382,9 +378,8 @@ def test_merging_set_intervals():
 
     # multi merge works
 
-
     t1 = TimeInterval(-10.0, 0.0)
-    t2 = TimeInterval(-5., 10.0)
+    t2 = TimeInterval(-5.0, 10.0)
     t3 = TimeInterval(7, 20.0)
 
     ts1 = TimeIntervalSet([t1, t2, t3])
@@ -396,9 +391,8 @@ def test_merging_set_intervals():
 
     # complete overlap merge works
 
-
     t1 = TimeInterval(-10.0, 25.0)
-    t2 = TimeInterval(-5., 10.0)
+    t2 = TimeInterval(-5.0, 10.0)
     t3 = TimeInterval(7, 20.0)
 
     ts1 = TimeIntervalSet([t1, t2, t3])
@@ -408,11 +402,10 @@ def test_merging_set_intervals():
     assert len(ts2) == 1
     assert TimeInterval(-10.0, 25.0) == ts2[0]
 
-
     # tests the inplace operation
 
     t1 = TimeInterval(-10.0, 25.0)
-    t2 = TimeInterval(-5., 10.0)
+    t2 = TimeInterval(-5.0, 10.0)
     t3 = TimeInterval(7, 20.0)
 
     ts1 = TimeIntervalSet([t1, t2, t3])
@@ -423,20 +416,19 @@ def test_merging_set_intervals():
     assert TimeInterval(-10.0, 25.0) == ts1[0]
 
 
-
 def test_interval_set_to_string():
 
     # also tests the time interval to string
 
     t1 = TimeInterval(-10.0, 0.0)
-    t2 = TimeInterval(5., 10.0)
+    t2 = TimeInterval(5.0, 10.0)
     t3 = TimeInterval(15.0, 20.0)
 
     ts1 = TimeIntervalSet([t1, t2, t3])
 
     strings = ts1.to_string()
 
-    strings_split = strings.split(',')
+    strings_split = strings.split(",")
 
     assert t1.to_string() == strings_split[0]
     assert t2.to_string() == strings_split[1]
@@ -446,21 +438,22 @@ def test_interval_set_to_string():
 
     assert ts2[0] == t1
 
+
 def test_time_interval_sets_starts_stops():
 
     t1 = TimeInterval(-10.0, 0.0)
-    t2 = TimeInterval(5., 10.0)
+    t2 = TimeInterval(5.0, 10.0)
     t3 = TimeInterval(15.0, 20.0)
 
     ts1 = TimeIntervalSet([t1, t2, t3])
 
-    for start, stop, interval in zip(ts1.start_times, ts1.stop_times, [t1,t2,t3]):
+    for start, stop, interval in zip(ts1.start_times, ts1.stop_times, [t1, t2, t3]):
 
         assert interval.start_time == start
         assert interval.stop_time == stop
 
-def test_time_edges():
 
+def test_time_edges():
 
     t1 = TimeInterval(-10.0, 0.0)
     t2 = TimeInterval(0.0, 10.0)
@@ -468,10 +461,10 @@ def test_time_edges():
 
     ts1 = TimeIntervalSet([t1, t2, t3])
 
-    assert ts1.time_edges[0] == -10.
+    assert ts1.time_edges[0] == -10.0
     assert ts1.time_edges[1] == 0.0
-    assert ts1.time_edges[2] == 10.
-    assert ts1.time_edges[3] == 20.
+    assert ts1.time_edges[2] == 10.0
+    assert ts1.time_edges[3] == 20.0
 
     with pytest.raises(IntervalsNotContiguous):
         t1 = TimeInterval(-10.0, -5.0)
@@ -481,12 +474,3 @@ def test_time_edges():
         ts1 = TimeIntervalSet([t1, t2, t3])
 
         _ = ts1.time_edges
-
-
-
-
-
-
-
-
-

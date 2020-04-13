@@ -12,9 +12,9 @@ from threeML.io.plotting.step_plot import step_plot
 # this file contains routines for plotting binned light curves
 
 
-
-
-def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bkg_selections=None):
+def binned_light_curve_plot(
+    time_bins, cnts, width, bkg=None, selection=None, bkg_selections=None
+):
     """
 
     :param time_bins: stacked array of time intervals
@@ -39,16 +39,22 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
     # round
     np.round(time_bins, decimals=4, out=time_bins)
 
-
-    light_curve_color = threeML_config['lightcurve']['lightcurve color']
-    selection_color = threeML_config['lightcurve']['selection color']
-    background_color = threeML_config['lightcurve']['background color']
-    background_selection_color = threeML_config['lightcurve']['background selection color']
+    light_curve_color = threeML_config["lightcurve"]["lightcurve color"]
+    selection_color = threeML_config["lightcurve"]["selection color"]
+    background_color = threeML_config["lightcurve"]["background color"]
+    background_selection_color = threeML_config["lightcurve"][
+        "background selection color"
+    ]
 
     # first plot the full lightcurve
 
-    step_plot(time_bins, old_div(cnts, width), ax,
-              color=light_curve_color, label="Light Curve")
+    step_plot(
+        time_bins,
+        old_div(cnts, width),
+        ax,
+        color=light_curve_color,
+        label="Light Curve",
+    )
 
     if selection is not None:
 
@@ -64,15 +70,24 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
         if len(all_masks) > 1:
 
             for mask in all_masks[1:]:
-                step_plot(time_bins[mask], old_div(cnts[mask], width[mask]), ax,
-                          color=selection_color,
-                          fill=True,
-                          fill_min=min_cnts)
+                step_plot(
+                    time_bins[mask],
+                    old_div(cnts[mask], width[mask]),
+                    ax,
+                    color=selection_color,
+                    fill=True,
+                    fill_min=min_cnts,
+                )
 
-        step_plot(time_bins[all_masks[0]], old_div(cnts[all_masks[0]], width[all_masks[0]]), ax,
-                  color=selection_color,
-                  fill=True,
-                  fill_min=min_cnts, label="Selection")
+        step_plot(
+            time_bins[all_masks[0]],
+            old_div(cnts[all_masks[0]], width[all_masks[0]]),
+            ax,
+            color=selection_color,
+            fill=True,
+            fill_min=min_cnts,
+            label="Selection",
+        )
 
     # now plot the background selections
 
@@ -89,25 +104,32 @@ def binned_light_curve_plot(time_bins, cnts, width, bkg=None, selection=None, bk
         if len(all_masks) > 1:
 
             for mask in all_masks[1:]:
-                step_plot(time_bins[mask], old_div(cnts[mask], width[mask]), ax,
-                          color=background_selection_color,
-                          fill=True,
-                          alpha=.4,
-                          fill_min=min_cnts)
+                step_plot(
+                    time_bins[mask],
+                    old_div(cnts[mask], width[mask]),
+                    ax,
+                    color=background_selection_color,
+                    fill=True,
+                    alpha=0.4,
+                    fill_min=min_cnts,
+                )
 
-        step_plot(time_bins[all_masks[0]], old_div(cnts[all_masks[0]], width[all_masks[0]]), ax,
-                  color=background_selection_color,
-                  fill=True,
-                  fill_min=min_cnts,
-                  alpha=.4,
-                  label="Bkg. Selections",
-                  zorder=-30)
+        step_plot(
+            time_bins[all_masks[0]],
+            old_div(cnts[all_masks[0]], width[all_masks[0]]),
+            ax,
+            color=background_selection_color,
+            fill=True,
+            fill_min=min_cnts,
+            alpha=0.4,
+            label="Bkg. Selections",
+            zorder=-30,
+        )
 
     if bkg is not None:
         # now plot the estimated background
 
-        ax.plot(mean_time, bkg, background_color, lw=2., label="Background")
-
+        ax.plot(mean_time, bkg, background_color, lw=2.0, label="Background")
 
     # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
 
@@ -125,8 +147,8 @@ def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     width = chan_max - chan_min
 
     step_plot(chans, old_div(counts, width), ax, **kwargs)
-    ax.set_xscale('log')
-    ax.set_yscale('log')
+    ax.set_xscale("log")
+    ax.set_yscale("log")
 
     return ax
 
@@ -150,7 +172,6 @@ def disjoint_patch_plot(ax, bin_min, bin_max, top, bottom, mask, **kwargs):
 
     # Find the contiguous regions that are selected
 
-
     non_zero = (mask).nonzero()[0]
 
     if len(non_zero) > 0:
@@ -158,10 +179,9 @@ def disjoint_patch_plot(ax, bin_min, bin_max, top, bottom, mask, **kwargs):
         slices = slice_disjoint(non_zero)
 
         for region in slices:
-            ax.fill_between([bin_min[region[0]], bin_max[region[1]]],
-                            bottom,
-                            top,
-                            **kwargs)
+            ax.fill_between(
+                [bin_min[region[0]], bin_max[region[1]]], bottom, top, **kwargs
+            )
 
         ax.set_ylim(bottom, top)
 
