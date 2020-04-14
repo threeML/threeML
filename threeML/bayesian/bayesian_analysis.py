@@ -31,18 +31,11 @@ class BayesianAnalysis(object):
 
         self._analysis_type = "bayesian"
 
-        self._likelihood_model = likelihood_model
-        self._data_list = data_list
+        self._is_registered = False
+        
+        self._register_model_and_data(likelihood_model, data_list)
 
-
-        for parameter_name, parameter in likelihood_model.free_parameters.items():
-
-            if not parameter.has_prior():
-                raise RuntimeError(
-                    "You need to define priors for all free parameters before instancing a "
-                    "Bayesian analysis"
-                )
-
+        
         
         # # Make sure that the current model is used in all data sets
         #
@@ -59,8 +52,60 @@ class BayesianAnalysis(object):
 
         self._sampler = None
 
-        # Get the initial list of free parameters, useful for debugging purposes
 
+        
+    def _register_model_and_data(self, likelihood_model, data_list):
+        """
+
+        make sure the model and data list are set up
+
+        :param likelihood_model: 
+        :param data_list: 
+        :returns: 
+        :rtype: 
+
+        """
+
+        # Verify that all the free parameters have priors
+        for parameter_name, parameter in likelihood_model.free_parameters.items():
+
+            if not parameter.has_prior():
+                raise RuntimeError(
+                    "You need to define priors for all free parameters before instancing a "
+                    "Bayesian analysis"
+                )
+
+        # Process optional keyword parameters
+
+
+        self._likelihood_model = likelihood_model
+
+        self._data_list = data_list
+
+        for dataset in list(self._data_list.values()):
+
+            dataset.set_model(self._likelihood_model)
+
+            # Now get the nuisance parameters from the data and add them to the model
+            # NOTE: it is important that this is *after* the setting of the model, as some
+            # plugins might need to adjust the number of nuisance parameters depending on the
+            # likelihood model
+
+            for parameter_name, parameter in list(dataset.nuisance_parameters.items()):
+                # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
+                # of the same plugin will overwrite each other's nuisance parameters
+
+                assert dataset.name in parameter_name, (
+                    "This is a bug of the plugin for %s: nuisance parameters "
+                    "must contain the instance name" % type(dataset)
+                )
+
+                self._likelihood_model.add_external_parameter(parameter)
+
+        self._is_registered = True
+
+
+        
     def set_sampler(self, sampler_name):
 
         assert sampler_name in _available_samplers, (
