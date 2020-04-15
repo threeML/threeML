@@ -1,6 +1,7 @@
 import time
 import os
 import versioneer
+import sys
 
 VERSION = versioneer.get_version()
 RELEASE_NOTES = 'docs/release_notes.rst'
@@ -11,14 +12,22 @@ def cmd(command, dry_run=False):
     print('About to execute "%s"...' % command)
     if dry_run:
         return 0  
-    #os.system(command)
+    os.system(command)
+
+def check_branch():
+    cmd = 'git rev-parse --abbrev-ref HEAD'
+    branch_name = os.popen(cmd).read().split('\n')[0]
+    print('Current branch is: %s' % branch_name)
+    if branch_name != 'master':
+        print("You can't tag a branch different form master. Abort.")
+        sys.exit(1)
 
 def update_version(mode):
     """ Return the new tag version.
     """
-    prevTag = VERSION.split('+')[0]
-    print('Previous tag was %s...' % prevTag)
-    version, release, patch = [int(item) for item in prevTag.split('.')]
+    prev_tag = VERSION.split('+')[0]
+    print('Previous tag was %s...' % prev_tag)
+    version, release, patch = [int(item) for item in prev_tag.split('.')]
     if mode == 'major':
         version += 1
         release = 0
@@ -35,23 +44,24 @@ def update_version(mode):
 def update_release_notes(tag, dry_run=False):
     """ Write the new tag and build date on top of the release notes.
     """
+    print('Updating %s...' % RELEASE_NOTES)
     title = 'Release notes\n=============\n\n'
-    print('Reading in %s...' % RELEASE_NOTES)
     notes = open(RELEASE_NOTES).read().strip('\n').strip(title)
     subtitle = '\nv%s\n--------\n' % tag
-    #if not dry_run:
-    outputFile = open(RELEASE_NOTES, 'w')
-    outputFile.writelines(title)
-    outputFile.writelines(subtitle)
-    outputFile.writelines('*%s*\n\n' % BUILD_DATE)
-    outputFile.writelines(notes)
-    outputFile.close()
+    if not dry_run:
+        output_file = open(RELEASE_NOTES, 'w')
+        output_file.writelines(title)
+        output_file.writelines(subtitle)
+        output_file.writelines('*%s*\n\n' % BUILD_DATE)
+        output_file.writelines(notes)
+        output_file.close()
 
 def tag_package(mode, dry_run=False):
     """ Tag the package with git.
     """
     cmd('git pull', dry_run)
-    #cmd('git status', dry_run)
+    cmd('git status', dry_run)
+    check_branch()
     tag = update_version(mode)
     update_release_notes(tag, dry_run)
     msg = 'Prepare for tag %s [ci skip]' % tag
