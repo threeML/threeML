@@ -20,6 +20,10 @@ A framework for multi-wavelength/multi-messenger analysis for astronomy/astrophy
 
 Please refer to the [Installation instructions](https://threeml.readthedocs.io/en/latest/installation.html).
 
+If you find this package useful in you analysis, or the code your own custom data tools, please cite:
+[Vianello et al. (2015)](https://arxiv.org/abs/1507.08343)
+
+
 
 # Acknowledgements 
 3ML makes use of the Spanish Virtual Observatory's Filter Profile servce (http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NIRT).
