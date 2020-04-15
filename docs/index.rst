@@ -24,6 +24,7 @@ Traditionally the Astrophysics community have been using frequentist techniques,
     modeling
     faq
     api/API
+    release_notes
 
 .. nbgallery::
    :caption: Features and examples:
