@@ -44,7 +44,7 @@ class PlotStyle(object):
         # Read style file
         with open(filename) as f:
 
-            d = yaml.load(f)
+            d = yaml.load(f, Loader=yaml.SafeLoader)
 
         return cls(matplotlib_base_style=d['matplotlib_base_style'],
                    matplotlib_overrides=d['matplotlib_overrides'],

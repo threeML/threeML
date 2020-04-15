@@ -57,6 +57,7 @@ def xlogy_one(x, y):
         return 0.0
 
 
+@njit(fastmath=True)
 def poisson_log_likelihood_ideal_bkg(
     observed_counts, expected_bkg_counts, expected_model_counts
 ):
@@ -75,13 +76,17 @@ def poisson_log_likelihood_ideal_bkg(
     # In this likelihood the background becomes part of the model, which means that
     # the uncertainty in the background is completely neglected
 
+    n = expected_model_counts.shape[0]
+    log_likes = np.empty(n, dtype=np.float64)
     predicted_counts = expected_bkg_counts + expected_model_counts
 
-    log_likes = (
-        xlogy(observed_counts, predicted_counts)
-        - predicted_counts
-        - logfactorial(observed_counts)
-    )
+    for i in range(n):
+
+        log_likes[i] = (
+            xlogy_one(observed_counts[i], predicted_counts[i])
+            - predicted_counts[i]
+            - logfactorial(observed_counts[i])
+        )
 
     return log_likes, expected_bkg_counts
 
@@ -209,7 +214,7 @@ def poisson_observed_gaussian_background(
 
     # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
 
-    n = len(background_counts)  # observed counts. It is a profile likelihood.
+    n = background_counts.shape[0]  # observed counts. It is a profile likelihood.
 
     log_likes = np.empty(n, dtype=np.float64)
     b = np.empty(n, dtype=np.float64)

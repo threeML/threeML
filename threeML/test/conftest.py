@@ -224,7 +224,7 @@ def completed_bn090217206_bayesian_analysis_multicomp(
 
 x = np.linspace(0, 10, 50)
 
-poiss_sig = [
+poiss_sig = np.array([
     44,
     43,
     38,
@@ -275,7 +275,7 @@ poiss_sig = [
     47,
     38,
     64,
-]
+])
 
 
 @pytest.fixture(scope="session")

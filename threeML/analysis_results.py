@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 from astromodels.core.model_parser import ModelParser
 from astromodels.core.my_yaml import my_yaml
+import yaml
 from astromodels.core.parameter import Parameter
 from corner import corner
 import matplotlib.pyplot as plt
@@ -91,7 +92,7 @@ def _load_one_results(fits_extension):
 
     # Gather the optimized model
     serialized_model = _escape_back_yaml_from_fits(fits_extension.header.get("MODEL"))
-    model_dict = my_yaml.load(serialized_model)
+    model_dict = my_yaml.load(serialized_model, Loader=yaml.SafeLoader)
 
     optimized_model = ModelParser(model_dict=model_dict).get_model()
 

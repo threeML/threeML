@@ -69,6 +69,7 @@ class XYLike(PluginPrototype):
             self._is_poisson = True
             self._yerr = None
             self._has_errors = True
+            self._y = self._y.astype(np.int64)
 
         # This will keep track of the simulated datasets we generate
         self._n_simulated_datasets = 0
