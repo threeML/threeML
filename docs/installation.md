@@ -11,24 +11,29 @@ to compile anything, and in a completely separate environment from your system a
 
 If you are not familiar with conda, install 3ML with the automatic script which will take care of everything:
 
-1. Download the script from [here](https://raw.githubusercontent.com/giacomov/3ML/master/install_3ML.sh)
-2. Run the script with `bash install_3ML.sh`
+1. Download the script from [here](https://raw.githubusercontent.com/threeML/threeML/master/install_3ML.sh)
+2. Run the script with `bash install_3ML.sh`. If you plan to use XSPEC models use `bash install_3ML.sh --with-xspec`.
 3. The script will install 3ML and then create a `threeML_init.sh` script and a `threeML_init.csh` script. Source the former if you are using Bash
 (`source threeML_init.sh`) and the second one if you are using Csh/Tcsh (`source threeML_init.csh`).
 
 ### If you already know Conda 
 
-If you are familiar with Conda and you already have it installed, you can install threeML by creating an environment with:
+If you are familiar with Conda and you already have it installed, you can install 3ML by creating an environment with:
 
 ```bash
-conda create --name threeML -c conda-forge python=2.7 numpy scipy matplotlib
+conda create --name threeML -c conda-forge python=3.7 numpy scipy matplotlib
 ```
 
 then activating your environment and installing 3ML as:
 
 ```bash
-source activate threeML
-conda install -c conda-forge -c threeml threeml
+conda activate threeML
+conda install -c conda-forge -c threeml astromodels threeml
+```
+
+Finally, if you also need XSPEC models you can install them by running:
+```bash
+conda install -c xspecmodels xspec-modelsonly
 ```
 
 ## pip

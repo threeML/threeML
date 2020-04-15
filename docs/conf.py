@@ -67,7 +67,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'The Multi-Mission Maximum Likelihood framework'
-copyright = u'2017--2020, G.Vianello, J. M. Burgess, N. , N. Omodei'
+copyright = u'2017--2020, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei'
 author = u'G.Vianello'
 
 # html_theme_options = {
