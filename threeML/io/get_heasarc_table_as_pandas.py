@@ -66,7 +66,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
             # the cache file is two lines. The first is a datetime string that
             # specifies the last time the XML file was obtained
 
-            yaml_cache = yaml.safe_load(cache)
+            yaml_cache = yaml.load(cache, Loader=yaml.SafeLoader)
 
             cached_time = astro_time.Time(datetime.datetime(*list(map(int, yaml_cache['last save'].split('-')))))
 
