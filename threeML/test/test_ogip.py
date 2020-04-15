@@ -554,4 +554,5 @@ def test_likelihood_functions():
                                                 background_error=bkg_err,
                                                 expected_model_counts=exp_cnts)
 
-    assert test == (-2, 5.0)
+    assert test == (-2.99750018, 5.0)
+
