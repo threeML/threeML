@@ -137,7 +137,7 @@ def poisson_observed_gaussian_background(observed_counts, background_counts, bac
 
     idx = background_counts > 0
 
-    log_likes = np.empty_like(expected_model_counts)
+    log_likes = np.empty(len(expected_model_counts))
 
     log_likes[idx] = (old_div(-(b[idx] - background_counts[idx]) ** 2, (2 * s2[idx]))
                       + observed_counts[idx] * np.log(b[idx] + expected_model_counts[idx])
