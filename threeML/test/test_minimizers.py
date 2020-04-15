@@ -37,7 +37,7 @@ skip_if_pygmo_is_not_available = pytest.mark.skipif(not has_pygmo, reason="No py
 
 def check_results(fit_results):
 
-    assert abs(fit_results['value']['bn090217206.spectrum.main.Powerlaw.K'] - 2.531028) < 1e-2
+    assert abs(fit_results['value']['bn090217206.spectrum.main.Powerlaw.K'] - 2.531028) < 5e-2
     assert abs(fit_results['value']['bn090217206.spectrum.main.Powerlaw.index'] + 1.1831566000728451) < 1e-2
 
 

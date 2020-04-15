@@ -1,6 +1,7 @@
 from builtins import range
 from builtins import object
 import pytest
+import numpy.testing as npt
 from .conftest import get_test_datasets_directory
 from threeML import *
 from threeML.io.file_utils import within_directory
@@ -549,10 +550,12 @@ def test_likelihood_functions():
 
     assert test == -0.
 
-    test = poisson_observed_gaussian_background(observed_counts=obs_cnts,
+    ll, bb = poisson_observed_gaussian_background(observed_counts=obs_cnts,
                                                 background_counts=obs_bkg,
                                                 background_error=bkg_err,
                                                 expected_model_counts=exp_cnts)
 
-    assert test == (-2.99750018, 5.0)
+
+    test = (ll[0], bb[0]) 
+    npt.assert_almost_equal(test, (-2.99750018, 5.0), decimal=4) 
 
