@@ -259,15 +259,20 @@ conda config --add channels defaults
 
 conda config --add channels threeml
 
+conda config --add channels conda-forge/label/cf201901
+
 conda config --add channels conda-forge
 
-conda config --add channels conda-forge/label/cf201901
+if [[ ${PYTHON_VERSION} == "2.7" ]]; then
+    conda config --add channels conda-forge/label/cf201901
+fi
 
 PACKAGES_TO_INSTALL="astromodels threeml"
 
 if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
 
     PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly=6.22.1"
+    conda config --add channels xspecmodels
 
 fi
 

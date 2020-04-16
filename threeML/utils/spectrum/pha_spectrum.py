@@ -801,7 +801,15 @@ p
         :return: a path to a file, or None
         """
 
-        return self._return_file("backfile")
+
+        back_file = self._return_file('backfile')
+
+        if back_file == "":
+            back_file = None
+        
+        
+        return back_file
+
 
     @property
     def scale_factor(self):

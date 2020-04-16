@@ -7,7 +7,7 @@
 
 [![PyPI version fury.io](https://badge.fury.io/py/threeML.svg)](https://pypi.python.org/pypi/threeML/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dw/threeml)
-
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/threeml)
 ## Conda
 
 ![Conda](https://img.shields.io/conda/pn/threeml/threeml)
@@ -19,6 +19,12 @@ A framework for multi-wavelength/multi-messenger analysis for astronomy/astrophy
 # Installation
 
 Please refer to the [Installation instructions](https://threeml.readthedocs.io/en/latest/installation.html).
+
+# Citing 
+If you find this package useful in you analysis, or the code in your own custom data tools, please cite:
+
+[Vianello et al. (2015)](https://arxiv.org/abs/1507.08343)
+
 
 
 # Acknowledgements 
