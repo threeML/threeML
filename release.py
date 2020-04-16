@@ -5,7 +5,7 @@ import sys
 
 VERSION = versioneer.get_version()
 RELEASE_NOTES = 'docs/release_notes.rst'
-BUILD_DATE = time.strftime('%a, %d %b %Y %H:%M:%S %z')
+BUILD_DATE = time.strftime("%a, %d %b %Y %H:%M:%S + 0000", time.gmtime())
 TAG_MODES = ['major', 'minor', 'patch']
 
 def cmd(command, dry_run=False):
@@ -64,7 +64,7 @@ def tag_package(mode, dry_run=False):
     check_branch()
     tag = update_version(mode)
     update_release_notes(tag, dry_run)
-    msg = 'Prepare for tag %s [ci skip]' % tag
+    msg = 'Prepare for tag %s' % tag
     cmd('git commit -m "%s" %s' % (msg, RELEASE_NOTES), dry_run)
     cmd('git push', dry_run)
     msg = 'New tag %s' % tag
