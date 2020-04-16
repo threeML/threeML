@@ -530,11 +530,15 @@ def test_likelihood_functions():
     exp_bkg = np.array([5])
     ratio = 1
 
-    test = poisson_log_likelihood_ideal_bkg(observed_counts=obs_cnts,
+    ll, b = poisson_log_likelihood_ideal_bkg(observed_counts=obs_cnts,
                                             expected_bkg_counts=exp_bkg,
                                             expected_model_counts=exp_bkg)
 
-    assert test == (-2.0785616431350551, 5)
+
+    test = (ll[0], b[0])
+
+    npt.assert_almost_equal(test, (-2.0785616431350551, 5), decimal=4) 
+    
 
     test = poisson_observed_poisson_background(observed_counts=obs_cnts,
                                                background_counts=obs_bkg,
