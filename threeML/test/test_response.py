@@ -4,7 +4,11 @@ import pytest
 import warnings
 
 from threeML.io.package_data import get_path_of_data_file
-from threeML.utils.OGIP.response import InstrumentResponseSet, InstrumentResponse, OGIPResponse
+from threeML.utils.OGIP.response import (
+    InstrumentResponseSet,
+    InstrumentResponse,
+    OGIPResponse,
+)
 from threeML.utils.time_interval import TimeInterval
 
 
@@ -47,7 +51,9 @@ def get_matrix_set_elements():
     # Fake a count getter
     law = lambda x: 1.23 * x
     # The counts getter is the integral of the law
-    counts_getter = lambda t1, t2: 1.23 * 0.5 * (t2 ** 2.0 - t1 ** 2.0) * livetime_fraction
+    counts_getter = (
+        lambda t1, t2: 1.23 * 0.5 * (t2 ** 2.0 - t1 ** 2.0) * livetime_fraction
+    )
 
     return [rsp_a, rsp_b], exposure_getter, counts_getter
 
@@ -96,6 +102,7 @@ def test_instrument_response_constructor():
 
         _ = InstrumentResponse(matrix, ebounds, mc_energies, "10-20")
 
+
 def test_instrument_response_replace_matrix():
 
     matrix, mc_energies, ebounds = get_matrix_elements()
@@ -110,7 +117,7 @@ def test_instrument_response_replace_matrix():
 
     with pytest.raises(AssertionError):
 
-        rsp.replace_matrix(np.random.uniform(0,1,100).reshape(10,10))
+        rsp.replace_matrix(np.random.uniform(0, 1, 100).reshape(10, 10))
 
 
 def test_instrument_response_set_function_and_convolve():
@@ -123,7 +130,7 @@ def test_instrument_response_set_function_and_convolve():
 
     # Integral of a constant, so we know easily what the output should be
 
-    integral_function = lambda e1,e2: e2-e1
+    integral_function = lambda e1, e2: e2 - e1
 
     rsp.set_function(integral_function)
 
@@ -241,8 +248,6 @@ def test_response_write_to_fits3():
     os.remove(temp_file)
 
 
-
-
 def test_response_set_constructor():
 
     [rsp_aw, rsp_bw], exposure_getter, counts_getter = get_matrix_set_elements()
@@ -255,7 +260,11 @@ def test_response_set_constructor():
 
     # Add the time information
 
-    [rsp_a, rsp_b], exposure_getter, counts_getter = get_matrix_set_elements_with_coverage()
+    (
+        [rsp_a, rsp_b],
+        exposure_getter,
+        counts_getter,
+    ) = get_matrix_set_elements_with_coverage()
 
     # This should work now
     rsp_set = InstrumentResponseSet([rsp_a, rsp_b], exposure_getter, counts_getter)
@@ -277,7 +286,9 @@ def test_response_set_constructor():
 
         warnings.simplefilter("error", np.VisibleDeprecationWarning)
 
-        rsp_set = InstrumentResponseSet.from_rsp2_file(rsp2_file, exposure_getter, counts_getter)
+        rsp_set = InstrumentResponseSet.from_rsp2_file(
+            rsp2_file, exposure_getter, counts_getter
+        )
 
     assert len(rsp_set) == 3
 
@@ -294,7 +305,11 @@ def test_response_set_constructor():
 
 def test_response_set_weighting():
 
-    [rsp_a, rsp_b], exposure_getter, counts_getter = get_matrix_set_elements_with_coverage()
+    (
+        [rsp_a, rsp_b],
+        exposure_getter,
+        counts_getter,
+    ) = get_matrix_set_elements_with_coverage()
 
     rsp_set = InstrumentResponseSet([rsp_a, rsp_b], exposure_getter, counts_getter)
 
@@ -343,9 +358,15 @@ def test_response_set_weighting_with_reference_time():
     # Now repeat the same tests but using a reference time
     ref_time = 123.456
 
-    [rsp_a, rsp_b], exposure_getter, counts_getter = get_matrix_set_elements_with_coverage(reference_time=ref_time)
+    (
+        [rsp_a, rsp_b],
+        exposure_getter,
+        counts_getter,
+    ) = get_matrix_set_elements_with_coverage(reference_time=ref_time)
 
-    rsp_set = InstrumentResponseSet([rsp_a, rsp_b], exposure_getter, counts_getter, reference_time=ref_time)
+    rsp_set = InstrumentResponseSet(
+        [rsp_a, rsp_b], exposure_getter, counts_getter, reference_time=ref_time
+    )
 
     assert rsp_set.reference_time == ref_time
 
@@ -366,9 +387,15 @@ def test_response_set_weighting_with_disjoint_intervals():
 
     ref_time = 123.456
 
-    [rsp_a, rsp_b], exposure_getter, counts_getter = get_matrix_set_elements_with_coverage(reference_time=ref_time)
+    (
+        [rsp_a, rsp_b],
+        exposure_getter,
+        counts_getter,
+    ) = get_matrix_set_elements_with_coverage(reference_time=ref_time)
 
-    rsp_set = InstrumentResponseSet([rsp_a, rsp_b], exposure_getter, counts_getter, reference_time=ref_time)
+    rsp_set = InstrumentResponseSet(
+        [rsp_a, rsp_b], exposure_getter, counts_getter, reference_time=ref_time
+    )
 
     assert rsp_set.reference_time == ref_time
 

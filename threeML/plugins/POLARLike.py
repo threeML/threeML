@@ -1,5 +1,6 @@
 from builtins import object
-__author__ = 'grburgess'
+
+__author__ = "grburgess"
 
 import astropy.io.fits as fits
 import numpy as np
@@ -22,10 +23,19 @@ class BinningMethodError(RuntimeError):
 
 
 class POLARLike(EventListLike):
-    def __init__(self, name, polar_root_file, rsp_file, source_intervals, background_selections=None,
-                 restore_background=None,
-                 trigger_time=0.,
-                 poly_order=-1, unbinned=True, verbose=True):
+    def __init__(
+        self,
+        name,
+        polar_root_file,
+        rsp_file,
+        source_intervals,
+        background_selections=None,
+        restore_background=None,
+        trigger_time=0.0,
+        poly_order=-1,
+        unbinned=True,
+        verbose=True,
+    ):
         """
 
         :param name:
@@ -46,29 +56,32 @@ class POLARLike(EventListLike):
 
         self._polar_data = POLARData(polar_root_file, trigger_time, rsp_file)
 
-
         # Create the the event list
 
-        event_list = EventListWithDeadTimeFraction(arrival_times=self._polar_data.time,
-                                                   energies=self._polar_data.pha,
-                                                   n_channels=self._polar_data.n_channels,
-                                                   start_time=self._polar_data.time.min(),
-                                                   stop_time=self._polar_data.time.max(),
-                                                   dead_time_fraction=self._polar_data.dead_time_fraction,
-                                                   verbose=verbose,
-                                                   rsp_file=rsp_file)
+        event_list = EventListWithDeadTimeFraction(
+            arrival_times=self._polar_data.time,
+            energies=self._polar_data.pha,
+            n_channels=self._polar_data.n_channels,
+            start_time=self._polar_data.time.min(),
+            stop_time=self._polar_data.time.max(),
+            dead_time_fraction=self._polar_data.dead_time_fraction,
+            verbose=verbose,
+            rsp_file=rsp_file,
+        )
 
         # pass to the super class
 
-        super(POLARLike, self).__init__(name,
-                                        event_list,
-                                        rsp_file=self._polar_data.rsp,
-                                        source_intervals=source_intervals,
-                                        background_selections=background_selections,
-                                        poly_order=poly_order,
-                                        unbinned=unbinned,
-                                        verbose=verbose,
-                                        restore_poly_fit=restore_background)
+        super(POLARLike, self).__init__(
+            name,
+            event_list,
+            rsp_file=self._polar_data.rsp,
+            source_intervals=source_intervals,
+            background_selections=background_selections,
+            poly_order=poly_order,
+            unbinned=unbinned,
+            verbose=verbose,
+            restore_poly_fit=restore_background,
+        )
 
     def set_active_time_interval(self, *intervals, **kwargs):
         """
@@ -88,8 +101,15 @@ class POLARLike(EventListLike):
 
         super(POLARLike, self).set_active_time_interval(*intervals, **kwargs)
 
-    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False, energy_selection=None,
-                        significance_level=None):
+    def view_lightcurve(
+        self,
+        start=-10,
+        stop=20.0,
+        dt=1.0,
+        use_binner=False,
+        energy_selection=None,
+        significance_level=None,
+    ):
         """
 
         :param use_binner: use the bins created via a binner
@@ -99,13 +119,15 @@ class POLARLike(EventListLike):
         :param energy_selection: string containing energy interval
         :return: fig
         """
-        super(POLARLike, self).view_lightcurve(start=start,
-                                               stop=stop,
-                                               dt=dt,
-                                               use_binner=use_binner,
-                                               energy_selection=energy_selection,
-                                               significance_level=significance_level,
-                                               instrument='gbm')
+        super(POLARLike, self).view_lightcurve(
+            start=start,
+            stop=stop,
+            dt=dt,
+            use_binner=use_binner,
+            energy_selection=energy_selection,
+            significance_level=significance_level,
+            instrument="gbm",
+        )
 
     def _output(self):
         super_out = super(POLARLike, self)._output()
@@ -115,7 +137,7 @@ class POLARLike(EventListLike):
 
 
 class POLARData(object):
-    def __init__(self, polar_root_file, reference_time=0., rsp_file=None):
+    def __init__(self, polar_root_file, reference_time=0.0, rsp_file=None):
         """
         container class that converts raw POLAR root data into useful python
         variables
@@ -128,39 +150,39 @@ class POLARData(object):
 
         # open the event file
         with open_ROOT_file(polar_root_file) as f:
-            tmp = tree_to_ndarray(f.Get('polar_out'))
+            tmp = tree_to_ndarray(f.Get("polar_out"))
 
             # extract the pedestal corrected ADC channels
             # which are non-integer and possibly
             # less than zero
-            pha = tmp['Energy']
+            pha = tmp["Energy"]
 
             # non-zero ADC channels are invalid
             idx = pha >= 0
             pha = pha[idx]
 
             # get the dead time fraction
-            self._dead_time_fraction = tmp['dead_ratio'][idx]
+            self._dead_time_fraction = tmp["dead_ratio"][idx]
 
             # get the arrival time, in tunix of the events
-            self._time = tmp['tunix'][idx] - reference_time
+            self._time = tmp["tunix"][idx] - reference_time
 
             # digitize the ADC channels into bins
             # these bins are preliminary
 
         with open_ROOT_file(rsp_file) as f:
-            matrix = th2_to_arrays(f.Get('rsp'))[-1]
-            ebounds = th2_to_arrays(f.Get('EM_bounds'))[-1]
-            mc_low = th2_to_arrays(f.Get('ER_low'))[-1]
-            mc_high = th2_to_arrays(f.Get('ER_high'))[-1]
+            matrix = th2_to_arrays(f.Get("rsp"))[-1]
+            ebounds = th2_to_arrays(f.Get("EM_bounds"))[-1]
+            mc_low = th2_to_arrays(f.Get("ER_low"))[-1]
+            mc_high = th2_to_arrays(f.Get("ER_high"))[-1]
 
         mc_energies = np.append(mc_low, mc_high[-1])
 
         # build the POLAR response
 
-        self._rsp = InstrumentResponse(matrix=matrix,
-                                       ebounds=ebounds,
-                                       monte_carlo_energies=mc_energies)
+        self._rsp = InstrumentResponse(
+            matrix=matrix, ebounds=ebounds, monte_carlo_energies=mc_energies
+        )
 
         # bin the ADC channels
 

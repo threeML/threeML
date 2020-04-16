@@ -31,12 +31,14 @@ class BayesianAnalysis(object):
 
         self._analysis_type = "bayesian"
 
+
         self._is_registered = False
         
         self._register_model_and_data(likelihood_model, data_list)
 
         
         
+
         # # Make sure that the current model is used in all data sets
         #
         # for dataset in self.data_list.values():

@@ -13,17 +13,19 @@ from threeML.io.suppress_stdout import suppress_stdout
 
 class MultinestMinimizer(GlobalMinimizer):
 
-    valid_setup_keys = ('second_minimization', 'live_points')
+    valid_setup_keys = ("second_minimization", "live_points")
 
     def __init__(self, function, parameters, verbosity=10, setup_dict=None):
 
-        super(MultinestMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
+        super(MultinestMinimizer, self).__init__(
+            function, parameters, verbosity, setup_dict
+        )
 
     def _setup(self, user_setup_dict):
 
         if user_setup_dict is None:
 
-            default_setup = {'live_points': max(100, self._Npar * 20)}
+            default_setup = {"live_points": max(100, self._Npar * 20)}
 
             self._setup_dict = default_setup
 
@@ -57,13 +59,17 @@ class MultinestMinimizer(GlobalMinimizer):
 
             min_value, max_value = self.parameters[parameter_name].bounds
 
-            assert min_value is not None, "Minimum value of parameter %s is None. In order to use the Multinest " \
-                                          "minimizer you need to define proper bounds for each " \
-                                          "free parameter" % parameter_name
+            assert min_value is not None, (
+                "Minimum value of parameter %s is None. In order to use the Multinest "
+                "minimizer you need to define proper bounds for each "
+                "free parameter" % parameter_name
+            )
 
-            assert max_value is not None, "Maximum value of parameter %s is None. In order to use the Multinest " \
-                                          "minimizer you need to define proper bounds for each " \
-                                          "free parameter" % parameter_name
+            assert max_value is not None, (
+                "Maximum value of parameter %s is None. In order to use the Multinest "
+                "minimizer you need to define proper bounds for each "
+                "free parameter" % parameter_name
+            )
 
             # Compute the difference in order of magnitudes between minimum and maximum
 
@@ -74,17 +80,23 @@ class MultinestMinimizer(GlobalMinimizer):
                 if orders_of_magnitude_span > 2:
 
                     # Use a Log-uniform prior
-                    self._param_priors[parameter_name] = Log_uniform_prior(lower_bound=min_value, upper_bound=max_value)
+                    self._param_priors[parameter_name] = Log_uniform_prior(
+                        lower_bound=min_value, upper_bound=max_value
+                    )
 
                 else:
 
                     # Use a uniform prior
-                    self._param_priors[parameter_name] = Uniform_prior(lower_bound=min_value, upper_bound=max_value)
+                    self._param_priors[parameter_name] = Uniform_prior(
+                        lower_bound=min_value, upper_bound=max_value
+                    )
 
             else:
 
                 # Can only use a uniform prior
-                self._param_priors[parameter_name] = Uniform_prior(lower_bound=min_value, upper_bound=max_value)
+                self._param_priors[parameter_name] = Uniform_prior(
+                    lower_bound=min_value, upper_bound=max_value
+                )
 
         def prior(params, ndim, nparams):
 
@@ -92,12 +104,16 @@ class MultinestMinimizer(GlobalMinimizer):
 
                 try:
 
-                    params[i] = self._param_priors[parameter_name].from_unit_cube(params[i])
+                    params[i] = self._param_priors[parameter_name].from_unit_cube(
+                        params[i]
+                    )
 
                 except AttributeError:
 
-                    raise RuntimeError("The prior you are trying to use for parameter %s is "
-                                       "not compatible with multinest" % parameter_name)
+                    raise RuntimeError(
+                        "The prior you are trying to use for parameter %s is "
+                        "not compatible with multinest" % parameter_name
+                    )
 
         # Give a test run to the prior to check that it is working. If it crashes while multinest is going
         # it will not stop multinest from running and generate thousands of exceptions (argh!)
@@ -130,23 +146,27 @@ class MultinestMinimizer(GlobalMinimizer):
         #
         #     os.makedirs(mcmc_chains_out_dir)
 
-        with temporary_directory(prefix='multinest-', within_directory=os.getcwd()) as mcmc_chains_out_dir:
+        with temporary_directory(
+            prefix="multinest-", within_directory=os.getcwd()
+        ) as mcmc_chains_out_dir:
 
-            outputfiles_basename = os.path.join(mcmc_chains_out_dir,'fit-')
+            outputfiles_basename = os.path.join(mcmc_chains_out_dir, "fit-")
 
             # print("\nMultinest is exploring the parameter space...\n")
 
             # Reset the likelihood values
             self._log_like_values = []
 
-            sampler = pymultinest.run(self._func_wrapper,
-                                      self._prior,
-                                      n_dim,
-                                      n_dim,
-                                      outputfiles_basename=outputfiles_basename,
-                                      n_live_points=self._setup_dict['live_points'],
-                                      multimodal=True,
-                                      resume=False)
+            sampler = pymultinest.run(
+                self._func_wrapper,
+                self._prior,
+                n_dim,
+                n_dim,
+                outputfiles_basename=outputfiles_basename,
+                n_live_points=self._setup_dict["live_points"],
+                multimodal=True,
+                resume=False,
+            )
 
             # Use PyMULTINEST analyzer to gather parameter info
 
@@ -154,8 +174,9 @@ class MultinestMinimizer(GlobalMinimizer):
 
             with suppress_stdout():
 
-                multinest_analyzer = pymultinest.analyse.Analyzer(n_params=n_dim,
-                                                                  outputfiles_basename=outputfiles_basename)
+                multinest_analyzer = pymultinest.analyse.Analyzer(
+                    n_params=n_dim, outputfiles_basename=outputfiles_basename
+                )
 
             # Get the function value from the chain
             func_values = multinest_analyzer.get_equal_weighted_posterior()[:, -1]

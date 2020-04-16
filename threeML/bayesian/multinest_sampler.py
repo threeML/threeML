@@ -55,7 +55,7 @@ class MultiNestSampler(UnitCubeSampler):
         """
 
         assert has_pymultinest, "You must install MultiNest to use this sampler"
-        
+
         super(MultiNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(
@@ -84,13 +84,13 @@ class MultiNestSampler(UnitCubeSampler):
         self._kwargs["importance_nested_sampling"] = importance_nested_sampling
         self._kwargs["chain_name"] = chain_name
         self._kwargs["resume"] = resume
-        
+
         for k, v in kwargs.items():
 
             self._kwargs[k] = v
 
         self._is_setup = True
-            
+
     def sample(self, quiet=False):
         """
         sample using the MultiNest numerical integration method
@@ -102,17 +102,14 @@ class MultiNestSampler(UnitCubeSampler):
         if not self._is_setup:
 
             print("You forgot to setup the sampler!")
-            return 
+            return
 
-        
         assert (
             has_pymultinest
         ), "You don't have pymultinest installed, so you cannot run the Multinest sampler"
 
-
         loud = not quiet
 
-        
         self._update_free_parameters()
 
         n_dim = len(list(self._free_parameters.keys()))
@@ -223,8 +220,9 @@ class MultiNestSampler(UnitCubeSampler):
 
             self._build_samples_dictionary()
 
-            self._marginal_likelihood = multinest_analyzer.get_stats()["global evidence"]/ np.log(10.0)
-            
+            self._marginal_likelihood = multinest_analyzer.get_stats()[
+                "global evidence"
+            ] / np.log(10.0)
 
             self._build_results()
 

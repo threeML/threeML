@@ -11,13 +11,18 @@ from distutils.spawn import find_executable
 
 
 from threeML.config.config import threeML_config
-from threeML.io.progress_bar import progress_bar, multiple_progress_bars, CannotGenerateHTMLBar
+from threeML.io.progress_bar import (
+    progress_bar,
+    multiple_progress_bars,
+    CannotGenerateHTMLBar,
+)
 
 try:
-    from subprocess import DEVNULL # py3k
+    from subprocess import DEVNULL  # py3k
 except ImportError:
     import os
-    DEVNULL = open(os.devnull, 'wb')
+
+    DEVNULL = open(os.devnull, "wb")
 
 # Check whether we have a parallel system or not
 
@@ -36,14 +41,13 @@ else:
     has_parallel = True
 
 
-
 class NoParallelEnvironment(UserWarning):
     pass
 
 
-
 # Set up the warnings module to always display our custom warning (otherwise it would only be displayed once)
-warnings.simplefilter('always', NoParallelEnvironment)
+warnings.simplefilter("always", NoParallelEnvironment)
+
 
 @contextmanager
 def parallel_computation(profile=None, start_cluster=True):
@@ -58,31 +62,33 @@ def parallel_computation(profile=None, start_cluster=True):
 
     # Memorize the state of the use-parallel config
 
-    old_state = bool(threeML_config['parallel']['use-parallel'])
+    old_state = bool(threeML_config["parallel"]["use-parallel"])
 
-    old_profile = str(threeML_config['parallel']['IPython profile name'])
+    old_profile = str(threeML_config["parallel"]["IPython profile name"])
 
     # Set the use-parallel feature on, if available
 
     if has_parallel:
 
-        threeML_config['parallel']['use-parallel'] = True
+        threeML_config["parallel"]["use-parallel"] = True
 
     else:
 
         # No parallel environment available. Issue a warning and continue with serial computation
 
-        warnings.warn("You requested parallel computation, but no parallel environment is available. You need "
-                      "to install the ipyparallel package. Continuing with serial computation...",
-                      NoParallelEnvironment)
+        warnings.warn(
+            "You requested parallel computation, but no parallel environment is available. You need "
+            "to install the ipyparallel package. Continuing with serial computation...",
+            NoParallelEnvironment,
+        )
 
-        threeML_config['parallel']['use-parallel'] = False
+        threeML_config["parallel"]["use-parallel"] = False
 
     # Now use the specified profile (if any), otherwise the default one
 
     if profile is not None:
 
-        threeML_config['parallel']['IPython profile name'] = str(profile)
+        threeML_config["parallel"]["IPython profile name"] = str(profile)
 
     # Here is where the content of the with parallel_computation statement gets
     # executed
@@ -152,20 +158,19 @@ def parallel_computation(profile=None, start_cluster=True):
         yield
 
     # Revert back
-    threeML_config['parallel']['use-parallel'] = old_state
+    threeML_config["parallel"]["use-parallel"] = old_state
 
-    threeML_config['parallel']['IPython profile name'] = old_profile
+    threeML_config["parallel"]["IPython profile name"] = old_profile
 
 
 def is_parallel_computation_active():
 
-    return bool(threeML_config['parallel']['use-parallel'])
+    return bool(threeML_config["parallel"]["use-parallel"])
 
 
 if has_parallel:
 
     class ParallelClient(Client):
-
         def __init__(self, *args, **kwargs):
             """
             Wrapper around the IPython Client class, which forces the use of dill for object serialization
@@ -180,9 +185,9 @@ if has_parallel:
             # (more robust, and allows for serialization of class
             # methods)
 
-            if 'profile' not in kwargs.keys():
+            if "profile" not in kwargs.keys():
 
-                kwargs['profile'] = threeML_config['parallel']['IPython profile name']
+                kwargs["profile"] = threeML_config["parallel"]["IPython profile name"]
 
             super(ParallelClient, self).__init__(*args, **kwargs)
 
@@ -194,7 +199,9 @@ if has_parallel:
 
             return len(self.direct_view())
 
-        def _interactive_map(self, worker, items_to_process, ordered=True, chunk_size=None):
+        def _interactive_map(
+            self, worker, items_to_process, ordered=True, chunk_size=None
+        ):
             """
             Subdivide the work among the active engines, taking care of dividing it among them
 
@@ -239,7 +246,9 @@ if has_parallel:
                     chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
 
             # We need this to keep the instance alive
-            self._current_amr = lview.imap(worker, items_to_process, chunksize=chunk_size, ordered=ordered)
+            self._current_amr = lview.imap(
+                worker, items_to_process, chunksize=chunk_size, ordered=ordered
+            )
 
             return self._current_amr
 
@@ -258,7 +267,9 @@ if has_parallel:
 
             with progress_bar(n_iterations) as p:
 
-                amr = self._interactive_map(wrapper, items_wrapped, ordered=False, chunk_size=chunk_size)
+                amr = self._interactive_map(
+                    wrapper, items_wrapped, ordered=False, chunk_size=chunk_size
+                )
 
                 results = []
 
@@ -269,7 +280,7 @@ if has_parallel:
                     p.increase()
 
             # Reorder the list according to the id
-            return list(map(lambda x:x[1], sorted(results, key=lambda x:x[0])))
+            return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))
 
 
 else:
@@ -277,8 +288,9 @@ else:
     # NO parallel environment available. Make a dumb object to avoid import problems, but this object will never
     # be really used because the context manager will not activate the parallel mode (see above)
     class ParallelClient(object):
-
         def __init__(self, *args, **kwargs):
 
-            raise RuntimeError("No parallel environment and attempted to use the ParallelClient class, which should "
-                               "never happen. Please open an issue at https://github.com/giacomov/3ML/issues")
+            raise RuntimeError(
+                "No parallel environment and attempted to use the ParallelClient class, which should "
+                "never happen. Please open an issue at https://github.com/giacomov/3ML/issues"
+            )

@@ -48,7 +48,14 @@ from threeML.config.config import threeML_config
 
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
 # them with normal characters when we write the keyword, and we substitute them back when we read it back
-_subs = (('\n', "_NEWLINE_"), ("'", "_QUOTE1_"), ('"', "_QUOTE2_"), ('{', "_PARO_"), ('}', "_PARC_"))
+_subs = (
+    ("\n", "_NEWLINE_"),
+    ("'", "_QUOTE1_"),
+    ('"', "_QUOTE2_"),
+    ("{", "_PARO_"),
+    ("}", "_PARC_"),
+)
+
 
 def _escape_yaml_for_fits(yaml_code):
     for sub in _subs:
@@ -74,11 +81,11 @@ def load_analysis_results(fits_file):
 
     with fits.open(fits_file) as f:
 
-        n_results = [x.name for x in f].count('ANALYSIS_RESULTS')
+        n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
 
         if n_results == 1:
 
-            return _load_one_results(f['ANALYSIS_RESULTS', 1])
+            return _load_one_results(f["ANALYSIS_RESULTS", 1])
 
         else:
 
@@ -128,7 +135,12 @@ def _load_one_results(fits_extension):
 
         # Instance and return
 
-        return MLEResults(optimized_model, covariance_matrix, statistic_values, statistical_measures=measure_values)
+        return MLEResults(
+            optimized_model,
+            covariance_matrix,
+            statistic_values,
+            statistical_measures=measure_values,
+        )
 
     elif analysis_type == "Bayesian":
 
@@ -137,7 +149,12 @@ def _load_one_results(fits_extension):
 
         # Instance and return
 
-        return BayesianResults(optimized_model, samples.T, statistic_values, statistical_measures=measure_values)
+        return BayesianResults(
+            optimized_model,
+            samples.T,
+            statistic_values,
+            statistical_measures=measure_values,
+        )
 
 
 def _load_set_of_results(open_fits_file, n_results):
@@ -145,13 +162,13 @@ def _load_set_of_results(open_fits_file, n_results):
     all_results = []
 
     for i in range(n_results):
-        all_results.append(_load_one_results(open_fits_file['ANALYSIS_RESULTS', i + 1]))
+        all_results.append(_load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1]))
 
     this_set = AnalysisResultsSet(all_results)
 
     # Now gather the SEQUENCE extension and set the characterization frame accordingly
 
-    sequence_ext = open_fits_file['SEQUENCE']
+    sequence_ext = open_fits_file["SEQUENCE"]
 
     seq_type = sequence_ext.header.get("SEQ_TYPE")
 
@@ -184,9 +201,9 @@ class SEQUENCE(FITSExtension):
     """
 
     _HEADER_KEYWORDS = [
-        ('EXTNAME', 'SEQUENCE', 'Extension name'),
-        ('ORIGIN', '3ML', 'Multi-Mission Max. Likelihood v. %s' % __version__),
-        ('SEQ_TYPE', None, 'Description of sequence type')
+        ("EXTNAME", "SEQUENCE", "Extension name"),
+        ("ORIGIN", "3ML", "Multi-Mission Max. Likelihood v. %s" % __version__),
+        ("SEQ_TYPE", None, "Description of sequence type"),
     ]
 
     def __init__(self, name, data_tuple):
@@ -207,10 +224,10 @@ class ANALYSIS_RESULTS(FITSExtension):
     """
 
     _HEADER_KEYWORDS = [
-        ('EXTNAME', 'ANALYSIS_RESULTS', 'Extension name'),
-        ('MODEL', None, 'A pseudo-yaml serialization of the model'),
-        ('ORIGIN', '3ML', 'Multi-Mission Max. Likelihood v. %s' % __version__),
-        ('RESUTYPE', None, 'Analysis producing results (MLE or Bayesian)')
+        ("EXTNAME", "ANALYSIS_RESULTS", "Extension name"),
+        ("MODEL", None, "A pseudo-yaml serialization of the model"),
+        ("ORIGIN", "3ML", "Multi-Mission Max. Likelihood v. %s" % __version__),
+        ("RESUTYPE", None, "Analysis producing results (MLE or Bayesian)"),
     ]
 
     def __init__(self, analysis_results):
@@ -233,10 +250,15 @@ class ANALYSIS_RESULTS(FITSExtension):
 
             # Check that the covariance matrix has the right shape
 
-            assert covariance_matrix.shape == (n_parameters, n_parameters), \
-                "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (n_parameters, n_parameters,
-                                                                                covariance_matrix.shape[0],
-                                                                                covariance_matrix.shape[1])
+            assert covariance_matrix.shape == (n_parameters, n_parameters), (
+                "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
+                % (
+                    n_parameters,
+                    n_parameters,
+                    covariance_matrix.shape[0],
+                    covariance_matrix.shape[1],
+                )
+            )
 
             # Empty samples set
             samples = np.zeros(n_parameters)
@@ -265,14 +287,16 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         # Prepare columns
 
-        data_tuple = [('NAME', list(free_parameters.keys())),
-                      ('VALUE', data_frame['value'].values),
-                      ('NEGATIVE_ERROR', data_frame['negative_error'].values),
-                      ('POSITIVE_ERROR', data_frame['positive_error'].values),
-                      ('ERROR', data_frame['error'].values),
-                      ('UNIT', np.array(data_frame['unit'].values, np.unicode_)),
-                      ('COVARIANCE', covariance_matrix),
-                      ('SAMPLES', samples)]
+        data_tuple = [
+            ("NAME", list(free_parameters.keys())),
+            ("VALUE", data_frame["value"].values),
+            ("NEGATIVE_ERROR", data_frame["negative_error"].values),
+            ("POSITIVE_ERROR", data_frame["positive_error"].values),
+            ("ERROR", data_frame["error"].values),
+            ("UNIT", np.array(data_frame["unit"].values, np.unicode_)),
+            ("COVARIANCE", covariance_matrix),
+            ("SAMPLES", samples),
+        ]
 
         # Init FITS extension
 
@@ -286,17 +310,22 @@ class ANALYSIS_RESULTS(FITSExtension):
         stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
 
         for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
-            self.hdu.header.set("STAT%i" % i, stat_value, comment="Stat. value for plugin %i" % i)
-            self.hdu.header.set("PN%i" % i, plugin_instance_name, comment="Name of plugin %i" % i)
+            self.hdu.header.set(
+                "STAT%i" % i, stat_value, comment="Stat. value for plugin %i" % i
+            )
+            self.hdu.header.set(
+                "PN%i" % i, plugin_instance_name, comment="Name of plugin %i" % i
+            )
 
         # Now add the statistical measures
 
-        measure_series = analysis_results.statistical_measures # type: pd.Series
+        measure_series = analysis_results.statistical_measures  # type: pd.Series
 
         for i, (measure, measure_value) in enumerate(measure_series.items()):
             self.hdu.header.set("MEAS%i" % i, measure, comment="Measure type %i" % i)
-            self.hdu.header.set("MV%i" % i, measure_value, comment="Measure value %i" % i)
-
+            self.hdu.header.set(
+                "MV%i" % i, measure_value, comment="Measure value %i" % i
+            )
 
 
 class AnalysisResultsFITS(FITSFile):
@@ -311,15 +340,15 @@ class AnalysisResultsFITS(FITSFile):
 
         extensions = []
 
-        if 'sequence_name' in kwargs:
+        if "sequence_name" in kwargs:
             # This is a set of results
 
-            assert 'sequence_tuple' in kwargs
+            assert "sequence_tuple" in kwargs
 
             # We got elements to write the SEQUENCE extension
 
             # Make SEQUENCE extension
-            sequence_ext = SEQUENCE(kwargs['sequence_name'], kwargs['sequence_tuple'])
+            sequence_ext = SEQUENCE(kwargs["sequence_name"], kwargs["sequence_tuple"])
 
             extensions.append(sequence_ext)
 
@@ -338,7 +367,11 @@ class AnalysisResultsFITS(FITSFile):
 
         # Set a couple of keywords in the primary header
         self._hdu_list[0].header.set("DATE", datetime.datetime.now().isoformat())
-        self._hdu_list[0].header.set("ORIGIN", "3ML", comment=('Multi-Mission Max. Likelihood v. %s' % __version__))
+        self._hdu_list[0].header.set(
+            "ORIGIN",
+            "3ML",
+            comment=("Multi-Mission Max. Likelihood v. %s" % __version__),
+        )
 
 
 class _AnalysisResults(object):
@@ -358,15 +391,23 @@ class _AnalysisResults(object):
     :type statistic_values: dict
     """
 
-    def __init__(self, optimized_model, samples, statistic_values, analysis_type, statistical_measures):
+    def __init__(
+        self,
+        optimized_model,
+        samples,
+        statistic_values,
+        analysis_type,
+        statistical_measures,
+    ):
 
         # Safety checks
 
         self._n_free_parameters = len(optimized_model.free_parameters)
 
-        assert samples.shape[1] == self._n_free_parameters, "Number of free parameters (%s) and set of samples (%s) " \
-                                                            "do not agree." % (samples.shape[1],
-                                                                               self._n_free_parameters)
+        assert samples.shape[1] == self._n_free_parameters, (
+            "Number of free parameters (%s) and set of samples (%s) "
+            "do not agree." % (samples.shape[1], self._n_free_parameters)
+        )
 
         # NOTE: we clone the model so that whatever happens outside or after, this copy of the model will not be
         # changed
@@ -425,8 +466,9 @@ class _AnalysisResults(object):
 
     def get_variates(self, param_path):
 
-        assert param_path in self._optimized_model.free_parameters, "Parameter %s is not a " \
-                                                                    "free parameters of the model" % param_path
+        assert param_path in self._optimized_model.free_parameters, (
+            "Parameter %s is not a " "free parameters of the model" % param_path
+        )
 
         param_index = list(self._free_parameters.keys()).index(param_path)
 
@@ -548,7 +590,9 @@ class _AnalysisResults(object):
 
                 if variance_i * variance_j > 0:
 
-                    correlation_matrix[i, j] = old_div(covariance[i, j], (math.sqrt(variance_i * variance_j)))
+                    correlation_matrix[i, j] = old_div(
+                        covariance[i, j], (math.sqrt(variance_i * variance_j))
+                    )
 
                 else:
 
@@ -568,10 +612,14 @@ class _AnalysisResults(object):
         logl_results = {}
 
         # Create a new ordered dict so we can add the total
-        optimal_statistic_values = collections.OrderedDict(iter(self._optimal_statistic_values.items()))
+        optimal_statistic_values = collections.OrderedDict(
+            iter(self._optimal_statistic_values.items())
+        )
 
         # Add the total
-        optimal_statistic_values['total'] = np.sum(self._optimal_statistic_values.values)
+        optimal_statistic_values["total"] = np.sum(
+            self._optimal_statistic_values.values
+        )
 
         logl_results[name] = optimal_statistic_values
 
@@ -589,7 +637,7 @@ class _AnalysisResults(object):
         :return: a pandas DataFrame instance
         """
 
-        return self._statistical_measures.to_frame(name='statistical measures')
+        return self._statistical_measures.to_frame(name="statistical measures")
 
     def _get_results_table(self, error_type, cl, covariance=None):
 
@@ -603,13 +651,17 @@ class _AnalysisResults(object):
 
         elif error_type == "covariance":
 
-            assert covariance is not None, "If you use error_type='covariance' you have to provide a cov. matrix"
+            assert (
+                covariance is not None
+            ), "If you use error_type='covariance' you have to provide a cov. matrix"
 
             errors_gatherer = None
 
         else:
 
-            raise ValueError("error_type must be either 'equal tail' or 'hpd'. Got %s" % error_type)
+            raise ValueError(
+                "error_type must be either 'equal tail' or 'hpd'. Got %s" % error_type
+            )
 
         # Build the data frame
         parameter_paths = []
@@ -644,10 +696,14 @@ class _AnalysisResults(object):
 
                     best_fit_internal = this_par.transformation.forward(values[-1])
 
-                    _, neg_error = this_par.internal_to_external_delta(best_fit_internal, -std_dev)
+                    _, neg_error = this_par.internal_to_external_delta(
+                        best_fit_internal, -std_dev
+                    )
                     negative_errors.append(neg_error)
 
-                    _, pos_error = this_par.internal_to_external_delta(best_fit_internal, std_dev)
+                    _, pos_error = this_par.internal_to_external_delta(
+                        best_fit_internal, std_dev
+                    )
                     positive_errors.append(pos_error)
 
                 else:
@@ -655,7 +711,9 @@ class _AnalysisResults(object):
                     negative_errors.append(-std_dev)
                     positive_errors.append(std_dev)
 
-        results_table = ResultsTable(parameter_paths, values, negative_errors, positive_errors, units_dict)
+        results_table = ResultsTable(
+            parameter_paths, values, negative_errors, positive_errors, units_dict
+        )
 
         return results_table
 
@@ -676,15 +734,23 @@ class _AnalysisResults(object):
 
         return self._get_results_table(error_type, cl).frame
 
-
     def get_point_source_flux(self, *args, **kwargs):
-                              
+
         custom_warnings.warn("get_point_source_flux() has been replaced by get_flux()")
         return self.get_flux(*args, **kwargs)
 
-    def get_flux(self, ene_min, ene_max, sources=(), confidence_level=0.68,
-                              flux_unit='erg/(s cm2)', use_components=False, components_to_use=(),
-                              sum_sources=False, include_extended=False):
+    def get_flux(
+        self,
+        ene_min,
+        ene_max,
+        sources=(),
+        confidence_level=0.68,
+        flux_unit="erg/(s cm2)",
+        use_components=False,
+        components_to_use=(),
+        sum_sources=False,
+        include_extended=False,
+    ):
         """
 
         :param ene_min: minimum energy (an astropy quantity, like 1.0 * u.keV. You can also use a frequency, like
@@ -708,29 +774,33 @@ class _AnalysisResults(object):
         _ene_max = ene_max.to("keV").value
 
         _params = {
-            'confidence_level': confidence_level,
-            'equal_tailed': True,  # FIXME: what happens if this is False?
-            'best_fit': 'median',
-            'energy_unit': 'keV',
-            'flux_unit': flux_unit,
-            'use_components': use_components,
-            'components_to_use': components_to_use,
-            'sources_to_use': sources,
-            'sum_sources': sum_sources,
-            'include_extended': include_extended
+            "confidence_level": confidence_level,
+            "equal_tailed": True,  # FIXME: what happens if this is False?
+            "best_fit": "median",
+            "energy_unit": "keV",
+            "flux_unit": flux_unit,
+            "use_components": use_components,
+            "components_to_use": components_to_use,
+            "sources_to_use": sources,
+            "sum_sources": sum_sources,
+            "include_extended": include_extended,
         }
 
-        mle_results, bayes_results = _calculate_point_source_flux(_ene_min, _ene_max, self, **_params)
+        mle_results, bayes_results = _calculate_point_source_flux(
+            _ene_min, _ene_max, self, **_params
+        )
 
         # The output contains one source per row
         def _format_error(row):
 
-            rep = uncertainty_formatter(row['flux'].value, row['low bound'].value, row['hi bound'].value)
+            rep = uncertainty_formatter(
+                row["flux"].value, row["low bound"].value, row["hi bound"].value
+            )
 
             # Represent the unit as a string
-            unit_rep = str(row['flux'].unit)
+            unit_rep = str(row["flux"].unit)
 
-            return pd.Series({'flux': "%s %s" % (rep, unit_rep)})
+            return pd.Series({"flux": "%s %s" % (rep, unit_rep)})
 
         if mle_results is not None:
 
@@ -750,8 +820,7 @@ class _AnalysisResults(object):
             # Return the dataframe
             return bayes_results
 
-
-    def get_equal_tailed_interval(self,parameter,cl=0.68):
+    def get_equal_tailed_interval(self, parameter, cl=0.68):
         """
 
         returns the equal tailed interval for the parameter
@@ -761,16 +830,13 @@ class _AnalysisResults(object):
         :return: (low bound, high bound)
         """
 
-        if isinstance(parameter,Parameter):
-
+        if isinstance(parameter, Parameter):
 
             path = parameter.path
 
         else:
 
             path = parameter
-
-
 
         variates = self.get_variates(path)
 
@@ -790,10 +856,13 @@ class BayesianResults(_AnalysisResults):
     :type posterior_values: dict
     """
 
-    def __init__(self, optimized_model, samples, posterior_values, statistical_measures):
+    def __init__(
+        self, optimized_model, samples, posterior_values, statistical_measures
+    ):
 
-        super(BayesianResults, self).__init__(optimized_model, samples, posterior_values, 'Bayesian', statistical_measures)
-
+        super(BayesianResults, self).__init__(
+            optimized_model, samples, posterior_values, "Bayesian", statistical_measures
+        )
 
     def get_correlation_matrix(self):
         """
@@ -810,7 +879,7 @@ class BayesianResults(_AnalysisResults):
 
     def get_statistic_frame(self):
 
-        return self._get_statistic_frame(name='-log(posterior)')
+        return self._get_statistic_frame(name="-log(posterior)")
 
     def display(self, display_correlation=False, error_type="equal tail", cl=0.68):
 
@@ -825,7 +894,7 @@ class BayesianResults(_AnalysisResults):
             corr_matrix = NumericMatrix(self.get_correlation_matrix())
 
             for col in corr_matrix.colnames:
-                corr_matrix[col].format = '2.2f'
+                corr_matrix[col].format = "2.2f"
 
             print("\nCorrelation matrix:\n")
 
@@ -850,9 +919,10 @@ class BayesianResults(_AnalysisResults):
         :return: a matplotlib.figure instance
         """
 
-        assert len(list(self._free_parameters.keys())) == self._samples_transposed.T[0].shape[0], ("Mismatch between sample"
-                                                                                             " dimensions and number of free"
-                                                                                             " parameters")
+        assert (
+            len(list(self._free_parameters.keys()))
+            == self._samples_transposed.T[0].shape[0]
+        ), ("Mismatch between sample" " dimensions and number of free" " parameters")
 
         labels = []
         priors = []
@@ -874,8 +944,12 @@ class BayesianResults(_AnalysisResults):
             priors.append(self._optimized_model.parameters[parameter_name].prior)
 
         # default arguments
-        default_args = {'show_titles': True, 'title_fmt': ".2g", 'labels': labels,
-                        'quantiles': [0.16, 0.50, 0.84]}
+        default_args = {
+            "show_titles": True,
+            "title_fmt": ".2g",
+            "labels": labels,
+            "quantiles": [0.16, 0.50, 0.84],
+        }
 
         # Update the default arguents with the one provided (if any). Note that .update also adds new keywords,
         # if they weren't present in the original dictionary, so you can use any option in kwargs, not just
@@ -900,17 +974,20 @@ class BayesianResults(_AnalysisResults):
         :return fig:
         """
 
-
         if not has_chainconsumer:
-            raise RuntimeError("You must have chainconsumer installed to use this function: pip install chainconsumer")
+            raise RuntimeError(
+                "You must have chainconsumer installed to use this function: pip install chainconsumer"
+            )
 
         # these are the keywords for the plot command
 
-        _default_plot_args = {'truth': None,
-                              'figsize': 'GROW',
-                              'filename': None,
-                              'display': False,
-                              'legend': None}
+        _default_plot_args = {
+            "truth": None,
+            "figsize": "GROW",
+            "filename": None,
+            "display": False,
+            "legend": None,
+        }
         keys = list(cc_kwargs.keys())
         for key in keys:
 
@@ -942,15 +1019,15 @@ class BayesianResults(_AnalysisResults):
 
         for i, val, in enumerate(labels):
 
-            if '$' not in labels[i]:
-                labels[i] = val.replace('_', '')
+            if "$" not in labels[i]:
+                labels[i] = val.replace("_", "")
 
         cc = chainconsumer.ChainConsumer()
 
         cc.add_chain(self._samples_transposed.T, parameters=labels)
 
         if not cc_kwargs:
-            cc_kwargs = threeML_config['bayesian']['chain consumer style']
+            cc_kwargs = threeML_config["bayesian"]["chain consumer style"]
 
         cc.configure(**cc_kwargs)
         fig = cc.plotter.plot(parameters=parameters, **_default_plot_args)
@@ -974,20 +1051,23 @@ class BayesianResults(_AnalysisResults):
 
         """
 
-
         if not has_chainconsumer:
-            raise RuntimeError("You must have chainconsumer installed to use this function")
+            raise RuntimeError(
+                "You must have chainconsumer installed to use this function"
+            )
 
         cc = chainconsumer.ChainConsumer()
 
         # these are the keywords for the plot command
 
-        _default_plot_args = {'truth': None,
-                              'figsize': 'GROW',
-                              'parameters': None,
-                              'filename': None,
-                              'display': False,
-                              'legend': None}
+        _default_plot_args = {
+            "truth": None,
+            "figsize": "GROW",
+            "parameters": None,
+            "filename": None,
+            "display": False,
+            "legend": None,
+        }
 
         keys = list(kwargs.keys())
 
@@ -998,20 +1078,21 @@ class BayesianResults(_AnalysisResults):
 
         # allows us to name chains
 
-        if 'names' in kwargs:
+        if "names" in kwargs:
 
-            names = kwargs.pop('names')
+            names = kwargs.pop("names")
 
-            assert len(names) == len(other_fits) + 1, 'you have %d chains but %d names' % (
-                len(other_fits) + 1, len(names))
+            assert (
+                len(names) == len(other_fits) + 1
+            ), "you have %d chains but %d names" % (len(other_fits) + 1, len(names))
 
         else:
 
             names = None
 
-        if 'renamed_parameters' in kwargs:
+        if "renamed_parameters" in kwargs:
 
-            renamed_parameters = kwargs.pop('renamed_parameters')
+            renamed_parameters = kwargs.pop("renamed_parameters")
 
         else:
 
@@ -1020,18 +1101,21 @@ class BayesianResults(_AnalysisResults):
         for j, other_fit in enumerate(other_fits):
 
             if other_fit.samples is not None:
-                assert len(list(other_fit._free_parameters.keys())) == other_fit.samples.T[0].shape[0], (
+                assert (
+                    len(list(other_fit._free_parameters.keys()))
+                    == other_fit.samples.T[0].shape[0]
+                ), (
                     "Mismatch between sample"
-
-
-
                     " dimensions and number of free"
-                    " parameters")
+                    " parameters"
+                )
 
             labels_other = []
             # priors_other = []
 
-            for i, (parameter_name, parameter) in enumerate(other_fit._free_parameters.items()):
+            for i, (parameter_name, parameter) in enumerate(
+                other_fit._free_parameters.items()
+            ):
                 short_name = parameter_name.split(".")[-1]
 
                 labels_other.append(short_name)
@@ -1054,12 +1138,14 @@ class BayesianResults(_AnalysisResults):
 
             for i, val, in enumerate(labels_other):
 
-                if '$' not in labels_other[i]:
-                    labels_other[i] = val.replace('_', ' ')
+                if "$" not in labels_other[i]:
+                    labels_other[i] = val.replace("_", " ")
 
             if names is not None:
 
-                cc.add_chain(other_fit.samples.T, parameters=labels_other, name=names[j + 1])
+                cc.add_chain(
+                    other_fit.samples.T, parameters=labels_other, name=names[j + 1]
+                )
 
             else:
 
@@ -1088,8 +1174,8 @@ class BayesianResults(_AnalysisResults):
 
         for i, val, in enumerate(labels):
 
-            if '$' not in labels[i]:
-                labels[i] = val.replace('_', ' ')
+            if "$" not in labels[i]:
+                labels[i] = val.replace("_", " ")
 
         if names is not None:
 
@@ -1123,26 +1209,26 @@ class BayesianResults(_AnalysisResults):
 
                 # Use all samples
 
-                subplot.plot(self.samples[i,:])
+                subplot.plot(self.samples[i, :])
 
             else:
 
                 assert isinstance(thin, int), "Thin must be a integer number"
 
-                subplot.plot(self.samples[i,::thin])
+                subplot.plot(self.samples[i, ::thin])
 
             subplot.set_ylabel(parameter_name.replace(".", "\n"))
 
             if thin is None:
-              subplot.set_xlabel("sample #")
+                subplot.set_xlabel("sample #")
             else:
-              subplot.set_xlabel("sample # / %d" % thin)
-              
+                subplot.set_xlabel("sample # / %d" % thin)
+
             figure.tight_layout()
             figures.append(figure)
 
         return figures
-          
+
     def convergence_plots(self, n_samples_in_each_subset, n_subsets):
         """
         Compute the mean and variance for subsets of the samples, and plot them. They should all be around the same
@@ -1174,8 +1260,7 @@ class BayesianResults(_AnalysisResults):
 
         for j, parameter_name in enumerate(self._free_parameters.keys()):
 
-            this_samples = self.samples[j,:]
-            
+            this_samples = self.samples[j, :]
 
             # First compute averages and variances using the sliding window
 
@@ -1190,8 +1275,8 @@ class BayesianResults(_AnalysisResults):
                 if idx2 > n_samples - 1:
                     break
 
-                this_averages.append(np.average(this_samples[idx1: idx2]))
-                this_variances.append(np.std(this_samples[idx1: idx2]))
+                this_averages.append(np.average(this_samples[idx1:idx2]))
+                this_variances.append(np.std(this_samples[idx1:idx2]))
 
             averages[parameter_name] = this_averages
 
@@ -1228,16 +1313,18 @@ class BayesianResults(_AnalysisResults):
 
             fig.suptitle(parameter_name)
 
-            plot_one_histogram(subs[0], averages[parameter_name], 'sliding window')
-            plot_one_histogram(subs[0], bootstrap_averages[parameter_name], 'bootstrap')
+            plot_one_histogram(subs[0], averages[parameter_name], "sliding window")
+            plot_one_histogram(subs[0], bootstrap_averages[parameter_name], "bootstrap")
 
             subs[0].set_ylabel("N subsets")
             subs[0].set_xlabel("Average")
-            
+
             subs[0].legend()
-            
-            plot_one_histogram(subs[1], variances[parameter_name], 'sliding window')
-            plot_one_histogram(subs[1], bootstrap_variances[parameter_name], 'bootstrap')
+
+            plot_one_histogram(subs[1], variances[parameter_name], "sliding window")
+            plot_one_histogram(
+                subs[1], bootstrap_variances[parameter_name], "bootstrap"
+            )
 
             subs[1].set_xlabel("Std. deviation")
             fig.tight_layout()
@@ -1263,7 +1350,7 @@ class BayesianResults(_AnalysisResults):
 
         return nbins
 
-    def get_highest_density_posterior_interval(self,parameter,cl=0.68):
+    def get_highest_density_posterior_interval(self, parameter, cl=0.68):
         """
 
         returns the highest density posterior interval for that parameter
@@ -1273,8 +1360,7 @@ class BayesianResults(_AnalysisResults):
         :return: (low bound, high bound)
         """
 
-        if isinstance(parameter,Parameter):
-
+        if isinstance(parameter, Parameter):
 
             path = parameter.path
 
@@ -1282,15 +1368,9 @@ class BayesianResults(_AnalysisResults):
 
             path = parameter
 
-
-
         variates = self.get_variates(path)
 
         return variates.highest_posterior_density_interval(cl)
-
-
-
-
 
 
 class MLEResults(_AnalysisResults):
@@ -1309,7 +1389,14 @@ class MLEResults(_AnalysisResults):
     :return: an _AnalysisResults instance
     """
 
-    def __init__(self, optimized_model, covariance_matrix, likelihood_values, n_samples=5000, statistical_measures=None):
+    def __init__(
+        self,
+        optimized_model,
+        covariance_matrix,
+        likelihood_values,
+        n_samples=5000,
+        statistical_measures=None,
+    ):
 
         # Generate samples for each parameter accounting for their covariance
 
@@ -1317,7 +1404,10 @@ class MLEResults(_AnalysisResults):
         covariance_matrix = np.array(covariance_matrix, float, copy=True)
 
         # Get the best fit value for each parameter
-        values = [x._get_internal_value() for x in  list(optimized_model.free_parameters.values())]
+        values = [
+            x._get_internal_value()
+            for x in list(optimized_model.free_parameters.values())
+        ]
 
         # This is the expected shape for the covariance matrix
 
@@ -1325,16 +1415,21 @@ class MLEResults(_AnalysisResults):
 
         if covariance_matrix.shape != ():
 
-            assert covariance_matrix.shape == expected_shape, "Covariance matrix has wrong shape. " \
-                                                              "Got %s, should be %s" % (covariance_matrix.shape,
-                                                                                        expected_shape)
+            assert covariance_matrix.shape == expected_shape, (
+                "Covariance matrix has wrong shape. "
+                "Got %s, should be %s" % (covariance_matrix.shape, expected_shape)
+            )
 
-            assert np.all(np.isfinite(covariance_matrix)), "Covariance matrix contains Nan or inf. Cannot continue."
+            assert np.all(
+                np.isfinite(covariance_matrix)
+            ), "Covariance matrix contains Nan or inf. Cannot continue."
 
             # Generate samples from the multivariate normal distribution, i.e., accounting for the covariance of the
             # parameters
 
-            samples = np.random.multivariate_normal(np.array(values).T, covariance_matrix, n_samples)
+            samples = np.random.multivariate_normal(
+                np.array(values).T, covariance_matrix, n_samples
+            )
 
         else:
 
@@ -1348,8 +1443,20 @@ class MLEResults(_AnalysisResults):
 
         # Gather boundaries
         # NOTE: every None boundary will become nan thanks to the casting to float
-        low_bounds = np.array([x._get_internal_min_value() for x in list(optimized_model.free_parameters.values())], float)
-        hi_bounds = np.array([x._get_internal_max_value() for x in list(optimized_model.free_parameters.values())], float)
+        low_bounds = np.array(
+            [
+                x._get_internal_min_value()
+                for x in list(optimized_model.free_parameters.values())
+            ],
+            float,
+        )
+        hi_bounds = np.array(
+            [
+                x._get_internal_max_value()
+                for x in list(optimized_model.free_parameters.values())
+            ],
+            float,
+        )
 
         # Fix all nans
         low_bounds[np.isnan(low_bounds)] = -np.inf
@@ -1369,10 +1476,12 @@ class MLEResults(_AnalysisResults):
         # Warn the user if more than 1% of the samples have been lost
 
         if n_removed_samples > samples.shape[0] / 100.0:
-            custom_warnings.warn("%s percent of samples have been thrown away because they failed the constraints "
-                                 "on the parameters. This results might not be suitable for error propagation. "
-                                 "Enlarge the boundaries until you loose less than 1 percent of the samples." %
-                                 (float(n_removed_samples) / samples.shape[0] * 100.0))
+            custom_warnings.warn(
+                "%s percent of samples have been thrown away because they failed the constraints "
+                "on the parameters. This results might not be suitable for error propagation. "
+                "Enlarge the boundaries until you loose less than 1 percent of the samples."
+                % (float(n_removed_samples) / samples.shape[0] * 100.0)
+            )
 
         # Now remove them
         samples = samples[to_be_kept_mask, :]
@@ -1386,7 +1495,9 @@ class MLEResults(_AnalysisResults):
 
         # Finally build the class
 
-        super(MLEResults, self).__init__(optimized_model, samples, likelihood_values, "MLE", statistical_measures)
+        super(MLEResults, self).__init__(
+            optimized_model, samples, likelihood_values, "MLE", statistical_measures
+        )
 
         # Store the covariance matrix
 
@@ -1414,11 +1525,13 @@ class MLEResults(_AnalysisResults):
 
     def get_statistic_frame(self):
 
-        return self._get_statistic_frame(name='-log(likelihood)')
+        return self._get_statistic_frame(name="-log(likelihood)")
 
     def display(self, display_correlation=True, cl=0.68):
 
-        best_fit_table = self._get_results_table(error_type="covariance", cl=cl, covariance=self.covariance_matrix)
+        best_fit_table = self._get_results_table(
+            error_type="covariance", cl=cl, covariance=self.covariance_matrix
+        )
 
         print("Best fit values:\n")
 
@@ -1429,7 +1542,7 @@ class MLEResults(_AnalysisResults):
             corr_matrix = NumericMatrix(self.get_correlation_matrix())
 
             for col in corr_matrix.colnames:
-                corr_matrix[col].format = '2.2f'
+                corr_matrix[col].format = "2.2f"
 
             print("\nCorrelation matrix:\n")
 
@@ -1475,17 +1588,20 @@ class AnalysisResultsSet(collections.Sequence):
         :return:
         """
 
-        assert len(x) == len(self), "Wrong number of bounds (%i, should be %i)" % (len(x), len(self))
+        assert len(x) == len(self), "Wrong number of bounds (%i, should be %i)" % (
+            len(x),
+            len(self),
+        )
 
         if unit is not None:
 
             unit = u.Unit(unit)
 
-            data_tuple = (('VALUE', x * unit),)
+            data_tuple = (("VALUE", x * unit),)
 
         else:
 
-            data_tuple = (('VALUE', x),)
+            data_tuple = (("VALUE", x),)
 
         self.characterize_sequence(name, data_tuple)
 
@@ -1502,22 +1618,26 @@ class AnalysisResultsSet(collections.Sequence):
         :return:
         """
 
-        assert len(upper_bounds) == len(lower_bounds), "Upper and lower bounds must have the same length"
+        assert len(upper_bounds) == len(
+            lower_bounds
+        ), "Upper and lower bounds must have the same length"
 
-        assert len(upper_bounds) == len(self), "Wrong number of bounds (%i, should be %i)" % (len(upper_bounds),
-                                                                                              len(self))
+        assert len(upper_bounds) == len(
+            self
+        ), "Wrong number of bounds (%i, should be %i)" % (len(upper_bounds), len(self))
 
         if unit is not None:
 
             unit = u.Unit(unit)
 
-            data_tuple = (('LOWER_BOUND', lower_bounds * unit),
-                          ('UPPER_BOUND', upper_bounds * unit))
+            data_tuple = (
+                ("LOWER_BOUND", lower_bounds * unit),
+                ("UPPER_BOUND", upper_bounds * unit),
+            )
 
         else:
 
-            data_tuple = (('LOWER_BOUND', lower_bounds),
-                          ('UPPER_BOUND', upper_bounds))
+            data_tuple = (("LOWER_BOUND", lower_bounds), ("UPPER_BOUND", upper_bounds))
 
         self.characterize_sequence(name, data_tuple)
 
@@ -1537,8 +1657,10 @@ class AnalysisResultsSet(collections.Sequence):
         self._sequence_name = str(name)
 
         for i, this_tuple in enumerate(data_tuple):
-            assert len(this_tuple[1]) == len(self), "Column %i in tuple has length of " \
-                                                    "%i (should be %i)" % (i, len(data_tuple), len(self))
+            assert len(this_tuple[1]) == len(self), (
+                "Column %i in tuple has length of "
+                "%i (should be %i)" % (i, len(data_tuple), len(self))
+            )
 
         self._sequence_tuple = data_tuple
 
@@ -1555,10 +1677,14 @@ class AnalysisResultsSet(collections.Sequence):
             # The user didn't specify what this sequence is
 
             # Make the default sequence
-            frame_tuple = (('VALUE', list(range(len(self)))),)
+            frame_tuple = (("VALUE", list(range(len(self)))),)
 
             self.characterize_sequence("unspecified", frame_tuple)
 
-        fits = AnalysisResultsFITS(*self, sequence_tuple=self._sequence_tuple, sequence_name=self._sequence_name)
+        fits = AnalysisResultsFITS(
+            *self,
+            sequence_tuple=self._sequence_tuple,
+            sequence_name=self._sequence_name
+        )
 
         fits.writeto(sanitize_filename(filename), overwrite=overwrite)

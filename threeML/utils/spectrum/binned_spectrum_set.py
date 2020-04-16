@@ -22,10 +22,13 @@ class BinnedSpectrumSet(object):
 
         if time_intervals is not None:
 
-            self._time_intervals = time_intervals - reference_time  # type: TimeIntervalSet
+            self._time_intervals = (
+                time_intervals - reference_time
+            )  # type: TimeIntervalSet
 
             assert len(time_intervals) == len(
-                binned_spectrum_list), 'time intervals mus be the same length as binned spectra'
+                binned_spectrum_list
+            ), "time intervals mus be the same length as binned spectra"
 
         else:
 
@@ -52,7 +55,9 @@ class BinnedSpectrumSet(object):
         :return: integer
         """
 
-        assert self._time_intervals is not None, 'This spectrum set has no time intervals'
+        assert (
+            self._time_intervals is not None
+        ), "This spectrum set has no time intervals"
 
         return self._time_intervals.containing_bin(time)
 
@@ -62,7 +67,9 @@ class BinnedSpectrumSet(object):
         :return:
         """
 
-        assert self._time_intervals is not None, 'must have time intervals to do sorting'
+        assert (
+            self._time_intervals is not None
+        ), "must have time intervals to do sorting"
 
         # get the sorting index
 
@@ -75,7 +82,6 @@ class BinnedSpectrumSet(object):
         # sort the time intervals in place
 
         self._time_intervals.sort()
-
 
     @property
     def quality_per_bin(self):
@@ -95,7 +101,9 @@ class BinnedSpectrumSet(object):
     @property
     def count_errors_per_bin(self):
 
-        return np.array([spectrum.count_errors for spectrum in self._binned_spectrum_list])
+        return np.array(
+            [spectrum.count_errors for spectrum in self._binned_spectrum_list]
+        )
 
     @property
     def rates_per_bin(self):
@@ -105,12 +113,16 @@ class BinnedSpectrumSet(object):
     @property
     def rate_errors_per_bin(self):
 
-        return np.array([spectrum.rate_errors for spectrum in self._binned_spectrum_list])
+        return np.array(
+            [spectrum.rate_errors for spectrum in self._binned_spectrum_list]
+        )
 
     @property
     def sys_errors_per_bin(self):
 
-        return np.array([spectrum.sys_errors for spectrum in self._binned_spectrum_list])
+        return np.array(
+            [spectrum.sys_errors for spectrum in self._binned_spectrum_list]
+        )
 
     @property
     def exposure_per_bin(self):

@@ -6,7 +6,7 @@ import os
 
 def get_user_data_path():
 
-    user_data = os.path.join(os.path.expanduser('~'), '.threeml','data')
+    user_data = os.path.join(os.path.expanduser("~"), ".threeml", "data")
 
     # Create it if doesn't exist
     if os.path.exists(user_data):

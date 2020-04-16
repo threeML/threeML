@@ -1,4 +1,5 @@
 from future import standard_library
+
 standard_library.install_aliases()
 import urllib.parse
 import ftplib
@@ -9,16 +10,22 @@ from threeML.io.progress_bar import progress_bar
 
 
 def download_file_from_ftp(ftp_url, destination_directory):
-    assert ftp_url[-1] != "/", "A URL for a file cannot end in / (received: %s)" % ftp_url
+    assert ftp_url[-1] != "/", (
+        "A URL for a file cannot end in / (received: %s)" % ftp_url
+    )
 
     tokens = ftp_url.split("/")
     server_url = "/".join(tokens[:-1])
     filename = tokens[-1]
 
-    return download_files_from_directory_ftp(server_url, destination_directory, [filename])[0]
+    return download_files_from_directory_ftp(
+        server_url, destination_directory, [filename]
+    )[0]
 
 
-def download_files_from_directory_ftp(ftp_url, destination_directory, filenames=None, namefilter=None):
+def download_files_from_directory_ftp(
+    ftp_url, destination_directory, filenames=None, namefilter=None
+):
     # Parse url
     tokens = urllib.parse.urlparse(ftp_url)
     serverAddress = tokens.netloc
@@ -30,7 +37,7 @@ def download_files_from_directory_ftp(ftp_url, destination_directory, filenames=
 
         # Connect to server and log in
 
-        ftp = ftplib.FTP(serverAddress, "anonymous", '', '', timeout=60)
+        ftp = ftplib.FTP(serverAddress, "anonymous", "", "", timeout=60)
 
         try:
 
@@ -41,7 +48,7 @@ def download_files_from_directory_ftp(ftp_url, destination_directory, filenames=
 
             try:
 
-                ftp.cwd('/')
+                ftp.cwd("/")
 
             except:
 
@@ -55,7 +62,7 @@ def download_files_from_directory_ftp(ftp_url, destination_directory, filenames=
         # Retrieve list of files
 
         filenames = []
-        ftp.retrlines('NLST', filenames.append)
+        ftp.retrlines("NLST", filenames.append)
 
         # Close connection (will reopen later)
 
@@ -80,7 +87,10 @@ def download_files_from_directory_ftp(ftp_url, destination_directory, filenames=
 
                 local_filename = os.path.join(destination_directory, filename)
 
-                urllib.request.urlretrieve("ftp://%s/%s/%s" % (serverAddress, directory, filename), local_filename)
+                urllib.request.urlretrieve(
+                    "ftp://%s/%s/%s" % (serverAddress, directory, filename),
+                    local_filename,
+                )
 
                 urllib.request.urlcleanup()
 

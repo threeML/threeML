@@ -34,7 +34,9 @@ class Likelihood2SherpaTableModel(object):
         self.e_hi = np.array(datastack.get_arf(1).energ_hi)
 
         # TODO figure out what to do if the binning is different across the datastack
-        self.table_model._TableModel__x = self.e_lo  # according to Sherpa TableModel specs, TBV
+        self.table_model._TableModel__x = (
+            self.e_lo
+        )  # according to Sherpa TableModel specs, TBV
 
         # determine which sources are inside the ON region
         self.onPtSrc = []  # list of point sources in the ON region
@@ -52,8 +54,12 @@ class Likelihood2SherpaTableModel(object):
         """
         vals = np.zeros(len(self.table_model._TableModel__x))
         for ipt in self.onPtSrc:
-            vals += [self.likelihoodModel.pointSources[ipt].spectralModel.photonFlux(bounds[0], bounds[1]) for bounds in
-                     zip(self.e_lo, self.e_hi)]
+            vals += [
+                self.likelihoodModel.pointSources[ipt].spectralModel.photonFlux(
+                    bounds[0], bounds[1]
+                )
+                for bounds in zip(self.e_lo, self.e_hi)
+            ]
             # integrated fluxes over same energy bins as for dataset, according to Sherpa TableModel specs, TBV
         self.table_model._TableModel__y = vals
 
@@ -95,7 +101,7 @@ class SherpaLike(PluginPrototype):
         """
         self.model = Likelihood2SherpaTableModel(likelihoodModel)
         self.model.update()  # to initialize values
-        self.model.ampl = 1.
+        self.model.ampl = 1.0
         self.ds.set_source(self.model.table_model)
 
     def _updateModel(self):
@@ -166,7 +172,9 @@ class SherpaLike(PluginPrototype):
         energies = datastack.ui.get_data_plot(1).x
         dlne = np.log(energies[1:]) - np.log(energies[:-1])
         dlne = np.append(dlne[0], dlne)  # TODO do this properly for arbitrary binning
-        de = np.power(10, np.log10(energies) + dlne) - np.power(10, np.log10(energies) - dlne)
+        de = np.power(10, np.log10(energies) + dlne) - np.power(
+            10, np.log10(energies) - dlne
+        )
         # TODO figure out what to do if different binning within the ds
         counts = np.zeros(len(energies))
         model = np.zeros(len(energies))
@@ -174,20 +182,37 @@ class SherpaLike(PluginPrototype):
         for id in self.ds.ids:
             counts += datastack.ui.get_data_plot(id).y * datastack.get_exposure(id) * de
             model += datastack.ui.get_model_plot(id).y * datastack.get_exposure(id) * de
-            bkg += datastack.ui.get_bkg_plot(id).y * datastack.get_exposure(id) * de * datastack.ui.get_bkg_scale(id)
+            bkg += (
+                datastack.ui.get_bkg_plot(id).y
+                * datastack.get_exposure(id)
+                * de
+                * datastack.ui.get_bkg_scale(id)
+            )
         tot = model + bkg
-        axarr[0].errorbar(energies, counts, xerr=np.zeros(len(energies)), yerr=np.sqrt(counts), fmt='ko', capsize=0)
-        axarr[0].plot(energies, model, label='source')
-        axarr[0].plot(energies, bkg, label='background')
-        axarr[0].plot(energies, tot, label='total model')
+        axarr[0].errorbar(
+            energies,
+            counts,
+            xerr=np.zeros(len(energies)),
+            yerr=np.sqrt(counts),
+            fmt="ko",
+            capsize=0,
+        )
+        axarr[0].plot(energies, model, label="source")
+        axarr[0].plot(energies, bkg, label="background")
+        axarr[0].plot(energies, tot, label="total model")
         leg = axarr[0].legend()
-        axarr[1].errorbar(energies[counts > 0], (old_div((counts - tot), tot))[counts > 0],
-                          xerr=np.zeros(len(energies[counts > 0])), yerr=(old_div(np.sqrt(counts), tot))[counts > 0], fmt='ko',
-                          capsize=0)
-        axarr[1].plot(energies, np.zeros(len(energies)), color='k', linestyle='--')
-        axarr[0].set_xscale('log')
-        axarr[1].set_xscale('log')
-        axarr[0].set_yscale('log')
-        axarr[0].set_ylabel('counts')
-        axarr[1].set_ylabel('residuals (counts-model)/model')
+        axarr[1].errorbar(
+            energies[counts > 0],
+            (old_div((counts - tot), tot))[counts > 0],
+            xerr=np.zeros(len(energies[counts > 0])),
+            yerr=(old_div(np.sqrt(counts), tot))[counts > 0],
+            fmt="ko",
+            capsize=0,
+        )
+        axarr[1].plot(energies, np.zeros(len(energies)), color="k", linestyle="--")
+        axarr[0].set_xscale("log")
+        axarr[1].set_xscale("log")
+        axarr[0].set_yscale("log")
+        axarr[0].set_ylabel("counts")
+        axarr[1].set_ylabel("residuals (counts-model)/model")
         axarr[1].set_xlabel("energy (keV)")

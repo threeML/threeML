@@ -15,7 +15,10 @@ def check_legal_plot_style_name(style_name):
 
     if style_name not in defined_styles:
 
-        raise NameError("Style '%s' is not known. Valid styles: %s" % (style_name, ",".join(list(defined_styles.keys()))))
+        raise NameError(
+            "Style '%s' is not known. Valid styles: %s"
+            % (style_name, ",".join(list(defined_styles.keys())))
+        )
 
 
 class PlotStyle(object):
@@ -24,17 +27,23 @@ class PlotStyle(object):
     an instance of PlotStyle the user can set at the same time the matplotlib style and
     all the elements of the 3ML style.
     """
-    def __init__(self,
-                 matplotlib_base_style='seaborn-notebook',
-                 matplotlib_overrides=None,
-                 threeml_style=None):
 
-        assert matplotlib_base_style in plt.style.available, \
+    def __init__(
+        self,
+        matplotlib_base_style="seaborn-notebook",
+        matplotlib_overrides=None,
+        threeml_style=None,
+    ):
+
+        assert matplotlib_base_style in plt.style.available, (
             "Style %s is not among the known matplotlib styles" % matplotlib_base_style
+        )
 
         self._matplotlib_base_style = matplotlib_base_style
 
-        self._matplotlib_overrides = {} if matplotlib_overrides is None else matplotlib_overrides
+        self._matplotlib_overrides = (
+            {} if matplotlib_overrides is None else matplotlib_overrides
+        )
 
         self._threeml_style = {} if threeml_style is None else threeml_style
 
@@ -46,18 +55,22 @@ class PlotStyle(object):
 
             d = yaml.load(f)
 
-        return cls(matplotlib_base_style=d['matplotlib_base_style'],
-                   matplotlib_overrides=d['matplotlib_overrides'],
-                   threeml_style=d['threeml_style'])
+        return cls(
+            matplotlib_base_style=d["matplotlib_base_style"],
+            matplotlib_overrides=d["matplotlib_overrides"],
+            threeml_style=d["threeml_style"],
+        )
 
     def clone(self):
         """
         Clone this style
         """
 
-        clone = PlotStyle(matplotlib_base_style=self._matplotlib_base_style,
-                          matplotlib_overrides=dict(self._matplotlib_overrides),
-                          threeml_style=dict(self._threeml_style))
+        clone = PlotStyle(
+            matplotlib_base_style=self._matplotlib_base_style,
+            matplotlib_overrides=dict(self._matplotlib_overrides),
+            threeml_style=dict(self._threeml_style),
+        )
 
         return clone
 
@@ -97,14 +110,16 @@ class PlotStyle(object):
 
         global current_style
 
-        current_style = defined_styles['default']
+        current_style = defined_styles["default"]
 
     @staticmethod
     def _check_name(name):
 
         if not is_valid_variable_name(name):
-            raise NameError("The name '%s' is not valid. Please use a simple name with no spaces nor "
-                            "special characters." % (name))
+            raise NameError(
+                "The name '%s' is not valid. Please use a simple name with no spaces nor "
+                "special characters." % (name)
+            )
 
     def save(self, name, overwrite=False):
         """
@@ -128,9 +143,9 @@ class PlotStyle(object):
 
         # Prepare dictionary to be written
         d = {}
-        d['matplotlib_base_style'] = self._matplotlib_base_style
-        d['matplotlib_overrides'] = self._matplotlib_overrides
-        d['threeml_style'] = self._threeml_style
+        d["matplotlib_base_style"] = self._matplotlib_base_style
+        d["matplotlib_overrides"] = self._matplotlib_overrides
+        d["threeml_style"] = self._threeml_style
 
         # Write it
         # Save in the style directory
@@ -139,7 +154,9 @@ class PlotStyle(object):
         # Check whether it exists already.
 
         if this_path in defined_styles and not overwrite:
-            raise IOError("Style %s already exists. Use 'overwrite=True' to overwrite it." % name)
+            raise IOError(
+                "Style %s already exists. Use 'overwrite=True' to overwrite it." % name
+            )
 
         # If necessary, create the styles directory (needed the first time that the user
         # save a custom style)
@@ -262,7 +279,7 @@ def plot_style(style_name):
     style.deactivate()
 
 
-def create_new_plotting_style(based_on='default'):
+def create_new_plotting_style(based_on="default"):
     """
     Create a new plotting style ready for customization, based on an existing plotting style. By default, the
     default plotting style is used.
@@ -277,13 +294,13 @@ def create_new_plotting_style(based_on='default'):
 
 
 def _get_styles_directory():
-    return os.path.join(get_path_of_user_dir(), 'styles')
+    return os.path.join(get_path_of_user_dir(), "styles")
 
 
 def _discover_styles():
     # Scan the 3ML styles directory for styles
 
-    styles = glob.glob(os.path.join(_get_styles_directory(), '*.yml'))
+    styles = glob.glob(os.path.join(_get_styles_directory(), "*.yml"))
 
     return styles
 
@@ -309,7 +326,7 @@ def _load_styles():
     # Now load the default style
     default_style_filename = get_path_of_data_file("default_style.yml")
 
-    defined_styles['default'] = PlotStyle.from_style_file(default_style_filename)
+    defined_styles["default"] = PlotStyle.from_style_file(default_style_filename)
 
     return defined_styles
 
@@ -317,10 +334,11 @@ def _load_styles():
 def get_available_plotting_styles():
     return list(defined_styles.keys())
 
+
 # Load them on import
 defined_styles = _load_styles()
 
-current_style = defined_styles['default']
+current_style = defined_styles["default"]
 
 
 # This is used to refresh the list on demand

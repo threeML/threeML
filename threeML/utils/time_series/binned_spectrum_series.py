@@ -15,9 +15,16 @@ from threeML.utils.time_series.time_series import TimeSeries
 
 
 class BinnedSpectrumSeries(TimeSeries):
-
-    def __init__(self,binned_spectrum_set,first_channel=1, ra=None, dec=None,
-                 mission=None, instrument=None, verbose=True):
+    def __init__(
+        self,
+        binned_spectrum_set,
+        first_channel=1,
+        ra=None,
+        dec=None,
+        mission=None,
+        instrument=None,
+        verbose=True,
+    ):
         """
         :param binned_spectrum_set:
         :param first_channel:
@@ -29,20 +36,20 @@ class BinnedSpectrumSeries(TimeSeries):
         :param verbose:
         """
 
-
         # pass up to TimeSeries
 
-        super(BinnedSpectrumSeries, self).__init__(binned_spectrum_set.time_intervals.absolute_start,
-                                                   binned_spectrum_set.time_intervals.absolute_stop,
-                                                   binned_spectrum_set.n_channels,
-                                                   binned_spectrum_set.quality_per_bin[0],
-                                                   first_channel,
-                                                   ra,
-                                                   dec,
-                                                   mission,
-                                                   instrument,
-                                                   verbose)
-
+        super(BinnedSpectrumSeries, self).__init__(
+            binned_spectrum_set.time_intervals.absolute_start,
+            binned_spectrum_set.time_intervals.absolute_stop,
+            binned_spectrum_set.n_channels,
+            binned_spectrum_set.quality_per_bin[0],
+            first_channel,
+            ra,
+            dec,
+            mission,
+            instrument,
+            verbose,
+        )
 
         self._binned_spectrum_set = binned_spectrum_set
 
@@ -52,8 +59,6 @@ class BinnedSpectrumSeries(TimeSeries):
         the time bins of the spectrum set
         :return: TimeIntervalSet
         """
-
-
 
         return self._binned_spectrum_set.time_intervals
 
@@ -65,8 +70,8 @@ class BinnedSpectrumSeries(TimeSeries):
         """
 
         return self._binned_spectrum_set
-    
-    def view_lightcurve(self, start=-10, stop=20., dt=1., use_binner=False):
+
+    def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False):
         # type: (float, float, float, bool) -> None
 
         """
@@ -79,16 +84,17 @@ class BinnedSpectrumSeries(TimeSeries):
 
         # git a set of bins containing the intervals
 
-        bins = self._binned_spectrum_set.time_intervals.containing_interval( start, stop) # type: TimeIntervalSet
+        bins = self._binned_spectrum_set.time_intervals.containing_interval(
+            start, stop
+        )  # type: TimeIntervalSet
 
         cnts = []
         width = []
 
         for bin in bins:
 
-            cnts.append(self.counts_over_interval(bin.start_time, bin.stop_time) )
+            cnts.append(self.counts_over_interval(bin.start_time, bin.stop_time))
             width.append(bin.duration)
-
 
         # now we want to get the estimated background from the polynomial fit
 
@@ -96,7 +102,7 @@ class BinnedSpectrumSeries(TimeSeries):
 
             bkg = []
             for j, tb in enumerate(bins):
-                tmpbkg = 0.
+                tmpbkg = 0.0
                 for poly in self.polynomials:
                     tmpbkg += poly.integral(tb.start_time, tb.stop_time)
 
@@ -124,20 +130,18 @@ class BinnedSpectrumSeries(TimeSeries):
 
             bkg_selection = None
 
-
         # plot the light curve
 
-        fig = binned_light_curve_plot(time_bins=bins.bin_stack,
-                                cnts=np.array(cnts),
-                                width=np.array(width),
-                                bkg=bkg,
-                                selection=selection,
-                                bkg_selections=bkg_selection)
-
-
+        fig = binned_light_curve_plot(
+            time_bins=bins.bin_stack,
+            cnts=np.array(cnts),
+            width=np.array(width),
+            bkg=bkg,
+            selection=selection,
+            bkg_selections=bkg_selection,
+        )
 
         return fig
-
 
     def counts_over_interval(self, start, stop):
         """
@@ -160,9 +164,7 @@ class BinnedSpectrumSeries(TimeSeries):
 
             total_counts += self._binned_spectrum_set[idx].counts.sum()
 
-
         return total_counts
-
 
     def count_per_channel_over_interval(self, start, stop):
         """
@@ -186,7 +188,6 @@ class BinnedSpectrumSeries(TimeSeries):
 
         return total_counts
 
-
     def _select_bins(self, start, stop):
         """
         return an index of the selected bins
@@ -195,7 +196,9 @@ class BinnedSpectrumSeries(TimeSeries):
         :return: int indices
         """
 
-        return self._binned_spectrum_set.time_intervals.containing_interval(start,stop,as_mask=True)
+        return self._binned_spectrum_set.time_intervals.containing_interval(
+            start, stop, as_mask=True
+        )
 
     def _adjust_to_true_intervals(self, time_intervals):
         """
@@ -223,17 +226,15 @@ class BinnedSpectrumSeries(TimeSeries):
             # searchsorted is fast, but is not returing what we want
             # we want the actaul values of the bins closest to the input
 
-            #idx = np.searchsorted(true_starts, interval.start_time,side)
+            # idx = np.searchsorted(true_starts, interval.start_time,side)
 
             idx = (np.abs(true_starts - interval.start_time)).argmin()
 
-
             new_start = true_starts[idx]
 
-            #idx = np.searchsorted(true_stops, interval.stop_time)
+            # idx = np.searchsorted(true_stops, interval.stop_time)
 
             idx = (np.abs(true_stops - interval.stop_time)).argmin()
-
 
             new_stop = true_stops[idx]
 
@@ -244,7 +245,6 @@ class BinnedSpectrumSeries(TimeSeries):
         # alright, now we can make appropriate time intervals
 
         return TimeIntervalSet.from_starts_and_stops(new_starts, new_stops)
-
 
     def _fit_polynomials(self):
         """
@@ -259,8 +259,10 @@ class BinnedSpectrumSeries(TimeSeries):
         self._poly_fit_exists = True
 
         # set the fit method
-        self._fit_method_info['bin type'] = 'Binned'
-        self._fit_method_info['fit method'] = threeML_config['event list']['binned fit method']
+        self._fit_method_info["bin type"] = "Binned"
+        self._fit_method_info["fit method"] = threeML_config["event list"][
+            "binned fit method"
+        ]
 
         # we need to adjust the selection to the true intervals of the time-binned spectra
 
@@ -279,7 +281,7 @@ class BinnedSpectrumSeries(TimeSeries):
 
             # get the mask of these bins
 
-            mask = self._select_bins(selection.start_time,selection.stop_time)
+            mask = self._select_bins(selection.start_time, selection.stop_time)
 
             # the counts will be (time, channel) here,
             # so the mask is selecting time.
@@ -288,7 +290,9 @@ class BinnedSpectrumSeries(TimeSeries):
             selected_counts.extend(self._binned_spectrum_set.counts_per_bin[mask])
 
             selected_exposure.extend(self._binned_spectrum_set.exposure_per_bin[mask])
-            selected_midpoints.extend(self._binned_spectrum_set.time_intervals.mid_points[mask])
+            selected_midpoints.extend(
+                self._binned_spectrum_set.time_intervals.mid_points[mask]
+            )
 
         selected_counts = np.array(selected_counts)
         selected_midpoints = np.array(selected_midpoints)
@@ -299,12 +303,15 @@ class BinnedSpectrumSeries(TimeSeries):
 
         if self._user_poly_order == -1:
 
-            self._optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(selected_counts.sum(axis=1),
-                                                                                    selected_midpoints,
-                                                                                    selected_exposure)
+            self._optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(
+                selected_counts.sum(axis=1), selected_midpoints, selected_exposure
+            )
             if self._verbose:
-                print("Auto-determined polynomial order: %d" % self._optimal_polynomial_grade)
-                print('\n')
+                print(
+                    "Auto-determined polynomial order: %d"
+                    % self._optimal_polynomial_grade
+                )
+                print("\n")
 
         else:
 
@@ -318,10 +325,12 @@ class BinnedSpectrumSeries(TimeSeries):
         with progress_bar(self._n_channels, title="Fitting background") as p:
             for counts in selected_counts.T:
 
-                polynomial, _ = polyfit(selected_midpoints,
-                                        counts,
-                                        self._optimal_polynomial_grade,
-                                        selected_exposure)
+                polynomial, _ = polyfit(
+                    selected_midpoints,
+                    counts,
+                    self._optimal_polynomial_grade,
+                    selected_exposure,
+                )
 
                 polynomials.append(polynomial)
                 p.increase()
@@ -352,9 +361,8 @@ class BinnedSpectrumSeries(TimeSeries):
 
         time_intervals = self._adjust_to_true_intervals(time_intervals)
 
-
         # start out with no time bins selection
-        all_idx = np.zeros(len(self._binned_spectrum_set.time_intervals),dtype=bool)
+        all_idx = np.zeros(len(self._binned_spectrum_set.time_intervals), dtype=bool)
 
         # now we need to sum up the counts and total time
 
@@ -367,18 +375,18 @@ class BinnedSpectrumSeries(TimeSeries):
             # are aligned with the true ones, we do not care if
             # it is inner or outer
 
-            all_idx = np.logical_or(all_idx,self._select_bins(interval.start_time,interval.stop_time))
+            all_idx = np.logical_or(
+                all_idx, self._select_bins(interval.start_time, interval.stop_time)
+            )
 
             total_time += interval.duration
 
         # sum along the time axis
         self._counts = self._binned_spectrum_set.counts_per_bin[all_idx].sum(axis=0)
 
-
         # the selected time intervals
 
         self._time_intervals = time_intervals
-
 
         tmp_counts = []
         tmp_err = []  # Temporary list to hold the err counts per chan
@@ -386,17 +394,21 @@ class BinnedSpectrumSeries(TimeSeries):
         if self._poly_fit_exists:
 
             if not self._poly_fit_exists:
-                raise RuntimeError('A polynomial fit to the channels does not exist!')
+                raise RuntimeError("A polynomial fit to the channels does not exist!")
 
             for chan in range(self._n_channels):
 
                 total_counts = 0
                 counts_err = 0
 
-                for tmin, tmax in zip(self._time_intervals.start_times, self._time_intervals.stop_times):
+                for tmin, tmax in zip(
+                    self._time_intervals.start_times, self._time_intervals.stop_times
+                ):
                     # Now integrate the appropriate background polynomial
                     total_counts += self._polynomials[chan].integral(tmin, tmax)
-                    counts_err += (self._polynomials[chan].integral_error(tmin, tmax)) ** 2
+                    counts_err += (
+                        self._polynomials[chan].integral_error(tmin, tmax)
+                    ) ** 2
 
                 tmp_counts.append(total_counts)
 
@@ -406,12 +418,9 @@ class BinnedSpectrumSeries(TimeSeries):
 
             self._poly_count_err = np.array(tmp_err)
 
-
         self._exposure = self._binned_spectrum_set.exposure_per_bin[all_idx].sum()
 
         self._active_dead_time = total_time - self._exposure
-
-
 
     def exposure_over_interval(self, start, stop):
         """
@@ -422,9 +431,6 @@ class BinnedSpectrumSeries(TimeSeries):
         :return:
         """
 
-
         mask = self._select_bins(start, stop)
-
-
 
         return self._binned_spectrum_set.exposure_per_bin[mask].sum()
