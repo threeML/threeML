@@ -6,9 +6,57 @@ v1.0.5
 --------
 *Thu, 16 Apr 2020 18:27:53 + 0000*
 
-* Merging in pull requests
+* Documentation updated with new gallery for example. Merged in pull request:
   https://github.com/threeML/threeML/pull/351
-* Documentation updated with new gallery for example
 * Issue(s) closed:
 
   * https://github.com/threeML/threeML/issues/355
+
+
+v1.0.4
+--------
+*Wed, 15 Apr 2020 07:58:00 + 0000*
+
+* Readme and Python versions updated.
+
+
+v1.0.3
+--------
+*Wed, 15 Apr 2020 01:37:00 + 0000*
+
+* Removed `pygmo` from requirements of `pip install` causing a failure. Merged
+  in pull request: https://github.com/threeML/threeML/pull/350
+* Setting of model moved back in the `BayesianAnalysis` class. Merged in pull 
+  request: https://github.com/threeML/threeML/pull/353
+* Fixed a bug in background loading when file is an empty string. Merged in pull
+  request: https://github.com/threeML/threeML/pull/354
+* Issue(s) closed:
+
+  * https://github.com/threeML/threeML/issues/352
+
+
+
+v1.0.2
+--------
+*Sat, 11 Apr 2020 06:49:00 + 0000*
+
+* New interface to the bayesian sampling and introdution of two new samplers 
+  (`ultranest` and `zeus`). Merged in pull request: 
+  https://github.com/threeML/threeML/pull/349
+
+
+v1.0.1
+--------
+*Fri, 10 Apr 2020 07:57:00 + 0000*
+
+* Solved an issue with travis causing a failure in the upload to PyPI.
+
+
+v1.0.0
+--------
+*Fri, 10 Apr 2020 01:38:00 + 0000*
+
+* Added Python 3 compatibility. Merged in pull request:
+  https://github.com/threeML/threeML/pull/346
+* New system to manage software versioning and upload to conda/pypi. Merged in
+  pull request: https://github.com/threeML/threeML/pull/347
