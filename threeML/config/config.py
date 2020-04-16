@@ -68,7 +68,7 @@ class Config(object):
 
             with open(user_config_path) as f:
 
-                configuration = yaml.load(f, Loader=yaml.Loader)
+                configuration = yaml.load(f)
 
                 # Test if the local/configuration is ok
 
