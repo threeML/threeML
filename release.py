@@ -41,13 +41,19 @@ def update_version(mode):
         abort('Unknown release mode %s.' % mode)
     return '%s.%s.%s' % (version, release, patch)
 
-def update_release_notes(tag, dry_run=False):
+def update_release_notes(mode, tag, dry_run=False):
     """ Write the new tag and build date on top of the release notes.
     """
     print('Updating %s...' % RELEASE_NOTES)
-    title = 'Release notes\n=============\n\n'
+    title = 'Release Notes\n=============\n\n'
+    version = '\nVersion %s\n-----------\n\n' % tag[:-2]
+    if mode == 'patch':
+        title += version
+        subtitle = ''
+    else:
+        subtitle = version
     notes = open(RELEASE_NOTES).read().strip('\n').strip(title)
-    subtitle = '\nv%s\n--------\n' % tag
+    subtitle += '\nv%s\n^^^^^^^^\n' % tag
     if not dry_run:
         output_file = open(RELEASE_NOTES, 'w')
         output_file.writelines(title)
@@ -63,7 +69,7 @@ def tag_package(mode, dry_run=False):
     cmd('git status', dry_run)
     check_branch()
     tag = update_version(mode)
-    update_release_notes(tag, dry_run)
+    update_release_notes(mode, tag, dry_run)
     msg = 'Prepare for tag %s' % tag
     cmd('git commit -m "%s" %s' % (msg, RELEASE_NOTES), dry_run)
     cmd('git push', dry_run)

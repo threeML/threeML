@@ -1,16 +1,20 @@
-Release notes
+Release Notes
 =============
 
 
+Version 1.0
+-----------
+
+
 v1.0.6
---------
+^^^^^^^^
 *Fri, 17 Apr 2020 18:27:31 + 0000*
 
 * Fixed a bug in the `ResidualPlot` of spectra.
 
 
 v1.0.5
---------
+^^^^^^^^
 *Fri, 17 Apr 2020 06:57:47 + 0000*
 
 * Documentation updated with new gallery for example. Merged in pull request:
@@ -21,14 +25,14 @@ v1.0.5
 
 
 v1.0.4
---------
+^^^^^^^^
 *Wed, 15 Apr 2020 07:58:00 + 0000*
 
 * Readme and Python versions updated.
 
 
 v1.0.3
---------
+^^^^^^^^
 *Wed, 15 Apr 2020 01:37:00 + 0000*
 
 * Removed `pygmo` from requirements of `pip install` causing a failure. Merged
@@ -44,7 +48,7 @@ v1.0.3
 
 
 v1.0.2
---------
+^^^^^^^^
 *Sat, 11 Apr 2020 06:49:00 + 0000*
 
 * New interface to the bayesian sampling and introdution of two new samplers 
@@ -53,14 +57,14 @@ v1.0.2
 
 
 v1.0.1
---------
+^^^^^^^^
 *Fri, 10 Apr 2020 07:57:00 + 0000*
 
 * Solved an issue with travis causing a failure in the upload to PyPI.
 
 
 v1.0.0
---------
+^^^^^^^^
 *Fri, 10 Apr 2020 01:38:00 + 0000*
 
 * Added Python 3 compatibility. Merged in pull request:
