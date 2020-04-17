@@ -2855,7 +2855,7 @@ class SpectrumLike(PluginPrototype):
         if model_label is None:
             model_label = "%s Model" % self._name
 
-        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
+        residual_plot = ResidualPlot(show_residuals=show_residuals, ratio_residuals=ratio_residuals, **kwargs)
 
         # compute the values for the plotting
 
