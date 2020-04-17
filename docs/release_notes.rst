@@ -2,6 +2,13 @@ Release notes
 =============
 
 
+v1.0.6
+--------
+*Fri, 17 Apr 2020 18:27:31 + 0000*
+
+* Fixed a bug in the `ResidualPlot` of spectra.
+
+
 v1.0.5
 --------
 *Fri, 17 Apr 2020 06:57:47 + 0000*
