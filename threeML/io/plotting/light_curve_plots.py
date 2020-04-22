@@ -146,6 +146,7 @@ def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     chans = np.vstack([chan_min, chan_max]).T
     width = chan_max - chan_min
 
+    
     step_plot(chans, old_div(counts, width), ax, **kwargs)
     ax.set_xscale("log")
     ax.set_yscale("log")

@@ -1643,7 +1643,7 @@ class SpectrumLike(PluginPrototype):
             ]
         )
 
-    def get_background_model(self):
+    def get_background_model(self, without_mask=False):
         """
          The background model integrated over the energy bins. Note that it only returns the  model for the
          currently active channels/measurements
@@ -1651,19 +1651,27 @@ class SpectrumLike(PluginPrototype):
          :return: array of folded model
          """
 
-        if self._rebinner is not None:
+        if not without_mask:
+            if self._rebinner is not None:
 
-            (model,) = self._rebinner.rebin(
-                self._evaluate_background_model() * self._background_exposure
-            )
+                (model,) = self._rebinner.rebin(
+                    self._evaluate_background_model() * self._background_exposure
+                )
+
+            else:
+
+                model = (
+                    self._evaluate_background_model()[self._mask]
+                    * self._background_exposure
+                )
 
         else:
 
             model = (
-                self._evaluate_background_model()[self._mask]
-                * self._background_exposure
+                self._evaluate_background_model() * self._background_exposure
             )
-
+            
+                
         # TODO: should I use the constant here?
 
         # return self._nuisance_parameter.value * model
@@ -1850,18 +1858,18 @@ class SpectrumLike(PluginPrototype):
 
             elif self._background_noise_model is None:
 
-                if self._background_plugin is not None:
+                background_counts = None
 
-                    # get the background counts from the background
-                    # plugin.. NOT SCALED
 
-                    background_counts = (
-                        self.get_background_model() * self._background_exposure
-                    )
+            elif self._background_noise_model == "modeled":
 
-                else:
+                # get the background counts from the background
+                # plugin.. NOT SCALED
 
-                    raise NotImplementedError("do not have this model yet")
+                background_counts = (
+                    self.get_background_model(without_mask=True)
+                )
+
 
             else:
 
@@ -1905,18 +1913,17 @@ class SpectrumLike(PluginPrototype):
 
             elif self._background_noise_model is None:
 
-                if self._background_plugin is not None:
+                return None
+                
+            elif self._background_noise_model == "modeled":
 
-                    # get the background count error from the background
-                    # plugin.. NOT SCALED
+                # get the background count error from the background
+                # plugin.. NOT SCALED
 
-                    background_errors = np.sqrt(
-                        self.get_background_model() * self._background_exposure
-                    )
+                background_errors = np.sqrt(
+                    self.get_background_model(without_mask=True)
+                )
 
-                else:
-
-                    raise NotImplementedError("do not have this model yet")
 
             else:
 
@@ -1946,7 +1953,7 @@ class SpectrumLike(PluginPrototype):
             # since we compare to the model rate... background subtract but with proper propagation
             src_rate = (
                 old_div(self.observed_counts, self._observed_spectrum.exposure)
-                - (old_div(self.background_counts, self._background_exposure))
+                - (old_div(self.background_counts , self._background_exposure))
                 * self._area_ratio
             )
 
@@ -2181,15 +2188,28 @@ class SpectrumLike(PluginPrototype):
 
                 else:
 
+                    raise RuntimeError("This is a bug")
+                    
                     # we will show the modeled counts
 
                     background_counts = (
-                        self.get_background_model() * self._background_exposure
+                        self.get_background_model() 
                     )
                     background_errors = np.sqrt(background_counts)
 
                     modeled_label = "Modeled "
 
+            elif self._background_noise_model == "modeled":
+
+                
+                    background_counts = (
+                        self.get_background_model() 
+                    )
+                    background_errors = np.sqrt(background_counts)
+
+                    modeled_label = "Modeled "
+
+                    
             else:
 
                 raise RuntimeError("This is a bug")
@@ -2214,7 +2234,7 @@ class SpectrumLike(PluginPrototype):
 
         observed_counts /= self._observed_spectrum.exposure
         cnt_err /= self._observed_spectrum.exposure
-
+        
         if scale_background:
 
             background_counts *= self._area_ratio
@@ -2324,12 +2344,21 @@ class SpectrumLike(PluginPrototype):
 
             if self._background_noise_model is not None:
 
-                background_rate_unrebinned = old_div(
-                    self._background_counts, self.background_exposure
-                )
-                background_rate_unrebinned_err = old_div(
-                    np.sqrt(self._background_counts), self.background_exposure
-                )
+                if self._background_noise_model == "modeled":
+
+                    
+                    background_rate_unrebinned = self.get_background_model(without_mask=True) /self._background_exposure
+                    background_rate_unrebinned_err = np.sqrt(self.get_background_model(without_mask=True))/ self._background_exposure
+            
+
+                else:
+                
+                    background_rate_unrebinned = old_div(
+                        self._background_counts, self.background_exposure
+                    )
+                    background_rate_unrebinned_err = old_div(
+                        np.sqrt(self._background_counts), self.background_exposure
+                    )
 
                 if non_used_mask.sum() > 0:
 
@@ -2396,28 +2425,19 @@ class SpectrumLike(PluginPrototype):
 
             # make some nice top and bottom plot ranges
 
+
+            tmp_bkg = background_rate_unrebinned/energy_width_unrebinned
+            tmp_bkg = tmp_bkg[np.isfinite(tmp_bkg)]
+
+            tmp_obs = observed_rate_unrebinned/energy_width_unrebinned
+            tmp_obs = tmp_obs[np.isfinite(tmp_obs)]
+            
             top = (
-                max(
-                    [
-                        max(
-                            old_div(background_rate_unrebinned, energy_width_unrebinned)
-                        ),
-                        max(old_div(observed_rate_unrebinned, energy_width_unrebinned)),
-                    ]
-                )
-                * 1.5
+                max( [ max(tmp_bkg), max(tmp_obs) ]) * 1.5
             )
 
             bottom = (
-                min(
-                    [
-                        min(
-                            old_div(background_rate_unrebinned, energy_width_unrebinned)
-                        ),
-                        min(old_div(observed_rate_unrebinned, energy_width_unrebinned)),
-                    ]
-                )
-                * 0.8
+                min( [ min(tmp_bkg), min(tmp_obs), ] ) * 0.8
             )
 
             # plot the deselected regions
@@ -2674,24 +2694,37 @@ class SpectrumLike(PluginPrototype):
         # and also the rebinned background
 
         if (
-            self._background_noise_model is not None
-            or self._background_plugin is not None
-        ):
+            self._background_noise_model is not None ):
 
-            (rebinned_background_counts,) = this_rebinner.rebin(self.background_counts)
-            (rebinned_background_errors,) = this_rebinner.rebin_errors(
-                self.background_count_errors
-            )
+
+            if False:#self._background_noise_model == "modeled":
+
+                            
+
+                (rebinned_background_counts,) = this_rebinner.rebin(self.get_background_model())
+                (rebinned_background_errors,) = this_rebinner.rebin_errors(np.sqrt(self.get_background_model()) )
+
+
+            else:
+            
+
+                (rebinned_background_counts,) = this_rebinner.rebin(self.background_counts)
+                (rebinned_background_errors,) = this_rebinner.rebin_errors(
+                    self.background_count_errors
+                )
 
         else:
 
             rebinned_background_counts = np.zeros_like(rebinned_observed_counts)
 
+
+            
+            
         significance_calc = Significance(
             rebinned_observed_counts,
             rebinned_background_counts
             + old_div(rebinned_model_counts, self._total_scale_factor),
-            self._total_scale_factor,
+            min([self._total_scale_factor, 1.]),
         )
 
         # Divide the various cases
@@ -2729,6 +2762,10 @@ class SpectrumLike(PluginPrototype):
 
                     residuals = significance_calc.known_background()
 
+                elif self._background_noise_model == "modeled":
+
+                    residuals = significance_calc.known_background()
+                    
                 else:
 
                     raise RuntimeError("This is a bug")
