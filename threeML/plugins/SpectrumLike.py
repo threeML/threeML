@@ -2764,7 +2764,7 @@ class SpectrumLike(PluginPrototype):
 
                 elif self._background_noise_model == "modeled":
 
-                    residuals = significance_calc.known_background()
+                    residuals = significance_calc.known_background()Pu
                     
                 else:
 
