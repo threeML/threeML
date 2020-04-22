@@ -6,6 +6,14 @@ Version 1.0
 -----------
 
 
+v1.0.7
+^^^^^^^^
+*Wed, 22 Apr 2020 19:22:43 + 0000*
+
+* Fixed some bugs in plotting and reading plugins with a background model. 
+  Merged in pull request: https://github.com/threeML/threeML/pull/358
+
+
 v1.0.6
 ^^^^^^^^
 *Fri, 17 Apr 2020 18:27:31 + 0000*
