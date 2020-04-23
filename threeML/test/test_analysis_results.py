@@ -10,7 +10,11 @@ import astropy.units as u
 from threeML.plugins.XYLike import XYLike
 from threeML import Model, DataList, JointLikelihood, PointSource
 from threeML import BayesianAnalysis, Uniform_prior, Log_uniform_prior
-from threeML.analysis_results import MLEResults, load_analysis_results, AnalysisResultsSet
+from threeML.analysis_results import (
+    MLEResults,
+    load_analysis_results,
+    AnalysisResultsSet,
+)
 from astromodels import Line, Gaussian, Powerlaw
 
 
@@ -20,8 +24,58 @@ _cache = {}
 
 x = np.linspace(0, 10, 50)
 
-poiss_sig = [44, 43, 38, 25, 51, 37, 46, 47, 55, 36, 40, 32, 46, 37, 44, 42, 50, 48, 52, 47, 39, 55, 80, 93, 123, 135,
-             96, 74, 43, 49, 43, 51, 27, 32, 35, 42, 43, 49, 38, 43, 59, 54, 50, 40, 50, 57, 55, 47, 38, 64]
+poiss_sig = [
+    44,
+    43,
+    38,
+    25,
+    51,
+    37,
+    46,
+    47,
+    55,
+    36,
+    40,
+    32,
+    46,
+    37,
+    44,
+    42,
+    50,
+    48,
+    52,
+    47,
+    39,
+    55,
+    80,
+    93,
+    123,
+    135,
+    96,
+    74,
+    43,
+    49,
+    43,
+    51,
+    27,
+    32,
+    35,
+    42,
+    43,
+    49,
+    38,
+    43,
+    59,
+    54,
+    50,
+    40,
+    50,
+    57,
+    55,
+    47,
+    38,
+    64,
+]
 
 
 def _results_are_same(res1, res2, bayes=False):
@@ -43,8 +97,8 @@ def _results_are_same(res1, res2, bayes=False):
     frame2 = res2.get_data_frame()
 
     # Remove the units (which cannot be checked with np.allclose)
-    unit1 = frame1.pop('unit')
-    unit2 = frame2.pop('unit')
+    unit1 = frame1.pop("unit")
+    unit2 = frame2.pop("unit")
 
     assert np.allclose(frame1.values, frame2.values, rtol=0.15)
     assert np.all(unit1 == unit2)
@@ -91,7 +145,7 @@ def test_analysis_set_input_output(xy_fitted_joint_likelihood):
 
     analysis_set = AnalysisResultsSet([ar, ar2])
 
-    analysis_set.set_bins("testing", [-1, 1], [3, 5], unit = 's')
+    analysis_set.set_bins("testing", [-1, 1], [3, 5], unit="s")
 
     temp_file = "_analysis_set_test"
 
@@ -160,7 +214,9 @@ def test_error_propagation(xy_fitted_joint_likelihood):
 
     # Prepare the error propagator function
 
-    pp = ar.propagate(ar.optimized_model.fake.spectrum.main.shape.evaluate_at, **arguments)
+    pp = ar.propagate(
+        ar.optimized_model.fake.spectrum.main.shape.evaluate_at, **arguments
+    )
 
     new_variate = pp(5.0)
 
@@ -197,56 +253,52 @@ def test_corner_plotting(xy_completed_bayesian_analysis):
 
     ar.corner_plot()
 
+
 def test_one_free_parameter_input_output():
 
-    fluxUnit = 1. / (u.TeV * u.cm**2 * u.s)
+    fluxUnit = 1.0 / (u.TeV * u.cm ** 2 * u.s)
 
     temp_file = "__test_mle.fits"
-    
-    spectrum=Powerlaw()
-    source = PointSource( "tst", ra=100 , dec=20, spectral_shape=spectrum)
+
+    spectrum = Powerlaw()
+    source = PointSource("tst", ra=100, dec=20, spectral_shape=spectrum)
     model = Model(source)
 
-    spectrum.piv = 7*u.TeV      
+    spectrum.piv = 7 * u.TeV
     spectrum.index = -2.3
-    spectrum.K = 1e-15*fluxUnit  
+    spectrum.K = 1e-15 * fluxUnit
 
     spectrum.piv.fix = True
 
-    #two free parameters (one with units)
+    # two free parameters (one with units)
     spectrum.index.fix = False
     spectrum.K.fix = False
-    cov_matrix = np.diag([0.001]*2)
-    ar = MLEResults(model, cov_matrix, {})  
-    
+    cov_matrix = np.diag([0.001] * 2)
+    ar = MLEResults(model, cov_matrix, {})
+
     ar.write_to(temp_file, overwrite=True)
     ar_reloaded = load_analysis_results(temp_file)
     os.remove(temp_file)
     _results_are_same(ar, ar_reloaded)
-   
-    #one free parameter with units
+
+    # one free parameter with units
     spectrum.index.fix = True
     spectrum.K.fix = False
-    cov_matrix = np.diag([0.001]*1)
-    ar = MLEResults(model, cov_matrix, {})  
-    
+    cov_matrix = np.diag([0.001] * 1)
+    ar = MLEResults(model, cov_matrix, {})
+
     ar.write_to(temp_file, overwrite=True)
     ar_reloaded = load_analysis_results(temp_file)
     os.remove(temp_file)
     _results_are_same(ar, ar_reloaded)
-  
-   
-    #one free parameter without units
+
+    # one free parameter without units
     spectrum.index.fix = False
     spectrum.K.fix = True
-    cov_matrix = np.diag([0.001]*1)
-    ar = MLEResults(model, cov_matrix, {})  
-    
+    cov_matrix = np.diag([0.001] * 1)
+    ar = MLEResults(model, cov_matrix, {})
+
     ar.write_to(temp_file, overwrite=True)
     ar_reloaded = load_analysis_results(temp_file)
     os.remove(temp_file)
     _results_are_same(ar, ar_reloaded)
-  
-
-
-

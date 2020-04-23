@@ -8,8 +8,9 @@ except:
     has_ultranest = False
 else:
     has_ultranest = True
-skip_if_ultranest_is_not_available = pytest.mark.skipif(not has_ultranest,
-    reason="No ultranest available")
+skip_if_ultranest_is_not_available = pytest.mark.skipif(
+    not has_ultranest, reason="No ultranest available"
+)
 
 try:
     import pymultinest
@@ -17,8 +18,9 @@ except:
     has_pymultinest = False
 else:
     has_pymultinest = True
-skip_if_pymultinest_is_not_available = pytest.mark.skipif(not has_pymultinest,
-    reason="No pymultinest available")
+skip_if_pymultinest_is_not_available = pytest.mark.skipif(
+    not has_pymultinest, reason="No pymultinest available"
+)
 
 try:
     import zeus
@@ -26,8 +28,9 @@ except:
     has_zeus = False
 else:
     has_zeus = True
-skip_if_zeus_is_not_available = pytest.mark.skipif(not has_zeus,
-    reason="No zeus available")
+skip_if_zeus_is_not_available = pytest.mark.skipif(
+    not has_zeus, reason="No zeus available"
+)
 
 
 def remove_priors(model):
@@ -77,13 +80,11 @@ def test_bayes_constructor(fitted_joint_likelihood_bn090217206_nai):
 
         _ = BayesianAnalysis(model, datalist)
 
-
     set_priors(model)
 
     bayes = BayesianAnalysis(model, datalist)
 
-    bayes.set_sampler('emcee')
-    
+    bayes.set_sampler("emcee")
 
     assert bayes.results is None
     assert bayes.samples is None

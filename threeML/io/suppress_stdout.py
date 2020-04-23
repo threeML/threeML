@@ -4,9 +4,11 @@ import sys
 
 
 class _DummyFile(object):
-    def write(self, x): pass
+    def write(self, x):
+        pass
 
-    def flush(self, *args, **kwargs): pass
+    def flush(self, *args, **kwargs):
+        pass
 
 
 @contextlib.contextmanager

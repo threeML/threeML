@@ -28,23 +28,21 @@ class PHAWrite(object):
         # The following lists corresponds to the different columns in the PHA/CSPEC
         # formats, and they will be filled up by addSpectrum()
 
-        self._tstart = {'pha': [], 'bak': []}
-        self._tstop = {'pha': [], 'bak': []}
-        self._channel = {'pha': [], 'bak': []}
-        self._rate = {'pha': [], 'bak': []}
-        self._stat_err = {'pha': [], 'bak': []}
-        self._sys_err = {'pha': [], 'bak': []}
-        self._backscal = {'pha': [], 'bak': []}
-        self._quality = {'pha': [], 'bak': []}
-        self._grouping = {'pha': [], 'bak': []}
-        self._exposure = {'pha': [], 'bak': []}
-        self._backfile = {'pha': [], 'bak': []}
-        self._respfile = {'pha': [], 'bak': []}
-        self._ancrfile = {'pha': [], 'bak': []}
-        self._mission = {'pha': [], 'bak': []}
-        self._instrument = {'pha': [], 'bak': []}
-
-
+        self._tstart = {"pha": [], "bak": []}
+        self._tstop = {"pha": [], "bak": []}
+        self._channel = {"pha": [], "bak": []}
+        self._rate = {"pha": [], "bak": []}
+        self._stat_err = {"pha": [], "bak": []}
+        self._sys_err = {"pha": [], "bak": []}
+        self._backscal = {"pha": [], "bak": []}
+        self._quality = {"pha": [], "bak": []}
+        self._grouping = {"pha": [], "bak": []}
+        self._exposure = {"pha": [], "bak": []}
+        self._backfile = {"pha": [], "bak": []}
+        self._respfile = {"pha": [], "bak": []}
+        self._ancrfile = {"pha": [], "bak": []}
+        self._mission = {"pha": [], "bak": []}
+        self._instrument = {"pha": [], "bak": []}
 
         # If the PHAs have existing background files
         # then it is assumed that we will not need to write them
@@ -54,10 +52,9 @@ class PHAWrite(object):
         self._write_bak_file = False
 
         # Assuming all entries will have one answer
-        self._is_poisson = {'pha': True, 'bak': True}
+        self._is_poisson = {"pha": True, "bak": True}
 
-        self._pseudo_time = 0.
-
+        self._pseudo_time = 0.0
 
         self._spec_iterator = 1
 
@@ -73,24 +70,23 @@ class PHAWrite(object):
         :return:
         """
 
-
-
         # Remove the .pha extension if any
-        if os.path.splitext(outfile_name)[-1].lower() == '.pha':
+        if os.path.splitext(outfile_name)[-1].lower() == ".pha":
 
             outfile_name = os.path.splitext(outfile_name)[0]
 
         self._outfile_basename = outfile_name
 
-
-        self._outfile_name = {'pha': '%s.pha' % outfile_name, 'bak': '%s_bak.pha' % outfile_name}
+        self._outfile_name = {
+            "pha": "%s.pha" % outfile_name,
+            "bak": "%s_bak.pha" % outfile_name,
+        }
 
         self._out_rsp = []
 
         for ogip in self._ogiplike:
 
             self._append_ogip(ogip, force_rsp_write)
-
 
         self._write_phaII(overwrite)
 
@@ -106,15 +102,13 @@ class PHAWrite(object):
         # grab the ogip pha info
         pha_info = ogip.get_pha_files()
 
+        first_channel = pha_info["rsp"].first_channel
 
+        for key in ["pha", "bak"]:
+            if key not in pha_info:
+                continue
 
-
-        first_channel = pha_info['rsp'].first_channel
-
-        for key in ['pha', 'bak']:
-            if key not in pha_info: continue
-
-            if key == 'pha' and 'bak' in pha_info:
+            if key == "pha" and "bak" in pha_info:
 
                 if pha_info[key].background_file is not None:
 
@@ -122,7 +116,9 @@ class PHAWrite(object):
 
                 else:
 
-                    self._backfile[key].append('%s_bak.pha{%d}' % (self._outfile_basename, self._spec_iterator))
+                    self._backfile[key].append(
+                        "%s_bak.pha{%d}" % (self._outfile_basename, self._spec_iterator)
+                    )
 
                     # We want to write the bak file
 
@@ -140,28 +136,27 @@ class PHAWrite(object):
 
                 # There is no ancillary file, so we need to flag it.
 
-                self._ancrfile[key].append('NONE')
+                self._ancrfile[key].append("NONE")
 
+            if pha_info["rsp"].rsp_filename is not None and not force_rsp_write:
 
-            if pha_info['rsp'].rsp_filename is not None and not force_rsp_write:
-
-                self._respfile[key].append(pha_info['rsp'].rsp_filename)
+                self._respfile[key].append(pha_info["rsp"].rsp_filename)
 
             else:
 
                 # This will be reached in the case that a response was generated from a plugin
                 # e.g. if we want to use weighted DRMs from GBM.
 
-
-
-                rsp_file_name = "%s.rsp{%d}"%(self._outfile_basename,self._spec_iterator)
+                rsp_file_name = "%s.rsp{%d}" % (
+                    self._outfile_basename,
+                    self._spec_iterator,
+                )
 
                 self._respfile[key].append(rsp_file_name)
 
-                if key == 'pha':
+                if key == "pha":
 
-                        self._out_rsp.append(pha_info['rsp'])
-
+                    self._out_rsp.append(pha_info["rsp"])
 
             self._rate[key].append(pha_info[key].rates.tolist())
 
@@ -182,18 +177,24 @@ class PHAWrite(object):
             # simply adds systematic in quadrature to statistical
             # error.
 
-            if pha_info[key].sys_errors.tolist() is not None:  # It returns an array which does not work!
+            if (
+                pha_info[key].sys_errors.tolist() is not None
+            ):  # It returns an array which does not work!
 
                 self._sys_err[key].append(pha_info[key].sys_errors.tolist())
 
             else:
 
-                self._sys_err[key].append(np.zeros_like(pha_info[key].rates, dtype=np.float32).tolist())
+                self._sys_err[key].append(
+                    np.zeros_like(pha_info[key].rates, dtype=np.float32).tolist()
+                )
 
             self._exposure[key].append(pha_info[key].exposure)
             self._quality[key].append(ogip.quality.to_ogip().tolist())
             self._grouping[key].append(ogip.grouping.tolist())
-            self._channel[key].append(np.arange(pha_info[key].n_channels, dtype=np.int32) + first_channel)
+            self._channel[key].append(
+                np.arange(pha_info[key].n_channels, dtype=np.int32) + first_channel
+            )
             self._instrument[key] = pha_info[key].instrument
             self._mission[key] = pha_info[key].mission
 
@@ -207,7 +208,9 @@ class PHAWrite(object):
 
                 else:
 
-                    RuntimeError('OGIP TSTART is a number but TSTOP is None. This is a bug.')
+                    RuntimeError(
+                        "OGIP TSTART is a number but TSTOP is None. This is a bug."
+                    )
 
             # We will assume that the exposure is the true DT
             # and assign starts and stops accordingly. This means
@@ -222,36 +225,36 @@ class PHAWrite(object):
 
         self._spec_iterator += 1
 
-
-
     def _write_phaII(self, overwrite):
 
         # Fix this later... if needed.
         trigger_time = None
 
-        if self._backfile['pha'] is not None:
+        if self._backfile["pha"] is not None:
             # Assuming background and pha files have the same
             # number of channels
 
-            assert len(self._rate['pha'][0]) == len(
-                    self._rate['bak'][0]), "PHA and BAK files do not have the same number of channels. Something is wrong."
+            assert len(self._rate["pha"][0]) == len(
+                self._rate["bak"][0]
+            ), "PHA and BAK files do not have the same number of channels. Something is wrong."
 
-            assert self._instrument['pha'] == self._instrument[
-                'bak'], "Instrument for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. " % (
-                self._instrument['pha'], self._instrument['bak'])
+            assert self._instrument["pha"] == self._instrument["bak"], (
+                "Instrument for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. "
+                % (self._instrument["pha"], self._instrument["bak"])
+            )
 
-            assert self._mission['pha'] == self._mission[
-                'bak'], "Mission for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. " % (
-                self._mission['pha'], self._mission['bak'])
-
+            assert self._mission["pha"] == self._mission["bak"], (
+                "Mission for PHA and BAK (%s,%s) are not the same. Something is wrong with the files. "
+                % (self._mission["pha"], self._mission["bak"])
+            )
 
         if self._write_bak_file:
 
-            keys = ['pha', 'bak']
+            keys = ["pha", "bak"]
 
         else:
 
-            keys = ['pha']
+            keys = ["pha"]
 
         for key in keys:
 
@@ -265,27 +268,28 @@ class PHAWrite(object):
 
             # build a PHAII instance
 
-            fits_file = PHAII(self._instrument[key],
-                              self._mission[key],
-                              tstart,
-                              np.array(self._tstop[key]) - np.array(self._tstart[key]),
-                              self._channel[key],
-                              self._rate[key],
-                              self._quality[key],
-                              self._grouping[key],
-                              self._exposure[key],
-                              self._backscal[key],
-                              self._respfile[key],
-                              self._ancrfile[key],
-                              back_file=self._backfile[key],
-                              sys_err=self._sys_err[key],
-                              stat_err=self._stat_err[key],
-                              is_poisson=self._is_poisson[key])
+            fits_file = PHAII(
+                self._instrument[key],
+                self._mission[key],
+                tstart,
+                np.array(self._tstop[key]) - np.array(self._tstart[key]),
+                self._channel[key],
+                self._rate[key],
+                self._quality[key],
+                self._grouping[key],
+                self._exposure[key],
+                self._backscal[key],
+                self._respfile[key],
+                self._ancrfile[key],
+                back_file=self._backfile[key],
+                sys_err=self._sys_err[key],
+                stat_err=self._stat_err[key],
+                is_poisson=self._is_poisson[key],
+            )
 
             # write the file
 
             fits_file.writeto(self._outfile_name[key], overwrite=overwrite)
-
 
         if self._out_rsp:
 
@@ -293,37 +297,41 @@ class PHAWrite(object):
 
             extensions = [EBOUNDS(self._out_rsp[0].ebounds)]
 
-            extensions.extend([SPECRESP_MATRIX(this_rsp.monte_carlo_energies, this_rsp.ebounds, this_rsp.matrix) for this_rsp in self._out_rsp])
+            extensions.extend(
+                [
+                    SPECRESP_MATRIX(
+                        this_rsp.monte_carlo_energies, this_rsp.ebounds, this_rsp.matrix
+                    )
+                    for this_rsp in self._out_rsp
+                ]
+            )
 
             for i, ext in enumerate(extensions[1:]):
 
-
                 # Set telescope and instrument name
-                ext.hdu.header.set("TELESCOP", self._mission['pha'])
-                ext.hdu.header.set("INSTRUME", self._instrument['pha'])
-                ext.hdu.header.set("EXTVER", i+1)
-
-
+                ext.hdu.header.set("TELESCOP", self._mission["pha"])
+                ext.hdu.header.set("INSTRUME", self._instrument["pha"])
+                ext.hdu.header.set("EXTVER", i + 1)
 
             rsp2 = FITSFile(fits_extensions=extensions)
 
             rsp2.writeto("%s.rsp" % self._outfile_basename, overwrite=True)
 
-def _atleast_2d_with_dtype(value,dtype=None):
 
+def _atleast_2d_with_dtype(value, dtype=None):
 
     if dtype is not None:
-        value = np.array(value,dtype=dtype)
+        value = np.array(value, dtype=dtype)
 
     arr = np.atleast_2d(value)
 
     return arr
 
-def _atleast_1d_with_dtype(value,dtype=None):
 
+def _atleast_1d_with_dtype(value, dtype=None):
 
     if dtype is not None:
-        value = np.array(value,dtype=dtype)
+        value = np.array(value, dtype=dtype)
 
         if dtype == str:
 
@@ -331,9 +339,9 @@ def _atleast_1d_with_dtype(value,dtype=None):
             # which is needed for None Type args
             # to string arrays
 
-            idx = np.core.defchararray.lower(value) == 'none'
+            idx = np.core.defchararray.lower(value) == "none"
 
-            value[idx] = 'NONE'
+            value[idx] = "NONE"
 
     arr = np.atleast_1d(value)
 
@@ -342,31 +350,47 @@ def _atleast_1d_with_dtype(value,dtype=None):
 
 class SPECTRUM(FITSExtension):
 
-    _HEADER_KEYWORDS = (('EXTNAME', 'SPECTRUM', 'Extension name'),
-                        ('CONTENT', 'OGIP PHA data', 'File content'),
-                        ('HDUCLASS', 'OGIP    ', 'format conforms to OGIP standard'),
-                        ('HDUVERS', '1.1.0   ', 'Version of format (OGIP memo CAL/GEN/92-002a)'),
-                        ('HDUDOC', 'OGIP memos CAL/GEN/92-002 & 92-002a', 'Documents describing the forma'),
-                        ('HDUVERS1', '1.0.0   ', 'Obsolete - included for backwards compatibility'),
-                        ('HDUVERS2', '1.1.0   ', 'Obsolete - included for backwards compatibility'),
-                        ('HDUCLAS1', 'SPECTRUM', 'Extension contains spectral data  '),
-                        ('HDUCLAS2', 'TOTAL ', ''),
-                        ('HDUCLAS3', 'RATE ', ''),
-                        ('HDUCLAS4', 'TYPE:II ', ''),
-                        ('FILTER', '', 'Filter used'),
-                        ('CHANTYPE', 'PHA', 'Channel type'),
-                        ('POISSERR', False, 'Are the rates Poisson distributed'),
-                        ('DETCHANS', None, 'Number of channels'),
-                        ('CORRSCAL',1.0,''),
-                        ('AREASCAL',1.0,'')
+    _HEADER_KEYWORDS = (
+        ("EXTNAME", "SPECTRUM", "Extension name"),
+        ("CONTENT", "OGIP PHA data", "File content"),
+        ("HDUCLASS", "OGIP    ", "format conforms to OGIP standard"),
+        ("HDUVERS", "1.1.0   ", "Version of format (OGIP memo CAL/GEN/92-002a)"),
+        (
+            "HDUDOC",
+            "OGIP memos CAL/GEN/92-002 & 92-002a",
+            "Documents describing the forma",
+        ),
+        ("HDUVERS1", "1.0.0   ", "Obsolete - included for backwards compatibility"),
+        ("HDUVERS2", "1.1.0   ", "Obsolete - included for backwards compatibility"),
+        ("HDUCLAS1", "SPECTRUM", "Extension contains spectral data  "),
+        ("HDUCLAS2", "TOTAL ", ""),
+        ("HDUCLAS3", "RATE ", ""),
+        ("HDUCLAS4", "TYPE:II ", ""),
+        ("FILTER", "", "Filter used"),
+        ("CHANTYPE", "PHA", "Channel type"),
+        ("POISSERR", False, "Are the rates Poisson distributed"),
+        ("DETCHANS", None, "Number of channels"),
+        ("CORRSCAL", 1.0, ""),
+        ("AREASCAL", 1.0, ""),
+    )
 
-
-
-                        )
-
-
-    def __init__(self, tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
-                 ancrfile, back_file=None, sys_err=None, stat_err=None, is_poisson=False):
+    def __init__(
+        self,
+        tstart,
+        telapse,
+        channel,
+        rate,
+        quality,
+        grouping,
+        exposure,
+        backscale,
+        respfile,
+        ancrfile,
+        back_file=None,
+        sys_err=None,
+        stat_err=None,
+        is_poisson=False,
+    ):
 
         """
         Represents the SPECTRUM extension of a PHAII file.
@@ -388,34 +412,35 @@ class SPECTRUM(FITSExtension):
 
         n_spectra = len(tstart)
 
-        data_list = [('TSTART', tstart),
-                      ('TELAPSE', telapse),
-                      ('SPEC_NUM',np.arange(1, n_spectra + 1, dtype=np.int16)),
-                      ('CHANNEL', channel),
-                      ('RATE',rate),
-                      ('QUALITY',quality),
-                      ('BACKSCAL', backscale),
-                      ('GROUPING',grouping),
-                      ('EXPOSURE',exposure),
-                      ('RESPFILE',respfile),
-                      ('ANCRFILE',ancrfile)]
-
+        data_list = [
+            ("TSTART", tstart),
+            ("TELAPSE", telapse),
+            ("SPEC_NUM", np.arange(1, n_spectra + 1, dtype=np.int16)),
+            ("CHANNEL", channel),
+            ("RATE", rate),
+            ("QUALITY", quality),
+            ("BACKSCAL", backscale),
+            ("GROUPING", grouping),
+            ("EXPOSURE", exposure),
+            ("RESPFILE", respfile),
+            ("ANCRFILE", ancrfile),
+        ]
 
         if back_file is not None:
 
-            data_list.append(('BACKFILE', back_file))
-
+            data_list.append(("BACKFILE", back_file))
 
         if stat_err is not None:
 
-            assert is_poisson == False, "Tying to enter STAT_ERR error but have POISSERR set true"
+            assert (
+                is_poisson == False
+            ), "Tying to enter STAT_ERR error but have POISSERR set true"
 
-            data_list.append(('STAT_ERR', stat_err))
+            data_list.append(("STAT_ERR", stat_err))
 
         if sys_err is not None:
 
-            data_list.append(('SYS_ERR', sys_err))
-
+            data_list.append(("SYS_ERR", sys_err))
 
         super(SPECTRUM, self).__init__(tuple(data_list), self._HEADER_KEYWORDS)
 
@@ -423,11 +448,25 @@ class SPECTRUM(FITSExtension):
 
 
 class PHAII(FITSFile):
-
-
-    def __init__(self, instrument_name, telescope_name, tstart, telapse, channel, rate, quality, grouping, exposure, backscale, respfile,
-                 ancrfile, back_file=None, sys_err=None, stat_err=None,is_poisson=False):
-
+    def __init__(
+        self,
+        instrument_name,
+        telescope_name,
+        tstart,
+        telapse,
+        channel,
+        rate,
+        quality,
+        grouping,
+        exposure,
+        backscale,
+        respfile,
+        ancrfile,
+        back_file=None,
+        sys_err=None,
+        stat_err=None,
+        is_poisson=False,
+    ):
 
         """
 
@@ -453,17 +492,16 @@ class PHAII(FITSFile):
         # collect the data so that we can have a general
         # extension builder
 
-        self._tstart = _atleast_1d_with_dtype(tstart , np.float32) * u.s
+        self._tstart = _atleast_1d_with_dtype(tstart, np.float32) * u.s
         self._telapse = _atleast_1d_with_dtype(telapse, np.float32) * u.s
         self._channel = _atleast_2d_with_dtype(channel, np.int16)
-        self._rate = _atleast_2d_with_dtype(rate, np.float32) * 1./u.s
+        self._rate = _atleast_2d_with_dtype(rate, np.float32) * 1.0 / u.s
         self._exposure = _atleast_1d_with_dtype(exposure, np.float32) * u.s
         self._quality = _atleast_2d_with_dtype(quality, np.int16)
         self._grouping = _atleast_2d_with_dtype(grouping, np.int16)
         self._backscale = _atleast_1d_with_dtype(backscale, np.float32)
-        self._respfile = _atleast_1d_with_dtype(respfile,str)
-        self._ancrfile = _atleast_1d_with_dtype(ancrfile,str)
-
+        self._respfile = _atleast_1d_with_dtype(respfile, str)
+        self._ancrfile = _atleast_1d_with_dtype(ancrfile, str)
 
         if sys_err is not None:
 
@@ -475,7 +513,7 @@ class PHAII(FITSFile):
 
         if stat_err is not None:
 
-            self._stat_err = _atleast_2d_with_dtype(stat_err,np.float32)
+            self._stat_err = _atleast_2d_with_dtype(stat_err, np.float32)
 
         else:
 
@@ -483,27 +521,29 @@ class PHAII(FITSFile):
 
         if back_file is not None:
 
-            self._back_file = _atleast_1d_with_dtype(back_file,str)
+            self._back_file = _atleast_1d_with_dtype(back_file, str)
         else:
 
-            self._back_file = np.array(['NONE'] * self._tstart.shape[0])
+            self._back_file = np.array(["NONE"] * self._tstart.shape[0])
 
         # Create the SPECTRUM extension
 
-        spectrum_extension = SPECTRUM(self._tstart,
-                                      self._telapse,
-                                      self._channel,
-                                      self._rate,
-                                      self._quality,
-                                      self._grouping,
-                                      self._exposure,
-                                      self._backscale,
-                                      self._respfile,
-                                      self._ancrfile,
-                                      back_file=self._back_file,
-                                      sys_err=self._sys_err,
-                                      stat_err=self._stat_err,
-                                      is_poisson=is_poisson)
+        spectrum_extension = SPECTRUM(
+            self._tstart,
+            self._telapse,
+            self._channel,
+            self._rate,
+            self._quality,
+            self._grouping,
+            self._exposure,
+            self._backscale,
+            self._respfile,
+            self._ancrfile,
+            back_file=self._back_file,
+            sys_err=self._sys_err,
+            stat_err=self._stat_err,
+            is_poisson=is_poisson,
+        )
 
         # Set telescope and instrument name
 
@@ -511,12 +551,7 @@ class PHAII(FITSFile):
         spectrum_extension.hdu.header.set("INSTRUME", instrument_name)
         spectrum_extension.hdu.header.set("DETCHANS", len(self._channel[0]))
 
-
-
         super(PHAII, self).__init__(fits_extensions=[spectrum_extension])
-
-
-
 
     @classmethod
     def from_time_series(cls, time_series, use_poly=False):
@@ -527,64 +562,56 @@ class PHAII(FITSFile):
 
         if use_poly:
 
-            is_poisson=False
+            is_poisson = False
 
-
-
-        return PHAII(instrument_name=pha_information['instrument'],
-                     telescope_name=pha_information['telescope'],
-                     tstart=pha_information['tstart'],
-                     telapse=pha_information['telapse'],
-                     channel=pha_information['channel'],
-                     rate=pha_information['rates'],
-                     stat_err=pha_information['rate error'],
-                     quality=pha_information['quality'].to_ogip(),
-                     grouping=pha_information['grouping'],
-                     exposure=pha_information['exposure'],
-                     backscale=1.,
-                     respfile=None,#pha_information['response_file'],
-                     ancrfile=None,
-                     is_poisson=is_poisson)
+        return PHAII(
+            instrument_name=pha_information["instrument"],
+            telescope_name=pha_information["telescope"],
+            tstart=pha_information["tstart"],
+            telapse=pha_information["telapse"],
+            channel=pha_information["channel"],
+            rate=pha_information["rates"],
+            stat_err=pha_information["rate error"],
+            quality=pha_information["quality"].to_ogip(),
+            grouping=pha_information["grouping"],
+            exposure=pha_information["exposure"],
+            backscale=1.0,
+            respfile=None,  # pha_information['response_file'],
+            ancrfile=None,
+            is_poisson=is_poisson,
+        )
 
     @classmethod
-    def from_fits_file(cls,fits_file):
+    def from_fits_file(cls, fits_file):
 
         with fits.open(fits_file) as f:
 
-
-            if 'SPECTRUM' in f: 
-                spectrum_extension=f['SPECTRUM']
+            if "SPECTRUM" in f:
+                spectrum_extension = f["SPECTRUM"]
             else:
                 warnings.warn("unable to find SPECTRUM extension: not OGIP PHA!")
 
-                spectrum_extension=None
+                spectrum_extension = None
 
                 for extension in f:
                     hduclass = extension.header.get("HDUCLASS")
                     hduclas1 = extension.header.get("HDUCLAS1")
-                    
-                    if hduclass == 'OGIP' and hduclas1 == 'SPECTRUM':
+
+                    if hduclass == "OGIP" and hduclas1 == "SPECTRUM":
                         spectrum_extension = extension
-                        warnings.warn("File has no SPECTRUM extension, but found a spectrum in extension %s" % (spectrum_extension.header.get("EXTNAME")))
-                        spectrum_extension.header['EXTNAME'] = 'SPECTRUM'
+                        warnings.warn(
+                            "File has no SPECTRUM extension, but found a spectrum in extension %s"
+                            % (spectrum_extension.header.get("EXTNAME"))
+                        )
+                        spectrum_extension.header["EXTNAME"] = "SPECTRUM"
                         break
-
-
-
-
 
             spectrum = FITSExtension.from_fits_file_extension(spectrum_extension)
 
-            out = FITSFile(primary_hdu=f['PRIMARY'], fits_extensions=[spectrum])
-
+            out = FITSFile(primary_hdu=f["PRIMARY"], fits_extensions=[spectrum])
 
         return out
-
-
-
 
     @property
     def instrument(self):
         return
-
-

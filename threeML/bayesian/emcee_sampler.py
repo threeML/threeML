@@ -43,7 +43,7 @@ class EmceeSampler(MCMCSampler):
     def sample(self, quiet=False):
 
         assert self._is_setup, "You forgot to setup the sampler!"
-            
+
         loud = not quiet
 
         self._update_free_parameters()
@@ -84,12 +84,11 @@ class EmceeSampler(MCMCSampler):
             )
 
             # Reset sampler
-            
 
             sampler.reset()
 
             state = emcee.State(pos, prob, random_state=state)
-            
+
             # Run the true sampling
 
             _ = sampler.run_mcmc(

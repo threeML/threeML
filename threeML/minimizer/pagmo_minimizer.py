@@ -11,7 +11,6 @@ import pygmo as pg
 
 
 class PAGMOWrapper(object):
-
     def __init__(self, function, parameters, dim):
 
         self._dim_ = dim
@@ -25,8 +24,10 @@ class PAGMOWrapper(object):
 
             if cur_min is None or cur_max is None:
 
-                raise RuntimeError("In order to use the PAGMO minimizer, you have to provide a minimum and a "
-                                   "maximum for all parameters in the model.")
+                raise RuntimeError(
+                    "In order to use the PAGMO minimizer, you have to provide a minimum and a "
+                    "maximum for all parameters in the model."
+                )
 
             minima.append(cur_min)
             maxima.append(cur_max)
@@ -54,31 +55,44 @@ class PAGMOWrapper(object):
 
 class PAGMOMinimizer(GlobalMinimizer):
 
-    valid_setup_keys = ('islands', 'population_size', 'evolution_cycles', 'second_minimization', 'algorithm')
+    valid_setup_keys = (
+        "islands",
+        "population_size",
+        "evolution_cycles",
+        "second_minimization",
+        "algorithm",
+    )
 
     def __init__(self, function, parameters, verbosity=10, setup_dict=None):
 
-        super(PAGMOMinimizer, self).__init__(function, parameters, verbosity, setup_dict)
+        super(PAGMOMinimizer, self).__init__(
+            function, parameters, verbosity, setup_dict
+        )
 
     def _setup(self, user_setup_dict):
 
         if user_setup_dict is None:
 
-            default_setup = {'islands': 8,
-                             'population_size': self._Npar * 20,
-                             'evolution_cycles': 1}
+            default_setup = {
+                "islands": 8,
+                "population_size": self._Npar * 20,
+                "evolution_cycles": 1,
+            }
 
             self._setup_dict = default_setup
 
         else:
 
-            assert 'algorithm' in user_setup_dict, "You have to provide a pygmo.algorithm instance using " \
-                                                   "the algorithm keyword"
+            assert "algorithm" in user_setup_dict, (
+                "You have to provide a pygmo.algorithm instance using "
+                "the algorithm keyword"
+            )
 
-            algorithm_instance = user_setup_dict['algorithm']
+            algorithm_instance = user_setup_dict["algorithm"]
 
-            assert isinstance(algorithm_instance,
-                              pg.algorithm), "The algorithm must be an instance of a PyGMO algorithm"
+            assert isinstance(
+                algorithm_instance, pg.algorithm
+            ), "The algorithm must be an instance of a PyGMO algorithm"
 
             # We can assume that the setup has been already checked against the setup_keys
             for key in user_setup_dict:
@@ -90,9 +104,9 @@ class PAGMOMinimizer(GlobalMinimizer):
     def _minimize(self):
 
         # Gather the setup
-        islands = self._setup_dict['islands']
-        pop_size = self._setup_dict['population_size']
-        evolution_cycles = self._setup_dict['evolution_cycles']
+        islands = self._setup_dict["islands"]
+        pop_size = self._setup_dict["population_size"]
+        evolution_cycles = self._setup_dict["evolution_cycles"]
 
         # Print some info
         print("\nPAGMO setup:")
@@ -105,12 +119,19 @@ class PAGMOMinimizer(GlobalMinimizer):
 
         if is_parallel_computation_active():
 
-            wrapper = PAGMOWrapper(function=self.function, parameters=self._internal_parameters, dim=Npar)
+            wrapper = PAGMOWrapper(
+                function=self.function, parameters=self._internal_parameters, dim=Npar
+            )
 
             # use the archipelago, which uses the ipyparallel computation
 
-            archi = pg.archipelago(udi=pg.ipyparallel_island(), n=islands,
-                                   algo=self._setup_dict['algorithm'], prob=wrapper, pop_size=pop_size)
+            archi = pg.archipelago(
+                udi=pg.ipyparallel_island(),
+                n=islands,
+                algo=self._setup_dict["algorithm"],
+                prob=wrapper,
+                pop_size=pop_size,
+            )
             archi.wait()
 
             # Display some info
@@ -152,7 +173,9 @@ class PAGMOMinimizer(GlobalMinimizer):
 
             # do not use ipyparallel. Evolve populations on islands serially
 
-            wrapper = PAGMOWrapper(function=self.function, parameters=self._internal_parameters, dim=Npar)
+            wrapper = PAGMOWrapper(
+                function=self.function, parameters=self._internal_parameters, dim=Npar
+            )
 
             xOpts = []
             fOpts = np.zeros(islands)
@@ -165,7 +188,7 @@ class PAGMOMinimizer(GlobalMinimizer):
 
                     for i in range(evolution_cycles):
 
-                        pop = self._setup_dict['algorithm'].evolve(pop)
+                        pop = self._setup_dict["algorithm"].evolve(pop)
 
                     # Gather results
 

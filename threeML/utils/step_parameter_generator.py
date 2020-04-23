@@ -30,7 +30,6 @@ def step_generator(intervals, parameter):
     # need to make sure the shape is right
     # assert self._intervals.shape
 
-
     # Check if the interval is 2D or 1D
     if intervals.shape[0] > 1 and intervals.shape[1] == 2:
 
@@ -72,14 +71,13 @@ def step_generator(intervals, parameter):
 
             i = i + 1
 
-            func.free_parameters['value_%d' % i].value = initial_value
-            func.free_parameters['value_%d' % i].min_value = parameter_min
-            func.free_parameters['value_%d' % i].max_value = parameter_max
+            func.free_parameters["value_%d" % i].value = initial_value
+            func.free_parameters["value_%d" % i].min_value = parameter_min
+            func.free_parameters["value_%d" % i].max_value = parameter_max
 
-            func.parameters['upper_bound_%d' % i].value = interval[1]
+            func.parameters["upper_bound_%d" % i].value = interval[1]
 
-            func.parameters['lower_bound_%d' % i].value = interval[0]
-
+            func.parameters["lower_bound_%d" % i].value = interval[0]
 
     else:
 
@@ -97,13 +95,10 @@ def step_generator(intervals, parameter):
 
             i = i + 1
 
-            func.free_parameters['value_%d' % i].value = initial_value
-            func.free_parameters['value_%d' % i].min_value = parameter_min
-            func.free_parameters['value_%d' % i].max_value = parameter_max
+            func.free_parameters["value_%d" % i].value = initial_value
+            func.free_parameters["value_%d" % i].min_value = parameter_min
+            func.free_parameters["value_%d" % i].max_value = parameter_max
 
-            func.parameters['zero_point_%d' % i].value = interval
-
-
+            func.parameters["zero_point_%d" % i].value = interval
 
     return func
-

@@ -575,11 +575,12 @@ class TemporalBinner(TimeIntervalSet):
                 final_edges = bayesian_blocks_not_unique(
                     arrival_times, arrival_times[0], arrival_times[-1], p0
                 )
-
             else:
+
                 print(e)
+
                 raise RuntimeError()
-                
+
         starts = np.asarray(final_edges)[:-1]
         stops = np.asarray(final_edges)[1:]
 

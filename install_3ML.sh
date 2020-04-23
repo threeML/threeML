@@ -477,9 +477,14 @@ EOM
 
 conda activate threeML
 
+# Fix needed to solve the "readinto" AttributeError due to older future package
+conda install --yes -c conda-forge future
+
 # Workaround needed to meet the requirement on ccfits on linux systems
 if [[ "$os_guessed" == "linux" ]] && [[ "${INSTALL_XSPEC}" == "yes" ]]; then
     conda install --yes -c conda-forge ccfits=2.5
+elif [[ "$os_guessed" == "osx" ]] && [[ "${INSTALL_XSPEC}" == "yes" ]]; then
+    conda install --yes -c conda-forge/label/cf201901 ccfits=2.5
 fi
 
 mv activate.csh $CONDA_PREFIX/bin

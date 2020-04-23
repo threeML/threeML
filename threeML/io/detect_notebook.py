@@ -15,7 +15,7 @@ def is_inside_notebook():
     else:
 
         # We are running in a IPython session, either in a console or in a notebook
-        if ip.has_trait('kernel'):
+        if ip.has_trait("kernel"):
 
             # We are in a notebook
             return True

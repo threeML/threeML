@@ -11,14 +11,18 @@ from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
 from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.likelihood_functions import half_chi2
-from threeML.utils.statistics.likelihood_functions import poisson_log_likelihood_ideal_bkg
+from threeML.utils.statistics.likelihood_functions import (
+    poisson_log_likelihood_ideal_bkg,
+)
 from threeML.exceptions.custom_exceptions import custom_warnings
+
 __instrument_name = "n.a."
 
 
 class XYLike(PluginPrototype):
-
-    def __init__(self, name, x, y, yerr=None, poisson_data=False, quiet=False, source_name=None):
+    def __init__(
+        self, name, x, y, yerr=None, poisson_data=False, quiet=False, source_name=None
+    ):
 
         nuisance_parameters = {}
 
@@ -42,7 +46,9 @@ class XYLike(PluginPrototype):
 
             if not quiet:
 
-                print("Using Gaussian statistic (equivalent to chi^2) with the provided errors.")
+                print(
+                    "Using Gaussian statistic (equivalent to chi^2) with the provided errors."
+                )
 
             self._is_poisson = False
 
@@ -111,7 +117,15 @@ class XYLike(PluginPrototype):
         return xyl_gen.get_simulated_dataset(name)
 
     @classmethod
-    def from_dataframe(cls, name, dataframe, x_column='x', y_column='y', err_column='yerr', poisson=False):
+    def from_dataframe(
+        cls,
+        name,
+        dataframe,
+        x_column="x",
+        y_column="y",
+        err_column="yerr",
+        poisson=False,
+    ):
         """
         Generate a XYLike instance from a Pandas.DataFrame instance
 
@@ -135,7 +149,6 @@ class XYLike(PluginPrototype):
 
                 # This is a dataframe generate with the to_dataframe method, which uses -99 to indicate that the
                 # data are Poisson
-
 
                 return cls(name, x=x, y=y, poisson_data=True)
 
@@ -176,8 +189,8 @@ class XYLike(PluginPrototype):
         :return: a pandas.DataFrame instance
         """
 
-        x_series = pd.Series(self.x, name='x')
-        y_series = pd.Series(self.y, name='y')
+        x_series = pd.Series(self.x, name="x")
+        y_series = pd.Series(self.y, name="y")
 
         if self._is_poisson:
 
@@ -185,11 +198,11 @@ class XYLike(PluginPrototype):
             # are Poisson distributed. We use instead a value of -99 for the error, to indicate that the data
             # are Poisson
 
-            yerr_series = pd.Series(np.ones_like(self.x) * (-99), name='yerr')
+            yerr_series = pd.Series(np.ones_like(self.x) * (-99), name="yerr")
 
         else:
 
-            yerr_series = pd.Series(self.yerr, name='yerr')
+            yerr_series = pd.Series(self.yerr, name="yerr")
 
         df = pd.concat((x_series, y_series, yerr_series), axis=1)
 
@@ -238,8 +251,10 @@ class XYLike(PluginPrototype):
 
         if self._likelihood_model is not None and source_name is not None:
 
-            assert source_name in self._likelihood_model.point_sources, "Source %s is not a point source in " \
-                                                                        "the likelihood model" % source_name
+            assert source_name in self._likelihood_model.point_sources, (
+                "Source %s is not a point source in "
+                "the likelihood model" % source_name
+            )
 
         self._source_name = source_name
 
@@ -283,9 +298,11 @@ class XYLike(PluginPrototype):
         if self._source_name is not None:
 
             # Make sure that the source is in the model
-            assert self._source_name in likelihood_model_instance.point_sources, \
-                                                "This XYLike plugin refers to the source %s, " \
-                                                "but that source is not a point source in the likelihood model" % (self._source_name)
+            assert self._source_name in likelihood_model_instance.point_sources, (
+                "This XYLike plugin refers to the source %s, "
+                "but that source is not a point source in the likelihood model"
+                % (self._source_name)
+            )
 
         self._likelihood_model = likelihood_model_instance
 
@@ -295,13 +312,22 @@ class XYLike(PluginPrototype):
 
             n_point_sources = self._likelihood_model.get_number_of_point_sources()
 
-            assert n_point_sources > 0, "You need to have at least one point source defined"
-            assert self._likelihood_model.get_number_of_extended_sources() == 0, "XYLike does not support extended sources"
+            assert (
+                n_point_sources > 0
+            ), "You need to have at least one point source defined"
+            assert (
+                self._likelihood_model.get_number_of_extended_sources() == 0
+            ), "XYLike does not support extended sources"
 
             # Make a function which will stack all point sources (XYLike do not support spatial dimension)
 
-            expectation = np.sum([source(self._x, tag=self._tag) for source in list(self._likelihood_model.point_sources.values())],
-                                 axis=0)
+            expectation = np.sum(
+                [
+                    source(self._x, tag=self._tag)
+                    for source in list(self._likelihood_model.point_sources.values())
+                ],
+                axis=0,
+            )
 
         else:
 
@@ -310,13 +336,18 @@ class XYLike(PluginPrototype):
             # Note that we checked that self._source_name is in the model when the model was set
 
             if self._source_name in self._likelihood_model.point_sources:
-            
-                expectation = self._likelihood_model.point_sources[self._source_name](self._x)
+
+                expectation = self._likelihood_model.point_sources[self._source_name](
+                    self._x
+                )
 
             else:
 
-                raise KeyError("This XYLike plugin has been assigned to source %s, "
-                               "which is not a point soure in the current model" % self._source_name)
+                raise KeyError(
+                    "This XYLike plugin has been assigned to source %s, "
+                    "which is not a point soure in the current model"
+                    % self._source_name
+                )
 
         return expectation
 
@@ -332,7 +363,11 @@ class XYLike(PluginPrototype):
 
             # Poisson log-likelihood
 
-            return np.sum(poisson_log_likelihood_ideal_bkg(self._y, np.zeros_like(self._y), expectation))
+            return np.sum(
+                poisson_log_likelihood_ideal_bkg(
+                    self._y, np.zeros_like(self._y), expectation
+                )
+            )
 
         else:
 
@@ -345,7 +380,9 @@ class XYLike(PluginPrototype):
 
     def get_simulated_dataset(self, new_name=None):
 
-        assert self._has_errors, "You cannot simulate a dataset if the original dataset has no errors"
+        assert (
+            self._has_errors
+        ), "You cannot simulate a dataset if the original dataset has no errors"
 
         self._n_simulated_datasets += 1
 
@@ -354,7 +391,6 @@ class XYLike(PluginPrototype):
         old_mask = copy.copy(self._mask)
 
         self._mask = np.ones(self._x.shape, dtype=bool)
-
 
         if new_name is None:
 
@@ -400,11 +436,11 @@ class XYLike(PluginPrototype):
 
         return new_xy
 
-    def plot(self, x_label='x', y_label='y', x_scale='linear', y_scale='linear'):
+    def plot(self, x_label="x", y_label="y", x_scale="linear", y_scale="linear"):
 
-        fig, sub = plt.subplots(1,1)
+        fig, sub = plt.subplots(1, 1)
 
-        sub.errorbar(self.x, self.y, yerr=self.yerr, fmt='.')
+        sub.errorbar(self.x, self.y, yerr=self.yerr, fmt=".")
 
         sub.set_xscale(x_scale)
         sub.set_yscale(y_scale)
@@ -416,12 +452,11 @@ class XYLike(PluginPrototype):
 
             flux = self._get_total_expectation()
 
-            sub.plot(self.x, flux, '--', label='model')
+            sub.plot(self.x, flux, "--", label="model")
 
             sub.legend(loc=0)
 
         return fig
-
 
     def inner_fit(self):
         """
@@ -438,8 +473,7 @@ class XYLike(PluginPrototype):
 
         return self._get_total_expectation()
 
-
-    def fit(self, function, minimizer='minuit', verbose=False):
+    def fit(self, function, minimizer="minuit", verbose=False):
         """
         Fit the data with the provided function (an astromodels function)
 
@@ -476,7 +510,6 @@ class XYLike(PluginPrototype):
 
         return g.by_mc(n_iterations, continue_of_failure)
 
-
     def get_number_of_data_points(self):
         """
         returns the number of active data points
@@ -486,4 +519,3 @@ class XYLike(PluginPrototype):
         # the sum of the mask should be the number of data points in use
 
         return self._mask.sum()
-

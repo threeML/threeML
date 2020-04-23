@@ -15,9 +15,9 @@ def test_plot():
 
     subs[0].plot(x, y)
 
-    subs[1].plot(x, y, '.')
+    subs[1].plot(x, y, ".")
 
-    subs[2].plot(x, y, 'o')
+    subs[2].plot(x, y, "o")
 
     subs[3].hist(np.random.normal(size=100))
 
@@ -33,7 +33,7 @@ def test_create_new_style():
     my_style = create_new_plotting_style()
 
     # Change something
-    my_style['lines.linewidth'] = 2.7
+    my_style["lines.linewidth"] = 2.7
 
     # Save it, but first make sure the file doesn't already exists (maybe from a crashed previous test)
     if os.path.exists("__test_style"):
@@ -62,7 +62,7 @@ def test_using_plot_style_context_manager():
     new_style = create_new_plotting_style()
 
     # Set axes green in the new style
-    new_style['axes.edgecolor'] = 'green'
+    new_style["axes.edgecolor"] = "green"
 
     # Save
     style_filename = new_style.save("__green")
@@ -71,18 +71,18 @@ def test_using_plot_style_context_manager():
 
     # Now let's try to use it
     # Copy what we have in the default style (probably black)
-    old_value = mpl.rcParams['axes.edgecolor']
+    old_value = mpl.rcParams["axes.edgecolor"]
 
     with plot_style("__green"):
 
         # Verify that at the moment the edgecolor is indeed green
-        assert mpl.rcParams['axes.edgecolor'] == 'green'
+        assert mpl.rcParams["axes.edgecolor"] == "green"
 
         # Make a plot just to make sure
         test_plot()
 
     # Verify that we are back to what we had before
-    assert mpl.rcParams['axes.edgecolor'] == old_value
+    assert mpl.rcParams["axes.edgecolor"] == old_value
 
     assert "__green" in get_available_plotting_styles()
 

@@ -17,7 +17,9 @@ else:
 
     has_root = True
 
-skip_if_ROOT_is_not_available = pytest.mark.skipif(not has_root, reason="No ROOT available")
+skip_if_ROOT_is_not_available = pytest.mark.skipif(
+    not has_root, reason="No ROOT available"
+)
 
 
 try:
@@ -32,7 +34,9 @@ else:
 
     has_pygmo = True
 
-skip_if_pygmo_is_not_available = pytest.mark.skipif(not has_pygmo, reason="No pygmo available")
+skip_if_pygmo_is_not_available = pytest.mark.skipif(
+    not has_pygmo, reason="No pygmo available"
+)
 
 
 def check_results(fit_results):
@@ -83,8 +87,14 @@ def test_grid(joint_likelihood_bn090217206_nai):
     grid = GlobalMinimization("GRID")
     minuit = LocalMinimization("minuit")
 
-    grid.setup(grid={joint_likelihood_bn090217206_nai.likelihood_model.bn090217206.spectrum.main.Powerlaw.K: np.linspace(0.1, 10, 10)},
-               second_minimization=minuit)
+    grid.setup(
+        grid={
+            joint_likelihood_bn090217206_nai.likelihood_model.bn090217206.spectrum.main.Powerlaw.K: np.linspace(
+                0.1, 10, 10
+            )
+        },
+        second_minimization=minuit,
+    )
 
     do_analysis(joint_likelihood_bn090217206_nai, grid)
 
@@ -97,7 +107,13 @@ def test_pagmo(joint_likelihood_bn090217206_nai):
 
     algo = pygmo.algorithm(pygmo.bee_colony(gen=100))
 
-    pagmo.setup(islands=4, population_size=20, evolution_cycles=1, second_minimization=minuit, algorithm=algo)
+    pagmo.setup(
+        islands=4,
+        population_size=20,
+        evolution_cycles=1,
+        second_minimization=minuit,
+        algorithm=algo,
+    )
 
     do_analysis(joint_likelihood_bn090217206_nai, pagmo)
 
@@ -116,6 +132,8 @@ def test_scipy(joint_likelihood_bn090217206_nai):
 
     do_analysis(joint_likelihood_bn090217206_nai, minim)
 
-    joint_likelihood_bn090217206_nai.likelihood_model.bn090217206.spectrum.main.Powerlaw.K = 1.25
+    joint_likelihood_bn090217206_nai.likelihood_model.bn090217206.spectrum.main.Powerlaw.K = (
+        1.25
+    )
 
     do_analysis(joint_likelihood_bn090217206_nai, minim)

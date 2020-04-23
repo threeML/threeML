@@ -156,7 +156,7 @@ def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_
 
     bayes = BayesianAnalysis(model, data_list)
 
-    bayes.set_sampler('emcee')
+    bayes.set_sampler("emcee")
     bayes.sampler.setup(n_walkers=50, n_burn_in=50, n_iterations=100, seed=1234)
     samples = bayes.sample()
 
@@ -333,10 +333,10 @@ def xy_completed_bayesian_analysis(xy_fitted_joint_likelihood):
 
     bs = BayesianAnalysis(model, data)
 
-    bs.set_sampler('emcee')
-    
+    bs.set_sampler("emcee")
+
     bs.sampler.setup(n_burn_in=100, n_iterations=100, n_walkers=20)
-    
+
     samples = bs.sample()
 
     return bs, samples
