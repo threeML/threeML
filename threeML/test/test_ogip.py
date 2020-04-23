@@ -563,15 +563,18 @@ def test_likelihood_functions():
     npt.assert_almost_equal(test, (-2.0785616431350551, 5), decimal=4) 
     
 
-    test = poisson_observed_poisson_background(
+    ll, b = poisson_observed_poisson_background(
         observed_counts=obs_cnts,
         background_counts=obs_bkg,
         exposure_ratio=ratio,
         expected_model_counts=exp_cnts,
     )
 
-    assert test == (-3.8188638237465984, 5.0)
 
+    test = (ll[0], b[0])
+    
+    npt.assert_almost_equal(test, (-3.8188638237465984, 5.0), decimal=4) 
+    
     test = poisson_observed_poisson_background_xs(observed_counts=obs_cnts,
                                                   background_counts=obs_bkg,
                                                   exposure_ratio=ratio,
