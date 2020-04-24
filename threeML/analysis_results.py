@@ -99,7 +99,7 @@ def _load_one_results(fits_extension):
 
     # Gather the optimized model
     serialized_model = _escape_back_yaml_from_fits(fits_extension.header.get("MODEL"))
-    model_dict = my_yaml.load(serialized_model, Loader=yaml.SafeLoader)
+    model_dict = my_yaml.load(serialized_model)
 
     optimized_model = ModelParser(model_dict=model_dict).get_model()
 
