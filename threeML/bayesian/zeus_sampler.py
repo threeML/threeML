@@ -91,7 +91,7 @@ class ZeusSampler(MCMCSampler):
                 with MPIPoolExecutor() as executor:
 
                     sampler = zeus.sampler(
-                        logprob=self.get_posterior,
+                        logprob_fn=self.get_posterior,
                         nwalkers=self._n_walkers,
                         ndim=n_dim,
                         pool=executor,
@@ -107,13 +107,13 @@ class ZeusSampler(MCMCSampler):
                         p0, self._n_iterations + self._n_burn_in, progress=loud,
                     )
 
-            if threeML_config["parallel"]["use-parallel"]:
+            elif threeML_config["parallel"]["use-parallel"]:
 
                 c = ParallelClient()
                 view = c[:]
 
                 sampler = zeus.sampler(
-                    logprob=self.get_posterior,
+                    logprob_fn=self.get_posterior,
                     nwalkers=self._n_walkers,
                     ndim=n_dim,
                     pool=view,
@@ -122,7 +122,7 @@ class ZeusSampler(MCMCSampler):
             else:
 
                 sampler = zeus.sampler(
-                    logprob=self.get_posterior, nwalkers=self._n_walkers, ndim=n_dim
+                    logprob_fn=self.get_posterior, nwalkers=self._n_walkers, ndim=n_dim
                 )
 
             # If a seed is provided, set the random number seed
@@ -136,15 +136,19 @@ class ZeusSampler(MCMCSampler):
                 _ = sampler.run(p0, self._n_iterations + self._n_burn_in, progress=loud)
 
         self._sampler = sampler
-        self._raw_samples = sampler.flatten(burn=self._n_burn_in)
+        self._raw_samples = sampler.flatten(discard=self._n_burn_in)
 
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
         log_prior = np.array([self._log_prior(x) for x in self._raw_samples])
-        self._log_probability_values = np.array(
-            [self.get_posterior(x) for x in self._raw_samples]
-        )
+        self._log_probability_values = sampler.get_log_prob(flat=True, discard=self._n_burn_in)
+
+
+
+        # np.array(
+        #     [self.get_posterior(x) for x in self._raw_samples]
+        # )
 
         # Now we get the log posterior and we remove the log prior
 
