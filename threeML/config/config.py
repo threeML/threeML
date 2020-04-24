@@ -52,7 +52,7 @@ class Config(object):
 
             try:
 
-                configuration = yaml.load(f, Loader=yaml.SafeLoader)
+                configuration = yaml.load(f)
 
             except:
 
