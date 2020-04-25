@@ -6,6 +6,14 @@ Version 1.0
 -----------
 
 
+v1.0.8
+^^^^^^^^
+*Sat, 25 Apr 2020 02:27:06 + 0000*
+
+* Added `numba` likelihoods. Merged in pull request:
+  https://github.com/threeML/threeML/pull/359
+
+
 v1.0.7
 ^^^^^^^^
 *Wed, 22 Apr 2020 19:22:43 + 0000*
