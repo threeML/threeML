@@ -21,6 +21,17 @@ else:
     has_dynesty = True
 
 
+class DynestyPool(object):
+    """A simple wrapper for `dview`."""
+
+    def __init__(self, dview):
+        self.dview = dview
+        self.size = nprocs
+
+    def map(self, function, tasks):
+        return self.dview.map_sync(function, tasks)
+
+
 class DynestyNestedSampler(UnitCubeSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
 
@@ -41,7 +52,6 @@ class DynestyNestedSampler(UnitCubeSampler):
         add_live=True,
         print_func=None,
         save_bounds=True,
-
         bound="multi",
         wrapped_params=None,
         sample="auto",
@@ -77,16 +87,14 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         self._sampler_kwargs = {}
         self._sampler_kwargs["maxiter"] = maxiter
-        self._sampler_kwargs["maxcall"]= maxcall
-        self._sampler_kwargs["dlogz"]= dlogz
-        self._sampler_kwargs["logl_max"]= logl_max
-        self._sampler_kwargs["n_effective"]= n_effective
-        self._sampler_kwargs["add_live"]= add_live
-        self._sampler_kwargs["print_func"]= print_func
-        self._sampler_kwargs["save_bounds"]= save_bounds
+        self._sampler_kwargs["maxcall"] = maxcall
+        self._sampler_kwargs["dlogz"] = dlogz
+        self._sampler_kwargs["logl_max"] = logl_max
+        self._sampler_kwargs["n_effective"] = n_effective
+        self._sampler_kwargs["add_live"] = add_live
+        self._sampler_kwargs["print_func"] = print_func
+        self._sampler_kwargs["save_bounds"] = save_bounds
 
-        
-        
         self._kwargs = {}
         self._kwargs["nlive"] = n_live_points
         self._kwargs["bound"] = bound
@@ -157,14 +165,16 @@ class DynestyNestedSampler(UnitCubeSampler):
         if threeML_config["parallel"]["use-parallel"]:
 
             c = ParallelClient()
-            pool = c[:]
+            view = c[:]
 
+            pool = DynestyPool(view)
+            
             self._kwargs["pool"] = pool
 
         sampler = NestedSampler(loglike, dynesty_prior, **self._kwargs)
 
         self._sampler_kwargs["print_progress"] = loud
-        
+
         with use_astromodels_memoization(False):
 
             sampler.run_nested(**self._sampler_kwargs)
@@ -212,7 +222,7 @@ class DynestyNestedSampler(UnitCubeSampler):
             [self._log_prior(samples) for samples in self._raw_samples]
         )
 
-        self._marginal_likelihood = self._sampler.results['logz'][-1] / np.log(10.)
+        self._marginal_likelihood = self._sampler.results["logz"][-1] / np.log(10.0)
 
         self._build_results()
 
