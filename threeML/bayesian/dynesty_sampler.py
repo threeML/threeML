@@ -26,7 +26,7 @@ class DynestyPool(object):
 
     def __init__(self, dview):
         self.dview = dview
-        self.size = nprocs
+        self.size = len(dview)
 
     def map(self, function, tasks):
         return self.dview.map_sync(function, tasks)
@@ -61,7 +61,6 @@ class DynestyNestedSampler(UnitCubeSampler):
         first_update=None,
         npdim=None,
         rstate=None,
-        queue_size=None,
         use_pool=None,
         live_points=None,
         logl_args=None,
@@ -106,9 +105,15 @@ class DynestyNestedSampler(UnitCubeSampler):
         self._kwargs["first_update"] = first_update
         self._kwargs["npdim"] = npdim
         self._kwargs["rstate"] = rstate
-        self._kwargs["queue_size"] = queue_size
         self._kwargs["pool"] = None
+
+        #TODO: have to figure out why
+        # this is not working properly
+        if use_pool is None:
+            use_pool = dict(prior_transform=False, loglikelihood=False, propose_point=False, update_bound=True)
+        
         self._kwargs["use_pool"] = use_pool
+
         self._kwargs["live_points"] = live_points
         self._kwargs["logl_args"] = logl_args
         self._kwargs["logl_kwargs"] = logl_kwargs
@@ -167,10 +172,9 @@ class DynestyNestedSampler(UnitCubeSampler):
             c = ParallelClient()
             view = c[:]
 
-            pool = DynestyPool(view)
+            self._kwargs["pool"] = view
+            self._kwargs["queue_size"] = len(view)
             
-            self._kwargs["pool"] = pool
-
         sampler = NestedSampler(loglike, dynesty_prior, **self._kwargs)
 
         self._sampler_kwargs["print_progress"] = loud
