@@ -2,7 +2,7 @@ import os
 import time
 import numpy as np
 
-
+from astromodels import ModelAssertionViolation, use_astromodels_memoization
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 
@@ -146,7 +146,8 @@ class UltraNestSampler(UnitCubeSampler):
                 wrapped_params=self._wrapped_params,
             )
 
-            sampler.run(show_status=loud, **self._kwargs)
+            with use_astromodels_memoization(False):
+                sampler.run(show_status=loud, **self._kwargs)
 
         process_fit = False
 

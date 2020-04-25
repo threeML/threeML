@@ -261,7 +261,7 @@ class FermipyLike(PluginPrototype):
             # Read the configuration
             with open(configuration_file) as f:
 
-                self._configuration = yaml.safe_load(f)
+                self._configuration = yaml.load(f, Loader=yaml.SafeLoader)
 
         else:
 

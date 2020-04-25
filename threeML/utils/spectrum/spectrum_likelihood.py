@@ -32,6 +32,7 @@ class BinnedStatistic(object):
 
         self._spectrum_plugin = spectrum_plugin
 
+
     def get_current_value(self):
         RuntimeError("must be implemented in subclass")
 

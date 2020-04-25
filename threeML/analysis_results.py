@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 from astromodels.core.model_parser import ModelParser
 from astromodels.core.my_yaml import my_yaml
+import yaml
 from astromodels.core.parameter import Parameter
 from corner import corner
 import matplotlib.pyplot as plt

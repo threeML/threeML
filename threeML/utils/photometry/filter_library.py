@@ -70,7 +70,7 @@ class FilterLibrary(object):
 
         with open(library_file) as f:
 
-            self._library = yaml.safe_load(f)
+            self._library = yaml.load(f, Loader=yaml.SafeLoader)
 
         self._instruments = []
 

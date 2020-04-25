@@ -6,7 +6,7 @@ import pymultinest
 
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
-
+from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
 try:
 
@@ -163,9 +163,11 @@ class MultiNestSampler(UnitCubeSampler):
 
         else:
 
-            sampler = pymultinest.run(
-                loglike, multinest_prior, n_dim, n_dim, **self._kwargs
-            )
+            with use_astromodels_memoization(False):
+            
+                sampler = pymultinest.run(
+                    loglike, multinest_prior, n_dim, n_dim, **self._kwargs
+                )
 
         # Use PyMULTINEST analyzer to gather parameter info
 

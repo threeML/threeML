@@ -9,7 +9,7 @@ from threeML.bayesian.multinest_sampler import MultiNestSampler
 from threeML.bayesian.zeus_sampler import ZeusSampler
 from threeML.bayesian.emcee_sampler import EmceeSampler
 from threeML.bayesian.ultranest_sampler import UltraNestSampler
-
+from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
 _available_samplers = {}
 _available_samplers["multinest"] = MultiNestSampler
@@ -125,7 +125,9 @@ class BayesianAnalysis(object):
         return self._sampler
 
     def sample(self, quiet=False):
-        self._sampler.sample(quiet=quiet)
+        with use_astromodels_memoization(False):
+
+            self._sampler.sample(quiet=quiet)
 
     @property
     def results(self):

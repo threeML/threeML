@@ -199,6 +199,8 @@ class SpectrumLike(PluginPrototype):
         # point to the original ones, but if a rebinner is used and/or a mask is created through set_active_measurements,
         # they will contain the rebinned and/or masked versions
 
+        
+        
         self._current_observed_counts = self._observed_counts
         self._current_observed_count_errors = self._observed_count_errors
         self._current_background_counts = self._background_counts
@@ -337,10 +339,14 @@ class SpectrumLike(PluginPrototype):
 
                 self._observed_count_errors = None
 
+                self._observed_counts = self._observed_counts.astype(np.int64)
+                
                 if self._background_spectrum.is_poisson:
 
                     observation_noise_model = "poisson"
                     background_noise_model = "poisson"
+
+                    self._background_counts = self._background_counts.astype(np.int64)
 
                     assert np.all(
                         self._observed_counts >= 0
@@ -390,6 +396,9 @@ class SpectrumLike(PluginPrototype):
             if self._observed_spectrum.is_poisson:
 
                 self._observed_count_errors = None
+                self._observed_counts = self._observed_counts.astype(np.int64)
+                
+                assert np.all(self._observed_counts >= 0), "Error in PHA: negative counts!"
 
                 assert np.all(
                     self._observed_counts >= 0
@@ -2232,9 +2241,13 @@ class SpectrumLike(PluginPrototype):
 
         # convert to rates, ugly, yes
 
-        observed_counts /= self._observed_spectrum.exposure
-        cnt_err /= self._observed_spectrum.exposure
-        
+        observed_rates = observed_counts/self._observed_spectrum.exposure
+        rate_err = cnt_err/self._observed_spectrum.exposure
+        #observed_counts /= self._observed_spectrum.exposure
+        #        cnt_err /= self._observed_spectrum.exposure
+
+
+
         if scale_background:
 
             background_counts *= self._area_ratio
@@ -2261,7 +2274,7 @@ class SpectrumLike(PluginPrototype):
             ax,
             energy_min,
             energy_max,
-            observed_counts,
+            observed_rates,
             color=threeML_config["ogip"]["counts color"],
             lw=1.5,
             alpha=1,
@@ -2287,8 +2300,8 @@ class SpectrumLike(PluginPrototype):
         if plot_errors:
             ax.errorbar(
                 mean_chan,
-                old_div(observed_counts, energy_width),
-                yerr=old_div(cnt_err, energy_width),
+                old_div(observed_rates, energy_width),
+                yerr=old_div(rate_err, energy_width),
                 fmt="",
                 # markersize=3,
                 linestyle="",
