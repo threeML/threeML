@@ -1,3 +1,4 @@
+import math
 import os
 import time
 import numpy as np
@@ -23,7 +24,7 @@ else:
 class DynestyNestedSampler(UnitCubeSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
 
-        assert has_dynesty, "You must install UltraNest to use this sampler"
+        assert has_dynesty, "You must install Dynesty to use this sampler"
 
         super(DynestyNestedSampler, self).__init__(
             likelihood_model, data_list, **kwargs
@@ -32,6 +33,15 @@ class DynestyNestedSampler(UnitCubeSampler):
     def setup(
         self,
         n_live_points=400,
+        maxiter=None,
+        maxcall=None,
+        dlogz=None,
+        logl_max=np.inf,
+        n_effective=None,
+        add_live=True,
+        print_func=None,
+        save_bounds=True,
+
         bound="multi",
         wrapped_params=None,
         sample="auto",
@@ -65,6 +75,18 @@ class DynestyNestedSampler(UnitCubeSampler):
         **kwargs
     ):
 
+        self._sampler_kwargs = {}
+        self._sampler_kwargs["maxiter"] = maxiter
+        self._sampler_kwargs["maxcall"]= maxcall
+        self._sampler_kwargs["dlogz"]= dlogz
+        self._sampler_kwargs["logl_max"]= logl_max
+        self._sampler_kwargs["n_effective"]= n_effective
+        self._sampler_kwargs["add_live"]= add_live
+        self._sampler_kwargs["print_func"]= print_func
+        self._sampler_kwargs["save_bounds"]= save_bounds
+
+        
+        
         self._kwargs = {}
         self._kwargs["nlive"] = n_live_points
         self._kwargs["bound"] = bound
@@ -128,7 +150,7 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         self._kwargs["ndim"] = ndim
 
-        loglike, dynesty_prior = self._construct_unitcube_posterior(return_copy=False)
+        loglike, dynesty_prior = self._construct_unitcube_posterior(return_copy=True)
 
         # check if we are doing to do things in parallel
 
@@ -141,9 +163,11 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         sampler = NestedSampler(loglike, dynesty_prior, **self._kwargs)
 
+        self._sampler_kwargs["print_progress"] = loud
+        
         with use_astromodels_memoization(False):
 
-            sampler.run_nested()
+            sampler.run_nested(**self._sampler_kwargs)
 
         self._sampler = sampler
 
