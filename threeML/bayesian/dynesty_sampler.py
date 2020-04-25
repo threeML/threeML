@@ -212,7 +212,7 @@ class DynestyNestedSampler(UnitCubeSampler):
             [self._log_prior(samples) for samples in self._raw_samples]
         )
 
-        self._marginal_likelihood = sampler.results["logz"] / np.log(10.0)
+        self._marginal_likelihood = self._sampler.results['logz'][-1] / np.log(10.)
 
         self._build_results()
 
