@@ -883,7 +883,7 @@ class TimeSeriesBuilder(object):
 
             assert has_balrog, "you must install the gbm_drm_gen package to use balrog"
 
-            assert cspecfile is not None, "must include a cspecfile"
+            assert cspec_file is not None, "must include a cspecfile"
 
             if poshist_file is not None:
 
@@ -900,7 +900,7 @@ class TimeSeriesBuilder(object):
 
                 drm_gen = gbm_drm_gen.DRMGenTTE(
                     tte_file,
-                    trigdat=trigdat,
+                    trigdat=trigdat_file,
                     cspecfile=cspec_file,
                     mat_type=2,
                     occult=True,
