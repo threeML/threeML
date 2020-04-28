@@ -136,7 +136,7 @@ class TimeSeriesBuilder(object):
         self._measured_background_spectrum = None
 
         self._time_series.poly_order = poly_order
-
+        
         self._default_unbinned = unbinned
 
         # try and restore the poly fit if requested
@@ -815,7 +815,7 @@ class TimeSeriesBuilder(object):
         cls,
         name,
         tte_file,
-        rsp_file,
+        rsp_file=None,
         restore_background=None,
         trigger_time=None,
         poly_order=-1,
