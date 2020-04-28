@@ -9,6 +9,8 @@ from threeML.bayesian.multinest_sampler import MultiNestSampler
 from threeML.bayesian.zeus_sampler import ZeusSampler
 from threeML.bayesian.emcee_sampler import EmceeSampler
 from threeML.bayesian.ultranest_sampler import UltraNestSampler
+from threeML.bayesian.dynesty_sampler import DynestyNestedSampler, DynestyDynamicSampler
+#from threeML.bayesian.pinnuts_sampler import NUTSSampler
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
 _available_samplers = {}
@@ -16,6 +18,9 @@ _available_samplers["multinest"] = MultiNestSampler
 _available_samplers["zeus"] = ZeusSampler
 _available_samplers["ultranest"] = UltraNestSampler
 _available_samplers["emcee"] = EmceeSampler
+_available_samplers["dynesty_nested"] = DynestyNestedSampler
+_available_samplers["dynesty_dynamic"] = DynestyDynamicSampler
+#_available_samplers["nuts"] = NUTSSampler
 
 
 class BayesianAnalysis(object):
