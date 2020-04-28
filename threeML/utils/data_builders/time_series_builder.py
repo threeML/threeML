@@ -23,6 +23,8 @@ from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum,
     BinnedSpectrumWithDispersion,
 )
+
+
 from threeML.utils.polarization.binned_polarization import BinnedModulationCurve
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
@@ -757,14 +759,28 @@ class TimeSeriesBuilder(object):
 
                         else:
 
-                            sl = DispersionSpectrumLike(
-                                name="%s%s%d" % (self._name, interval_name, i),
-                                observation=self._observed_spectrum,
-                                background=this_background_spectrum,
-                                verbose=self._verbose,
-                                tstart=self._tstart,
-                                tstop=self._tstop,
-                            )
+                            if not self._use_balrog:
+
+                                sl = DispersionSpectrumLike(
+                                    name="%s%s%d" % (self._name, interval_name, i),
+                                    observation=self._observed_spectrum,
+                                    background=this_background_spectrum,
+                                    verbose=self._verbose,
+                                    tstart=self._tstart,
+                                    tstop=self._tstop,
+                                )
+
+                            else:
+                                
+                                sl = gbm_drm_gen.BALROGLike(
+                                    name="%s%s%d" % (self._name, interval_name, i),
+                                    observation=self._observed_spectrum,
+                                    background=this_background_spectrum,
+                                    verbose=self._verbose,
+                                    time=0.5 * (self._tstart + self._tstop),
+                                    tstart=self._tstart,
+                                    tstop=self._tstop,
+                                )
 
                         list_of_speclikes.append(sl)
 
