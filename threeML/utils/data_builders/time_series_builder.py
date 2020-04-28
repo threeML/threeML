@@ -1,45 +1,33 @@
 import copy
+import re
 
 import astropy.io.fits as fits
 import numpy as np
-import re
-
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.io.progress_bar import progress_bar
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
-from threeML.plugins.SpectrumLike import SpectrumLike, NegativeBackground
+from threeML.plugins.SpectrumLike import NegativeBackground, SpectrumLike
+from threeML.utils.data_builders.fermi.gbm_data import GBMCdata, GBMTTEFile
+from threeML.utils.data_builders.fermi.lat_data import LLEFile
+from threeML.utils.histogram import Histogram
 from threeML.utils.OGIP.pha import PHAWrite
-from threeML.utils.OGIP.response import (
-    InstrumentResponse,
-    InstrumentResponseSet,
-    OGIPResponse,
-)
-
-
+from threeML.utils.OGIP.response import (InstrumentResponse,
+                                         InstrumentResponseSet, OGIPResponse)
+from threeML.utils.polarization.binned_polarization import \
+    BinnedModulationCurve
 from threeML.utils.spectrum.binned_spectrum import (
-    BinnedSpectrum,
-    BinnedSpectrumWithDispersion,
-)
-
-
-from threeML.utils.polarization.binned_polarization import BinnedModulationCurve
+    BinnedSpectrum, BinnedSpectrumWithDispersion)
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
-from threeML.utils.time_series.binned_spectrum_series import BinnedSpectrumSeries
+from threeML.utils.time_series.binned_spectrum_series import \
+    BinnedSpectrumSeries
 from threeML.utils.time_series.event_list import (
-    EventListWithDeadTime,
-    EventListWithLiveTime,
-    EventList,
-    EventListWithDeadTimeFraction,
-)
+    EventList, EventListWithDeadTime, EventListWithDeadTimeFraction,
+    EventListWithLiveTime)
 from threeML.utils.time_series.time_series import TimeSeries
-from threeML.utils.histogram import Histogram
-
-from threeML.utils.data_builders.fermi.gbm_data import GBMTTEFile, GBMCdata
-from threeML.utils.data_builders.fermi.lat_data import LLEFile
 
 try:
 
@@ -98,9 +86,11 @@ class TimeSeriesBuilder(object):
         :param restore_poly_fit: file from which to read a prefitted background
         """
 
-        assert isinstance(time_series, TimeSeries), "must be a TimeSeries instance"
+        assert isinstance(
+            time_series, TimeSeries), "must be a TimeSeries instance"
 
-        assert issubclass(container_type, Histogram), "must be a subclass of Histogram"
+        assert issubclass(
+            container_type, Histogram), "must be a subclass of Histogram"
 
         self._name = name
 
@@ -157,7 +147,8 @@ class TimeSeriesBuilder(object):
                 self._time_series.restore_fit(restore_poly_fit)
 
                 if verbose:
-                    print("Successfully restored fit from %s" % restore_poly_fit)
+                    print("Successfully restored fit from %s" %
+                          restore_poly_fit)
 
             else:
 
@@ -283,7 +274,8 @@ class TimeSeriesBuilder(object):
 
             unbinned = self._default_unbinned
 
-        self._time_series.set_polynomial_fit_interval(*intervals, unbinned=unbinned)
+        self._time_series.set_polynomial_fit_interval(
+            *intervals, unbinned=unbinned)
 
         # In theory this will automatically get the poly counts if a
         # time interval already exists
@@ -381,7 +373,6 @@ class TimeSeriesBuilder(object):
 
     def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False):
         # type: (float, float, float, bool) -> None
-
         """
         :param start:
         :param stop:
@@ -428,14 +419,17 @@ class TimeSeriesBuilder(object):
 
             for (start, stop) in self._time_series.bins.bin_stack:
 
-                total_counts = self._time_series.counts_over_interval(start, stop)
-                bkg_counts = self._time_series.get_total_poly_count(start, stop)
+                total_counts = self._time_series.counts_over_interval(
+                    start, stop)
+                bkg_counts = self._time_series.get_total_poly_count(
+                    start, stop)
                 bkg_error = self._time_series.get_total_poly_error(start, stop)
 
                 sig_calc = Significance(total_counts, bkg_counts)
 
                 sig_per_interval.append(
-                    sig_calc.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
+                    sig_calc.li_and_ma_equivalent_for_gaussian_background(bkg_error)[
+                        0]
                 )
 
             return np.array(sig_per_interval)
@@ -449,7 +443,8 @@ class TimeSeriesBuilder(object):
 
             for (start, stop) in self._time_series.bins.bin_stack:
 
-                total_counts.append(self._time_series.counts_over_interval(start, stop))
+                total_counts.append(
+                    self._time_series.counts_over_interval(start, stop))
 
             return np.array(total_counts)
 
@@ -461,7 +456,8 @@ class TimeSeriesBuilder(object):
             total_counts = []
 
             for (start, stop) in self._time_series.bins.bin_stack:
-                total_counts.append(self._time_series.get_total_poly_count(start, stop))
+                total_counts.append(
+                    self._time_series.get_total_poly_count(start, stop))
 
             return np.array(total_counts)
 
@@ -476,7 +472,8 @@ class TimeSeriesBuilder(object):
         """
 
         other_bins = time_series_builder.bins.bin_stack
-        self.create_time_bins(other_bins[:, 0], other_bins[:, 1], method="custom")
+        self.create_time_bins(
+            other_bins[:, 0], other_bins[:, 1], method="custom")
 
     def create_time_bins(self, start, stop, method="constant", **options):
         """
@@ -527,7 +524,8 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                raise RuntimeError("significance bins require a sigma argument")
+                raise RuntimeError(
+                    "significance bins require a sigma argument")
 
             if "min_counts" in options:
 
@@ -570,14 +568,16 @@ class TimeSeriesBuilder(object):
 
                 use_background = False
 
-            self._time_series.bin_by_bayesian_blocks(start, stop, p0, use_background)
+            self._time_series.bin_by_bayesian_blocks(
+                start, stop, p0, use_background)
 
         elif method == "custom":
 
             if type(start) is not list:
 
                 if type(start) is not np.ndarray:
-                    raise RuntimeError("start must be and array in custom mode")
+                    raise RuntimeError(
+                        "start must be and array in custom mode")
 
             if type(stop) is not list:
 
@@ -598,7 +598,8 @@ class TimeSeriesBuilder(object):
 
         if self._verbose:
 
-            print("Created %d bins via %s" % (len(self._time_series.bins), method))
+            print("Created %d bins via %s" %
+                  (len(self._time_series.bins), method))
 
     def to_spectrumlike(
         self,
@@ -717,7 +718,8 @@ class TimeSeriesBuilder(object):
             if stop is not None:
                 assert stop is not None, "must specify a start AND a stop time"
 
-                these_bins = these_bins.containing_interval(start, stop, inner=False)
+                these_bins = these_bins.containing_interval(
+                    start, stop, inner=False)
 
             # loop through the intervals and create spec likes
 
@@ -762,7 +764,8 @@ class TimeSeriesBuilder(object):
                             if not self._use_balrog:
 
                                 sl = DispersionSpectrumLike(
-                                    name="%s%s%d" % (self._name, interval_name, i),
+                                    name="%s%s%d" % (
+                                        self._name, interval_name, i),
                                     observation=self._observed_spectrum,
                                     background=this_background_spectrum,
                                     verbose=self._verbose,
@@ -771,9 +774,10 @@ class TimeSeriesBuilder(object):
                                 )
 
                             else:
-                                
+
                                 sl = gbm_drm_gen.BALROGLike(
-                                    name="%s%s%d" % (self._name, interval_name, i),
+                                    name="%s%s%d" % (
+                                        self._name, interval_name, i),
                                     observation=self._observed_spectrum,
                                     background=this_background_spectrum,
                                     verbose=self._verbose,
@@ -818,32 +822,33 @@ class TimeSeriesBuilder(object):
         unbinned=True,
         verbose=True,
         use_balrog=False,
-        trigdat=None,
-        poshist=None,
-        cspecfile=None,
+        trigdat_file=None,
+        poshist_file=None,
+        cspec_file=None,
     ):
         """
-           A plugin to natively bin, view, and handle Fermi GBM TTE data.
-           A TTE event file are required as well as the associated response
+        A plugin to natively bin, view, and handle Fermi GBM TTE data.
+        A TTE event file are required as well as the associated response
 
+        Background selections are specified as
+        a comma separated string e.g. "-10-0,10-20"
 
+        Initial source selection is input as a string e.g. "0-5"
 
-           Background selections are specified as
-           a comma separated string e.g. "-10-0,10-20"
+        One can choose a background polynomial order by hand (up to 4th order)
+        or leave it as the default polyorder=-1 to decide by LRT test
 
-           Initial source selection is input as a string e.g. "0-5"
-
-           One can choose a background polynomial order by hand (up to 4th order)
-           or leave it as the default polyorder=-1 to decide by LRT test
-
-           :param name: name for your choosing
-           :param tte_file: GBM tte event file
-           :param rsp_file: Associated TTE CSPEC response file
-           :param trigger_time: trigger time if needed
-           :param poly_order: 0-4 or -1 for auto
-           :param unbinned: unbinned likelihood fit (bool)
-           :param verbose: verbose (bool)
-
+        :param name: name for your choosing
+        :param tte_file: GBM tte event file
+        :param rsp_file: Associated TTE CSPEC response file
+        :param trigger_time: trigger time if needed
+        :param poly_order: 0-4 or -1 for auto
+        :param unbinned: unbinned likelihood fit (bool)
+        :param verbose: verbose (bool)
+        :param use_balrog:  (bool) if you have gbm_drm_gen installed, will build BALROGlike 
+        :param trigdat_file: the trigdat file to use for location 
+        :param poshist_file: the poshist file to use for location 
+        :param cspec_file: the cspec file to use for location 
 
 
                """
@@ -880,23 +885,23 @@ class TimeSeriesBuilder(object):
 
             assert cspecfile is not None, "must include a cspecfile"
 
-            if poshist is not None:
+            if poshist_file is not None:
 
                 drm_gen = gbm_drm_gen.DRMGenTTE(
                     tte_file,
-                    poshist=poshist,
-                    cspecfile=cspecfile,
+                    poshist=poshist_file,
+                    cspecfile=cspec_file,
                     T0=trigger_time,
                     mat_type=2,
                     occult=True,
                 )
 
-            elif trigdat is not None:
+            elif trigdat_file is not None:
 
                 drm_gen = gbm_drm_gen.DRMGenTTE(
                     tte_file,
                     trigdat=trigdat,
-                    cspecfile=cspecfile,
+                    cspecfile=cspec_file,
                     mat_type=2,
                     occult=True,
                 )
@@ -1094,7 +1099,6 @@ class TimeSeriesBuilder(object):
         unbinned=False,
         verbose=True,
     ):
-
         """
                A plugin to natively bin, view, and handle Fermi LAT LLE data.
                An LLE event file and FT2 (1 sec) are required as well as the associated response
@@ -1128,7 +1132,8 @@ class TimeSeriesBuilder(object):
 
         # Mark channels less than 50 MeV as bad
 
-        channel_30MeV = np.searchsorted(lat_lle_file.energy_edges[0], 30000.0) - 1
+        channel_30MeV = np.searchsorted(
+            lat_lle_file.energy_edges[0], 30000.0) - 1
 
         native_quality = np.zeros(lat_lle_file.n_channels, dtype=int)
 
@@ -1245,7 +1250,8 @@ class TimeSeriesBuilder(object):
 
         # extract the polar varaibles
 
-        polar_data = POLARData(polar_hdf5_file, polar_hdf5_response, trigger_time)
+        polar_data = POLARData(
+            polar_hdf5_file, polar_hdf5_response, trigger_time)
 
         # Create the the event list
 
@@ -1354,7 +1360,8 @@ class TimeSeriesBuilder(object):
             if stop is not None:
                 assert stop is not None, "must specify a start AND a stop time"
 
-                these_bins = these_bins.containing_interval(start, stop, inner=False)
+                these_bins = these_bins.containing_interval(
+                    start, stop, inner=False)
 
             # loop through the intervals and create spec likes
 
