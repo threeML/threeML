@@ -13,6 +13,17 @@ skip_if_ultranest_is_not_available = pytest.mark.skipif(
 )
 
 try:
+    import dynesty
+except:
+    has_dynesty = False
+else:
+    has_dynesty = True
+skip_if_dynesty_is_not_available = pytest.mark.skipif(
+    not has_dynesty, reason="No dynesty available"
+)
+
+
+try:
     import pymultinest
 except:
     has_pymultinest = False
@@ -129,6 +140,42 @@ def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
     check_results(res)
 
+
+@skip_if_dynesty_is_not_available
+def test_dynesty_nested(bayes_fitter, completed_bn090217206_bayesian_analysis):
+
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("dynesty_nested")
+
+    bayes.sampler.setup(n_live_points=100, n_effective=10)
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    check_results(res)
+
+
+
+
+@skip_if_dynesty_is_not_available
+def test_dynesty_dynamic(bayes_fitter, completed_bn090217206_bayesian_analysis):
+
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("dynesty_dynamic")
+
+    bayes.sampler.setup(nlive_init=100, maxbatch=2, n_effective=10)
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    check_results(res)
+
+
+    
 
 @skip_if_zeus_is_not_available
 def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):

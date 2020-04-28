@@ -6,6 +6,16 @@ Version 1.0
 -----------
 
 
+v1.0.9
+^^^^^^^^
+*Tue, 28 Apr 2020 01:31:32 + 0000*
+
+* Interface to `zeus` updated. Merged in pull request:
+  https://github.com/threeML/threeML/pull/360
+* Added `dynesty` sampler. Merged in pull request:
+  https://github.com/threeML/threeML/pull/361
+
+
 v1.0.8
 ^^^^^^^^
 *Sat, 25 Apr 2020 02:27:06 + 0000*
