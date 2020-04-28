@@ -18,6 +18,7 @@ from threeML.utils.OGIP.response import (
     OGIPResponse,
 )
 
+
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum,
     BinnedSpectrumWithDispersion,
@@ -50,6 +51,16 @@ except (ImportError):
 
     has_polarpy = False
 
+try:
+
+    import gbm_drm_gen
+
+    has_balrog = True
+
+except (ImportError):
+
+    has_balrog = False
+
 
 class BinningMethodError(RuntimeError):
     pass
@@ -66,6 +77,7 @@ class TimeSeriesBuilder(object):
         verbose=True,
         restore_poly_fit=None,
         container_type=BinnedSpectrumWithDispersion,
+        **kwargs
     ):
         """
         Class for handling generic time series data including binned and event list
@@ -150,6 +162,14 @@ class TimeSeriesBuilder(object):
                 custom_warnings.warn(
                     "Could not find saved background %s." % restore_poly_fit
                 )
+
+        if "use_balrog" in kwargs:
+
+            self._use_balrog = True
+
+        else:
+
+            self._use_balrog = False
 
     def _output(self):
 
@@ -393,11 +413,6 @@ class TimeSeriesBuilder(object):
 
     @property
     def time_series(self):
-        """                                                                                                                                                                                                                                                                   
-        returns the time_series                                                                                                                                                                                                                                               
-        :return: time_series                                                                                                                                                                                                                                                  
-        """
-
         return self._time_series
 
     @property
@@ -647,14 +662,28 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                return DispersionSpectrumLike(
-                    name=self._name,
-                    observation=self._observed_spectrum,
-                    background=this_background_spectrum,
-                    verbose=self._verbose,
-                    tstart=self._tstart,
-                    tstop=self._tstop,
-                )
+                if not self._use_balrog:
+
+                    return DispersionSpectrumLike(
+                        name=self._name,
+                        observation=self._observed_spectrum,
+                        background=this_background_spectrum,
+                        verbose=self._verbose,
+                        tstart=self._tstart,
+                        tstop=self._tstop,
+                    )
+
+                else:
+
+                    return gbm_drm_gen.BALROGLike(
+                        name=self._name,
+                        observation=self._observed_spectrum,
+                        background=this_background_spectrum,
+                        verbose=self._verbose,
+                        time=0.5 * (self._tstart + self._tstop),
+                        tstart=self._tstart,
+                        tstop=self._tstop,
+                    )
 
         else:
 
@@ -772,6 +801,10 @@ class TimeSeriesBuilder(object):
         poly_order=-1,
         unbinned=True,
         verbose=True,
+        use_balrog=False,
+        trigdat=None,
+        poshist=None,
+        cspecfile=None,
     ):
         """
            A plugin to natively bin, view, and handle Fermi GBM TTE data.
@@ -825,7 +858,40 @@ class TimeSeriesBuilder(object):
             verbose=verbose,
         )
 
-        if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
+        if use_balrog:
+
+            assert has_balrog, "you must install the gbm_drm_gen package to use balrog"
+
+            assert cspecfile is not None, "must include a cspecfile"
+
+            if poshist is not None:
+
+                drm_gen = gbm_drm_gen.DRMGenTTE(
+                    tte_file,
+                    poshist=poshist,
+                    cspecfile=cspecfile,
+                    T0=trigger_time,
+                    mat_type=2,
+                    occult=True,
+                )
+
+            elif trigdat is not None:
+
+                drm_gen = gbm_drm_gen.DRMGenTTE(
+                    tte_file,
+                    trigdat=trigdat,
+                    cspecfile=cspecfile,
+                    mat_type=2,
+                    occult=True,
+                )
+
+            else:
+
+                RuntimeError("No poshist or trigdat file supplied")
+
+            rsp = gbm_drm_gen.BALROG_DRM(drm_gen, 0, 0)
+
+        elif isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
 
             # we need to see if this is an RSP2
 
@@ -881,6 +947,7 @@ class TimeSeriesBuilder(object):
             verbose=verbose,
             restore_poly_fit=restore_background,
             container_type=BinnedSpectrumWithDispersion,
+            use_balrog=use_balrog,
         )
 
     @classmethod
