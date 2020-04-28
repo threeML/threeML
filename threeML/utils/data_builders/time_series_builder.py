@@ -158,7 +158,7 @@ class TimeSeriesBuilder(object):
 
         if "use_balrog" in kwargs:
 
-            self._use_balrog = True
+            self._use_balrog = kwargs["use_balrog"]
 
         else:
 
