@@ -44,7 +44,7 @@ def cmap_intervals(length=50, cmap="YlOrBr", start=None, stop=None):
     successive lines because successive colors are very similar.
     :param cmap: str name of a matplotlib colormap (see matplotlib.pyplot.cm)
     """
-    cm = getattr(plt.cm, cmap)
+    cm = plt.cm.get_cmap(cmap)
 
     # qualitative color maps
     if cmap in [
