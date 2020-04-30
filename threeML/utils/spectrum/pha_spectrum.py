@@ -1,6 +1,5 @@
 from __future__ import division
 from builtins import range
-from builtins import str
 from past.utils import old_div
 import collections
 
@@ -8,6 +7,7 @@ import astropy.io.fits as fits
 import numpy as np
 import os
 import warnings
+import six
 
 
 from threeML.io.progress_bar import progress_bar
@@ -73,11 +73,11 @@ def _read_pha_or_pha2_file(
     :return:
     """
 
-    assert isinstance(pha_file_or_instance, str) or isinstance(
+    assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
         pha_file_or_instance, PHAII
     ), "Must provide a FITS file name or PHAII instance"
 
-    if isinstance(pha_file_or_instance, str):
+    if isinstance(pha_file_or_instance, six.string_types):
 
         ext = os.path.splitext(pha_file_or_instance)[-1]
 
@@ -392,7 +392,7 @@ def _read_pha_or_pha2_file(
 
                 # Read in the response
 
-        if isinstance(rsp_file, str) or isinstance(rsp_file, str):
+        if isinstance(rsp_file, six.string_types) or isinstance(rsp_file, str):
             rsp = OGIPResponse(rsp_file, arf_file=arf_file)
 
         else:
@@ -727,7 +727,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         # extract the spectrum number if needed
 
-        assert isinstance(pha_file_or_instance, str) or isinstance(
+        assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
             pha_file_or_instance, PHAII
         ), "Must provide a FITS file name or PHAII instance"
 
@@ -994,7 +994,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
         # extract the spectrum number if needed
 
-        assert isinstance(pha_file_or_instance, str) or isinstance(
+        assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
             pha_file_or_instance, PHAII
         ), "Must provide a FITS file name or PHAII instance"
 
