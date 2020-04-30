@@ -2,6 +2,19 @@ Release Notes
 =============
 
 
+Version 1.1
+-----------
+
+
+v1.1.0
+^^^^^^^^
+*Thu, 30 Apr 2020 04:19:52 + 0000*
+
+* Added the ability to build BALROG. Merged in pull request:
+  https://github.com/threeML/threeML/pull/362
+* Fix for the `str`/`unicode` issue in python 2.
+
+
 Version 1.0
 -----------
 

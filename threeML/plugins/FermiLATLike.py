@@ -291,7 +291,7 @@ class FermiLATLike(PluginPrototype):
 
             self.lmc.setFileSpectrumEnergies(self.emin, self.emax, self.Nenergies)
 
-            xmlFile = "%s.xml" % get_random_unique_name()
+            xmlFile = str("%s.xml" % get_random_unique_name())
 
             temp_files = self.lmc.writeXml(xmlFile, self.ra, self.dec, self.rad)
 
