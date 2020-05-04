@@ -2,7 +2,7 @@ import os
 import time
 
 import numpy as np
-import pymultinest
+
 
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
