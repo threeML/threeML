@@ -22,7 +22,7 @@ elif  (( $TRAVIS_BUILD_NUMBER % 4 == 1 )); then
 # Testing with xspec and root
 elif  (( $TRAVIS_BUILD_NUMBER % 4 == 2 )); then
 
-    if (( $TRAVIS_PYTHON_VERSION == 2.7 )); then
+    if [[ $TRAVIS_PYTHON_VERSION == "2.7" ]]; then
 
         echo "Testing with xspec-modelsonly and root with python $TRAVIS_PYTHON_VERSION"
         bash install_3ML.sh --batch --with-xspec --with-root --python $TRAVIS_PYTHON_VERSION
@@ -38,7 +38,7 @@ elif  (( $TRAVIS_BUILD_NUMBER % 4 == 2 )); then
 # Testing with Fermi software
 else
 
-    if (( $TRAVIS_PYTHON_VERSION == 2.7 )); then
+    if [[ $TRAVIS_PYTHON_VERSION == "2.7" ]]; then
 
         echo "Testing with xspec-modelsonly and Fermi software with python $TRAVIS_PYTHON_VERSION"
         bash install_3ML.sh --batch --with-xspec --with-fermi --python $TRAVIS_PYTHON_VERSION
