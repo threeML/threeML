@@ -6,6 +6,14 @@ Version 1.1
 -----------
 
 
+v1.1.1
+^^^^^^^^
+*Mon, 11 May 2020 21:17:58 + 0000*
+
+* Added `dynesty >= 1` version dependency.
+* Fixed cmap, `multinest` import and install script bugs.
+
+
 v1.1.0
 ^^^^^^^^
 *Thu, 30 Apr 2020 04:19:52 + 0000*
