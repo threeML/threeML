@@ -2225,8 +2225,8 @@ class SpectrumLike(PluginPrototype):
 
                 # convert to rates, ugly, yes
 
-            background_counts /= self._background_exposure
-            background_errors /= self._background_exposure
+            background_rates = background_counts/ self._background_exposure
+            background_rate_errors = background_errors/ self._background_exposure
 
         # Gaussian observation
         else:
@@ -2234,8 +2234,8 @@ class SpectrumLike(PluginPrototype):
             if self._background_noise_model is None:
                 observed_counts = copy.copy(self._current_observed_counts)
 
-                background_counts = np.zeros(observed_counts.shape)
-                background_errors = np.zeros(observed_counts.shape)
+                background_rates = np.zeros(observed_counts.shape)
+                background_rate_errors = np.zeros(observed_counts.shape)
 
                 cnt_err = copy.copy(self._current_observed_count_errors)
 
@@ -2250,8 +2250,8 @@ class SpectrumLike(PluginPrototype):
 
         if scale_background:
 
-            background_counts *= self._area_ratio
-            background_errors *= self._area_ratio
+            background_rates *= self._area_ratio
+            background_rate_errors *= self._area_ratio
 
             background_label = "Scaled %sBackground" % modeled_label
 
@@ -2287,7 +2287,7 @@ class SpectrumLike(PluginPrototype):
                 ax,
                 energy_min,
                 energy_max,
-                background_counts,
+                background_rates,
                 color=threeML_config["ogip"]["background color"],
                 alpha=0.8,
                 label=background_label,
@@ -2315,8 +2315,8 @@ class SpectrumLike(PluginPrototype):
             if self._background_noise_model is not None:
                 ax.errorbar(
                     mean_chan,
-                    old_div(background_counts, energy_width),
-                    yerr=old_div(background_errors, energy_width),
+                    old_div(background_rates, energy_width),
+                    yerr=old_div(background_rate_errors, energy_width),
                     fmt="",
                     # markersize=3,
                     linestyle="",
