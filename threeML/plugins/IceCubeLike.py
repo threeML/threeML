@@ -50,7 +50,16 @@ class SpectrumConverter(object):
         c.__dict__.update(self.__dict__)
         return c
         
+class WeightClassicLLH(ClassicLLH):
 
+    def add_spectrum(self,spectrum):
+        self.__spectrum=spectrum
+        
+    def weight(self, ev, **params):
+        if self.__spectrum is not None:
+            return self.__spectrum(ev['logE']),None
+        else:
+            return np.ones(len(ev)),None
 
         
 
@@ -72,7 +81,7 @@ class IceCubeLike(PluginPrototype):
         self._sample=None
         
     def set_model(self, likelihood_model_instance):
-    r"""Setting up the model"""
+        r"""Setting up the model"""
         if likelihood_model_instance is None:
 
             return
@@ -91,7 +100,8 @@ class IceCubeLike(PluginPrototype):
             
             self._llh_instance=likelihood_model_instance
             self._spectrum=SpectrumConverter(likelihood_model_instance)
-            self._llh_model=ClassicLLH(spectrum=self._spectrum,sinDec_bins=self._sinDec_bins)
+            self._llh_model=WeightClassicLLH(sinDec_bins=self._sinDec_bins)
+            self._llh_model.add_spectrum(self._spectrum)
             self._ps_llh=PointSourceLLH(self._exp, self._mc, self._livetime,self._llh_model,self._parameter)
             self._ps_llh._select_events(np.array([self._ra]),np.array([self._dec]),np.array([1]),inject=self._sample)
         else:
