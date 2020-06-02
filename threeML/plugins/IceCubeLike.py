@@ -59,7 +59,7 @@ class WeightClassicLLH(ClassicLLH):
         r"""This part is wrong. The correct way is to multiply by the oneweight spline.
         """
         if self.__spectrum is not None:
-            return self.__spectrum(np.exp(ev['logE'])),None
+            return self.__spectrum(np.exp(ev['logE']))/np.exp(ev['logE'])**(-3.7),None
         else:
             return np.ones(len(ev)),None
 
