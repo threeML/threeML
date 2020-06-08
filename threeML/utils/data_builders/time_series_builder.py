@@ -309,6 +309,7 @@ class TimeSeriesBuilder(object):
         file_name,
         start=None,
         stop=None,
+            inner=True,
         overwrite=False,
         force_rsp_write=False,
         extract_measured_background=False,
@@ -335,6 +336,7 @@ class TimeSeriesBuilder(object):
                 from_bins=True,
                 start=start,
                 stop=stop,
+                inner=inner,
                 extract_measured_background=extract_measured_background,
             )
         ]
@@ -606,6 +608,7 @@ class TimeSeriesBuilder(object):
         from_bins=False,
         start=None,
         stop=None,
+        inner=True,
         interval_name="_interval",
         extract_measured_background=False,
     ):
@@ -719,7 +722,7 @@ class TimeSeriesBuilder(object):
                 assert stop is not None, "must specify a start AND a stop time"
 
                 these_bins = these_bins.containing_interval(
-                    start, stop, inner=False)
+                    start, stop, inner=inner)
 
             # loop through the intervals and create spec likes
 
