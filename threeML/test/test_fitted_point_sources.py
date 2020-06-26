@@ -50,8 +50,6 @@ def make_components_model():
     dec = -8.4
 
     powerlaw = Powerlaw() + Blackbody()
-    powerlaw.redshift_2 = 0
-    powerlaw.redshift_2.free = False
     GRB = PointSource(triggerName, ra, dec, spectral_shape=powerlaw)
     model = Model(GRB)
 

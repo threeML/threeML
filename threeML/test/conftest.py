@@ -163,14 +163,14 @@ def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_
     return bayes, samples
 
 
+2
 
 
 @pytest.fixture(scope="session")
 def joint_likelihood_bn090217206_nai_multicomp(data_list_bn090217206_nai6):
 
     composite = Powerlaw() + Blackbody()
-    composite.redshift_2 = 0
-    composite.redshift_2.free = False
+
     model = get_grb_model(composite)
 
     jl = JointLikelihood(model, data_list_bn090217206_nai6, verbose=False)
