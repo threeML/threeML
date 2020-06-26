@@ -22,10 +22,9 @@ def test_assigning_source_name():
 
     sim_K = 1e-1
     sim_kT = 20.0
-    sim_redshift = 0
 
     # get a blackbody source function
-    source_function = Blackbody(K=sim_K, kT=sim_kT, redshift=sim_redshift)
+    source_function = Blackbody(K=sim_K, kT=sim_kT)
 
     # power law background function
     background_function = Powerlaw(K=1, index=-1.5, piv=100.0)
@@ -41,8 +40,6 @@ def test_assigning_source_name():
     # good name setting
 
     bb = Blackbody()
-    bb.redshift = 0
-    bb.redshift.free = False
 
     pts = PointSource("good_name", 0, 0, spectral_shape=bb)
 
@@ -121,7 +118,6 @@ def test_assigning_source_name():
 
     model = Model(ps1, ps2)
 
-    model.ps1.spectrum.main.Blackbody.redshift.fix = True
     model.ps2.spectrum.main.Powerlaw.K.fix = True
     model.ps2.spectrum.main.Powerlaw.index.fix = True
 
@@ -144,10 +140,9 @@ def test_spectrumlike_fit():
 
     sim_K = 1e-1
     sim_kT = 20.0
-    sim_redshift = 0
 
     # get a blackbody source function
-    source_function = Blackbody(K=sim_K, kT=sim_kT, redshift=sim_redshift)
+    source_function = Blackbody(K=sim_K, kT=sim_kT)
 
     # power law background function
     background_function = Powerlaw(K=1, index=-1.5, piv=100.0)
@@ -161,8 +156,6 @@ def test_spectrumlike_fit():
     )
 
     bb = Blackbody()
-    bb.redshift = 0
-    bb.redshift.free = False
 
     pts = PointSource("mysource", 0, 0, spectral_shape=bb)
 
@@ -189,10 +182,9 @@ def test_dispersionspectrumlike_fit():
 
     sim_K = 1e-1
     sim_kT = 20.0
-    sim_redshift = 0
 
     # get a blackbody source function
-    source_function = Blackbody(K=sim_K, kT=sim_kT, redshift=sim_redshift)
+    source_function = Blackbody(K=sim_K, kT=sim_kT)
 
     # power law background function
     background_function = Powerlaw(K=1, index=-1.5, piv=100.0)
@@ -205,8 +197,6 @@ def test_dispersionspectrumlike_fit():
     )
 
     bb = Blackbody()
-    bb.redshift = 0
-    bb.redshift.free = False
 
     pts = PointSource("mysource", 0, 0, spectral_shape=bb)
 
@@ -235,10 +225,9 @@ def test_spectrum_like_with_background_model():
 
     sim_K = 1e-1
     sim_kT = 20.0
-    sim_redshift = 0
 
     # get a blackbody source function
-    source_function = Blackbody(K=sim_K, kT=sim_kT, redshift=sim_redshift)
+    source_function = Blackbody(K=sim_K, kT=sim_kT)
 
     # power law background function
     background_function = Powerlaw(K=5, index=-1.5, piv=100.0)
@@ -254,8 +243,6 @@ def test_spectrum_like_with_background_model():
     background_plugin = SpectrumLike.from_background("background", spectrum_generator)
 
     bb = Blackbody()
-    bb.redshift = 0
-    bb.redshift.free = False
 
     pl = Powerlaw()
     pl.piv = 100
