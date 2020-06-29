@@ -36,10 +36,9 @@ _hesse_status_translation = {
 }
 
 
-class FuncWrapper(ROOT.TPyMultiGenFunction):
-    def __init__(self, function, dimensions):
-
-        ROOT.TPyMultiGenFunction.__init__(self, self)
+class FuncWrapper(ROOT.Math.IMultiGenFunction):
+    
+    def setup(self, function, dimensions):
         self.function = function
         self.dimensions = int(dimensions)
 
@@ -47,10 +46,14 @@ class FuncWrapper(ROOT.TPyMultiGenFunction):
         return self.dimensions
 
     def DoEval(self, args):
-
         new_args = [args[i] for i in range(self.dimensions)]
-
         return self.function(*new_args)
+    
+    def Clone(self):
+        f = FuncWrapper()
+        f.setup(f.function, f.dimensions)
+        ROOT.SetOwnership(f, False)
+        return f
 
 
 class ROOTMinimizer(LocalMinimizer):
@@ -76,7 +79,8 @@ class ROOTMinimizer(LocalMinimizer):
 
         # Setup the minimizer algorithm
 
-        self.functor = FuncWrapper(self.function, self.Npar)
+        self.functor = FuncWrapper()
+        self.functor.setup(self.function, self.Npar)
         self.minimizer = ROOT.Minuit2.Minuit2Minimizer("Minimize")
         self.minimizer.Clear()
         self.minimizer.SetMaxFunctionCalls(setup_dict["max_function_calls"])
