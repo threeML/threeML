@@ -49,7 +49,7 @@ class Spectrum(object):
         
 
 class IceCubeLike(PluginPrototype):
-    def __init__(self, name, exp, mc, livetime,**kwargs):
+    def __init__(self, name, exp, mc, livetime, fit_position=False ,**kwargs):
         r"""Constructor of the class.
         exp is the data,mc is the monte carlo,livetime is the livetime of the data.
         The default sin dec bins is set but can be pass by sinDec_bins.
@@ -58,15 +58,18 @@ class IceCubeLike(PluginPrototype):
         nuisance_parameters = {}
         super(IceCubeLike, self).__init__(name, nuisance_parameters)
         self.parameter=kwargs
-        self.data=exp
-        self.mc=mc
-        self.livetime=livetime
+        self.data = exp
+        self.mc = mc
+        self.livetime = livetime
         self.llh_model = None
-        self.sample=None
-       
-       
+        self.sample = None
+        self.fit_position = fit_position
+        self.spectrum = PowerLaw(1,1e-15,2)
+        self.llh_model=LLH_point_source(ra=np.pi/2 , dec=np.pi/6 , data = self.data , sim =self.mc , livetime = 1 ,spectrum = self.spectrum , fit_position=False) 
+        self.dec = None
+        self.ra = None
         
-    def set_model(self, likelihood_model_instance):
+    def set_model(self, likelihood_model_instance ):
         r"""Setting up the model"""
         if likelihood_model_instance is None:
 
@@ -81,14 +84,20 @@ class IceCubeLike(PluginPrototype):
             ), "Current IceCubeLike does not support more than one point source"
             #extracting the point source location
             ra,dec=likelihood_model_instance.get_point_source_position(id=0)
-            self.ra=ra*np.pi/180 #convert it to radian
-            self.dec=dec*np.pi/180 #convert it to radian
+            ra = ra*np.pi/180 #convert it to radian
+            dec = dec*np.pi/180 #convert it to radian
+            if self.ra == ra and self.dec == dec :
+                pass
+            else:
+                self.ra = ra
+                self.dec = dec
+                self.llh_model.fit_position = self.fit_position
+                self.llh_model.update_position(ra,dec, sampling_width = np.radians(1))
+            
+            self.model=likelihood_model_instance
             self.source_name=likelihood_model_instance.get_point_source_name(id=0)
-            self.llh_instance=likelihood_model_instance
-            self.spectrum=Spectrum(likelihood_model_instance)
-            self.llh_model=LLH_point_source(self.ra , self.dec ,  self.data , self.mc , self.livetime , self.spectrum) 
-            if self.sample != None:
-                self.llh_model.add_injection(self.sample)
+            #self.spectrum=Spectrum(likelihood_model_instance)
+            #self.llh_model.update_spectrum(self.spectrum)
                 
 
         else:
@@ -100,12 +109,14 @@ class IceCubeLike(PluginPrototype):
         return
         
         
-    def update_model(self):            
-        self.spectrum=Spectrum(self.llh_instance)
+    def update_model(self):   
+        self.spectrum=Spectrum(self.model)
+        self.llh_model.update_spectrum(self.spectrum)    
+        #self.llh_model.update_energy_weight()
         return
     
     def add_injection(self,sample):
-        self.sample=sample
+        self.llh_model.add_injection(sample)
         return
     
     def get_log_like(self):
