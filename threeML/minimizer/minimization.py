@@ -241,6 +241,11 @@ class ProfileLikelihood(object):
                 len(self._fixed_parameters) == 1
             ), "You cannot step in 1d if you fix 2 parameters"
 
+            param_1_name = self._fixed_parameters[0]
+
+            # Fix steps if needed.
+            steps1 = self._transform_steps(param_1_name, steps1)
+
             return self._step1d(steps1)
 
     def __call__(self, values):
