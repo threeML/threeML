@@ -31,7 +31,7 @@ def internet_connection_is_active():
 
             print(ex.message)
 
-        #port 53 doesn't work on MacOS, try port 443.
+        #if port 53 doesn't work (eg on MacOS), try port 443.
         try:
         
             socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, 443))
