@@ -1,3 +1,5 @@
+from __future__ import division
+from past.utils import old_div
 import pytest
 from threeML.utils.interval import IntervalSet
 from threeML.utils.histogram import Histogram
@@ -11,9 +13,9 @@ __this_dir__ = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
-    assert truth !=0
+    assert truth != 0
 
-    if abs((truth - value) / truth) <= relative_tolerance:
+    if abs(old_div((truth - value), truth)) <= relative_tolerance:
 
         return True
 
@@ -21,11 +23,12 @@ def is_within_tolerance(truth, value, relative_tolerance=0.01):
 
         return False
 
+
 def test_hist_constructor():
 
     with within_directory(__this_dir__):
 
-        bins=[-3,-2,-1,0,1,2,3]
+        bins = [-3, -2, -1, 0, 1, 2, 3]
 
         bounds = IntervalSet.from_list_of_edges(bins)
 
@@ -35,7 +38,7 @@ def test_hist_constructor():
 
         assert hh1.is_poisson == True
 
-        assert len(hh1) == len(bins)-1
+        assert len(hh1) == len(bins) - 1
 
         hh1.display()
 
@@ -54,13 +57,12 @@ def test_hist_constructor():
 
         assert hh4.is_poisson == False
 
-
         with pytest.raises(AssertionError):
 
-            hh4 = Histogram(bounds, contents, errors=contents,is_poisson=True)
+            hh4 = Histogram(bounds, contents, errors=contents, is_poisson=True)
+
 
 def test_hist_addition():
-
 
     bins = [-3, -2, -1, 0, 1, 2, 3]
 
@@ -70,12 +72,11 @@ def test_hist_addition():
 
     hh1 = Histogram(bounds, contents, is_poisson=True)
 
-    hh2 = hh1+hh1
+    hh2 = hh1 + hh1
 
-    assert np.all(hh2.contents == 2*hh1.contents)
+    assert np.all(hh2.contents == 2 * hh1.contents)
 
-
-    hh3 =  Histogram(bounds, contents, errors=contents)
+    hh3 = Histogram(bounds, contents, errors=contents)
 
     hh4 = hh3 + hh3
 
@@ -83,25 +84,10 @@ def test_hist_addition():
 
         hh3 + hh1
 
-
     hh5 = Histogram(bounds, contents, errors=contents, sys_errors=contents)
 
-    hh6 = hh5 +hh5
+    hh6 = hh5 + hh5
 
     hh7 = hh5 + hh3
 
     hh8 = hh3 + hh5
-
-
-
-
-
-
-
-
-
-
-
-
-
-

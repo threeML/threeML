@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import zip
+from past.utils import old_div
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MaxNLocator
@@ -47,7 +50,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     if not data:
 
-        data_keys = analysis.data_list.keys()
+        data_keys = list(analysis.data_list.keys())
 
     else:
 
@@ -60,20 +63,25 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     for key in data_keys:
 
         # Make sure it is a valid key
-        if key in analysis.data_list.keys():
+        if key in list(analysis.data_list.keys()):
 
-            if isinstance(analysis.data_list[key], threeML.plugins.SpectrumLike.SpectrumLike):
+            if isinstance(
+                analysis.data_list[key], threeML.plugins.SpectrumLike.SpectrumLike
+            ):
 
                 new_data_keys.append(key)
 
             else:
 
-                custom_warnings.warn("Dataset %s is not of the SpectrumLike kind. Cannot be plotted by "
-                                     "display_spectrum_model_counts" % key)
+                custom_warnings.warn(
+                    "Dataset %s is not of the SpectrumLike kind. Cannot be plotted by "
+                    "display_spectrum_model_counts" % key
+                )
 
     if not new_data_keys:
         RuntimeError(
-            'There were no valid SpectrumLike data requested for plotting. Please use the detector names in the data list')
+            "There were no valid SpectrumLike data requested for plotting. Please use the detector names in the data list"
+        )
 
     data_keys = new_data_keys
 
@@ -82,8 +90,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     # Default is to show the model with steps
     step = True
 
-    data_cmap = threeML_config['ogip']['data plot cmap']  # plt.cm.rainbow
-    model_cmap = threeML_config['ogip']['model plot cmap']  # plt.cm.nipy_spectral_r
+    data_cmap = threeML_config["ogip"]["data plot cmap"]  # plt.cm.rainbow
+    model_cmap = threeML_config["ogip"]["model plot cmap"]  # plt.cm.nipy_spectral_r
 
     # Legend is on by default
     show_legend = True
@@ -95,34 +103,28 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     data_colors = cmap_intervals(len(data_keys), data_cmap)
     model_colors = cmap_intervals(len(data_keys), model_cmap)
 
-
-
-
     # Now override defaults according to the optional keywords, if present
 
+    if "show_data" in kwargs:
 
-
-    if 'show_data' in kwargs:
-
-        show_data = bool(kwargs.pop('show_data'))
+        show_data = bool(kwargs.pop("show_data"))
 
     else:
 
         show_data = True
 
+    if "show_legend" in kwargs:
+        show_legend = bool(kwargs.pop("show_legend"))
 
-    if 'show_legend' in kwargs:
-        show_legend = bool(kwargs.pop('show_legend'))
+    if "show_residuals" in kwargs:
+        show_residuals = bool(kwargs.pop("show_residuals"))
 
-    if 'show_residuals' in kwargs:
-        show_residuals= bool(kwargs.pop('show_residuals'))
+    if "step" in kwargs:
+        step = bool(kwargs.pop("step"))
 
-    if 'step' in kwargs:
-        step = bool(kwargs.pop('step'))
+    if "min_rate" in kwargs:
 
-    if 'min_rate' in kwargs:
-
-        min_rate = kwargs.pop('min_rate')
+        min_rate = kwargs.pop("min_rate")
 
         # If min_rate is a floating point, use the same for all datasets, otherwise use the provided ones
 
@@ -136,9 +138,10 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             min_rates = list(min_rate)
 
-            assert len(min_rates) >= len(
-                data_keys), "If you provide different minimum rates for each data set, you need" \
-                            "to provide an iterable of the same length of the number of datasets"
+            assert len(min_rates) >= len(data_keys), (
+                "If you provide different minimum rates for each data set, you need"
+                "to provide an iterable of the same length of the number of datasets"
+            )
 
     else:
 
@@ -146,91 +149,91 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         min_rates = [NO_REBIN] * len(data_keys)
 
-    if 'data_cmap' in kwargs:
-        data_cmap = plt.get_cmap(kwargs.pop('data_cmap'))
+    if "data_cmap" in kwargs:
+        data_cmap = plt.get_cmap(kwargs.pop("data_cmap"))
         data_colors = cmap_intervals(len(data_keys), data_cmap)
 
-    if 'model_cmap' in kwargs:
-        model_cmap = kwargs.pop('model_cmap')
+    if "model_cmap" in kwargs:
+        model_cmap = kwargs.pop("model_cmap")
         model_colors = cmap_intervals(len(data_keys), model_cmap)
 
-    if 'data_colors' in kwargs:
-        data_colors = kwargs.pop('data_colors')
+    if "data_colors" in kwargs:
+        data_colors = kwargs.pop("data_colors")
 
-        assert len(data_colors) >= len(data_keys), "You need to provide at least a number of data colors equal to the " \
-                                                   "number of datasets"
+        assert len(data_colors) >= len(data_keys), (
+            "You need to provide at least a number of data colors equal to the "
+            "number of datasets"
+        )
 
-    elif 'data_color' in kwargs:
+    elif "data_color" in kwargs:
 
-        data_colors = [kwargs.pop('data_color')] * len(data_keys)
+        data_colors = [kwargs.pop("data_color")] * len(data_keys)
 
+    if "model_colors" in kwargs:
+        model_colors = kwargs.pop("model_colors")
 
+        assert len(model_colors) >= len(data_keys), (
+            "You need to provide at least a number of model colors equal to the "
+            "number of datasets"
+        )
 
-    if 'model_colors' in kwargs:
-        model_colors = kwargs.pop('model_colors')
+    ratio_residuals = False
+    if "ratio_residuals" in kwargs:
+        ratio_residuals = bool(kwargs["ratio_residuals"])
 
-        assert len(model_colors) >= len(
-            data_keys), "You need to provide at least a number of model colors equal to the " \
-                        "number of datasets"
-    
-    ratio_residuals=False
-    if 'ratio_residuals' in kwargs:
-        ratio_residuals = bool(kwargs['ratio_residuals'])
+    elif "model_color" in kwargs:
 
-    elif 'model_color' in kwargs:
+        model_colors = [kwargs.pop("model_color")] * len(data_keys)
 
-        model_colors = [kwargs.pop('model_color')] * len(data_keys)
+    if "model_labels" in kwargs:
 
+        model_labels = kwargs.pop("model_labels")
 
-    if 'model_labels' in kwargs:
-
-
-        model_labels = kwargs.pop('model_labels')
-
-        assert len(model_labels) == len(data_keys), 'you must have the same number of model labels as data sets'
+        assert len(model_labels) == len(
+            data_keys
+        ), "you must have the same number of model labels as data sets"
 
     else:
 
-        model_labels = ['%s Model' % analysis.data_list[key]._name for key in data_keys]
+        model_labels = ["%s Model" % analysis.data_list[key]._name for key in data_keys]
 
-    #fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
+    # fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
 
     residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
     if show_residuals:
 
-        axes = [residual_plot.data_axis,residual_plot.residual_axis]
+        axes = [residual_plot.data_axis, residual_plot.residual_axis]
 
     else:
 
         axes = residual_plot.data_axis
 
-
     # go thru the detectors
-    for key, data_color, model_color, min_rate, model_label in zip(data_keys, data_colors, model_colors, min_rates, model_labels):
-
-
+    for key, data_color, model_color, min_rate, model_label in zip(
+        data_keys, data_colors, model_colors, min_rates, model_labels
+    ):
 
         # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
 
-        data = analysis.data_list[key] # type: threeML.plugins.SpectrumLike.SpectrumLike
+        data = analysis.data_list[
+            key
+        ]  # type: threeML.plugins.SpectrumLike.SpectrumLike
 
-        data.display_model(data_color=data_color,
-                           model_color=model_color,
-                           min_rate=min_rate,
-                           step=step,
-                           show_residuals=show_residuals,
-                           show_data=show_data,
-                           show_legend=show_legend,
-                           ratio_residuals=ratio_residuals,
-                           model_label=model_label,
-                           model_subplot=axes
-
-                           )
-
+        data.display_model(
+            data_color=data_color,
+            model_color=model_color,
+            min_rate=min_rate,
+            step=step,
+            show_residuals=show_residuals,
+            show_data=show_data,
+            show_legend=show_legend,
+            ratio_residuals=ratio_residuals,
+            model_label=model_label,
+            model_subplot=axes,
+        )
 
     return residual_plot.figure
-
 
 
 def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
@@ -261,7 +264,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
     if not data:
 
-        data_keys = analysis.data_list.keys()
+        data_keys = list(analysis.data_list.keys())
 
     else:
 
@@ -274,28 +277,33 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     for key in data_keys:
 
         # Make sure it is a valid key
-        if key in analysis.data_list.keys():
+        if key in list(analysis.data_list.keys()):
 
-            if isinstance(analysis.data_list[key], threeML.plugins.PhotometryLike.PhotometryLike):
+            if isinstance(
+                analysis.data_list[key], threeML.plugins.PhotometryLike.PhotometryLike
+            ):
 
                 new_data_keys.append(key)
 
             else:
 
-                custom_warnings.warn("Dataset %s is not of the Photometery kind. Cannot be plotted by "
-                                     "display_photometry_model_magnitudes" % key)
+                custom_warnings.warn(
+                    "Dataset %s is not of the Photometery kind. Cannot be plotted by "
+                    "display_photometry_model_magnitudes" % key
+                )
 
     if not new_data_keys:
         RuntimeError(
-            'There were no valid Photometry data requested for plotting. Please use the detector names in the data list')
+            "There were no valid Photometry data requested for plotting. Please use the detector names in the data list"
+        )
 
     data_keys = new_data_keys
 
     # Default is to show the model with steps
     step = True
 
-    data_cmap = threeML_config['photo']['data plot cmap']  # plt.cm.rainbow
-    model_cmap = threeML_config['photo']['model plot cmap']  # plt.cm.nipy_spectral_r
+    data_cmap = threeML_config["photo"]["data plot cmap"]  # plt.cm.rainbow
+    model_cmap = threeML_config["photo"]["model plot cmap"]  # plt.cm.nipy_spectral_r
 
     # Legend is on by default
     show_legend = True
@@ -307,49 +315,50 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
     # Now override defaults according to the optional keywords, if present
 
-    if 'show_legend' in kwargs:
-        show_legend = bool(kwargs.pop('show_legend'))
+    if "show_legend" in kwargs:
+        show_legend = bool(kwargs.pop("show_legend"))
 
-    if 'step' in kwargs:
-        step = bool(kwargs.pop('step'))
+    if "step" in kwargs:
+        step = bool(kwargs.pop("step"))
 
-
-
-    if 'data_cmap' in kwargs:
-        data_cmap = plt.get_cmap(kwargs.pop('data_cmap'))
+    if "data_cmap" in kwargs:
+        data_cmap = plt.get_cmap(kwargs.pop("data_cmap"))
         data_colors = cmap_intervals(len(data_keys), data_cmap)
 
-    if 'model_cmap' in kwargs:
-        model_cmap = kwargs.pop('model_cmap')
+    if "model_cmap" in kwargs:
+        model_cmap = kwargs.pop("model_cmap")
         model_colors = cmap_intervals(len(data_keys), model_cmap)
 
-    if 'data_colors' in kwargs:
-        data_colors = kwargs.pop('data_colors')
+    if "data_colors" in kwargs:
+        data_colors = kwargs.pop("data_colors")
 
-        assert len(data_colors) >= len(data_keys), "You need to provide at least a number of data colors equal to the " \
-                                                   "number of datasets"
+        assert len(data_colors) >= len(data_keys), (
+            "You need to provide at least a number of data colors equal to the "
+            "number of datasets"
+        )
 
-    if 'model_colors' in kwargs:
-        model_colors = kwargs.pop('model_colors')
+    if "model_colors" in kwargs:
+        model_colors = kwargs.pop("model_colors")
 
-        assert len(model_colors) >= len(
-            data_keys), "You need to provide at least a number of model colors equal to the " \
-                        "number of datasets"
+        assert len(model_colors) >= len(data_keys), (
+            "You need to provide at least a number of model colors equal to the "
+            "number of datasets"
+        )
 
     residual_plot = ResidualPlot(**kwargs)
-
 
     # go thru the detectors
     for key, data_color, model_color in zip(data_keys, data_colors, model_colors):
 
-
-        data = analysis.data_list[key]  # type: threeML.plugins.PhotometryLike.PhotometryLike
-
+        data = analysis.data_list[
+            key
+        ]  # type: threeML.plugins.PhotometryLike.PhotometryLike
 
         # get the expected counts
 
-
-        avg_wave_length = data._filter_set.effective_wavelength.value #type: np.ndarray
+        avg_wave_length = (
+            data._filter_set.effective_wavelength.value
+        )  # type: np.ndarray
 
         # need to sort because filters are not always in order
 
@@ -357,37 +366,37 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
         expected_model_magnitudes = data._get_total_expectation()[sort_idx]
         magnitudes = data.magnitudes[sort_idx]
-        mag_errors= data.magnitude_errors[sort_idx]
+        mag_errors = data.magnitude_errors[sort_idx]
         avg_wave_length = avg_wave_length[sort_idx]
 
-        residuals = (expected_model_magnitudes - magnitudes) / mag_errors
+        residuals = old_div((expected_model_magnitudes - magnitudes), mag_errors)
 
         widths = data._filter_set.wavelength_bounds.widths[sort_idx]
 
+        residual_plot.add_data(
+            x=avg_wave_length,
+            y=magnitudes,
+            xerr=widths,
+            yerr=mag_errors,
+            residuals=residuals,
+            label=data._name,
+            color=data_color,
+        )
 
-        residual_plot.add_data(x=avg_wave_length,
-                               y=magnitudes,
-                               xerr=widths,
-                               yerr=mag_errors,
-                               residuals=residuals,
-                               label=data._name,
-                               color=data_color)
+        residual_plot.add_model(
+            avg_wave_length,
+            expected_model_magnitudes,
+            label="%s Model" % data._name,
+            color=model_color,
+        )
 
-        residual_plot.add_model(avg_wave_length,
-                                expected_model_magnitudes,
-                                label='%s Model' % data._name,
-                                color=model_color)
-
-
-
-        return residual_plot.finalize(xlabel="Wavelength\n(%s)"%data._filter_set.waveunits,
-                                      ylabel='Magnitudes',
-                                      xscale='linear',
-                                      yscale='linear',
-                                      invert_y=True)
-
-
-
+        return residual_plot.finalize(
+            xlabel="Wavelength\n(%s)" % data._filter_set.waveunits,
+            ylabel="Magnitudes",
+            xscale="linear",
+            yscale="linear",
+            invert_y=True,
+        )
 
 
 # def display_histogram_fit(analysis, data=(), **kwargs):
@@ -624,5 +633,3 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 #     return fig
 #
 #
-
-

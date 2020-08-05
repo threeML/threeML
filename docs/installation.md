@@ -1,4 +1,6 @@
 # Installation
+3ML brings together multiple instrument and fitting software packages into a common framework. Thus, installing all the pieces can be a bit of a task for the user. In order to make this a less painless process, we have packaged most of the external dependencies into conda (see below). However, if you want more control over your install, 3ML is available on PyPI via pip. If you have issues with the installs, first check that you have properly installed all the external dependencies that *you* plan on using. Are their libraries accessible on you system's standard paths? If you think that you have everything setup properly and the install does not work for you, please [submit an issue](https://github.com/threeML/threeML/issues) and we will do our best to find a solution.
+
 
 ## Conda installation (suggested)
 
@@ -9,27 +11,52 @@ to compile anything, and in a completely separate environment from your system a
 
 If you are not familiar with conda, install 3ML with the automatic script which will take care of everything:
 
-1. Download the script from [here](https://raw.githubusercontent.com/giacomov/3ML/master/install_3ML.sh)
-2. Run the script with `bash install_3ML.sh`
+1. Download the script from [here](https://raw.githubusercontent.com/threeML/threeML/master/install_3ML.sh)
+2. Run the script with `bash install_3ML.sh`. If you plan to use XSPEC models use `bash install_3ML.sh --with-xspec`.
 3. The script will install 3ML and then create a `threeML_init.sh` script and a `threeML_init.csh` script. Source the former if you are using Bash
 (`source threeML_init.sh`) and the second one if you are using Csh/Tcsh (`source threeML_init.csh`).
 
 ### If you already know Conda 
 
-If you are familiar with Conda and you already have it installed, you can install threeML by creating an environment with:
+If you are familiar with Conda and you already have it installed, you can install 3ML by creating an environment with:
 
 ```bash
-conda create --name threeML -c conda-forge python=2.7 numpy scipy matplotlib
+conda create --name threeML -c conda-forge python=3.7 numpy scipy matplotlib
 ```
 
 then activating your environment and installing 3ML as:
 
 ```bash
-source activate threeML
-conda install -c conda-forge -c threeml threeml
+conda activate threeML
+conda install -c conda-forge -c threeml astromodels threeml
 ```
 
-### Other dependencies
+Finally, if you also need XSPEC models you can install them by running:
+```bash
+conda install -c xspecmodels xspec-modelsonly
+```
+
+## pip
+
+If you would like to install 3ML and astromodels on their own and have more control over which dependencies you would like to use. Please to the following
+
+1. It is highly recommended you work within a python virtual environment to keep you base python clean
+2. install astromodels
+
+```bash
+pip install astromodels
+```
+
+3. Install 3ML
+
+```bash
+pip install threeml
+```
+
+If you need to build other dependencies such as pagmo, multinest, XSPEC, etc., it is recommended you do this **before** installing astromodels!
+
+
+## Other dependencies
 
 You need to set up packages such as AERIE (for HAWC), or the Fermi Science Tools, 
 before running the script, otherwise some of the functionalities will not work.

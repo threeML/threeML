@@ -23,7 +23,10 @@ class DataList(object):
 
             if d.name in self._inner_dictionary.keys():
 
-                raise RuntimeError("You have to use unique names for data sets. %s already exists." % (d.name))
+                raise RuntimeError(
+                    "You have to use unique names for data sets. %s already exists."
+                    % (d.name)
+                )
 
             else:
 
@@ -34,7 +37,9 @@ class DataList(object):
         # Enforce the unique name
         if dataset.name in self.keys():
 
-            raise RuntimeError("You have to use unique names for data sets. %s already exists." % key)
+            raise RuntimeError(
+                "You have to use unique names for data sets. %s already exists." % key
+            )
 
         else:
 
@@ -51,4 +56,3 @@ class DataList(object):
     def values(self):
 
         return self._inner_dictionary.values()
-

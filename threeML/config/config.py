@@ -1,42 +1,65 @@
+from __future__ import print_function
+from future import standard_library
+
+standard_library.install_aliases()
+from builtins import object
 import os
 import shutil
 import re
 import pkg_resources
 import yaml
-import urlparse
+import urllib.parse
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 
-from threeML.exceptions.custom_exceptions import custom_warnings, ConfigurationFileCorrupt
+from threeML.exceptions.custom_exceptions import (
+    custom_warnings,
+    ConfigurationFileCorrupt,
+)
 from threeML.io.package_data import get_path_of_data_file, get_path_of_user_dir
 
-_config_file_name = 'threeML_config.yml'
+_config_file_name = "threeML_config.yml"
 
 # Scipy optimizers
 # adds the ability for safe load to import dictionaries
-_optimize_methods = ('Nelder-Mead',"Powell","CG","BFGS","Newton-CG","L-BFGS-B","TNC","COBYLA","SLSQP","dogleg","trust-ncg")
+_optimize_methods = (
+    "Nelder-Mead",
+    "Powell",
+    "CG",
+    "BFGS",
+    "Newton-CG",
+    "L-BFGS-B",
+    "TNC",
+    "COBYLA",
+    "SLSQP",
+    "dogleg",
+    "trust-ncg",
+)
 
 
 class Config(object):
-
     def __init__(self):
 
         # Read first the default configuration file
         default_configuration_path = get_path_of_data_file(_config_file_name)
 
-        assert os.path.exists(default_configuration_path), \
-            "Default configuration %s does not exist. Re-install 3ML" % default_configuration_path
+        assert os.path.exists(default_configuration_path), (
+            "Default configuration %s does not exist. Re-install 3ML"
+            % default_configuration_path
+        )
 
         with open(default_configuration_path) as f:
 
             try:
 
-                configuration = yaml.safe_load(f)
+                configuration = yaml.load(f)
 
             except:
 
-                raise ConfigurationFileCorrupt("Default configuration file %s cannot be parsed!" %
-                                               (default_configuration_path))
+                raise ConfigurationFileCorrupt(
+                    "Default configuration file %s cannot be parsed!"
+                    % (default_configuration_path)
+                )
 
             # This needs to be here for the _check_configuration to work
 
@@ -64,23 +87,27 @@ class Config(object):
 
             with open(user_config_path) as f:
 
-                configuration = yaml.safe_load(f)
+                configuration = yaml.load(f)
 
                 # Test if the local/configuration is ok
 
                 try:
 
-                    self._configuration = self._check_configuration(configuration, user_config_path)
+                    self._configuration = self._check_configuration(
+                        configuration, user_config_path
+                    )
 
                 except ConfigurationFileCorrupt:
 
                     # Probably an old configuration file
-                    custom_warnings.warn("The user configuration file at %s does not appear to be valid. We will "
-                                         "substitute it with the default configuration. You will find a copy of the "
-                                         "old configuration at %s so you can transfer any customization you might "
-                                         "have from there to the new configuration file. We will use the default "
-                                         "configuration for this session."
-                                         %(user_config_path, "%s.bak" % user_config_path))
+                    custom_warnings.warn(
+                        "The user configuration file at %s does not appear to be valid. We will "
+                        "substitute it with the default configuration. You will find a copy of the "
+                        "old configuration at %s so you can transfer any customization you might "
+                        "have from there to the new configuration file. We will use the default "
+                        "configuration for this session."
+                        % (user_config_path, "%s.bak" % user_config_path)
+                    )
 
                     # Move the config file to a backup file
                     shutil.copy2(user_config_path, "%s.bak" % user_config_path)
@@ -91,7 +118,9 @@ class Config(object):
                     # Copy the default configuration
                     shutil.copy2(self._default_path, user_config_path)
 
-                    self._configuration = self._check_configuration(self._default_configuration_raw, self._default_path)
+                    self._configuration = self._check_configuration(
+                        self._default_configuration_raw, self._default_path
+                    )
                     self._filename = self._default_path
 
                 else:
@@ -102,22 +131,28 @@ class Config(object):
 
         else:
 
-            custom_warnings.warn("Using default configuration from %s. "
-                                 "You might want to copy it to %s to customize it and avoid this warning."
-                                 % (self._default_path, user_config_path))
+            custom_warnings.warn(
+                "Using default configuration from %s. "
+                "You might want to copy it to %s to customize it and avoid this warning."
+                % (self._default_path, user_config_path)
+            )
 
-            self._configuration = self._check_configuration(self._default_configuration_raw, self._default_path)
+            self._configuration = self._check_configuration(
+                self._default_configuration_raw, self._default_path
+            )
             self._filename = self._default_path
 
     def __getitem__(self, key):
 
-        if key in self._configuration.keys():
+        if key in list(self._configuration.keys()):
 
             return self._configuration[key]
 
         else:
 
-            raise ValueError("Configuration key %s does not exist in %s." % (key, self._filename))
+            raise ValueError(
+                "Configuration key %s does not exist in %s." % (key, self._filename)
+            )
 
     def __repr__(self):
 
@@ -132,7 +167,6 @@ class Config(object):
 
             return True
 
-
         except:
 
             return False
@@ -145,7 +179,7 @@ class Config(object):
 
             return colors.is_color_like(color)
 
-        except(ValueError):
+        except (ValueError):
 
             return False
 
@@ -163,7 +197,7 @@ class Config(object):
 
         try:
 
-            tokens = urlparse.urlparse(var)
+            tokens = urllib.parse.urlparse(var)
 
         except:
 
@@ -172,7 +206,7 @@ class Config(object):
 
         else:
 
-            if tokens.scheme != 'ftp' or tokens.netloc == '':
+            if tokens.scheme != "ftp" or tokens.netloc == "":
 
                 return False
 
@@ -185,7 +219,7 @@ class Config(object):
 
         try:
 
-            tokens = urlparse.urlparse(var)
+            tokens = urllib.parse.urlparse(var)
 
         except:
 
@@ -194,7 +228,9 @@ class Config(object):
 
         else:
 
-            if (tokens.scheme != 'http' and tokens.scheme != 'https') or tokens.netloc == '':
+            if (
+                tokens.scheme != "http" and tokens.scheme != "https"
+            ) or tokens.netloc == "":
 
                 return False
 
@@ -275,29 +311,41 @@ class Config(object):
         # First check that the provided configuration has the same structure of the default configuration
         # (if a default configuration has been loaded)
 
-        if (self._default_configuration_raw is not None) and \
-                (not self._check_same_structure(config_dict, self._default_configuration_raw)):
+        if (self._default_configuration_raw is not None) and (
+            not self._check_same_structure(config_dict, self._default_configuration_raw)
+        ):
 
             # It does not, so of course is not valid (no need to check further)
 
-            raise ConfigurationFileCorrupt("Config file %s has a different structure than the expected "
-                                           "one." % config_path)
+            raise ConfigurationFileCorrupt(
+                "Config file %s has a different structure than the expected "
+                "one." % config_path
+            )
 
         else:
 
             # Make a dictionary of known checkers and what they apply to
-            known_checkers = {'color'    : (self.is_matplotlib_color, 'a matplotlib color (name or html hex value)'),
-                              'cmap'     : (self.is_matplotlib_cmap, 'a matplotlib color map (available: %s)' %
-                                       ", ".join(plt.colormaps())),
-                              'name'     : (self.is_string, "a valid name (string)"),
-                              'switch'   : (self.is_bool, "one of yes, no, True, False"),
-                              'ftp url'  : (self.is_ftp_url, "a valid FTP URL"),
-                              'http url' : (self.is_http_url, "a valid HTTP(S) URL"),
-
-                              'optimizer': (self.is_optimizer, "one of scipy.optimize minimization methods (available: %s)"
-                                            %", ".join(_optimize_methods)),
-                              'number'   : (self.is_number, "an int or float"),
-                              }
+            known_checkers = {
+                "color": (
+                    self.is_matplotlib_color,
+                    "a matplotlib color (name or html hex value)",
+                ),
+                "cmap": (
+                    self.is_matplotlib_cmap,
+                    "a matplotlib color map (available: %s)"
+                    % ", ".join(plt.colormaps()),
+                ),
+                "name": (self.is_string, "a valid name (string)"),
+                "switch": (self.is_bool, "one of yes, no, True, False"),
+                "ftp url": (self.is_ftp_url, "a valid FTP URL"),
+                "http url": (self.is_http_url, "a valid HTTP(S) URL"),
+                "optimizer": (
+                    self.is_optimizer,
+                    "one of scipy.optimize minimization methods (available: %s)"
+                    % ", ".join(_optimize_methods),
+                ),
+                "number": (self.is_number, "an int or float"),
+            }
 
             # Now that we know that the provided configuration have the right structure, let's check that
             # each value is of the proper type
@@ -312,8 +360,10 @@ class Config(object):
 
                 except IndexError:
 
-                    raise ConfigurationFileCorrupt("Cannot parse element '%s' in configuration file %s" %(key,
-                                                                                                          config_path))
+                    raise ConfigurationFileCorrupt(
+                        "Cannot parse element '%s' in configuration file %s"
+                        % (key, config_path)
+                    )
 
                 if element_type in known_checkers:
 
@@ -321,13 +371,17 @@ class Config(object):
 
                     if not checker(value):
 
-                        raise ValueError("Value %s for key %s in file %s is not %s" % (value, element_name,
-                                                                                       config_path, descr))
+                        raise ValueError(
+                            "Value %s for key %s in file %s is not %s"
+                            % (value, element_name, config_path, descr)
+                        )
 
                 else:
 
-                    raise ConfigurationFileCorrupt("Cannot understand element type %s for "
-                                       "key %s in config file %s" % (element_type, key, config_path))
+                    raise ConfigurationFileCorrupt(
+                        "Cannot understand element type %s for "
+                        "key %s in config file %s" % (element_type, key, config_path)
+                    )
 
             # If we are here it means that all checks were successful
             # Return the new configuration, where all types are stripped out
@@ -336,7 +390,9 @@ class Config(object):
     @staticmethod
     def _remove_type(d):
 
-        return dict(map(lambda (key, value): (key.split("(")[0].rstrip(), value), d.items()))
+        # tmp = [ (key.split("(")[0].rstrip(), value) for key, value in d.items()]
+
+        return dict((key.split("(")[0].rstrip(), value) for key, value in d.items())
 
     def _get_copy_with_no_types(self, multilevelDict):
 
@@ -352,12 +408,11 @@ class Config(object):
 
                 # Sometimes the user uses 'None' instead of None, which becomes the string
                 # 'None' instead of the object None. Let's fix transparently this
-                if new[key] == 'None':
+                if new[key] == "None":
 
                     new[key] = None
 
         return new
-
 
 
 # Now read the config file, so it will be available as Config.c

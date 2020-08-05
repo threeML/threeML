@@ -9,4 +9,9 @@ def get_unique_deterministic_tag(string):
     :return: a hex unique digest
     """
 
-    return hashlib.md5(string).hexdigest()
+    try:
+        return hashlib.md5(string.encode("utf-8")).hexdigest()
+
+    except:
+
+        return hashlib.md5(string).hexdigest()

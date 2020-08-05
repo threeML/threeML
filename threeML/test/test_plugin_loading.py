@@ -1,9 +1,9 @@
-__author__ = 'drjfunk'
+__author__ = "drjfunk"
 
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SwiftXRTLike import SwiftXRTLike
 import os
-from conftest import get_test_datasets_directory
+from .conftest import get_test_datasets_directory
 from threeML.io.file_utils import within_directory
 
 #
@@ -17,15 +17,18 @@ def test_loading_ogip():
 
     with within_directory(datasets_dir):
 
-        _ = OGIPLike('test_ogip', observation='test.pha{1}')
+        _ = OGIPLike("test_ogip", observation="test.pha{1}")
 
 
 def test_loading_xrt():
 
     with within_directory(datasets_dir):
 
-        xrt_dir = 'xrt'
-        xrt = SwiftXRTLike("XRT", observation=os.path.join(xrt_dir, "xrt_src.pha"),
-                           background=os.path.join(xrt_dir, "xrt_bkg.pha"),
-                           response=os.path.join(xrt_dir, "xrt.rmf"),
-                           arf_file=os.path.join(xrt_dir, "xrt.arf"))
+        xrt_dir = "xrt"
+        xrt = SwiftXRTLike(
+            "XRT",
+            observation=os.path.join(xrt_dir, "xrt_src.pha"),
+            background=os.path.join(xrt_dir, "xrt_bkg.pha"),
+            response=os.path.join(xrt_dir, "xrt.rmf"),
+            arf_file=os.path.join(xrt_dir, "xrt.arf"),
+        )

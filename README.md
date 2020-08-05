@@ -1,7 +1,17 @@
-[![Build Status](https://travis-ci.org/giacomov/3ML.svg?branch=master)](https://travis-ci.org/giacomov/3ML)
-[![codecov](https://codecov.io/gh/giacomov/3ML/branch/master/graph/badge.svg)](https://codecov.io/gh/giacomov/3ML)
+[![Build Status](https://travis-ci.org/threeML/threeML.svg?branch=master)](https://travis-ci.org/threeML/threeML)
+[![codecov](https://codecov.io/gh/threeML/threeML/branch/master/graph/badge.svg)](https://codecov.io/gh/threeML/threeML)
 [![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
+## PyPi
+
+[![PyPI version fury.io](https://badge.fury.io/py/threeML.svg)](https://pypi.python.org/pypi/threeML/)
+![PyPI - Downloads](https://img.shields.io/pypi/dw/threeml)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/threeml)
+## Conda
+
+![Conda](https://img.shields.io/conda/pn/threeml/threeml)
+![Conda](https://img.shields.io/conda/dn/threeml/threeml)
 # The Multi-Mission Maximum Likelihood framework (3ML)
 
 A framework for multi-wavelength/multi-messenger analysis for astronomy/astrophysics.
@@ -9,6 +19,12 @@ A framework for multi-wavelength/multi-messenger analysis for astronomy/astrophy
 # Installation
 
 Please refer to the [Installation instructions](https://threeml.readthedocs.io/en/latest/installation.html).
+
+# Citing 
+If you find this package useful in you analysis, or the code in your own custom data tools, please cite:
+
+[Vianello et al. (2015)](https://arxiv.org/abs/1507.08343)
+
 
 
 # Acknowledgements 

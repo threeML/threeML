@@ -1,5 +1,9 @@
+from __future__ import division
+from __future__ import print_function
+
 # NOTE: XSpec must be loaded before any other plugin/package from threeML because otherwise it could
 # complain about conflicting CFITSIO libraries
+from past.utils import old_div
 import os
 
 if os.environ.get("HEADAS") is not None:
@@ -31,8 +35,9 @@ from threeML.io.package_data import get_path_of_data_file
 from threeML.utils.OGIP.response import InstrumentResponse, OGIPResponse
 
 
-skip_if_pyxspec_is_not_available = pytest.mark.skipif(not has_pyxspec,
-                                                       reason="No pyXspec installed")
+skip_if_pyxspec_is_not_available = pytest.mark.skipif(
+    not has_pyxspec, reason="No pyXspec installed"
+)
 
 
 def get_matrix_elements():
@@ -51,7 +56,6 @@ def get_matrix_elements():
     ebounds = [1.0, 2.5, 4.5, 5.0]
 
     return matrix, mc_energies, ebounds
-
 
 
 @skip_if_pyxspec_is_not_available
@@ -91,7 +95,7 @@ def test_OGIP_response_against_xspec():
         powerlaw_integral.K._transformation = None
         powerlaw_integral.K.bounds = (None, None)
         powerlaw_integral.index = powerlaw.index.value + 1
-        powerlaw_integral.K = powerlaw.K.value / (powerlaw.index.value + 1)
+        powerlaw_integral.K = old_div(powerlaw.K.value, (powerlaw.index.value + 1))
 
         powerlaw_integral.display()
 
@@ -104,7 +108,9 @@ def test_OGIP_response_against_xspec():
         # Get path of response file
         rsp_file = get_path_of_data_file("ogip_test_gbm_n6.rsp")
 
-        fs1 = xspec.FakeitSettings(rsp_file, exposure=1.0, fileName="_fake_spectrum.pha")
+        fs1 = xspec.FakeitSettings(
+            rsp_file, exposure=1.0, fileName="_fake_spectrum.pha"
+        )
 
         xspec.AllData.fakeit(noWrite=True, applyStats=False, settings=fs1)
 
@@ -132,7 +138,9 @@ def test_OGIP_response_against_xspec():
 
         arf_file = get_path_of_data_file("ogip_test_xmm_pn.arf")
 
-        fs1 = xspec.FakeitSettings(rsp_file, arf_file, exposure=1.0, fileName="_fake_spectrum.pha")
+        fs1 = xspec.FakeitSettings(
+            rsp_file, arf_file, exposure=1.0, fileName="_fake_spectrum.pha"
+        )
 
         xspec.AllData.fakeit(noWrite=True, applyStats=False, settings=fs1)
 
@@ -201,7 +209,7 @@ def test_response_against_xspec():
         powerlaw_integral.K._transformation = None
         powerlaw_integral.K.bounds = (None, None)
         powerlaw_integral.index = powerlaw.index.value + 1
-        powerlaw_integral.K = powerlaw.K.value / (powerlaw.index.value + 1)
+        powerlaw_integral.K = old_div(powerlaw.K.value, (powerlaw.index.value + 1))
 
         integral_function = lambda e1, e2: powerlaw_integral(e2) - powerlaw_integral(e1)
 
@@ -211,7 +219,9 @@ def test_response_against_xspec():
 
         # Get path of response file
 
-        fs1 = xspec.FakeitSettings(temp_file, exposure=1.0, fileName="_fake_spectrum.pha")
+        fs1 = xspec.FakeitSettings(
+            temp_file, exposure=1.0, fileName="_fake_spectrum.pha"
+        )
 
         xspec.AllData.fakeit(noWrite=True, applyStats=False, settings=fs1)
 

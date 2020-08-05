@@ -13,31 +13,49 @@ __instrument_name = "All OGIP-compliant instruments"
 
 
 class OGIPLike(DispersionSpectrumLike):
-    def __init__(self, name, observation, background=None, response=None, arf_file=None, spectrum_number=None,
-                 verbose=True):
+    def __init__(
+        self,
+        name,
+        observation,
+        background=None,
+        response=None,
+        arf_file=None,
+        spectrum_number=None,
+        verbose=True,
+    ):
 
-        assert is_valid_variable_name(name), "Name %s is not a valid name for a plugin. You must use a name which is " \
-                                             "a valid python identifier: no spaces, no operators (+,-,/,*), " \
-                                             "it cannot start with a number, no special characters" % name
+        assert is_valid_variable_name(name), (
+            "Name %s is not a valid name for a plugin. You must use a name which is "
+            "a valid python identifier: no spaces, no operators (+,-,/,*), "
+            "it cannot start with a number, no special characters" % name
+        )
 
         # Read the pha file (or the PHAContainer instance)
 
-        assert isinstance(observation, str) or isinstance(observation,
-                                                          PHASpectrum) or isinstance(observation,
-                                                                                     PHAII), 'observation must be a FITS file name or PHASpectrum'
+        assert (
+            isinstance(observation, str)
+            or isinstance(observation, PHASpectrum)
+            or isinstance(observation, PHAII)
+        ), "observation must be a FITS file name or PHASpectrum"
 
-        assert isinstance(background, str) or isinstance(background,
-                                                         PHASpectrum) or (
-                   background is None) or isinstance(background,
-                                                     PHAII) or isinstance(background, SpectrumLike) or isinstance(background,XYLike),\
-                                                                                                        'background must be a FITS file name, PHASpectrum, a Plugin or None'
-
-
+        assert (
+            isinstance(background, str)
+            or isinstance(background, PHASpectrum)
+            or (background is None)
+            or isinstance(background, PHAII)
+            or isinstance(background, SpectrumLike)
+            or isinstance(background, XYLike)
+        ), "background must be a FITS file name, PHASpectrum, a Plugin or None"
 
         if isinstance(observation, str) or isinstance(observation, PHAII):
 
-            pha = PHASpectrum(observation, spectrum_number=spectrum_number, file_type='observed', rsp_file=response,
-                              arf_file=arf_file)
+            pha = PHASpectrum(
+                observation,
+                spectrum_number=spectrum_number,
+                file_type="observed",
+                rsp_file=response,
+                arf_file=arf_file,
+            )
 
         else:
 
@@ -55,7 +73,6 @@ class OGIPLike(DispersionSpectrumLike):
 
             # assert background is not None, "No background file provided, and the PHA file does not specify one."
 
-
         # Get a PHA instance with the background, we pass the response to get the energy bounds in the
         # histogram constructor. It is not saved to the background class
 
@@ -67,8 +84,12 @@ class OGIPLike(DispersionSpectrumLike):
 
         elif isinstance(background, str) or isinstance(observation, PHAII):
 
-            bak = PHASpectrum(background, spectrum_number=spectrum_number, file_type='background',
-                              rsp_file=pha.response)
+            bak = PHASpectrum(
+                background,
+                spectrum_number=spectrum_number,
+                file_type="background",
+                rsp_file=pha.response,
+            )
 
         else:
 
@@ -77,10 +98,9 @@ class OGIPLike(DispersionSpectrumLike):
         # we do not need to pass the response as it is contained in the observation (pha) spectrum
         # already.
 
-        super(OGIPLike, self).__init__(name=name,
-                                       observation=pha,
-                                       background=bak,
-                                       verbose=verbose)
+        super(OGIPLike, self).__init__(
+            name=name, observation=pha, background=bak, verbose=verbose
+        )
 
     def get_simulated_dataset(self, new_name=None, **kwargs):
         # type: (str, dict) -> OGIPLike
@@ -94,10 +114,9 @@ class OGIPLike(DispersionSpectrumLike):
          """
 
         # pass the response thru to the constructor
-        return super(OGIPLike, self).get_simulated_dataset(new_name=new_name,
-                                                           spectrum_number=1,
-                                                           response=self._rsp,
-                                                           **kwargs)
+        return super(OGIPLike, self).get_simulated_dataset(
+            new_name=new_name, spectrum_number=1, response=self._rsp, **kwargs
+        )
 
     @property
     def grouping(self):
@@ -118,7 +137,9 @@ class OGIPLike(DispersionSpectrumLike):
 
         pha_writer = PHAWrite(self)
 
-        pha_writer.write(file_name, overwrite=overwrite, force_rsp_write=force_rsp_write)
+        pha_writer.write(
+            file_name, overwrite=overwrite, force_rsp_write=force_rsp_write
+        )
 
     def _output(self):
         # type: () -> pd.Series
@@ -130,10 +151,7 @@ class OGIPLike(DispersionSpectrumLike):
         else:
             bak_file = None
 
-        this_out = {
-                     'pha file': self._observed_spectrum.filename,
-                     'bak file': bak_file
-        }
+        this_out = {"pha file": self._observed_spectrum.filename, "bak file": bak_file}
 
         this_df = pd.Series(this_out)
 
@@ -152,14 +170,23 @@ class OGIPLike(DispersionSpectrumLike):
         """
 
         pha_files = dispersion_like.get_pha_files()
-        observed = pha_files['pha']
-        background = pha_files['bak']
+        observed = pha_files["pha"]
+        background = pha_files["bak"]
 
-        observed_pha = PHASpectrum.from_dispersion_spectrum(observed, file_type='observed')
+        observed_pha = PHASpectrum.from_dispersion_spectrum(
+            observed, file_type="observed"
+        )
 
         if background is None:
             background_pha = None
         else:
-            background_pha = PHASpectrum.from_dispersion_spectrum(background, file_type='background')
+            background_pha = PHASpectrum.from_dispersion_spectrum(
+                background, file_type="background"
+            )
 
-        return cls(dispersion_like.name, observation=observed_pha, background=background_pha, verbose=False)
+        return cls(
+            dispersion_like.name,
+            observation=observed_pha,
+            background=background_pha,
+            verbose=False,
+        )

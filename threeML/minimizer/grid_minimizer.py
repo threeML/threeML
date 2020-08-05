@@ -1,3 +1,4 @@
+from builtins import str
 import collections
 import numpy as np
 import itertools
@@ -13,7 +14,7 @@ class AllFitFailed(RuntimeError):
 
 class GridMinimizer(GlobalMinimizer):
 
-    valid_setup_keys = ('grid', 'second_minimization', 'callbacks')
+    valid_setup_keys = ("grid", "second_minimization", "callbacks")
 
     def __init__(self, function, parameters, verbosity=1):
 
@@ -39,25 +40,29 @@ class GridMinimizer(GlobalMinimizer):
             return
 
         # This minimizer MUST be set up with a grid, so we enforce that user_setup_dict is not None
-        assert user_setup_dict is not None, "You have to setup a grid for this minimizer"
+        assert (
+            user_setup_dict is not None
+        ), "You have to setup a grid for this minimizer"
 
-        assert 'grid' in user_setup_dict, "You have to setup a grid for this minimizer"
+        assert "grid" in user_setup_dict, "You have to setup a grid for this minimizer"
 
-        assert 'second_minimization' in user_setup_dict, "You have to set up a second minimizer"
+        assert (
+            "second_minimization" in user_setup_dict
+        ), "You have to set up a second minimizer"
 
         # Setup grid
 
-        for parameter, grid in user_setup_dict['grid'].items():
+        for parameter, grid in user_setup_dict["grid"].items():
 
             self.add_parameter_to_grid(parameter, grid)
 
         # Setup inner minimization
-        self._2nd_minimization = user_setup_dict['second_minimization']
+        self._2nd_minimization = user_setup_dict["second_minimization"]
 
         # If there are callbacks, set them up
-        if 'callbacks' in user_setup_dict:
+        if "callbacks" in user_setup_dict:
 
-            for callback in user_setup_dict['callbacks']:
+            for callback in user_setup_dict["callbacks"]:
 
                 self.add_callback(callback)
 
@@ -91,8 +96,9 @@ class GridMinimizer(GlobalMinimizer):
 
         if isinstance(parameter, Parameter):
 
-            assert parameter in self.parameters.values(), "Parameter %s is not part of the " \
-                                                          "current model" % parameter.name
+            assert parameter in list(self.parameters.values()), (
+                "Parameter %s is not part of the " "current model" % parameter.name
+            )
 
         else:
 
@@ -100,8 +106,8 @@ class GridMinimizer(GlobalMinimizer):
             parameter_path = str(parameter)
 
             # Make a list of paths for the parameters
-            v = self.parameters.values()
-            parameters_paths = map(lambda x:x.path, v)
+            v = list(self.parameters.values())
+            parameters_paths = [x.path for x in v]
 
             try:
 
@@ -109,51 +115,61 @@ class GridMinimizer(GlobalMinimizer):
 
             except ValueError:
 
-                raise ValueError("Could not find parameter %s in current model" % parameter_path)
+                raise ValueError(
+                    "Could not find parameter %s in current model" % parameter_path
+                )
 
             parameter = v[idx]
 
         grid = np.array(grid)
 
-        assert grid.ndim == 1, "The grid for parameter %s must be 1-dimensional" % parameter.name
+        assert grid.ndim == 1, (
+            "The grid for parameter %s must be 1-dimensional" % parameter.name
+        )
 
         # Check that the grid is legal
         if parameter.max_value is not None:
 
-            assert grid.max() < parameter.max_value, "The maximum value in the grid (%s) is above the maximum " \
-                                                      "legal value (%s) for parameter %s" %(grid.max(),
-                                                                                            parameter.max_value,
-                                                                                            parameter.name)
+            assert grid.max() < parameter.max_value, (
+                "The maximum value in the grid (%s) is above the maximum "
+                "legal value (%s) for parameter %s"
+                % (grid.max(), parameter.max_value, parameter.name)
+            )
 
         if parameter.min_value is not None:
 
-            assert grid.min() > parameter.min_value, "The minimum value in the grid (%s) is above the minimum legal " \
-                                                      "value (%s) for parameter %s" % (grid.min(),
-                                                                                       parameter.min_value,
-                                                                                       parameter.name)
+            assert grid.min() > parameter.min_value, (
+                "The minimum value in the grid (%s) is above the minimum legal "
+                "value (%s) for parameter %s"
+                % (grid.min(), parameter.min_value, parameter.name)
+            )
 
         self._grid[parameter.path] = grid
 
     def _minimize(self):
 
-        assert len(self._grid) > 0, "You need to set up a grid using add_parameter_to_grid"
+        assert (
+            len(self._grid) > 0
+        ), "You need to set up a grid using add_parameter_to_grid"
 
         if self._2nd_minimization is None:
 
-            raise RuntimeError("You did not setup this global minimizer (GRID). You need to use the .setup() method")
+            raise RuntimeError(
+                "You did not setup this global minimizer (GRID). You need to use the .setup() method"
+            )
 
         # For each point in the grid, perform a fit
 
-        parameters = self._grid.keys()
+        parameters = list(self._grid.keys())
 
         overall_minimum = 1e20
         internal_best_fit_values = None
 
-        n_iterations = np.prod([x.shape for x in self._grid.values()])
+        n_iterations = np.prod([x.shape for x in list(self._grid.values())])
 
-        with progress_bar(n_iterations, title='Grid minimization') as progress:
+        with progress_bar(n_iterations, title="Grid minimization") as progress:
 
-            for values_tuple in itertools.product(*self._grid.values()):
+            for values_tuple in itertools.product(*list(self._grid.values())):
 
                 # Reset everything to the original values, so that the fit will always start
                 # from there, instead that from the values obtained in the last iterations, which
@@ -176,7 +192,9 @@ class GridMinimizer(GlobalMinimizer):
                 # point, because the init method of the minimizer instance will use those values to set the starting
                 # point for the fit
 
-                _minimizer = self._2nd_minimization.get_instance(self.function, self.parameters, verbosity=0)
+                _minimizer = self._2nd_minimization.get_instance(
+                    self.function, self.parameters, verbosity=0
+                )
 
                 # Perform fit
 

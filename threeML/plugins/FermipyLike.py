@@ -1,3 +1,5 @@
+from __future__ import division
+from past.utils import old_div
 import astromodels
 import numpy as np
 import os
@@ -22,36 +24,45 @@ __instrument_name = "Fermi LAT (with fermipy)"
 
 
 # A lookup map for the correspondence between IRFS and evclass
-evclass_irf = {2    : 'P8R2_TRANSIENT100E_V6',
-               4    : 'P8R2_TRANSIENT100_V6',
-               8    : 'P8R2_TRANSIENT020E_V6',
-               16   : 'P8R2_TRANSIENT020_V6',
-               32   : 'P8R2_TRANSIENT010E_V6',
-               64   : 'P8R2_TRANSIENT010_V6',
-               128  : 'P8R2_SOURCE_V6',
-               256  : 'P8R2_CLEAN_V6',
-               512  : 'P8R2_ULTRACLEAN_V6',
-               1024 : 'P8R2_ULTRACLEANVETO_V6',
-               32768: 'P8R2_TRANSIENT100S_V6',
-               65536: 'P8R2_TRANSIENT015S_V6',
-               }
+evclass_irf = {
+    2: "P8R2_TRANSIENT100E_V6",
+    4: "P8R2_TRANSIENT100_V6",
+    8: "P8R2_TRANSIENT020E_V6",
+    16: "P8R2_TRANSIENT020_V6",
+    32: "P8R2_TRANSIENT010E_V6",
+    64: "P8R2_TRANSIENT010_V6",
+    128: "P8R2_SOURCE_V6",
+    256: "P8R2_CLEAN_V6",
+    512: "P8R2_ULTRACLEAN_V6",
+    1024: "P8R2_ULTRACLEANVETO_V6",
+    32768: "P8R2_TRANSIENT100S_V6",
+    65536: "P8R2_TRANSIENT015S_V6",
+}
 
 
 def _get_unique_tag_from_configuration(configuration):
-    keys_for_hash = (('data', ('evfile', 'scfile')),
-                     ('binning', ('roiwidth', 'binsz', 'binsperdec')),
-                     ('selection', ('emin', 'emax', 'zmax', 'evclass', 'evtype', 'filter', 'ra', 'dec'))
-                     )
+    keys_for_hash = (
+        ("data", ("evfile", "scfile")),
+        ("binning", ("roiwidth", "binsz", "binsperdec")),
+        (
+            "selection",
+            ("emin", "emax", "zmax", "evclass", "evtype", "filter", "ra", "dec"),
+        ),
+    )
 
     string_to_hash = []
 
     for section, keys in keys_for_hash:
 
-        assert section in configuration, "Configuration lacks section %s, which is required" % section
+        assert section in configuration, (
+            "Configuration lacks section %s, which is required" % section
+        )
 
         for key in keys:
 
-            assert key in configuration[section], "Section %s in configuration lacks key %s, which is required" % key
+            assert key in configuration[section], (
+                "Section %s in configuration lacks key %s, which is required" % key
+            )
 
             string_to_hash.append("%s" % configuration[section][key])
 
@@ -72,28 +83,29 @@ def _get_fermipy_instance(configuration, likelihood_model):
     # provided as input
 
     # Get center and radius of ROI
-    ra_center = float(configuration['selection']['ra'])
-    dec_center = float(configuration['selection']['dec'])
+    ra_center = float(configuration["selection"]["ra"])
+    dec_center = float(configuration["selection"]["dec"])
 
-    roi_width = float(configuration['binning']['roiwidth'])
-    roi_radius = roi_width / np.sqrt(2.0)
+    roi_width = float(configuration["binning"]["roiwidth"])
+    roi_radius = old_div(roi_width, np.sqrt(2.0))
 
     # Get IRFS
-    irfs = evclass_irf[int(configuration['selection']['evclass'])]
+    irfs = evclass_irf[int(configuration["selection"]["evclass"])]
 
-    if 'gtlike' in configuration and 'irfs' in configuration['gtlike']:
+    if "gtlike" in configuration and "irfs" in configuration["gtlike"]:
 
-        assert irfs.upper() == configuration['gtlike']['irfs'].upper(), \
-            "Evclass points to IRFS %s, while you specified %s into he " \
-            "configuration" % (irfs, configuration['gtlike']['irfs'])
+        assert irfs.upper() == configuration["gtlike"]["irfs"].upper(), (
+            "Evclass points to IRFS %s, while you specified %s into he "
+            "configuration" % (irfs, configuration["gtlike"]["irfs"])
+        )
 
     else:
 
-        if not 'gtlike' in configuration:
+        if not "gtlike" in configuration:
 
-            configuration['gtlike'] = {}
+            configuration["gtlike"] = {}
 
-        configuration['gtlike']['irfs'] = irfs
+        configuration["gtlike"]["irfs"] = irfs
 
     # The fermipy model is just a dictionary. It corresponds to the 'model' section
     # of the configuration file (http://fermipy.readthedocs.io/en/latest/config.html#model)
@@ -105,41 +117,47 @@ def _get_fermipy_instance(configuration, likelihood_model):
     # analysis a lot)
     # NOTE: these are going to be absolute paths
 
-    galactic_template = sanitize_filename(findGalacticTemplate(irfs, ra_center, dec_center, roi_radius), True)
+    galactic_template = sanitize_filename(
+        findGalacticTemplate(irfs, ra_center, dec_center, roi_radius), True
+    )
     isotropic_template = sanitize_filename(findIsotropicTemplate(irfs), True)
 
     # Add them to the fermipy model
 
-    fermipy_model['galdiff'] = galactic_template
-    fermipy_model['isodiff'] = isotropic_template
+    fermipy_model["galdiff"] = galactic_template
+    fermipy_model["isodiff"] = isotropic_template
 
     # Now iterate over all sources contained in the likelihood model
     sources = []
 
     # point sources
-    for point_source in likelihood_model.point_sources.values():  # type: astromodels.PointSource
+    for point_source in list(
+        likelihood_model.point_sources.values()
+    ):  # type: astromodels.PointSource
 
-        this_source = {'Index': 2.56233, 'Scale': 572.78, 'Prefactor': 2.4090e-12}
-        this_source['name'] = point_source.name
-        this_source['ra'] = point_source.position.ra.value
-        this_source['dec'] = point_source.position.dec.value
+        this_source = {"Index": 2.56233, "Scale": 572.78, "Prefactor": 2.4090e-12}
+        this_source["name"] = point_source.name
+        this_source["ra"] = point_source.position.ra.value
+        this_source["dec"] = point_source.position.dec.value
 
         # The spectrum used here is unconsequential, as it will be substituted by a FileFunction
         # later on. So I will just use PowerLaw for everything
-        this_source['SpectrumType'] = 'PowerLaw'
+        this_source["SpectrumType"] = "PowerLaw"
 
         sources.append(this_source)
 
     # extended sources
-    for extended_source in likelihood_model.extended_sources.values():  # type: astromodels.ExtendedSource
+    for extended_source in list(
+        likelihood_model.extended_sources.values()
+    ):  # type: astromodels.ExtendedSource
 
         raise NotImplementedError("Extended sources are not supported yet")
 
     # Add all sources to the model
-    fermipy_model['sources'] = sources
+    fermipy_model["sources"] = sources
 
     # Now we can finally instance the GTAnalysis instance
-    configuration['model'] = fermipy_model
+    configuration["model"] = fermipy_model
 
     gta = GTAnalysis(configuration)
 
@@ -151,17 +169,21 @@ def _get_fermipy_instance(configuration, likelihood_model):
 
     energies_keV = None
 
-    for point_source in likelihood_model.point_sources.values():  # type: astromodels.PointSource
+    for point_source in list(
+        likelihood_model.point_sources.values()
+    ):  # type: astromodels.PointSource
 
         # Fix this source, so fermipy will not optimize by itself the parameters
         gta.free_source(point_source.name, False)
 
         # This will substitute the current spectrum with a FileFunction with the same shape and flux
-        gta.set_source_spectrum(point_source.name, 'FileFunction', update_source=False)
+        gta.set_source_spectrum(point_source.name, "FileFunction", update_source=False)
 
         # Get the energies at which to evaluate this source
         this_log_energies, _flux = gta.get_source_dnde(point_source.name)
-        this_energies_keV = 10 ** this_log_energies * 1e3  # fermipy energies are in GeV, we need keV
+        this_energies_keV = (
+            10 ** this_log_energies * 1e3
+        )  # fermipy energies are in GeV, we need keV
 
         if energies_keV is None:
 
@@ -178,7 +200,9 @@ def _get_fermipy_instance(configuration, likelihood_model):
         gta.set_source_dnde(point_source.name, dnde_per_MeV, False)
 
     # Same for extended source
-    for extended_source in likelihood_model.extended_sources.values():  # type: astromodels.ExtendedSource
+    for extended_source in list(
+        likelihood_model.extended_sources.values()
+    ):  # type: astromodels.ExtendedSource
 
         raise NotImplementedError("Extended sources are not supported yet")
 
@@ -190,9 +214,9 @@ def _expensive_imports_hook():
     from fermipy.gtanalysis import GTAnalysis
     from GtBurst.LikelihoodComponent import findGalacticTemplate, findIsotropicTemplate
 
-    globals()['GTAnalysis'] = GTAnalysis
-    globals()['findGalacticTemplate'] = findGalacticTemplate
-    globals()['findIsotropicTemplate'] = findIsotropicTemplate
+    globals()["GTAnalysis"] = GTAnalysis
+    globals()["findGalacticTemplate"] = findGalacticTemplate
+    globals()["findIsotropicTemplate"] = findIsotropicTemplate
 
 
 class FermipyLike(PluginPrototype):
@@ -230,12 +254,14 @@ class FermipyLike(PluginPrototype):
             # Assume this is a file name
             configuration_file = sanitize_filename(fermipy_config)
 
-            assert os.path.exists(fermipy_config), "Configuration file %s does not exist" % configuration_file
+            assert os.path.exists(fermipy_config), (
+                "Configuration file %s does not exist" % configuration_file
+            )
 
             # Read the configuration
             with open(configuration_file) as f:
 
-                self._configuration = yaml.safe_load(f)
+                self._configuration = yaml.load(f, Loader=yaml.SafeLoader)
 
         else:
 
@@ -245,62 +271,88 @@ class FermipyLike(PluginPrototype):
         # If the user provided a 'model' key, issue a warning, as the model will be defined
         # later on and will overwrite the one contained in 'model'
 
-        if 'model' in self._configuration:
+        if "model" in self._configuration:
 
-            custom_warnings.warn("The provided configuration contains a 'model' section, which is useless as it "
-                                 "will be overridden")
+            custom_warnings.warn(
+                "The provided configuration contains a 'model' section, which is useless as it "
+                "will be overridden"
+            )
 
-            self._configuration.pop('model')
+            self._configuration.pop("model")
 
-        if 'fileio' in self._configuration:
+        if "fileio" in self._configuration:
 
-            custom_warnings.warn("The provided configuration contains a 'fileio' section, which will be "
-                                 "overwritten")
+            custom_warnings.warn(
+                "The provided configuration contains a 'fileio' section, which will be "
+                "overwritten"
+            )
 
-            self._configuration.pop('fileio')
+            self._configuration.pop("fileio")
 
         # Now check that the data exists
 
         # As minimum there must be a evfile and a scfile
-        assert 'evfile' in self._configuration['data'], "You must provide a evfile in the data section"
-        assert 'scfile' in self._configuration['data'], "You must provide a scfile in the data section"
+        assert (
+            "evfile" in self._configuration["data"]
+        ), "You must provide a evfile in the data section"
+        assert (
+            "scfile" in self._configuration["data"]
+        ), "You must provide a scfile in the data section"
 
-        for datum in self._configuration['data']:
+        for datum in self._configuration["data"]:
 
             # Sanitize file name, as fermipy is not very good at handling relative paths or env. variables
 
-            filename = sanitize_filename(self._configuration['data'][datum], True)
+            filename = sanitize_filename(self._configuration["data"][datum], True)
 
-            self._configuration['data'][datum] = filename
+            self._configuration["data"][datum] = filename
 
-            assert os.path.exists(self._configuration['data'][datum]), "File %s (%s) not found" % (filename, datum)
+            assert os.path.exists(
+                self._configuration["data"][datum]
+            ), "File %s (%s) not found" % (filename, datum)
 
         # Prepare the 'fileio' part
         # Save all output in a directory with a unique name which depends on the configuration,
         # so that the same configuration will write in the same directory and fermipy will
         # know that it doesn't need to recompute things
 
-        self._unique_id = "__%s" % _get_unique_tag_from_configuration(self._configuration)
+        self._unique_id = "__%s" % _get_unique_tag_from_configuration(
+            self._configuration
+        )
 
-        self._configuration['fileio'] = {'outdir': self._unique_id}
+        self._configuration["fileio"] = {"outdir": self._unique_id}
 
         # Ensure that there is a complete definition of a Region Of Interest (ROI)
-        assert ('ra' in self._configuration['selection']) \
-               and ('dec' in self._configuration['selection']), \
-            "You have to provide 'ra' and 'dec' in the 'selection' section of the configuration. Source name " \
+        assert ("ra" in self._configuration["selection"]) and (
+            "dec" in self._configuration["selection"]
+        ), (
+            "You have to provide 'ra' and 'dec' in the 'selection' section of the configuration. Source name "
             "resolution, as well as Galactic coordinates, are not currently supported"
+        )
 
         # This is empty at the beginning, will be instanced in the set_model method
         self._gta = None
 
     @staticmethod
-    def get_basic_config(evfile, scfile, ra, dec, emin=100.0, emax=100000.0, zmax=100.0, evclass=128, evtype=3,
-                         filter='DATA_QUAL>0 && LAT_CONFIG==1'):
+    def get_basic_config(
+        evfile,
+        scfile,
+        ra,
+        dec,
+        emin=100.0,
+        emax=100000.0,
+        zmax=100.0,
+        evclass=128,
+        evtype=3,
+        filter="DATA_QUAL>0 && LAT_CONFIG==1",
+    ):
 
         from fermipy.config import ConfigManager
 
         # Get default config from fermipy
-        basic_config = ConfigManager.load(get_path_of_data_file("fermipy_basic_config.yml"))  # type: dict
+        basic_config = ConfigManager.load(
+            get_path_of_data_file("fermipy_basic_config.yml")
+        )  # type: dict
 
         evfile = sanitize_filename(evfile)
         scfile = sanitize_filename(scfile)
@@ -308,40 +360,46 @@ class FermipyLike(PluginPrototype):
         assert os.path.exists(evfile), "The provided evfile %s does not exist" % evfile
         assert os.path.exists(scfile), "The provided scfile %s does not exist" % scfile
 
-        basic_config['data']['evfile'] = evfile
-        basic_config['data']['scfile'] = scfile
+        basic_config["data"]["evfile"] = evfile
+        basic_config["data"]["scfile"] = scfile
 
         ra = float(ra)
         dec = float(dec)
 
-        assert 0 <= ra <= 360, "The provided R.A. (%s) is not valid. Should be 0 <= ra <= 360.0" % ra
-        assert -90 <= dec <= 90, "The provided Dec (%s) is not valid. Should be -90 <= dec <= 90.0" % dec
+        assert 0 <= ra <= 360, (
+            "The provided R.A. (%s) is not valid. Should be 0 <= ra <= 360.0" % ra
+        )
+        assert -90 <= dec <= 90, (
+            "The provided Dec (%s) is not valid. Should be -90 <= dec <= 90.0" % dec
+        )
 
-        basic_config['selection']['ra'] = ra
-        basic_config['selection']['dec'] = dec
+        basic_config["selection"]["ra"] = ra
+        basic_config["selection"]["dec"] = dec
 
         emin = float(emin)
         emax = float(emax)
 
-        basic_config['selection']['emin'] = emin
-        basic_config['selection']['emax'] = emax
+        basic_config["selection"]["emin"] = emin
+        basic_config["selection"]["emax"] = emax
 
         zmax = float(zmax)
-        assert 0.0 <= zmax <= 180.0, "The provided Zenith angle cut (zmax = %s) is not valid. " \
-                                     "Should be 0 <= zmax <= 180.0" % zmax
+        assert 0.0 <= zmax <= 180.0, (
+            "The provided Zenith angle cut (zmax = %s) is not valid. "
+            "Should be 0 <= zmax <= 180.0" % zmax
+        )
 
-        basic_config['selection']['zmax'] = zmax
+        basic_config["selection"]["zmax"] = zmax
 
         evclass = int(evclass)
         assert is_power_of_2(evclass), "The provided evclass is not a power of 2."
 
-        basic_config['selection']['evclass'] = evclass
+        basic_config["selection"]["evclass"] = evclass
 
         evtype = int(evtype)
 
-        basic_config['selection']['evtype'] = evtype
+        basic_config["selection"]["evtype"] = evtype
 
-        basic_config['selection']['filter'] = filter
+        basic_config["selection"]["filter"] = filter
 
         return DictWithPrettyPrint(basic_config)
 
@@ -357,8 +415,10 @@ class FermipyLike(PluginPrototype):
     @property
     def gta(self):
 
-        assert self._gta is not None, "You have to perform a fit or a bayesian analysis before accessing the " \
-                                      "gta object"
+        assert self._gta is not None, (
+            "You have to perform a fit or a bayesian analysis before accessing the "
+            "gta object"
+        )
 
         return self._gta
 
@@ -372,13 +432,17 @@ class FermipyLike(PluginPrototype):
 
         self._likelihood_model = likelihood_model_instance
 
-        self._gta, self._pts_energies = _get_fermipy_instance(self._configuration, likelihood_model_instance)
+        self._gta, self._pts_energies = _get_fermipy_instance(
+            self._configuration, likelihood_model_instance
+        )
 
     def _update_model_in_fermipy(self):
 
         # Substitute all spectra for point sources with FileSpectrum, so that we will be able to control
         # them from 3ML
-        for point_source in self._likelihood_model.point_sources.values():  # type: astromodels.PointSource
+        for point_source in list(
+            self._likelihood_model.point_sources.values()
+        ):  # type: astromodels.PointSource
 
             # Update this source only if it has free parameters (to gain time)
             if point_source.has_free_parameters():
@@ -398,15 +462,17 @@ class FermipyLike(PluginPrototype):
                 continue
 
         # Same for extended source
-        for extended_source in self._likelihood_model.extended_sources.values():  # type: astromodels.ExtendedSource
+        for extended_source in list(
+            self._likelihood_model.extended_sources.values()
+        ):  # type: astromodels.ExtendedSource
 
             raise NotImplementedError("Extended sources are not supported yet")
 
     def get_log_like(self):
-        '''
+        """
         Return the value of the log-likelihood with the current values for the
         parameters stored in the ModelManager instance
-        '''
+        """
 
         # Update all sources on the fermipy side
         self._update_model_in_fermipy()
@@ -432,4 +498,3 @@ class FermipyLike(PluginPrototype):
         logLike value.
         """
         return self.get_log_like()
-

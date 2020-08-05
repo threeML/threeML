@@ -21,6 +21,14 @@ import os
 sys.path.insert(0, os.path.abspath('..'))
 #sys.path.insert(0, os.path.abspath('../threeML/classicMLE'))
 
+
+import mock
+
+MOCK_MODULES = ['fermipy']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = mock.Mock()
+
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -31,9 +39,12 @@ sys.path.insert(0, os.path.abspath('..'))
 # ones.
 extensions = [
     'nbsphinx',
+    'recommonmark',
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
+#    'sphinx_gallery.gen_gallery',
+    'sphinx_gallery.load_style',
 ]
 
 
@@ -42,8 +53,11 @@ templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
+# source_parsers = {
+#     '.md': CommonMarkParser,
+# }
+#source_suffix = '.rst'
 
 # The encoding of source files.
 #source_encoding = 'utf-8-sig'
@@ -53,12 +67,12 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'The Multi-Mission Maximum Likelihood framework'
-copyright = u'2017, G.Vianello'
+copyright = u'2017--2020, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei'
 author = u'G.Vianello'
 
-html_theme_options = {
-    'navigation_depth': 4,
-}
+# html_theme_options = {
+#     'navigation_depth': 4,
+# }
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -104,6 +118,20 @@ exclude_patterns = ['_build', '**.ipynb_checkpoints']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
+html_theme = 'sphinx_rtd_theme'
+
+html_theme_options = {
+    'style_external_links': True,
+    # 'vcs_pageview_mode': 'edit',
+    'style_nav_header_background': '#0B4BA8',
+    #'only_logo': False,
+}
+
+html_logo = "media/logo.png"
+html_show_sourcelink = False
+html_favicon = "media/favicon.ico"
+
+
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
@@ -147,7 +175,7 @@ todo_include_todos = False
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -281,14 +309,16 @@ texinfo_documents = [
    'Miscellaneous'),
 ]
 
-# Documents to append as an appendix to all manuals.
-#texinfo_appendices = []
 
-# If false, no module index is generated.
-#texinfo_domain_indices = True
-
-# How to display URL addresses: 'footnote', 'no', or 'inline'.
-#texinfo_show_urls = 'footnote'
-
-# If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+# nbsphinx_thumbnails = {
+#     'examples/scatter': 'examples/screenshot/scatter.png',
+#     'examples/volshow': 'examples/screenshot/volshow-head.png',
+#     'examples/mesh': 'examples/screenshot/mesh.png',
+#     'examples/animation': 'examples/screenshot/wave.gif',
+#     'examples/mcmc': 'examples/screenshot/mcmc.gif',
+#     'examples/bqplot': 'examples/screenshot/bqplot.png',
+#     'examples/bokeh': 'examples/screenshot/bokeh.png',
+#     'examples/scales': 'examples/screenshot/scales.png',
+#     'examples/moebius': 'examples/screenshot/moebius.png',
+#     'examples/bars': 'examples/screenshot/bars.gif',

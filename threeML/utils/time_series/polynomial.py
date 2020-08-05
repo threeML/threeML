@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import zip
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import numpy as np
 import scipy.optimize as opt
 import warnings
@@ -8,8 +13,8 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 class CannotComputeCovariance(RuntimeWarning):
     pass
 
-from threeML.config.config import threeML_config
 
+from threeML.config.config import threeML_config
 
 
 class Polynomial(object):
@@ -23,7 +28,7 @@ class Polynomial(object):
         self._coefficients = coefficients
         self._degree = len(coefficients) - 1
 
-        self._i_plus_1 = np.array(range(1, self._degree + 1 + 1), dtype=float)
+        self._i_plus_1 = np.array(list(range(1, self._degree + 1 + 1)), dtype=float)
 
         self._cov_matrix = np.zeros((self._degree + 1, self._degree + 1))
 
@@ -34,13 +39,17 @@ class Polynomial(object):
 
             integral_coeff = [0]
 
-            integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+            integral_coeff.extend(
+                [
+                    self._coefficients[i - 1] / float(i)
+                    for i in range(1, self._degree + 1 + 1)
+                ]
+            )
 
             self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
 
     @classmethod
     def from_previous_fit(cls, coefficients, covariance):
-
 
         poly = Polynomial(coefficients=coefficients)
         poly._cov_matrix = covariance
@@ -80,7 +89,12 @@ class Polynomial(object):
 
         integral_coeff = [0]
 
-        integral_coeff.extend(map(lambda i: self._coefficients[i - 1] / float(i), range(1, self._degree + 1 + 1)))
+        integral_coeff.extend(
+            [
+                self._coefficients[i - 1] / float(i)
+                for i in range(1, self._degree + 1 + 1)
+            ]
+        )
 
         self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
 
@@ -89,8 +103,11 @@ class Polynomial(object):
 
         return self.__set_coefficient(val)
 
-    coefficients = property(___get_coefficient, ___set_coefficient,
-                            doc="""Gets or sets the coefficients of the polynomial.""")
+    coefficients = property(
+        ___get_coefficient,
+        ___set_coefficient,
+        doc="""Gets or sets the coefficients of the polynomial.""",
+    )
 
     def __call__(self, x):
 
@@ -116,8 +133,11 @@ class Polynomial(object):
 
         except ParameterOnBoundary:
 
-            custom_warnings.warn("One or more of the parameters are at their boundaries. Cannot compute covariance and"
-                                 " errors", CannotComputeCovariance)
+            custom_warnings.warn(
+                "One or more of the parameters are at their boundaries. Cannot compute covariance and"
+                " errors",
+                CannotComputeCovariance,
+            )
 
             n_dim = len(best_fit_parameters)
 
@@ -131,11 +151,11 @@ class Polynomial(object):
 
             self._cov_matrix = covariance_matrix
 
-
-
         except:
 
-            custom_warnings.warn("Cannot invert Hessian matrix, looks like the matrix is singluar")
+            custom_warnings.warn(
+                "Cannot invert Hessian matrix, looks like the matrix is singluar"
+            )
 
             n_dim = len(best_fit_parameters)
 
@@ -155,7 +175,7 @@ class Polynomial(object):
 
     def _eval_basis(self, x):
 
-        return (1. / self._i_plus_1) * np.power(x, self._i_plus_1)
+        return (1.0 / self._i_plus_1) * np.power(x, self._i_plus_1)
 
     def integral_error(self, xmin, xmax):
         """
@@ -172,7 +192,6 @@ class Polynomial(object):
 
 
 class PolyLogLikelihood(object):
-
     def __init__(self, model, exposure):
 
         self._model = model
@@ -182,21 +201,19 @@ class PolyLogLikelihood(object):
         # build the covariance call
         self._build_cov_call()
 
-
-
     def _evaluate_logM(self, M):
         # Evaluate the logarithm with protection for negative or small
         # numbers, using a smooth linear extrapolation (better than just a sharp
         # cutoff)
         tiny = np.float64(np.finfo(M[0]).tiny)
 
-        non_tiny_mask = (M > 2.0 * tiny)
+        non_tiny_mask = M > 2.0 * tiny
 
         tink_mask = np.logical_not(non_tiny_mask)
 
         if tink_mask.sum() > 0:
             logM = np.zeros(len(M))
-            logM[tink_mask] = np.abs(M[tink_mask]) / tiny + np.log(tiny) - 1
+            logM[tink_mask] = old_div(np.abs(M[tink_mask]), tiny) + np.log(tiny) - 1
             logM[non_tiny_mask] = np.log(M[non_tiny_mask])
 
         else:
@@ -212,16 +229,15 @@ class PolyLogLikelihood(object):
           and errors like underflows or overflows in math operations.
         """
         tiny = np.float64(np.finfo(v[0]).tiny)
-        zero_mask = (np.abs(v) <= tiny) # type: np.ndarray
+        zero_mask = np.abs(v) <= tiny  # type: np.ndarray
         if zero_mask.sum() > 0:
             v[zero_mask] = np.sign(v[zero_mask]) * tiny
 
         return v, tiny
 
-
     def _build_cov_call(self):
 
-        raise NotImplementedError('must be built in subclass')
+        raise NotImplementedError("must be built in subclass")
 
 
 class PolyBinnedLogLikelihood(PolyLogLikelihood):
@@ -238,10 +254,9 @@ class PolyBinnedLogLikelihood(PolyLogLikelihood):
 
         self._non_zero_mask = self._counts > 0
 
-        super(PolyBinnedLogLikelihood,self).__init__(model, exposure)
+        super(PolyBinnedLogLikelihood, self).__init__(model, exposure)
 
     def _build_cov_call(self):
-
         def cov_call(*parameters):
 
             self._model.coefficients = parameters
@@ -252,7 +267,7 @@ class PolyBinnedLogLikelihood(PolyLogLikelihood):
             # Replace negative values for the model (impossible in the Poisson context)
             # with zero
 
-            negative_mask = (M < 0)
+            negative_mask = M < 0
             if negative_mask.sum() > 0:
                 M[negative_mask] = 0.0
 
@@ -267,17 +282,15 @@ class PolyBinnedLogLikelihood(PolyLogLikelihood):
 
             d_times_logM = np.zeros(len(self._counts))
 
-
-            d_times_logM[self._non_zero_mask] = self._counts[self._non_zero_mask] * logM[self._non_zero_mask]
+            d_times_logM[self._non_zero_mask] = (
+                self._counts[self._non_zero_mask] * logM[self._non_zero_mask]
+            )
 
             log_likelihood = np.sum(M_fixed - d_times_logM)
 
             return log_likelihood
 
-
         self.cov_call = cov_call
-
-
 
     def __call__(self, parameters):
         """
@@ -294,8 +307,8 @@ class PolyBinnedLogLikelihood(PolyLogLikelihood):
         # Replace negative values for the model (impossible in the Poisson context)
         # with zero
 
-        negative_mask = (M < 0)
-        if (negative_mask.sum() > 0):
+        negative_mask = M < 0
+        if negative_mask.sum() > 0:
             M[negative_mask] = 0.0
 
         # Poisson loglikelihood statistic (Cash) is:
@@ -309,13 +322,13 @@ class PolyBinnedLogLikelihood(PolyLogLikelihood):
 
         d_times_logM = np.zeros_like(self._counts)
 
-
-        d_times_logM[self._non_zero_mask] = self._counts[self._non_zero_mask] * logM[self._non_zero_mask]
+        d_times_logM[self._non_zero_mask] = (
+            self._counts[self._non_zero_mask] * logM[self._non_zero_mask]
+        )
 
         log_likelihood = np.sum(M_fixed - d_times_logM)
 
         return log_likelihood
-
 
 
 class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
@@ -335,7 +348,6 @@ class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
         super(PolyUnbinnedLogLikelihood, self).__init__(model, exposure)
 
     def _build_cov_call(self):
-
         def cov_call(*parameters):
 
             # Compute the values for the model given this set of parameters
@@ -343,7 +355,7 @@ class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
 
             # Integrate the polynomial (or in the future, model) over the given interval
 
-            n_expected_counts = 0.
+            n_expected_counts = 0.0
 
             for start, stop in zip(self._t_start, self._t_stop):
                 n_expected_counts += self._model.integral(start, stop)
@@ -354,7 +366,7 @@ class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
 
             # Replace negative values for the model (impossible in the Poisson context)
             # with zero
-            negative_mask = (M < 0)
+            negative_mask = M < 0
 
             if negative_mask.sum() > 0:
                 M[negative_mask] = 0.0
@@ -370,8 +382,6 @@ class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
 
         self.cov_call = cov_call
 
-
-
     def __call__(self, parameters):
         """
 
@@ -382,7 +392,7 @@ class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
 
         # Integrate the polynomial (or in the future, model) over the given interval
 
-        n_expected_counts = 0.
+        n_expected_counts = 0.0
 
         for start, stop in zip(self._t_start, self._t_stop):
             n_expected_counts += self._model.integral(start, stop)
@@ -393,9 +403,9 @@ class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
 
         # Replace negative values for the model (impossible in the Poisson context)
         # with zero
-        negative_mask = (M < 0)
+        negative_mask = M < 0
 
-        if (negative_mask.sum() > 0):
+        if negative_mask.sum() > 0:
             M[negative_mask] = 0.0
 
         # Poisson loglikelihood statistic  is:
@@ -406,7 +416,6 @@ class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
         log_likelihood = -n_expected_counts + logM.sum()
 
         return -log_likelihood
-
 
 
 def polyfit(x, y, grade, exposure):
@@ -438,14 +447,16 @@ def polyfit(x, y, grade, exposure):
     # in the interval of interest)
     M = polynomial(x)
 
-    negative_mask = (M < 0)
+    negative_mask = M < 0
 
     if negative_mask.sum() > 0:
         # Least square fit failed to converge to a meaningful solution
         # Reset the initialGuess to reasonable value
         initial_guess[0] = np.mean(y)
         meanx = np.mean(x)
-        initial_guess = map(lambda x: abs(x[1]) / pow(meanx, x[0]), enumerate(initial_guess))
+        initial_guess = [
+            old_div(abs(i[1]), pow(meanx, i[0])) for i in enumerate(initial_guess)
+        ]
 
     # Improve the solution using a logLikelihood statistic (Cash statistic)
     log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
@@ -456,18 +467,19 @@ def polyfit(x, y, grade, exposure):
 
     if dof <= 2:
         # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-        while (dof < 2 and len(initial_guess) > 1):
+        while dof < 2 and len(initial_guess) > 1:
             initial_guess = initial_guess[:-1]
             polynomial = Polynomial(initial_guess)
             log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
 
     # Try to improve the fit with the log-likelihood
 
-
-
-    final_estimate = \
-    opt.minimize(log_likelihood, initial_guess, method=threeML_config['event list']['binned fit method'],
-                 options=threeML_config['event list']['binned fit options'])['x']
+    final_estimate = opt.minimize(
+        log_likelihood,
+        initial_guess,
+        method=threeML_config["event list"]["binned fit method"],
+        options=threeML_config["event list"]["binned fit options"],
+    )["x"]
     final_estimate = np.atleast_1d(final_estimate)
 
     # Get the value for cstat at the minimum
@@ -480,7 +492,6 @@ def polyfit(x, y, grade, exposure):
     final_polynomial = Polynomial(final_estimate)
 
     final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
-
 
     return final_polynomial, min_log_likelihood
 
@@ -503,17 +514,13 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
 
         # if there are no events then return nothing
 
-
-
         if len(events) == 0:
 
             return Polynomial([0]), 0
 
-        log_likelihood = PolyUnbinnedLogLikelihood(events,
-                                                   polynomial,
-                                                   t_start,
-                                                   t_stop,
-                                                   exposure)
+        log_likelihood = PolyUnbinnedLogLikelihood(
+            events, polynomial, t_start, t_stop, exposure
+        )
 
         like_grid = []
         for amp in search_grid:
@@ -528,18 +535,19 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
 
         if dof <= 2:
             # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-            while (dof < 1 and len(initial_guess) > 1):
+            while dof < 1 and len(initial_guess) > 1:
                 initial_guess = initial_guess[:-1]
                 polynomial = Polynomial(initial_guess)
-                log_likelihood = PolyUnbinnedLogLikelihood(events,
-                                                           polynomial,
-                                                           t_start,
-                                                           t_stop,
-                                                           exposure)
+                log_likelihood = PolyUnbinnedLogLikelihood(
+                    events, polynomial, t_start, t_stop, exposure
+                )
 
-        final_estimate = \
-        opt.minimize(log_likelihood, initial_guess, method=threeML_config['event list']['unbinned fit method'],
-                     options=threeML_config['event list']['unbinned fit options'])['x']
+        final_estimate = opt.minimize(
+            log_likelihood,
+            initial_guess,
+            method=threeML_config["event list"]["unbinned fit method"],
+            options=threeML_config["event list"]["unbinned fit options"],
+        )["x"]
 
         final_estimate = np.atleast_1d(final_estimate)
 
@@ -551,8 +559,5 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
     final_polynomial = Polynomial(final_estimate)
 
     final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
-
-
-
 
     return final_polynomial, min_log_likelihood

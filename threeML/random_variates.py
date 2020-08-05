@@ -3,7 +3,6 @@ import numpy as np
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 
 
-
 class RandomVariates(np.ndarray):
     """
     A subclass of np.array which is meant to contain samples for one parameter. This class contains methods to easily
@@ -25,13 +24,13 @@ class RandomVariates(np.ndarray):
     def __array_finalize__(self, obj):
 
         # see InfoArray.__array_finalize__ for comments
-        if obj is None: return
+        if obj is None:
+            return
 
         # Add the value
+        self._orig_value = getattr(obj, "_orig_value", None)
 
-        self._orig_value = getattr(obj, '_orig_value', None)
-
-    def __array_wrap__(self, out_arr):
+    def __array_wrap__(self, out_arr, context=None):
 
         # This gets called at the end of any operation, where out_arr is the result of the operation
         # We need to update _orig_value so that the final results will have it
@@ -39,7 +38,52 @@ class RandomVariates(np.ndarray):
         out_arr._orig_value = out_arr.median
 
         # then just call the parent
-        return np.ndarray.__array_wrap__(self, out_arr)
+        return super(RandomVariates, self).__array_wrap__(out_arr, context)
+
+    # def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+
+    #     # TODO: must make this return single numbers is needed
+
+    #     args = []
+    #     in_no = []
+    #     for i, input_ in enumerate(inputs):
+    #         if isinstance(input_, RandomVariates):
+    #             in_no.append(i)
+    #             args.append(input_.view(np.ndarray))
+    #         else:
+    #             args.append(input_)
+
+    #     outputs = kwargs.pop('out', None)
+    #     out_no = []
+
+    #     if outputs:
+    #         out_args = []
+    #         for j, output in enumerate(outputs):
+    #             if isinstance(output, RandomVariates):
+    #                 out_no.append(j)
+    #                 out_args.append(output.view(np.ndarray))
+    #             else:
+    #                 out_args.append(output)
+    #         kwargs['out'] = tuple(out_args)
+    #     else:
+    #         outputs = (None,) * ufunc.nout
+
+    #     results = super(RandomVariates, self).__array_ufunc__(ufunc, method,
+    #                                              *args, **kwargs)
+    #     if results is NotImplemented:
+    #         return NotImplemented
+
+    #     if method == 'at':
+    #         return
+
+    #     if ufunc.nout == 1:
+    #         results = (results,)
+
+    #     results = tuple((np.asarray(result).view(RandomVariates)
+    #                      if output is None else output)
+    #                     for result, output in zip(results, outputs))
+
+    #     return results[0] if len(results) == 1 else results
 
     @property
     def median(self):
@@ -48,6 +92,24 @@ class RandomVariates(np.ndarray):
         # the np.asarray casting avoids the calls to __new__ and __array_finalize_ of this class
 
         return float(np.median(np.asarray(self)))
+
+    # @property
+    # def mean(self):
+    #     """Returns average value"""
+
+    #     return float(np.asarray(self).mean())
+
+    @property
+    def std(self):
+        """Returns sample std value"""
+
+        return float(np.asarray(self).std())
+
+    @property
+    def var(self):
+        """Returns sample variance value"""
+
+        return float(np.asarray(self).var())
 
     @property
     def average(self):
@@ -101,11 +163,14 @@ class RandomVariates(np.ndarray):
 
         # Now compute the width of all intervals that might be the one we are looking for
 
-        interval_width = ordered[index_of_rightmost_possibility:] - ordered[:index_of_leftmost_possibility]
+        interval_width = (
+            ordered[index_of_rightmost_possibility:]
+            - ordered[:index_of_leftmost_possibility]
+        )
 
         # This might happen if there are too few values
         if len(interval_width) == 0:
-            raise RuntimeError('Too few elements for interval calculation')
+            raise RuntimeError("Too few elements for interval calculation")
 
         # Find the index of the shortest interval
 
@@ -117,7 +182,6 @@ class RandomVariates(np.ndarray):
         hpd_right_bound = ordered[idx_of_minimum + index_of_rightmost_possibility]
 
         return hpd_left_bound, hpd_right_bound
-
 
     def equal_tail_interval(self, cl=0.68):
         """
@@ -135,7 +199,9 @@ class RandomVariates(np.ndarray):
 
         half_cl = cl / 2.0 * 100.0
 
-        low_bound, hi_bound = np.percentile(np.asarray(self), [50.0 - half_cl, 50.0 + half_cl])
+        low_bound, hi_bound = np.percentile(
+            np.asarray(self), [50.0 - half_cl, 50.0 + half_cl]
+        )
 
         return float(low_bound), float(hi_bound)
 

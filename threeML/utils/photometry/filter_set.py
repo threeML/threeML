@@ -1,3 +1,7 @@
+from __future__ import division
+from builtins import zip
+from builtins import object
+from past.utils import old_div
 import speclite.filters as spec_filters
 import astropy.units as astro_units
 import numpy as np
@@ -6,9 +10,7 @@ import astropy.constants as constants
 from threeML.utils.interval import IntervalSet
 
 
-
-
-class  NotASpeclikeFilter(RuntimeError):
+class NotASpeclikeFilter(RuntimeError):
     pass
 
 
@@ -30,19 +32,21 @@ class FilterSet(object):
         # we explicitly violate duck typing here in order to have one routine
         # to return values from the filters (speclite appends 's' to the end of sequence calls)
 
-        if isinstance(filter,spec_filters.FilterResponse):
+        if isinstance(filter, spec_filters.FilterResponse):
 
             # we will make a sequence
 
             self._filters = spec_filters.FilterSequence([filter])
 
-        elif isinstance(filter,spec_filters.FilterSequence):
+        elif isinstance(filter, spec_filters.FilterSequence):
 
             self._filters = filter  # type: spec_filters.FilterSequence
 
         else:
 
-            raise NotASpeclikeFilter('filter must be a speclite FilterResponse or FilterSequence')
+            raise NotASpeclikeFilter(
+                "filter must be a speclite FilterResponse or FilterSequence"
+            )
 
         if mask is not None:
 
@@ -54,11 +58,9 @@ class FilterSet(object):
 
                     tmp.append(response)
 
-
             self._filters = spec_filters.FilterSequence(tmp)
-            self._names = np.array([name.split('-')[1] for name in self._filters.names])
+            self._names = np.array([name.split("-")[1] for name in self._filters.names])
             self._long_name = self._filters.names
-
 
         # haven't set a likelihood model yet
         self._model_set = False
@@ -66,7 +68,6 @@ class FilterSet(object):
         # calculate the FWHM
 
         self._calculate_fwhm()
-
 
     @property
     def wavelength_bounds(self):
@@ -92,15 +93,13 @@ class FilterSet(object):
         for filter in self._filters:
 
             response = filter.response
-            max_response =  response.max()
+            max_response = response.max()
             idx_max = response.argmax()
             half_max = 0.5 * max_response
 
-            idx1 = abs(response[:idx_max] -
-                         half_max).argmin()
+            idx1 = abs(response[:idx_max] - half_max).argmin()
 
-            idx2 = abs(response[idx_max:] -
-                         half_max).argmin() + idx_max
+            idx2 = abs(response[idx_max:] - half_max).argmin() + idx_max
 
             # have to grab the private member here
             # bc the library does not expose it!
@@ -108,12 +107,10 @@ class FilterSet(object):
             w1 = filter._wavelength[idx1]
             w2 = filter._wavelength[idx2]
 
-
             wmin.append(w1)
             wmax.append(w2)
 
-        self._wavebounds = IntervalSet.from_starts_and_stops(wmin,wmax)
-
+        self._wavebounds = IntervalSet.from_starts_and_stops(wmin, wmax)
 
     def set_model(self, differential_flux):
         """
@@ -124,12 +121,10 @@ class FilterSet(object):
 
         """
 
-        conversion_factor = (constants.c ** 2 * constants.h ** 2).to('keV2 * cm2')
+        conversion_factor = (constants.c ** 2 * constants.h ** 2).to("keV2 * cm2")
 
         def wrapped_model(x):
-            return differential_flux(x) * conversion_factor / x ** 3
-
-
+            return old_div(differential_flux(x) * conversion_factor, x ** 3)
 
         self._wrapped_model = wrapped_model
 
@@ -142,7 +137,7 @@ class FilterSet(object):
         :return: np.ndarray of ab magnitudes
         """
 
-        assert self._model_set, 'no likelihood model has been set'
+        assert self._model_set, "no likelihood model has been set"
 
         # speclite has issues with unit conversion
         # so we will do the calculation manually here
@@ -152,24 +147,21 @@ class FilterSet(object):
         for filter in self._filters:
 
             # first get the flux and convert it to base units
-            synthetic_flux = filter.convolve_with_function(self._wrapped_model).to('1/(cm2 s)')
+            synthetic_flux = filter.convolve_with_function(self._wrapped_model).to(
+                "1/(cm2 s)"
+            )
 
             # normalize it to the filter's AB magnitude
 
-
-
-            ratio.append((synthetic_flux/filter.ab_zeropoint.to('1/(cm2 s)')).value)
-
-
+            ratio.append(
+                (old_div(synthetic_flux, filter.ab_zeropoint.to("1/(cm2 s)"))).value
+            )
 
         ratio = np.array(ratio)
 
         return -2.5 * np.log10(ratio)
 
-
-
-        #return self._filters.get_ab_magnitudes(self._wrapped_model).to_pandas().loc[0]
-
+        # return self._filters.get_ab_magnitudes(self._wrapped_model).to_pandas().loc[0]
 
     def plot_filters(self):
         """
@@ -178,7 +170,6 @@ class FilterSet(object):
         """
 
         spec_filters.plot_filters(self._filters)
-
 
     @property
     def n_bands(self):

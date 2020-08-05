@@ -7,9 +7,10 @@
 
 Astrophysical sources are observed by different instruments at different wavelengths with an unprecedented quality. Putting all these data together to form a coherent view, however, is a very difficult task. Indeed, each instrument and data type has its own ad-hoc software and handling procedure, which present steep learning curves and do not talk to each other.
 
-The Multi-Mission Maximum Likelihood framework (3ML) provides a common high-level interface and model definition which allows for an easy, coherent and intuitive modeling of sources using all the available data, no matter their origin. At the same time, thanks to its architecture based on plug-ins, 3ML uses under the hood the official software of each instrument, the only one certified and maintained by the collaboration which built the instrument itself. This guarantees that 3ML is always using the best possible methodology to deal with the data of each instrument.
+The Multi-Mission Maximum Likelihood framework (3ML) provides a common high-level interface and model definition, which allows for an easy, coherent and intuitive modeling of sources using all the available data, no matter their origin. At the same time, thanks to its architecture based on plug-ins, 3ML uses under the hood the official software of each instrument, the only one certified and maintained by the collaboration which built the instrument itself. This guarantees that 3ML is always using the best possible methodology to deal with the data of each instrument.
 
 Traditionally the Astrophysics community have been using frequentist techniques, but in recent years Bayesian methods and approaches have been gaining consensum and momentum. In 3ML both analysis are possible. Moreover, the 3ML Python interface allows for combinations with all available packages for data analysis and mining.
+
 
 .. toctree::
     :maxdepth: 5
@@ -19,11 +20,22 @@ Traditionally the Astrophysics community have been using frequentist techniques,
     intro
     notebooks/Minimization_tutorial.ipynb
     notebooks/Bayesian_tutorial.ipynb
-    notebooks/Time-energy-fit.ipynb
     plugins
     modeling
-    features
-    tutorials
     faq
     api/API
+    release_notes
 
+.. nbgallery::
+   :caption: Features and examples:
+
+   examples/grb080916C
+   examples/joint_BAT_gbm_demo
+   examples/Fermipy_LAT
+   examples/Time-energy-fit
+   notebooks/Analysis_results_showcase
+   notebooks/random_variates
+   notebooks/Point_source_plotting
+   notebooks/synthetic_spectra
+   examples/gof_lrt
+    

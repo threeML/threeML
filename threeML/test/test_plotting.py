@@ -7,7 +7,7 @@ def test_OGIP_plotting(fitted_joint_likelihood_bn090217206_nai):
 
     jl, _, _ = fitted_joint_likelihood_bn090217206_nai
 
-    NaI6 = jl.data_list['NaI6']
+    NaI6 = jl.data_list["NaI6"]
 
     # OGIP channel plotting
 
@@ -21,12 +21,12 @@ def test_OGIP_plotting(fitted_joint_likelihood_bn090217206_nai):
 
     _ = display_spectrum_model_counts(jl)
 
-    _ = display_spectrum_model_counts(jl, data=('NaI6'))
+    _ = display_spectrum_model_counts(jl, data=("NaI6"))
 
-    _ = display_spectrum_model_counts(jl, data=('wrong'))
+    _ = display_spectrum_model_counts(jl, data=("wrong"))
 
-    _ = display_spectrum_model_counts(jl, min_rate=1E-8)
+    _ = display_spectrum_model_counts(jl, min_rate=1e-8)
 
     with pytest.raises(NotEnoughData):
 
-        _ = display_spectrum_model_counts(jl, min_rate=1E8)
+        _ = display_spectrum_model_counts(jl, min_rate=1e8)

@@ -29,8 +29,10 @@ class Interval(object):
 
             else:
 
-                raise RuntimeError("Invalid time interval! TSTART must be before TSTOP and TSTOP-TSTART >0. "
-                                   "Got tstart = %s and tstop = %s" % (start, stop))
+                raise RuntimeError(
+                    "Invalid time interval! TSTART must be before TSTOP and TSTOP-TSTART >0. "
+                    "Got tstart = %s and tstop = %s" % (start, stop)
+                )
 
     @property
     def start(self):
@@ -56,7 +58,11 @@ class Interval(object):
 
     def __repr__(self):
 
-        return " interval %s - %s (width: %s)" % (self.start, self.stop, self._get_width())
+        return " interval %s - %s (width: %s)" % (
+            self.start,
+            self.stop,
+            self._get_width(),
+        )
 
     def intersect(self, interval):
         """
@@ -69,7 +75,9 @@ class Interval(object):
         """
 
         if not self.overlaps_with(interval):
-            raise IntervalsDoNotOverlap("Current interval does not overlap with provided interval")
+            raise IntervalsDoNotOverlap(
+                "Current interval does not overlap with provided interval"
+            )
 
         new_start = max(self._start, interval.start)
         new_stop = min(self._stop, interval.stop)
@@ -208,9 +216,11 @@ class IntervalSet(object):
         # The following regular expression matches any two numbers, positive or negative,
         # like "-10 --5","-10 - -5", "-10-5", "5-10" and so on
 
-        tokens = re.match('(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)', time_interval).groups()
+        tokens = re.match(
+            "(\-?\+?[0-9]+\.?[0-9]*)\s*-\s*(\-?\+?[0-9]+\.?[0-9]*)", time_interval
+        ).groups()
 
-        return map(float, tokens)
+        return [float(x) for x in tokens]
 
     @classmethod
     def from_starts_and_stops(cls, starts, stops):
@@ -225,8 +235,10 @@ class IntervalSet(object):
         :return:
         """
 
-        assert len(starts) == len(stops), 'starts length: %d and stops length: %d must have same length' % (
-        len(starts), len(stops))
+        assert len(starts) == len(stops), (
+            "starts length: %d and stops length: %d must have same length"
+            % (len(starts), len(stops))
+        )
 
         list_of_intervals = []
 
@@ -272,7 +284,7 @@ class IntervalSet(object):
 
         new_intervals = []
 
-        while (len(sorted_intervals) > 1):
+        while len(sorted_intervals) > 1:
 
             # pop the first interval off the stack
 
@@ -306,8 +318,9 @@ class IntervalSet(object):
         # we append it
         if sorted_intervals:
 
-            assert len(
-                sorted_intervals) == 1, "there should only be one interval left over, this is a bug"  # pragma: no cover
+            assert (
+                len(sorted_intervals) == 1
+            ), "there should only be one interval left over, this is a bug"  # pragma: no cover
 
             # we want to make sure that the last new interval did not
             # overlap with the final interval
@@ -320,7 +333,6 @@ class IntervalSet(object):
                 else:
 
                     new_intervals.append(sorted_intervals[0])
-
 
             else:
 
@@ -387,9 +399,9 @@ class IntervalSet(object):
         """
 
         # Gather all tstarts
-        tstarts = map(lambda x: x.start, self._intervals)
+        tstarts = [x.start for x in self._intervals]
 
-        return map(lambda x: x[0], sorted(enumerate(tstarts), key=itemgetter(1)))
+        return [x[0] for x in sorted(enumerate(tstarts), key=itemgetter(1))]
 
     def is_contiguous(self, relative_tolerance=1e-5):
         """
@@ -399,8 +411,8 @@ class IntervalSet(object):
         :return: True or False
         """
 
-        starts = map(attrgetter("start"), self._intervals)
-        stops = map(attrgetter("stop"), self._intervals)
+        starts = [attrgetter("start")(x) for x in self._intervals]
+        stops = [attrgetter("stop")(x) for x in self._intervals]
 
         return np.allclose(starts[1:], stops[:-1], rtol=relative_tolerance)
 
@@ -443,19 +455,18 @@ class IntervalSet(object):
         # we need to round for the comparison because we may have read from
         # strings which are rounded to six decimals
 
-        starts = np.round(self.starts,decimals=6)
-        stops = np.round(self.stops,decimals=6)
+        starts = np.round(self.starts, decimals=6)
+        stops = np.round(self.stops, decimals=6)
 
-        start = np.round(start,decimals=6)
+        start = np.round(start, decimals=6)
         stop = np.round(stop, decimals=6)
-
 
         condition = (starts >= start) & (stop >= stops)
 
         if not inner:
 
             # now we get the end caps
-            lower_condition = (starts <= start) & ( start <= stops)
+            lower_condition = (starts <= start) & (start <= stops)
 
             upper_condition = (starts <= stop) & (stop <= stops)
 
@@ -470,9 +481,6 @@ class IntervalSet(object):
         else:
 
             return self.new(np.asarray(self._intervals)[condition])
-
-
-
 
     @property
     def starts(self):
@@ -531,12 +539,22 @@ class IntervalSet(object):
 
         if self.is_contiguous() and self.is_sorted:
 
-            edges = [interval.start for interval in itemgetter(*self.argsort())(self._intervals)]
-            edges.append([interval.stop for interval in itemgetter(*self.argsort())(self._intervals)][-1])
+            edges = [
+                interval.start
+                for interval in itemgetter(*self.argsort())(self._intervals)
+            ]
+            edges.append(
+                [
+                    interval.stop
+                    for interval in itemgetter(*self.argsort())(self._intervals)
+                ][-1]
+            )
 
         else:
 
-            raise IntervalsNotContiguous("Cannot return edges for non-contiguous intervals")
+            raise IntervalsNotContiguous(
+                "Cannot return edges for non-contiguous intervals"
+            )
 
         return edges
 
@@ -548,7 +566,7 @@ class IntervalSet(object):
         :return:
         """
 
-        return ','.join([interval.to_string() for interval in self._intervals])
+        return ",".join([interval.to_string() for interval in self._intervals])
 
     @property
     def bin_stack(self):

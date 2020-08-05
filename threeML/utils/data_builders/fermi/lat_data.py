@@ -5,7 +5,9 @@ import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 
-from threeML.utils.fermi_relative_mission_time import compute_fermi_relative_mission_times
+from threeML.utils.fermi_relative_mission_time import (
+    compute_fermi_relative_mission_times,
+)
 
 
 class LLEFile(object):
@@ -23,7 +25,7 @@ class LLEFile(object):
 
         with fits.open(rsp_file) as rsp_:
 
-            data = rsp_['EBOUNDS'].data
+            data = rsp_["EBOUNDS"].data
 
             self._emin = data.E_MIN
             self._emax = data.E_MAX
@@ -31,29 +33,29 @@ class LLEFile(object):
 
         with fits.open(lle_file) as ft1_:
 
-            data = ft1_['EVENTS'].data
+            data = ft1_["EVENTS"].data
 
             self._events = data.TIME  # - trigger_time
-            self._energy = data.ENERGY * 1E3  # keV
+            self._energy = data.ENERGY * 1e3  # keV
 
-            self._tstart = ft1_['PRIMARY'].header['TSTART']
-            self._tstop = ft1_['PRIMARY'].header['TSTOP']
-            self._utc_start = ft1_['PRIMARY'].header['DATE-OBS']
-            self._utc_stop = ft1_['PRIMARY'].header['DATE-END']
-            self._instrument = ft1_['PRIMARY'].header['INSTRUME']
-            self._telescope = ft1_['PRIMARY'].header['TELESCOP'] + "_LLE"
-            self._gti_start = ft1_['GTI'].data['START']
-            self._gti_stop = ft1_['GTI'].data['STOP']
+            self._tstart = ft1_["PRIMARY"].header["TSTART"]
+            self._tstop = ft1_["PRIMARY"].header["TSTOP"]
+            self._utc_start = ft1_["PRIMARY"].header["DATE-OBS"]
+            self._utc_stop = ft1_["PRIMARY"].header["DATE-END"]
+            self._instrument = ft1_["PRIMARY"].header["INSTRUME"]
+            self._telescope = ft1_["PRIMARY"].header["TELESCOP"] + "_LLE"
+            self._gti_start = ft1_["GTI"].data["START"]
+            self._gti_stop = ft1_["GTI"].data["STOP"]
 
             try:
-                self._trigger_time = ft1_['EVENTS'].header['TRIGTIME']
-
+                self._trigger_time = ft1_["EVENTS"].header["TRIGTIME"]
 
             except:
 
                 # For whatever reason
                 warnings.warn(
-                        "There is no trigger time in the LLE file. Must be set manually or using MET relative times.")
+                    "There is no trigger time in the LLE file. Must be set manually or using MET relative times."
+                )
 
                 self._trigger_time = 0
 
@@ -67,22 +69,25 @@ class LLEFile(object):
 
         with fits.open(ft2_file) as ft2_:
 
-            ft2_tstart = ft2_['SC_DATA'].data.field("START")  # - trigger_time
-            ft2_tstop = ft2_['SC_DATA'].data.field("STOP")  # - trigger_time
-            ft2_livetime = ft2_['SC_DATA'].data.field("LIVETIME")
+            ft2_tstart = ft2_["SC_DATA"].data.field("START")  # - trigger_time
+            ft2_tstop = ft2_["SC_DATA"].data.field("STOP")  # - trigger_time
+            ft2_livetime = ft2_["SC_DATA"].data.field("LIVETIME")
 
         ft2_bin_size = 1.0  # seconds
 
         if not np.all(ft2_livetime <= 1.0):
 
-            warnings.warn("You are using a 30s FT2 file. You should use a 1s Ft2 file otherwise the livetime "
-                          "correction will not be accurate!")
+            warnings.warn(
+                "You are using a 30s FT2 file. You should use a 1s Ft2 file otherwise the livetime "
+                "correction will not be accurate!"
+            )
 
             ft2_bin_size = 30.0  # s
 
         # Keep only the needed entries (plus a padding)
         idx = (ft2_tstart >= self._tstart - 10 * ft2_bin_size) & (
-            ft2_tstop <= self._tstop + 10 * ft2_bin_size)
+            ft2_tstop <= self._tstop + 10 * ft2_bin_size
+        )
 
         self._ft2_tstart = ft2_tstart[idx]
         self._ft2_tstop = ft2_tstop[idx]
@@ -91,10 +96,6 @@ class LLEFile(object):
         # now filter the livetime by GTI
 
         self._apply_gti_to_live_time()
-
-
-
-
 
         # Now sort all vectors
         idx = np.argsort(self._ft2_tstart)
@@ -182,9 +183,6 @@ class LLEFile(object):
 
         return in_gti
 
-
-
-
     def _bin_energies_into_pha(self):
         """
 
@@ -197,12 +195,9 @@ class LLEFile(object):
 
         self._pha = np.digitize(self._energy, edges)
 
-
         # There are some events outside of the energy bounds. We will dump those
 
         self._filter_idx = self._pha > 0
-
-
 
         self._n_channels = len(self._channels)
 
@@ -217,8 +212,10 @@ class LLEFile(object):
     @trigger_time.setter
     def trigger_time(self, val):
 
-        assert self._tstart <= val <= self._tstop, "Trigger time must be within the interval (%f,%f)" % (
-            self._tstart, self._tstop)
+        assert self._tstart <= val <= self._tstop, (
+            "Trigger time must be within the interval (%f,%f)"
+            % (self._tstart, self._tstop)
+        )
 
         self._trigger_time = val
 
@@ -261,7 +258,7 @@ class LLEFile(object):
     @property
     def energy_edges(self):
 
-        return np.vstack((self._emin,self._emax))
+        return np.vstack((self._emin, self._emax))
 
     @property
     def instrument(self):
@@ -285,12 +282,9 @@ class LLEFile(object):
     def livetime_stop(self):
         return self._ft2_tstop
 
-
-
     def __repr__(self):
 
-        return  self._output().to_string()
-
+        return self._output().to_string()
 
     def _output(self):
 
@@ -306,22 +300,17 @@ class LLEFile(object):
 
         fermi_dict = collections.OrderedDict()
 
-        fermi_dict['Fermi Trigger Time'] = "%.3f" % self._trigger_time
-        fermi_dict['Fermi MET OBS Start'] = "%.3f" % self._tstart
-        fermi_dict['Fermi MET OBS Stop'] = "%.3f" % self._tstop
-        fermi_dict['Fermi UTC OBS Start'] = self._utc_start
-        fermi_dict['Fermi UTC OBS Stop'] = self._utc_stop
+        fermi_dict["Fermi Trigger Time"] = "%.3f" % self._trigger_time
+        fermi_dict["Fermi MET OBS Start"] = "%.3f" % self._tstart
+        fermi_dict["Fermi MET OBS Stop"] = "%.3f" % self._tstop
+        fermi_dict["Fermi UTC OBS Start"] = self._utc_start
+        fermi_dict["Fermi UTC OBS Stop"] = self._utc_stop
 
         fermi_df = pd.Series(fermi_dict, index=fermi_dict.keys())
-
 
         if mission_dict is not None:
             mission_df = pd.Series(mission_dict, index=mission_dict.keys())
 
             fermi_df = fermi_df.append(mission_df)
 
-
-
         return fermi_df
-
-

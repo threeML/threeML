@@ -2,6 +2,47 @@ from threeML import BayesianAnalysis, Uniform_prior, Log_uniform_prior
 import numpy as np
 import pytest
 
+try:
+    import ultranest
+except:
+    has_ultranest = False
+else:
+    has_ultranest = True
+skip_if_ultranest_is_not_available = pytest.mark.skipif(
+    not has_ultranest, reason="No ultranest available"
+)
+
+try:
+    import dynesty
+except:
+    has_dynesty = False
+else:
+    has_dynesty = True
+skip_if_dynesty_is_not_available = pytest.mark.skipif(
+    not has_dynesty, reason="No dynesty available"
+)
+
+
+try:
+    import pymultinest
+except:
+    has_pymultinest = False
+else:
+    has_pymultinest = True
+skip_if_pymultinest_is_not_available = pytest.mark.skipif(
+    not has_pymultinest, reason="No pymultinest available"
+)
+
+try:
+    import zeus
+except:
+    has_zeus = False
+else:
+    has_zeus = True
+skip_if_zeus_is_not_available = pytest.mark.skipif(
+    not has_zeus, reason="No zeus available"
+)
+
 
 def remove_priors(model):
 
@@ -22,12 +63,17 @@ def check_results(fit_results):
 
     expected_results = [2.531028, -1.1831566000728451]
 
-    assert np.isclose(fit_results['value']['bn090217206.spectrum.main.Powerlaw.K'],
-                      expected_results[0], rtol=0.1)
+    assert np.isclose(
+        fit_results["value"]["bn090217206.spectrum.main.Powerlaw.K"],
+        expected_results[0],
+        rtol=0.1,
+    )
 
-    assert np.isclose(fit_results['value']['bn090217206.spectrum.main.Powerlaw.index'],
-                      expected_results[1], rtol=0.1)
-
+    assert np.isclose(
+        fit_results["value"]["bn090217206.spectrum.main.Powerlaw.index"],
+        expected_results[1],
+        rtol=0.1,
+    )
 
 
 def test_bayes_constructor(fitted_joint_likelihood_bn090217206_nai):
@@ -49,45 +95,115 @@ def test_bayes_constructor(fitted_joint_likelihood_bn090217206_nai):
 
     bayes = BayesianAnalysis(model, datalist)
 
+    bayes.set_sampler("emcee")
 
-def test_emcee():
+    assert bayes.results is None
+    assert bayes.samples is None
+    assert bayes.log_like_values is None
+    assert bayes.log_probability_values is None
 
-    # This has been already tested in the fixtures (see conftest.py)
+
+def test_emcee(bayes_fitter):
 
     pass
+    # This has been already tested in the fixtures (see conftest.py)
 
 
-def test_multinest(completed_bn090217206_bayesian_analysis):
+@skip_if_pymultinest_is_not_available
+def test_multinest(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
     bayes, _ = completed_bn090217206_bayesian_analysis
 
-    bayes.sample_multinest(n_live_points=400)
+    bayes.set_sampler("multinest")
+
+    bayes.sampler.setup(n_live_points=400)
+
+    bayes.sample()
 
     res = bayes.results.get_data_frame()
 
     check_results(res)
 
-# def test_parallel_temp():
-#
-#     powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
-#     powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
-#
-#     bayes = BayesianAnalysis(model, data_list)
-#
-#     # test parallel temp
-#     bayes.sample_parallel_tempering(n_temps=2, n_walkers=10, burn_in=2, n_samples=500, quiet=False)
-#
-#
+
+@skip_if_ultranest_is_not_available
+def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
+
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("ultranest")
+
+    bayes.sampler.setup()
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    check_results(res)
+
+
+@skip_if_dynesty_is_not_available
+def test_dynesty_nested(bayes_fitter, completed_bn090217206_bayesian_analysis):
+
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("dynesty_nested")
+
+    bayes.sampler.setup(n_live_points=100, n_effective=10)
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    check_results(res)
+
+
+
+
+@skip_if_dynesty_is_not_available
+def test_dynesty_dynamic(bayes_fitter, completed_bn090217206_bayesian_analysis):
+
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("dynesty_dynamic")
+
+    bayes.sampler.setup(nlive_init=100, maxbatch=2, n_effective=10)
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    check_results(res)
+
+
+    
+
+@skip_if_zeus_is_not_available
+def test_zeus(bayes_fitter, completed_bn090217206_bayesian_analysis):
+
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("zeus")
+
+    bayes.sampler.setup(n_iterations=200, n_walkers=20)
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    bayes.restore_median_fit()
+
+    check_results(res)
+
 
 def test_bayes_plots(completed_bn090217206_bayesian_analysis):
 
     bayes, samples = completed_bn090217206_bayesian_analysis
 
-
-
     with pytest.raises(AssertionError):
-        bayes.convergence_plots(n_samples_in_each_subset=100,n_subsets=2000)
+        bayes.convergence_plots(n_samples_in_each_subset=100, n_subsets=2000)
 
     bayes.convergence_plots(n_samples_in_each_subset=10, n_subsets=5)
 
     bayes.plot_chains()
+
+    bayes.restore_median_fit()

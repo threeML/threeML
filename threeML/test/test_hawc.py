@@ -1,3 +1,8 @@
+from __future__ import division
+from __future__ import print_function
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 import pytest
 from threeML import *
 
@@ -18,14 +23,16 @@ from threeML.io.file_utils import sanitize_filename
 
 # This defines a decorator which can be applied to single tests to
 # skip them if the condition is not met
-skip_if_hawc_is_not_available = pytest.mark.skipif((os.environ.get('HAWC_3ML_TEST_DATA_DIR') is None) or (not has_HAWC),
-                                                   reason="HAWC test dataset or HAWC environment is not available")
+skip_if_hawc_is_not_available = pytest.mark.skipif(
+    (os.environ.get("HAWC_3ML_TEST_DATA_DIR") is None) or (not has_HAWC),
+    reason="HAWC test dataset or HAWC environment is not available",
+)
 
 
 def is_within_tolerance(truth, value, relative_tolerance=0.01):
     assert truth != 0
 
-    if abs((truth - value) / truth) <= relative_tolerance:
+    if abs(old_div((truth - value), truth)) <= relative_tolerance:
 
         return True
 
@@ -48,12 +55,16 @@ _response_name = "detector_response.root"
 @pytest.fixture(scope="session")
 def hawc_point_source_fitted_joint_like():
 
-    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
+    data_path = sanitize_filename(
+        os.environ.get("HAWC_3ML_TEST_DATA_DIR"), abspath=True
+    )
 
     maptree = os.path.join(data_path, _maptree_name)
     response = os.path.join(data_path, _response_name)
 
-    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
+    assert os.path.exists(maptree) and os.path.exists(response), (
+        "Data files do not exist at %s" % data_path
+    )
 
     # The simulated source has this spectrum (credits for simulation: Colas Riviere):
     # CutOffPowerLaw,3.15e-11,2.37,42.3
@@ -64,7 +75,7 @@ def hawc_point_source_fitted_joint_like():
     spectrum = Cutoff_powerlaw()
     source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
 
-    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
+    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
 
     spectrum.piv = 1 * u.TeV
@@ -106,18 +117,22 @@ def hawc_point_source_fitted_joint_like():
 @skip_if_hawc_is_not_available
 def test_set_active_measurements():
 
-    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
+    data_path = sanitize_filename(
+        os.environ.get("HAWC_3ML_TEST_DATA_DIR"), abspath=True
+    )
 
     maptree = os.path.join(data_path, _maptree_name)
     response = os.path.join(data_path, _response_name)
 
-    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
+    assert os.path.exists(maptree) and os.path.exists(response), (
+        "Data files do not exist at %s" % data_path
+    )
 
     llh = HAWCLike("HAWC", maptree, response)
     # Test one way
     llh.set_active_measurements(1, 9)
     # Test the other way
-    llh.set_active_measurements(bin_list=['4','5','6','7','8','9'])
+    llh.set_active_measurements(bin_list=["4", "5", "6", "7", "8", "9"])
 
 
 @skip_if_hawc_is_not_available
@@ -125,12 +140,16 @@ def test_hawc_fullsky_options():
 
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
 
-    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
+    data_path = sanitize_filename(
+        os.environ.get("HAWC_3ML_TEST_DATA_DIR"), abspath=True
+    )
 
     maptree = os.path.join(data_path, _maptree_name)
     response = os.path.join(data_path, _response_name)
 
-    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
+    assert os.path.exists(maptree) and os.path.exists(response), (
+        "Data files do not exist at %s" % data_path
+    )
 
     # The simulated source has this spectrum (credits for simulation: Colas Riviere):
     # CutOffPowerLaw,3.15e-11,2.37,42.3
@@ -141,7 +160,7 @@ def test_hawc_fullsky_options():
     spectrum = Cutoff_powerlaw()
     source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
 
-    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
+    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
 
     spectrum.piv = 1 * u.TeV
@@ -188,7 +207,7 @@ def test_hawc_fullsky_options():
     llh = HAWCLike("HAWC", maptree, response, fullsky=False)
     llh.set_active_measurements(1, 9)
     llh.set_ROI(100.0, 22.0, 1.0)
-    
+
     # Double check the free parameters
     print("Likelihood model:\n")
     print(lm)
@@ -212,17 +231,24 @@ def test_hawc_point_source_fit(hawc_point_source_fitted_joint_like):
     # Check that we have converged to the right solution
     # (the true value of course are not exactly the value simulated,
     # they are just the point where the fit should converge)
-    assert is_within_tolerance(3.3246428894535895e-20,
-                               parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.K'])
-    assert is_within_tolerance(-2.33736923856,
-                               parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.index'])
-    assert is_within_tolerance(37478522636.504425, parameter_frame['value']['TestSource.spectrum.main.Cutoff_powerlaw.xc'])
+    assert is_within_tolerance(
+        3.3246428894535895e-20,
+        parameter_frame["value"]["TestSource.spectrum.main.Cutoff_powerlaw.K"],
+    )
+    assert is_within_tolerance(
+        -2.33736923856,
+        parameter_frame["value"]["TestSource.spectrum.main.Cutoff_powerlaw.index"],
+    )
+    assert is_within_tolerance(
+        37478522636.504425,
+        parameter_frame["value"]["TestSource.spectrum.main.Cutoff_powerlaw.xc"],
+    )
 
-    assert is_within_tolerance(55979.424031, like['-log(likelihood)']['HAWC'])
+    assert is_within_tolerance(55979.424031, like["-log(likelihood)"]["HAWC"])
 
     # Print up the TS, significance, and fit parameters, and then plot stuff
     print("\nTest statistic:")
-    TS = jl.data_list['HAWC'].calc_TS()
+    TS = jl.data_list["HAWC"].calc_TS()
     sigma = np.sqrt(TS)
 
     print("Test statistic: %g" % TS)
@@ -234,7 +260,7 @@ def test_hawc_point_source_fit(hawc_point_source_fitted_joint_like):
     # Get the differential flux at 1 TeV
     diff_flux = spectrum(1 * u.TeV)
     # Convert it to 1 / (TeV cm2 s)
-    diff_flux_TeV = diff_flux.to(1 / (u.TeV * u.cm ** 2 * u.s))
+    diff_flux_TeV = diff_flux.to(old_div(1, (u.TeV * u.cm ** 2 * u.s)))
 
     print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
@@ -249,12 +275,16 @@ def test_hawc_extended_source_fit():
 
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
 
-    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
+    data_path = sanitize_filename(
+        os.environ.get("HAWC_3ML_TEST_DATA_DIR"), abspath=True
+    )
 
     maptree = os.path.join(data_path, _maptree_name)
     response = os.path.join(data_path, _response_name)
 
-    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
+    assert os.path.exists(maptree) and os.path.exists(response), (
+        "Data files do not exist at %s" % data_path
+    )
 
     # The simulated source has this spectrum (credits for simulation: Colas Riviere):
     # CutOffPowerLaw,1.32e-07,2.37,42.3
@@ -267,9 +297,7 @@ def test_hawc_extended_source_fit():
 
     shape = Disk_on_sphere()
 
-    source = ExtendedSource("ExtSource",
-                            spatial_shape=shape,
-                            spectral_shape=spectrum)
+    source = ExtendedSource("ExtSource", spatial_shape=shape, spectral_shape=spectrum)
 
     shape.lon0 = 100.0
     shape.lon0.fix = True
@@ -318,12 +346,19 @@ def test_hawc_extended_source_fit():
     # Check that we have converged to the right solution
     # (the true value of course are not exactly the value simulated,
     # they are just the point where the fit should converge)
-    assert is_within_tolerance(4.7805737823025172e-20, parameter_frame['value']['ExtSource.spectrum.main.Cutoff_powerlaw.K'])
-    assert is_within_tolerance(-2.44931279819,
-                               parameter_frame['value']['ExtSource.spectrum.main.Cutoff_powerlaw.index'])
-    assert is_within_tolerance(1.4273457159139373, parameter_frame['value']['ExtSource.Disk_on_sphere.radius'])
+    assert is_within_tolerance(
+        4.7805737823025172e-20,
+        parameter_frame["value"]["ExtSource.spectrum.main.Cutoff_powerlaw.K"],
+    )
+    assert is_within_tolerance(
+        -2.44931279819,
+        parameter_frame["value"]["ExtSource.spectrum.main.Cutoff_powerlaw.index"],
+    )
+    assert is_within_tolerance(
+        1.4273457159139373, parameter_frame["value"]["ExtSource.Disk_on_sphere.radius"]
+    )
 
-    assert is_within_tolerance(186389.581117, like['-log(likelihood)']['HAWC'])
+    assert is_within_tolerance(186389.581117, like["-log(likelihood)"]["HAWC"])
 
     # Print up the TS, significance, and fit parameters, and then plot stuff
     print("\nTest statistic:")
@@ -339,7 +374,7 @@ def test_hawc_extended_source_fit():
     # Get the differential flux at 1 TeV
     diff_flux = spectrum(1 * u.TeV)
     # Convert it to 1 / (TeV cm2 s)
-    diff_flux_TeV = diff_flux.to(1 / (u.TeV * u.cm ** 2 * u.s))
+    diff_flux_TeV = diff_flux.to(old_div(1, (u.TeV * u.cm ** 2 * u.s)))
 
     print("Norm @ 1 TeV:  %s \n" % diff_flux_TeV)
 
@@ -347,7 +382,6 @@ def test_hawc_extended_source_fit():
 
     spectrum.display()
     shape.display()
-    
 
 
 @skip_if_hawc_is_not_available
@@ -360,12 +394,16 @@ def test_hawc_display_residuals(hawc_point_source_fitted_joint_like):
     source = jl.likelihood_model.TestSource
 
     # Check the 'display' functions (plot model&data/residuals vs analysis bins)
-    llh = jl.data_list['HAWC']
+    llh = jl.data_list["HAWC"]
     llh.display(radius=0.5)
-    llh.display_residuals_at_position(source.position.ra.value, source.position.dec.value, radius=0.5)
+    llh.display_residuals_at_position(
+        source.position.ra.value, source.position.dec.value, radius=0.5
+    )
 
     # Now check the bin-dependent radius
-    llh.display_residuals_at_position(source.position.ra.value, source.position.dec.value, radius=[0.5] * 9)
+    llh.display_residuals_at_position(
+        source.position.ra.value, source.position.dec.value, radius=[0.5] * 9
+    )
 
 
 @skip_if_hawc_is_not_available
@@ -377,8 +415,10 @@ def test_null_hyp_prob(hawc_point_source_fitted_joint_like):
 
     jl, parameter_frame, like = hawc_point_source_fitted_joint_like
     source = jl.likelihood_model.TestSource
-    llh = jl.data_list['HAWC']
-    p_value = llh.calc_p_value(source.position.ra.value, source.position.dec.value, radius=[0.5] * 9)
+    llh = jl.data_list["HAWC"]
+    p_value = llh.calc_p_value(
+        source.position.ra.value, source.position.dec.value, radius=[0.5] * 9
+    )
 
     assert np.isclose(p_value, 0.88173524636, rtol=0.1)
 
@@ -391,29 +431,68 @@ def test_radial_profile(hawc_point_source_fitted_joint_like):
 
     jl, parameter_frame, like = hawc_point_source_fitted_joint_like
     source = jl.likelihood_model.TestSource
-    llh = jl.data_list['HAWC']
+    llh = jl.data_list["HAWC"]
     lm = jl.likelihood_model
 
     correct_radii = [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9]
-    correct_model = [1.006176e+07, 3.775266e+06, 6.518357e+05, 1.390542e+05, 4.952657e+04, 2.139160e+04,
-                     1.067152e+04, 5.250257e+03, 2.334314e+03, 9.489685e+02]
-    correct_data = [9.851449e+06, 3.862865e+06, 6.724352e+05, 1.395860e+05, 4.972864e+04, 3.894414e+04,
-                    -5.817591e+04, 1.270122e+04, 4.575470e+03, -1.882920e+04]
-    correct_error = [2.360076e+05, 8.138953e+04, 4.063915e+04, 3.042109e+04, 2.590773e+04, 2.452525e+04,
-                     2.383261e+04, 2.194618e+04, 1.990404e+04, 1.751396e+04, ]
+    correct_model = [
+        1.006176e07,
+        3.775266e06,
+        6.518357e05,
+        1.390542e05,
+        4.952657e04,
+        2.139160e04,
+        1.067152e04,
+        5.250257e03,
+        2.334314e03,
+        9.489685e02,
+    ]
+    correct_data = [
+        9.851449e06,
+        3.862865e06,
+        6.724352e05,
+        1.395860e05,
+        4.972864e04,
+        3.894414e04,
+        -5.817591e04,
+        1.270122e04,
+        4.575470e03,
+        -1.882920e04,
+    ]
+    correct_error = [
+        2.360076e05,
+        8.138953e04,
+        4.063915e04,
+        3.042109e04,
+        2.590773e04,
+        2.452525e04,
+        2.383261e04,
+        2.194618e04,
+        1.990404e04,
+        1.751396e04,
+    ]
 
-    correct_bins = ['4', '5', '6', '7', '8', '9']
+    correct_bins = ["4", "5", "6", "7", "8", "9"]
 
-    subtracted_data = [ d-m for m,d in zip(correct_model, correct_data) ]
+    subtracted_data = [d - m for m, d in zip(correct_model, correct_data)]
 
     max_radius = 2.0
     n_bins = 10
-    bins_to_use = ['4', '5', '6', '7', '8', '9']
+    bins_to_use = ["4", "5", "6", "7", "8", "9"]
 
-    radii, excess_model, excess_data, excess_error, list_of_bin_names = llh.get_radial_profile(source.position.ra.value,
-                                                                                               source.position.dec.value,
-                                                                                               bins_to_use, max_radius,
-                                                                                               n_bins)
+    (
+        radii,
+        excess_model,
+        excess_data,
+        excess_error,
+        list_of_bin_names,
+    ) = llh.get_radial_profile(
+        source.position.ra.value,
+        source.position.dec.value,
+        bins_to_use,
+        max_radius,
+        n_bins,
+    )
 
     # Un-comment the next lines to re-generate the "correct_" values if needed
     # print 'model, data, error:'
@@ -436,14 +515,22 @@ def test_radial_profile(hawc_point_source_fitted_joint_like):
         assert is_within_tolerance(excess_data[i], correct_data[i])
         assert is_within_tolerance(excess_error[i], correct_error[i])
 
-
     # Now again subtracting the model from data and model
-    radii, excess_model, excess_data, excess_error, list_of_bin_names = llh.get_radial_profile(source.position.ra.value,
-                                                                                               source.position.dec.value,
-                                                                                               bins_to_use, max_radius,
-                                                                                               n_bins,
-                                                                                               model_to_subtract=lm,
-                                                                                               subtract_model_from_model=True)
+    (
+        radii,
+        excess_model,
+        excess_data,
+        excess_error,
+        list_of_bin_names,
+    ) = llh.get_radial_profile(
+        source.position.ra.value,
+        source.position.dec.value,
+        bins_to_use,
+        max_radius,
+        n_bins,
+        model_to_subtract=lm,
+        subtract_model_from_model=True,
+    )
 
     assert len(radii) == n_bins
     assert len(excess_model) == n_bins
@@ -455,7 +542,7 @@ def test_radial_profile(hawc_point_source_fitted_joint_like):
     for i in range(0, n_bins):
         assert is_within_tolerance(radii[i], correct_radii[i])
         assert is_null_within_tolerance(excess_model[i], 0.01 * correct_model[i])
-        assert is_within_tolerance(excess_data[i], correct_data[i]-correct_model[i])
+        assert is_within_tolerance(excess_data[i], correct_data[i] - correct_model[i])
         assert is_within_tolerance(excess_error[i], correct_error[i])
 
 
@@ -463,12 +550,16 @@ def test_radial_profile(hawc_point_source_fitted_joint_like):
 def test_CommonNorm_fit():
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
 
-    data_path = sanitize_filename(os.environ.get('HAWC_3ML_TEST_DATA_DIR'), abspath=True)
+    data_path = sanitize_filename(
+        os.environ.get("HAWC_3ML_TEST_DATA_DIR"), abspath=True
+    )
 
     maptree = os.path.join(data_path, _maptree_name)
     response = os.path.join(data_path, _response_name)
 
-    assert os.path.exists(maptree) and os.path.exists(response), "Data files do not exist at %s" % data_path
+    assert os.path.exists(maptree) and os.path.exists(response), (
+        "Data files do not exist at %s" % data_path
+    )
     # The simulated source has this spectrum (credits for simulation: Colas Riviere):
     # CutOffPowerLaw,3.15e-11,2.37,42.3
     # at this position:
@@ -478,7 +569,7 @@ def test_CommonNorm_fit():
     spectrum = Cutoff_powerlaw()
     source = PointSource("TestSource", ra=100.0, dec=22.0, spectral_shape=spectrum)
 
-    spectrum.K = 3.15e-11 / (u.TeV * u.cm ** 2 * u.s)
+    spectrum.K = old_div(3.15e-11, (u.TeV * u.cm ** 2 * u.s))
     spectrum.K.bounds = (1e-22, 1e-18)  # without units energies are in keV
     spectrum.K.fix = True
 
@@ -521,7 +612,7 @@ def test_CommonNorm_fit():
 
     assert np.isclose(lm.HAWC_ComNorm.value, 1.0756519971562115, rtol=1e-2)
 
-    
+
 @skip_if_hawc_is_not_available
 def test_hawc_get_number_of_data_points(hawc_point_source_fitted_joint_like):
 
@@ -530,7 +621,7 @@ def test_hawc_get_number_of_data_points(hawc_point_source_fitted_joint_like):
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
 
     jl, parameter_frame, like = hawc_point_source_fitted_joint_like
-    llh = jl.data_list['HAWC']
+    llh = jl.data_list["HAWC"]
 
     assert llh.get_number_of_data_points() == 13428
 
@@ -543,7 +634,7 @@ def test_hawc_write_map(hawc_point_source_fitted_joint_like):
     assert is_plugin_available("HAWCLike"), "HAWCLike is not available!"
 
     jl, parameter_frame, like = hawc_point_source_fitted_joint_like
-    llh = jl.data_list['HAWC']
+    llh = jl.data_list["HAWC"]
 
     file_name = "__hawc_map.root"
 
