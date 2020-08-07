@@ -300,10 +300,7 @@ class FermiLATLike(PluginPrototype):
         # Activate inner minimization by default
         self.setInnerMinimization(True)
 
-        if source_name is not None:
-            self._source_name = source_name
-        else:
-            self._source_name = None
+        self._source_name = source_name
 
     pass
 
