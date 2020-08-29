@@ -131,7 +131,7 @@ class Spectrum(object):
         
 
 class IceCubeLike(PluginPrototype):
-    def __init__(self, name, exp, mc,background, signal_time_profile = None , background_time_profile = (50000,70000) , fit_position=False ,**kwargs):
+    def __init__(self, name, exp, mc,background, signal_time_profile = None , background_time_profile = (50000,70000) , fit_position=False,verbose=False,**kwargs):
         r"""Constructor of the class.
         exp is the data,mc is the monte carlo
         The default sin dec bins is set but can be pass by sinDec_bins.
@@ -140,12 +140,11 @@ class IceCubeLike(PluginPrototype):
         nuisance_parameters = {}
         super(IceCubeLike, self).__init__(name, nuisance_parameters)
         self.parameter=kwargs
-        self.data = exp
-        self.mc = mc
         self.llh_model = None
         self.sample = None
         self.fit_position = fit_position
         self.spectrum = PowerLaw(1,1e-15,-2)
+        self.verbose = verbose
         if isinstance(background_time_profile,generic_profile):
             pass
         else:
@@ -155,7 +154,7 @@ class IceCubeLike(PluginPrototype):
         else:
             signal_time_profile = signal_time_profile
             
-        self.llh_model=LLH_point_source(ra=np.pi/2 , dec=np.pi/6 , data = self.data , sim = self.mc ,spectrum = self.spectrum ,signal_time_profile = signal_time_profile , background_time_profile = background_time_profile, background = background ,fit_position=False) 
+        self.llh_model=LLH_point_source(ra=np.pi/2 , dec=np.pi/6 , data = exp , sim = mc ,spectrum = self.spectrum ,signal_time_profile = signal_time_profile , background_time_profile = background_time_profile, background = background ,fit_position=True) 
         self.dec = None
         self.ra = None
         
@@ -179,7 +178,8 @@ class IceCubeLike(PluginPrototype):
                     self.dec = dec
                     self.llh_model.fit_position = self.fit_position
                     self.llh_model.update_position(ra,dec, sampling_width = np.radians(1))
-                
+                    self.llh_model.update_time_weight()
+                    self.llh_model.update_energy_weight()
             self.model=likelihood_model_instance
             #self.source_name=likelihood_model_instance.get_point_source_name(id=0)
             #self.spectrum=Spectrum(likelihood_model_instance)
@@ -208,7 +208,8 @@ class IceCubeLike(PluginPrototype):
     def get_log_like(self):
         self.update_model()
         llh=self.llh_model.eval_llh()
-        print(llh)
+        if self.verbose:
+            print(llh)
         return llh[1]
         
     def inner_fit(self):
