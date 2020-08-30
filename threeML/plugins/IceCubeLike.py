@@ -12,10 +12,12 @@ from astromodels import Parameter
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.plugin_prototype import PluginPrototype
+from threeML.classicMLE.joint_likelihood import JointLikelihood
 from astromodels import PointSource,ExtendedSource
 import astropy.units as u
 from mla.core import *
 from mla.spectral import *
+from mla.injection import *
 __instrument_name = "IceCube"
 
 __all__=["NeutrinoPointSource","NeutrinoExtendedSource"]
@@ -104,16 +106,17 @@ class Spectrum(object):
     r"""
     A class that converter a astromodels model instance to a spectrum object with __call__ method.
     """
-    def __init__(self,likelihood_model_instance):
+    def __init__(self,likelihood_model_instance,factor = 1):
         r"""Constructor of the class"""
         self.model=likelihood_model_instance
+        self.factor = factor
         for source_name, source in likelihood_model_instance._point_sources.items():
             if isinstance(source,NeutrinoPointSource):
                 self.neutrinopointsource = source_name
         
     def __call__(self, E, **kwargs):
         r"""Evaluate spectrum at E """
-        return self.model._point_sources[self.neutrinopointsource].call(E)
+        return self.model._point_sources[self.neutrinopointsource].call(E)*self.factor
     
     #Function below exists only to avoid skylab conflict and can be removed after get rid of skylab dependence. Not sure removing them cause any problem now
     def validate(self):
@@ -214,3 +217,212 @@ class IceCubeLike(PluginPrototype):
         
     def inner_fit(self):
         return self.get_log_like()
+
+class sensitivity(object):
+
+    def __init__(self,JointLikelihood_instance):
+        self.jl = JointLikelihood_instance
+        for i in JointLikelihood_instance._data_list.keys():
+            if isinstance(JointLikelihood_instance._data_list[i],IceCubeLike):
+                self.jl_key = i
+                self.jl_value = JointLikelihood_instance._data_list[i]
+                self.jl_value.verbose = False
+        return 
+    
+    
+    def set_backround(self, grl, time_window = None ,background_window = 14 , start_time = None):
+        r'''Setting the background information which will later be used when drawing data as background
+        args:
+        grl:The good run list
+        background_window: The time window(days) that will be used to estimated the background rate and drawn sample from.Default is 14 days
+        '''
+        if start_time is None:
+            start_time = self.jl_value.llh_model.background_time_profile.get_range()[0]
+        fully_contained = (grl['start'] >= start_time-background_window) &\
+                            (grl['stop'] < start_time)
+        start_contained = (grl['start'] < start_time-background_window) &\
+                            (grl['stop'] > start_time-background_window)
+        background_runs = (fully_contained | start_contained)
+        if not np.any(background_runs):
+            print("ERROR: No runs found in GRL for calculation of "
+                  "background rates!")
+            raise RuntimeError
+        background_grl = grl[background_runs]
+        if time_window is None:
+            time_window = self.jl_value.llh_model.background_time_profile.effective_exposure()
+        # Get the number of events we see from these runs and scale 
+        # it to the number we expect for our search livetime.
+        n_background = background_grl['events'].sum()
+        n_background /= background_grl['livetime'].sum()
+        n_background *= time_window
+        self.n_background = n_background
+        return    
+        
+    def draw_data(self):
+        r'''Draw data sample
+        return:
+        background: background sample
+        '''
+        n_background_observed = np.random.poisson(self.n_background)
+        background = np.random.choice(self.jl_value.llh_model.background, n_background_observed).copy()
+        background['time'] = self.jl_value.llh_model.background_time_profile.random(len(background))
+        return background
+    
+    def set_injection( self, signal_time_profile = None , background_time_profile = (50000,70000), sampling_width = np.radians(1) ):
+        r'''Set the details of the injection.
+        sim: Simulation data
+        gamma: Spectral index of the injection spectrum
+        signal_time_profile: generic_profile object. This is the signal time profile.Default is the same as background_time_profile.
+        background_time_profile: generic_profile object or the list of the start time and end time. This is the background time profile.Default is a (0,1) tuple which will create a uniform_profile from 0 to 1.
+        '''
+        spectrum = PowerLaw( 100e3, 1, -2)
+        self.PS_injector = PSinjector(spectrum, self.jl_value.llh_model.fullsim , signal_time_profile = None , background_time_profile = background_time_profile)
+        self.PS_injector.set_source_location(self.jl_value.ra,self.jl_value.dec,sampling_width = sampling_width)
+        return
+    
+    def draw_signal(self):
+        r'''Draw signal sample
+        return:
+        signal: signal sample
+        '''
+        return self.PS_injector.sample_from_spectrum()
+    
+    def build_background_TS(self,n_trials = 1000):
+        r'''build background TS distribution
+        args:
+        n_trials: Number of trials
+        return:
+        TS: The TS array
+        '''
+        TS = []
+        for i in range(n_trials):
+            self.jl_value.llh_model.update_data(self.draw_data())
+            try:
+                self.jl.fit(quiet=True)
+            except (OverflowError, IndexError) as e:
+                pass
+            TS.append(self.jl._current_minimum)
+        return np.array(TS)
+    
+    def build_signal_TS(self, signal_trials = 200):
+        r'''build signal TS distribution
+        args:
+        signal_trials: Number of trials
+        result: Whether storing the full result in self.result.Default is False.
+        result_file:Whether storing the full result in file.Default is False.
+        
+        return:
+        TS: The TS array
+        '''
+        TS = []
+        for i in range(signal_trials):
+            data = self.draw_data()
+            signal = self.draw_signal()
+            signal = rf.drop_fields(signal, [n for n in signal.dtype.names \
+            if not n in data.dtype.names])
+            self.jl_value.llh_model.update_data(np.concatenate([data,signal]))
+            self.jl.fit(quiet=True)
+            TS.append(self.jl._current_minimum)
+        return np.array(TS)
+        
+    def calculate_ratio_passthreshold(self, signal_trials = 200):
+        r'''Calculate the ratio of signal trials passing the threshold
+        args:
+        signal_trials: Number of signal trials
+        result: Whether storing the full result in self.result.Default is False.
+        result_file:Whether storing the full result in file.Default is False.
+        
+        return:
+        result:The ratio of passing(both for three sigma and median of the background
+        '''
+        signal_ts = self.build_signal_TS(signal_trials)
+        result = [(signal_ts > self.bkg_three_sigma ).sum()/float(len(signal_ts)), (signal_ts > self.bkg_median).sum()/float(len(signal_ts))]
+        return result
+        
+    def calculate_sensitivity(self, base_spectrum, bkg_trials = 1000, signal_trials = 200,list_N = [1] ,N_factor = 1.5 , make_plot = None ,Threshold_list=[90] , Threshold_potential = [50]):
+        r'''Calculate the sensitivity plus the discovery potential
+        args:
+        base_spectrum = The spectrum
+        bkg_trials : Number of background trials
+        signal_trials: Number of signal trials
+        list_N:The list of flux norm to test and build the spline
+        N_factor: Factor for Flux increments .If the maximum in list_N still wasn't enough to pass the threshold, the program will enter a while loop with N_factor*N tested each times until the N passed the threshold.
+        make_plot: The file name of the plot saved. Default is not saving
+        Threshold_list: The list of threshold of signal TS passing Median of the background TS. 
+        Threshold_potential: The list of threshold of signal TS passing 3 sigma of the background TS. 
+        '''
+        self.Threshold_list = Threshold_list
+        self.base_spectrum = base_spectrum
+        self.Threshold_potential = Threshold_potential
+        max_threshold = np.array(Threshold_list).max()
+        max_potential = np.array(Threshold_potential).max()
+        list_N = np.array(deepcopy(list_N))
+        result = []
+        self.ts_bkg = self.build_background_TS(bkg_trials)
+        self.bkg_median = np.percentile(self.ts_bkg , 50)
+        self.bkg_three_sigma = np.percentile(self.ts_bkg , 99.7)
+        for N in list_N:
+            print("Now testing factor: "+ str(N))
+            self.base_spectrum.factor = N
+            self.PS_injector.update_spectrum(spectrum)
+            tempresult = self.calculate_ratio_passthreshold(bkg_trials = 1000, signal_trials = 200)
+            print(tempresult)
+            result.append(tempresult)
+        if tempresult[0] < max_potential*0.01 or tempresult[1] < max_threshold*0.01:
+            reach_max = False
+            N = N * N_factor
+            list_N = np.append(list_N,N)
+        else:
+            reach_max = True
+        while not reach_max:
+            print("Now testing : "+ str(N))
+            self.base_spectrum.factor = N
+            self.PS_injector.update_spectrum(spectrum)
+            tempresult = self.calculate_ratio_passthreshold(bkg_trials = 1000, signal_trials = 200)
+            print(tempresult)
+            result.append(tempresult)
+            if tempresult[0] < max_potential*0.01 or tempresult[1] < max_threshold*0.01:
+                N = N * N_factor
+                list_N = np.append(list_N,N)
+            else:
+                reach_max = True
+        result = np.array(result)
+        self.result = result
+        self.list_N = list_N
+        self.spline_sigma = interpolate.UnivariateSpline(list_N,result[:,0] , ext = 3)
+        self.spline_sen = interpolate.UnivariateSpline( list_N,result[:,1] , ext = 3)
+        Threshold_result = []
+        Threshold_potential_result = []
+        for i in Threshold_list:
+            tempspline = interpolate.UnivariateSpline(list_N,result[:,1]-i*0.01 , ext = 3)
+            Threshold_result.append(tempspline.roots()[0])
+            print("Threshold: " + str(i) + ", N : " + str(self.spline_sen(i*0.01)))
+        for i in Threshold_potential:
+            tempspline = interpolate.UnivariateSpline(list_N,result[:,0]-i*0.01 , ext = 3)
+            Threshold_potential_result.append(tempspline.roots()[0])
+            print("Threshold_potential: " + str(i) + ", N : " + str(self.spline_sigma(i*0.01)))    
+        self.Threshold_result = Threshold_result
+        self.Threshold_potential_result = Threshold_potential_result
+        if make_plot != None :
+           self.make_plot(make_plot)
+        return
+
+    def make_plot(self,file_name):
+        r'''save plot to file_name
+        '''
+        fig, ax = plt.subplots(figsize = (12,12))
+        ax.scatter(self.list_N,self.result[:,1],label = 'sensitiviy point',color='r')
+        ax.scatter(self.list_N,self.result[:,0],label = 'potential point',color='b')
+        ax.set_xlim(self.list_N[0],self.list_N[-1])
+        ax.plot(np.linspace(self.list_N[0],self.list_N[-1],1000),self.spline_sen(np.linspace(self.list_N[0],self.list_N[-1],1000)),label = 'sensitiviy spline',color='r')
+        ax.plot(np.linspace(self.list_N[0],self.list_N[-1],1000),self.spline_sigma(np.linspace(self.list_N[0],self.list_N[-1],1000)),label = 'potential spline',color='b')
+        for i in range(len(self.Threshold_result)):
+            ax.axvline(self.Threshold_result[i],label = 'sensitiviy '+str(self.Threshold_list[i]),color='r')
+        for i in range(len(self.Threshold_potential_result)):
+            ax.axvline(self.Threshold_potential_result[i],label = 'potential '+str(self.Threshold_potential[i]),color='b')
+        ax.set_title("Flux norm vs passing ratio",fontsize=14)
+        ax.set_xlabel(r"Flux Norm($GeV cm^{-2} s^{-1}$)",fontsize=14)
+        ax.set_ylabel(r"Passing ratio",fontsize=14)
+        ax.legend(fontsize=14)
+        fig.savefig(file_name)
+        plt.close()        
