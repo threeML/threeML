@@ -18,6 +18,7 @@ from threeML.config.config import threeML_config
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 from threeML.io.download_from_http import ApacheDirectory
 
+from GtApp import GtApp
 
 # Set default timeout for operations
 socket.setdefaulttimeout(120)
@@ -75,6 +76,36 @@ class DivParser(html.parser.HTMLParser):
 # Keyword name to store the unique ID for the download
 _uid_fits_keyword = "QUERYUID"
 
+def merge_LAT_data(ft1s,destination_directory="."):
+
+    _filelist = "_filelist.txt"
+
+    _outfile  = 'ft1_merged.fits'
+
+    infile = os.path.join(destination_directory, _filelist)
+
+    outfile = os.path.join(destination_directory, _outfile)
+
+    infile_list = open(infile,'w')
+
+    for ft1 in ft1s: infile_list.write(ft1 + '\n' )
+
+    infile_list.close()
+
+    gtselect = GtApp('gtselect')
+
+    gtselect['infile']  = '@' + infile
+    gtselect['outfile'] = outfile
+    gtselect['ra']      = 'INDEF'
+    gtselect['dec']     = 'INDEF'
+    gtselect['rad']     = 'INDEF'
+    gtselect['tmin']    = 'INDEF'
+    gtselect['tmax']    = 'INDEF'
+    gtselect['emin']    = '30'
+    gtselect['emax']    ='1000000'
+    gtselect['zmax']    = 180
+    gtselect.run()
+    return outfile
 
 def download_LAT_data(
     ra,
@@ -169,6 +200,9 @@ def download_LAT_data(
 
     prev_downloaded_ft1 = None
     prev_downloaded_ft2 = None
+    prev_downloaded_ft1s = []
+    prev_downloaded_ft2s = []
+    print("DEBUG::query_unique_id=",query_unique_id)
 
     for ft1 in ft1s:
 
@@ -181,9 +215,9 @@ def download_LAT_data(
                 # Found one!
 
                 prev_downloaded_ft1 = ft1
-
-                break
-
+                prev_downloaded_ft1s.append(ft1)
+                #break
+                pass
     if prev_downloaded_ft1 is not None:
 
         for ft2 in ft2s:
@@ -196,9 +230,10 @@ def download_LAT_data(
                     # Found one!
 
                     prev_downloaded_ft2 = ft2
+                    prev_downloaded_ft2s.append(ft2)
 
-                    break
-
+                    #break
+                    pass
     else:
 
         # No need to look any further, if there is no FT1 file there shouldn't be any FT2 file either
@@ -211,10 +246,10 @@ def download_LAT_data(
             "Existing event file %s and Spacecraft file %s correspond to the same selection. "
             "We assume you did not tamper with them, so we will return those instead of downloading them again. "
             "If you want to download them again, remove them from the outdir"
-            % (prev_downloaded_ft1, prev_downloaded_ft2)
+            % (prev_downloaded_ft1s, prev_downloaded_ft2s)
         )
 
-        return [prev_downloaded_ft1, prev_downloaded_ft2]
+        return [merge_LAT_data(prev_downloaded_ft1s,destination_directory), prev_downloaded_ft2s]
 
     # Print them out
 
