@@ -453,8 +453,8 @@ def download_LAT_data(
 
     # Separate the FT1 and FT2 files:
 
-    FT1=[]
-    FT2=None
+    FT1 = []
+    FT2 = None
 
     for fits_file in downloaded_files:
         # Open the FITS file and write the unique key for this query, so that the download will not be
