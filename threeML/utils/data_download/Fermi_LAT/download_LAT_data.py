@@ -18,8 +18,6 @@ from threeML.config.config import threeML_config
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 from threeML.io.download_from_http import ApacheDirectory
 
-from GtApp import GtApp
-
 # Set default timeout for operations
 socket.setdefaulttimeout(120)
 
@@ -99,6 +97,8 @@ def merge_LAT_data(ft1s,destination_directory=".", outfile  = 'ft1_merged.fits')
     for ft1 in ft1s: infile_list.write(ft1 + '\n' )
 
     infile_list.close()
+
+    from GtApp import GtApp
 
     gtselect = GtApp('gtselect')
 

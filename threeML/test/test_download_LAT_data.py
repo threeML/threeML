@@ -10,9 +10,28 @@ skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
 )
 
+try:
+
+    import GtApp
+
+except ImportError:
+
+    has_Fermi = False
+
+else:
+
+    has_Fermi = True
+
+# This defines a decorator which can be applied to single tests to
+# skip them if the condition is not met
+skip_if_LAT_is_not_available = pytest.mark.skipif(not has_Fermi,
+    reason="Fermi Science Tools not installed",
+)
+
 
 @skip_if_internet_is_not_available
 @pytest.mark.xfail
+@skip_if_LAT_is_not_available
 def test_download_LAT_data():
     # Crab
     ra = 83.6331
