@@ -74,11 +74,13 @@ class DivParser(html.parser.HTMLParser):
 # Keyword name to store the unique ID for the download
 _uid_fits_keyword = "QUERYUID"
 
-def merge_LAT_data(ft1s,destination_directory=".", outfile  = 'ft1_merged.fits'):
+def merge_LAT_data(ft1s, destination_directory=".", outfile='ft1_merged.fits'):
+
+    if len(ft1s) == 1:
+        print('Only one FT1 file provided. Skipping the merge...')
+        return ft1s[0]
 
     _filelist = "_filelist.txt"
-
-
 
     infile = os.path.join(destination_directory, _filelist)
 
@@ -248,7 +250,7 @@ def download_LAT_data(
             % (prev_downloaded_ft1s, prev_downloaded_ft2)
         )
 
-        return [merge_LAT_data(prev_downloaded_ft1s,destination_directory,outfile='L%s_FT1.fits' % query_unique_id), prev_downloaded_ft2]
+        return merge_LAT_data(prev_downloaded_ft1s, destination_directory, outfile='L%s_FT1.fits' % query_unique_id), prev_downloaded_ft2
 
     # Print them out
 
@@ -470,8 +472,7 @@ def download_LAT_data(
 
             FT1.append(fits_file)
 
-
     # If FT2 is first, switch them, otherwise do nothing
     #if re.match(".+SC[0-9][0-9].fits", downloaded_files[0]) is not None:
 
-    return merge_LAT_data(FT1, destination_directory,outfile='L%s_FT1.fits' % query_unique_id) , FT2
+    return merge_LAT_data(FT1, destination_directory, outfile='L%s_FT1.fits' % query_unique_id), FT2
