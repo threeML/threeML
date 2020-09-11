@@ -2,6 +2,30 @@ Release Notes
 =============
 
 
+Version 1.2
+-----------
+
+
+v1.2.0
+^^^^^^^^
+*Fri, 11 Sep 2020 23:42:47 + 0000*
+
+* Added functionality to `FermiLatLike` plugin. Merged in pull request:
+  https://github.com/threeML/threeML/pull/368
+* Fix for results keys in `ultranest` sampler. Merged in pull request:
+  https://github.com/threeML/threeML/pull/367
+* Fix for `int` to `float` conversion issue of `numba` array. Merged in pull
+  request: https://github.com/threeML/threeML/pull/373
+* Fix to LAT data downloader in case of multiple files. Merged in pull 
+  request: https://github.com/threeML/threeML/pull/376
+* Added `numdifftools` to requirements and fixed a test. Merged in pull
+  request: https://github.com/threeML/threeML/pull/375
+* Issue(s) closed:
+
+  * https://github.com/threeML/threeML/issues/356
+  * https://github.com/threeML/threeML/issues/372
+
+
 Version 1.1
 -----------
 
