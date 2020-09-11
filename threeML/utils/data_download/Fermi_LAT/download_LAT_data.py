@@ -76,15 +76,8 @@ _uid_fits_keyword = "QUERYUID"
 
 def merge_LAT_data(ft1s, destination_directory=".", outfile='ft1_merged.fits'):
 
-    if len(ft1s) == 1:
-        print('Only one FT1 file provided. Skipping the merge...')
-        return ft1s[0]
-
-    _filelist = "_filelist.txt"
-
-    infile = os.path.join(destination_directory, _filelist)
-
     outfile = os.path.join(destination_directory, outfile)
+
     if os.path.exists(outfile):
         print(
             "Existing merged event file %s correspond to the same selection. "
@@ -93,6 +86,17 @@ def merge_LAT_data(ft1s, destination_directory=".", outfile='ft1_merged.fits'):
             % (outfile)
         )
         return outfile
+
+    if len(ft1s) == 1:
+        print('Only one FT1 file provided. Skipping the merge...')
+        import shutil
+        shutil.copyfile(ft1s[0],outfile)
+        return outfile
+
+    _filelist = "_filelist.txt"
+
+    infile = os.path.join(destination_directory, _filelist)
+
 
     infile_list = open(infile,'w')
 
