@@ -22,8 +22,8 @@ requirements:
     - python
     #- setuptools
     #- toolchain
-    - numpy>=1.6,<1.16 # [py2k]
-    - numpy # [py3k]
+    - numpy>=1.15,<1.16 # [py2k]
+    - numpy>=1.15 # [py3k]
     #- scipy >=0.18
     - emcee>=3
     #- astropy >=1.0.3
@@ -52,12 +52,14 @@ requirements:
     - py
     - tk==8.5.19 # [py2k]
     - ipopt<3.13 # [py2k]
+    - numdifftools
+    - interpolation>=2.1.5 # [py3k]
     
     
   run:
     - python
-    - numpy>=1.6,<1.16 # [py2k]
-    - numpy # [py3k]
+    - numpy>=1.15,<1.16 # [py2k]
+    - numpy>=1.15 # [py3k]
     - scipy>=0.18
     - emcee>=3
     - astropy>=1.0.3
@@ -88,6 +90,7 @@ requirements:
     - pytest # [py3k]
     - numexpr
     - ipopt<3.13 # [py2k]
+    - numdifftools
 
 #test:
 #  # Python imports
