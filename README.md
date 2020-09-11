@@ -3,6 +3,9 @@
 [![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
+![GitHub pull requests](https://img.shields.io/github/issues-pr/threeML/threeML)
+![GitHub issues](https://img.shields.io/github/issues/threeML/threeML)
+
 ## PyPi
 
 [![PyPI version fury.io](https://badge.fury.io/py/threeML.svg)](https://pypi.python.org/pypi/threeML/)
