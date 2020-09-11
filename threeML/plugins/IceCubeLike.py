@@ -6,9 +6,16 @@ from past.utils import old_div
 import collections
 import os
 import sys
-from copy import deepcopy
+from copy import deepcopy,copy
 import numpy as np
 from astromodels import Parameter
+from astromodels.core.sky_direction import SkyDirection
+from astromodels.core.spectral_component import SpectralComponent
+from astromodels.core.tree import Node
+from astromodels.core.units import get_units
+from astromodels.sources.source import Source, POINT_SOURCE
+from astromodels.utils.pretty_list import dict_to_list
+from astromodels.core.memoization import use_astromodels_memoization
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.plugin_prototype import PluginPrototype
@@ -23,10 +30,99 @@ __instrument_name = "IceCube"
 __all__=["NeutrinoPointSource","NeutrinoExtendedSource"]
 r"""This IceCube plugin is currently under develop by Kwok Lung Fan and John Evans"""
 class NeutrinoPointSource(PointSource):
+    def __init__(self, source_name, ra=None, dec=None, spectral_shape=None,
+                 l=None, b=None, components=None, sky_position=None):
+
+        # Check that we have all the required information
+
+        # (the '^' operator acts as XOR on booleans)
+
+        # Check that we have one and only one specification of the position
+
+        assert ((ra is not None and dec is not None) ^
+                (l is not None and b is not None) ^
+                (sky_position is not None)), "You have to provide one and only one specification for the position"
+
+        # Gather the position
+
+        if not isinstance(sky_position, SkyDirection):
+
+            if (ra is not None) and (dec is not None):
+
+                # Check that ra and dec are actually numbers
+
+                try:
+
+                    ra = float(ra)
+                    dec = float(dec)
+
+                except (TypeError, ValueError):
+
+                    raise AssertionError("RA and Dec must be numbers. If you are confused by this message, you "
+                                         "are likely using the constructor in the wrong way. Check the documentation.")
+
+                sky_position = SkyDirection(ra=ra, dec=dec)
+
+            else:
+
+                sky_position = SkyDirection(l=l, b=b)
+
+        self._sky_position = sky_position
+
+        # Now gather the component(s)
+
+        # We need either a single component, or a list of components, but not both
+        # (that's the ^ symbol)
+
+        assert (spectral_shape is not None) ^ (components is not None), "You have to provide either a single " \
+                                                                        "component, or a list of components " \
+                                                                        "(but not both)."
+
+        # If the user specified only one component, make a list of one element with a default name ("main")
+
+        if spectral_shape is not None:
+
+            components = [SpectralComponent("main", spectral_shape)]
+
+        Source.__init__(self, components, POINT_SOURCE)
+
+        # A source is also a Node in the tree
+
+        Node.__init__(self, source_name)
+
+        # Add the position as a child node, with an explicit name
+
+        self._add_child(self._sky_position)
+
+        # Add a node called 'spectrum'
+
+        spectrum_node = Node('spectrum')
+        spectrum_node._add_children(list(self._components.values()))
+
+        self._add_child(spectrum_node)
+
+        # Now set the units
+        # Now sets the units of the parameters for the energy domain
+
+        current_units = get_units()
+
+        # Components in this case have energy as x and differential flux as y
+
+        x_unit = current_units.energy
+        y_unit = (current_units.energy * current_units.area * current_units.time) ** (-1)
+
+        # Now set the units of the components
+        for component in list(self._components.values()):
+
+            component.shape.set_units(x_unit, y_unit)
     def __call__(self, x, tag=None):
         if isinstance(x, u.Quantity):
+            if type(x) == float or type(x) == int:
+                return 0*(u.keV**-1*u.cm**-2*u.second**-1)
             return np.zeros((len(x)))*(u.keV**-1*u.cm**-2*u.second**-1) #It is zero so the unit doesn't matter
         else:
+            if type(x) == float or type(x) == int:
+                return 0
             return np.zeros((len(x)))
             
     def call(self, x, tag=None):
@@ -106,17 +202,17 @@ class Spectrum(object):
     r"""
     A class that converter a astromodels model instance to a spectrum object with __call__ method.
     """
-    def __init__(self,likelihood_model_instance,factor = 1):
+    def __init__(self,likelihood_model_instance,A = 1):
         r"""Constructor of the class"""
         self.model=likelihood_model_instance
-        self.factor = factor
+        self.A = A
         for source_name, source in likelihood_model_instance._point_sources.items():
             if isinstance(source,NeutrinoPointSource):
                 self.neutrinopointsource = source_name
         
     def __call__(self, E, **kwargs):
         r"""Evaluate spectrum at E """
-        return self.model._point_sources[self.neutrinopointsource].call(E)*self.factor
+        return self.model._point_sources[self.neutrinopointsource].call(E)*self.A
     
     #Function below exists only to avoid skylab conflict and can be removed after get rid of skylab dependence. Not sure removing them cause any problem now
     def validate(self):
@@ -227,10 +323,12 @@ class sensitivity(object):
                 self.jl_key = i
                 self.jl_value = JointLikelihood_instance._data_list[i]
                 self.jl_value.verbose = False
+        
+        self.list_of_source = deepcopy(self.jl._likelihood_model.sources)
         return 
     
     
-    def set_backround(self, grl, time_window = None ,background_window = 14 , start_time = None):
+    def set_backround(self, grl, background_model ,time_window = None ,background_window = 14 , start_time = None):
         r'''Setting the background information which will later be used when drawing data as background
         args:
         grl:The good run list
@@ -256,6 +354,7 @@ class sensitivity(object):
         n_background /= background_grl['livetime'].sum()
         n_background *= time_window
         self.n_background = n_background
+        self.background_model = background_model
         return    
         
     def draw_data(self):
@@ -268,14 +367,14 @@ class sensitivity(object):
         background['time'] = self.jl_value.llh_model.background_time_profile.random(len(background))
         return background
     
-    def set_injection( self, signal_time_profile = None , background_time_profile = (50000,70000), sampling_width = np.radians(1) ):
+    def set_injection( self,signal_time_profile = None , background_time_profile = (50000,70000), sampling_width = np.radians(1) ):
         r'''Set the details of the injection.
         sim: Simulation data
         gamma: Spectral index of the injection spectrum
         signal_time_profile: generic_profile object. This is the signal time profile.Default is the same as background_time_profile.
         background_time_profile: generic_profile object or the list of the start time and end time. This is the background time profile.Default is a (0,1) tuple which will create a uniform_profile from 0 to 1.
         '''
-        spectrum = PowerLaw( 100e3, 1, -2)
+        spectrum = PowerLaw(1,1e-15,-2)
         self.PS_injector = PSinjector(spectrum, self.jl_value.llh_model.fullsim , signal_time_profile = None , background_time_profile = background_time_profile)
         self.PS_injector.set_source_location(self.jl_value.ra,self.jl_value.dec,sampling_width = sampling_width)
         return
@@ -295,11 +394,19 @@ class sensitivity(object):
         TS: The TS array
         '''
         TS = []
+        print("start building Background TS")
         for i in range(n_trials):
+            print(i)
+            for source_name,source in self.list_of_source.items():
+                self.jl._likelihood_model.remove_source(source_name)
+            for source_name,source in self.list_of_source.items():
+                self.jl._likelihood_model.add_source(deepcopy(source))
             self.jl_value.llh_model.update_data(self.draw_data())
             try:
                 self.jl.fit(quiet=True)
-            except (OverflowError, IndexError) as e:
+            except OverflowError:
+                pass
+            except IndexError:
                 pass
             TS.append(self.jl._current_minimum)
         return np.array(TS)
@@ -321,8 +428,14 @@ class sensitivity(object):
             signal = rf.drop_fields(signal, [n for n in signal.dtype.names \
             if not n in data.dtype.names])
             self.jl_value.llh_model.update_data(np.concatenate([data,signal]))
-            self.jl.fit(quiet=True)
-            TS.append(self.jl._current_minimum)
+            try:
+                #self.jl_value.verbose=True
+                self.jl.fit(quiet=True)
+            except OverflowError:
+                pass
+            except IndexError:
+                pass
+            TS.append(-self.jl._current_minimum)
         return np.array(TS)
         
     def calculate_ratio_passthreshold(self, signal_trials = 200):
@@ -353,6 +466,7 @@ class sensitivity(object):
         '''
         self.Threshold_list = Threshold_list
         self.base_spectrum = base_spectrum
+        self.base_spectrum.A = list_N[0]
         self.Threshold_potential = Threshold_potential
         max_threshold = np.array(Threshold_list).max()
         max_potential = np.array(Threshold_potential).max()
@@ -363,9 +477,9 @@ class sensitivity(object):
         self.bkg_three_sigma = np.percentile(self.ts_bkg , 99.7)
         for N in list_N:
             print("Now testing factor: "+ str(N))
-            self.base_spectrum.factor = N
-            self.PS_injector.update_spectrum(spectrum)
-            tempresult = self.calculate_ratio_passthreshold(bkg_trials = 1000, signal_trials = 200)
+            self.base_spectrum.A = N
+            self.PS_injector.update_spectrum(self.base_spectrum)
+            tempresult = self.calculate_ratio_passthreshold( signal_trials = 200)
             print(tempresult)
             result.append(tempresult)
         if tempresult[0] < max_potential*0.01 or tempresult[1] < max_threshold*0.01:
@@ -377,7 +491,7 @@ class sensitivity(object):
         while not reach_max:
             print("Now testing : "+ str(N))
             self.base_spectrum.factor = N
-            self.PS_injector.update_spectrum(spectrum)
+            self.PS_injector.update_spectrum(self.base_spectrum)
             tempresult = self.calculate_ratio_passthreshold(bkg_trials = 1000, signal_trials = 200)
             print(tempresult)
             result.append(tempresult)
