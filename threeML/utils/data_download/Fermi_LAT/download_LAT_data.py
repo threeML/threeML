@@ -18,7 +18,6 @@ from threeML.config.config import threeML_config
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 from threeML.io.download_from_http import ApacheDirectory
 
-
 # Set default timeout for operations
 socket.setdefaulttimeout(120)
 
@@ -75,6 +74,52 @@ class DivParser(html.parser.HTMLParser):
 # Keyword name to store the unique ID for the download
 _uid_fits_keyword = "QUERYUID"
 
+def merge_LAT_data(ft1s, destination_directory=".", outfile='ft1_merged.fits'):
+
+    outfile = os.path.join(destination_directory, outfile)
+
+    if os.path.exists(outfile):
+        print(
+            "Existing merged event file %s correspond to the same selection. "
+            "We assume you did not tamper with it, so we will return it instead of merging it again. "
+            "If you want to redo the FT1 file again, remove it from the outdir"
+            % (outfile)
+        )
+        return outfile
+
+    if len(ft1s) == 1:
+        print('Only one FT1 file provided. Skipping the merge...')
+        import shutil
+        shutil.copyfile(ft1s[0],outfile)
+        return outfile
+
+    _filelist = "_filelist.txt"
+
+    infile = os.path.join(destination_directory, _filelist)
+
+
+    infile_list = open(infile,'w')
+
+    for ft1 in ft1s: infile_list.write(ft1 + '\n' )
+
+    infile_list.close()
+
+    from GtApp import GtApp
+
+    gtselect = GtApp('gtselect')
+
+    gtselect['infile']  = '@' + infile
+    gtselect['outfile'] = outfile
+    gtselect['ra']      = 'INDEF'
+    gtselect['dec']     = 'INDEF'
+    gtselect['rad']     = 'INDEF'
+    gtselect['tmin']    = 'INDEF'
+    gtselect['tmax']    = 'INDEF'
+    gtselect['emin']    = '30'
+    gtselect['emax']    ='1000000'
+    gtselect['zmax']    = 180
+    gtselect.run()
+    return outfile
 
 def download_LAT_data(
     ra,
@@ -167,7 +212,7 @@ def download_LAT_data(
 
     # Loop over all ft1s and see if there is any matching the uid
 
-    prev_downloaded_ft1 = None
+    prev_downloaded_ft1s = []
     prev_downloaded_ft2 = None
 
     for ft1 in ft1s:
@@ -178,13 +223,12 @@ def download_LAT_data(
 
             if this_query_uid == query_unique_id:
 
-                # Found one!
+                # Found one! Append to the list as there might be others
 
-                prev_downloaded_ft1 = ft1
-
-                break
-
-    if prev_downloaded_ft1 is not None:
+                prev_downloaded_ft1s.append(ft1)
+                #break
+                pass
+    if len(prev_downloaded_ft1s)>0:
 
         for ft2 in ft2s:
 
@@ -193,28 +237,24 @@ def download_LAT_data(
                 this_query_uid = f[0].header.get(_uid_fits_keyword)
 
                 if this_query_uid == query_unique_id:
-                    # Found one!
-
+                    # Found one! (FT2 is a single file)
                     prev_downloaded_ft2 = ft2
-
                     break
-
     else:
-
         # No need to look any further, if there is no FT1 file there shouldn't be any FT2 file either
         pass
 
     # If we have both FT1 and FT2 matching the ID, we do not need to download anymore
-    if prev_downloaded_ft1 is not None and prev_downloaded_ft2 is not None:
+    if len(prev_downloaded_ft1s)>0 and prev_downloaded_ft2 is not None:
 
         print(
             "Existing event file %s and Spacecraft file %s correspond to the same selection. "
             "We assume you did not tamper with them, so we will return those instead of downloading them again. "
             "If you want to download them again, remove them from the outdir"
-            % (prev_downloaded_ft1, prev_downloaded_ft2)
+            % (prev_downloaded_ft1s, prev_downloaded_ft2)
         )
 
-        return [prev_downloaded_ft1, prev_downloaded_ft2]
+        return merge_LAT_data(prev_downloaded_ft1s, destination_directory, outfile='L%s_FT1.fits' % query_unique_id), prev_downloaded_ft2
 
     # Print them out
 
@@ -417,19 +457,26 @@ def download_LAT_data(
 
     # Now we need to sort so that the FT1 is always first (they might be out of order)
 
-    # If FT2 is first, switch them, otherwise do nothing
-    if re.match(".+SC[0-9][0-9].fits", downloaded_files[0]) is not None:
+    # Separate the FT1 and FT2 files:
 
-        # The FT2 is first, flip them
-        downloaded_files = downloaded_files[::-1]
-
-    # Finally, open the FITS file and write the unique key for this query, so that the download will not be
-    # repeated if not necessary
+    FT1 = []
+    FT2 = None
 
     for fits_file in downloaded_files:
-
+        # Open the FITS file and write the unique key for this query, so that the download will not be
+        # repeated if not necessary
         with pyfits.open(fits_file, mode="update") as f:
 
             f[0].header.set(_uid_fits_keyword, query_unique_id)
 
-    return downloaded_files
+        if re.match(".+SC[0-9][0-9].fits", fits_file) is not None:
+
+            FT2 = fits_file
+        else:
+
+            FT1.append(fits_file)
+
+    # If FT2 is first, switch them, otherwise do nothing
+    #if re.match(".+SC[0-9][0-9].fits", downloaded_files[0]) is not None:
+
+    return merge_LAT_data(FT1, destination_directory, outfile='L%s_FT1.fits' % query_unique_id), FT2
