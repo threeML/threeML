@@ -8,6 +8,7 @@ import os
 import sys
 from copy import deepcopy,copy
 import numpy as np
+from multiprocessing import Pool
 from astromodels import Parameter
 from astromodels.core.sky_direction import SkyDirection
 from astromodels.core.spectral_component import SpectralComponent
@@ -31,7 +32,7 @@ __all__=["NeutrinoPointSource","NeutrinoExtendedSource"]
 r"""This IceCube plugin is currently under develop by Kwok Lung Fan and John Evans"""
 class NeutrinoPointSource(PointSource):
     def __init__(self, source_name, ra=None, dec=None, spectral_shape=None,
-                 l=None, b=None, components=None, sky_position=None):
+                 l=None, b=None, components=None, sky_position=None,energy_unit=u.GeV):
 
         # Check that we have all the required information
 
@@ -108,8 +109,8 @@ class NeutrinoPointSource(PointSource):
 
         # Components in this case have energy as x and differential flux as y
 
-        x_unit = current_units.energy
-        y_unit = (current_units.energy * current_units.area * current_units.time) ** (-1)
+        x_unit = energy_unit
+        y_unit = (energy_unit * current_units.area * current_units.time) ** (-1)
 
         # Now set the units of the components
         for component in list(self._components.values()):
@@ -386,7 +387,17 @@ class sensitivity(object):
         '''
         return self.PS_injector.sample_from_spectrum()
     
-    def build_background_TS(self,n_trials = 1000):
+    
+    def reset_model(self):
+        r'''Reset the model to background model
+        '''
+        for source_name,source in self.list_of_source.items():
+             self.jl._likelihood_model.remove_source(source_name)
+        for source_name,source in self.list_of_source.items():
+            self.jl._likelihood_model.add_source(deepcopy(source))
+        return    
+    
+    def build_background_TS(self,n_trials = 1000 , n_cpu = 1): 
         r'''build background TS distribution
         args:
         n_trials: Number of trials
@@ -395,23 +406,59 @@ class sensitivity(object):
         '''
         TS = []
         print("start building Background TS")
-        for i in range(n_trials):
-            print(i)
-            for source_name,source in self.list_of_source.items():
-                self.jl._likelihood_model.remove_source(source_name)
-            for source_name,source in self.list_of_source.items():
-                self.jl._likelihood_model.add_source(deepcopy(source))
-            self.jl_value.llh_model.update_data(self.draw_data())
-            try:
-                self.jl.fit(quiet=True)
-            except OverflowError:
-                pass
-            except IndexError:
-                pass
-            TS.append(self.jl._current_minimum)
-        return np.array(TS)
+        if n_cpu == 1:
+            for i in range(n_trials):
+                print(i)
+                self.reset_model()
+                self.jl_value.llh_model.update_data(self.draw_data())
+                try:
+                    self.jl.fit(quiet=True)
+                    TS.append(-self.jl._current_minimum)
+                except OverflowError:
+                    TS.append(-self.jl._current_minimum)
+                except IndexError:
+                    TS.append(-self.jl._current_minimum)
+                except :
+                    i = i-1    
+            TS = np.array(TS)
+            TS[TS<0] = 0
+            return TS
+        elif n_cpu > 1:
+            n_cpu = int(n_cpu)
+            trials_per_cpu = n_trials//n_cpu
+            trials_remain = n_trials % n_cpu
+            trials_list = np.full((n_cpu,) , trials_per_cpu)
+            trials_list[:trials_remain] = trials_list[:trials_remain]+1
+            seed_list = np.arange(n_cpu)
+            arg_list = np.array([trials_list,seed_list]).T
+            global build_bkg_TS
+            def build_bkg_TS(n_trials,seeds):
+                np.random.seed(seeds)
+                TS_per_cpu = [] 
+                for i in range(n_trials):
+                    self.reset_model()
+                    self.jl_value.llh_model.update_data(self.draw_data())
+                    try:
+                        self.jl.fit(quiet=True)
+                        TS_per_cpu.append(-self.jl._current_minimum)
+                    except OverflowError:
+                        TS_per_cpu.append(-self.jl._current_minimum)
+                    except IndexError:
+                        TS_per_cpu.append(-self.jl._current_minimum)
+                    except:
+                        TS_per_cpu.append(build_bkg_TS(1,np.random.randint(1,1000000))[0])
+                return np.array(TS_per_cpu)
+            p = Pool(n_cpu)
+            result=p.starmap(build_bkg_TS,arg_list)
+            print(result)
+            TS = np.concatenate(result).ravel()
+            TS[TS<0] = 0
+            p.close()
+            return TS
+            
+            
     
-    def build_signal_TS(self, signal_trials = 200):
+    def build_signal_TS(self, signal_trials = 200, n_cpu = 1):
         r'''build signal TS distribution
         args:
         signal_trials: Number of trials
@@ -422,23 +469,65 @@ class sensitivity(object):
         TS: The TS array
         '''
         TS = []
-        for i in range(signal_trials):
-            data = self.draw_data()
-            signal = self.draw_signal()
-            signal = rf.drop_fields(signal, [n for n in signal.dtype.names \
-            if not n in data.dtype.names])
-            self.jl_value.llh_model.update_data(np.concatenate([data,signal]))
-            try:
-                #self.jl_value.verbose=True
-                self.jl.fit(quiet=True)
-            except OverflowError:
-                pass
-            except IndexError:
-                pass
-            TS.append(-self.jl._current_minimum)
-        return np.array(TS)
+        if n_cpu == 1:
+            for i in range(signal_trials):
+                self.reset_model()
+                data = self.draw_data()
+                signal = self.draw_signal()
+                signal = rf.drop_fields(signal, [n for n in signal.dtype.names \
+                if not n in data.dtype.names])
+                self.jl_value.llh_model.update_data(np.concatenate([data,signal]))
+                try:
+                    #self.jl_value.verbose=True
+                    self.jl.fit(quiet=True)
+                    TS.append(-self.jl._current_minimum)
+                except OverflowError:
+                    TS.append(-self.jl._current_minimum)
+                except IndexError:
+                    TS.append(-self.jl._current_minimum)
+                except :
+                    i = i-1  
+                
+            TS = np.array(TS)
+            TS[TS<0] = 0
+            return TS
+        elif n_cpu > 1:
+            n_cpu = int(n_cpu)
+            trials_per_cpu = signal_trials//n_cpu
+            trials_remain = signal_trials % n_cpu
+            trials_list = np.full((n_cpu,) , trials_per_cpu)
+            trials_list[:trials_remain] = trials_list[:trials_remain]+1
+            seed_list = np.arange(n_cpu)
+            arg_list = np.array([trials_list,seed_list]).T
+            global build_sig_TS
+            def build_sig_TS(n_trials,seeds):
+                np.random.seed(seeds)
+                TS_per_cpu = [] 
+                for i in range(n_trials):
+                    self.reset_model()
+                    data = self.draw_data()
+                    signal = self.draw_signal()
+                    signal = rf.drop_fields(signal, [n for n in signal.dtype.names \
+                    if not n in data.dtype.names])
+                    self.jl_value.llh_model.update_data(np.concatenate([data,signal]))
+                    try:
+                        self.jl.fit(quiet=True)
+                        TS_per_cpu.append(-self.jl._current_minimum)
+                    except OverflowError:
+                        TS_per_cpu.append(-self.jl._current_minimum)
+                    except IndexError:
+                        TS_per_cpu.append(-self.jl._current_minimum)
+                    except:
+                        TS_per_cpu.append(build_bkg_TS(1,np.random.randint(1,1000000)))
+                return np.array(TS_per_cpu)
+            p = Pool(n_cpu)
+            result=p.starmap(build_bkg_TS,arg_list)
+            TS = np.concatenate(result).ravel()
+            TS[TS<0] = 0
+            p.close()
+            return TS
         
-    def calculate_ratio_passthreshold(self, signal_trials = 200):
+    def calculate_ratio_passthreshold(self, signal_trials = 200, n_cpu = 1):
         r'''Calculate the ratio of signal trials passing the threshold
         args:
         signal_trials: Number of signal trials
@@ -448,11 +537,11 @@ class sensitivity(object):
         return:
         result:The ratio of passing(both for three sigma and median of the background
         '''
-        signal_ts = self.build_signal_TS(signal_trials)
+        signal_ts = self.build_signal_TS(signal_trials, n_cpu = n_cpu)
         result = [(signal_ts > self.bkg_three_sigma ).sum()/float(len(signal_ts)), (signal_ts > self.bkg_median).sum()/float(len(signal_ts))]
         return result
         
-    def calculate_sensitivity(self, base_spectrum, bkg_trials = 1000, signal_trials = 200,list_N = [1] ,N_factor = 1.5 , make_plot = None ,Threshold_list=[90] , Threshold_potential = [50]):
+    def calculate_sensitivity(self, base_spectrum, bkg_trials = 1000, signal_trials = 200,list_N = [1] ,N_factor = 1.5 , make_plot = None ,Threshold_list=[90] , Threshold_potential = [50],n_cpu = 1):
         r'''Calculate the sensitivity plus the discovery potential
         args:
         base_spectrum = The spectrum
@@ -472,14 +561,14 @@ class sensitivity(object):
         max_potential = np.array(Threshold_potential).max()
         list_N = np.array(deepcopy(list_N))
         result = []
-        self.ts_bkg = self.build_background_TS(bkg_trials)
+        self.ts_bkg = self.build_background_TS(bkg_trials, n_cpu = n_cpu)
         self.bkg_median = np.percentile(self.ts_bkg , 50)
         self.bkg_three_sigma = np.percentile(self.ts_bkg , 99.7)
         for N in list_N:
             print("Now testing factor: "+ str(N))
             self.base_spectrum.A = N
             self.PS_injector.update_spectrum(self.base_spectrum)
-            tempresult = self.calculate_ratio_passthreshold( signal_trials = 200)
+            tempresult = self.calculate_ratio_passthreshold( signal_trials = 200, n_cpu = n_cpu)
             print(tempresult)
             result.append(tempresult)
         if tempresult[0] < max_potential*0.01 or tempresult[1] < max_threshold*0.01:
