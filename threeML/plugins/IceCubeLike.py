@@ -231,7 +231,7 @@ class Spectrum(object):
         
 
 class IceCubeLike(PluginPrototype):
-    def __init__(self, name, exp, mc,background, signal_time_profile = None , background_time_profile = (50000,70000) , fit_position=False,verbose=False,**kwargs):
+    def __init__(self, name, exp, mc,background, signal_time_profile = None , background_time_profile = (50000,70000) , fit_position = False,verbose=False,**kwargs):
         r"""Constructor of the class.
         exp is the data,mc is the monte carlo
         The default sin dec bins is set but can be pass by sinDec_bins.
@@ -239,7 +239,7 @@ class IceCubeLike(PluginPrototype):
         """
         nuisance_parameters = {}
         super(IceCubeLike, self).__init__(name, nuisance_parameters)
-        self.parameter=kwargs
+        self.parameter = kwargs
         self.llh_model = None
         self.sample = None
         self.fit_position = fit_position
@@ -254,7 +254,7 @@ class IceCubeLike(PluginPrototype):
         else:
             signal_time_profile = signal_time_profile
             
-        self.llh_model=LLH_point_source(ra=np.pi/2 , dec=np.pi/6 , data = exp , sim = mc ,spectrum = self.spectrum ,signal_time_profile = signal_time_profile , background_time_profile = background_time_profile, background = background ,fit_position=True) 
+        self.llh_model=LLH_point_source(ra=np.pi/2 , dec=np.pi/6 , data = exp , sim = mc ,spectrum = self.spectrum ,signal_time_profile = signal_time_profile , background_time_profile = background_time_profile, background = background ,fit_position = fit_position , **kwargs) 
         self.dec = None
         self.ra = None
         
@@ -277,7 +277,7 @@ class IceCubeLike(PluginPrototype):
                     self.ra = ra
                     self.dec = dec
                     self.llh_model.fit_position = self.fit_position
-                    self.llh_model.update_position(ra,dec, sampling_width = np.radians(1))
+                    self.llh_model.update_position(ra,dec)
                     self.llh_model.update_time_weight()
                     self.llh_model.update_energy_weight()
             self.model=likelihood_model_instance
@@ -368,14 +368,13 @@ class sensitivity(object):
         background['time'] = self.jl_value.llh_model.background_time_profile.random(len(background))
         return background
     
-    def set_injection( self,signal_time_profile = None , background_time_profile = (50000,70000), sampling_width = np.radians(1) ):
+    def set_injection( self, spectrum = PowerLaw(1,1e-15,-2), signal_time_profile = None , background_time_profile = (50000,70000), sampling_width = np.radians(1) ):
         r'''Set the details of the injection.
         sim: Simulation data
         gamma: Spectral index of the injection spectrum
         signal_time_profile: generic_profile object. This is the signal time profile.Default is the same as background_time_profile.
         background_time_profile: generic_profile object or the list of the start time and end time. This is the background time profile.Default is a (0,1) tuple which will create a uniform_profile from 0 to 1.
         '''
-        spectrum = PowerLaw(1,1e-15,-2)
         self.PS_injector = PSinjector(spectrum, self.jl_value.llh_model.fullsim , signal_time_profile = None , background_time_profile = background_time_profile)
         self.PS_injector.set_source_location(self.jl_value.ra,self.jl_value.dec,sampling_width = sampling_width)
         return
