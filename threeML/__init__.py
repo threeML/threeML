@@ -17,6 +17,12 @@ if os.environ.get("DISPLAY") is None:
 
     mpl.use("Agg")
 
+# Workaround to a CFITSIO issue
+try:
+    import pyLikelihood
+except ImportError:
+    pass
+
 # Import version (this has to be placed before the import of serialization
 # since __version__ needs to be defined at that stage)
 from ._version import get_versions
