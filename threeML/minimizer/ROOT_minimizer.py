@@ -41,7 +41,7 @@ _hesse_status_translation = {
 #except AttributeError:
 #    root_class = ROOT.Math.IMultiGenFunction
 
-class FuncWrapper(root_math.IMultiGenFunction):
+class FuncWrapper(ROOT.Math.IMultiGenFunction):
     
     def setup(self, function, dimensions):
         self.function = function
