@@ -35,13 +35,13 @@ _hesse_status_translation = {
     300: "Covariance matrix is not positive defined",
 }
 
-root_class = None
-try:
-    root_class = ROOT.TPyMultiGenFunction
-except AttributeError:
-    root_class = ROOT.Math.IMultiGenFunction
+#root_class = None
+#try:
+#    root_class = ROOT.TPyMultiGenFunction
+#except AttributeError:
+#    root_class = ROOT.Math.IMultiGenFunction
 
-class FuncWrapper(root_class):
+class FuncWrapper(root_math.IMultiGenFunction):
     
     def setup(self, function, dimensions):
         self.function = function
