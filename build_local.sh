@@ -56,10 +56,9 @@ then
 else  # osx
     miniconda_os=MacOSX
     compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
     # On macOS we also need the conda libx11 libraries used to build xspec
     # We also need to pin down ncurses, for now only on macos.
-    xorg="xorg-libx11 ncurses=5"
+    xorg="xorg-libx11"
 fi
 
 # Get the version in the __version__ environment variable

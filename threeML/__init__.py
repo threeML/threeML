@@ -19,6 +19,10 @@ if os.environ.get("DISPLAY") is None:
 
 # Workaround to a CFITSIO issue
 try:
+    import ROOT
+except ImportError:
+    pass
+try:
     import pyLikelihood
 except ImportError:
     pass
