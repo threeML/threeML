@@ -128,8 +128,8 @@ conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PY
 # Activate test environment
 echo "Activate test environment..."
 
-#source $CONDA_PREFIX/etc/profile.d/conda.sh
-source $HOME/work/miniconda3/etc/profile.d/conda.sh
+source $CONDA_PREFIX/etc/profile.d/conda.sh
+#source $HOME/work/miniconda3/etc/profile.d/conda.sh
 conda activate $ENVNAME
 
 # Build package
