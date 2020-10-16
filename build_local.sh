@@ -94,7 +94,7 @@ fi
 
 if [[ ${TRAVIS_PYTHON_VERSION} == 2.7 ]]; then
     #PKG="pytest<4 openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 ipopt<3.13 pygmo=2.11.4 emcee>=3 pandas>=0.23 krb5=1.14.6"
-    PKG="pytest<4 astroquery=0.3.10 pygmo=2.11.4 emcee>=3 pandas>=0.23 ipopt<3.13 pyyaml=5.1"
+    PKG="pytest<4 astroquery=0.3.10 pygmo=2.11.4 emcee>=3 pandas>=0.23 ipopt<3.13 pyyaml"
 else
     PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 fi
@@ -118,7 +118,7 @@ conda config --add channels conda-forge
 
 # Create test environment
 echo "Create test environment..."
-conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy numba
+conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy
 
 #openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 pygmo=2.11.4 "pytest<4"
 #libgfortran=${libgfortranver}

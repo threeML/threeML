@@ -60,7 +60,7 @@ if [ -n "${XSPECVER}" ];
 fi
 
 if [[ ${TRAVIS_PYTHON_VERSION} == 2.7 ]]; then
-    PKG="pytest<4 astroquery=0.3.10 pygmo=2.11.4 emcee>=3 pandas>=0.23 ipopt<3.13 pyyaml=5.1"
+    PKG="pytest<4 astroquery=0.3.10 pygmo=2.11.4 emcee>=3 pandas>=0.23 ipopt<3.13 pyyaml"
 else
     PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 fi
@@ -83,7 +83,7 @@ conda config --add channels threeml
 conda config --add channels conda-forge
 
 # Create test environment
-conda create --yes --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy numba
+conda create --yes --name test_env -c conda-forge python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy
 
 if [[ "$TRAVIS_OS_NAME" == "removeme" ]]; then
 
