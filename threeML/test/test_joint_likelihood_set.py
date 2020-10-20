@@ -1,4 +1,5 @@
 from __future__ import print_function
+import pytest
 from threeML import *
 from .conftest import get_grb_model
 
