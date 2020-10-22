@@ -43,10 +43,10 @@ USE_LOCAL=false
 
 # Environment
 libgfortranver="3.0"
-NUMPYVER=1.15
+#NUMPYVER=1.15
 MATPLOTLIBVER=2
 UPDATE_CONDA=false
-XSPECVER="6.22.1"
+XSPECVER="6.25"
 xspec_channel=xspecmodels
 
 if [[ ${TRAVIS_OS_NAME} == "linux" ]];
@@ -56,10 +56,9 @@ then
 else  # osx
     miniconda_os=MacOSX
     compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
     # On macOS we also need the conda libx11 libraries used to build xspec
     # We also need to pin down ncurses, for now only on macos.
-    xorg="xorg-libx11 ncurses=5"
+    xorg="xorg-libx11"
 fi
 
 # Get the version in the __version__ environment variable
@@ -74,7 +73,7 @@ echo "Python version: ${TRAVIS_PYTHON_VERSION}"
 echo "Use local is: ${USE_LOCAL}"
 
 if ${USE_LOCAL}; then
-    conda config --remove channels ${xspec_channel}
+    #conda config --remove channels ${xspec_channel}
     use_local="--use-local"
 else
     conda config --add channels ${xspec_channel}
@@ -94,9 +93,10 @@ if [ -n "${XSPECVER}" ];
 fi
 
 if [[ ${TRAVIS_PYTHON_VERSION} == 2.7 ]]; then
-    PKG="pytest<4 openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 ipopt<3.13 pygmo=2.11.4 emcee>=3 pandas>=0.23"
+    #PKG="pytest<4 openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 ipopt<3.13 pygmo=2.11.4 emcee>=3 pandas>=0.23 krb5=1.14.6"
+    PKG="pytest<4 astroquery=0.3.10 pygmo=2.11.4 emcee>=3 pandas>=0.23 ipopt<3.13 pyyaml"
 else
-    PKG="pytest pandas>=0.23 ultranest interpolation>=2.1.5"
+    PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 fi
 
 echo "dependencies: ${MATPLOTLIB} ${NUMPY} ${XSPEC}"
@@ -112,13 +112,13 @@ conda config --add channels defaults
 
 conda config --add channels threeml
 
-conda config --add channels conda-forge/label/cf201901
+#conda config --add channels conda-forge/label/cf201901
 
 conda config --add channels conda-forge
 
 # Create test environment
 echo "Create test environment..."
-conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy krb5=1.14.6
+conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PYTHON_VERSION ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy
 
 #openblas-devel=0.3.6 tk=8.5.19 astroquery=0.3.10 pygmo=2.11.4 "pytest<4"
 #libgfortran=${libgfortranver}
@@ -128,7 +128,7 @@ conda create --yes --name $ENVNAME -c conda-forge ${use_local} python=$TRAVIS_PY
 echo "Activate test environment..."
 
 source $CONDA_PREFIX/etc/profile.d/conda.sh
-#source $HOME/work/fermi/miniconda3/etc/profile.d/conda.sh
+#source $HOME/work/miniconda3/etc/profile.d/conda.sh
 conda activate $ENVNAME
 
 # Build package

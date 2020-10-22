@@ -21,7 +21,7 @@ def setup_ipcluster():
 
     ipycluster_process = subprocess.Popen(["ipcluster", "start", "-n", "2"])
 
-    time.sleep(5.0)
+    time.sleep(10.0)
 
     yield ipycluster_process
 
