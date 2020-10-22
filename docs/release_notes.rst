@@ -2,6 +2,20 @@ Release Notes
 =============
 
 
+Version 2.0
+-----------
+
+
+v2.0.0
+^^^^^^^^
+*Thu, 22 Oct 2020 17:22:42 + 0000*
+
+* Added compatibility with `root=6`, `fermitools=2` (1.4 for py27) and `xspec-modelsonly=6.25`
+* Removed pinned dependency `pyyaml=3.13` (now `pyyaml>=5.1`)
+* Installation scripts updated
+* Merged pull request: https://github.com/threeML/threeML/pull/380
+
+
 Version 1.2
 -----------
 
