@@ -14,6 +14,11 @@ import astropy.table as astro_table
 
 from threeML.io.network import internet_connection_is_active
 
+# Workaround to support astropy 4.1+
+astropy_old = True
+astropy_version = astropy.__version__
+if int(astropy_version[0]) >= 4 and int(astropy_version[2]) >= 1:
+    astropy_old = False
 
 class ConeSearchFailed(RuntimeError):
     pass
@@ -94,7 +99,7 @@ class VirtualObservatoryCatalog(object):
                 # Workaround to comply with newer versions of astroquery
                 if isinstance(votable, astropy.io.votable.tree.Table):
                     table = votable.to_table()
-
+                
                 table.convert_bytestring_to_unicode()
 
                 pandas_df = (
@@ -102,18 +107,19 @@ class VirtualObservatoryCatalog(object):
                 )
 
                 str_df = pandas_df.select_dtypes([np.object])
-
-                str_df = str_df.stack().str.decode("utf-8").unstack()
-
+                
+                if astropy_old:
+                    str_df = str_df.stack().str.decode("utf-8").unstack()
+                
                 for col in str_df:
                     pandas_df[col] = str_df[col]
 
-                new_index = [x.decode("utf-8") for x in pandas_df.index]
-
-                pandas_df.index = new_index
+                if astropy_old:
+                    new_index = [x.decode("utf-8") for x in pandas_df.index]
+                    pandas_df.index = new_index
 
                 self._last_query_results = pandas_df
-
+                
                 out = self.apply_format(table)
 
                 # This is needed to avoid strange errors
