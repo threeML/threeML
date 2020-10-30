@@ -6,6 +6,18 @@ Version 2.0
 -----------
 
 
+v2.0.1
+^^^^^^^^
+*Fri, 30 Oct 2020 18:55:21 + 0000*
+
+* Added support for `astropy 4.1+` which caused catalog tests to fail.
+* Improved the installation script for `python 2.7`. 
+* Merged in pull request: https://github.com/threeML/threeML/pull/383
+* Issue(s) closed:
+
+  * https://github.com/threeML/threeML/issues/382
+
+
 v2.0.0
 ^^^^^^^^
 *Thu, 22 Oct 2020 17:22:42 + 0000*
