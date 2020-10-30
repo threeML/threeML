@@ -110,6 +110,7 @@ optional_dependencies = {
     "pyOpt": [False, "provides more optimizers"],
     "ROOT": [False, "provides the ROOT optimizer"],
     "ipywidgets": [False, "provides widget for jypyter (like the HTML progress bar)"],
+    "chainconsumer": [False, "consumes the chains output from Monte Carlo processes"],
 }
 
 for dep_name in optional_dependencies:

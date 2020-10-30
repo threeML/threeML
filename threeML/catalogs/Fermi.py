@@ -834,6 +834,10 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
     def apply_format(self, table):
         new_table = table["name", "ra", "dec", "trigger_time", "trigger_type"]
 
+        #Remove rows with masked elements in trigger_time column
+        if new_table.masked:
+            new_table = new_table[~new_table['trigger_time'].mask]
+        
         new_table["ra"].format = "5.3f"
         new_table["dec"].format = "5.3f"
 
