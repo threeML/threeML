@@ -6,6 +6,15 @@ Version 2.0
 -----------
 
 
+v2.0.2
+^^^^^^^^
+*Tue, 03 Nov 2020 00:12:35 + 0000*
+
+* Pinned `speclite` package version on pypi up to 0.8.
+* Added new HAL plugin page on documentation. Merged in pull request:
+  https://github.com/threeML/threeML/pull/384
+
+
 v2.0.1
 ^^^^^^^^
 *Fri, 30 Oct 2020 18:55:21 + 0000*
