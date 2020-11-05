@@ -38,6 +38,10 @@ else:
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
+from threeML.io.hdf5_utils import (
+    recursively_load_dict_contents_from_group,
+    recursively_save_dict_contents_to_group,
+)
 from threeML.io.fits_file import fits, FITSFile, FITSExtension
 from threeML.io.rich_display import display
 from threeML.io.table import NumericMatrix
@@ -159,6 +163,70 @@ def _load_one_results(fits_extension):
         )
 
 
+def _load_one_results_hdf(hdf_obj):
+    # Gather analysis type
+    analysis_type = hdf_obj.attrs["RESUTYPE"]
+
+    # Gather the optimized model
+    model_dict = recursively_load_dict_contents_from_group(hdf_obj, "MODEL")
+
+    optimized_model = ModelParser(model_dict=model_dict).get_model()
+
+    # Gather statistics values
+    statistic_values = collections.OrderedDict()
+
+    measure_values = collections.OrderedDict()
+
+    for key in list(hdf_obj.attrs.keys()):
+
+        if key.find("STAT") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("STAT", ""))
+            value = float(hdf_obj.attrs[key])
+            name = hdf_obj.attrs["PN%i" % id]
+            statistic_values[name] = value
+
+        if key.find("MEAS") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("MEAS", ""))
+            name = hdf_obj.attrs[key]
+            value = float(hdf_obj.attrs["MV%i" % id])
+            measure_values[name] = value
+
+    if analysis_type == "MLE":
+
+        # Get covariance matrix
+
+        covariance_matrix = np.atleast_2d(hdf_obj["COVARIANCE"][()].T)
+
+        # Instance and return
+
+        return MLEResults(
+            optimized_model,
+            covariance_matrix,
+            statistic_values,
+            statistical_measures=measure_values,
+        )
+
+    elif analysis_type == "Bayesian":
+
+        # Gather samples
+        samples = hdf_obj["SAMPLES"][()]
+
+        # Instance and return
+
+        return BayesianResults(
+            optimized_model,
+            samples.T,
+            statistic_values,
+            statistical_measures=measure_values,
+        )
+
+
 def _load_set_of_results(open_fits_file, n_results):
     # Gather all results
     all_results = []
@@ -216,13 +284,158 @@ class SEQUENCE(FITSExtension):
         # Update keywords
         self.hdu.header.set("SEQ_TYPE", name)
 
+
 class ANALYSIS_RESULTS_HDF(object):
+    def __init__(self, analysis_results, file_name):
 
-    def __init__(self):
+        optimized_model = analysis_results.optimized_model
 
-        pass
+        # Gather the dictionary with free parameters
 
-        
+        free_parameters = optimized_model.free_parameters
+
+        n_parameters = len(free_parameters)
+
+        # Gather covariance matrix (if any)
+
+        if analysis_results.analysis_type == "MLE":
+
+            assert isinstance(analysis_results, MLEResults)
+
+            covariance_matrix = analysis_results.covariance_matrix
+
+            # Check that the covariance matrix has the right shape
+
+            assert covariance_matrix.shape == (n_parameters, n_parameters), (
+                "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
+                % (
+                    n_parameters,
+                    n_parameters,
+                    covariance_matrix.shape[0],
+                    covariance_matrix.shape[1],
+                )
+            )
+
+            # Empty samples set
+            samples = np.zeros(n_parameters)
+
+        else:
+
+            assert isinstance(analysis_results, BayesianResults)
+
+            # Empty covariance matrix
+
+            covariance_matrix = np.zeros(n_parameters)
+
+            # Gather the samples
+            samples = analysis_results._samples_transposed
+
+        with h5py.File(file_name, "w") as f:
+
+            # yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
+
+            # save the model to recursive dictionaries
+
+            f.attrs["created"] = datetime.datetime.now().isoformat()
+            f.attrs["3mlver"] = "%s" % __version__
+
+            f.attrs["RESUTYPE"] = analysis_results.analysis_type
+
+            recursively_save_dict_contents_to_group(
+                f, "MODEL", optimized_model.to_dict_with_types()
+            )
+            # Get data frame with parameters (always use equal tail errors)
+
+            data_frame = analysis_results.get_data_frame(error_type="equal tail")
+
+            f.create_dataset(
+                "NAME",
+                data=np.array(list(free_parameters.keys()), dtype=h5py.string_dtype()),
+                compression="gzip",
+                compression_opts=9,
+                shuffle=True,
+            )
+
+            f.create_dataset(
+                "VALUE",
+                data=data_frame["value"],
+                compression="gzip",
+                compression_opts=9,
+                shuffle=True,
+            )
+
+            f.create_dataset(
+                "NEGATIVE_ERROR",
+                data=data_frame["negative_error"].values,
+                compression="gzip",
+                compression_opts=9,
+                shuffle=True,
+            )
+            f.create_dataset(
+                "POSITIVE_ERROR",
+                data=data_frame["positive_error"].values,
+                compression="gzip",
+                compression_opts=9,
+                shuffle=True,
+            )
+            f.create_dataset(
+                "ERROR",
+                data=data_frame["error"].values,
+                compression="gzip",
+                compression_opts=9,
+                shuffle=True,
+            )
+
+            f.create_dataset(
+                "UNIT",
+                data=np.array(data_frame["unit"].values, dtype=np.unicode_).astype(
+                    h5py.string_dtype()
+                ),
+                compression="gzip",
+                compression_opts=9,
+                shuffle=True,
+            )
+
+            if analysis_results.analysis_type == "MLE":
+            
+                f.create_dataset(
+                    "COVARIANCE",
+                    data=covariance_matrix,
+                    compression="gzip",
+                    compression_opts=9,
+                    shuffle=True,
+                )
+
+            elif analysis_results.analysis_type == "Bayesian":
+
+                f.create_dataset(
+                    "SAMPLES",
+                    data=samples,
+                    compression="gzip",
+                    compression_opts=9,
+                    shuffle=True,
+                )
+            else:
+
+                raise RuntimeError("This AR is invalid!")
+                
+            # Now add two keywords for each instrument
+            stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
+
+            for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
+
+                f.attrs["STAT%i" % i] = stat_value
+                f.attrs["PN%i" % i] = plugin_instance_name
+
+            # Now add the statistical measures
+
+            measure_series = analysis_results.statistical_measures  # type: pd.Series
+
+            for i, (measure, measure_value) in enumerate(measure_series.items()):
+                f.attrs["MEAS%i" % i] = measure
+                f.attrs["MV%i" % i] = measure_value
+
+
 class ANALYSIS_RESULTS(FITSExtension):
     """
     Represents the ANALYSIS_RESULTS extension of a FITS file encoding the results of an analysis
