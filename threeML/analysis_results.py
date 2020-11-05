@@ -10,6 +10,7 @@ import datetime
 import functools
 import inspect
 import math
+import h5py
 
 import astromodels
 import astropy.units as u
@@ -215,7 +216,13 @@ class SEQUENCE(FITSExtension):
         # Update keywords
         self.hdu.header.set("SEQ_TYPE", name)
 
+class ANALYSIS_RESULTS_HDF(object):
 
+    def __init__(self):
+
+        pass
+
+        
 class ANALYSIS_RESULTS(FITSExtension):
     """
     Represents the ANALYSIS_RESULTS extension of a FITS file encoding the results of an analysis
