@@ -5,6 +5,7 @@ from builtins import map
 from builtins import range
 from builtins import object
 from past.utils import old_div
+import os
 import collections
 import datetime
 import functools
@@ -97,6 +98,7 @@ def load_analysis_results(fits_file):
 
             return _load_set_of_results(f, n_results)
 
+
 def load_analysis_results_hdf(hdf_file):
     """
     Load the results of one or more analysis from a FITS file produced by 3ML
@@ -117,7 +119,20 @@ def load_analysis_results_hdf(hdf_file):
 
             return _load_set_of_results_hdf(f, n_results)
 
-        
+
+def convert_fits_analysis_result_to_hdf(fits_result_file):
+
+    ar = load_analysis_results(fits_result_file)  # type: _AnalysisResults
+
+    new_file_name, _ = os.path.splitext(fits_result_file)
+
+    ar.write_to(sanitize_filename("%s.h5" % new_file_name), overwrite=True, as_hdf=True)
+
+    print(
+        "Converted %s to %s!"
+        % (fits_result_file, (sanitize_filename("%s.h5" % new_file_name)))
+    )
+
 
 def _load_one_results(fits_extension):
     # Gather analysis type
@@ -247,6 +262,7 @@ def _load_one_results_hdf(hdf_obj):
             statistical_measures=measure_values,
         )
 
+
 def _load_set_of_results_hdf(hdf_obj, n_results):
     # Gather all results
     all_results = []
@@ -268,7 +284,7 @@ def _load_set_of_results_hdf(hdf_obj, n_results):
 
     data_list = []
 
-    for name, grp  in seq_grp.items():
+    for name, grp in seq_grp.items():
 
         if grp.attrs["UNIT"] == "NONE_TYPE":
 
@@ -285,9 +301,6 @@ def _load_set_of_results_hdf(hdf_obj, n_results):
     return this_set
 
 
-    
-    
-    
 def _load_set_of_results(open_fits_file, n_results):
     # Gather all results
     all_results = []
@@ -390,8 +403,6 @@ class ANALYSIS_RESULTS_HDF(object):
 
             # Gather the samples
             samples = analysis_results._samples_transposed
-
-        
 
         # yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
 
@@ -744,23 +755,21 @@ class _AnalysisResults(object):
         """
 
         if not as_hdf:
-        
+
             fits_file = AnalysisResultsFITS(self)
 
             fits_file.writeto(sanitize_filename(filename), overwrite=overwrite)
 
         else:
 
-            
             with h5py.File(sanitize_filename(filename), "w") as f:
 
                 f.attrs["n_results"] = 1
-                
+
                 grp = f.create_group("AnalysisResults_0")
-                
+
                 ANALYSIS_RESULTS_HDF(self, grp)
 
-            
     def get_variates(self, param_path):
 
         assert param_path in self._optimized_model.free_parameters, (
@@ -1979,7 +1988,7 @@ class AnalysisResultsSet(collections.Sequence):
             self.characterize_sequence("unspecified", frame_tuple)
 
         if not as_hdf:
-            
+
             fits = AnalysisResultsFITS(
                 *self,
                 sequence_tuple=self._sequence_tuple,
@@ -1992,7 +2001,7 @@ class AnalysisResultsSet(collections.Sequence):
             with h5py.File(sanitize_filename(filename), "w") as f:
 
                 f.attrs["n_results"] = len(self)
-                
+
                 f.attrs["SEQ_TYPE"] = self._sequence_name
                 seq_grp = f.create_group("SEQUENCE")
 
@@ -2004,18 +2013,16 @@ class AnalysisResultsSet(collections.Sequence):
 
                         sub_grp.attrs["UNIT"] = value.unit.to_string()
 
-                        sub_grp.create_dataset('DATA', data=value.value)
-                        
+                        sub_grp.create_dataset("DATA", data=value.value)
+
                     except:
 
                         sub_grp.attrs["UNIT"] = "NONE_TYPE"
-                        
-                        sub_grp.create_dataset('DATA', data=value)
 
-                
+                        sub_grp.create_dataset("DATA", data=value)
+
                 for i, ar in enumerate(self):
 
-                    grp = f.create_group("AnalysisResults_%d" %i)
+                    grp = f.create_group("AnalysisResults_%d" % i)
 
                     ANALYSIS_RESULTS_HDF(ar, grp)
-                    
