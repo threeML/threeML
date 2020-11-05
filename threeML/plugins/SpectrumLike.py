@@ -1552,7 +1552,7 @@ class SpectrumLike(PluginPrototype):
         doc="Sets/gets the noise model for the background spectrum",
     )
 
-    def get_log_like(self):
+    def get_log_like(self, true_fluxes=None):
         """
         Calls the likelihood from the pre-setup likelihood evaluator that "knows" of the currently set
         noise models
@@ -1560,7 +1560,7 @@ class SpectrumLike(PluginPrototype):
         :return: 
         """
 
-        loglike, _ = self._likelihood_evaluator.get_current_value()
+        loglike, _ = self._likelihood_evaluator.get_current_value(true_fluxes=true_fluxes)
 
         return loglike
 
@@ -1614,7 +1614,7 @@ class SpectrumLike(PluginPrototype):
             ]
         )
 
-    def get_model(self):
+    def get_model(self, true_fluxes=None):
         """
         The model integrated over the energy bins. Note that it only returns the  model for the
         currently active channels/measurements
@@ -1625,13 +1625,13 @@ class SpectrumLike(PluginPrototype):
         if self._rebinner is not None:
 
             (model,) = self._rebinner.rebin(
-                self._evaluate_model() * self._observed_spectrum.exposure
+                self._evaluate_model(true_fluxes=true_fluxes) * self._observed_spectrum.exposure
             )
 
         else:
 
             model = (
-                self._evaluate_model()[self._mask] * self._observed_spectrum.exposure
+                self._evaluate_model(true_fluxes=true_fluxes)[self._mask] * self._observed_spectrum.exposure
             )
 
         return self._nuisance_parameter.value * model
@@ -1756,6 +1756,7 @@ class SpectrumLike(PluginPrototype):
 
         """New way with simpson rule - But is simpson rule really necessary? Maybe use trapz, as this would
         speed up the integral by a factor of ~2
+        """
         def integral(e1, e2):
             # Simpson's rule
             e_edges = np.append(e1, e2[-1])
@@ -1781,8 +1782,9 @@ class SpectrumLike(PluginPrototype):
             #diff_fluxes = np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T
 
             return np.trapz(np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T,np.array([e1,e2]).T)
-
+        """
         return differential_flux, integral
+
 
     def use_effective_area_correction(self, min_value=0.8, max_value=1.2):
         """

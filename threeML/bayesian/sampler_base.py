@@ -57,6 +57,44 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         self._likelihood_model = likelihood_model
         self._data_list = data_list
         
+        # Share spectrum flag if the spectrum should only be calculated
+        # once when different data_list entries have the same input energy bins
+        # for the response folding. Only usefull if spectrum calculation is slow.
+        if "share_spectrum" in kwargs:
+            self._share_spectrum = kwargs["share_spectrum"]
+        else:
+            self._share_spectrum = False
+
+        # SET IT TO TRUE FOR TESIING
+        #self._share_spectrum = False
+        if self._share_spectrum:
+            # Check which data_list entries have the same input energies in the response folding
+            print("yes")
+            found = False
+            num_found = 0
+            self._data_ein_edges = {}
+            for j, d in enumerate(list(self._data_list.values())):
+                if j==0:
+                    self._data_ein_edges[num_found] = d._likelihood_evaluator._spectrum_plugin.response.monte_carlo_energies
+                    self._data_ebin_connect = np.array([0])
+                    num_found += 1
+
+                else:
+                    e = d._likelihood_evaluator._spectrum_plugin.response.monte_carlo_energies
+                    for i in range(len(self._data_ein_edges)):
+                        if np.all(np.equal(e, self._data_ein_edges[i])):
+                            self._data_ebin_connect = np.append(self._data_ebin_connect, i)
+                            found = True
+
+                    if found == False:
+                        self._data_ein_edges[num_found] = e
+                        self._data_ebin_connect = np.append(self._data_ebin_connect, i+1)
+                    num_found += 1
+                    found = False
+
+
+            # Integral function
+            _, self._integral = list(self._data_list.values())[0]._get_diff_flux_and_integral(self._likelihood_model)
 
 
 
@@ -305,13 +343,26 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         # Get the value of the log-likelihood for this parameters
 
         try:
-
             # Loop over each dataset and get the likelihood values for each set
+            if not self._share_spectrum:
+                # Old way; every dataset independendly - Not a problem if
+                # the input spectrum is calculated several times, as it is fast.
+                log_like_values = [
+                    dataset.get_log_like() for dataset in list(self._data_list.values())
+                ]
+            else:
+                # If the calculation for the input spectrum of one of the sources is expensive
+                # we want to avoid calculating the same thing several times.
+                log_like_values = np.zeros(len(self._data_ebin_connect))
+                true_fluxes = []
 
-            log_like_values = [
-                dataset.get_log_like() for dataset in list(self._data_list.values())
-            ]
+                for i, e_edges in enumerate(list(self._data_ein_edges.values())):
+                    true_fluxes.append(self._integral(e_edges[:-1], e_edges[1:]))
+                for i, dataset in enumerate(list(self._data_list.values())):
+                    # call get log_like with precalculated spectrum
+                    log_like_values[i] = dataset.get_log_like(true_fluxes=true_fluxes[self._data_ebin_connect[i]])
 
+        
         except ModelAssertionViolation:
 
             # Fit engine or sampler outside of allowed zone

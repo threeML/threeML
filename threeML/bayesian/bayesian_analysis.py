@@ -113,7 +113,7 @@ class BayesianAnalysis(object):
 
 
         
-    def set_sampler(self, sampler_name):
+    def set_sampler(self, sampler_name, **kwargs):
 
         assert sampler_name in _available_samplers, (
             "%s is not a valid sampler please choose from %s"
@@ -121,7 +121,7 @@ class BayesianAnalysis(object):
         )
 
         self._sampler = _available_samplers[sampler_name](
-            self._likelihood_model, self._data_list
+            self._likelihood_model, self._data_list, **kwargs
         )
 
     @property

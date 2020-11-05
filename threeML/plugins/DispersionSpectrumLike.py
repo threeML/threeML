@@ -89,13 +89,13 @@ class DispersionSpectrumLike(SpectrumLike):
 
         self._rsp.set_function(integral)
 
-    def _evaluate_model(self):
+    def _evaluate_model(self, true_fluxes=None):
         """
         evaluates the full model over all channels
         :return:
         """
 
-        return self._rsp.convolve()
+        return self._rsp.convolve(true_fluxes=true_fluxes)
 
     def get_simulated_dataset(self, new_name=None, **kwargs):
         """

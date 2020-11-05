@@ -208,11 +208,11 @@ class InstrumentResponse(object):
 
         self._integral_function = integral_function
 
-    def convolve(self):
-
-        true_fluxes = self._integral_function(
-            self._mc_energies[:-1], self._mc_energies[1:]
-        )
+    def convolve(self, true_fluxes=None):
+        if true_fluxes is None:
+            true_fluxes = self._integral_function(
+                self._mc_energies[:-1], self._mc_energies[1:]
+            )
 
         # Sometimes some channels have 0 lenths, or maybe they start at 0, where
         # many functions (like a power law) are not defined. In the response these
