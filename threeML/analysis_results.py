@@ -672,19 +672,27 @@ class _AnalysisResults(object):
 
         return self._analysis_type
 
-    def write_to(self, filename, overwrite=False):
+    def write_to(self, filename, overwrite=False, as_hdf=False):
         """
-        Write results to a FITS file
+        Write results to a FITS or HDF5 file
 
-        :param filename:
-        :param overwrite:
+        :param filename: the file name
+        :param overwrite: overwrite the file?
+        :param: save as an HDF5 file
         :return: None
         """
 
-        fits_file = AnalysisResultsFITS(self)
+        if not as_hdf:
+        
+            fits_file = AnalysisResultsFITS(self)
 
-        fits_file.writeto(sanitize_filename(filename), overwrite=overwrite)
+            fits_file.writeto(sanitize_filename(filename), overwrite=overwrite)
 
+        else:
+
+            ANALYSIS_RESULTS_HDF(self, sanitize_filename(filename))
+
+            
     def get_variates(self, param_path):
 
         assert param_path in self._optimized_model.free_parameters, (
