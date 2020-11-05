@@ -247,7 +247,47 @@ def _load_one_results_hdf(hdf_obj):
             statistical_measures=measure_values,
         )
 
+def _load_set_of_results_hdf(hdf_obj, n_results):
+        # Gather all results
+    all_results = []
 
+    for i in range(n_results):
+
+        grp = hdf_obj["AnalysisResults_%d" % i]
+
+        all_results.append(_load_one_results_hdf(grp))
+
+    this_set = AnalysisResultsSet(all_results)
+
+    # Now gather the SEQUENCE extension and set the characterization frame accordingly
+
+    seq_type = hdf_obj["SEQ_TYPE"]
+
+    # Build the data tuple
+    record = hdf_obj["SEQUENCE"][()]
+
+    data_list = []
+
+    for column in record.columns:
+
+        if column.unit is None:
+
+            this_tuple = (column.name, record[column.name])
+
+        else:
+
+            this_tuple = (column.name, record[column.name] * u.Unit(column.unit))
+
+        data_list.append(this_tuple)
+
+    this_set.characterize_sequence(seq_type, tuple(data_list))
+
+    return this_set
+
+
+    
+    
+    
 def _load_set_of_results(open_fits_file, n_results):
     # Gather all results
     all_results = []
@@ -714,7 +754,7 @@ class _AnalysisResults(object):
             
             with h5py.File(sanitize_filename(filename), "w") as f:
 
-                grp = f.create_group("AnalysisResults_1")
+                grp = f.create_group("AnalysisResults_0")
                 
                 ANALYSIS_RESULTS_HDF(self, grp)
 
