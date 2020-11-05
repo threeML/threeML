@@ -1737,6 +1737,7 @@ class SpectrumLike(PluginPrototype):
         # decent models. It might fail for models with too sharp features, smaller
         # than the size of the monte carlo interval.
 
+        """Old way- Calculates many energies twice if energies are continous energy bins with e1[i]==e2[i-1]
         def integral(e1, e2):
             # Simpson's rule
 
@@ -1749,6 +1750,37 @@ class SpectrumLike(PluginPrototype):
                     + differential_flux(e2)
                 )
             )
+
+        return differential_flux, integral
+        """
+
+        """New way with simpson rule - But is simpson rule really necessary? Maybe use trapz, as this would
+        speed up the integral by a factor of ~2
+        def integral(e1, e2):
+            # Simpson's rule
+            e_edges = np.append(e1, e2[-1])
+            e_m = (e1+e2)/2.
+
+            diff_fluxes_edges = differential_flux(e_edges)
+            diff_fluxes_mid = differential_flux(e_m)
+
+            return (
+                (e2 - e1)
+                / 6.0
+                * (
+                    diff_fluxes_edges[:-1]+4*diff_fluxes_mid+diff_fluxes_edges[1:]
+                )
+            )
+        """
+        def integral(e1, e2):
+            # Trapz rule
+            e_edges = np.append(e1, e2[-1])
+
+            diff_fluxes_edges = differential_flux(e_edges)
+
+            #diff_fluxes = np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T
+
+            return np.trapz(np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T,np.array([e1,e2]).T)
 
         return differential_flux, integral
 
