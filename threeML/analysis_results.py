@@ -97,6 +97,27 @@ def load_analysis_results(fits_file):
 
             return _load_set_of_results(f, n_results)
 
+def load_analysis_results_hdf(hdf_file):
+    """
+    Load the results of one or more analysis from a FITS file produced by 3ML
+
+    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
+    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
+    """
+
+    with h5py.File(hdf_file, "r") as f:
+
+        n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
+
+        if n_results == 1:
+
+            return _load_one_results(f["ANALYSIS_RESULTS", 1])
+
+        else:
+
+            return _load_set_of_results(f, n_results)
+
+        
 
 def _load_one_results(fits_extension):
     # Gather analysis type
@@ -286,7 +307,7 @@ class SEQUENCE(FITSExtension):
 
 
 class ANALYSIS_RESULTS_HDF(object):
-    def __init__(self, analysis_results, file_name):
+    def __init__(self, analysis_results, hdf_obj):
 
         optimized_model = analysis_results.optimized_model
 
@@ -330,110 +351,110 @@ class ANALYSIS_RESULTS_HDF(object):
             # Gather the samples
             samples = analysis_results._samples_transposed
 
-        with h5py.File(file_name, "w") as f:
+        
 
-            # yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
+        # yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
 
-            # save the model to recursive dictionaries
+        # save the model to recursive dictionaries
 
-            f.attrs["created"] = datetime.datetime.now().isoformat()
-            f.attrs["3mlver"] = "%s" % __version__
+        hdf_obj.attrs["created"] = datetime.datetime.now().isoformat()
+        hdf_obj.attrs["3mlver"] = "%s" % __version__
 
-            f.attrs["RESUTYPE"] = analysis_results.analysis_type
+        hdf_obj.attrs["RESUTYPE"] = analysis_results.analysis_type
 
-            recursively_save_dict_contents_to_group(
-                f, "MODEL", optimized_model.to_dict_with_types()
-            )
-            # Get data frame with parameters (always use equal tail errors)
+        recursively_save_dict_contents_to_group(
+            f, "MODEL", optimized_model.to_dict_with_types()
+        )
+        # Get data frame with parameters (always use equal tail errors)
 
-            data_frame = analysis_results.get_data_frame(error_type="equal tail")
+        data_frame = analysis_results.get_data_frame(error_type="equal tail")
 
-            f.create_dataset(
-                "NAME",
-                data=np.array(list(free_parameters.keys()), dtype=h5py.string_dtype()),
+        hdf_obj.create_dataset(
+            "NAME",
+            data=np.array(list(free_parameters.keys()), dtype=h5py.string_dtype()),
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+
+        hdf_obj.create_dataset(
+            "VALUE",
+            data=data_frame["value"],
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+
+        hdf_obj.create_dataset(
+            "NEGATIVE_ERROR",
+            data=data_frame["negative_error"].values,
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+        hdf_obj.create_dataset(
+            "POSITIVE_ERROR",
+            data=data_frame["positive_error"].values,
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+        hdf_obj.create_dataset(
+            "ERROR",
+            data=data_frame["error"].values,
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+
+        hdf_obj.create_dataset(
+            "UNIT",
+            data=np.array(data_frame["unit"].values, dtype=np.unicode_).astype(
+                h5py.string_dtype()
+            ),
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+
+        if analysis_results.analysis_type == "MLE":
+
+            hdf_obj.create_dataset(
+                "COVARIANCE",
+                data=covariance_matrix,
                 compression="gzip",
                 compression_opts=9,
                 shuffle=True,
             )
 
-            f.create_dataset(
-                "VALUE",
-                data=data_frame["value"],
+        elif analysis_results.analysis_type == "Bayesian":
+
+            hdf_obj.create_dataset(
+                "SAMPLES",
+                data=samples,
                 compression="gzip",
                 compression_opts=9,
                 shuffle=True,
             )
+        else:
 
-            f.create_dataset(
-                "NEGATIVE_ERROR",
-                data=data_frame["negative_error"].values,
-                compression="gzip",
-                compression_opts=9,
-                shuffle=True,
-            )
-            f.create_dataset(
-                "POSITIVE_ERROR",
-                data=data_frame["positive_error"].values,
-                compression="gzip",
-                compression_opts=9,
-                shuffle=True,
-            )
-            f.create_dataset(
-                "ERROR",
-                data=data_frame["error"].values,
-                compression="gzip",
-                compression_opts=9,
-                shuffle=True,
-            )
+            raise RuntimeError("This AR is invalid!")
 
-            f.create_dataset(
-                "UNIT",
-                data=np.array(data_frame["unit"].values, dtype=np.unicode_).astype(
-                    h5py.string_dtype()
-                ),
-                compression="gzip",
-                compression_opts=9,
-                shuffle=True,
-            )
+        # Now add two keywords for each instrument
+        stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
 
-            if analysis_results.analysis_type == "MLE":
-            
-                f.create_dataset(
-                    "COVARIANCE",
-                    data=covariance_matrix,
-                    compression="gzip",
-                    compression_opts=9,
-                    shuffle=True,
-                )
+        for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
 
-            elif analysis_results.analysis_type == "Bayesian":
+            hdf_obj.attrs["STAT%i" % i] = stat_value
+            hdf_obj.attrs["PN%i" % i] = plugin_instance_name
 
-                f.create_dataset(
-                    "SAMPLES",
-                    data=samples,
-                    compression="gzip",
-                    compression_opts=9,
-                    shuffle=True,
-                )
-            else:
+        # Now add the statistical measures
 
-                raise RuntimeError("This AR is invalid!")
-                
-            # Now add two keywords for each instrument
-            stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
+        measure_series = analysis_results.statistical_measures  # type: pd.Series
 
-            for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
-
-                f.attrs["STAT%i" % i] = stat_value
-                f.attrs["PN%i" % i] = plugin_instance_name
-
-            # Now add the statistical measures
-
-            measure_series = analysis_results.statistical_measures  # type: pd.Series
-
-            for i, (measure, measure_value) in enumerate(measure_series.items()):
-                f.attrs["MEAS%i" % i] = measure
-                f.attrs["MV%i" % i] = measure_value
+        for i, (measure, measure_value) in enumerate(measure_series.items()):
+            hdf_obj.attrs["MEAS%i" % i] = measure
+            hdf_obj.attrs["MV%i" % i] = measure_value
 
 
 class ANALYSIS_RESULTS(FITSExtension):
@@ -690,7 +711,12 @@ class _AnalysisResults(object):
 
         else:
 
-            ANALYSIS_RESULTS_HDF(self, sanitize_filename(filename))
+            
+            with h5py.File(sanitize_filename(filename), "w") as f:
+
+                grp = f.create_group("AnalysisResults_1")
+                
+                ANALYSIS_RESULTS_HDF(self, grp)
 
             
     def get_variates(self, param_path):
@@ -1893,7 +1919,7 @@ class AnalysisResultsSet(collections.Sequence):
 
         self._sequence_tuple = data_tuple
 
-    def write_to(self, filename, overwrite=False):
+    def write_to(self, filename, overwrite=False, as_hdf=False):
         """
         Write this set of results to a FITS file.
 
@@ -1910,10 +1936,25 @@ class AnalysisResultsSet(collections.Sequence):
 
             self.characterize_sequence("unspecified", frame_tuple)
 
-        fits = AnalysisResultsFITS(
-            *self,
-            sequence_tuple=self._sequence_tuple,
-            sequence_name=self._sequence_name
-        )
+        if not as_hdf:
+            
+            fits = AnalysisResultsFITS(
+                *self,
+                sequence_tuple=self._sequence_tuple,
+                sequence_name=self._sequence_name
+            )
 
-        fits.writeto(sanitize_filename(filename), overwrite=overwrite)
+            fits.writeto(sanitize_filename(filename), overwrite=overwrite)
+        else:
+
+            with h5py.File(sanitize_filename(filename), "w") as f:
+
+                f.attrs["SEQ_TYPE"] = self._sequence_name
+                f.create_dataset("SEQUENCE", data=self._sequence_tuple)
+
+                for i, ar in enumerate(self):
+
+                    grp = f.create_group("AnalysisResults_{%d}" %i)
+
+                    ANALYSIS_RESULTS_HDF(ar, grp)
+                    
