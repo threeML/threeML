@@ -107,15 +107,15 @@ def load_analysis_results_hdf(hdf_file):
 
     with h5py.File(hdf_file, "r") as f:
 
-        n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
+        n_results = f.attrs["n_results"]
 
         if n_results == 1:
 
-            return _load_one_results(f["ANALYSIS_RESULTS", 1])
+            return _load_one_results_hdf(f["AnalysisResults_0"])
 
         else:
 
-            return _load_set_of_results(f, n_results)
+            return _load_set_of_results_hdf(f, n_results)
 
         
 
@@ -248,7 +248,7 @@ def _load_one_results_hdf(hdf_obj):
         )
 
 def _load_set_of_results_hdf(hdf_obj, n_results):
-        # Gather all results
+    # Gather all results
     all_results = []
 
     for i in range(n_results):
@@ -261,22 +261,22 @@ def _load_set_of_results_hdf(hdf_obj, n_results):
 
     # Now gather the SEQUENCE extension and set the characterization frame accordingly
 
-    seq_type = hdf_obj["SEQ_TYPE"]
+    seq_type = hdf_obj.attrs["SEQ_TYPE"]
 
     # Build the data tuple
-    record = hdf_obj["SEQUENCE"][()]
+    seq_grp = hdf_obj["SEQUENCE"]
 
     data_list = []
 
-    for column in record.columns:
+    for name, grp  in seq_grp.items():
 
-        if column.unit is None:
+        if grp.attrs["UNIT"] == "NONE_TYPE":
 
-            this_tuple = (column.name, record[column.name])
+            this_tuple = (name, grp["DATA"][()])
 
         else:
 
-            this_tuple = (column.name, record[column.name] * u.Unit(column.unit))
+            this_tuple = (name, grp["DATA"][()] * u.Unit(grp.attrs["UNIT"]))
 
         data_list.append(this_tuple)
 
@@ -403,7 +403,7 @@ class ANALYSIS_RESULTS_HDF(object):
         hdf_obj.attrs["RESUTYPE"] = analysis_results.analysis_type
 
         recursively_save_dict_contents_to_group(
-            f, "MODEL", optimized_model.to_dict_with_types()
+            hdf_obj, "MODEL", optimized_model.to_dict_with_types()
         )
         # Get data frame with parameters (always use equal tail errors)
 
@@ -754,6 +754,8 @@ class _AnalysisResults(object):
             
             with h5py.File(sanitize_filename(filename), "w") as f:
 
+                f.attrs["n_results"] = 1
+                
                 grp = f.create_group("AnalysisResults_0")
                 
                 ANALYSIS_RESULTS_HDF(self, grp)
@@ -1989,12 +1991,31 @@ class AnalysisResultsSet(collections.Sequence):
 
             with h5py.File(sanitize_filename(filename), "w") as f:
 
+                f.attrs["n_results"] = len(self)
+                
                 f.attrs["SEQ_TYPE"] = self._sequence_name
-                f.create_dataset("SEQUENCE", data=self._sequence_tuple)
+                seq_grp = f.create_group("SEQUENCE")
 
+                for name, value in self._sequence_tuple:
+
+                    sub_grp = seq_grp.create_group(name)
+
+                    try:
+
+                        sub_grp.attrs["UNIT"] = value.unit.to_string()
+
+                        sub_grp.create_dataset('DATA', data=value.value)
+                        
+                    except:
+
+                        sub_grp.attrs["UNIT"] = "NONE_TYPE"
+                        
+                        sub_grp.create_dataset('DATA', data=value)
+
+                
                 for i, ar in enumerate(self):
 
-                    grp = f.create_group("AnalysisResults_{%d}" %i)
+                    grp = f.create_group("AnalysisResults_%d" %i)
 
                     ANALYSIS_RESULTS_HDF(ar, grp)
                     
