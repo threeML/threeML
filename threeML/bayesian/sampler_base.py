@@ -89,7 +89,7 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                     if found == False:
                         self._data_ein_edges[num_found] = e
                         self._data_ebin_connect = np.append(self._data_ebin_connect, i+1)
-                    num_found += 1
+                        num_found += 1
                     found = False
 
 
