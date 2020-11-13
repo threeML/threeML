@@ -115,6 +115,7 @@ class SpectrumLike(PluginPrototype):
         self._like_model = None
         self._rebinner = None
         self._source_name = None
+        self._stokes = None
 
         # probe the noise models and then setup the appropriate count errors
 
@@ -310,8 +311,7 @@ class SpectrumLike(PluginPrototype):
 
                 # check that zero error => zero counts
                 assert np.all(errors[zero_idx] == counts[zero_idx]), (
-                    "Error in %s spectrum: if the error on the background is zero, "
-                    "also the expected %s must be zero" % name
+                    "Error in %s spectrum: if the error on the background is zero, also the expected %s must be zero" % (name, name)
                 )
 
         observed_count_errors, background_count_errors = error_tuple
@@ -1697,13 +1697,13 @@ class SpectrumLike(PluginPrototype):
 
             def differential_flux(energies):
                 fluxes = likelihood_model.get_point_source_fluxes(
-                    0, energies, tag=self._tag
+                    0, energies, tag=self._tag, stokes=self._stokes
                 )
 
                 # If we have only one point source, this will never be executed
                 for i in range(1, n_point_sources):
                     fluxes += likelihood_model.get_point_source_fluxes(
-                        i, energies, tag=self._tag
+                        i, energies, tag=self._tag, stokes=self._stokes
                     )
 
                 return fluxes

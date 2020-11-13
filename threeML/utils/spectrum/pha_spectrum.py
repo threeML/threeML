@@ -13,6 +13,7 @@ import six
 from threeML.io.progress_bar import progress_bar
 from threeML.utils.OGIP.response import OGIPResponse, InstrumentResponse
 from threeML.utils.OGIP.pha import PHAII
+from threeML.io.fits_file import FITSFile
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, Quality
 from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
 from threeML.utils.time_interval import TimeIntervalSet
@@ -73,10 +74,8 @@ def _read_pha_or_pha2_file(
     :return:
     """
 
-    assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
-        pha_file_or_instance, PHAII
-    ), "Must provide a FITS file name or PHAII instance"
-
+    assert isinstance(pha_file_or_instance, (six.string_types, PHAII, 
+        FITSFile)), "Must provide a FITS file name or PHAII / FITSFile instance"
     if isinstance(pha_file_or_instance, six.string_types):
 
         ext = os.path.splitext(pha_file_or_instance)[-1]
@@ -96,7 +95,7 @@ def _read_pha_or_pha2_file(
 
     # If this is already a FITS_FILE instance,
 
-    elif isinstance(pha_file_or_instance, PHAII):
+    elif isinstance(pha_file_or_instance, (PHAII, FITSFile)):
 
         # we simply create a dummy filename
 
@@ -727,9 +726,8 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         # extract the spectrum number if needed
 
-        assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
-            pha_file_or_instance, PHAII
-        ), "Must provide a FITS file name or PHAII instance"
+        assert isinstance(pha_file_or_instance, (six.string_types, PHAII, 
+            FITSFile)), "Must provide a FITS file name or PHAII / FITSFile instance"
 
         pha_information = _read_pha_or_pha2_file(
             pha_file_or_instance,
