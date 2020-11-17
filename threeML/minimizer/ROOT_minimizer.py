@@ -2,6 +2,7 @@ from builtins import zip
 from builtins import range
 import ROOT
 import numpy as np
+import ctypes
 
 from threeML.minimizer.minimization import (
     LocalMinimizer,
@@ -209,12 +210,12 @@ class ROOTMinimizer(LocalMinimizer):
 
         for i, par_name in enumerate(self.parameters):
 
-            err_low = ROOT.Double(0)
-            err_up = ROOT.Double(0)
+            err_low = ctypes.c_double(0)
+            err_up = ctypes.c_double(0)
 
             self.minimizer.GetMinosError(i, err_low, err_up)
 
-            errors[par_name] = (err_low, err_up)
+            errors[par_name] = (err_low.value, err_up.value)
 
         return errors
 
