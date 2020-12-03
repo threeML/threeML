@@ -23,17 +23,36 @@ from threeML.plugin_prototype import PluginPrototype
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from astromodels import PointSource,ExtendedSource
 import astropy.units as u
-from mla.core import *
-from mla.spectral import *
-from mla.injection import *
+from mla import models
+from mla import spectral
+from mla import analysis
+from mla import injector
+from mla import time_profiles
 __instrument_name = "IceCube"
 
 __all__=["NeutrinoPointSource","NeutrinoExtendedSource"]
 r"""This IceCube plugin is currently under develop by Kwok Lung Fan and John Evans"""
 class NeutrinoPointSource(PointSource):
+    """
+    Class for NeutrinoPointSource. It is inherited from astromodels PointSource class.
+    """
     def __init__(self, source_name, ra=None, dec=None, spectral_shape=None,
-                 l=None, b=None, components=None, sky_position=None,energy_unit=u.GeV):
-
+                 l=None,b=None,components=None, sky_position=None,energy_unit=u.GeV):
+        """Constructor for NeutrinoPointSource
+        
+        More info ...
+        
+        Args:
+            source_name:Name of the source
+            ra: right ascension in degree
+            dec: declination in degree
+            spectral_shape: Shape of the spectrum.Check 3ML example for more detail.
+            l: galactic longitude in degree
+            b: galactic   in degree
+            components: Spectral Component.Check 3ML example for more detail.
+            sky_position: sky position
+            energy_unit: Unit of the energy
+        """
         # Check that we have all the required information
 
         # (the '^' operator acts as XOR on booleans)
@@ -116,7 +135,11 @@ class NeutrinoPointSource(PointSource):
         for component in list(self._components.values()):
 
             component.shape.set_units(x_unit, y_unit)
+            
     def __call__(self, x, tag=None):
+       """
+       Overwrite the function so it always return 0. It is because it should not produce any EM signal.
+       """
         if isinstance(x, u.Quantity):
             if type(x) == float or type(x) == int:
                 return 0*(u.keV**-1*u.cm**-2*u.second**-1)
@@ -127,6 +150,15 @@ class NeutrinoPointSource(PointSource):
             return np.zeros((len(x)))
             
     def call(self, x, tag=None):
+        """
+        Calling the spectrum
+        
+        Args:
+            x: Energy
+        
+        return
+            differential flux
+        """
         if tag is None:
 
             # No integration nor time-varying or whatever-varying
@@ -231,32 +263,41 @@ class Spectrum(object):
         
 
 class IceCubeLike(PluginPrototype):
-    def __init__(self, name, exp, mc,background, signal_time_profile = None , background_time_profile = (50000,70000) , fit_position = False,verbose=False,**kwargs):
+
+    def __init__(self,name, exp, mc, grl , background, signal_time_profile = = (50000,70000),
+                background_time_profile = (50000,70000),background_window = 14, fit_position = False, verbose=False, **kwargs):
         r"""Constructor of the class.
-        exp is the data,mc is the monte carlo
-        The default sin dec bins is set but can be pass by sinDec_bins.
-        The current version doesn't support a time dependent search.
+        Args:
+            exp:data
+            mc: Monte Carlo
+            grl: Good run list
+            background: Background
+            signal_time_profile: Signal time profile object.Same as background_time_profile if None.
+            background_time_profile: Background time profile
+            fit_position:Not in use_astromodels_memoization
+            verbose: print the output or not
+            
         """
         nuisance_parameters = {}
         super(IceCubeLike, self).__init__(name, nuisance_parameters)
         self.parameter = kwargs
-        self.llh_model = None
-        self.sample = None
-        self.fit_position = fit_position
-        self.spectrum = PowerLaw(1,1e-15,-2)
+        self.event_model = models.ThreeMLEventModel(background, mc, grl, **kwargs)
         self.verbose = verbose
-        if isinstance(background_time_profile,generic_profile):
-            pass
-        else:
-            background_time_profile = uniform_profile(background_time_profile[0],background_time_profile[1])
-        if signal_time_profile is None:
-            signal_time_profile = deepcopy(background_time_profile)
-        else:
-            signal_time_profile = signal_time_profile
-            
-        self.llh_model=LLH_point_source(ra=np.pi/2 , dec=np.pi/6 , data = exp , sim = mc ,spectrum = self.spectrum ,signal_time_profile = signal_time_profile , background_time_profile = background_time_profile, background = background ,fit_position = fit_position , **kwargs) 
         self.dec = None
         self.ra = None
+        injector = injector.PsInjector(source = {'ra':np.pi/2,'dec': np.pi/6})
+        
+        if type(background_time_profile) is not time_profiles.GenericProfile:
+            background_time_profile = time_profiles.UniformProfile(background_time_profile[0],
+                                                                   background_time_profile[1])
+        if type(signal_time_profile) is not time_profiles.GenericProfile:
+            signal_time_profile = time_profiles.UniformProfile(signal_time_profile[0],
+                                                               signal_time_profile[1])    
+                                                               
+        injector.set_background_profile(self.event_model,background_time_profile,background_window)
+        injector.set_signal_profile(signal_time_profile)
+        self.Analysis = analysis.ThreeMLPsAnalysis(injector = injector)
+        return
         
     def set_model(self, likelihood_model_instance ):
         r"""Setting up the model"""
@@ -276,10 +317,10 @@ class IceCubeLike(PluginPrototype):
                 else:
                     self.ra = ra
                     self.dec = dec
-                    self.llh_model.fit_position = self.fit_position
-                    self.llh_model.update_position(ra,dec)
-                    self.llh_model.update_time_weight()
-                    self.llh_model.update_energy_weight()
+                    self.Analysis.injector.set_position(ra,dec)
+                    self.event_model.update_position(ra,dec)
+                    spectrum = Spectrum(likelihood_model_instance)
+                    self.event_model.update_model(spectrum)
             self.model=likelihood_model_instance
             #self.source_name=likelihood_model_instance.get_point_source_name(id=0)
             #self.spectrum=Spectrum(likelihood_model_instance)
@@ -289,28 +330,25 @@ class IceCubeLike(PluginPrototype):
         if self.source_name is None:
             print("No point sources in the model")
             return
-            
-    def overload_llh(self,llh_model):
-        self.llh_model=llh_model
-        return
+
         
         
     def update_model(self):   
         self.spectrum=Spectrum(self.model)
-        self.llh_model.update_spectrum(self.spectrum)    
+        self.event_model.update_model(self.spectrum)    
         #self.llh_model.update_energy_weight()
         return
     
-    def add_injection(self,sample):
-        self.llh_model.add_injection(sample)
+    def set_data(self,data):
+        self.event_model.set_data(sample)
         return
     
     def get_log_like(self):
         self.update_model()
-        llh=self.llh_model.eval_llh()
+        llh=self.Analysis.calculate_TS(self.event_model)
         if self.verbose:
             print(llh)
-        return llh[1]
+        return llh[0]
         
     def inner_fit(self):
         return self.get_log_like()
