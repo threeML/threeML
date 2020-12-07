@@ -3,11 +3,13 @@ from __future__ import division
 from builtins import str
 from builtins import range
 from past.utils import old_div
+from typing import Dict, List, Optional, Union, Tuple
 import collections
 import os
 import sys
 from copy import deepcopy,copy
 import numpy as np
+import numpy.lib.recfunctions as rf
 from multiprocessing import Pool
 from astromodels import Parameter
 from astromodels.core.sky_direction import SkyDirection
@@ -26,7 +28,7 @@ import astropy.units as u
 from mla import models
 from mla import spectral
 from mla import analysis
-from mla import injector
+from mla import injectors
 from mla import time_profiles
 __instrument_name = "IceCube"
 
@@ -137,9 +139,9 @@ class NeutrinoPointSource(PointSource):
             component.shape.set_units(x_unit, y_unit)
             
     def __call__(self, x, tag=None):
-       """
-       Overwrite the function so it always return 0. It is because it should not produce any EM signal.
-       """
+        """
+        Overwrite the function so it always return 0. It is because it should not produce any EM signal.
+        """
         if isinstance(x, u.Quantity):
             if type(x) == float or type(x) == int:
                 return 0*(u.keV**-1*u.cm**-2*u.second**-1)
@@ -264,7 +266,7 @@ class Spectrum(object):
 
 class IceCubeLike(PluginPrototype):
 
-    def __init__(self,name, exp, mc, grl , background, signal_time_profile = = (50000,70000),
+    def __init__(self,name, exp, mc, grl , background, signal_time_profile = (50000,70000),
                 background_time_profile = (50000,70000),background_window = 14, fit_position = False, verbose=False, **kwargs):
         r"""Constructor of the class.
         Args:
@@ -285,18 +287,21 @@ class IceCubeLike(PluginPrototype):
         self.verbose = verbose
         self.dec = None
         self.ra = None
-        injector = injector.PsInjector(source = {'ra':np.pi/2,'dec': np.pi/6})
+        injector = injectors.PsInjector(source = {'ra':np.pi/2,'dec': np.pi/6})
         
-        if type(background_time_profile) is not time_profiles.GenericProfile:
+        if not issubclass(type(background_time_profile) ,time_profiles.GenericProfile):
             background_time_profile = time_profiles.UniformProfile(background_time_profile[0],
                                                                    background_time_profile[1])
-        if type(signal_time_profile) is not time_profiles.GenericProfile:
+        if not issubclass(type(signal_time_profile) ,time_profiles.GenericProfile):
             signal_time_profile = time_profiles.UniformProfile(signal_time_profile[0],
                                                                signal_time_profile[1])    
                                                                
         injector.set_background_profile(self.event_model,background_time_profile,background_window)
         injector.set_signal_profile(signal_time_profile)
         self.Analysis = analysis.ThreeMLPsAnalysis(injector = injector)
+        self.Analysis.set_data(exp)
+        self.test_signal_time_profile = None
+        self.test_background_time_profile = None
         return
         
     def set_model(self, likelihood_model_instance ):
@@ -331,7 +336,74 @@ class IceCubeLike(PluginPrototype):
             print("No point sources in the model")
             return
 
+    def set_test_time_profile(self,
+                              test_signal_time_profile:Optional[time_profiles.GenericProfile],
+                              test_background_time_profile:Optional[time_profiles.GenericProfile]):
+        """ set the time profile for eval ts so it is not using injector's time profile"""
+        self.test_signal_time_profile = test_signal_time_profile
+        self.test_background_time_profile = test_background_time_profile
+    
+    def inject_background(self):
+        """inject background events"""
+        data = self.injector.inject_background_events(self.event_model)
+        self.set_data(data)
+        return
+    
+    def inject_signal(self,nsignal = None, spectrum = None):
+        """inject signal events"""
+        if nsignal is None:
+            if spectrum is None:
+                try:
+                    data = self.injector.inject_signal_events(self.event_model._reduced_sim_truedec)
+                except:
+                    raise "No spectrum had even supplied"
+            else:
+                self.event_model._reduced_sim_truedec = self.injector.reduced_sim(event_model = self.event_model,spectrum=spectrum)
+                data = self.injector.inject_signal_events(self.event_model._reduced_sim_truedec)    
+        else:
+            if spectrum is None:
+                try:
+                    data = self.injector.inject_nsignal_events(self.event_model._reduced_sim_truedec,nsignal)
+                except:
+                    raise "No spectrum had even supplied"
+            else:
+                self.event_model._reduced_sim_truedec = self.injector.reduced_sim(event_model = self.event_model,spectrum=spectrum)
+                data = self.injector.inject_nsignal_events(self.event_model._reduced_sim_truedec,nsignal)    
+            
+        self.set_data(data)    
+        return
         
+    def inject_background_and_signal(self,nsignal = None, spectrum = None):
+        background = self.Analysis.injector.inject_background_events(self.event_model)
+        if nsignal is None:
+            if spectrum is None:
+                try:
+                    data = self.Analysis.injector.inject_signal_events(self.event_model._reduced_sim_truedec)
+                except:
+                    raise "No spectrum had even supplied"
+            else:
+                self.event_model._reduced_sim_truedec = self.Analysis.injector.reduced_sim(event_model = self.event_model,spectrum=spectrum)
+                data = self.Analysis.injector.inject_signal_events(self.event_model._reduced_sim_truedec)    
+        else:
+            if spectrum is None:
+                try:
+                    data = self.Analysis.injector.inject_nsignal_events(self.event_model._reduced_sim_truedec,nsignal)
+                except:
+                    raise "No spectrum had even supplied"
+            else:
+                self.event_model._reduced_sim_truedec = self.Analysis.injector.reduced_sim(event_model = self.event_model,spectrum=spectrum)
+                data = self.Analysis.injector.inject_nsignal_events(self.event_model._reduced_sim_truedec,nsignal)
+                
+        bgrange = self.Analysis.injector.background_time_profile.get_range()
+        contained_in_background = ((data['time'] >= bgrange[0]) &\
+                                   (data['time'] < bgrange[1]))
+        data = data[contained_in_background]
+        data = rf.drop_fields(data, [n for n in data.dtype.names \
+                 if not n in background.dtype.names])    
+        self.set_data(np.concatenate([background,data]))
+        return
+    
+    
         
     def update_model(self):   
         self.spectrum=Spectrum(self.model)
@@ -340,12 +412,14 @@ class IceCubeLike(PluginPrototype):
         return
     
     def set_data(self,data):
-        self.event_model.set_data(sample)
+        self.Analysis.set_data(data)
         return
     
     def get_log_like(self):
         self.update_model()
-        llh=self.Analysis.calculate_TS(self.event_model)
+        llh=self.Analysis.calculate_TS(self.event_model,
+                                       test_signal_time_profile=self.test_signal_time_profile,
+                                       test_background_time_profile=self.test_background_time_profile)
         if self.verbose:
             print(llh)
         return llh[0]
@@ -353,6 +427,9 @@ class IceCubeLike(PluginPrototype):
     def inner_fit(self):
         return self.get_log_like()
 
+
+
+"""
 class sensitivity(object):
 
     def __init__(self,JointLikelihood_instance):
@@ -666,3 +743,4 @@ class sensitivity(object):
         ax.legend(fontsize=14)
         fig.savefig(file_name)
         plt.close()        
+"""
