@@ -6,6 +6,20 @@ Version 2.0
 -----------
 
 
+v2.0.3
+^^^^^^^^
+*Tue, 08 Dec 2020 19:24:04 + 0000*
+
+* Fix for `double` attribute of `ROOT` minimizer. Merged in pull request:
+  https://github.com/threeML/threeML/pull/388
+* Added support for `fermipy 1.0+`. Merged in pull request:
+  https://github.com/threeML/threeML/pull/390
+* Issue(s) closed:
+
+  * https://github.com/threeML/threeML/issues/385
+  * https://github.com/threeML/threeML/issues/387
+
+
 v2.0.2
 ^^^^^^^^
 *Tue, 03 Nov 2020 00:12:35 + 0000*
