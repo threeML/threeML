@@ -49,6 +49,7 @@ class BinnedSpectrumSeries(TimeSeries):
             mission,
             instrument,
             verbose,
+            binned_spectrum_set._binned_spectrum_list[0].edges
         )
 
         self._binned_spectrum_set = binned_spectrum_set
