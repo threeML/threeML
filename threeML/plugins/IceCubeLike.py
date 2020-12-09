@@ -287,7 +287,7 @@ class IceCubeLike(PluginPrototype):
         self.verbose = verbose
         self.dec = None
         self.ra = None
-        injector = injectors.PsInjector(source = {'ra':np.pi/2,'dec': np.pi/6})
+        injector = injectors.TimeDependentPsInjector(source = {'ra':np.pi/2,'dec': np.pi/6})
         
         if not issubclass(type(background_time_profile) ,time_profiles.GenericProfile):
             background_time_profile = time_profiles.UniformProfile(background_time_profile[0],
@@ -343,64 +343,12 @@ class IceCubeLike(PluginPrototype):
         self.test_signal_time_profile = test_signal_time_profile
         self.test_background_time_profile = test_background_time_profile
     
-    def inject_background(self):
-        """inject background events"""
-        data = self.injector.inject_background_events(self.event_model)
-        self.set_data(data)
-        return
-    
-    def inject_signal(self,nsignal = None, spectrum = None):
-        """inject signal events"""
-        if nsignal is None:
-            if spectrum is None:
-                try:
-                    data = self.injector.inject_signal_events(self.event_model._reduced_sim_truedec)
-                except:
-                    raise "No spectrum had even supplied"
-            else:
-                self.event_model._reduced_sim_truedec = self.injector.reduced_sim(event_model = self.event_model,spectrum=spectrum)
-                data = self.injector.inject_signal_events(self.event_model._reduced_sim_truedec)    
-        else:
-            if spectrum is None:
-                try:
-                    data = self.injector.inject_nsignal_events(self.event_model._reduced_sim_truedec,nsignal)
-                except:
-                    raise "No spectrum had even supplied"
-            else:
-                self.event_model._reduced_sim_truedec = self.injector.reduced_sim(event_model = self.event_model,spectrum=spectrum)
-                data = self.injector.inject_nsignal_events(self.event_model._reduced_sim_truedec,nsignal)    
-            
-        self.set_data(data)    
-        return
         
     def inject_background_and_signal(self,nsignal = None, spectrum = None):
-        background = self.Analysis.injector.inject_background_events(self.event_model)
-        if nsignal is None:
-            if spectrum is None:
-                try:
-                    data = self.Analysis.injector.inject_signal_events(self.event_model._reduced_sim_truedec)
-                except:
-                    raise "No spectrum had even supplied"
-            else:
-                self.event_model._reduced_sim_truedec = self.Analysis.injector.reduced_sim(event_model = self.event_model,spectrum=spectrum)
-                data = self.Analysis.injector.inject_signal_events(self.event_model._reduced_sim_truedec)    
-        else:
-            if spectrum is None:
-                try:
-                    data = self.Analysis.injector.inject_nsignal_events(self.event_model._reduced_sim_truedec,nsignal)
-                except:
-                    raise "No spectrum had even supplied"
-            else:
-                self.event_model._reduced_sim_truedec = self.Analysis.injector.reduced_sim(event_model = self.event_model,spectrum=spectrum)
-                data = self.Analysis.injector.inject_nsignal_events(self.event_model._reduced_sim_truedec,nsignal)
-                
-        bgrange = self.Analysis.injector.background_time_profile.get_range()
-        contained_in_background = ((data['time'] >= bgrange[0]) &\
-                                   (data['time'] < bgrange[1]))
-        data = data[contained_in_background]
-        data = rf.drop_fields(data, [n for n in data.dtype.names \
-                 if not n in background.dtype.names])    
-        self.set_data(np.concatenate([background,data]))
+
+        data = self.Analysis.produce_trial(self.event_model, spectrum = spectrum, nsignal=nsignal)
+          
+        self.set_data(data)
         return
     
     
