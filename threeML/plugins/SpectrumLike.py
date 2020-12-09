@@ -1598,7 +1598,7 @@ class SpectrumLike(PluginPrototype):
 
         self._integral_flux = integral
 
-    def _evaluate_model(self):
+    def _evaluate_model(self, true_fluxes=None):
         """
         Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.
         This can be overloaded to convolve the model with a response, for example
@@ -1606,7 +1606,9 @@ class SpectrumLike(PluginPrototype):
 
         :return:
         """
-
+        if true_fluxes is not None:
+            return true_fluxes
+        
         return np.array(
             [
                 self._integral_flux(emin, emax)
@@ -1756,7 +1758,7 @@ class SpectrumLike(PluginPrototype):
 
         """New way with simpson rule - But is simpson rule really necessary? Maybe use trapz, as this would
         speed up the integral by a factor of ~2
-        """
+        
         def integral(e1, e2):
             # Simpson's rule
             e_edges = np.append(e1, e2[-1])
@@ -1782,7 +1784,7 @@ class SpectrumLike(PluginPrototype):
             #diff_fluxes = np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T
 
             return np.trapz(np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T,np.array([e1,e2]).T)
-        """
+        #"""
         return differential_flux, integral
 
 
