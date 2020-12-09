@@ -29,7 +29,8 @@ from threeML.analysis_results import BayesianResults
 from threeML.utils.statistics.stats_tools import aic, bic, dic
 from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
 from astromodels.functions.function import ModelAssertionViolation
-
+from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 
 class SamplerBase(with_metaclass(abc.ABCMeta, object)):
     def __init__(self, likelihood_model, data_list, **kwargs):
@@ -65,27 +66,43 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         else:
             self._share_spectrum = False
 
-        # SET IT TO TRUE FOR TESIING
-        #self._share_spectrum = False
+
         if self._share_spectrum:
             # Check which data_list entries have the same input energies in the response folding
-            print("yes")
             found = False
             num_found = 0
             self._data_ein_edges = {}
             for j, d in enumerate(list(self._data_list.values())):
                 if j==0:
-                    self._data_ein_edges[num_found] = d._likelihood_evaluator._spectrum_plugin.response.monte_carlo_energies
+                    if isinstance(d, DispersionSpectrumLike):
+                        self._data_ein_edges[num_found] = d.response.monte_carlo_energies
+                    elif isinstance(d, SpectrumLike):
+                        self._data_ein_edges[num_found] = d.observed_spectrum.edges
+                        
+                    else:
+                        raise AssertionError("At the moment share spectrum only works for"\
+                                             " SpectrumLike instances.")
+                    # Build an array which saves which plugins have the same Ein_bins
                     self._data_ebin_connect = np.array([0])
                     num_found += 1
 
                 else:
-                    e = d._likelihood_evaluator._spectrum_plugin.response.monte_carlo_energies
-                    for i in range(len(self._data_ein_edges)):
-                        if np.all(np.equal(e, self._data_ein_edges[i])):
-                            self._data_ebin_connect = np.append(self._data_ebin_connect, i)
-                            found = True
+                    if isinstance(d, DispersionSpectrumLike):
+                        e = d.response.monte_carlo_energies
+                    elif isinstance(d, SpectrumLike):
+                        e = d.observed_spectrum.edges
+                    else:
+                        raise AssertionError("At the moment share spectrum only works for"\
+                                             " SpectrumLike instances.")
 
+                    # Check if these Ein_bins are already used by an earlier plugin
+                    for i in range(len(self._data_ein_edges)):
+                        if len(e)==len(self._data_ein_edges[i]):
+                            if np.all(np.equal(e, self._data_ein_edges[i])):
+                                self._data_ebin_connect = np.append(self._data_ebin_connect, i)
+                                found = True
+
+                    # If not save these Ein_bins and add an entry to the connection array
                     if found == False:
                         self._data_ein_edges[num_found] = e
                         self._data_ebin_connect = np.append(self._data_ebin_connect, i+1)
@@ -93,7 +110,8 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                     found = False
 
 
-            # Integral function
+            # Get the Integral function. This should be the same for all plugins.
+            # Only Ein_bins may be different. Not sure if this holds always.
             _, self._integral = list(self._data_list.values())[0]._get_diff_flux_and_integral(self._likelihood_model)
 
 
