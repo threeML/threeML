@@ -190,9 +190,10 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
             # Add the samples for this parameter for this source
+            idx = self._log_probability_values.argmax()
+            par = self._samples[parameter_name][idx]
 
-            mean_par = np.median(self._samples[parameter_name])
-            parameter.value = mean_par
+            parameter.value = par
 
     def _build_samples_dictionary(self):
         """
