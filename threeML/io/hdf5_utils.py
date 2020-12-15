@@ -48,7 +48,16 @@ def recursively_load_dict_contents_from_group(h5file, path):
     for key, item in h5file[path].items():
 
         if isinstance(item, h5py._hl.dataset.Dataset):
-            ans[key] = item[()]
+            tmp = item[()]
+
+            try:
+
+               ans[key] = tmp.decode("utf-8")
+
+            except:
+
+                ans[key] == tmp
+                
 
             if ans[key] == "NONE_TYPE":
 
