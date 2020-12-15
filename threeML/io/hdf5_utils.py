@@ -56,7 +56,7 @@ def recursively_load_dict_contents_from_group(h5file, path):
 
             except:
 
-                ans[key] == tmp
+                ans[key] = tmp
                 
 
             if ans[key] == "NONE_TYPE":
