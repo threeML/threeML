@@ -1,27 +1,28 @@
-import pkg_resources
 import os
 from pathlib import Path
 
-def get_path_of_data_file(data_file):
+import pkg_resources
+
+
+def get_path_of_data_file(data_file) -> Path:
     file_path = pkg_resources.resource_filename("threeML", "data/%s" % data_file)
 
-    return file_path
+    return Path(file_path)
 
 
-def get_path_of_data_dir():
+def get_path_of_data_dir() -> Path:
     file_path = pkg_resources.resource_filename("threeML", "data")
 
-    return file_path
+    return Path(file_path)
 
 
-def get_path_of_user_dir():
+def get_path_of_user_dir() -> Path:
     """
     Returns the path of the directory containing the user data (~/.threeML)
 
     :return: an absolute path
     """
-
-    return os.path.abspath(os.path.expanduser("~/.threeML"))
+    return Path("~/.threeML").expanduser()
 
 
 def get_path_of_log_dir() -> Path:
@@ -30,6 +31,7 @@ def get_path_of_log_dir() -> Path:
 
 
 _log_file_names = ["usr.log", "dev.log"]
+
 
 def get_path_of_log_file(log_file: str) -> Path:
     """
