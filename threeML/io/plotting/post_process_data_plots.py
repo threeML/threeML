@@ -41,6 +41,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
     :param model_subplot: (optional) axe(s) to plot to for overplotting
     with linear interpolation between each bin
+    :param data_per_plot: (optional) Can spezify how many detectors should be plotted in one plot. If there
+    are more detectors than this number it will split it up in several plots
     :return: figure instance
 
 
@@ -150,7 +152,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         min_rates = [NO_REBIN] * len(data_keys)
         
     if "data_per_plot" in kwargs:
-        data_per_plot = int(kwargs.pop("dets_per_plot"))
+        data_per_plot = int(kwargs.pop("data_per_plot"))
     else:
         data_per_plot = len(data_keys)
 
