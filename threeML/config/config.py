@@ -82,7 +82,7 @@ class Config(object):
 
         user_config_path: Path = get_path_of_user_dir() / _config_file_name
 
-        if user_config_path.exist():
+        If user_config_path.exist():
 
             with user_config_path.open() as f:
 
