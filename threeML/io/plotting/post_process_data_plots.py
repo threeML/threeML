@@ -148,14 +148,31 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         # This is the default (no rebinning)
 
         min_rates = [NO_REBIN] * len(data_keys)
+        
+    if "data_per_plot" in kwargs:
+        data_per_plot = int(kwargs.pop("dets_per_plot"))
+    else:
+        data_per_plot = len(data_keys)
 
     if "data_cmap" in kwargs:
-        data_cmap = plt.get_cmap(kwargs.pop("data_cmap"))
-        data_colors = cmap_intervals(len(data_keys), data_cmap)
+        if len(data_keys) <= data_per_plot:
+            data_colors = cmap_intervals(len(data_keys), kwargs.pop("data_cmap"))
+        else:
+            data_colors_base = cmap_intervals(data_per_plot, kwargs.pop("data_cmap"))
+            data_colors = []
+            for i in range(len(data_keys)):
+                data_colors.append(data_colors_base[i % data_per_plot])
 
     if "model_cmap" in kwargs:
-        model_cmap = kwargs.pop("model_cmap")
-        model_colors = cmap_intervals(len(data_keys), model_cmap)
+        if len(data_keys) <= data_per_plot:
+            model_colors = cmap_intervals(len(data_keys),
+                                          kwargs.pop("model_cmap"))
+        else:
+            model_colors_base = cmap_intervals(data_per_plot,
+                                               kwargs.pop("model_cmap"))
+            model_colors = []
+            for i in range(len(data_keys)):
+                model_colors.append(model_colors_base[i % data_per_plot])
 
     if "data_colors" in kwargs:
         data_colors = kwargs.pop("data_colors")
@@ -197,44 +214,86 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         model_labels = ["%s Model" % analysis.data_list[key]._name for key in data_keys]
 
-    # fig, (ax, ax1) = plt.subplots(2, 1, sharex=True, gridspec_kw={'height_ratios': [2, 1]}, **kwargs)
+    if len(data_keys) <= data_per_plot:
+        # If less than data_per_plot detectors need to be plotted,
+        # just plot it in one plot
+        residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
 
-    residual_plot = ResidualPlot(show_residuals=show_residuals, **kwargs)
+        if show_residuals:
 
-    if show_residuals:
+            axes = [residual_plot.data_axis, residual_plot.residual_axis]
 
-        axes = [residual_plot.data_axis, residual_plot.residual_axis]
+        else:
+
+            axes = residual_plot.data_axis
+
+        # go thru the detectors
+        for key, data_color, model_color, min_rate, model_label in zip(
+            data_keys, data_colors, model_colors, min_rates, model_labels
+        ):
+
+            # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
+
+            data = analysis.data_list[
+                key
+            ]  # type: threeML.plugins.SpectrumLike.SpectrumLike
+
+            data.display_model(
+                data_color=data_color,
+                model_color=model_color,
+                min_rate=min_rate,
+                step=step,
+                show_residuals=show_residuals,
+                show_data=show_data,
+                show_legend=show_legend,
+                ratio_residuals=ratio_residuals,
+                model_label=model_label,
+                model_subplot=axes,
+            )
+
+        return residual_plot.figure
 
     else:
+        # Too many detectors to plot everything in one plot... Make indivi.
+        # plots with data_per_plot dets per plot
 
-        axes = residual_plot.data_axis
+        # How many plots do we need?
+        n_plots = int(np.ceil(1.*len(data_keys)/data_per_plot))
 
-    # go thru the detectors
-    for key, data_color, model_color, min_rate, model_label in zip(
-        data_keys, data_colors, model_colors, min_rates, model_labels
-    ):
+        plots = []
+        for i in range(n_plots):
+            plots.append(ResidualPlot(show_residuals=show_residuals, **kwargs))
 
-        # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
+        # go thru the detectors
+        for j, (key, data_color, model_color, min_rate, model_label) in enumerate(zip(
+                data_keys, data_colors, model_colors, min_rates, model_labels
+        )):
+            axes = [plots[int(j/data_per_plot)].data_axis,
+                    plots[int(j/data_per_plot)].residual_axis]
+            # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
 
-        data = analysis.data_list[
-            key
-        ]  # type: threeML.plugins.SpectrumLike.SpectrumLike
+            data = analysis.data_list[
+                key
+            ]  # type: threeML.plugins.SpectrumLike.SpectrumLike
 
-        data.display_model(
-            data_color=data_color,
-            model_color=model_color,
-            min_rate=min_rate,
-            step=step,
-            show_residuals=show_residuals,
-            show_data=show_data,
-            show_legend=show_legend,
-            ratio_residuals=ratio_residuals,
-            model_label=model_label,
-            model_subplot=axes,
-        )
+            data.display_model(
+                data_color=data_color,
+                model_color=model_color,
+                min_rate=min_rate,
+                step=step,
+                show_residuals=show_residuals,
+                show_data=show_data,
+                show_legend=show_legend,
+                ratio_residuals=ratio_residuals,
+                model_label=model_label,
+                model_subplot=axes,
+            )
 
-    return residual_plot.figure
+        figs = []
+        for p in plots:
+            figs.append(p.figure)
 
+        return figs
 
 def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     """
