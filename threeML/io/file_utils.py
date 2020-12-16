@@ -9,7 +9,7 @@ from pathlib import Path
 from threeML.exceptions.custom_exceptions import custom_warnings
 
 
-def sanitize_filename(filename, abspath=False) -> Path:
+def sanitize_filename(filename, abspath: bool=False) -> Path:
 
     path: Path = Path(filename)
 
