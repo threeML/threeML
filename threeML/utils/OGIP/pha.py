@@ -78,8 +78,8 @@ class PHAWrite(object):
         self._outfile_basename = outfile_name
 
         self._outfile_name = {
-            "pha": "%s.pha" % outfile_name,
-            "bak": "%s_bak.pha" % outfile_name,
+            "pha": Path(f"{outfile_name}.pha")
+            "bak": Path(f"{outfile_name}_bak.pha")
         }
 
         self._out_rsp = []
