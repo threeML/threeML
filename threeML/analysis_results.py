@@ -12,7 +12,7 @@ import functools
 import inspect
 import math
 import h5py
-from pathlib iumport path
+from pathlib import path
 
 import astromodels
 import astropy.units as u
