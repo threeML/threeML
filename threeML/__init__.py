@@ -288,7 +288,7 @@ import os
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
 
 # Import the results loader
-from threeML.analysis_results import load_analysis_results
+from threeML.analysis_results import load_analysis_results, load_analysis_results_hdf, convert_fits_analysis_result_to_hdf
 
 # Import the plot_style context manager and the function to create new styles
 from .io.plotting.plot_style import (
