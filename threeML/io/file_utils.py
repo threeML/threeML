@@ -1,62 +1,18 @@
-from builtins import str
 import os
-from contextlib import contextmanager
-import tempfile
 import shutil
+import tempfile
 import uuid
-from threeML.exceptions.custom_exceptions import custom_warnings
+from builtins import str
+from contextlib import contextmanager
 from pathlib import Path
 
-def file_existing_and_readable(filename):
-
-    sanitized_filename = sanitize_filename(filename)
-
-    if os.path.exists(sanitized_filename):
-
-        # Try to open it
-
-        try:
-
-            with open(sanitized_filename):
-
-                pass
-
-        except:
-
-            return False
-
-        else:
-
-            return True
-
-    else:
-
-        return False
+from threeML.exceptions.custom_exceptions import custom_warnings
 
 
-def path_exists_and_is_directory(path):
+def sanitize_filename(filename, abspath=False) -> Path:
 
-    sanitized_path = sanitize_filename(path, abspath=True)
+    path: Path = Path(filename)
 
-    if os.path.exists(sanitized_path):
-
-        if os.path.isdir(path):
-
-            return True
-
-        else:
-
-            return False
-
-    else:
-
-        return False
-
-
-def sanitize_filename(filename, abspath=False):
-
-    path = Path(filename)
-    
     sanitized = path.expanduser()
 
     if abspath:
@@ -68,7 +24,21 @@ def sanitize_filename(filename, abspath=False):
         return sanitized
 
 
-def if_directory_not_existing_then_make(directory):
+def file_existing_and_readable(filename) -> bool:
+
+    sanitized_filename: Path = sanitize_filename(filename)
+
+    return sanitized_filename.is_file()
+
+
+def path_exists_and_is_directory(path) -> bool:
+
+    sanitized_path: Path = sanitize_filename(path, abspath=True)
+
+    return sanitized_path.is_dir()
+
+
+def if_directory_not_existing_then_make(directory) -> None:
     """
     If the given directory does not exists, then make it
 
@@ -76,11 +46,17 @@ def if_directory_not_existing_then_make(directory):
     :return: None
     """
 
-    sanitized_directory = sanitize_filename(directory)
+    sanitized_directory: Path = sanitize_filename(directory)
 
-    if not os.path.exists(sanitized_directory):
+    try:
 
-        os.makedirs(sanitized_directory)
+        sanitized_directory.mkdir(parents=True, exist_ok=False)
+
+    except (FileExistsError):
+
+        # should add logging here!
+
+        pass
 
 
 def get_random_unique_name():
