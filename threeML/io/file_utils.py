@@ -5,7 +5,7 @@ import tempfile
 import shutil
 import uuid
 from threeML.exceptions.custom_exceptions import custom_warnings
-
+from pathlib import Path
 
 def file_existing_and_readable(filename):
 
@@ -55,11 +55,13 @@ def path_exists_and_is_directory(path):
 
 def sanitize_filename(filename, abspath=False):
 
-    sanitized = os.path.expandvars(os.path.expanduser(filename))
+    path = Path(filename)
+    
+    sanitized = path.expanduser()
 
     if abspath:
 
-        return os.path.abspath(sanitized)
+        return sanitized.absolute()
 
     else:
 
