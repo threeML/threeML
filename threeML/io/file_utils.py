@@ -97,19 +97,17 @@ def temporary_directory(prefix="", within_directory=None):
 @contextmanager
 def within_directory(directory):
 
-    current_dir = os.getcwd()
+    path: Path = Path(directory)
 
-    if not os.path.exists(directory):
+    assert path.is_dir(), f"path {path} does not exist!"
 
-        raise IOError("Directory %s does not exists!" % os.path.abspath(directory))
+    current_dir: Path = Path(".")
 
+    os.chdir(path)
     try:
-        os.chdir(directory)
 
-    except OSError:
+        yield
 
-        raise IOError("Cannot access %s" % os.path.abspath(directory))
+    finally:
 
-    yield
-
-    os.chdir(current_dir)
+        os.chdir(current_dir)
