@@ -786,7 +786,7 @@ class InstrumentResponseSet(object):
             # we will read all the matrices and save them
             for rsp_number in range(1, n_responses + 1):
 
-                this_response = OGIPResponse(rsp2_file + "{%i}" % rsp_number)
+                this_response = OGIPResponse(str(rsp2_file) + "{%i}" % rsp_number)
 
                 list_of_matrices.append(this_response)
 
