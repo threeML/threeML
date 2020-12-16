@@ -12,6 +12,7 @@ import functools
 import inspect
 import math
 import h5py
+from pathlib iumport path
 
 import astromodels
 import astropy.units as u
@@ -78,7 +79,7 @@ def _escape_back_yaml_from_fits(yaml_code):
     return yaml_code
 
 
-def load_analysis_results(fits_file):
+def load_analysis_results(fits_file: string):
     """
     Load the results of one or more analysis from a FITS file produced by 3ML
 
@@ -86,6 +87,8 @@ def load_analysis_results(fits_file):
     :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
     """
 
+    fits_file: Path = fits_file
+    
     with fits.open(fits_file) as f:
 
         n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
@@ -99,7 +102,7 @@ def load_analysis_results(fits_file):
             return _load_set_of_results(f, n_results)
 
 
-def load_analysis_results_hdf(hdf_file):
+def load_analysis_results_hdf(hdf_file: str):
     """
     Load the results of one or more analysis from a FITS file produced by 3ML
 
@@ -107,6 +110,8 @@ def load_analysis_results_hdf(hdf_file):
     :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
     """
 
+    hdf_file: Path = sanitize_filename(hdf_file)
+    
     with h5py.File(hdf_file, "r") as f:
 
         n_results = f.attrs["n_results"]
@@ -120,7 +125,7 @@ def load_analysis_results_hdf(hdf_file):
             return _load_set_of_results_hdf(f, n_results)
 
 
-def convert_fits_analysis_result_to_hdf(fits_result_file):
+def convert_fits_analysis_result_to_hdf(fits_result_file: str):
 
     ar = load_analysis_results(fits_result_file)  # type: _AnalysisResults
 
@@ -744,7 +749,7 @@ class _AnalysisResults(object):
 
         return self._analysis_type
 
-    def write_to(self, filename, overwrite=False, as_hdf=False):
+    def write_to(self, filename: str, overwritebool: =False, as_hdf: bool=False):
         """
         Write results to a FITS or HDF5 file
 
