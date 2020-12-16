@@ -230,7 +230,7 @@ def test_read_gbm_tte():
 
         nai3.view_lightcurve(use_binner=True)
 
-        nai3.write_pha_from_binner("test_from_nai3", overwrite=True)
+        nai3.write_pha_from_binner("test_from_nai3", overwrite=True, force_rsp_write=True)
 
 
 def test_reading_of_written_pha():

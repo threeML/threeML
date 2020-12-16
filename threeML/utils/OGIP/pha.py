@@ -1,6 +1,7 @@
 import os
 import warnings
 from builtins import object
+from pathlib import Path
 
 import astropy.io.fits as fits
 import astropy.units as u
@@ -118,7 +119,7 @@ class PHAWrite(object):
                 else:
 
                     self._backfile[key].append(
-                        f"{self._outfile_basename}_bak.pha{self._spec_iterator}"
+                        f"{self._outfile_basename}_bak.pha" + "{%d}" % self._spec_iterator
                     )
 
                     # We want to write the bak file
@@ -148,7 +149,7 @@ class PHAWrite(object):
                 # This will be reached in the case that a response was generated from a plugin
                 # e.g. if we want to use weighted DRMs from GBM.
 
-                rsp_file_name = f"{self._outfile_baseename}.rsp{self._spec_iterator}"
+                rsp_file_name = f"{self._outfile_basename}.rsp" + "{%d}" % self._spec_iterator
 
                 self._respfile[key].append(rsp_file_name)
 
