@@ -5,7 +5,7 @@ from typing import Dict, Optional
 
 from colorama import Back, Fore, Style
 
-from threeML import threeML_config
+from threeML.config.config import threeML_config
 from threeML.io.package_data import get_path_of_log_dir, get_path_of_log_file
 
 ## set up the console logging
@@ -57,7 +57,7 @@ threeML_dev_log_handler.setLevel(logging.DEBUG)
 
 # lots of info written out
 _dev_formatter = logging.Formatter(
-    "%(asctime)s | %(name)s | %(levelname)s| %(funcName)s | %(lineno)d | %(message)s"
+    "%(asctime)s | %(name)s | %(levelname)s| %(funcName)s | %(lineno)d | %(message)s",  datefmt='%Y-%m-%d %H:%M:%S'
 )
 
 threeML_dev_log_handler.setFormatter(_dev_formatter)
@@ -71,7 +71,7 @@ threeML_usr_log_handler = handlers.RotatingFileHandler(
 threeML_usr_log_handler.setLevel(logging.INFO)
 
 # lots of info written out
-_usr_formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+_usr_formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s",  datefmt='%Y-%m-%d %H:%M:%S')
 
 threeML_usr_log_handler.setFormatter(_usr_formatter)
 

@@ -35,6 +35,9 @@ from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 NO_REBIN = 1e-99
 
@@ -184,7 +187,7 @@ class SpectrumLike(PluginPrototype):
         if isinstance(self._background_plugin, XYLike):
 
             if background_exposure is None:
-                custom_warnings.warn(
+                log.warning(
                     "An XYLike plugin is modeling the background but background_exposure is not set. "
                     "It is assumed the observation and background have the same exposure"
                 )
@@ -1123,12 +1126,12 @@ class SpectrumLike(PluginPrototype):
                     if self._observed_spectrum.quality.bad[i] and self._mask[i]:
                         deselected_channels.append(i)
 
-                custom_warnings.warn(
+                log.critical(
                     "You have opted to use channels which are flagged BAD in the PHA file."
                 )
 
-                if self._verbose:
-                    custom_warnings.warn(
+
+                log.warning(
                         "These channels are: %s"
                         % (", ".join([str(ch) for ch in deselected_channels]))
                     )
@@ -1504,7 +1507,7 @@ class SpectrumLike(PluginPrototype):
             new_model
         ](self)
 
-        custom_warnings.warn(
+        log.critical(
             "You are setting the background noise model to something that is not specified in the spectrum.\
          Verify that this makes statistical sense."
         )
@@ -1537,7 +1540,7 @@ class SpectrumLike(PluginPrototype):
             self._background_noise_model
         ](self)
 
-        custom_warnings.warn(
+        log.critical(
             "You are setting the observation noise model to something that is not specified in the spectrum.\
                  Verify that this makes statistical sense."
         )
@@ -2084,7 +2087,7 @@ class SpectrumLike(PluginPrototype):
 
                 raise NotImplementedError("We haven't put in other significances yet")
         else:
-            custom_warnings.warn(
+            log.warning(
                 "Significance with no background is not yet computed accurately"
             )
             significance = [np.NaN]

@@ -20,6 +20,9 @@ from threeML.io.file_utils import (file_existing_and_readable,
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 class NoCoverageIntervals(RuntimeError):
     pass
@@ -100,7 +103,7 @@ class InstrumentResponse(object):
 
         if self._mc_energies.max() < self._ebounds.max():
 
-            custom_warnings.warn(
+            log.warning(
                 "Maximum MC energy (%s) is smaller "
                 "than maximum EBOUNDS energy (%s)"
                 % (self._mc_energies.max(), self.ebounds.max()),
@@ -109,7 +112,7 @@ class InstrumentResponse(object):
 
         if self._mc_energies.min() > self._ebounds.min():
 
-            custom_warnings.warn(
+            log.warning(
                 "Minimum MC energy (%s) is larger than "
                 "minimum EBOUNDS energy (%s)"
                 % (self._mc_energies.min(), self._ebounds.min()),
@@ -698,7 +701,7 @@ class InstrumentResponseSet(object):
 
                     custom_warnings.simplefilter("always", RuntimeWarning)
 
-                    custom_warnings.warn(
+                    log.warning(
                         "Removing matrix %s (numbering starts at zero) because it has a coverage of "
                         "zero seconds" % i,
                         RuntimeWarning,

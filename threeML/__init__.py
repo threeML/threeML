@@ -6,10 +6,15 @@ pd.set_option("max_columns", None)
 
 import os
 import warnings
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
+
+log.info("Starting 3ML!")
 
 if os.environ.get("DISPLAY") is None:
 
-    warnings.warn(
+    log.warning(
         "No DISPLAY variable set. Using backend for graphics without display (Agg)"
     )
 
@@ -37,7 +42,7 @@ del get_versions
 # Finally import the serialization machinery
 from .io.serialization import *
 
-from .exceptions.custom_exceptions import custom_warnings
+#from .exceptions.custom_exceptions import custom_warnings
 
 import glob
 import imp
@@ -57,16 +62,14 @@ from .exceptions import custom_exceptions
 from .plugin_prototype import PluginPrototype
 
 try:
-
     # noinspection PyUnresolvedReferences
     from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 
 except ImportError:
 
-    custom_warnings.warn(
+    log.warning(
         "The cthreeML package is not installed. You will not be able to use plugins which require "
-        "the C/C++ interface (currently HAWC)",
-        custom_exceptions.CppInterfaceNotAvailable,
+        "the C/C++ interface (currently HAWC)"    #    custom_exceptions.CppInterfaceNotAvailable,
     )
 
 # Now look for plugins
@@ -110,10 +113,10 @@ for i, module_full_path in enumerate(found_plugins):
 
     if not is_importable:
 
-        custom_warnings.warn(
+        log.warning(
             "Could not import plugin %s. Do you have the relative instrument software installed "
-            "and configured?" % os.path.basename(module_full_path),
-            custom_exceptions.CannotImportPlugin,
+            "and configured?" % os.path.basename(module_full_path)
+            #custom_exceptions.CannotImportPlugin,
         )
 
         _not_working_plugins[plugin_name] = failure_traceback
@@ -317,16 +320,16 @@ for var in var_to_check:
 
         except ValueError:
 
-            custom_warnings.warn(
+            log.warning(
                 "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
                 "for optimum performances." % var,
-                RuntimeWarning,
+                #RuntimeWarning,
             )
 
     else:
 
-        custom_warnings.warn(
+        log.warning(
             "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
-            % var,
-            RuntimeWarning,
+            % var
+#            RuntimeWarning,
         )
