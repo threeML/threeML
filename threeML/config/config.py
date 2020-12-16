@@ -1,21 +1,22 @@
 from __future__ import print_function
+
 from future import standard_library
 
 standard_library.install_aliases()
-from builtins import object
 import os
-import shutil
 import re
-import pkg_resources
-import yaml
+import shutil
 import urllib.parse
+from builtins import object
+from pathlib import Path
+
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
+import pkg_resources
+import yaml
 
-from threeML.exceptions.custom_exceptions import (
-    custom_warnings,
-    ConfigurationFileCorrupt,
-)
+from threeML.exceptions.custom_exceptions import (ConfigurationFileCorrupt,
+                                                  custom_warnings)
 from threeML.io.package_data import get_path_of_data_file, get_path_of_user_dir
 
 _config_file_name = "threeML_config.yml"
@@ -41,24 +42,22 @@ class Config(object):
     def __init__(self):
 
         # Read first the default configuration file
-        default_configuration_path = get_path_of_data_file(_config_file_name)
+        default_configuration_path: Path = get_path_of_data_file(_config_file_name)
 
-        assert os.path.exists(default_configuration_path), (
-            "Default configuration %s does not exist. Re-install 3ML"
-            % default_configuration_path
-        )
+        assert (
+            default_configuration_path.exists()
+        ), f"Default configuration {default_configuration_path} does not exist. Re-install 3ML"
 
-        with open(default_configuration_path) as f:
+        with default_configuration_path.open() as f:
 
             try:
 
-                configuration = yaml.load(f, Loader=yaml.FullLoader)
+                configuration: dict = yaml.load(f, Loader=yaml.FullLoader)
 
             except:
 
                 raise ConfigurationFileCorrupt(
-                    "Default configuration file %s cannot be parsed!"
-                    % (default_configuration_path)
+                    f"Default configuration file {default_configuration_path} cannot be parsed!"
                 )
 
             # This needs to be here for the _check_configuration to work
@@ -77,17 +76,17 @@ class Config(object):
 
             else:
 
-                self._default_path = default_configuration_path
+                self._default_path: Path = default_configuration_path
 
         # Check if the user has a user-supplied config file under .threeML
 
-        user_config_path = os.path.join(get_path_of_user_dir(), _config_file_name)
+        user_config_path: Path = get_path_of_user_dir() / _config_file_name
 
-        if os.path.exists(user_config_path):
+        if user_config_path.exist():
 
-            with open(user_config_path) as f:
+            with user_config_path.open() as f:
 
-                configuration = yaml.load(f, Loader=yaml.FullLoader)
+                configuration: dict = yaml.load(f, Loader=yaml.FullLoader)
 
                 # Test if the local/configuration is ok
 
@@ -101,16 +100,15 @@ class Config(object):
 
                     # Probably an old configuration file
                     custom_warnings.warn(
-                        "The user configuration file at %s does not appear to be valid. We will "
+                        f"The user configuration file at {user_config_path} does not appear to be valid. We will "
                         "substitute it with the default configuration. You will find a copy of the "
-                        "old configuration at %s so you can transfer any customization you might "
+                        f"old configuration at {user_config_path}.bak so you can transfer any customization you might "
                         "have from there to the new configuration file. We will use the default "
                         "configuration for this session."
-                        % (user_config_path, "%s.bak" % user_config_path)
                     )
 
                     # Move the config file to a backup file
-                    shutil.copy2(user_config_path, "%s.bak" % user_config_path)
+                    user_config_path.rename(f"{user_config_path}.bak")
 
                     # Remove old file
                     os.remove(user_config_path)
@@ -121,26 +119,25 @@ class Config(object):
                     self._configuration = self._check_configuration(
                         self._default_configuration_raw, self._default_path
                     )
-                    self._filename = self._default_path
+                    self._filename: Path = self._default_path
 
                 else:
 
-                    self._filename = user_config_path
+                    self._filename: Path = user_config_path
 
-                    print("Configuration read from %s" % (user_config_path))
+                    print(f"Configuration read from {user_config_path}")
 
         else:
 
             custom_warnings.warn(
-                "Using default configuration from %s. "
-                "You might want to copy it to %s to customize it and avoid this warning."
-                % (self._default_path, user_config_path)
+                f"Using default configuration from {self._default_path} "
+                f"You might want to copy it to {user_config_path} to customize it and avoid this warning."
             )
 
             self._configuration = self._check_configuration(
                 self._default_configuration_raw, self._default_path
             )
-            self._filename = self._default_path
+            self._filename: Path = self._default_path
 
     def __getitem__(self, key):
 
@@ -151,7 +148,7 @@ class Config(object):
         else:
 
             raise ValueError(
-                "Configuration key %s does not exist in %s." % (key, self._filename)
+                f"Configuration key {key} does not exist in {self._filename}"
             )
 
     def __repr__(self):
@@ -184,16 +181,16 @@ class Config(object):
             return False
 
     @staticmethod
-    def is_bool(var):
+    def is_bool(var) -> bool:
         return type(var) == bool
 
     @staticmethod
-    def is_string(var):
+    def is_string(var) -> bool:
 
         return type(var) == str
 
     @staticmethod
-    def is_ftp_url(var):
+    def is_ftp_url(var) -> bool:
 
         try:
 
@@ -215,7 +212,7 @@ class Config(object):
                 return True
 
     @staticmethod
-    def is_http_url(var):
+    def is_http_url(var) -> bool:
 
         try:
 
@@ -239,7 +236,7 @@ class Config(object):
                 return True
 
     @staticmethod
-    def is_optimizer(method):
+    def is_optimizer(method) -> bool:
 
         if method in _optimize_methods:
 
@@ -250,7 +247,7 @@ class Config(object):
             return False
 
     @staticmethod
-    def is_number(val):
+    def is_number(val) -> bool:
 
         return type(val) == int or type(val) == float
 
@@ -270,7 +267,7 @@ class Config(object):
             # Replace all non-dict values with None.
             return None
 
-    def _check_same_structure(self, d1, d2):
+    def _check_same_structure(self, d1, d2) -> bool:
         """
         Return True if d1 and d2 have the same keys structure (same set of keys, and all nested dictionaries have
         the same structure)
@@ -298,7 +295,7 @@ class Config(object):
 
                 yield key, d[key]
 
-    def _check_configuration(self, config_dict, config_path):
+    def _check_configuration(self, config_dict: dict, config_path: Path) -> None:
         """
         A routine to make sure that user specified configurations
         are indeed valid.
@@ -318,8 +315,8 @@ class Config(object):
             # It does not, so of course is not valid (no need to check further)
 
             raise ConfigurationFileCorrupt(
-                "Config file %s has a different structure than the expected "
-                "one." % config_path
+                f"Config file {config_path} has a different structure than the expected "
+                "one."
             )
 
         else:
@@ -388,7 +385,7 @@ class Config(object):
             return self._get_copy_with_no_types(config_dict)
 
     @staticmethod
-    def _remove_type(d):
+    def _remove_type(d) -> dict:
 
         # tmp = [ (key.split("(")[0].rstrip(), value) for key, value in d.items()]
 
