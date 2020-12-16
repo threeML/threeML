@@ -37,7 +37,7 @@ def fits_file_existing_and_readable(filename) -> bool:
     info
 
     """
-    base_filename, _ = str(filename).split("{")
+    base_filename = str(filename).split("{")[0]
     
     return file_existing_and_readable(base_filename)
     

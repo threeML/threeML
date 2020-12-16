@@ -12,7 +12,7 @@ import functools
 import inspect
 import math
 import h5py
-from pathlib import path
+from pathlib import Path
 
 import astromodels
 import astropy.units as u
@@ -79,7 +79,7 @@ def _escape_back_yaml_from_fits(yaml_code):
     return yaml_code
 
 
-def load_analysis_results(fits_file: string):
+def load_analysis_results(fits_file: str):
     """
     Load the results of one or more analysis from a FITS file produced by 3ML
 
@@ -749,7 +749,7 @@ class _AnalysisResults(object):
 
         return self._analysis_type
 
-    def write_to(self, filename: str, overwritebool: =False, as_hdf: bool=False):
+    def write_to(self, filename: str, overwrite: bool=False, as_hdf: bool=False):
         """
         Write results to a FITS or HDF5 file
 
