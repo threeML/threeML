@@ -2,6 +2,23 @@ Release Notes
 =============
 
 
+Version 2.1
+-----------
+
+
+v2.1.0
+^^^^^^^^
+*Wed, 16 Dec 2020 00:02:29 + 0000*
+
+* Dropped `python 2` release and support.
+* Pinned `iminuit<2` version dependency.
+* Added ability to save `AnalysisResults` to HDF5 files. 
+* Merged in pull request: https://github.com/threeML/threeML/pull/386
+* Issue(s) closed:
+
+  * https://github.com/threeML/threeML/issues/389
+
+
 Version 2.0
 -----------
 
