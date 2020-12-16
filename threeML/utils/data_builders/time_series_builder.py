@@ -3,7 +3,7 @@ import re
 
 import astropy.io.fits as fits
 import numpy as np
-
+from pathlib import Path
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable
 from threeML.io.progress_bar import progress_bar
@@ -912,11 +912,11 @@ class TimeSeriesBuilder(object):
 
             rsp = gbm_drm_gen.BALROG_DRM(drm_gen, 0, 0)
 
-        elif isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
+        elif isinstance(rsp_file, str) or isinstance(rsp_file, Path):
 
             # we need to see if this is an RSP2
 
-            test = re.match("^.*\.rsp2$", rsp_file)
+            test = re.match("^.*\.rsp2$", str(rsp_file))
 
             # some GBM RSPs that are not marked RSP2 are in fact RSP2s
             # we need to check
@@ -1031,9 +1031,9 @@ class TimeSeriesBuilder(object):
 
         # we need to see if this is an RSP2
 
-        if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
+        if isinstance(rsp_file, str) or isinstance(rsp_file, Path):
 
-            test = re.match("^.*\.rsp2$", rsp_file)
+            test = re.match("^.*\.rsp2$", str(rsp_file))
 
             # some GBM RSPs that are not marked RSP2 are in fact RSP2s
             # we need to check

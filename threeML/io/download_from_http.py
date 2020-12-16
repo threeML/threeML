@@ -2,7 +2,7 @@ from builtins import object
 import requests
 import re
 import os
-
+from pathlib import Path
 from threeML.io.progress_bar import progress_bar, ProgressBarBase
 from threeML.io.file_utils import (
     sanitize_filename,
@@ -123,7 +123,7 @@ class ApacheDirectory(object):
     def download(
         self,
         remote_filename,
-        destination_path,
+        destination_path: str,
         new_filename=None,
         progress=True,
         compress=False,
@@ -134,22 +134,22 @@ class ApacheDirectory(object):
             % (remote_filename, self._request_result.url)
         )
 
-        destination_path = sanitize_filename(destination_path, abspath=True)
+        destination_path: Path = sanitize_filename(destination_path, abspath=True)
 
         assert path_exists_and_is_directory(destination_path), (
-            "Provided destination does not exist or "
-            "is not a directory" % destination_path
+            f"Provided destination {destination_path} does not exist or "
+            "is not a directory"
         )
 
         # If no filename is specified, use the same name that the file has on the remote server
 
         if new_filename is None:
-            new_filename = remote_filename.split("/")[-1]
+            new_filename: str = remote_filename.split("/")[-1]
 
         # Get the fully qualified path for the remote and the local file
 
-        remote_path = self._request_result.url + remote_filename
-        local_path = os.path.join(destination_path, new_filename)
+        remote_path: str = self._request_result.url + remote_filename
+        local_path: Path = destination_path / new_filename
 
         # Ask the server for the file, but do not download it just yet
         # (stream=True will get the HTTP header but nothing else)
@@ -168,7 +168,7 @@ class ApacheDirectory(object):
         if compress:
             # Add a .gz at the end of the file path
 
-            local_path += ".gz"
+            local_path: Path =  Path(f"{local_path}.gz")
 
         if file_existing_and_readable(local_path):
 
