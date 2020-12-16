@@ -25,10 +25,22 @@ def sanitize_filename(filename, abspath=False) -> Path:
 
 
 def file_existing_and_readable(filename) -> bool:
-
+    
     sanitized_filename: Path = sanitize_filename(filename)
 
     return sanitized_filename.is_file()
+
+
+def fits_file_existing_and_readable(filename) -> bool:
+    """
+    checks if a FITS file exists ignoring extension ({})
+    info
+
+    """
+    base_filename, _ = str(filename).split("{")
+    
+    return file_existing_and_readable(base_filename)
+    
 
 
 def path_exists_and_is_directory(path) -> bool:
