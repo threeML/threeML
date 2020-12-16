@@ -1,9 +1,10 @@
+import os
+import warnings
 from builtins import object
+
 import astropy.io.fits as fits
 import astropy.units as u
 import numpy as np
-import os
-import warnings
 
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.utils.OGIP.response import EBOUNDS, SPECRESP_MATRIX
@@ -78,8 +79,8 @@ class PHAWrite(object):
         self._outfile_basename = outfile_name
 
         self._outfile_name = {
-            "pha": Path(f"{outfile_name}.pha")
-            "bak": Path(f"{outfile_name}_bak.pha")
+            "pha": Path(f"{outfile_name}.pha"),
+            "bak": Path(f"{outfile_name}_bak.pha"),
         }
 
         self._out_rsp = []
@@ -117,7 +118,7 @@ class PHAWrite(object):
                 else:
 
                     self._backfile[key].append(
-                        "%s_bak.pha{%d}" % (self._outfile_basename, self._spec_iterator)
+                        f"{self._outfile_basename}_bak.pha{self._spec_iterator}"
                     )
 
                     # We want to write the bak file
@@ -147,10 +148,7 @@ class PHAWrite(object):
                 # This will be reached in the case that a response was generated from a plugin
                 # e.g. if we want to use weighted DRMs from GBM.
 
-                rsp_file_name = "%s.rsp{%d}" % (
-                    self._outfile_basename,
-                    self._spec_iterator,
-                )
+                rsp_file_name = f"{self._outfile_baseename}.rsp{self._spec_iterator}"
 
                 self._respfile[key].append(rsp_file_name)
 
