@@ -1,6 +1,6 @@
 import numpy as np
+from tqdm.auto import tqdm
 
-from threeML.io.progress_bar import progress_bar
 from threeML.utils.bayesian_blocks import bayesian_blocks, bayesian_blocks_not_unique
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
@@ -369,7 +369,7 @@ class TemporalBinner(TimeIntervalSet):
         # as long as we have not reached the end of the interval
         # the loop will run
 
-        pbar = tqdm()
+        pbar = tqdm(total=arrival_times.shape[0],"Binning by significance")
         
         while not end_all_search:
 
