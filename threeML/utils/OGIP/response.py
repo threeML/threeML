@@ -107,7 +107,7 @@ class InstrumentResponse(object):
                 "Maximum MC energy (%s) is smaller "
                 "than maximum EBOUNDS energy (%s)"
                 % (self._mc_energies.max(), self.ebounds.max()),
-                RuntimeWarning,
+                #RuntimeWarning,
             )
 
         if self._mc_energies.min() > self._ebounds.min():
@@ -116,7 +116,7 @@ class InstrumentResponse(object):
                 "Minimum MC energy (%s) is larger than "
                 "minimum EBOUNDS energy (%s)"
                 % (self._mc_energies.min(), self._ebounds.min()),
-                RuntimeWarning,
+             #   RuntimeWarning,
             )
 
     # This will be overridden by subclasses
@@ -704,7 +704,7 @@ class InstrumentResponseSet(object):
                     log.warning(
                         "Removing matrix %s (numbering starts at zero) because it has a coverage of "
                         "zero seconds" % i,
-                        RuntimeWarning,
+                        #RuntimeWarning,
                     )
 
                 to_be_removed.append(i)
