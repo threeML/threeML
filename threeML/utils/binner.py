@@ -369,7 +369,7 @@ class TemporalBinner(TimeIntervalSet):
         # as long as we have not reached the end of the interval
         # the loop will run
 
-        pbar = tqdm(total=arrival_times.shape[0],"Binning by significance")
+        pbar = tqdm(total=arrival_times.shape[0],desc="Binning by significance")
         
         while not end_all_search:
 
