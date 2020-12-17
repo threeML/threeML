@@ -9,8 +9,8 @@ import math
 import numpy as np
 import pandas as pd
 import scipy.optimize
+from tqdm.auto import tqdm
 
-from threeML.io.progress_bar import progress_bar
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
 
@@ -260,27 +260,27 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros_like(steps1)
 
-        with progress_bar(len(steps1), title="Profiling likelihood") as p:
+        p = tqdm(total=len(steps1), desc="Profiling likelihood")
 
-            for i, step in enumerate(steps1):
+        for i, step in enumerate(steps1):
 
-                if self._n_free_parameters > 0:
+            if self._n_free_parameters > 0:
 
-                    # Profile out the free parameters
+                # Profile out the free parameters
 
-                    self._wrapper.set_fixed_values(step)
+                self._wrapper.set_fixed_values(step)
 
-                    _, this_log_like = self._optimizer.minimize(compute_covar=False)
+                _, this_log_like = self._optimizer.minimize(compute_covar=False)
 
-                else:
+            else:
 
-                    # No free parameters, just compute the likelihood
+                # No free parameters, just compute the likelihood
 
-                    this_log_like = self._function(step)
+                this_log_like = self._function(step)
 
-                log_likes[i] = this_log_like
+            log_likes[i] = this_log_like
 
-                p.increase()
+            p.update(1)
 
         return log_likes
 
@@ -288,40 +288,40 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros((len(steps1), len(steps2)))
 
-        with progress_bar(len(steps1) * len(steps2), title="Profiling likelihood") as p:
+        p = tqdm(total=len(steps1) * len(steps2),desc="Profiling likelihood" )
 
-            for i, step1 in enumerate(steps1):
+        for i, step1 in enumerate(steps1):
 
-                for j, step2 in enumerate(steps2):
+            for j, step2 in enumerate(steps2):
 
-                    if self._n_free_parameters > 0:
+                if self._n_free_parameters > 0:
 
-                        # Profile out the free parameters
+                    # Profile out the free parameters
 
-                        self._wrapper.set_fixed_values([step1, step2])
+                    self._wrapper.set_fixed_values([step1, step2])
 
-                        try:
+                    try:
 
-                            _, this_log_like = self._optimizer.minimize(
-                                compute_covar=False
-                            )
+                        _, this_log_like = self._optimizer.minimize(
+                            compute_covar=False
+                        )
 
-                        except FitFailed:
+                    except FitFailed:
 
-                            # If the user is stepping too far it might be that the fit fails. It is usually not a
-                            # problem
+                        # If the user is stepping too far it might be that the fit fails. It is usually not a
+                        # problem
 
-                            this_log_like = np.nan
+                        this_log_like = np.nan
 
-                    else:
+                else:
 
-                        # No free parameters, just compute the likelihood
+                    # No free parameters, just compute the likelihood
 
-                        this_log_like = self._function(step1, step2)
+                    this_log_like = self._function(step1, step2)
 
-                    log_likes[i, j] = this_log_like
+                log_likes[i, j] = this_log_like
 
-                    p.increase()
+                p.update(1)
 
         return log_likes
 
@@ -1125,23 +1125,23 @@ class Minimizer(object):
 
         errors = collections.OrderedDict()
 
-        with progress_bar(2 * len(self.parameters), title="Computing errors") as p:
+        p =tqdm(total=2 * len(self.parameters), desc="Computing errors")
 
-            for parameter_name in self.parameters:
+        for parameter_name in self.parameters:
 
-                negative_error = self._get_one_error(
-                    parameter_name, target_delta_log_like, -1
-                )
+            negative_error = self._get_one_error(
+                parameter_name, target_delta_log_like, -1
+            )
 
-                p.increase()
+            p.update(1)
 
-                positive_error = self._get_one_error(
-                    parameter_name, target_delta_log_like, +1
-                )
+            positive_error = self._get_one_error(
+                parameter_name, target_delta_log_like, +1
+            )
 
-                p.increase()
+            p.update(1)
 
-                errors[parameter_name] = (negative_error, positive_error)
+            errors[parameter_name] = (negative_error, positive_error)
 
         return errors
 

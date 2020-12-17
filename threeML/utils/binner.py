@@ -1,6 +1,6 @@
 import numpy as np
+from tqdm.auto import tqdm
 
-from threeML.io.progress_bar import progress_bar
 from threeML.utils.bayesian_blocks import bayesian_blocks, bayesian_blocks_not_unique
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
@@ -368,138 +368,140 @@ class TemporalBinner(TimeIntervalSet):
         # this is the main loop
         # as long as we have not reached the end of the interval
         # the loop will run
-        with progress_bar(arrival_times.shape[0]) as pbar:
-            while not end_all_search:
 
-                # start of the fast search
-                # we reset the flag for the interval
-                # having been decreased in the last pass
-                decreased_interval = False
+        pbar = tqdm(total=arrival_times.shape[0],desc="Binning by significance")
+        
+        while not end_all_search:
 
-                while not end_fast_search:
+            # start of the fast search
+            # we reset the flag for the interval
+            # having been decreased in the last pass
+            decreased_interval = False
 
-                    # we calculate the sigma of the current region
-                    _, counts = TemporalBinner._select_events(
-                        arrival_times, current_start, current_stop
-                    )
+            while not end_fast_search:
 
-                    sigma_exceeded = TemporalBinner._check_exceeds_sigma_interval(
-                        current_start,
-                        current_stop,
-                        counts,
-                        sigma_level,
-                        background_getter,
-                        background_error_getter,
-                    )
+                # we calculate the sigma of the current region
+                _, counts = TemporalBinner._select_events(
+                    arrival_times, current_start, current_stop
+                )
 
-                    time_step = abs(current_stop - current_start)
+                sigma_exceeded = TemporalBinner._check_exceeds_sigma_interval(
+                    current_start,
+                    current_stop,
+                    counts,
+                    sigma_level,
+                    background_getter,
+                    background_error_getter,
+                )
 
-                    # if we do not exceed the sigma
-                    # we need to increase the time interval
-                    if not sigma_exceeded:
+                time_step = abs(current_stop - current_start)
 
-                        # however, if in the last pass we had to decrease
-                        # the interval, it means we have found where we
-                        # we need to start the slow search
-                        if decreased_interval:
+                # if we do not exceed the sigma
+                # we need to increase the time interval
+                if not sigma_exceeded:
 
-                            # mark where we are in the list
+                    # however, if in the last pass we had to decrease
+                    # the interval, it means we have found where we
+                    # we need to start the slow search
+                    if decreased_interval:
+
+                        # mark where we are in the list
+                        start_idx = searchsorted(arrival_times, current_stop)
+
+                        # end the fast search
+                        end_fast_search = True
+
+                    # otherwise we increase the interval
+                    else:
+
+                        # unless, we would increase it too far
+                        if (
+                            current_stop + time_step * increase_factor
+                        ) >= arrival_times[-1]:
+
+                            # mark where we are in the interval
                             start_idx = searchsorted(arrival_times, current_stop)
 
-                            # end the fast search
+                            # then we also want to go ahead and get out of the fast search
                             end_fast_search = True
 
-                        # otherwise we increase the interval
                         else:
 
-                            # unless, we would increase it too far
-                            if (
-                                current_stop + time_step * increase_factor
-                            ) >= arrival_times[-1]:
+                            # increase the interval
+                            current_stop += time_step * increase_factor
 
-                                # mark where we are in the interval
-                                start_idx = searchsorted(arrival_times, current_stop)
+                # if we did exceede the sigma level we will need to step
+                # back in time to find where it was NOT exceeded
+                else:
 
-                                # then we also want to go ahead and get out of the fast search
-                                end_fast_search = True
+                    # decrease the interval
+                    current_stop -= time_step * decrease_factor
 
-                            else:
+                    # inform the loop that we have been back stepping
+                    decreased_interval = True
 
-                                # increase the interval
-                                current_stop += time_step * increase_factor
+            # Now we are ready for the slow forward search
+            # where we count up all the photons
 
-                    # if we did exceede the sigma level we will need to step
-                    # back in time to find where it was NOT exceeded
+            # we have already counted up the photons to this point
+            total_counts = counts
+
+            # start searching from where the fast search ended
+            pbar.update(counts)
+
+            for time in arrival_times[start_idx:]:
+
+                total_counts += 1
+                pbar.update(1)
+                if total_counts < min_counts:
+
+                    continue
+
+                else:
+
+                    # first use the background function to know the number of background counts
+                    bkg = background_getter(current_start, time)
+
+                    sig = Significance(total_counts, bkg)
+
+                    if background_error_getter is not None:
+
+                        bkg_error = background_error_getter(current_start, time)
+
+                        sigma = sig.li_and_ma_equivalent_for_gaussian_background(
+                            bkg_error
+                        )[0]
+
                     else:
 
-                        # decrease the interval
-                        current_stop -= time_step * decrease_factor
+                        sigma = sig.li_and_ma()[0]
 
-                        # inform the loop that we have been back stepping
-                        decreased_interval = True
+                        # now test if we have enough sigma
 
-                # Now we are ready for the slow forward search
-                # where we count up all the photons
+                    if sigma >= sigma_level:
 
-                # we have already counted up the photons to this point
-                total_counts = counts
+                        # if we succeeded we want to mark the time bins
+                        stops.append(time)
 
-                # start searching from where the fast search ended
-                pbar.increase(counts)
+                        starts.append(current_start)
 
-                for time in arrival_times[start_idx:]:
+                        # set up the next fast search
+                        # by looking past this interval
+                        current_start = time
 
-                    total_counts += 1
-                    pbar.increase()
-                    if total_counts < min_counts:
+                        current_stop = 0.5 * (arrival_times[-1] + time)
 
-                        continue
+                        end_fast_search = False
 
-                    else:
+                        # get out of the for loop
+                        break
 
-                        # first use the background function to know the number of background counts
-                        bkg = background_getter(current_start, time)
+            # if we never exceeded the sigma level by the
+            # end of the search, we never will
+            if end_fast_search:
 
-                        sig = Significance(total_counts, bkg)
-
-                        if background_error_getter is not None:
-
-                            bkg_error = background_error_getter(current_start, time)
-
-                            sigma = sig.li_and_ma_equivalent_for_gaussian_background(
-                                bkg_error
-                            )[0]
-
-                        else:
-
-                            sigma = sig.li_and_ma()[0]
-
-                            # now test if we have enough sigma
-
-                        if sigma >= sigma_level:
-
-                            # if we succeeded we want to mark the time bins
-                            stops.append(time)
-
-                            starts.append(current_start)
-
-                            # set up the next fast search
-                            # by looking past this interval
-                            current_start = time
-
-                            current_stop = 0.5 * (arrival_times[-1] + time)
-
-                            end_fast_search = False
-
-                            # get out of the for loop
-                            break
-
-                # if we never exceeded the sigma level by the
-                # end of the search, we never will
-                if end_fast_search:
-
-                    # so lets kill the main search
-                    end_all_search = True
+                # so lets kill the main search
+                end_all_search = True
 
         if not starts:
 

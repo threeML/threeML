@@ -5,9 +5,11 @@ from builtins import range
 from past.utils import old_div
 import numpy as np
 
+from tqdm.auto import tqdm
+
 from threeML.config.config import threeML_config
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
-from threeML.io.progress_bar import progress_bar
+
 from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit
@@ -322,18 +324,18 @@ class BinnedSpectrumSeries(TimeSeries):
         # now fit the light curve of each channel
         # and save the estimated polynomial
 
-        with progress_bar(self._n_channels, title="Fitting background") as p:
-            for counts in selected_counts.T:
+        
+        for counts in tqdm(selected_counts.T, desc=f"Fitting {self._instrument} background"):
 
-                polynomial, _ = polyfit(
-                    selected_midpoints,
-                    counts,
-                    self._optimal_polynomial_grade,
-                    selected_exposure,
-                )
+            polynomial, _ = polyfit(
+                selected_midpoints,
+                counts,
+                self._optimal_polynomial_grade,
+                selected_exposure,
+            )
 
-                polynomials.append(polynomial)
-                p.increase()
+            polynomials.append(polynomial)
+            
 
         self._polynomials = polynomials
 

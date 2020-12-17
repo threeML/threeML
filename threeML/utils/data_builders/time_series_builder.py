@@ -5,11 +5,19 @@ from pathlib import Path
 import astropy.io.fits as fits
 import matplotlib.pyplot as plt
 import numpy as np
+<<<<<<< HEAD
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.logging import setup_logger
 from threeML.io.progress_bar import progress_bar
+=======
+from pathlib import Path
+from tqdm.auto import tqdm
+
+from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.file_utils import file_existing_and_readable
+>>>>>>> feature-tqdm
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SpectrumLike import NegativeBackground, SpectrumLike
@@ -777,23 +785,25 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            with progress_bar(len(these_bins), title="Creating plugins") as p:
+            p = tqdm(total=len(these_bins), desc="Creating plugins")
+            
+            for i, interval in enumerate(these_bins):
 
-                for i, interval in enumerate(these_bins):
+                self.set_active_time_interval(interval.to_string())
 
-                    self.set_active_time_interval(interval.to_string())
+                assert isinstance(
+                    self._observed_spectrum, BinnedSpectrum
+                ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
 
-                    assert isinstance(
-                        self._observed_spectrum, BinnedSpectrum
-                    ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
+                if extract_measured_background:
 
-                    if extract_measured_background:
+                    this_background_spectrum = self._measured_background_spectrum
 
                         log.debug(f"trying extract background as measurement in {self._name}")
                         
                         this_background_spectrum = self._measured_background_spectrum
 
-                    else:
+                    this_background_spectrum = self._background_spectrum
 
                         log.debug(f"trying extract background as model in {self._name}")
                         
@@ -804,7 +814,7 @@ class TimeSeriesBuilder(object):
                             "No bakckground selection has been made. This plugin will contain no background!"
                         )
 
-                    try:
+                    else:
 
                         plugin_name = f"{self._name}{interval_name}{i}"
 
@@ -850,15 +860,15 @@ class TimeSeriesBuilder(object):
                                     tstop=self._tstop,
                                 )
 
-                        list_of_speclikes.append(sl)
+                    list_of_speclikes.append(sl)
 
-                    except (NegativeBackground):
+                except (NegativeBackground):
 
                         log.critical(
                             "Something is wrong with interval {interval} skipping."
                         )
 
-                    p.increase()
+                p.update(1)
 
             # restore the old interval
 
@@ -1462,47 +1472,45 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            with progress_bar(len(these_bins), title="Creating plugins") as p:
+            p = tqdm(total=len(these_bins), desc="Creating plugins")
+            
+            for i, interval in enumerate(these_bins):
 
-                for i, interval in enumerate(these_bins):
+                self.set_active_time_interval(interval.to_string())
 
-                    self.set_active_time_interval(interval.to_string())
+                if extract_measured_background:
 
-                    if extract_measured_background:
+                    this_background_spectrum = self._measured_background_spectrum
 
-                        this_background_spectrum = self._measured_background_spectrum
+                else:
 
-                    else:
-
-                        this_background_spectrum = self._background_spectrum
+                    this_background_spectrum = self._background_spectrum
 
                     if this_background_spectrum is None:
                         log.warning(
                             "No bakckground selection has been made. This plugin will contain no background!"
                         )
 
-                    try:
+                try:
 
-                        pl = PolarLike(
-                            name="%s%s%d" % (self._name, interval_name, i),
-                            observation=self._observed_spectrum,
-                            background=this_background_spectrum,
-                            response=self._response,
-                            verbose=self._verbose,
-                            #               tstart=self._tstart,
-                            #               tstop=self._tstop
-                        )
+                    pl = PolarLike(
+                        name="%s%s%d" % (self._name, interval_name, i),
+                        observation=self._observed_spectrum,
+                        background=this_background_spectrum,
+                        response=self._response,
+                        verbose=self._verbose,
+                        #               tstart=self._tstart,
+                        #               tstop=self._tstop
+                    )
 
-                        list_of_polarlikes.append(pl)
+                    list_of_polarlikes.append(pl)
 
-                    except (NegativeBackground):
-
-                        log.critical(
+                    log.critical(
                             "Something is wrong with interval %s. skipping." % interval
                         )
 
-                    p.increase()
-
+                    
+                p.update(1)
             # restore the old interval
 
             if old_interval is not None:
