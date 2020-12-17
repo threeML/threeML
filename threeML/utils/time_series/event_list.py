@@ -19,7 +19,6 @@ from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
-# from threeML.io.progress_bar import progress_bar
 from threeML.io.rich_display import display
 from threeML.utils.binner import TemporalBinner
 from threeML.utils.time_interval import TimeIntervalSet

@@ -7,8 +7,6 @@ from tqdm.auto import tqdm
 import numexpr
 import numpy as np
 
-from threeML.io.progress_bar import progress_bar
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("bayesian_blocks")
 

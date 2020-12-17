@@ -9,7 +9,6 @@ from tqdm.auto import tqdm
 from threeML.io.file_utils import (file_existing_and_readable,
                                    path_exists_and_is_directory,
                                    sanitize_filename)
-from threeML.io.progress_bar import ProgressBarBase, progress_bar
 
 
 class RemoteDirectoryNotFound(IOError):

@@ -10,7 +10,6 @@ import warnings
 import six
 from tqdm.auto import tqdm, trange
 
-from threeML.io.progress_bar import progress_bar
 from threeML.utils.OGIP.response import OGIPResponse, InstrumentResponse
 from threeML.utils.OGIP.pha import PHAII
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, Quality
