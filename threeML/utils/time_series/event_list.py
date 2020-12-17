@@ -18,12 +18,15 @@ from tqdm.auto import tqdm, trange
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
+from threeML.io.logging import setup_logger
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 from threeML.io.rich_display import display
 from threeML.utils.binner import TemporalBinner
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit
 from threeML.utils.time_series.time_series import TimeSeries
+
+log = setup_logger(__name__)
 
 
 class ReducingNumberOfThreads(Warning):
@@ -479,12 +482,10 @@ class EventList(TimeSeries):
                     exposure_per_bin[non_zero_mask],
                 )
             )
-            if self._verbose:
-                print(
-                    "Auto-determined polynomial order: %d"
-                    % self._optimal_polynomial_grade
-                )
-                print("\n")
+
+            log.info(
+                "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
+            )
 
         else:
 
@@ -583,12 +584,10 @@ class EventList(TimeSeries):
                     total_poly_events, poly_exposure
                 )
             )
-            if self._verbose:
-                print(
-                    "Auto-determined polynomial order: %d"
-                    % self._optimal_polynomial_grade
-                )
-                print("\n")
+
+            log.info(
+                "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
+            )
 
         else:
 

@@ -83,9 +83,9 @@ _console_formatter = ColoredFormatter(
     datefmt="%Y-%m-%d %H:%M:%S",
     colors={
         "DEBUG": Fore.CYAN,
-        "INFO": Fore.GREEN,
-        "WARNING": Fore.YELLOW,
-        "ERROR": Fore.RED,
+        "INFO": Fore.GREEN + Style.BRIGHT ,
+        "WARNING": Fore.YELLOW + Style.DIM,
+        "ERROR": Fore.RED + Style.BRIGHT,
         "CRITICAL": Fore.RED + Back.WHITE + Style.BRIGHT,
     },
 )

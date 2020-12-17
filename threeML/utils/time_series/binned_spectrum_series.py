@@ -15,6 +15,9 @@ from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit
 from threeML.utils.time_series.time_series import TimeSeries
 
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 class BinnedSpectrumSeries(TimeSeries):
     def __init__(
@@ -308,12 +311,12 @@ class BinnedSpectrumSeries(TimeSeries):
             self._optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(
                 selected_counts.sum(axis=1), selected_midpoints, selected_exposure
             )
-            if self._verbose:
-                print(
+
+            log.info(
                     "Auto-determined polynomial order: %d"
                     % self._optimal_polynomial_grade
                 )
-                print("\n")
+
 
         else:
 
