@@ -4,10 +4,13 @@ import sys
 from typing import Dict, Optional
 
 from colorama import Back, Fore, Style
-
+import colorama
 from threeML.config.config import threeML_config
 from threeML.io.package_data import get_path_of_log_dir, get_path_of_log_file
 
+
+colorama.deinit()
+colorama.init(strip=False)
 ## set up the console logging
 
 

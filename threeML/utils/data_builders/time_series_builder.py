@@ -529,7 +529,7 @@ class TimeSeriesBuilder(object):
         """
 
         log.debug(
-            f"setting bins of {self._name} to those of {time_series_builder.name}"
+            f"setting bins of {self._name} to those of {time_series_builder._name}"
         )
 
         other_bins = time_series_builder.bins.bin_stack
