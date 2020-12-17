@@ -185,10 +185,9 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         """
         Sets the model parameters to the mean of the marginal distributions
         """
-
+        idx = self._log_probability_values.argmax()
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
-            # Add the samples for this parameter for this source
-            idx = self._log_probability_values.argmax()
+
             par = self._samples[parameter_name][idx]
 
             parameter.value = par
