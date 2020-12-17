@@ -1096,11 +1096,16 @@ class TimeSeriesBuilder(object):
 
         # Load the relevant information from the TTE file
 
-        cdata = GBMCdata(cspec_or_ctime_file, rsp_file)
+        cdata = GBMCdata(sanitize_filename(cspec_or_ctime_file), sanitize_filename(rsp_file))
 
+        log.debug(f"loaded the CDATA file {cspec_or_ctime_file}")
+        
         # Set a trigger time if one has not been set
 
         if trigger_time is not None:
+
+            log.debug("set custom trigger time")
+            
             cdata.trigger_time = trigger_time
 
         # Create the the event list
@@ -1124,8 +1129,12 @@ class TimeSeriesBuilder(object):
 
             if test is None:
 
+                log.debug("detected single RSP")
+                
                 with fits.open(rsp_file) as f:
 
+                    
+                    
                     # there should only be a header, ebounds and one spec rsp extension
 
                     if len(f) > 3:
@@ -1133,12 +1142,14 @@ class TimeSeriesBuilder(object):
 
                         test = -1
 
-                        custom_warnings.warn(
+                        log.warning(
                             "The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2"
                         )
 
             if test is not None:
 
+                log.debug("detected and RSP2 file")
+                
                 rsp = InstrumentResponseSet.from_rsp2_file(
                     rsp2_file=rsp_file,
                     counts_getter=event_list.counts_over_interval,
@@ -1148,6 +1159,8 @@ class TimeSeriesBuilder(object):
 
             else:
 
+                log.debug("loading RSP")
+                
                 rsp = OGIPResponse(rsp_file)
 
         else:
@@ -1277,7 +1290,8 @@ class TimeSeriesBuilder(object):
 
         if not has_polarpy:
 
-            raise RuntimeError("The polarpy module is not installed")
+            log.error("The polarpy module is not installed")
+            raise RuntimeError()
 
         # self._default_unbinned = unbinned
 
@@ -1327,7 +1341,9 @@ class TimeSeriesBuilder(object):
     ):
 
         if not has_polarpy:
-            raise RuntimeError("The polarpy module is not installed")
+
+            log.error("The polarpy module is not installed")
+            raise RuntimeError()
 
         # self._default_unbinned = unbinned
 
@@ -1396,7 +1412,7 @@ class TimeSeriesBuilder(object):
 
             if this_background_spectrum is None:
 
-                custom_warnings.warn(
+                log.warning(
                     "No background selection has been made. This plugin will contain no background!"
                 )
 
@@ -1461,7 +1477,7 @@ class TimeSeriesBuilder(object):
                         this_background_spectrum = self._background_spectrum
 
                     if this_background_spectrum is None:
-                        custom_warnings.warn(
+                        log.warning(
                             "No bakckground selection has been made. This plugin will contain no background!"
                         )
 
@@ -1481,7 +1497,7 @@ class TimeSeriesBuilder(object):
 
                     except (NegativeBackground):
 
-                        custom_warnings.warn(
+                        log.critical(
                             "Something is wrong with interval %s. skipping." % interval
                         )
 
