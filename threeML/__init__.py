@@ -9,7 +9,7 @@ import warnings
 from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
-
+log.propagate = False
 log.info("Starting 3ML!")
 
 if os.environ.get("DISPLAY") is None:

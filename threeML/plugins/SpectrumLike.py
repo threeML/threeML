@@ -50,7 +50,7 @@ _known_noise_models = ["poisson", "gaussian", "ideal", "modeled"]
 class SpectrumLike(PluginPrototype):
     def __init__(
         self,
-        name,
+        name: str,
         observation,
         background=None,
         verbose=True,

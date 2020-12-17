@@ -9,13 +9,17 @@ from threeML.utils.spectrum.binned_spectrum import (
     ChannelSet,
 )
 
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
+
 __instrument_name = "General binned spectral data with energy dispersion"
 
 
 class DispersionSpectrumLike(SpectrumLike):
     def __init__(
         self,
-        name,
+        name: str,
         observation,
         background=None,
         background_exposure=None,
@@ -72,6 +76,8 @@ class DispersionSpectrumLike(SpectrumLike):
         Set the model to be used in the joint minimization.
         """
 
+        log.debug(f"model set for {self._name}")
+        
         # Store likelihood model
 
         self._like_model = likelihoodModel
@@ -87,6 +93,8 @@ class DispersionSpectrumLike(SpectrumLike):
 
         differential_flux, integral = self._get_diff_flux_and_integral(self._like_model)
 
+        log.debug(f"{self._name} passing intfral flux function to RSP")
+        
         self._rsp.set_function(integral)
 
     def _evaluate_model(self):
@@ -134,7 +142,7 @@ class DispersionSpectrumLike(SpectrumLike):
         self._rsp.plot_matrix()
 
     @property
-    def response(self):
+    def response(self) -> InstrumentResponse:
         return self._rsp
 
     def _output(self):
@@ -146,7 +154,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
         return super_out.append(the_df)
 
-    def write_pha(self, filename, overwrite=False, force_rsp_write=False):
+    def write_pha(self, filename:str, overwrite: bool=False, force_rsp_write: bool=False) -> None:
         """
         Writes the observation, background and (optional) rsp to PHAII fits files
 
@@ -210,7 +218,7 @@ class DispersionSpectrumLike(SpectrumLike):
     @classmethod
     def from_function(
         cls,
-        name,
+        name: str,
         source_function,
         response,
         source_errors=None,
@@ -219,6 +227,7 @@ class DispersionSpectrumLike(SpectrumLike):
         background_errors=None,
         background_sys_errors=None,
     ):
+        #type: () -> DispersionSpectrumLike
         """
 
         Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.
