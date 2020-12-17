@@ -724,7 +724,7 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            p = tqdm(total=len(these_bins), desc="Cresating plugins")
+            p = tqdm(total=len(these_bins), desc="Creating plugins")
             
             for i, interval in enumerate(these_bins):
 
