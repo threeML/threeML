@@ -1,14 +1,15 @@
-from builtins import object
-import requests
-import re
 import os
+import re
+from builtins import object
 from pathlib import Path
-from threeML.io.progress_bar import progress_bar, ProgressBarBase
-from threeML.io.file_utils import (
-    sanitize_filename,
-    path_exists_and_is_directory,
-    file_existing_and_readable,
-)
+
+import requests
+from tqdm.auto import tqdm
+
+from threeML.io.file_utils import (file_existing_and_readable,
+                                   path_exists_and_is_directory,
+                                   sanitize_filename)
+from threeML.io.progress_bar import ProgressBarBase, progress_bar
 
 
 class RemoteDirectoryNotFound(IOError):
@@ -129,9 +130,11 @@ class ApacheDirectory(object):
         compress=False,
     ):
 
-        assert remote_filename in self.files, (
-            "File %s is not contained in this directory (%s)"
-            % (remote_filename, self._request_result.url)
+        assert (
+            remote_filename in self.files
+        ), "File %s is not contained in this directory (%s)" % (
+            remote_filename,
+            self._request_result.url,
         )
 
         destination_path: Path = sanitize_filename(destination_path, abspath=True)
@@ -168,7 +171,7 @@ class ApacheDirectory(object):
         if compress:
             # Add a .gz at the end of the file path
 
-            local_path: Path =  Path(f"{local_path}.gz")
+            local_path: Path = Path(f"{local_path}.gz")
 
         if file_existing_and_readable(local_path):
 
@@ -200,18 +203,26 @@ class ApacheDirectory(object):
             # Set a title for the progress bar
             bar_title = "Downloading %s" % new_filename
 
-            with progress_bar(
-                file_size, scale=1024 * 1024, units="Mb", title=bar_title
-            ) as bar:  # type: ProgressBarBase
+            # with progress_bar(
+            #     file_size, scale=1024 * 1024, units="Mb", title=bar_title
+            # ) as bar:  # type: ProgressBarBase
 
-                with opener(local_path, "wb") as f:
+            bar = tqdm(
+                unit_scale=True,
+                unit_divisor=1024,
+                unit="B",
+                total=int(this_request.headers["Content-Length"]),
+                desc=bar_title,
+            )
 
-                    for chunk in this_request.iter_content(chunk_size=chunk_size):
+            with opener(local_path, "wb") as f:
 
-                        if chunk:  # filter out keep-alive new chunks
+                for chunk in this_request.iter_content(chunk_size=chunk_size):
 
-                            f.write(chunk)
-                            bar.increase(len(chunk))
+                    if chunk:  # filter out keep-alive new chunks
+
+                        f.write(chunk)
+                        bar.update(len(chunk))
 
             this_request.close()
 
