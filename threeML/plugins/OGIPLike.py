@@ -71,7 +71,7 @@ class OGIPLike(DispersionSpectrumLike):
 
         if background is None:
 
-            log.debug(f"{self._name} has no bkg set", args, kwargs)
+            log.debug(f"{name} has no bkg set")
             
             background = pha.background_file
 
