@@ -240,6 +240,10 @@ def test_gbm_workflow():
         ts_cspec.set_background_interval(*background_interval.split(","))
         ts_cspec.save_background(f"{det}_bkg.h5", overwrite=True)
 
+        ts_cspec.write_pha_from_binner(
+            "test_write", start=0, stop=10, overwrite=True, force_rsp_write=True
+        )
+
         ts_tte = TimeSeriesBuilder.from_gbm_tte(
             det,
             tte_file=dload[det]["tte"],
@@ -267,9 +271,19 @@ def test_gbm_workflow():
 
         fluence_plugins.append(fluence_plugin)
 
+        ts_tte.create_time_bins(start=0, stop=10, method="constant", dt=1)
+
     # clean up
     p = Path(".")
 
     dl_files = p.glob("glg*080916009*")
+
+    [x.unlink() for x in dl_files]
+
+    dl_files = p.glob("test_write*")
+
+    [x.unlink() for x in dl_files]
+
+    dl_files = p.glob("*_bkg.h5")
 
     [x.unlink() for x in dl_files]
