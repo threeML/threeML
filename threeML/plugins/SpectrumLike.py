@@ -129,6 +129,10 @@ class SpectrumLike(PluginPrototype):
             self._back_count_errors,
         ) = self._count_errors_initialization()
 
+        # Init the integral methods for background and model integration to default
+        self._model_integrate_method = "simpson"
+        self._background_integrate_method = "simpson"
+
         # Initialize a mask that selects all the data.
         # We will initially use the quality mask for the PHA file
         # and set any quality greater than 0 to False. We want to save
@@ -175,7 +179,8 @@ class SpectrumLike(PluginPrototype):
                 # now get the background likelihood model
 
                 differential_flux, integral = self._get_diff_flux_and_integral(
-                    self._background_plugin.likelihood_model
+                    self._background_plugin.likelihood_model,
+                    integrate_method=self._background_integrate_method
                 )
 
                 self._background_integral_flux = integral
@@ -1595,7 +1600,8 @@ class SpectrumLike(PluginPrototype):
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
 
-        differential_flux, integral = self._get_diff_flux_and_integral(self._like_model)
+        differential_flux, integral = self._get_diff_flux_and_integral(self._like_model,
+                                                                       integrate_method=self._model_integrate_method)
 
         self._integral_flux = integral
 
@@ -1690,7 +1696,9 @@ class SpectrumLike(PluginPrototype):
 
         return model
 
-    def _get_diff_flux_and_integral(self, likelihood_model):
+    def _get_diff_flux_and_integral(self, likelihood_model, integrate_method="simpson"):
+
+        assert integral_method in ["simpson", "trapz"], "Only simpson and trapz are valid integral_methods."
 
         if self._source_name is None:
 
@@ -1740,73 +1748,60 @@ class SpectrumLike(PluginPrototype):
         # decent models. It might fail for models with too sharp features, smaller
         # than the size of the monte carlo interval.
 
-        """Old way- Calculates many energies twice as energies on the "input side"
-        are continous energy bins with e1[i]==e2[i-1]
-        def integral(e1, e2):
-            # Simpson's rule
+        if integrate_method == "simpson":
 
-            return (
-                (e2 - e1)
-                / 6.0
-                * (
-                    differential_flux(e1)
-                    + 4 * differential_flux((e1 + e2) / 2.0)
-                    + differential_flux(e2)
-                )
-            )
+            # New way with simpson rule.
+            # Make sure to not calculate the model twice for the same energies
+            def integral(e1, e2):
+                # Simpson's rule
+                if isinstance(e1, Iterable):
+                    # Energy given as list or array
+
+                    # Make sure we do not calculate the flux two times at the same energy
+                    e_edges = np.append(e1, e2[-1])
+                    e_m = (e1+e2)/2.
+
+                    diff_fluxes_edges = differential_flux(e_edges)
+                    diff_fluxes_mid = differential_flux(e_m)
+
+                    return (
+                        (e2 - e1)
+                        / 6.0
+                        * (
+                            diff_fluxes_edges[:-1]
+                            + 4*diff_fluxes_mid
+                            + diff_fluxes_edges[1:]
+                        )
+                    )
+                else:
+                    #single energy values given
+                    return (
+                        (e2 - e1)
+                        / 6.0
+                        * (
+                            differential_flux(e1)
+                            + 4*differential_flux((e2 + e1) / 2.0)
+                            + differential_flux(e2)
+                        )
+                    )
+
+        elif integrate_method == "trapz":
+
+            def integral(e1, e2):
+                # Simpson's rule
+                if isinstance(e1, Iterable):
+                    # Energy given as list or array
+
+                    # Make sure we do not calculate the flux two times at the same energy
+                    e_edges = np.append(e1, e2[-1])
+                    diff_fluxes_edges = differential_flux(e_edges)
+
+                    return np.trapz(np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T,np.array([e1,e2]).T)
+                else:
+                    #single energy values given
+                    return np.trapz(np.array([differential_flux(e1), differential_flux(e2)]),np.array([e1,e2]))
 
         return differential_flux, integral
-        """
-
-        """New way with simpson rule - But is simpson rule really necessary? Maybe use trapz, as this would
-        speed up the integral by a factor of ~2
-        """
-        def integral(e1, e2):
-            # Simpson's rule
-            if isinstance(e1, Iterable):
-                # Energy given as list or array
-
-                # Make sure we do not calculate the flux two times at the same energy
-                e_edges = np.append(e1, e2[-1])
-                e_m = (e1+e2)/2.
-
-                diff_fluxes_edges = differential_flux(e_edges)
-                diff_fluxes_mid = differential_flux(e_m)
-
-                return (
-                    (e2 - e1)
-                    / 6.0
-                    * (
-                        diff_fluxes_edges[:-1]
-                        + 4*diff_fluxes_mid
-                        + diff_fluxes_edges[1:]
-                    )
-                )
-            else:
-                #single energy values given
-                 return (
-                    (e2 - e1)
-                    / 6.0
-                    * (
-                        differential_flux(e1)
-                        + 4*differential_flux((e2 + e1) / 2.0)
-                        + differential_flux(e2)
-                    )
-                )
-
-        """
-        def integral(e1, e2):
-            # Trapz rule
-            e_edges = np.append(e1, e2[-1])
-
-            diff_fluxes_edges = differential_flux(e_edges)
-
-            #diff_fluxes = np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T
-
-            return np.trapz(np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T,np.array([e1,e2]).T)
-        """
-        return differential_flux, integral
-
 
     def use_effective_area_correction(self, min_value=0.8, max_value=1.2):
         """
@@ -1841,6 +1836,34 @@ class SpectrumLike(PluginPrototype):
 
         self._nuisance_parameter.value = value
         self._nuisance_parameter.fix = True
+
+    def set_model_integrate_method(self, method):
+        """
+        Change the integrate method for the model integration
+        :param method: (str) which method should be used (simpson or trapz)
+        """
+        assert method in ["simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        self._model_integrate_method = method
+
+        # if like_model already set, upadte the integral function
+        if self._like_model is not None:
+            differential_flux, integral = self._get_diff_flux_and_integral(self._like_model,
+                                                                           integrate_method=method)
+            self._integral_flux = integral
+
+    def set_background_integrate_method(self, method):
+        """
+        Change the integrate method for the background integration
+        :param method: (str) which method should be used (simpson or trapz)
+        """
+        assert method in ["simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        self._background_integrate_method = method
+
+        # if background_plugin is set, update the integral function
+        if self._background_plugin is not None:
+            differential_flux, integral = self._get_diff_flux_and_integral(self._background_plugin.likelihood_model,
+                                                                           integrate_method=method)
+            self._background_integral_flux = integral
 
     @property
     def mask(self):
