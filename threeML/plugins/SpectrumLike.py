@@ -7,6 +7,7 @@ from past.utils import old_div
 import collections
 import copy
 from contextlib import contextmanager
+from collections.abc import Iterable
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -1552,7 +1553,7 @@ class SpectrumLike(PluginPrototype):
         doc="Sets/gets the noise model for the background spectrum",
     )
 
-    def get_log_like(self, true_fluxes=None):
+    def get_log_like(self, precalc_fluxes=None):
         """
         Calls the likelihood from the pre-setup likelihood evaluator that "knows" of the currently set
         noise models
@@ -1560,7 +1561,7 @@ class SpectrumLike(PluginPrototype):
         :return: 
         """
 
-        loglike, _ = self._likelihood_evaluator.get_current_value(true_fluxes=true_fluxes)
+        loglike, _ = self._likelihood_evaluator.get_current_value(precalc_fluxes=precalc_fluxes)
 
         return loglike
 
@@ -1598,7 +1599,7 @@ class SpectrumLike(PluginPrototype):
 
         self._integral_flux = integral
 
-    def _evaluate_model(self, true_fluxes=None):
+    def _evaluate_model(self, precalc_fluxes=None):
         """
         Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.
         This can be overloaded to convolve the model with a response, for example
@@ -1606,8 +1607,8 @@ class SpectrumLike(PluginPrototype):
 
         :return:
         """
-        if true_fluxes is not None:
-            return true_fluxes
+        if precalc_fluxes is not None:
+            return precalc_fluxes
         
         return np.array(
             [
@@ -1616,7 +1617,7 @@ class SpectrumLike(PluginPrototype):
             ]
         )
 
-    def get_model(self, true_fluxes=None):
+    def get_model(self, precalc_fluxes=None):
         """
         The model integrated over the energy bins. Note that it only returns the  model for the
         currently active channels/measurements
@@ -1627,13 +1628,13 @@ class SpectrumLike(PluginPrototype):
         if self._rebinner is not None:
 
             (model,) = self._rebinner.rebin(
-                self._evaluate_model(true_fluxes=true_fluxes) * self._observed_spectrum.exposure
+                self._evaluate_model(precalc_fluxes=precalc_fluxes) * self._observed_spectrum.exposure
             )
 
         else:
 
             model = (
-                self._evaluate_model(true_fluxes=true_fluxes)[self._mask] * self._observed_spectrum.exposure
+                self._evaluate_model(precalc_fluxes=precalc_fluxes)[self._mask] * self._observed_spectrum.exposure
             )
 
         return self._nuisance_parameter.value * model
@@ -1739,7 +1740,8 @@ class SpectrumLike(PluginPrototype):
         # decent models. It might fail for models with too sharp features, smaller
         # than the size of the monte carlo interval.
 
-        """Old way- Calculates many energies twice if energies are continous energy bins with e1[i]==e2[i-1]
+        """Old way- Calculates many energies twice as energies on the "input side"
+        are continous energy bins with e1[i]==e2[i-1]
         def integral(e1, e2):
             # Simpson's rule
 
@@ -1758,22 +1760,40 @@ class SpectrumLike(PluginPrototype):
 
         """New way with simpson rule - But is simpson rule really necessary? Maybe use trapz, as this would
         speed up the integral by a factor of ~2
-        
+        """
         def integral(e1, e2):
             # Simpson's rule
-            e_edges = np.append(e1, e2[-1])
-            e_m = (e1+e2)/2.
+            if isinstance(e1, Iterable):
+                # Energy given as list or array
 
-            diff_fluxes_edges = differential_flux(e_edges)
-            diff_fluxes_mid = differential_flux(e_m)
+                # Make sure we do not calculate the flux two times at the same energy
+                e_edges = np.append(e1, e2[-1])
+                e_m = (e1+e2)/2.
 
-            return (
-                (e2 - e1)
-                / 6.0
-                * (
-                    diff_fluxes_edges[:-1]+4*diff_fluxes_mid+diff_fluxes_edges[1:]
+                diff_fluxes_edges = differential_flux(e_edges)
+                diff_fluxes_mid = differential_flux(e_m)
+
+                return (
+                    (e2 - e1)
+                    / 6.0
+                    * (
+                        diff_fluxes_edges[:-1]
+                        + 4*diff_fluxes_mid
+                        + diff_fluxes_edges[1:]
+                    )
                 )
-            )
+            else:
+                #single energy values given
+                 return (
+                    (e2 - e1)
+                    / 6.0
+                    * (
+                        differential_flux(e1)
+                        + 4*differential_flux((e2 + e1) / 2.0)
+                        + differential_flux(e2)
+                    )
+                )
+
         """
         def integral(e1, e2):
             # Trapz rule
@@ -1784,7 +1804,7 @@ class SpectrumLike(PluginPrototype):
             #diff_fluxes = np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T
 
             return np.trapz(np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T,np.array([e1,e2]).T)
-        #"""
+        """
         return differential_flux, integral
 
 
@@ -2644,7 +2664,7 @@ class SpectrumLike(PluginPrototype):
 
         return self._output().to_string()
 
-    def _construct_counts_arrays(self, min_rate, ratio_residuals):
+    def _construct_counts_arrays(self, min_rate, ratio_residuals, total_counts=False):
         """
 
         Build new arrays before or after a fit of rebinned data/model
@@ -2653,6 +2673,9 @@ class SpectrumLike(PluginPrototype):
 
         :param min_rate:
         :param ratio_residuals:
+        :param total_counts: Should this construct the total counts as "data". If not, the "data counts" are
+        observed-background and the model counts are only source counts. Otherwise "data counts" are observed
+        and model counts are source+background
         :return:
         """
 
@@ -2663,20 +2686,30 @@ class SpectrumLike(PluginPrototype):
 
         chan_width = energy_max - energy_min
 
+        # Source model
         expected_model_rate = self.expected_model_rate
 
-        # figure out the type of data
+        # Observed rate
+        observed_rate = old_div(self.observed_counts, self._observed_spectrum.exposure)
+        observed_rate_err = old_div(self.observed_count_errors, self._observed_spectrum.exposure)
 
-        src_rate = self.source_rate
-        src_rate_err = self.source_rate_error
-
-        # rebin on the source rate
+        # Background rate
+        if (self._background_noise_model is not None) or (self._background_plugin is not None):
+            background_rate = old_div(self.background_counts,
+                                      self._background_exposure) *\
+                                      self._area_ratio
+            background_rate_err = old_div(self.background_count_errors,
+                                          self._background_exposure) *\
+                                          self._area_ratio
+        else:
+            background_rate = np.zeros(len(observed_rate))
+            background_rate_err = np.zeros(len(observed_rate))
 
         # Create a rebinner if either a min_rate has been given, or if the current data set has no rebinned on its own
-
+        # rebin on expected model rate
         if (min_rate is not NO_REBIN) or (self._rebinner is None):
 
-            this_rebinner = Rebinner(src_rate, min_rate, self._mask)
+            this_rebinner = Rebinner(expected_model_rate, min_rate, self._mask)
 
         else:
 
@@ -2684,8 +2717,10 @@ class SpectrumLike(PluginPrototype):
             this_rebinner = self._rebinner
 
         # get the rebinned counts
-        new_rate, new_model_rate = this_rebinner.rebin(src_rate, expected_model_rate)
-        (new_err,) = this_rebinner.rebin_errors(src_rate_err)
+        new_observed_rate, new_model_rate, new_background_rate = \
+            this_rebinner.rebin(observed_rate, expected_model_rate, background_rate)
+        (new_observed_rate_err,) = this_rebinner.rebin_errors(observed_rate_err)
+        (new_background_rate_err,) = this_rebinner.rebin_errors(background_rate_err)
 
         # adjust channels
         new_energy_min, new_energy_max = this_rebinner.get_new_start_and_stop(
@@ -2706,7 +2741,7 @@ class SpectrumLike(PluginPrototype):
             idx = (mean_energy_unrebinned >= e_min) & (mean_energy_unrebinned <= e_max)
 
             # Find the rates for these channels
-            r = src_rate[idx]
+            r = observed_rate[idx]
 
             if r.max() == 0:
 
@@ -2786,6 +2821,9 @@ class SpectrumLike(PluginPrototype):
 
         # Divide the various cases
 
+
+        #TODO check this: shoudn't it be obseved-background/model (for the old way) and
+        # observed/(model+background) (for the new way). Errors also wrong observed+background error
         if ratio_residuals:
             residuals = old_div(
                 (rebinned_observed_counts - rebinned_model_counts),
@@ -2844,19 +2882,29 @@ class SpectrumLike(PluginPrototype):
         # so that we can extract them for plotting
 
         rebinned_quantities = dict(
-            new_rate=new_rate,
-            new_err=new_err,
+            # Rebined
+            #observed
+            new_observed_rate=new_observed_rate,
+            new_observed_rate_err=new_observed_rate_err,
+            #background
+            new_background_rate=new_background_rate,
+            new_background_rate_err=new_background_rate_err,
+            #model
+            new_model_rate=new_model_rate,
+            # New echans
             new_chan_width=new_chan_width,
             new_energy_min=new_energy_min,
             new_energy_max=new_energy_max,
             mean_energy=mean_energy,
+            #Residuals
             residuals=residuals,
             residual_errors=residual_errors,
             delta_energy=delta_energy,
+            #Unbinned model rate
             expected_model_rate=expected_model_rate,
+            #Unbinned echans
             energy_min=energy_min,
             energy_max=energy_max,
-            new_model_rate=new_model_rate,
             chan_width=chan_width,
         )
 
@@ -2866,6 +2914,7 @@ class SpectrumLike(PluginPrototype):
         self,
         data_color="k",
         model_color="r",
+        background_color="b",
         step=True,
         show_data=True,
         show_residuals=True,
@@ -2875,6 +2924,10 @@ class SpectrumLike(PluginPrototype):
         model_label=None,
         model_kwargs=None,
         data_kwargs=None,
+        background_label=None,
+        background_kwargs=None,
+        source_only=True,
+        show_background=False,
         **kwargs
     ):
 
@@ -2906,11 +2959,13 @@ class SpectrumLike(PluginPrototype):
 
         # set up the default plotting
 
-        _default_model_kwargs = dict(color=model_color, alpha=1.0)
+        _default_model_kwargs = dict(color=model_color, alpha=1)
+
+        _default_background_kwargs = dict(color=background_color, alpha=1, linestyle="--")
 
         _default_data_kwargs = dict(
             color=data_color,
-            alpha=1.0,
+            alpha=1,
             fmt=threeML_config["residual plot"]["error marker"],
             markersize=threeML_config["residual plot"]["error marker size"],
             linestyle="",
@@ -2946,6 +3001,20 @@ class SpectrumLike(PluginPrototype):
 
                     _default_data_kwargs[k] = v
 
+        if background_kwargs is not None:
+
+            assert type(background_kwargs) == dict, "background_kwargs must be a dict"
+
+            for k, v in list(background_kwargs.items()):
+
+                if k in _default_background_kwargs:
+
+                    _default_background_kwargs[k] = v
+
+                else:
+
+                    _default_background_kwargs[k] = v
+
         if model_label is None:
             model_label = "%s Model" % self._name
 
@@ -2955,12 +3024,28 @@ class SpectrumLike(PluginPrototype):
 
         rebinned_quantities = self._construct_counts_arrays(min_rate, ratio_residuals)
 
-        weighted_data = old_div(
-            rebinned_quantities["new_rate"], rebinned_quantities["new_chan_width"]
-        )
-        weighted_error = old_div(
-            rebinned_quantities["new_err"], rebinned_quantities["new_chan_width"]
-        )
+        if source_only:
+            weighted_data = old_div(
+                rebinned_quantities["new_observed_rate"]-rebinned_quantities["new_background_rate"], rebinned_quantities["new_chan_width"]
+            )
+            weighted_error = old_div(
+                np.sqrt(rebinned_quantities["new_observed_rate_err"]**2+
+                        rebinned_quantities["new_background_rate_err"]**2),
+                rebinned_quantities["new_chan_width"]
+            )
+        else:
+            weighted_data = old_div(
+                rebinned_quantities["new_observed_rate"], rebinned_quantities["new_chan_width"]
+            )
+            weighted_error = old_div(
+                rebinned_quantities["new_observed_rate_err"], rebinned_quantities["new_chan_width"]
+            )
+        #weighted_data = old_div(
+        #    rebinned_quantities["new_rate"], rebinned_quantities["new_chan_width"]
+        #)
+        #weighted_error = old_div(
+        #    rebinned_quantities["new_err"], rebinned_quantities["new_chan_width"]
+        #)
 
         residual_plot.add_data(
             rebinned_quantities["mean_energy"],
@@ -2974,17 +3059,40 @@ class SpectrumLike(PluginPrototype):
             **_default_data_kwargs
         )
 
-        # a step historgram
-        if step:
-
+        if show_background:
             residual_plot.add_model_step(
                 rebinned_quantities["new_energy_min"],
                 rebinned_quantities["new_energy_max"],
                 rebinned_quantities["new_chan_width"],
-                rebinned_quantities["new_model_rate"],
+                rebinned_quantities["new_background_rate"],
+                label=background_label,
+                **_default_background_kwargs
+                )
+
+        # a step historgram
+        if step:
+            if source_only:
+                # only source
+                eff_model = rebinned_quantities["new_model_rate"]
+            else:
+                eff_model = rebinned_quantities["new_model_rate"] + rebinned_quantities["new_background_rate"]
+            residual_plot.add_model_step(
+                rebinned_quantities["new_energy_min"],
+                rebinned_quantities["new_energy_max"],
+                rebinned_quantities["new_chan_width"],
+                eff_model,
                 label=model_label,
                 **_default_model_kwargs
             )
+
+            #residual_plot.add_model_step(
+            #    rebinned_quantities["new_energy_min"],
+            #    rebinned_quantities["new_energy_max"],
+            #    rebinned_quantities["new_chan_width"],
+            #    rebinned_quantities["new_model_rate"],
+            #    label=model_label,
+            #    **_default_model_kwargs
+            #)
 
         else:
 

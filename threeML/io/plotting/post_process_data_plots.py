@@ -43,6 +43,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     with linear interpolation between each bin
     :param data_per_plot: (optional) Can spezify how many detectors should be plotted in one plot. If there
     are more detectors than this number it will split it up in several plots
+    :param show_background: (optional) Also show the background
+    :param source_only: (optional) Plot only source (total data - background)
+    :param background_cmap: (str) (optional) the color map used to extract automatically the colors for the background
+    :param background_colors: (optional) a tuple or list with the color for each background
+    :param background_color: (optional) color for all backgrounds
     :return: figure instance
 
 
@@ -104,6 +109,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     data_colors = cmap_intervals(len(data_keys), data_cmap)
     model_colors = cmap_intervals(len(data_keys), model_cmap)
+    background_colors = cmap_intervals(len(data_keys), model_cmap)
 
     # Now override defaults according to the optional keywords, if present
 
@@ -165,18 +171,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             for i in range(len(data_keys)):
                 data_colors.append(data_colors_base[i % data_per_plot])
 
-    if "model_cmap" in kwargs:
-        if len(data_keys) <= data_per_plot:
-            model_colors = cmap_intervals(len(data_keys),
-                                          kwargs.pop("model_cmap"))
-        else:
-            model_colors_base = cmap_intervals(data_per_plot,
-                                               kwargs.pop("model_cmap"))
-            model_colors = []
-            for i in range(len(data_keys)):
-                model_colors.append(model_colors_base[i % data_per_plot])
-
-    if "data_colors" in kwargs:
+    elif "data_colors" in kwargs:
         data_colors = kwargs.pop("data_colors")
 
         assert len(data_colors) >= len(data_keys), (
@@ -188,7 +183,18 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         data_colors = [kwargs.pop("data_color")] * len(data_keys)
 
-    if "model_colors" in kwargs:
+    if "model_cmap" in kwargs:
+        if len(data_keys) <= data_per_plot:
+            model_colors = cmap_intervals(len(data_keys),
+                                          kwargs.pop("model_cmap"))
+        else:
+            model_colors_base = cmap_intervals(data_per_plot,
+                                               kwargs.pop("model_cmap"))
+            model_colors = []
+            for i in range(len(data_keys)):
+                model_colors.append(model_colors_base[i % data_per_plot])
+
+    elif "model_colors" in kwargs:
         model_colors = kwargs.pop("model_colors")
 
         assert len(model_colors) >= len(data_keys), (
@@ -196,13 +202,35 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             "number of datasets"
         )
 
-    ratio_residuals = False
-    if "ratio_residuals" in kwargs:
-        ratio_residuals = bool(kwargs["ratio_residuals"])
-
     elif "model_color" in kwargs:
 
         model_colors = [kwargs.pop("model_color")] * len(data_keys)
+
+    if "background_cmap" in kwargs:
+        if len(data_keys) <= data_per_plot:
+            background_colors = cmap_intervals(len(data_keys),
+                                          kwargs.pop("background_cmap"))
+        else:
+            background_colors_base = cmap_intervals(data_per_plot,
+                                               kwargs.pop("background_cmap"))
+            background_colors = []
+            for i in range(len(data_keys)):
+                background_colors.append(background_colors_base[i % data_per_plot])
+
+    elif "background_colors" in kwargs:
+        background_colors = kwargs.pop("background_colors")
+
+        assert len(background_colors) >= len(data_keys), (
+            "You need to provide at least a number of background colors equal to the "
+            "number of datasets"
+        )
+    elif "background_color" in kwargs:
+
+        background_colors = [kwargs.pop("background_color")] * len(data_keys)
+
+    ratio_residuals = False
+    if "ratio_residuals" in kwargs:
+        ratio_residuals = bool(kwargs["ratio_residuals"])
 
     if "model_labels" in kwargs:
 
@@ -215,6 +243,40 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     else:
 
         model_labels = ["%s Model" % analysis.data_list[key]._name for key in data_keys]
+
+    if "background_labels" in kwargs:
+
+        background_labels = kwargs.pop("background_labels")
+
+        assert len(background_labels) == len(
+            data_keys
+        ), "you must have the same number of background labels as data sets"
+
+    else:
+
+        background_labels = ["%s Background" % analysis.data_list[key]._name for key in data_keys]
+
+
+    if "source_only" in kwargs:
+
+        source_only = kwargs.pop("source_only")
+
+        assert type(source_only) == bool, "source_only must be a boolean"
+
+    else:
+
+        source_only = True
+
+    if "show_background" in kwargs:
+
+        show_background = kwargs.pop("show_background")
+
+        assert type(show_background) == bool, "show_background must be a boolean"
+
+    else:
+
+        show_background = False
+
 
     if len(data_keys) <= data_per_plot:
         # If less than data_per_plot detectors need to be plotted,
@@ -230,8 +292,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             axes = residual_plot.data_axis
 
         # go thru the detectors
-        for key, data_color, model_color, min_rate, model_label in zip(
-            data_keys, data_colors, model_colors, min_rates, model_labels
+        for key, data_color, model_color, background_color, min_rate, model_label, background_label in zip(
+                data_keys, data_colors, model_colors, background_colors, min_rates, model_labels, background_labels
         ):
 
             # NOTE: we use the original (unmasked) vectors because we need to rebin ourselves the data later on
@@ -251,6 +313,10 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                 ratio_residuals=ratio_residuals,
                 model_label=model_label,
                 model_subplot=axes,
+                show_background=show_background,
+                source_only=source_only,
+                background_color=background_color,
+                background_label=background_label
             )
 
         return residual_plot.figure
@@ -267,8 +333,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             plots.append(ResidualPlot(show_residuals=show_residuals, **kwargs))
 
         # go thru the detectors
-        for j, (key, data_color, model_color, min_rate, model_label) in enumerate(zip(
-                data_keys, data_colors, model_colors, min_rates, model_labels
+        for j, (key, data_color, model_color, background_color, min_rate, model_label, background_label) in enumerate(zip(
+                data_keys, data_colors, model_colors, background_colors, min_rates, model_labels, background_labels
         )):
             axes = [plots[int(j/data_per_plot)].data_axis,
                     plots[int(j/data_per_plot)].residual_axis]
@@ -289,6 +355,10 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
                 ratio_residuals=ratio_residuals,
                 model_label=model_label,
                 model_subplot=axes,
+                show_background=show_background,
+                source_only=source_only,
+                background_color=background_color,
+                background_label=background_label
             )
 
         figs = []
