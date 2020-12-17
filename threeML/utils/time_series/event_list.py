@@ -1,7 +1,7 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import zip
-from builtins import range
+from __future__ import division, print_function
+
+from builtins import range, zip
+
 from past.utils import old_div
 
 __author__ = "grburgess"
@@ -13,19 +13,18 @@ import os
 import numpy as np
 import pandas as pd
 from pandas import HDFStore
+from tqdm.auto import tqdm, trange
 
-
-from tqdm.auto import trange, tqdm
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
-#from threeML.io.progress_bar import progress_bar
+from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
+# from threeML.io.progress_bar import progress_bar
 from threeML.io.rich_display import display
 from threeML.utils.binner import TemporalBinner
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit
 from threeML.utils.time_series.time_series import TimeSeries
-from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 
 
 class ReducingNumberOfThreads(Warning):
@@ -106,9 +105,11 @@ class EventList(TimeSeries):
 
         self._temporal_binner = None
 
-        assert self._arrival_times.shape[0] == self._measurement.shape[0], (
-            "Arrival time (%d) and energies (%d) have different shapes"
-            % (self._arrival_times.shape[0], self._measurement.shape[0])
+        assert (
+            self._arrival_times.shape[0] == self._measurement.shape[0]
+        ), "Arrival time (%d) and energies (%d) have different shapes" % (
+            self._arrival_times.shape[0],
+            self._measurement.shape[0],
         )
 
     @property
@@ -138,14 +139,14 @@ class EventList(TimeSeries):
     def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
         """
 
-       Interface to the temporal binner's significance binning model
+        Interface to the temporal binner's significance binning model
 
-        :param start: start of the interval to bin on
-        :param stop:  stop of the interval ot bin on
-        :param sigma: sigma-level of the bins
-        :param mask: (bool) use the energy mask to decide on ,significance
-        :param min_counts:  minimum number of counts per bin
-        :return:
+         :param start: start of the interval to bin on
+         :param stop:  stop of the interval ot bin on
+         :param sigma: sigma-level of the bins
+         :param mask: (bool) use the energy mask to decide on ,significance
+         :param min_counts:  minimum number of counts per bin
+         :return:
         """
 
         if mask is not None:
@@ -472,10 +473,12 @@ class EventList(TimeSeries):
 
         if self._user_poly_order == -1:
 
-            self._optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(
-                cnts[non_zero_mask],
-                mean_time[non_zero_mask],
-                exposure_per_bin[non_zero_mask],
+            self._optimal_polynomial_grade = (
+                self._fit_global_and_determine_optimum_grade(
+                    cnts[non_zero_mask],
+                    mean_time[non_zero_mask],
+                    exposure_per_bin[non_zero_mask],
+                )
             )
             if self._verbose:
                 print(
@@ -494,9 +497,6 @@ class EventList(TimeSeries):
 
         polynomials = []
 
-        # with progress_bar(
-        #     self._n_channels, title="Fitting %s background" % self._instrument
-        # ) as p:
         for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
             channel_mask = total_poly_energies == channel
 
@@ -520,7 +520,6 @@ class EventList(TimeSeries):
             )
 
             polynomials.append(polynomial)
-
 
         # We are now ready to return the polynomials
 
@@ -580,8 +579,10 @@ class EventList(TimeSeries):
 
         if self._user_poly_order == -1:
 
-            self._optimal_polynomial_grade = self._unbinned_fit_global_and_determine_optimum_grade(
-                total_poly_events, poly_exposure
+            self._optimal_polynomial_grade = (
+                self._unbinned_fit_global_and_determine_optimum_grade(
+                    total_poly_events, poly_exposure
+                )
             )
             if self._verbose:
                 print(
@@ -690,9 +691,11 @@ class EventListWithDeadTime(EventList):
 
             self._dead_time = np.asarray(dead_time)
 
-            assert self._arrival_times.shape[0] == self._dead_time.shape[0], (
-                "Arrival time (%d) and Dead Time (%d) have different shapes"
-                % (self._arrival_times.shape[0], self._dead_time.shape[0])
+            assert (
+                self._arrival_times.shape[0] == self._dead_time.shape[0]
+            ), "Arrival time (%d) and Dead Time (%d) have different shapes" % (
+                self._arrival_times.shape[0],
+                self._dead_time.shape[0],
             )
 
         else:
@@ -875,9 +878,11 @@ class EventListWithDeadTimeFraction(EventList):
 
             self._dead_time_fraction = np.asarray(dead_time_fraction)
 
-            assert self._arrival_times.shape[0] == self._dead_time_fraction.shape[0], (
-                "Arrival time (%d) and Dead Time (%d) have different shapes"
-                % (self._arrival_times.shape[0], self._dead_time_fraction.shape[0])
+            assert (
+                self._arrival_times.shape[0] == self._dead_time_fraction.shape[0]
+            ), "Arrival time (%d) and Dead Time (%d) have different shapes" % (
+                self._arrival_times.shape[0],
+                self._dead_time_fraction.shape[0],
             )
 
         else:
@@ -1042,14 +1047,18 @@ class EventListWithLiveTime(EventList):
         :param  dec:
         """
 
-        assert len(live_time) == len(live_time_starts), (
-            "Live time fraction (%d) and live time start (%d) have different shapes"
-            % (len(live_time), len(live_time_starts))
+        assert len(live_time) == len(
+            live_time_starts
+        ), "Live time fraction (%d) and live time start (%d) have different shapes" % (
+            len(live_time),
+            len(live_time_starts),
         )
 
-        assert len(live_time) == len(live_time_stops), (
-            "Live time fraction (%d) and live time stop (%d) have different shapes"
-            % (len(live_time), len(live_time_stops))
+        assert len(live_time) == len(
+            live_time_stops
+        ), "Live time fraction (%d) and live time stop (%d) have different shapes" % (
+            len(live_time),
+            len(live_time_stops),
         )
 
         super(EventListWithLiveTime, self).__init__(

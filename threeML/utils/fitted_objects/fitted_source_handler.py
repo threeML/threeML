@@ -1,15 +1,13 @@
-from builtins import map
-from builtins import zip
-from builtins import object
+from builtins import map, object, zip
 
 __author__ = "grburgess"
 
-import itertools
 import functools
-import numpy as np
-from tqdm.auto import tqdm
+import itertools
 
+import numpy as np
 from astromodels import use_astromodels_memoization
+from tqdm.auto import tqdm
 
 
 class GenericFittedSourceHandler(object):
@@ -153,13 +151,12 @@ class GenericFittedSourceHandler(object):
             # scroll through the independent variables
             n_iterations = np.product(self._out_shape)
 
-            
-
             with use_astromodels_memoization(False):
 
-                for variables in tqdm(itertools.product(
-                    *self._independent_variable_range
-                )):
+                for variables in tqdm(
+                    itertools.product(*self._independent_variable_range),
+                    desc="Propagating errors",
+                ):
                     variates.append(self._propagated_function(*variables))
         # otherwise just evaluate
         else:
