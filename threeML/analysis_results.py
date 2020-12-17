@@ -26,6 +26,11 @@ from corner import corner
 import matplotlib.pyplot as plt
 
 
+
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
+
 try:
 
     import chainconsumer
@@ -34,10 +39,14 @@ except:
 
     has_chainconsumer = False
 
+    log.debug("chainconsumer is NOT installed")
+
 else:
 
     has_chainconsumer = True
 
+    log.debug("chainconsumer is installed")
+    
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.hdf5_utils import (
@@ -95,10 +104,14 @@ def load_analysis_results(fits_file: str):
 
         if n_results == 1:
 
+            log.debug(f"{fits_file} AR opened with 1 result")
+
             return _load_one_results(f["ANALYSIS_RESULTS", 1])
 
         else:
 
+            log.debug(f"{fits_file} AR opened with {n_results} results")
+            
             return _load_set_of_results(f, n_results)
 
 
@@ -118,10 +131,14 @@ def load_analysis_results_hdf(hdf_file: str):
 
         if n_results == 1:
 
+            log.debug(f"{hdf_file} AR opened with {n_results} result")
+
             return _load_one_results_hdf(f["AnalysisResults_0"])
 
         else:
 
+            log.debug(f"{hdf_file} AR opened with {n_results} results")
+            
             return _load_set_of_results_hdf(f, n_results)
 
 
@@ -129,13 +146,14 @@ def convert_fits_analysis_result_to_hdf(fits_result_file: str):
 
     ar = load_analysis_results(fits_result_file)  # type: _AnalysisResults
 
-    new_file_name, _ = os.path.splitext(fits_result_file)
+    new_file_name_base, _ = os.path.splitext(fits_result_file)
 
-    ar.write_to(sanitize_filename("%s.h5" % new_file_name), overwrite=True, as_hdf=True)
+    new_file_name: Path = sanitize_filename(f"{new_file_name_base}.h5")
+    
+    ar.write_to(new_file_name, overwrite=True, as_hdf=True)
 
-    print(
-        "Converted %s to %s!"
-        % (fits_result_file, (sanitize_filename("%s.h5" % new_file_name)))
+    log.info(
+        f"Converted {fits_result_file} to {new_file_name}"
     )
 
 
@@ -1567,7 +1585,7 @@ class BayesianResults(_AnalysisResults):
 
         assert stepsize > 10, "Too few samples for this method to be effective"
 
-        print("Stepsize for sliding window is %s" % stepsize)
+        log.info("Stepsize for sliding window is %s" % stepsize)
 
         for j, parameter_name in enumerate(self._free_parameters.keys()):
 
