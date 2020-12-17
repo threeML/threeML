@@ -203,10 +203,6 @@ class ApacheDirectory(object):
             # Set a title for the progress bar
             bar_title = "Downloading %s" % new_filename
 
-            # with progress_bar(
-            #     file_size, scale=1024 * 1024, units="Mb", title=bar_title
-            # ) as bar:  # type: ProgressBarBase
-
             bar = tqdm(
                 unit_scale=True,
                 unit_divisor=1024,

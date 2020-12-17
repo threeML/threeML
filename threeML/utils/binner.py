@@ -368,84 +368,86 @@ class TemporalBinner(TimeIntervalSet):
         # this is the main loop
         # as long as we have not reached the end of the interval
         # the loop will run
-        with progress_bar(arrival_times.shape[0]) as pbar:
-            while not end_all_search:
 
-                # start of the fast search
-                # we reset the flag for the interval
-                # having been decreased in the last pass
-                decreased_interval = False
+        pbar = tqdm()
+        
+        while not end_all_search:
 
-                while not end_fast_search:
+            # start of the fast search
+            # we reset the flag for the interval
+            # having been decreased in the last pass
+            decreased_interval = False
 
-                    # we calculate the sigma of the current region
-                    _, counts = TemporalBinner._select_events(
-                        arrival_times, current_start, current_stop
-                    )
+            while not end_fast_search:
 
-                    sigma_exceeded = TemporalBinner._check_exceeds_sigma_interval(
-                        current_start,
-                        current_stop,
-                        counts,
-                        sigma_level,
-                        background_getter,
-                        background_error_getter,
-                    )
+                # we calculate the sigma of the current region
+                _, counts = TemporalBinner._select_events(
+                    arrival_times, current_start, current_stop
+                )
 
-                    time_step = abs(current_stop - current_start)
+                sigma_exceeded = TemporalBinner._check_exceeds_sigma_interval(
+                    current_start,
+                    current_stop,
+                    counts,
+                    sigma_level,
+                    background_getter,
+                    background_error_getter,
+                )
 
-                    # if we do not exceed the sigma
-                    # we need to increase the time interval
-                    if not sigma_exceeded:
+                time_step = abs(current_stop - current_start)
 
-                        # however, if in the last pass we had to decrease
-                        # the interval, it means we have found where we
-                        # we need to start the slow search
-                        if decreased_interval:
+                # if we do not exceed the sigma
+                # we need to increase the time interval
+                if not sigma_exceeded:
 
-                            # mark where we are in the list
-                            start_idx = searchsorted(arrival_times, current_stop)
+                    # however, if in the last pass we had to decrease
+                    # the interval, it means we have found where we
+                    # we need to start the slow search
+                    if decreased_interval:
 
-                            # end the fast search
-                            end_fast_search = True
+                        # mark where we are in the list
+                        start_idx = searchsorted(arrival_times, current_stop)
 
-                        # otherwise we increase the interval
-                        else:
+                        # end the fast search
+                        end_fast_search = True
 
-                            # unless, we would increase it too far
-                            if (
-                                current_stop + time_step * increase_factor
-                            ) >= arrival_times[-1]:
-
-                                # mark where we are in the interval
-                                start_idx = searchsorted(arrival_times, current_stop)
-
-                                # then we also want to go ahead and get out of the fast search
-                                end_fast_search = True
-
-                            else:
-
-                                # increase the interval
-                                current_stop += time_step * increase_factor
-
-                    # if we did exceede the sigma level we will need to step
-                    # back in time to find where it was NOT exceeded
+                    # otherwise we increase the interval
                     else:
 
-                        # decrease the interval
-                        current_stop -= time_step * decrease_factor
+                        # unless, we would increase it too far
+                        if (
+                            current_stop + time_step * increase_factor
+                        ) >= arrival_times[-1]:
 
-                        # inform the loop that we have been back stepping
-                        decreased_interval = True
+                            # mark where we are in the interval
+                            start_idx = searchsorted(arrival_times, current_stop)
 
-                # Now we are ready for the slow forward search
-                # where we count up all the photons
+                            # then we also want to go ahead and get out of the fast search
+                            end_fast_search = True
 
-                # we have already counted up the photons to this point
-                total_counts = counts
+                        else:
 
-                # start searching from where the fast search ended
-                pbar.increase(counts)
+                            # increase the interval
+                            current_stop += time_step * increase_factor
+
+                # if we did exceede the sigma level we will need to step
+                # back in time to find where it was NOT exceeded
+                else:
+
+                    # decrease the interval
+                    current_stop -= time_step * decrease_factor
+
+                    # inform the loop that we have been back stepping
+                    decreased_interval = True
+
+            # Now we are ready for the slow forward search
+            # where we count up all the photons
+
+            # we have already counted up the photons to this point
+            total_counts = counts
+
+            # start searching from where the fast search ended
+            pbar.update(counts)
 
                 for time in arrival_times[start_idx:]:
 
