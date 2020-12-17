@@ -66,21 +66,19 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         else:
             self._share_spectrum = False
 
-
         if self._share_spectrum:
             # Check which data_list entries have the same input energies in the response folding
             found = False
             num_found = 0
             self._data_ein_edges = {}
             for j, d in enumerate(list(self._data_list.values())):
-                if j==0:
+                if j == 0:
                     if isinstance(d, DispersionSpectrumLike):
                         self._data_ein_edges[num_found] = d.response.monte_carlo_energies
                     elif isinstance(d, SpectrumLike):
                         self._data_ein_edges[num_found] = d.observed_spectrum.edges
-                        
                     else:
-                        raise AssertionError("At the moment share spectrum only works for"\
+                        raise AssertionError("Share spectrum only works for"\
                                              " SpectrumLike instances.")
                     # Build an array which saves which plugins have the same Ein_bins
                     self._data_ebin_connect = np.array([0])
@@ -103,7 +101,7 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                                 found = True
 
                     # If not save these Ein_bins and add an entry to the connection array
-                    if found == False:
+                    if not found:
                         self._data_ein_edges[num_found] = e
                         self._data_ebin_connect = np.append(self._data_ebin_connect, i+1)
                         num_found += 1
@@ -364,22 +362,28 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         try:
             # Loop over each dataset and get the likelihood values for each set
             if not self._share_spectrum:
-                # Old way; every dataset independendly - Not a problem if
-                # the input spectrum is calculated several times, as it is fast.
+                # Old way; every dataset independendly - This is fine if the
+                # spectrum calc is fast.
                 log_like_values = [
                     dataset.get_log_like() for dataset in list(self._data_list.values())
                 ]
             else:
                 # If the calculation for the input spectrum of one of the sources is expensive
                 # we want to avoid calculating the same thing several times.
+
+                # Precalc the spectrum for all different Ebin_in that are used in the plugins
                 log_like_values = np.zeros(len(self._data_ebin_connect))
-                true_fluxes = []
+                precalc_fluxes = []
 
                 for i, e_edges in enumerate(list(self._data_ein_edges.values())):
-                    true_fluxes.append(self._integral(e_edges[:-1], e_edges[1:]))
+                    precalc_fluxes.append(self._integral(e_edges[:-1], e_edges[1:]))
+
+                # Use these precalculated spectra to get the log_like for all plugins
                 for i, dataset in enumerate(list(self._data_list.values())):
                     # call get log_like with precalculated spectrum
-                    log_like_values[i] = dataset.get_log_like(true_fluxes=true_fluxes[self._data_ebin_connect[i]])
+                    log_like_values[i] = \
+                        dataset.get_log_like(precalc_fluxes=
+                                             precalc_fluxes[self._data_ebin_connect[i]])
 
         
         except ModelAssertionViolation:
