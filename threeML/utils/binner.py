@@ -449,59 +449,59 @@ class TemporalBinner(TimeIntervalSet):
             # start searching from where the fast search ended
             pbar.update(counts)
 
-                for time in arrival_times[start_idx:]:
+            for time in arrival_times[start_idx:]:
 
-                    total_counts += 1
-                    pbar.increase()
-                    if total_counts < min_counts:
+                total_counts += 1
+                pbar.update(1)
+                if total_counts < min_counts:
 
-                        continue
+                    continue
+
+                else:
+
+                    # first use the background function to know the number of background counts
+                    bkg = background_getter(current_start, time)
+
+                    sig = Significance(total_counts, bkg)
+
+                    if background_error_getter is not None:
+
+                        bkg_error = background_error_getter(current_start, time)
+
+                        sigma = sig.li_and_ma_equivalent_for_gaussian_background(
+                            bkg_error
+                        )[0]
 
                     else:
 
-                        # first use the background function to know the number of background counts
-                        bkg = background_getter(current_start, time)
+                        sigma = sig.li_and_ma()[0]
 
-                        sig = Significance(total_counts, bkg)
+                        # now test if we have enough sigma
 
-                        if background_error_getter is not None:
+                    if sigma >= sigma_level:
 
-                            bkg_error = background_error_getter(current_start, time)
+                        # if we succeeded we want to mark the time bins
+                        stops.append(time)
 
-                            sigma = sig.li_and_ma_equivalent_for_gaussian_background(
-                                bkg_error
-                            )[0]
+                        starts.append(current_start)
 
-                        else:
+                        # set up the next fast search
+                        # by looking past this interval
+                        current_start = time
 
-                            sigma = sig.li_and_ma()[0]
+                        current_stop = 0.5 * (arrival_times[-1] + time)
 
-                            # now test if we have enough sigma
+                        end_fast_search = False
 
-                        if sigma >= sigma_level:
+                        # get out of the for loop
+                        break
 
-                            # if we succeeded we want to mark the time bins
-                            stops.append(time)
+            # if we never exceeded the sigma level by the
+            # end of the search, we never will
+            if end_fast_search:
 
-                            starts.append(current_start)
-
-                            # set up the next fast search
-                            # by looking past this interval
-                            current_start = time
-
-                            current_stop = 0.5 * (arrival_times[-1] + time)
-
-                            end_fast_search = False
-
-                            # get out of the for loop
-                            break
-
-                # if we never exceeded the sigma level by the
-                # end of the search, we never will
-                if end_fast_search:
-
-                    # so lets kill the main search
-                    end_all_search = True
+                # so lets kill the main search
+                end_all_search = True
 
         if not starts:
 
