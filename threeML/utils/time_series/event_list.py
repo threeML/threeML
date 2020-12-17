@@ -14,10 +14,12 @@ import numpy as np
 import pandas as pd
 from pandas import HDFStore
 
+
+from tqdm.auto import trange, tqdm
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
-from threeML.io.progress_bar import progress_bar
+#from threeML.io.progress_bar import progress_bar
 from threeML.io.rich_display import display
 from threeML.utils.binner import TemporalBinner
 from threeML.utils.time_interval import TimeIntervalSet
@@ -492,33 +494,33 @@ class EventList(TimeSeries):
 
         polynomials = []
 
-        with progress_bar(
-            self._n_channels, title="Fitting %s background" % self._instrument
-        ) as p:
-            for channel in channels:
-                channel_mask = total_poly_energies == channel
+        # with progress_bar(
+        #     self._n_channels, title="Fitting %s background" % self._instrument
+        # ) as p:
+        for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
+            channel_mask = total_poly_energies == channel
 
-                # Mask background events and current channel
-                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
-                # Select the masked events
+            # Mask background events and current channel
+            # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+            # Select the masked events
 
-                current_events = total_poly_events[channel_mask]
+            current_events = total_poly_events[channel_mask]
 
-                # now bin the selected channel counts
+            # now bin the selected channel counts
 
-                cnts, bins = np.histogram(current_events, bins=these_bins)
+            cnts, bins = np.histogram(current_events, bins=these_bins)
 
-                # Put data to fit in an x vector and y vector
+            # Put data to fit in an x vector and y vector
 
-                polynomial, _ = polyfit(
-                    mean_time[non_zero_mask],
-                    cnts[non_zero_mask],
-                    self._optimal_polynomial_grade,
-                    exposure_per_bin[non_zero_mask],
-                )
+            polynomial, _ = polyfit(
+                mean_time[non_zero_mask],
+                cnts[non_zero_mask],
+                self._optimal_polynomial_grade,
+                exposure_per_bin[non_zero_mask],
+            )
 
-                polynomials.append(polynomial)
-                p.increase()
+            polynomials.append(polynomial)
+
 
         # We are now ready to return the polynomials
 
@@ -603,28 +605,24 @@ class EventList(TimeSeries):
 
         polynomials = []
 
-        with progress_bar(
-            self._n_channels, title="Fitting %s background" % self._instrument
-        ) as p:
-            for channel in channels:
-                channel_mask = total_poly_energies == channel
+        for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
+            channel_mask = total_poly_energies == channel
 
-                # Mask background events and current channel
-                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
-                # Select the masked events
+            # Mask background events and current channel
+            # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+            # Select the masked events
 
-                current_events = total_poly_events[channel_mask]
+            current_events = total_poly_events[channel_mask]
 
-                polynomial, _ = unbinned_polyfit(
-                    current_events,
-                    self._optimal_polynomial_grade,
-                    t_start,
-                    t_stop,
-                    poly_exposure,
-                )
+            polynomial, _ = unbinned_polyfit(
+                current_events,
+                self._optimal_polynomial_grade,
+                t_start,
+                t_stop,
+                poly_exposure,
+            )
 
-                polynomials.append(polynomial)
-                p.increase()
+            polynomials.append(polynomial)
 
         # We are now ready to return the polynomials
 
