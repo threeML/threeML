@@ -8,7 +8,10 @@ import collections
 import copy
 from contextlib import contextmanager
 from collections.abc import Iterable
+from typing import Optional, Union, Tuple
+import types
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -30,12 +33,10 @@ from threeML.utils.binner import Rebinner
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
 
 from threeML.utils.string_utils import dash_separated_string_to_tuple
-from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.io.plotting.data_residual_plot import ResidualPlot
-
 
 NO_REBIN = 1e-99
 
@@ -48,13 +49,13 @@ _known_noise_models = ["poisson", "gaussian", "ideal", "modeled"]
 class SpectrumLike(PluginPrototype):
     def __init__(
         self,
-        name,
-        observation,
+        name: str,
+        observation: BinnedSpectrum,
         background=None,
-        verbose=True,
+        verbose: bool=True,
         background_exposure=None,
-        tstart=None,
-        tstop=None,
+        tstart: Optional[Union[float,int]]=None,
+        tstop: Optional[Union[float,int]]=None,
     ):
         # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
         """
@@ -438,7 +439,9 @@ class SpectrumLike(PluginPrototype):
 
         return observation_noise_model, background_noise_model
 
-    def _background_setup(self, background, observation):
+    def _background_setup(self,
+                          background,
+                          observation: BinnedSpectrum):
         """
         
         :param background: background arguments (spectrum or plugin)
@@ -654,7 +657,10 @@ class SpectrumLike(PluginPrototype):
         return self._observed_spectrum
 
     @classmethod
-    def _get_synthetic_plugin(cls, observation, background, source_function):
+    def _get_synthetic_plugin(cls,
+                              observation: BinnedSpectrum,
+                              background,
+                              source_function):
 
         speclike_gen = cls("generator", observation, background, verbose=False)
 
@@ -700,7 +706,10 @@ class SpectrumLike(PluginPrototype):
         return observation
 
     @classmethod
-    def from_background(cls, name, spectrum_like, verbose=True):
+    def from_background(cls,
+                        name: str,
+                        spectrum_like,
+                        verbose: bool=True):
         """
         Extract a SpectrumLike plugin from the background of another SpectrumLike (or subclass) instance
 
@@ -722,7 +731,7 @@ class SpectrumLike(PluginPrototype):
     @classmethod
     def from_function(
         cls,
-        name,
+        name: str,
         source_function,
         energy_min,
         energy_max,
@@ -849,7 +858,8 @@ class SpectrumLike(PluginPrototype):
 
         return generator.get_simulated_dataset(name)
 
-    def assign_to_source(self, source_name):
+    def assign_to_source(self,
+                         source_name: str):
         """
         Assign these data to the given source (instead of to the sum of all sources, which is the default)
 
@@ -1558,7 +1568,7 @@ class SpectrumLike(PluginPrototype):
         doc="Sets/gets the noise model for the background spectrum",
     )
 
-    def get_log_like(self, precalc_fluxes=None):
+    def get_log_like(self, precalc_fluxes: Optional[np.array]=None):
         """
         Calls the likelihood from the pre-setup likelihood evaluator that "knows" of the currently set
         noise models
@@ -1605,7 +1615,7 @@ class SpectrumLike(PluginPrototype):
 
         self._integral_flux = integral
 
-    def _evaluate_model(self, precalc_fluxes=None):
+    def _evaluate_model(self, precalc_fluxes: Optional[np.array]=None):
         """
         Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.
         This can be overloaded to convolve the model with a response, for example
@@ -1623,7 +1633,8 @@ class SpectrumLike(PluginPrototype):
             ]
         )
 
-    def get_model(self, precalc_fluxes=None):
+    def get_model(self,
+                  precalc_fluxes: Optional[np.array]=None):
         """
         The model integrated over the energy bins. Note that it only returns the  model for the
         currently active channels/measurements
@@ -1661,7 +1672,8 @@ class SpectrumLike(PluginPrototype):
             ]
         )
 
-    def get_background_model(self, without_mask=False):
+    def get_background_model(self,
+                             without_mask: bool=False):
         """
          The background model integrated over the energy bins. Note that it only returns the  model for the
          currently active channels/measurements
@@ -1696,9 +1708,12 @@ class SpectrumLike(PluginPrototype):
 
         return model
 
-    def _get_diff_flux_and_integral(self, likelihood_model, integrate_method="simpson"):
+    def _get_diff_flux_and_integral(self,
+                                    likelihood_model: Model,
+                                    integrate_method: str="simpson") -> Tuple[types.FunctionType,
+                                                                              types.FunctionType]:
 
-        assert integral_method in ["simpson", "trapz"], "Only simpson and trapz are valid integral_methods."
+        assert integrate_method in ["simpson", "trapz"], "Only simpson and trapz are valid integral_methods."
 
         if self._source_name is None:
 
@@ -1803,7 +1818,9 @@ class SpectrumLike(PluginPrototype):
 
         return differential_flux, integral
 
-    def use_effective_area_correction(self, min_value=0.8, max_value=1.2):
+    def use_effective_area_correction(self,
+                                      min_value: Union[int, float]=0.8,
+                                      max_value: Union[int, float]=1.2):
         """
         Activate the use of the effective area correction, which is a multiplicative factor in front of the model which
         might be used to mitigate the effect of intercalibration mismatch between different instruments.
@@ -1826,7 +1843,8 @@ class SpectrumLike(PluginPrototype):
 
         self._nuisance_parameter.set_uninformative_prior(Uniform_prior)
 
-    def fix_effective_area_correction(self, value=1):
+    def fix_effective_area_correction(self,
+                                      value: Union[int, float]=1):
         """
         Fix the multiplicative factor (see use_effective_area_correction) to the provided value (default: 1)
 
@@ -1837,7 +1855,8 @@ class SpectrumLike(PluginPrototype):
         self._nuisance_parameter.value = value
         self._nuisance_parameter.fix = True
 
-    def set_model_integrate_method(self, method):
+    def set_model_integrate_method(self,
+                                   method: str):
         """
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
@@ -1851,7 +1870,8 @@ class SpectrumLike(PluginPrototype):
                                                                            integrate_method=method)
             self._integral_flux = integral
 
-    def set_background_integrate_method(self, method):
+    def set_background_integrate_method(self,
+                                        method: str):
         """
         Change the integrate method for the background integration
         :param method: (str) which method should be used (simpson or trapz)
@@ -2215,12 +2235,12 @@ class SpectrumLike(PluginPrototype):
 
     def view_count_spectrum(
         self,
-        plot_errors=True,
-        show_bad_channels=True,
-        show_warn_channels=False,
-        significance_level=None,
-        scale_background=True,
-    ):
+        plot_errors: bool=True,
+        show_bad_channels: bool=True,
+        show_warn_channels: bool=False,
+        significance_level: bool=None,
+        scale_background: bool=True,
+    ) -> matplotlib.figure.Figure:
         """
         View the count and background spectrum. Useful to check energy selections.
         :param plot_errors: plot errors on the counts
@@ -2687,7 +2707,10 @@ class SpectrumLike(PluginPrototype):
 
         return self._output().to_string()
 
-    def _construct_counts_arrays(self, min_rate, ratio_residuals, total_counts=False):
+    def _construct_counts_arrays(self,
+                                 min_rate: Union[int, float],
+                                 ratio_residuals: bool=False,
+                                 total_counts: bool=False) -> dict:
         """
 
         Build new arrays before or after a fit of rebinned data/model
@@ -2935,24 +2958,24 @@ class SpectrumLike(PluginPrototype):
 
     def display_model(
         self,
-        data_color="k",
-        model_color="r",
-        background_color="b",
-        step=True,
-        show_data=True,
-        show_residuals=True,
-        ratio_residuals=False,
-        show_legend=True,
-        min_rate=1e-99,
-        model_label=None,
-        model_kwargs=None,
-        data_kwargs=None,
-        background_label=None,
-        background_kwargs=None,
-        source_only=True,
-        show_background=False,
+        data_color: str="k",
+        model_color: str="r",
+        background_color: str="b",
+        step: bool=True,
+        show_data: bool=True,
+        show_residuals: bool=True,
+        ratio_residuals: bool=False,
+        show_legend: bool=True,
+        min_rate: Union[int,float]=1e-99,
+        model_label: Optional[str]=None,
+        model_kwargs: Optional[dict]=None,
+        data_kwargs: Optional[dict]=None,
+        background_label: Optional[str]=None,
+        background_kwargs: Optional[dict]=None,
+        source_only: bool=True,
+        show_background: bool=False,
         **kwargs
-    ):
+    ) -> ResidualPlot:
 
         """
         Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying
