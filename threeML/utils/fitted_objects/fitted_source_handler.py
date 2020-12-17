@@ -7,8 +7,8 @@ __author__ = "grburgess"
 import itertools
 import functools
 import numpy as np
+from tqdm.auto import tqdm
 
-from threeML.io.progress_bar import progress_bar
 from astromodels import use_astromodels_memoization
 
 
@@ -153,17 +153,14 @@ class GenericFittedSourceHandler(object):
             # scroll through the independent variables
             n_iterations = np.product(self._out_shape)
 
-            with progress_bar(n_iterations, title="Propagating errors") as p:
+            
 
-                with use_astromodels_memoization(False):
+            with use_astromodels_memoization(False):
 
-                    for variables in itertools.product(
-                        *self._independent_variable_range
-                    ):
-                        variates.append(self._propagated_function(*variables))
-
-                        p.increase()
-
+                for variables in tqdm(itertools.product(
+                    *self._independent_variable_range
+                )):
+                    variates.append(self._propagated_function(*variables))
         # otherwise just evaluate
         else:
 

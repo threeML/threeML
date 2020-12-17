@@ -1,21 +1,17 @@
 # Custom warning
-import warnings
+import math
+import re
+import signal
+import subprocess
 import sys
 import time
-import re
-import math
-import subprocess
+import warnings
 from contextlib import contextmanager
-import signal
 from distutils.spawn import find_executable
 
+from tqdm.auto import tqdm
 
 from threeML.config.config import threeML_config
-from threeML.io.progress_bar import (
-    progress_bar,
-    multiple_progress_bars,
-    CannotGenerateHTMLBar,
-)
 
 try:
     from subprocess import DEVNULL  # py3k
@@ -249,7 +245,7 @@ if has_parallel:
             self._current_amr = lview.imap(
                 worker, items_to_process, chunksize=chunk_size, ordered=ordered
             )
-
+            
             return self._current_amr
 
         def execute_with_progress_bar(self, worker, items, chunk_size=None):
@@ -265,20 +261,19 @@ if has_parallel:
 
             n_iterations = len(items)
 
-            with progress_bar(n_iterations) as p:
+            p = tqdm(total=n_iterations)
 
-                amr = self._interactive_map(
-                    wrapper, items_wrapped, ordered=False, chunk_size=chunk_size
-                )
+            amr = self._interactive_map(
+                wrapper, items_wrapped, ordered=False, chunk_size=chunk_size
+            )
 
-                results = []
+            results = []
 
-                for i, res in enumerate(amr):
+            for i, res in enumerate(amr):
 
-                    results.append(res)
+                results.append(res)
 
-                    p.increase()
-
+                p.update(1)
             # Reorder the list according to the id
             return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))
 
