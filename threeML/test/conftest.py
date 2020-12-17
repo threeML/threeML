@@ -74,6 +74,21 @@ def get_dataset():
 
     return NaI6
 
+def get_dataset_det(det):
+
+    datadir = os.path.join(get_test_datasets_directory(), "bn090217206")
+
+    obsSpectrum = os.path.join(datadir, f"bn090217206_{det}_srcspectra.pha{{1}}")
+    bakSpectrum = os.path.join(datadir, f"bn090217206_{det}_bkgspectra.bak{{1}}")
+    rspFile = os.path.join(datadir, f"bn090217206_{det}_weightedrsp.rsp{{1}}")
+    p = OGIPLike(det, obsSpectrum, bakSpectrum, rspFile)
+    if det[0] == "b":
+        p.set_active_measurements("250-25000")
+    else:
+        p.set_active_measurements("10.0-30.0", "40.0-950.0")
+
+    return p
+
 
 @pytest.fixture(scope="session")
 def data_list_bn090217206_nai6():
@@ -84,6 +99,17 @@ def data_list_bn090217206_nai6():
 
     return data_list
 
+@pytest.fixture(scope="session")
+def data_list_bn090217206_nai6_nai9_bgo1():
+
+    p_list = []
+    p_list.append(get_dataset_det("n6"))
+    p_list.append(get_dataset_det("n9"))
+    p_list.append(get_dataset_det("b1"))
+
+    data_list = DataList(*p_list)
+
+    return data_list
 
 # This is going to be run every time a test need it, so the jl object
 # is always "fresh"
@@ -98,6 +124,19 @@ def joint_likelihood_bn090217206_nai(data_list_bn090217206_nai6):
 
     return jl
 
+# This is going to be run every time a test need it, so the jl object
+# is always "fresh"
+@pytest.fixture(scope="function")
+def joint_likelihood_bn090217206_nai6_nai9_bgo1(data_list_bn090217206_nai6_nai9_bgo1):
+
+    powerlaw = Powerlaw()
+
+    model = get_grb_model(powerlaw)
+
+    jl = JointLikelihood(model, data_list_bn090217206_nai6_nai9_bgo1, verbose=False)
+
+    return jl
+
 
 # No need to keep refitting, so we fit once (scope=session)
 @pytest.fixture(scope="function")
@@ -109,6 +148,15 @@ def fitted_joint_likelihood_bn090217206_nai(joint_likelihood_bn090217206_nai):
 
     return jl, fit_results, like_frame
 
+# No need to keep refitting, so we fit once (scope=session)
+@pytest.fixture(scope="function")
+def fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1(joint_likelihood_bn090217206_nai6_nai9_bgo1):
+
+    jl = joint_likelihood_bn090217206_nai6_nai9_bgo1
+
+    fit_results, like_frame = jl.fit()
+
+    return jl, fit_results, like_frame
 
 def set_priors(model):
 
