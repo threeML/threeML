@@ -7,8 +7,11 @@ import astropy.io.fits as fits
 import astropy.units as u
 import numpy as np
 
+from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.utils.OGIP.response import EBOUNDS, SPECRESP_MATRIX
+from threeML.io.logging import setup_logger
+log = setup_logger(__name__)
 
 
 class PHAWrite(object):
@@ -25,6 +28,8 @@ class PHAWrite(object):
 
         self._ogiplike = ogiplike
 
+        log.debug(f"registered {len(ogiplike)} plugins")
+        
         self._n_spectra = len(ogiplike)
 
         # The following lists corresponds to the different columns in the PHA/CSPEC
@@ -60,7 +65,7 @@ class PHAWrite(object):
 
         self._spec_iterator = 1
 
-    def write(self, outfile_name, overwrite=True, force_rsp_write=False):
+    def write(self, outfile_name: str, overwrite:bool=True, force_rsp_write:bool=False) -> None:
         """
         Write a PHA Type II and BAK file for the given OGIP plugin. Automatically determines
         if BAK files should be generated.
@@ -72,10 +77,16 @@ class PHAWrite(object):
         :return:
         """
 
+        outfile_name: Path = sanitize_filename(outfile_name)
+        
         # Remove the .pha extension if any
-        if os.path.splitext(outfile_name)[-1].lower() == ".pha":
+        if outfile_name.suffix.lower() == ".pha":
 
-            outfile_name = os.path.splitext(outfile_name)[0]
+            log.debug(f"stripping {outfile_name} of its suffix")
+            
+            outfile_name = outfile_name.stem
+
+            
 
         self._outfile_basename = outfile_name
 
@@ -92,7 +103,7 @@ class PHAWrite(object):
 
         self._write_phaII(overwrite)
 
-    def _append_ogip(self, ogip, force_rsp_write):
+    def _append_ogip(self, ogip, force_rsp_write: bool) -> None:
         """
         Add an ogip instance's data into the data list
 
@@ -102,9 +113,9 @@ class PHAWrite(object):
         """
 
         # grab the ogip pha info
-        pha_info = ogip.get_pha_files()
+        pha_info: dict = ogip.get_pha_files()
 
-        first_channel = pha_info["rsp"].first_channel
+        first_channel: int = pha_info["rsp"].first_channel
 
         for key in ["pha", "bak"]:
             if key not in pha_info:
@@ -114,12 +125,17 @@ class PHAWrite(object):
 
                 if pha_info[key].background_file is not None:
 
+                    log.debug(f" keeping original bak file: {pha_info[key].background_file}")
+
                     self._backfile[key].append(pha_info[key].background_file)
 
                 else:
 
+                    log.debug(f"creating new bak file: {self._outfile_basename}_bak.pha" + "{%d}" % self._spec_iterator)
+                    
                     self._backfile[key].append(
-                        f"{self._outfile_basename}_bak.pha" + "{%d}" % self._spec_iterator
+                        f"{self._outfile_basename}_bak.pha"
+                        + "{%d}" % self._spec_iterator
                     )
 
                     # We want to write the bak file
@@ -128,9 +144,13 @@ class PHAWrite(object):
 
             else:
 
+                log.debug("not creating a bak file")
+
                 self._backfile[key] = None
 
             if pha_info[key].ancillary_file is not None:
+
+                log.debug("appending the ancillary file")
 
                 self._ancrfile[key].append(pha_info[key].ancillary_file)
 
@@ -142,6 +162,8 @@ class PHAWrite(object):
 
             if pha_info["rsp"].rsp_filename is not None and not force_rsp_write:
 
+                log.debug(f"not creating a new response and keeping {pha_info['rsp'].rsp_filename}")
+                
                 self._respfile[key].append(pha_info["rsp"].rsp_filename)
 
             else:
@@ -149,8 +171,12 @@ class PHAWrite(object):
                 # This will be reached in the case that a response was generated from a plugin
                 # e.g. if we want to use weighted DRMs from GBM.
 
-                rsp_file_name = f"{self._outfile_basename}.rsp" + "{%d}" % self._spec_iterator
+                rsp_file_name = (
+                    f"{self._outfile_basename}.rsp" + "{%d}" % self._spec_iterator
+                )
 
+                log.debug(f"creating a new response and saving it to {rsp_file_name}")
+                
                 self._respfile[key].append(rsp_file_name)
 
                 if key == "pha":
@@ -163,11 +189,15 @@ class PHAWrite(object):
 
             if not pha_info[key].is_poisson:
 
+                log.debug("this file is not Poisson and we save the errors")
+                
                 self._is_poisson[key] = pha_info[key].is_poisson
 
                 self._stat_err[key].append(pha_info[key].rate_errors.tolist())
 
             else:
+
+                log.debug("this file is Poisson and we do not save the errors")
 
                 self._stat_err[key] = None
 
@@ -207,14 +237,16 @@ class PHAWrite(object):
 
                 else:
 
-                    RuntimeError(
-                        "OGIP TSTART is a number but TSTOP is None. This is a bug."
-                    )
+                    log.error("OGIP TSTART is a number but TSTOP is None. This is a bug.")
+
+                    RuntimeError()
 
             # We will assume that the exposure is the true DT
             # and assign starts and stops accordingly. This means
             # we are most likely are dealing with a simulation.
             else:
+
+                log.debug("setting duration to exposure")
 
                 self._tstart[key].append(self._pseudo_time)
 

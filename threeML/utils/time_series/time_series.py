@@ -22,6 +22,7 @@ from threeML.utils.time_series.polynomial import (Polynomial, polyfit,
 
 log = setup_logger(__name__)
 
+
 class ReducingNumberOfThreads(Warning):
     pass
 
@@ -46,12 +47,12 @@ class TimeSeries(object):
         stop_time: float,
         n_channels: int,
         native_quality=None,
-        first_channel:int=1,
-        ra: float=None,
-        dec: float=None,
-        mission: str=None,
-        instrument: str=None,
-        verbose: bool=True,
+        first_channel: int = 1,
+        ra: float = None,
+        dec: float = None,
+        mission: str = None,
+        instrument: str = None,
+        verbose: bool = True,
         edges=None,
     ):
         """
@@ -257,7 +258,7 @@ class TimeSeries(object):
         self._user_poly_order = value
 
         log.debug(f"poly order set to {value}")
-        
+
         if self._poly_fit_exists:
 
             log.info(
@@ -267,10 +268,10 @@ class TimeSeries(object):
             if self._time_selection_exists:
 
                 log.debug("recomputing time selection")
-                
+
                 self.set_polynomial_fit_interval(
                     *self._poly_intervals.to_string().split(","),
-                    unbinned=self._unbinned
+                    unbinned=self._unbinned,
                 )
 
             else:
@@ -333,7 +334,7 @@ class TimeSeries(object):
 
         raise RuntimeError("Must be implemented in sub class")
 
-    def set_polynomial_fit_interval(self, *time_intervals, **options) ->:
+    def set_polynomial_fit_interval(self, *time_intervals, **options) -> None:
         """Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
@@ -434,16 +435,18 @@ class TimeSeries(object):
 
         self._poly_fit_exists = True
 
-
-            log.info(
-                f"{self._fit_method_info["bin type"]} {self._optimal_polynomial_grade}-order polynomial fit with the {self._fit_method_info["fit method"]} method" )
+        log.info(
+            f"{self._fit_method_info['bin type']} {self._optimal_polynomial_grade}-order polynomial fit with the {self._fit_method_info['fit method']} method"
+        )
 
         # recalculate the selected counts
 
         if self._time_selection_exists:
             self.set_active_time_intervals(*self._time_intervals.to_string().split(","))
 
-    def get_information_dict(self, use_poly: bool=False, extract:bool=False) -> dict:
+    def get_information_dict(
+        self, use_poly: bool = False, extract: bool = False
+    ) -> dict:
         """
         Return a PHAContainer that can be read by different builders
 
@@ -456,12 +459,12 @@ class TimeSeries(object):
         if extract:
 
             log.debug("using extract method")
-            
+
             is_poisson = True
 
             counts_err = None
             counts = self._poly_selected_counts
-            rates = self._counts/self._poly_exposure
+            rates = self._counts / self._poly_exposure
             rate_err = None
             exposure = self._poly_exposure
 
@@ -473,8 +476,8 @@ class TimeSeries(object):
 
             counts_err = self._poly_count_err
             counts = self._poly_counts
-            rate_err = self._poly_count_err/ self._exposure
-            rates = self._poly_counts/self._exposure
+            rate_err = self._poly_count_err / self._exposure
+            rates = self._poly_counts / self._exposure
             exposure = self._exposure
 
             # removing negative counts
@@ -493,7 +496,7 @@ class TimeSeries(object):
 
             counts_err = None
             counts = self._counts
-            rates = self._counts/ self._exposure
+            rates = self._counts / self._exposure
             rate_err = None
 
             exposure = self._exposure
@@ -682,19 +685,20 @@ class TimeSeries(object):
         filename_sanitized: Path = sanitize_filename(filename)
 
         # Check that it does not exists
-        if filename.exists():
+        if filename_sanitized.exists():
 
             if overwrite:
 
                 try:
 
-                    filename_sanitize.unlink()
+                    filename_sanitized.unlink()
 
                 except:
 
                     log.error(
                         f"The file {filename_sanitized} already exists and cannot be removed (maybe you do not have "
-                        "permissions to do so?). ")
+                        "permissions to do so?). "
+                    )
 
                     raise IOError()
 
@@ -737,7 +741,6 @@ class TimeSeries(object):
                 "unbinned": self._unbinned,
                 "fit_method": self._fit_method_info["fit method"],
             }
-
 
         log.info(f"Saved fitted background to {filename_sanitized}")
 

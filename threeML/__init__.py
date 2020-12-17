@@ -233,6 +233,7 @@ from .bayesian.bayesian_analysis import BayesianAnalysis
 
 from .data_list import DataList
 
+from threeML.io import silence_warnings, activate_warnings, update_logging_level
 
 from threeML.io.plotting.model_plot import plot_spectra, plot_point_source_spectra
 from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve

@@ -1,23 +1,14 @@
 import copy
 import re
 from pathlib import Path
-
+from tqdm.auto import tqdm
 import astropy.io.fits as fits
 import matplotlib.pyplot as plt
 import numpy as np
-<<<<<<< HEAD
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.logging import setup_logger
-from threeML.io.progress_bar import progress_bar
-=======
-from pathlib import Path
-from tqdm.auto import tqdm
-
-from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.file_utils import file_existing_and_readable
->>>>>>> feature-tqdm
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SpectrumLike import NegativeBackground, SpectrumLike
@@ -431,7 +422,7 @@ class TimeSeriesBuilder(object):
 
         self._time_series.save_background(file_name, overwrite)
 
-        log.info("Saved background to {file_name}")
+        log.info(f"Saved background to {file_name}")
 
     def view_lightcurve(
         self,
@@ -652,11 +643,11 @@ class TimeSeriesBuilder(object):
 
     def to_spectrumlike(
         self,
-        from_bins: bool=False,
+        from_bins: bool = False,
         start=None,
         stop=None,
-        interval_name: str="_interval",
-        extract_measured_background: bool=False,
+        interval_name: str = "_interval",
+        extract_measured_background: bool = False,
     ) -> list:
         """
         Create plugin(s) from either the current active selection or the time bins.
@@ -678,13 +669,13 @@ class TimeSeriesBuilder(object):
         if extract_measured_background:
 
             log.debug(f"trying extract background as measurement in {self._name}")
-            
+
             this_background_spectrum = self._measured_background_spectrum
 
         else:
 
             log.debug(f"trying extract background as model in {self._name}")
-            
+
             this_background_spectrum = self._background_spectrum
 
         # this is for a single interval
@@ -709,8 +700,8 @@ class TimeSeriesBuilder(object):
 
             if self._response is None:
 
-                log.debug("creating a SpectrumLike plugin named {self._name}")
-                
+                log.debug(f"creating a SpectrumLike plugin named {self._name}")
+
                 return SpectrumLike(
                     name=self._name,
                     observation=self._observed_spectrum,
@@ -721,11 +712,13 @@ class TimeSeriesBuilder(object):
                 )
 
             else:
-                
+
                 if not self._use_balrog:
 
-                    log.debug("creating a DispersionSpectrumLike plugin named {self._name}")
-                    
+                    log.debug(
+                        f"creating a DispersionSpectrumLike plugin named {self._name}"
+                    )
+
                     return DispersionSpectrumLike(
                         name=self._name,
                         observation=self._observed_spectrum,
@@ -737,8 +730,8 @@ class TimeSeriesBuilder(object):
 
                 else:
 
-                    log.debug("creating a BALROGLike plugin named {self._name}")
-                    
+                    log.debug(f"creating a BALROGLike plugin named {self._name}")
+
                     return gbm_drm_gen.BALROGLike(
                         name=self._name,
                         observation=self._observed_spectrum,
@@ -753,12 +746,12 @@ class TimeSeriesBuilder(object):
 
             # this is for a set of intervals.
 
-            log.debug("extracting a series of spectra")
-            
+            log.debug(f"extracting a series of spectra")
+
             assert (
                 self._time_series.bins is not None
             ), "This time series does not have any bins!"
-            
+
             # save the original interval if there is one
             old_interval = copy.copy(self._active_interval)
             old_verbose = copy.copy(self._verbose)
@@ -786,7 +779,7 @@ class TimeSeriesBuilder(object):
             # loop through the intervals and create spec likes
 
             p = tqdm(total=len(these_bins), desc="Creating plugins")
-            
+
             for i, interval in enumerate(these_bins):
 
                 self.set_active_time_interval(interval.to_string())
@@ -799,30 +792,47 @@ class TimeSeriesBuilder(object):
 
                     this_background_spectrum = self._measured_background_spectrum
 
-                        log.debug(f"trying extract background as measurement in {self._name}")
-                        
-                        this_background_spectrum = self._measured_background_spectrum
+                    log.debug(
+                        f"trying extract background as measurement in {self._name}"
+                    )
+
+                else:
 
                     this_background_spectrum = self._background_spectrum
 
-                        log.debug(f"trying extract background as model in {self._name}")
-                        
-                        this_background_spectrum = self._background_spectrum
+                    log.debug(f"trying extract background as model in {self._name}")
 
-                    if this_background_spectrum is None:
-                        log.warnings(
-                            "No bakckground selection has been made. This plugin will contain no background!"
+                if this_background_spectrum is None:
+                    log.warnings(
+                        "No bakckground selection has been made. This plugin will contain no background!"
+                    )
+
+                try:
+
+                    plugin_name = f"{self._name}{interval_name}{i}"
+
+                    if self._response is None:
+
+                        log.debug(f"creating a SpectrumLike plugin named {plugin_name}")
+
+                        sl = SpectrumLike(
+                            name=plugin_name,
+                            observation=self._observed_spectrum,
+                            background=this_background_spectrum,
+                            verbose=self._verbose,
+                            tstart=self._tstart,
+                            tstop=self._tstop,
                         )
 
                     else:
 
-                        plugin_name = f"{self._name}{interval_name}{i}"
+                        if not self._use_balrog:
 
-                        if self._response is None:
+                            log.debug(
+                                f"creating a DispersionSpectrumLike plugin named {plugin_name}"
+                            )
 
-                            log.debug("creating a SpectrumLike plugin named {plugin_name}")
-                            
-                            sl = SpectrumLike(
+                            sl = DispersionSpectrumLike(
                                 name=plugin_name,
                                 observation=self._observed_spectrum,
                                 background=this_background_spectrum,
@@ -833,40 +843,27 @@ class TimeSeriesBuilder(object):
 
                         else:
 
-                            if not self._use_balrog:
+                            log.debug(
+                                f"creating a BALROGLike plugin named {plugin_name}"
+                            )
 
-                                log.debug("creating a DispersionSpectrumLike plugin named {plugin_name}")
-
-                                sl = DispersionSpectrumLike(
-                                    name=plugin_name,
-                                    observation=self._observed_spectrum,
-                                    background=this_background_spectrum,
-                                    verbose=self._verbose,
-                                    tstart=self._tstart,
-                                    tstop=self._tstop,
-                                )
-
-                            else:
-
-                                log.debug("creating a BALROGLike plugin named {plugin_name}")
-
-                                sl = gbm_drm_gen.BALROGLike(
-                                    name=plugin_name,
-                                    observation=self._observed_spectrum,
-                                    background=this_background_spectrum,
-                                    verbose=self._verbose,
-                                    time=0.5 * (self._tstart + self._tstop),
-                                    tstart=self._tstart,
-                                    tstop=self._tstop,
-                                )
+                            sl = gbm_drm_gen.BALROGLike(
+                                name=plugin_name,
+                                observation=self._observed_spectrum,
+                                background=this_background_spectrum,
+                                verbose=self._verbose,
+                                time=0.5 * (self._tstart + self._tstop),
+                                tstart=self._tstart,
+                                tstop=self._tstop,
+                            )
 
                     list_of_speclikes.append(sl)
 
                 except (NegativeBackground):
 
-                        log.critical(
-                            "Something is wrong with interval {interval} skipping."
-                        )
+                    log.critical(
+                        f"Something is wrong with interval {interval} skipping."
+                    )
 
                 p.update(1)
 
@@ -894,10 +891,10 @@ class TimeSeriesBuilder(object):
         rsp_file=None,
         restore_background=None,
         trigger_time=None,
-        poly_order: int=-1,
-        unbinned: bool=True,
-        verbose: bool=True,
-        use_balrog: bool=False,
+        poly_order: int = -1,
+        unbinned: bool = True,
+        verbose: bool = True,
+        use_balrog: bool = False,
         trigdat_file=None,
         poshist_file=None,
         cspec_file=None,
@@ -942,7 +939,7 @@ class TimeSeriesBuilder(object):
         if trigger_time is not None:
 
             log.debug("set custom trigger time")
-            
+
             gbm_tte_file.trigger_time = trigger_time
 
         # Create the the event list
@@ -963,7 +960,7 @@ class TimeSeriesBuilder(object):
         if use_balrog:
 
             log.debug("using BALROG to build time series")
-            
+
             assert has_balrog, "you must install the gbm_drm_gen package to use balrog"
 
             assert cspec_file is not None, "must include a cspecfile"
@@ -971,7 +968,7 @@ class TimeSeriesBuilder(object):
             if poshist_file is not None:
 
                 log.debug("using a poshist file")
-                
+
                 drm_gen = gbm_drm_gen.DRMGenTTE(
                     tte_file,
                     poshist=poshist_file,
@@ -984,7 +981,7 @@ class TimeSeriesBuilder(object):
             elif trigdat_file is not None:
 
                 log.debug("using a trigdat file")
-                
+
                 drm_gen = gbm_drm_gen.DRMGenTTE(
                     tte_file,
                     trigdat=trigdat_file,
@@ -1030,7 +1027,7 @@ class TimeSeriesBuilder(object):
             if test is not None:
 
                 log.debug("detected and RSP2 file")
-                
+
                 rsp = InstrumentResponseSet.from_rsp2_file(
                     rsp2_file=rsp_file,
                     counts_getter=event_list.counts_over_interval,
@@ -1106,16 +1103,18 @@ class TimeSeriesBuilder(object):
 
         # Load the relevant information from the TTE file
 
-        cdata = GBMCdata(sanitize_filename(cspec_or_ctime_file), sanitize_filename(rsp_file))
+        cdata = GBMCdata(
+            sanitize_filename(cspec_or_ctime_file), sanitize_filename(rsp_file)
+        )
 
         log.debug(f"loaded the CDATA file {cspec_or_ctime_file}")
-        
+
         # Set a trigger time if one has not been set
 
         if trigger_time is not None:
 
             log.debug("set custom trigger time")
-            
+
             cdata.trigger_time = trigger_time
 
         # Create the the event list
@@ -1140,11 +1139,9 @@ class TimeSeriesBuilder(object):
             if test is None:
 
                 log.debug("detected single RSP")
-                
+
                 with fits.open(rsp_file) as f:
 
-                    
-                    
                     # there should only be a header, ebounds and one spec rsp extension
 
                     if len(f) > 3:
@@ -1159,7 +1156,7 @@ class TimeSeriesBuilder(object):
             if test is not None:
 
                 log.debug("detected and RSP2 file")
-                
+
                 rsp = InstrumentResponseSet.from_rsp2_file(
                     rsp2_file=rsp_file,
                     counts_getter=event_list.counts_over_interval,
@@ -1170,7 +1167,7 @@ class TimeSeriesBuilder(object):
             else:
 
                 log.debug("loading RSP")
-                
+
                 rsp = OGIPResponse(rsp_file)
 
         else:
@@ -1473,7 +1470,7 @@ class TimeSeriesBuilder(object):
             # loop through the intervals and create spec likes
 
             p = tqdm(total=len(these_bins), desc="Creating plugins")
-            
+
             for i, interval in enumerate(these_bins):
 
                 self.set_active_time_interval(interval.to_string())
@@ -1505,11 +1502,11 @@ class TimeSeriesBuilder(object):
 
                     list_of_polarlikes.append(pl)
 
+                except (NegativeBackground):
                     log.critical(
-                            "Something is wrong with interval %s. skipping." % interval
-                        )
+                        "Something is wrong with interval %s. skipping." % interval
+                    )
 
-                    
                 p.update(1)
             # restore the old interval
 

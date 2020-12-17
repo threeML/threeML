@@ -8,14 +8,16 @@ from threeML.utils.OGIP.pha import PHAWrite
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.io.logging import setup_logger
 
 __instrument_name = "All OGIP-compliant instruments"
 
+log = setup_logger(__name__)
 
 class OGIPLike(DispersionSpectrumLike):
     def __init__(
         self,
-        name,
+        name: str,
         observation,
         background=None,
         response=None,
@@ -69,6 +71,8 @@ class OGIPLike(DispersionSpectrumLike):
 
         if background is None:
 
+            log.debug(f"{self._name} has no bkg set", args, kwargs)
+            
             background = pha.background_file
 
             # assert background is not None, "No background file provided, and the PHA file does not specify one."
@@ -102,7 +106,7 @@ class OGIPLike(DispersionSpectrumLike):
             name=name, observation=pha, background=bak, verbose=verbose
         )
 
-    def get_simulated_dataset(self, new_name=None, **kwargs):
+    def get_simulated_dataset(self, new_name: str=None, **kwargs):
         # type: (str, dict) -> OGIPLike
         """
         Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
@@ -123,7 +127,7 @@ class OGIPLike(DispersionSpectrumLike):
 
         return self._observed_spectrum.grouping
 
-    def write_pha(self, file_name, overwrite=False, force_rsp_write=False):
+    def write_pha(self, file_name: str, overwrite: bool=False, force_rsp_write:bool=False) -> None:
         """
         Create a pha file of the current pha selections
 
