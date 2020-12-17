@@ -53,7 +53,7 @@ threeML_dev_log_handler = handlers.TimedRotatingFileHandler(
     get_path_of_log_file("dev.log"), when="D", interval=1, backupCount=10
 )
 
-threeML_dev_log_handler.setLevel(logging.DEBUG)
+
 
 # lots of info written out
 _dev_formatter = logging.Formatter(
@@ -61,11 +61,11 @@ _dev_formatter = logging.Formatter(
 )
 
 threeML_dev_log_handler.setFormatter(_dev_formatter)
-
+threeML_dev_log_handler.setLevel(logging.DEBUG)
 # now set up the usr log which will save the info
 
 threeML_usr_log_handler = handlers.RotatingFileHandler(
-    get_path_of_log_file("usr.log"), maxBytes=10000, backupCount=20
+    get_path_of_log_file("usr.log"), maxBytes=1000000, backupCount=20
 )
 
 threeML_usr_log_handler.setLevel(logging.INFO)
@@ -93,7 +93,7 @@ _console_formatter = ColoredFormatter(
 
 threeML_console_log_handler = logging.StreamHandler(sys.stdout)
 threeML_console_log_handler.setFormatter(_console_formatter)
-
+threeML_console_log_handler.setLevel(threeML_config["logging"]["level"])
 
 warning_filter = MyFilter(logging.WARNING)
 
@@ -114,15 +114,20 @@ def activate_warnings():
     threeML_usr_log_handler.removeFilter(warning_filter)
     threeML_console_log_handler.removeFilter(warning_filter)
 
+
+def update_logging_level(level):
+
+    threeML_console_log_handler.setLevel(level)
     
 
 def setup_logger(name):
 
-    # A logger with name my_logger will be created
+    # A logger with name name will be created
     # and then add it to the print stream
     log = logging.getLogger(name)
 
-    log.setLevel(threeML_config["logging"]["level"])
+    # this must be set to allow debug messages through
+    log.setLevel(logging.DEBUG)
 
     # add the handlers
 
