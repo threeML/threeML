@@ -6,6 +6,14 @@ Version 2.1
 -----------
 
 
+v2.1.1
+^^^^^^^^
+*Thu, 17 Dec 2020 02:35:08 + 0000*
+
+* Refactored code with `pathlib` library addition. Merged in pull request:
+  https://github.com/threeML/threeML/pull/393
+
+
 v2.1.0
 ^^^^^^^^
 *Wed, 16 Dec 2020 00:02:29 + 0000*
