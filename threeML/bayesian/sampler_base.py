@@ -31,9 +31,11 @@ from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_wa
 from astromodels.functions.function import ModelAssertionViolation
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
+from threeML.data_list import DataList
+from astromodels.core.model import Model
 
 class SamplerBase(with_metaclass(abc.ABCMeta, object)):
-    def __init__(self, likelihood_model, data_list, **kwargs):
+    def __init__(self, likelihood_model : Model, data_list : DataList, **kwargs):
         """
 
         The base class for all bayesian samplers. Provides a common interface
@@ -63,6 +65,8 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         # for the response folding. Only usefull if spectrum calculation is slow.
         if "share_spectrum" in kwargs:
             self._share_spectrum = kwargs["share_spectrum"]
+            assert type(self._share_spectrum) == bool,\
+                "share_spectrum must be False or True."
         else:
             self._share_spectrum = False
 

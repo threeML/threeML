@@ -209,7 +209,7 @@ class InstrumentResponse(object):
         self._integral_function = integral_function
 
 
-    def convolve(self, precalc_fluxes=None):
+    def convolve(self, precalc_fluxes: Optional[np.array]=None):
         """
         Convolve the source flux with the response
         :param precalc_fluxes: The precalulated flux. If this is None, the

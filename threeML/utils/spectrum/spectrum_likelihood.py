@@ -50,7 +50,7 @@ class BinnedStatistic(object):
 
 
 class GaussianObservedStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes=None):
+    def get_current_value(self, precalc_fluxes: Optional[np.array]=None):
         
         model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
 
@@ -95,7 +95,7 @@ class GaussianObservedStatistic(BinnedStatistic):
 
 
 class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes=None):
+    def get_current_value(self, precalc_fluxes: Optional[np.array]=None):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
@@ -130,7 +130,7 @@ class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes=None):
+    def get_current_value(self, precalc_fluxes: Optional[np.array]=None):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
@@ -184,7 +184,7 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes=None):
+    def get_current_value(self, precalc_fluxes: Optional[np.array]=None):
         # In this likelihood the background becomes part of the model, which means that
         # the uncertainty in the background is completely neglected
 
@@ -210,7 +210,7 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes=None):
+    def get_current_value(self, precalc_fluxes: Optional[np.array]=None):
         # Scale factor between source and background spectrum
         model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
 
@@ -250,7 +250,7 @@ class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
 
 
 class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
-    def get_current_value(self, precalc_fluxes=None):
+    def get_current_value(self, precalc_fluxes: Optional[np.array]=None):
         expected_model_counts = self._spectrum_plugin.get_model(precalc_fluxes=precalc_fluxes)
 
         loglike, bkg_model = poisson_observed_gaussian_background(
