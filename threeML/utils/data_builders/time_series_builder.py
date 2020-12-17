@@ -3,10 +3,11 @@ import re
 from pathlib import Path
 
 import astropy.io.fits as fits
+import matplotlib.pyplot as plt
 import numpy as np
 
 from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.file_utils import file_existing_and_readable
+from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.io.logging import setup_logger
 from threeML.io.progress_bar import progress_bar
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
@@ -74,12 +75,12 @@ class TimeSeriesBuilder(object):
         name: str,
         time_series: TimeSeries,
         response=None,
-        poly_order: int=-1,
-        unbinned: bool=True,
-        verbose: bool=True,
+        poly_order: int = -1,
+        unbinned: bool = True,
+        verbose: bool = True,
         restore_poly_fit=None,
         container_type=BinnedSpectrumWithDispersion,
-        **kwargs
+        **kwargs,
     ):
         """
         Class for handling generic time series data including binned and event list
@@ -126,7 +127,7 @@ class TimeSeriesBuilder(object):
             self._weighted_rsp: InstrumentResponseSet = response
 
             log.debug("The response is weighted")
-            
+
             # just get a dummy response for the moment
             # it will be corrected when we set the interval
 
@@ -142,7 +143,7 @@ class TimeSeriesBuilder(object):
             self._response = response
 
             log.debug("The response is not weighted")
-            
+
         self._verbose: bool = verbose
         self._active_interval = None
         self._observed_spectrum = None
@@ -158,22 +159,20 @@ class TimeSeriesBuilder(object):
         if restore_poly_fit is not None:
 
             log.debug("Attempting to read a previously fit background")
-            
+
             if file_existing_and_readable(restore_poly_fit):
                 self._time_series.restore_fit(restore_poly_fit)
 
-                
                 log.info(f"Successfully restored fit from {restore_poly_fit}")
 
             else:
 
-                log.critical(
-                    f"Could not find saved background {restore_poly_fit()}." )
+                log.critical(f"Could not find saved background {restore_poly_fit()}.")
 
         if "use_balrog" in kwargs:
 
             log.debug("This time series will use BALROG")
-            
+
             self._use_balrog: bool = kwargs["use_balrog"]
 
         else:
@@ -227,8 +226,10 @@ class TimeSeriesBuilder(object):
         :return:
         """
 
-        log.debug(f"setting active time interval to {','.join(intervals)} for {self._name}")
-        
+        log.debug(
+            f"setting active time interval to {','.join(intervals)} for {self._name}"
+        )
+
         self._time_series.set_active_time_intervals(*intervals)
 
         # extract a spectrum
@@ -236,7 +237,7 @@ class TimeSeriesBuilder(object):
         if self._response is None:
 
             log.debug(f"no response is set for {self._name}")
-            
+
             self._observed_spectrum = self._container_type.from_time_series(
                 self._time_series, use_poly=False
             )
@@ -246,19 +247,17 @@ class TimeSeriesBuilder(object):
             if self._rsp_is_weighted:
 
                 log.debug(f"weighted response is set for {self._name}")
-                
+
                 self._response = self._weighted_rsp.weight_by_counts(
                     *self._time_series.time_intervals.to_string().split(",")
                 )
 
-            
-            
             self._observed_spectrum = self._container_type.from_time_series(
                 self._time_series, self._response, use_poly=False
             )
 
             log.debug(f"response is now set for {self._name}")
-            
+
         self._active_interval: list = intervals
 
         # re-get the background if there was a time selection
@@ -266,7 +265,7 @@ class TimeSeriesBuilder(object):
         if self._time_series.poly_fit_exists:
 
             log.debug(f"re-applying the background for {self._name}")
-            
+
             self._background_spectrum = self._container_type.from_time_series(
                 self._time_series, response=self._response, use_poly=True, extract=False
             )
@@ -282,7 +281,7 @@ class TimeSeriesBuilder(object):
         self._tstop = self._time_series.time_intervals.absolute_stop_time
 
         log.info(f"Interval set to {self._tstart}-{self._tstop} for {self._name}")
-        
+
     def set_background_interval(self, *intervals, **options):
         """
         Set the time interval to fit the background.
@@ -305,12 +304,18 @@ class TimeSeriesBuilder(object):
 
             unbinned = self._default_unbinned
 
+        log.debug(f"using unbinned is {unbinned} for {self._name}")
+        log.debug(f"fitting bkg for {self._name}")
+
         self._time_series.set_polynomial_fit_interval(*intervals, unbinned=unbinned)
 
+        log.debug(f"finished fitting bkg for {self._name}")
         # In theory this will automatically get the poly counts if a
         # time interval already exists
 
         if self._active_interval is not None:
+
+            log.debug(f"the active interval was already set for {self._name}")
 
             if self._response is None:
 
@@ -323,6 +328,8 @@ class TimeSeriesBuilder(object):
                         self._time_series, use_poly=False, extract=True
                     )
                 )
+
+                log.debug(f"bkg w/o rsp set for {self._name}")
 
             else:
 
@@ -341,9 +348,11 @@ class TimeSeriesBuilder(object):
                     )
                 )
 
+                log.debug(f"bkg w/ rsp set for {self._name}")
+
     def write_pha_from_binner(
         self,
-        file_name,
+        file_name: str,
         start=None,
         stop=None,
         overwrite=False,
@@ -366,6 +375,8 @@ class TimeSeriesBuilder(object):
 
         # we simply create a bunch of dispersion plugins and convert them to OGIP
 
+        file_name: Path = sanitize_filename(file_name)
+
         ogip_list = [
             OGIPLike.from_general_dispersion_spectrum(sl)
             for sl in self.to_spectrumlike(
@@ -384,6 +395,8 @@ class TimeSeriesBuilder(object):
             file_name, overwrite=overwrite, force_rsp_write=force_rsp_write
         )
 
+        log.info(f"Selections saved to {file_name}")
+
     def get_background_parameters(self):
         """
         Returns a pandas DataFrame containing the background polynomial
@@ -393,7 +406,7 @@ class TimeSeriesBuilder(object):
 
         return self._time_series.get_poly_info()
 
-    def save_background(self, filename, overwrite=False):
+    def save_background(self, file_name: str, overwrite=False) -> None:
         """
 
         save the background to and HDF5 file. The filename does not need an extension.
@@ -401,27 +414,40 @@ class TimeSeriesBuilder(object):
 
 
 
-        :param filename: name of file to save
+        :param file_name: name of file to save
         :param overwrite: to overwrite or not
         :return:
         """
 
-        self._time_series.save_background(filename, overwrite)
+        file_name: Path = sanitize_filename(file_name)
 
-    def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False):
+        self._time_series.save_background(file_name, overwrite)
+
+        log.info("Saved background to {file_name}")
+
+    def view_lightcurve(
+        self,
+        start: float = -10,
+        stop: float = 20.0,
+        dt: float = 1.0,
+        use_binner: bool = False,
+    ) -> plt.Figure:
         # type: (float, float, float, bool) -> None
         """
-        :param start:
-        :param stop:
-        :param dt:
-        :param use_binner:
+
+        view the binned light curve
+
+        :param start: start time of viewing
+        :param stop: stop time of viewing
+        :param dt: cadance of binning
+        :param use_binner: use the binning created by a binning method
 
         """
 
         return self._time_series.view_lightcurve(start, stop, dt, use_binner)
 
     @property
-    def tstart(self):
+    def tstart(self) -> float:
         """
         :return: start time of the active interval
         """
@@ -429,7 +455,7 @@ class TimeSeriesBuilder(object):
         return self._tstart
 
     @property
-    def tstop(self):
+    def tstop(self) -> float:
         """
         :return: stop time of the active interval
         """
@@ -442,11 +468,11 @@ class TimeSeriesBuilder(object):
         return self._time_series.bins
 
     @property
-    def time_series(self):
+    def time_series(self) -> TimeSeries:
         return self._time_series
 
     @property
-    def significance_per_interval(self):
+    def significance_per_interval(self) -> np.ndarray:
 
         if self._time_series.bins is not None:
 
@@ -469,7 +495,7 @@ class TimeSeriesBuilder(object):
             return np.array(sig_per_interval)
 
     @property
-    def total_counts_per_interval(self):
+    def total_counts_per_interval(self) -> np.ndarray:
 
         if self._time_series.bins is not None:
 
@@ -482,7 +508,7 @@ class TimeSeriesBuilder(object):
             return np.array(total_counts)
 
     @property
-    def background_counts_per_interval(self):
+    def background_counts_per_interval(self) -> np.ndarray:
 
         if self._time_series.bins is not None:
 
@@ -493,7 +519,7 @@ class TimeSeriesBuilder(object):
 
             return np.array(total_counts)
 
-    def read_bins(self, time_series_builder):
+    def read_bins(self, time_series_builder) -> None:
         """
 
         Read the temporal bins from another *binned* TimeSeriesBuilder instance
@@ -502,6 +528,10 @@ class TimeSeriesBuilder(object):
         :param time_series_builder: *binned* time series builder to copy
         :return:
         """
+
+        log.debug(
+            f"setting bins of {self._name} to those of {time_series_builder.name}"
+        )
 
         other_bins = time_series_builder.bins.bin_stack
         self.create_time_bins(other_bins[:, 0], other_bins[:, 1], method="custom")
@@ -528,14 +558,6 @@ class TimeSeriesBuilder(object):
             self._time_series, EventList
         ), "can only bin event lists currently"
 
-        # if 'use_energy_mask' in options:
-        #
-        #     use_energy_mask = options.pop('use_energy_mask')
-        #
-        # else:
-        #
-        #     use_energy_mask = False
-
         if method == "constant":
 
             if "dt" in options:
@@ -543,7 +565,8 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                raise RuntimeError("constant bins requires the dt option set!")
+                log.error("constant bins requires the dt option set!")
+                raise RuntimeError()
 
             self._time_series.bin_by_constant(start, stop, dt)
 
@@ -555,7 +578,8 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                raise RuntimeError("significance bins require a sigma argument")
+                log.error("significance bins require a sigma argument")
+                raise RuntimeError()
 
             if "min_counts" in options:
 
@@ -564,17 +588,6 @@ class TimeSeriesBuilder(object):
             else:
 
                 min_counts = 10
-
-            # removed for now
-            # should we mask the data
-
-            # if use_energy_mask:
-            #
-            #     mask = self._mask
-            #
-            # else:
-            #
-            #     mask = None
 
             self._time_series.bin_by_significance(
                 start, stop, sigma=sigma, min_counts=min_counts, mask=None
@@ -605,12 +618,14 @@ class TimeSeriesBuilder(object):
             if type(start) is not list:
 
                 if type(start) is not np.ndarray:
-                    raise RuntimeError("start must be and array in custom mode")
+                    log.error("start must be and array in custom mode")
+                    raise RuntimeError()
 
             if type(stop) is not list:
 
                 if type(stop) is not np.ndarray:
-                    raise RuntimeError("stop must be and array in custom mode")
+                    log.error("stop must be and array in custom mode")
+                    raise RuntimeError()
 
             assert len(start) == len(
                 stop
@@ -620,22 +635,21 @@ class TimeSeriesBuilder(object):
 
         else:
 
-            raise BinningMethodError(
+            log.error(
                 "Only constant, significance, bayesblock, or custom method argument accepted."
             )
+            raise BinningMethodError()
 
-        if self._verbose:
-
-            print("Created %d bins via %s" % (len(self._time_series.bins), method))
+        log.info(f"Created {len(self._time_series.bins)} bins via {method}")
 
     def to_spectrumlike(
         self,
-        from_bins=False,
+        from_bins: bool=False,
         start=None,
         stop=None,
-        interval_name="_interval",
-        extract_measured_background=False,
-    ):
+        interval_name: str="_interval",
+        extract_measured_background: bool=False,
+    ) -> list:
         """
         Create plugin(s) from either the current active selection or the time bins.
         If creating from an event list, the
@@ -655,15 +669,21 @@ class TimeSeriesBuilder(object):
 
         if extract_measured_background:
 
+            log.debug(f"trying extract background as measurement in {self._name}")
+            
             this_background_spectrum = self._measured_background_spectrum
 
         else:
 
+            log.debug(f"trying extract background as model in {self._name}")
+            
             this_background_spectrum = self._background_spectrum
 
         # this is for a single interval
 
         if not from_bins:
+
+            log.debug("will extract a single spectrum")
 
             assert (
                 self._observed_spectrum is not None
@@ -675,12 +695,14 @@ class TimeSeriesBuilder(object):
 
             if this_background_spectrum is None:
 
-                custom_warnings.warn(
+                log.warnings(
                     "No background selection has been made. This plugin will contain no background!"
                 )
 
             if self._response is None:
 
+                log.debug("creating a SpectrumLike plugin named {self._name}")
+                
                 return SpectrumLike(
                     name=self._name,
                     observation=self._observed_spectrum,
@@ -691,9 +713,11 @@ class TimeSeriesBuilder(object):
                 )
 
             else:
-
+                
                 if not self._use_balrog:
 
+                    log.debug("creating a DispersionSpectrumLike plugin named {self._name}")
+                    
                     return DispersionSpectrumLike(
                         name=self._name,
                         observation=self._observed_spectrum,
@@ -705,6 +729,8 @@ class TimeSeriesBuilder(object):
 
                 else:
 
+                    log.debug("creating a BALROGLike plugin named {self._name}")
+                    
                     return gbm_drm_gen.BALROGLike(
                         name=self._name,
                         observation=self._observed_spectrum,
@@ -719,10 +745,12 @@ class TimeSeriesBuilder(object):
 
             # this is for a set of intervals.
 
+            log.debug("extracting a series of spectra")
+            
             assert (
                 self._time_series.bins is not None
             ), "This time series does not have any bins!"
-
+            
             # save the original interval if there is one
             old_interval = copy.copy(self._active_interval)
             old_verbose = copy.copy(self._verbose)
@@ -761,23 +789,31 @@ class TimeSeriesBuilder(object):
 
                     if extract_measured_background:
 
+                        log.debug(f"trying extract background as measurement in {self._name}")
+                        
                         this_background_spectrum = self._measured_background_spectrum
 
                     else:
 
+                        log.debug(f"trying extract background as model in {self._name}")
+                        
                         this_background_spectrum = self._background_spectrum
 
                     if this_background_spectrum is None:
-                        custom_warnings.warn(
+                        log.warnings(
                             "No bakckground selection has been made. This plugin will contain no background!"
                         )
 
                     try:
 
+                        plugin_name = f"{self._name}{interval_name}{i}"
+
                         if self._response is None:
 
+                            log.debug("creating a SpectrumLike plugin named {plugin_name}")
+                            
                             sl = SpectrumLike(
-                                name="%s%s%d" % (self._name, interval_name, i),
+                                name=plugin_name,
                                 observation=self._observed_spectrum,
                                 background=this_background_spectrum,
                                 verbose=self._verbose,
@@ -789,8 +825,10 @@ class TimeSeriesBuilder(object):
 
                             if not self._use_balrog:
 
+                                log.debug("creating a DispersionSpectrumLike plugin named {plugin_name}")
+
                                 sl = DispersionSpectrumLike(
-                                    name="%s%s%d" % (self._name, interval_name, i),
+                                    name=plugin_name,
                                     observation=self._observed_spectrum,
                                     background=this_background_spectrum,
                                     verbose=self._verbose,
@@ -800,8 +838,10 @@ class TimeSeriesBuilder(object):
 
                             else:
 
+                                log.debug("creating a BALROGLike plugin named {plugin_name}")
+
                                 sl = gbm_drm_gen.BALROGLike(
-                                    name="%s%s%d" % (self._name, interval_name, i),
+                                    name=plugin_name,
                                     observation=self._observed_spectrum,
                                     background=this_background_spectrum,
                                     verbose=self._verbose,
@@ -814,8 +854,8 @@ class TimeSeriesBuilder(object):
 
                     except (NegativeBackground):
 
-                        custom_warnings.warn(
-                            "Something is wrong with interval %s. skipping." % interval
+                        log.critical(
+                            "Something is wrong with interval {interval} skipping."
                         )
 
                     p.increase()
@@ -823,6 +863,8 @@ class TimeSeriesBuilder(object):
             # restore the old interval
 
             if old_interval is not None:
+
+                log.debug("restoring the old interval")
 
                 self.set_active_time_interval(*old_interval)
 
@@ -837,15 +879,15 @@ class TimeSeriesBuilder(object):
     @classmethod
     def from_gbm_tte(
         cls,
-        name,
-        tte_file,
+        name: str,
+        tte_file: str,
         rsp_file=None,
         restore_background=None,
         trigger_time=None,
-        poly_order=-1,
-        unbinned=True,
-        verbose=True,
-        use_balrog=False,
+        poly_order: int=-1,
+        unbinned: bool=True,
+        verbose: bool=True,
+        use_balrog: bool=False,
         trigdat_file=None,
         poshist_file=None,
         cspec_file=None,
@@ -881,11 +923,16 @@ class TimeSeriesBuilder(object):
 
         # Load the relevant information from the TTE file
 
-        gbm_tte_file = GBMTTEFile(tte_file)
+        gbm_tte_file = GBMTTEFile(sanitize_filename(tte_file))
+
+        log.debug(f"loaded the TTE file {tte_file}")
 
         # Set a trigger time if one has not been set
 
         if trigger_time is not None:
+
+            log.debug("set custom trigger time")
+            
             gbm_tte_file.trigger_time = trigger_time
 
         # Create the the event list
@@ -905,12 +952,16 @@ class TimeSeriesBuilder(object):
 
         if use_balrog:
 
+            log.debug("using BALROG to build time series")
+            
             assert has_balrog, "you must install the gbm_drm_gen package to use balrog"
 
             assert cspec_file is not None, "must include a cspecfile"
 
             if poshist_file is not None:
 
+                log.debug("using a poshist file")
+                
                 drm_gen = gbm_drm_gen.DRMGenTTE(
                     tte_file,
                     poshist=poshist_file,
@@ -922,6 +973,8 @@ class TimeSeriesBuilder(object):
 
             elif trigdat_file is not None:
 
+                log.debug("using a trigdat file")
+                
                 drm_gen = gbm_drm_gen.DRMGenTTE(
                     tte_file,
                     trigdat=trigdat_file,
@@ -932,7 +985,8 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                RuntimeError("No poshist or trigdat file supplied")
+                log.error("No poshist or trigdat file supplied")
+                RuntimeError()
 
             rsp = gbm_drm_gen.BALROG_DRM(drm_gen, 0, 0)
 
@@ -947,6 +1001,8 @@ class TimeSeriesBuilder(object):
 
             if test is None:
 
+                log.debug("detected single RSP")
+
                 with fits.open(rsp_file) as f:
 
                     # there should only be a header, ebounds and one spec rsp extension
@@ -957,12 +1013,14 @@ class TimeSeriesBuilder(object):
 
                         test = -1
 
-                        custom_warnings.warn(
+                        log.warning(
                             "The RSP file is marked as a single response but in fact has multiple matrices. We will treat it as an RSP2"
                         )
 
             if test is not None:
 
+                log.debug("detected and RSP2 file")
+                
                 rsp = InstrumentResponseSet.from_rsp2_file(
                     rsp2_file=rsp_file,
                     counts_getter=event_list.counts_over_interval,
@@ -971,6 +1029,8 @@ class TimeSeriesBuilder(object):
                 )
 
             else:
+
+                log.debug("loading RSP")
 
                 rsp = OGIPResponse(rsp_file)
 
