@@ -343,3 +343,26 @@ def xy_completed_bayesian_analysis(xy_fitted_joint_likelihood):
     samples = bs.sample()
 
     return bs, samples
+
+@pytest.fixture(scope="function")
+def test_directory():
+
+    test_directory = Path("dummy_dir")
+
+    test_directory.mkdir(parents=True, exist_ok=True)
+
+    yield test_directory
+
+    test_directory.rmdir()
+
+
+@pytest.fixture(scope="function")
+def test_file():
+
+    test_file = Path("dummy_file")
+
+    test_file.touch(exist_ok=True)
+
+    yield test_file
+
+    test_file.unlink()

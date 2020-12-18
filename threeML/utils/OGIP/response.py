@@ -1,25 +1,26 @@
 from __future__ import division
-from builtins import map
-from builtins import str
-from builtins import range
-from past.utils import old_div
-from builtins import object
-import astropy.io.fits as pyfits
-import numpy as np
-import warnings
-import matplotlib.cm as cm
-from matplotlib.colors import SymLogNorm
-import matplotlib.pyplot as plt
-from operator import itemgetter, attrgetter
+
 import copy
-from typing import Optional
-
+import warnings
+from builtins import map, object, range, str
+from operator import attrgetter, itemgetter
+from pathlib import Path
+import astropy.io.fits as pyfits
 import astropy.units as u
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+from typing import Optional
+import numpy as np
+from matplotlib.colors import SymLogNorm
+from past.utils import old_div
 
-from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
+
+from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.file_utils import (file_existing_and_readable,
+                                   fits_file_existing_and_readable,
+                                   sanitize_filename)
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
-from threeML.exceptions.custom_exceptions import custom_warnings
 
 
 class NoCoverageIntervals(RuntimeError):
@@ -94,12 +95,9 @@ class InstrumentResponse(object):
         assert self._matrix.shape == (
             self._ebounds.shape[0] - 1,
             self._mc_energies.shape[0] - 1,
-        ), (
-            "Matrix has the wrong shape. Got %s, expecting %s"
-            % (
-                self._matrix.shape,
-                [self._ebounds.shape[0] - 1, self._mc_energies.shape[0] - 1],
-            )
+        ), "Matrix has the wrong shape. Got %s, expecting %s" % (
+            self._matrix.shape,
+            [self._ebounds.shape[0] - 1, self._mc_energies.shape[0] - 1],
         )
 
         if self._mc_energies.max() < self._ebounds.max():
@@ -319,7 +317,7 @@ class InstrumentResponse(object):
         :return: None
         """
 
-        filename = sanitize_filename(filename, abspath=True)
+        filename: Path = sanitize_filename(filename, abspath=True)
 
         fits_file = RSP(
             self.monte_carlo_energies,
@@ -358,27 +356,27 @@ class OGIPResponse(InstrumentResponse):
 
         # Now make sure that the response file exist
 
-        rsp_file = sanitize_filename(rsp_file)
+        rsp_file: Path = sanitize_filename(rsp_file)
 
-        assert file_existing_and_readable(rsp_file.split("{")[0]), (
-            "OGIPResponse file %s not existing or not " "readable" % rsp_file
+        assert fits_file_existing_and_readable(rsp_file), (
+            f"OGIPResponse file {rsp_file} not existing or not " "readable"
         )
 
         # Check if we are dealing with a .rsp2 file (containing more than
         # one response). This is checked by looking for the syntax
         # [responseFile]{[responseNumber]}
 
-        if "{" in rsp_file:
+        if "{" in str(rsp_file):
 
-            tokens = rsp_file.split("{")
-            rsp_file = tokens[0]
+            tokens = str(rsp_file).split("{")
+            rsp_file: Path = sanitize_filename(tokens[0])
             rsp_number = int(tokens[-1].split("}")[0].replace(" ", ""))
 
         else:
 
             rsp_number = 1
 
-        self._rsp_file = rsp_file
+        self._rsp_file: Path = rsp_file
 
         # Read the response
         with pyfits.open(rsp_file) as f:
@@ -445,7 +443,7 @@ class OGIPResponse(InstrumentResponse):
         # Read the ARF if there is any
         # NOTE: this has to happen *after* calling the parent constructor
 
-        if arf_file is not None and arf_file.lower() != "none":
+        if arf_file is not None and str(arf_file).lower() != "none":
 
             self._read_arf_file(arf_file)
 
@@ -581,7 +579,7 @@ class OGIPResponse(InstrumentResponse):
         return rsp.T
 
     @property
-    def rsp_filename(self):
+    def rsp_filename(self) -> Path:
         """
         Returns the name of the RSP/RMF file from which the response has been loaded
         """
@@ -596,7 +594,7 @@ class OGIPResponse(InstrumentResponse):
 
         return self._arf_file
 
-    def _read_arf_file(self, arf_file):
+    def _read_arf_file(self, arf_file: str):
         """
         read an arf file and apply it to the current_matrix
 
@@ -606,12 +604,12 @@ class OGIPResponse(InstrumentResponse):
         :return:
         """
 
-        arf_file = sanitize_filename(arf_file)
+        arf_file: Path = sanitize_filename(arf_file)
 
         self._arf_file = arf_file
 
-        assert file_existing_and_readable(arf_file.split("{")[0]), (
-            "Ancillary file %s not existing or not " "readable" % arf_file
+        assert fits_file_existing_and_readable(arf_file), (
+            f"Ancillary file {arf_file} not existing or not " "readable"
         )
 
         with pyfits.open(arf_file) as f:
@@ -798,7 +796,7 @@ class InstrumentResponseSet(object):
             # we will read all the matrices and save them
             for rsp_number in range(1, n_responses + 1):
 
-                this_response = OGIPResponse(rsp2_file + "{%i}" % rsp_number)
+                this_response = OGIPResponse(str(rsp2_file) + "{%i}" % rsp_number)
 
                 list_of_matrices.append(this_response)
 
@@ -1105,9 +1103,14 @@ class MATRIX(FITSExtension):
         n_mc_channels = len(mc_energies) - 1
         n_channels = len(channel_energies) - 1
 
-        assert matrix.shape == (n_channels, n_mc_channels), (
-            "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
-            % (n_channels, n_mc_channels, matrix.shape[0], matrix.shape[1])
+        assert matrix.shape == (
+            n_channels,
+            n_mc_channels,
+        ), "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
+            n_channels,
+            n_mc_channels,
+            matrix.shape[0],
+            matrix.shape[1],
         )
 
         ones = np.ones(n_mc_channels, np.int16)
@@ -1181,8 +1184,8 @@ class RMF(FITSFile):
 
 class RSP(FITSFile):
     """
-        A response file, the OGIP format for a matrix representing both energy dispersion effects and effective area,
-        in the same matrix.
+    A response file, the OGIP format for a matrix representing both energy dispersion effects and effective area,
+    in the same matrix.
 
     """
 

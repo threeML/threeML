@@ -57,6 +57,10 @@ def do_analysis(jl, minimizer):
 
     check_results(fit_results)
 
+    fit_results = jl.get_errors()
+
+    check_results(fit_results)
+    
 
 def test_minuit_simple(joint_likelihood_bn090217206_nai):
 

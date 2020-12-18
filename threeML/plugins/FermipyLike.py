@@ -4,6 +4,7 @@ import astromodels
 import numpy as np
 import os
 import yaml
+import astropy.io.fits as fits
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
@@ -389,6 +390,13 @@ class FermipyLike(PluginPrototype):
         )
 
         basic_config["selection"]["zmax"] = zmax
+
+        with fits.open(scfile) as ft2_:
+            tmin = float(ft2_[0].header["TSTART"])
+            tmax = float(ft2_[0].header["TSTOP"])
+        
+        basic_config["selection"]["tmin"] = tmin
+        basic_config["selection"]["tmax"] = tmax
 
         evclass = int(evclass)
         assert is_power_of_2(evclass), "The provided evclass is not a power of 2."

@@ -3,10 +3,11 @@ import re
 
 import astropy.io.fits as fits
 import numpy as np
+from pathlib import Path
+from tqdm.auto import tqdm
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable
-from threeML.io.progress_bar import progress_bar
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SpectrumLike import NegativeBackground, SpectrumLike
@@ -723,35 +724,49 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            with progress_bar(len(these_bins), title="Creating plugins") as p:
+            p = tqdm(total=len(these_bins), desc="Creating plugins")
+            
+            for i, interval in enumerate(these_bins):
 
-                for i, interval in enumerate(these_bins):
+                self.set_active_time_interval(interval.to_string())
 
-                    self.set_active_time_interval(interval.to_string())
+                assert isinstance(
+                    self._observed_spectrum, BinnedSpectrum
+                ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
 
-                    assert isinstance(
-                        self._observed_spectrum, BinnedSpectrum
-                    ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
+                if extract_measured_background:
 
-                    if extract_measured_background:
+                    this_background_spectrum = self._measured_background_spectrum
 
-                        this_background_spectrum = self._measured_background_spectrum
+                else:
+
+                    this_background_spectrum = self._background_spectrum
+
+                if this_background_spectrum is None:
+                    custom_warnings.warn(
+                        "No bakckground selection has been made. This plugin will contain no background!"
+                    )
+
+                try:
+
+                    if self._response is None:
+
+                        sl = SpectrumLike(
+                            name="%s%s%d" % (self._name, interval_name, i),
+                            observation=self._observed_spectrum,
+                            background=this_background_spectrum,
+                            verbose=self._verbose,
+                            tstart=self._tstart,
+                            tstop=self._tstop,
+                        )
 
                     else:
 
-                        this_background_spectrum = self._background_spectrum
+                        if not self._use_balrog:
 
-                    if this_background_spectrum is None:
-                        custom_warnings.warn(
-                            "No bakckground selection has been made. This plugin will contain no background!"
-                        )
-
-                    try:
-
-                        if self._response is None:
-
-                            sl = SpectrumLike(
-                                name="%s%s%d" % (self._name, interval_name, i),
+                            sl = DispersionSpectrumLike(
+                                name="%s%s%d" % (
+                                    self._name, interval_name, i),
                                 observation=self._observed_spectrum,
                                 background=this_background_spectrum,
                                 verbose=self._verbose,
@@ -761,40 +776,26 @@ class TimeSeriesBuilder(object):
 
                         else:
 
-                            if not self._use_balrog:
+                            sl = gbm_drm_gen.BALROGLike(
+                                name="%s%s%d" % (
+                                    self._name, interval_name, i),
+                                observation=self._observed_spectrum,
+                                background=this_background_spectrum,
+                                verbose=self._verbose,
+                                time=0.5 * (self._tstart + self._tstop),
+                                tstart=self._tstart,
+                                tstop=self._tstop,
+                            )
 
-                                sl = DispersionSpectrumLike(
-                                    name="%s%s%d" % (
-                                        self._name, interval_name, i),
-                                    observation=self._observed_spectrum,
-                                    background=this_background_spectrum,
-                                    verbose=self._verbose,
-                                    tstart=self._tstart,
-                                    tstop=self._tstop,
-                                )
+                    list_of_speclikes.append(sl)
 
-                            else:
+                except (NegativeBackground):
 
-                                sl = gbm_drm_gen.BALROGLike(
-                                    name="%s%s%d" % (
-                                        self._name, interval_name, i),
-                                    observation=self._observed_spectrum,
-                                    background=this_background_spectrum,
-                                    verbose=self._verbose,
-                                    time=0.5 * (self._tstart + self._tstop),
-                                    tstart=self._tstart,
-                                    tstop=self._tstop,
-                                )
+                    custom_warnings.warn(
+                        "Something is wrong with interval %s. skipping." % interval
+                    )
 
-                        list_of_speclikes.append(sl)
-
-                    except (NegativeBackground):
-
-                        custom_warnings.warn(
-                            "Something is wrong with interval %s. skipping." % interval
-                        )
-
-                    p.increase()
+                p.update(1)
 
             # restore the old interval
 
@@ -912,11 +913,11 @@ class TimeSeriesBuilder(object):
 
             rsp = gbm_drm_gen.BALROG_DRM(drm_gen, 0, 0)
 
-        elif isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
+        elif isinstance(rsp_file, str) or isinstance(rsp_file, Path):
 
             # we need to see if this is an RSP2
 
-            test = re.match("^.*\.rsp2$", rsp_file)
+            test = re.match("^.*\.rsp2$", str(rsp_file))
 
             # some GBM RSPs that are not marked RSP2 are in fact RSP2s
             # we need to check
@@ -1031,9 +1032,9 @@ class TimeSeriesBuilder(object):
 
         # we need to see if this is an RSP2
 
-        if isinstance(rsp_file, str) or isinstance(rsp_file, unicode):
+        if isinstance(rsp_file, str) or isinstance(rsp_file, Path):
 
-            test = re.match("^.*\.rsp2$", rsp_file)
+            test = re.match("^.*\.rsp2$", str(rsp_file))
 
             # some GBM RSPs that are not marked RSP2 are in fact RSP2s
             # we need to check
@@ -1365,47 +1366,46 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            with progress_bar(len(these_bins), title="Creating plugins") as p:
+            p = tqdm(total=len(these_bins), desc="Creating plugins")
+            
+            for i, interval in enumerate(these_bins):
 
-                for i, interval in enumerate(these_bins):
+                self.set_active_time_interval(interval.to_string())
 
-                    self.set_active_time_interval(interval.to_string())
+                if extract_measured_background:
 
-                    if extract_measured_background:
+                    this_background_spectrum = self._measured_background_spectrum
 
-                        this_background_spectrum = self._measured_background_spectrum
+                else:
 
-                    else:
+                    this_background_spectrum = self._background_spectrum
 
-                        this_background_spectrum = self._background_spectrum
+                if this_background_spectrum is None:
+                    custom_warnings.warn(
+                        "No bakckground selection has been made. This plugin will contain no background!"
+                    )
 
-                    if this_background_spectrum is None:
-                        custom_warnings.warn(
-                            "No bakckground selection has been made. This plugin will contain no background!"
-                        )
+                try:
 
-                    try:
+                    pl = PolarLike(
+                        name="%s%s%d" % (self._name, interval_name, i),
+                        observation=self._observed_spectrum,
+                        background=this_background_spectrum,
+                        response=self._response,
+                        verbose=self._verbose,
+                        #               tstart=self._tstart,
+                        #               tstop=self._tstop
+                    )
 
-                        pl = PolarLike(
-                            name="%s%s%d" % (self._name, interval_name, i),
-                            observation=self._observed_spectrum,
-                            background=this_background_spectrum,
-                            response=self._response,
-                            verbose=self._verbose,
-                            #               tstart=self._tstart,
-                            #               tstop=self._tstop
-                        )
+                    list_of_polarlikes.append(pl)
 
-                        list_of_polarlikes.append(pl)
+                except (NegativeBackground):
 
-                    except (NegativeBackground):
+                    custom_warnings.warn(
+                        "Something is wrong with interval %s. skipping." % interval
+                    )
 
-                        custom_warnings.warn(
-                            "Something is wrong with interval %s. skipping." % interval
-                        )
-
-                    p.increase()
-
+                p.update(1)
             # restore the old interval
 
             if old_interval is not None:
