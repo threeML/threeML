@@ -116,7 +116,12 @@ class BayesianAnalysis(object):
 
         
     def set_sampler(self, sampler_name: str, **kwargs):
-
+        """
+        Set the sampler
+        :param sampler_name: (str) Name of sampler
+        :param share_spectrum: (optional) Option to share the spectrum calc
+        between detectors with the same input energy bins
+        """
         assert sampler_name in _available_samplers, (
             "%s is not a valid sampler please choose from %s"
             % (sampler_name, ",".join(list(_available_samplers.keys())))
