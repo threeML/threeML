@@ -9,9 +9,11 @@ import astropy.io.fits as pyfits
 import astropy.units as u
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
+from typing import Optional
 import numpy as np
 from matplotlib.colors import SymLogNorm
 from past.utils import old_div
+
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import (file_existing_and_readable,
@@ -208,11 +210,19 @@ class InstrumentResponse(object):
 
         self._integral_function = integral_function
 
-    def convolve(self):
 
-        true_fluxes = self._integral_function(
-            self._mc_energies[:-1], self._mc_energies[1:]
-        )
+    def convolve(self, precalc_fluxes: Optional[np.array]=None):
+        """
+        Convolve the source flux with the response
+        :param precalc_fluxes: The precalulated flux. If this is None, the
+        flux gets calculated here.
+        """
+        if precalc_fluxes is None:
+            fluxes = self._integral_function(
+                self._mc_energies[:-1], self._mc_energies[1:]
+            )
+        else:
+            fluxes = precalc_fluxes
 
         # Sometimes some channels have 0 lenths, or maybe they start at 0, where
         # many functions (like a power law) are not defined. In the response these
@@ -220,10 +230,10 @@ class InstrumentResponse(object):
         # inf * zero != zero. Thus, let's force this. We avoid checking this situation
         # in details because this would have a HUGE hit on performances
 
-        idx = np.isfinite(true_fluxes)
-        true_fluxes[~idx] = 0
+        idx = np.isfinite(fluxes)
+        fluxes[~idx] = 0
 
-        folded_counts = np.dot(true_fluxes, self._matrix.T)
+        folded_counts = np.dot(fluxes, self._matrix.T)
 
         return folded_counts
 
