@@ -67,8 +67,8 @@ threeML_dev_log_handler.setFormatter(_dev_formatter)
 threeML_dev_log_handler.setLevel(logging.DEBUG)
 # now set up the usr log which will save the info
 
-threeML_usr_log_handler = handlers.RotatingFileHandler(
-    get_path_of_log_file("usr.log"), maxBytes=1000000, backupCount=20
+threeML_usr_log_handler = handlers.TimedRotatingFileHandler(
+    get_path_of_log_file("usr.log"), when="D", interval=1, backupCount=10
 )
 
 threeML_usr_log_handler.setLevel(logging.INFO)
@@ -141,7 +141,8 @@ def setup_logger(name):
 
         log.addHandler(threeML_console_log_handler)
 
-    log.addHandler(threeML_usr_log_handler)
+    if threeML_config["logging"]["usr"]:
+        log.addHandler(threeML_usr_log_handler)
 
     # we do not want to duplicate teh messages in the parents
     log.propagate =False
