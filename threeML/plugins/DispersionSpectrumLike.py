@@ -100,6 +100,21 @@ class DispersionSpectrumLike(SpectrumLike):
 
         return self._rsp.convolve(precalc_fluxes=precalc_fluxes)
 
+    def set_model_integrate_method(self,
+                                   method: str):
+        """
+        Change the integrate method for the model integration
+        :param method: (str) which method should be used (simpson or trapz)
+        """
+        assert method in ["simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        self._model_integrate_method = method
+
+        # if like_model already set, upadte the integral function
+        if self._like_model is not None:
+            differential_flux, integral = self._get_diff_flux_and_integral(self._like_model,
+                                                                           integrate_method=method)
+            self._rsp._integral_function = integral
+
     def get_simulated_dataset(self, new_name=None, **kwargs):
         """
         Returns another DispersionSpectrumLike instance where data have been obtained by randomizing the current expectation from the
