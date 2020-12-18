@@ -60,29 +60,31 @@ def get_grb_model(spectrum):
 
 def get_test_datasets_directory():
 
-    return os.path.abspath(os.path.join(get_path_of_data_dir(), "datasets"))
+    return Path(get_path_of_data_dir(), "datasets").absolute()
 
 
 def get_dataset():
 
-    datadir = os.path.join(get_test_datasets_directory(), "bn090217206")
+    data_dir = Path(get_test_datasets_directory(), "bn090217206")
 
-    obsSpectrum = os.path.join(datadir, "bn090217206_n6_srcspectra.pha{1}")
-    bakSpectrum = os.path.join(datadir, "bn090217206_n6_bkgspectra.bak{1}")
-    rspFile = os.path.join(datadir, "bn090217206_n6_weightedrsp.rsp{1}")
-    NaI6 = OGIPLike("NaI6", obsSpectrum, bakSpectrum, rspFile)
+    obs_spectrum = Path(data_dir, "bn090217206_n6_srcspectra.pha{1}")
+    bak_spectrum = Path(data_dir, "bn090217206_n6_bkgspectra.bak{1}")
+    rsp_file = Path(data_dir, "bn090217206_n6_weightedrsp.rsp{1}")
+    NaI6 = OGIPLike("NaI6", str(obs_spectrum),
+                    str(bak_spectrum), str(rsp_file))
     NaI6.set_active_measurements("10.0-30.0", "40.0-950.0")
 
     return NaI6
 
 def get_dataset_det(det):
 
-    datadir = os.path.join(get_test_datasets_directory(), "bn090217206")
+    data_dir = Path(get_test_datasets_directory(), "bn090217206")
 
-    obsSpectrum = os.path.join(datadir, f"bn090217206_{det}_srcspectra.pha{{1}}")
-    bakSpectrum = os.path.join(datadir, f"bn090217206_{det}_bkgspectra.bak{{1}}")
-    rspFile = os.path.join(datadir, f"bn090217206_{det}_weightedrsp.rsp{{1}}")
-    p = OGIPLike(det, obsSpectrum, bakSpectrum, rspFile)
+    obs_spectrum = Path(data_dir, f"bn090217206_{det}_srcspectra.pha{{1}}")
+    bak_spectrum = Path(data_dir, f"bn090217206_{det}_bkgspectra.bak{{1}}")
+    rsp_file = Path(data_dir, f"bn090217206_{det}_weightedrsp.rsp{{1}}")
+    p = OGIPLike(det, str(obs_spectrum),
+                 str(bak_spectrum), str(rsp_file))
     if det[0] == "b":
         p.set_active_measurements("250-25000")
     else:
