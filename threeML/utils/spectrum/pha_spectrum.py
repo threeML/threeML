@@ -2,15 +2,14 @@ from __future__ import division
 from builtins import range
 from past.utils import old_div
 import collections
-
+from pathlib import Path
 import astropy.io.fits as fits
 import numpy as np
 import os
 import warnings
 import six
+from tqdm.auto import tqdm, trange
 
-
-from threeML.io.progress_bar import progress_bar
 from threeML.utils.OGIP.response import OGIPResponse, InstrumentResponse
 from threeML.utils.OGIP.pha import PHAII
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, Quality
@@ -75,9 +74,9 @@ def _read_pha_or_pha2_file(
 
     assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
         pha_file_or_instance, PHAII
-    ), "Must provide a FITS file name or PHAII instance"
+    ) or isinstance(pha_file_or_instance, Path), "Must provide a FITS file name or PHAII instance"
 
-    if isinstance(pha_file_or_instance, six.string_types):
+    if isinstance(pha_file_or_instance, six.string_types) or isinstance(pha_file_or_instance, Path):
 
         ext = os.path.splitext(pha_file_or_instance)[-1]
 
@@ -392,7 +391,7 @@ def _read_pha_or_pha2_file(
 
                 # Read in the response
 
-        if isinstance(rsp_file, six.string_types) or isinstance(rsp_file, str):
+        if isinstance(rsp_file, six.string_types) or isinstance(rsp_file, str) or isinstance(rsp_file, Path):
             rsp = OGIPResponse(rsp_file, arf_file=arf_file)
 
         else:
@@ -996,7 +995,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
         assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
             pha_file_or_instance, PHAII
-        ), "Must provide a FITS file name or PHAII instance"
+        ) or isinstance(pha_file_or_instance, Path), "Must provide a FITS file name or PHAII instance"
 
         with fits.open(pha_file_or_instance) as f:
 
@@ -1089,26 +1088,26 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
         list_of_binned_spectra = []
 
-        with progress_bar(num_spectra, title="Loading PHAII spectra") as p:
-            for i in range(num_spectra):
+        
+        for i in trange(num_spectra, desc="Loading PHAII Spectra"):
 
-                list_of_binned_spectra.append(
-                    BinnedSpectrumWithDispersion(
-                        counts=pha_information["counts"][i],
-                        exposure=pha_information["exposure"][i, 0],
-                        response=pha_information["rsp"],
-                        count_errors=count_errors[i],
-                        sys_errors=pha_information["sys_errors"][i],
-                        is_poisson=pha_information["is_poisson"],
-                        quality=pha_information["quality"].get_slice(i),
-                        mission=pha_information["gathered_keywords"]["mission"],
-                        instrument=pha_information["gathered_keywords"]["instrument"],
-                        tstart=tstart[i],
-                        tstop=tstop[i],
-                    )
+            list_of_binned_spectra.append(
+                BinnedSpectrumWithDispersion(
+                    counts=pha_information["counts"][i],
+                    exposure=pha_information["exposure"][i, 0],
+                    response=pha_information["rsp"],
+                    count_errors=count_errors[i],
+                    sys_errors=pha_information["sys_errors"][i],
+                    is_poisson=pha_information["is_poisson"],
+                    quality=pha_information["quality"].get_slice(i),
+                    mission=pha_information["gathered_keywords"]["mission"],
+                    instrument=pha_information["gathered_keywords"]["instrument"],
+                    tstart=tstart[i],
+                    tstop=tstop[i],
                 )
+            )
 
-                p.increase()
+        
 
         # now get the time intervals
 

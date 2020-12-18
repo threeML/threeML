@@ -3,10 +3,9 @@
 import logging
 import sys
 
+from tqdm.auto import tqdm
 import numexpr
 import numpy as np
-
-from threeML.io.progress_bar import progress_bar
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("bayesian_blocks")
@@ -82,42 +81,42 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
     numexpr.set_num_threads(1)
     numexpr.set_vml_num_threads(1)
 
-    with progress_bar(N) as progress:
+    progress = tqdm(total=N, desc="Bayesian Blocks")
 
-        for R in range(N):
-            br = block_length[R + 1]
-            T_k = block_length[: R + 1] - br
+    for R in range(N):
+        br = block_length[R + 1]
+        T_k = block_length[: R + 1] - br
 
-            # N_k: number of elements in each block
-            # This expression has been simplified for the case of
-            # unbinned events (i.e., one element in each block)
-            # It was:
-            N_k = cumsum(x[: R + 1][::-1])[::-1]
-            # Now it is:
-            # N_k = arange(R + 1, 0, -1)
+        # N_k: number of elements in each block
+        # This expression has been simplified for the case of
+        # unbinned events (i.e., one element in each block)
+        # It was:
+        N_k = cumsum(x[: R + 1][::-1])[::-1]
+        # Now it is:
+        # N_k = arange(R + 1, 0, -1)
 
-            # Evaluate fitness function
-            # This is the slowest part, which I'm speeding up by using
-            # numexpr. It provides a ~40% gain in execution speed.
+        # Evaluate fitness function
+        # This is the slowest part, which I'm speeding up by using
+        # numexpr. It provides a ~40% gain in execution speed.
 
-            fit_vec = numexpr_evaluate(
-                """N_k * log(N_k/ T_k) """,
-                optimization="aggressive",
-                local_dict={"N_k": N_k, "T_k": T_k},
-            )
+        fit_vec = numexpr_evaluate(
+            """N_k * log(N_k/ T_k) """,
+            optimization="aggressive",
+            local_dict={"N_k": N_k, "T_k": T_k},
+        )
 
-            p = priors[R]
+        p = priors[R]
 
-            A_R = fit_vec - p
+        A_R = fit_vec - p
 
-            A_R[1:] += best[:R]
+        A_R[1:] += best[:R]
 
-            i_max = argmax(A_R)
+        i_max = argmax(A_R)
 
-            last[R] = i_max
-            best[R] = A_R[i_max]
+        last[R] = i_max
+        best[R] = A_R[i_max]
 
-            progress.increase()
+        progress.update(1)
 
     numexpr.set_vml_accuracy_mode(oldaccuracy)
 

@@ -2,8 +2,47 @@ Release Notes
 =============
 
 
+Version 2.1
+-----------
+
+
+v2.1.1
+^^^^^^^^
+*Thu, 17 Dec 2020 02:35:08 + 0000*
+
+* Refactored code with `pathlib` library addition. Merged in pull request:
+  https://github.com/threeML/threeML/pull/393
+
+
+v2.1.0
+^^^^^^^^
+*Wed, 16 Dec 2020 00:02:29 + 0000*
+
+* Dropped `python 2` release and support.
+* Pinned `iminuit<2` version dependency.
+* Added ability to save `AnalysisResults` to HDF5 files. 
+* Merged in pull request: https://github.com/threeML/threeML/pull/386
+* Issue(s) closed:
+
+  * https://github.com/threeML/threeML/issues/389
+
+
 Version 2.0
 -----------
+
+
+v2.0.3
+^^^^^^^^
+*Tue, 08 Dec 2020 19:24:04 + 0000*
+
+* Fix for `double` attribute of `ROOT` minimizer. Merged in pull request:
+  https://github.com/threeML/threeML/pull/388
+* Added support for `fermipy 1.0+`. Merged in pull request:
+  https://github.com/threeML/threeML/pull/390
+* Issue(s) closed:
+
+  * https://github.com/threeML/threeML/issues/385
+  * https://github.com/threeML/threeML/issues/387
 
 
 v2.0.2
