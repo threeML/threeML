@@ -1803,7 +1803,7 @@ class SpectrumLike(PluginPrototype):
         elif integrate_method == "trapz":
 
             def integral(e1, e2):
-                # Simpson's rule
+                # Trapz rule
                 if isinstance(e1, Iterable):
                     # Energy given as list or array
 
@@ -3071,6 +3071,7 @@ class SpectrumLike(PluginPrototype):
         rebinned_quantities = self._construct_counts_arrays(min_rate, ratio_residuals)
 
         if source_only:
+            y_label = "Net rate\n(counts s$^{-1}$ keV$^{-1}$)"
             weighted_data = old_div(
                 rebinned_quantities["new_observed_rate"]-rebinned_quantities["new_background_rate"], rebinned_quantities["new_chan_width"]
             )
@@ -3080,6 +3081,7 @@ class SpectrumLike(PluginPrototype):
                 rebinned_quantities["new_chan_width"]
             )
         else:
+            y_label = "Observed rate\n(counts s$^{-1}$ keV$^{-1}$)"
             weighted_data = old_div(
                 rebinned_quantities["new_observed_rate"], rebinned_quantities["new_chan_width"]
             )
@@ -3163,7 +3165,7 @@ class SpectrumLike(PluginPrototype):
 
         return residual_plot.finalize(
             xlabel="Energy\n(keV)",
-            ylabel="Net rate\n(counts s$^{-1}$ keV$^{-1}$)",
+            ylabel=y_label,
             xscale="log",
             yscale="log",
             show_legend=show_legend,
