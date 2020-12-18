@@ -12,6 +12,8 @@ from threeML.bayesian.ultranest_sampler import UltraNestSampler
 from threeML.bayesian.dynesty_sampler import DynestyNestedSampler, DynestyDynamicSampler
 #from threeML.bayesian.pinnuts_sampler import NUTSSampler
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
+from threeML.data_list import DataList
+from astromodels.core.model import Model
 
 _available_samplers = {}
 _available_samplers["multinest"] = MultiNestSampler
@@ -24,7 +26,7 @@ _available_samplers["dynesty_dynamic"] = DynestyDynamicSampler
 
 
 class BayesianAnalysis(object):
-    def __init__(self, likelihood_model, data_list, **kwargs):
+    def __init__(self, likelihood_model: Model, data_list: DataList, **kwargs):
         """
         Bayesian analysis.
 
@@ -61,7 +63,7 @@ class BayesianAnalysis(object):
 
 
         
-    def _register_model_and_data(self, likelihood_model, data_list):
+    def _register_model_and_data(self, likelihood_model: Model, data_list: DataList):
         """
 
         make sure the model and data list are set up
@@ -113,15 +115,20 @@ class BayesianAnalysis(object):
 
 
         
-    def set_sampler(self, sampler_name):
-
+    def set_sampler(self, sampler_name: str, **kwargs):
+        """
+        Set the sampler
+        :param sampler_name: (str) Name of sampler
+        :param share_spectrum: (optional) Option to share the spectrum calc
+        between detectors with the same input energy bins
+        """
         assert sampler_name in _available_samplers, (
             "%s is not a valid sampler please choose from %s"
             % (sampler_name, ",".join(list(_available_samplers.keys())))
         )
 
         self._sampler = _available_samplers[sampler_name](
-            self._likelihood_model, self._data_list
+            self._likelihood_model, self._data_list, **kwargs
         )
 
     @property
