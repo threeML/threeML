@@ -565,7 +565,6 @@ class BinnedSpectrum(Histogram):
         :param use_poly:
         :return:
         """
-        raise NotImplementedError("This is still under construction")
 
         pha_information = time_series.get_information_dict(use_poly)
 
@@ -578,15 +577,17 @@ class BinnedSpectrum(Histogram):
             instrument=pha_information["instrument"],
             mission=pha_information["telescope"],
             tstart=pha_information["tstart"],
-            telapse=pha_information["telapse"],
+            tstop=pha_information["tstart"]+pha_information["telapse"],
+            #telapse=pha_information["telapse"],
             # channel=pha_information['channel'],
             counts=pha_information["counts"],
             count_errors=pha_information["counts error"],
             quality=pha_information["quality"],
-            grouping=pha_information["grouping"],
+            #grouping=pha_information["grouping"],
             exposure=pha_information["exposure"],
-            backscale=1.0,
+            #backscale=1.0,
             is_poisson=is_poisson,
+            ebounds=pha_information["edges"]
         )
 
     def __add__(self, other):

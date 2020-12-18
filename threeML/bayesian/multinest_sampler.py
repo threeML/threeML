@@ -1,5 +1,6 @@
 import os
 import time
+from typing import Optional
 
 import numpy as np
 
@@ -7,6 +8,8 @@ import numpy as np
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
+from threeML.data_list import DataList
+from astromodels.core.model import Model
 
 try:
 
@@ -42,7 +45,10 @@ except:
 
 
 class MultiNestSampler(UnitCubeSampler):
-    def __init__(self, likelihood_model=None, data_list=None, **kwargs):
+    def __init__(self,
+                 likelihood_model: Optional[Model]=None,
+                 data_list: Optional[DataList]=None,
+                 **kwargs):
         """
         Implements the MultiNest sampler of https://github.com/farhanferoz/MultiNest
         via the python wrapper of https://github.com/JohannesBuchner/PyMultiNest
@@ -60,10 +66,10 @@ class MultiNestSampler(UnitCubeSampler):
 
     def setup(
         self,
-        n_live_points,
-        chain_name="chains/fit-",
-        resume=False,
-        importance_nested_sampling=False,
+        n_live_points: int,
+        chain_name: str="chains/fit-",
+        resume: bool=False,
+        importance_nested_sampling: bool=False,
         **kwargs
     ):
         """
@@ -91,7 +97,7 @@ class MultiNestSampler(UnitCubeSampler):
 
         self._is_setup = True
 
-    def sample(self, quiet=False):
+    def sample(self, quiet: bool=False):
         """
         sample using the MultiNest numerical integration method
 
