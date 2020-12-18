@@ -12,6 +12,7 @@ from matplotlib.colors import SymLogNorm
 import matplotlib.pyplot as plt
 from operator import itemgetter, attrgetter
 import copy
+from typing import Optional
 
 import astropy.units as u
 

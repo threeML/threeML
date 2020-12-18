@@ -1,4 +1,6 @@
 import copy
+from typing import Optional
+import numpy as np
 
 import pandas as pd
 
@@ -85,11 +87,12 @@ class DispersionSpectrumLike(SpectrumLike):
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
 
-        differential_flux, integral = self._get_diff_flux_and_integral(self._like_model)
+        differential_flux, integral = self._get_diff_flux_and_integral(self._like_model,
+                                                                       integrate_method=self._model_integrate_method)
 
         self._rsp.set_function(integral)
 
-    def _evaluate_model(self, precalc_fluxes=None):
+    def _evaluate_model(self, precalc_fluxes: Optional[np.array]=None):
         """
         evaluates the full model over all channels
         :return:

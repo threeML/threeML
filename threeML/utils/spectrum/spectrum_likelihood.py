@@ -1,5 +1,6 @@
 from builtins import object
 import copy
+from typing import Optional
 
 import numpy as np
 
