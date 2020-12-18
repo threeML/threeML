@@ -43,7 +43,9 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
 
         :param likelihood_model: the likelihood model
-        :param data_list: the data list 
+        :param data_list: the data list
+        :param share_spectrum: (optional) Should the spectrum be shared between detectors
+        with the same input energy bins?
         :returns: 
         :rtype: 
 
@@ -61,8 +63,8 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         self._data_list = data_list
         
         # Share spectrum flag if the spectrum should only be calculated
-        # once when different data_list entries have the same input energy bins
-        # for the response folding. Only usefull if spectrum calculation is slow.
+        # once when different data_list entries have the same input energy bins.
+        # Can speed up the fits a lot if many similar detectors are used.
         if "share_spectrum" in kwargs:
             self._share_spectrum = kwargs["share_spectrum"]
             assert type(self._share_spectrum) == bool,\
@@ -88,6 +90,12 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                     self._data_ebin_connect = np.array([0])
                     num_found += 1
 
+                    # Get integral function. Should be the same for all plugins.
+                    _, self._integral = d._get_diff_flux_and_integral(
+                        likelihood_model,
+                        integrate_method=d._model_integrate_method
+                    )
+
                 else:
                     if isinstance(d, DispersionSpectrumLike):
                         e = d.response.monte_carlo_energies
@@ -99,7 +107,7 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
                     # Check if these Ein_bins are already used by an earlier plugin
                     for i in range(len(self._data_ein_edges)):
-                        if len(e)==len(self._data_ein_edges[i]):
+                        if len(e) == len(self._data_ein_edges[i]):
                             if np.all(np.equal(e, self._data_ein_edges[i])):
                                 self._data_ebin_connect = np.append(self._data_ebin_connect, i)
                                 found = True
@@ -110,12 +118,6 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                         self._data_ebin_connect = np.append(self._data_ebin_connect, i+1)
                         num_found += 1
                     found = False
-
-
-            # Get the Integral function. This should be the same for all plugins.
-            # Only Ein_bins may be different. Not sure if this holds always.
-            _, self._integral = list(self._data_list.values())[0]._get_diff_flux_and_integral(self._likelihood_model)
-
 
 
     @abc.abstractmethod
