@@ -3,6 +3,7 @@ from builtins import object
 import logging
 import numpy as np
 import warnings
+from tqdm.auto import trange
 
 log = logging.getLogger(__name__)
 
@@ -10,7 +11,7 @@ from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
-from threeML.io.progress_bar import progress_bar
+
 from threeML.analysis_results import AnalysisResultsSet
 from threeML.minimizer.minimization import _Minimization, LocalMinimization, _minimizers
 
@@ -249,15 +250,9 @@ class JointLikelihoodSet(object):
 
             results = []
 
-            with progress_bar(
-                self._n_iterations, title="Goodness of fit computation"
-            ) as p:
+            for i in trange(self._n_iterations,desc="Goodness of fit computation"):
 
-                for i in range(self._n_iterations):
-
-                    results.append(self.worker(i))
-
-                    p.increase()
+                results.append(self.worker(i))
 
         assert len(results) == self._n_iterations, (
             "Something went wrong, I have %s results "

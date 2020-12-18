@@ -6,8 +6,7 @@ import ftplib
 import urllib.request, urllib.parse, urllib.error
 import os
 
-from threeML.io.progress_bar import progress_bar
-
+from tqdm.auto import tqdm
 
 def download_file_from_ftp(ftp_url, destination_directory):
     assert ftp_url[-1] != "/", (
@@ -72,28 +71,28 @@ def download_files_from_directory_ftp(
 
     downloaded_files = []
 
-    with progress_bar(len(filenames)) as p:
+    progress_bar = tqdm(total=len(filenames))
 
-        for i, filename in enumerate(filenames):
+    for i, filename in enumerate(filenames):
 
-            if namefilter != None and filename.find(namefilter) < 0:
+        if namefilter != None and filename.find(namefilter) < 0:
 
-                p.increase()
+            progress_bar.update(1)
 
-                # Filename does not match, do not download it
-                continue
+            # Filename does not match, do not download it
+            continue
 
-            else:
+        else:
 
-                local_filename = os.path.join(destination_directory, filename)
+            local_filename = os.path.join(destination_directory, filename)
 
-                urllib.request.urlretrieve(
-                    "ftp://%s/%s/%s" % (serverAddress, directory, filename),
-                    local_filename,
-                )
+            urllib.request.urlretrieve(
+                "ftp://%s/%s/%s" % (serverAddress, directory, filename),
+                local_filename,
+            )
 
-                urllib.request.urlcleanup()
+            urllib.request.urlcleanup()
 
-                downloaded_files.append(local_filename)
+            downloaded_files.append(local_filename)
 
     return downloaded_files
