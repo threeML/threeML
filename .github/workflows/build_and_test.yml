@@ -77,7 +77,9 @@ jobs:
         echo "Building ${PKG_VERSION} ..."
         echo "Python version: ${TRAVIS_PYTHON_VERSION}"
 
-        conda update --yes -q conda conda-build
+        #conda update --yes -q conda conda-build
+
+        conda update --yes -q conda
 
         conda config --add channels ${xspec_channel}
 
