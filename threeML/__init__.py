@@ -5,6 +5,7 @@ import pandas as pd
 pd.set_option("max_columns", None)
 
 import os
+from pathlib import Path
 import warnings
 from threeML.io.logging import setup_logger
 
@@ -45,7 +46,7 @@ from .io.serialization import *
 #from .exceptions.custom_exceptions import custom_warnings
 
 import glob
-import imp
+from importlib.machinery import SourceFileLoader
 import traceback
 
 # Import everything from astromodels
@@ -81,7 +82,7 @@ def is_module_importable(module_full_path):
 
     try:
 
-        _ = imp.load_source("__", module_full_path)
+        _ = SourceFileLoader("__", str(module_full_path)).load_module()
 
     except:
 
@@ -92,13 +93,18 @@ def is_module_importable(module_full_path):
         return True, "%s imported ok" % module_full_path
 
 
-plugins_dir = os.path.join(os.path.dirname(__file__), "plugins")
+plugins_dir = Path(__file__).parent / "plugins"
 
-found_plugins = glob.glob(os.path.join(plugins_dir, "*.py"))
+found_plugins = plugins_dir.glob("*.py")
 
 # Filter out __init__
 
-found_plugins = filter(lambda x: x.find("__init__") < 0, found_plugins)
+#found_plugins = filter(lambda x: str(x).find("__init__") < 0, found_plugins)
+
+# Filter out __init__
+
+found_plugins = filter(lambda x: str(x).find("__init__") < 0, found_plugins)
+
 
 _working_plugins = {}
 _not_working_plugins = {}
@@ -108,6 +114,8 @@ _not_working_plugins = {}
 for i, module_full_path in enumerate(found_plugins):
 
     plugin_name = os.path.splitext(os.path.basename(module_full_path))[0]
+
+    
 
     is_importable, failure_traceback = is_module_importable(module_full_path)
 
@@ -334,3 +342,6 @@ for var in var_to_check:
             % var
 #            RuntimeWarning,
         )
+del os
+del Path
+        
