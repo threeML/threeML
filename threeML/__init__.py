@@ -5,8 +5,9 @@ import pandas as pd
 pd.set_option("max_columns", None)
 
 import os
-from pathlib import Path
 import warnings
+from pathlib import Path
+
 from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
@@ -40,27 +41,28 @@ from ._version import get_versions
 __version__ = get_versions()["version"]
 del get_versions
 
-# Finally import the serialization machinery
-from .io.serialization import *
-
-#from .exceptions.custom_exceptions import custom_warnings
-
 import glob
-from importlib.machinery import SourceFileLoader
 import traceback
+from importlib.machinery import SourceFileLoader
 
 # Import everything from astromodels
 from astromodels import *
 
+from .exceptions import custom_exceptions
+# Finally import the serialization machinery
+from .io.serialization import *
 # Now import the optimizers first (to avoid conflicting libraries problems)
-from .minimizer.minimization import _minimizers, LocalMinimization, GlobalMinimization
+from .minimizer.minimization import (GlobalMinimization, LocalMinimization,
+                                     _minimizers)
+from .plugin_prototype import PluginPrototype
+
+# from .exceptions.custom_exceptions import custom_warnings
+
 
 # This must be here before the automatic import of subpackages,
 # otherwise we will incur in weird issues with other packages
 # using similar names (for example, the io package)
 
-from .exceptions import custom_exceptions
-from .plugin_prototype import PluginPrototype
 
 try:
     # noinspection PyUnresolvedReferences
@@ -70,7 +72,7 @@ except ImportError:
 
     log.warning(
         "The cthreeML package is not installed. You will not be able to use plugins which require "
-        "the C/C++ interface (currently HAWC)"    #    custom_exceptions.CppInterfaceNotAvailable,
+        "the C/C++ interface (currently HAWC)"  #    custom_exceptions.CppInterfaceNotAvailable,
     )
 
 # Now look for plugins
@@ -99,7 +101,7 @@ found_plugins = plugins_dir.glob("*.py")
 
 # Filter out __init__
 
-#found_plugins = filter(lambda x: str(x).find("__init__") < 0, found_plugins)
+# found_plugins = filter(lambda x: str(x).find("__init__") < 0, found_plugins)
 
 # Filter out __init__
 
@@ -113,18 +115,16 @@ _not_working_plugins = {}
 
 for i, module_full_path in enumerate(found_plugins):
 
-    plugin_name = os.path.splitext(os.path.basename(module_full_path))[0]
-
-    
+    plugin_name = module_full_path.stem
 
     is_importable, failure_traceback = is_module_importable(module_full_path)
 
     if not is_importable:
 
         log.warning(
-            "Could not import plugin %s. Do you have the relative instrument software installed "
-            "and configured?" % os.path.basename(module_full_path)
-            #custom_exceptions.CannotImportPlugin,
+            f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
+            "and configured?"
+            # custom_exceptions.CannotImportPlugin,
         )
 
         _not_working_plugins[plugin_name] = failure_traceback
@@ -136,7 +136,7 @@ for i, module_full_path in enumerate(found_plugins):
         # First get the instrument name
         try:
 
-            exec("from threeML.plugins.%s import __instrument_name" % plugin_name)
+            exec(f"from threeML.plugins.{plugin_name} import __instrument_name")
 
         except ImportError:
 
@@ -145,10 +145,7 @@ for i, module_full_path in enumerate(found_plugins):
 
         # Now import the plugin itself
 
-        import_command = "from threeML.plugins.%s import %s" % (
-            plugin_name,
-            plugin_name,
-        )
+        import_command = f"from threeML.plugins.{plugin_name} import {plugin_name}"
 
         try:
 
@@ -176,16 +173,16 @@ def get_available_plugins():
 
     for instrument, class_name in _working_plugins.items():
 
-        print("%s for %s" % (class_name, instrument))
+        print(f"{class_name} for {instrument}")
 
 
 def _display_plugin_traceback(plugin):
 
-    print("#############################################################")
-    print("\nCouldn't import plugin %s" % plugin)
-    print("\nTraceback:\n")
-    print(_not_working_plugins[plugin])
-    print("#############################################################")
+    log.warning("#############################################################")
+    log.warning("\nCouldn't import plugin %s" % plugin)
+    log.warning("\nTraceback:\n")
+    log.warning(_not_working_plugins[plugin])
+    log.warning("#############################################################")
 
 
 def is_plugin_available(plugin):
@@ -227,87 +224,70 @@ def is_plugin_available(plugin):
 
         else:
 
-            raise RuntimeError("Plugin %s is not known" % plugin)
+            log.error(f"Plugin {plugin} is not known")
+            raise RuntimeError()
 
 
 # Import the classic Maximum Likelihood Estimation package
 
-from .classicMLE.joint_likelihood import JointLikelihood
+import os
+
+import astropy.units as u
+
+# Import the results loader
+from threeML.analysis_results import (convert_fits_analysis_result_to_hdf,
+                                      load_analysis_results,
+                                      load_analysis_results_hdf)
+# Import catalogs
+from threeML.catalogs import *
+from threeML.io import (activate_warnings, silence_warnings,
+                        update_logging_level)
+from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
+from threeML.io.plotting.model_plot import (plot_point_source_spectra,
+                                            plot_spectra)
+from threeML.io.plotting.post_process_data_plots import (
+    display_photometry_model_magnitudes, display_spectrum_model_counts)
+#
+from threeML.io.uncertainty_formatter import interval_to_errors
+# import time series builder, soon to replace the Fermi plugins
+from threeML.utils.data_builders import *
+from threeML.utils.data_download.Fermi_GBM.download_GBM_data import \
+    download_GBM_trigger_data
+# Import the LAT data downloader
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import \
+    download_LAT_data
+# Import LLE downloader
+from threeML.utils.data_download.Fermi_LAT.download_LLE_data import \
+    download_LLE_trigger_data
 
 # Import the Bayesian analysis
 from .bayesian.bayesian_analysis import BayesianAnalysis
-
-# Import the DataList class
-
-from .data_list import DataList
-
-from threeML.io import silence_warnings, activate_warnings, update_logging_level
-
-from threeML.io.plotting.model_plot import plot_spectra, plot_point_source_spectra
-from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
-from threeML.io.plotting.post_process_data_plots import (
-    display_spectrum_model_counts,
-    display_photometry_model_magnitudes,
-)
-
-# Import the joint likelihood set
-from .classicMLE.joint_likelihood_set import (
-    JointLikelihoodSet,
-    JointLikelihoodSetAnalyzer,
-)
-from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from .classicMLE.goodness_of_fit import GoodnessOfFit
-
+from .classicMLE.joint_likelihood import JointLikelihood
+# Import the joint likelihood set
+from .classicMLE.joint_likelihood_set import (JointLikelihoodSet,
+                                              JointLikelihoodSetAnalyzer)
+from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
+# Now read the configuration and make it available as threeML_config
+from .config.config import threeML_config
+from .data_list import DataList
 from .io.calculate_flux import calculate_point_source_flux
-
+# Import the plot_style context manager and the function to create new styles
+from .io.plotting.plot_style import (create_new_plotting_style,
+                                     get_available_plotting_styles, plot_style)
+from .parallel.parallel_client import parallel_computation
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
 
-from .parallel.parallel_client import parallel_computation
-
-#
-from threeML.io.uncertainty_formatter import interval_to_errors
+# Import the DataList class
 
 
 # Import optical filters
 # from threeML.plugins.photometry.filter_factory import threeML_filter_library
 
-# import time series builder, soon to replace the Fermi plugins
-from threeML.utils.data_builders import *
-
-# Import catalogs
-from threeML.catalogs import *
 
 # Import GBM  downloader
 
-from threeML.utils.data_download.Fermi_GBM.download_GBM_data import (
-    download_GBM_trigger_data,
-)
-
-# Import LLE downloader
-from threeML.utils.data_download.Fermi_LAT.download_LLE_data import (
-    download_LLE_trigger_data,
-)
-
-# Now read the configuration and make it available as threeML_config
-from .config.config import threeML_config
-
-import astropy.units as u
-
-import os
-
-# Import the LAT data downloader
-from threeML.utils.data_download.Fermi_LAT.download_LAT_data import download_LAT_data
-
-# Import the results loader
-from threeML.analysis_results import load_analysis_results, load_analysis_results_hdf, convert_fits_analysis_result_to_hdf
-
-# Import the plot_style context manager and the function to create new styles
-from .io.plotting.plot_style import (
-    plot_style,
-    create_new_plotting_style,
-    get_available_plotting_styles,
-)
 
 # Check that the number of threads is set to 1 for all multi-thread libraries
 # otherwise numpy operations will be way slower than what they could be, since
@@ -332,7 +312,7 @@ for var in var_to_check:
             log.warning(
                 "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
                 "for optimum performances." % var,
-                #RuntimeWarning,
+                # RuntimeWarning,
             )
 
     else:
@@ -340,8 +320,7 @@ for var in var_to_check:
         log.warning(
             "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
             % var
-#            RuntimeWarning,
+            #            RuntimeWarning,
         )
 del os
 del Path
-        
