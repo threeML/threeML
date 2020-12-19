@@ -1,32 +1,32 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import zip
-from builtins import range
-from builtins import object
-from past.utils import old_div
+from __future__ import division, print_function
+
 import collections
 import sys
+from builtins import object, range, zip
+
 import astromodels.core.model
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.optimize
 import scipy.stats
-from astromodels import ModelAssertionViolation, Model
-from astromodels import clone_model
+from astromodels import Model, ModelAssertionViolation, clone_model
+from past.utils import old_div
+
 from threeML.analysis_results import MLEResults
 from threeML.config.config import threeML_config
+from threeML.data_list import DataList
 from threeML.exceptions import custom_exceptions
-from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
+from threeML.exceptions.custom_exceptions import FitFailed, custom_warnings
+from threeML.io.logging import setup_logger
 from threeML.io.results_table import ResultsTable
 from threeML.io.table import Table
 from threeML.minimizer import minimization
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.statistics.stats_tools import aic, bic
-from threeML.data_list import DataList
-from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
+
 
 class ReducingNumberOfThreads(Warning):
     pass
@@ -41,7 +41,13 @@ class NotANumberInLikelihood(Warning):
 
 
 class JointLikelihood(object):
-    def __init__(self, likelihood_model: Model, data_list: DataList, verbose: bool=False, record: bool=True):
+    def __init__(
+        self,
+        likelihood_model: Model,
+        data_list: DataList,
+        verbose: bool = False,
+        record: bool = True,
+    ):
         """
         Implement a joint likelihood analysis.
 
@@ -54,8 +60,8 @@ class JointLikelihood(object):
         """
 
         log.debug("creating new MLE analysis")
-        
-        self._analysis_type: string = "mle"
+
+        self._analysis_type: str = "mle"
 
         # Process optional keyword parameters
         self.verbose: bool = verbose
@@ -104,7 +110,7 @@ class JointLikelihood(object):
     def _assign_model_to_data(self, model) -> None:
 
         log.debug("REGISTERING MODEL")
-        
+
         for dataset in list(self._data_list.values()):
 
             dataset.set_model(model)
@@ -127,7 +133,7 @@ class JointLikelihood(object):
                 self._likelihood_model.add_external_parameter(parameter)
 
         log.debug("MODEL REGISTERED!")
-        
+
     @property
     def likelihood_model(self) -> Model:
         """
@@ -199,7 +205,12 @@ class JointLikelihood(object):
 
         self._free_parameters = self._likelihood_model.free_parameters
 
-    def fit(self, quiet: bool=False, compute_covariance: bool=True, n_samples: int=5000):
+    def fit(
+        self,
+        quiet: bool = False,
+        compute_covariance: bool = True,
+        n_samples: int = 5000,
+    ):
         """
         Perform a fit of the current likelihood model on the datasets
 
@@ -222,9 +233,7 @@ class JointLikelihood(object):
         # Check if we have free parameters, otherwise simply return the value of the log like
         if len(self._free_parameters) == 0:
 
-            log.warning(
-                "There is no free parameter in the current model"
-            )
+            log.warning("There is no free parameter in the current model")
 
             # Create the minimizer anyway because it will be needed by the following code
 
@@ -426,7 +435,7 @@ class JointLikelihood(object):
         param_2_maximum=None,
         param_2_n_steps=None,
         progress=True,
-        **options
+        **options,
     ):
         """
         Generate confidence contours for the given parameters by stepping for the given number of steps between
@@ -545,7 +554,7 @@ class JointLikelihood(object):
                 param_2_maximum,
                 param_2_n_steps,
                 progress,
-                **options
+                **options,
             )
 
             # Collapse the second dimension of the results if we are doing a 1d contour
@@ -577,7 +586,6 @@ class JointLikelihood(object):
                 log.warning(
                     "The number of engines is larger than the number of steps. Using only %s engines."
                     % n_engines,
-                    
                 )
 
             # Check if the number of steps is divisible by the number
@@ -592,7 +600,6 @@ class JointLikelihood(object):
                 log.warning(
                     "Number of steps is not a multiple of the number of threads. Reducing steps to %s"
                     % param_1_n_steps,
-                    
                 )
 
             # Compute the number of splits, i.e., how many lines in the grid for each engine.
@@ -653,7 +660,7 @@ class JointLikelihood(object):
                     param_2_maximum,
                     param_2_n_steps,
                     progress=True,
-                    **options
+                    **options,
                 )
 
                 # Restore best fit values
@@ -909,7 +916,6 @@ class JointLikelihood(object):
 
                 log.warning(
                     "Fitting engine in forbidden space: %s" % (trial_values,),
-                    
                 )
 
                 return minimization.FIT_FAILED
@@ -929,7 +935,6 @@ class JointLikelihood(object):
         if "%s" % summed_log_likelihood == "nan":
             log.warning(
                 "These parameters returned a logLike = Nan: %s" % (trial_values,),
-                
             )
 
             return minimization.FIT_FAILED
@@ -981,7 +986,7 @@ class JointLikelihood(object):
             self._minimizer_type = minimization.LocalMinimization(minimizer)
 
         log.info(f"set the minimizer to {minimizer}")
-            
+
     def _get_minimizer(self, *args, **kwargs):
 
         # Get an instance of the minimizer
@@ -1014,9 +1019,7 @@ class JointLikelihood(object):
 
         else:
 
-            log.warning(
-                "Cannot restore best fit, since fit has not been executed."
-            )
+            log.warning("Cannot restore best fit, since fit has not been executed.")
 
     def _get_table_of_parameters(self, parameters):
 
