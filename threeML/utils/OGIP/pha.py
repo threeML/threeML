@@ -620,7 +620,7 @@ class PHAII(FITSFile):
             if "SPECTRUM" in f:
                 spectrum_extension = f["SPECTRUM"]
             else:
-                warnings.warn("unable to find SPECTRUM extension: not OGIP PHA!")
+                log.warning("unable to find SPECTRUM extension: not OGIP PHA!")
 
                 spectrum_extension = None
 
@@ -630,7 +630,7 @@ class PHAII(FITSFile):
 
                     if hduclass == "OGIP" and hduclas1 == "SPECTRUM":
                         spectrum_extension = extension
-                        warnings.warn(
+                        log.warning(
                             "File has no SPECTRUM extension, but found a spectrum in extension %s"
                             % (spectrum_extension.header.get("EXTNAME"))
                         )

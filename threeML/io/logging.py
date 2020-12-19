@@ -59,6 +59,7 @@ threeML_dev_log_handler = handlers.TimedRotatingFileHandler(
 
 
 # lots of info written out
+
 _dev_formatter = logging.Formatter(
     "%(asctime)s | %(name)s | %(levelname)s| %(funcName)s | %(lineno)d | %(message)s",  datefmt='%Y-%m-%d %H:%M:%S'
 )

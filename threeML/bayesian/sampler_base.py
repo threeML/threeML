@@ -1,9 +1,9 @@
-import numpy as np
 import abc
 import collections
 import math
-from future.utils import with_metaclass
 
+import numpy as np
+from future.utils import with_metaclass
 
 try:
 
@@ -25,29 +25,35 @@ except:
     using_mpi = False
 
 
-from threeML.analysis_results import BayesianResults
-from threeML.utils.statistics.stats_tools import aic, bic, dic
-from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
-from astromodels.functions.function import ModelAssertionViolation
-from threeML.plugins.SpectrumLike import SpectrumLike
-from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
-from threeML.data_list import DataList
 from astromodels.core.model import Model
+from astromodels.functions.function import ModelAssertionViolation
+
+from threeML.analysis_results import BayesianResults
+from threeML.data_list import DataList
+from threeML.exceptions.custom_exceptions import (LikelihoodIsInfinite,
+                                                  custom_warnings)
+from threeML.io.logging import setup_logger
+from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
+from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.utils.statistics.stats_tools import aic, bic, dic
+
+log = setup_logger(__name__)
+
 
 class SamplerBase(with_metaclass(abc.ABCMeta, object)):
-    def __init__(self, likelihood_model : Model, data_list : DataList, **kwargs):
+    def __init__(self, likelihood_model: Model, data_list: DataList, **kwargs):
         """
 
         The base class for all bayesian samplers. Provides a common interface
-        to access samples and byproducts of fits. 
+        to access samples and byproducts of fits.
 
 
         :param likelihood_model: the likelihood model
         :param data_list: the data list
         :param share_spectrum: (optional) Should the spectrum be shared between detectors
         with the same input energy bins?
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -61,18 +67,20 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         self._is_registered = False
         self._likelihood_model = likelihood_model
         self._data_list = data_list
-        
+
         # Share spectrum flag if the spectrum should only be calculated
         # once when different data_list entries have the same input energy bins.
         # Can speed up the fits a lot if many similar detectors are used.
         if "share_spectrum" in kwargs:
             self._share_spectrum = kwargs["share_spectrum"]
-            assert type(self._share_spectrum) == bool,\
-                "share_spectrum must be False or True."
+            assert (
+                type(self._share_spectrum) == bool
+            ), "share_spectrum must be False or True."
         else:
             self._share_spectrum = False
 
         if self._share_spectrum:
+            log.debug("share spectrum has been set")
             # Check which data_list entries have the same input energies in the response folding
             found = False
             num_found = 0
@@ -81,7 +89,9 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
             for j, d in enumerate(list(self._data_list.values())):
                 if j == 0:
                     if isinstance(d, DispersionSpectrumLike):
-                        self._data_ein_edges[num_found] = d.response.monte_carlo_energies
+                        self._data_ein_edges[
+                            num_found
+                        ] = d.response.monte_carlo_energies
                         share_spec_possible = True
                     elif isinstance(d, SpectrumLike):
                         self._data_ein_edges[num_found] = d.observed_spectrum.edges
@@ -96,8 +106,7 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                     if share_spec_possible:
                         # Get integral function. Should be the same for all plugins.
                         _, self._integral = d._get_diff_flux_and_integral(
-                            likelihood_model,
-                            integrate_method=d._model_integrate_method
+                            likelihood_model, integrate_method=d._model_integrate_method
                         )
 
                 else:
@@ -109,8 +118,9 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                         share_spec_possible = True
                     else:
                         self._data_ein_edges[num_found] = None
-                        self._data_ebin_connect = np.append(self._data_ebin_connect,
-                                                            len(self._data_ein_edges)-1)
+                        self._data_ebin_connect = np.append(
+                            self._data_ebin_connect, len(self._data_ein_edges) - 1
+                        )
                         num_found += 1
                         share_spec_possible = False
 
@@ -120,21 +130,24 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                             if self._data_ein_edges[i] is not None:
                                 if len(e) == len(self._data_ein_edges[i]):
                                     if np.all(np.equal(e, self._data_ein_edges[i])):
-                                        self._data_ebin_connect = np.append(self._data_ebin_connect, i)
+                                        self._data_ebin_connect = np.append(
+                                            self._data_ebin_connect, i
+                                        )
                                         found = True
                         if self._integral is None:
                             # Get integral function. Should be the same for all plugins.
                             _, self._integral = d._get_diff_flux_and_integral(
                                 likelihood_model,
-                                integrate_method=d._model_integrate_method
+                                integrate_method=d._model_integrate_method,
                             )
                         # If not save these Ein_bins and add an entry to the connection array
                         if not found:
                             self._data_ein_edges[num_found] = e
-                            self._data_ebin_connect = np.append(self._data_ebin_connect, i+1)
+                            self._data_ebin_connect = np.append(
+                                self._data_ebin_connect, i + 1
+                            )
                             num_found += 1
                         found = False
-
 
     @abc.abstractmethod
     def setup(self):
@@ -232,8 +245,8 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         """
         build the results after a fit is performed
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -406,12 +419,12 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                 for i, dataset in enumerate(list(self._data_list.values())):
                     # call get log_like with precalculated spectrum
                     if self._data_ein_edges[self._data_ebin_connect[i]] is not None:
-                        log_like_values[i] = \
-                            dataset.get_log_like(precalc_fluxes=
-                                                 precalc_fluxes[self._data_ebin_connect[i]])
+                        log_like_values[i] = dataset.get_log_like(
+                            precalc_fluxes=precalc_fluxes[self._data_ebin_connect[i]]
+                        )
                     else:
                         log_like_values[i] = dataset.get_log_like()
-        
+
         except ModelAssertionViolation:
 
             # Fit engine or sampler outside of allowed zone
@@ -431,9 +444,8 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         if not np.isfinite(log_like):
             # Issue warning
 
-            custom_warnings.warn(
+            log.warning(
                 "Likelihood value is infinite for parameters %s" % trial_values,
-                LikelihoodIsInfinite,
             )
 
             return -np.inf

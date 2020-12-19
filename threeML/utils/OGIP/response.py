@@ -392,14 +392,14 @@ class OGIPResponse(InstrumentResponse):
                 header = f["MATRIX", rsp_number].header
 
                 if arf_file is None:
-                    warnings.warn(
+                    log.warning(
                         "The response is in an extension called MATRIX, which usually means you also "
                         "need an ancillary file (ARF) which you didn't provide. You should refer to the "
                         "documentation  of the instrument and make sure you don't need an ARF."
                     )
 
             except Exception as e:
-                warnings.warn(
+                log.warning(
                     "The default choice for MATRIX extension failed:"
                     + repr(e)
                     + "available: "
@@ -528,7 +528,7 @@ class OGIPResponse(InstrumentResponse):
             tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
 
         except (KeyError):
-            warnings.warn(
+            log.warning(
                 "No TLMIN keyword found. This DRM does not follow OGIP standards. Assuming TLMIN=1"
             )
             tlmin_fchan = 1

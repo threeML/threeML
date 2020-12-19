@@ -9,12 +9,14 @@ import os
 import warnings
 import six
 from tqdm.auto import tqdm, trange
-
+from threeML.io.logging import setup_logger
 from threeML.utils.OGIP.response import OGIPResponse, InstrumentResponse
 from threeML.utils.OGIP.pha import PHAII
 from threeML.utils.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, Quality
 from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
 from threeML.utils.time_interval import TimeIntervalSet
+
+log = setup_logger(__name__)
 
 _required_keywords = {}
 _required_keywords["observed"] = (
@@ -120,8 +122,9 @@ def _read_pha_or_pha2_file(
 
     except:
 
+        log.error(f"The input file {pha_file_or_instance} is not in PHA format")
         raise RuntimeError(
-            "The input file %s is not in PHA format" % (pha_file_or_instance)
+            
         )
 
     # spectrum_number = spectrum_number
@@ -168,7 +171,7 @@ def _read_pha_or_pha2_file(
 
             is_all_data_good = True
 
-            warnings.warn(
+            log.warning(
                 "Could not find QUALITY in columns or header of PHA file. This is not a valid OGIP file. Assuming QUALITY =0 (good)"
             )
 
@@ -223,7 +226,7 @@ def _read_pha_or_pha2_file(
 
     if has_tstop and has_telapse:
 
-        warnings.warn("Found TSTOP and TELAPSE. This file is invalid. Using TSTOP.")
+        log.warning("Found TSTOP and TELAPSE. This file is invalid. Using TSTOP.")
 
         has_telapse = False
 
@@ -241,9 +244,10 @@ def _read_pha_or_pha2_file(
 
     else:
 
+        log.error("This file does not contain a RATE nor a COUNTS column. "
+            "This is not a valid PHA file")
         raise RuntimeError(
-            "This file does not contain a RATE nor a COUNTS column. "
-            "This is not a valid PHA file"
+            
         )
 
     # Determine if this is a PHA I or PHA II
@@ -277,7 +281,7 @@ def _read_pha_or_pha2_file(
                 keyname in _required_keyword_types
                 and type(header.get(keyname)) is not _required_keyword_types[keyname]
             ):
-                warnings.warn(
+                log.warning(
                     "unexpected type of %(keyname)s, expected %(expected_type)s\n found %(found_type)s: %(found_value)s"
                     % dict(
                         keyname=keyname,
@@ -337,7 +341,7 @@ def _read_pha_or_pha2_file(
 
             if keyname == "POISSERR" and "STAT_ERR" in data.columns.names:
 
-                warnings.warn(
+                log.warning(
                     "POISSERR is not set. Assuming non-poisson errors as given in the "
                     "STAT_ERR column"
                 )
@@ -349,7 +353,7 @@ def _read_pha_or_pha2_file(
                 # Some non-compliant files have no ARF because they don't need one. Don't fail, but issue a
                 # warning
 
-                warnings.warn(
+                log.warning(
                     "ANCRFILE is not set. This is not a compliant OGIP file. Assuming no ARF."
                 )
 
@@ -360,7 +364,7 @@ def _read_pha_or_pha2_file(
                 # Some non-compliant files have no FILTER because they don't need one. Don't fail, but issue a
                 # warning
 
-                warnings.warn(
+                log.warning(
                     "FILTER is not set. This is not a compliant OGIP file. Assuming no FILTER."
                 )
 
@@ -489,7 +493,7 @@ def _read_pha_or_pha2_file(
 
                     quality_element = data.field("QUALITY")[spectrum_number - 1]
 
-                    warnings.warn(
+                    log.warning(
                         "The QUALITY column has the wrong shape. This PHAII file does not follow OGIP standards"
                     )
 
