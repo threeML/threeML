@@ -1,31 +1,26 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import str
-from builtins import map
-from builtins import range
-from builtins import object
-from past.utils import old_div
-import os
+from __future__ import division, print_function
+
 import collections
 import datetime
 import functools
 import inspect
 import math
-import h5py
+import os
+from builtins import map, object, range, str
 from pathlib import Path
 
 import astromodels
 import astropy.units as u
+import h5py
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import yaml
 from astromodels.core.model_parser import ModelParser
 from astromodels.core.my_yaml import my_yaml
-import yaml
 from astromodels.core.parameter import Parameter
 from corner import corner
-import matplotlib.pyplot as plt
-
-
+from past.utils import old_div
 
 from threeML.io.logging import setup_logger
 
@@ -46,22 +41,20 @@ else:
     has_chainconsumer = True
 
     log.debug("chainconsumer is installed")
-    
-from threeML.exceptions.custom_exceptions import custom_warnings
+
+
+from threeML import __version__
+from threeML.config.config import threeML_config
+from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.io.file_utils import sanitize_filename
-from threeML.io.hdf5_utils import (
-    recursively_load_dict_contents_from_group,
-    recursively_save_dict_contents_to_group,
-)
-from threeML.io.fits_file import fits, FITSFile, FITSExtension
+from threeML.io.fits_file import FITSExtension, FITSFile, fits
+from threeML.io.hdf5_utils import (recursively_load_dict_contents_from_group,
+                                   recursively_save_dict_contents_to_group)
+from threeML.io.results_table import ResultsTable
 from threeML.io.rich_display import display
 from threeML.io.table import NumericMatrix
 from threeML.io.uncertainty_formatter import uncertainty_formatter
-from threeML.io.results_table import ResultsTable
-from threeML import __version__
 from threeML.random_variates import RandomVariates
-from threeML.io.calculate_flux import _calculate_point_source_flux
-from threeML.config.config import threeML_config
 
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
 # them with normal characters when we write the keyword, and we substitute them back when we read it back
@@ -97,7 +90,7 @@ def load_analysis_results(fits_file: str):
     """
 
     fits_file: Path = fits_file
-    
+
     with fits.open(fits_file) as f:
 
         n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
@@ -111,7 +104,7 @@ def load_analysis_results(fits_file: str):
         else:
 
             log.debug(f"{fits_file} AR opened with {n_results} results")
-            
+
             return _load_set_of_results(f, n_results)
 
 
@@ -124,7 +117,7 @@ def load_analysis_results_hdf(hdf_file: str):
     """
 
     hdf_file: Path = sanitize_filename(hdf_file)
-    
+
     with h5py.File(hdf_file, "r") as f:
 
         n_results = f.attrs["n_results"]
@@ -138,7 +131,7 @@ def load_analysis_results_hdf(hdf_file: str):
         else:
 
             log.debug(f"{hdf_file} AR opened with {n_results} results")
-            
+
             return _load_set_of_results_hdf(f, n_results)
 
 
@@ -149,12 +142,10 @@ def convert_fits_analysis_result_to_hdf(fits_result_file: str):
     new_file_name_base, _ = os.path.splitext(fits_result_file)
 
     new_file_name: Path = sanitize_filename(f"{new_file_name_base}.h5")
-    
+
     ar.write_to(new_file_name, overwrite=True, as_hdf=True)
 
-    log.info(
-        f"Converted {fits_result_file} to {new_file_name}"
-    )
+    log.info(f"Converted {fits_result_file} to {new_file_name}")
 
 
 def _load_one_results(fits_extension):
@@ -403,14 +394,14 @@ class ANALYSIS_RESULTS_HDF(object):
 
             # Check that the covariance matrix has the right shape
 
-            assert covariance_matrix.shape == (n_parameters, n_parameters), (
-                "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
-                % (
-                    n_parameters,
-                    n_parameters,
-                    covariance_matrix.shape[0],
-                    covariance_matrix.shape[1],
-                )
+            assert covariance_matrix.shape == (
+                n_parameters,
+                n_parameters,
+            ), "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
+                n_parameters,
+                n_parameters,
+                covariance_matrix.shape[0],
+                covariance_matrix.shape[1],
             )
 
             # Empty samples set
@@ -566,14 +557,14 @@ class ANALYSIS_RESULTS(FITSExtension):
 
             # Check that the covariance matrix has the right shape
 
-            assert covariance_matrix.shape == (n_parameters, n_parameters), (
-                "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
-                % (
-                    n_parameters,
-                    n_parameters,
-                    covariance_matrix.shape[0],
-                    covariance_matrix.shape[1],
-                )
+            assert covariance_matrix.shape == (
+                n_parameters,
+                n_parameters,
+            ), "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
+                n_parameters,
+                n_parameters,
+                covariance_matrix.shape[0],
+                covariance_matrix.shape[1],
             )
 
             # Empty samples set
@@ -767,7 +758,7 @@ class _AnalysisResults(object):
 
         return self._analysis_type
 
-    def write_to(self, filename: str, overwrite: bool=False, as_hdf: bool=False):
+    def write_to(self, filename: str, overwrite: bool = False, as_hdf: bool = False):
         """
         Write results to a FITS or HDF5 file
 
@@ -1065,7 +1056,7 @@ class _AnalysisResults(object):
 
     def get_point_source_flux(self, *args, **kwargs):
 
-        custom_warnings.warn("get_point_source_flux() has been replaced by get_flux()")
+        log.warning("get_point_source_flux() has been replaced by get_flux()")
         return self.get_flux(*args, **kwargs)
 
     def get_flux(
@@ -1094,7 +1085,7 @@ class _AnalysisResults(object):
         :param components_to_use: (optional) list of string names of the components to plot: including 'total'
         :param sum_sources: (optional) if True, also the sum of all sources will be plotted
         :param include_extended: (optional) if True, plot extended source spectra (spatially integrated) as well.
-        
+
         :return:
         """
 
@@ -1346,7 +1337,10 @@ class BayesianResults(_AnalysisResults):
 
         # Must remove underscores!
 
-        for i, val, in enumerate(labels):
+        for (
+            i,
+            val,
+        ) in enumerate(labels):
 
             if "$" not in labels[i]:
                 labels[i] = val.replace("_", "")
@@ -1465,7 +1459,10 @@ class BayesianResults(_AnalysisResults):
 
             # Must remove underscores!
 
-            for i, val, in enumerate(labels_other):
+            for (
+                i,
+                val,
+            ) in enumerate(labels_other):
 
                 if "$" not in labels_other[i]:
                     labels_other[i] = val.replace("_", " ")
@@ -1501,7 +1498,10 @@ class BayesianResults(_AnalysisResults):
 
         # Must remove underscores!
 
-        for i, val, in enumerate(labels):
+        for (
+            i,
+            val,
+        ) in enumerate(labels):
 
             if "$" not in labels[i]:
                 labels[i] = val.replace("_", " ")
@@ -1744,9 +1744,11 @@ class MLEResults(_AnalysisResults):
 
         if covariance_matrix.shape != ():
 
-            assert covariance_matrix.shape == expected_shape, (
-                "Covariance matrix has wrong shape. "
-                "Got %s, should be %s" % (covariance_matrix.shape, expected_shape)
+            assert (
+                covariance_matrix.shape == expected_shape
+            ), "Covariance matrix has wrong shape. " "Got %s, should be %s" % (
+                covariance_matrix.shape,
+                expected_shape,
             )
 
             assert np.all(
@@ -1805,7 +1807,7 @@ class MLEResults(_AnalysisResults):
         # Warn the user if more than 1% of the samples have been lost
 
         if n_removed_samples > samples.shape[0] / 100.0:
-            custom_warnings.warn(
+            log.warning(
                 "%s percent of samples have been thrown away because they failed the constraints "
                 "on the parameters. This results might not be suitable for error propagation. "
                 "Enlarge the boundaries until you loose less than 1 percent of the samples."
@@ -1986,9 +1988,12 @@ class AnalysisResultsSet(collections.Sequence):
         self._sequence_name = str(name)
 
         for i, this_tuple in enumerate(data_tuple):
-            assert len(this_tuple[1]) == len(self), (
-                "Column %i in tuple has length of "
-                "%i (should be %i)" % (i, len(data_tuple), len(self))
+            assert len(this_tuple[1]) == len(
+                self
+            ), "Column %i in tuple has length of " "%i (should be %i)" % (
+                i,
+                len(data_tuple),
+                len(self),
             )
 
         self._sequence_tuple = data_tuple
@@ -2015,7 +2020,7 @@ class AnalysisResultsSet(collections.Sequence):
             fits = AnalysisResultsFITS(
                 *self,
                 sequence_tuple=self._sequence_tuple,
-                sequence_name=self._sequence_name
+                sequence_name=self._sequence_name,
             )
 
             fits.writeto(sanitize_filename(filename), overwrite=overwrite)
