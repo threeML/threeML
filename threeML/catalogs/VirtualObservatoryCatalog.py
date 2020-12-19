@@ -13,6 +13,9 @@ from astropy.coordinates.name_resolve import get_icrs_coordinates
 import astropy.table as astro_table
 
 from threeML.io.network import internet_connection_is_active
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 # Workaround to support astropy 4.1+
 astropy_old = True

@@ -9,6 +9,9 @@ from colorama import Back, Fore, Style
 from threeML.config.config import threeML_config
 from threeML.io.package_data import get_path_of_log_dir, get_path_of_log_file
 
+
+from astromodels.utils.logging import astromodels_console_log_handler, astromodels_dev_log_handler, astromodels_usr_log_handler
+
 colorama.deinit()
 colorama.init(strip=False)
 ## set up the console logging
@@ -61,6 +64,8 @@ _dev_formatter = logging.Formatter(
 
 threeML_dev_log_handler.setFormatter(_dev_formatter)
 threeML_dev_log_handler.setLevel(logging.DEBUG)
+
+
 # now set up the usr log which will save the info
 
 threeML_usr_log_handler = handlers.TimedRotatingFileHandler(
@@ -95,6 +100,8 @@ _console_formatter = ColoredFormatter(
 threeML_console_log_handler = logging.StreamHandler(sys.stdout)
 threeML_console_log_handler.setFormatter(_console_formatter)
 threeML_console_log_handler.setLevel(threeML_config["logging"]["level"])
+astromodels_console_log_handler.setLevel(threeML_config["logging"]["level"])
+
 
 warning_filter = MyFilter(logging.WARNING)
 
@@ -107,6 +114,10 @@ def silence_warnings():
     threeML_usr_log_handler.addFilter(warning_filter)
     threeML_console_log_handler.addFilter(warning_filter)
 
+    astromodels_usr_log_handler.addFilter(warning_filter)
+    astromodels_console_log_handler.addFilter(warning_filter)
+    
+    
 
 def activate_warnings():
     """
@@ -116,10 +127,14 @@ def activate_warnings():
     threeML_usr_log_handler.removeFilter(warning_filter)
     threeML_console_log_handler.removeFilter(warning_filter)
 
+    astromodels_usr_log_handler.removeFilter(warning_filter)
+    astromodels_console_log_handler.removeFilter(warning_filter)
+
 
 def update_logging_level(level):
 
     threeML_console_log_handler.setLevel(level)
+    astromodels_console_log_handler.setLevel(level)
 
 
 def setup_logger(name):

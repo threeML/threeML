@@ -17,6 +17,9 @@ import warnings
 import yaml
 import codecs
 
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_days=1):
     """
@@ -58,7 +61,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     if not file_existing_and_readable(cache_file_sanatized):
 
-        print(
+        log.info(
             "The cache for %s does not yet exist. We will try to build it\n"
             % heasarc_table_name
         )
@@ -104,7 +107,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     if write_cache or update:
 
-        print("Building cache for %s.\n" % heasarc_table_name)
+        log.info(f"Building cache for {heasarc_table_name}")
 
         # go to HEASARC and get the requested table
         heasarc_url = (
@@ -118,7 +121,7 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
         except (IOError):
 
-            warnings.warn(
+            log.warning(
                 "The cache is outdated but the internet cannot be reached. Please check your connection"
             )
 
