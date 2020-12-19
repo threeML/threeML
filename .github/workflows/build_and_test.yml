@@ -12,6 +12,7 @@ jobs:
         python-version: [3.7, 3.8]
         
   steps:
+  - name: Checkout code
   - uses: actions/checkout@v2
   - name: Set up Python  ${{ matrix.python-version }} or  ${{ matrix.os}}
     uses: actions/setup-python@v2
