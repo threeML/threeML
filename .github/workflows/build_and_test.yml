@@ -25,7 +25,36 @@ jobs:
         
     - name: Initialize conda ${{ matrix.python-version }}
       run: |
-        conda install -y conda-build
+        #conda install -y conda-build
         conda config --add channels conda-forge
-        
+
+    - name: Init Env
+      run: |
+        # Make sure we fail in case of errors
+        set -e
+
+        # Copy sources (we do not have write permission on the mounted $TRAVIS_BUILD_DIR),
+        # so let's make a copy of the source code
+        cd ~
+        rm -rf my_work_dir
+        mkdir my_work_dir
+        # Copy also dot files (.*)
+        shopt -s dotglob
+        cp -R ${GITHUB_WORKSPACE}/* my_work_dir/
+
+        cd my_work_dir
+
+        if [[ ${{matrix.os}} == ubuntu0latest ]];
+        then
+        miniconda_os=Linux
+        compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+        else  # osx
+        miniconda_os=MacOSX
+        compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+
+        # On macOS we also need the conda libx11 libraries used to build xspec
+        # We also need to pin down ncurses, for now only on macos.
+        xorg="xorg-libx11"
+fi
+
 
