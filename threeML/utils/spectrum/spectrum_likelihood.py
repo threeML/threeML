@@ -16,6 +16,9 @@ from threeML.utils.statistics.likelihood_functions import (
     poisson_observed_poisson_background,
 )
 
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 # These classes provide likelihood evaluation to SpectrumLike and children
 

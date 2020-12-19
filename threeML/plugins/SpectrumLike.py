@@ -509,6 +509,8 @@ class SpectrumLike(PluginPrototype):
         :return:
         """
 
+        log.debug("Starting precalculations")
+        
         # area scale factor between background and source
         # and exposure ratio between background and source
 
@@ -516,6 +518,8 @@ class SpectrumLike(PluginPrototype):
 
             # there is no background so the area scaling is unity
 
+            log.debug("no background set in precalculations")
+            
             self._area_ratio = 1.0
             self._exposure_ratio = 1.0
             self._background_exposure = 1.0
@@ -523,8 +527,12 @@ class SpectrumLike(PluginPrototype):
 
         else:
 
+            log.debug("background set in precalculations")
+            
             if self._background_plugin is not None:
 
+                log.debug("detected background plugin")
+                
                 if isinstance(self._background_plugin, SpectrumLike):
 
                     # use the background plugin's observed spectrum  and exposure to scale the area and time
@@ -553,6 +561,8 @@ class SpectrumLike(PluginPrototype):
             else:
                 # this is the normal case with no background model, get the scale factor directly
 
+                log.debug("this is a normal background observation")
+                
                 self._background_scale_factor = self._background_spectrum.scale_factor
                 self._background_exposure = self._background_spectrum.exposure
 
@@ -566,11 +576,12 @@ class SpectrumLike(PluginPrototype):
 
         self._total_scale_factor = self._area_ratio * self._exposure_ratio
 
+        log.debug("completed precalculations")
         # deal with background exposure and scale factor
         # we run through this separately to
 
     @property
-    def exposure(self):
+    def exposure(self) -> float:
         """
         Exposure of the source spectrum
         """
@@ -578,7 +589,7 @@ class SpectrumLike(PluginPrototype):
         return self._observed_spectrum.exposure
 
     @property
-    def area_ratio(self):
+    def area_ratio(self) -> float:
         """
         :return: ratio between source and background area
         """
@@ -590,7 +601,7 @@ class SpectrumLike(PluginPrototype):
         return self._area_ratio
 
     @property
-    def exposure_ratio(self):
+    def exposure_ratio(self) -> float:
         """
 
         :return:  ratio between source and background exposure
@@ -602,7 +613,7 @@ class SpectrumLike(PluginPrototype):
         return self._exposure_ratio
 
     @property
-    def scale_factor(self):
+    def scale_factor(self) -> float:
         """
         Ratio between the source and the background exposure and area
 
@@ -620,7 +631,7 @@ class SpectrumLike(PluginPrototype):
         return self._total_scale_factor
 
     @property
-    def background_exposure(self):
+    def background_exposure(self) -> float:
         """
         Exposure of the background spectrum, if present
         """
@@ -628,7 +639,7 @@ class SpectrumLike(PluginPrototype):
         return self._background_exposure
 
     @property
-    def background_scale_factor(self):
+    def background_scale_factor(self) -> float:
         """
         The background scale factor
 
@@ -638,7 +649,7 @@ class SpectrumLike(PluginPrototype):
         return self._background_scale_factor
 
     @property
-    def background_spectrum(self):
+    def background_spectrum(self) -> BinnedSpectrum:
 
         assert (
             self._background_spectrum is not None
@@ -648,11 +659,12 @@ class SpectrumLike(PluginPrototype):
 
     @property
     def background_plugin(self):
+        #type: () -> SpectrumLike
 
         return self._background_plugin
 
     @property
-    def observed_spectrum(self):
+    def observed_spectrum(self) -> BinnedSpectrum:
 
         return self._observed_spectrum
 
@@ -675,7 +687,7 @@ class SpectrumLike(PluginPrototype):
     @staticmethod
     def _build_fake_observation(
         fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs
-    ):
+    ) -> BinnedSpectrum:
         """
         This is the fake observation builder for SpectrumLike which builds data
         for a binned spectrum without dispersion. It must be overridden in child classes.
@@ -720,6 +732,8 @@ class SpectrumLike(PluginPrototype):
         :return: SpectrumLike instance from the background
         """
 
+        log.debug("creating new spectrumlike from background")
+        
         background_only_spectrum = copy.deepcopy(spectrum_like.background_spectrum)
 
         background_spectrum_like = SpectrumLike(
@@ -758,6 +772,8 @@ class SpectrumLike(PluginPrototype):
         :return: simulated SpectrumLike plugin
         """
 
+        log.debug("creating new spectrumlikg from function")
+        
         channel_set = ChannelSet.from_starts_and_stops(energy_min, energy_max)
 
         # this is just for construction
@@ -859,7 +875,7 @@ class SpectrumLike(PluginPrototype):
         return generator.get_simulated_dataset(name)
 
     def assign_to_source(self,
-                         source_name: str):
+                         source_name: str) -> None:
         """
         Assign these data to the given source (instead of to the sum of all sources, which is the default)
 
@@ -875,7 +891,7 @@ class SpectrumLike(PluginPrototype):
         self._source_name = source_name
 
     @property
-    def likelihood_model(self):
+    def likelihood_model(self) -> Model:
 
         assert self._like_model is not None, (
             "plugin %s does not have a likelihood model" % self._name
@@ -883,7 +899,7 @@ class SpectrumLike(PluginPrototype):
 
         return self._like_model
 
-    def get_pha_files(self):
+    def get_pha_files(self) -> dcit:
 
         info = {}
 
@@ -897,7 +913,7 @@ class SpectrumLike(PluginPrototype):
 
         return info
 
-    def set_active_measurements(self, *args, **kwargs):
+    def set_active_measurements(self, *args, **kwargs) ->:
         """
         Set the measurements to be used during the analysis. Use as many ranges as you need, and you can specify
         either energies or channels to be used.
