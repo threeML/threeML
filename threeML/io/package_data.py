@@ -22,12 +22,25 @@ def get_path_of_user_dir() -> Path:
 
     :return: an absolute path
     """
-    return Path("~/.threeML").expanduser()
+    user_dir: Path = Path().home() / ".threeML"
 
+    if not user_dir.exists():
+
+        user_dir.mkdir()
+
+    return user_dir
+    
+    
 
 def get_path_of_log_dir() -> Path:
 
-    return get_path_of_user_dir() / "log"
+    log_path: Path = get_path_of_user_dir() / "log"
+
+    if not log_path.exists():
+
+        log_path.mkdir()
+    
+    return log_path
 
 
 _log_file_names = ["usr.log", "dev.log"]

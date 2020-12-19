@@ -3,11 +3,11 @@ import logging.handlers as handlers
 import sys
 from typing import Dict, Optional
 
-from colorama import Back, Fore, Style
 import colorama
+from colorama import Back, Fore, Style
+
 from threeML.config.config import threeML_config
 from threeML.io.package_data import get_path_of_log_dir, get_path_of_log_file
-
 
 colorama.deinit()
 colorama.init(strip=False)
@@ -45,11 +45,6 @@ class MyFilter(object):
         return logRecord.levelno != self.__level
 
 
-# make sure the logging directory is there
-log_path = get_path_of_log_dir()
-log_path.mkdir(parents=True, exist_ok=True)
-
-
 # now create the developer handler that rotates every day and keeps
 # 10 days worth of backup
 threeML_dev_log_handler = handlers.TimedRotatingFileHandler(
@@ -57,11 +52,11 @@ threeML_dev_log_handler = handlers.TimedRotatingFileHandler(
 )
 
 
-
 # lots of info written out
 
 _dev_formatter = logging.Formatter(
-    "%(asctime)s | %(name)s | %(levelname)s| %(funcName)s | %(lineno)d | %(message)s",  datefmt='%Y-%m-%d %H:%M:%S'
+    "%(asctime)s | %(name)s | %(levelname)s| %(funcName)s | %(lineno)d | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
 )
 
 threeML_dev_log_handler.setFormatter(_dev_formatter)
@@ -75,7 +70,9 @@ threeML_usr_log_handler = handlers.TimedRotatingFileHandler(
 threeML_usr_log_handler.setLevel(logging.INFO)
 
 # lots of info written out
-_usr_formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s",  datefmt='%Y-%m-%d %H:%M:%S')
+_usr_formatter = logging.Formatter(
+    "%(asctime)s | %(levelname)s | %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+)
 
 threeML_usr_log_handler.setFormatter(_usr_formatter)
 
@@ -87,7 +84,7 @@ _console_formatter = ColoredFormatter(
     datefmt="%Y-%m-%d %H:%M:%S",
     colors={
         "DEBUG": Fore.CYAN,
-        "INFO": Fore.GREEN + Style.BRIGHT ,
+        "INFO": Fore.GREEN + Style.BRIGHT,
         "WARNING": Fore.YELLOW + Style.DIM,
         "ERROR": Fore.RED + Style.BRIGHT,
         "CRITICAL": Fore.RED + Back.WHITE + Style.BRIGHT,
@@ -100,6 +97,7 @@ threeML_console_log_handler.setFormatter(_console_formatter)
 threeML_console_log_handler.setLevel(threeML_config["logging"]["level"])
 
 warning_filter = MyFilter(logging.WARNING)
+
 
 def silence_warnings():
     """
@@ -122,7 +120,7 @@ def activate_warnings():
 def update_logging_level(level):
 
     threeML_console_log_handler.setLevel(level)
-    
+
 
 def setup_logger(name):
 
@@ -146,6 +144,6 @@ def setup_logger(name):
         log.addHandler(threeML_usr_log_handler)
 
     # we do not want to duplicate teh messages in the parents
-    log.propagate =False
-    
+    log.propagate = False
+
     return log
