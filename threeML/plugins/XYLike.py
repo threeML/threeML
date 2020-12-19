@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import copy
 
 import matplotlib.pyplot as plt
@@ -9,12 +10,12 @@ from astromodels import Model, PointSource
 from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
+from threeML.io.logging import setup_logger
 from threeML.plugin_prototype import PluginPrototype
-from threeML.utils.statistics.likelihood_functions import half_chi2
 from threeML.utils.statistics.likelihood_functions import (
-    poisson_log_likelihood_ideal_bkg,
-)
-from threeML.exceptions.custom_exceptions import custom_warnings
+    half_chi2, poisson_log_likelihood_ideal_bkg)
+
+log = setup_logger(__name__)
 
 __instrument_name = "n.a."
 
@@ -44,11 +45,9 @@ class XYLike(PluginPrototype):
 
             assert np.all(self._yerr > 0), "Errors cannot be negative or zero."
 
-            if not quiet:
-
-                print(
-                    "Using Gaussian statistic (equivalent to chi^2) with the provided errors."
-                )
+            log.info(
+                "Using Gaussian statistic (equivalent to chi^2) with the provided errors."
+            )
 
             self._is_poisson = False
 
@@ -62,15 +61,15 @@ class XYLike(PluginPrototype):
 
             self._has_errors = False
 
-            if not quiet:
 
-                print("Using unweighted Gaussian (equivalent to chi^2) statistic.")
+
+            log.info("Using unweighted Gaussian (equivalent to chi^2) statistic.")
 
         else:
 
-            if not quiet:
 
-                print("Using Poisson log-likelihood")
+
+            log.info("Using Poisson log-likelihood")
 
             self._is_poisson = True
             self._yerr = None
@@ -95,7 +94,7 @@ class XYLike(PluginPrototype):
     def from_function(cls, name, function, x, yerr, **kwargs):
         """
         Generate an XYLike plugin from an astromodels function instance
-        
+
         :param name: name of plugin
         :param function: astromodels function instance
         :param x: where to simulate
@@ -244,7 +243,7 @@ class XYLike(PluginPrototype):
     def assign_to_source(self, source_name):
         """
         Assign these data to the given source (instead of to the sum of all sources, which is the default)
-        
+
         :param source_name: name of the source (must be contained in the likelihood model)
         :return: none
         """
