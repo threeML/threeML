@@ -18,17 +18,6 @@ jobs:
         with:
           github_token: ${{ github.token }}
 
-  pre-commit:
-    needs: skip_duplicate
-    if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.8
-      - uses: pre-commit/action@v2.0.0
 
 
   test-pip:
@@ -65,6 +54,78 @@ jobs:
            file: ./coverage.xml
            files: ./coverage1.xml,./coverage2.xml
            directory: ./coverage/reports/
+
+
+  test-conda:
+    needs: skip_duplicate
+    if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest', 'macos-latest' ]
+        python-version: [ 3.7 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache conda
+        uses: actions/cache@v1
+        with:
+          path: ~/conda_pkgs_dir
+    
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+          activate-environment: test_env
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge, xspecmodels, threeml
+          environment-file: ci/environment.yml
+
+      - name: Init Env
+        run: |
+          # Make sure we fail in case of error
+          if [[ ${{matrix.os}} == ubuntu-latest ]];
+          then
+          miniconda_os=Linux
+          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+          else  # osx
+          miniconda_os=MacOSX
+          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+
+          # On macOS we also need the conda libx11 libraries used to build xspec
+          # We also need to pin down ncurses, for now only on macos.
+          xorg="xorg-libx11"
+          fi
+
+          # Get the version in the __version__ environment variable
+          #python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
+
+          #export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
+
+          export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
+
+          echo "HOME= ${HOME}"
+          echo "Building ${PKG_VERSION} ..."
+          echo "Python version: ${{matrix.python-version}}"
+
+          #libgfortranver="3.0"
+          #NUMPYVER=1.15
+          MATPLOTLIBVER=2
+          XSPECVER="6.25"
+          xspec_channel=xspecmodels
+
+          # Figure out requested dependencies
+          if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
+          if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
+          if [ -n "${XSPECVER}" ];
+          then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
+          fi
+
+
+          PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
+
+          conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest
           
 
         
