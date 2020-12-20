@@ -105,7 +105,7 @@ jobs:
                   conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
                   fi
 
-            - name: Install the distribution
-              run: |
-                conda activate test_env
-                conda install --use-local threeml
+#                  conda activate test_env
+                  conda install --use-local threeml
+
+           
