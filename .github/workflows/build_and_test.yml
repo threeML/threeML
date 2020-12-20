@@ -42,7 +42,7 @@ jobs:
           pip install -e .
       - name: Test pip on ${{ matrix.python-version }}
         run: |
-          python -m pytest -vv threeml/test  --cov=threeml --cov-report=xml
+          python -m pytest -vv --cov=threeml/ --cov-report=xml
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
