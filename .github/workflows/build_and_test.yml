@@ -128,7 +128,7 @@ jobs:
           conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest
       - name: Install on conda python ${{ matrix.python-version }}  os ${{ matrix.os }}
         run: |
-           pip install .
+           pip3 install .
 
         
 
