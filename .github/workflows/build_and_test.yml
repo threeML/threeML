@@ -39,7 +39,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install --upgrade coverage pytest pytest-cov cython codecov
           pip install --upgrade astromodels
-          python setup.py install
+          pip install -e .
       - name: Test pip on ${{ matrix.python-version }}
         run: |
           pytest -vv --cov=threeml --cov-report=xml
@@ -139,7 +139,7 @@ jobs:
       - name: test it
         shell: bash -l {0}
         run: |
-          pytest -vv --cov=threeml --cov-report=xml
+          python -m pytest -vv --cov=threeml --cov-report=xml
 
         env:
           OMP_NUM_THREADS: 1
