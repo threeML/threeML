@@ -39,6 +39,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install --upgrade numpy ipython scipy matplotlib 
           pip install --upgrade coverage pytest pytest-cov cython codecov
+          pip install speclite==0.11
       - name: Install source
         run: |
           python setup.py install
@@ -71,7 +72,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ~/conda_pkgs_dir
-    
+          key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
