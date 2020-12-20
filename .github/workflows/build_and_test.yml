@@ -42,10 +42,15 @@ jobs:
       - name: Install source
         run: |
           python setup.py install
-
+          
       - name: Test pip on ${{ matrix.python-version }}
         run: |
           python -m pytest -vv --cov=threeml/ --cov-report=xml
+        env:
+          OMP_NUM_THREADS: 1
+          MKL_NUM_THREADS: 1
+          NUMEXPR_NUM_THREADS: 1
+      
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
@@ -126,7 +131,7 @@ jobs:
           conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest
       - name: test it
         run: |
-           $CONDA/bin/pytest
+          pytest
 
         
 
