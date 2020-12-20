@@ -21,7 +21,7 @@ jobs:
               uses: conda-incubator/setup-miniconda@v2
               with:
                   activate-environment: "test_env"
-                  auto-activate-base: true
+                  auto-activate-base: false
                   architecture: "x64"
                   conda-build-version: 3.18
                   python-version: ${{ matrix.python-version }}
@@ -105,8 +105,7 @@ jobs:
                   conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
                   fi
 
-                  ls
-
-                  conda install --use-local threeml
-
-           
+            - name: Install the distribution
+              run: |
+                
+                conda install --use-local threeml
