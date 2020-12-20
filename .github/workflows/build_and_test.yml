@@ -46,8 +46,6 @@ jobs:
       - name: Test pip on ${{ matrix.python-version }}
         run: |
           python -m pytest -vv --cov=threeml/ --cov-report=xml
-        env:
-          NUMBA_DISABLE_JIT: 1
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
@@ -79,7 +77,7 @@ jobs:
           auto-activate-base: false
           activate-environment: test_env
           python-version: ${{ matrix.python-version }}
-          channels: conda-forge, xspecmodels, threeml
+          channels: conda-forge, xspecmodels, threeml, defaults
           environment-file: ci/environment.yml
 
       - name: Init Env
@@ -126,9 +124,9 @@ jobs:
           PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 
           conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest
-      - name: Install on conda python ${{ matrix.python-version }}  os ${{ matrix.os }}
+      - name: test it
         run: |
-           pip3 install .
+           $CONDA/bin/pytest
 
         
 
