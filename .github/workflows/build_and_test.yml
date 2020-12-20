@@ -39,10 +39,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install --upgrade coverage pytest pytest-cov cython codecov
           pip install --upgrade astromodels
-      - name: Install source
-        run: |
           python setup.py install
-          
       - name: Test pip on ${{ matrix.python-version }}
         run: |
           pytest -vv --cov=threeml --cov-report=xml
@@ -134,6 +131,7 @@ jobs:
       - name: Conda list
         run: conda list
       - name: test it
+        shell: bash -l {0}
         run: |
           pytest -vv --cov=threeml --cov-report=xml
 
