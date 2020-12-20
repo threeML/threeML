@@ -21,8 +21,8 @@ jobs:
 
 
   test-pip:
-    needs: skip_duplicate
-    if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
+    # needs: skip_duplicate
+    # if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
     strategy:
       matrix:
         python-version: [ 3.7, 3.8 ]
@@ -61,8 +61,8 @@ jobs:
 
 
   test-conda:
-    needs: skip_duplicate
-    if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
+    # needs: skip_duplicate
+    # if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'macos-latest' ]
