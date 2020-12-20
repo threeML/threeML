@@ -126,7 +126,9 @@ jobs:
           PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 
           conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest
-          
+      - name: Install on conda python ${{ matrix.python-version }}  os ${{ matrix.os }}
+        run: |
+           pip install .
 
         
 
