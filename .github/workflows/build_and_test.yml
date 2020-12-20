@@ -127,7 +127,7 @@ jobs:
 
           PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 
-          conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest
+          conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest
 
       - name: Conda list
         run: conda list
@@ -147,6 +147,12 @@ jobs:
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
 
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+           file: ./coverage.xml
+           files: ./coverage1.xml,./coverage2.xml
+           directory: ./coverage/reports/
 
         
   # build:
