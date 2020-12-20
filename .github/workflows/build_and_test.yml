@@ -132,7 +132,7 @@ jobs:
           conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest
       - name: test it
         run: |
-          python -m pytest -vv --cov=threeml --cov-report=xml
+          pytest -vv --cov=threeml --cov-report=xml
 
         env:
           OMP_NUM_THREADS: 1
