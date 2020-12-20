@@ -84,6 +84,7 @@ jobs:
           environment-file: ci/environment.yml
 
       - name: Init Env
+        shell: bash -l {0}
         run: |
           # Make sure we fail in case of error
           if [[ ${{matrix.os}} == ubuntu-latest ]];
