@@ -20,13 +20,13 @@ jobs:
 
     - name: Add conda ${{ matrix.python-version }} to system path
       uses: conda-incubator/setup-miniconda@v2
-        with:
-          activate-environment: ''
-          auto-activate-base: true
-          conda-build-version: 3.20
-          python-version: ${{ matrix.python-version }}
-          auto-update-conda: true
-          channels: conda-forge, xspecmodels, threeml, defaults
+      with:
+        activate-environment: ''
+        auto-activate-base: true
+        conda-build-version: 3.20
+        python-version: ${{ matrix.python-version }}
+        auto-update-conda: true
+        channels: conda-forge, xspecmodels, threeml, defaults
 
     - name: Initialize conda ${{ matrix.python-version }}
       run: |
