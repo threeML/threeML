@@ -23,16 +23,12 @@ jobs:
       with:
         activate-environment: 'test_env'
         auto-activate-base: true
-        conda-build-version: 3.20
+        conda-build-version: 3.18
         python-version: ${{ matrix.python-version }}
-        auto-update-conda: true
-        channels: conda-forge, xspecmodels, threeml, defaults
+        auto-update-conda: false
+        channels: conda-forge, xspecmodels, threeml
 
-    - name: Initialize conda ${{ matrix.python-version }}
-      run: |
-        #conda install -y conda-build
-        conda config --add channels conda-forge
-
+ 
     - name: Init Env
       run: |
         # Make sure we fail in case of errors
