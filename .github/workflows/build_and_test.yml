@@ -23,6 +23,7 @@ jobs:
       with:
         activate-environment: 'test_env'
         auto-activate-base: true
+        architecture: "x64"
         conda-build-version: 3.18
         python-version: ${{ matrix.python-version }}
         auto-update-conda: false
@@ -45,7 +46,7 @@ jobs:
 
         cd my_work_dir
 
-        if [[ ${{matrix.os}} == ubuntu0latest ]];
+        if [[ ${{matrix.os}} == ubuntu-latest ]];
         then
         miniconda_os=Linux
         compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
