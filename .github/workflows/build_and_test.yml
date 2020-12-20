@@ -19,10 +19,15 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Add conda ${{ matrix.python-version }} to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
-        
+      uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: ''
+          auto-activate-base: true
+          conda-build-version: 3.20
+          python-version: ${{ matrix.python-version }}
+          auto-update-conda: true
+          channels: conda-forge, xspecmodels, threeml, defaults
+
     - name: Initialize conda ${{ matrix.python-version }}
       run: |
         #conda install -y conda-build
@@ -79,8 +84,8 @@ jobs:
 
         #conda update --yes -q conda conda-build
 
-        conda update --yes -q conda
+        #conda update --yes -q conda
 
-        conda config --add channels ${xspec_channel}
+        #conda config --add channels ${xspec_channel}
 
 
