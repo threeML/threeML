@@ -43,6 +43,7 @@ jobs:
       - name: Test pip on ${{ matrix.python-version }}
         run: |
           pwd
+          ls
           python -m pytest -vv --cov=threeml/ --cov-report=xml
         env:
           OMP_NUM_THREADS: 1
