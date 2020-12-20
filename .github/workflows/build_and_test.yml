@@ -57,10 +57,11 @@ jobs:
       - name: Test pip on ${{ matrix.python-version }}
         run: |
           python -m pytest -vv --cov=threeml/ --cov-report=xml
-          
+        env:
+          NUMBA_DISABLE_JIT: 1
       - name: Upload coverage to Codecov
-         uses: codecov/codecov-action@v1
-         with:
+        uses: codecov/codecov-action@v1
+        with:
            file: ./coverage.xml
            files: ./coverage1.xml,./coverage2.xml
            directory: ./coverage/reports/
