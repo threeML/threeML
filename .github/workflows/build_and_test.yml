@@ -130,6 +130,11 @@ jobs:
 
       - name: Conda list
         run: conda list
+      - name: install it
+        shell: bash -l {0}
+        run:
+          pip install -e .
+        
       - name: test it
         shell: bash -l {0}
         run: |
