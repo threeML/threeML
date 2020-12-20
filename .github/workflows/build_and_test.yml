@@ -93,11 +93,20 @@ jobs:
         echo "dependencies: ${MATPLOTLIB} ${NUMPY}  ${XSPEC}"
 
         conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy
-        
-        #conda update --yes -q conda conda-build
 
-        #conda update --yes -q conda
+    - name: Build the Distribution
+      run: |
+        # Build package
 
-        #conda config --add channels ${xspec_channel}
+        if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
+        conda build --python=${{matrix.python-version}} conda-dist/recipes/threeml
 
+        else
+        # there is some strange error about the prefix length
+        conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
+        fi
 
+    - name: Install the distribution
+      run: |
+        conda install --use-local -c conda-forge -c threeml threeml
+      
