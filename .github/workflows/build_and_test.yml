@@ -174,7 +174,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@v1.1.0
         with:
           user: __token__
-          password: ${{ secrets.PYPI_KEY }}
+          password: ${{ secrets.PYPI_TOKEN }}
       
   publish-conda:
     needs: test-conda
