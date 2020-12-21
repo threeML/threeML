@@ -176,7 +176,7 @@ jobs:
     test-publish-pypi:
         needs: test-pip
         name: Testing Publish to PyPi
-        #    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+        
         runs-on: ubuntu-latest
         steps:
             - name: Checkout source
@@ -202,6 +202,7 @@ jobs:
     publish-conda:
         needs: test-conda
         name: Publish to conda
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
