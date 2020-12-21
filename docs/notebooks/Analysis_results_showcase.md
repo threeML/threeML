@@ -25,7 +25,7 @@ from threeML import *
 
 from threeML.analysis_results import *
 
-from threeML.io.progress_bar import progress_bar
+from tqdm.auto import tqdm
 
 from jupyterthemes import jtplot
 
@@ -35,7 +35,7 @@ jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 
 import matplotlib.pyplot as plt
 
-plt.style.use("mike")
+plt.style.use("./threeml.mplstyle")
 
 
 import astropy.units as u
@@ -296,23 +296,23 @@ def go(fitfun, ar, model):
 
     free_parameters = model.free_parameters
 
-    with progress_bar(len(energies), title="Propagating errors") as p:
+	p = tqdm(total=len(energies) desc="Propagating errors")
 
-        with use_astromodels_memoization(False):
+	with use_astromodels_memoization(False):
 
-            for i, e in enumerate(energies):
+		for i, e in enumerate(energies):
 
-                this_flux = pp(e)
+			this_flux = pp(e)
 
-                low_bound, hi_bound = this_flux.equal_tail_interval()
+			low_bound, hi_bound = this_flux.equal_tail_interval()
 
-                low_curve[i], middle_curve[i], hi_curve[i] = (
-                    low_bound,
-                    this_flux.median,
-                    hi_bound,
-                )
+			low_curve[i], middle_curve[i], hi_curve[i] = (
+				low_bound,
+				this_flux.median,
+				hi_bound,
+			)
 
-                p.increase()
+			p.update(1)
 
     ax.plot(energies, middle_curve, "--", color="black")
     ax.fill_between(energies, low_curve, hi_curve, alpha=0.5, color="blue")

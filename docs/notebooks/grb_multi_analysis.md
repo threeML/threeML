@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from jupyterthemes import jtplot
 
 %matplotlib inline
-plt.style.use("mike")
+plt.style.use("./threeml.mplstyle")
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 
 

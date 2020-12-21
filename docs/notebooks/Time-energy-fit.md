@@ -28,7 +28,7 @@ from jupyterthemes import jtplot
 
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-plt.style.use("mike")
+plt.style.use("./threeml.mplstyle")
 
 
 ```

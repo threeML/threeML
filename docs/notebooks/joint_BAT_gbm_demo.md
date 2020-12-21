@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from jupyterthemes import jtplot
 
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-plt.style.use("mike")
+plt.style.use("./threeml.mplstyle")
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file

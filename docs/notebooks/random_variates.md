@@ -26,7 +26,7 @@ from threeML import *
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 import matplotlib.pyplot as plt
-plt.style.use("mike")
+plt.style.use("./threeml.mplstyle")
 
 ```
 
