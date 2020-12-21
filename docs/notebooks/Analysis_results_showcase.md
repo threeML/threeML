@@ -296,7 +296,7 @@ def go(fitfun, ar, model):
 
     free_parameters = model.free_parameters
 
-	p = tqdm(total=len(energies) desc="Propagating errors")
+	p = tqdm(total=len(energies), desc="Propagating errors")
 
 	with use_astromodels_memoization(False):
 
