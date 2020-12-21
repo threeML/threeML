@@ -339,7 +339,7 @@ model.fake.spectrum.main.composite.sigma_2.set_uninformative_prior(Log_uniform_p
 
 bs = BayesianAnalysis(model, data)
 bs.set_sampler('emcee')
-bayes.sampler.setup(n_iterations=1000,n_burn_in=100,n_walkers=20 )
+bs.sampler.setup(n_iterations=1000,n_burn_in=100,n_walkers=20 )
 samples = bs.sample()
 ```
 
