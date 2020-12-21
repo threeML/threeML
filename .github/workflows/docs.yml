@@ -1,0 +1,57 @@
+name: Docs
+on: [push, release]
+
+jobs:
+  notebooks:
+    name: "Build the notebooks for the docs"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+          activate-environment: test_env
+          python-version: 3.7
+          channels: conda-forge, xspecmodels, threeml, fermi, defaults
+          environment-file: ci/environment.yml
+
+      - name: Init Environment
+        shell: bash -l {0}
+        run: |
+          # Make sure we fail in case of error
+          
+          miniconda_os=Linux
+          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+                
+                  
+          conda install  astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest fermitools jupytext
+          
+      - name: Install the package
+        shell: bash -l {0}
+        run: |
+
+          pip install -e .
+
+      - name: Execute the notebooks
+        shell: bash -l {0}
+        run: |
+          jupytext --to ipynb --execute docs/notebooks/*.md
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-${{ github.sha }}
+          path: docs/tutorials
+
+      # - name: Trigger RTDs build
+      #   uses: dfm/rtds-action@v1
+      #   with:
+      #     webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
+      #     webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
+      #     commit_ref: ${{ github.ref }}
