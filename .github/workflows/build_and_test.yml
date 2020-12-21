@@ -176,7 +176,7 @@ jobs:
     test-publish-pypi:
         needs: test-pip
         name: Testing Publish to PyPi
-        
+        continue-on-error: true
         runs-on: ubuntu-latest
         steps:
             - name: Checkout source
