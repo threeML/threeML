@@ -8,9 +8,9 @@ jupyter:
       format_version: '1.2'
       jupytext_version: 1.7.1
   kernelspec:
-    display_name: 3ml
+    display_name: Python 3
     language: python
-    name: 3ml
+    name: python3
 ---
 
 # Example joint fit between GBM and Swift BAT
