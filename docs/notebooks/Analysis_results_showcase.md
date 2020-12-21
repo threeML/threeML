@@ -299,9 +299,7 @@ def go(fitfun, ar, model):
 	p = tqdm(total=len(energies), desc="Propagating errors")
 
 	with use_astromodels_memoization(False):
-
 		for i, e in enumerate(energies):
-
 			this_flux = pp(e)
 
 			low_bound, hi_bound = this_flux.equal_tail_interval()
