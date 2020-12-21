@@ -189,11 +189,12 @@ jobs:
               run: |
                   pip install wheel
                   python setup.py sdist bdist_wheel
+                  
             - name: Test Publish
               uses: pypa/gh-action-pypi-publish@v1.1.0
               with:
                   user: __token__
-                  password: ${{ secrets.TEST_PYPI_TOKEN }}
+                  password: ${{ secrets.TEST_PYPY_TOKEN }}
                   skip-existing: true
                   verbose: true
                   repository_url: https://test.pypi.org/legacy/
