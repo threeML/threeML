@@ -3,89 +3,100 @@ on:
   push:
     # paths-ignore:
     #   - 'CHANGELOG.md'
-  pull_request:
-  schedule:
-    - cron: '0 11 * * *'
+#  pull_request:
+  # schedule:
+  #   - cron: '0 11 * * 4'
+
+
+
 
 jobs:
-  skip_duplicate:
+
+
+  publish-pypi:
+    needs: test-pip
+    name: Publish to PyPi
+    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
     runs-on: ubuntu-latest
-    outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@master
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
         with:
-          github_token: ${{ github.token }}
+          python-version: 3.7
+      - name: Build package
+        run: |
+          pip install wheel
+          python setup.py sdist bdist_wheel
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@v1.1.0
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
+          skip-existing: true
 
+  test-publish-pypi:
+    needs: test-pip
+    name: Testing Publish to PyPi
+#    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Build package
+        run: |
+          pip install wheel
+          python setup.py sdist bdist_wheel
+      - name: Test Publish
+        uses: pypa/gh-action-pypi-publish@v1.1.0
+        with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_TOKEN }}
+          skip-existing: true
+          repository_url: https://test.pypi.org/legacy/
 
-
-  test-pip:
-    needs: skip_duplicate
-    if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
+          
+  publish-conda:
+    needs: test-conda
+    name: Publish to conda
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [ 3.7, 3.8 ]
-    runs-on: ubuntu-latest
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.7]
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
+      - uses: actions/checkout@v2
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade astromodels
-          pip install --upgrade coverage pytest-cov cython
-          pip install -e .
-      - name: Test pip on ${{ matrix.python-version }}
-        run: |
-          python -m pytest -vv --cov=threeML/ --cov-report=xml
-        env:
-          OMP_NUM_THREADS: 1
-          MKL_NUM_THREADS: 1
-          NUMEXPR_NUM_THREADS: 1
-          MPLBACKEND: "Agg"
-      
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-           file: ./coverage.xml
-           files: ./coverage1.xml,./coverage2.xml
-           directory: ./coverage/reports/
-
-
-  test-conda:
-    needs: skip_duplicate
-    if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
-    strategy:
-      matrix:
-        os: [ 'ubuntu-latest', 'macos-latest' ]
-        python-version: [ 3.7 ]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
       - name: Cache conda
         uses: actions/cache@v1
         with:
           path: ~/conda_pkgs_dir
           key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
-      - name: Setup Miniconda
+      - name: Add conda ${{ matrix.python-version }} to system path
         uses: conda-incubator/setup-miniconda@v2
         with:
-          auto-update-conda: true
+          activate-environment: "test_env"
           auto-activate-base: false
-          activate-environment: test_env
+          architecture: "x64"
+          conda-build-version: 3.18
           python-version: ${{ matrix.python-version }}
-          channels: conda-forge, xspecmodels, threeml, defaults
+          auto-update-conda: true
           environment-file: ci/environment.yml
+          channels: conda-forge, xspecmodels, threeml, defaults
 
       - name: Init Env
         shell: bash -l {0}
         run: |
+
           # Make sure we fail in case of error
           if [[ ${{matrix.os}} == ubuntu-latest ]];
           then
@@ -128,30 +139,17 @@ jobs:
           PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 
           conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest
-
-      - name: Conda list
-        run: conda list
-      - name: install it
-        shell: bash -l {0}
-        run:
-          pip install -e .
-        
-      - name: test it
+            
+      - name: Build the Distribution
         shell: bash -l {0}
         run: |
-          python -m pytest -vv --cov=threeML --cov-report=xml
+          # Build package
+          
+          if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
-        env:
-          OMP_NUM_THREADS: 1
-          MKL_NUM_THREADS: 1
-          NUMEXPR_NUM_THREADS: 1
-          MPLBACKEND: "Agg"
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
-        with:
-           file: ./coverage.xml
-           files: ./coverage1.xml,./coverage2.xml
-           directory: ./coverage/reports/
-
-  
+          conda build --python=${{matrix.python-version}} conda-dist/recipes/threeml
+        
+          else
+          # there is some strange error about the prefix length
+          conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
+          fi
