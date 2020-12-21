@@ -18,8 +18,8 @@ Traditionally the Astrophysics community have been using frequentist techniques,
     
     installation
     intro
-    notebooks/Minimization_tutorial.ipynb
-    notebooks/Bayesian_tutorial.ipynb
+    notebooks/Minimization_tutorial
+    notebooks/Bayesian_tutorial
     plugins
     modeling
     faq
@@ -29,13 +29,13 @@ Traditionally the Astrophysics community have been using frequentist techniques,
 .. nbgallery::
    :caption: Features and examples:
 
-   examples/grb080916C
-   examples/joint_BAT_gbm_demo
-   examples/Fermipy_LAT
-   examples/Time-energy-fit
+   notebooks/grb080916C
+   notebooks/joint_BAT_gbm_demo
+   notebooks/Fermipy_LAT
+   notebooks/Time-energy-fit
    notebooks/Analysis_results_showcase
    notebooks/random_variates
    notebooks/Point_source_plotting
    notebooks/synthetic_spectra
-   examples/gof_lrt
+   notebooks/gof_lrt
     

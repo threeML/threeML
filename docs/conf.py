@@ -45,7 +45,23 @@ extensions = [
     'sphinx.ext.viewcode',
 #    'sphinx_gallery.gen_gallery',
     'sphinx_gallery.load_style',
+    "rtds_action"
+    
 ]
+
+
+# The path where the artifact should be extracted
+# Note: this is relative to the conf.py file!
+rtds_action_path = "notebooks/"
+
+# The "prefix" used in the `upload-artifact` step of the action
+rtds_action_artifact_prefix = "notebooks-for-"
+
+
+rtds_action_github_repo = "threeml/threeml"
+
+# A GitHub personal access token is required, more info below
+rtds_action_github_token = os.environ["GITHUB_TOKEN"]
 
 
 # Add any paths that contain templates here, relative to this directory.
