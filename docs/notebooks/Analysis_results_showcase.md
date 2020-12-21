@@ -338,8 +338,9 @@ model.fake.spectrum.main.composite.mu_2.set_uninformative_prior(Uniform_prior)
 model.fake.spectrum.main.composite.sigma_2.set_uninformative_prior(Log_uniform_prior)
 
 bs = BayesianAnalysis(model, data)
-
-samples = bs.sample(20, 100, 1000)
+bs.set_sampler('emcee')
+bayes.sampler.setup(n_iterations=1000,n_burn_in=100,n_walkers=20 )
+samples = bs.sample()
 ```
 
 Again, we grab the results from the BayesianAnalysis object:
