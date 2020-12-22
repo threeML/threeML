@@ -174,6 +174,19 @@ _ = plot_sample_path(bayes,truth=40.,burn_in=n_walkers*burn_in)
 _ = bayes.results.corner_plot()
 ```
 
+## Complex Likelihood
+
+We now examine a more complex likelihood.
+
+```python
+bayes, model = get_bayesian_analysis_object_complex_likelihood()
+
+
+
+model.test.spectrum.main.shape.mu.prior = Uniform_prior(lower_bound=1, upper_bound=100)
+
+_ = plot_likelihood_function(bayes)
+```
 
 ## MULTINEST
 
