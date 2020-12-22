@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 ```
 
 ```python nbsphinx="hidden"
-plt.style.use('mike')
+plt.style.use('./threeml.mplstyle')
 import warnings
 warnings.filterwarnings('ignore')
 ```

@@ -41,7 +41,7 @@ from threeML.bayesian.tutorial_material import *
 ```
 
 ```python nbsphinx="hidden"
-plt.style.use('mike')
+plt.style.use('./threeml.mplstyle')
 ```
 
 Let’s get a BayesianAnalysis object like the one we would have in a normal 3ML analysis. We use a custom function, prepared for this tutorial, which gives a BayesianAnalysis object having a very simple model with one free parameter ($\mu$), and with a likelihood having a very simple shape:

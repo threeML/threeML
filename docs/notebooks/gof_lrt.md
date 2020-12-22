@@ -29,7 +29,7 @@ import matplotlib.pyplot as plt
 from jupyterthemes import jtplot
 
 jtplot.style(context='talk', fscale=1, ticks=True, grid=False)
-plt.style.use('mike')
+plt.style.use('./threeml.mplstyle')
 
 import scipy.stats as stats
 import numpy as np
