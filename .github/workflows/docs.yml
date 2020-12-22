@@ -32,9 +32,9 @@ jobs:
 
           EXTRAS = "emcee pymultinest ultranest"
           
-          PKGS = "${compilers} ${EXTRAS} jupytext jupyterthemes miktex"
+          PKGS = "jupytext jupyterthemes miktex"
           
-          conda install ${PKGS}
+          conda install ${compilers} ${PKGS} ${EXTRAS}
           
       - name: Install the package
         shell: bash -l {0}
