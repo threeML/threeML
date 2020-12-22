@@ -10,7 +10,7 @@ skip_if_internet_is_not_available = pytest.mark.skipif(
 )
 
 
-@skip_if_internet_is_not_available
+#@skip_if_internet_is_not_available
 @pytest.mark.xfail
 def test_download_GBM_data():
     # test good trigger names

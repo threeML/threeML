@@ -29,7 +29,7 @@ skip_if_LAT_is_not_available = pytest.mark.skipif(not has_Fermi,
 )
 
 
-@skip_if_internet_is_not_available
+#@skip_if_internet_is_not_available
 @pytest.mark.xfail
 @skip_if_LAT_is_not_available
 def test_download_LAT_data():
@@ -57,7 +57,7 @@ def test_download_LAT_data():
     shutil.rmtree(temp_dir)
 
 
-@skip_if_internet_is_not_available
+#@skip_if_internet_is_not_available
 @pytest.mark.xfail
 def test_download_LLE_data():
     # test good trigger names
