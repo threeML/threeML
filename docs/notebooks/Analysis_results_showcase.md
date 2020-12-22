@@ -370,10 +370,8 @@ np.allclose(ar2_reloaded.samples, ar2.samples)
 We can examine the marginal distributions of the parameters:
 
 ```python
-#ar2.corner_plot();
+ar2.corner_plot();
 
-# with chain consumer (pretty!)
-ar2.corner_plot_cc();
 ```
 
 We can return pandas DataFrames with equal tail or HPD results.
