@@ -29,12 +29,8 @@ jobs:
           
           miniconda_os=Linux
           compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-
-          EXTRAS = "emcee pymultinest ultranest"
           
-          PKGS = "jupytext jupyterthemes miktex"
-          
-          conda install ${compilers} ${PKGS} ${EXTRAS}
+          conda install ${compilers} jupytext jupyterthemes miktex emcee pymultinest ultranest
           
       - name: Install the package
         shell: bash -l {0}
