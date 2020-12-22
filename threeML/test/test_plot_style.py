@@ -2,7 +2,7 @@ import pytest
 from threeML import *
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-
+import os
 
 def test_plot():
 
