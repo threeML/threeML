@@ -37,8 +37,10 @@ jobs:
         shell: bash -l {0}
         run: |
 
-          pip install -e .
           pip install chainconsumer
+          pip install latex
+          pip install -e .
+          
           
       - name: Execute the notebooks
         shell: bash -l {0}
