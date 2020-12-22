@@ -37,12 +37,15 @@ jobs:
       - name: Install the package
         shell: bash -l {0}
         run: |
+
+          pip install zeus-mcmc
           pip install -e .
           
           
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
+
           jupytext --to ipynb --execute docs/notebooks/*.md
 
       - uses: actions/upload-artifact@v2
