@@ -82,7 +82,7 @@ class SpectrumLike(PluginPrototype):
 
         # Just a toggle for verbosity
         self._verbose = bool(verbose)
-
+        self._name = name
         assert is_valid_variable_name(name), (
             "Name %s is not a valid name for a plugin. You must use a name which is "
             "a valid python identifier: no spaces, no operators (+,-,/,*), "
@@ -163,7 +163,7 @@ class SpectrumLike(PluginPrototype):
 
         if self._background_plugin is not None:
 
-            log.debug(f"{self._name} is using a modeled background")
+            log.debug(f"{name} is using a modeled background")
 
             self._background_noise_model = "modeled"
 
@@ -899,7 +899,7 @@ class SpectrumLike(PluginPrototype):
 
         return self._like_model
 
-    def get_pha_files(self) -> dcit:
+    def get_pha_files(self) -> dict:
 
         info = {}
 
@@ -913,7 +913,7 @@ class SpectrumLike(PluginPrototype):
 
         return info
 
-    def set_active_measurements(self, *args, **kwargs) ->:
+    def set_active_measurements(self, *args, **kwargs):
         """
         Set the measurements to be used during the analysis. Use as many ranges as you need, and you can specify
         either energies or channels to be used.
@@ -1856,7 +1856,7 @@ class SpectrumLike(PluginPrototype):
         :param max_value: maximum allowed value (default: 1.2, corresponding to a 20% + effect
         :return:
         """
-
+        log.info(f"{self._name} is using effective area correction (between {min_value} and {max_value})")
         self._nuisance_parameter.free = True
         self._nuisance_parameter.bounds = (min_value, max_value)
 
@@ -1884,6 +1884,7 @@ class SpectrumLike(PluginPrototype):
         """
         assert method in ["simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
         self._model_integrate_method = method
+        log.info(f"{self._name} changing model integration method to {method}")
 
         # if like_model already set, upadte the integral function
         if self._like_model is not None:
@@ -1899,6 +1900,7 @@ class SpectrumLike(PluginPrototype):
         """
         assert method in ["simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
         self._background_integrate_method = method
+        log.info(f"{self._name} changing background integration method to {method}")
 
         # if background_plugin is set, update the integral function
         if self._background_plugin is not None:
