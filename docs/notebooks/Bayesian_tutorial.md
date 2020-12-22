@@ -174,68 +174,6 @@ _ = plot_sample_path(bayes,truth=40.,burn_in=n_walkers*burn_in)
 _ = bayes.results.corner_plot()
 ```
 
-## The Zeus sampler
-
-We now examine a more complex likelihood with [zeus](https://zeus-mcmc.readthedocs.io/en/latest/). Zeus builds upon the approach of emcee and by adding on [slice sampling](https://en.wikipedia.org/wiki/Slice_sampling).
-
-```python
-bayes, model = get_bayesian_analysis_object_complex_likelihood()
-
-bayes.set_sampler('zeus')
-
-
-model.test.spectrum.main.shape.mu.prior = Uniform_prior(lower_bound=1, upper_bound=100)
-
-_ = plot_likelihood_function(bayes)
-```
-
-We proceed as before and see if we can fully sample the likelihood
-
-```python
-
-model.test.spectrum.main.shape.mu = 1.
-
-n_walkers = 100
-burn_in = 100
-n_samples = 500
-
-bayes.sampler.setup(n_iterations=n_samples,n_burn_in=burn_in,n_walkers=n_walkers )
-
-res = bayes.sample()
-```
-
-```python
-_ = plot_sample_path(bayes,burn_in=n_walkers*burn_in)
-_ = bayes.results.corner_plot()
-```
-
-We see that zeus explored the parameter space, but did not sample all the modes evenly.
-
-<!-- #raw -->
-... note
-    This is NOT a problem with zeus. This is just a complex likelihood that is better suited for other types of sampling algorithms.
-<!-- #endraw -->
-
-We can try to explode the number of samples and see if it improves.
-
-```python
-model.test.spectrum.main.shape.mu = 99.
-n_walkers = 10
-burn_in = 200
-n_samples = 1000
-
-bayes.sampler.setup(n_iterations=n_samples,n_burn_in=burn_in,n_walkers=n_walkers )
-
-res = bayes.sample()
-```
-
-```python
-_ = plot_sample_path(bayes,burn_in=n_walkers*burn_in)
-_ = bayes.results.corner_plot()
-```
-
-<!-- #region -->
-We were able search the parameter space and resolve some modes, but it is easy to see that any inference will be diffuse. We need to always investigate the samplers we use to make sure they are appropriate for the problem at hand
 
 ## MULTINEST
 
