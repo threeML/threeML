@@ -913,7 +913,8 @@ class SpectrumLike(PluginPrototype):
 
         return info
 
-    def set_active_measurements(self, *args, **kwargs):
+    def set_active_measurements(self, *args, **kwargs) -> None:
+
         """
         Set the measurements to be used during the analysis. Use as many ranges as you need, and you can specify
         either energies or channels to be used.

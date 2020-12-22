@@ -1,3 +1,4 @@
+![CI](https://github.com/threeML/threeML/workflows/CI/badge.svg?branch=master&event=push)
 [![Build Status](https://travis-ci.org/threeML/threeML.svg?branch=master)](https://travis-ci.org/threeML/threeML)
 [![codecov](https://codecov.io/gh/threeML/threeML/branch/master/graph/badge.svg)](https://codecov.io/gh/threeML/threeML)
 [![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
