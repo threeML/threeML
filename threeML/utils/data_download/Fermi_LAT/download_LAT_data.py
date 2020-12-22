@@ -493,7 +493,7 @@ def download_LAT_data(
 
             print(fits_file)
 
-        if re.match(".+SC[0-9][0-9].fits", fits_file) is not None:
+        if re.match(".+SC[0-9][0-9].fits", str(fits_file)) is not None:
 
             FT2 = fits_file
         else:
