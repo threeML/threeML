@@ -1,22 +1,25 @@
 from __future__ import print_function
+
 from future import standard_library
 
 standard_library.install_aliases()
-from builtins import str
+import glob
 import html.parser
+import os
 import re
 import socket
 import time
-import urllib.request, urllib.parse, urllib.error
-import os
-import glob
+import urllib.error
+import urllib.parse
+import urllib.request
+from builtins import str
 
 import astropy.io.fits as pyfits
 
-from threeML.io.file_utils import sanitize_filename
 from threeML.config.config import threeML_config
-from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 from threeML.io.download_from_http import ApacheDirectory
+from threeML.io.file_utils import sanitize_filename
+from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 
 # Set default timeout for operations
 socket.setdefaulttimeout(120)
@@ -74,7 +77,8 @@ class DivParser(html.parser.HTMLParser):
 # Keyword name to store the unique ID for the download
 _uid_fits_keyword = "QUERYUID"
 
-def merge_LAT_data(ft1s, destination_directory=".", outfile='ft1_merged.fits'):
+
+def merge_LAT_data(ft1s, destination_directory=".", outfile="ft1_merged.fits"):
 
     outfile = os.path.join(destination_directory, outfile)
 
@@ -88,38 +92,40 @@ def merge_LAT_data(ft1s, destination_directory=".", outfile='ft1_merged.fits'):
         return outfile
 
     if len(ft1s) == 1:
-        print('Only one FT1 file provided. Skipping the merge...')
+        print("Only one FT1 file provided. Skipping the merge...")
         import shutil
-        shutil.copyfile(ft1s[0],outfile)
+
+        shutil.copyfile(ft1s[0], outfile)
         return outfile
 
     _filelist = "_filelist.txt"
 
     infile = os.path.join(destination_directory, _filelist)
 
+    infile_list = open(infile, "w")
 
-    infile_list = open(infile,'w')
-
-    for ft1 in ft1s: infile_list.write(ft1 + '\n' )
+    for ft1 in ft1s:
+        infile_list.write(ft1 + "\n")
 
     infile_list.close()
 
     from GtApp import GtApp
 
-    gtselect = GtApp('gtselect')
+    gtselect = GtApp("gtselect")
 
-    gtselect['infile']  = '@' + infile
-    gtselect['outfile'] = outfile
-    gtselect['ra']      = 'INDEF'
-    gtselect['dec']     = 'INDEF'
-    gtselect['rad']     = 'INDEF'
-    gtselect['tmin']    = 'INDEF'
-    gtselect['tmax']    = 'INDEF'
-    gtselect['emin']    = '30'
-    gtselect['emax']    ='1000000'
-    gtselect['zmax']    = 180
+    gtselect["infile"] = "@" + infile
+    gtselect["outfile"] = outfile
+    gtselect["ra"] = "INDEF"
+    gtselect["dec"] = "INDEF"
+    gtselect["rad"] = "INDEF"
+    gtselect["tmin"] = "INDEF"
+    gtselect["tmax"] = "INDEF"
+    gtselect["emin"] = "30"
+    gtselect["emax"] = "1000000"
+    gtselect["zmax"] = 180
     gtselect.run()
     return outfile
+
 
 def download_LAT_data(
     ra,
@@ -226,9 +232,9 @@ def download_LAT_data(
                 # Found one! Append to the list as there might be others
 
                 prev_downloaded_ft1s.append(ft1)
-                #break
+                # break
                 pass
-    if len(prev_downloaded_ft1s)>0:
+    if len(prev_downloaded_ft1s) > 0:
 
         for ft2 in ft2s:
 
@@ -245,7 +251,7 @@ def download_LAT_data(
         pass
 
     # If we have both FT1 and FT2 matching the ID, we do not need to download anymore
-    if len(prev_downloaded_ft1s)>0 and prev_downloaded_ft2 is not None:
+    if len(prev_downloaded_ft1s) > 0 and prev_downloaded_ft2 is not None:
 
         print(
             "Existing event file %s and Spacecraft file %s correspond to the same selection. "
@@ -254,7 +260,14 @@ def download_LAT_data(
             % (prev_downloaded_ft1s, prev_downloaded_ft2)
         )
 
-        return merge_LAT_data(prev_downloaded_ft1s, destination_directory, outfile='L%s_FT1.fits' % query_unique_id), prev_downloaded_ft2
+        return (
+            merge_LAT_data(
+                prev_downloaded_ft1s,
+                destination_directory,
+                outfile="L%s_FT1.fits" % query_unique_id,
+            ),
+            prev_downloaded_ft2,
+        )
 
     # Print them out
 
@@ -386,7 +399,10 @@ def download_LAT_data(
 
         try:
 
-            _ = urllib.request.urlretrieve(http_address, fakeName,)
+            _ = urllib.request.urlretrieve(
+                http_address,
+                fakeName,
+            )
 
         except socket.timeout:
 
@@ -475,8 +491,8 @@ def download_LAT_data(
 
         except:
 
-            pass
-            
+            print(fits_file)
+
         if re.match(".+SC[0-9][0-9].fits", fits_file) is not None:
 
             FT2 = fits_file
@@ -485,6 +501,11 @@ def download_LAT_data(
             FT1.append(fits_file)
 
     # If FT2 is first, switch them, otherwise do nothing
-    #if re.match(".+SC[0-9][0-9].fits", downloaded_files[0]) is not None:
+    # if re.match(".+SC[0-9][0-9].fits", downloaded_files[0]) is not None:
 
-    return merge_LAT_data(FT1, destination_directory, outfile='L%s_FT1.fits' % query_unique_id), FT2
+    return (
+        merge_LAT_data(
+            FT1, destination_directory, outfile="L%s_FT1.fits" % query_unique_id
+        ),
+        FT2,
+    )
