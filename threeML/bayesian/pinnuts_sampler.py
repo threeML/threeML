@@ -1,6 +1,7 @@
 import numpy as np
 import numdifftools
 
+from threeML.io.logging import setup_logger
 from threeML.bayesian.sampler_base import MCMCSampler
 from threeML.config.config import threeML_config
 from threeML.parallel.parallel_client import ParallelClient
@@ -20,6 +21,7 @@ else:
 
     has_nuts = True
 
+log = setup_logger(__name__)
 
 class NUTSSampler(MCMCSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
@@ -37,6 +39,9 @@ class NUTSSampler(MCMCSampler):
         super(NUTSSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(self, n_iterations, n_adapt=None, delta=0.6, seed=None):
+
+        log.debug(f"Setup for NUTS sampler: n_iterations: {n_iterations}, n_adapt: {n_adapt}, "\
+                  f"delta:{delta}, seed:{seed}")
 
         self._n_iterations = int(n_iterations)
 
@@ -56,7 +61,10 @@ class NUTSSampler(MCMCSampler):
 
     def sample(self, quiet=False):
 
-        assert self._is_setup, "You forgot to setup the sampler!"
+         if not self._is_setup:
+
+            log.info("You forgot to setup the sampler!")
+            return
 
         loud = not quiet
 
@@ -93,9 +101,9 @@ class NUTSSampler(MCMCSampler):
                     return numerical_grad(theta, self.get_posterior)
                 
                 nuts_fn = nuts.NutsSampler_fn_wrapper(self.get_posterior, grad)
-
+                log.debug("Start NUTS run")
                 samples, lnprob, epsilon = nuts.nuts6(nuts_fn, self._n_iterations, self._n_adapt, p0)
-                
+                log.debug("NUTS run done")
 #            sampler = nuts.NUTSSampler(n_dim, self.get_posterior, gradfn=None)  
 
             # # if a seed is provided, set the random number seed

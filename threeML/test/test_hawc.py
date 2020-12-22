@@ -4,6 +4,8 @@ from builtins import zip
 from builtins import range
 from past.utils import old_div
 import pytest
+import os
+
 from threeML import *
 
 

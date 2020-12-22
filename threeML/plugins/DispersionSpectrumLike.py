@@ -116,6 +116,7 @@ class DispersionSpectrumLike(SpectrumLike):
         """
         assert method in ["simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
         self._model_integrate_method = method
+        log.info(f"{self._name} changing model integration method to {method}")
 
         # if like_model already set, upadte the integral function
         if self._like_model is not None:

@@ -1,6 +1,7 @@
 from builtins import range
 from builtins import object
 import pytest
+import os
 import numpy.testing as npt
 from .conftest import get_test_datasets_directory
 from threeML import *

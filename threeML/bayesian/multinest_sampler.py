@@ -4,7 +4,7 @@ from typing import Optional
 
 import numpy as np
 
-
+from threeML.io.logging import setup_logger
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
@@ -43,6 +43,7 @@ except:
 
     using_mpi = False
 
+log = setup_logger(__name__)
 
 class MultiNestSampler(UnitCubeSampler):
     def __init__(self,
@@ -83,7 +84,9 @@ class MultiNestSampler(UnitCubeSampler):
         :rtype: 
 
         """
-
+        log.debug(f"Setup for MultiNest sampler: n_live_points:{n_live_points}, chain_name:{chain_name},"\
+                  f"resume: {resume}, importance_nested_sampling: {importance_nested_sampling}."\
+                  f"Other input: {kwargs}")
         self._kwargs = {}
         self._kwargs["n_live_points"] = n_live_points
         self._kwargs["outputfiles_basename"] = chain_name
@@ -107,7 +110,7 @@ class MultiNestSampler(UnitCubeSampler):
         """
         if not self._is_setup:
 
-            print("You forgot to setup the sampler!")
+            log.info("You forgot to setup the sampler!")
             return
 
         assert (
@@ -151,11 +154,13 @@ class MultiNestSampler(UnitCubeSampler):
                 # create mcmc chains directory only on first engine
 
                 if not os.path.exists(mcmc_chains_out_dir):
+                    log.debug(f"Create {mcmc_chains_out_dir} for multinest output")
                     os.makedirs(mcmc_chains_out_dir)
 
         else:
 
             if not os.path.exists(mcmc_chains_out_dir):
+                log.debug(f"Create {mcmc_chains_out_dir} for multinest output")
                 os.makedirs(mcmc_chains_out_dir)
 
         # Multinest must be run parallel via an external method
@@ -163,17 +168,16 @@ class MultiNestSampler(UnitCubeSampler):
 
         if threeML_config["parallel"]["use-parallel"]:
 
-            raise RuntimeError(
-                "If you want to run multinest in parallell you need to use an ad-hoc method"
-            )
+            log.error("If you want to run multinest in parallell you need to use an ad-hoc method")
 
         else:
 
             with use_astromodels_memoization(False):
-            
+                log.debug("Start multinest run")
                 sampler = pymultinest.run(
                     loglike, multinest_prior, n_dim, n_dim, **self._kwargs
                 )
+                log.debug("Multinest run done")
 
         # Use PyMULTINEST analyzer to gather parameter info
 

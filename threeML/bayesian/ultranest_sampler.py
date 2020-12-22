@@ -5,6 +5,7 @@ import numpy as np
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
+from threeML.io.logging import setup_logger
 
 
 try:
@@ -39,6 +40,7 @@ except:
 
     using_mpi = False
 
+log = setup_logger(__name__)
 
 class UltraNestSampler(UnitCubeSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
@@ -55,7 +57,9 @@ class UltraNestSampler(UnitCubeSampler):
         wrapped_params=None,
         **kwargs
     ):
-
+        log.debug(f"Setup for UltraNest sampler: min_num_live_points:{min_num_live_points}, "\
+                  f"chain_name:{chain_name}, dlogz: {dlogz}, wrapped_params: {wrapped_params}. "\
+                  f"Other input: {kwargs}")
         self._kwargs = {}
         self._kwargs["min_num_live_points"] = min_num_live_points
         self._kwargs["dlogz"] = dlogz
@@ -79,7 +83,7 @@ class UltraNestSampler(UnitCubeSampler):
         """
         if not self._is_setup:
 
-            print("You forgot to setup the sampler!")
+            log.info("You forgot to setup the sampler!")
             return
 
         loud = not quiet
@@ -119,11 +123,13 @@ class UltraNestSampler(UnitCubeSampler):
                     # create mcmc chains directory only on first engine
 
                     if not os.path.exists(mcmc_chains_out_dir):
+                        log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                         os.makedirs(mcmc_chains_out_dir)
 
             else:
 
                 if not os.path.exists(mcmc_chains_out_dir):
+                    log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                     os.makedirs(mcmc_chains_out_dir)
 
         # Multinest must be run parallel via an external method
@@ -147,7 +153,9 @@ class UltraNestSampler(UnitCubeSampler):
             )
 
             with use_astromodels_memoization(False):
+                log.debug("Start ultranest run")
                 sampler.run(show_status=loud, **self._kwargs)
+                log.debug("Ultranest run done")
 
         process_fit = False
 
