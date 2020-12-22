@@ -181,11 +181,6 @@ We now examine a more complex likelihood.
 ```python
 bayes, model = get_bayesian_analysis_object_complex_likelihood()
 
-
-
-model.test.spectrum.main.shape.mu.prior = Uniform_prior(lower_bound=1, upper_bound=100)
-
-_ = plot_likelihood_function(bayes)
 ```
 
 ## MULTINEST
@@ -193,12 +188,19 @@ _ = plot_likelihood_function(bayes)
 [MULTINEST](https://github.com/farhanferoz/MultiNest) is a nested sampling algorithm that is designed to integrate the the posterior to obtain the marginal likelihood. For details on the algorithm see [Feroz et al. (2009)](https://academic.oup.com/mnras/article-abstract/398/4/1601/981502), [Feroz et al. (2013)](https://arxiv.org/abs/1306.2144), and for details on the input arguments for the python interface we implement, see the documentation of [pymultinest](https://johannesbuchner.github.io/PyMultiNest/). If you find these algorithms useful for your research, please cite the originals authors!
 
 
-Let's resample the complex likelihood from above with MULTINEST using 
+Let's sample the complex likelihood from above with MULTINEST using 
 <!-- #endregion -->
 
 ```python
 
 bayes.set_sampler('multinest')
+
+
+model.test.spectrum.main.shape.mu.prior = Uniform_prior(lower_bound=1, upper_bound=100)
+
+_ = plot_likelihood_function(bayes)
+
+
 bayes.sampler.setup(n_live_points=400, resume=False)
 
 
