@@ -97,7 +97,7 @@ We could easily run the sampler longer, but let's reset the value of $\mu$ far f
 model.test.spectrum.main.shape.mu =99
 
 
-n_walkers = 2
+n_walkers = 5
 burn_in = 200
 n_samples = 500
 
@@ -193,7 +193,7 @@ We proceed as before and see if we can fully sample the likelihood
 
 ```python
 model.test.spectrum.main.shape.mu = 1.
-n_walkers = 4
+n_walkers = 20
 burn_in = 100
 n_samples = 500
 
@@ -218,7 +218,7 @@ We can try to explode the number of samples and see if it improves.
 
 ```python
 model.test.spectrum.main.shape.mu = 99.
-n_walkers = 4
+n_walkers = 10
 burn_in = 200
 n_samples = 1000
 
@@ -246,7 +246,7 @@ Let's resample the complex likelihood from above with MULTINEST using
 ```python
 
 bayes.set_sampler('multinest')
-bayes.sampler.setup(n_live_points=400)
+bayes.sampler.setup(n_live_points=400, resume=False)
 
 
 res = bayes.sample()
