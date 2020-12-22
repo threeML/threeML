@@ -29,9 +29,12 @@ jobs:
           
           miniconda_os=Linux
           compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-                
-                  
-          conda install  astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest jupytext jupyterthemes
+
+          EXTRA = emcee pymultinest ultranest
+          
+          PKGS = ${compilers} ${EXTRAS} jupytext jupyterthemes miktex
+          
+          conda install ${PKGS}
           
       - name: Install the package
         shell: bash -l {0}
