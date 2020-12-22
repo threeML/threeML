@@ -29,7 +29,8 @@ jobs:
           
           miniconda_os=Linux
           compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-          
+
+          sudo apt-get install texlive-full
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
           
