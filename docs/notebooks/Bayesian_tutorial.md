@@ -181,10 +181,7 @@ We now examine a more complex likelihood with [zeus](https://zeus-mcmc.readthedo
 ```python
 bayes, model = get_bayesian_analysis_object_complex_likelihood()
 
-bayes.set_sampler('zeus')
-
 model.test.spectrum.main.shape.mu.prior = Uniform_prior(lower_bound=1, upper_bound=100)
-
 
 _ = plot_likelihood_function(bayes)
 ```
@@ -192,8 +189,11 @@ _ = plot_likelihood_function(bayes)
 We proceed as before and see if we can fully sample the likelihood
 
 ```python
+bayes.set_sampler('zeus')
+
 model.test.spectrum.main.shape.mu = 1.
-n_walkers = 20
+
+n_walkers = 100
 burn_in = 100
 n_samples = 500
 
