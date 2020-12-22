@@ -1,11 +1,13 @@
 import emcee
 import numpy as np
 
+from threeML.io.logging import setup_logger
 from threeML.bayesian.sampler_base import MCMCSampler
 from threeML.config.config import threeML_config
 from threeML.parallel.parallel_client import ParallelClient
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
+log = setup_logger(__name__)
 
 class EmceeSampler(MCMCSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
@@ -23,6 +25,9 @@ class EmceeSampler(MCMCSampler):
         super(EmceeSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(self, n_iterations, n_burn_in=None, n_walkers=20, seed=None):
+
+        log.debug(f"Setup for Emcee sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"\
+                  f"n_walkers: {n_walkers}, seed: {seed}.")
 
         self._n_iterations = int(n_iterations)
 
@@ -42,7 +47,10 @@ class EmceeSampler(MCMCSampler):
 
     def sample(self, quiet=False):
 
-        assert self._is_setup, "You forgot to setup the sampler!"
+        if not self._is_setup:
+
+            log.info("You forgot to setup the sampler!")
+            return
 
         loud = not quiet
 
@@ -78,10 +86,12 @@ class EmceeSampler(MCMCSampler):
 
                 sampler._random.seed(self._seed)
 
+            log.debug("Start emcee run")
             # Sample the burn-in
             pos, prob, state = sampler.run_mcmc(
                 initial_state=p0, nsteps=self._n_burn_in, progress=loud
             )
+            log.debug("Emcee run done")
 
             # Reset sampler
 
@@ -97,7 +107,7 @@ class EmceeSampler(MCMCSampler):
 
         acc = np.mean(sampler.acceptance_fraction)
 
-        print("\nMean acceptance fraction: %s\n" % acc)
+        log.info("\nMean acceptance fraction: %s\n" % acc)
 
         self._sampler = sampler
         self._raw_samples = sampler.get_chain(flat=True)
