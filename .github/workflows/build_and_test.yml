@@ -284,17 +284,33 @@ jobs:
                   # Build package
 
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
+                  
+                  mkdir conda-bld-linux
 
-                  conda build --python=${{matrix.python-version}} conda-dist/recipes/threeml
+                  conda build --python=${{matrix.python-version}} --output-folder conda-bld-linux conda-dist/recipes/threeml
 
                   else
                   # there is some strange error about the prefix length
-                  conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
+
+                  mkdir conda-bld-osx
+                  
+                  conda build --no-build-id --python=${{matrix.python-version}} --output-folder conda-bld-osx  conda-dist/recipes/threeml
                   fi
             - name: Publish to Conda
               if:  startsWith(github.event.ref, 'refs/tags') == true
               shell:  bash -l {0}
               run: |
+                if [[ ${{matrix.os}} == ubuntu-latest ]]; then
+
+                anaconda -v --show-traceback -t ${CONDA_TOKEN} upload -u threeml ${HOME}/miniconda/conda-bld/linux-64/*.tar.bz2 --force
+
+                else
+
+                anaconda -v --show-traceback -t ${CONDA_TOKEN} upload -u threeml ${HOME}/miniconda/conda-bld/*/*.tar.bz2 --force
+
+                fi
+              env:
+                CONDA_TOKEN: ${{ secrets.CONDA_TOKEN }}
                 
             - name: Test Publish to Conda
               if: startsWith(github.event.ref, 'refs/tags') != true
@@ -303,10 +319,12 @@ jobs:
 
                 if [[ ${{matrix.os}} == ubuntu-latest ]]; then
 
-                anaconda -v --show-traceback -t ${{ secrets.CONDA_TOKEN }} upload -u threeml ${HOME}/miniconda/conda-bld/linux-64/*.tar.bz2 --force --label test
+                anaconda -v --show-traceback -t ${CONDA_TOKEN} upload -u threeml conda-bld-linux/linux-64/*.tar.bz2 --force --label test
 
                 else
 
-                anaconda -v --show-traceback -t ${{ secrets.CONDA_TOKEN }} upload -u threeml ${HOME}/miniconda/conda-bld/*/*.tar.bz2 --force --label test
+                anaconda -v --show-traceback -t ${CONDA_TOKEN} upload -u threeml conda-bld-osx/*/*.tar.bz2 --force --label test
 
                 fi
+              env:
+                CONDA_TOKEN: ${{ secrets.CONDA_TOKEN }}
