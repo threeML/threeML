@@ -297,7 +297,7 @@ jobs:
               run: |
                 
             - name: Test Publish to Conda
-              if: ! startsWith(github.event.ref, 'refs/tags') != true
+              if: startsWith(github.event.ref, 'refs/tags') != true
               shell:  bash -l {0}
               run: |
 
