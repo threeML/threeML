@@ -202,7 +202,6 @@ jobs:
     publish-conda:
         needs: test-conda
         name: Publish to conda
-        if: github.event_name == 'push'
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
