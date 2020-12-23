@@ -1,13 +1,17 @@
 from __future__ import division
-from builtins import zip
-from builtins import range
-from past.utils import old_div
-from builtins import object
+
+import warnings
+from builtins import object, range, zip
+
 import numpy as np
 import scipy.optimize as opt
-import warnings
-from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
+from past.utils import old_div
+
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.logging import setup_logger
+from threeML.utils.differentiation import ParameterOnBoundary, get_hessian
+
+log = setup_logger(__name__)
 
 
 class CannotComputeCovariance(RuntimeWarning):
@@ -28,6 +32,9 @@ class Polynomial(object):
         self._coefficients = coefficients
         self._degree = len(coefficients) - 1
 
+        log.debug(f"creating polynomial of degree {self._degree}")
+        log.debug(f"with coefficients {self._coefficients}")
+
         self._i_plus_1 = np.array(list(range(1, self._degree + 1 + 1)), dtype=float)
 
         self._cov_matrix = np.zeros((self._degree + 1, self._degree + 1))
@@ -36,6 +43,8 @@ class Polynomial(object):
         # we only need to set the coeff for the
         # integral polynomial
         if not is_integral:
+
+            log.debug("This is NOT and intergral polynomial")
 
             integral_coeff = [0]
 
@@ -50,6 +59,8 @@ class Polynomial(object):
 
     @classmethod
     def from_previous_fit(cls, coefficients, covariance):
+
+        log.debug("restoring polynomial from previous fit")
 
         poly = Polynomial(coefficients=coefficients)
         poly._cov_matrix = covariance
@@ -133,10 +144,9 @@ class Polynomial(object):
 
         except ParameterOnBoundary:
 
-            custom_warnings.warn(
+            log.warning(
                 "One or more of the parameters are at their boundaries. Cannot compute covariance and"
-                " errors",
-                CannotComputeCovariance,
+                " errors"
             )
 
             n_dim = len(best_fit_parameters)
@@ -153,7 +163,7 @@ class Polynomial(object):
 
         except:
 
-            custom_warnings.warn(
+            log.warning(
                 "Cannot invert Hessian matrix, looks like the matrix is singluar"
             )
 
@@ -166,7 +176,7 @@ class Polynomial(object):
         return self._cov_matrix
 
     def integral(self, xmin, xmax):
-        """ 
+        """
         Evaluate the integral of the polynomial between xmin and xmax
 
         """
@@ -224,9 +234,9 @@ class PolyLogLikelihood(object):
 
     def _fix_precision(self, v):
         """
-          Round extremely small number inside v to the smallest usable
-          number of the type corresponding to v. This is to avoid warnings
-          and errors like underflows or overflows in math operations.
+        Round extremely small number inside v to the smallest usable
+        number of the type corresponding to v. This is to avoid warnings
+        and errors like underflows or overflows in math operations.
         """
         tiny = np.float64(np.finfo(v[0]).tiny)
         zero_mask = np.abs(v) <= tiny  # type: np.ndarray
@@ -294,7 +304,7 @@ class PolyBinnedLogLikelihood(PolyLogLikelihood):
 
     def __call__(self, parameters):
         """
-          Evaluate the Cash statistic for the given set of parameters
+        Evaluate the Cash statistic for the given set of parameters
         """
 
         # Compute the values for the model given this set of parameters
@@ -383,9 +393,7 @@ class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
         self.cov_call = cov_call
 
     def __call__(self, parameters):
-        """
-
-        """
+        """"""
 
         # Compute the values for the model given this set of parameters
         self._model.coefficients = parameters
@@ -427,13 +435,17 @@ def polyfit(x, y, grade, exposure):
     n_non_zero = non_zero_mask.sum()
     if n_non_zero == 0:
         # No data, nothing to do!
-        return Polynomial([0.0]*(grade+1)), 0.0
+        log.debug("no data for poly fit so return zeros")
+        
+        return Polynomial([0.0] * (grade + 1)), 0.0
 
     # Compute an initial guess for the polynomial parameters,
     # with a least-square fit (with weight=1) using SVD (extremely robust):
     # (note that polyfit returns the coefficient starting from the maximum grade,
     # thus we need to reverse the order)
 
+    log.debug("estimating initial poly degree")
+    
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
 
@@ -441,6 +453,8 @@ def polyfit(x, y, grade, exposure):
 
     initial_guess = initial_guess[::-1]
 
+    log.debug(f"got {initial_guess}")
+    
     polynomial = Polynomial(initial_guess)
 
     # Check that the solution found is meaningful (i.e., definite positive
@@ -464,14 +478,19 @@ def polyfit(x, y, grade, exposure):
     # Check that we have enough non-empty bins to fit this grade of polynomial,
     # otherwise lower the grade
     dof = n_non_zero - (grade + 1)
-
+    
     if dof <= 2:
+
+        log.debug(f"reducing the number of degrees from {len(initial_guess)}")
+        
         # Fit is poorly or ill-conditioned, have to reduce the number of parameters
         while dof < 2 and len(initial_guess) > 1:
             initial_guess = initial_guess[:-1]
             polynomial = Polynomial(initial_guess)
             log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
 
+        log.debug(f"now have {len(initial_guess)}")
+            
     # Try to improve the fit with the log-likelihood
 
     final_estimate = opt.minimize(
@@ -516,7 +535,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
 
         if len(events) == 0:
 
-            return Polynomial([0]*(grade+1)), 0
+            return Polynomial([0] * (grade + 1)), 0
 
         log_likelihood = PolyUnbinnedLogLikelihood(
             events, polynomial, t_start, t_stop, exposure
