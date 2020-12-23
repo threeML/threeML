@@ -293,12 +293,12 @@ jobs:
                   conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
                   fi
             - name: Publish to Conda
-              if:  startsWith(github.event.ref, 'refs/tags')
+              if:  startsWith(github.event.ref, 'refs/tags') == true
               shell:  bash -l {0}
               run: |
                 
             - name: Test Publish to Conda
-              if: ! startsWith(github.event.ref, 'refs/tags')
+              if: ! startsWith(github.event.ref, 'refs/tags') != true
               shell:  bash -l {0}
               run: |
 
