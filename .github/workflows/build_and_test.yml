@@ -302,11 +302,11 @@ jobs:
               run: |
                 if [[ ${{matrix.os}} == ubuntu-latest ]]; then
 
-                anaconda -v --show-traceback -t ${CONDA_TOKEN} upload -u threeml ${HOME}/miniconda/conda-bld/linux-64/*.tar.bz2 --force
+                anaconda -v --show-traceback -t ${CONDA_TOKEN} upload -u threeml conda-bld-linux/linux-64/*.tar.bz2 --force
 
                 else
 
-                anaconda -v --show-traceback -t ${CONDA_TOKEN} upload -u threeml ${HOME}/miniconda/conda-bld/*/*.tar.bz2 --force
+                anaconda -v --show-traceback -t ${CONDA_TOKEN} upload -u threeml conda-bld-osx/*/*.tar.bz2 --force
 
                 fi
               env:
@@ -317,11 +317,14 @@ jobs:
               shell:  bash -l {0}
               run: |
 
+                # This will upload with a test label so it is not released to all users
+                # but it is run every time we push to test the upload
+
                 if [[ ${{matrix.os}} == ubuntu-latest ]]; then
 
                 anaconda -v --show-traceback -t ${CONDA_TOKEN} upload -u threeml conda-bld-linux/linux-64/*.tar.bz2 --force --label test
 
-                else
+                else`
 
                 anaconda -v --show-traceback -t ${CONDA_TOKEN} upload -u threeml conda-bld-osx/*/*.tar.bz2 --force --label test
 
