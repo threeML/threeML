@@ -8,9 +8,9 @@ import collections
 import os
 from pathlib import Path
 
+import h5py
 import numpy as np
 import pandas as pd
-from pandas import HDFStore
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
@@ -707,7 +707,7 @@ class TimeSeries(object):
                 log.error(f"The file {filename_sanitized} already exists!")
                 raise IOError()
 
-        with HDFStore(filename_sanitized) as store:
+        with h5py.File(filename_sanitized, "w") as store:
 
             # extract the polynomial information and save it
 
@@ -719,28 +719,26 @@ class TimeSeries(object):
                 for poly in self._polynomials:
                     coeff.append(poly.coefficients)
                     err.append(poly.covariance_matrix)
-                df_coeff = pd.Series(coeff)
-                df_err = pd.Series(err)
+                # df_coeff = pd.Series(coeff)
+                # df_err = pd.Series(err)
 
             else:
 
                 log.error("the polynomials have not been fit yet")
                 raise RuntimeError()
 
-            df_coeff.to_hdf(store, "coefficients")
-            df_err.to_hdf(store, "covariance")
+            store.create_dataset("coefficients", data=np.array(coeff))
+            store.create_dataset("covariance", data=np.array(err))
 
-            store.get_storer("coefficients").attrs.metadata = {
-                "poly_order": self._optimal_polynomial_grade,
-                "poly_selections": list(
-                    zip(
-                        self._poly_intervals.start_times,
-                        self._poly_intervals.stop_times,
-                    )
-                ),
-                "unbinned": self._unbinned,
-                "fit_method": self._fit_method_info["fit method"],
-            }
+            store.attrs["poly_order"] = self._optimal_polynomial_grade
+            store.attrs["poly_selections"] = list(
+                zip(
+                    self._poly_intervals.start_times,
+                    self._poly_intervals.stop_times,
+                )
+            )
+            store.attrs["unbinned"] = self._unbinned
+            store.attrs["fit_method"] = self._fit_method_info["fit method"]
 
         log.info(f"Saved fitted background to {filename_sanitized}")
 
@@ -748,18 +746,18 @@ class TimeSeries(object):
 
         filename_sanitized: Path = sanitize_filename(filename)
 
-        with HDFStore(filename_sanitized) as store:
+        with h5py.File(filename_sanitized,"r") as store:
 
-            coefficients = store["coefficients"]
+            coefficients = store["coefficients"][()]
 
-            covariance = store["covariance"]
+            covariance = store["covariance"][()]
 
             self._polynomials = []
 
             # create new polynomials
 
             for i in range(len(coefficients)):
-                coeff = np.array(coefficients.loc[i])
+                coeff = np.array(coefficients[i])
 
                 # make sure we get the right order
                 # pandas stores the non-needed coeff
@@ -767,11 +765,11 @@ class TimeSeries(object):
 
                 coeff = coeff[np.isfinite(coeff)]
 
-                cov = covariance.loc[i]
+                cov = covariance[i]
 
                 self._polynomials.append(Polynomial.from_previous_fit(coeff, cov))
 
-            metadata = store.get_storer("coefficients").attrs.metadata
+            metadata = store.attrs
 
             self._optimal_polynomial_grade = metadata["poly_order"]
             poly_selections = np.array(metadata["poly_selections"])
