@@ -713,26 +713,21 @@ class TimeSeries(object):
 
             if self._poly_fit_exists:
 
-                coeff = []
-                err = []
+                coeff = np.empty((self._n_channels, self._optimal_polynomial_grade + 1))
+                err = np.empty(
+                    (
+                        self._n_channels,
+                        self._optimal_polynomial_grade + 1,
+                        self._optimal_polynomial_grade + 1,
+                    )
+                )
 
-                for poly in self._polynomials:
+                for i, poly in enumerate(self._polynomials):
 
-                    try:
-                    
-                        coeff.append(poly.coefficients.tolist())
+                    coeff[i, :] = poly.coefficients
 
-                    except:
+                    err[i, ...] = poly.covariance_matrix
 
-                        coeff.append(poly.coefficients)
-
-                    try:
-
-                        err.append(poly.covariance_matrix.tolist())
-
-                    except:
-
-                        err.append(poly.covariance_matrix)
                 # df_coeff = pd.Series(coeff)
                 # df_err = pd.Series(err)
 
@@ -741,8 +736,6 @@ class TimeSeries(object):
                 log.error("the polynomials have not been fit yet")
                 raise RuntimeError()
 
-            print(np.array(coeff))
-            
             store.create_dataset("coefficients", data=np.array(coeff))
             store.create_dataset("covariance", data=np.array(err))
 
@@ -762,7 +755,7 @@ class TimeSeries(object):
 
         filename_sanitized: Path = sanitize_filename(filename)
 
-        with h5py.File(filename_sanitized,"r") as store:
+        with h5py.File(filename_sanitized, "r") as store:
 
             coefficients = store["coefficients"][()]
 
