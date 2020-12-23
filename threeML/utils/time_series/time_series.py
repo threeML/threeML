@@ -717,8 +717,22 @@ class TimeSeries(object):
                 err = []
 
                 for poly in self._polynomials:
-                    coeff.append(poly.coefficients)
-                    err.append(poly.covariance_matrix)
+
+                    try:
+                    
+                        coeff.append(poly.coefficients.tolist())
+
+                    except:
+
+                        coeff.append(poly.coefficients)
+
+                    try:
+
+                        err.append(poly.covariance_matrix.tolist())
+
+                    except:
+
+                        err.append(poly.covariance_matrix)
                 # df_coeff = pd.Series(coeff)
                 # df_err = pd.Series(err)
 
@@ -727,6 +741,8 @@ class TimeSeries(object):
                 log.error("the polynomials have not been fit yet")
                 raise RuntimeError()
 
+            print(np.array(coeff))
+            
             store.create_dataset("coefficients", data=np.array(coeff))
             store.create_dataset("covariance", data=np.array(err))
 
