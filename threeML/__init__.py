@@ -9,14 +9,17 @@ import warnings
 from pathlib import Path
 
 from threeML.io.logging import setup_logger
-
+from .config.config import threeML_config
 log = setup_logger(__name__)
 log.propagate = False
-log.info("Starting 3ML!")
+
+
+if threeML_config["logging"]["startup_warning"]:
+    log.info("Starting 3ML!")
 
 if os.environ.get("DISPLAY") is None:
-
-    log.warning(
+    if threeML_config["logging"]["startup_warning"]:
+        log.warning(
         "No DISPLAY variable set. Using backend for graphics without display (Agg)"
     )
 
@@ -69,8 +72,8 @@ try:
     from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 
 except ImportError:
-
-    log.warning(
+    if threeML_config["logging"]["startup_warning"]:
+        log.warning(
         "The cthreeML package is not installed. You will not be able to use plugins which require "
         "the C/C++ interface (currently HAWC)"  #    custom_exceptions.CppInterfaceNotAvailable,
     )
@@ -120,8 +123,8 @@ for i, module_full_path in enumerate(found_plugins):
     is_importable, failure_traceback = is_module_importable(module_full_path)
 
     if not is_importable:
-
-        log.warning(
+        if threeML_config["logging"]["startup_warning"]:
+            log.warning(
             f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
             "and configured?"
             # custom_exceptions.CannotImportPlugin,
@@ -177,12 +180,12 @@ def get_available_plugins():
 
 
 def _display_plugin_traceback(plugin):
-
-    log.warning("#############################################################")
-    log.warning("\nCouldn't import plugin %s" % plugin)
-    log.warning("\nTraceback:\n")
-    log.warning(_not_working_plugins[plugin])
-    log.warning("#############################################################")
+    if threeML_config["logging"]["startup_warning"]:
+        log.warning("#############################################################")
+        log.warning("\nCouldn't import plugin %s" % plugin)
+        log.warning("\nTraceback:\n")
+        log.warning(_not_working_plugins[plugin])
+        log.warning("#############################################################")
 
 
 def is_plugin_available(plugin):
@@ -269,7 +272,7 @@ from .classicMLE.joint_likelihood_set import (JointLikelihoodSet,
                                               JointLikelihoodSetAnalyzer)
 from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 # Now read the configuration and make it available as threeML_config
-from .config.config import threeML_config
+
 from .data_list import DataList
 from .io.calculate_flux import calculate_point_source_flux
 # Import the plot_style context manager and the function to create new styles
@@ -308,8 +311,8 @@ for var in var_to_check:
             num_threads = int(num_threads)
 
         except ValueError:
-
-            log.warning(
+            if threeML_config["logging"]["startup_warning"]:
+                log.warning(
                 "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
                 "for optimum performances." % var,
                 # RuntimeWarning,
@@ -317,7 +320,8 @@ for var in var_to_check:
 
     else:
 
-        log.warning(
+        if threeML_config["logging"]["startup_warning"]:
+            log.warning(
             "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
             % var
             #            RuntimeWarning,
