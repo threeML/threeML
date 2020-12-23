@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import copy
 
 import matplotlib.pyplot as plt
@@ -9,19 +10,17 @@ from astromodels import Model, PointSource
 from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.plugin_prototype import PluginPrototype
-from threeML.utils.statistics.likelihood_functions import half_chi2
-from threeML.utils.statistics.likelihood_functions import (
-    poisson_log_likelihood_ideal_bkg,
-)
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.plugin_prototype import PluginPrototype
+from threeML.utils.statistics.likelihood_functions import (
+    half_chi2, poisson_log_likelihood_ideal_bkg)
 
 __instrument_name = "n.a."
 
 
 class XYLike(PluginPrototype):
     def __init__(
-        self, name, x, y, yerr=None, poisson_data=False, quiet=False, source_name=None
+            self, name, x, y, yerr=None, exposure=None, poisson_data=False, quiet=False, source_name=None
     ):
 
         nuisance_parameters = {}
@@ -77,6 +76,21 @@ class XYLike(PluginPrototype):
             self._has_errors = True
             self._y = self._y.astype(np.int64)
 
+
+        ## sets the exposure assuming eval at center
+        ## of bin. this should probably be improved
+        ## with a histogram plugin
+
+            
+        if exposure is None:
+            self._has_exposure: bool = False
+            self._exposure = np.ones(len(self._x))
+            
+        else:
+            self._has_exposure: bool = True
+            self._exposure = exposure
+
+            
         # This will keep track of the simulated datasets we generate
         self._n_simulated_datasets = 0
 
@@ -95,7 +109,7 @@ class XYLike(PluginPrototype):
     def from_function(cls, name, function, x, yerr, **kwargs):
         """
         Generate an XYLike plugin from an astromodels function instance
-        
+
         :param name: name of plugin
         :param function: astromodels function instance
         :param x: where to simulate
@@ -244,7 +258,7 @@ class XYLike(PluginPrototype):
     def assign_to_source(self, source_name):
         """
         Assign these data to the given source (instead of to the sum of all sources, which is the default)
-        
+
         :param source_name: name of the source (must be contained in the likelihood model)
         :return: none
         """
@@ -365,14 +379,14 @@ class XYLike(PluginPrototype):
 
             return np.sum(
                 poisson_log_likelihood_ideal_bkg(
-                    self._y, np.zeros_like(self._y), expectation
+                    self._y * self._exposure, np.zeros_like(self._y), expectation
                 )
             )
 
         else:
 
             # Chi squared
-            chi2_ = half_chi2(self._y, self._yerr, expectation)
+            chi2_ = half_chi2(self._y * self.exposure, self._yerr, expectation)
 
             assert np.all(np.isfinite(chi2_))
 

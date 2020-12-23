@@ -10,6 +10,14 @@ from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
 from threeML.exceptions.custom_exceptions import custom_warnings
 
 
+from astromodels import Constant, Line, Quadratic, Cubic, Quadratic, Gaussian, Log_normal
+from astromodels import Model, PointSource
+from threeML.plugins.XYLike import XYLike
+from threeML.bayesian.bayesian_analysis import BayesianAnalysis
+from threeML.data_list import DataList
+_grade_model_lookup = (Constant, Line, Quadratic, Cubic, Quadratic)
+
+
 class CannotComputeCovariance(RuntimeWarning):
     pass
 
@@ -116,6 +124,10 @@ class Polynomial(object):
             result = result * x + coefficient
         return result
 
+    def set_covariace_matrix(self, matrix):
+
+        self._covariance_matrix = matrix
+    
     def compute_covariance_matrix(self, function, best_fit_parameters):
         """
         Compute the covariance matrix of this fit
@@ -418,7 +430,7 @@ class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
         return -log_likelihood
 
 
-def polyfit(x, y, grade, exposure):
+def polyfit(x, y, grade, exposure, bayes=False):
     """ function to fit a polynomial to event data. not a member to allow parallel computation """
 
     # Check that we have enough counts to perform the fit, otherwise
@@ -429,70 +441,111 @@ def polyfit(x, y, grade, exposure):
         # No data, nothing to do!
         return Polynomial([0.0]), 0.0
 
-    # Compute an initial guess for the polynomial parameters,
-    # with a least-square fit (with weight=1) using SVD (extremely robust):
-    # (note that polyfit returns the coefficient starting from the maximum grade,
-    # thus we need to reverse the order)
+    if not bayes:
+        
+        # Compute an initial guess for the polynomial parameters,
+        # with a least-square fit (with weight=1) using SVD (extremely robust):
+        # (note that polyfit returns the coefficient starting from the maximum grade,
+        # thus we need to reverse the order)
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
 
-        initial_guess = np.polyfit(x, y, grade)
+            initial_guess = np.polyfit(x, y, grade)
 
-    initial_guess = initial_guess[::-1]
+        initial_guess = initial_guess[::-1]
 
-    polynomial = Polynomial(initial_guess)
+        polynomial = Polynomial(initial_guess)
 
-    # Check that the solution found is meaningful (i.e., definite positive
-    # in the interval of interest)
-    M = polynomial(x)
+        # Check that the solution found is meaningful (i.e., definite positive
+        # in the interval of interest)
+        M = polynomial(x)
 
-    negative_mask = M < 0
+        negative_mask = M < 0
 
-    if negative_mask.sum() > 0:
-        # Least square fit failed to converge to a meaningful solution
-        # Reset the initialGuess to reasonable value
-        initial_guess[0] = np.mean(y)
-        meanx = np.mean(x)
-        initial_guess = [
-            old_div(abs(i[1]), pow(meanx, i[0])) for i in enumerate(initial_guess)
-        ]
+        if negative_mask.sum() > 0:
+            # Least square fit failed to converge to a meaningful solution
+            # Reset the initialGuess to reasonable value
+            initial_guess[0] = np.mean(y)
+            meanx = np.mean(x)
+            initial_guess = [
+                old_div(abs(i[1]), pow(meanx, i[0])) for i in enumerate(initial_guess)
+            ]
 
-    # Improve the solution using a logLikelihood statistic (Cash statistic)
-    log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
+        # Improve the solution using a logLikelihood statistic (Cash statistic)
+        log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
 
-    # Check that we have enough non-empty bins to fit this grade of polynomial,
-    # otherwise lower the grade
-    dof = n_non_zero - (grade + 1)
+        # Check that we have enough non-empty bins to fit this grade of polynomial,
+        # otherwise lower the grade
+        dof = n_non_zero - (grade + 1)
 
-    if dof <= 2:
-        # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-        while dof < 2 and len(initial_guess) > 1:
-            initial_guess = initial_guess[:-1]
-            polynomial = Polynomial(initial_guess)
-            log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
+        if dof <= 2:
+            # Fit is poorly or ill-conditioned, have to reduce the number of parameters
+            while dof < 2 and len(initial_guess) > 1:
+                initial_guess = initial_guess[:-1]
+                polynomial = Polynomial(initial_guess)
+                log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
 
-    # Try to improve the fit with the log-likelihood
+        # Try to improve the fit with the log-likelihood
 
-    final_estimate = opt.minimize(
-        log_likelihood,
-        initial_guess,
-        method=threeML_config["event list"]["binned fit method"],
-        options=threeML_config["event list"]["binned fit options"],
-    )["x"]
-    final_estimate = np.atleast_1d(final_estimate)
+        final_estimate = opt.minimize(
+            log_likelihood,
+            initial_guess,
+            method=threeML_config["event list"]["binned fit method"],
+            options=threeML_config["event list"]["binned fit options"],
+        )["x"]
+        final_estimate = np.atleast_1d(final_estimate)
 
-    # Get the value for cstat at the minimum
+        # Get the value for cstat at the minimum
 
-    min_log_likelihood = log_likelihood(final_estimate)
+        min_log_likelihood = log_likelihood(final_estimate)
 
-    # Update the polynomial with the fitted parameters,
-    # and the relative covariance matrix
+        # Update the polynomial with the fitted parameters,
+        # and the relative covariance matrix
 
-    final_polynomial = Polynomial(final_estimate)
+        final_polynomial = Polynomial(final_estimate)
 
-    final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
+        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
 
+
+    else:
+
+        shape = _grade_model_lookup[grade]
+
+        ps = PointSource("_dummy", 0, 0, spectral_shape=shape)
+        
+        model = Model(ps)
+
+        for i, (k, v) in enumerate(model.freee_parameters.items()):
+
+            if i == 0:
+
+                v.bounds = (0, None)
+                v,prior = Log_normal(mu=np.log(1), sigma=2)
+
+            else:
+
+                v.prior = Gaussian(mu=0, sigma=1)
+        
+        xy = XYLike(x,y,exposure=exposure, poisson_data=True, verbose=False)
+
+
+        bayes: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
+
+        bayes.set_sampler("emcee")
+
+        bayes.sampler.setup(n_iterations=500, n_burn_in=200, n_walkers=20)
+
+        bayes.sample(quiet=True)
+
+        bayes.restore_median_fit()
+        
+        coeff = [v.value for _, v in model.free_parameters.items()]
+
+        final_polynomial = Polynomial(coeff)
+
+        final_polynomial.set_covariace_matrix(bayes.results.estimate_covariance_matrix())
+        
     return final_polynomial, min_log_likelihood
 
 
