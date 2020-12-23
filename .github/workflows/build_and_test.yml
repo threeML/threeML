@@ -202,7 +202,7 @@ jobs:
     publish-conda:
         needs: test-conda
         name: Publish to conda
-        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+        if: github.event_name == 'push'
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
@@ -292,3 +292,22 @@ jobs:
                   # there is some strange error about the prefix length
                   conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
                   fi
+            - name: Publish to Conda
+              if:  startsWith(github.event.ref, 'refs/tags')
+              shell:  bash -l {0}
+              run: |
+                
+            - name: Test Publish to Conda
+              if: ! startsWith(github.event.ref, 'refs/tags')
+              shell:  bash -l {0}
+              run: |
+
+                if [[ ${{matrix.os}} == ubuntu-latest ]]; then
+
+                anaconda -v --show-traceback -t ${{ secrets.CONDA_TOKEN }} upload -u threeml ${HOME}/miniconda/conda-bld/linux-64/*.tar.bz2 --force --label test
+
+                else
+
+                anaconda -v --show-traceback -t ${{ secrets.CONDA_TOKEN }} upload -u threeml ${HOME}/miniconda/conda-bld/*/*.tar.bz2 --force --label test
+
+                fi
