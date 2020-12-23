@@ -427,7 +427,7 @@ def polyfit(x, y, grade, exposure):
     n_non_zero = non_zero_mask.sum()
     if n_non_zero == 0:
         # No data, nothing to do!
-        return Polynomial([0.0]*grade), 0.0
+        return Polynomial([0.0]*(grade+1)), 0.0
 
     # Compute an initial guess for the polynomial parameters,
     # with a least-square fit (with weight=1) using SVD (extremely robust):
@@ -516,7 +516,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude
 
         if len(events) == 0:
 
-            return Polynomial([0]*gradee), 0
+            return Polynomial([0]*(grade+1)), 0
 
         log_likelihood = PolyUnbinnedLogLikelihood(
             events, polynomial, t_start, t_stop, exposure
