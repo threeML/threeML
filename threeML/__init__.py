@@ -44,14 +44,14 @@ from ._version import get_versions
 __version__ = get_versions()["version"]
 del get_versions
 
-import glob
+
 import traceback
 from importlib.machinery import SourceFileLoader
 
 # Import everything from astromodels
 from astromodels import *
 
-from .exceptions import custom_exceptions
+
 # Finally import the serialization machinery
 from .io.serialization import *
 # Now import the optimizers first (to avoid conflicting libraries problems)
@@ -328,3 +328,6 @@ for var in var_to_check:
         )
 del os
 del Path
+del warnings
+del SourceFileLoader
+del traceback
