@@ -13,6 +13,8 @@ from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import FitFailed, JointLikelihood
 from threeML.data_list import DataList
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
+                                                 UnbinnedPoissonLike)
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.differentiation import ParameterOnBoundary, get_hessian
 
@@ -204,140 +206,6 @@ class Polynomial(object):
         return np.sqrt(err2)
 
 
-class PolyLogLikelihood(object):
-    def __init__(self, model, exposure):
-
-        self._model = model
-        self._parameters = model.coefficients
-        self._exposure = exposure
-
-        # build the covariance call
-        self._build_cov_call()
-
-    def _evaluate_logM(self, M):
-        # Evaluate the logarithm with protection for negative or small
-        # numbers, using a smooth linear extrapolation (better than just a sharp
-        # cutoff)
-        tiny = np.float64(np.finfo(M[0]).tiny)
-
-        non_tiny_mask = M > 2.0 * tiny
-
-        tink_mask = np.logical_not(non_tiny_mask)
-
-        if tink_mask.sum() > 0:
-            logM = np.zeros(len(M))
-            logM[tink_mask] = old_div(np.abs(M[tink_mask]), tiny) + np.log(tiny) - 1
-            logM[non_tiny_mask] = np.log(M[non_tiny_mask])
-
-        else:
-
-            logM = np.log(M)
-
-        return logM
-
-    def _fix_precision(self, v):
-        """
-        Round extremely small number inside v to the smallest usable
-        number of the type corresponding to v. This is to avoid warnings
-        and errors like underflows or overflows in math operations.
-        """
-        tiny = np.float64(np.finfo(v[0]).tiny)
-        zero_mask = np.abs(v) <= tiny  # type: np.ndarray
-        if zero_mask.sum() > 0:
-            v[zero_mask] = np.sign(v[zero_mask]) * tiny
-
-        return v, tiny
-
-    def _build_cov_call(self):
-
-        raise NotImplementedError("must be built in subclass")
-
-
-class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
-    """
-    Implements a Poisson likelihood (i.e., the Cash statistic). Mind that this is not
-    the Castor statistic (Cstat). The difference between the two is a constant given
-    a dataset. I kept Cash instead of Castor to make easier the comparison with ROOT
-    during tests, since ROOT implements the Cash statistic.
-    """
-
-    def __init__(self, events, model, t_start, t_stop, exposure):
-
-        self._events = events
-        self._t_start = t_start  # list of starts
-        self._t_stop = t_stop
-
-        super(PolyUnbinnedLogLikelihood, self).__init__(model, exposure)
-
-    def _build_cov_call(self):
-        def cov_call(*parameters):
-
-            # Compute the values for the model given this set of parameters
-            self._model.coefficients = parameters
-
-            # Integrate the polynomial (or in the future, model) over the given interval
-
-            n_expected_counts = 0.0
-
-            for start, stop in zip(self._t_start, self._t_stop):
-                n_expected_counts += self._model.integral(start, stop)
-
-            # Now evaluate the model at the event times and multiply by the exposure
-
-            M = self._model(self._events) * self._exposure
-
-            # Replace negative values for the model (impossible in the Poisson context)
-            # with zero
-            negative_mask = M < 0
-
-            if negative_mask.sum() > 0:
-                M[negative_mask] = 0.0
-
-            # Poisson loglikelihood statistic  is:
-            # logL = -Nexp + Sum ( log M_i )
-
-            logM = self._evaluate_logM(M)
-
-            log_likelihood = -n_expected_counts + logM.sum()
-
-            return -log_likelihood
-
-        self.cov_call = cov_call
-
-    def __call__(self, parameters):
-        """"""
-
-        # Compute the values for the model given this set of parameters
-        self._model.coefficients = parameters
-
-        # Integrate the polynomial (or in the future, model) over the given interval
-
-        n_expected_counts = 0.0
-
-        for start, stop in zip(self._t_start, self._t_stop):
-            n_expected_counts += self._model.integral(start, stop)
-
-        # Now evaluate the model at the event times and multiply by the exposure
-
-        M = self._model(self._events) * self._exposure
-
-        # Replace negative values for the model (impossible in the Poisson context)
-        # with zero
-        negative_mask = M < 0
-
-        if negative_mask.sum() > 0:
-            M[negative_mask] = 0.0
-
-        # Poisson loglikelihood statistic  is:
-        # logL = -Nexp + Sum ( log M_i )
-
-        logM = self._evaluate_logM(M)
-
-        log_likelihood = -n_expected_counts + logM.sum()
-
-        return -log_likelihood
-
-
 def polyfit(x, y, grade, exposure, bayes=False):
     """ function to fit a polynomial to event data. not a member to allow parallel computation """
 
@@ -423,10 +291,6 @@ def polyfit(x, y, grade, exposure, bayes=False):
                 v.prior = Gaussian(mu=0, sigma=1)
                 v.value = 0.1
 
-        xy = XYLike(
-            "series", x=x, y=y, exposure=exposure, poisson_data=True, quiet=True
-        )
-
         ba: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
 
         ba.set_sampler("emcee")
@@ -448,68 +312,112 @@ def polyfit(x, y, grade, exposure, bayes=False):
     return final_polynomial, min_log_likelihood
 
 
-def unbinned_polyfit(events, grade, t_start, t_stop, exposure, initial_amplitude=1):
+def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes=False):
     """
     function to fit a polynomial to event data. not a member to allow parallel computation
 
     """
 
-    # first do a simple amplitude fit
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    # Check that we have enough counts to perform the fit, otherwise
+    # return a "zero polynomial"
+    non_zero_mask = y > 0
+    n_non_zero = non_zero_mask.sum()
+    if n_non_zero == 0:
+        # No data, nothing to do!
+        return Polynomial([0.0]), 0.0
 
-        search_grid = np.logspace(-2, 4, 10)
+    # create 3ML plugins and fit them with 3ML!
+    # should eventuallly allow better config
 
-        initial_guess = np.zeros(grade + 1)
+    # seelct the model based on the grade
 
-        polynomial = Polynomial(initial_guess)
+    shape = _grade_model_lookup[grade]()
 
-        # if there are no events then return nothing
+    ps = PointSource("_dummy", 0, 0, spectral_shape=shape)
 
-        if len(events) == 0:
+    model = Model(ps)
 
-            return Polynomial([0]), 0
+    observation = EventObservation(events, exposure, t_start, t_stop)
 
-        log_likelihood = PolyUnbinnedLogLikelihood(
-            events, polynomial, t_start, t_stop, exposure
-        )
+    xy = UnbinnedPoissonLike("series")
 
-        like_grid = []
-        for amp in search_grid:
+    if not bayes:
 
-            initial_guess[0] = amp
-            like_grid.append(log_likelihood(initial_guess))
+        # make sure the model is positive
 
-        initial_guess[0] = search_grid[np.argmin(like_grid)]
+        for i, (k, v) in enumerate(model.free_parameters.items()):
 
-        # Improve the solution
-        dof = len(events) - (grade + 1)
+            if i == 0:
 
-        if dof <= 2:
-            # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-            while dof < 1 and len(initial_guess) > 1:
-                initial_guess = initial_guess[:-1]
-                polynomial = Polynomial(initial_guess)
-                log_likelihood = PolyUnbinnedLogLikelihood(
-                    events, polynomial, t_start, t_stop, exposure
-                )
+                v.bounds = (0, None)
 
-        final_estimate = opt.minimize(
-            log_likelihood,
-            initial_guess,
-            method=threeML_config["event list"]["unbinned fit method"],
-            options=threeML_config["event list"]["unbinned fit options"],
-        )["x"]
+                v.value = 1
 
-        final_estimate = np.atleast_1d(final_estimate)
+            else:
 
-        min_log_likelihood = log_likelihood(final_estimate)
+                v.value = 0.1
 
-    # Update the polynomial with the fitted parameters,
-    # and the relative covariance matrix
+        jl: JointLikelihood = JointLikelihood(model, DataList(xy))
 
-    final_polynomial = Polynomial(final_estimate)
+        jl.set_minimizer("minuit")
 
-    final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
+        # if the fit falis, retry and then just accept
+
+        try:
+
+            jl.fit(quiet=True)
+
+        except:
+
+            try:
+
+                jl.fit(quiet=True)
+
+            except:
+
+                pass
+
+        coeff = [v.value for _, v in model.free_parameters.items()]
+
+        final_polynomial = Polynomial(coeff)
+
+        final_polynomial.set_covariace_matrix(jl.results.covariance_matrix)
+
+        min_log_likelihood = xy.get_log_like()
+
+    else:
+
+        # set smart priors
+
+        for i, (k, v) in enumerate(model.free_parameters.items()):
+
+            if i == 0:
+
+                v.bounds = (0, None)
+                v.prior = Log_normal(mu=np.log(1), sigma=2)
+                v.value = 1
+
+            else:
+
+                v.prior = Gaussian(mu=0, sigma=1)
+                v.value = 0.1
+
+        ba: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
+
+        ba.set_sampler("emcee")
+
+        ba.sampler.setup(n_iterations=500, n_burn_in=200, n_walkers=20)
+
+        ba.sample(quiet=True)
+
+        ba.restore_median_fit()
+
+        coeff = [v.value for _, v in model.free_parameters.items()]
+
+        final_polynomial = Polynomial(coeff)
+
+        final_polynomial.set_covariace_matrix(ba.results.estimate_covariance_matrix())
+
+        min_log_likelihood = xy.get_log_like()
 
     return final_polynomial, min_log_likelihood
