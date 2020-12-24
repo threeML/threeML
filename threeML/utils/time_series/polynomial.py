@@ -353,21 +353,19 @@ def polyfit(x, y, grade, exposure, bayes=False):
     # should eventuallly allow better config
 
     # seelct the model based on the grade
-    
+
     shape = _grade_model_lookup[grade]()
 
     ps = PointSource("_dummy", 0, 0, spectral_shape=shape)
 
     model = Model(ps)
 
-    xy = XYLike(
-            "series", x=x, y=y, exposure=exposure, poisson_data=True, quiet=True
-        )
+    xy = XYLike("series", x=x, y=y, exposure=exposure, poisson_data=True, quiet=True)
 
     if not bayes:
 
         # make sure the model is positive
-        
+
         for i, (k, v) in enumerate(model.free_parameters.items()):
 
             if i == 0:
@@ -380,13 +378,12 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
                 v.value = 0.1
 
-    
         jl: JointLikelihood = JointLikelihood(model, DataList(xy))
 
         jl.set_minimizer("minuit")
 
         # if the fit falis, retry and then just accept
-        
+
         try:
 
             jl.fit(quiet=True)
@@ -412,7 +409,7 @@ def polyfit(x, y, grade, exposure, bayes=False):
     else:
 
         # set smart priors
-        
+
         for i, (k, v) in enumerate(model.free_parameters.items()):
 
             if i == 0:
