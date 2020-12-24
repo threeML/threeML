@@ -33,7 +33,7 @@ from future.utils import with_metaclass
 #     return wrapper
 
 
-class PluginPrototype(with_metaclass(abc.ABCMeta, object)):
+class PluginPrototype(object, metaclass=abc.ABCMeta):
     def __init__(self, name, nuisance_parameters):
         assert is_valid_variable_name(name), (
             "The name %s cannot be used as a name. You need to use a valid "
