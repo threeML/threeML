@@ -265,7 +265,7 @@ def test_read_lle():
 
         lle.set_active_time_interval("0-10")
 
-        lle.set_background_interval("-150-0", "100-250")
+        lle.set_background_interval("-150-0", "100-250", unbinned=True)
 
         speclike = lle.to_spectrumlike()
 

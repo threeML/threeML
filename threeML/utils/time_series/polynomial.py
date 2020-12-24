@@ -355,7 +355,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
                 v.bounds = (0, None)
 
-                v.value = 1
+                v.value = 10
 
             else:
 
