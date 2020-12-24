@@ -253,7 +253,7 @@ class TimeSeriesBuilder(object):
         self._tstart = self._time_series.time_intervals.absolute_start_time
         self._tstop = self._time_series.time_intervals.absolute_stop_time
 
-    def set_background_interval(self, *intervals, **options):
+    def set_background_interval(self, *intervals, **kwargs):
         """
         Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
@@ -263,20 +263,29 @@ class TimeSeriesBuilder(object):
 
 
         :param *intervals:
-        :param **options:
+        :param **kwargs:
 
         :return: none
 
         """
-        if "unbinned" in options:
+        if "unbinned" in kwargs:
 
-            unbinned = options.pop("unbinned")
+            unbinned = kwargs.pop("unbinned")
         else:
 
             unbinned = self._default_unbinned
 
+
+        if "bayes" in kwargs:
+            bayes = kwargs.pop("bayes")
+            
+        else:
+
+            bayes = False
+
+            
         self._time_series.set_polynomial_fit_interval(
-            *intervals, unbinned=unbinned)
+            *intervals, unbinned=unbinned, bayes=bayes)
 
         # In theory this will automatically get the poly counts if a
         # time interval already exists
@@ -476,7 +485,7 @@ class TimeSeriesBuilder(object):
         self.create_time_bins(
             other_bins[:, 0], other_bins[:, 1], method="custom")
 
-    def create_time_bins(self, start, stop, method="constant", **options):
+    def create_time_bins(self, start, stop, method="constant", **kwargs):
         """
 
         Create time bins from start to stop with a given method (constant, siginificance, bayesblocks, custom).
@@ -498,9 +507,9 @@ class TimeSeriesBuilder(object):
             self._time_series, EventList
         ), "can only bin event lists currently"
 
-        # if 'use_energy_mask' in options:
+        # if 'use_energy_mask' in kwargs:
         #
-        #     use_energy_mask = options.pop('use_energy_mask')
+        #     use_energy_mask = kwargs.pop('use_energy_mask')
         #
         # else:
         #
@@ -508,8 +517,8 @@ class TimeSeriesBuilder(object):
 
         if method == "constant":
 
-            if "dt" in options:
-                dt = float(options.pop("dt"))
+            if "dt" in kwargs:
+                dt = float(kwargs.pop("dt"))
 
             else:
 
@@ -519,18 +528,18 @@ class TimeSeriesBuilder(object):
 
         elif method == "significance":
 
-            if "sigma" in options:
+            if "sigma" in kwargs:
 
-                sigma = options.pop("sigma")
+                sigma = kwargs.pop("sigma")
 
             else:
 
                 raise RuntimeError(
                     "significance bins require a sigma argument")
 
-            if "min_counts" in options:
+            if "min_counts" in kwargs:
 
-                min_counts = options.pop("min_counts")
+                min_counts = kwargs.pop("min_counts")
 
             else:
 
@@ -553,17 +562,17 @@ class TimeSeriesBuilder(object):
 
         elif method == "bayesblocks":
 
-            if "p0" in options:
+            if "p0" in kwargs:
 
-                p0 = options.pop("p0")
+                p0 = kwargs.pop("p0")
 
             else:
 
                 p0 = 0.1
 
-            if "use_background" in options:
+            if "use_background" in kwargs:
 
-                use_background = options.pop("use_background")
+                use_background = kwargs.pop("use_background")
 
             else:
 

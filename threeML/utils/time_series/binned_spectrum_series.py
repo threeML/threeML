@@ -1,15 +1,13 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import zip
-from builtins import range
-from past.utils import old_div
-import numpy as np
+from __future__ import division, print_function
 
+from builtins import range, zip
+
+import numpy as np
+from past.utils import old_div
 from tqdm.auto import tqdm
 
 from threeML.config.config import threeML_config
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
-
 from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit
@@ -51,7 +49,7 @@ class BinnedSpectrumSeries(TimeSeries):
             mission,
             instrument,
             verbose,
-            binned_spectrum_set._binned_spectrum_list[0].edges
+            binned_spectrum_set._binned_spectrum_list[0].edges,
         )
 
         self._binned_spectrum_set = binned_spectrum_set
@@ -67,9 +65,9 @@ class BinnedSpectrumSeries(TimeSeries):
 
     @property
     def binned_spectrum_set(self):
-        """                                                                                                                                                                                                                                                                   
-        returns the spectrum set                                                                                                                                                                                                                                              
-        :return: binned_spectrum_set                                                                                                                                                                                                                                          
+        """
+        returns the spectrum set
+        :return: binned_spectrum_set
         """
 
         return self._binned_spectrum_set
@@ -249,7 +247,7 @@ class BinnedSpectrumSeries(TimeSeries):
 
         return TimeIntervalSet.from_starts_and_stops(new_starts, new_stops)
 
-    def _fit_polynomials(self):
+    def _fit_polynomials(self, bayes=False):
         """
         fits a polynomial to all channels over the input time intervals
 
@@ -306,8 +304,13 @@ class BinnedSpectrumSeries(TimeSeries):
 
         if self._user_poly_order == -1:
 
-            self._optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(
-                selected_counts.sum(axis=1), selected_midpoints, selected_exposure
+            self._optimal_polynomial_grade = (
+                self._fit_global_and_determine_optimum_grade(
+                    selected_counts.sum(axis=1),
+                    selected_midpoints,
+                    selected_exposure,
+                    bayes=bayes,
+                )
             )
             if self._verbose:
                 print(
@@ -325,18 +328,19 @@ class BinnedSpectrumSeries(TimeSeries):
         # now fit the light curve of each channel
         # and save the estimated polynomial
 
-        
-        for counts in tqdm(selected_counts.T, desc=f"Fitting {self._instrument} background"):
+        for counts in tqdm(
+            selected_counts.T, desc=f"Fitting {self._instrument} background"
+        ):
 
             polynomial, _ = polyfit(
                 selected_midpoints,
                 counts,
                 self._optimal_polynomial_grade,
                 selected_exposure,
+                bayes=bayes,
             )
 
             polynomials.append(polynomial)
-            
 
         self._polynomials = polynomials
 

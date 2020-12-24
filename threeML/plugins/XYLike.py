@@ -371,7 +371,7 @@ class XYLike(PluginPrototype):
         parameters
         """
 
-        expectation = self._get_total_expectation()
+        expectation =  self._get_total_expectation()
 
         if self._is_poisson:
 
@@ -379,7 +379,7 @@ class XYLike(PluginPrototype):
 
             return np.sum(
                 poisson_log_likelihood_ideal_bkg(
-                    self._y * self._exposure, np.zeros_like(self._y), expectation
+                    self._y, np.zeros_like(self._y), expectation  * self._exposure
                 )
             )
 

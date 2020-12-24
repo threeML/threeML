@@ -327,7 +327,7 @@ class TimeSeries(object):
 
         raise RuntimeError("Must be implemented in sub class")
 
-    def set_polynomial_fit_interval(self, *time_intervals, **options):
+    def set_polynomial_fit_interval(self, *time_intervals, **kwargs):
         """Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
@@ -335,16 +335,18 @@ class TimeSeries(object):
         set_polynomial_fit_interval("-10.0-0.0","10.-15.")
 
         :param time_intervals: intervals to fit on
-        :param options:
+        :param unbinned:
+        :param bayes:
+        :param kwargs:
 
         """
 
         # Find out if we want to binned or unbinned.
         # TODO: add the option to config file
-        if "unbinned" in options:
-            unbinned = options.pop("unbinned")
+        if "unbinned" in kwargs:
+            unbinned = kwargs.pop("unbinned")
             assert type(unbinned) == bool, "unbinned option must be True or False"
-
+            
         else:
 
             # assuming unbinned
@@ -353,6 +355,13 @@ class TimeSeries(object):
 
             unbinned = True
 
+        if "bayes" in kwargs:
+            bayes = kwargs.pop("bayes")
+            
+        else:
+
+            bayes = False
+            
         # we create some time intervals
 
         poly_intervals = TimeIntervalSet.from_strings(*time_intervals)
@@ -422,7 +431,7 @@ class TimeSeries(object):
 
             self._unbinned = False
 
-            self._fit_polynomials()
+            self._fit_polynomials(bayes=bayes)
 
         # we have a fit now
 
@@ -565,7 +574,7 @@ class TimeSeries(object):
 
         return pd.Series(info_dict, index=list(info_dict.keys()))
 
-    def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
+    def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure, bayes=False):
         """
         Provides the ability to find the optimum polynomial grade for *binned* counts by fitting the
         total (all channels) to 0-4 order polynomials and then comparing them via a likelihood ratio test.
@@ -574,6 +583,7 @@ class TimeSeries(object):
         :param cnts: counts per bin
         :param bins: the bins used
         :param exposure: exposure per bin
+        :param bayes:
         :return: polynomial grade
         """
 
@@ -582,7 +592,7 @@ class TimeSeries(object):
         log_likelihoods = []
 
         for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = polyfit(bins, cnts, grade, exposure)
+            polynomial, log_like = polyfit(bins, cnts, grade, exposure, bayes=bayes)
 
             log_likelihoods.append(log_like)
 

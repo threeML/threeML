@@ -1,20 +1,21 @@
 from __future__ import division
-from builtins import zip
-from builtins import range
-from past.utils import old_div
-from builtins import object
+
+import warnings
+from builtins import object, range, zip
+
 import numpy as np
 import scipy.optimize as opt
-import warnings
-from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
-from threeML.exceptions.custom_exceptions import custom_warnings
+from astromodels import (Constant, Cubic, Gaussian, Line, Log_normal, Model,
+                         PointSource, Quadratic)
+from past.utils import old_div
 
-
-from astromodels import Constant, Line, Quadratic, Cubic, Quadratic, Gaussian, Log_normal
-from astromodels import Model, PointSource
-from threeML.plugins.XYLike import XYLike
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
+from threeML.classicMLE.joint_likelihood import FitFailed, JointLikelihood
 from threeML.data_list import DataList
+from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.plugins.XYLike import XYLike
+from threeML.utils.differentiation import ParameterOnBoundary, get_hessian
+
 _grade_model_lookup = (Constant, Line, Quadratic, Cubic, Quadratic)
 
 
@@ -126,8 +127,8 @@ class Polynomial(object):
 
     def set_covariace_matrix(self, matrix):
 
-        self._covariance_matrix = matrix
-    
+        self._cov_matrix = matrix
+
     def compute_covariance_matrix(self, function, best_fit_parameters):
         """
         Compute the covariance matrix of this fit
@@ -178,7 +179,7 @@ class Polynomial(object):
         return self._cov_matrix
 
     def integral(self, xmin, xmax):
-        """ 
+        """
         Evaluate the integral of the polynomial between xmin and xmax
 
         """
@@ -236,9 +237,9 @@ class PolyLogLikelihood(object):
 
     def _fix_precision(self, v):
         """
-          Round extremely small number inside v to the smallest usable
-          number of the type corresponding to v. This is to avoid warnings
-          and errors like underflows or overflows in math operations.
+        Round extremely small number inside v to the smallest usable
+        number of the type corresponding to v. This is to avoid warnings
+        and errors like underflows or overflows in math operations.
         """
         tiny = np.float64(np.finfo(v[0]).tiny)
         zero_mask = np.abs(v) <= tiny  # type: np.ndarray
@@ -250,97 +251,6 @@ class PolyLogLikelihood(object):
     def _build_cov_call(self):
 
         raise NotImplementedError("must be built in subclass")
-
-
-class PolyBinnedLogLikelihood(PolyLogLikelihood):
-    """
-    Implements a Poisson likelihood (i.e., the Cash statistic). Mind that this is not
-    the Castor statistic (Cstat). The difference between the two is a constant given
-    a dataset. I kept Cash instead of Castor to make easier the comparison with ROOT
-    during tests, since ROOT implements the Cash statistic.
-    """
-
-    def __init__(self, x, y, model, exposure):
-        self._bin_centers = x
-        self._counts = y
-
-        self._non_zero_mask = self._counts > 0
-
-        super(PolyBinnedLogLikelihood, self).__init__(model, exposure)
-
-    def _build_cov_call(self):
-        def cov_call(*parameters):
-
-            self._model.coefficients = parameters
-
-            M = self._model(self._bin_centers) * self._exposure
-            M_fixed, tiny = self._fix_precision(M)
-
-            # Replace negative values for the model (impossible in the Poisson context)
-            # with zero
-
-            negative_mask = M < 0
-            if negative_mask.sum() > 0:
-                M[negative_mask] = 0.0
-
-            # Poisson loglikelihood statistic (Cash) is:
-            # L = Sum ( M_i - D_i * log(M_i))
-
-            logM = self._evaluate_logM(M)
-
-            # Evaluate v_i = D_i * log(M_i): if D_i = 0 then the product is zero
-            # whatever value has log(M_i). Thus, initialize the whole vector v = {v_i}
-            # to zero, then overwrite the elements corresponding to D_i > 0
-
-            d_times_logM = np.zeros(len(self._counts))
-
-            d_times_logM[self._non_zero_mask] = (
-                self._counts[self._non_zero_mask] * logM[self._non_zero_mask]
-            )
-
-            log_likelihood = np.sum(M_fixed - d_times_logM)
-
-            return log_likelihood
-
-        self.cov_call = cov_call
-
-    def __call__(self, parameters):
-        """
-          Evaluate the Cash statistic for the given set of parameters
-        """
-
-        # Compute the values for the model given this set of parameters
-        # model is in counts
-
-        self._model.coefficients = parameters
-        M = self._model(self._bin_centers) * self._exposure
-        M_fixed, tiny = self._fix_precision(M)
-
-        # Replace negative values for the model (impossible in the Poisson context)
-        # with zero
-
-        negative_mask = M < 0
-        if negative_mask.sum() > 0:
-            M[negative_mask] = 0.0
-
-        # Poisson loglikelihood statistic (Cash) is:
-        # L = Sum ( M_i - D_i * log(M_i))
-
-        logM = self._evaluate_logM(M)
-
-        # Evaluate v_i = D_i * log(M_i): if D_i = 0 then the product is zero
-        # whatever value has log(M_i). Thus, initialize the whole vector v = {v_i}
-        # to zero, then overwrite the elements corresponding to D_i > 0
-
-        d_times_logM = np.zeros_like(self._counts)
-
-        d_times_logM[self._non_zero_mask] = (
-            self._counts[self._non_zero_mask] * logM[self._non_zero_mask]
-        )
-
-        log_likelihood = np.sum(M_fixed - d_times_logM)
-
-        return log_likelihood
 
 
 class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
@@ -395,9 +305,7 @@ class PolyUnbinnedLogLikelihood(PolyLogLikelihood):
         self.cov_call = cov_call
 
     def __call__(self, parameters):
-        """
-
-        """
+        """"""
 
         # Compute the values for the model given this set of parameters
         self._model.coefficients = parameters
@@ -441,111 +349,105 @@ def polyfit(x, y, grade, exposure, bayes=False):
         # No data, nothing to do!
         return Polynomial([0.0]), 0.0
 
+    # create 3ML plugins and fit them with 3ML!
+    # should eventuallly allow better config
+
+    # seelct the model based on the grade
+    
+    shape = _grade_model_lookup[grade]()
+
+    ps = PointSource("_dummy", 0, 0, spectral_shape=shape)
+
+    model = Model(ps)
+
+    xy = XYLike(
+            "series", x=x, y=y, exposure=exposure, poisson_data=True, quiet=True
+        )
+
     if not bayes:
+
+        # make sure the model is positive
         
-        # Compute an initial guess for the polynomial parameters,
-        # with a least-square fit (with weight=1) using SVD (extremely robust):
-        # (note that polyfit returns the coefficient starting from the maximum grade,
-        # thus we need to reverse the order)
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-
-            initial_guess = np.polyfit(x, y, grade)
-
-        initial_guess = initial_guess[::-1]
-
-        polynomial = Polynomial(initial_guess)
-
-        # Check that the solution found is meaningful (i.e., definite positive
-        # in the interval of interest)
-        M = polynomial(x)
-
-        negative_mask = M < 0
-
-        if negative_mask.sum() > 0:
-            # Least square fit failed to converge to a meaningful solution
-            # Reset the initialGuess to reasonable value
-            initial_guess[0] = np.mean(y)
-            meanx = np.mean(x)
-            initial_guess = [
-                old_div(abs(i[1]), pow(meanx, i[0])) for i in enumerate(initial_guess)
-            ]
-
-        # Improve the solution using a logLikelihood statistic (Cash statistic)
-        log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
-
-        # Check that we have enough non-empty bins to fit this grade of polynomial,
-        # otherwise lower the grade
-        dof = n_non_zero - (grade + 1)
-
-        if dof <= 2:
-            # Fit is poorly or ill-conditioned, have to reduce the number of parameters
-            while dof < 2 and len(initial_guess) > 1:
-                initial_guess = initial_guess[:-1]
-                polynomial = Polynomial(initial_guess)
-                log_likelihood = PolyBinnedLogLikelihood(x, y, polynomial, exposure)
-
-        # Try to improve the fit with the log-likelihood
-
-        final_estimate = opt.minimize(
-            log_likelihood,
-            initial_guess,
-            method=threeML_config["event list"]["binned fit method"],
-            options=threeML_config["event list"]["binned fit options"],
-        )["x"]
-        final_estimate = np.atleast_1d(final_estimate)
-
-        # Get the value for cstat at the minimum
-
-        min_log_likelihood = log_likelihood(final_estimate)
-
-        # Update the polynomial with the fitted parameters,
-        # and the relative covariance matrix
-
-        final_polynomial = Polynomial(final_estimate)
-
-        final_polynomial.compute_covariance_matrix(log_likelihood.cov_call, final_estimate)
-
-
-    else:
-
-        shape = _grade_model_lookup[grade]
-
-        ps = PointSource("_dummy", 0, 0, spectral_shape=shape)
-        
-        model = Model(ps)
-
-        for i, (k, v) in enumerate(model.freee_parameters.items()):
+        for i, (k, v) in enumerate(model.free_parameters.items()):
 
             if i == 0:
 
                 v.bounds = (0, None)
-                v,prior = Log_normal(mu=np.log(1), sigma=2)
+
+                v.value = 1
 
             else:
 
-                v.prior = Gaussian(mu=0, sigma=1)
+                v.value = 0.1
+
+    
+        jl: JointLikelihood = JointLikelihood(model, DataList(xy))
+
+        jl.set_minimizer("minuit")
+
+        # if the fit falis, retry and then just accept
         
-        xy = XYLike(x,y,exposure=exposure, poisson_data=True, verbose=False)
+        try:
 
+            jl.fit(quiet=True)
 
-        bayes: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
+        except:
 
-        bayes.set_sampler("emcee")
+            try:
 
-        bayes.sampler.setup(n_iterations=500, n_burn_in=200, n_walkers=20)
+                jl.fit(quiet=True)
 
-        bayes.sample(quiet=True)
+            except:
 
-        bayes.restore_median_fit()
-        
+                pass
+
         coeff = [v.value for _, v in model.free_parameters.items()]
 
         final_polynomial = Polynomial(coeff)
 
-        final_polynomial.set_covariace_matrix(bayes.results.estimate_covariance_matrix())
+        final_polynomial.set_covariace_matrix(jl.results.covariance_matrix)
+
+        min_log_likelihood = xy.get_log_like()
+
+    else:
+
+        # set smart priors
         
+        for i, (k, v) in enumerate(model.free_parameters.items()):
+
+            if i == 0:
+
+                v.bounds = (0, None)
+                v.prior = Log_normal(mu=np.log(1), sigma=2)
+                v.value = 1
+
+            else:
+
+                v.prior = Gaussian(mu=0, sigma=1)
+                v.value = 0.1
+
+        xy = XYLike(
+            "series", x=x, y=y, exposure=exposure, poisson_data=True, quiet=True
+        )
+
+        ba: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
+
+        ba.set_sampler("emcee")
+
+        ba.sampler.setup(n_iterations=500, n_burn_in=200, n_walkers=20)
+
+        ba.sample(quiet=True)
+
+        ba.restore_median_fit()
+
+        coeff = [v.value for _, v in model.free_parameters.items()]
+
+        final_polynomial = Polynomial(coeff)
+
+        final_polynomial.set_covariace_matrix(ba.results.estimate_covariance_matrix())
+
+        min_log_likelihood = xy.get_log_like()
+
     return final_polynomial, min_log_likelihood
 
 
