@@ -425,7 +425,7 @@ class TimeSeries(object):
 
             self._unbinned = True  # keep track!
 
-            self._unbinned_fit_polynomials()
+            self._unbinned_fit_polynomials(bayes=bayes)
 
         else:
 
@@ -623,7 +623,7 @@ class TimeSeries(object):
 
         return best_grade
 
-    def _unbinned_fit_global_and_determine_optimum_grade(self, events, exposure):
+    def _unbinned_fit_global_and_determine_optimum_grade(self, events, exposure, bayes=False):
         """
         Provides the ability to find the optimum polynomial grade for *unbinned* events by fitting the
         total (all channels) to 0-4 order polynomials and then comparing them via a likelihood ratio test.
@@ -646,7 +646,7 @@ class TimeSeries(object):
 
         for grade in range(min_grade, max_grade + 1):
             polynomial, log_like = unbinned_polyfit(
-                events, grade, t_start, t_stop, exposure
+                events, grade, t_start, t_stop, exposure, bayes=bayes
             )
 
             log_likelihoods.append(log_like)

@@ -65,15 +65,19 @@ class EventObservation(object):
 
 
 class UnbinnedPoissonLike(PluginPrototype):
-    def __init__(self, name: str, observation: EventObservation, source_name: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        name: str,
+        observation: EventObservation,
+        source_name: Optional[str] = None,
+    ) -> None:
 
         assert isinstance(observation, EventObservation)
 
         self._observation: EventObservation = observation
 
         self._source_name = source_name
-        
-        
+
         super(UnbinnedPoissonLike, self).__init__(name=name, nuisance_parameters={})
 
     def set_model(self, model: astromodels.Model) -> None:
@@ -83,8 +87,6 @@ class UnbinnedPoissonLike(PluginPrototype):
 
         self._like_model = model
 
-
-        
         # We assume there are no extended sources, since we cannot handle them here
 
         assert self._like_model.get_number_of_extended_sources() == 0, (
@@ -100,17 +102,14 @@ class UnbinnedPoissonLike(PluginPrototype):
             )
 
         differential, integral = self._get_diff_flux_and_integral(self._like_model)
-                            
 
         self._integral_model = integral
 
         self._model = differential
 
-
-            
-    def _get_diff_and_integral(self,
-                                    likelihood_model: astromodels.Model) -> Tuple[types.FunctionType,
-                                                                              types.FunctionType]
+    def _get_diff_and_integral(
+        self, likelihood_model: astromodels.Model
+    ) -> Tuple[types.FunctionType, types.FunctionType]:
 
         if self._source_name is None:
 
@@ -156,21 +155,18 @@ class UnbinnedPoissonLike(PluginPrototype):
         # Make sure to not calculate the model twice for the same energies
         def integral(e1, e2):
             # Simpson's rule
-                #single energy values given
-                return (
-                    (e2 - e1)
-                    / 6.0
-                    * (
-                        differential(e1)
-                        + 4*differential((e2 + e1) / 2.0)
-                        + differential(e2)
-                    )
+            # single energy values given
+            return (
+                (e2 - e1)
+                / 6.0
+                * (
+                    differential(e1)
+                    + 4 * differential((e2 + e1) / 2.0)
+                    + differential(e2)
                 )
-
-                                
+            )
 
         return differential, integral
-
 
     def get_log_like(self) -> float:
         """
@@ -188,7 +184,9 @@ class UnbinnedPoissonLike(PluginPrototype):
 
         else:
 
-            n_expected_counts += self._integral_model(self._observation.start, self._observation.stop)
+            n_expected_counts += self._integral_model(
+                self._observation.start, self._observation.stop
+            )
 
         M = self._model(self._observation.events) * self._observation.exposure
 

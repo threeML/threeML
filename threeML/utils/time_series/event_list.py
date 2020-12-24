@@ -383,7 +383,7 @@ class EventList(TimeSeries):
 
         return np.logical_and(start <= self._arrival_times, self._arrival_times <= stop)
 
-    def _fit_polynomials(self):
+    def _fit_polynomials(self, bayes=False):
         """
 
         Binned fit to each channel. Sets the polynomial array that will be used to compute
@@ -524,7 +524,7 @@ class EventList(TimeSeries):
 
         self._polynomials = polynomials
 
-    def _unbinned_fit_polynomials(self):
+    def _unbinned_fit_polynomials(self,bayes=False):
 
         self._poly_fit_exists = True
 
@@ -620,6 +620,7 @@ class EventList(TimeSeries):
                 t_start,
                 t_stop,
                 poly_exposure,
+                bayes=bayes
             )
 
             polynomials.append(polynomial)

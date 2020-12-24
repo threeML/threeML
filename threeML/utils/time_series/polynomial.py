@@ -320,11 +320,11 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes=False):
 
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
-    non_zero_mask = y > 0
-    n_non_zero = non_zero_mask.sum()
-    if n_non_zero == 0:
-        # No data, nothing to do!
-        return Polynomial([0.0]), 0.0
+    
+    # n_non_zero = non_zero_mask.sum()
+    # if n_non_zero == 0:
+    #     # No data, nothing to do!
+    #     return Polynomial([0.0]), 0.0
 
     # create 3ML plugins and fit them with 3ML!
     # should eventuallly allow better config
