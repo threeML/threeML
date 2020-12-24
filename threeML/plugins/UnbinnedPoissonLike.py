@@ -52,6 +52,10 @@ class EventObservation(object):
         return self._events
 
     @property
+    def exposure(self) -> float:
+        return self._exposure
+    
+    @property
     def start(self) -> Union[float, np.ndarray]:
         return self._start
 
@@ -101,7 +105,7 @@ class UnbinnedPoissonLike(PluginPrototype):
                 "the likelihood model" % self._source_name
             )
 
-        differential, integral = self._get_diff_flux_and_integral(self._like_model)
+        differential, integral = self._get_diff_and_integral(self._like_model)
 
         self._integral_model = integral
 

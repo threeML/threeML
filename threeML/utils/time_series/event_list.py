@@ -524,7 +524,7 @@ class EventList(TimeSeries):
 
         self._polynomials = polynomials
 
-    def _unbinned_fit_polynomials(self,bayes=False):
+    def _unbinned_fit_polynomials(self ,bayes=False):
 
         self._poly_fit_exists = True
 
@@ -580,7 +580,7 @@ class EventList(TimeSeries):
 
             self._optimal_polynomial_grade = (
                 self._unbinned_fit_global_and_determine_optimum_grade(
-                    total_poly_events, poly_exposure
+                    total_poly_events, poly_exposure,bayes=bayes
                 )
             )
             if self._verbose:

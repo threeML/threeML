@@ -418,6 +418,7 @@ class TimeSeries(object):
 
         # set the poly intervals as an attribute
 
+
         self._poly_intervals = poly_intervals
 
         # Fit the events with the given intervals

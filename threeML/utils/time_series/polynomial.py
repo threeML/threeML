@@ -312,7 +312,7 @@ def polyfit(x, y, grade, exposure, bayes=False):
     return final_polynomial, min_log_likelihood
 
 
-def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes=False):
+def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
     """
     function to fit a polynomial to event data. not a member to allow parallel computation
 
@@ -320,7 +320,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes=False):
 
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
-    
+
     # n_non_zero = non_zero_mask.sum()
     # if n_non_zero == 0:
     #     # No data, nothing to do!
@@ -331,6 +331,10 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes=False):
 
     # seelct the model based on the grade
 
+    if len(events) == 0:
+
+        return Polynomial([0] * (grade + 1)), 0
+
     shape = _grade_model_lookup[grade]()
 
     ps = PointSource("_dummy", 0, 0, spectral_shape=shape)
@@ -339,7 +343,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes=False):
 
     observation = EventObservation(events, exposure, t_start, t_stop)
 
-    xy = UnbinnedPoissonLike("series")
+    xy = UnbinnedPoissonLike("series", observation=observation)
 
     if not bayes:
 
