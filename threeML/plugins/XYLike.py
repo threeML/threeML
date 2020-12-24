@@ -20,7 +20,15 @@ __instrument_name = "n.a."
 
 class XYLike(PluginPrototype):
     def __init__(
-            self, name, x, y, yerr=None, exposure=None, poisson_data=False, quiet=False, source_name=None
+        self,
+        name,
+        x,
+        y,
+        yerr=None,
+        poisson_data=False,
+        exposure=None,
+        quiet=False,
+        source_name=None,
     ):
 
         nuisance_parameters = {}
@@ -76,21 +84,18 @@ class XYLike(PluginPrototype):
             self._has_errors = True
             self._y = self._y.astype(np.int64)
 
-
         ## sets the exposure assuming eval at center
         ## of bin. this should probably be improved
         ## with a histogram plugin
 
-            
         if exposure is None:
             self._has_exposure: bool = False
             self._exposure = np.ones(len(self._x))
-            
+
         else:
             self._has_exposure: bool = True
             self._exposure = exposure
 
-            
         # This will keep track of the simulated datasets we generate
         self._n_simulated_datasets = 0
 
@@ -106,7 +111,7 @@ class XYLike(PluginPrototype):
         self._source_name = source_name
 
     @classmethod
-    def from_function(cls, name, function, x, yerr, **kwargs):
+    def from_function(cls, name, function, x, yerr=None, exposure=None, **kwargs):
         """
         Generate an XYLike plugin from an astromodels function instance
 
@@ -120,7 +125,7 @@ class XYLike(PluginPrototype):
 
         y = function(x)
 
-        xyl_gen = XYLike("generator", x, y, yerr, **kwargs)
+        xyl_gen = XYLike("generator", x, y, yerr=yerr, exposure=exposure, **kwargs)
 
         pts = PointSource("fake", 0.0, 0.0, function)
 
@@ -371,7 +376,7 @@ class XYLike(PluginPrototype):
         parameters
         """
 
-        expectation =  self._get_total_expectation()
+        expectation = self._get_total_expectation()
 
         if self._is_poisson:
 
@@ -379,14 +384,14 @@ class XYLike(PluginPrototype):
 
             return np.sum(
                 poisson_log_likelihood_ideal_bkg(
-                    self._y, np.zeros_like(self._y), expectation  * self._exposure
+                    self._y, np.zeros_like(self._y), expectation * self._exposure
                 )
             )
 
         else:
 
             # Chi squared
-            chi2_ = half_chi2(self._y * self.exposure, self._yerr, expectation)
+            chi2_ = half_chi2(self._y * self._exposure, self._yerr, expectation)
 
             assert np.all(np.isfinite(chi2_))
 
@@ -442,7 +447,15 @@ class XYLike(PluginPrototype):
 
         """
 
-        new_xy = type(self)(name, x, y, yerr, poisson_data=self._is_poisson, quiet=True)
+        new_xy = type(self)(
+            name,
+            x,
+            y,
+            yerr,
+            exposure=self._exposure,
+            poisson_data=self._is_poisson,
+            quiet=True,
+        )
 
         # apply the current mask
 
