@@ -12,6 +12,7 @@ import os
 import numpy as np
 import pandas as pd
 from pandas import HDFStore
+from tqdm.auto import tqdm, trange
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -612,11 +613,11 @@ class TimeSeries(object):
             client = ParallelClient()
 
             log_likelihoods = client.execute_with_progress_bar(
-                worker, list(range(min_grade, max_grade + 1)))
+                worker, list(range(min_grade, max_grade + 1)), name="Finding best polynomial Order")
 
         else:
 
-            for grade in range(min_grade, max_grade + 1):
+            for grade in trange(min_grade, max_grade + 1, desc="Finding best polynomial Order"):
                 polynomial, log_like = polyfit(
                     bins, cnts, grade, exposure, bayes=bayes)
 
@@ -684,11 +685,11 @@ class TimeSeries(object):
             client = ParallelClient()
 
             log_likelihoods = client.execute_with_progress_bar(
-                worker, list(range(min_grade, max_grade + 1)))
+                worker, list(range(min_grade, max_grade + 1)), name="Finding best polynomial Order")
 
         else:
 
-            for grade in range(min_grade, max_grade + 1):
+            for grade in trange(min_grade, max_grade + 1, desc="Finding best polynomial Order"):
                 polynomial, log_like = unbinned_polyfit(
                     events, grade, t_start, t_stop, exposure, bayes=bayes
                 )
