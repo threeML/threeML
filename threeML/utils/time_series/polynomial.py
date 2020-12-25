@@ -18,7 +18,8 @@ from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.differentiation import ParameterOnBoundary, get_hessian
 
-_grade_model_lookup = (Constant, Line, Quadratic, Cubic, Quadratic)
+# we include the line twice to mimic a constant
+_grade_model_lookup = (Line, Line, Quadratic, Cubic, Quadratic)
 
 
 class CannotComputeCovariance(RuntimeWarning):
@@ -246,6 +247,15 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
                 v.value = 0.1
 
+        # we actually use a line here
+        # because a constant is returns a
+        # single number
+
+        if grade == 0:
+
+            shape.b = 0
+            shape.b.fix = True
+
         jl: JointLikelihood = JointLikelihood(model, DataList(xy))
 
         jl.set_minimizer("minuit")
@@ -291,6 +301,15 @@ def polyfit(x, y, grade, exposure, bayes=False):
                 v.prior = Gaussian(mu=0, sigma=1)
                 v.value = 0.1
 
+        # we actually use a line here
+        # because a constant is returns a
+        # single number
+
+        if grade == 0:
+
+            shape.b = 0
+            shape.b.fix = True
+
         ba: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
 
         ba.set_sampler("emcee")
@@ -309,7 +328,7 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
         min_log_likelihood = xy.get_log_like()
 
-    return final_polynomial, min_log_likelihood
+    return final_polynomial, -min_log_likelihood
 
 
 def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
@@ -361,6 +380,15 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
                 v.value = 0.1
 
+        # we actually use a line here
+        # because a constant is returns a
+        # single number
+
+        if grade == 0:
+
+            shape.b = 0
+            shape.b.fix = True
+
         jl: JointLikelihood = JointLikelihood(model, DataList(xy))
 
         jl.set_minimizer("minuit")
@@ -398,13 +426,22 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
             if i == 0:
 
                 v.bounds = (0, None)
-                v.prior = Log_normal(mu=np.log(1), sigma=2)
+                v.prior = Log_normal(mu=np.log(5), sigma=np.log(5))
                 v.value = 1
 
             else:
 
-                v.prior = Gaussian(mu=0, sigma=1)
+                v.prior = Gaussian(mu=0, sigma=.5)
                 v.value = 0.1
+
+        # we actually use a line here
+        # because a constant is returns a
+        # single number
+
+        if grade == 0:
+
+            shape.b = 0
+            shape.b.fix = True
 
         ba: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
 
@@ -424,4 +461,4 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
         min_log_likelihood = xy.get_log_like()
 
-    return final_polynomial, min_log_likelihood
+    return final_polynomial, -min_log_likelihood

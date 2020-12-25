@@ -20,7 +20,7 @@ class EventObservation(object):
     ):
 
         self._events = np.array(events)
-        self._exposure = exposure
+        self._exposure: float = exposure
 
         if isinstance(start, Iterable) or isinstance(stop, Iterable):
 
@@ -37,7 +37,7 @@ class EventObservation(object):
 
             self._stop: np.ndarray = stop
 
-            self._is_multi_interval = True
+            self._is_multi_interval: bool = True
 
         else:
 
@@ -45,7 +45,7 @@ class EventObservation(object):
 
             self._stop: float = stop
 
-            self._is_multi_interval = False
+            self._is_multi_interval: bool = False
 
     @property
     def events(self) -> np.ndarray:
@@ -54,7 +54,7 @@ class EventObservation(object):
     @property
     def exposure(self) -> float:
         return self._exposure
-    
+
     @property
     def start(self) -> Union[float, np.ndarray]:
         return self._start
@@ -65,7 +65,7 @@ class EventObservation(object):
 
     @property
     def is_multi_interval(self) -> bool:
-        return self._events
+        return self._is_multi_interval
 
 
 class UnbinnedPoissonLike(PluginPrototype):
@@ -82,7 +82,8 @@ class UnbinnedPoissonLike(PluginPrototype):
 
         self._source_name = source_name
 
-        super(UnbinnedPoissonLike, self).__init__(name=name, nuisance_parameters={})
+        super(UnbinnedPoissonLike, self).__init__(
+            name=name, nuisance_parameters={})
 
     def set_model(self, model: astromodels.Model) -> None:
         """
@@ -172,15 +173,36 @@ class UnbinnedPoissonLike(PluginPrototype):
 
         return differential, integral
 
+    def _evaluate_logM(self, M):
+        # Evaluate the logarithm with protection for negative or small
+        # numbers, using a smooth linear extrapolation (better than just a sharp
+        # cutoff)
+        tiny = np.float64(np.finfo(M[0]).tiny)
+
+        non_tiny_mask = M > 2.0 * tiny
+
+        tink_mask = np.logical_not(non_tiny_mask)
+
+        if tink_mask.sum() > 0:
+            logM = np.zeros(len(M))
+            logM[tink_mask] = (np.abs(M[tink_mask])/tiny) + np.log(tiny) - 1
+            logM[non_tiny_mask] = np.log(M[non_tiny_mask])
+
+        else:
+
+            logM = np.log(M)
+
+        return logM
+
     def get_log_like(self) -> float:
         """
         Return the value of the log-likelihood with the current values for the
         parameters
         """
 
-        n_expected_counts = 0
+        n_expected_counts = 0.
 
-        if self._observation._is_multi_interval:
+        if self._observation.is_multi_interval:
 
             for start, stop in zip(self._observation.start, self._observation.stop):
 
@@ -194,7 +216,11 @@ class UnbinnedPoissonLike(PluginPrototype):
 
         M = self._model(self._observation.events) * self._observation.exposure
 
-        return -n_expected_counts * np.log(M).sum()
+        sum_logM = self._evaluate_logM(M).sum()
+
+        minus_log_like = -n_expected_counts + sum_logM
+
+        return minus_log_like
 
     def inner_fit(self) -> float:
         """
