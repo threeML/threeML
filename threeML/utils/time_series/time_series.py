@@ -696,13 +696,6 @@ class TimeSeries(object):
 
                 log_likelihoods.append(log_like)
 
-        for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = unbinned_polyfit(
-                events, grade, t_start, t_stop, exposure, bayes=bayes
-            )
-
-            log_likelihoods.append(log_like)
-
         # Found the best one
         delta_loglike = np.array(
             [2 * (x[0] - x[1])

@@ -11,6 +11,7 @@ from past.utils import old_div
 
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import FitFailed, JointLikelihood
+from threeML.config.config import threeML_config
 from threeML.data_list import DataList
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
@@ -18,6 +19,7 @@ from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.differentiation import ParameterOnBoundary, get_hessian
 
+from threeML.minimizer.minimization import GlobalMinimization, LocalMinimization
 # we include the line twice to mimic a constant
 _grade_model_lookup = (Line, Line, Quadratic, Cubic, Quadratic)
 
@@ -26,12 +28,8 @@ class CannotComputeCovariance(RuntimeWarning):
     pass
 
 
-from threeML.config.config import threeML_config
-
-
 class Polynomial(object):
     def __init__(self, coefficients, is_integral=False):
-
         """
 
         :param coefficients: array of poly coefficients
@@ -40,7 +38,8 @@ class Polynomial(object):
         self._coefficients = coefficients
         self._degree = len(coefficients) - 1
 
-        self._i_plus_1 = np.array(list(range(1, self._degree + 1 + 1)), dtype=float)
+        self._i_plus_1 = np.array(
+            list(range(1, self._degree + 1 + 1)), dtype=float)
 
         self._cov_matrix = np.zeros((self._degree + 1, self._degree + 1))
 
@@ -58,7 +57,8 @@ class Polynomial(object):
                 ]
             )
 
-            self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
+            self._integral_polynomial = Polynomial(
+                integral_coeff, is_integral=True)
 
     @classmethod
     def from_previous_fit(cls, coefficients, covariance):
@@ -108,7 +108,8 @@ class Polynomial(object):
             ]
         )
 
-        self._integral_polynomial = Polynomial(integral_coeff, is_integral=True)
+        self._integral_polynomial = Polynomial(
+            integral_coeff, is_integral=True)
 
     def ___set_coefficient(self, val):
         """ Indirect coefficient setter """
@@ -145,7 +146,8 @@ class Polynomial(object):
 
         try:
 
-            hessian_matrix = get_hessian(function, best_fit_parameters, minima, maxima)
+            hessian_matrix = get_hessian(
+                function, best_fit_parameters, minima, maxima)
 
         except ParameterOnBoundary:
 
@@ -229,7 +231,8 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
     model = Model(ps)
 
-    xy = XYLike("series", x=x, y=y, exposure=exposure, poisson_data=True, quiet=True)
+    xy = XYLike("series", x=x, y=y, exposure=exposure,
+                poisson_data=True, quiet=True)
 
     if not bayes:
 
@@ -241,11 +244,11 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
                 v.bounds = (0, None)
 
-                v.value = 1
+                v.value = np.mean(y/exposure)
 
             else:
 
-                v.value = 0.1
+                v.value = 0.0
 
         # we actually use a line here
         # because a constant is returns a
@@ -324,7 +327,8 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
         final_polynomial = Polynomial(coeff)
 
-        final_polynomial.set_covariace_matrix(ba.results.estimate_covariance_matrix())
+        final_polynomial.set_covariace_matrix(
+            ba.results.estimate_covariance_matrix())
 
         min_log_likelihood = xy.get_log_like()
 
@@ -356,7 +360,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
     shape = _grade_model_lookup[grade]()
 
-    ps = PointSource("_dummy", 0, 0, spectral_shape=shape)
+    ps = PointSource("dummy", 0, 0, spectral_shape=shape)
 
     model = Model(ps)
 
@@ -378,7 +382,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
             else:
 
-                v.value = 0.1
+                v.value = 0.0
 
         # we actually use a line here
         # because a constant is returns a
@@ -391,8 +395,21 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
         jl: JointLikelihood = JointLikelihood(model, DataList(xy))
 
-        jl.set_minimizer("minuit")
 
+        grid_minimizer = GlobalMinimization("grid")
+        
+
+        local_minimizer = LocalMinimization("minuit")
+
+        my_grid = {model.dummy.spectrum.main.shape.a: np.logspace(0, 3, 3)}
+
+        grid_minimizer.setup(second_minimization=local_minimizer, grid = my_grid)
+
+        
+        jl.set_minimizer(grid_minimizer)
+
+
+        
         # if the fit falis, retry and then just accept
 
         try:
@@ -407,7 +424,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
             except:
 
-                pass
+                return Polynomial([0]*(grade + 1 )), 0
 
         coeff = [v.value for _, v in model.free_parameters.items()]
 
@@ -457,7 +474,8 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
         final_polynomial = Polynomial(coeff)
 
-        final_polynomial.set_covariace_matrix(ba.results.estimate_covariance_matrix())
+        final_polynomial.set_covariace_matrix(
+            ba.results.estimate_covariance_matrix())
 
         min_log_likelihood = xy.get_log_like()
 

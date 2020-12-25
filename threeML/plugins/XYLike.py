@@ -84,9 +84,9 @@ class XYLike(PluginPrototype):
             self._has_errors = True
             self._y = self._y.astype(np.int64)
 
-        ## sets the exposure assuming eval at center
-        ## of bin. this should probably be improved
-        ## with a histogram plugin
+        # sets the exposure assuming eval at center
+        # of bin. this should probably be improved
+        # with a histogram plugin
 
         if exposure is None:
             self._has_exposure: bool = False
@@ -125,7 +125,8 @@ class XYLike(PluginPrototype):
 
         y = function(x)
 
-        xyl_gen = XYLike("generator", x, y, yerr=yerr, exposure=exposure, **kwargs)
+        xyl_gen = XYLike("generator", x, y, yerr=yerr,
+                         exposure=exposure, **kwargs)
 
         pts = PointSource("fake", 0.0, 0.0, function)
 
@@ -382,16 +383,22 @@ class XYLike(PluginPrototype):
 
             # Poisson log-likelihood
 
+            negative_mask = expectation < 0
+            if negative_mask.sum() > 0:
+                expectation[negative_mask] = 0.0
+
             return np.sum(
                 poisson_log_likelihood_ideal_bkg(
-                    self._y, np.zeros_like(self._y), expectation * self._exposure
+                    self._y, np.zeros_like(
+                        self._y), expectation * self._exposure
                 )
             )
 
         else:
 
             # Chi squared
-            chi2_ = half_chi2(self._y * self._exposure, self._yerr, expectation)
+            chi2_ = half_chi2(self._y * self._exposure,
+                              self._yerr, expectation)
 
             assert np.all(np.isfinite(chi2_))
 
@@ -518,7 +525,8 @@ class XYLike(PluginPrototype):
 
         self.set_model(model)
 
-        self._joint_like_obj = JointLikelihood(model, DataList(self), verbose=verbose)
+        self._joint_like_obj = JointLikelihood(
+            model, DataList(self), verbose=verbose)
 
         self._joint_like_obj.set_minimizer(minimizer)
 

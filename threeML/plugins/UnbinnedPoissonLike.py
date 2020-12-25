@@ -215,8 +215,15 @@ class UnbinnedPoissonLike(PluginPrototype):
             )
 
         M = self._model(self._observation.events) * self._observation.exposure
-
+        negative_mask = M < 0
+        if negative_mask.sum() > 0:
+            M[negative_mask] = 0.0
+        
+        
         sum_logM = self._evaluate_logM(M).sum()
+
+        
+        #sum_logM = np.log(M).sum()
 
         minus_log_like = -n_expected_counts + sum_logM
 
