@@ -14,7 +14,7 @@ from threeML.classicMLE.joint_likelihood import FitFailed, JointLikelihood
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
 from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.logging import setup_logger
+from threeML.io.logging import setup_logger, update_logging_level
 from threeML.minimizer.minimization import (GlobalMinimization,
                                             LocalMinimization)
 from threeML.plugins.UnbinnedPoissonLike import (EventObservation,

@@ -152,7 +152,7 @@ class GridMinimizer(GlobalMinimizer):
             )
 
             log.debug(f"grid successfully added: {grid}")
-            
+
         self._grid[parameter.path] = grid
 
     def _minimize(self):

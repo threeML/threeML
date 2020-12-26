@@ -18,7 +18,7 @@ from tqdm.auto import tqdm, trange
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
-from threeML.io.logging import setup_logger
+from threeML.io.logging import setup_logger, silence_console_log
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 from threeML.io.rich_display import display
 from threeML.parallel.parallel_client import ParallelClient
@@ -483,14 +483,16 @@ class EventList(TimeSeries):
 
         if self._user_poly_order == -1:
 
-            self._optimal_polynomial_grade = (
-                self._fit_global_and_determine_optimum_grade(
-                    cnts[non_zero_mask],
-                    mean_time[non_zero_mask],
-                    exposure_per_bin[non_zero_mask],
-                    bayes=bayes
+            with silence_console_log():
+
+                self._optimal_polynomial_grade = (
+                    self._fit_global_and_determine_optimum_grade(
+                        cnts[non_zero_mask],
+                        mean_time[non_zero_mask],
+                        exposure_per_bin[non_zero_mask],
+                        bayes=bayes
+                    )
                 )
-            )
 
             log.info(
                 "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
@@ -530,37 +532,41 @@ class EventList(TimeSeries):
 
             client = ParallelClient()
 
-            polynomials = client.execute_with_progress_bar(
-                worker, channels, name=f"Fitting {self._instrument} background")
+            with silence_console_log():
+
+                polynomials = client.execute_with_progress_bar(
+                    worker, channels, name=f"Fitting {self._instrument} background")
 
         else:
 
             polynomials = []
 
-            for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
-                channel_mask = total_poly_energies == channel
+            with silence_console_log():
 
-                # Mask background events and current channel
-                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
-                # Select the masked events
+                for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
+                    channel_mask = total_poly_energies == channel
 
-                current_events = total_poly_events[channel_mask]
+                    # Mask background events and current channel
+                    # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+                    # Select the masked events
 
-                # now bin the selected channel counts
+                    current_events = total_poly_events[channel_mask]
 
-                cnts, bins = np.histogram(current_events, bins=these_bins)
+                    # now bin the selected channel counts
 
-                # Put data to fit in an x vector and y vector
+                    cnts, bins = np.histogram(current_events, bins=these_bins)
 
-                polynomial, _ = polyfit(
-                    mean_time[non_zero_mask],
-                    cnts[non_zero_mask],
-                    self._optimal_polynomial_grade,
-                    exposure_per_bin[non_zero_mask],
-                    bayes=bayes
-                )
+                    # Put data to fit in an x vector and y vector
 
-                polynomials.append(polynomial)
+                    polynomial, _ = polyfit(
+                        mean_time[non_zero_mask],
+                        cnts[non_zero_mask],
+                        self._optimal_polynomial_grade,
+                        exposure_per_bin[non_zero_mask],
+                        bayes=bayes
+                    )
+
+                    polynomials.append(polynomial)
 
         # We are now ready to return the polynomials
 
@@ -620,11 +626,12 @@ class EventList(TimeSeries):
 
         if self._user_poly_order == -1:
 
-            self._optimal_polynomial_grade = (
-                self._unbinned_fit_global_and_determine_optimum_grade(
-                    total_poly_events, poly_exposure, bayes=bayes
+            with silence_console_log():
+                self._optimal_polynomial_grade = (
+                    self._unbinned_fit_global_and_determine_optimum_grade(
+                        total_poly_events, poly_exposure, bayes=bayes
+                    )
                 )
-            )
 
             log.info(
                 "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
@@ -667,32 +674,35 @@ class EventList(TimeSeries):
 
             client = ParallelClient()
 
-            polynomials = client.execute_with_progress_bar(
-                worker, channels,name=f"Fitting {self._instrument} background")
+            with silence_console_log():
+                polynomials = client.execute_with_progress_bar(
+                    worker, channels, name=f"Fitting {self._instrument} background")
 
         else:
 
             polynomials = []
 
-            for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
-                channel_mask = total_poly_energies == channel
+            with silence_console_log():
 
-                # Mask background events and current channel
-                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
-                # Select the masked events
+                for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
+                    channel_mask = total_poly_energies == channel
 
-                current_events = total_poly_events[channel_mask]
+                    # Mask background events and current channel
+                    # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+                    # Select the masked events
 
-                polynomial, _ = unbinned_polyfit(
-                    current_events,
-                    self._optimal_polynomial_grade,
-                    t_start,
-                    t_stop,
-                    poly_exposure,
-                    bayes=bayes
-                )
+                    current_events = total_poly_events[channel_mask]
 
-                polynomials.append(polynomial)
+                    polynomial, _ = unbinned_polyfit(
+                        current_events,
+                        self._optimal_polynomial_grade,
+                        t_start,
+                        t_stop,
+                        poly_exposure,
+                        bayes=bayes
+                    )
+
+                    polynomials.append(polynomial)
 
         # We are now ready to return the polynomials
 

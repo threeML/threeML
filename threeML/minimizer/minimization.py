@@ -12,7 +12,7 @@ from tqdm.auto import tqdm
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.logging import setup_logger
-from threeML.minimizer.grid_minimizer import GridMinimizer
+
 from threeML.utils.differentiation import ParameterOnBoundary, get_hessian
 
 # Set the warnings to be issued always for this module
@@ -1384,7 +1384,8 @@ if len(_minimizers) == 0:
         "You do not have any minimizer available! You need to install at least iminuit."
     )
 
-# Add the GRID minimizer here since it needs at least one other minimizer
+    # Add the GRID minimizer here since it needs at least one other minimizer
 
-
-_minimizers["GRID"] = GridMinimizer
+    from threeML.minimizer.grid_minimizer import GridMinimizer
+    
+    _minimizers["GRID"] = GridMinimizer

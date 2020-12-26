@@ -13,7 +13,7 @@ from typing import Optional
 import numpy as np
 from matplotlib.colors import SymLogNorm
 from past.utils import old_div
-
+import numba as nb
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import (file_existing_and_readable,
@@ -71,7 +71,7 @@ class InstrumentResponse(object):
         # we simply store all the variables to the class
 
         self._matrix = np.array(matrix, float)
-
+        self._matrix_transpose = self._matrix.T
         # Make sure there are no nans or inf
         assert np.all(np.isfinite(self._matrix)), "Infinity or nan in matrix"
 
@@ -179,6 +179,7 @@ class InstrumentResponse(object):
         assert new_matrix.shape == self._matrix.shape
 
         self._matrix = new_matrix
+        self._matrix_transpose = self._matrix.T
 
     @property
     def ebounds(self):
@@ -211,7 +212,7 @@ class InstrumentResponse(object):
         self._integral_function = integral_function
 
 
-    def convolve(self, precalc_fluxes: Optional[np.array]=None):
+    def convolve(self, precalc_fluxes: Optional[np.array]=None) -> np.ndarray:
         """
         Convolve the source flux with the response
         :param precalc_fluxes: The precalulated flux. If this is None, the
@@ -233,7 +234,7 @@ class InstrumentResponse(object):
         idx = np.isfinite(fluxes)
         fluxes[~idx] = 0
 
-        folded_counts = np.dot(fluxes, self._matrix.T)
+        folded_counts = np.dot(fluxes, self._matrix_transpose)
 
         return folded_counts
 

@@ -71,7 +71,11 @@ class DispersionSpectrumLike(SpectrumLike):
             verbose=verbose,
             tstart=tstart,
             tstop=tstop,
+            has_contiguous_energies=True
         )
+
+
+        self._predefined_energies = self._rsp.monte_carlo_energies
 
     def set_model(self, likelihoodModel):
         """

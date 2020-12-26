@@ -2,7 +2,7 @@ import logging
 import logging.handlers as handlers
 import sys
 from typing import Dict, Optional
-
+from contextlib import contextmanager
 import colorama
 from colorama import Back, Fore, Style
 
@@ -151,7 +151,27 @@ def update_logging_level(level):
     if _has_astro_log:
         astromodels_console_log_handler.setLevel(level)
 
+@contextmanager
+def silence_console_log():
 
+    current_console_logging_level = threeML_console_log_handler.level
+    current_usr_logging_level = threeML_usr_log_handler.level
+
+    threeML_console_log_handler.setLevel(logging.ERROR)
+    threeML_usr_log_handler.setLevel(logging.ERROR)
+
+    try:
+        yield
+
+    finally:
+
+        threeML_console_log_handler.setLevel(current_console_logging_level)
+        threeML_usr_log_handler.setLevel(current_usr_logging_level)
+
+
+        
+
+        
 def setup_logger(name):
 
     # A logger with name name will be created
