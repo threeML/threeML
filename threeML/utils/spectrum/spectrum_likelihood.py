@@ -86,7 +86,7 @@ class GaussianObservedStatistic(BinnedStatistic):
         negative_source_n = _sum(idx)
 
         if negative_source_n > 0:
-            custom_warnings.warn(
+            log.warning(
                 "Generated source has negative counts "
                 "in %i channels. Fixing them to zero" % (negative_source_n)
             )
@@ -307,7 +307,7 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
         negative_background_n = _sum(idx)
 
         if negative_background_n > 0:
-            custom_warnings.warn(
+            log.warning(
                 "Generated background has negative counts "
                 "in %i channels. Fixing them to zero" % (negative_background_n)
             )

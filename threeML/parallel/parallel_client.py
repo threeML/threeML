@@ -12,6 +12,9 @@ from distutils.spawn import find_executable
 from tqdm.auto import tqdm
 
 from threeML.config.config import threeML_config
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 try:
     from subprocess import DEVNULL  # py3k
@@ -72,10 +75,10 @@ def parallel_computation(profile=None, start_cluster=True):
 
         # No parallel environment available. Issue a warning and continue with serial computation
 
-        warnings.warn(
+        log.warning(
             "You requested parallel computation, but no parallel environment is available. You need "
             "to install the ipyparallel package. Continuing with serial computation...",
-            NoParallelEnvironment,
+            
         )
 
         threeML_config["parallel"]["use-parallel"] = False
@@ -219,7 +222,7 @@ if has_parallel:
 
             if n_items < n_total_engines:
 
-                warnings.warn("More engines than items to process")
+                log.warning("More engines than items to process")
 
                 # Limit the view to the needed engines
 
