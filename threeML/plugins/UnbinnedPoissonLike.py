@@ -41,9 +41,12 @@ class EventObservation(object):
 
         else:
 
-            self._start: float = start
 
-            self._stop: float = stop
+            assert start < stop
+            
+            self._start: float = float(start)
+
+            self._stop: float = float(stop)
 
             self._is_multi_interval: bool = False
 
