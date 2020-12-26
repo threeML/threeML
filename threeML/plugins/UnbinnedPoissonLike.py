@@ -4,10 +4,17 @@ from typing import Optional, Tuple, Union
 
 import astromodels
 import numpy as np
+import numba as nb
 
+from threeML.io.logging import setup_logger
 from threeML.plugin_prototype import PluginPrototype
 
 __instrument_name = "n.a."
+
+
+log = setup_logger(__name__)
+
+_tiny = np.float64(np.finfo(1.).tiny)
 
 
 class EventObservation(object):
@@ -41,18 +48,26 @@ class EventObservation(object):
 
         else:
 
-
             assert start < stop
-            
+
             self._start: float = float(start)
 
             self._stop: float = float(stop)
 
             self._is_multi_interval: bool = False
 
+            self._n_events: int = len(self._events)
+
+        log.debug(f"created event observation with")
+        log.debug(f"{self._start} {self._stop}")
+
     @property
     def events(self) -> np.ndarray:
         return self._events
+
+    @property
+    def n_events(self) -> int:
+        return self._n_events
 
     @property
     def exposure(self) -> float:
@@ -78,12 +93,23 @@ class UnbinnedPoissonLike(PluginPrototype):
         observation: EventObservation,
         source_name: Optional[str] = None,
     ) -> None:
+        """
+        This is a generic likelihood for unbinned Poisson data.
+        It is very slow for many events. 
+
+        :param name: the plugin name
+        :param observation: and EventObservation container
+        :param source_name: option source name to apply to the source
+
+        """
 
         assert isinstance(observation, EventObservation)
 
         self._observation: EventObservation = observation
 
-        self._source_name = source_name
+        self._source_name: str = source_name
+
+        self._n_events: int = self._observation.n_events
 
         super(UnbinnedPoissonLike, self).__init__(
             name=name, nuisance_parameters={})
@@ -93,7 +119,7 @@ class UnbinnedPoissonLike(PluginPrototype):
         Set the model to be used in the joint minimization. Must be a LikelihoodModel instance.
         """
 
-        self._like_model = model
+        self._like_model: astromodels.Model = model
 
         # We assume there are no extended sources, since we cannot handle them here
 
@@ -176,26 +202,6 @@ class UnbinnedPoissonLike(PluginPrototype):
 
         return differential, integral
 
-    def _evaluate_logM(self, M):
-        # Evaluate the logarithm with protection for negative or small
-        # numbers, using a smooth linear extrapolation (better than just a sharp
-        # cutoff)
-        tiny = np.float64(np.finfo(M[0]).tiny)
-
-        non_tiny_mask = M > 2.0 * tiny
-
-        tink_mask = np.logical_not(non_tiny_mask)
-
-        if tink_mask.sum() > 0:
-            logM = np.zeros(len(M))
-            logM[tink_mask] = (np.abs(M[tink_mask])/tiny) + np.log(tiny) - 1
-            logM[non_tiny_mask] = np.log(M[non_tiny_mask])
-
-        else:
-
-            logM = np.log(M)
-
-        return logM
 
     def get_log_like(self) -> float:
         """
@@ -203,7 +209,7 @@ class UnbinnedPoissonLike(PluginPrototype):
         parameters
         """
 
-        n_expected_counts = 0.
+        n_expected_counts: float = 0.
 
         if self._observation.is_multi_interval:
 
@@ -221,12 +227,9 @@ class UnbinnedPoissonLike(PluginPrototype):
         negative_mask = M < 0
         if negative_mask.sum() > 0:
             M[negative_mask] = 0.0
-        
-        
-        sum_logM = self._evaluate_logM(M).sum()
 
-        
-        #sum_logM = np.log(M).sum()
+        # use numba to sum the events
+        sum_logM = _evaluate_logM_sum(M, self._n_events)
 
         minus_log_like = -n_expected_counts + sum_logM
 
@@ -242,3 +245,25 @@ class UnbinnedPoissonLike(PluginPrototype):
         """
 
         return self.get_log_like()
+
+@nb.njit(fastmath=True)
+def _evaluate_logM_sum(M, size):
+    # Evaluate the logarithm with protection for negative or small
+    # numbers, using a smooth linear extrapolation (better than just a sharp
+    # cutoff)
+ 
+    
+    non_tiny_mask = M > 2.0 * _tiny
+
+    tink_mask = np.logical_not(non_tiny_mask)
+
+    if tink_mask.sum() > 0:
+        logM = np.zeros(size)
+        logM[tink_mask] = (np.abs(M[tink_mask])/_tiny) + np.log(_tiny) - 1
+        logM[non_tiny_mask] = np.log(M[non_tiny_mask])
+
+    else:
+
+        logM = np.log(M)
+
+    return logM.sum()
