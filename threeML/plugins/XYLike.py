@@ -549,7 +549,7 @@ def _poisson_like(y, zeros, expectation):
     return np.sum(
         poisson_log_likelihood_ideal_bkg(
             y, zeros, expectation
-        )
+        )[0]
     )
 
 @nb.njit(fastmath=True)
