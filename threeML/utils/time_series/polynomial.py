@@ -144,51 +144,6 @@ class Polynomial(object):
 
         self._cov_matrix = matrix
 
-    def compute_covariance_matrix(self, function, best_fit_parameters):
-        """
-        Compute the covariance matrix of this fit
-        :param function: the loglike for the fit
-        :param best_fit_parameters: the best fit parameters
-        :return:
-        """
-
-        minima = np.zeros_like(best_fit_parameters) - 100
-        maxima = np.zeros_like(best_fit_parameters) + 100
-
-        try:
-
-            hessian_matrix = get_hessian(
-                function, best_fit_parameters, minima, maxima)
-
-        except ParameterOnBoundary:
-
-            log.warning(
-                "One or more of the parameters are at their boundaries. Cannot compute covariance and"
-                " errors"
-            )
-
-            n_dim = len(best_fit_parameters)
-
-            self._cov_matrix = np.zeros((n_dim, n_dim)) * np.nan
-
-        # Invert it to get the covariance matrix
-
-        try:
-
-            covariance_matrix = np.linalg.inv(hessian_matrix)
-
-            self._cov_matrix = covariance_matrix
-
-        except:
-
-            log.warning(
-                "Cannot invert Hessian matrix, looks like the matrix is singluar"
-            )
-
-            n_dim = len(best_fit_parameters)
-
-            self._cov_matrix = np.zeros((n_dim, n_dim)) * np.nan
-
     @property
     def covariance_matrix(self):
         return self._cov_matrix
@@ -225,6 +180,8 @@ def polyfit(x, y, grade, exposure, bayes=False):
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
 
+    log.debug(f"starting polyfit with grade {grade} ")
+
     nan_mask = np.isnan(y)
 
     y = y[~nan_mask]
@@ -234,6 +191,9 @@ def polyfit(x, y, grade, exposure, bayes=False):
     non_zero_mask = y > 0
     n_non_zero = non_zero_mask.sum()
     if n_non_zero == 0:
+
+        log.debug("no counts, return 0")
+
         # No data, nothing to do!
         return Polynomial([0.0]*(grade+1)), 0.0
 
@@ -296,9 +256,13 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
             except:
 
+                log.debug("all MLE fits failed")
+
                 pass
 
         coeff = [v.value for _, v in model.free_parameters.items()]
+
+        log.debug(f"got coeff: {coeff}")
 
         final_polynomial = Polynomial(coeff)
 
@@ -344,12 +308,16 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
         coeff = [v.value for _, v in model.free_parameters.items()]
 
+        log.debug(f"got coeff: {coeff}")
+
         final_polynomial = Polynomial(coeff)
 
         final_polynomial.set_covariace_matrix(
             ba.results.estimate_covariance_matrix())
 
         min_log_likelihood = xy.get_log_like()
+
+    log.debug(f"-min loglike: {-min_log_likelihood}")
 
     return final_polynomial, -min_log_likelihood
 
@@ -360,13 +328,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
     """
 
-    # Check that we have enough counts to perform the fit, otherwise
-    # return a "zero polynomial"
-
-    # n_non_zero = non_zero_mask.sum()
-    # if n_non_zero == 0:
-    #     # No data, nothing to do!
-    #     return Polynomial([0.0]), 0.0
+    log.debug(f"starting unbinned_polyfit with grade {grade}")
 
     # create 3ML plugins and fit them with 3ML!
     # should eventuallly allow better config
@@ -374,6 +336,8 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
     # seelct the model based on the grade
 
     if len(events) == 0:
+
+        log.debug("no events! returning zero")
 
         return Polynomial([0] * (grade + 1)), 0
 
@@ -438,9 +402,13 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
             except:
 
+                log.debug("all MLE fits failed, returning zero")
+
                 return Polynomial([0]*(grade + 1)), 0
 
         coeff = [v.value for _, v in model.free_parameters.items()]
+
+        log.debug(f"got coeff: {coeff}")
 
         final_polynomial = Polynomial(coeff)
 
@@ -486,6 +454,8 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
         coeff = [v.value for _, v in model.free_parameters.items()]
 
+        log.debug(f"got coeff: {coeff}")
+        
         final_polynomial = Polynomial(coeff)
 
         final_polynomial.set_covariace_matrix(
@@ -493,4 +463,6 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
         min_log_likelihood = xy.get_log_like()
 
+    log.debug(f"-min loglike: {-min_log_likelihood}")    
+        
     return final_polynomial, -min_log_likelihood

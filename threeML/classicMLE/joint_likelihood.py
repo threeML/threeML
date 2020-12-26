@@ -251,6 +251,7 @@ class JointLikelihood(object):
             if isinstance(self._minimizer_type, minimization.GlobalMinimization):
 
                 # Do global minimization first
+                log.debug(f"starting global optimization")
 
                 if quiet:
 
@@ -305,6 +306,8 @@ class JointLikelihood(object):
             else:
 
                 # Only local minimization to be performed
+
+                log.debug("starting local optimization")
 
                 self._minimizer = self._get_minimizer(
                     self.minus_log_like_profile, self._free_parameters

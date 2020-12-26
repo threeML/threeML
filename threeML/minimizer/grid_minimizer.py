@@ -1,11 +1,15 @@
-from builtins import str
 import collections
-import numpy as np
 import itertools
+from builtins import str
+
+import numpy as np
+from astromodels import Parameter
 from tqdm.auto import tqdm
+
+from threeML.io.logging import setup_logger
 from threeML.minimizer.minimization import GlobalMinimizer
 
-from astromodels import Parameter
+log = setup_logger(__name__)
 
 
 class AllFitFailed(RuntimeError):
@@ -53,6 +57,8 @@ class GridMinimizer(GlobalMinimizer):
         # Setup grid
 
         for parameter, grid in user_setup_dict["grid"].items():
+
+            log.debug(f"added {parameter} to the grid")
 
             self.add_parameter_to_grid(parameter, grid)
 
@@ -115,9 +121,10 @@ class GridMinimizer(GlobalMinimizer):
 
             except ValueError:
 
-                raise ValueError(
-                    "Could not find parameter %s in current model" % parameter_path
-                )
+                log.error("Could not find parameter %s in current model" %
+                          parameter_path)
+
+                raise ValueError()
 
             parameter = v[idx]
 
@@ -144,6 +151,8 @@ class GridMinimizer(GlobalMinimizer):
                 % (grid.min(), parameter.min_value, parameter.name)
             )
 
+            log.debug(f"grid successfully added: {grid}")
+            
         self._grid[parameter.path] = grid
 
     def _minimize(self):
@@ -167,9 +176,9 @@ class GridMinimizer(GlobalMinimizer):
 
         n_iterations = np.prod([x.shape for x in list(self._grid.values())])
 
-        if self._verbosity ==1:
+        if self._verbosity == 1:
 
-            p = tqdm(total = n_iterations, desc="Grid Minimization")
+            p = tqdm(total=n_iterations, desc="Grid Minimization")
 
         for values_tuple in itertools.product(*list(self._grid.values())):
 
@@ -226,12 +235,13 @@ class GridMinimizer(GlobalMinimizer):
 
                 callback(values_tuple, this_minimum)
 
-            if self._verbosity ==1:
+            if self._verbosity == 1:
 
                 p.update(1)
 
         if internal_best_fit_values is None:
 
-            raise AllFitFailed("All fit starting from values in the grid have failed!")
+            raise AllFitFailed(
+                "All fit starting from values in the grid have failed!")
 
         return internal_best_fit_values, overall_minimum

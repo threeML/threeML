@@ -114,13 +114,7 @@ class TimeSeries(object):
 
         if instrument is None:
 
-
-<< << << < HEAD
             log.warning("No instrument name is given. Setting to UNKNOWN")
-== == == =
-            custom_warnings.warn(
-                "No instrument name is given. Setting to UNKNOWN")
->>>>>> > feature-bayes-poly
 
             self._instrument = "UNKNOWN"
 
@@ -611,6 +605,8 @@ class TimeSeries(object):
         max_grade = 4
         log_likelihoods = []
 
+        log.debug("attempting to find best poly with binned data")
+
         if threeML_config["parallel"]["use-parallel"]:
 
             def worker(grade):
@@ -638,6 +634,10 @@ class TimeSeries(object):
             [2 * (x[0] - x[1])
              for x in zip(log_likelihoods[:-1], log_likelihoods[1:])]
         )
+
+        log.debug(f"log likes {log_likelihoods}")
+        log.debug(f" delta loglikes {delta_loglike}")
+
         delta_threshold = 9.0
 
         mask = delta_loglike >= delta_threshold
@@ -674,6 +674,8 @@ class TimeSeries(object):
         t_start = self._poly_intervals.start_times
         t_stop = self._poly_intervals.stop_times
 
+        log.debug("attempting to find best fit poly with unbinned")
+
         if threeML_config["parallel"]["use-parallel"]:
 
             def worker(grade):
@@ -703,6 +705,9 @@ class TimeSeries(object):
             [2 * (x[0] - x[1])
              for x in zip(log_likelihoods[:-1], log_likelihoods[1:])]
         )
+
+        log.debug(f"log likes {log_likelihoods}")
+        log.debug(f" delta loglikes {delta_loglike}")
 
         delta_threshold = 9.0
 
@@ -772,7 +777,8 @@ class TimeSeries(object):
 
             if self._poly_fit_exists:
 
-                coeff = np.empty((self._n_channels, self._optimal_polynomial_grade + 1))
+                coeff = np.empty(
+                    (self._n_channels, self._optimal_polynomial_grade + 1))
                 err = np.empty(
                     (
                         self._n_channels,
