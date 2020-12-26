@@ -3,6 +3,7 @@ from __future__ import print_function
 import copy
 
 import matplotlib.pyplot as plt
+import numba as nb
 import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource
@@ -69,13 +70,9 @@ class XYLike(PluginPrototype):
 
             self._has_errors = False
 
-
-
             log.info("Using unweighted Gaussian (equivalent to chi^2) statistic.")
 
         else:
-
-
 
             log.info("Using Poisson log-likelihood")
 
@@ -83,7 +80,7 @@ class XYLike(PluginPrototype):
             self._yerr = None
             self._has_errors = True
             self._y = self._y.astype(np.int64)
-
+            self._zeros = np.zeros_like(self._y)
         # sets the exposure assuming eval at center
         # of bin. this should probably be improved
         # with a histogram plugin
@@ -387,22 +384,13 @@ class XYLike(PluginPrototype):
             if negative_mask.sum() > 0:
                 expectation[negative_mask] = 0.0
 
-            return np.sum(
-                poisson_log_likelihood_ideal_bkg(
-                    self._y, np.zeros_like(
-                        self._y), expectation * self._exposure
-                )
-            )
+            return _poisson_like(self._y, self._zeros, expectation * self._exposure
+                                 )
 
         else:
 
             # Chi squared
-            chi2_ = half_chi2(self._y * self._exposure,
-                              self._yerr, expectation)
-
-            assert np.all(np.isfinite(chi2_))
-
-            return np.sum(chi2_) * (-1)
+            return _chi2_like(self._y, self._yerr, expectation * self._exposure)
 
     def get_simulated_dataset(self, new_name=None):
 
@@ -554,3 +542,21 @@ class XYLike(PluginPrototype):
         # the sum of the mask should be the number of data points in use
 
         return self._mask.sum()
+
+
+@nb.njit(fastmath=True)
+def _poisson_like(y, zeros, expectation):
+    return np.sum(
+        poisson_log_likelihood_ideal_bkg(
+            y, zeros, expectation
+        )
+    )
+
+@nb.njit(fastmath=True)
+def _chi2_like(y, yerr, expectation):
+
+    chi2_ = half_chi2(y, yerr, expectation)
+
+    assert np.all(np.isfinite(chi2_))
+
+    return np.sum(chi2_) * (-1)
