@@ -724,7 +724,7 @@ class TimeSeriesBuilder(object):
 
             if this_background_spectrum is None:
 
-                log.warnings(
+                log.warning(
                     "No background selection has been made. This plugin will contain no background!"
                 )
 
@@ -836,7 +836,7 @@ class TimeSeriesBuilder(object):
                         f"trying extract background as model in {self._name}")
 
                 if this_background_spectrum is None:
-                    log.warnings(
+                    log.warning(
                         "No bakckground selection has been made. This plugin will contain no background!"
                     )
 
