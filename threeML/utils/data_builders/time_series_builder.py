@@ -170,7 +170,7 @@ class TimeSeriesBuilder(object):
             else:
 
                 log.critical(
-                    f"Could not find saved background {restore_poly_fit()}.")
+                    f"Could not find saved background {restore_poly_fit}.")
 
         if "use_balrog" in kwargs:
 
