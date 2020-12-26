@@ -10,6 +10,7 @@ from typing import Optional, Tuple, Union
 
 import matplotlib
 import matplotlib.pyplot as plt
+import numba as nb
 import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource, clone_model
@@ -51,10 +52,11 @@ class SpectrumLike(PluginPrototype):
         name: str,
         observation: BinnedSpectrum,
         background=None,
-        verbose: bool=True,
+        verbose: bool = True,
         background_exposure=None,
-        tstart: Optional[Union[float,int]]=None,
-        tstop: Optional[Union[float,int]]=None,
+        tstart: Optional[Union[float, int]] = None,
+        tstop: Optional[Union[float, int]] = None,
+        has_contiguous_energies: bool = True
     ):
         # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
         """
@@ -83,6 +85,8 @@ class SpectrumLike(PluginPrototype):
         # Just a toggle for verbosity
         self._verbose = bool(verbose)
         self._name = name
+        self._has_contiguous_energies = has_contiguous_energies
+
         assert is_valid_variable_name(name), (
             "Name %s is not a valid name for a plugin. You must use a name which is "
             "a valid python identifier: no spaces, no operators (+,-,/,*), "
@@ -139,7 +143,8 @@ class SpectrumLike(PluginPrototype):
         # the native quality so that we can warn the user if they decide to
         # select channels that were flagged as bad.
 
-        self._mask = np.asarray(np.ones(self._observed_spectrum.n_channels), np.bool)
+        self._mask = np.asarray(
+            np.ones(self._observed_spectrum.n_channels), np.bool)
 
         # Now create the nuisance parameter for the effective area correction, which is fixed
         # by default. This factor multiplies the model so that it can account for calibration uncertainties on the
@@ -240,6 +245,8 @@ class SpectrumLike(PluginPrototype):
         # Apply the mask
         self._apply_mask_to_original_vectors()
 
+        self._predefined_energies = None
+
         # calculate all scalings between area and exposure
 
         self._precalculations()
@@ -325,7 +332,6 @@ class SpectrumLike(PluginPrototype):
         return observed_count_errors, background_count_errors
 
     def _probe_noise_models(self):
-
         """
 
         probe the noise models
@@ -352,7 +358,8 @@ class SpectrumLike(PluginPrototype):
                     observation_noise_model = "poisson"
                     background_noise_model = "poisson"
 
-                    self._background_counts = self._background_counts.astype(np.int64)
+                    self._background_counts = self._background_counts.astype(
+                        np.int64)
 
                     assert np.all(
                         self._observed_counts >= 0
@@ -510,7 +517,7 @@ class SpectrumLike(PluginPrototype):
         """
 
         log.debug("Starting precalculations")
-        
+
         # area scale factor between background and source
         # and exposure ratio between background and source
 
@@ -519,7 +526,7 @@ class SpectrumLike(PluginPrototype):
             # there is no background so the area scaling is unity
 
             log.debug("no background set in precalculations")
-            
+
             self._area_ratio = 1.0
             self._exposure_ratio = 1.0
             self._background_exposure = 1.0
@@ -528,11 +535,11 @@ class SpectrumLike(PluginPrototype):
         else:
 
             log.debug("background set in precalculations")
-            
+
             if self._background_plugin is not None:
 
                 log.debug("detected background plugin")
-                
+
                 if isinstance(self._background_plugin, SpectrumLike):
 
                     # use the background plugin's observed spectrum  and exposure to scale the area and time
@@ -562,7 +569,7 @@ class SpectrumLike(PluginPrototype):
                 # this is the normal case with no background model, get the scale factor directly
 
                 log.debug("this is a normal background observation")
-                
+
                 self._background_scale_factor = self._background_spectrum.scale_factor
                 self._background_exposure = self._background_spectrum.exposure
 
@@ -659,7 +666,7 @@ class SpectrumLike(PluginPrototype):
 
     @property
     def background_plugin(self):
-        #type: () -> SpectrumLike
+        # type: () -> SpectrumLike
 
         return self._background_plugin
 
@@ -721,7 +728,7 @@ class SpectrumLike(PluginPrototype):
     def from_background(cls,
                         name: str,
                         spectrum_like,
-                        verbose: bool=True):
+                        verbose: bool = True):
         """
         Extract a SpectrumLike plugin from the background of another SpectrumLike (or subclass) instance
 
@@ -733,8 +740,9 @@ class SpectrumLike(PluginPrototype):
         """
 
         log.debug("creating new spectrumlike from background")
-        
-        background_only_spectrum = copy.deepcopy(spectrum_like.background_spectrum)
+
+        background_only_spectrum = copy.deepcopy(
+            spectrum_like.background_spectrum)
 
         background_spectrum_like = SpectrumLike(
             name, observation=background_only_spectrum, background=None, verbose=verbose
@@ -773,7 +781,7 @@ class SpectrumLike(PluginPrototype):
         """
 
         log.debug("creating new spectrumlikg from function")
-        
+
         channel_set = ChannelSet.from_starts_and_stops(energy_min, energy_max)
 
         # this is just for construction
@@ -914,7 +922,6 @@ class SpectrumLike(PluginPrototype):
         return info
 
     def set_active_measurements(self, *args, **kwargs) -> None:
-
         """
         Set the measurements to be used during the analysis. Use as many ranges as you need, and you can specify
         either energies or channels to be used.
@@ -1026,7 +1033,8 @@ class SpectrumLike(PluginPrototype):
             # otherwise, we will start out with all channels deselected
             # and turn the on/off by the arguments
 
-            self._mask = np.zeros(self._observed_spectrum.n_channels, dtype=bool)
+            self._mask = np.zeros(
+                self._observed_spectrum.n_channels, dtype=bool)
 
         if "all" in args:
 
@@ -1072,7 +1080,8 @@ class SpectrumLike(PluginPrototype):
 
                     else:
 
-                        idx[i] = self._observed_spectrum.containing_bin(float(s))
+                        idx[i] = self._observed_spectrum.containing_bin(
+                            float(s))
 
                 assert idx[0] < idx[1], (
                     "The channel and energy selection (%s) are out of order and translates to %s-%s"
@@ -1080,10 +1089,11 @@ class SpectrumLike(PluginPrototype):
                 )
 
                 # we do the opposite of the exclude command!
-                self._mask[idx[0] : idx[1] + 1] = True
+                self._mask[idx[0]: idx[1] + 1] = True
 
                 log.info(
-                    "Range %s translates to channels %s-%s" % (arg, idx[0], idx[1])
+                    "Range %s translates to channels %s-%s" % (
+                        arg, idx[0], idx[1])
                 )
 
         # If you are just excluding channels
@@ -1115,7 +1125,8 @@ class SpectrumLike(PluginPrototype):
 
                     else:
 
-                        idx[i] = self._observed_spectrum.containing_bin(float(s))
+                        idx[i] = self._observed_spectrum.containing_bin(
+                            float(s))
 
                 assert idx[0] < idx[1], (
                     "The channel and energy selection (%s) are out of order and translate to %s-%s"
@@ -1123,14 +1134,12 @@ class SpectrumLike(PluginPrototype):
                 )
 
                 # we do the opposite of the exclude command!
-                self._mask[idx[0] : idx[1] + 1] = False
+                self._mask[idx[0]: idx[1] + 1] = False
 
-                
                 log.info(
-                        "Range %s translates to excluding channels %s-%s"
-                        % (arg, idx[0], idx[1])
-                    )
-
+                    "Range %s translates to excluding channels %s-%s"
+                    % (arg, idx[0], idx[1])
+                )
 
             log.info(
                 "Now using %s channels out of %s"
@@ -1145,7 +1154,8 @@ class SpectrumLike(PluginPrototype):
 
         if not use_quality:
 
-            number_of_native_good_channels = sum(self._observed_spectrum.quality.good)
+            number_of_native_good_channels = sum(
+                self._observed_spectrum.quality.good)
             number_of_user_good_channels = sum(self._mask)
 
             if number_of_user_good_channels > number_of_native_good_channels:
@@ -1334,7 +1344,8 @@ class SpectrumLike(PluginPrototype):
             # We want to store the simulated parameters so that the user
             # can recall them later
 
-            new_spectrum_plugin._simulation_storage = clone_model(self._like_model)
+            new_spectrum_plugin._simulation_storage = clone_model(
+                self._like_model)
 
             # TODO: nuisance parameters
 
@@ -1397,14 +1408,21 @@ class SpectrumLike(PluginPrototype):
             self._background_spectrum is not None
         ), "This data has no background, cannot rebin on background!"
 
-        rebinner = Rebinner(self._background_counts, min_number_of_counts, self._mask)
+        rebinner: Rebinner = Rebinner(self._background_counts,
+                                      min_number_of_counts, self._mask)
 
-        # only for the PHASpectrum subclass do we need to update the the grouping
-        if isinstance(self._observed_spectrum, PHASpectrum):
-            self._observed_spectrum.set_ogip_grouping(rebinner.grouping)
-            self._background_spectrum.set_ogip_grouping(rebinner.grouping)
+        if rebinner.n_bins < len(self._mask):
 
-        self._apply_rebinner(rebinner)
+            # only for the PHASpectrum subclass do we need to update the the grouping
+            if isinstance(self._observed_spectrum, PHASpectrum):
+                self._observed_spectrum.set_ogip_grouping(rebinner.grouping)
+                self._background_spectrum.set_ogip_grouping(rebinner.grouping)
+
+            self._apply_rebinner(rebinner)
+
+        else:
+
+            log.info("rebinning had no effect")
 
     def rebin_on_source(self, min_number_of_counts):
         """
@@ -1418,16 +1436,24 @@ class SpectrumLike(PluginPrototype):
 
         # NOTE: the rebinner takes care of the mask already
 
-        rebinner = Rebinner(self._observed_counts, min_number_of_counts, self._mask)
+        rebinner = Rebinner(self._observed_counts,
+                            min_number_of_counts, self._mask)
 
-        # only for the PHASpectrum subclass do we need to update the the grouping
-        if isinstance(self._observed_spectrum, PHASpectrum):
-            self._observed_spectrum.set_ogip_grouping(rebinner.grouping)
+        if rebinner.n_bins < len(self._mask):
 
-            if self._background_spectrum is not None:
-                self._background_spectrum.set_ogip_grouping(rebinner.grouping)
+            # only for the PHASpectrum subclass do we need to update the the grouping
+            if isinstance(self._observed_spectrum, PHASpectrum):
+                self._observed_spectrum.set_ogip_grouping(rebinner.grouping)
 
-        self._apply_rebinner(rebinner)
+                if self._background_spectrum is not None:
+                    self._background_spectrum.set_ogip_grouping(
+                        rebinner.grouping)
+
+            self._apply_rebinner(rebinner)
+
+        else:
+
+            log.info("rebinning had no effect")
 
     def _apply_rebinner(self, rebinner):
 
@@ -1436,7 +1462,8 @@ class SpectrumLike(PluginPrototype):
         # Apply the rebinning to everything.
         # NOTE: the output of the .rebin method are the vectors with the mask *already applied*
 
-        (self._current_observed_counts,) = self._rebinner.rebin(self._observed_counts)
+        (self._current_observed_counts,) = self._rebinner.rebin(
+            self._observed_counts)
 
         if self._observed_count_errors is not None:
             (self._current_observed_count_errors,) = self._rebinner.rebin_errors(
@@ -1459,7 +1486,6 @@ class SpectrumLike(PluginPrototype):
                     self._back_count_errors
                 )
 
-        
         log.info("Now using %s bins" % self._rebinner.n_bins)
 
     def remove_rebinning(self):
@@ -1593,7 +1619,7 @@ class SpectrumLike(PluginPrototype):
         doc="Sets/gets the noise model for the background spectrum",
     )
 
-    def get_log_like(self, precalc_fluxes: Optional[np.array]=None):
+    def get_log_like(self, precalc_fluxes: Optional[np.array] = None):
         """
         Calls the likelihood from the pre-setup likelihood evaluator that "knows" of the currently set
         noise models
@@ -1601,7 +1627,8 @@ class SpectrumLike(PluginPrototype):
         :return:
         """
 
-        loglike, _ = self._likelihood_evaluator.get_current_value(precalc_fluxes=precalc_fluxes)
+        loglike, _ = self._likelihood_evaluator.get_current_value(
+            precalc_fluxes=precalc_fluxes)
 
         return loglike
 
@@ -1640,7 +1667,7 @@ class SpectrumLike(PluginPrototype):
 
         self._integral_flux = integral
 
-    def _evaluate_model(self, precalc_fluxes: Optional[np.array]=None):
+    def _evaluate_model(self, precalc_fluxes: Optional[np.array] = None):
         """
         Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.
         This can be overloaded to convolve the model with a response, for example
@@ -1650,7 +1677,7 @@ class SpectrumLike(PluginPrototype):
         """
         if precalc_fluxes is not None:
             return precalc_fluxes
-        
+
         return np.array(
             [
                 self._integral_flux(emin, emax)
@@ -1659,7 +1686,7 @@ class SpectrumLike(PluginPrototype):
         )
 
     def get_model(self,
-                  precalc_fluxes: Optional[np.array]=None):
+                  precalc_fluxes: Optional[np.array] = None):
         """
         The model integrated over the energy bins. Note that it only returns the  model for the
         currently active channels/measurements
@@ -1670,13 +1697,15 @@ class SpectrumLike(PluginPrototype):
         if self._rebinner is not None:
 
             (model,) = self._rebinner.rebin(
-                self._evaluate_model(precalc_fluxes=precalc_fluxes) * self._observed_spectrum.exposure
+                self._evaluate_model(
+                    precalc_fluxes=precalc_fluxes) * self._observed_spectrum.exposure
             )
 
         else:
 
             model = (
-                self._evaluate_model(precalc_fluxes=precalc_fluxes)[self._mask] * self._observed_spectrum.exposure
+                self._evaluate_model(precalc_fluxes=precalc_fluxes)[
+                    self._mask] * self._observed_spectrum.exposure
             )
 
         return self._nuisance_parameter.value * model
@@ -1698,7 +1727,7 @@ class SpectrumLike(PluginPrototype):
         )
 
     def get_background_model(self,
-                             without_mask: bool=False):
+                             without_mask: bool = False):
         """
         The background model integrated over the energy bins. Note that it only returns the  model for the
         currently active channels/measurements
@@ -1732,10 +1761,11 @@ class SpectrumLike(PluginPrototype):
 
     def _get_diff_flux_and_integral(self,
                                     likelihood_model: Model,
-                                    integrate_method: str="simpson") -> Tuple[types.FunctionType,
-                                                                              types.FunctionType]:
+                                    integrate_method: str = "simpson") -> Tuple[types.FunctionType,
+                                                                                types.FunctionType]:
 
-        assert integrate_method in ["simpson", "trapz"], "Only simpson and trapz are valid integral_methods."
+        assert integrate_method in [
+            "simpson", "trapz"], "Only simpson and trapz are valid integral_methods."
 
         if self._source_name is None:
 
@@ -1789,29 +1819,41 @@ class SpectrumLike(PluginPrototype):
 
             # New way with simpson rule.
             # Make sure to not calculate the model twice for the same energies
-            def integral(e1, e2):
-                # Simpson's rule
-                if isinstance(e1, Iterable):
-                    # Energy given as list or array
 
-                    # Make sure we do not calculate the flux two times at the same energy
-                    e_edges = np.append(e1, e2[-1])
-                    e_m = (e1+e2)/2.
+            if self._has_contiguous_energies:
 
-                    diff_fluxes_edges = differential_flux(e_edges)
-                    diff_fluxes_mid = differential_flux(e_m)
+                if self._predefined_energies is None:
 
-                    return (
-                        (e2 - e1)
-                        / 6.0
-                        * (
-                            diff_fluxes_edges[:-1]
-                            + 4*diff_fluxes_mid
-                            + diff_fluxes_edges[1:]
-                        )
-                    )
+                    def integral(e1, e2):
+
+                        # Make sure we do not calculate the flux two times at the same energy
+                        e_edges = np.append(e1, e2[-1])
+                        e_m = (e1+e2)/2.
+
+                        diff_fluxes_edges = differential_flux(e_edges)
+                        diff_fluxes_mid = differential_flux(e_m)
+
+                        return _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid)
+
                 else:
-                    #single energy values given
+
+                    e_edges = self._predefined_energies
+                    ee1 = e_edges[:-1]
+                    ee2 = e_edges[1:]
+
+                    e_m = (ee1+ee2)/2.
+
+                    def integral(e1, e2):
+
+                        diff_fluxes_edges = differential_flux(e_edges)
+                        diff_fluxes_mid = differential_flux(e_m)
+
+                        return _simps(ee1, ee2, diff_fluxes_edges, diff_fluxes_mid)
+
+            else:
+
+                def integral(e1, e2):
+                    # single energy values given
                     return (
                         (e2 - e1)
                         / 6.0
@@ -1833,16 +1875,16 @@ class SpectrumLike(PluginPrototype):
                     e_edges = np.append(e1, e2[-1])
                     diff_fluxes_edges = differential_flux(e_edges)
 
-                    return np.trapz(np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T,np.array([e1,e2]).T)
+                    return _trapz(np.array([diff_fluxes_edges[:-1], diff_fluxes_edges[1:]]).T, np.array([e1, e2]).T)
                 else:
-                    #single energy values given
-                    return np.trapz(np.array([differential_flux(e1), differential_flux(e2)]),np.array([e1,e2]))
+                    # single energy values given
+                    return _trapz(np.array([differential_flux(e1), differential_flux(e2)]), np.array([e1, e2]))
 
         return differential_flux, integral
 
     def use_effective_area_correction(self,
-                                      min_value: Union[int, float]=0.8,
-                                      max_value: Union[int, float]=1.2):
+                                      min_value: Union[int, float] = 0.8,
+                                      max_value: Union[int, float] = 1.2):
         """
         Activate the use of the effective area correction, which is a multiplicative factor in front of the model which
         might be used to mitigate the effect of intercalibration mismatch between different instruments.
@@ -1857,7 +1899,8 @@ class SpectrumLike(PluginPrototype):
         :param max_value: maximum allowed value (default: 1.2, corresponding to a 20% + effect
         :return:
         """
-        log.info(f"{self._name} is using effective area correction (between {min_value} and {max_value})")
+        log.info(
+            f"{self._name} is using effective area correction (between {min_value} and {max_value})")
         self._nuisance_parameter.free = True
         self._nuisance_parameter.bounds = (min_value, max_value)
 
@@ -1866,7 +1909,7 @@ class SpectrumLike(PluginPrototype):
         self._nuisance_parameter.set_uninformative_prior(Uniform_prior)
 
     def fix_effective_area_correction(self,
-                                      value: Union[int, float]=1):
+                                      value: Union[int, float] = 1):
         """
         Fix the multiplicative factor (see use_effective_area_correction) to the provided value (default: 1)
 
@@ -1883,7 +1926,8 @@ class SpectrumLike(PluginPrototype):
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        assert method in ["simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        assert method in [
+            "simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
         self._model_integrate_method = method
         log.info(f"{self._name} changing model integration method to {method}")
 
@@ -1899,9 +1943,11 @@ class SpectrumLike(PluginPrototype):
         Change the integrate method for the background integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        assert method in ["simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        assert method in [
+            "simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
         self._background_integrate_method = method
-        log.info(f"{self._name} changing background integration method to {method}")
+        log.info(
+            f"{self._name} changing background integration method to {method}")
 
         # if background_plugin is set, update the integral function
         if self._background_plugin is not None:
@@ -1997,7 +2043,8 @@ class SpectrumLike(PluginPrototype):
                 # get the background counts from the background
                 # plugin.. NOT SCALED
 
-                background_counts = self.get_background_model(without_mask=True)
+                background_counts = self.get_background_model(
+                    without_mask=True)
 
             else:
 
@@ -2033,7 +2080,8 @@ class SpectrumLike(PluginPrototype):
 
             elif self._background_noise_model == "ideal":
 
-                background_errors = np.zeros_like(self._scaled_background_counts)
+                background_errors = np.zeros_like(
+                    self._scaled_background_counts)
 
             elif self._background_noise_model == "gaussian":
 
@@ -2087,7 +2135,8 @@ class SpectrumLike(PluginPrototype):
         else:
 
             # since we compare to the model rate... background subtract but with proper propagation
-            src_rate = old_div(self.observed_counts, self._observed_spectrum.exposure)
+            src_rate = old_div(self.observed_counts,
+                               self._observed_spectrum.exposure)
 
         return src_rate
 
@@ -2200,7 +2249,8 @@ class SpectrumLike(PluginPrototype):
 
             else:
 
-                raise NotImplementedError("We haven't put in other significances yet")
+                raise NotImplementedError(
+                    "We haven't put in other significances yet")
         else:
             log.warning(
                 "Significance with no background is not yet computed accurately"
@@ -2242,7 +2292,8 @@ class SpectrumLike(PluginPrototype):
 
             else:
 
-                raise NotImplementedError("We haven't put in other significances yet")
+                raise NotImplementedError(
+                    "We haven't put in other significances yet")
 
             return significance
 
@@ -2254,11 +2305,11 @@ class SpectrumLike(PluginPrototype):
 
     def view_count_spectrum(
         self,
-        plot_errors: bool=True,
-        show_bad_channels: bool=True,
-        show_warn_channels: bool=False,
-        significance_level: bool=None,
-        scale_background: bool=True,
+        plot_errors: bool = True,
+        show_bad_channels: bool = True,
+        show_warn_channels: bool = False,
+        significance_level: bool = None,
+        scale_background: bool = True,
     ) -> matplotlib.figure.Figure:
         """
         View the count and background spectrum. Useful to check energy selections.
@@ -2268,7 +2319,8 @@ class SpectrumLike(PluginPrototype):
         """
 
         if sum(self._mask) == 0:
-            raise RuntimeError("There are no active channels selected to plot!")
+            raise RuntimeError(
+                "There are no active channels selected to plot!")
 
         # adding the rebinner: j. michael.
 
@@ -2295,7 +2347,8 @@ class SpectrumLike(PluginPrototype):
 
             elif self._background_noise_model == "ideal":
 
-                background_counts = copy.copy(self._current_scaled_background_counts)
+                background_counts = copy.copy(
+                    self._current_scaled_background_counts)
 
                 background_errors = np.zeros_like(background_counts)
 
@@ -2349,8 +2402,10 @@ class SpectrumLike(PluginPrototype):
             if self._background_noise_model is None:
                 observed_counts = copy.copy(self._current_observed_counts)
 
-                background_counts = np.zeros(observed_counts.shape, dtype=np.int64)
-                background_errors = np.zeros(observed_counts.shape, dtype=np.int64)
+                background_counts = np.zeros(
+                    observed_counts.shape, dtype=np.int64)
+                background_errors = np.zeros(
+                    observed_counts.shape, dtype=np.int64)
 
                 background_rate = np.zeros(observed_counts.shape)
 
@@ -2455,7 +2510,8 @@ class SpectrumLike(PluginPrototype):
                 np.array(self._observed_spectrum.stops),
             )
             energy_width_unrebinned = energy_max_unrebinned - energy_min_unrebinned
-            observed_rate_unrebinned = old_div(self._observed_counts, self.exposure)
+            observed_rate_unrebinned = old_div(
+                self._observed_counts, self.exposure)
             observed_rate_unrebinned_err = old_div(
                 np.sqrt(self._observed_counts), self.exposure
             )
@@ -2506,7 +2562,8 @@ class SpectrumLike(PluginPrototype):
                     )
             else:
 
-                background_rate_unrebinned = np.zeros_like(observed_rate_unrebinned)
+                background_rate_unrebinned = np.zeros_like(
+                    observed_rate_unrebinned)
                 background_rate_unrebinned_err = np.zeros_like(
                     observed_rate_unrebinned_err
                 )
@@ -2630,8 +2687,8 @@ class SpectrumLike(PluginPrototype):
 
             if significance_level is not None:
 
-                
-                log.info("channels below the significance threshold shown in red\n")
+                log.info(
+                    "channels below the significance threshold shown in red\n")
 
                 with np.errstate(invalid="ignore"):
                     significance_mask = (
@@ -2726,8 +2783,8 @@ class SpectrumLike(PluginPrototype):
 
     def _construct_counts_arrays(self,
                                  min_rate: Union[int, float],
-                                 ratio_residuals: bool=False,
-                                 total_counts: bool=False) -> dict:
+                                 ratio_residuals: bool = False,
+                                 total_counts: bool = False) -> dict:
         """
 
         Build new arrays before or after a fit of rebinned data/model
@@ -2753,17 +2810,19 @@ class SpectrumLike(PluginPrototype):
         expected_model_rate = self.expected_model_rate
 
         # Observed rate
-        observed_rate = old_div(self.observed_counts, self._observed_spectrum.exposure)
-        observed_rate_err = old_div(self.observed_count_errors, self._observed_spectrum.exposure)
+        observed_rate = old_div(self.observed_counts,
+                                self._observed_spectrum.exposure)
+        observed_rate_err = old_div(
+            self.observed_count_errors, self._observed_spectrum.exposure)
 
         # Background rate
         if (self._background_noise_model is not None) or (self._background_plugin is not None):
             background_rate = old_div(self.background_counts,
                                       self._background_exposure) *\
-                                      self._area_ratio
+                self._area_ratio
             background_rate_err = old_div(self.background_count_errors,
                                           self._background_exposure) *\
-                                          self._area_ratio
+                self._area_ratio
         else:
             background_rate = np.zeros(len(observed_rate))
             background_rate_err = np.zeros(len(observed_rate))
@@ -2781,7 +2840,8 @@ class SpectrumLike(PluginPrototype):
 
         # get the rebinned counts
         new_observed_rate, new_model_rate, new_background_rate = \
-            this_rebinner.rebin(observed_rate, expected_model_rate, background_rate)
+            this_rebinner.rebin(
+                observed_rate, expected_model_rate, background_rate)
         (new_observed_rate_err,) = this_rebinner.rebin_errors(observed_rate_err)
         (new_background_rate_err,) = this_rebinner.rebin_errors(background_rate_err)
 
@@ -2801,7 +2861,8 @@ class SpectrumLike(PluginPrototype):
         for e_min, e_max in zip(new_energy_min, new_energy_max):
 
             # Find all channels in this rebinned bin
-            idx = (mean_energy_unrebinned >= e_min) & (mean_energy_unrebinned <= e_max)
+            idx = (mean_energy_unrebinned >= e_min) & (
+                mean_energy_unrebinned <= e_max)
 
             # Find the rates for these channels
             r = observed_rate[idx]
@@ -2870,7 +2931,8 @@ class SpectrumLike(PluginPrototype):
 
         else:
 
-            rebinned_background_counts = np.zeros_like(rebinned_observed_counts)
+            rebinned_background_counts = np.zeros_like(
+                rebinned_observed_counts)
 
         significance_calc = Significance(
             rebinned_observed_counts,
@@ -2881,8 +2943,7 @@ class SpectrumLike(PluginPrototype):
 
         # Divide the various cases
 
-
-        #TODO check this: shoudn't it be obseved-background/model (for the old way) and
+        # TODO check this: shoudn't it be obseved-background/model (for the old way) and
         # observed/(model+background) (for the new way). Errors also wrong observed+background error
         if ratio_residuals:
             residuals = old_div(
@@ -2945,26 +3006,26 @@ class SpectrumLike(PluginPrototype):
 
         rebinned_quantities = dict(
             # Rebined
-            #observed
+            # observed
             new_observed_rate=new_observed_rate,
             new_observed_rate_err=new_observed_rate_err,
-            #background
+            # background
             new_background_rate=new_background_rate,
             new_background_rate_err=new_background_rate_err,
-            #model
+            # model
             new_model_rate=new_model_rate,
             # New echans
             new_chan_width=new_chan_width,
             new_energy_min=new_energy_min,
             new_energy_max=new_energy_max,
             mean_energy=mean_energy,
-            #Residuals
+            # Residuals
             residuals=residuals,
             residual_errors=residual_errors,
             delta_energy=delta_energy,
-            #Unbinned model rate
+            # Unbinned model rate
             expected_model_rate=expected_model_rate,
-            #Unbinned echans
+            # Unbinned echans
             energy_min=energy_min,
             energy_max=energy_max,
             chan_width=chan_width,
@@ -2974,25 +3035,24 @@ class SpectrumLike(PluginPrototype):
 
     def display_model(
         self,
-        data_color: str="k",
-        model_color: str="r",
-        background_color: str="b",
-        step: bool=True,
-        show_data: bool=True,
-        show_residuals: bool=True,
-        ratio_residuals: bool=False,
-        show_legend: bool=True,
-        min_rate: Union[int,float]=1e-99,
-        model_label: Optional[str]=None,
-        model_kwargs: Optional[dict]=None,
-        data_kwargs: Optional[dict]=None,
-        background_label: Optional[str]=None,
-        background_kwargs: Optional[dict]=None,
-        source_only: bool=True,
-        show_background: bool=False,
+        data_color: str = "k",
+        model_color: str = "r",
+        background_color: str = "b",
+        step: bool = True,
+        show_data: bool = True,
+        show_residuals: bool = True,
+        ratio_residuals: bool = False,
+        show_legend: bool = True,
+        min_rate: Union[int, float] = 1e-99,
+        model_label: Optional[str] = None,
+        model_kwargs: Optional[dict] = None,
+        data_kwargs: Optional[dict] = None,
+        background_label: Optional[str] = None,
+        background_kwargs: Optional[dict] = None,
+        source_only: bool = True,
+        show_background: bool = False,
         **kwargs
     ) -> ResidualPlot:
-
         """
         Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying
         a previous axis to 'model_subplot'.
@@ -3023,7 +3083,8 @@ class SpectrumLike(PluginPrototype):
 
         _default_model_kwargs = dict(color=model_color, alpha=1)
 
-        _default_background_kwargs = dict(color=background_color, alpha=1, linestyle="--")
+        _default_background_kwargs = dict(
+            color=background_color, alpha=1, linestyle="--")
 
         _default_data_kwargs = dict(
             color=data_color,
@@ -3065,7 +3126,8 @@ class SpectrumLike(PluginPrototype):
 
         if background_kwargs is not None:
 
-            assert type(background_kwargs) == dict, "background_kwargs must be a dict"
+            assert type(
+                background_kwargs) == dict, "background_kwargs must be a dict"
 
             for k, v in list(background_kwargs.items()):
 
@@ -3086,15 +3148,17 @@ class SpectrumLike(PluginPrototype):
 
         # compute the values for the plotting
 
-        rebinned_quantities = self._construct_counts_arrays(min_rate, ratio_residuals)
+        rebinned_quantities = self._construct_counts_arrays(
+            min_rate, ratio_residuals)
 
         if source_only:
             y_label = "Net rate\n(counts s$^{-1}$ keV$^{-1}$)"
             weighted_data = old_div(
-                rebinned_quantities["new_observed_rate"]-rebinned_quantities["new_background_rate"], rebinned_quantities["new_chan_width"]
+                rebinned_quantities["new_observed_rate"] -
+                rebinned_quantities["new_background_rate"], rebinned_quantities["new_chan_width"]
             )
             weighted_error = old_div(
-                np.sqrt(rebinned_quantities["new_observed_rate_err"]**2+
+                np.sqrt(rebinned_quantities["new_observed_rate_err"]**2 +
                         rebinned_quantities["new_background_rate_err"]**2),
                 rebinned_quantities["new_chan_width"]
             )
@@ -3106,12 +3170,12 @@ class SpectrumLike(PluginPrototype):
             weighted_error = old_div(
                 rebinned_quantities["new_observed_rate_err"], rebinned_quantities["new_chan_width"]
             )
-        #weighted_data = old_div(
+        # weighted_data = old_div(
         #    rebinned_quantities["new_rate"], rebinned_quantities["new_chan_width"]
-        #)
-        #weighted_error = old_div(
+        # )
+        # weighted_error = old_div(
         #    rebinned_quantities["new_err"], rebinned_quantities["new_chan_width"]
-        #)
+        # )
 
         residual_plot.add_data(
             rebinned_quantities["mean_energy"],
@@ -3133,7 +3197,7 @@ class SpectrumLike(PluginPrototype):
                 rebinned_quantities["new_background_rate"],
                 label=background_label,
                 **_default_background_kwargs
-                )
+            )
 
         # a step historgram
         if step:
@@ -3141,7 +3205,8 @@ class SpectrumLike(PluginPrototype):
                 # only source
                 eff_model = rebinned_quantities["new_model_rate"]
             else:
-                eff_model = rebinned_quantities["new_model_rate"] + rebinned_quantities["new_background_rate"]
+                eff_model = rebinned_quantities["new_model_rate"] + \
+                    rebinned_quantities["new_background_rate"]
             residual_plot.add_model_step(
                 rebinned_quantities["new_energy_min"],
                 rebinned_quantities["new_energy_max"],
@@ -3151,14 +3216,14 @@ class SpectrumLike(PluginPrototype):
                 **_default_model_kwargs,
             )
 
-            #residual_plot.add_model_step(
+            # residual_plot.add_model_step(
             #    rebinned_quantities["new_energy_min"],
             #    rebinned_quantities["new_energy_max"],
             #    rebinned_quantities["new_chan_width"],
             #    rebinned_quantities["new_model_rate"],
             #    label=model_label,
             #    **_default_model_kwargs
-            #)
+            # )
 
         else:
 
@@ -3175,11 +3240,13 @@ class SpectrumLike(PluginPrototype):
             )
 
             x = np.mean(
-                [rebinned_quantities["energy_min"], rebinned_quantities["energy_max"]],
+                [rebinned_quantities["energy_min"],
+                    rebinned_quantities["energy_max"]],
                 axis=0,
             )
 
-            residual_plot.add_model(x, y, label=model_label, **_default_model_kwargs)
+            residual_plot.add_model(
+                x, y, label=model_label, **_default_model_kwargs)
 
         return residual_plot.finalize(
             xlabel="Energy\n(keV)",
@@ -3188,3 +3255,17 @@ class SpectrumLike(PluginPrototype):
             yscale="log",
             show_legend=show_legend,
         )
+
+
+@nb.njit(fastmath=True, cache=True)
+def _trapz(x, y):
+    return np.trapz(x, y)
+
+
+@nb.njit(fastmath=True, cache=True)
+def _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid):
+    return (e2 - e1) / 6.0 * (
+        diff_fluxes_edges[:-1]
+        + 4*diff_fluxes_mid
+        + diff_fluxes_edges[1:]
+    )
