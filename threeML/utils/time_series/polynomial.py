@@ -279,7 +279,7 @@ def polyfit(x, y, grade, exposure, bayes=False):
             if i == 0:
 
                 v.bounds = (0, None)
-                v.prior = Log_normal(mu=np.log(avg), sigma=np.log(avg/2))
+                v.prior = Log_normal(mu=np.log(avg), sigma=np.max([np.log(avg/2),1]))
                 v.value = 1
 
             else:
