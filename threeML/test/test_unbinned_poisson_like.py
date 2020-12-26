@@ -52,6 +52,11 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
 
     m = Model(ps)
 
+    ######
+    ######
+    ######
+
+    
     ub1 = UnbinnedPoissonLike("test", observation=event_observation_contiguous)
 
     jl = JointLikelihood(m, DataList(ub1))
@@ -75,7 +80,6 @@ def test_ubinned_poisson_full(event_observation_contiguous, event_observation_sp
     ######
     ######
     ######
-
 
     ub2 = UnbinnedPoissonLike("test", observation=event_observation_split)
 
