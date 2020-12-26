@@ -3,11 +3,14 @@ import numpy as np
 from tqdm.auto import tqdm
 
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.logging import setup_logger
 from threeML.utils.bayesian_blocks import (bayesian_blocks,
                                            bayesian_blocks_not_unique)
 from threeML.utils.numba_utils import VectorFloat64, VectorInt64
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
+
+log = setup_logger(__name__)
 
 
 class NotEnoughData(RuntimeError):
@@ -28,10 +31,11 @@ class Rebinner(object):
         total = np.sum(vector_to_rebin_on)
 
         if total < min_value_per_bin:
-            raise NotEnoughData(
-                "Vector total is %s, cannot rebin at %s per bin"
-                % (total, min_value_per_bin)
-            )
+
+            log.error("Vector total is %s, cannot rebin at %s per bin"
+                      % (total, min_value_per_bin))
+
+            raise NotEnoughData()
 
         # Check if we have a mask, if not prepare a empty one
         if mask is not None:
@@ -142,6 +146,9 @@ class Rebinner(object):
         self._n_bins = len(self._starts)
         self._starts = np.array(self._starts)
         self._stops = np.array(self._stops)
+
+        log.debug(
+            f"Vector was rebinned from {len(vector_to_rebin_on)} to {self._n_bins}")
 
     @property
     def n_bins(self):
@@ -470,7 +477,7 @@ class TemporalBinner(TimeIntervalSet):
 
         if not starts:
 
-            print(
+            log.critical(
                 "The requested sigma level could not be achieved in the interval. Try decreasing it."
             )
 
@@ -535,8 +542,8 @@ class TemporalBinner(TimeIntervalSet):
 
             if "duplicate" in str(e):
 
-                custom_warnings.warn(
-                    "There where possible duplicate time tags in the data. We will try to run a different algorithm"
+                log.warning(
+                    "There were possible duplicate time tags in the data. We will try to run a different algorithm"
                 )
 
                 final_edges = bayesian_blocks_not_unique(
@@ -636,7 +643,9 @@ class TemporalBinner(TimeIntervalSet):
 #####
 @nb.njit(fastmath=True)
 def _rebin_vector_float(vector, start, stop, mask, N):
-
+    """
+    faster rebinner using numba
+    """
     rebinned_vector = VectorFloat64(0)
 
     for n in range(N):
@@ -661,7 +670,9 @@ def _rebin_vector_float(vector, start, stop, mask, N):
 
 @nb.njit(fastmath=True)
 def _rebin_vector_int(vector, start, stop, mask, N):
-
+    """
+    faster rebinner using numba
+    """
     rebinned_vector = VectorInt64(0)
 
     for n in range(N):
