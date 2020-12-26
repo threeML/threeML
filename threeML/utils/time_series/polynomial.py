@@ -214,11 +214,18 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
+
+    nan_mask = np.isnan(y)
+
+    y = y[~nan_mask]
+    x = x[~nan_mask]
+    exposure = exposure[~nan_mask]
+    
     non_zero_mask = y > 0
     n_non_zero = non_zero_mask.sum()
     if n_non_zero == 0:
         # No data, nothing to do!
-        return Polynomial([0.0]), 0.0
+        return Polynomial([0.0]*(grade+1)), 0.0
 
     # create 3ML plugins and fit them with 3ML!
     # should eventuallly allow better config
@@ -231,6 +238,8 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
     model = Model(ps)
 
+    avg = np.mean(y/exposure)
+    
     xy = XYLike("series", x=x, y=y, exposure=exposure,
                 poisson_data=True, quiet=True)
 
@@ -244,7 +253,7 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
                 v.bounds = (0, None)
 
-                v.value = np.mean(y/exposure)
+                v.value = avg
 
             else:
 
@@ -296,13 +305,13 @@ def polyfit(x, y, grade, exposure, bayes=False):
             if i == 0:
 
                 v.bounds = (0, None)
-                v.prior = Log_normal(mu=np.log(1), sigma=2)
+                v.prior = Log_normal(mu=np.log(avg), sigma=np.log(avg/2))
                 v.value = 1
 
             else:
 
-                v.prior = Gaussian(mu=0, sigma=1)
-                v.value = 0.1
+                v.prior = Gaussian(mu=0, sigma=2)
+                v.value = 1e-2
 
         # we actually use a line here
         # because a constant is returns a
