@@ -1,10 +1,11 @@
 import copy
 import re
 from pathlib import Path
-from tqdm.auto import tqdm
+
 import astropy.io.fits as fits
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm.auto import tqdm
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
@@ -75,7 +76,7 @@ class TimeSeriesBuilder(object):
         time_series: TimeSeries,
         response=None,
         poly_order: int = -1,
-        unbinned: bool = True,
+        unbinned: bool = False,
         verbose: bool = True,
         restore_poly_fit=None,
         container_type=BinnedSpectrumWithDispersion,
@@ -98,9 +99,11 @@ class TimeSeriesBuilder(object):
         :param restore_poly_fit: file from which to read a prefitted background
         """
 
-        assert isinstance(time_series, TimeSeries), "must be a TimeSeries instance"
+        assert isinstance(
+            time_series, TimeSeries), "must be a TimeSeries instance"
 
-        assert issubclass(container_type, Histogram), "must be a subclass of Histogram"
+        assert issubclass(
+            container_type, Histogram), "must be a subclass of Histogram"
 
         self._name: str = name
 
@@ -166,7 +169,8 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                log.critical(f"Could not find saved background {restore_poly_fit()}.")
+                log.critical(
+                    f"Could not find saved background {restore_poly_fit()}.")
 
         if "use_balrog" in kwargs:
 
@@ -279,9 +283,10 @@ class TimeSeriesBuilder(object):
         self._tstart = self._time_series.time_intervals.absolute_start_time
         self._tstop = self._time_series.time_intervals.absolute_stop_time
 
-        log.info(f"Interval set to {self._tstart}-{self._tstop} for {self._name}")
+        log.info(
+            f"Interval set to {self._tstart}-{self._tstop} for {self._name}")
 
-    def set_background_interval(self, *intervals, **options):
+    def set_background_interval(self, *intervals, **kwargs):
         """
         Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
@@ -291,22 +296,31 @@ class TimeSeriesBuilder(object):
 
 
         :param *intervals:
-        :param **options:
+        :param **kwargs:
 
         :return: none
 
         """
-        if "unbinned" in options:
+        if "unbinned" in kwargs:
 
-            unbinned = options.pop("unbinned")
+            unbinned = kwargs.pop("unbinned")
         else:
 
-            unbinned = self._default_unbinned
+            unbinned = False
+
+        if "bayes" in kwargs:
+            bayes = kwargs.pop("bayes")
+
+        else:
+
+            bayes = False
 
         log.debug(f"using unbinned is {unbinned} for {self._name}")
         log.debug(f"fitting bkg for {self._name}")
 
-        self._time_series.set_polynomial_fit_interval(*intervals, unbinned=unbinned)
+        self._time_series.set_polynomial_fit_interval(
+            *intervals, unbinned=unbinned, bayes=bayes
+        )
 
         log.debug(f"finished fitting bkg for {self._name}")
         # In theory this will automatically get the poly counts if a
@@ -481,14 +495,17 @@ class TimeSeriesBuilder(object):
 
             for (start, stop) in self._time_series.bins.bin_stack:
 
-                total_counts = self._time_series.counts_over_interval(start, stop)
-                bkg_counts = self._time_series.get_total_poly_count(start, stop)
+                total_counts = self._time_series.counts_over_interval(
+                    start, stop)
+                bkg_counts = self._time_series.get_total_poly_count(
+                    start, stop)
                 bkg_error = self._time_series.get_total_poly_error(start, stop)
 
                 sig_calc = Significance(total_counts, bkg_counts)
 
                 sig_per_interval.append(
-                    sig_calc.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
+                    sig_calc.li_and_ma_equivalent_for_gaussian_background(bkg_error)[
+                        0]
                 )
 
             return np.array(sig_per_interval)
@@ -502,7 +519,8 @@ class TimeSeriesBuilder(object):
 
             for (start, stop) in self._time_series.bins.bin_stack:
 
-                total_counts.append(self._time_series.counts_over_interval(start, stop))
+                total_counts.append(
+                    self._time_series.counts_over_interval(start, stop))
 
             return np.array(total_counts)
 
@@ -514,7 +532,8 @@ class TimeSeriesBuilder(object):
             total_counts = []
 
             for (start, stop) in self._time_series.bins.bin_stack:
-                total_counts.append(self._time_series.get_total_poly_count(start, stop))
+                total_counts.append(
+                    self._time_series.get_total_poly_count(start, stop))
 
             return np.array(total_counts)
 
@@ -533,9 +552,10 @@ class TimeSeriesBuilder(object):
         )
 
         other_bins = time_series_builder.bins.bin_stack
-        self.create_time_bins(other_bins[:, 0], other_bins[:, 1], method="custom")
+        self.create_time_bins(
+            other_bins[:, 0], other_bins[:, 1], method="custom")
 
-    def create_time_bins(self, start, stop, method="constant", **options):
+    def create_time_bins(self, start, stop, method="constant", **kwargs):
         """
 
         Create time bins from start to stop with a given method (constant, siginificance, bayesblocks, custom).
@@ -557,10 +577,18 @@ class TimeSeriesBuilder(object):
             self._time_series, EventList
         ), "can only bin event lists currently"
 
+        # if 'use_energy_mask' in kwargs:
+        #
+        #     use_energy_mask = kwargs.pop('use_energy_mask')
+        #
+        # else:
+        #
+        #     use_energy_mask = False
+
         if method == "constant":
 
-            if "dt" in options:
-                dt = float(options.pop("dt"))
+            if "dt" in kwargs:
+                dt = float(kwargs.pop("dt"))
 
             else:
 
@@ -571,18 +599,18 @@ class TimeSeriesBuilder(object):
 
         elif method == "significance":
 
-            if "sigma" in options:
+            if "sigma" in kwargs:
 
-                sigma = options.pop("sigma")
+                sigma = kwargs.pop("sigma")
 
             else:
 
                 log.error("significance bins require a sigma argument")
                 raise RuntimeError()
 
-            if "min_counts" in options:
+            if "min_counts" in kwargs:
 
-                min_counts = options.pop("min_counts")
+                min_counts = kwargs.pop("min_counts")
 
             else:
 
@@ -594,23 +622,24 @@ class TimeSeriesBuilder(object):
 
         elif method == "bayesblocks":
 
-            if "p0" in options:
+            if "p0" in kwargs:
 
-                p0 = options.pop("p0")
+                p0 = kwargs.pop("p0")
 
             else:
 
                 p0 = 0.1
 
-            if "use_background" in options:
+            if "use_background" in kwargs:
 
-                use_background = options.pop("use_background")
+                use_background = kwargs.pop("use_background")
 
             else:
 
                 use_background = False
 
-            self._time_series.bin_by_bayesian_blocks(start, stop, p0, use_background)
+            self._time_series.bin_by_bayesian_blocks(
+                start, stop, p0, use_background)
 
         elif method == "custom":
 
@@ -668,7 +697,8 @@ class TimeSeriesBuilder(object):
 
         if extract_measured_background:
 
-            log.debug(f"trying extract background as measurement in {self._name}")
+            log.debug(
+                f"trying extract background as measurement in {self._name}")
 
             this_background_spectrum = self._measured_background_spectrum
 
@@ -730,7 +760,8 @@ class TimeSeriesBuilder(object):
 
                 else:
 
-                    log.debug(f"creating a BALROGLike plugin named {self._name}")
+                    log.debug(
+                        f"creating a BALROGLike plugin named {self._name}")
 
                     return gbm_drm_gen.BALROGLike(
                         name=self._name,
@@ -774,7 +805,8 @@ class TimeSeriesBuilder(object):
             if stop is not None:
                 assert stop is not None, "must specify a start AND a stop time"
 
-                these_bins = these_bins.containing_interval(start, stop, inner=False)
+                these_bins = these_bins.containing_interval(
+                    start, stop, inner=False)
 
             # loop through the intervals and create spec likes
 
@@ -800,7 +832,8 @@ class TimeSeriesBuilder(object):
 
                     this_background_spectrum = self._background_spectrum
 
-                    log.debug(f"trying extract background as model in {self._name}")
+                    log.debug(
+                        f"trying extract background as model in {self._name}")
 
                 if this_background_spectrum is None:
                     log.warnings(
@@ -813,7 +846,8 @@ class TimeSeriesBuilder(object):
 
                     if self._response is None:
 
-                        log.debug(f"creating a SpectrumLike plugin named {plugin_name}")
+                        log.debug(
+                            f"creating a SpectrumLike plugin named {plugin_name}")
 
                         sl = SpectrumLike(
                             name=plugin_name,
@@ -1236,7 +1270,8 @@ class TimeSeriesBuilder(object):
 
         # Mark channels less than 50 MeV as bad
 
-        channel_30MeV = np.searchsorted(lat_lle_file.energy_edges[0], 30000.0) - 1
+        channel_30MeV = np.searchsorted(
+            lat_lle_file.energy_edges[0], 30000.0) - 1
 
         native_quality = np.zeros(lat_lle_file.n_channels, dtype=int)
 
@@ -1356,7 +1391,8 @@ class TimeSeriesBuilder(object):
 
         # extract the polar varaibles
 
-        polar_data = POLARData(polar_hdf5_file, polar_hdf5_response, trigger_time)
+        polar_data = POLARData(
+            polar_hdf5_file, polar_hdf5_response, trigger_time)
 
         # Create the the event list
 
@@ -1465,7 +1501,8 @@ class TimeSeriesBuilder(object):
             if stop is not None:
                 assert stop is not None, "must specify a start AND a stop time"
 
-                these_bins = these_bins.containing_interval(start, stop, inner=False)
+                these_bins = these_bins.containing_interval(
+                    start, stop, inner=False)
 
             # loop through the intervals and create spec likes
 

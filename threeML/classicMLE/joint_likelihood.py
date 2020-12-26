@@ -200,7 +200,6 @@ class JointLikelihood(object):
         return self._analysis_type
 
     def _update_free_parameters(self):
-
         """Update the dictionary of free parameters"""
 
         self._free_parameters = self._likelihood_model.free_parameters
@@ -253,8 +252,16 @@ class JointLikelihood(object):
 
                 # Do global minimization first
 
+                if quiet:
+
+                    verbosity = 0
+
+                else:
+
+                    verbosity = 1
+
                 global_minimizer = self._get_minimizer(
-                    self.minus_log_like_profile, self._free_parameters
+                    self.minus_log_like_profile, self._free_parameters, verbosity=verbosity
                 )
 
                 xs, global_log_likelihood_minimum = global_minimizer.minimize(
@@ -274,7 +281,8 @@ class JointLikelihood(object):
                     errors.append(0)
                     units.append(par.unit)
 
-                global_results = ResultsTable(paths, values, errors, errors, units)
+                global_results = ResultsTable(
+                    paths, values, errors, errors, units)
 
                 if not quiet:
 
@@ -409,7 +417,8 @@ class JointLikelihood(object):
         # Print a table with the errors
 
         parameter_names = list(self._free_parameters.keys())
-        best_fit_values = [x.value for x in list(self._free_parameters.values())]
+        best_fit_values = [x.value for x in list(
+            self._free_parameters.values())]
         negative_errors = [errors[k][0] for k in parameter_names]
         positive_errors = [errors[k][1] for k in parameter_names]
         units = [par.unit for par in list(self._free_parameters.values())]
@@ -500,7 +509,8 @@ class JointLikelihood(object):
 
         # Check minimal assumptions about the procedure
 
-        assert not (param_1 == param_2), "You have to specify two different parameters"
+        assert not (
+            param_1 == param_2), "You have to specify two different parameters"
 
         assert (
             param_1_minimum < param_1_maximum
@@ -512,14 +522,16 @@ class JointLikelihood(object):
 
             assert param_1_minimum >= min1, (
                 "Requested low range for parameter %s (%s) "
-                "is below parameter minimum (%s)" % (param_1, param_1_minimum, min1)
+                "is below parameter minimum (%s)" % (
+                    param_1, param_1_minimum, min1)
             )
 
         if max1 is not None:
 
             assert param_1_maximum <= max1, (
                 "Requested hi range for parameter %s (%s) "
-                "is above parameter maximum (%s)" % (param_1, param_1_maximum, max1)
+                "is above parameter maximum (%s)" % (
+                    param_1, param_1_maximum, max1)
             )
 
         if param_2 is not None:
@@ -530,14 +542,16 @@ class JointLikelihood(object):
 
                 assert param_2_minimum >= min2, (
                     "Requested low range for parameter %s (%s) "
-                    "is below parameter minimum (%s)" % (param_2, param_2_minimum, min2)
+                    "is below parameter minimum (%s)" % (
+                        param_2, param_2_minimum, min2)
                 )
 
             if max2 is not None:
 
                 assert param_2_maximum <= max2, (
                     "Requested hi range for parameter %s (%s) "
-                    "is above parameter maximum (%s)" % (param_2, param_2_maximum, max2)
+                    "is above parameter maximum (%s)" % (
+                        param_2, param_2_maximum, max2)
                 )
 
         # Check whether we are parallelizing or not
@@ -614,7 +628,8 @@ class JointLikelihood(object):
                 # One array
                 pcc = np.zeros(param_1_n_steps)
 
-                pa = np.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
+                pa = np.linspace(
+                    param_1_minimum, param_1_maximum, param_1_n_steps)
                 pb = None
 
             else:
@@ -622,8 +637,10 @@ class JointLikelihood(object):
                 pcc = np.zeros((param_1_n_steps, param_2_n_steps))
 
                 # Prepare the two axes of the parameter space
-                pa = np.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
-                pb = np.linspace(param_2_minimum, param_2_maximum, param_2_n_steps)
+                pa = np.linspace(
+                    param_1_minimum, param_1_maximum, param_1_n_steps)
+                pb = np.linspace(
+                    param_2_minimum, param_2_maximum, param_2_n_steps)
 
             # Define the parallel worker which will go through the computation
 
@@ -684,14 +701,14 @@ class JointLikelihood(object):
 
                 if param_2 is None:
 
-                    pcc[i * p1_split_steps : (i + 1) * p1_split_steps] = these_results[
+                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps] = these_results[
                         :, 0
                     ]
 
                 else:
 
                     pcc[
-                        i * p1_split_steps : (i + 1) * p1_split_steps, :
+                        i * p1_split_steps: (i + 1) * p1_split_steps, :
                     ] = these_results
 
             # Give the results the names that the following code expect. These are kept separate for debugging
@@ -708,7 +725,8 @@ class JointLikelihood(object):
 
             # 2d contour
 
-            fig = self._plot_contours("%s" % (param_1), a, "%s" % (param_2,), b, cc)
+            fig = self._plot_contours(
+                "%s" % (param_1), a, "%s" % (param_2,), b, cc)
 
         else:
 
@@ -813,8 +831,10 @@ class JointLikelihood(object):
                         ** n_sigma
                     )
 
-                lower_1 = max(self.likelihood_model[param_1].bounds[0], lower_1)
-                upper_1 = min(self.likelihood_model[param_1].bounds[1], upper_1)
+                lower_1 = max(
+                    self.likelihood_model[param_1].bounds[0], lower_1)
+                upper_1 = min(
+                    self.likelihood_model[param_1].bounds[1], upper_1)
 
                 for param_2 in self._likelihood_model.free_parameters:
 
@@ -822,8 +842,10 @@ class JointLikelihood(object):
                         continue
 
                     center_2 = res["value"][param_2]
-                    lower_2 = center_2 + res["negative_error"][param_2] * n_sigma
-                    upper_2 = center_2 + res["positive_error"][param_2] * n_sigma
+                    lower_2 = center_2 + \
+                        res["negative_error"][param_2] * n_sigma
+                    upper_2 = center_2 + \
+                        res["positive_error"][param_2] * n_sigma
 
                     if (
                         log_norm
@@ -843,8 +865,10 @@ class JointLikelihood(object):
                             ** n_sigma
                         )
 
-                    lower_2 = max(self.likelihood_model[param_2].bounds[0], lower_2)
-                    upper_2 = min(self.likelihood_model[param_2].bounds[1], upper_2)
+                    lower_2 = max(
+                        self.likelihood_model[param_2].bounds[0], lower_2)
+                    upper_2 = min(
+                        self.likelihood_model[param_2].bounds[1], upper_2)
 
                     try:
                         a, b, cc, fig = self.get_contours(
@@ -997,7 +1021,8 @@ class JointLikelihood(object):
 
         if self._minimizer_callback is not None:
 
-            self._minimizer_callback(minimizer_instance, self._likelihood_model)
+            self._minimizer_callback(
+                minimizer_instance, self._likelihood_model)
 
         return minimizer_instance
 
@@ -1085,11 +1110,13 @@ class JointLikelihood(object):
         # (fit failed)
         idx = cc == minimization.FIT_FAILED
 
-        sub.plot(a[~idx], cc[~idx], lw=2, color=threeML_config["mle"]["profile color"])
+        sub.plot(a[~idx], cc[~idx], lw=2,
+                 color=threeML_config["mle"]["profile color"])
 
         # Now plot the failed fits as "x"
 
-        sub.plot(a[idx], [cc.min()] * a[idx].shape[0], "x", c="red", markersize=2)
+        sub.plot(a[idx], [cc.min()] * a[idx].shape[0],
+                 "x", c="red", markersize=2)
 
         # Decide colors
         colors = [
@@ -1177,7 +1204,8 @@ class JointLikelihood(object):
         bounds.append(cc.max())
 
         # Define the color palette
-        palette = plt.get_cmap(threeML_config["mle"]["contour cmap"])  # cm.Pastel1
+        palette = plt.get_cmap(
+            threeML_config["mle"]["contour cmap"])  # cm.Pastel1
         palette.set_over(threeML_config["mle"]["contour background"])
         palette.set_under(threeML_config["mle"]["contour background"])
         palette.set_bad(threeML_config["mle"]["contour background"])
@@ -1247,7 +1275,8 @@ class JointLikelihood(object):
 
             this_name = dataset.name
 
-            null_hyp_mlike = null_hyp_mlike_df.loc[this_name, "-log(likelihood)"]
+            null_hyp_mlike = null_hyp_mlike_df.loc[this_name,
+                                                   "-log(likelihood)"]
             alt_hyp_mlike = alt_hyp_mlike_df.loc[this_name, "-log(likelihood)"]
 
             this_TS = 2 * (null_hyp_mlike - alt_hyp_mlike)

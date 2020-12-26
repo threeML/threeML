@@ -248,7 +248,7 @@ if has_parallel:
             
             return self._current_amr
 
-        def execute_with_progress_bar(self, worker, items, chunk_size=None):
+        def execute_with_progress_bar(self, worker, items, chunk_size=None, name="progress"):
 
             # Let's make a wrapper which will allow us to recover the order
             def wrapper(x):
@@ -261,7 +261,7 @@ if has_parallel:
 
             n_iterations = len(items)
 
-            p = tqdm(total=n_iterations)
+            p = tqdm(total=n_iterations, desc=name)
 
             amr = self._interactive_map(
                 wrapper, items_wrapped, ordered=False, chunk_size=chunk_size
