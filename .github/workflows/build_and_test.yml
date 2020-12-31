@@ -22,9 +22,8 @@ jobs:
                   paths_ignore: '["**/README.md", "**/docs/**"]'
                   do_not_skip: '["pull_request",  "schedule"]'
 
-
     test-pip:
-      name: Test on Pip
+        name: Test on Pip
         needs: skip_duplicate
         if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
         strategy:
@@ -51,7 +50,6 @@ jobs:
                   # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
                   flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-
             - name: Test pip on ${{ matrix.python-version }}
               run: |
                   python -m pytest -vv --cov=threeML/ --cov-report=xml
@@ -69,9 +67,9 @@ jobs:
                   directory: ./coverage/reports/
 
     test-conda:
-      name: Test on Conda
-      needs: skip_duplicate
-      if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
+        name: Test on Conda
+        needs: skip_duplicate
+        if: ${{ needs.skip_duplicate.outputs.should_skip == 'false' }}
         strategy:
             matrix:
                 os: ["ubuntu-latest", "macos-latest"]
@@ -144,11 +142,11 @@ jobs:
             - name: Conda list
               shell: bash -l {0}
               run: |
-                conda list
+                  conda list
             - name: install it
               shell: bash -l {0}
               run: |
-                pip install -e .
+                  pip install -e .
             - name: Lint with flake8
               shell: bash -l {0}
               run: |
@@ -157,7 +155,6 @@ jobs:
                   # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
                   flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
- 
             - name: test it
               shell: bash -l {0}
               run: |
@@ -174,7 +171,7 @@ jobs:
               with:
                   file: ./coverage.xml
                   files: ./coverage1.xml,./coverage2.xml
-                  directory: ./coverage/reports/
+                  Directory: ./coverage/reports/
 
     publish-pypi:
         name: Publish to PyPi
@@ -221,8 +218,6 @@ jobs:
               run: |
                   python -m twine check dist/*
 
-                  
-                  
     build-conda:
         name: Build and verify with Conda
         if: startsWith(github.event.ref, 'refs/tags') == false
@@ -413,19 +408,19 @@ jobs:
               shell: bash -l {0}
               run: |
 
-                conda install -c conda-forge anaconda-client
-                echo "Uploading ${CONDA_BUILD_PATH}"
-            
-                if [[ "$CURRENT_OS" == "ubuntu_latest" ]]; then
+                  conda install -c conda-forge anaconda-client
+                  echo "Uploading ${CONDA_BUILD_PATH}"
 
-                anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/share/miniconda/conda-bld/linux-64/*.tar.bz2 --force
+                  if [[ "$CURRENT_OS" == "ubuntu_latest" ]]; then
 
-                else
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/share/miniconda/conda-bld/linux-64/*.tar.bz2 --force
 
-                anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/local/miniconda/conda-bld/osx-64/*.tar.bz2 --force
+                  else
 
-                fi
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/local/miniconda/conda-bld/osx-64/*.tar.bz2 --force
+
+                  fi
 
               env:
-                UPLOAD_TOKEN: secrets.CONDA_TOKEN
-                CURRENT_OS: ${{matrix.os}}
+                  UPLOAD_TOKEN: secrets.CONDA_TOKEN
+                  CURRENT_OS: ${{matrix.os}}
