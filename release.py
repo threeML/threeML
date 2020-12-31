@@ -1,18 +1,21 @@
-import time
 import os
-import versioneer
 import sys
+import time
+
+import versioneer
 
 VERSION = versioneer.get_version()
 RELEASE_NOTES = 'docs/release_notes.rst'
 BUILD_DATE = time.strftime("%a, %d %b %Y %H:%M:%S + 0000", time.gmtime())
 TAG_MODES = ['major', 'minor', 'patch']
 
+
 def cmd(command, dry_run=False):
     print('About to execute "%s"...' % command)
     if dry_run:
-        return 0  
+        return 0
     os.system(command)
+
 
 def check_branch():
     cmd = 'git rev-parse --abbrev-ref HEAD'
@@ -21,6 +24,7 @@ def check_branch():
     if branch_name != 'master':
         print("You can't tag a branch different form master. Abort.")
         sys.exit(1)
+
 
 def update_version(mode):
     """ Return the new tag version.
@@ -38,8 +42,9 @@ def update_version(mode):
     elif mode == 'patch':
         patch += 1
     else:
-        abort('Unknown release mode %s.' % mode)
+        RuntimeError('Unknown release mode %s.' % mode)
     return '%s.%s.%s' % (version, release, patch)
+
 
 def update_release_notes(mode, tag, dry_run=False):
     """ Write the new tag and build date on top of the release notes.
@@ -62,6 +67,7 @@ def update_release_notes(mode, tag, dry_run=False):
         output_file.writelines(notes)
         output_file.close()
 
+
 def tag_package(mode, dry_run=False):
     """ Tag the package with git.
     """
@@ -81,10 +87,10 @@ def tag_package(mode, dry_run=False):
 if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser()
-    parser.add_option('-t', dest = 'tagmode', type = str, default = None,
-                      help = 'The release tag mode %s.' % TAG_MODES)
-    parser.add_option('-n', action = 'store_true', dest = 'dryrun',
-                      help = 'Dry run (i.e. do not actually do anything).')
+    parser.add_option('-t', dest='tagmode', type=str, default=None,
+                      help='The release tag mode %s.' % TAG_MODES)
+    parser.add_option('-n', action='store_true', dest='dryrun',
+                      help='Dry run (i.e. do not actually do anything).')
     (opts, args) = parser.parse_args()
     if not opts.tagmode and not (opts.src):
         parser.print_help()
@@ -92,6 +98,6 @@ if __name__ == '__main__':
     tag = None
     if opts.tagmode is not None:
         if opts.tagmode not in TAG_MODES:
-            parser.error('Invalid tag mode %s (allowed: %s)' %\
-                             (opts.tagmode, TAG_MODES))
+            parser.error('Invalid tag mode %s (allowed: %s)' %
+                         (opts.tagmode, TAG_MODES))
         tag_package(opts.tagmode, opts.dryrun)

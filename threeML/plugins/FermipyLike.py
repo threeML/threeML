@@ -120,8 +120,8 @@ def _get_fermipy_instance(configuration, likelihood_model):
 
     galactic_template = sanitize_filename(
         findGalacticTemplate(irfs, ra_center, dec_center, roi_radius), True
-    )
-    isotropic_template = sanitize_filename(findIsotropicTemplate(irfs), True)
+    ) # noqa: F821
+    isotropic_template = sanitize_filename(findIsotropicTemplate(irfs), True) # noqa: F821
 
     # Add them to the fermipy model
 
@@ -160,7 +160,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
     # Now we can finally instance the GTAnalysis instance
     configuration["model"] = fermipy_model
 
-    gta = GTAnalysis(configuration)
+    gta = GTAnalysis(configuration)  # noqa: F821
 
     # This will take a long time if it's the first time we run with this model
     gta.setup()
