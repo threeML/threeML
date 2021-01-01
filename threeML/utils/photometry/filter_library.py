@@ -1,34 +1,48 @@
 from __future__ import print_function
-from future import standard_library
 
-standard_library.install_aliases()
-from builtins import object
-import pandas as pd
 import os
-import yaml
+import re
+import io
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+import warnings
+import xml.etree.ElementTree as ET
+from builtins import object
+from collections import defaultdict
+from pathlib import Path
+
+import h5py
+
 import astropy.io.votable as votable
 import astropy.units as u
-import urllib.request, urllib.error, urllib.parse
-import xml.etree.ElementTree as ET
-import re
-from collections import defaultdict
 import numpy as np
-import warnings
-
+import pandas as pd
 import speclite.filters as spec_filter
+import yaml
+from future import standard_library
 
 from threeML.io.configuration import get_user_data_path
-from threeML.io.file_utils import (
-    if_directory_not_existing_then_make,
-    file_existing_and_readable,
-)
+from threeML.io.file_utils import (file_existing_and_readable,
+                                   if_directory_not_existing_then_make)
 from threeML.io.network import internet_connection_is_active
 from threeML.io.package_data import get_path_of_data_dir
 
+standard_library.install_aliases()
 
-def get_speclite_filter_path():
 
-    return os.path.join(get_path_of_data_dir(), "optical_filters")
+
+def get_speclite_filter_path() -> Path:
+
+    return get_path_of_data_dir() / "optical_filters" 
+
+def get_speclite_filter_library() -> Path:
+
+    return get_speclite_filter_path() / "filter_library.h5"
+
+
+
 
 
 def to_valid_python_name(name):
@@ -58,7 +72,7 @@ class ObservatoryNode(object):
 
 
 class FilterLibrary(object):
-    def __init__(self, library_file):
+    def __init__(self):
         """
         holds all the observatories/instruments/filters
 
@@ -68,32 +82,41 @@ class FilterLibrary(object):
 
         # get the filter file
 
-        with open(library_file) as f:
+        with h5py.File(get_speclite_filter_library(), "r") as f:
 
-            self._library = yaml.load(f, Loader=yaml.SafeLoader)
+            self._instruments = []
 
-        self._instruments = []
-
-        # create attributes which are lib.observatory.instrument
-        # and the instrument attributes are speclite FilterResponse objects
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
 
             print("Loading optical filters")
 
-            for observatory, value in self._library.items():
+            for observatory in f.keys():
+
+
+                sub_dict = {}
+                for instrument in f[observatory].keys():
+
+                    sub_dict[instrument] = instrument
+                
+                
 
                 # create a node for the observatory
-                this_node = ObservatoryNode(value)
+                this_node = ObservatoryNode(sub_dict)
 
                 # attach it to the object
 
-                setattr(self, observatory, this_node)
+                if observatory == "2MASS":
+
+                    xx = "TwoMass"
+
+                else:
+
+                    xx = observatory
+                
+                setattr(self, xx, this_node)
 
                 # now get the instruments
 
-                for instrument, value2 in value.items():
+                for instrument in f[observatory].keys():
 
                     # update the instruments
 
@@ -101,19 +124,29 @@ class FilterLibrary(object):
 
                     # create the filter response via speclite
 
-                    filter_path = os.path.join(
-                        get_speclite_filter_path(), observatory, instrument
-                    )
+                    this_grp = f[observatory][instrument]
+                    filters = []
 
-                    filters_to_load = [
-                        "%s-%s.ecsv" % (filter_path, filter) for filter in value2
-                    ]
+                    for ff in this_grp.keys():
 
-                    this_filter = spec_filter.load_filters(*filters_to_load)
+                        grp = this_grp[ff]
+                        
+                        this_filter = spec_filter.FilterResponse(
+                            wavelength=grp["wavelength"][()]   * u.Angstrom,
+                            response=grp["transmission"][()],
+                            meta=dict(
+                                group_name=instrument,
+                                band_name=ff,
+                            )
+                        )
 
+                        filters.append(this_filter)
+
+
+                    fgroup = spec_filter.FilterSequence(filters)
                     # attach the filters to the observatory
 
-                    setattr(this_node, instrument, this_filter)
+                    setattr(this_node, instrument, fgroup)
 
         self._instruments.sort()
 
@@ -137,37 +170,31 @@ def add_svo_filter_to_speclite(observatory, instrument, ffilter, update=False):
 
     # make a directory for this observatory and instrument
 
-    filter_path = os.path.join(
-        get_speclite_filter_path(), to_valid_python_name(observatory)
-    )
+    # filter_path = os.path.join(
+    #     get_speclite_filter_path(), to_valid_python_name(observatory)
+    # )
 
-    if_directory_not_existing_then_make(filter_path)
+    # if_directory_not_existing_then_make(filter_path)
 
-    # grab the filter file from SVO
+
 
     # reconvert 2MASS so we can grab it
 
-    if observatory == "TwoMASS":
-        observatory = "2MASS"
+    #if observatory == "TwoMASS":
+        #observatory = "2MASS"
 
-    if (
-        not file_existing_and_readable(
-            os.path.join(
-                filter_path,
-                "%s-%s.ecsv"
-                % (to_valid_python_name(instrument), to_valid_python_name(ffilter)),
-            )
-        )
-        or update
-    ):
+    if True:
 
         url_response = urllib.request.urlopen(
             "http://svo2.cab.inta-csic.es/svo/theory/fps/fps.php?PhotCalID=%s/%s.%s/AB"
-            % (observatory, instrument, ffilter)
+            % (observatory.replace(" ", "%20"), instrument, ffilter)
         )
         # now parse it
-        data = votable.parse_single_table(url_response).to_table()
+        data = votable.parse_single_table(io.BytesIO(url_response.read())).to_table()
 
+
+
+        
         # save the waveunit
 
         waveunit = data["Wavelength"].unit
@@ -197,7 +224,8 @@ def add_svo_filter_to_speclite(observatory, instrument, ffilter, update=False):
         try:
 
             transmission = spec_filter.FilterResponse(
-                wavelength=data["Wavelength"] * waveunit.to("Angstrom") * u.Angstrom,
+                wavelength=data["Wavelength"] *
+                waveunit.to("Angstrom") * u.Angstrom,
                 response=data["Transmission"],
                 meta=dict(
                     group_name=to_valid_python_name(instrument),
@@ -205,10 +233,43 @@ def add_svo_filter_to_speclite(observatory, instrument, ffilter, update=False):
                 ),
             )
 
-            # save the filter
+            with h5py.File(get_speclite_filter_library(), 'a') as f:
 
-            transmission.save(filter_path)
+                if observatory not in f.keys():
 
+                    obs_grp = f.create_group(observatory)
+
+                else:
+
+                    obs_grp = f[observatory]
+
+                
+                grp_name = to_valid_python_name(instrument)
+                
+                if grp_name not in obs_grp.keys():
+
+                    grp = obs_grp.create_group(grp_name)
+                
+                else:
+
+                    grp = obs_grp[grp_name]
+
+                band_name = to_valid_python_name(ffilter)
+
+                if band_name not in grp.keys():
+
+                    sub_grp = grp.create_group(band_name)
+
+                else:
+
+                    sub_grp = grp[band_name]
+
+                sub_grp.create_dataset("wavelength",
+                                         data=(data["Wavelength"]*waveunit.to("Angstrom")), compression="gzip")
+            
+                sub_grp.create_dataset("transmission",data=data["Transmission"],compression="gzip")
+
+                
             success = True
 
         except (ValueError):
@@ -249,6 +310,13 @@ def download_SVO_filters(filter_dict, update=False):
     # the normal VO parser cannot read the XML table
     # so we manually do it to obtain all the instrument names
 
+    
+    with h5py.File(get_speclite_filter_library(), "a") as f:
+
+        f.attrs["start"] = 1
+        
+
+    
     tree = ET.parse(url_response)
 
     observatories = []
@@ -267,23 +335,24 @@ def download_SVO_filters(filter_dict, update=False):
     # now we are going to build a multi-layer dictionary
     # observatory:instrument:filter
 
-    for obs in observatories:
+    for obs in observatories[::-1]:
 
+        
+        time.sleep(1)
         # fix 2MASS to a valid name
 
-        if obs == "2MASS":
+        # if obs == "La Silla":
+        # #     continue
+        #     obs = 
+        url = "http://svo2.cab.inta-csic.es/svo/theory/fps/fps.php?Facility=%s" % obs.replace(" ", "%20")
 
-            obs = "TwoMASS"
-
-        url_response = urllib.request.urlopen(
-            "http://svo2.cab.inta-csic.es/svo/theory/fps/fps.php?Facility=%s" % obs
-        )
+        url_response = urllib.request.urlopen(url)
 
         try:
 
             # parse the VO table
 
-            v = votable.parse(url_response)
+            v = votable.parse(io.BytesIO(url_response.read()))
 
             instrument_dict = defaultdict(list)
 
@@ -295,20 +364,45 @@ def download_SVO_filters(filter_dict, update=False):
 
             for x in instruments:
 
+                
+
+                
+                
                 _, instrument, subfilter = search_name.match(x).groups()
 
-                success = add_svo_filter_to_speclite(obs, instrument, subfilter, update)
+                go = True
 
+                with h5py.File(get_speclite_filter_library(),"r") as f:
+                    
+                    if obs in f.keys():
+
+                        if to_valid_python_name(instrument) in f[obs].keys():
+
+                            if to_valid_python_name(subfilter) in f[obs][to_valid_python_name(instrument)].keys():
+
+                                go =False
+
+
+                        
+                if go:
+
+                    print(f"now on {obs} {instrument} {subfilter}")
+                    success = add_svo_filter_to_speclite(
+                        obs, instrument, subfilter, update)
+
+                else:
+
+                    success = True
                 if success:
 
                     instrument_dict[to_valid_python_name(instrument)].append(
                         to_valid_python_name(subfilter)
                     )
 
-                    # attach this to the big dictionary
+                        # attach this to the big dictionary
 
-            filter_dict[to_valid_python_name(obs)] = dict(instrument_dict)
-
+                    filter_dict[to_valid_python_name(obs)] = dict(instrument_dict)
+                        
         except (IndexError):
 
             pass
@@ -352,11 +446,11 @@ def download_grond(filter_dict):
     return filter_dict
 
 
+update = False
+
 def build_filter_library():
 
-    if not file_existing_and_readable(
-        os.path.join(get_speclite_filter_path(), "filter_lib.yml")
-    ):
+    if not file_existing_and_readable(get_speclite_filter_library()) or update:
 
         print("Downloading optical filters. This will take a while.\n")
 
@@ -368,13 +462,13 @@ def build_filter_library():
 
             filter_dict = download_grond(filter_dict)
 
-            # Ok, finally, we want to keep track of the SVO filters we have
-            # so we will save this to a YAML file for future reference
-            with open(
-                os.path.join(get_speclite_filter_path(), "filter_lib.yml"), "w"
-            ) as f:
+            # # ok, finally, we want to keep track of the svo filters we have
+            # # so we will save this to a yaml file for future reference
+            # with open(
+            #     os.path.join(get_speclite_filter_path(), "filter_lib.yml"), "w"
+            # ) as f:
 
-                yaml.safe_dump(filter_dict, f, default_flow_style=False)
+            #     yaml.safe_dump(filter_dict, f, default_flow_style=false)
 
             return True
 
@@ -400,9 +494,7 @@ with warnings.catch_warnings():
 
 if lib_exists:
 
-    threeML_filter_library = FilterLibrary(
-        os.path.join(get_speclite_filter_path(), "filter_lib.yml")
-    )
+    threeML_filter_library = FilterLibrary()
 
     __all__ = ["threeML_filter_library"]
 
