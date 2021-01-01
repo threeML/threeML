@@ -233,6 +233,8 @@ def add_svo_filter_to_speclite(observatory, instrument, ffilter, update=False):
                 ),
             )
 
+            observatory = observatory.replace(" ", "")
+            
             with h5py.File(get_speclite_filter_library(), 'a') as f:
 
                 if observatory not in f.keys():
@@ -335,7 +337,7 @@ def download_SVO_filters(filter_dict, update=False):
     # now we are going to build a multi-layer dictionary
     # observatory:instrument:filter
 
-    for obs in observatories[::-1]:
+    for obs in observatories[::-1][50:]:
 
         
         time.sleep(1)
@@ -412,9 +414,6 @@ def download_SVO_filters(filter_dict, update=False):
 
 def download_grond(filter_dict):
 
-    save_path = os.path.join(get_speclite_filter_path(), "ESO")
-
-    if_directory_not_existing_then_make(save_path)
 
     grond_filter_url = "http://www.mpe.mpg.de/~jcg/GROND/GROND_filtercurves.txt"
 
@@ -422,24 +421,39 @@ def download_grond(filter_dict):
 
     grond_table = pd.read_table(url_response)
 
-    wave = grond_table["A"].as_matrix()
+    wave = np.array(grond_table["A"])
 
     bands = ["g", "r", "i", "z", "H", "J", "K"]
 
-    for band in bands:
+    with h5py.File(get_speclite_filter_library(),"r+") as f:
 
-        curve = np.array(grond_table["%sBand" % band])
-        curve[curve < 0] = 0
-        curve[0] = 0
-        curve[-1] = 0
+        this_grp = f["LaSilla"]
 
-        grond_spec = spec_filter.FilterResponse(
-            wavelength=wave * u.nm,
-            response=curve,
-            meta=dict(group_name="GROND", band_name=band),
-        )
+        try:
+            this_ins = this_grp.create_group("GROND")
 
-        grond_spec.save(directory_name=save_path)
+        except:
+
+            this_ins = this_grp["GROND"]
+    
+
+        for band in bands:
+
+            curve = np.array(grond_table["%sBand" % band])
+            curve[curve < 0] = 0
+            curve[0] = 0
+            curve[-1] = 0
+
+            wavelength = wave * u.nm
+
+            wavelength = wavelength.to(u.angstrom).value
+
+            band_grp = this_ins.create_group(band)
+            
+            band_grp.create_dataset("wavelength", data=wavelength, compression="gzip")
+
+            band_grp.create_dataset("transmission", data=curve, compression="gzip")
+            
 
     filter_dict["ESO"] = {"GROND": bands}
 
@@ -458,9 +472,14 @@ def build_filter_library():
 
             filter_dict = {}
 
+
+            
+            filter_dict = download_grond(filter_dict)
+
+            
             filter_dict = download_SVO_filters(filter_dict)
 
-            filter_dict = download_grond(filter_dict)
+            # filter_dict = download_grond(filter_dict)
 
             # # ok, finally, we want to keep track of the svo filters we have
             # # so we will save this to a yaml file for future reference

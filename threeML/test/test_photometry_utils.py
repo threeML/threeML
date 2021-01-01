@@ -16,7 +16,7 @@ def get_plugin():
 
     grond = PhotometryLike(
         "GROND",
-        filters=threeML_filter_library.ESO.GROND,
+        filters=threeML_filter_library.LaSilla.GROND,
         g=(19.92, 0.1),
         r=(19.75, 0.1),
         i=(19.65, 0.1),
@@ -61,7 +61,7 @@ def test_constructor():
 
     grond = PhotometryLike(
         "GROND",
-        filters=threeML_filter_library.ESO.GROND,
+        filters=threeML_filter_library.LaSilla.GROND,
         g=(19.92, 0.1),
         r=(19.75, 0.1),
         i=(19.65, 0.1),
