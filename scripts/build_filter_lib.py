@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import urllib
 from collections import defaultdict
 from pathlib import Path
-
+import warnings
 import h5py
 import time
 import astropy.io.votable as votable
@@ -11,8 +11,10 @@ import numpy as np
 import pandas as pd
 import speclite.filters as spec_filter
 import io
-
+import re
 from threeML.utils.photometry.filter_library import get_speclite_filter_library
+from threeML.io.network import internet_connection_is_active
+from threeML.io.file_utils import file_existing_and_readable
 
 
 
