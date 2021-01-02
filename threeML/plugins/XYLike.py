@@ -357,7 +357,7 @@ class XYLike(PluginPrototype):
         parameters
         """
 
-        expectation = self._get_total_expectation()
+        expectation = self._get_total_expectation()[self._mask]
 
         if self._is_poisson:
 
@@ -365,14 +365,14 @@ class XYLike(PluginPrototype):
 
             return np.sum(
                 poisson_log_likelihood_ideal_bkg(
-                    self._y, np.zeros_like(self._y), expectation
+                    self._y[self._mask], np.zeros_like(self._y[self._mask]), expectation
                 )
             )
 
         else:
 
             # Chi squared
-            chi2_ = half_chi2(self._y, self._yerr, expectation)
+            chi2_ = half_chi2(self._y[self._mask], self._yerr[self._mask], expectation)
 
             assert np.all(np.isfinite(chi2_))
 

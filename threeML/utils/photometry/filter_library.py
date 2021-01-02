@@ -43,7 +43,7 @@ class FilterLibrary(object):
         with h5py.File(get_speclite_filter_library(), "r") as f:
 
             self._instruments = []
-            
+
             for observatory in tqdm(f.keys(), desc="Loading photometric filters"):
 
                 sub_dict = {}
@@ -68,8 +68,7 @@ class FilterLibrary(object):
 
                 # now get the instruments
 
-                for instrument in f[observatory].keys()
-                :
+                for instrument in f[observatory].keys():
 
                     # update the instruments
 

@@ -32,6 +32,29 @@ def test_constructor(grond_plugin):
 
     grond_plugin.display_filters()
 
+    assert grond_plugin._mask.sum() == 7
+
+    grond_plugin.band_g.on = False
+
+    assert grond_plugin._mask.sum() == 6
+
+
+    grond_plugin.band_g.on = True
+
+    assert grond_plugin._mask.sum() == 7
+
+
+    grond_plugin.band_g.off = True
+
+    assert grond_plugin._mask.sum() == 6
+
+
+    grond_plugin.band_g.off = False
+
+    assert grond_plugin._mask.sum() == 7
+
+
+    
 
 def test_fit(photometry_data_model):
 

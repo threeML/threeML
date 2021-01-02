@@ -17,7 +17,7 @@ from threeML.io.package_data import get_path_of_data_dir
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.PhotometryLike import PhotometryLike
 from threeML.plugins.XYLike import XYLike
-from threeML.utils.photometry import get_photometric_filter_library
+from threeML.utils.photometry import get_photometric_filter_library, PhotometericObservation
 
 # Set up an ipyparallel cluster for the tests to use
 
@@ -398,12 +398,11 @@ def threeML_filter_library():
     yield threeML_filter_library
 
 
-@pytest.fixture(scope="function")
-def grond_plugin(threeML_filter_library):
 
-    grond = PhotometryLike(
-        "GROND",
-        filters=threeML_filter_library.LaSilla.GROND,
+@pytest.fixture(scope="session")
+def photo_obs():
+
+    photo_obs = PhotometericObservation.from_kwargs(
         g=(19.92, 0.1),
         r=(19.75, 0.1),
         i=(19.65, 0.1),
@@ -411,6 +410,26 @@ def grond_plugin(threeML_filter_library):
         J=(19.38, 0.1),
         H=(19.22, 0.1),
         K=(19.07, 0.1),
+)
+
+    fn = Path("grond_observation.h5")
+
+    photo_obs.to_hdf5(fn, overwrite=True)
+
+    restored = PhotometericObservation.from_hdf5(fn)
+
+    yield restored
+
+    fn.unlink()
+    
+    
+@pytest.fixture(scope="function")
+def grond_plugin(threeML_filter_library, photo_obs):
+
+    grond = PhotometryLike(
+        "GROND",
+        filters=threeML_filter_library.LaSilla.GROND,
+        observation=photo_obs
     )
 
     yield grond

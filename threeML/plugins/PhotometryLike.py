@@ -1,30 +1,172 @@
 import collections
 import copy
 from builtins import range
+from typing import Union
 
 import numpy as np
+from speclite.filters import FilterResponse, FilterSequence
 
 from threeML.plugins.XYLike import XYLike
-from threeML.utils.photometry import FilterSet
+from threeML.utils.photometry import FilterSet, PhotometericObservation
 
 __instrument_name = "Generic photometric data"
 
 
+class BandNode(object):
+
+    def __init__(self, name, index, value, mask):
+        """
+        Container class that allows for the shutting on and off of bands
+        """
+        self._name = name
+        self._index = index
+        self._mask = mask
+        self._value = value
+
+        self._on = True
+
+    def _set_on(self, value=True):
+
+        self._on = value
+
+        self._mask[self._index] = self._on
+
+    def _get_on(self):
+
+        return self._on
+
+    on = property(_get_on, _set_on,
+                  doc="Turn on or off the band. Use booleans, like: 'p.on = True' "
+                  " or 'p.on = False'. ")
+
+    # Define property "fix"
+
+    def _set_off(self, value=True):
+
+        self._on = (not value)
+
+        self._mask[self._index] = self._on
+
+    def _get_off(self):
+
+        return not self._on
+
+    off = property(_get_off, _set_off,
+                   doc="Turn on or off the band. Use booleans, like: 'p.off = True' "
+                       " or 'p.off = False'. ")
+
+
+    def __repr__(self):
+
+        return f"on: {self._on}\nvalue: {self._value}"
+
+
 class PhotometryLike(XYLike):
-    def __init__(self, name, filters, **data):
+    def __init__(self, name: str,
+                 filters: Union[FilterSequence, FilterResponse],
+                 observation: PhotometericObservation):
         """
         The photometry plugin is desinged to fit optical/IR/UV photometric data from a given
         filter system. Filters are given in the form a speclite (http://speclite.readthedocs.io)
         FitlerResponse or FilterSequence objects. 3ML contains a vast number of filters via the SVO
         VO service: http://svo2.cab.inta-csic.es/svo/theory/fps/ and can be accessed via:
 
-        from threeML.plugins.photometry.filter_library import threeML_filter_library
+        from threeML.utils.photometry import get_photometric_filter_library
 
-        One can also construct their own filters with speclite.
+        filter_lib = get_photometric_filter_library()
 
+
+        Bands can be turned on and off by setting
+
+
+        plugin.band_<band name>.on = False/True
+        plugin.band_<band name>.off = False/True
+
+
+        :param name: plugin name
+        :param filters: speclite filters
+        :param observation: A PhotometricObservation instance
+        """
+
+        assert isinstance(
+            observation, PhotometericObservation), "Observation must be PhotometricObservation"
+
+        # convert names so that only the filters are present
+        # speclite uses '-' to separate instrument and filter
+
+        if isinstance(filters, FilterSequence):
+
+            # we have a filter sequence
+
+            names = [fname.split("-")[1] for fname in filters.names]
+
+        elif isinstance(filters, FilterResponse):
+
+            # we have a filter response
+
+            names = [filters.name.split("-")[1]]
+
+            filters = FilterSequence([filters])
+
+        else:
+
+            RuntimeError(
+                "filters must be A FilterResponse or a FilterSequence")
+
+        # since we may only have a few of the  filters in use
+        # we will mask the filters not needed. The will stay fixed
+        # during the life of the plugin
+
+        assert observation.is_compatible_with_filter_set(
+            filters), "The data and filters are not congruent"
+
+        mask = observation.get_mask_from_filter_sequence(filters)
+
+        assert mask.sum() > 0, "There are no data in this observation!"
+
+        # create a filter set and use only the bands that were specified
+
+        self._filter_set = FilterSet(filters, mask)
+
+        self._magnitudes = np.zeros(self._filter_set.n_bands)
+
+        self._magnitude_errors = np.zeros(self._filter_set.n_bands)
+
+        # we want to fill the magnitudes in the same order as the
+        # the filters
+
+        for i, band in enumerate(self._filter_set.filter_names):
+
+            self._magnitudes[i] = observation[band][0]
+            self._magnitude_errors[i] = observation[band][1]
+
+        self._observation = observation
+
+        # pass thru to XYLike
+
+        super(PhotometryLike, self).__init__(
+            name=name,
+            x=self._filter_set.effective_wavelength,  # dummy x values
+            y=self._magnitudes,
+            yerr=self._magnitude_errors,
+            poisson_data=False,
+        )
+
+        # now set up the mask zetting
+
+        for i, band in enumerate(self._filter_set.filter_names):
+
+            node = BandNode(band, i, (self._magnitudes[i], self._magnitude_errors[i]),
+                            self._mask)
+
+            setattr(self, f"band_{band}", node)
+
+    @classmethod
+    def from_kwargs(cls, name, filters, **kwargs):
+        """
         Example:
 
-        grond = PhotometryLike('GROND',
+        grond = PhotometryLike.from_kwargs('GROND',
                        filters=threeML_filter_library.ESO.GROND,
                        g=(20.93,.23),
                        r=(20.6,0.12),
@@ -44,63 +186,25 @@ class PhotometryLike(XYLike):
 
         :param name: plugin name
         :param filters: speclite filters
-        :param data: keyword args of band name and tuple(mag, mag error)
+        :param kwargs: keyword args of band name and tuple(mag, mag error)
+
         """
 
-        # convert names so that only the filters are present
-        # speclite uses '-' to separate instrument and filter
+        return cls(name, filters, PhotometericObservation.from_kwargs(**kwargs))
 
-        try:
+    @classmethod
+    def from_file(cls, name: str, filters: Union[FilterResponse, FilterSequence], file_name: str):
+        """
+        Create the a PhotometryLike plugin from a saved HDF5 data file
 
-            # we have a filter sequence
+        :param name: plugin name
+        :param filters: speclite filters
+        :param file_name: name of the observation file
 
-            names = [fname.split("-")[1] for fname in filters.names]
 
-        except (AttributeError):
+        """
 
-            # we have a filter response
-
-            names = [filters.name.split("-")[1]]
-
-        # since we may only have a few of the  filters in use
-        # we will mask the filters not needed. The will stay fixed
-        # during the life of the plugin
-
-        starting_mask = np.zeros(len(names), dtype=bool)
-
-        for band in list(data.keys()):
-
-            assert band in names, "band %s is not a member of the filter set %s" % (
-                band,
-                "blah",
-            )
-            starting_mask[names.index(band)] = True
-
-        # create a filter set and use only the bands that were specified
-
-        self._filter_set = FilterSet(filters, starting_mask)
-
-        self._magnitudes = np.zeros(self._filter_set.n_bands)
-
-        self._magnitude_errors = np.zeros(self._filter_set.n_bands)
-
-        # we want to fill the magnitudes in the same order as the
-        # the filters
-
-        for i, band in enumerate(self._filter_set.filter_names):
-
-            self._magnitudes[i] = data[band][0]
-            self._magnitude_errors[i] = data[band][1]
-
-        # pass thru to XYLike
-
-        super(PhotometryLike, self).__init__(
-            name=name,
-            x=self._filter_set.effective_wavelength,  # dummy x values
-            y=self._magnitudes,
-            yerr=self._magnitude_errors,
-            poisson_data=False,
-        )
+        return cls(name, filters, PhotometericObservation.from_hdf5(file_name))
 
     @property
     def magnitudes(self):
@@ -109,68 +213,6 @@ class PhotometryLike(XYLike):
     @property
     def magnitude_errors(self):
         return self._magnitude_errors
-
-    # def set_active_filters(self, *filter_names):
-    #     """
-    #     set the active filters to be used in the fit
-    #     :param filter_names: filter names ot be set active
-    #     :return:
-    #     """
-    #
-    #     # scroll through the known filter names
-    #
-    #     for i, name in enumerate(self._filter_set.filter_names):
-    #
-    #         for select_name in filter_names:
-    #
-    #             # if one of the filters is hit, then activate it
-    #
-    #             if name == select_name:
-    #                 self._mask[i] = True
-    #
-    #
-    #     print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
-    #                                                                 len(self._mask),
-    #                                                                 ', '.join(
-    #                                                                     self._filter_set.filter_names[self._mask])))
-    #
-    #     # reconstruct the plugin with selected data
-    #
-    #     super(PhotometryLike, self).__init__(name=self.name,
-    #                                          x=self._filter_set.effective_wavelength[self._mask],  # dummy x values
-    #                                          y=self._magnitudes[self._mask],
-    #                                          yerr=self._magnitude_errors[self._mask],
-    #                                          poisson_data=False)
-    #
-    # def set_inactive_filters(self, *filter_names):
-    #     """
-    #     set filters to be excluded from the fit
-    #     :param filter_names: filter names ot be set inactive
-    #     :return:
-    #     """
-    #
-    #     # scroll through the known filter names
-    #
-    #
-    #     for i, name in enumerate(self._filter_set.filter_names):
-    #
-    #         for select_name in filter_names:
-    #
-    #             if name == select_name:
-    #                 self._mask[i] = False
-    #
-    #     print("Now using %d of %d filters:\n\tActive Filters: %s", (sum(self._mask),
-    #                                                                 len(self._mask),
-    #                                                                 ', '.join(
-    #                                                                     self._filter_set.filter_names[self._mask])))
-    #
-    #     # reconstruct the plugin with selected data
-    #
-    #     super(PhotometryLike, self).__init__(name=self.name,
-    #                                          x=self._filter_set.effective_wavelength[self._mask],  # dummy x values
-    #                                          y=self._magnitudes[self._mask],
-    #                                          yerr=self._magnitude_errors[self._mask],
-    #                                          poisson_data=False)
 
     def set_model(self, likelihood_model):
         """
@@ -204,7 +246,7 @@ class PhotometryLike(XYLike):
 
     def _get_total_expectation(self):
 
-        return self._filter_set.ab_magnitudes()[self._mask]  # .as_matrix()
+        return self._filter_set.ab_magnitudes()
 
     def display_filters(self):
         """
