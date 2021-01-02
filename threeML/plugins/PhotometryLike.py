@@ -5,7 +5,7 @@ from builtins import range
 import numpy as np
 
 from threeML.plugins.XYLike import XYLike
-from threeML.utils.photometry.filter_set import FilterSet
+from threeML.utils.photometry import FilterSet
 
 __instrument_name = "Generic photometric data"
 
@@ -39,7 +39,7 @@ class PhotometryLike(XYLike):
         the argument is a tuple containing the data. You can exclude data for individual filters and
         they will be ignored during the fit.
 
-        NOTE: PhotometryLike expects apparent AM magnitudes. Please calibrate your data to this system
+        NOTE: PhotometryLike expects apparent AB magnitudes. Please calibrate your data to this system
 
 
         :param name: plugin name
