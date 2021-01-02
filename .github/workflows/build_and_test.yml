@@ -90,7 +90,7 @@ jobs:
                   auto-activate-base: false
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
-                  channels: conda-forge, xspecmodels, threeml, defaults
+                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
                   environment-file: ci/environment.yml
 
             - name: Init Env
@@ -248,7 +248,7 @@ jobs:
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ci/environment.yml
-                  channels: conda-forge, xspecmodels, threeml, defaults
+                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
 
             - name: Init Env
               shell: bash -l {0}
