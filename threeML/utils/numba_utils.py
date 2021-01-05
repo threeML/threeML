@@ -1,4 +1,4 @@
-import numba
+import numba as nb
 import numpy as np
 
 _EXPANSION_CONSTANT_ = 1.7
@@ -138,32 +138,38 @@ def Vector(numba_type):
             self.n = self.m = arr.size
 
     if numba_type not in Vector._saved_type:
-        spec = [("n", numba.uint64), ("m", numba.uint64), ("full_arr", numba_type[:])]
-        Vector._saved_type[numba_type] = numba.experimental.jitclass(spec)(_Vector)
+        spec = [("n", nb.uint64), ("m", nb.uint64), ("full_arr", numba_type[:])]
+        Vector._saved_type[numba_type] = nb.experimental.jitclass(spec)(_Vector)
 
     return Vector._saved_type[numba_type]
 
 
 Vector._saved_type = dict()
 
-VectorUint8 = Vector(numba.uint8)
-VectorUint16 = Vector(numba.uint16)
-VectorUint32 = Vector(numba.uint32)
-VectorUint64 = Vector(numba.uint64)
+VectorUint8 = Vector(nb.uint8)
+VectorUint16 = Vector(nb.uint16)
+VectorUint32 = Vector(nb.uint32)
+VectorUint64 = Vector(nb.uint64)
 
-VectorInt8 = Vector(numba.int8)
-VectorInt16 = Vector(numba.int16)
-VectorInt32 = Vector(numba.int32)
-VectorInt64 = Vector(numba.int64)
+VectorInt8 = Vector(nb.int8)
+VectorInt16 = Vector(nb.int16)
+VectorInt32 = Vector(nb.int32)
+VectorInt64 = Vector(nb.int64)
 
-VectorFloat32 = Vector(numba.float32)
-VectorFloat64 = Vector(numba.float64)
+VectorFloat32 = Vector(nb.float32)
+VectorFloat64 = Vector(nb.float64)
 
-VectorComplex64 = Vector(numba.complex64)
-VectorComplex128 = Vector(numba.complex128)
+VectorComplex64 = Vector(nb.complex64)
+VectorComplex128 = Vector(nb.complex128)
 
 __all_types = tuple(v for k, v in Vector._saved_type.items())
 
 
 def _isinstance(obj):
     return isinstance(obj, __all_types)
+
+
+@nb.njit(fastmath=True):
+def nb_sum(x):
+    return np.sum(x)
+
