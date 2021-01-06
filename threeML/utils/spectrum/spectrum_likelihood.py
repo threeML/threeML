@@ -5,7 +5,8 @@ from typing import Optional
 import numpy as np
 import numba as nb
 
-from threeML.exceptions.custom_exceptions import custom_warnings
+
+from threeML.utils.numba_utils import nb_sum
 from threeML.utils.statistics.likelihood_functions import half_chi2
 from threeML.utils.statistics.likelihood_functions import (
     poisson_log_likelihood_ideal_bkg,
@@ -83,7 +84,7 @@ class GaussianObservedStatistic(BinnedStatistic):
 
         idx = randomized_source_counts < 0  # type: np.ndarray
 
-        negative_source_n = _sum(idx)
+        negative_source_n = nb_sum(idx)
 
         if negative_source_n > 0:
             log.warning(
@@ -112,7 +113,7 @@ class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
             model_counts,
         )
 
-        return _sum(loglike), None
+        return nb_sum(loglike), None
 
     def get_randomized_source_counts(self, source_model_counts):
         # Randomize expectations for the source
@@ -156,7 +157,7 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
 
         bkg_log_like = self._spectrum_plugin.background_plugin.get_log_like()
 
-        total_log_like = _sum(loglike) + bkg_log_like
+        total_log_like = nb_sum(loglike) + bkg_log_like
 
         return total_log_like, None
 
@@ -203,7 +204,7 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
             model_counts,
         )
 
-        return _sum(loglike), None
+        return nb_sum(loglike), None
 
     def get_randomized_source_counts(self, source_model_counts):
         # Randomize expectations for the source
@@ -226,7 +227,7 @@ class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
             model_counts,
         )
 
-        return _sum(loglike), bkg_model
+        return nb_sum(loglike), bkg_model
 
     def get_randomized_source_counts(self, source_model_counts):
         # Since we use a profile likelihood, the background model is conditional on the source model, so let's
@@ -265,7 +266,7 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
             expected_model_counts,
         )
 
-        return _sum(loglike), bkg_model
+        return nb_sum(loglike), bkg_model
 
     def get_randomized_source_counts(self, source_model_counts):
         # Since we use a profile likelihood, the background model is conditional on the source model, so let's
@@ -304,7 +305,7 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
 
         idx = randomized_background_counts < 0  # type: np.ndarray
 
-        negative_background_n = _sum(idx)
+        negative_background_n = nb_sum(idx)
 
         if negative_background_n > 0:
             log.warning(
@@ -333,6 +334,3 @@ statistic_lookup = {
 }
 
 
-@nb.njit(fastmath=True)
-def _sum(v):
-    return np.sum(v)

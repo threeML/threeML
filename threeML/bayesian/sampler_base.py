@@ -28,6 +28,7 @@ except:
 from astromodels.core.model import Model
 from astromodels.functions.function import ModelAssertionViolation
 
+from threeML.utils.numba_utils import nb_sum
 from threeML.analysis_results import BayesianResults
 from threeML.data_list import DataList
 from threeML.exceptions.custom_exceptions import (LikelihoodIsInfinite,
@@ -439,7 +440,7 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
         # Sum the values of the log-like
 
-        log_like = np.sum(log_like_values)
+        log_like = nb_sum(log_like_values)
 
         if not np.isfinite(log_like):
             # Issue warning
