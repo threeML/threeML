@@ -169,7 +169,7 @@ def _isinstance(obj):
     return isinstance(obj, __all_types)
 
 
-@nb.njit(fastmath=True):
+@nb.njit(fastmath=True)
 def nb_sum(x):
     return np.sum(x)
 
