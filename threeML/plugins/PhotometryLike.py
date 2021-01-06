@@ -1,6 +1,6 @@
-from builtins import range
 import collections
 import copy
+from builtins import range
 
 import numpy as np
 
