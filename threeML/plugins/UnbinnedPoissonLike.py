@@ -3,8 +3,8 @@ from collections.abc import Iterable
 from typing import Optional, Tuple, Union
 
 import astromodels
-import numpy as np
 import numba as nb
+import numpy as np
 
 from threeML.io.logging import setup_logger
 from threeML.plugin_prototype import PluginPrototype
@@ -56,7 +56,7 @@ class EventObservation(object):
 
             self._is_multi_interval: bool = False
 
-            self._n_events: int = len(self._events)
+        self._n_events: int = len(self._events)
 
         log.debug(f"created event observation with")
         log.debug(f"{self._start} {self._stop}")
@@ -202,7 +202,6 @@ class UnbinnedPoissonLike(PluginPrototype):
 
         return differential, integral
 
-
     def get_log_like(self) -> float:
         """
         Return the value of the log-likelihood with the current values for the
@@ -246,13 +245,16 @@ class UnbinnedPoissonLike(PluginPrototype):
 
         return self.get_log_like()
 
+    def get_number_of_data_points(self):
+        return self._n_events
+
+
 @nb.njit(fastmath=True)
 def _evaluate_logM_sum(M, size):
     # Evaluate the logarithm with protection for negative or small
     # numbers, using a smooth linear extrapolation (better than just a sharp
     # cutoff)
- 
-    
+
     non_tiny_mask = M > 2.0 * _tiny
 
     tink_mask = np.logical_not(non_tiny_mask)
