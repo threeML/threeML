@@ -1010,7 +1010,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
             except:
 
                 raise RuntimeError(
-                    "The input file %s is not in PHA format" % (pha2_file)
+                    "The input file %s is not in PHA format" % (pha_file_or_instance)
                 )
 
             spectrum = f[HDUidx]
