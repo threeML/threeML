@@ -68,7 +68,7 @@ class GaussianObservedStatistic(BinnedStatistic):
 
         assert np.all(np.isfinite(chi2_))
 
-        return _sum(chi2_) * (-1), None
+        return nb_sum(chi2_) * (-1), None
 
     def get_randomized_source_counts(self, source_model_counts):
         idx = self._spectrum_plugin.observed_count_errors > 0
