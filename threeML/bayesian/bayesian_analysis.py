@@ -3,7 +3,6 @@ from __future__ import division, print_function
 from builtins import object
 
 import numpy as np
-# from threeML.bayesian.pinnuts_sampler import NUTSSampler
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 from astromodels.core.model import Model
 
@@ -88,7 +87,6 @@ class BayesianAnalysis(object):
 
         # Process optional keyword parameters
 
-        
         self._likelihood_model = likelihood_model
 
         self._data_list = data_list
@@ -114,7 +112,7 @@ class BayesianAnalysis(object):
                 self._likelihood_model.add_external_parameter(parameter)
 
         log.debug("MODEL REGISTERED!")
-                
+
         self._is_registered = True
 
     def set_sampler(self, sampler_name: str, **kwargs):
@@ -136,7 +134,7 @@ class BayesianAnalysis(object):
         )
 
         log.info(f"Sampler set to {sampler_name}")
-        
+
     @property
     def sampler(self):
 
