@@ -1384,6 +1384,9 @@ if len(_minimizers) == 0:
         "You do not have any minimizer available! You need to install at least iminuit."
     )
 
+
+
+else:
     # Add the GRID minimizer here since it needs at least one other minimizer
 
     from threeML.minimizer.grid_minimizer import GridMinimizer
