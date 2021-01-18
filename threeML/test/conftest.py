@@ -308,8 +308,8 @@ def xy_model_and_datalist():
 
     fitfun = Line() + Gaussian()
 
-    fitfun.a_1.bounds = (-10, 10.0)
-    fitfun.b_1.bounds = (-100, 100.0)
+    fitfun.b_1.bounds = (-10, 10.0)
+    fitfun.a_1.bounds = (-100, 100.0)
     fitfun.F_2 = 60.0
     fitfun.F_2.bounds = (1e-3, 200.0)
     fitfun.mu_2 = 5.0
