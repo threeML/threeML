@@ -1,9 +1,9 @@
 import copy
 import re
+from pathlib import Path
 
 import astropy.io.fits as fits
 import numpy as np
-from pathlib import Path
 from tqdm.auto import tqdm
 
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -33,8 +33,8 @@ from threeML.utils.time_series.time_series import TimeSeries
 try:
 
     from polarpy.polar_data import POLARData
-    from polarpy.polarlike import PolarLike
     from polarpy.polar_response import PolarResponse
+    from polarpy.polarlike import PolarLike
 
     has_polarpy = True
 
@@ -64,7 +64,7 @@ class TimeSeriesBuilder(object):
         time_series,
         response=None,
         poly_order=-1,
-        unbinned=True,
+        unbinned=False,
         verbose=True,
         restore_poly_fit=None,
         container_type=BinnedSpectrumWithDispersion,
@@ -87,11 +87,9 @@ class TimeSeriesBuilder(object):
         :param restore_poly_fit: file from which to read a prefitted background
         """
 
-        assert isinstance(
-            time_series, TimeSeries), "must be a TimeSeries instance"
+        assert isinstance(time_series, TimeSeries), "must be a TimeSeries instance"
 
-        assert issubclass(
-            container_type, Histogram), "must be a subclass of Histogram"
+        assert issubclass(container_type, Histogram), "must be a subclass of Histogram"
 
         self._name = name
 
@@ -137,7 +135,7 @@ class TimeSeriesBuilder(object):
         self._measured_background_spectrum = None
 
         self._time_series.poly_order = poly_order
-        
+
         self._default_unbinned = unbinned
 
         # try and restore the poly fit if requested
@@ -148,8 +146,7 @@ class TimeSeriesBuilder(object):
                 self._time_series.restore_fit(restore_poly_fit)
 
                 if verbose:
-                    print("Successfully restored fit from %s" %
-                          restore_poly_fit)
+                    print("Successfully restored fit from %s" % restore_poly_fit)
 
             else:
 
@@ -253,7 +250,7 @@ class TimeSeriesBuilder(object):
         self._tstart = self._time_series.time_intervals.absolute_start_time
         self._tstop = self._time_series.time_intervals.absolute_stop_time
 
-    def set_background_interval(self, *intervals, **options):
+    def set_background_interval(self, *intervals, **kwargs):
         """
         Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
@@ -263,20 +260,28 @@ class TimeSeriesBuilder(object):
 
 
         :param *intervals:
-        :param **options:
+        :param **kwargs:
 
         :return: none
 
         """
-        if "unbinned" in options:
+        if "unbinned" in kwargs:
 
-            unbinned = options.pop("unbinned")
+            unbinned = kwargs.pop("unbinned")
         else:
 
-            unbinned = self._default_unbinned
+            unbinned = False
+
+        if "bayes" in kwargs:
+            bayes = kwargs.pop("bayes")
+
+        else:
+
+            bayes = False
 
         self._time_series.set_polynomial_fit_interval(
-            *intervals, unbinned=unbinned)
+            *intervals, unbinned=unbinned, bayes=bayes
+        )
 
         # In theory this will automatically get the poly counts if a
         # time interval already exists
@@ -289,8 +294,10 @@ class TimeSeriesBuilder(object):
                     self._time_series, use_poly=True, extract=False
                 )
 
-                self._measured_background_spectrum = self._container_type.from_time_series(
-                    self._time_series, use_poly=False, extract=True
+                self._measured_background_spectrum = (
+                    self._container_type.from_time_series(
+                        self._time_series, use_poly=False, extract=True
+                    )
                 )
 
             else:
@@ -301,8 +308,13 @@ class TimeSeriesBuilder(object):
                     self._time_series, self._response, use_poly=True, extract=False
                 )
 
-                self._measured_background_spectrum = self._container_type.from_time_series(
-                    self._time_series, self._response, use_poly=False, extract=True,
+                self._measured_background_spectrum = (
+                    self._container_type.from_time_series(
+                        self._time_series,
+                        self._response,
+                        use_poly=False,
+                        extract=True,
+                    )
                 )
 
     def write_pha_from_binner(
@@ -420,17 +432,14 @@ class TimeSeriesBuilder(object):
 
             for (start, stop) in self._time_series.bins.bin_stack:
 
-                total_counts = self._time_series.counts_over_interval(
-                    start, stop)
-                bkg_counts = self._time_series.get_total_poly_count(
-                    start, stop)
+                total_counts = self._time_series.counts_over_interval(start, stop)
+                bkg_counts = self._time_series.get_total_poly_count(start, stop)
                 bkg_error = self._time_series.get_total_poly_error(start, stop)
 
                 sig_calc = Significance(total_counts, bkg_counts)
 
                 sig_per_interval.append(
-                    sig_calc.li_and_ma_equivalent_for_gaussian_background(bkg_error)[
-                        0]
+                    sig_calc.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
                 )
 
             return np.array(sig_per_interval)
@@ -444,8 +453,7 @@ class TimeSeriesBuilder(object):
 
             for (start, stop) in self._time_series.bins.bin_stack:
 
-                total_counts.append(
-                    self._time_series.counts_over_interval(start, stop))
+                total_counts.append(self._time_series.counts_over_interval(start, stop))
 
             return np.array(total_counts)
 
@@ -457,8 +465,7 @@ class TimeSeriesBuilder(object):
             total_counts = []
 
             for (start, stop) in self._time_series.bins.bin_stack:
-                total_counts.append(
-                    self._time_series.get_total_poly_count(start, stop))
+                total_counts.append(self._time_series.get_total_poly_count(start, stop))
 
             return np.array(total_counts)
 
@@ -473,10 +480,9 @@ class TimeSeriesBuilder(object):
         """
 
         other_bins = time_series_builder.bins.bin_stack
-        self.create_time_bins(
-            other_bins[:, 0], other_bins[:, 1], method="custom")
+        self.create_time_bins(other_bins[:, 0], other_bins[:, 1], method="custom")
 
-    def create_time_bins(self, start, stop, method="constant", **options):
+    def create_time_bins(self, start, stop, method="constant", **kwargs):
         """
 
         Create time bins from start to stop with a given method (constant, siginificance, bayesblocks, custom).
@@ -498,9 +504,9 @@ class TimeSeriesBuilder(object):
             self._time_series, EventList
         ), "can only bin event lists currently"
 
-        # if 'use_energy_mask' in options:
+        # if 'use_energy_mask' in kwargs:
         #
-        #     use_energy_mask = options.pop('use_energy_mask')
+        #     use_energy_mask = kwargs.pop('use_energy_mask')
         #
         # else:
         #
@@ -508,8 +514,8 @@ class TimeSeriesBuilder(object):
 
         if method == "constant":
 
-            if "dt" in options:
-                dt = float(options.pop("dt"))
+            if "dt" in kwargs:
+                dt = float(kwargs.pop("dt"))
 
             else:
 
@@ -519,18 +525,17 @@ class TimeSeriesBuilder(object):
 
         elif method == "significance":
 
-            if "sigma" in options:
+            if "sigma" in kwargs:
 
-                sigma = options.pop("sigma")
+                sigma = kwargs.pop("sigma")
 
             else:
 
-                raise RuntimeError(
-                    "significance bins require a sigma argument")
+                raise RuntimeError("significance bins require a sigma argument")
 
-            if "min_counts" in options:
+            if "min_counts" in kwargs:
 
-                min_counts = options.pop("min_counts")
+                min_counts = kwargs.pop("min_counts")
 
             else:
 
@@ -553,32 +558,30 @@ class TimeSeriesBuilder(object):
 
         elif method == "bayesblocks":
 
-            if "p0" in options:
+            if "p0" in kwargs:
 
-                p0 = options.pop("p0")
+                p0 = kwargs.pop("p0")
 
             else:
 
                 p0 = 0.1
 
-            if "use_background" in options:
+            if "use_background" in kwargs:
 
-                use_background = options.pop("use_background")
+                use_background = kwargs.pop("use_background")
 
             else:
 
                 use_background = False
 
-            self._time_series.bin_by_bayesian_blocks(
-                start, stop, p0, use_background)
+            self._time_series.bin_by_bayesian_blocks(start, stop, p0, use_background)
 
         elif method == "custom":
 
             if type(start) is not list:
 
                 if type(start) is not np.ndarray:
-                    raise RuntimeError(
-                        "start must be and array in custom mode")
+                    raise RuntimeError("start must be and array in custom mode")
 
             if type(stop) is not list:
 
@@ -599,8 +602,7 @@ class TimeSeriesBuilder(object):
 
         if self._verbose:
 
-            print("Created %d bins via %s" %
-                  (len(self._time_series.bins), method))
+            print("Created %d bins via %s" % (len(self._time_series.bins), method))
 
     def to_spectrumlike(
         self,
@@ -719,13 +721,12 @@ class TimeSeriesBuilder(object):
             if stop is not None:
                 assert stop is not None, "must specify a start AND a stop time"
 
-                these_bins = these_bins.containing_interval(
-                    start, stop, inner=False)
+                these_bins = these_bins.containing_interval(start, stop, inner=False)
 
             # loop through the intervals and create spec likes
 
             p = tqdm(total=len(these_bins), desc="Creating plugins")
-            
+
             for i, interval in enumerate(these_bins):
 
                 self.set_active_time_interval(interval.to_string())
@@ -765,8 +766,7 @@ class TimeSeriesBuilder(object):
                         if not self._use_balrog:
 
                             sl = DispersionSpectrumLike(
-                                name="%s%s%d" % (
-                                    self._name, interval_name, i),
+                                name="%s%s%d" % (self._name, interval_name, i),
                                 observation=self._observed_spectrum,
                                 background=this_background_spectrum,
                                 verbose=self._verbose,
@@ -777,8 +777,7 @@ class TimeSeriesBuilder(object):
                         else:
 
                             sl = gbm_drm_gen.BALROGLike(
-                                name="%s%s%d" % (
-                                    self._name, interval_name, i),
+                                name="%s%s%d" % (self._name, interval_name, i),
                                 observation=self._observed_spectrum,
                                 background=this_background_spectrum,
                                 verbose=self._verbose,
@@ -846,13 +845,13 @@ class TimeSeriesBuilder(object):
         :param poly_order: 0-4 or -1 for auto
         :param unbinned: unbinned likelihood fit (bool)
         :param verbose: verbose (bool)
-        :param use_balrog:  (bool) if you have gbm_drm_gen installed, will build BALROGlike 
-        :param trigdat_file: the trigdat file to use for location 
-        :param poshist_file: the poshist file to use for location 
-        :param cspec_file: the cspec file to use for location 
+        :param use_balrog:  (bool) if you have gbm_drm_gen installed, will build BALROGlike
+        :param trigdat_file: the trigdat file to use for location
+        :param poshist_file: the poshist file to use for location
+        :param cspec_file: the cspec file to use for location
 
 
-               """
+        """
 
         # self._default_unbinned = unbinned
 
@@ -984,30 +983,30 @@ class TimeSeriesBuilder(object):
         verbose=True,
     ):
         """
-               A plugin to natively bin, view, and handle Fermi GBM TTE data.
-               A TTE event file are required as well as the associated response
+        A plugin to natively bin, view, and handle Fermi GBM TTE data.
+        A TTE event file are required as well as the associated response
 
 
 
-               Background selections are specified as
-               a comma separated string e.g. "-10-0,10-20"
+        Background selections are specified as
+        a comma separated string e.g. "-10-0,10-20"
 
-               Initial source selection is input as a string e.g. "0-5"
+        Initial source selection is input as a string e.g. "0-5"
 
-               One can choose a background polynomial order by hand (up to 4th order)
-               or leave it as the default polyorder=-1 to decide by LRT test
+        One can choose a background polynomial order by hand (up to 4th order)
+        or leave it as the default polyorder=-1 to decide by LRT test
 
-               :param name: name for your choosing
-               :param tte_file: GBM tte event file
-               :param rsp_file: Associated TTE CSPEC response file
-               :param trigger_time: trigger time if needed
-               :param poly_order: 0-4 or -1 for auto
-               :param unbinned: unbinned likelihood fit (bool)
-               :param verbose: verbose (bool)
+        :param name: name for your choosing
+        :param tte_file: GBM tte event file
+        :param rsp_file: Associated TTE CSPEC response file
+        :param trigger_time: trigger time if needed
+        :param poly_order: 0-4 or -1 for auto
+        :param unbinned: unbinned likelihood fit (bool)
+        :param verbose: verbose (bool)
 
 
 
-               """
+        """
 
         # self._default_unbinned = unbinned
 
@@ -1101,30 +1100,30 @@ class TimeSeriesBuilder(object):
         verbose=True,
     ):
         """
-               A plugin to natively bin, view, and handle Fermi LAT LLE data.
-               An LLE event file and FT2 (1 sec) are required as well as the associated response
+        A plugin to natively bin, view, and handle Fermi LAT LLE data.
+        An LLE event file and FT2 (1 sec) are required as well as the associated response
 
 
 
-               Background selections are specified as
-               a comma separated string e.g. "-10-0,10-20"
+        Background selections are specified as
+        a comma separated string e.g. "-10-0,10-20"
 
-               Initial source selection is input as a string e.g. "0-5"
+        Initial source selection is input as a string e.g. "0-5"
 
-               One can choose a background polynomial order by hand (up to 4th order)
-               or leave it as the default polyorder=-1 to decide by LRT test
+        One can choose a background polynomial order by hand (up to 4th order)
+        or leave it as the default polyorder=-1 to decide by LRT test
 
-               :param name: name of the plugin
-               :param lle_file: lle event file
-               :param ft2_file: fermi FT2 file
-               :param rsp_file: lle response file
-               :param trigger_time: trigger time if needed
-               :param poly_order: 0-4 or -1 for auto
-               :param unbinned: unbinned likelihood fit (bool)
-               :param verbose: verbose (bool)
+        :param name: name of the plugin
+        :param lle_file: lle event file
+        :param ft2_file: fermi FT2 file
+        :param rsp_file: lle response file
+        :param trigger_time: trigger time if needed
+        :param poly_order: 0-4 or -1 for auto
+        :param unbinned: unbinned likelihood fit (bool)
+        :param verbose: verbose (bool)
 
 
-               """
+        """
 
         lat_lle_file = LLEFile(lle_file, ft2_file, rsp_file)
 
@@ -1133,8 +1132,7 @@ class TimeSeriesBuilder(object):
 
         # Mark channels less than 50 MeV as bad
 
-        channel_30MeV = np.searchsorted(
-            lat_lle_file.energy_edges[0], 30000.0) - 1
+        channel_30MeV = np.searchsorted(lat_lle_file.energy_edges[0], 30000.0) - 1
 
         native_quality = np.zeros(lat_lle_file.n_channels, dtype=int)
 
@@ -1251,8 +1249,7 @@ class TimeSeriesBuilder(object):
 
         # extract the polar varaibles
 
-        polar_data = POLARData(
-            polar_hdf5_file, polar_hdf5_response, trigger_time)
+        polar_data = POLARData(polar_hdf5_file, polar_hdf5_response, trigger_time)
 
         # Create the the event list
 
@@ -1361,13 +1358,12 @@ class TimeSeriesBuilder(object):
             if stop is not None:
                 assert stop is not None, "must specify a start AND a stop time"
 
-                these_bins = these_bins.containing_interval(
-                    start, stop, inner=False)
+                these_bins = these_bins.containing_interval(start, stop, inner=False)
 
             # loop through the intervals and create spec likes
 
             p = tqdm(total=len(these_bins), desc="Creating plugins")
-            
+
             for i, interval in enumerate(these_bins):
 
                 self.set_active_time_interval(interval.to_string())

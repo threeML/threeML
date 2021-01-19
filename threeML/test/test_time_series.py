@@ -72,7 +72,7 @@ def test_unbinned_fit():
         )
 
         evt_list.set_polynomial_fit_interval(
-            "%f-%f" % (start + 1, stop - 1), unbinned=True
+            "%f-%f" % (start + 1, stop - 1), unbinned=True, bayes=False
         )
 
         results = evt_list.get_poly_info()["coefficients"]
@@ -126,7 +126,7 @@ def test_read_gbm_cspec():
             "NAI3",
             os.path.join(data_dir, "glg_cspec_n3_bn080916009_v01.pha"),
             rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
-            poly_order=-1,
+            poly_order=1,
         )
 
         nai3.set_active_time_interval("0-1")
@@ -166,7 +166,7 @@ def test_read_gbm_tte():
         )
 
         nai3.set_active_time_interval("0-1")
-        nai3.set_background_interval("-20--10", "100-200")
+        nai3.set_background_interval("-20--10", "100-200", unbinned=False)
 
         speclike = nai3.to_spectrumlike()
 
@@ -265,7 +265,7 @@ def test_read_lle():
 
         lle.set_active_time_interval("0-10")
 
-        lle.set_background_interval("-150-0", "100-250")
+        lle.set_background_interval("-150-0", "100-250", unbinned=True)
 
         speclike = lle.to_spectrumlike()
 

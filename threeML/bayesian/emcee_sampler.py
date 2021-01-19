@@ -97,7 +97,7 @@ class EmceeSampler(MCMCSampler):
 
         acc = np.mean(sampler.acceptance_fraction)
 
-        print("\nMean acceptance fraction: %s\n" % acc)
+ #       print("\nMean acceptance fraction: %s\n" % acc)
 
         self._sampler = sampler
         self._raw_samples = sampler.get_chain(flat=True)
