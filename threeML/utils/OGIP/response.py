@@ -220,7 +220,7 @@ class InstrumentResponse(object):
         """
         if precalc_fluxes is None:
             fluxes = self._integral_function(
-                self._mc_energies[:-1], self._mc_energies[1:]
+               # self._mc_energies[:-1], self._mc_energies[1:]
             )
         else:
             fluxes = precalc_fluxes

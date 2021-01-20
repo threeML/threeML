@@ -56,7 +56,6 @@ class SpectrumLike(PluginPrototype):
         background_exposure=None,
         tstart: Optional[Union[float, int]] = None,
         tstop: Optional[Union[float, int]] = None,
-        has_contiguous_energies: bool = True
     ):
         # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
         """
@@ -85,7 +84,6 @@ class SpectrumLike(PluginPrototype):
         # Just a toggle for verbosity
         self._verbose = bool(verbose)
         self._name = name
-        self._has_contiguous_energies = has_contiguous_energies
 
         assert is_valid_variable_name(name), (
             "Name %s is not a valid name for a plugin. You must use a name which is "
@@ -100,6 +98,10 @@ class SpectrumLike(PluginPrototype):
         # Precomputed observed (for speed)
 
         self._observed_spectrum = observation  # type: BinnedSpectrum
+
+        self._has_contiguous_energies = observation.is_contiguous()
+
+        self._predefined_energies = observation.edges
 
         self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
 
@@ -245,7 +247,7 @@ class SpectrumLike(PluginPrototype):
         # Apply the mask
         self._apply_mask_to_original_vectors()
 
-        self._predefined_energies = None
+        # this will be immeadiately changed if inherited
 
         # calculate all scalings between area and exposure
 
@@ -681,7 +683,8 @@ class SpectrumLike(PluginPrototype):
                               background,
                               source_function, are_contiguous=False):
 
-        speclike_gen = cls("generator", observation, background, verbose=False, has_contiguous_energies=are_contiguous)
+        speclike_gen = cls("generator", observation, background,
+                           verbose=False)
 
         pts = PointSource("fake", 0.0, 0.0, source_function)
 
@@ -876,15 +879,9 @@ class SpectrumLike(PluginPrototype):
 
             background = None
 
-        
-            
         generator = cls._get_synthetic_plugin(
             observation, background, source_function,
-            are_contiguous=channel_set.is_contiguous(),
-            
-            
 
-            
         )  # type: SpectrumLike
 
         return generator.get_simulated_dataset(name)
@@ -991,7 +988,8 @@ class SpectrumLike(PluginPrototype):
         To simply add or exclude channels from the native PHA, one can use the use_quailty
         option:
 
-        set_active_measurements("0.2-c10",exclude=["c30-c50"], use_quality=True)
+        set_active_measurements(
+            "0.2-c10",exclude=["c30-c50"], use_quality=True)
 
         This translates to including the channels from 0.2 keV - channel 10, exluding channels
         30-50 and any channels flagged BAD in the PHA file will also be excluded.
@@ -1685,12 +1683,23 @@ class SpectrumLike(PluginPrototype):
         if precalc_fluxes is not None:
             return precalc_fluxes
 
-        return np.array(
-            [
-                self._integral_flux(emin, emax)
-                for emin, emax in self._observed_spectrum.bin_stack
-            ]
-        )
+        elif self._has_contiguous_energies:
+
+            if self._predefined_energies is None:
+
+                return self._integral_flux(self._observed_spectrum.edges)
+
+            else:
+
+                return self._integral_flux()
+
+        else:
+            return np.array(
+                [
+                    self._integral_flux(emin, emax)
+                    for emin, emax in self._observed_spectrum.bin_stack
+                ]
+            )
 
     def get_model(self,
                   precalc_fluxes: Optional[np.array] = None):
@@ -1726,12 +1735,22 @@ class SpectrumLike(PluginPrototype):
         :return:
         """
 
-        return np.array(
-            [
-                self._background_integral_flux(emin, emax)
-                for emin, emax in self._observed_spectrum.bin_stack
-            ]
-        )
+        if self._has_contiguous_energies:
+
+            if self._predefined_energies is None:
+
+                return self._background_integral_flux(self._observed_spectrum.edges)
+
+            else:
+
+                return self._background_integral_flux()
+
+        else:
+            return np.array(
+                [
+                    self._background_integral_flux(emin, emax)
+                    for emin, emax in self._observed_spectrum.bin_stack
+                ])
 
     def get_background_model(self,
                              without_mask: bool = False):
@@ -1831,26 +1850,26 @@ class SpectrumLike(PluginPrototype):
 
                 if self._predefined_energies is None:
 
-                    def integral(e1, e2):
+                    def integral(e_edges):
 
                         # Make sure we do not calculate the flux two times at the same energy
-                        e_edges = np.append(e1, e2)
-                        e_m = (e1+e2)/2.
+                        # e_edges = np.append(e1, e2[-1])
+                        e_m = (e_edges[1:] + e_edges[:-1])/2.
 
                         diff_fluxes_edges = differential_flux(e_edges)
                         diff_fluxes_mid = differential_flux(e_m)
 
-                        return _simps(e1, e2, diff_fluxes_edges, diff_fluxes_mid)
+                        return _simps(e_edges[:-1], e_edges[1:], diff_fluxes_edges, diff_fluxes_mid)
 
                 else:
 
-                    e_edges = self._predefined_energies
+                    e_edges = np.array(self._predefined_energies)
                     ee1 = e_edges[:-1]
                     ee2 = e_edges[1:]
 
                     e_m = (ee1+ee2)/2.
 
-                    def integral(e1, e2):
+                    def integral():
 
                         diff_fluxes_edges = differential_flux(e_edges)
                         diff_fluxes_mid = differential_flux(e_m)

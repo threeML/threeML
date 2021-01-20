@@ -1,17 +1,14 @@
 import copy
 from typing import Optional
-import numpy as np
 
+import numpy as np
 import pandas as pd
 
+from threeML.io.logging import setup_logger
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.spectrum.binned_spectrum import (
-    BinnedSpectrumWithDispersion,
-    ChannelSet,
-)
-
-from threeML.io.logging import setup_logger
+    BinnedSpectrumWithDispersion, ChannelSet)
 
 log = setup_logger(__name__)
 
@@ -71,9 +68,8 @@ class DispersionSpectrumLike(SpectrumLike):
             verbose=verbose,
             tstart=tstart,
             tstop=tstop,
-            has_contiguous_energies=True
-        )
 
+        )
 
         self._predefined_energies = self._rsp.monte_carlo_energies
 
@@ -83,7 +79,7 @@ class DispersionSpectrumLike(SpectrumLike):
         """
 
         log.debug(f"model set for {self._name}")
-        
+
         # Store likelihood model
 
         self._like_model = likelihoodModel
@@ -101,11 +97,11 @@ class DispersionSpectrumLike(SpectrumLike):
                                                                        integrate_method=self._model_integrate_method)
 
         log.debug(f"{self._name} passing intfral flux function to RSP")
-        
+
         self._rsp.set_function(integral)
         self._integral_flux = integral
 
-    def _evaluate_model(self, precalc_fluxes: Optional[np.array]=None):
+    def _evaluate_model(self, precalc_fluxes: Optional[np.array] = None):
         """
         evaluates the full model over all channels
         :return:
@@ -119,7 +115,8 @@ class DispersionSpectrumLike(SpectrumLike):
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        assert method in ["simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        assert method in [
+            "simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
         self._model_integrate_method = method
         log.info(f"{self._name} changing model integration method to {method}")
 
@@ -173,13 +170,14 @@ class DispersionSpectrumLike(SpectrumLike):
     def _output(self):
         # type: () -> pd.Series
 
-        super_out = super(DispersionSpectrumLike, self)._output()  # type: pd.Series
+        super_out = super(DispersionSpectrumLike,
+                          self)._output()  # type: pd.Series
 
         the_df = pd.Series({"response": self._rsp.rsp_filename})
 
         return super_out.append(the_df)
 
-    def write_pha(self, filename:str, overwrite: bool=False, force_rsp_write: bool=False) -> None:
+    def write_pha(self, filename: str, overwrite: bool = False, force_rsp_write: bool = False) -> None:
         """
         Writes the observation, background and (optional) rsp to PHAII fits files
 
@@ -252,7 +250,7 @@ class DispersionSpectrumLike(SpectrumLike):
         background_errors=None,
         background_sys_errors=None,
     ):
-        #type: () -> DispersionSpectrumLike
+        # type: () -> DispersionSpectrumLike
         """
 
         Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.
