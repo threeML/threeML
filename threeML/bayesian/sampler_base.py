@@ -358,8 +358,7 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                         precalc_fluxes.append(None)
                     else:
                         precalc_fluxes.append(
-                            self._data_list[base_key]._integral_flux(e_edges[:-1],
-                                                                     e_edges[1:])
+                            self._data_list[base_key]._integral_flux()
                         )
 
                 # Use these precalculated spectra to get the log_like for all plugins
