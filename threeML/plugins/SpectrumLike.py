@@ -679,9 +679,9 @@ class SpectrumLike(PluginPrototype):
     def _get_synthetic_plugin(cls,
                               observation: BinnedSpectrum,
                               background,
-                              source_function):
+                              source_function, are_contiguous=False):
 
-        speclike_gen = cls("generator", observation, background, verbose=False)
+        speclike_gen = cls("generator", observation, background, verbose=False, has_contiguous_energies=are_contiguous)
 
         pts = PointSource("fake", 0.0, 0.0, source_function)
 
@@ -780,7 +780,7 @@ class SpectrumLike(PluginPrototype):
         :return: simulated SpectrumLike plugin
         """
 
-        log.debug("creating new spectrumlikg from function")
+        log.debug("creating new spectrumlike from function")
 
         channel_set = ChannelSet.from_starts_and_stops(energy_min, energy_max)
 
@@ -876,8 +876,15 @@ class SpectrumLike(PluginPrototype):
 
             background = None
 
+        
+            
         generator = cls._get_synthetic_plugin(
-            observation, background, source_function
+            observation, background, source_function,
+            are_contiguous=channel_set.is_contiguous(),
+            
+            
+
+            
         )  # type: SpectrumLike
 
         return generator.get_simulated_dataset(name)
@@ -1827,7 +1834,7 @@ class SpectrumLike(PluginPrototype):
                     def integral(e1, e2):
 
                         # Make sure we do not calculate the flux two times at the same energy
-                        e_edges = np.append(e1, e2[-1])
+                        e_edges = np.append(e1, e2)
                         e_m = (e1+e2)/2.
 
                         diff_fluxes_edges = differential_flux(e_edges)
