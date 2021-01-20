@@ -103,6 +103,7 @@ class DispersionSpectrumLike(SpectrumLike):
         log.debug(f"{self._name} passing intfral flux function to RSP")
         
         self._rsp.set_function(integral)
+        self._integral_flux = integral
 
     def _evaluate_model(self, precalc_fluxes: Optional[np.array]=None):
         """
@@ -126,7 +127,8 @@ class DispersionSpectrumLike(SpectrumLike):
         if self._like_model is not None:
             differential_flux, integral = self._get_diff_flux_and_integral(self._like_model,
                                                                            integrate_method=method)
-            self._rsp._integral_function = integral
+            self._rsp.set_function(integral)
+            self._integral_flux = integral
 
     def get_simulated_dataset(self, new_name=None, **kwargs):
         """

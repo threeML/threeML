@@ -37,6 +37,7 @@ from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.utils.numba_utils import nb_sum
 from threeML.utils.statistics.stats_tools import aic, bic, dic
+from threeML.utils.spectrum.share_spectrum import ShareSpectrum
 
 log = setup_logger(__name__)
 
@@ -79,79 +80,11 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
             assert (
                 type(self._share_spectrum) == bool
             ), "share_spectrum must be False or True."
+            if self._share_spectrum:
+                self._share_spectrum_object = ShareSpectrum(self._data_list)
+                log.debug("Share spectrum has been initalized")
         else:
             self._share_spectrum = False
-
-        if self._share_spectrum:
-            log.debug("share spectrum has been set")
-            # Check which data_list entries have the same input energies in the response folding
-            found = False
-            num_found = 0
-            self._integral = None
-            self._data_ein_edges = {}
-            for j, d in enumerate(list(self._data_list.values())):
-                if j == 0:
-                    if isinstance(d, DispersionSpectrumLike):
-                        self._data_ein_edges[
-                            num_found
-                        ] = d.response.monte_carlo_energies
-                        share_spec_possible = True
-                    elif isinstance(d, SpectrumLike):
-                        self._data_ein_edges[num_found] = d.observed_spectrum.edges
-                        share_spec_possible = True
-                    else:
-                        self._data_ein_edges[num_found] = None
-                        share_spec_possible = False
-
-                    # Build an array which saves which plugins have the same Ein_bins
-                    self._data_ebin_connect = np.array([0])
-                    num_found += 1
-                    if share_spec_possible:
-                        # Get integral function. Should be the same for all plugins.
-                        _, self._integral = d._get_diff_flux_and_integral(
-                            likelihood_model, integrate_method=d._model_integrate_method
-                        )
-
-                else:
-                    if isinstance(d, DispersionSpectrumLike):
-                        e = d.response.monte_carlo_energies
-                        share_spec_possible = True
-                    elif isinstance(d, SpectrumLike):
-                        e = d.observed_spectrum.edges
-                        share_spec_possible = True
-                    else:
-                        self._data_ein_edges[num_found] = None
-                        self._data_ebin_connect = np.append(
-                            self._data_ebin_connect, len(
-                                self._data_ein_edges) - 1
-                        )
-                        num_found += 1
-                        share_spec_possible = False
-
-                    if share_spec_possible:
-                        # Check if these Ein_bins are already used by an earlier plugin
-                        for i in range(len(self._data_ein_edges)):
-                            if self._data_ein_edges[i] is not None:
-                                if len(e) == len(self._data_ein_edges[i]):
-                                    if np.all(np.equal(e, self._data_ein_edges[i])):
-                                        self._data_ebin_connect = np.append(
-                                            self._data_ebin_connect, i
-                                        )
-                                        found = True
-                        if self._integral is None:
-                            # Get integral function. Should be the same for all plugins.
-                            _, self._integral = d._get_diff_flux_and_integral(
-                                likelihood_model,
-                                integrate_method=d._model_integrate_method,
-                            )
-                        # If not save these Ein_bins and add an entry to the connection array
-                        if not found:
-                            self._data_ein_edges[num_found] = e
-                            self._data_ebin_connect = np.append(
-                                self._data_ebin_connect, i + 1
-                            )
-                            num_found += 1
-                        found = False
 
     @abc.abstractmethod
     def setup(self):
@@ -417,22 +350,27 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
                 # we want to avoid calculating the same thing several times.
 
                 # Precalc the spectrum for all different Ebin_in that are used in the plugins
-                log_like_values = np.zeros(len(self._data_ebin_connect))
                 precalc_fluxes = []
 
-                for i, e_edges in enumerate(list(self._data_ein_edges.values())):
+                for base_key, e_edges in zip(self._share_spectrum_object.base_plugin_key,
+                                            self._share_spectrum_object.data_ein_edges):
                     if e_edges is None:
                         precalc_fluxes.append(None)
                     else:
                         precalc_fluxes.append(
-                            self._integral(e_edges[:-1], e_edges[1:]))
+                            self._data_list[base_key]._integral_flux(e_edges[:-1],
+                                                                     e_edges[1:])
+                        )
 
                 # Use these precalculated spectra to get the log_like for all plugins
                 for i, dataset in enumerate(list(self._data_list.values())):
                     # call get log_like with precalculated spectrum
-                    if self._data_ein_edges[self._data_ebin_connect[i]] is not None:
+                    if self._share_spectrum_object.data_ein_edges[
+                            self._share_spectrum_object.data_ebin_connect[i]] is not None:
                         log_like_values[i] = dataset.get_log_like(
-                            precalc_fluxes=precalc_fluxes[self._data_ebin_connect[i]]
+                            precalc_fluxes=precalc_fluxes[
+                                self._share_spectrum_object.data_ebin_connect[i]
+                            ]
                         )
                     else:
                         log_like_values[i] = dataset.get_log_like()
