@@ -83,7 +83,8 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
             if self._share_spectrum:
                 self._share_spectrum_object = ShareSpectrum(self._data_list)
                 log.debug("Share spectrum has been initalized")
-
+        else:
+            self._share_spectrum = False
 
     @abc.abstractmethod
     def setup(self):
