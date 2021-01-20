@@ -257,8 +257,8 @@ def test_error_propagation(xy_fitted_joint_likelihood):
     ar = jl.results  # type: MLEResults
 
     # You can use the results for propagating errors non-linearly for analytical functions
-    p1 = ar.get_variates("fake.spectrum.main.composite.a_1")
-    p2 = ar.get_variates("fake.spectrum.main.composite.b_1")
+    p1 = ar.get_variates("fake.spectrum.main.composite.b_1")
+    p2 = ar.get_variates("fake.spectrum.main.composite.a_1")
 
     # Test the printing
     print(p1)

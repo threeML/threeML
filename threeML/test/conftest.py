@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 
 import numpy as np
+import numba as nb
 import pytest
 from astromodels import *
 from astromodels import (Blackbody, Gaussian, Line, Log_uniform_prior, Model,
@@ -18,6 +19,9 @@ from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.PhotometryLike import PhotometryLike
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.photometry import get_photometric_filter_library, PhotometericObservation
+from threeML.plugins.UnbinnedPoissonLike import EventObservation
+from threeML.plugins.XYLike import XYLike
+from threeML.utils.numba_utils import VectorFloat64
 
 # Set up an ipyparallel cluster for the tests to use
 
@@ -307,8 +311,8 @@ def xy_model_and_datalist():
 
     fitfun = Line() + Gaussian()
 
-    fitfun.a_1.bounds = (-10, 10.0)
-    fitfun.b_1.bounds = (-100, 100.0)
+    fitfun.b_1.bounds = (-10, 10.0)
+    fitfun.a_1.bounds = (-100, 100.0)
     fitfun.F_2 = 60.0
     fitfun.F_2.bounds = (1e-3, 200.0)
     fitfun.mu_2 = 5.0
@@ -445,3 +449,63 @@ def photometry_data_model(grond_plugin):
     model = Model(PointSource("grb", 0, 0, spectral_shape=spec))
 
     yield model, datalist
+
+    
+@nb.njit(fastmath=True, cache=True)
+def poisson_generator(tstart, tstop, slope, intercept, seed=1234):
+    """
+    Non-homogeneous poisson process generator
+    for a given max rate and time range, this function
+    generates time tags sampled from the energy integrated
+    lightcurve.
+    """
+
+    np.random.seed(seed)
+
+    num_time_steps = 1000
+
+    time_grid = np.linspace(tstart, tstop + 1.0, num_time_steps)
+
+    tmp = intercept + slope * time_grid
+
+    fmax = tmp.max()
+
+    time = tstart
+    arrival_times = VectorFloat64(0)
+    arrival_times.append(tstart)
+
+    while time < tstop:
+
+        time = time - (1.0 / fmax) * np.log(np.random.rand())
+        test = np.random.rand()
+
+        p_test = (intercept + slope * time) / fmax
+
+        if test <= p_test:
+            arrival_times.append(time)
+
+    return arrival_times.arr
+
+
+@pytest.fixture(scope="session")
+def event_observation_contiguous():
+
+    events = poisson_generator(
+        tstart=0, tstop=10, slope=1., intercept=10, seed=1234)
+
+    obs = EventObservation(events, exposure=10, start=0., stop=10.)
+
+    yield obs
+
+
+@pytest.fixture(scope="session")
+def event_observation_split():
+
+    events = poisson_generator(
+        tstart=0, tstop=2, slope=.2, intercept=1, seed=1234)
+    events = np.append(events, poisson_generator(
+        tstart=30, tstop=40, slope=.2, intercept=1, seed=1234))
+
+    obs = EventObservation(events, exposure=12, start=[0., 30.], stop=[2., 40.])
+
+    yield obs

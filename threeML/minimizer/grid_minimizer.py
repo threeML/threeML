@@ -167,9 +167,11 @@ class GridMinimizer(GlobalMinimizer):
 
         n_iterations = np.prod([x.shape for x in list(self._grid.values())])
 
+        if self._verbosity ==1:
 
+            p = tqdm(total = n_iterations, desc="Grid Minimization")
 
-        for values_tuple in tqdm(itertools.product(*list(self._grid.values())),desc="Grid Minimization"):
+        for values_tuple in itertools.product(*list(self._grid.values())):
 
             # Reset everything to the original values, so that the fit will always start
             # from there, instead that from the values obtained in the last iterations, which
@@ -224,7 +226,9 @@ class GridMinimizer(GlobalMinimizer):
 
                 callback(values_tuple, this_minimum)
 
+            if self._verbosity ==1:
 
+                p.update(1)
 
         if internal_best_fit_values is None:
 
