@@ -386,7 +386,6 @@ class XYLike(PluginPrototype):
 
             return _poisson_like(self._y[self._mask], self._zeros, expectation * self._exposure
                                  )
-            
 
         else:
 
@@ -552,6 +551,7 @@ def _poisson_like(y, zeros, expectation):
             y, zeros, expectation
         )[0]
     )
+
 
 @nb.njit(fastmath=True)
 def _chi2_like(y, yerr, expectation):
