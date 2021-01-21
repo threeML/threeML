@@ -9,7 +9,7 @@ import astropy.io.fits as fits
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
 from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins.gammaln import logfactorial
+from threeML.utils.statistics.gammaln import logfactorial
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 from threeML.utils.power_of_two_utils import is_power_of_2
 from threeML.io.package_data import get_path_of_data_file
