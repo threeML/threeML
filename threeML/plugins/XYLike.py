@@ -374,7 +374,7 @@ class XYLike(PluginPrototype):
         parameters
         """
 
-        expectation = self._get_total_expectation()
+        expectation = self._get_total_expectation()[self._mask]
 
         if self._is_poisson:
 
@@ -384,13 +384,14 @@ class XYLike(PluginPrototype):
             if negative_mask.sum() > 0:
                 expectation[negative_mask] = 0.0
 
-            return _poisson_like(self._y, self._zeros, expectation * self._exposure
+            return _poisson_like(self._y[self._mask], self._zeros, expectation * self._exposure
                                  )
+            
 
         else:
 
             # Chi squared
-            return _chi2_like(self._y, self._yerr, expectation * self._exposure)
+            return _chi2_like(self._y[self._mask], self._yerr[self._mask], expectation * self._exposure)
 
     def get_simulated_dataset(self, new_name=None):
 

@@ -16,6 +16,9 @@ from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
 from threeML.io.package_data import get_path_of_data_dir
 from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins.PhotometryLike import PhotometryLike
+from threeML.plugins.XYLike import XYLike
+from threeML.utils.photometry import get_photometric_filter_library, PhotometericObservation
 from threeML.plugins.UnbinnedPoissonLike import EventObservation
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.numba_utils import VectorFloat64
@@ -391,6 +394,63 @@ def test_file():
     test_file.unlink()
 
 
+@pytest.fixture(scope="session")
+def threeML_filter_library():
+
+    threeML_filter_library = get_photometric_filter_library()
+
+    yield threeML_filter_library
+
+
+
+@pytest.fixture(scope="session")
+def photo_obs():
+
+    photo_obs = PhotometericObservation.from_kwargs(
+        g=(19.92, 0.1),
+        r=(19.75, 0.1),
+        i=(19.65, 0.1),
+        z=(19.56, 0.1),
+        J=(19.38, 0.1),
+        H=(19.22, 0.1),
+        K=(19.07, 0.1),
+)
+
+    fn = Path("grond_observation.h5")
+
+    photo_obs.to_hdf5(fn, overwrite=True)
+
+    restored = PhotometericObservation.from_hdf5(fn)
+
+    yield restored
+
+    fn.unlink()
+    
+    
+@pytest.fixture(scope="function")
+def grond_plugin(threeML_filter_library, photo_obs):
+
+    grond = PhotometryLike(
+        "GROND",
+        filters=threeML_filter_library.LaSilla.GROND,
+        observation=photo_obs
+    )
+
+    yield grond
+
+
+@pytest.fixture(scope="function")
+def photometry_data_model(grond_plugin):
+
+    spec = Powerlaw()  # * XS_zdust() * XS_zdust()
+
+    datalist = DataList(grond_plugin)
+
+    model = Model(PointSource("grb", 0, 0, spectral_shape=spec))
+
+    yield model, datalist
+
+    
 @nb.njit(fastmath=True, cache=True)
 def poisson_generator(tstart, tstop, slope, intercept, seed=1234):
     """
