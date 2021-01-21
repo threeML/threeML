@@ -1,4 +1,5 @@
 from __future__ import print_function
+
 import copy
 
 import matplotlib.pyplot as plt
@@ -9,19 +10,25 @@ from astromodels import Model, PointSource
 from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.plugin_prototype import PluginPrototype
-from threeML.utils.statistics.likelihood_functions import half_chi2
-from threeML.utils.statistics.likelihood_functions import (
-    poisson_log_likelihood_ideal_bkg,
-)
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.plugin_prototype import PluginPrototype
+from threeML.utils.statistics.likelihood_functions import (
+    half_chi2, poisson_log_likelihood_ideal_bkg)
 
 __instrument_name = "n.a."
 
 
 class XYLike(PluginPrototype):
     def __init__(
-        self, name, x, y, yerr=None, poisson_data=False, quiet=False, source_name=None
+        self,
+        name,
+        x,
+        y,
+        yerr=None,
+        poisson_data=False,
+        exposure=None,
+        quiet=False,
+        source_name=None,
     ):
 
         nuisance_parameters = {}
@@ -77,6 +84,18 @@ class XYLike(PluginPrototype):
             self._has_errors = True
             self._y = self._y.astype(np.int64)
 
+        # sets the exposure assuming eval at center
+        # of bin. this should probably be improved
+        # with a histogram plugin
+
+        if exposure is None:
+            self._has_exposure: bool = False
+            self._exposure = np.ones(len(self._x))
+
+        else:
+            self._has_exposure: bool = True
+            self._exposure = exposure
+
         # This will keep track of the simulated datasets we generate
         self._n_simulated_datasets = 0
 
@@ -92,10 +111,10 @@ class XYLike(PluginPrototype):
         self._source_name = source_name
 
     @classmethod
-    def from_function(cls, name, function, x, yerr, **kwargs):
+    def from_function(cls, name, function, x, yerr=None, exposure=None, **kwargs):
         """
         Generate an XYLike plugin from an astromodels function instance
-        
+
         :param name: name of plugin
         :param function: astromodels function instance
         :param x: where to simulate
@@ -106,7 +125,8 @@ class XYLike(PluginPrototype):
 
         y = function(x)
 
-        xyl_gen = XYLike("generator", x, y, yerr, **kwargs)
+        xyl_gen = XYLike("generator", x, y, yerr=yerr,
+                         exposure=exposure, **kwargs)
 
         pts = PointSource("fake", 0.0, 0.0, function)
 
@@ -244,7 +264,7 @@ class XYLike(PluginPrototype):
     def assign_to_source(self, source_name):
         """
         Assign these data to the given source (instead of to the sum of all sources, which is the default)
-        
+
         :param source_name: name of the source (must be contained in the likelihood model)
         :return: none
         """
@@ -357,22 +377,26 @@ class XYLike(PluginPrototype):
         parameters
         """
 
-        expectation = self._get_total_expectation()
+        expectation = self._get_total_expectation()[self._mask]
 
         if self._is_poisson:
 
             # Poisson log-likelihood
 
+            negative_mask = expectation < 0
+            if negative_mask.sum() > 0:
+                expectation[negative_mask] = 0.0
+
             return np.sum(
                 poisson_log_likelihood_ideal_bkg(
-                    self._y, np.zeros_like(self._y), expectation
+                    self._y[self._mask], np.zeros_like(self._y[self._mask]), expectation
                 )
             )
 
         else:
 
             # Chi squared
-            chi2_ = half_chi2(self._y, self._yerr, expectation)
+            chi2_ = half_chi2(self._y[self._mask], self._yerr[self._mask], expectation)
 
             assert np.all(np.isfinite(chi2_))
 
@@ -428,7 +452,15 @@ class XYLike(PluginPrototype):
 
         """
 
-        new_xy = type(self)(name, x, y, yerr, poisson_data=self._is_poisson, quiet=True)
+        new_xy = type(self)(
+            name,
+            x,
+            y,
+            yerr,
+            exposure=self._exposure,
+            poisson_data=self._is_poisson,
+            quiet=True,
+        )
 
         # apply the current mask
 
@@ -491,7 +523,8 @@ class XYLike(PluginPrototype):
 
         self.set_model(model)
 
-        self._joint_like_obj = JointLikelihood(model, DataList(self), verbose=verbose)
+        self._joint_like_obj = JointLikelihood(
+            model, DataList(self), verbose=verbose)
 
         self._joint_like_obj.set_minimizer(minimizer)
 

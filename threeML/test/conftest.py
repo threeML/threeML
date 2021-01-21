@@ -1,22 +1,31 @@
-import pytest
-import numpy as np
 import os
+import signal
 import subprocess
 import time
-import signal
 from pathlib import Path
 
+import numpy as np
+import numba as nb
+import pytest
 from astromodels import *
-from threeML.classicMLE.joint_likelihood import JointLikelihood
+from astromodels import (Blackbody, Gaussian, Line, Log_uniform_prior, Model,
+                         PointSource, Powerlaw, Uniform_prior)
+
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
-from threeML.io.package_data import get_path_of_data_dir
+from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
+from threeML.io.package_data import get_path_of_data_dir
 from threeML.plugins.OGIPLike import OGIPLike
+from threeML.plugins.PhotometryLike import PhotometryLike
 from threeML.plugins.XYLike import XYLike
-from astromodels import PointSource, Model, Uniform_prior, Log_uniform_prior
-from astromodels import Line, Gaussian, Blackbody, Powerlaw
+from threeML.utils.photometry import get_photometric_filter_library, PhotometericObservation
+from threeML.plugins.UnbinnedPoissonLike import EventObservation
+from threeML.plugins.XYLike import XYLike
+from threeML.utils.numba_utils import VectorFloat64
 
 # Set up an ipyparallel cluster for the tests to use
+
+
 @pytest.fixture(scope="session", autouse=True)
 def setup_ipcluster():
 
@@ -76,6 +85,7 @@ def get_dataset():
 
     return NaI6
 
+
 def get_dataset_det(det):
 
     data_dir = Path(get_test_datasets_directory(), "bn090217206")
@@ -102,6 +112,7 @@ def data_list_bn090217206_nai6():
 
     return data_list
 
+
 @pytest.fixture(scope="session")
 def data_list_bn090217206_nai6_nai9_bgo1():
 
@@ -116,6 +127,8 @@ def data_list_bn090217206_nai6_nai9_bgo1():
 
 # This is going to be run every time a test need it, so the jl object
 # is always "fresh"
+
+
 @pytest.fixture(scope="function")
 def joint_likelihood_bn090217206_nai(data_list_bn090217206_nai6):
 
@@ -129,6 +142,8 @@ def joint_likelihood_bn090217206_nai(data_list_bn090217206_nai6):
 
 # This is going to be run every time a test need it, so the jl object
 # is always "fresh"
+
+
 @pytest.fixture(scope="function")
 def joint_likelihood_bn090217206_nai6_nai9_bgo1(data_list_bn090217206_nai6_nai9_bgo1):
 
@@ -136,7 +151,8 @@ def joint_likelihood_bn090217206_nai6_nai9_bgo1(data_list_bn090217206_nai6_nai9_
 
     model = get_grb_model(powerlaw)
 
-    jl = JointLikelihood(model, data_list_bn090217206_nai6_nai9_bgo1, verbose=False)
+    jl = JointLikelihood(
+        model, data_list_bn090217206_nai6_nai9_bgo1, verbose=False)
 
     return jl
 
@@ -152,6 +168,8 @@ def fitted_joint_likelihood_bn090217206_nai(joint_likelihood_bn090217206_nai):
     return jl, fit_results, like_frame
 
 # No need to keep refitting, so we fit once (scope=session)
+
+
 @pytest.fixture(scope="function")
 def fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1(joint_likelihood_bn090217206_nai6_nai9_bgo1):
 
@@ -160,6 +178,7 @@ def fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1(joint_likelihood_bn090217
     fit_results, like_frame = jl.fit()
 
     return jl, fit_results, like_frame
+
 
 def set_priors(model):
 
@@ -208,7 +227,8 @@ def completed_bn090217206_bayesian_analysis(fitted_joint_likelihood_bn090217206_
     bayes = BayesianAnalysis(model, data_list)
 
     bayes.set_sampler("emcee")
-    bayes.sampler.setup(n_walkers=50, n_burn_in=50, n_iterations=100, seed=1234)
+    bayes.sampler.setup(n_walkers=50, n_burn_in=50,
+                        n_iterations=100, seed=1234)
     samples = bayes.sample()
 
     return bayes, samples
@@ -266,7 +286,8 @@ def completed_bn090217206_bayesian_analysis_multicomp(
 
     bayes.set_sampler("emcee")
 
-    bayes.sampler.setup(n_walkers=50, n_burn_in=50, n_iterations=100, seed=1234)
+    bayes.sampler.setup(n_walkers=50, n_burn_in=50,
+                        n_iterations=100, seed=1234)
 
     samples = bayes.sample()
 
@@ -275,8 +296,8 @@ def completed_bn090217206_bayesian_analysis_multicomp(
 
 x = np.linspace(0, 10, 50)
 
-poiss_sig = np.array([44, 43, 38, 25, 51, 37, 46, 47, 55, 36, 40, 32, 46, 37, 
-                      44, 42, 50, 48, 52, 47, 39, 55, 80, 93, 123, 135, 96, 74, 
+poiss_sig = np.array([44, 43, 38, 25, 51, 37, 46, 47, 55, 36, 40, 32, 46, 37,
+                      44, 42, 50, 48, 52, 47, 39, 55, 80, 93, 123, 135, 96, 74,
                       43, 49, 43, 51, 27, 32, 35, 42, 43, 49, 38, 43, 59, 54,
                       50, 40, 50, 57, 55, 47, 38, 64])
 
@@ -290,8 +311,8 @@ def xy_model_and_datalist():
 
     fitfun = Line() + Gaussian()
 
-    fitfun.a_1.bounds = (-10, 10.0)
-    fitfun.b_1.bounds = (-100, 100.0)
+    fitfun.b_1.bounds = (-10, 10.0)
+    fitfun.a_1.bounds = (-100, 100.0)
     fitfun.F_2 = 60.0
     fitfun.F_2.bounds = (1e-3, 200.0)
     fitfun.mu_2 = 5.0
@@ -326,10 +347,14 @@ def xy_completed_bayesian_analysis(xy_fitted_joint_likelihood):
     model = jl.likelihood_model
     data = jl.data_list
 
-    model.fake.spectrum.main.composite.a_1.set_uninformative_prior(Uniform_prior)
-    model.fake.spectrum.main.composite.b_1.set_uninformative_prior(Uniform_prior)
-    model.fake.spectrum.main.composite.F_2.set_uninformative_prior(Log_uniform_prior)
-    model.fake.spectrum.main.composite.mu_2.set_uninformative_prior(Uniform_prior)
+    model.fake.spectrum.main.composite.a_1.set_uninformative_prior(
+        Uniform_prior)
+    model.fake.spectrum.main.composite.b_1.set_uninformative_prior(
+        Uniform_prior)
+    model.fake.spectrum.main.composite.F_2.set_uninformative_prior(
+        Log_uniform_prior)
+    model.fake.spectrum.main.composite.mu_2.set_uninformative_prior(
+        Uniform_prior)
     model.fake.spectrum.main.composite.sigma_2.set_uninformative_prior(
         Log_uniform_prior
     )
@@ -343,6 +368,7 @@ def xy_completed_bayesian_analysis(xy_fitted_joint_likelihood):
     samples = bs.sample()
 
     return bs, samples
+
 
 @pytest.fixture(scope="function")
 def test_directory():
@@ -366,3 +392,120 @@ def test_file():
     yield test_file
 
     test_file.unlink()
+
+
+@pytest.fixture(scope="session")
+def threeML_filter_library():
+
+    threeML_filter_library = get_photometric_filter_library()
+
+    yield threeML_filter_library
+
+
+
+@pytest.fixture(scope="session")
+def photo_obs():
+
+    photo_obs = PhotometericObservation.from_kwargs(
+        g=(19.92, 0.1),
+        r=(19.75, 0.1),
+        i=(19.65, 0.1),
+        z=(19.56, 0.1),
+        J=(19.38, 0.1),
+        H=(19.22, 0.1),
+        K=(19.07, 0.1),
+)
+
+    fn = Path("grond_observation.h5")
+
+    photo_obs.to_hdf5(fn, overwrite=True)
+
+    restored = PhotometericObservation.from_hdf5(fn)
+
+    yield restored
+
+    fn.unlink()
+    
+    
+@pytest.fixture(scope="function")
+def grond_plugin(threeML_filter_library, photo_obs):
+
+    grond = PhotometryLike(
+        "GROND",
+        filters=threeML_filter_library.LaSilla.GROND,
+        observation=photo_obs
+    )
+
+    yield grond
+
+
+@pytest.fixture(scope="function")
+def photometry_data_model(grond_plugin):
+
+    spec = Powerlaw()  # * XS_zdust() * XS_zdust()
+
+    datalist = DataList(grond_plugin)
+
+    model = Model(PointSource("grb", 0, 0, spectral_shape=spec))
+
+    yield model, datalist
+
+    
+@nb.njit(fastmath=True, cache=True)
+def poisson_generator(tstart, tstop, slope, intercept, seed=1234):
+    """
+    Non-homogeneous poisson process generator
+    for a given max rate and time range, this function
+    generates time tags sampled from the energy integrated
+    lightcurve.
+    """
+
+    np.random.seed(seed)
+
+    num_time_steps = 1000
+
+    time_grid = np.linspace(tstart, tstop + 1.0, num_time_steps)
+
+    tmp = intercept + slope * time_grid
+
+    fmax = tmp.max()
+
+    time = tstart
+    arrival_times = VectorFloat64(0)
+    arrival_times.append(tstart)
+
+    while time < tstop:
+
+        time = time - (1.0 / fmax) * np.log(np.random.rand())
+        test = np.random.rand()
+
+        p_test = (intercept + slope * time) / fmax
+
+        if test <= p_test:
+            arrival_times.append(time)
+
+    return arrival_times.arr
+
+
+@pytest.fixture(scope="session")
+def event_observation_contiguous():
+
+    events = poisson_generator(
+        tstart=0, tstop=10, slope=1., intercept=10, seed=1234)
+
+    obs = EventObservation(events, exposure=10, start=0., stop=10.)
+
+    yield obs
+
+
+@pytest.fixture(scope="session")
+def event_observation_split():
+
+    events = poisson_generator(
+        tstart=0, tstop=2, slope=.2, intercept=1, seed=1234)
+    events = np.append(events, poisson_generator(
+        tstart=30, tstop=40, slope=.2, intercept=1, seed=1234))
+
+    obs = EventObservation(events, exposure=12, start=[0., 30.], stop=[2., 40.])
+
+    yield obs
