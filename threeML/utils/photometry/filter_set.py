@@ -1,13 +1,21 @@
 from __future__ import division
-from builtins import zip
-from builtins import object
-from past.utils import old_div
-import speclite.filters as spec_filters
-import astropy.units as astro_units
-import numpy as np
+
+from builtins import object, zip
+
 import astropy.constants as constants
+import astropy.units as astro_units
+import numba as nb
+import numpy as np
+import speclite.filters as spec_filters
+from past.utils import old_div
 
 from threeML.utils.interval import IntervalSet
+
+_final_convert = (1. * astro_units.cm**2 * astro_units.keV / (astro_units.erg *
+                                                              astro_units.angstrom**2 * astro_units.s * astro_units.cm**2)).to("1/(cm2 s)").value
+
+_hc_constant = (constants.h * constants.c).to(
+    astro_units.erg * astro_units.angstrom).value
 
 
 class NotASpeclikeFilter(RuntimeError):
@@ -59,11 +67,14 @@ class FilterSet(object):
                     tmp.append(response)
 
             self._filters = spec_filters.FilterSequence(tmp)
-            self._names = np.array([name.split("-")[1] for name in self._filters.names])
+            self._names = np.array([name.split("-")[1]
+                                    for name in self._filters.names])
             self._long_name = self._filters.names
 
         # haven't set a likelihood model yet
         self._model_set = False
+
+        self._n_filters = len(self._filters)
 
         # calculate the FWHM
 
@@ -121,12 +132,36 @@ class FilterSet(object):
 
         """
 
-        conversion_factor = (constants.c ** 2 * constants.h ** 2).to("keV2 * cm2")
+        conversion_factor = (constants.c ** 2 *
+                             constants.h ** 2).to("keV2 * cm2")
 
-        def wrapped_model(x):
-            return old_div(differential_flux(x) * conversion_factor, x ** 3)
+        self._zero_points = np.empty(self._n_filters)
+        self._wavelengths = []
+        self._energies = []
+        self._response = []
+        self._factors = []
+        self._n_terms = []
 
-        self._wrapped_model = wrapped_model
+        for i, filter in enumerate(self._filters):
+
+            # precompute the zeropoints
+            self._zero_points[i] = filter.ab_zeropoint.to("1/(cm2 s)").value
+
+            # save the wavelenghts
+            self._wavelengths.append(filter.wavelength)
+
+            # we are going to input things in to the astromodels
+            # funtion as keV and convert back later
+            self._energies.append(
+                (filter.wavelength * astro_units.angstrom).to("keV", equivalencies=astro_units.spectral()).value)
+
+            self._factors.append(
+                (conversion_factor / ((filter.wavelength * astro_units.angstrom) ** 3)).value)
+
+            self._response.append(filter.response)
+            self._n_terms.append(len(filter.wavelength))
+
+        self._differential_flux = differential_flux
 
         self._model_set = True
 
@@ -142,26 +177,20 @@ class FilterSet(object):
         # speclite has issues with unit conversion
         # so we will do the calculation manually here
 
-        ratio = []
+        out = []
 
-        for filter in self._filters:
+        for i in range(self._n_filters):
 
-            # first get the flux and convert it to base units
-            synthetic_flux = filter.convolve_with_function(self._wrapped_model).to(
-                "1/(cm2 s)"
-            )
+            out.append(_conolve_and_convert(self._differential_flux(self._energies[i]),
+                                            self._factors[i],
+                                            self._response[i],
+                                            self._wavelengths[i],
+                                            self._zero_points[i],
+                                            self._n_terms[i])
 
-            # normalize it to the filter's AB magnitude
+                       )
 
-            ratio.append(
-                (old_div(synthetic_flux, filter.ab_zeropoint.to("1/(cm2 s)"))).value
-            )
-
-        ratio = np.array(ratio)
-
-        return -2.5 * np.log10(ratio)
-
-        # return self._filters.get_ab_magnitudes(self._wrapped_model).to_pandas().loc[0]
+        return np.array(out)
 
     def plot_filters(self):
         """
@@ -225,3 +254,18 @@ class FilterSet(object):
         """
 
         return astro_units.Angstrom
+
+
+@nb.njit(fastmath=True)
+def _conolve_and_convert(diff_flux, factor, response, wavelength, zero_point, N):
+
+    for n in range(N):
+
+        diff_flux[n] *= factor[n] * response[n] * wavelength[n] / _hc_constant
+
+    # this will be in some funky units so we convert to 1/ cm2 s
+    synthetic_flux = np.trapz(diff_flux, wavelength) * _final_convert
+
+    ratio = synthetic_flux / zero_point
+
+    return -2.5 * np.log10(ratio)

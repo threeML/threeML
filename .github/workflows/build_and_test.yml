@@ -59,12 +59,13 @@ jobs:
                   NUMEXPR_NUM_THREADS: 1
                   MPLBACKEND: "Agg"
 
-            - name: Upload coverage to Codecov
-              uses: codecov/codecov-action@v1
-              with:
-                  file: ./coverage.xml
-                  files: ./coverage1.xml,./coverage2.xml
-                  directory: ./coverage/reports/
+            # we do not need to run coverage on pip
+            # - name: Upload coverage to Codecov
+            #   uses: codecov/codecov-action@v1
+            #   with:
+            #       file: ./coverage.xml
+            #       files: ./coverage1.xml,./coverage2.xml
+            #       directory: ./coverage/reports/
 
     test-conda:
         name: Test on Conda
@@ -90,7 +91,7 @@ jobs:
                   auto-activate-base: false
                   activate-environment: test_env
                   python-version: ${{ matrix.python-version }}
-                  channels: conda-forge, xspecmodels, threeml, defaults
+                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
                   environment-file: ci/environment.yml
 
             - name: Init Env
@@ -248,7 +249,7 @@ jobs:
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ci/environment.yml
-                  channels: conda-forge, xspecmodels, threeml, defaults
+                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
 
             - name: Init Env
               shell: bash -l {0}
