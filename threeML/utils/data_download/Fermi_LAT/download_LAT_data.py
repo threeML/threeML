@@ -469,7 +469,7 @@ def download_LAT_data(
 
             f[0].header.set(_uid_fits_keyword, query_unique_id)
 
-        if re.match(".+SC[0-9][0-9].fits", fits_file) is not None:
+        if re.match(".+SC[0-9][0-9].fits", str(fits_file) ) is not None:
 
             FT2 = fits_file
         else:
