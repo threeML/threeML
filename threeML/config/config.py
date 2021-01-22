@@ -15,9 +15,17 @@ import matplotlib.pyplot as plt
 import pkg_resources
 import yaml
 
-from threeML.exceptions.custom_exceptions import (ConfigurationFileCorrupt,
-                                                  custom_warnings)
+# from threeML.exceptions.custom_exceptions import (ConfigurationFileCorrupt,
+#                                                   custom_warnings)
+
+import warnings
+
 from threeML.io.package_data import get_path_of_data_file, get_path_of_user_dir
+
+
+class ConfigurationFileCorrupt(RuntimeWarning):
+    pass
+
 
 _config_file_name = "threeML_config.yml"
 
@@ -102,7 +110,7 @@ class Config(object):
                 except ConfigurationFileCorrupt:
 
                     # Probably an old configuration file
-                    custom_warnings.warn(
+                    warnings.warn(
                         f"The user configuration file at {user_config_path} does not appear to be valid. We will "
                         "substitute it with the default configuration. You will find a copy of the "
                         f"old configuration at {user_config_path}.bak so you can transfer any customization you might "
@@ -121,7 +129,7 @@ class Config(object):
 
         else:
 
-            custom_warnings.warn(
+            warnings.warn(
                 f"Using default configuration from {self._default_path}.\n"
                 f"You might want to copy it to {user_config_path} to customize it and avoid this warning.\n"
                 "You can also call threeML_config.copy_default_cong_file()\n"
