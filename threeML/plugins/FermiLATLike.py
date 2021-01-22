@@ -15,7 +15,7 @@ from astromodels.core.model_parser import ModelParser
 
 from threeML.plugin_prototype import PluginPrototype
 from threeML.io.file_utils import get_random_unique_name
-from threeML.plugins.gammaln import logfactorial
+from threeML.utils.statistics.gammaln import logfactorial
 from threeML.io.suppress_stdout import suppress_stdout
 
 import UnbinnedAnalysis

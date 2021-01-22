@@ -9,7 +9,7 @@ import astropy.io.fits as fits
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
 from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins.gammaln import logfactorial
+from threeML.utils.statistics.gammaln import logfactorial
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 from threeML.utils.power_of_two_utils import is_power_of_2
 from threeML.io.package_data import get_path_of_data_file
@@ -118,10 +118,10 @@ def _get_fermipy_instance(configuration, likelihood_model):
     # analysis a lot)
     # NOTE: these are going to be absolute paths
 
-    galactic_template = sanitize_filename(
+    galactic_template = str( sanitize_filename(
         findGalacticTemplate(irfs, ra_center, dec_center, roi_radius), True  # noqa: F821
-    )
-    isotropic_template = sanitize_filename(findIsotropicTemplate(irfs), True) # noqa: F821
+    ) )
+    isotropic_template = str( sanitize_filename(findIsotropicTemplate(irfs), True) ) # noqa: F821
 
     # Add them to the fermipy model
 
@@ -304,7 +304,7 @@ class FermipyLike(PluginPrototype):
 
             # Sanitize file name, as fermipy is not very good at handling relative paths or env. variables
 
-            filename = sanitize_filename(self._configuration["data"][datum], True)
+            filename = str( sanitize_filename(self._configuration["data"][datum], True) )
 
             self._configuration["data"][datum] = filename
 
@@ -355,8 +355,8 @@ class FermipyLike(PluginPrototype):
             get_path_of_data_file("fermipy_basic_config.yml")
         )  # type: dict
 
-        evfile = sanitize_filename(evfile)
-        scfile = sanitize_filename(scfile)
+        evfile = str(sanitize_filename(evfile) )
+        scfile = str(sanitize_filename(scfile) )
 
         assert os.path.exists(evfile), "The provided evfile %s does not exist" % evfile
         assert os.path.exists(scfile), "The provided scfile %s does not exist" % scfile
