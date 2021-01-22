@@ -1328,17 +1328,17 @@ else:
 
     _minimizers["MINUIT"] = MinuitMinimizer
 
-try:
+# try:
 
-    from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
+#     from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
 
-except ImportError:
+# except ImportError:
 
-    log.warning("ROOT minimizer not available")
+#     log.warning("ROOT minimizer not available")
 
-else:
+# else:
 
-    _minimizers["ROOT"] = ROOTMinimizer
+#     _minimizers["ROOT"] = ROOTMinimizer
 
 try:
 
