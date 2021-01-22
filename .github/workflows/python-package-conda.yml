@@ -1,0 +1,36 @@
+name: Python Package using Conda
+
+on:
+  schedule:
+    - cron: "30 * * * *"
+
+jobs:
+  test-threeml:
+    runs-on: ["ubuntu-latest", "macos-latest"]
+    strategy:
+      max-parallel: 5
+
+    steps:
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install threeML
+      run: |
+        bash install_3ML.sh --batch --python 3.7
+    - name: test threeML
+      run: |
+        source threeML_init.sh
+        pytest -vv --pyargs threeML
+        pytest -vv --pyargs astromodels
+      env:
+        OMP_NUM_THREADS: 1
+        MKL_NUM_THREADS: 1
+        NUMEXPR_NUM_THREADS: 1
+        MPLBACKEND: "Agg"
+
+
