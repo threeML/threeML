@@ -6,6 +6,7 @@ from astromodels import ModelAssertionViolation, use_astromodels_memoization
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
+import logging
 
 
 try:
@@ -40,6 +41,10 @@ except:
 
     using_mpi = False
 
+
+un_logger = logging.getLogger("ultranest")
+un_logger.propagate = False
+    
 log = setup_logger(__name__)
 
 class UltraNestSampler(UnitCubeSampler):
