@@ -7,10 +7,6 @@ pd.set_option("max_columns", None)
 import os
 import traceback
 import warnings
-from pathlib import Path
-
-from threeML.io.logging import setup_logger
-from .config.config import threeML_config
 
 
 # if threeML_config["logging"]["startup_warning"]:
@@ -35,6 +31,11 @@ try:
     import pyLikelihood
 except ImportError:
     pass
+
+from pathlib import Path
+
+from threeML.io.logging import setup_logger
+from .config.config import threeML_config
 
 # Import version (this has to be placed before the import of serialization
 # since __version__ needs to be defined at that stage)
