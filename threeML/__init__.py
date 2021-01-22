@@ -8,21 +8,8 @@ import os
 import traceback
 import warnings
 
-
-# if threeML_config["logging"]["startup_warning"]:
-#     log.info("Starting 3ML!")
-
-if os.environ.get("DISPLAY") is None:
-    # if threeML_config["logging"]["startup_warning"]:
-    #     log.warning(
-    #     "no display variable set. using backend for graphics without display (agg)"
-    # )
-
-    import matplotlib as mpl
-
-    mpl.use("Agg")
-
-# Workaround to a CFITSIO issue
+# Workaround to avoid a segmentation fault with ROOT and a CFITSIO issue
+# LEAVE THESE HERE BEFORE ANY THREEML IMPORT
 try:
     import ROOT
 except ImportError:
@@ -36,6 +23,22 @@ from pathlib import Path
 
 from threeML.io.logging import setup_logger
 from .config.config import threeML_config
+
+log = setup_logger(__name__)
+log.propagate = False
+
+if threeML_config["logging"]["startup_warning"]:
+    log.info("Starting 3ML!")
+
+if os.environ.get("DISPLAY") is None:
+    if threeML_config["logging"]["startup_warning"]:
+        log.warning(
+        "no display variable set. using backend for graphics without display (agg)"
+    )
+
+    import matplotlib as mpl
+
+    mpl.use("Agg")
 
 # Import version (this has to be placed before the import of serialization
 # since __version__ needs to be defined at that stage)
@@ -72,12 +75,11 @@ try:
     from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 
 except ImportError:
-    # if threeML_config["logging"]["startup_warning"]:
-    #     log.warning(
-    #     "The cthreeML package is not installed. You will not be able to use plugins which require "
-    #     "the C/C++ interface (currently HAWC)"  #    custom_exceptions.CppInterfaceNotAvailable,
-    # )
-    pass
+    if threeML_config["logging"]["startup_warning"]:
+        log.warning(
+        "The cthreeML package is not installed. You will not be able to use plugins which require "
+        "the C/C++ interface (currently HAWC)"  #    custom_exceptions.CppInterfaceNotAvailable,
+    )
 # Now look for plugins
 
 # This verifies if a module is importable
@@ -123,12 +125,12 @@ for i, module_full_path in enumerate(found_plugins):
     is_importable, failure_traceback = is_module_importable(module_full_path)
 
     if not is_importable:
-        # if threeML_config["logging"]["startup_warning"]:
-        #     log.warning(
-        #     f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
-        #     "and configured?"
-        #     # custom_exceptions.CannotImportPlugin,
-        # )
+        if threeML_config["logging"]["startup_warning"]:
+            log.warning(
+            f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
+            "and configured?"
+            # custom_exceptions.CannotImportPlugin,
+        )
 
         _not_working_plugins[plugin_name] = failure_traceback
 
@@ -180,13 +182,12 @@ def get_available_plugins():
 
 
 def _display_plugin_traceback(plugin):
-    # if threeML_config["logging"]["startup_warning"]:
-    #     log.warning("#############################################################")
-    #     log.warning("\nCouldn't import plugin %s" % plugin)
-    #     log.warning("\nTraceback:\n")
-    #     log.warning(_not_working_plugins[plugin])
-    #     log.warning("#############################################################")
-    pass
+    if threeML_config["logging"]["startup_warning"]:
+        log.warning("#############################################################")
+        log.warning("\nCouldn't import plugin %s" % plugin)
+        log.warning("\nTraceback:\n")
+        log.warning(_not_working_plugins[plugin])
+        log.warning("#############################################################")
 
 def is_plugin_available(plugin):
     """
@@ -227,7 +228,7 @@ def is_plugin_available(plugin):
 
         else:
 
-            #log.error(f"Plugin {plugin} is not known")
+            log.error(f"Plugin {plugin} is not known")
             raise RuntimeError()
 
 
@@ -300,9 +301,6 @@ from .utils.step_parameter_generator import step_generator
 
 var_to_check = ["OMP_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"]
 
-
-log = setup_logger(__name__)
-log.propagate = False
 
 
 for var in var_to_check:
