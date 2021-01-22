@@ -28,6 +28,7 @@ jobs:
     - name: test threeML
       run: |
         source threeML_init.sh
+        conda install colorama
         pytest -vv --pyargs threeML
         pytest -vv --pyargs astromodels
       env:
