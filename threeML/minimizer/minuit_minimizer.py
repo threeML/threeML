@@ -51,6 +51,7 @@ class MinuitMinimizer(LocalMinimizer):
 
     valid_setup_keys = ("ftol",)
 
+    # @TODO: Is this still relevant?
     # NOTE: this class is built to be able to work both with iMinuit and with a boost interface to SEAL
     # minuit, i.e., it does not rely on functionality that iMinuit provides which is not of the original
     # minuit. This makes the implementation a little bit more cumbersome, but more adaptable if we want
@@ -67,9 +68,15 @@ class MinuitMinimizer(LocalMinimizer):
 
     def _setup(self, user_setup_dict):
 
-        # Prepare the dictionary for the parameters which will be used by iminuit
+        # Prepare the dictionaries for the parameters which will be used by iminuit
 
         iminuit_init_parameters = collections.OrderedDict()
+
+        iminuit_errors = collections.OrderedDict()
+
+        iminuit_limits = collections.OrderedDict()
+
+        iminuit_fixed_parameters = collections.OrderedDict()
 
         # List of variable names that will be used for iminuit.
 
@@ -91,24 +98,17 @@ class MinuitMinimizer(LocalMinimizer):
             iminuit_init_parameters["%s" % current_name] = value
 
             # Initial delta
-            iminuit_init_parameters["error_%s" % current_name] = delta
+            iminuit_errors["%s" % current_name] = delta
 
             # Limits
-            iminuit_init_parameters["limit_%s" % current_name] = (minimum, maximum)
+            iminuit_limits["%s" % current_name] = (minimum, maximum)
 
             # This is useless, since all parameters here are free,
             # but do it anyway for clarity
-            iminuit_init_parameters["fix_%s" % current_name] = False
+            iminuit_fixed_parameters["%s" % current_name] = False
 
-        # This is to tell Minuit that we are dealing with likelihoods,
-        # not chi square
-        iminuit_init_parameters["errordef"] = 0.5
-
-        iminuit_init_parameters["print_level"] = self.verbosity
-
-        #        iminuit_init_parameters['frontend'] = _get_frontend()
-
-        iminuit_init_parameters["forced_parameters"] = variable_names_for_iminuit
+        # Tell imnuit what parameter names are
+        iminuit_init_parameters["name"] = variable_names_for_iminuit
 
         # # We need to make a function with the parameters as explicit
         # # variables in the calling sequence, so that Minuit will be able
@@ -131,11 +131,24 @@ class MinuitMinimizer(LocalMinimizer):
         # add_method(self, _f, "_f")
 
         # Finally we can instance the Minuit class
+
         self.minuit = Minuit(self.function, **iminuit_init_parameters)
 
-        # Make sure we got this right (some versions of iminuit does not understand the keyword in the setup)
+        for param, value in iminuit_errors.items():
+            self.minuit.errors[param] = value
 
-        self.minuit.errordef = 0.5
+        for param, value in iminuit_limits.items():
+            self.minuit.limits[param] = value
+
+        for param, value in iminuit_fixed_parameters.items():
+            self.minuit.fixed[param] = value
+
+        # This is to tell Minuit that we are dealing with likelihoods,
+        # not chi square
+
+        self.minuit.errordef = Minuit.LIKELIHOOD
+
+        self.minuit.print_level = self.verbosity
 
         if user_setup_dict is not None:
 
@@ -182,27 +195,6 @@ class MinuitMinimizer(LocalMinimizer):
 
             self.minuit.values[minuit_name] = par._get_internal_value()
 
-    def _is_fit_ok(self):
-        """
-        iMinuit provides the method migrad_ok(). However, that method also checks for a valid Hessian matrix, which
-        is a stricter requirement than just asking that the fit has converged. That is why we implement this method
-
-        :return: whether the fit converged or not
-        """
-
-        assert self._last_migrad_results is not None, "MIGRAD has not been run yet."
-
-        if (
-            not self._last_migrad_results[0]["is_above_max_edm"]
-            and self._last_migrad_results[0]["has_valid_parameters"]
-        ):
-
-            return True
-
-        else:
-
-            return False
-
     def _print_current_status(self):
         """
         To be used to print info before raising an exception
@@ -210,7 +202,7 @@ class MinuitMinimizer(LocalMinimizer):
         """
 
         print("Last status:\n")
-        print(self._last_migrad_results[0])
+        print(self._last_migrad_results.fmin)
         print("\n")
         # Print params to get some info about the failure
         self.minuit.print_param()
@@ -229,11 +221,12 @@ class MinuitMinimizer(LocalMinimizer):
 
         # Try a maximum of 10 times and break as soon as the fit is ok
 
-        self._last_migrad_results = self.minuit.migrad(resume=False)
+        self.minuit.reset()
+        self._last_migrad_results = self.minuit.migrad()
 
         for i in range(9):
 
-            if self._is_fit_ok():
+            if self.minuit.valid:
 
                 break
 
@@ -242,7 +235,7 @@ class MinuitMinimizer(LocalMinimizer):
                 # Try again
                 self._last_migrad_results = self.minuit.migrad()
 
-        if not self._is_fit_ok():
+        if not self.minuit.valid:
 
             self._print_current_status()
 
@@ -263,7 +256,7 @@ class MinuitMinimizer(LocalMinimizer):
 
                 best_fit_values.append(self.minuit.values[minuit_name])
 
-            return best_fit_values, self._last_migrad_results[0]["fval"]
+            return best_fit_values, self.minuit.fval
 
     # Override the default _compute_covariance_matrix
     def _compute_covariance_matrix(self, best_fit_values):
@@ -272,7 +265,7 @@ class MinuitMinimizer(LocalMinimizer):
 
         try:
 
-            covariance = np.array(self.minuit.matrix(correlation=False))
+            covariance = np.array(self.minuit.covariance)
 
         except RuntimeError:
 
@@ -298,7 +291,7 @@ class MinuitMinimizer(LocalMinimizer):
 
         self.restore_best_fit()
 
-        if not self._is_fit_ok():
+        if not self.minuit.valid:
 
             raise CannotComputeErrors(
                 "MIGRAD results not valid, cannot compute errors."
