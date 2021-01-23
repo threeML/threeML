@@ -23,7 +23,7 @@ def get_path_of_log_dir() -> Path:
     get the path to the logging directory
     """
 
-    log_path: Path = Path(threeML_config["logging"]["path"])
+    log_path: Path = Path(threeML_config["logging"]["path"]).expanduser()
 
     if not log_path.exists():
 
@@ -135,7 +135,7 @@ def silence_logs():
         handler.setLevel(logging.CRITICAL)
 
 
-def active_logs():
+def activate_logs():
     """
     re-activate silenced logs
     """
@@ -180,7 +180,7 @@ def setup_logger(name):
         # if we do not want to log developer
         # for 3ML, then lets not for astromodels
 
-        astromodels_dev_log_handler.setLeveL(logging.CRITICAL)
+        astromodels_dev_log_handler.setLevel(logging.CRITICAL)
 
     if threeML_config["logging"]["console"]:
 

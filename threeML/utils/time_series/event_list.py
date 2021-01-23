@@ -406,11 +406,6 @@ class EventList(TimeSeries):
 
         self._poly_fit_exists = True
 
-        self._fit_method_info["bin type"] = "Binned"
-        self._fit_method_info["fit method"] = threeML_config["event list"][
-            "binned fit method"
-        ]
-
         # Select all the events that are in the background regions
         # and make a mask
 
@@ -575,12 +570,6 @@ class EventList(TimeSeries):
     def _unbinned_fit_polynomials(self, bayes=False):
 
         self._poly_fit_exists = True
-
-        # inform the type of fit we have
-        self._fit_method_info["bin type"] = "Unbinned"
-        self._fit_method_info["fit method"] = threeML_config["event list"][
-            "unbinned fit method"
-        ]
 
         # Select all the events that are in the background regions
         # and make a mask

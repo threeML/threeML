@@ -265,11 +265,6 @@ class BinnedSpectrumSeries(TimeSeries):
 
         self._poly_fit_exists = True
 
-        # set the fit method
-        self._fit_method_info["bin type"] = "Binned"
-        self._fit_method_info["fit method"] = threeML_config["event list"][
-            "binned fit method"
-        ]
 
         # we need to adjust the selection to the true intervals of the time-binned spectra
 
