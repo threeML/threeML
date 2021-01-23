@@ -325,8 +325,8 @@ class MinuitMinimizer(LocalMinimizer):
 
             minuit_name = self._parameter_name_to_minuit_name(k)
 
-            minus_error = self.minuit.merrors[(minuit_name, -1)]
-            plus_error = self.minuit.merrors[(minuit_name, 1)]
+            minus_error = self.minuit.merrors[minuit_name].lower
+            plus_error = self.minuit.merrors[minuit_name].upper
 
             if par.has_transformation():
 
