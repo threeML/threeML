@@ -1502,17 +1502,17 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins"):
+            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
 
                 self.set_active_time_interval(interval.to_string())
 
                 if extract_measured_background:
 
-                    this_background_spectrum=self._measured_background_spectrum
+                    this_background_spectrum = self._measured_background_spectrum
 
                 else:
 
-                    this_background_spectrum=self._background_spectrum
+                    this_background_spectrum = self._background_spectrum
 
                     if this_background_spectrum is None:
                         log.warning(
@@ -1521,7 +1521,7 @@ class TimeSeriesBuilder(object):
 
                 try:
 
-                    pl=PolarLike(
+                    pl = PolarLike(
                         name="%s%s%d" % (self._name, interval_name, i),
                         observation=self._observed_spectrum,
                         background=this_background_spectrum,
@@ -1538,7 +1538,6 @@ class TimeSeriesBuilder(object):
                         "Something is wrong with interval %s. skipping." % interval
                     )
 
-
             # restore the old interval
 
             if old_interval is not None:
@@ -1547,8 +1546,8 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                self._active_interval=None
+                self._active_interval = None
 
-            self._verbose=old_verbose
+            self._verbose = old_verbose
 
             return list_of_polarlikes
