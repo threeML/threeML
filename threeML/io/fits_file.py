@@ -6,6 +6,10 @@ import astropy.units as u
 import pkg_resources
 import six
 
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
+
 # From https://heasarc.gsfc.nasa.gov/docs/software/fitsio/c/c_user/node20.html
 # Codes for the data type of binary table columns and/or for the
 # data type of variables when reading or writing keywords or data:

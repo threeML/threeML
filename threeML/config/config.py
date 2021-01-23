@@ -38,6 +38,9 @@ _optimize_methods = (
 )
 
 
+
+    
+
 class Config(object):
     def __init__(self):
 
@@ -107,20 +110,9 @@ class Config(object):
                         "configuration for this session."
                     )
 
-                    # Move the config file to a backup file
-                    user_config_path.rename(f"{user_config_path}.bak")
 
-                    # Remove old file
-                    os.remove(user_config_path)
-
-                    # Copy the default configuration
-                    shutil.copy2(self._default_path, user_config_path)
-
-                    self._configuration = self._check_configuration(
-                        self._default_configuration_raw, self._default_path
-                    )
-                    self._filename: Path = self._default_path
-
+                    self.copy_default_config_file()
+                    
                 else:
 
                     self._filename: Path = user_config_path
@@ -130,8 +122,9 @@ class Config(object):
         else:
 
             custom_warnings.warn(
-                f"Using default configuration from {self._default_path} "
-                f"You might want to copy it to {user_config_path} to customize it and avoid this warning."
+                f"Using default configuration from {self._default_path}.\n"
+                f"You might want to copy it to {user_config_path} to customize it and avoid this warning.\n"
+                "You can also call threeML_config.copy_default_cong_file()\n"
             )
 
             self._configuration = self._check_configuration(
@@ -139,6 +132,29 @@ class Config(object):
             )
             self._filename: Path = self._default_path
 
+    def copy_default_config_file(self):
+
+        user_config_path: Path = get_path_of_user_dir() / _config_file_name
+
+        try:
+            old_config = user_config_path.rename(f"{user_config_path}.bak")
+        
+            # Remove old file
+            user_config_path.unlink()
+
+        except:
+
+            pass
+        
+                    # Copy the default configuration
+        shutil.copy(self._default_path, user_config_path)
+
+        self._configuration = self._check_configuration(
+                        self._default_configuration_raw, self._default_path
+                    )
+        self._filename: Path = self._default_path
+        
+            
     def __getitem__(self, key):
 
         if key in list(self._configuration.keys()):

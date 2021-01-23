@@ -5,12 +5,14 @@ Define the interface for a plugin class.
 from builtins import object
 import abc
 from astromodels.utils.valid_variable import is_valid_variable_name
-import warnings
+
 import functools
 from astromodels import IndependentVariable
 from future.utils import with_metaclass
+from threeML.io.logging import setup_logger
 
 
+log =setup_logger(__name__)
 # def set_external_property(method):
 #     """
 #     Sets external property values if they exist
@@ -60,9 +62,9 @@ class PluginPrototype(object, metaclass=abc.ABCMeta):
         self._tag = None
 
     def get_name(self):
-        warnings.warn(
+        log.warning(
             "Do not use get_name() for plugins, use the .name property",
-            DeprecationWarning,
+           
         )
 
         return self.name
@@ -109,7 +111,7 @@ class PluginPrototype(object, metaclass=abc.ABCMeta):
         evaluated on the likelihood
         """
 
-        warnings.warn(
+        log.warning(
             "get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are "
             "unreliable",
         )
@@ -154,7 +156,7 @@ class PluginPrototype(object, metaclass=abc.ABCMeta):
 
         if not isinstance(independent_variable, IndependentVariable):
 
-            warnings.warn(
+            log.warning(
                 "When tagging a plugin, you should use an IndependentVariable instance. You used instead "
                 "an instance of a %s object. This might lead to crashes or "
                 "other problems." % type(independent_variable)

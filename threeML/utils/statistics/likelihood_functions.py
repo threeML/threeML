@@ -1,10 +1,12 @@
 from __future__ import division
-from past.utils import old_div
-import numpy as np
-from threeML.utils.statistics.gammaln import logfactorial
-from math import log, sqrt, pi
 
+from math import log, pi, sqrt
+
+import numpy as np
 from numba import njit
+from past.utils import old_div
+
+from threeML.utils.statistics.gammaln import logfactorial
 
 _log_pi_2 = log(2 * pi)
 
@@ -124,7 +126,8 @@ def poisson_observed_poisson_background_xs(
     )
 
     first_term = (
-        expected_model_counts + (1 + exposure_ratio) * background_nuisance_parameter
+        expected_model_counts + (1 + exposure_ratio) *
+        background_nuisance_parameter
     )
 
     # we regularize the log so it will not give NaN if expected_model_counts and background_nuisance_parameter are both
@@ -182,7 +185,8 @@ def poisson_observed_poisson_background(
             * (alpha + alpha ** 2)
             * background_counts[idx]
             * expected_model_counts[idx]
-            + ((alpha + 1) * expected_model_counts[idx] - alpha * (o_plus_b)) ** 2
+            + ((alpha + 1) *
+               expected_model_counts[idx] - alpha * (o_plus_b)) ** 2
         )
 
         B_mle[idx] = (
@@ -195,7 +199,8 @@ def poisson_observed_poisson_background(
 
         loglike[idx] = (
             xlogy_one(
-                observed_counts[idx], alpha * B_mle[idx] + expected_model_counts[idx]
+                observed_counts[idx], alpha *
+                B_mle[idx] + expected_model_counts[idx]
             )
             + xlogy_one(background_counts[idx], B_mle[idx])
             - (alpha + 1) * B_mle[idx]
@@ -214,7 +219,8 @@ def poisson_observed_gaussian_background(
 
     # This loglike assume Gaussian errors on the background and Poisson uncertainties on the
 
-    n = background_counts.shape[0]  # observed counts. It is a profile likelihood.
+    # observed counts. It is a profile likelihood.
+    n = background_counts.shape[0]
 
     log_likes = np.empty(n, dtype=np.float64)
     b = np.empty(n, dtype=np.float64)
@@ -243,7 +249,8 @@ def poisson_observed_gaussian_background(
 
             log_likes[idx] = (
                 -((b[idx] - background_counts[idx]) ** 2) / (2 * s2)
-                + observed_counts[idx] * log(b[idx] + expected_model_counts[idx])
+                + observed_counts[idx] *
+                log(b[idx] + expected_model_counts[idx])
                 - b[idx]
                 - expected_model_counts[idx]
                 - logfactorial(observed_counts[idx])
@@ -266,10 +273,19 @@ def poisson_observed_gaussian_background(
     return log_likes, b
 
 
+@njit(fastmath=True)
 def half_chi2(y, yerr, expectation):
 
     # This is half of a chi2. The reason for the factor of two is that we need this to be the Gaussian likelihood,
     # so that the delta log-like for an error of say 1 sigma is 0.5 and not 1 like it would be for
     # the other likelihood functions. This way we can sum it with other likelihood functions.
 
-    return 1 / 2.0 * (y - expectation) ** 2 / yerr ** 2
+    N = y.shape[0]
+
+    log_likes = np.empty(N, dtype=np.float64)
+
+    for n in range(N):
+
+        log_likes[n] = (y[n] - expectation[n])**2 / (yerr[n]**2)
+
+    return 0.5 * log_likes

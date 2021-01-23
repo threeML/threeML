@@ -130,8 +130,12 @@ def test_instrument_response_set_function_and_convolve():
 
     # Integral of a constant, so we know easily what the output should be
 
-    integral_function = lambda e1, e2: e2 - e1
+    #integral_function = lambda e1, e2: e2 - e1
 
+    def integral_function():
+        return np.array(mc_energies)[1:] - np.array(mc_energies)[:-1]
+
+    
     rsp.set_function(integral_function)
 
     folded_counts = rsp.convolve()

@@ -1,6 +1,6 @@
 from threeML import *
 from threeML.plugins.XYLike import XYLike
-
+import os
 
 def get_signal():
     # Generate a test signal

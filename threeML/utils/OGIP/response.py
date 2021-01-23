@@ -13,7 +13,7 @@ from typing import Optional
 import numpy as np
 from matplotlib.colors import SymLogNorm
 from past.utils import old_div
-
+import numba as nb
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import (file_existing_and_readable,
@@ -22,6 +22,9 @@ from threeML.io.file_utils import (file_existing_and_readable,
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 class NoCoverageIntervals(RuntimeError):
     pass
@@ -68,7 +71,7 @@ class InstrumentResponse(object):
         # we simply store all the variables to the class
 
         self._matrix = np.array(matrix, float)
-
+        self._matrix_transpose = self._matrix.T
         # Make sure there are no nans or inf
         assert np.all(np.isfinite(self._matrix)), "Infinity or nan in matrix"
 
@@ -102,20 +105,20 @@ class InstrumentResponse(object):
 
         if self._mc_energies.max() < self._ebounds.max():
 
-            custom_warnings.warn(
+            log.warning(
                 "Maximum MC energy (%s) is smaller "
                 "than maximum EBOUNDS energy (%s)"
                 % (self._mc_energies.max(), self.ebounds.max()),
-                RuntimeWarning,
+                #RuntimeWarning,
             )
 
         if self._mc_energies.min() > self._ebounds.min():
 
-            custom_warnings.warn(
+            log.warning(
                 "Minimum MC energy (%s) is larger than "
                 "minimum EBOUNDS energy (%s)"
                 % (self._mc_energies.min(), self._ebounds.min()),
-                RuntimeWarning,
+             #   RuntimeWarning,
             )
 
     # This will be overridden by subclasses
@@ -176,6 +179,7 @@ class InstrumentResponse(object):
         assert new_matrix.shape == self._matrix.shape
 
         self._matrix = new_matrix
+        self._matrix_transpose = self._matrix.T
 
     @property
     def ebounds(self):
@@ -208,7 +212,7 @@ class InstrumentResponse(object):
         self._integral_function = integral_function
 
 
-    def convolve(self, precalc_fluxes: Optional[np.array]=None):
+    def convolve(self, precalc_fluxes: Optional[np.array]=None) -> np.ndarray:
         """
         Convolve the source flux with the response
         :param precalc_fluxes: The precalulated flux. If this is None, the
@@ -216,7 +220,7 @@ class InstrumentResponse(object):
         """
         if precalc_fluxes is None:
             fluxes = self._integral_function(
-                self._mc_energies[:-1], self._mc_energies[1:]
+               # self._mc_energies[:-1], self._mc_energies[1:]
             )
         else:
             fluxes = precalc_fluxes
@@ -230,7 +234,7 @@ class InstrumentResponse(object):
         idx = np.isfinite(fluxes)
         fluxes[~idx] = 0
 
-        folded_counts = np.dot(fluxes, self._matrix.T)
+        folded_counts = np.dot(fluxes, self._matrix_transpose)
 
         return folded_counts
 
@@ -389,14 +393,14 @@ class OGIPResponse(InstrumentResponse):
                 header = f["MATRIX", rsp_number].header
 
                 if arf_file is None:
-                    warnings.warn(
+                    log.warning(
                         "The response is in an extension called MATRIX, which usually means you also "
                         "need an ancillary file (ARF) which you didn't provide. You should refer to the "
                         "documentation  of the instrument and make sure you don't need an ARF."
                     )
 
             except Exception as e:
-                warnings.warn(
+                log.warning(
                     "The default choice for MATRIX extension failed:"
                     + repr(e)
                     + "available: "
@@ -525,7 +529,7 @@ class OGIPResponse(InstrumentResponse):
             tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
 
         except (KeyError):
-            warnings.warn(
+            log.warning(
                 "No TLMIN keyword found. This DRM does not follow OGIP standards. Assuming TLMIN=1"
             )
             tlmin_fchan = 1
@@ -708,10 +712,10 @@ class InstrumentResponseSet(object):
 
                     custom_warnings.simplefilter("always", RuntimeWarning)
 
-                    custom_warnings.warn(
+                    log.warning(
                         "Removing matrix %s (numbering starts at zero) because it has a coverage of "
                         "zero seconds" % i,
-                        RuntimeWarning,
+                        #RuntimeWarning,
                     )
 
                 to_be_removed.append(i)
