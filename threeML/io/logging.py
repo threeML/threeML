@@ -1,27 +1,58 @@
 import logging
 import logging.handlers as handlers
 import sys
-from typing import Dict, Optional
 from contextlib import contextmanager
+from typing import Dict, Optional
+from pathlib import Path
+
 import colorama
 from colorama import Back, Fore, Style
 
 from threeML.config.config import threeML_config
-from threeML.io.package_data import get_path_of_log_dir, get_path_of_log_file
+
 
 try:
     from astromodels.utils.logging import (astromodels_console_log_handler,
                                            astromodels_usr_log_handler)
 
     _has_astro_log = True
-    
+
 except:
 
     _has_astro_log = False
-    
+
 colorama.deinit()
 colorama.init(strip=False)
-## set up the console logging
+# set up the console logging
+
+
+
+
+def get_path_of_log_dir() -> Path:
+    """
+    get the path to the logging directory
+    """
+
+    log_path: Path = Path(threeML_config["logging"]["path"])
+
+    if not log_path.exists():
+
+        log_path.mkdir(parents=True)
+    
+    return log_path
+
+
+_log_file_names = ["usr.log", "dev.log"]
+
+
+def get_path_of_log_file(log_file: str) -> Path:
+    """
+    returns the path of the log files
+    """
+    assert log_file in _log_file_names, f"{log_file} is not one of {_log_file_names}"
+
+    return get_path_of_log_dir() / log_file
+
 
 
 class ColoredFormatter(logging.Formatter):
@@ -109,7 +140,8 @@ threeML_console_log_handler.setFormatter(_console_formatter)
 threeML_console_log_handler.setLevel(threeML_config["logging"]["level"])
 
 if _has_astro_log:
-    astromodels_console_log_handler.setLevel(threeML_config["logging"]["level"])
+    astromodels_console_log_handler.setLevel(
+        threeML_config["logging"]["level"])
 
 
 warning_filter = MyFilter(logging.WARNING)
@@ -124,11 +156,10 @@ def silence_warnings():
     threeML_console_log_handler.addFilter(warning_filter)
 
     if _has_astro_log:
-    
+
         astromodels_usr_log_handler.addFilter(warning_filter)
         astromodels_console_log_handler.addFilter(warning_filter)
-    
-    
+
 
 def activate_warnings():
     """
@@ -139,7 +170,7 @@ def activate_warnings():
     threeML_console_log_handler.removeFilter(warning_filter)
 
     if _has_astro_log:
-    
+
         astromodels_usr_log_handler.removeFilter(warning_filter)
         astromodels_console_log_handler.removeFilter(warning_filter)
 
@@ -150,6 +181,7 @@ def update_logging_level(level):
 
     if _has_astro_log:
         astromodels_console_log_handler.setLevel(level)
+
 
 @contextmanager
 def silence_console_log():
@@ -169,9 +201,6 @@ def silence_console_log():
         threeML_usr_log_handler.setLevel(current_usr_logging_level)
 
 
-        
-
-        
 def setup_logger(name):
 
     # A logger with name name will be created
