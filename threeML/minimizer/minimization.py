@@ -8,11 +8,11 @@ import numpy as np
 import pandas as pd
 import scipy.optimize
 from past.utils import old_div
-from tqdm.auto import tqdm
+from threeML.utils.progress_bar import tqdm
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.logging import setup_logger
-
+from threeML.config.config import threeML_config
 from threeML.utils.differentiation import ParameterOnBoundary, get_hessian
 
 # Set the warnings to be issued always for this module
@@ -265,9 +265,9 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros_like(steps1)
 
-        p = tqdm(total=len(steps1), desc="Profiling likelihood")
+        
 
-        for i, step in enumerate(steps1):
+        for i, step in enumerate(tqdm(steps1, desc="Profiling likelihood")):
 
             if self._n_free_parameters > 0:
 
@@ -286,7 +286,7 @@ class ProfileLikelihood(object):
 
             log_likes[i] = this_log_like
 
-            p.update(1)
+            
 
         return log_likes
 
@@ -294,7 +294,9 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros((len(steps1), len(steps2)))
 
-        p = tqdm(total=len(steps1) * len(steps2), desc="Profiling likelihood")
+        if threeML_config["interface"]["show_progress_bars"]:
+        
+            p = tqdm(total=len(steps1) * len(steps2), desc="Profiling likelihood")
 
         for i, step1 in enumerate(steps1):
 
@@ -327,7 +329,8 @@ class ProfileLikelihood(object):
 
                 log_likes[i, j] = this_log_like
 
-                p.update(1)
+                if threeML_config["interface"]["show_progress_bars"]:
+                    p.update(1)
 
         return log_likes
 

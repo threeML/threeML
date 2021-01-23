@@ -84,6 +84,36 @@ astromodels_console_log_handler.setLevel(
 warning_filter = LogFilter(logging.WARNING)
 
 
+
+####
+####  These control the verbosity of 3ML
+####
+
+def silence_progress_bars():
+    """
+    Turn off the progress bars
+    """
+
+    threeML_config["interface"]["show_progress_bars"] = False
+
+
+def activate_progress_bars():
+    """
+    Turn on the progress bars
+    """
+    threeML_config["interface"]["show_progress_bars"] = True
+
+
+def toggle_progress_bars():
+    """
+    toggle the state of the progress bars
+    """
+    state = threeML_config["interface"]["show_progress_bars"]
+
+    threeML_config["interface"]["show_progress_bars"] = not state
+
+    
+    
 def silence_warnings():
     """
     supress warning messages in console and file usr logs
@@ -135,6 +165,13 @@ def silence_logs():
         handler.setLevel(logging.CRITICAL)
 
 
+
+def quiet_mode():
+    """
+    turn off all logging and progress bars
+    """
+    
+        
 def activate_logs():
     """
     re-activate silenced logs

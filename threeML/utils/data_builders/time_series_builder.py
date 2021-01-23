@@ -5,7 +5,6 @@ from pathlib import Path
 import astropy.io.fits as fits
 import matplotlib.pyplot as plt
 import numpy as np
-from tqdm.auto import tqdm
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
@@ -21,6 +20,7 @@ from threeML.utils.OGIP.response import (InstrumentResponse,
                                          InstrumentResponseSet, OGIPResponse)
 from threeML.utils.polarization.binned_polarization import \
     BinnedModulationCurve
+from threeML.utils.progress_bar import tqdm
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum, BinnedSpectrumWithDispersion)
 from threeML.utils.statistics.stats_tools import Significance
@@ -810,9 +810,7 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            p = tqdm(total=len(these_bins), desc="Creating plugins")
-
-            for i, interval in enumerate(these_bins):
+            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
 
                 self.set_active_time_interval(interval.to_string())
 
@@ -898,8 +896,6 @@ class TimeSeriesBuilder(object):
                     log.critical(
                         f"Something is wrong with interval {interval} skipping."
                     )
-
-                p.update(1)
 
             # restore the old interval
 
@@ -1506,19 +1502,17 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            p = tqdm(total=len(these_bins), desc="Creating plugins")
-
-            for i, interval in enumerate(these_bins):
+            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins"):
 
                 self.set_active_time_interval(interval.to_string())
 
                 if extract_measured_background:
 
-                    this_background_spectrum = self._measured_background_spectrum
+                    this_background_spectrum=self._measured_background_spectrum
 
                 else:
 
-                    this_background_spectrum = self._background_spectrum
+                    this_background_spectrum=self._background_spectrum
 
                     if this_background_spectrum is None:
                         log.warning(
@@ -1527,7 +1521,7 @@ class TimeSeriesBuilder(object):
 
                 try:
 
-                    pl = PolarLike(
+                    pl=PolarLike(
                         name="%s%s%d" % (self._name, interval_name, i),
                         observation=self._observed_spectrum,
                         background=this_background_spectrum,
@@ -1544,7 +1538,7 @@ class TimeSeriesBuilder(object):
                         "Something is wrong with interval %s. skipping." % interval
                     )
 
-                p.update(1)
+
             # restore the old interval
 
             if old_interval is not None:
@@ -1553,8 +1547,8 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                self._active_interval = None
+                self._active_interval=None
 
-            self._verbose = old_verbose
+            self._verbose=old_verbose
 
             return list_of_polarlikes

@@ -13,7 +13,7 @@ import os
 import numpy as np
 import pandas as pd
 from pandas import HDFStore
-from tqdm.auto import tqdm, trange
+from threeML.utils.progress_bar import tqdm, trange
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings

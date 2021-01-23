@@ -9,10 +9,9 @@ import warnings
 from contextlib import contextmanager
 from distutils.spawn import find_executable
 
-from tqdm.auto import tqdm
-
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
+from threeML.utils.progress_bar import tqdm
 
 log = setup_logger(__name__)
 
@@ -78,7 +77,7 @@ def parallel_computation(profile=None, start_cluster=True):
         log.warning(
             "You requested parallel computation, but no parallel environment is available. You need "
             "to install the ipyparallel package. Continuing with serial computation...",
-            
+
         )
 
         threeML_config["parallel"]["use-parallel"] = False
@@ -242,13 +241,14 @@ if has_parallel:
 
                 if chunk_size is None:
 
-                    chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
+                    chunk_size = int(
+                        math.ceil(n_items / float(n_active_engines) / 20))
 
             # We need this to keep the instance alive
             self._current_amr = lview.imap(
                 worker, items_to_process, chunksize=chunk_size, ordered=ordered
             )
-            
+
             return self._current_amr
 
         def execute_with_progress_bar(self, worker, items, chunk_size=None, name="progress"):
@@ -262,21 +262,16 @@ if has_parallel:
 
             items_wrapped = [(i, item) for i, item in enumerate(items)]
 
-            n_iterations = len(items)
-
-            p = tqdm(total=n_iterations, desc=name)
-
             amr = self._interactive_map(
                 wrapper, items_wrapped, ordered=False, chunk_size=chunk_size
             )
 
             results = []
 
-            for i, res in enumerate(amr):
+            for i, res in enumerate(tqdm(amr, desc=name)):
 
                 results.append(res)
 
-                p.update(1)
             # Reorder the list according to the id
             return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))
 

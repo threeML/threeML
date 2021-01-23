@@ -7,7 +7,8 @@ import itertools
 
 import numpy as np
 from astromodels import use_astromodels_memoization
-from tqdm.auto import tqdm
+
+from threeML.utils.progress_bar import tqdm
 
 
 class GenericFittedSourceHandler(object):
@@ -47,7 +48,8 @@ class GenericFittedSourceHandler(object):
         # keep from confusing itertools
 
         if len(self._independent_variable_range) == 1:
-            self._independent_variable_range = (self._independent_variable_range[0],)
+            self._independent_variable_range = (
+                self._independent_variable_range[0],)
 
         # figure out the output shape of the best fit and errors
 
@@ -417,7 +419,8 @@ class VariatesContainer(object):
 
             other_values = other.values
 
-            summed_values = [v + vo for v, vo in zip(self._values, other_values)]
+            summed_values = [v + vo for v,
+                             vo in zip(self._values, other_values)]
 
             return VariatesContainer(
                 summed_values,
