@@ -6,12 +6,9 @@ from threeML.minimizer.minimization import (
     FitFailed,
     CannotComputeCovariance,
 )
-from threeML.io.detect_notebook import is_inside_notebook
 
 from iminuit import Minuit
 
-# from iminuit.frontends.console import ConsoleFrontend
-# from iminuit.frontends.html import HtmlFrontend
 import collections
 import numpy as np
 
@@ -29,22 +26,6 @@ def add_method(self, method, name=None):
         name = method.__name__
 
     setattr(self.__class__, name, method)
-
-
-# def _get_frontend():
-#     """
-#     Returns the appropriate frontend (HTML for notebook and Console for the console)
-
-#     :return:
-#     """
-
-#     if is_inside_notebook():
-
-#         return HtmlFrontend()
-
-#     else:
-
-#         return ConsoleFrontend()
 
 
 class MinuitMinimizer(LocalMinimizer):
@@ -78,7 +59,7 @@ class MinuitMinimizer(LocalMinimizer):
 
         iminuit_fixed_parameters = collections.OrderedDict()
 
-        # List of variable names that will be used for iminuit.
+        # List of variable names that will be used for iminuit
 
         variable_names_for_iminuit = []
 
@@ -109,26 +90,6 @@ class MinuitMinimizer(LocalMinimizer):
 
         # Tell imnuit what parameter names are
         iminuit_init_parameters["name"] = variable_names_for_iminuit
-
-        # # We need to make a function with the parameters as explicit
-        # # variables in the calling sequence, so that Minuit will be able
-        # # to probe the parameter's names
-        # var_spelled_out = ",".join(variable_names_for_iminuit)
-        #
-        # # A dictionary to keep a way to convert from var. name to
-        # # variable position in the function calling sequence
-        # # (will use this in contours)
-        #
-        # self.name_to_position = {k: i for i, k in enumerate(variable_names_for_iminuit)}
-        #
-        # # Write and compile the code for such function
-        #
-        # code = 'def _f(self, %s):\n  return self.function(%s)' % (var_spelled_out, var_spelled_out)
-        # exec code
-        #
-        # # Add the function just created as a method of the class
-        # # so it will be able to use the 'self' pointer
-        # add_method(self, _f, "_f")
 
         # Finally we can instance the Minuit class
 
