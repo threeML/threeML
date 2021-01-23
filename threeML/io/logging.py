@@ -1,58 +1,47 @@
 import logging
 import logging.handlers as handlers
 import sys
-from typing import Dict, Optional
 from contextlib import contextmanager
-import colorama
+from pathlib import Path
+from typing import Dict, Optional
+
+from astromodels.utils.logging import (ColoredFormatter, LogFilter,
+                                       _console_formatter, _dev_formatter,
+                                       _usr_formatter,
+                                       astromodels_console_log_handler,
+                                       astromodels_dev_log_handler,
+                                       astromodels_usr_log_handler)
 from colorama import Back, Fore, Style
 
 from threeML.config.config import threeML_config
-from threeML.io.package_data import get_path_of_log_dir, get_path_of_log_file
 
-try:
-    from astromodels.utils.logging import (astromodels_console_log_handler,
-                                           astromodels_usr_log_handler)
-
-    _has_astro_log = True
-    
-except:
-
-    _has_astro_log = False
-    
-colorama.deinit()
-colorama.init(strip=False)
-## set up the console logging
+# set up the console logging
 
 
-class ColoredFormatter(logging.Formatter):
+def get_path_of_log_dir() -> Path:
     """
-    Colored log formatter.
+    get the path to the logging directory
     """
 
-    def __init__(
-        self, *args, colors: Optional[Dict[str, str]] = None, **kwargs
-    ) -> None:
-        """Initialize the formatter with specified format strings."""
+    log_path: Path = Path(threeML_config["logging"]["path"]).expanduser()
 
-        super().__init__(*args, **kwargs)
+    if not log_path.exists():
 
-        self.colors = colors if colors else {}
+        log_path.mkdir(parents=True)
 
-    def format(self, record) -> str:
-        """Format the specified record as text."""
-
-        record.color = self.colors.get(record.levelname, "")
-        record.reset = Style.RESET_ALL
-
-        return super().format(record)
+    return log_path
 
 
-class MyFilter(object):
-    def __init__(self, level):
-        self.__level = level
+_log_file_names = ["usr.log", "dev.log"]
 
-    def filter(self, logRecord):
-        return logRecord.levelno != self.__level
+
+def get_path_of_log_file(log_file: str) -> Path:
+    """
+    returns the path of the log files
+    """
+    assert log_file in _log_file_names, f"{log_file} is not one of {_log_file_names}"
+
+    return get_path_of_log_dir() / log_file
 
 
 # now create the developer handler that rotates every day and keeps
@@ -63,11 +52,6 @@ threeML_dev_log_handler = handlers.TimedRotatingFileHandler(
 
 
 # lots of info written out
-
-_dev_formatter = logging.Formatter(
-    "%(asctime)s | %(name)s | %(levelname)s| %(funcName)s | %(lineno)d | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
 
 threeML_dev_log_handler.setFormatter(_dev_formatter)
 threeML_dev_log_handler.setLevel(logging.DEBUG)
@@ -82,39 +66,54 @@ threeML_usr_log_handler = handlers.TimedRotatingFileHandler(
 threeML_usr_log_handler.setLevel(logging.INFO)
 
 # lots of info written out
-_usr_formatter = logging.Formatter(
-    "%(asctime)s | %(levelname)s | %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
-)
 
 threeML_usr_log_handler.setFormatter(_usr_formatter)
 
 # now set up the console logger
-
-_console_formatter = ColoredFormatter(
-    "{asctime} |{color} {levelname:8} {reset}| {color} {message} {reset}",
-    style="{",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    colors={
-        "DEBUG": Fore.CYAN,
-        "INFO": Fore.GREEN + Style.BRIGHT,
-        "WARNING": Fore.YELLOW + Style.DIM,
-        "ERROR": Fore.RED + Style.BRIGHT,
-        "CRITICAL": Fore.RED + Back.WHITE + Style.BRIGHT,
-    },
-)
 
 
 threeML_console_log_handler = logging.StreamHandler(sys.stdout)
 threeML_console_log_handler.setFormatter(_console_formatter)
 threeML_console_log_handler.setLevel(threeML_config["logging"]["level"])
 
-if _has_astro_log:
-    astromodels_console_log_handler.setLevel(threeML_config["logging"]["level"])
+
+astromodels_console_log_handler.setLevel(
+    threeML_config["logging"]["level"])
 
 
-warning_filter = MyFilter(logging.WARNING)
+warning_filter = LogFilter(logging.WARNING)
 
 
+
+####
+####  These control the verbosity of 3ML
+####
+
+def silence_progress_bars():
+    """
+    Turn off the progress bars
+    """
+
+    threeML_config["interface"]["show_progress_bars"] = False
+
+
+def activate_progress_bars():
+    """
+    Turn on the progress bars
+    """
+    threeML_config["interface"]["show_progress_bars"] = True
+
+
+def toggle_progress_bars():
+    """
+    toggle the state of the progress bars
+    """
+    state = threeML_config["interface"]["show_progress_bars"]
+
+    threeML_config["interface"]["show_progress_bars"] = not state
+
+    
+    
 def silence_warnings():
     """
     supress warning messages in console and file usr logs
@@ -123,12 +122,9 @@ def silence_warnings():
     threeML_usr_log_handler.addFilter(warning_filter)
     threeML_console_log_handler.addFilter(warning_filter)
 
-    if _has_astro_log:
-    
-        astromodels_usr_log_handler.addFilter(warning_filter)
-        astromodels_console_log_handler.addFilter(warning_filter)
-    
-    
+    astromodels_usr_log_handler.addFilter(warning_filter)
+    astromodels_console_log_handler.addFilter(warning_filter)
+
 
 def activate_warnings():
     """
@@ -138,19 +134,52 @@ def activate_warnings():
     threeML_usr_log_handler.removeFilter(warning_filter)
     threeML_console_log_handler.removeFilter(warning_filter)
 
-    if _has_astro_log:
-    
-        astromodels_usr_log_handler.removeFilter(warning_filter)
-        astromodels_console_log_handler.removeFilter(warning_filter)
+    astromodels_usr_log_handler.removeFilter(warning_filter)
+    astromodels_console_log_handler.removeFilter(warning_filter)
 
 
 def update_logging_level(level):
-
+    """
+    update the logging level to the console
+    """
     threeML_console_log_handler.setLevel(level)
 
-    if _has_astro_log:
-        astromodels_console_log_handler.setLevel(level)
+    astromodels_console_log_handler.setLevel(level)
 
+
+def silence_logs():
+    """
+    Turn off all logging 
+    """
+
+    log = logging.getLogger("threeML")
+
+    for handler in log.handers:
+
+        handler.setLevel(logging.CRITICAL)
+
+    log = logging.getLogger("astromodels")
+
+    for handler in log.handers:
+
+        handler.setLevel(logging.CRITICAL)
+
+
+
+def quiet_mode():
+    """
+    turn off all logging and progress bars
+    """
+    
+        
+def activate_logs():
+    """
+    re-activate silenced logs
+    """
+
+    pass
+
+        
 @contextmanager
 def silence_console_log():
 
@@ -169,9 +198,6 @@ def silence_console_log():
         threeML_usr_log_handler.setLevel(current_usr_logging_level)
 
 
-        
-
-        
 def setup_logger(name):
 
     # A logger with name name will be created
@@ -185,6 +211,13 @@ def setup_logger(name):
 
     if threeML_config["logging"]["developer"]:
         log.addHandler(threeML_dev_log_handler)
+
+    else:
+
+        # if we do not want to log developer
+        # for 3ML, then lets not for astromodels
+
+        astromodels_dev_log_handler.setLevel(logging.CRITICAL)
 
     if threeML_config["logging"]["console"]:
 

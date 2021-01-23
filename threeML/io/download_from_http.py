@@ -4,12 +4,13 @@ from builtins import object
 from pathlib import Path
 
 import requests
-from tqdm.auto import tqdm
+from threeML.utils.progress_bar import tqdm
 
 from threeML.io.file_utils import (file_existing_and_readable,
                                    path_exists_and_is_directory,
                                    sanitize_filename)
 
+from threeML.config.config import threeML_config
 
 class RemoteDirectoryNotFound(IOError):
     pass
@@ -197,7 +198,7 @@ class ApacheDirectory(object):
 
             opener = open
 
-        if progress:
+        if threeML_config["interface"]["show_progress_bars"]:
 
             # Set a title for the progress bar
             bar_title = "Downloading %s" % new_filename
