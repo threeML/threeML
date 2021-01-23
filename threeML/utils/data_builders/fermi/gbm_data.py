@@ -1,20 +1,22 @@
 import collections
+import re
+import warnings
 
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
-import re
 import requests
-import warnings
 
-from threeML.utils.fermi_relative_mission_time import (
-    compute_fermi_relative_mission_times,
-)
+from threeML.io.logging import setup_logger
+from threeML.utils.fermi_relative_mission_time import \
+    compute_fermi_relative_mission_times
 from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
+
+log = setup_logger(__name__)
 
 
 class GBMTTEFile(object):
-    def __init__(self, ttefile):
+    def __init__(self, ttefile: str) -> None:
         """
 
         A simple class for opening and easily accessing Fermi GBM
@@ -38,7 +40,7 @@ class GBMTTEFile(object):
 
         if not len(self._events) == len(np.unique(self._events)):
 
-            warnings.warn(
+            log.warning(
                 "The TTE file %s contains duplicate time tags and is thus invalid. Contact the FSSC "
                 % ttefile
             )
@@ -49,7 +51,7 @@ class GBMTTEFile(object):
         if not np.alltrue(self._events[sort_idx] == self._events):
 
             # now sort both time and energy
-            warnings.warn(
+            log.warning(
                 "The TTE file %s was not sorted in time but contains no duplicate events. We will sort the times, but use caution with this file. Contact the FSSC."
             )
             self._events = self._events[sort_idx]
@@ -61,10 +63,11 @@ class GBMTTEFile(object):
         except:
 
             # For continuous data
-            warnings.warn(
+            log.warning(
                 "There is no trigger time in the TTE file. Must be set manually or using MET relative times."
             )
 
+            log.debug("set trigger time to zero")
             self._trigger_time = 0
 
         self._start_events = tte["PRIMARY"].header["TSTART"]
@@ -85,12 +88,12 @@ class GBMTTEFile(object):
         self._calculate_deadtime()
 
     @property
-    def trigger_time(self):
+    def trigger_time(self) -> float:
 
         return self._trigger_time
 
     @trigger_time.setter
-    def trigger_time(self, val):
+    def trigger_time(self, val) -> None:
 
         assert self._start_events <= val <= self._stop_events, (
             "Trigger time must be within the interval (%f,%f)"
@@ -100,27 +103,27 @@ class GBMTTEFile(object):
         self._trigger_time = val
 
     @property
-    def tstart(self):
+    def tstart(self) -> float:
         return self._start_events
 
     @property
-    def tstop(self):
+    def tstop(self) -> float:
         return self._stop_events
 
     @property
-    def arrival_times(self):
+    def arrival_times(self) -> np.ndarray:
         return self._events
 
     @property
-    def n_channels(self):
+    def n_channels(self) -> int:
         return self._n_channels
 
     @property
-    def energies(self):
+    def energies(self) -> np.ndarray:
         return self._pha
 
     @property
-    def mission(self):
+    def mission(self) -> str:
         """
         Return the name of the mission
         :return:
@@ -128,7 +131,7 @@ class GBMTTEFile(object):
         return self._telescope
 
     @property
-    def det_name(self):
+    def det_name(self) -> str:
         """
         Return the name of the instrument and detector
 
@@ -138,10 +141,10 @@ class GBMTTEFile(object):
         return self._det_name
 
     @property
-    def deadtime(self):
+    def deadtime(self) -> np.ndarray:
         return self._deadtime
 
-    def _calculate_deadtime(self):
+    def _calculate_deadtime(self) -> None:
         """
         Computes an array of deadtimes following the perscription of Meegan et al. (2009).
 
@@ -158,7 +161,7 @@ class GBMTTEFile(object):
         # Normal dead time
         self._deadtime[~overflow_mask] = 2.0e-6  # s
 
-    def _compute_mission_times(self):
+    def _compute_mission_times(self) -> None:
 
         mission_dict = {}
 
@@ -194,7 +197,7 @@ class GBMTTEFile(object):
 
         except:
 
-            warnings.warn(
+            log.warning(
                 "You do not have the requests library, cannot get time system from Heasarc "
                 "at this point."
             )
@@ -208,7 +211,6 @@ class GBMTTEFile(object):
         return self._output().to_string()
 
     def _output(self):
-
         """
                 Examine the currently selected interval
                 If connected to the internet, will also look up info for other instruments to compare with
@@ -237,19 +239,20 @@ class GBMTTEFile(object):
 
 
 class GBMCdata(object):
-    def __init__(self, cdata_file, rsp_file):
+    def __init__(self, cdata_file: str, rsp_file: str) -> None:
 
         self.spectrum_set = PHASpectrumSet(cdata_file, rsp_file=rsp_file)
 
         cdata = fits.open(cdata_file)
 
         try:
+
             self._trigger_time = cdata["PRIMARY"].header["TRIGTIME"]
 
         except:
 
             # For continuous data
-            warnings.warn(
+            log.warning(
                 "There is no trigger time in the TTE file. Must be set manually or using MET relative times."
             )
 
@@ -271,12 +274,12 @@ class GBMCdata(object):
         self._telescope = cdata["PRIMARY"].header["TELESCOP"]
 
     @property
-    def trigger_time(self):
+    def trigger_time(self) -> float:
 
         return self._trigger_time
 
     @trigger_time.setter
-    def trigger_time(self, val):
+    def trigger_time(self, val) -> None:
 
         assert self._start_events <= val <= self._stop_events, (
             "Trigger time must be within the interval (%f,%f)"
@@ -286,27 +289,23 @@ class GBMCdata(object):
         self._trigger_time = val
 
     @property
-    def tstart(self):
+    def tstart(self) -> float:
         return self._start_events
 
     @property
-    def tstop(self):
+    def tstop(self) -> float:
         return self._stop_events
 
     @property
-    def arrival_times(self):
-        return self._events
-
-    @property
-    def n_channels(self):
+    def n_channels(self) -> int:
         return self._n_channels
 
     @property
-    def energies(self):
+    def energies(self) -> np.ndarray:
         return self._pha
 
     @property
-    def mission(self):
+    def mission(self) -> str:
         """
         Return the name of the mission
         :return:
@@ -314,7 +313,7 @@ class GBMCdata(object):
         return self._telescope
 
     @property
-    def det_name(self):
+    def det_name(self) -> str:
         """
         Return the name of the instrument and detector
 
@@ -359,7 +358,7 @@ class GBMCdata(object):
 
         except:
 
-            warnings.warn(
+            log.warning(
                 "You do not have the requests library, cannot get time system from Heasarc "
                 "at this point."
             )
@@ -373,7 +372,6 @@ class GBMCdata(object):
         return self._output().to_string()
 
     def _output(self):
-
         """
                 Examine the currently selected interval
                 If connected to the internet, will also look up info for other instruments to compare with

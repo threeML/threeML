@@ -14,6 +14,9 @@ from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit
 from threeML.utils.time_series.time_series import TimeSeries
 
+from threeML.io.logging import setup_logger, silence_console_log
+
+log = setup_logger(__name__)
 
 class BinnedSpectrumSeries(TimeSeries):
     def __init__(
@@ -308,21 +311,22 @@ class BinnedSpectrumSeries(TimeSeries):
         # The total cnts (over channels) is binned
 
         if self._user_poly_order == -1:
-
-            self._optimal_polynomial_grade = (
-                self._fit_global_and_determine_optimum_grade(
-                    selected_counts.sum(axis=1),
-                    selected_midpoints,
-                    selected_exposure,
-                    bayes=bayes,
+            with silence_console_log():
+            
+                self._optimal_polynomial_grade = (
+                    self._fit_global_and_determine_optimum_grade(
+                        selected_counts.sum(axis=1),
+                        selected_midpoints,
+                        selected_exposure,
+                        bayes=bayes,
+                    )
                 )
-            )
-            if self._verbose:
-                print(
+
+            log.info(
                     "Auto-determined polynomial order: %d"
                     % self._optimal_polynomial_grade
                 )
-                print("\n")
+
 
         else:
 
@@ -344,8 +348,10 @@ class BinnedSpectrumSeries(TimeSeries):
 
             client = ParallelClient()
 
-            polynomials = client.execute_with_progress_bar(
-                worker, selected_counts.T, name=f"Fitting {self._instrument} background")
+            with silence_console_log():
+
+                polynomials = client.execute_with_progress_bar(
+                    worker, selected_counts.T, name=f"Fitting {self._instrument} background")
 
         else:
 
@@ -354,19 +360,21 @@ class BinnedSpectrumSeries(TimeSeries):
             # now fit the light curve of each channel
             # and save the estimated polynomial
 
-            for counts in tqdm(
-                selected_counts.T, desc=f"Fitting {self._instrument} background"
-            ):
+            with silence_console_log():
+                
+                for counts in tqdm(
+                    selected_counts.T, desc=f"Fitting {self._instrument} background"
+                ):
 
-                polynomial, _ = polyfit(
-                    selected_midpoints,
-                    counts,
-                    self._optimal_polynomial_grade,
-                    selected_exposure,
-                    bayes=bayes,
-                )
+                    polynomial, _ = polyfit(
+                        selected_midpoints,
+                        counts,
+                        self._optimal_polynomial_grade,
+                        selected_exposure,
+                        bayes=bayes,
+                    )
 
-                polynomials.append(polynomial)
+                    polynomials.append(polynomial)
 
         self._polynomials = polynomials
 

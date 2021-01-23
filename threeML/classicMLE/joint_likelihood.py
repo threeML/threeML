@@ -10,18 +10,22 @@ import numpy as np
 import pandas as pd
 import scipy.optimize
 import scipy.stats
-from astromodels import ModelAssertionViolation, clone_model
+from astromodels import Model, ModelAssertionViolation, clone_model
 from past.utils import old_div
 
 from threeML.analysis_results import MLEResults
 from threeML.config.config import threeML_config
+from threeML.data_list import DataList
 from threeML.exceptions import custom_exceptions
 from threeML.exceptions.custom_exceptions import FitFailed, custom_warnings
+from threeML.io.logging import setup_logger
 from threeML.io.results_table import ResultsTable
 from threeML.io.table import Table
 from threeML.minimizer import minimization
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.statistics.stats_tools import aic, bic
+
+log = setup_logger(__name__)
 
 
 class ReducingNumberOfThreads(Warning):
@@ -37,7 +41,13 @@ class NotANumberInLikelihood(Warning):
 
 
 class JointLikelihood(object):
-    def __init__(self, likelihood_model, data_list, verbose=False, record=True):
+    def __init__(
+        self,
+        likelihood_model: Model,
+        data_list: DataList,
+        verbose: bool = False,
+        record: bool = True,
+    ):
         """
         Implement a joint likelihood analysis.
 
@@ -49,22 +59,24 @@ class JointLikelihood(object):
         :return:
         """
 
-        self._analysis_type = "mle"
+        log.debug("creating new MLE analysis")
+
+        self._analysis_type: str = "mle"
 
         # Process optional keyword parameters
-        self.verbose = verbose
+        self.verbose: bool = verbose
 
-        self._likelihood_model = likelihood_model  # type: astromodels.core.model.Model
+        self._likelihood_model: Model = likelihood_model
 
-        self._data_list = data_list
+        self._data_list: DataList = data_list
 
         self._assign_model_to_data(self._likelihood_model)
 
         # This is to keep track of the number of calls to the likelihood
         # function
-        self._record = bool(record)
-        self._ncalls = 0
-        self._record_calls = {}
+        self._record: bool = bool(record)
+        self._ncalls: int = 0
+        self._record_calls: dict = {}
 
         # Pre-defined minimizer
         default_minimizer = minimization.LocalMinimization(
@@ -95,7 +107,9 @@ class JointLikelihood(object):
 
         self._analysis_results = None
 
-    def _assign_model_to_data(self, model):
+    def _assign_model_to_data(self, model) -> None:
+
+        log.debug("REGISTERING MODEL")
 
         for dataset in list(self._data_list.values()):
 
@@ -118,8 +132,10 @@ class JointLikelihood(object):
 
                 self._likelihood_model.add_external_parameter(parameter)
 
+        log.debug("MODEL REGISTERED!")
+
     @property
-    def likelihood_model(self):
+    def likelihood_model(self) -> Model:
         """
         :return: likelihood model for this analysis
         """
@@ -127,7 +143,7 @@ class JointLikelihood(object):
         return self._likelihood_model
 
     @property
-    def data_list(self):
+    def data_list(self) -> DataList:
         """
         :return: data list for this analysis
         """
@@ -135,7 +151,7 @@ class JointLikelihood(object):
         return self._data_list
 
     @property
-    def current_minimum(self):
+    def current_minimum(self) -> float:
         """
         :return: current minimum of the joint likelihood (available only after the fit() method)
         """
@@ -180,7 +196,7 @@ class JointLikelihood(object):
             )
 
     @property
-    def analysis_type(self):
+    def analysis_type(self) -> str:
         return self._analysis_type
 
     def _update_free_parameters(self):
@@ -188,7 +204,12 @@ class JointLikelihood(object):
 
         self._free_parameters = self._likelihood_model.free_parameters
 
-    def fit(self, quiet=False, compute_covariance=True, n_samples=5000):
+    def fit(
+        self,
+        quiet: bool = False,
+        compute_covariance: bool = True,
+        n_samples: int = 5000,
+    ):
         """
         Perform a fit of the current likelihood model on the datasets
 
@@ -201,6 +222,7 @@ class JointLikelihood(object):
         # Update the list of free parameters, to be safe against changes the user might do between
         # the creation of this class and the calling of this method
 
+        log.debug("beginning the fit!")
         self._update_free_parameters()
 
         # Empty the call recorder
@@ -210,9 +232,7 @@ class JointLikelihood(object):
         # Check if we have free parameters, otherwise simply return the value of the log like
         if len(self._free_parameters) == 0:
 
-            custom_warnings.warn(
-                "There is no free parameter in the current model", RuntimeWarning
-            )
+            log.warning("There is no free parameter in the current model")
 
             # Create the minimizer anyway because it will be needed by the following code
 
@@ -231,6 +251,7 @@ class JointLikelihood(object):
             if isinstance(self._minimizer_type, minimization.GlobalMinimization):
 
                 # Do global minimization first
+                log.debug(f"starting global optimization")
 
                 if quiet:
 
@@ -266,13 +287,13 @@ class JointLikelihood(object):
 
                 if not quiet:
 
-                    print(
+                    log.info(
                         "\n\nResults after global minimizer (before secondary optimization):"
                     )
 
                     global_results.display()
 
-                    print(
+                    log.info(
                         "\nTotal log-likelihood minimum: %.3f\n"
                         % global_log_likelihood_minimum
                     )
@@ -285,6 +306,8 @@ class JointLikelihood(object):
             else:
 
                 # Only local minimization to be performed
+
+                log.debug("starting local optimization")
 
                 self._minimizer = self._get_minimizer(
                     self.minus_log_like_profile, self._free_parameters
@@ -299,8 +322,8 @@ class JointLikelihood(object):
             )
 
             if log_likelihood_minimum == minimization.FIT_FAILED:
-
-                raise FitFailed("The fit failed to converge.")
+                log.error("The fit failed to converge.")
+                raise FitFailed()
 
             # Store the current minimum for the -log likelihood
 
@@ -372,7 +395,7 @@ class JointLikelihood(object):
         )
 
     @property
-    def results(self):
+    def results(self) -> MLEResults:
 
         return self._analysis_results
 
@@ -424,7 +447,7 @@ class JointLikelihood(object):
         param_2_maximum=None,
         param_2_n_steps=None,
         progress=True,
-        **options
+        **options,
     ):
         """
         Generate confidence contours for the given parameters by stepping for the given number of steps between
@@ -548,7 +571,7 @@ class JointLikelihood(object):
                 param_2_maximum,
                 param_2_n_steps,
                 progress,
-                **options
+                **options,
             )
 
             # Collapse the second dimension of the results if we are doing a 1d contour
@@ -577,10 +600,9 @@ class JointLikelihood(object):
 
                 n_engines = int(param_1_n_steps)
 
-                custom_warnings.warn(
+                log.warning(
                     "The number of engines is larger than the number of steps. Using only %s engines."
                     % n_engines,
-                    ReducingNumberOfThreads,
                 )
 
             # Check if the number of steps is divisible by the number
@@ -592,10 +614,9 @@ class JointLikelihood(object):
 
                 param_1_n_steps = (param_1_n_steps // n_engines) * n_engines
 
-                custom_warnings.warn(
+                log.warning(
                     "Number of steps is not a multiple of the number of threads. Reducing steps to %s"
                     % param_1_n_steps,
-                    ReducingNumberOfSteps,
                 )
 
             # Compute the number of splits, i.e., how many lines in the grid for each engine.
@@ -659,7 +680,7 @@ class JointLikelihood(object):
                     param_2_maximum,
                     param_2_n_steps,
                     progress=True,
-                    **options
+                    **options,
                 )
 
                 # Restore best fit values
@@ -920,9 +941,8 @@ class JointLikelihood(object):
                 # This is a zone of the parameter space which is not allowed. Return
                 # a big number for the likelihood so that the fit engine will avoid it
 
-                custom_warnings.warn(
+                log.warning(
                     "Fitting engine in forbidden space: %s" % (trial_values,),
-                    custom_exceptions.ForbiddenRegionOfParameterSpace,
                 )
 
                 return minimization.FIT_FAILED
@@ -940,10 +960,8 @@ class JointLikelihood(object):
         # especially if they are written in something other than python
 
         if "%s" % summed_log_likelihood == "nan":
-            custom_warnings.warn(
-                "These parameters returned a logLike = Nan: %s" % (
-                    trial_values,),
-                NotANumberInLikelihood,
+            log.warning(
+                "These parameters returned a logLike = Nan: %s" % (trial_values,),
             )
 
             return minimization.FIT_FAILED
@@ -994,6 +1012,8 @@ class JointLikelihood(object):
 
             self._minimizer_type = minimization.LocalMinimization(minimizer)
 
+        log.info(f"set the minimizer to {minimizer}")
+
     def _get_minimizer(self, *args, **kwargs):
 
         # Get an instance of the minimizer
@@ -1027,9 +1047,7 @@ class JointLikelihood(object):
 
         else:
 
-            custom_warnings.warn(
-                "Cannot restore best fit, since fit has not been executed."
-            )
+            log.warning("Cannot restore best fit, since fit has not been executed.")
 
     def _get_table_of_parameters(self, parameters):
 

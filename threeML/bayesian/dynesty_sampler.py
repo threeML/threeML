@@ -7,6 +7,7 @@ from astromodels import ModelAssertionViolation, use_astromodels_memoization
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from threeML.parallel.parallel_client import ParallelClient
+from threeML.io.logging import setup_logger
 
 try:
 
@@ -20,6 +21,7 @@ else:
 
     has_dynesty = True
 
+log = setup_logger(__name__)
 
 class DynestyPool(object):
     """A simple wrapper for `dview`."""
@@ -83,6 +85,7 @@ class DynestyNestedSampler(UnitCubeSampler):
         update_func=None,
         **kwargs
     ):
+        log.debug("Setup dynesty sampler")
 
         self._sampler_kwargs = {}
         self._sampler_kwargs["maxiter"] = maxiter
@@ -155,7 +158,7 @@ class DynestyNestedSampler(UnitCubeSampler):
         """
         if not self._is_setup:
 
-            print("You forgot to setup the sampler!")
+            log.info("You forgot to setup the sampler!")
             return
 
         loud = not quiet
@@ -185,8 +188,9 @@ class DynestyNestedSampler(UnitCubeSampler):
         self._sampler_kwargs["print_progress"] = loud
 
         with use_astromodels_memoization(False):
-
+            log.debug("Start dynesty run")
             sampler.run_nested(**self._sampler_kwargs)
+            log.debug("Dynesty run done")
 
         self._sampler = sampler
 
@@ -306,7 +310,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
         update_func=None,
         **kwargs
     ):
-
+        log.debug("Setup dynesty sampler")
         self._sampler_kwargs = {}
         self._sampler_kwargs["nlive_init"] = nlive_init
         self._sampler_kwargs["maxiter_init"] = maxiter_init
@@ -391,7 +395,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
         """
         if not self._is_setup:
 
-            print("You forgot to setup the sampler!")
+            log.info("You forgot to setup the sampler!")
             return
 
         loud = not quiet
@@ -421,8 +425,9 @@ class DynestyDynamicSampler(UnitCubeSampler):
         self._sampler_kwargs["print_progress"] = loud
 
         with use_astromodels_memoization(False):
-
+            log.debug("Start dynestsy run")
             sampler.run_nested(**self._sampler_kwargs)
+            log.debug("Dynesty run done")
 
         self._sampler = sampler
 

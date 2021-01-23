@@ -3,6 +3,7 @@ from __future__ import print_function
 import copy
 
 import matplotlib.pyplot as plt
+import numba as nb
 import numpy as np
 import pandas as pd
 from astromodels import Model, PointSource
@@ -10,10 +11,12 @@ from astromodels import Model, PointSource
 from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
-from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.logging import setup_logger
 from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.likelihood_functions import (
     half_chi2, poisson_log_likelihood_ideal_bkg)
+
+log = setup_logger(__name__)
 
 __instrument_name = "n.a."
 
@@ -51,11 +54,9 @@ class XYLike(PluginPrototype):
 
             assert np.all(self._yerr > 0), "Errors cannot be negative or zero."
 
-            if not quiet:
-
-                print(
-                    "Using Gaussian statistic (equivalent to chi^2) with the provided errors."
-                )
+            log.info(
+                "Using Gaussian statistic (equivalent to chi^2) with the provided errors."
+            )
 
             self._is_poisson = False
 
@@ -69,21 +70,17 @@ class XYLike(PluginPrototype):
 
             self._has_errors = False
 
-            if not quiet:
-
-                print("Using unweighted Gaussian (equivalent to chi^2) statistic.")
+            log.info("Using unweighted Gaussian (equivalent to chi^2) statistic.")
 
         else:
 
-            if not quiet:
-
-                print("Using Poisson log-likelihood")
+            log.info("Using Poisson log-likelihood")
 
             self._is_poisson = True
             self._yerr = None
             self._has_errors = True
             self._y = self._y.astype(np.int64)
-
+            self._zeros = np.zeros_like(self._y)
         # sets the exposure assuming eval at center
         # of bin. this should probably be improved
         # with a histogram plugin
@@ -387,20 +384,13 @@ class XYLike(PluginPrototype):
             if negative_mask.sum() > 0:
                 expectation[negative_mask] = 0.0
 
-            return np.sum(
-                poisson_log_likelihood_ideal_bkg(
-                    self._y[self._mask], np.zeros_like(self._y[self._mask]), expectation
-                )
-            )
+            return _poisson_like(self._y[self._mask], self._zeros, expectation * self._exposure
+                                 )
 
         else:
 
             # Chi squared
-            chi2_ = half_chi2(self._y[self._mask], self._yerr[self._mask], expectation)
-
-            assert np.all(np.isfinite(chi2_))
-
-            return np.sum(chi2_) * (-1)
+            return _chi2_like(self._y[self._mask], self._yerr[self._mask], expectation * self._exposure)
 
     def get_simulated_dataset(self, new_name=None):
 
@@ -552,3 +542,22 @@ class XYLike(PluginPrototype):
         # the sum of the mask should be the number of data points in use
 
         return self._mask.sum()
+
+
+@nb.njit(fastmath=True)
+def _poisson_like(y, zeros, expectation):
+    return np.sum(
+        poisson_log_likelihood_ideal_bkg(
+            y, zeros, expectation
+        )[0]
+    )
+
+
+@nb.njit(fastmath=True)
+def _chi2_like(y, yerr, expectation):
+
+    chi2_ = half_chi2(y, yerr, expectation)
+
+    assert np.all(np.isfinite(chi2_))
+
+    return np.sum(chi2_) * (-1)

@@ -6,6 +6,7 @@ from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
 from threeML.io.calculate_flux import _calculate_point_source_flux
 import astropy.units as u
 import matplotlib.pyplot as plt
+import os
 
 from threeML.io.package_data import get_path_of_data_dir
 

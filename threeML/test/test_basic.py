@@ -1,4 +1,13 @@
+from pathlib import Path
+
+import pytest
+
 from threeML import *
+from threeML.io.network import internet_connection_is_active
+
+skip_if_internet_is_not_available = pytest.mark.skipif(
+    not internet_connection_is_active(), reason="No active internet connection"
+)
 
 
 def test_basic_analysis_results(fitted_joint_likelihood_bn090217206_nai):
@@ -197,3 +206,84 @@ def test_basic_bayesian_analysis_results_multicomp(
     assert np.allclose(
         frame["positive_error"].values, expected_positive_errors, rtol=0.1
     )
+
+
+@skip_if_internet_is_not_available
+def test_gbm_workflow():
+
+    import warnings
+
+    warnings.simplefilter("ignore")
+
+    gbm_catalog = FermiGBMBurstCatalog()
+    gbm_catalog.query_sources("GRB080916009")
+
+    grb_info = gbm_catalog.get_detector_information()["GRB080916009"]
+
+    gbm_detectors = grb_info["detectors"]
+    source_interval = grb_info["source"]["fluence"]
+    background_interval = grb_info["background"]["full"]
+    best_fit_model = grb_info["best fit model"]["fluence"]
+    model = gbm_catalog.get_model(best_fit_model, "fluence")["GRB080916009"]
+
+    dload = download_GBM_trigger_data("bn080916009", detectors=gbm_detectors)
+
+    fluence_plugins = []
+    time_series = {}
+
+    for det in gbm_detectors:
+
+        ts_cspec = TimeSeriesBuilder.from_gbm_cspec_or_ctime(
+            det, cspec_or_ctime_file=dload[det]["cspec"], rsp_file=dload[det]["rsp"]
+        )
+
+        ts_cspec.set_background_interval(*background_interval.split(","))
+        ts_cspec.save_background(f"{det}_bkg.h5", overwrite=True)
+
+        ts_cspec.write_pha_from_binner(
+            "test_write", start=0, stop=10, overwrite=True, force_rsp_write=True
+        )
+
+        ts_tte = TimeSeriesBuilder.from_gbm_tte(
+            det,
+            tte_file=dload[det]["tte"],
+            rsp_file=dload[det]["rsp"],
+            restore_background=f"{det}_bkg.h5",
+        )
+
+        time_series[det] = ts_tte
+
+        ts_tte.set_active_time_interval(source_interval)
+
+        ts_tte.view_lightcurve(-40, 100)
+
+        fluence_plugin = ts_tte.to_spectrumlike()
+
+        if det.startswith("b"):
+
+            fluence_plugin.set_active_measurements("250-30000")
+
+        else:
+
+            fluence_plugin.set_active_measurements("9-900")
+
+        fluence_plugin.rebin_on_background(1.0)
+
+        fluence_plugins.append(fluence_plugin)
+
+        ts_tte.create_time_bins(start=0, stop=10, method="constant", dt=1)
+
+    # clean up
+    p = Path(".")
+
+    dl_files = p.glob("glg*080916009*")
+
+    [x.unlink() for x in dl_files]
+
+    dl_files = p.glob("test_write*")
+
+    [x.unlink() for x in dl_files]
+
+    dl_files = p.glob("*_bkg.h5")
+
+    [x.unlink() for x in dl_files]

@@ -3,8 +3,10 @@ import copy
 from typing import Optional
 
 import numpy as np
+import numba as nb
 
-from threeML.exceptions.custom_exceptions import custom_warnings
+
+from threeML.utils.numba_utils import nb_sum
 from threeML.utils.statistics.likelihood_functions import half_chi2
 from threeML.utils.statistics.likelihood_functions import (
     poisson_log_likelihood_ideal_bkg,
@@ -16,6 +18,9 @@ from threeML.utils.statistics.likelihood_functions import (
     poisson_observed_poisson_background,
 )
 
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 # These classes provide likelihood evaluation to SpectrumLike and children
 
@@ -63,7 +68,7 @@ class GaussianObservedStatistic(BinnedStatistic):
 
         assert np.all(np.isfinite(chi2_))
 
-        return np.sum(chi2_) * (-1), None
+        return nb_sum(chi2_) * (-1), None
 
     def get_randomized_source_counts(self, source_model_counts):
         idx = self._spectrum_plugin.observed_count_errors > 0
@@ -79,10 +84,10 @@ class GaussianObservedStatistic(BinnedStatistic):
 
         idx = randomized_source_counts < 0  # type: np.ndarray
 
-        negative_source_n = np.sum(idx)
+        negative_source_n = nb_sum(idx)
 
         if negative_source_n > 0:
-            custom_warnings.warn(
+            log.warning(
                 "Generated source has negative counts "
                 "in %i channels. Fixing them to zero" % (negative_source_n)
             )
@@ -108,7 +113,7 @@ class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
             model_counts,
         )
 
-        return np.sum(loglike), None
+        return nb_sum(loglike), None
 
     def get_randomized_source_counts(self, source_model_counts):
         # Randomize expectations for the source
@@ -152,7 +157,7 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
 
         bkg_log_like = self._spectrum_plugin.background_plugin.get_log_like()
 
-        total_log_like = np.sum(loglike) + bkg_log_like
+        total_log_like = nb_sum(loglike) + bkg_log_like
 
         return total_log_like, None
 
@@ -199,7 +204,7 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
             model_counts,
         )
 
-        return np.sum(loglike), None
+        return nb_sum(loglike), None
 
     def get_randomized_source_counts(self, source_model_counts):
         # Randomize expectations for the source
@@ -222,7 +227,7 @@ class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
             model_counts,
         )
 
-        return np.sum(loglike), bkg_model
+        return nb_sum(loglike), bkg_model
 
     def get_randomized_source_counts(self, source_model_counts):
         # Since we use a profile likelihood, the background model is conditional on the source model, so let's
@@ -261,7 +266,7 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
             expected_model_counts,
         )
 
-        return np.sum(loglike), bkg_model
+        return nb_sum(loglike), bkg_model
 
     def get_randomized_source_counts(self, source_model_counts):
         # Since we use a profile likelihood, the background model is conditional on the source model, so let's
@@ -300,10 +305,10 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
 
         idx = randomized_background_counts < 0  # type: np.ndarray
 
-        negative_background_n = np.sum(idx)
+        negative_background_n = nb_sum(idx)
 
         if negative_background_n > 0:
-            custom_warnings.warn(
+            log.warning(
                 "Generated background has negative counts "
                 "in %i channels. Fixing them to zero" % (negative_background_n)
             )
@@ -327,3 +332,5 @@ statistic_lookup = {
     "gaussian": {None: GaussianObservedStatistic},
     None: {None: None},
 }
+
+

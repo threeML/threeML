@@ -172,4 +172,3 @@ def _isinstance(obj):
 @nb.njit(fastmath=True)
 def nb_sum(x):
     return np.sum(x)
-
