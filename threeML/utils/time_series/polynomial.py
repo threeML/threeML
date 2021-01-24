@@ -1,26 +1,20 @@
-from __future__ import division
 
-import warnings
-from builtins import object, range, zip
+from typing import Iterable, List, Optional, Tuple, Union
 
 import numpy as np
-import scipy.optimize as opt
 from astromodels import (Constant, Cubic, Gaussian, Line, Log_normal, Model,
                          PointSource, Quadratic)
-from past.utils import old_div
 
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import FitFailed, JointLikelihood
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
-from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.logging import setup_logger, update_logging_level
+from threeML.io.logging import setup_logger
 from threeML.minimizer.minimization import (GlobalMinimization,
                                             LocalMinimization)
 from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
                                                  UnbinnedPoissonLike)
 from threeML.plugins.XYLike import XYLike
-from threeML.utils.differentiation import ParameterOnBoundary, get_hessian
 
 log = setup_logger(__name__)
 
@@ -33,22 +27,24 @@ class CannotComputeCovariance(RuntimeWarning):
 
 
 class Polynomial(object):
-    def __init__(self, coefficients, is_integral=False):
+    def __init__(self, coefficients: Iterable[float], is_integral: bool = False):
         """
+        A polynomial
 
         :param coefficients: array of poly coefficients
         :param is_integral: if this polynomial is an
         """
-        self._coefficients = coefficients
-        self._degree = len(coefficients) - 1
+        self._coefficients: Iterable[float] = coefficients
+        self._degree: int = len(coefficients) - 1
 
         log.debug(f"creating polynomial of degree {self._degree}")
         log.debug(f"with coefficients {self._coefficients}")
 
-        self._i_plus_1 = np.array(
+        self._i_plus_1: np.ndarray = np.array(
             list(range(1, self._degree + 1 + 1)), dtype=float)
 
-        self._cov_matrix = np.zeros((self._degree + 1, self._degree + 1))
+        self._cov_matrix: np.ndarray = np.zeros(
+            (self._degree + 1, self._degree + 1))
 
         # we can fix some things for speed
         # we only need to set the coeff for the
@@ -66,11 +62,11 @@ class Polynomial(object):
                 ]
             )
 
-            self._integral_polynomial = Polynomial(
+            self._integral_polynomial: "Polynomial" = Polynomial(
                 integral_coeff, is_integral=True)
 
     @classmethod
-    def from_previous_fit(cls, coefficients, covariance):
+    def from_previous_fit(cls, coefficients, covariance) -> "Polynomial":
 
         log.debug("restoring polynomial from previous fit")
 
@@ -80,7 +76,7 @@ class Polynomial(object):
         return poly
 
     @property
-    def degree(self):
+    def degree(self) -> int:
         """
         the polynomial degree
         :return:
@@ -140,15 +136,15 @@ class Polynomial(object):
             result = result * x + coefficient
         return result
 
-    def set_covariace_matrix(self, matrix):
+    def set_covariace_matrix(self, matrix) -> None:
 
         self._cov_matrix = matrix
 
     @property
-    def covariance_matrix(self):
+    def covariance_matrix(self) -> np.ndarray:
         return self._cov_matrix
 
-    def integral(self, xmin, xmax):
+    def integral(self, xmin, xmax) -> float:
         """
         Evaluate the integral of the polynomial between xmin and xmax
 
@@ -160,7 +156,7 @@ class Polynomial(object):
 
         return (1.0 / self._i_plus_1) * np.power(x, self._i_plus_1)
 
-    def integral_error(self, xmin, xmax):
+    def integral_error(self, xmin, xmax) -> float:
         """
         computes the integral error of an interval
         :param xmin: start of the interval
@@ -174,8 +170,19 @@ class Polynomial(object):
         return np.sqrt(err2)
 
 
-def polyfit(x, y, grade, exposure, bayes=False):
-    """ function to fit a polynomial to event data. not a member to allow parallel computation """
+def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterable[float], bayes: bool = False) -> Tuple[Polynomial, float]:
+    """ 
+    function to fit a polynomial to data. 
+    not a member to allow parallel computation
+
+    :param x: the x coord of the data
+    :param y: teh y coord of the data
+    :param grade: the polynomical order or grade
+    :param expousure: the exposure of the interval
+    :param bayes: to do a bayesian fit or not
+
+
+    """
 
     # Check that we have enough counts to perform the fit, otherwise
     # return a "zero polynomial"
@@ -328,9 +335,17 @@ def polyfit(x, y, grade, exposure, bayes=False):
     return final_polynomial, -min_log_likelihood
 
 
-def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
+def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop: float, exposure: float, bayes: bool) -> Tuple[Polynomial, float]:
     """
-    function to fit a polynomial to event data. not a member to allow parallel computation
+    function to fit a polynomial to unbinned event data. 
+    not a member to allow parallel computation
+
+    :param events: the events to fit
+    :param grade: the polynomical order or grade
+    :param t_start: the start time to fit over
+    :param t_stop: the end time to fit over
+    :param expousure: the exposure of the interval
+    :param bayes: to do a bayesian fit or not
 
     """
 
