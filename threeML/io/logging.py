@@ -95,7 +95,7 @@ class LoggingState(object):
                  astromodels_usr_log_handler, astromodels_console_log_handler
                  ):
         """
-        A container to store the stat of the logs 
+        A container to store the stat of the logs
         """
 
         # attach the log handlers
@@ -244,7 +244,7 @@ def update_logging_level(level):
 
 def silence_logs():
     """
-    Turn off all logging 
+    Turn off all logging
     """
 
     # handle dev logs independently
@@ -300,7 +300,7 @@ def debug_mode():
 @contextmanager
 def silence_console_log():
     """
-    temporarily silence the console and progress bars 
+    temporarily silence the console and progress bars
     """
     current_console_logging_level = threeML_console_log_handler.level
     current_usr_logging_level = threeML_usr_log_handler.level
@@ -320,8 +320,8 @@ def silence_console_log():
         threeML_console_log_handler.setLevel(current_console_logging_level)
         threeML_usr_log_handler.setLevel(current_usr_logging_level)
 
-       threeML_config["interface"]["show_progress_bars"] = progress_state
-
+        threeML_config["interface"]["show_progress_bars"] = progress_state
+       
 
 def setup_logger(name):
 
