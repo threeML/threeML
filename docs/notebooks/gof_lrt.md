@@ -43,7 +43,7 @@ warnings.simplefilter('ignore')
 Let's go back to simulations. We will simulate a straight line. 
 
 ```python
-gen_function = Line(a=0,b=1)
+gen_function = Line(a=1,b=0)
 
 x = np.linspace(0, 2, 50)
 

@@ -44,7 +44,7 @@ import astropy.units as u
 Let's take a look at what we can do with an AR. First, we will simulate some data.
 
 ```python
-gen_function = Line(a=0.0, b=2) + Gaussian(F=30.0, mu=25.0, sigma=1)
+gen_function = Line(a=2, b=0) + Gaussian(F=30.0, mu=25.0, sigma=1)
 
 # Generate a dataset using the line and a gaussian.
 # constant 20% error
