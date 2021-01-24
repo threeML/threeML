@@ -9,7 +9,7 @@ from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import FitFailed, JointLikelihood
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
-from threeML.io.logging import setup_logger
+from threeML.io.logging import setup_logger, silence_console_log
 from threeML.minimizer.minimization import (GlobalMinimization,
                                             LocalMinimization)
 from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
@@ -217,45 +217,41 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
 
     avg = np.mean(y/exposure)
 
-    xy = XYLike("series", x=x, y=y, exposure=exposure,
-                poisson_data=True, quiet=True)
+    with silence_console_log():
 
-    if not bayes:
+        xy = XYLike("series", x=x, y=y, exposure=exposure,
+                    poisson_data=True, quiet=True)
 
-        # make sure the model is positive
+        if not bayes:
 
-        for i, (k, v) in enumerate(model.free_parameters.items()):
+            # make sure the model is positive
 
-            if i == 0:
+            for i, (k, v) in enumerate(model.free_parameters.items()):
 
-                v.bounds = (0, None)
+                if i == 0:
 
-                v.value = avg
+                    v.bounds = (0, None)
 
-            else:
+                    v.value = avg
 
-                v.value = 0.0
+                else:
 
-        # we actually use a line here
-        # because a constant is returns a
-        # single number
+                    v.value = 0.0
 
-        if grade == 0:
+            # we actually use a line here
+            # because a constant is returns a
+            # single number
 
-            shape.b = 0
-            shape.b.fix = True
+            if grade == 0:
 
-        jl: JointLikelihood = JointLikelihood(model, DataList(xy))
+                shape.b = 0
+                shape.b.fix = True
 
-        jl.set_minimizer("minuit")
+            jl: JointLikelihood = JointLikelihood(model, DataList(xy))
 
-        # if the fit falis, retry and then just accept
+            jl.set_minimizer("minuit")
 
-        try:
-
-            jl.fit(quiet=True)
-
-        except:
+            # if the fit falis, retry and then just accept
 
             try:
 
@@ -263,72 +259,78 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
 
             except:
 
-                log.debug("all MLE fits failed")
+                try:
 
-                pass
+                    jl.fit(quiet=True)
 
-        coeff = [v.value for _, v in model.free_parameters.items()]
+                except:
 
-        log.debug(f"got coeff: {coeff}")
+                    log.debug("all MLE fits failed")
 
-        final_polynomial = Polynomial(coeff)
+                    pass
 
-        try:
-            final_polynomial.set_covariace_matrix(jl.results.covariance_matrix)
+            coeff = [v.value for _, v in model.free_parameters.items()]
 
-        except:
+            log.debug(f"got coeff: {coeff}")
 
-            log.exception(f"Fit failed in channel")
+            final_polynomial = Polynomial(coeff)
 
-        min_log_likelihood = xy.get_log_like()
+            try:
+                final_polynomial.set_covariace_matrix(jl.results.covariance_matrix)
 
-    else:
+            except:
 
-        # set smart priors
+                log.exception(f"Fit failed in channel")
 
-        for i, (k, v) in enumerate(model.free_parameters.items()):
+            min_log_likelihood = xy.get_log_like()
 
-            if i == 0:
+        else:
 
-                v.bounds = (0, None)
-                v.prior = Log_normal(
-                    mu=np.log(avg), sigma=np.max([np.log(avg/2), 1]))
-                v.value = 1
+            # set smart priors
 
-            else:
+            for i, (k, v) in enumerate(model.free_parameters.items()):
 
-                v.prior = Gaussian(mu=0, sigma=2)
-                v.value = 1e-2
+                if i == 0:
 
-        # we actually use a line here
-        # because a constant is returns a
-        # single number
+                    v.bounds = (0, None)
+                    v.prior = Log_normal(
+                        mu=np.log(avg), sigma=np.max([np.log(avg/2), 1]))
+                    v.value = 1
 
-        if grade == 0:
+                else:
 
-            shape.b = 0
-            shape.b.fix = True
+                    v.prior = Gaussian(mu=0, sigma=2)
+                    v.value = 1e-2
 
-        ba: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
+            # we actually use a line here
+            # because a constant is returns a
+            # single number
 
-        ba.set_sampler("emcee")
+            if grade == 0:
 
-        ba.sampler.setup(n_iterations=500, n_burn_in=200, n_walkers=20)
+                shape.b = 0
+                shape.b.fix = True
 
-        ba.sample(quiet=True)
+            ba: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
 
-        ba.restore_median_fit()
+            ba.set_sampler("emcee")
 
-        coeff = [v.value for _, v in model.free_parameters.items()]
+            ba.sampler.setup(n_iterations=500, n_burn_in=200, n_walkers=20)
 
-        log.debug(f"got coeff: {coeff}")
+            ba.sample(quiet=True)
 
-        final_polynomial = Polynomial(coeff)
+            ba.restore_median_fit()
 
-        final_polynomial.set_covariace_matrix(
-            ba.results.estimate_covariance_matrix())
+            coeff = [v.value for _, v in model.free_parameters.items()]
 
-        min_log_likelihood = xy.get_log_like()
+            log.debug(f"got coeff: {coeff}")
+
+            final_polynomial = Polynomial(coeff)
+
+            final_polynomial.set_covariace_matrix(
+                ba.results.estimate_covariance_matrix())
+
+            min_log_likelihood = xy.get_log_like()
 
     log.debug(f"-min loglike: {-min_log_likelihood}")
 
@@ -364,58 +366,54 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
 
     shape = _grade_model_lookup[grade]()
 
-    ps = PointSource("dummy", 0, 0, spectral_shape=shape)
+    with silence_console_log():
 
-    model = Model(ps)
+        ps = PointSource("dummy", 0, 0, spectral_shape=shape)
 
-    observation = EventObservation(events, exposure, t_start, t_stop)
+        model = Model(ps)
 
-    xy = UnbinnedPoissonLike("series", observation=observation)
+        observation = EventObservation(events, exposure, t_start, t_stop)
 
-    if not bayes:
+        xy = UnbinnedPoissonLike("series", observation=observation)
 
-        # make sure the model is positive
+        if not bayes:
 
-        for i, (k, v) in enumerate(model.free_parameters.items()):
+            # make sure the model is positive
 
-            if i == 0:
+            for i, (k, v) in enumerate(model.free_parameters.items()):
 
-                v.bounds = (0, None)
+                if i == 0:
 
-                v.value = 10
+                    v.bounds = (0, None)
 
-            else:
+                    v.value = 10
 
-                v.value = 0.0
+                else:
 
-        # we actually use a line here
-        # because a constant is returns a
-        # single number
+                    v.value = 0.0
 
-        if grade == 0:
+            # we actually use a line here
+            # because a constant is returns a
+            # single number
 
-            shape.b = 0
-            shape.b.fix = True
+            if grade == 0:
 
-        jl: JointLikelihood = JointLikelihood(model, DataList(xy))
+                shape.b = 0
+                shape.b.fix = True
 
-        grid_minimizer = GlobalMinimization("grid")
+            jl: JointLikelihood = JointLikelihood(model, DataList(xy))
 
-        local_minimizer = LocalMinimization("minuit")
+            grid_minimizer = GlobalMinimization("grid")
 
-        my_grid = {model.dummy.spectrum.main.shape.a: np.logspace(0, 3, 3)}
+            local_minimizer = LocalMinimization("minuit")
 
-        grid_minimizer.setup(second_minimization=local_minimizer, grid=my_grid)
+            my_grid = {model.dummy.spectrum.main.shape.a: np.logspace(0, 3, 3)}
 
-        jl.set_minimizer(grid_minimizer)
+            grid_minimizer.setup(second_minimization=local_minimizer, grid=my_grid)
 
-        # if the fit falis, retry and then just accept
+            jl.set_minimizer(grid_minimizer)
 
-        try:
-
-            jl.fit(quiet=True)
-
-        except:
+            # if the fit falis, retry and then just accept
 
             try:
 
@@ -423,66 +421,72 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
 
             except:
 
-                log.debug("all MLE fits failed, returning zero")
+                try:
 
-                return Polynomial([0]*(grade + 1)), 0
+                    jl.fit(quiet=True)
 
-        coeff = [v.value for _, v in model.free_parameters.items()]
+                except:
 
-        log.debug(f"got coeff: {coeff}")
+                    log.debug("all MLE fits failed, returning zero")
 
-        final_polynomial = Polynomial(coeff)
+                    return Polynomial([0]*(grade + 1)), 0
 
-        final_polynomial.set_covariace_matrix(jl.results.covariance_matrix)
+            coeff = [v.value for _, v in model.free_parameters.items()]
 
-        min_log_likelihood = xy.get_log_like()
+            log.debug(f"got coeff: {coeff}")
 
-    else:
+            final_polynomial = Polynomial(coeff)
 
-        # set smart priors
+            final_polynomial.set_covariace_matrix(jl.results.covariance_matrix)
 
-        for i, (k, v) in enumerate(model.free_parameters.items()):
+            min_log_likelihood = xy.get_log_like()
 
-            if i == 0:
+        else:
 
-                v.bounds = (0, None)
-                v.prior = Log_normal(mu=np.log(5), sigma=np.log(5))
-                v.value = 1
+            # set smart priors
 
-            else:
+            for i, (k, v) in enumerate(model.free_parameters.items()):
 
-                v.prior = Gaussian(mu=0, sigma=.5)
-                v.value = 0.1
+                if i == 0:
 
-        # we actually use a line here
-        # because a constant is returns a
-        # single number
+                    v.bounds = (0, None)
+                    v.prior = Log_normal(mu=np.log(5), sigma=np.log(5))
+                    v.value = 1
 
-        if grade == 0:
+                else:
 
-            shape.b = 0
-            shape.b.fix = True
+                    v.prior = Gaussian(mu=0, sigma=.5)
+                    v.value = 0.1
 
-        ba: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
+            # we actually use a line here
+            # because a constant is returns a
+            # single number
 
-        ba.set_sampler("emcee")
+            if grade == 0:
 
-        ba.sampler.setup(n_iterations=500, n_burn_in=200, n_walkers=20)
+                shape.b = 0
+                shape.b.fix = True
 
-        ba.sample(quiet=True)
+            ba: BayesianAnalysis = BayesianAnalysis(model, DataList(xy))
 
-        ba.restore_median_fit()
+            ba.set_sampler("emcee")
 
-        coeff = [v.value for _, v in model.free_parameters.items()]
+            ba.sampler.setup(n_iterations=500, n_burn_in=200, n_walkers=20)
 
-        log.debug(f"got coeff: {coeff}")
+            ba.sample(quiet=True)
 
-        final_polynomial = Polynomial(coeff)
+            ba.restore_median_fit()
 
-        final_polynomial.set_covariace_matrix(
-            ba.results.estimate_covariance_matrix())
+            coeff = [v.value for _, v in model.free_parameters.items()]
 
-        min_log_likelihood = xy.get_log_like()
+            log.debug(f"got coeff: {coeff}")
+
+            final_polynomial = Polynomial(coeff)
+
+            final_polynomial.set_covariace_matrix(
+                ba.results.estimate_covariance_matrix())
+
+            min_log_likelihood = xy.get_log_like()
 
     log.debug(f"-min loglike: {-min_log_likelihood}")
 

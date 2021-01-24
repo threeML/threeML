@@ -478,16 +478,16 @@ class EventList(TimeSeries):
 
         if self._user_poly_order == -1:
 
-            with silence_console_log():
+            
 
-                self._optimal_polynomial_grade = (
-                    self._fit_global_and_determine_optimum_grade(
-                        cnts[non_zero_mask],
-                        mean_time[non_zero_mask],
-                        exposure_per_bin[non_zero_mask],
-                        bayes=bayes
-                    )
+            self._optimal_polynomial_grade = (
+                self._fit_global_and_determine_optimum_grade(
+                    cnts[non_zero_mask],
+                    mean_time[non_zero_mask],
+                    exposure_per_bin[non_zero_mask],
+                    bayes=bayes
                 )
+            )
 
             log.info(
                 "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
@@ -527,41 +527,42 @@ class EventList(TimeSeries):
 
             client = ParallelClient()
 
-            with silence_console_log():
 
-                polynomials = client.execute_with_progress_bar(
+
+            polynomials = client.execute_with_progress_bar(
                     worker, channels, name=f"Fitting {self._instrument} background")
 
         else:
 
             polynomials = []
 
-            with silence_console_log():
+            
 
-                for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
-                    channel_mask = total_poly_energies == channel
+            for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
 
-                    # Mask background events and current channel
-                    # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
-                    # Select the masked events
+                channel_mask = total_poly_energies == channel
 
-                    current_events = total_poly_events[channel_mask]
+                # Mask background events and current channel
+                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+                # Select the masked events
 
-                    # now bin the selected channel counts
+                current_events = total_poly_events[channel_mask]
 
-                    cnts, bins = np.histogram(current_events, bins=these_bins)
+                # now bin the selected channel counts
 
-                    # Put data to fit in an x vector and y vector
+                cnts, bins = np.histogram(current_events, bins=these_bins)
 
-                    polynomial, _ = polyfit(
-                        mean_time[non_zero_mask],
-                        cnts[non_zero_mask],
-                        self._optimal_polynomial_grade,
-                        exposure_per_bin[non_zero_mask],
-                        bayes=bayes
-                    )
+                # Put data to fit in an x vector and y vector
 
-                    polynomials.append(polynomial)
+                polynomial, _ = polyfit(
+                    mean_time[non_zero_mask],
+                    cnts[non_zero_mask],
+                    self._optimal_polynomial_grade,
+                    exposure_per_bin[non_zero_mask],
+                    bayes=bayes
+                )
+
+                polynomials.append(polynomial)
 
         # We are now ready to return the polynomials
 
@@ -615,12 +616,12 @@ class EventList(TimeSeries):
 
         if self._user_poly_order == -1:
 
-            with silence_console_log():
-                self._optimal_polynomial_grade = (
-                    self._unbinned_fit_global_and_determine_optimum_grade(
-                        total_poly_events, poly_exposure, bayes=bayes
-                    )
+
+            self._optimal_polynomial_grade = (
+                self._unbinned_fit_global_and_determine_optimum_grade(
+                    total_poly_events, poly_exposure, bayes=bayes
                 )
+            )
 
             log.info(
                 "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
@@ -663,35 +664,35 @@ class EventList(TimeSeries):
 
             client = ParallelClient()
 
-            with silence_console_log():
-                polynomials = client.execute_with_progress_bar(
+
+            polynomials = client.execute_with_progress_bar(
                     worker, channels, name=f"Fitting {self._instrument} background")
 
         else:
 
             polynomials = []
 
-            with silence_console_log():
+            
 
-                for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
-                    channel_mask = total_poly_energies == channel
+            for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
+                channel_mask = total_poly_energies == channel
 
-                    # Mask background events and current channel
-                    # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
-                    # Select the masked events
+                # Mask background events and current channel
+                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+                # Select the masked events
 
-                    current_events = total_poly_events[channel_mask]
+                current_events = total_poly_events[channel_mask]
 
-                    polynomial, _ = unbinned_polyfit(
-                        current_events,
-                        self._optimal_polynomial_grade,
-                        t_start,
-                        t_stop,
-                        poly_exposure,
-                        bayes=bayes
-                    )
+                polynomial, _ = unbinned_polyfit(
+                    current_events,
+                    self._optimal_polynomial_grade,
+                    t_start,
+                    t_stop,
+                    poly_exposure,
+                    bayes=bayes
+                )
 
-                    polynomials.append(polynomial)
+                polynomials.append(polynomial)
 
         # We are now ready to return the polynomials
 
