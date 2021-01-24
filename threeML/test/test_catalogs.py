@@ -7,14 +7,13 @@ skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
 )
 
-
-@skip_if_internet_is_not_available
 # @pytest.mark.xfail
+@skip_if_internet_is_not_available
 def test_gbm_catalog():
 
     gbm_catalog = FermiGBMBurstCatalog()
 
-    _ = gbm_catalog.cone_search(0.0, 0.0, 5.0)
+    _ = gbm_catalog.cone_search(0.0, 0.0, 300.0)
 
     assert gbm_catalog.ra_center == 0.0
     assert gbm_catalog.dec_center == 0.0
