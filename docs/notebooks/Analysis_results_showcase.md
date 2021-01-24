@@ -22,7 +22,7 @@ The structure is nearly the same between MLE and Bayesian analyses in order to m
 
 ```python
 from threeML import *
-
+silence_logs()
 from threeML.analysis_results import *
 
 from tqdm.auto import tqdm
