@@ -84,10 +84,106 @@ astromodels_console_log_handler.setLevel(
 warning_filter = LogFilter(logging.WARNING)
 
 
+####
+# These control the verbosity of 3ML
+####
 
-####
-####  These control the verbosity of 3ML
-####
+
+class LoggingState(object):
+
+    def __init__(self, threeML_usr_log_handler, threeML_console_log_handler,
+                 astromodels_usr_log_handler, astromodels_console_log_handler
+                 ):
+        """
+        A container to store the stat of the logs 
+        """
+
+        # attach the log handlers
+
+        self.threeML_usr_log_handler = threeML_usr_log_handler
+        self.threeML_console_log_handler = threeML_console_log_handler
+
+        self.astromodels_usr_log_handler = astromodels_usr_log_handler
+        self.astromodels_console_log_handler = astromodels_console_log_handler
+
+        # store their current states
+
+        self.threeML_usr_log_handler_state = threeML_usr_log_handler.level
+        self.threeML_console_log_handler_state = threeML_console_log_handler.level
+
+        self.astromodels_usr_log_handler_state = astromodels_usr_log_handler.level
+        self.astromodels_console_log_handler_state = astromodels_console_log_handler.level
+
+    def _store_state(self):
+
+        self.threeML_usr_log_handler_state = threeML_usr_log_handler.level
+        self.threeML_console_log_handler_state = threeML_console_log_handler.level
+
+        self.astromodels_usr_log_handler_state = astromodels_usr_log_handler.level
+        self.astromodels_console_log_handler_state = astromodels_console_log_handler.level
+
+    def restore_last_state(self):
+
+        self.threeML_usr_log_handler.setLevel(
+            self.threeML_usr_log_handler_state)
+        self.threeML_console_log_handler.setLevel(
+            self.threeML_console_log_handler_state)
+
+        self.astromodels_usr_log_handler.setLevel(
+            self.astromodels_usr_log_handler_state)
+        self.astromodels_console_log_handler.setLevel(
+            self.astromodels_console_log_handler_state)
+
+    def silence_logs(self):
+
+        # store the state
+        self._store_state()
+
+        # silence the logs
+
+        self.threeML_usr_log_handler.setLevel(
+            logging.CRITICAL)
+        self.threeML_console_log_handler.setLevel(
+            logging.CRITICAL)
+
+        self.astromodels_usr_log_handler.setLevel(
+            logging.CRITICAL)
+        self.astromodels_console_log_handler.setLevel(
+            logging.CRITICAL)
+
+    def loud_logs(self):
+
+        # store the state
+        self._store_state()
+
+        # silence the logs
+
+        self.threeML_usr_log_handler.setLevel(
+            logging.INFO)
+        self.threeML_console_log_handler.setLevel(
+            logging.INFO)
+
+        self.astromodels_usr_log_handler.setLevel(
+            logging.INFO)
+        self.astromodels_console_log_handler.setLevel(
+            logging.INFO)
+
+    def debug_logs(self):
+
+        # store the state
+        self._store_state()
+
+        # silence the logs
+        self.threeML_console_log_handler.setLevel(
+            logging.DEBUG)
+
+        self.astromodels_console_log_handler.setLevel(
+            logging.DEBUG)
+
+
+_log_state = LoggingState(threeML_usr_log_handler, threeML_console_log_handler,
+                          astromodels_usr_log_handler, astromodels_console_log_handler)
+
 
 def silence_progress_bars():
     """
@@ -112,8 +208,7 @@ def toggle_progress_bars():
 
     threeML_config["interface"]["show_progress_bars"] = not state
 
-    
-    
+
 def silence_warnings():
     """
     supress warning messages in console and file usr logs
@@ -152,42 +247,70 @@ def silence_logs():
     Turn off all logging 
     """
 
-    log = logging.getLogger("threeML")
+    # handle dev logs independently
+    threeML_dev_log_handler.setLevel(logging.CRITICAL)
+    astromodels_dev_log_handler.setLevel(logging.CRITICAL)
 
-    for handler in log.handers:
-
-        handler.setLevel(logging.CRITICAL)
-
-    log = logging.getLogger("astromodels")
-
-    for handler in log.handers:
-
-        handler.setLevel(logging.CRITICAL)
-
+    _log_state.silence_logs()
 
 
 def quiet_mode():
     """
     turn off all logging and progress bars
     """
-    
-        
+
+    silence_progress_bars()
+
+    # save state and silence
+    silence_logs()
+
+
+def loud_mode():
+    """
+    turn on all progress bars and logging
+    """
+
+    activate_progress_bars()
+
+    # save state and make loud
+    _log_state.loud_logs()
+
+
 def activate_logs():
     """
     re-activate silenced logs
     """
 
-    pass
+    # handle dev logs independently
+    threeML_dev_log_handler.setLevel(logging.DEBUG)
+    astromodels_dev_log_handler.setLevel(logging.DEBUG)
 
-        
+    _log_state.restore_last_state()
+
+
+def debug_mode():
+    """
+    activate debug in the console
+    """
+
+    # store state and switch console to debug
+    _log_state.debug_logs()
+
+
 @contextmanager
 def silence_console_log():
-
+    """
+    temporarily silence the console and progress bars 
+    """
     current_console_logging_level = threeML_console_log_handler.level
     current_usr_logging_level = threeML_usr_log_handler.level
 
     threeML_console_log_handler.setLevel(logging.ERROR)
     threeML_usr_log_handler.setLevel(logging.ERROR)
+
+    progress_state = threeML_config["interface"]["show_progress_bars"]
+
+    threeML_config["interface"]["show_progress_bars"] = False
 
     try:
         yield
@@ -196,6 +319,8 @@ def silence_console_log():
 
         threeML_console_log_handler.setLevel(current_console_logging_level)
         threeML_usr_log_handler.setLevel(current_usr_logging_level)
+
+        threeML_config["interface"]["show_progress_bars"] = progress_state
 
 
 def setup_logger(name):

@@ -245,7 +245,20 @@ from threeML.analysis_results import (convert_fits_analysis_result_to_hdf,
 # Import catalogs
 from threeML.catalogs import *
 from threeML.io import (activate_warnings, silence_warnings,
-                        update_logging_level)
+                        update_logging_level,
+                        silence_logs,
+                        silence_progress_bars,
+                        activate_progress_bars,
+                        toggle_progress_bars,
+                        quiet_mode,
+                        loud_mode,
+                        debug_mode,
+                        activate_logs
+                        
+
+
+
+                        )
 from threeML.io.plotting.light_curve_plots import plot_tte_lightcurve
 from threeML.io.plotting.model_plot import (plot_point_source_spectra,
                                             plot_spectra)
