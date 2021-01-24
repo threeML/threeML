@@ -1,18 +1,22 @@
 from __future__ import division
-from builtins import range
-from past.utils import old_div
+
 import collections
-from pathlib import Path
-import astropy.io.fits as fits
-import numpy as np
 import os
 import warnings
+from builtins import range
+from pathlib import Path
+
+import astropy.io.fits as fits
+import numpy as np
 import six
-from tqdm.auto import tqdm, trange
+from past.utils import old_div
+
 from threeML.io.logging import setup_logger
-from threeML.utils.OGIP.response import OGIPResponse, InstrumentResponse
 from threeML.utils.OGIP.pha import PHAII
-from threeML.utils.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, Quality
+from threeML.utils.OGIP.response import InstrumentResponse, OGIPResponse
+from threeML.utils.progress_bar import tqdm, trange
+from threeML.utils.spectrum.binned_spectrum import (
+    BinnedSpectrumWithDispersion, Quality)
 from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
 from threeML.utils.time_interval import TimeIntervalSet
 
@@ -122,9 +126,10 @@ def _read_pha_or_pha2_file(
 
     except:
 
-        log.error(f"The input file {pha_file_or_instance} is not in PHA format")
+        log.error(
+            f"The input file {pha_file_or_instance} is not in PHA format")
         raise RuntimeError(
-            
+
         )
 
     # spectrum_number = spectrum_number
@@ -226,7 +231,8 @@ def _read_pha_or_pha2_file(
 
     if has_tstop and has_telapse:
 
-        log.warning("Found TSTOP and TELAPSE. This file is invalid. Using TSTOP.")
+        log.warning(
+            "Found TSTOP and TELAPSE. This file is invalid. Using TSTOP.")
 
         has_telapse = False
 
@@ -245,9 +251,9 @@ def _read_pha_or_pha2_file(
     else:
 
         log.error("This file does not contain a RATE nor a COUNTS column. "
-            "This is not a valid PHA file")
+                  "This is not a valid PHA file")
         raise RuntimeError(
-            
+
         )
 
     # Determine if this is a PHA I or PHA II
@@ -426,7 +432,8 @@ def _read_pha_or_pha2_file(
                 rate_errors = None
 
                 if not is_poisson:
-                    rate_errors = data.field("STAT_ERR")[spectrum_number - 1, :]
+                    rate_errors = data.field("STAT_ERR")[
+                        spectrum_number - 1, :]
 
             else:
 
@@ -442,19 +449,22 @@ def _read_pha_or_pha2_file(
             if not treat_as_time_series:
 
                 rates = old_div(
-                    data.field(data_column_name)[spectrum_number - 1, :], exposure
+                    data.field(data_column_name)[
+                        spectrum_number - 1, :], exposure
                 )
 
                 rate_errors = None
 
                 if not is_poisson:
                     rate_errors = old_div(
-                        data.field("STAT_ERR")[spectrum_number - 1, :], exposure
+                        data.field("STAT_ERR")[
+                            spectrum_number - 1, :], exposure
                     )
 
             else:
 
-                rates = old_div(data.field(data_column_name), np.atleast_2d(exposure).T)
+                rates = old_div(data.field(data_column_name),
+                                np.atleast_2d(exposure).T)
 
                 rate_errors = None
 
@@ -491,7 +501,8 @@ def _read_pha_or_pha2_file(
                     # list simply QUALITY=0 for each spectrum
                     # so we have to read them differently
 
-                    quality_element = data.field("QUALITY")[spectrum_number - 1]
+                    quality_element = data.field(
+                        "QUALITY")[spectrum_number - 1]
 
                     log.warning(
                         "The QUALITY column has the wrong shape. This PHAII file does not follow OGIP standards"
@@ -805,15 +816,12 @@ p
         :return: a path to a file, or None
         """
 
-
         back_file = self._return_file('backfile')
 
         if back_file == "":
             back_file = None
-        
-        
-        return back_file
 
+        return back_file
 
     @property
     def scale_factor(self):
@@ -1010,7 +1018,8 @@ class PHASpectrumSet(BinnedSpectrumSet):
             except:
 
                 raise RuntimeError(
-                    "The input file %s is not in PHA format" % (pha_file_or_instance)
+                    "The input file %s is not in PHA format" % (
+                        pha_file_or_instance)
                 )
 
             spectrum = f[HDUidx]
@@ -1040,7 +1049,8 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
             else:
 
-                raise RuntimeError("This appears to be a PHA I and not PHA II file")
+                raise RuntimeError(
+                    "This appears to be a PHA I and not PHA II file")
 
         pha_information = _read_pha_or_pha2_file(
             pha_file_or_instance,
@@ -1092,7 +1102,6 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
         list_of_binned_spectra = []
 
-        
         for i in trange(num_spectra, desc="Loading PHAII Spectra"):
 
             list_of_binned_spectra.append(
@@ -1111,14 +1120,13 @@ class PHASpectrumSet(BinnedSpectrumSet):
                 )
             )
 
-        
-
         # now get the time intervals
 
         start_times = data.field("TIME")
         stop_times = data.field("ENDTIME")
 
-        time_intervals = TimeIntervalSet.from_starts_and_stops(start_times, stop_times)
+        time_intervals = TimeIntervalSet.from_starts_and_stops(
+            start_times, stop_times)
 
         reference_time = 0
 

@@ -31,25 +31,3 @@ def get_path_of_user_dir() -> Path:
     return user_dir
     
     
-
-def get_path_of_log_dir() -> Path:
-
-    log_path: Path = get_path_of_user_dir() / "log"
-
-    if not log_path.exists():
-
-        log_path.mkdir()
-    
-    return log_path
-
-
-_log_file_names = ["usr.log", "dev.log"]
-
-
-def get_path_of_log_file(log_file: str) -> Path:
-    """
-    returns the path of the log files
-    """
-    assert log_file in _log_file_names, f"{log_file} is not on of {_log_file_names}"
-
-    return get_path_of_log_dir() / log_file

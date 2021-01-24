@@ -1,12 +1,15 @@
+import ftplib
+import os
+import urllib.error
+import urllib.parse
+import urllib.request
+
 from future import standard_library
 
-standard_library.install_aliases()
-import urllib.parse
-import ftplib
-import urllib.request, urllib.parse, urllib.error
-import os
+from threeML.utils.progress_bar import tqdm
 
-from tqdm.auto import tqdm
+standard_library.install_aliases()
+
 
 def download_file_from_ftp(ftp_url, destination_directory):
     assert ftp_url[-1] != "/", (
@@ -71,13 +74,9 @@ def download_files_from_directory_ftp(
 
     downloaded_files = []
 
-    progress_bar = tqdm(total=len(filenames))
-
-    for i, filename in enumerate(filenames):
+    for i, filename in enumerate(tqdm(filenames)):
 
         if namefilter != None and filename.find(namefilter) < 0:
-
-            progress_bar.update(1)
 
             # Filename does not match, do not download it
             continue

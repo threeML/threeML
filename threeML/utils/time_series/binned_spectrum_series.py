@@ -4,19 +4,19 @@ from builtins import range, zip
 
 import numpy as np
 from past.utils import old_div
-from tqdm.auto import tqdm
 
 from threeML.config.config import threeML_config
+from threeML.io.logging import setup_logger, silence_console_log
 from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 from threeML.parallel.parallel_client import ParallelClient
+from threeML.utils.progress_bar import tqdm
 from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit
 from threeML.utils.time_series.time_series import TimeSeries
 
-from threeML.io.logging import setup_logger, silence_console_log
-
 log = setup_logger(__name__)
+
 
 class BinnedSpectrumSeries(TimeSeries):
     def __init__(
@@ -265,12 +265,6 @@ class BinnedSpectrumSeries(TimeSeries):
 
         self._poly_fit_exists = True
 
-        # set the fit method
-        self._fit_method_info["bin type"] = "Binned"
-        self._fit_method_info["fit method"] = threeML_config["event list"][
-            "binned fit method"
-        ]
-
         # we need to adjust the selection to the true intervals of the time-binned spectra
 
         tmp_poly_intervals = self._poly_intervals
@@ -312,7 +306,7 @@ class BinnedSpectrumSeries(TimeSeries):
 
         if self._user_poly_order == -1:
             with silence_console_log():
-            
+
                 self._optimal_polynomial_grade = (
                     self._fit_global_and_determine_optimum_grade(
                         selected_counts.sum(axis=1),
@@ -323,10 +317,9 @@ class BinnedSpectrumSeries(TimeSeries):
                 )
 
             log.info(
-                    "Auto-determined polynomial order: %d"
-                    % self._optimal_polynomial_grade
-                )
-
+                "Auto-determined polynomial order: %d"
+                % self._optimal_polynomial_grade
+            )
 
         else:
 
@@ -361,7 +354,7 @@ class BinnedSpectrumSeries(TimeSeries):
             # and save the estimated polynomial
 
             with silence_console_log():
-                
+
                 for counts in tqdm(
                     selected_counts.T, desc=f"Fitting {self._instrument} background"
                 ):

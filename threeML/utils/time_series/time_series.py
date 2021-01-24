@@ -11,7 +11,7 @@ from pathlib import Path
 import h5py
 import numpy as np
 import pandas as pd
-from tqdm.auto import tqdm, trange
+from threeML.utils.progress_bar import tqdm, trange
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -366,6 +366,10 @@ class TimeSeries(object):
 
             unbinned = True
 
+
+        # check if we are doing a bayesian
+        # fit and record this info
+            
         if "bayes" in kwargs:
             bayes = kwargs.pop("bayes")
 
@@ -373,6 +377,14 @@ class TimeSeries(object):
 
             bayes = False
 
+        if bayes:
+
+            self._fit_method_info["fit method"] = "bayes"
+
+        else:
+
+            self._fit_method_info["fit method"] = "bayes"
+            
         # we create some time intervals
 
         poly_intervals = TimeIntervalSet.from_strings(*time_intervals)

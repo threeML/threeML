@@ -2,13 +2,16 @@ logging:
 
   # Basic logging setup
 
+
+  path (path): ~/.threeML/log
+  
   # print the developer log
   developer (switch): False
 
   # print logging to the screen
   console (switch): True
 
-  # print logging t usr log
+  # print logging to usr log
   usr (switch): True
 
   
@@ -17,7 +20,7 @@ logging:
 
   startup_warning (switch): True
 
-
+  
 parallel:
   
   #Name of the ipython profile to use for parallel
@@ -34,6 +37,22 @@ parallel:
   
   use-parallel (switch): False
 
+
+
+interface:
+
+  # control the progress bars through the whole system
+  show_progress_bars (switch): True
+
+  
+  # use cmap colors for the progress bars
+  multi_progress_color (switch): True
+
+  multi_progress_cmap (cmap): viridis
+  
+  # if not random, the static color of the progress
+  progress_bar_color (color): "#9C04FF"
+  
 ogip:
 
   # The default color map for the data to use when
@@ -231,43 +250,6 @@ model plot:
             shadow (switch): True
 
 
-
-event list:
-
-   # methods for dealing with event lists
-
-   # The scipy.optimize method to be used when
-   # performing an unbinned polynomial fit to
-   # an event list
-
-   unbinned fit method (optimizer): "Nelder-Mead"
-
-   # options for the unbinned fit method.
-   # see: https://docs.scipy.org/doc/scipy-0.18.1/reference/optimize.html
-
-   unbinned fit options (dict):
-
-       ftol (number): !!float 1E-5
-       xtol (number): !!float 1E-5
-       maxiter (number): !!float 1E6
-       maxfun (number): !!float 1E6
-       disp (switch): False
-
-   # The scipy.optimize method to be used when
-   # performing an binned polynomial fit to
-   # an event list
-
-   binned fit method (optimizer): "Powell"
-
-
-   # options for the binned fit method.
-   # see: https://docs.scipy.org/doc/scipy-0.18.1/reference/optimize.html
-   binned fit options (dict):
-
-       ftol (number): !!float 1E-5
-       xtol (number): !!float 1E-5
-       maxiter (number): !!float 1E6
-       disp (switch): False
 LAT:
 
   # URL for the FTP website used to download LAT data

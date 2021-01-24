@@ -5,7 +5,7 @@ import astropy.units as u
 import h5py
 import speclite.filters as spec_filter
 import yaml
-from tqdm.auto import tqdm
+from threeML.utils.progress_bar import tqdm
 
 from threeML.io.package_data import get_path_of_data_dir
 
