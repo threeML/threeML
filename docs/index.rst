@@ -19,6 +19,7 @@ Traditionally the Astrophysics community have been using frequentist techniques,
     installation
     intro
     notebooks/configuration
+    notebooks/logging
     notebooks/Minimization_tutorial
     notebooks/Bayesian_tutorial
     plugins
