@@ -481,7 +481,7 @@ class TemporalBinner(TimeIntervalSet):
 
         if not starts:
 
-            log.critical(
+            log.error(
                 "The requested sigma level could not be achieved in the interval. Try decreasing it."
             )
 

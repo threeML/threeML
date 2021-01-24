@@ -169,7 +169,7 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                log.critical(
+                log.error(
                     f"Could not find saved background {restore_poly_fit}.")
 
         if "use_balrog" in kwargs:
@@ -893,7 +893,7 @@ class TimeSeriesBuilder(object):
 
                 except (NegativeBackground):
 
-                    log.critical(
+                    log.error(
                         f"Something is wrong with interval {interval} skipping."
                     )
 
@@ -1534,7 +1534,7 @@ class TimeSeriesBuilder(object):
                     list_of_polarlikes.append(pl)
 
                 except (NegativeBackground):
-                    log.critical(
+                    log.error(
                         "Something is wrong with interval %s. skipping." % interval
                     )
 

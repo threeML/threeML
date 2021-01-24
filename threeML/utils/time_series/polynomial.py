@@ -266,7 +266,12 @@ def polyfit(x, y, grade, exposure, bayes=False):
 
         final_polynomial = Polynomial(coeff)
 
-        final_polynomial.set_covariace_matrix(jl.results.covariance_matrix)
+        try:
+            final_polynomial.set_covariace_matrix(jl.results.covariance_matrix)
+
+        except:
+
+            log.exception(f"Fit failed in channel")
 
         min_log_likelihood = xy.get_log_like()
 
@@ -279,7 +284,8 @@ def polyfit(x, y, grade, exposure, bayes=False):
             if i == 0:
 
                 v.bounds = (0, None)
-                v.prior = Log_normal(mu=np.log(avg), sigma=np.max([np.log(avg/2),1]))
+                v.prior = Log_normal(
+                    mu=np.log(avg), sigma=np.max([np.log(avg/2), 1]))
                 v.value = 1
 
             else:
@@ -455,7 +461,7 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
         coeff = [v.value for _, v in model.free_parameters.items()]
 
         log.debug(f"got coeff: {coeff}")
-        
+
         final_polynomial = Polynomial(coeff)
 
         final_polynomial.set_covariace_matrix(
@@ -463,6 +469,6 @@ def unbinned_polyfit(events, grade, t_start, t_stop, exposure, bayes):
 
         min_log_likelihood = xy.get_log_like()
 
-    log.debug(f"-min loglike: {-min_log_likelihood}")    
-        
+    log.debug(f"-min loglike: {-min_log_likelihood}")
+
     return final_polynomial, -min_log_likelihood
