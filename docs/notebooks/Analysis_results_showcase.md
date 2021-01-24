@@ -55,7 +55,7 @@ xy = XYLike.from_function(
     "sim_data", function=gen_function, x=x, yerr=0.2 * gen_function(x)
 )
 
-xy.plot()
+xy.plot();
 ```
 
 <!-- #region -->
@@ -70,8 +70,8 @@ Let's do a simple likelihood maximization of our data and model.
 ```python
 fitfun = Line() + Gaussian()
 
-fitfun.a_1.bounds = (-10, 10.0)
-fitfun.b_1.bounds = (-100, 100.0)
+fitfun.b_1.bounds = (-10, 10.0)
+fitfun.a_1.bounds = (-100, 100.0)
 fitfun.F_2 = 25.0
 fitfun.F_2.bounds = (1e-3, 200.0)
 fitfun.mu_2 = 25.0
@@ -199,8 +199,8 @@ You can use the results for propagating errors non-linearly for analytical funct
 
 
 ```python
-p1 = ar.get_variates("fake.spectrum.main.composite.a_1")
-p2 = ar.get_variates("fake.spectrum.main.composite.b_1")
+p1 = ar.get_variates("fake.spectrum.main.composite.b_1")
+p2 = ar.get_variates("fake.spectrum.main.composite.a_1")
 
 print("Propagating a+b, with a and b respectively:")
 print(p1)
@@ -224,7 +224,7 @@ print(50 * p1/p1)
 You can use arbitrary (np) functions
 
 ```python
-print("\nThis is arcsinh(a + 5*b) / np.log10(b) (why not?)")
+print("\nThis is arcsinh(b + 5*) / np.log10(b) (why not?)")
 print(np.arcsinh(p1 + 5 * p2) / np.log10(p2))
 ```
 
@@ -387,8 +387,8 @@ ar2.get_data_frame("hpd")
 Error propagation operates the same way. Internally, the process is the same as the MLE results, however, the samples are those of the posterior rather than the (assumed) covariance matrix.
 
 ```python
-p1 = ar2.get_variates("fake.spectrum.main.composite.a_1")
-p2 = ar2.get_variates("fake.spectrum.main.composite.b_1")
+p1 = ar2.get_variates("fake.spectrum.main.composite.b_1")
+p2 = ar2.get_variates("fake.spectrum.main.composite.a_1")
 
 print(p1)
 print(p2)
@@ -403,4 +403,8 @@ To demonstrate how the two objects (MLE and Bayes) are the same, we see that our
 
 ```python
 go(fitfun, ar2, model)
+```
+
+```python
+
 ```
