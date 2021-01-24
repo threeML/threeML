@@ -58,11 +58,14 @@ def tqdm(itr=None, **kwargs):
     return (_tqdm(itr, colour=color, **kwargs) if threeML_config["interface"]["show_progress_bars"] else itr)
 
 
-def trange(N, **kwargs):
+def trange(*args, **kwargs):
 
     color = _get_color.color()
 
-    return (_trange(N, colour=color, **kwargs) if threeML_config["interface"]["show_progress_bars"] else range(N))
+    return (_trange(*args, colour=color, **kwargs) if threeML_config["interface"]["show_progress_bars"] else range(*args))
 
 
 __all__ = ["tqdm", "trange"]
+
+
+
