@@ -366,6 +366,10 @@ class TimeSeries(object):
 
             unbinned = True
 
+
+        # check if we are doing a bayesian
+        # fit and record this info
+            
         if "bayes" in kwargs:
             bayes = kwargs.pop("bayes")
 
@@ -373,6 +377,14 @@ class TimeSeries(object):
 
             bayes = False
 
+        if bayes:
+
+            self._fit_method_info["fit method"] = "bayes"
+
+        else:
+
+            self._fit_method_info["fit method"] = "bayes"
+            
         # we create some time intervals
 
         poly_intervals = TimeIntervalSet.from_strings(*time_intervals)
