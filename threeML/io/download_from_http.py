@@ -4,13 +4,16 @@ from builtins import object
 from pathlib import Path
 
 import requests
-from threeML.utils.progress_bar import tqdm
 
+from threeML.config.config import threeML_config
 from threeML.io.file_utils import (file_existing_and_readable,
                                    path_exists_and_is_directory,
                                    sanitize_filename)
+from threeML.io.logging import setup_logger
+from threeML.utils.progress_bar import tqdm
 
-from threeML.config.config import threeML_config
+log = setup_logger(__name__)
+
 
 class RemoteDirectoryNotFound(IOError):
     pass
@@ -137,7 +140,8 @@ class ApacheDirectory(object):
             self._request_result.url,
         )
 
-        destination_path: Path = sanitize_filename(destination_path, abspath=True)
+        destination_path: Path = sanitize_filename(
+            destination_path, abspath=True)
 
         assert path_exists_and_is_directory(destination_path), (
             f"Provided destination {destination_path} does not exist or "
@@ -166,10 +170,15 @@ class ApacheDirectory(object):
 
         file_size = int(this_request.headers["Content-Length"])
 
+        log.debug(f"downloading {remote_filename} of size {file_size}")
+
         # Now check if we really need to download this file
 
         if compress:
             # Add a .gz at the end of the file path
+
+            log.debug(
+                f"file {remote_filename} will be downloaded and compressed")
 
             local_path: Path = Path(f"{local_path}.gz")
 
@@ -182,7 +191,18 @@ class ApacheDirectory(object):
                 # it will have a smaller size
 
                 # No need to download it again
+
+                log.info(f"file {remote_filename} is already downloaded!")
+
                 return local_path
+
+        if local_path.is_file():
+
+            first_byte = os.path.getsize(local_path)
+
+        else:
+
+            first_byte = 0
 
         # Chunk size shouldn't bee too small otherwise we are causing a bottleneck in the download speed
         chunk_size = 1024 * 10
@@ -203,7 +223,10 @@ class ApacheDirectory(object):
             # Set a title for the progress bar
             bar_title = "Downloading %s" % new_filename
 
+            total_size = int(this_request.headers.get('content-length', 0))
+
             bar = tqdm(
+                initial=first_byte,
                 unit_scale=True,
                 unit_divisor=1024,
                 unit="B",
@@ -221,6 +244,7 @@ class ApacheDirectory(object):
                         bar.update(len(chunk))
 
             this_request.close()
+            bar.close()
 
         else:
 
@@ -257,7 +281,8 @@ class ApacheDirectory(object):
 
                     continue
 
-            this_local_file = self.download(file, destination_path, progress=progress)
+            this_local_file = self.download(
+                file, destination_path, progress=progress)
 
             local_files.append(this_local_file)
 
