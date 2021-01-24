@@ -74,7 +74,7 @@ class ZeusSampler(MCMCSampler):
 
     def sample(self, quiet=False):
 
-        if not self._is_selfetup:
+        if not self._is_setup:
 
             log.info("You forgot to setup the sampler!")
             return

@@ -1,8 +1,5 @@
 from __future__ import print_function
 
-from future import standard_library
-
-standard_library.install_aliases()
 import os
 import re
 import shutil
@@ -14,10 +11,14 @@ import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 import pkg_resources
 import yaml
+from future import standard_library
 
 from threeML.exceptions.custom_exceptions import (ConfigurationFileCorrupt,
                                                   custom_warnings)
 from threeML.io.package_data import get_path_of_data_file, get_path_of_user_dir
+
+standard_library.install_aliases()
+
 
 _config_file_name = "threeML_config.yml"
 
@@ -38,14 +39,12 @@ _optimize_methods = (
 )
 
 
-
-    
-
 class Config(object):
     def __init__(self):
 
         # Read first the default configuration file
-        default_configuration_path: Path = get_path_of_data_file(_config_file_name)
+        default_configuration_path: Path = get_path_of_data_file(
+            _config_file_name)
 
         assert (
             default_configuration_path.exists()
@@ -71,7 +70,8 @@ class Config(object):
 
             try:
 
-                self._check_configuration(configuration, default_configuration_path)
+                self._check_configuration(
+                    configuration, default_configuration_path)
 
             except:
 
@@ -110,9 +110,8 @@ class Config(object):
                         "configuration for this session."
                     )
 
-
                     self.copy_default_config_file()
-                    
+
                 else:
 
                     self._filename: Path = user_config_path
@@ -138,23 +137,22 @@ class Config(object):
 
         try:
             old_config = user_config_path.rename(f"{user_config_path}.bak")
-        
+
             # Remove old file
             user_config_path.unlink()
 
         except:
 
             pass
-        
-                    # Copy the default configuration
+
+            # Copy the default configuration
         shutil.copy(self._default_path, user_config_path)
 
         self._configuration = self._check_configuration(
-                        self._default_configuration_raw, self._default_path
-                    )
+            self._default_configuration_raw, self._default_path
+        )
         self._filename: Path = self._default_path
-        
-            
+
     def __getitem__(self, key):
 
         if key in list(self._configuration.keys()):
@@ -263,6 +261,17 @@ class Config(object):
             return False
 
     @staticmethod
+    def is_path(path) -> bool:
+
+        try:
+
+            Path(path)
+            return True
+        except:
+
+            return False
+
+    @staticmethod
     def is_number(val) -> bool:
 
         return type(val) == int or type(val) == float
@@ -325,7 +334,8 @@ class Config(object):
         # (if a default configuration has been loaded)
 
         if (self._default_configuration_raw is not None) and (
-            not self._check_same_structure(config_dict, self._default_configuration_raw)
+            not self._check_same_structure(
+                config_dict, self._default_configuration_raw)
         ):
 
             # It does not, so of course is not valid (no need to check further)
@@ -358,6 +368,7 @@ class Config(object):
                     % ", ".join(_optimize_methods),
                 ),
                 "number": (self.is_number, "an int or float"),
+                "path": (self.is_path, "a path")
             }
 
             # Now that we know that the provided configuration have the right structure, let's check that
@@ -369,7 +380,8 @@ class Config(object):
 
                 try:
 
-                    element_name, element_type = re.findall("(.+) \((.+)\)", key)[0]
+                    element_name, element_type = re.findall(
+                        "(.+) \((.+)\)", key)[0]
 
                 except IndexError:
 
@@ -393,7 +405,8 @@ class Config(object):
 
                     raise ConfigurationFileCorrupt(
                         "Cannot understand element type %s for "
-                        "key %s in config file %s" % (element_type, key, config_path)
+                        "key %s in config file %s" % (
+                            element_type, key, config_path)
                     )
 
             # If we are here it means that all checks were successful

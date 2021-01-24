@@ -1174,7 +1174,7 @@ class SpectrumLike(PluginPrototype):
                     if self._observed_spectrum.quality.bad[i] and self._mask[i]:
                         deselected_channels.append(i)
 
-                log.critical(
+                log.warning(
                     "You have opted to use channels which are flagged BAD in the PHA file."
                 )
 
@@ -1574,7 +1574,7 @@ class SpectrumLike(PluginPrototype):
             new_model
         ](self)
 
-        log.critical(
+        log.warning(
             "You are setting the background noise model to something that is not specified in the spectrum.\
          Verify that this makes statistical sense."
         )
@@ -1609,7 +1609,7 @@ class SpectrumLike(PluginPrototype):
             self._background_noise_model
         ](self)
 
-        log.critical(
+        log.warning(
             "You are setting the observation noise model to something that is not specified in the spectrum.\
                  Verify that this makes statistical sense."
         )

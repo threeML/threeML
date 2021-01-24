@@ -5,7 +5,6 @@ from pathlib import Path
 import astropy.io.fits as fits
 import matplotlib.pyplot as plt
 import numpy as np
-from tqdm.auto import tqdm
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
@@ -21,6 +20,7 @@ from threeML.utils.OGIP.response import (InstrumentResponse,
                                          InstrumentResponseSet, OGIPResponse)
 from threeML.utils.polarization.binned_polarization import \
     BinnedModulationCurve
+from threeML.utils.progress_bar import tqdm
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum, BinnedSpectrumWithDispersion)
 from threeML.utils.statistics.stats_tools import Significance
@@ -169,7 +169,7 @@ class TimeSeriesBuilder(object):
 
             else:
 
-                log.critical(
+                log.error(
                     f"Could not find saved background {restore_poly_fit}.")
 
         if "use_balrog" in kwargs:
@@ -810,9 +810,7 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            p = tqdm(total=len(these_bins), desc="Creating plugins")
-
-            for i, interval in enumerate(these_bins):
+            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
 
                 self.set_active_time_interval(interval.to_string())
 
@@ -895,11 +893,9 @@ class TimeSeriesBuilder(object):
 
                 except (NegativeBackground):
 
-                    log.critical(
+                    log.error(
                         f"Something is wrong with interval {interval} skipping."
                     )
-
-                p.update(1)
 
             # restore the old interval
 
@@ -1506,9 +1502,7 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            p = tqdm(total=len(these_bins), desc="Creating plugins")
-
-            for i, interval in enumerate(these_bins):
+            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
 
                 self.set_active_time_interval(interval.to_string())
 
@@ -1540,11 +1534,10 @@ class TimeSeriesBuilder(object):
                     list_of_polarlikes.append(pl)
 
                 except (NegativeBackground):
-                    log.critical(
+                    log.error(
                         "Something is wrong with interval %s. skipping." % interval
                     )
 
-                p.update(1)
             # restore the old interval
 
             if old_interval is not None:

@@ -1,14 +1,16 @@
 # Author: Giacomo Vianello (giacomov@stanford.edu)
 
-import logging
+
 import sys
 
-from tqdm.auto import tqdm
+from threeML.utils.progress_bar import tqdm
 import numexpr
 import numpy as np
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("bayesian_blocks")
+
+from threeML.io.logging import setup_logger
+
+logger = setup_logger(__name__)
 
 __all__ = ["bayesian_blocks", "bayesian_blocks_not_unique"]
 
@@ -81,9 +83,9 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
     numexpr.set_num_threads(1)
     numexpr.set_vml_num_threads(1)
 
-    progress = tqdm(total=N, desc="Bayesian Blocks")
+    
 
-    for R in range(N):
+    for R in tqdm(range(N)):
         br = block_length[R + 1]
         T_k = block_length[: R + 1] - br
 
@@ -116,7 +118,7 @@ def bayesian_blocks_not_unique(tt, ttstart, ttstop, p0):
         last[R] = i_max
         best[R] = A_R[i_max]
 
-        progress.update(1)
+        
 
     numexpr.set_vml_accuracy_mode(oldaccuracy)
 

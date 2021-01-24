@@ -1,4 +1,4 @@
-from builtins import object
+
 from astromodels import *
 import astropy
 
@@ -102,7 +102,13 @@ class VirtualObservatoryCatalog(object):
                 # Workaround to comply with newer versions of astroquery
                 if isinstance(votable, astropy.io.votable.tree.Table):
                     table = votable.to_table()
-                
+
+                if table is None:
+
+                    log.error("Your search returned nothing")
+                    
+                    return None
+                    
                 table.convert_bytestring_to_unicode()
 
                 pandas_df = (
