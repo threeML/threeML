@@ -18,7 +18,7 @@
 ![Conda](https://img.shields.io/conda/dn/threeml/threeml)
 
 <div  >
-<img src="https://raw.githubusercontent.com/threeML/threeML/master/logo/logo_sq.png" alt="drawing" width="500" align="right"/>
+<img src="https://raw.githubusercontent.com/threeML/threeML/master/logo/logo_sq.png" alt="drawing" width="300" align="right"/>
 <header >
   <h1>
    <p > The Multi-Mission Maximum Likelihood framework (3ML)</p>
@@ -71,7 +71,7 @@ Here is a highlight list of teams and their publications using 3ML.
 * [POLAR](https://www.astro.unige.ch/polar-2/?fbclid=IwAR0IxMxHtiXZyqc0A_kT1xKe9ASAk_VmfJpCEBr0HOhDG5eOHY7AE5TWHv8)
   * [The POLAR gamma-ray burst polarization catalog](https://ui.adsabs.harvard.edu/link_gateway/2020A&A...644A.124K/doi:10.1051/0004-6361/202037915)
 
-A full list of publications using 3ML is [here](https://ui.adsabs.harvard.edu/abs/2015arXiv150708343V/citations)
+A full list of publications using 3ML is [here](https://ui.adsabs.harvard.edu/abs/2015arXiv150708343V/citations).
 
 ## Citing 
 If you find this package useful in you analysis, or the code in your own custom data tools, please cite:
