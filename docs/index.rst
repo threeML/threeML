@@ -9,7 +9,10 @@ Astrophysical sources are observed by different instruments at different wavelen
 
 The Multi-Mission Maximum Likelihood framework (3ML) provides a common high-level interface and model definition, which allows for an easy, coherent and intuitive modeling of sources using all the available data, no matter their origin. At the same time, thanks to its architecture based on plug-ins, 3ML uses under the hood the official software of each instrument, the only one certified and maintained by the collaboration which built the instrument itself. This guarantees that 3ML is always using the best possible methodology to deal with the data of each instrument.
 
-Traditionally the Astrophysics community have been using frequentist techniques, but in recent years Bayesian methods and approaches have been gaining consensum and momentum. In 3ML both analysis are possible. Moreover, the 3ML Python interface allows for combinations with all available packages for data analysis and mining.
+.. image:: /media/plugin_demo.png
+
+Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an interface to several **Bayesian** inference algorithms such as MCMC and nested sampling as well as likelihood optimization algorithms. Each approach to analysis can be seamlessly switched between allowing users to try different approaches quickly and without having to rewrite their model or data interfaces. 
+
 
 
 .. toctree::
