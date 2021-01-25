@@ -40,7 +40,7 @@ The Multi-Mission Maximum Likelihood framework (3ML) provides a common high-leve
 
 Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an interface to several **Bayesian** inference algorithms such as MCMC and nested sampling as well as likelihood optimization algorithms. Each approach to analysis can be seamlessly switched between allowing users to try different approaches quickly and without having to rewrite their model or data interfaces. 
 
-Like your [XPSEC](https://heasarc.gsfc.nasa.gov/xanadu/xspec/) models? You can use them in 3ML as well as our growing selection of 1-,2- and 3-D models from our fast and customizable modeling language [astromodels](http://astromodels.readthedocs.org/en/latest/)
+Like your [XPSEC](https://heasarc.gsfc.nasa.gov/xanadu/xspec/) models? You can use them in 3ML as well as our growing selection of 1-,2- and 3-D models from our fast and customizable modeling language [astromodels](http://astromodels.readthedocs.org/en/latest/).
 
 
 ## Installation
