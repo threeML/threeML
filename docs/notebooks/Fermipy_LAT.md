@@ -23,22 +23,19 @@ In this example we show how to download Fermi-LAT data, how to build a model sta
 
 ```python
 import shutil
-
 from IPython.display import Image,display
-
 import glob
-
+from pathlib import Path
 import matplotlib as mpl
-
 from matplotlib import pyplot as plt
-
 from astropy.io import fits as pyfits
-
+import scipy as sp
 import numpy as np
-
 from threeML import *
 
-import scipy as sp
+from jupyterthemes import jtplot
+jtplot.style(context='talk', fscale=1, ticks=True, grid=False)
+plt.style.use('./threeml.mplstyle')
 
 %matplotlib inline
 ```
@@ -148,19 +145,18 @@ LAT = FermipyLike("LAT", config)
 The plugin modifies the configuration as needed to get the output files in a unique place, which will stay the same as long as your selection does not change.
 
 ```python
-
 config.display()
 ```
 
 Here is where the fermipy processing happens (the .setup method)
 
 ```python
-fermipy_output_directory = config['fileio']['outdir']
+fermipy_output_directory = Path(config['fileio']['outdir'])
 print('Fermipy Output directoty: %s' % fermipy_output_directory)
 
 #This remove the output directory, to start a fresh analysis...
 
-if os.path.exists(fermipy_output_directory): shutil.rmtree(fermipy_output_directory)
+if fermipy_output_directory.exists():  shutil.rmtree(fermipy_output_directory)
 
 # Here is where the fermipy processing happens (the .setup method)
 
@@ -210,12 +206,11 @@ res = jl.get_contours(
 res[-1]
 ```
 
-Pro-trick: We can also axcess the GTAnalysis object of fermipy:
+**Pro-trick:** We can also axcess the GTAnalysis object of fermipy:
 
 ```python
 res = jl.fit()
 LAT.gta.write_roi('test',make_plots=True)
-plt.show()
 ```
 
 All the plots are saved in the output directory as png files:
@@ -223,10 +218,10 @@ All the plots are saved in the output directory as png files:
 
 
 ```python
-pngs=glob.glob("%s/*png" % fermipy_output_directory)
+pngs=Path(f"{fermipy_output_directory}").glob("*png")
 for png in pngs:
-    print png
-    my_image=Image(png)
+    print(png)
+    my_image=Image(str(png))
     display(my_image)
 ```
 
@@ -234,7 +229,7 @@ We can also plot the resulting model:
 
 ```python
 energies=sp.logspace(1,8,100) *u.MeV
-fig=plt.figure()
+fig, ax=plt.subplots()
 # we only want to visualize the relevant sources...
 src_to_plot=['Crab','PSR_J0534p2200']
 # Now loop over all point sources and plot them
@@ -243,21 +238,22 @@ for source_name, point_source in model.point_sources.iteritems():
         if src in source_name: 
             # Plot the sum of all components for this source
 
-            plt.loglog(energies, point_source(energies),label=source_name)
+            ax.loglog(energies, point_source(energies),label=source_name)
             # If there is more than one component, plot them also separately
 
             if len(point_source.components) > 1:
 
                 for component_name, component in point_source.components.iteritems():
-                    plt.loglog(energies,component.shape(energies),'--',label="%s of %s" %(component_name, source_name))
+                    ax.loglog(energies,component.shape(energies),
+                              '--',label=f"{component_name} of {source_name}")
     
 # Add a legend
-plt.legend(loc=0,frameon=False)
+ax.legend(loc=0,frameon=False)
 
-plt.xlabel("Energy (MeV)")
-plt.ylabel(r"Flux (ph cm$^{-2}$ s$^{-1}$ keV$^{-1}$")
-plt.ylim([1e-20,1e-3])
-plt.show()
+ax.set_xlabel("Energy (MeV)")
+ax.set_ylabel(r"Flux (ph cm$^{-2}$ s$^{-1}$ keV$^{-1}$")
+ax.set_ylim([1e-20,1e-3])
+
 ```
 
 We can also do a bayesian analysis.
@@ -282,7 +278,7 @@ model._4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.set_uninformative_prior(
 ```
 
 ```python
-#It's better to remove the output rirectory,...
+#It's better to remove the output directory,...
 shutil.rmtree(fermipy_output_directory)
 
 bayes = BayesianAnalysis(model, data)
@@ -292,19 +288,13 @@ bayes = BayesianAnalysis(model, data)
 bayes.set_sampler('emcee')
 
 n_walkers = 10
-
 burn_in = 10
-
 n_samples = 500
 
 bayes.sampler.setup(n_iterations=n_samples,n_burn_in=burn_in,n_walkers=n_walkers )
 
 res = bayes.sample()
 
-```
-
-```python
-#credible_intervals = bayes.get_credible_intervals()
 ```
 
 You can access to the parameter range like this (HPD):
@@ -326,9 +316,4 @@ print('Index (95%%): %10.2e,%10.2e' % this_idx.highest_posterior_density_interva
 
 ```python
 corner_figure = bayes.results.corner_plot()
-plt.show()
-```
-
-```python
-
 ```
