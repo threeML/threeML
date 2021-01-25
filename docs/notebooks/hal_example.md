@@ -77,6 +77,12 @@ from hawc_hal import HAL, HealpixConeROI
 import matplotlib.pyplot as plt
 from threeML import *
 
+from jupyterthemes import jtplot
+jtplot.style(context='talk', fscale=1, ticks=True, grid=False)
+plt.style.use('./threeml.mplstyle')
+
+%matplotlib inline
+
 # Define the ROI. 
 ra_crab, dec_crab = 83.63,22.02
 data_radius = 3.0 #in degree
@@ -97,8 +103,6 @@ hawc = HAL("HAWC",
 # Use from bin 1 to bin 9
 hawc.set_active_measurements(1, 9)
 
-
-
 ```
 
 ## Exploratory analysis
@@ -116,7 +120,6 @@ Next, some plots. We can use the `display_stacked_image()` function to visualize
 First, let's see what the counts look like without (or very little) smoothing:
 
 ```python
-%matplotlib inline
 fig = hawc.display_stacked_image(smoothing_kernel_sigma=0.01)
 ```
 
@@ -284,7 +287,3 @@ for i in range(0,N_param):
 ```
 
 We can see that the index and normalization are essentially uncorrelated (as the pivot energy was chosen accordingly). There is significant correlation between the spectral index and the curvature parameter though.
-
-```python
-
-```
