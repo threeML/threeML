@@ -19,7 +19,7 @@ One of the key features of 3ML is the abil ity to fit multi-messenger data prope
 
 
 ```python
-%matplotlib inline
+
 import matplotlib.pyplot as plt
 from jupyterthemes import jtplot
 
@@ -32,7 +32,7 @@ from threeML.io.package_data import get_path_of_data_file
 import os
 
 import warnings
-
+%matplotlib inline
 
 warnings.simplefilter("ignore")
 ```

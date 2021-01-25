@@ -21,7 +21,7 @@ For optical photometry, we provide the **PhotometryLike** plugin that handles fo
 
 ```python
 import numpy as np
-%matplotlib notebook
+
 import matplotlib.pyplot as plt
 
 
@@ -33,6 +33,13 @@ from astromodels.xspec import *
 
 # The filter library takes a while to load so you must import it explicitly..
 from threeML.plugins.photometry.filter_library import threeML_filter_library
+
+from jupyterthemes import jtplot
+
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+plt.style.use("./threeml.mplstyle")
+
+%matplotlib inline
 ```
 
 ## Setup

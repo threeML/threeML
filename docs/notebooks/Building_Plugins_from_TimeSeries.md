@@ -22,6 +22,10 @@ import numpy as np
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 
+from jupyterthemes import jtplot
+
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+plt.style.use("./threeml.mplstyle")
 import warnings
 warnings.simplefilter('ignore')
 ```
