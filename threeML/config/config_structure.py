@@ -1,9 +1,14 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum, Flag
 from typing import Any, Dict, List, Optional
 
 from omegaconf import II, MISSING, SI, OmegaConf
 
+
+from .catalog_structure import Catalogs, PublicDataServer
+from .fitting_structure import MLEDefault, BayesianDefault
+from .plugin_structure import Plugins, TimeSeries
+from .plotting_structure import ModelPlotting
 
 class Switch(Flag):
     on = True
@@ -34,65 +39,31 @@ class Parallel:
 @dataclass
 class Interface:
     progress_bars: Switch = Switch.on
-    show_progress_bars: bool = II("progress_bars")
     multi_progress_color: Switch = Switch.on
     multi_progress_cmap: str = "viridis"
     progress_bar_color: str = "#9C04FF"
 
 
-@dataclass(frozen=True)
-class PublicDataServer:
-    public_ftp_Location: Optional[str] = None
-    public_http_Location: str = MISSING
-    query_form: Optional[str] = None
 
 
-@dataclass(frozen=True)
-class CatalogServer:
-    url: str = MISSING
+
 
 
 @dataclass
-class InstrumentCatalogs:
-    catalogs: Dict[str, CatalogServer]
-
-
-@dataclass
-class BinnedSpectrumPlot:
-    data_cmap: str = Set1
-    model_cmap: str = Set1
-    step: bool = False
-
-
-@dataclass
-class LightCurve:
-    light_curve_color: str = "#34495E"
-    selection_color: str = "#85929E"
-    background_color: str = "#C0392B"
-    background_selection_color: str = "#E74C3C"
-
-
-class Sampler(Enum):
-    emcee = 1
-    pymultinest = 2
-    zeus = 3
-    dynesty = 4
-    ultranest = 5
-
-
-_sampler_default = (
-
-
-
-)
-
+class Config:
+    logging: Logging = Logging()
+    parallel: Parallel = Parallel()
+    interface: Interface = Interface()
+    plugins: Plugins = Plugins()
+    time_series: TimeSeries = TimeSeries()
+    mle: MLEDefault = MLEDefault()
+    bayesian: BayesianDefault = BayesianDefault()
     
-class Optimizer(Enum):
-    minuit = 1
-    
-    
+    model_plot: ModelPlotting = ModelPlotting()
 
-
-@dataclass
-class BayesianDefault:
-    default_sampler: Sampler.emcee
+    LAT: PublicDataServer = PublicDataServer(public_ftp_Location="ftp://heasarc.nasa.gov/fermi/data",
+                                             public_http_Location="https://heasarc.gsfc.nasa.gov/FTP/fermi/data/lat",
+                                             query_form="https://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi")
+    GBM: PublicDataServer = PublicDataServer(public_ftp_Location="ftp://heasarc.nasa.gov/fermi/data",
+                                             public_http_Location="https://heasarc.gsfc.nasa.gov/FTP/fermi/data/gbm")
+    catalogs: Catalogs = Catalogs()
