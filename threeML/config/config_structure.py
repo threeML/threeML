@@ -1,14 +1,15 @@
+import logging
 from dataclasses import dataclass, field
-from enum import Enum, Flag
+from enum import Enum, Flag, IntEnum
 from typing import Any, Dict, List, Optional
 
 from omegaconf import II, MISSING, SI, OmegaConf
 
-
 from .catalog_structure import Catalogs, PublicDataServer
-from .fitting_structure import MLEDefault, BayesianDefault
-from .plugin_structure import Plugins, TimeSeries
+from .fitting_structure import BayesianDefault, MLEDefault
 from .plotting_structure import ModelPlotting
+from .plugin_structure import Plugins, TimeSeries
+
 
 class Switch(Flag):
     on = True
@@ -20,6 +21,13 @@ class Switch(Flag):
 
 
 # logging
+class LoggingLevel(IntEnum):
+    DEBUG = logging.DEBUG
+    INFO = logging.INFO
+    WARNING = logging.WARNING
+    ERROR = logging.ERROR
+    CRITICAL = logging.CRITICAL
+
 
 @dataclass
 class Logging:
@@ -28,6 +36,7 @@ class Logging:
     developer: Switch = Switch.off
     usr: Switch = Switch.on
     console: Switch = Switch.on
+    level: LoggingLevel = LoggingLevel.INFO
 
 
 @dataclass
@@ -44,11 +53,6 @@ class Interface:
     progress_bar_color: str = "#9C04FF"
 
 
-
-
-
-
-
 @dataclass
 class Config:
     logging: Logging = Logging()
@@ -58,7 +62,7 @@ class Config:
     time_series: TimeSeries = TimeSeries()
     mle: MLEDefault = MLEDefault()
     bayesian: BayesianDefault = BayesianDefault()
-    
+
     model_plot: ModelPlotting = ModelPlotting()
 
     LAT: PublicDataServer = PublicDataServer(public_ftp_Location="ftp://heasarc.nasa.gov/fermi/data",
