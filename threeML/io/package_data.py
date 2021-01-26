@@ -29,5 +29,13 @@ def get_path_of_user_dir() -> Path:
         user_dir.mkdir()
 
     return user_dir
+
+def get_path_of_user_config() -> Path:
+
+    config_path: Path =  Path().home() / ".config" / "threeML"
     
-    
+    if not config_path.exists():
+
+        config_path.mkdir(parents=True)
+
+    return config_path
