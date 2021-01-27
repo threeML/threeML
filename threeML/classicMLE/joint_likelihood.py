@@ -80,13 +80,13 @@ class JointLikelihood(object):
 
         # Pre-defined minimizer
         default_minimizer = minimization.LocalMinimization(
-            threeML_config["mle"]["default_minimizer"]
+            threeML_config["mle"]["default_minimizer"].value
         )
 
         if threeML_config["mle"]["default_minimizer_algorithm"] is not None:
 
             default_minimizer.set_algorithm(
-                threeML_config["mle"]["default_minimizer_algorithm"]
+                threeML_config["mle"]["default_minimizer_algorithm"].value
             )
 
         self.set_minimizer(default_minimizer)
@@ -1000,6 +1000,8 @@ class JointLikelihood(object):
 
             self._minimizer_type = minimizer
 
+            log.info(f"set the minimizer to {minimizer.name}")
+            
         else:
 
             assert minimizer.upper() in minimization._minimizers, (
@@ -1013,7 +1015,7 @@ class JointLikelihood(object):
 
             self._minimizer_type = minimization.LocalMinimization(minimizer)
 
-        log.info(f"set the minimizer to {minimizer}")
+            log.info(f"set the minimizer to {minimizer.upper()}")
 
     def _get_minimizer(self, *args, **kwargs):
 

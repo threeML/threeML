@@ -8,12 +8,12 @@ import numpy as np
 import pandas as pd
 import scipy.optimize
 from past.utils import old_div
-from threeML.utils.progress_bar import tqdm
 
+from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.logging import setup_logger
-from threeML.config.config import threeML_config
 from threeML.utils.differentiation import ParameterOnBoundary, get_hessian
+from threeML.utils.progress_bar import tqdm
 
 # Set the warnings to be issued always for this module
 
@@ -265,8 +265,6 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros_like(steps1)
 
-        
-
         for i, step in enumerate(tqdm(steps1, desc="Profiling likelihood")):
 
             if self._n_free_parameters > 0:
@@ -286,8 +284,6 @@ class ProfileLikelihood(object):
 
             log_likes[i] = this_log_like
 
-            
-
         return log_likes
 
     def _step2d(self, steps1, steps2):
@@ -295,8 +291,9 @@ class ProfileLikelihood(object):
         log_likes = np.zeros((len(steps1), len(steps2)))
 
         if threeML_config["interface"]["show_progress_bars"]:
-        
-            p = tqdm(total=len(steps1) * len(steps2), desc="Profiling likelihood")
+
+            p = tqdm(total=len(steps1) * len(steps2),
+                     desc="Profiling likelihood")
 
         for i, step1 in enumerate(steps1):
 
@@ -340,7 +337,9 @@ class ProfileLikelihood(object):
 
 
 class _Minimization(object):
-    def __init__(self, minimizer_type):
+    def __init__(self, minimizer_type: str):
+
+        self._name = minimizer_type
 
         self._minimizer_type = get_minimizer(minimizer_type=minimizer_type)
 
@@ -359,6 +358,10 @@ class _Minimization(object):
             )
 
         self._setup_dict = setup_dict
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     def set_algorithm(self, algorithm):
 
@@ -1388,10 +1391,9 @@ if len(_minimizers) == 0:
     )
 
 
-
 else:
     # Add the GRID minimizer here since it needs at least one other minimizer
 
     from threeML.minimizer.grid_minimizer import GridMinimizer
-    
+
     _minimizers["GRID"] = GridMinimizer
