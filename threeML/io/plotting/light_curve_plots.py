@@ -39,10 +39,10 @@ def binned_light_curve_plot(
     # round
     np.round(time_bins, decimals=4, out=time_bins)
 
-    light_curve_color = threeML_config.lightcurve_color
-    selection_color = threeML_config.selection_color
-    background_color = threeML_config.background_color
-    background_selection_color = threeML_config.background_selection_color
+    light_curve_color = threeML_config.time_series.light_curve_color
+    selection_color = threeML_config.time_series.selection_color
+    background_color = threeML_config.time_series.background_color
+    background_selection_color = threeML_config.time_series.background_selection_color
 
     # first plot the full lightcurve
 

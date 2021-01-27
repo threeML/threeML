@@ -290,7 +290,7 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros((len(steps1), len(steps2)))
 
-        if threeML_config["interface"]["show_progress_bars"]:
+        if threeML_config.interface.progress_bars:
 
             p = tqdm(total=len(steps1) * len(steps2),
                      desc="Profiling likelihood")
@@ -326,7 +326,7 @@ class ProfileLikelihood(object):
 
                 log_likes[i, j] = this_log_like
 
-                if threeML_config["interface"]["show_progress_bars"]:
+                if threeML_config.interface.progress_bars:
                     p.update(1)
 
         return log_likes

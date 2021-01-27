@@ -11,15 +11,6 @@ from .plotting_structure import ModelPlotting
 from .plugin_structure import Plugins, TimeSeries
 
 
-class Switch(Flag):
-    on = True
-    off = False
-    ON = True
-    OFF = False
-    On = True
-    Off = False
-
-
 # logging
 class LoggingLevel(IntEnum):
     DEBUG = logging.DEBUG
@@ -33,11 +24,11 @@ class LoggingLevel(IntEnum):
 class Logging:
 
     path: str = "~/.threeml/log"
-    developer: Switch = Switch.off
-    usr: Switch = Switch.on
-    console: Switch = Switch.on
+    developer: bool = 'off'
+    usr: bool = 'on'
+    console: bool = 'on'
     level: LoggingLevel = LoggingLevel.INFO
-    startup_warning: Switch = Switch.on
+    startup_warning: bool = 'on'
 
 
 @dataclass
@@ -48,8 +39,8 @@ class Parallel:
 
 @dataclass
 class Interface:
-    progress_bars: Switch = Switch.on
-    multi_progress_color: Switch = Switch.on
+    progress_bars: bool = 'on'
+    multi_progress_color: bool = 'on'
     multi_progress_cmap: str = "viridis"
     progress_bar_color: str = "#9C04FF"
 

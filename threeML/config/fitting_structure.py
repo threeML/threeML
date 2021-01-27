@@ -33,8 +33,8 @@ class BayesianDefault:
 @dataclass
 class MLEDefault:
     default_minimizer: Optimizer = Optimizer.minuit
-    default_algorithm: Optional[str] = None
-    default_callback: Optional[str] = None
+    default_minimizer_algorithm: Optional[str] = None
+    default_minimizer_callback: Optional[str] = None
     contour_cmap: str = MPLCmap.Pastel1
     contour_background: str = 'white'
     contour_level_1: str = '#76E36C'

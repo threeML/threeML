@@ -488,6 +488,16 @@ def poisson_generator(tstart, tstop, slope, intercept, seed=1234):
 
 
 @pytest.fixture(scope="session")
+def event_time_series():
+
+    events = poisson_generator(
+        tstart=-10, tstop=60, slope=0, intercept=100, seed=1234)
+
+    yield events
+    
+
+
+@pytest.fixture(scope="session")
 def event_observation_contiguous():
 
     events = poisson_generator(

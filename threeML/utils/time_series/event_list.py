@@ -1034,8 +1034,11 @@ class EventListWithDeadTimeFraction(EventList):
         if self._poly_fit_exists:
 
             if not self._poly_fit_exists:
+
+                log.error("A polynomial fit to the channels does not exist!")
+                
                 raise RuntimeError(
-                    "A polynomial fit to the channels does not exist!")
+                    )
 
             for chan in range(self._n_channels):
 
