@@ -1,25 +1,29 @@
 from __future__ import print_function
-from builtins import map
-from threeML.io.file_utils import (
-    sanitize_filename,
-    if_directory_not_existing_then_make,
-    file_existing_and_readable,
-)
-from threeML.config.config import threeML_config
-from threeML.io.download_from_http import ApacheDirectory, RemoteDirectoryNotFound
-from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
-
-from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
 
 import gzip
-import shutil
 import os
-import numpy as np
-from collections import OrderedDict
 import re
+import shutil
+from builtins import map
+from collections import OrderedDict
+from typing import Any, Dict, List, Optional, Union
+
+import numpy as np
+
+from threeML.config.config import threeML_config
+from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
+from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
+from threeML.io.download_from_http import (ApacheDirectory,
+                                           RemoteDirectoryNotFound)
+from threeML.io.file_utils import (file_existing_and_readable,
+                                   if_directory_not_existing_then_make,
+                                   sanitize_filename)
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 
-def _validate_fermi_trigger_name(trigger):
+def _validate_fermi_trigger_name(trigger: str) -> str:
 
     _trigger_name_match = re.compile("^(bn|grb?)? ?(\d{9})$")
 
@@ -42,6 +46,8 @@ def _validate_fermi_trigger_name(trigger):
 
     trigger = search.group(2)
 
+    log.debug(f"validated {trigger}")
+
     return trigger
 
 
@@ -49,8 +55,8 @@ _detector_list = "n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,na,nb,b0,b1".split(",")
 
 
 def download_GBM_trigger_data(
-    trigger_name, detectors=None, destination_directory=".", compress_tte=True
-):
+    trigger_name: str, detectors: Optional[List[str]] = None, destination_directory: str = ".", compress_tte: bool = True
+) -> Dict[str, Any]:
     """
     Download the latest GBM TTE and RSP files from the HEASARC server. Will get the
     latest file version and prefer RSP2s over RSPs. If the files already exist in your destination
@@ -68,10 +74,11 @@ def download_GBM_trigger_data(
 
     # Let's doctor up the input just in case the user tried something strange
 
-    sanitized_trigger_name_ = _validate_fermi_trigger_name(trigger_name)
+    sanitized_trigger_name_: str = _validate_fermi_trigger_name(trigger_name)
 
     # create output directory if it does not exists
-    destination_directory = sanitize_filename(destination_directory, abspath=True)
+    destination_directory: Path = sanitize_filename(
+        destination_directory, abspath=True)
 
     if_directory_not_existing_then_make(destination_directory)
 
@@ -81,21 +88,23 @@ def download_GBM_trigger_data(
         for det in detectors:
 
             assert det in _detector_list, (
-                "Detector %s in the provided list is not a valid detector. "
-                "Valid choices are: %s" % (det, _detector_list)
+                f"Detector {det} in the provided list is not a valid detector. "
+                f"Valid choices are: {_detector_list}"
             )
 
     else:
 
-        detectors = list(_detector_list)
+        detectors: List[str] = list(_detector_list)
 
     # Open heasarc web page
 
-    url = threeML_config["gbm"]["public HTTP location"]
-    year = "20%s" % sanitized_trigger_name_[:2]
-    directory = "/triggers/%s/bn%s/current" % (year, sanitized_trigger_name_)
+    url = threeML_config.gbm.public_http_location
+    year = f"20{sanitized_trigger_name_[:2]}"
+    directory = f"/triggers/{year}/bn{sanitized_trigger_name_}/current"
 
-    heasarc_web_page_url = "%s/%s" % (url, directory)
+    heasarc_web_page_url = f"{url}/{directory}"
+
+    log.debug(f"going to look in {heasarc_web_page_url}")
 
     try:
 
@@ -103,9 +112,11 @@ def download_GBM_trigger_data(
 
     except RemoteDirectoryNotFound:
 
+        log.exception(
+            f"Trigger {sanitized_trigger_name_} does not exist at {heasarc_web_page_url}")
+
         raise TriggerDoesNotExist(
-            "Trigger %s does not exist at %s"
-            % (sanitized_trigger_name_, heasarc_web_page_url)
+
         )
 
     # Now select the files we want to download, then we will download them later
@@ -183,6 +194,8 @@ def download_GBM_trigger_data(
 
     for detector in list(remote_files_info.keys()):
 
+        log.debug(f"trying to download GBM detector {detector}")
+
         remote_detector_info = remote_files_info[detector]
         local_detector_info = download_info[detector]
 
@@ -194,11 +207,15 @@ def download_GBM_trigger_data(
         # Get the RSP2 file if it exists, otherwise get the RSP file
         if "rsp2" in remote_detector_info:
 
+            log.debug(f"{detector} has RSP2 responses")
+
             local_detector_info["rsp"] = downloader.download(
                 remote_detector_info["rsp2"], destination_directory, progress=True
             )
 
         else:
+
+            log.debug(f"{detector} has RSP responses")
 
             local_detector_info["rsp"] = downloader.download(
                 remote_detector_info["rsp"], destination_directory, progress=True
@@ -285,7 +302,7 @@ def _get_latest_version(filenames):
     return final_file_names
 
 
-def cleanup_downloaded_GBM_data(detector_information_dict):
+def cleanup_downloaded_GBM_data(detector_information_dict) -> None:
     """
     deletes data downloaded with download_GBM_trigger_data.
     :param detector_information_dict: the return dictionary from download_GBM_trigger_data

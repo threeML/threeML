@@ -232,7 +232,7 @@ class JointLikelihoodSet(object):
 
         # let's iterate, perform the fit and fill the data frame
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             # Parallel computation
 

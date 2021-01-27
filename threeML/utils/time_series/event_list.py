@@ -501,7 +501,7 @@ class EventList(TimeSeries):
             range(self._first_channel, self._n_channels + self._first_channel)
         )
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             def worker(channel):
 
@@ -640,7 +640,7 @@ class EventList(TimeSeries):
         t_start = self._poly_intervals.start_times
         t_stop = self._poly_intervals.stop_times
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             def worker(channel):
                 channel_mask = total_poly_energies == channel

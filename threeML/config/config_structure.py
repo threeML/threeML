@@ -37,6 +37,7 @@ class Logging:
     usr: Switch = Switch.on
     console: Switch = Switch.on
     level: LoggingLevel = LoggingLevel.INFO
+    startup_warning: Switch = Switch.on
 
 
 @dataclass

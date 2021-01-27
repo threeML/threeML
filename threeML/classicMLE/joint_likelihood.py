@@ -80,13 +80,13 @@ class JointLikelihood(object):
 
         # Pre-defined minimizer
         default_minimizer = minimization.LocalMinimization(
-            threeML_config["mle"]["default minimizer"]
+            threeML_config["mle"]["default_minimizer"]
         )
 
-        if threeML_config["mle"]["default minimizer algorithm"] is not None:
+        if threeML_config["mle"]["default_minimizer_algorithm"] is not None:
 
             default_minimizer.set_algorithm(
-                threeML_config["mle"]["default minimizer algorithm"]
+                threeML_config["mle"]["default_minimizer_algorithm"]
             )
 
         self.set_minimizer(default_minimizer)
@@ -559,7 +559,7 @@ class JointLikelihood(object):
 
         # Check whether we are parallelizing or not
 
-        if not threeML_config["parallel"]["use-parallel"]:
+        if not threeML_config["parallel"]["use_parallel"]:
 
             a, b, cc = self.minimizer.contours(
                 param_1,
@@ -961,7 +961,8 @@ class JointLikelihood(object):
 
         if "%s" % summed_log_likelihood == "nan":
             log.warning(
-                "These parameters returned a logLike = Nan: %s" % (trial_values,),
+                "These parameters returned a logLike = Nan: %s" % (
+                    trial_values,),
             )
 
             return minimization.FIT_FAILED
@@ -1047,7 +1048,8 @@ class JointLikelihood(object):
 
         else:
 
-            log.warning("Cannot restore best fit, since fit has not been executed.")
+            log.warning(
+                "Cannot restore best fit, since fit has not been executed.")
 
     def _get_table_of_parameters(self, parameters):
 
@@ -1114,7 +1116,7 @@ class JointLikelihood(object):
         idx = cc == minimization.FIT_FAILED
 
         sub.plot(a[~idx], cc[~idx], lw=2,
-                 color=threeML_config["mle"]["profile color"])
+                 color=threeML_config["mle"]["profile_color"])
 
         # Now plot the failed fits as "x"
 
@@ -1123,9 +1125,9 @@ class JointLikelihood(object):
 
         # Decide colors
         colors = [
-            threeML_config["mle"]["profile level 1"],
-            threeML_config["mle"]["profile level 2"],
-            threeML_config["mle"]["profile level 3"],
+            threeML_config["mle"]["profile_level_1"],
+            threeML_config["mle"]["profile_level_2"],
+            threeML_config["mle"]["profile_level_3"],
         ]
 
         for s, d, c in zip(sigmas, delta_chi2, colors):
@@ -1209,9 +1211,9 @@ class JointLikelihood(object):
         # Define the color palette
         palette = plt.get_cmap(
             threeML_config["mle"]["contour cmap"])  # cm.Pastel1
-        palette.set_over(threeML_config["mle"]["contour background"])
-        palette.set_under(threeML_config["mle"]["contour background"])
-        palette.set_bad(threeML_config["mle"]["contour background"])
+        palette.set_over(threeML_config["mle"]["contour_background"])
+        palette.set_under(threeML_config["mle"]["contour_background"])
+        palette.set_bad(threeML_config["mle"]["contour_background"])
 
         fig = plt.figure()
         sub = fig.add_subplot(111)
@@ -1223,9 +1225,9 @@ class JointLikelihood(object):
             cc,
             self._current_minimum + delta_chi2,
             colors=(
-                threeML_config["mle"]["contour level 1"],
-                threeML_config["mle"]["contour level 2"],
-                threeML_config["mle"]["contour level 3"],
+                threeML_config["mle"]["contour_level_1"],
+                threeML_config["mle"]["contour_level_2"],
+                threeML_config["mle"]["contour_level_3"],
             ),
         )
 

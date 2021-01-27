@@ -1,17 +1,19 @@
 from __future__ import division
+
 from builtins import zip
-from past.utils import old_div
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MaxNLocator
+from past.utils import old_div
 
-import threeML.plugins.SpectrumLike
 import threeML.plugins.PhotometryLike
-from threeML.io.plotting.cmap_cycle import cmap_intervals
-from threeML.exceptions.custom_exceptions import custom_warnings
+import threeML.plugins.SpectrumLike
 from threeML.config.config import threeML_config
-from threeML.io.plotting.step_plot import step_plot
+from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.io.plotting.data_residual_plot import ResidualPlot
+from threeML.io.plotting.step_plot import step_plot
 
 # This file contains plots which are plotted in data space after a model has been
 # assigned to the plugin.
@@ -95,10 +97,10 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     # default settings
 
     # Default is to show the model with steps
-    step = True
+    step = threeML_config.plugins.ogip.fit_plot.step
 
-    data_cmap = threeML_config["ogip"]["data plot cmap"]  # plt.cm.rainbow
-    model_cmap = threeML_config["ogip"]["model plot cmap"]  # plt.cm.nipy_spectral_r
+    data_cmap = threeML_config.plugins.ogip.fit_plot.data_cmap
+    model_cmap = threeML_config.plugins.ogip.fit_plot.model_cmap
 
     # Legend is on by default
     show_legend = True
@@ -156,7 +158,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         # This is the default (no rebinning)
 
         min_rates = [NO_REBIN] * len(data_keys)
-        
+
     if "data_per_plot" in kwargs:
         data_per_plot = int(kwargs.pop("data_per_plot"))
     else:
@@ -164,9 +166,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     if "data_cmap" in kwargs:
         if len(data_keys) <= data_per_plot:
-            data_colors = cmap_intervals(len(data_keys), kwargs.pop("data_cmap"))
+            data_colors = cmap_intervals(
+                len(data_keys), kwargs.pop("data_cmap"))
         else:
-            data_colors_base = cmap_intervals(data_per_plot, kwargs.pop("data_cmap"))
+            data_colors_base = cmap_intervals(
+                data_per_plot, kwargs.pop("data_cmap"))
             data_colors = []
             for i in range(len(data_keys)):
                 data_colors.append(data_colors_base[i % data_per_plot])
@@ -209,13 +213,14 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     if "background_cmap" in kwargs:
         if len(data_keys) <= data_per_plot:
             background_colors = cmap_intervals(len(data_keys),
-                                          kwargs.pop("background_cmap"))
+                                               kwargs.pop("background_cmap"))
         else:
             background_colors_base = cmap_intervals(data_per_plot,
-                                               kwargs.pop("background_cmap"))
+                                                    kwargs.pop("background_cmap"))
             background_colors = []
             for i in range(len(data_keys)):
-                background_colors.append(background_colors_base[i % data_per_plot])
+                background_colors.append(
+                    background_colors_base[i % data_per_plot])
 
     elif "background_colors" in kwargs:
         background_colors = kwargs.pop("background_colors")
@@ -242,7 +247,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     else:
 
-        model_labels = ["%s Model" % analysis.data_list[key]._name for key in data_keys]
+        model_labels = ["%s Model" %
+                        analysis.data_list[key]._name for key in data_keys]
 
     if "background_labels" in kwargs:
 
@@ -254,8 +260,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     else:
 
-        background_labels = ["%s Background" % analysis.data_list[key]._name for key in data_keys]
-
+        background_labels = ["%s Background" %
+                             analysis.data_list[key]._name for key in data_keys]
 
     if "source_only" in kwargs:
 
@@ -271,12 +277,12 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         show_background = kwargs.pop("show_background")
 
-        assert type(show_background) == bool, "show_background must be a boolean"
+        assert type(
+            show_background) == bool, "show_background must be a boolean"
 
     else:
 
         show_background = False
-
 
     if len(data_keys) <= data_per_plot:
         # If less than data_per_plot detectors need to be plotted,
@@ -367,6 +373,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         return figs
 
+
 def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     """
 
@@ -431,10 +438,10 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     data_keys = new_data_keys
 
     # Default is to show the model with steps
-    step = True
+    step = threeML_config.photo.fit_plot.step
 
-    data_cmap = threeML_config["photo"]["data plot cmap"]  # plt.cm.rainbow
-    model_cmap = threeML_config["photo"]["model plot cmap"]  # plt.cm.nipy_spectral_r
+    data_cmap = threeML_config.photo.fit_plot.data_cmap  # plt.cm.rainbow
+    model_cmap = threeML_config.photo.fit_plot.model_cmap  # plt.cm.nipy_spectral_r
 
     # Legend is on by default
     show_legend = True
@@ -500,7 +507,8 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
         mag_errors = data.magnitude_errors[sort_idx]
         avg_wave_length = avg_wave_length[sort_idx]
 
-        residuals = old_div((expected_model_magnitudes - magnitudes), mag_errors)
+        residuals = old_div(
+            (expected_model_magnitudes - magnitudes), mag_errors)
 
         widths = data._filter_set.wavelength_bounds.widths[sort_idx]
 

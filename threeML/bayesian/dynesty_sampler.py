@@ -175,7 +175,7 @@ class DynestyNestedSampler(UnitCubeSampler):
 
         # check if we are doing to do things in parallel
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             c = ParallelClient()
             view = c[:]
@@ -412,7 +412,7 @@ class DynestyDynamicSampler(UnitCubeSampler):
 
         # check if we are doing to do things in parallel
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             c = ParallelClient()
             view = c[:]

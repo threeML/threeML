@@ -22,7 +22,6 @@ class DataHistPlot:
     background_color: str = '#377eb8'
 
 
-
 @dataclass
 class PlotStyle:
     linestyle: Optional[str] = '-'
@@ -41,6 +40,7 @@ class LegendLoc(Enum):
     upper_left = 'upper left'
     upper_right = 'upper right'
 
+
 @dataclass
 class LegendStyle:
     loc: LegendLoc = LegendLoc.best
@@ -56,7 +56,13 @@ class PointSourcePlot:
     bayes_cmap: MPLCmap = MPLCmap.Set1
     plot_style: PlotStyle = PlotStyle()
     contour_style: ContourStyle = ContourStyle()
+    show_legend: bool = True
     legend_style: LegendStyle = LegendStyle()
+    flux_unit: str = "1/(keV s cm2)"
+    emin: float = 10.
+    emax: float = 1e4
+    num_ene: int = 100
+    ene_unit: str = "keV"
 
 
 @dataclass
