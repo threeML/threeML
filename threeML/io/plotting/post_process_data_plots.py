@@ -99,8 +99,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     # Default is to show the model with steps
     step = threeML_config.plugins.ogip.fit_plot.step
 
-    data_cmap = threeML_config.plugins.ogip.fit_plot.data_cmap
-    model_cmap = threeML_config.plugins.ogip.fit_plot.model_cmap
+    data_cmap = threeML_config.plugins.ogip.fit_plot.data_cmap.value
+    model_cmap = threeML_config.plugins.ogip.fit_plot.model_cmap.value
 
     # Legend is on by default
     show_legend = True
@@ -440,8 +440,8 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     # Default is to show the model with steps
     step = threeML_config.photo.fit_plot.step
 
-    data_cmap = threeML_config.photo.fit_plot.data_cmap  # plt.cm.rainbow
-    model_cmap = threeML_config.photo.fit_plot.model_cmap  # plt.cm.nipy_spectral_r
+    data_cmap = threeML_config.photo.fit_plot.data_cmap.value  # plt.cm.rainbow
+    model_cmap = threeML_config.photo.fit_plot.model_cmap.value  # plt.cm.nipy_spectral_r
 
     # Legend is on by default
     show_legend = True

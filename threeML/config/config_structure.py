@@ -7,7 +7,7 @@ from omegaconf import II, MISSING, SI, OmegaConf
 
 from .catalog_structure import Catalogs, PublicDataServer
 from .fitting_structure import BayesianDefault, MLEDefault
-from .plotting_structure import ModelPlotting
+from .plotting_structure import GenericPlotting, ModelPlotting
 from .plugin_structure import Plugins, TimeSeries
 
 
@@ -54,7 +54,7 @@ class Config:
     time_series: TimeSeries = TimeSeries()
     mle: MLEDefault = MLEDefault()
     bayesian: BayesianDefault = BayesianDefault()
-
+    plotting: GenericPlotting = GenericPlotting()
     model_plot: ModelPlotting = ModelPlotting()
 
     LAT: PublicDataServer = PublicDataServer(public_ftp_Location="ftp://heasarc.nasa.gov/fermi/data",

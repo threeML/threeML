@@ -5,13 +5,19 @@ import numpy as np
 from astromodels import (Constant, Cubic, Gaussian, Line, Log_normal, Model,
                          PointSource, Quadratic)
 
+from threeML.exceptions.custom_exceptions import FitFailed, BadCovariance
+from threeML.minimizer.grid_minimizer import AllFitFailed
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
-from threeML.classicMLE.joint_likelihood import FitFailed, JointLikelihood
+from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.logging import setup_logger, silence_console_log
 from threeML.minimizer.minimization import (GlobalMinimization,
-                                            LocalMinimization)
+                                            LocalMinimization,
+                                            CannotComputeCovariance
+
+                                            
+                                            )
 from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
                                                  UnbinnedPoissonLike)
 from threeML.plugins.XYLike import XYLike
@@ -22,8 +28,6 @@ log = setup_logger(__name__)
 _grade_model_lookup = (Line, Line, Quadratic, Cubic, Quadratic)
 
 
-class CannotComputeCovariance(RuntimeWarning):
-    pass
 
 
 class Polynomial(object):
@@ -262,13 +266,13 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
 
                 jl.fit(quiet=True)
 
-            except(FitFailed):
+            except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
 
                 try:
 
                     jl.fit(quiet=True)
 
-                except(FitFailed):
+                except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
 
                     log.debug("all MLE fits failed")
 
@@ -287,6 +291,7 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
             except:
 
                 log.exception(f"Fit failed in channel")
+                raise FitFailed()
 
             min_log_likelihood = xy.get_log_like()
 
@@ -433,13 +438,13 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
 
                 jl.fit(quiet=True)
 
-            except(FitFailed):
+            except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
 
                 try:
 
                     jl.fit(quiet=True)
 
-                except(FitFailed):
+                except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
 
                     log.debug("all MLE fits failed, returning zero")
 

@@ -66,6 +66,19 @@ class PointSourcePlot:
 
 
 @dataclass
+class ResidualPlot:
+    linewidth: float = 1
+    marker: str = "."
+    size: float = 3
+
+
+@dataclass
+class GenericPlotting:
+
+    residual_plot: ResidualPlot = ResidualPlot()
+
+
+@dataclass
 class ModelPlotting:
 
     point_source_plot: PointSourcePlot = PointSourcePlot()
