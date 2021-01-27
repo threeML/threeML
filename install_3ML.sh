@@ -266,7 +266,7 @@ conda config --add channels threeml
 
 conda config --add channels conda-forge
 
-PACKAGES_TO_INSTALL="astromodels>=2 threeml>=2"
+PACKAGES_TO_INSTALL="astromodels>=2 threeml>=2 iminuit<2"
 
 if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
 
