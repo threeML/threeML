@@ -66,7 +66,7 @@ class EmceeSampler(MCMCSampler):
         # same set of parameters
         with use_astromodels_memoization(False):
 
-            if threeML_config["parallel"]["use-parallel"]:
+            if threeML_config["parallel"]["use_parallel"]:
 
                 c = ParallelClient()
                 view = c[:]

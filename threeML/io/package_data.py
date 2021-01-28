@@ -3,9 +3,12 @@ from pathlib import Path
 
 import pkg_resources
 
+_custom_config_path = os.environ.get("THREEML_CONFIG")
+
 
 def get_path_of_data_file(data_file) -> Path:
-    file_path = pkg_resources.resource_filename("threeML", "data/%s" % data_file)
+    file_path = pkg_resources.resource_filename(
+        "threeML", "data/%s" % data_file)
 
     return Path(file_path)
 
@@ -29,27 +32,24 @@ def get_path_of_user_dir() -> Path:
         user_dir.mkdir()
 
     return user_dir
-    
-    
-
-def get_path_of_log_dir() -> Path:
-
-    log_path: Path = get_path_of_user_dir() / "log"
-
-    if not log_path.exists():
-
-        log_path.mkdir()
-    
-    return log_path
 
 
-_log_file_names = ["usr.log", "dev.log"]
+def get_path_of_user_config() -> Path:
 
+    if _custom_config_path is not None:
 
-def get_path_of_log_file(log_file: str) -> Path:
-    """
-    returns the path of the log files
-    """
-    assert log_file in _log_file_names, f"{log_file} is not on of {_log_file_names}"
+        config_path: Path = Path(_custom_config_path)
 
-    return get_path_of_log_dir() / log_file
+    config_path: Path = Path().home() / ".config" / "threeML"
+
+    if not config_path.exists():
+
+        config_path.mkdir(parents=True)
+
+    return config_path
+
+__all__ = ["get_path_of_data_file",
+           "get_path_of_data_dir",
+           "get_path_of_user_dir",
+           "get_path_of_user_config",
+           ]

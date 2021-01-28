@@ -4,10 +4,11 @@ from builtins import str
 
 import numpy as np
 from astromodels import Parameter
-from tqdm.auto import tqdm
 
+from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
 from threeML.minimizer.minimization import GlobalMinimizer
+from threeML.utils.progress_bar import tqdm
 
 log = setup_logger(__name__)
 
@@ -37,7 +38,7 @@ class GridMinimizer(GlobalMinimizer):
         # This list will contain callbacks, if any
         self._callbacks = []
 
-    def _setup(self, user_setup_dict):
+    def _setup(self, user_setup_dict) -> None:
 
         if user_setup_dict is None:
 
@@ -176,8 +177,7 @@ class GridMinimizer(GlobalMinimizer):
 
         n_iterations = np.prod([x.shape for x in list(self._grid.values())])
 
-        if self._verbosity == 1:
-
+        if threeML_config.interface.progress_bars:
             p = tqdm(total=n_iterations, desc="Grid Minimization")
 
         for values_tuple in itertools.product(*list(self._grid.values())):
@@ -235,13 +235,12 @@ class GridMinimizer(GlobalMinimizer):
 
                 callback(values_tuple, this_minimum)
 
-            if self._verbosity == 1:
-
+            if threeML_config.interface.progress_bars:
                 p.update(1)
 
         if internal_best_fit_values is None:
-
+            log.error("All fit starting from values in the grid have failed!")
             raise AllFitFailed(
-                "All fit starting from values in the grid have failed!")
+            )
 
         return internal_best_fit_values, overall_minimum

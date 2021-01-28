@@ -59,36 +59,30 @@ def plot_spectra(*analysis_results, **kwargs):
 
     quantity_support()
 
+    _sub_menu = threeML_config.model_plot.point_source_plot
+
     _defaults = {
-        "fit_cmap": threeML_config["model plot"]["point source plot"]["fit cmap"],
-        "contour_cmap": threeML_config["model plot"]["point source plot"][
-            "contour cmap"
-        ],
+        "fit_cmap": _sub_menu.fit_cmap.value,
+        "contour_cmap": _sub_menu.contour_cmap.value,
         "contour_colors": None,
         "fit_colors": None,
         "confidence_level": 0.68,
         "equal_tailed": True,
         "best_fit": "median",
-        "energy_unit": "keV",
-        "flux_unit": "1/(keV s cm2)",
-        "ene_min": 10.0,
-        "ene_max": 1e4,
-        "num_ene": 100,
+        "energy_unit": _sub_menu.ene_unit,
+        "flux_unit": _sub_menu.flux_unit,
+        "ene_min": _sub_menu.emin,
+        "ene_max": _sub_menu.emax,
+        "num_ene": _sub_menu.num_ene,
         "use_components": False,
         "components_to_use": [],
         "sources_to_use": [],
         "sum_sources": False,
         "show_contours": True,
-        "plot_style_kwargs": threeML_config["model plot"]["point source plot"][
-            "plot style"
-        ],
-        "contour_style_kwargs": threeML_config["model plot"]["point source plot"][
-            "contour style"
-        ],
-        "show_legend": True,
-        "legend_kwargs": threeML_config["model plot"]["point source plot"][
-            "legend style"
-        ],
+        "plot_style_kwargs": _sub_menu.plot_style,
+        "contour_style_kwargs": _sub_menu.contour_style,
+        "show_legend": _sub_menu.show_legend,
+        "legend_kwargs": _sub_menu.legend_style,
         "subplot": None,
         "xscale": "log",
         "yscale": "log",

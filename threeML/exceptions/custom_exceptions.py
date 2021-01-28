@@ -54,6 +54,10 @@ class ConfigurationFileCorrupt(RuntimeWarning):
     pass
 
 
+class BadCovariance(RuntimeError):
+    pass
+
+
 class deprecated(object):
     def __init__(self, reason):
         if inspect.isclass(reason) or inspect.isfunction(reason):

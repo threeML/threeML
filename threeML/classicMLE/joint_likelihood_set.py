@@ -1,22 +1,23 @@
-from builtins import range
-from builtins import object
-import logging
-import numpy as np
+
 import warnings
-from tqdm.auto import trange
+from builtins import object, range
 
-log = logging.getLogger(__name__)
-
-from threeML.classicMLE.joint_likelihood import JointLikelihood
-from threeML.parallel.parallel_client import ParallelClient
-from threeML.config.config import threeML_config
-from threeML.data_list import DataList
+import numpy as np
+import pandas as pd
+from astromodels import Model
 
 from threeML.analysis_results import AnalysisResultsSet
-from threeML.minimizer.minimization import _Minimization, LocalMinimization, _minimizers
+from threeML.classicMLE.joint_likelihood import JointLikelihood
+from threeML.config.config import threeML_config
+from threeML.data_list import DataList
+from threeML.minimizer.minimization import (LocalMinimization, _Minimization,
+                                            _minimizers)
+from threeML.parallel.parallel_client import ParallelClient
+from threeML.utils.progress_bar import trange
+from threeML.io.logging import setup_logger
 
-from astromodels import Model
-import pandas as pd
+
+log = setup_logger(__name__)
 
 
 class JointLikelihoodSet(object):
@@ -224,9 +225,6 @@ class JointLikelihoodSet(object):
 
         # Generate the data frame which will contain all results
 
-        if verbose:
-
-            log.setLevel(logging.INFO)
 
         self._continue_on_failure = continue_on_failure
 
@@ -234,7 +232,7 @@ class JointLikelihoodSet(object):
 
         # let's iterate, perform the fit and fill the data frame
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             # Parallel computation
 
@@ -250,7 +248,7 @@ class JointLikelihoodSet(object):
 
             results = []
 
-            for i in trange(self._n_iterations,desc="Goodness of fit computation"):
+            for i in trange(self._n_iterations, desc="Goodness of fit computation"):
 
                 results.append(self.worker(i))
 

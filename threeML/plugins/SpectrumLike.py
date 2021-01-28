@@ -1180,7 +1180,7 @@ class SpectrumLike(PluginPrototype):
                     if self._observed_spectrum.quality.bad[i] and self._mask[i]:
                         deselected_channels.append(i)
 
-                log.critical(
+                log.warning(
                     "You have opted to use channels which are flagged BAD in the PHA file."
                 )
 
@@ -1580,7 +1580,7 @@ class SpectrumLike(PluginPrototype):
             new_model
         ](self)
 
-        log.critical(
+        log.warning(
             "You are setting the background noise model to something that is not specified in the spectrum.\
          Verify that this makes statistical sense."
         )
@@ -1615,7 +1615,7 @@ class SpectrumLike(PluginPrototype):
             self._background_noise_model
         ](self)
 
-        log.critical(
+        log.warning(
             "You are setting the observation noise model to something that is not specified in the spectrum.\
                  Verify that this makes statistical sense."
         )
@@ -2479,7 +2479,7 @@ class SpectrumLike(PluginPrototype):
             energy_min,
             energy_max,
             observed_rates,
-            color=threeML_config["ogip"]["counts color"],
+            color=threeML_config["plugins"]["ogip"]["data_plot"]["counts_color"],
             lw=1.5,
             alpha=1,
             label="Total",
@@ -2492,7 +2492,7 @@ class SpectrumLike(PluginPrototype):
                 energy_min,
                 energy_max,
                 background_rate,
-                color=threeML_config["ogip"]["background color"],
+                color=threeML_config["plugins"]["ogip"]["data_plot"]["background_color"],
                 alpha=0.8,
                 label=background_label,
             )
@@ -2513,7 +2513,7 @@ class SpectrumLike(PluginPrototype):
                 alpha=0.9,
                 capsize=0,
                 # label=data._name,
-                color=threeML_config["ogip"]["counts color"],
+                color=threeML_config["plugins"]["ogip"]["data_plot"]["counts_color"],
             )
 
             if self._background_noise_model is not None:
@@ -2528,7 +2528,7 @@ class SpectrumLike(PluginPrototype):
                     alpha=0.9,
                     capsize=0,
                     # label=data._name,
-                    color=threeML_config["ogip"]["background color"],
+                    color=threeML_config["plugins"]["ogip"]["data_plot"]["background_color"],
                 )
 
         # Now plot and fade the non-used channels
@@ -2555,7 +2555,7 @@ class SpectrumLike(PluginPrototype):
                     energy_min_unrebinned[non_used_mask],
                     energy_max_unrebinned[non_used_mask],
                     observed_rate_unrebinned[non_used_mask],
-                    color=threeML_config["ogip"]["counts color"],
+                    color=threeML_config["plugins"]["ogip"]["data_plot"]["counts_color"],
                     lw=1.5,
                     alpha=1,
                 )
@@ -2589,7 +2589,7 @@ class SpectrumLike(PluginPrototype):
                         energy_min_unrebinned[non_used_mask],
                         energy_max_unrebinned[non_used_mask],
                         background_rate_unrebinned[non_used_mask],
-                        color=threeML_config["ogip"]["background color"],
+                        color=threeML_config["plugins"]["ogip"]["data_plot"]["background_color"],
                         alpha=0.8,
                     )
             else:
@@ -2622,7 +2622,7 @@ class SpectrumLike(PluginPrototype):
                     alpha=0.9,
                     capsize=0,
                     # label=data._name,
-                    color=threeML_config["ogip"]["counts color"],
+                    color=threeML_config["plugins"]["ogip"]["data_plot"]["counts_color"],
                 )
 
                 if self._background_noise_model is not None:
@@ -2643,7 +2643,7 @@ class SpectrumLike(PluginPrototype):
                         alpha=0.9,
                         capsize=0,
                         # label=data._name,
-                        color=threeML_config["ogip"]["background color"],
+                        color=threeML_config["plugins"]["ogip"]["data_plot"]["background_color"],
                     )
 
             # make some nice top and bottom plot ranges
@@ -3118,13 +3118,15 @@ class SpectrumLike(PluginPrototype):
         _default_background_kwargs = dict(
             color=background_color, alpha=1, linestyle="--")
 
+        _sub_menu = threeML_config.plotting.residual_plot
+
         _default_data_kwargs = dict(
             color=data_color,
             alpha=1,
-            fmt=threeML_config["residual plot"]["error marker"],
-            markersize=threeML_config["residual plot"]["error marker size"],
+            fmt=_sub_menu.marker,
+            markersize=_sub_menu.size,
             linestyle="",
-            elinewidth=threeML_config["residual plot"]["error line width"],
+            elinewidth=_sub_menu.linewidth,
             capsize=0,
         )
 

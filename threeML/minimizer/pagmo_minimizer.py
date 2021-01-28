@@ -3,7 +3,7 @@ from builtins import range
 from builtins import object
 import numpy as np
 import os
-from tqdm.auto import tqdm, trange
+from threeML.utils.progress_bar import tqdm, trange
 
 from threeML.minimizer.minimization import GlobalMinimizer
 from threeML.parallel.parallel_client import is_parallel_computation_active

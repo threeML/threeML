@@ -52,7 +52,7 @@ jobs:
 
             - name: Test pip on ${{ matrix.python-version }}
               run: |
-                  python -m pytest -vv --cov=threeML/ --cov-report=xml
+                  python -m pytest -vv --cov=threeML --cov-report=xml
               env:
                   OMP_NUM_THREADS: 1
                   MKL_NUM_THREADS: 1
@@ -74,7 +74,7 @@ jobs:
         strategy:
             matrix:
                 os: ["ubuntu-latest", "macos-latest"]
-                python-version: [3.8]
+                python-version: [3.7]
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -229,7 +229,10 @@ jobs:
                 python-version: [3.7]
 
         steps:
-            - uses: actions/checkout@v2
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
             - name: Set up Python
               uses: actions/setup-python@v2
               with:
@@ -313,6 +316,20 @@ jobs:
                   conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
                   fi
 
+                  conda install --use-local -c conda-forge threeml
+            
+            - name: Test conda build
+              shell: bash -l {0}
+              run: |
+              
+                  python -m pytest -vv --cov=threeML --cov-report=xml
+
+              env:
+                  OMP_NUM_THREADS: 1
+                  MKL_NUM_THREADS: 1
+                  NUMEXPR_NUM_THREADS: 1
+                  MPLBACKEND: "Agg"
+
     publish-conda:
         name: Publish to Conda
         if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
@@ -323,7 +340,10 @@ jobs:
                 python-version: [3.7]
 
         steps:
-            - uses: actions/checkout@v2
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
             - name: Set up Python
               uses: actions/setup-python@v2
               with:
@@ -426,5 +446,5 @@ jobs:
                   fi
 
               env:
-                  UPLOAD_TOKEN: secrets.CONDA_TOKEN
+                  UPLOAD_TOKEN: ${{secrets.CONDA_TOKEN}}
                   CURRENT_OS: ${{matrix.os}}

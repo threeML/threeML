@@ -101,21 +101,27 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     # default settings
 
     # Default is to show the model with steps
-    step = True
+    step = threeML_config.plugins.ogip.fit_plot.step
 
-    data_cmap = threeML_config["ogip"]["data plot cmap"]  # plt.cm.rainbow
-    # plt.cm.nipy_spectral_r
-    model_cmap = threeML_config["ogip"]["model plot cmap"]
 
-    # Legend is on by default
-    show_legend = True
+<< << << < HEAD
+data_cmap = threeML_config["ogip"]["data plot cmap"]  # plt.cm.rainbow
+ # plt.cm.nipy_spectral_r
+ model_cmap = threeML_config["ogip"]["model plot cmap"]
+== == == =
+data_cmap = threeML_config.plugins.ogip.fit_plot.data_cmap.value
+ model_cmap = threeML_config.plugins.ogip.fit_plot.model_cmap.value
+>>>>>> > feature-omegaconf
 
-    show_residuals = True
+# Legend is on by default
+show_legend = True
 
-    # Default colors
+ show_residuals = True
 
-    data_colors = cmap_intervals(len(data_keys), data_cmap)
-    model_colors = cmap_intervals(len(data_keys), model_cmap)
+  # Default colors
+
+  data_colors = cmap_intervals(len(data_keys), data_cmap)
+   model_colors = cmap_intervals(len(data_keys), model_cmap)
     background_colors = cmap_intervals(len(data_keys), model_cmap)
 
     # Now override defaults according to the optional keywords, if present
@@ -443,23 +449,30 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     data_keys = new_data_keys
 
     # Default is to show the model with steps
-    step = True
+    step = threeML_config.plugins.photo.fit_plot.step
 
-    data_cmap = threeML_config["photo"]["data plot cmap"]  # plt.cm.rainbow
-    # plt.cm.nipy_spectral_r
-    model_cmap = threeML_config["photo"]["model plot cmap"]
 
-    # Legend is on by default
-    show_legend = True
+<< << << < HEAD
+data_cmap = threeML_config["photo"]["data plot cmap"]  # plt.cm.rainbow
+ # plt.cm.nipy_spectral_r
+ model_cmap = threeML_config["photo"]["model plot cmap"]
+== == == =
+data_cmap = threeML_config.plugins.photo.fit_plot.data_cmap.value  # plt.cm.rainbow
+ # plt.cm.nipy_spectral_r
+ model_cmap = threeML_config.plugins.photo.fit_plot.model_cmap.value
+>>>>>> > feature-omegaconf
 
-    # Default colors
+# Legend is on by default
+show_legend = True
 
-    data_colors = cmap_intervals(len(data_keys), data_cmap)
-    model_colors = cmap_intervals(len(data_keys), model_cmap)
+ # Default colors
 
-    # Now override defaults according to the optional keywords, if present
+ data_colors = cmap_intervals(len(data_keys), data_cmap)
+  model_colors = cmap_intervals(len(data_keys), model_cmap)
 
-    if "show_legend" in kwargs:
+   # Now override defaults according to the optional keywords, if present
+
+   if "show_legend" in kwargs:
         show_legend = bool(kwargs.pop("show_legend"))
 
     if "step" in kwargs:

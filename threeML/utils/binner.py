@@ -1,12 +1,13 @@
 import numba as nb
 import numpy as np
-from tqdm.auto import tqdm
 
+from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.logging import setup_logger
 from threeML.utils.bayesian_blocks import (bayesian_blocks,
                                            bayesian_blocks_not_unique)
 from threeML.utils.numba_utils import VectorFloat64, VectorInt64
+from threeML.utils.progress_bar import tqdm
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
 
@@ -338,8 +339,10 @@ class TemporalBinner(TimeIntervalSet):
         # as long as we have not reached the end of the interval
         # the loop will run
 
-        pbar = tqdm(
-            total=arrival_times.shape[0], desc="Binning by significance")
+        if threeML_config.interface.progress_bars:
+
+            pbar = tqdm(
+                total=arrival_times.shape[0], desc="Binning by significance")
 
         while not end_all_search:
 
@@ -418,12 +421,14 @@ class TemporalBinner(TimeIntervalSet):
             total_counts = counts
 
             # start searching from where the fast search ended
-            pbar.update(counts)
+            if threeML_config.interface.progress_bars:
+                pbar.update(counts)
 
             for time in arrival_times[start_idx:]:
 
                 total_counts += 1
-                pbar.update(1)
+                if threeML_config.interface.progress_bars:
+                    pbar.update(1)
                 if total_counts < min_counts:
 
                     continue
@@ -477,7 +482,7 @@ class TemporalBinner(TimeIntervalSet):
 
         if not starts:
 
-            log.critical(
+            log.error(
                 "The requested sigma level could not be achieved in the interval. Try decreasing it."
             )
 

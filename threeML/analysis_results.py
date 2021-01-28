@@ -24,6 +24,7 @@ from past.utils import old_div
 
 from threeML import __version__
 from threeML.config.config import threeML_config
+from threeML.exceptions.custom_exceptions import BadCovariance
 from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.fits_file import FITSExtension, FITSFile, fits
@@ -1776,9 +1777,14 @@ class MLEResults(_AnalysisResults):
                 expected_shape,
             )
 
-            assert np.all(
+            if not np.all(
                 np.isfinite(covariance_matrix)
-            ), "Covariance matrix contains Nan or inf. Cannot continue."
+            ):
+
+                log.error(
+                    "Covariance matrix contains Nan or inf. Cannot continue.")
+
+                raise BadCovariance()
 
             # Generate samples from the multivariate normal distribution, i.e., accounting for the covariance of the
             # parameters

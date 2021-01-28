@@ -62,7 +62,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMBurstCatalog, self).__init__(
             "fermigbrst",
-            threeML_config["catalogs"]["Fermi"]["GBM burst catalog"],
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM burst catalog"].url,
             "Fermi-LAT/GBM burst catalog",
         )
 
@@ -691,7 +691,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
         super(FermiLATSourceCatalog, self).__init__(
             "fermilpsc",
-            threeML_config["catalogs"]["Fermi"]["LAT FGL"],
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["LAT FGL"].url,
             "Fermi-LAT/LAT source catalog",
         )
 
@@ -835,7 +835,7 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
 
         super(FermiLLEBurstCatalog, self).__init__(
             "fermille",
-            threeML_config["catalogs"]["Fermi"]["LLE catalog"],
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["LLE catalog"].url,
             "Fermi-LAT/LLE catalog",
         )
 
