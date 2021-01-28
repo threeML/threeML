@@ -99,7 +99,7 @@ def download_GBM_trigger_data(
 
     # Open heasarc web page
 
-    url = threeML_config.gbm.public_http_location
+    url = threeML_config.GBM.public_http_location
     year = f"20{sanitized_trigger_name_[:2]}"
     directory = f"/triggers/{year}/bn{sanitized_trigger_name_}/current"
 

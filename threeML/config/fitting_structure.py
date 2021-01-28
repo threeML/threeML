@@ -35,13 +35,13 @@ class MLEDefault:
     default_minimizer: Optimizer = Optimizer.minuit
     default_minimizer_algorithm: Optional[str] = None
     default_minimizer_callback: Optional[str] = None
-    contour_cmap: str = MPLCmap.Pastel1
+    contour_cmap: MPLCmap = MPLCmap.Pastel1
     contour_background: str = 'white'
-    contour_level_1: str = '#76E36C'
-    contour_level_2: str = '#FF5239'
-    contour_level_3: str = '#64CAFE'
+    contour_level_1: str = '#ffa372'
+    contour_level_2: str = '#ed6663'
+    contour_level_3: str = '#0f4c81'
     profile_color: str = 'k'
 
-    profile_level_1: str = '#76E36C'
-    profile_level_2: str = '#FF5239'
-    profile_level_3: str = '#64CAFE'
+    profile_level_1: str = '#ffa372'
+    profile_level_2: str = '#ed6663'
+    profile_level_3: str = '#0f4c81'

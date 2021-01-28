@@ -25,7 +25,7 @@ class DataHistPlot:
 @dataclass
 class PlotStyle:
     linestyle: Optional[str] = '-'
-    lineswidth: Optional[float] = 1.7
+    linewidth: Optional[float] = 1.7
 
 
 @dataclass

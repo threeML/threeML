@@ -59,8 +59,8 @@ def plot_spectra(*analysis_results, **kwargs):
     _sub_menu = threeML_config.model_plot.point_source_plot
 
     _defaults = {
-        "fit_cmap": _sub_menu.fit_cmap,
-        "contour_cmap": _sub_menu.contour_cmap,
+        "fit_cmap": _sub_menu.fit_cmap.value,
+        "contour_cmap": _sub_menu.contour_cmap.value,
         "contour_colors": None,
         "fit_colors": None,
         "confidence_level": 0.68,

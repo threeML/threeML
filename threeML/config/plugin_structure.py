@@ -32,8 +32,8 @@ class LightCurveMethodSwitch(Flag):
     
 @dataclass
 class TimeSeries:
-    light_curve_color: str = "#34495E"
-    selection_color: str = "#85929E"
+    light_curve_color: str = "#05716c"
+    selection_color: str = "#1fbfb8"
     background_color: str = "#C0392B"
     background_selection_color: str = "#E74C3C"
     default_fit_method: Optional[LightCurveMethodSwitch] = None

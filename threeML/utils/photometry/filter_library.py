@@ -8,7 +8,10 @@ import yaml
 from threeML.utils.progress_bar import tqdm
 
 from threeML.io.package_data import get_path_of_data_dir
+from threeML.io.logging import setup_logger
 
+
+log = setup_logger(__name__)
 
 def get_speclite_filter_path() -> Path:
 
@@ -45,6 +48,8 @@ class FilterLibrary(object):
             self._instruments = []
 
             for observatory in tqdm(f.keys(), desc="Loading photometric filters"):
+
+                log.debug(f"loading {observatory}")
 
                 sub_dict = {}
                 for instrument in f[observatory].keys():

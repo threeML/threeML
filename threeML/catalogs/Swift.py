@@ -38,7 +38,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         super(SwiftGRBCatalog, self).__init__(
             "swiftgrb",
-            threeML_config["catalogs"]["Swift"]["Swift GRB catalog"].url,
+            threeML_config["catalogs"]["Swift"]["catalogs"]["Swift GRB catalog"].url,
             "Swift GRB catalog",
         )
 

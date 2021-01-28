@@ -1212,7 +1212,7 @@ class JointLikelihood(object):
 
         # Define the color palette
         palette = plt.get_cmap(
-            threeML_config["mle"]["contour cmap"])  # cm.Pastel1
+            threeML_config["mle"]["contour_cmap"].value)  # cm.Pastel1
         palette.set_over(threeML_config["mle"]["contour_background"])
         palette.set_under(threeML_config["mle"]["contour_background"])
         palette.set_bad(threeML_config["mle"]["contour_background"])
