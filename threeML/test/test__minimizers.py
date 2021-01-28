@@ -38,9 +38,9 @@ skip_if_pygmo_is_not_available = pytest.mark.skipif(
     not has_pygmo, reason="No pygmo available"
 )
 
-skip_if_ROOT_is_available = pytest.mark.skipif(
-    (not has_pygmo) or has_root, reason="ROOT is available. Skipping incompatible tests."
-)
+# skip_if_ROOT_is_available = pytest.mark.skipif(
+#     (not has_pygmo) or has_root, reason="ROOT is available. Skipping incompatible tests."
+# )
 
 
 def check_results(fit_results):
@@ -126,12 +126,12 @@ def test_pagmo(joint_likelihood_bn090217206_nai):
     do_analysis(joint_likelihood_bn090217206_nai, pagmo)
 
 
-@skip_if_ROOT_is_available
-def test_parallel_pagmo(joint_likelihood_bn090217206_nai):
-
-    with parallel_computation(start_cluster=False):
-
-        test_pagmo(joint_likelihood_bn090217206_nai)
+#@skip_if_ROOT_is_available
+#def _test_parallel_pagmo(joint_likelihood_bn090217206_nai):
+#
+#    with parallel_computation(start_cluster=False):
+#
+#        test_pagmo(joint_likelihood_bn090217206_nai)
 
 
 def test_scipy(joint_likelihood_bn090217206_nai):
