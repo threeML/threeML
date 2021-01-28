@@ -23,6 +23,7 @@ from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import (NegativeBackground,
                                                   custom_warnings)
 from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.io.plotting.light_curve_plots import (channel_plot,
                                                    disjoint_patch_plot)
@@ -36,10 +37,7 @@ from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.string_utils import dash_separated_string_to_tuple
 
-from threeML.io.package_data import get_path_of_data_file
-
 plt.style.use(get_path_of_data_file("threeml.mplstyle"))
-
 
 
 log = setup_logger(__name__)
@@ -2555,7 +2553,7 @@ class SpectrumLike(PluginPrototype):
                     energy_min_unrebinned[non_used_mask],
                     energy_max_unrebinned[non_used_mask],
                     observed_rate_unrebinned[non_used_mask],
-                    color=threeML_config["plugins"]["ogip"]["data_plot"]["counts_color"],
+                    color=threeML_config.plugins.ogip.data_plot.counts_color,
                     lw=1.5,
                     alpha=1,
                 )
@@ -2589,7 +2587,7 @@ class SpectrumLike(PluginPrototype):
                         energy_min_unrebinned[non_used_mask],
                         energy_max_unrebinned[non_used_mask],
                         background_rate_unrebinned[non_used_mask],
-                        color=threeML_config["plugins"]["ogip"]["data_plot"]["background_color"],
+                        color=threeML_config.plugins.ogip.data_plot.background_color,
                         alpha=0.8,
                     )
             else:
@@ -2622,7 +2620,7 @@ class SpectrumLike(PluginPrototype):
                     alpha=0.9,
                     capsize=0,
                     # label=data._name,
-                    color=threeML_config["plugins"]["ogip"]["data_plot"]["counts_color"],
+                    color=threeML_config.plugins.ogip.data_plot.counts_color,
                 )
 
                 if self._background_noise_model is not None:
@@ -2632,10 +2630,9 @@ class SpectrumLike(PluginPrototype):
                             background_rate_unrebinned[non_used_mask],
                             energy_width_unrebinned[non_used_mask],
                         ),
-                        yerr=old_div(
-                            background_rate_unrebinned_err[non_used_mask],
-                            energy_width_unrebinned[non_used_mask],
-                        ),
+                        yerr=background_rate_unrebinned_err[non_used_mask] /
+                        energy_width_unrebinned[non_used_mask]
+                        ,
                         fmt="",
                         # markersize=3,
                         linestyle="",
@@ -2643,7 +2640,7 @@ class SpectrumLike(PluginPrototype):
                         alpha=0.9,
                         capsize=0,
                         # label=data._name,
-                        color=threeML_config["plugins"]["ogip"]["data_plot"]["background_color"],
+                        color=threeML_config.plugins.ogip.data_plot.background_color,
                     )
 
             # make some nice top and bottom plot ranges
@@ -2675,8 +2672,8 @@ class SpectrumLike(PluginPrototype):
                 top,
                 bottom,
                 ~self._mask,
-                color="k",
-                alpha=0.4,
+                color=threeML_config.plugins.ogip.data_plot.masked_channels_color,
+                alpha=0.5,
             )
 
             # plot the bad quality channels if requested
@@ -2694,7 +2691,7 @@ class SpectrumLike(PluginPrototype):
                     bottom,
                     self._observed_spectrum.quality.bad,
                     color="none",
-                    edgecolor="#FE3131",
+                    edgecolor=threeML_config.plugins.ogip.data_plot.bad_channels_color,
                     hatch="/",
                     alpha=0.95,
                 )
@@ -2712,7 +2709,7 @@ class SpectrumLike(PluginPrototype):
                     bottom,
                     self._observed_spectrum.quality.bad,
                     color="none",
-                    edgecolor="#C79BFE",
+                    edgecolor=threeML_config.plugins.ogip.data_plot.warn_channels_color,
                     hatch="/",
                     alpha=0.95,
                 )

@@ -14,12 +14,17 @@ class BinnedSpectrumPlot:
     data_cmap: MPLCmap = MPLCmap.Set1
     model_cmap: MPLCmap = MPLCmap.Set1
     step: bool = False
+    show_legend: bool = True
+    show_residuals: bool = True
 
 
 @dataclass
 class DataHistPlot:
-    counts_color: str = '#31FE6F'
-    background_color: str = '#377eb8'
+    counts_color: str = "#500472"
+    background_color: str = "#79cbb8"
+    warn_channels_color: str = "#C79BFE"
+    bad_channels_color: str = "#FE3131"
+    masked_channels_color: str = "#566573"
 
 
 @dataclass

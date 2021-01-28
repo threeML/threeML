@@ -7,8 +7,8 @@ import numpy as np
 from matplotlib.ticker import MaxNLocator
 from past.utils import old_div
 
-import threeML.plugins.PhotometryLike
-import threeML.plugins.SpectrumLike
+import threeML.plugins.PhotometryLike as photolike
+import threeML.plugins.SpectrumLike as speclike
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.package_data import get_path_of_data_file
@@ -79,7 +79,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
         if key in list(analysis.data_list.keys()):
 
             if isinstance(
-                analysis.data_list[key], threeML.plugins.SpectrumLike.SpectrumLike
+                analysis.data_list[key], speclike.SpectrumLike
             ):
 
                 new_data_keys.append(key)
@@ -100,28 +100,23 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     # default settings
 
+    _sub_menu = threeML_config.plugins.ogip.fit_plot
+    
     # Default is to show the model with steps
-    step = threeML_config.plugins.ogip.fit_plot.step
+    step = _sub_menu.step
 
+    data_cmap = _sub_menu.data_cmap.value
+    model_cmap = _sub_menu.model_cmap.value
 
-<< << << < HEAD
-data_cmap = threeML_config["ogip"]["data plot cmap"]  # plt.cm.rainbow
- # plt.cm.nipy_spectral_r
- model_cmap = threeML_config["ogip"]["model plot cmap"]
-== == == =
-data_cmap = threeML_config.plugins.ogip.fit_plot.data_cmap.value
- model_cmap = threeML_config.plugins.ogip.fit_plot.model_cmap.value
->>>>>> > feature-omegaconf
+    # Legend is on by default
+    show_legend = _sub_menu.show_legend
 
-# Legend is on by default
-show_legend = True
+    show_residuals = _sub_menu.show_residuals
 
- show_residuals = True
+    # Default colors
 
-  # Default colors
-
-  data_colors = cmap_intervals(len(data_keys), data_cmap)
-   model_colors = cmap_intervals(len(data_keys), model_cmap)
+    data_colors = cmap_intervals(len(data_keys), data_cmap)
+    model_colors = cmap_intervals(len(data_keys), model_cmap)
     background_colors = cmap_intervals(len(data_keys), model_cmap)
 
     # Now override defaults according to the optional keywords, if present
@@ -203,7 +198,7 @@ show_legend = True
             model_colors = cmap_intervals(len(data_keys),
                                           kwargs.pop("model_cmap"))
         else:
-            model_colors_base = cmap_intervals(data_per_plot,
+ um,.           model_colors_base = cmap_intervals(data_per_plot,
                                                kwargs.pop("model_cmap"))
             model_colors = []
             for i in range(len(data_keys)):
@@ -451,28 +446,22 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     # Default is to show the model with steps
     step = threeML_config.plugins.photo.fit_plot.step
 
+    data_cmap = threeML_config.plugins.photo.fit_plot.data_cmap.value  # plt.cm.rainbow
 
-<< << << < HEAD
-data_cmap = threeML_config["photo"]["data plot cmap"]  # plt.cm.rainbow
- # plt.cm.nipy_spectral_r
- model_cmap = threeML_config["photo"]["model plot cmap"]
-== == == =
-data_cmap = threeML_config.plugins.photo.fit_plot.data_cmap.value  # plt.cm.rainbow
- # plt.cm.nipy_spectral_r
- model_cmap = threeML_config.plugins.photo.fit_plot.model_cmap.value
->>>>>> > feature-omegaconf
+    model_cmap = threeML_config.plugins.photo.fit_plot.model_cmap.value
 
-# Legend is on by default
-show_legend = True
+    # Legend is on by default
+    show_legend = True
 
- # Default colors
+    # Default colors
 
- data_colors = cmap_intervals(len(data_keys), data_cmap)
-  model_colors = cmap_intervals(len(data_keys), model_cmap)
+    data_colors = cmap_intervals(len(data_keys), data_cmap)
+    model_colors = cmap_intervals(len(data_keys), model_cmap)
 
-   # Now override defaults according to the optional keywords, if present
+    # Now override defaults according to the optional keywords, if present
 
-   if "show_legend" in kwargs:
+    if "show_legend" in kwargs:
+
         show_legend = bool(kwargs.pop("show_legend"))
 
     if "step" in kwargs:
