@@ -12,7 +12,8 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
+from threeML.exceptions.custom_exceptions import TriggerDoesNotExist,\
+    DetDoesNotExist
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.download_from_http import (ApacheDirectory,
                                            RemoteDirectoryNotFound)
@@ -35,15 +36,23 @@ def _validate_fermi_trigger_name(trigger: str) -> str:
         ", or ".join(_valid_trigger_args),
     )
 
-    assert type(trigger) == str, "triggers must be strings"
+    if not isinstance(trigger, str):
+        log.error(
+            "Triggers must be strings"
+        )
+        raise TypeError()
 
     trigger = trigger.lower()
 
     search = _trigger_name_match.match(trigger)
 
-    assert search is not None, assert_string
+    if search is None:
+        log.error(assert_string)
+        raise NameError()
 
-    assert search.group(2) is not None, assert_string
+    if search.group(2) is None:
+        log.error(assert_string)
+        raise NameError()
 
     trigger = search.group(2)
 
@@ -88,10 +97,12 @@ def download_GBM_trigger_data(
 
         for det in detectors:
 
-            assert det in _detector_list, (
-                f"Detector {det} in the provided list is not a valid detector. "
-                f"Valid choices are: {_detector_list}"
-            )
+            if det not in _detector_list:
+                log.error(
+                    f"Detector {det} in the provided list is not a valid detector. "
+                    f"Valid choices are: {_detector_list}"
+                )
+                raise DetDoesNotExist()
 
     else:
 
