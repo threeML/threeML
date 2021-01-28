@@ -36,6 +36,12 @@ from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.string_utils import dash_separated_string_to_tuple
 
+from threeML.io.package_data import get_path_of_data_file
+
+plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+
+
+
 log = setup_logger(__name__)
 
 NO_REBIN = 1e-99

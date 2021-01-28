@@ -19,11 +19,15 @@ from threeML.data_list import DataList
 from threeML.exceptions import custom_exceptions
 from threeML.exceptions.custom_exceptions import FitFailed, custom_warnings
 from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
 from threeML.io.table import Table
 from threeML.minimizer import minimization
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.statistics.stats_tools import aic, bic
+
+plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+
 
 log = setup_logger(__name__)
 
@@ -961,7 +965,8 @@ class JointLikelihood(object):
 
         if "%s" % summed_log_likelihood == "nan":
             log.warning(
-                "These parameters returned a logLike = Nan: %s" % (trial_values,),
+                "These parameters returned a logLike = Nan: %s" % (
+                    trial_values,),
             )
 
             return minimization.FIT_FAILED
@@ -1047,7 +1052,8 @@ class JointLikelihood(object):
 
         else:
 
-            log.warning("Cannot restore best fit, since fit has not been executed.")
+            log.warning(
+                "Cannot restore best fit, since fit has not been executed.")
 
     def _get_table_of_parameters(self, parameters):
 

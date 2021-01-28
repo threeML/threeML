@@ -2,23 +2,26 @@ from builtins import object
 
 __author__ = "grburgess"
 
+import warnings
+
 import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy.visualization import quantity_support
-import warnings
 
 from threeML.config.config import threeML_config
-from threeML.io.calculate_flux import (
-    _setup_analysis_dictionaries,
-    _collect_sums_into_dictionaries,
-)
+from threeML.io.calculate_flux import (_collect_sums_into_dictionaries,
+                                       _setup_analysis_dictionaries)
+from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
+
+plt.style.use(get_path_of_data_file("threeml.mplstyle"))
 
 
 def plot_point_source_spectra(*analysis_results, **kwargs):
 
-    warnings.warn("plot_point_source_spectra() has been replaced by plot_spectra().")
+    warnings.warn(
+        "plot_point_source_spectra() has been replaced by plot_spectra().")
     return plot_spectra(*analysis_results, **kwargs)
 
 
@@ -161,7 +164,8 @@ def plot_spectra(*analysis_results, **kwargs):
 
         if _defaults["fit_colors"] is None:
 
-            color_fit = cmap_intervals(num_sources_to_plot + 1, _defaults["fit_cmap"])
+            color_fit = cmap_intervals(
+                num_sources_to_plot + 1, _defaults["fit_cmap"])
 
         else:
 
@@ -181,7 +185,8 @@ def plot_spectra(*analysis_results, **kwargs):
 
             else:
                 raise ValueError(
-                    "Can not setup color, wrong type:", type(_defaults["fit_colors"])
+                    "Can not setup color, wrong type:", type(
+                        _defaults["fit_colors"])
                 )
 
         if _defaults["contour_colors"] is None:
@@ -195,7 +200,8 @@ def plot_spectra(*analysis_results, **kwargs):
             # duck typing
             if isinstance(_defaults["contour_colors"], (str, str)):
 
-                color_contour = [_defaults["contour_colors"]] * num_sources_to_plot
+                color_contour = [
+                    _defaults["contour_colors"]] * num_sources_to_plot
 
             elif isinstance(_defaults["contour_colors"], list):
 
@@ -512,7 +518,8 @@ def plot_spectra(*analysis_results, **kwargs):
         )
 
         color_fit = cmap_intervals(num_sources_to_plot, _defaults["fit_cmap"])
-        color_contour = cmap_intervals(num_sources_to_plot, _defaults["contour_cmap"])
+        color_contour = cmap_intervals(
+            num_sources_to_plot, _defaults["contour_cmap"])
         color_itr = 0
 
         if _defaults["use_components"] and list(component_sum_dict_mle.keys()):

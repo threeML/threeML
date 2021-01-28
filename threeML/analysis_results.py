@@ -22,7 +22,23 @@ from astromodels.core.parameter import Parameter
 from corner import corner
 from past.utils import old_div
 
+from threeML import __version__
+from threeML.config.config import threeML_config
+from threeML.io.calculate_flux import _calculate_point_source_flux
+from threeML.io.file_utils import sanitize_filename
+from threeML.io.fits_file import FITSExtension, FITSFile, fits
+from threeML.io.hdf5_utils import (recursively_load_dict_contents_from_group,
+                                   recursively_save_dict_contents_to_group)
 from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
+from threeML.io.results_table import ResultsTable
+from threeML.io.rich_display import display
+from threeML.io.table import NumericMatrix
+from threeML.io.uncertainty_formatter import uncertainty_formatter
+from threeML.random_variates import RandomVariates
+
+plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+
 
 log = setup_logger(__name__)
 
@@ -42,19 +58,6 @@ else:
 
     log.debug("chainconsumer is installed")
 
-
-from threeML import __version__
-from threeML.config.config import threeML_config
-from threeML.io.calculate_flux import _calculate_point_source_flux
-from threeML.io.file_utils import sanitize_filename
-from threeML.io.fits_file import FITSExtension, FITSFile, fits
-from threeML.io.hdf5_utils import (recursively_load_dict_contents_from_group,
-                                   recursively_save_dict_contents_to_group)
-from threeML.io.results_table import ResultsTable
-from threeML.io.rich_display import display
-from threeML.io.table import NumericMatrix
-from threeML.io.uncertainty_formatter import uncertainty_formatter
-from threeML.random_variates import RandomVariates
 
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
 # them with normal characters when we write the keyword, and we substitute them back when we read it back
@@ -153,7 +156,8 @@ def _load_one_results(fits_extension):
     analysis_type = fits_extension.header.get("RESUTYPE")
 
     # Gather the optimized model
-    serialized_model = _escape_back_yaml_from_fits(fits_extension.header.get("MODEL"))
+    serialized_model = _escape_back_yaml_from_fits(
+        fits_extension.header.get("MODEL"))
     model_dict = my_yaml.load(serialized_model, Loader=yaml.FullLoader)
 
     optimized_model = ModelParser(model_dict=model_dict).get_model()
@@ -187,7 +191,8 @@ def _load_one_results(fits_extension):
 
         # Get covariance matrix
 
-        covariance_matrix = np.atleast_2d(fits_extension.data.field("COVARIANCE").T)
+        covariance_matrix = np.atleast_2d(
+            fits_extension.data.field("COVARIANCE").T)
 
         # Instance and return
 
@@ -320,7 +325,8 @@ def _load_set_of_results(open_fits_file, n_results):
     all_results = []
 
     for i in range(n_results):
-        all_results.append(_load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1]))
+        all_results.append(_load_one_results(
+            open_fits_file["ANALYSIS_RESULTS", i + 1]))
 
     this_set = AnalysisResultsSet(all_results)
 
@@ -343,7 +349,8 @@ def _load_set_of_results(open_fits_file, n_results):
 
         else:
 
-            this_tuple = (column.name, record[column.name] * u.Unit(column.unit))
+            this_tuple = (
+                column.name, record[column.name] * u.Unit(column.unit))
 
         data_list.append(this_tuple)
 
@@ -436,7 +443,8 @@ class ANALYSIS_RESULTS_HDF(object):
 
         hdf_obj.create_dataset(
             "NAME",
-            data=np.array(list(free_parameters.keys()), dtype=h5py.string_dtype()),
+            data=np.array(list(free_parameters.keys()),
+                          dtype=h5py.string_dtype()),
             compression="gzip",
             compression_opts=9,
             shuffle=True,
@@ -583,10 +591,12 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         # Serialize the model so it can be placed in the header
 
-        yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
+        yaml_model_serialization = my_yaml.dump(
+            optimized_model.to_dict_with_types())
 
         # Replace characters which cannot be contained in a FITS header with other characters
-        yaml_model_serialization = _escape_yaml_for_fits(yaml_model_serialization)
+        yaml_model_serialization = _escape_yaml_for_fits(
+            yaml_model_serialization)
 
         # Get data frame with parameters (always use equal tail errors)
 
@@ -607,7 +617,8 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         # Init FITS extension
 
-        super(ANALYSIS_RESULTS, self).__init__(data_tuple, self._HEADER_KEYWORDS)
+        super(ANALYSIS_RESULTS, self).__init__(
+            data_tuple, self._HEADER_KEYWORDS)
 
         # Update keywords with their values for this instance
         self.hdu.header.set("MODEL", yaml_model_serialization)
@@ -629,7 +640,8 @@ class ANALYSIS_RESULTS(FITSExtension):
         measure_series = analysis_results.statistical_measures  # type: pd.Series
 
         for i, (measure, measure_value) in enumerate(measure_series.items()):
-            self.hdu.header.set("MEAS%i" % i, measure, comment="Measure type %i" % i)
+            self.hdu.header.set("MEAS%i" % i, measure,
+                                comment="Measure type %i" % i)
             self.hdu.header.set(
                 "MV%i" % i, measure_value, comment="Measure value %i" % i
             )
@@ -655,7 +667,8 @@ class AnalysisResultsFITS(FITSFile):
             # We got elements to write the SEQUENCE extension
 
             # Make SEQUENCE extension
-            sequence_ext = SEQUENCE(kwargs["sequence_name"], kwargs["sequence_tuple"])
+            sequence_ext = SEQUENCE(
+                kwargs["sequence_name"], kwargs["sequence_tuple"])
 
             extensions.append(sequence_ext)
 
@@ -673,7 +686,8 @@ class AnalysisResultsFITS(FITSFile):
         super(AnalysisResultsFITS, self).__init__(fits_extensions=extensions)
 
         # Set a couple of keywords in the primary header
-        self._hdu_list[0].header.set("DATE", datetime.datetime.now().isoformat())
+        self._hdu_list[0].header.set(
+            "DATE", datetime.datetime.now().isoformat())
         self._hdu_list[0].header.set(
             "ORIGIN",
             "3ML",
@@ -738,7 +752,8 @@ class _AnalysisResults(object):
         self._free_parameters = self._optimized_model.free_parameters
 
         # Gather also the optimized values of the parameters
-        self._values = np.array([x.value for x in list(self._free_parameters.values())])
+        self._values = np.array(
+            [x.value for x in list(self._free_parameters.values())])
 
         # Set the analysis type
         self._analysis_type = analysis_type
@@ -839,7 +854,8 @@ class _AnalysisResults(object):
         # Get the arguments of function which have not been specified
         # in the calling sequence (the **kwargs dictionary)
         # (they will be excluded from the vectorization)
-        to_be_excluded = [item for item in arguments if item not in list(kwargs.keys())]
+        to_be_excluded = [
+            item for item in arguments if item not in list(kwargs.keys())]
 
         # Vectorize the function
         vectorized = np.vectorize(function, excluded=to_be_excluded)
@@ -849,7 +865,8 @@ class _AnalysisResults(object):
         wrapper = functools.partial(vectorized, **kwargs)
 
         # Finally make so that the result is always a RandomVariate
-        wrapper2 = lambda *args, **kwargs: RandomVariates(wrapper(*args, **kwargs))
+        wrapper2 = lambda *args, **kwargs: RandomVariates(
+            wrapper(*args, **kwargs))
 
         return wrapper2
 
@@ -1014,7 +1031,8 @@ class _AnalysisResults(object):
 
                 if this_par.has_transformation():
 
-                    best_fit_internal = this_par.transformation.forward(values[-1])
+                    best_fit_internal = this_par.transformation.forward(
+                        values[-1])
 
                     _, neg_error = this_par.internal_to_external_delta(
                         best_fit_internal, -std_dev
@@ -1261,7 +1279,8 @@ class BayesianResults(_AnalysisResults):
 
                     labels[-1] = renamed_parameters[parameter.path]
 
-            priors.append(self._optimized_model.parameters[parameter_name].prior)
+            priors.append(
+                self._optimized_model.parameters[parameter_name].prior)
 
         # default arguments
         default_args = {
@@ -1322,7 +1341,8 @@ class BayesianResults(_AnalysisResults):
 
             labels.append(short_name)
 
-            priors.append(self._optimized_model.parameters[parameter_name].prior)
+            priors.append(
+                self._optimized_model.parameters[parameter_name].prior)
 
         # Rename the parameters if needed.
 
@@ -1508,7 +1528,8 @@ class BayesianResults(_AnalysisResults):
 
         if names is not None:
 
-            cc.add_chain(self._samples_transposed.T, parameters=labels, name=names[0])
+            cc.add_chain(self._samples_transposed.T,
+                         parameters=labels, name=names[0])
 
         else:
 
@@ -1617,7 +1638,8 @@ class BayesianResults(_AnalysisResults):
             this_bootstrap_variances = []
 
             for i in range(n_subsets):
-                samples = np.random.choice(this_samples, n_samples_in_each_subset)
+                samples = np.random.choice(
+                    this_samples, n_samples_in_each_subset)
 
                 this_bootstrap_averages.append(np.average(samples))
                 this_bootstrap_variances.append(np.std(samples))
@@ -1642,15 +1664,18 @@ class BayesianResults(_AnalysisResults):
 
             fig.suptitle(parameter_name)
 
-            plot_one_histogram(subs[0], averages[parameter_name], "sliding window")
-            plot_one_histogram(subs[0], bootstrap_averages[parameter_name], "bootstrap")
+            plot_one_histogram(
+                subs[0], averages[parameter_name], "sliding window")
+            plot_one_histogram(
+                subs[0], bootstrap_averages[parameter_name], "bootstrap")
 
             subs[0].set_ylabel("N subsets")
             subs[0].set_xlabel("Average")
 
             subs[0].legend()
 
-            plot_one_histogram(subs[1], variances[parameter_name], "sliding window")
+            plot_one_histogram(
+                subs[1], variances[parameter_name], "sliding window")
             plot_one_histogram(
                 subs[1], bootstrap_variances[parameter_name], "bootstrap"
             )
@@ -1822,7 +1847,8 @@ class MLEResults(_AnalysisResults):
 
             if parameter.has_transformation():
 
-                samples[:, i] = parameter.transformation.backward(samples[:, i])
+                samples[:, i] = parameter.transformation.backward(
+                    samples[:, i])
 
         # Finally build the class
 
@@ -1968,7 +1994,8 @@ class AnalysisResultsSet(collections.Sequence):
 
         else:
 
-            data_tuple = (("LOWER_BOUND", lower_bounds), ("UPPER_BOUND", upper_bounds))
+            data_tuple = (("LOWER_BOUND", lower_bounds),
+                          ("UPPER_BOUND", upper_bounds))
 
         self.characterize_sequence(name, data_tuple)
 

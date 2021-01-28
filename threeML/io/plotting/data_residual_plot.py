@@ -12,6 +12,11 @@ from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.logging import setup_logger
 
+from threeML.io.package_data import get_path_of_data_file
+
+plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+
+
 log = setup_logger(__name__)
 
 class ResidualPlot(object):
