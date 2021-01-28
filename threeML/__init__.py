@@ -22,7 +22,7 @@ except ImportError:
 from pathlib import Path
 
 from threeML.io.logging import setup_logger
-from .config import threeML_config, show_configuration
+from .config import threeML_config, show_configuration, get_current_configuration_copy
 
 log = setup_logger(__name__)
 log.propagate = False
