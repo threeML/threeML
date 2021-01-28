@@ -200,13 +200,13 @@ def activate_progress_bars():
     threeML_config["interface"]["progress_bars"] = 'on'
 
 
-# def toggle_progress_bars():
-#     """
-#     toggle the state of the progress bars
-#     """
-#     state = threeML_config["interface"]["progress_bars"]
+def toggle_progress_bars():
+    """
+    toggle the state of the progress bars
+    """
+    state = threeML_config["interface"]["progress_bars"]
 
-#     threeML_config["interface"]["progress_bars"] = not state
+    threeML_config["interface"]["progress_bars"] = not state
 
 
 def silence_warnings():

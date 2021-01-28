@@ -17,7 +17,7 @@ from threeML.utils.progress_bar import tqdm, trange
 
 def test_all_toggles():
 
-    #toggle_progress_bars()
+    toggle_progress_bars()
 
     activate_progress_bars()
     silence_progress_bars()
@@ -44,11 +44,11 @@ def test_progress_bars():
 
     threeML_config.interface.progress_bars = 'on'
 
-    # toggle_progress_bars()
+    toggle_progress_bars()
 
-    # assert not threeML_config.interface.progress_bars
+    assert not threeML_config.interface.progress_bars
 
-    # toggle_progress_bars()
+    toggle_progress_bars()
 
     assert threeML_config.interface.progress_bars
 

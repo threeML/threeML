@@ -1327,8 +1327,8 @@ try:
     from threeML.minimizer.minuit_minimizer import MinuitMinimizer
 
 except ImportError:
-
-    log.warning("Minuit minimizer not available")
+    if threeML_config.logging.startup_warnings:
+        log.warning("Minuit minimizer not available")
 
 else:
 
@@ -1339,8 +1339,8 @@ try:
     from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
 
 except ImportError:
-
-    log.warning("ROOT minimizer not available")
+    if threeML_config.logging.startup_warnings:
+        log.warning("ROOT minimizer not available")
 
 else:
 
@@ -1351,8 +1351,8 @@ try:
     from threeML.minimizer.multinest_minimizer import MultinestMinimizer
 
 except ImportError:
-
-    log.warning("Multinest minimizer not available")
+    if threeML_config.logging.startup_warnings:
+        log.warning("Multinest minimizer not available")
 
 else:
 
@@ -1363,8 +1363,8 @@ try:
     from threeML.minimizer.pagmo_minimizer import PAGMOMinimizer
 
 except ImportError:
-
-    log.warning("PyGMO is not available")
+    if threeML_config.logging.startup_warnings:
+        log.warning("PyGMO is not available")
 
 else:
 
@@ -1375,8 +1375,8 @@ try:
     from threeML.minimizer.scipy_minimizer import ScipyMinimizer
 
 except ImportError:
-
-    log.warning("Scipy minimizer is not available")
+    if threeML_config.logging.startup_warnings:
+        log.warning("Scipy minimizer is not available")
 
 else:
 

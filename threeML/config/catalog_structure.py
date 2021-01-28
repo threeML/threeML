@@ -8,8 +8,8 @@ from omegaconf import II, MISSING, SI, OmegaConf
 
 @dataclass(frozen=True)
 class PublicDataServer:
-    public_ftp_Location: Optional[str] = None
-    public_http_Location: str = MISSING
+    public_ftp_location: Optional[str] = None
+    public_http_location: str = MISSING
     query_form: Optional[str] = None
 
 
