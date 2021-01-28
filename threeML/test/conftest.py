@@ -23,6 +23,11 @@ from threeML.plugins.UnbinnedPoissonLike import EventObservation
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.numba_utils import VectorFloat64
 
+from threeML.io.logging import debug_mode
+
+# useful for testing
+debug_mode()
+
 # Set up an ipyparallel cluster for the tests to use
 
 
