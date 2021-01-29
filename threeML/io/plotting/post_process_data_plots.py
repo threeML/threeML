@@ -101,7 +101,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     # default settings
 
     _sub_menu = threeML_config.plugins.ogip.fit_plot
-    
+
     # Default is to show the model with steps
     step = _sub_menu.step
 
@@ -198,7 +198,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             model_colors = cmap_intervals(len(data_keys),
                                           kwargs.pop("model_cmap"))
         else:
- um,.           model_colors_base = cmap_intervals(data_per_plot,
+            model_colors_base = cmap_intervals(data_per_plot,
                                                kwargs.pop("model_cmap"))
             model_colors = []
             for i in range(len(data_keys)):
