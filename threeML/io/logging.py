@@ -11,9 +11,10 @@ from astromodels.utils.logging import (ColoredFormatter, LogFilter,
                                        astromodels_console_log_handler,
                                        astromodels_dev_log_handler,
                                        astromodels_usr_log_handler)
-from colorama import Back, Fore, Style
+
 
 from threeML.config.config import threeML_config
+
 
 # set up the console logging
 

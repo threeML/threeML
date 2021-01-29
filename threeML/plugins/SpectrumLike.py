@@ -3198,15 +3198,15 @@ class SpectrumLike(PluginPrototype):
 
         for d in _duplicates:
 
-            if (d[0] in _default_model_kwargs) and (d[0] in _default_model_kwargs):
+            if (d[0] in _default_model_kwargs) and (d[1] in _default_model_kwargs):
 
                 _default_model_kwargs.pop(d[0])
 
-            if (d[0] in _default_data_kwargs) and (d[0] in _default_data_kwargs):
+            if (d[0] in _default_data_kwargs) and (d[1] in _default_data_kwargs):
 
                 _default_data_kwargs.pop(d[0])
 
-            if (d[0] in _default_background_kwargs) and (d[0] in _default_background_kwargs):
+            if (d[0] in _default_background_kwargs) and (d[1] in _default_background_kwargs):
 
                 _default_background_kwargs.pop(d[0])
 
