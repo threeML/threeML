@@ -15,6 +15,9 @@ from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.io.plotting.step_plot import step_plot
 
+from threeML.io.logging import setup_logger
+log = setup_logger(__name__)
+
 # This file contains plots which are plotted in data space after a model has been
 # assigned to the plugin.
 
@@ -148,10 +151,12 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             min_rates = list(min_rate)
 
-            assert len(min_rates) >= len(data_keys), (
-                "If you provide different minimum rates for each data set, you need"
-                "to provide an iterable of the same length of the number of datasets"
-            )
+            if len(min_rates) < len(data_keys):
+                log.error(
+                    "If you provide different minimum rates for each data set, you need"
+                    "to provide an iterable of the same length of the number of datasets"
+                )
+                raise ValueError()
 
     else:
 
@@ -178,10 +183,12 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     elif "data_colors" in kwargs:
         data_colors = kwargs.pop("data_colors")
 
-        assert len(data_colors) >= len(data_keys), (
-            "You need to provide at least a number of data colors equal to the "
-            "number of datasets"
-        )
+        if len(data_colors) < len(data_keys):
+            log.error(
+                "You need to provide at least a number of data colors equal to the "
+                "number of datasets"
+            )
+            raise ValueError()
 
     elif "data_color" in kwargs:
 
@@ -201,10 +208,12 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     elif "model_colors" in kwargs:
         model_colors = kwargs.pop("model_colors")
 
-        assert len(model_colors) >= len(data_keys), (
-            "You need to provide at least a number of model colors equal to the "
-            "number of datasets"
-        )
+        if len(model_colors) < len(data_keys):
+            log.error(
+                "You need to provide at least a number of model colors equal to the "
+                "number of datasets"
+            )
+            raise ValueError()
 
     elif "model_color" in kwargs:
 
@@ -225,10 +234,14 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     elif "background_colors" in kwargs:
         background_colors = kwargs.pop("background_colors")
 
-        assert len(background_colors) >= len(data_keys), (
-            "You need to provide at least a number of background colors equal to the "
-            "number of datasets"
-        )
+
+        if len(background_colors) < len(data_keys):
+            log.error(
+                "You need to provide at least a number of background colors equal to the "
+                "number of datasets"
+            )
+            raise ValueError()
+
     elif "background_color" in kwargs:
 
         background_colors = [kwargs.pop("background_color")] * len(data_keys)
@@ -241,10 +254,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         model_labels = kwargs.pop("model_labels")
 
-        assert len(model_labels) == len(
-            data_keys
-        ), "you must have the same number of model labels as data sets"
-
+        if len(model_labels) != len(data_keys):
+            log.error(
+                "You must have the same number of model labels as data sets"
+            )
+            raise ValueError()
     else:
 
         model_labels = ["%s Model" %
@@ -254,9 +268,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         background_labels = kwargs.pop("background_labels")
 
-        assert len(background_labels) == len(
-            data_keys
-        ), "you must have the same number of background labels as data sets"
+        if len(background_labels) != len(data_keys):
+            log.error(
+                "You must have the same number of background labels as data sets"
+                )
+            raise ValueError()
 
     else:
 
@@ -267,7 +283,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         source_only = kwargs.pop("source_only")
 
-        assert type(source_only) == bool, "source_only must be a boolean"
+        if type(source_only) != bool:
+            log.error(
+                "source_only must be a boolean"
+                )
+            raise TypeError()
 
     else:
 
@@ -277,8 +297,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         show_background = kwargs.pop("show_background")
 
-        assert type(
-            show_background) == bool, "show_background must be a boolean"
+        if type(show_background) != bool:
+            log.error(
+                "show_background must be a boolean"
+                )
+            raise TypeError()
 
     else:
 
@@ -470,18 +493,22 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     if "data_colors" in kwargs:
         data_colors = kwargs.pop("data_colors")
 
-        assert len(data_colors) >= len(data_keys), (
-            "You need to provide at least a number of data colors equal to the "
-            "number of datasets"
-        )
+        if len(data_colors) < len(data_keys):
+            log.error(
+                "You need to provide at least a number of data colors equal to the "
+                "number of datasets"
+            )
+            raise ValueError()
 
     if "model_colors" in kwargs:
         model_colors = kwargs.pop("model_colors")
 
-        assert len(model_colors) >= len(data_keys), (
-            "You need to provide at least a number of model colors equal to the "
-            "number of datasets"
-        )
+        if len(model_colors) < len(data_keys):
+            log.error(
+                "You need to provide at least a number of model colors equal to the "
+                "number of datasets"
+            )
+            raise ValueError()
 
     residual_plot = ResidualPlot(**kwargs)
 

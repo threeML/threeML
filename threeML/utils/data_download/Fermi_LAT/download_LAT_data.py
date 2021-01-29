@@ -19,6 +19,7 @@ from threeML.io.download_from_http import ApacheDirectory
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.logging import setup_logger
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
+from threeML.exceptions.custom_exceptions import TimeTypeNotKnown
 
 log = setup_logger(__name__)
 
@@ -162,19 +163,38 @@ def download_LAT_data(
     """
     _known_time_types = ["MET", "Gregorian", "MJD"]
 
-    assert time_type in _known_time_types, "Time type must be one of %s" % ",".join(
-        _known_time_types
-    )
+    if time_type not in _known_time_types:
+        out = ",".join(_known_time_types)
+        log.error(
+            f"Time type must be one of {out}"
+        )
+        raise TimeTypeNotKnown()
 
     valid_classes = ["Photon", "Extended"]
-    assert data_type in valid_classes, "Data type must be one of %s" % ",".join(
-        valid_classes
-    )
+    if data_type not in valid_classes:
+        out = ",".join(valid_classes)
+        log.error(
+            f"Data type must be one of {out}"
+            )
+        raise TypeError()
 
-    assert radius > 0, "Radius of the Region of Interest must be > 0"
+    if radius <= 0:
+        log.error(
+            "Radius of the Region of Interest must be > 0"
+            )
+        raise ValueError()
 
-    assert 0 <= ra <= 360.0, "R.A. must be 0 <= ra <= 360"
-    assert -90 <= dec <= 90, "Dec. must be -90 <= dec <= 90"
+    if not (0 <= ra <= 360.0):
+        log.error(
+            "R.A. must be 0 <= ra <= 360"
+            )
+        raise ValueError()
+
+    if not -90 <= dec <= 90:
+        log.error(
+            "Dec. must be -90 <= dec <= 90"
+            )
+        raise ValueError()
 
     # create output directory if it does not exists
     destination_directory = sanitize_filename(
@@ -296,8 +316,10 @@ def download_LAT_data(
             url, temporaryFileName, lambda x, y, z: 0, postData)
     except socket.timeout:
 
-        log.error("Time out when connecting to the server. Check your internet connection, or that the "
-                  f"form at {url} is accessible, then retry")
+        log.error(
+            "Time out when connecting to the server. Check your internet connection, or that the "
+            f"form at {url} is accessible, then retry"
+        )
         raise RuntimeError(
 
         )
@@ -469,7 +491,9 @@ def download_LAT_data(
 
     else:
 
-        log.error("Could not download LAT Standard data")
+        log.error(
+            "Could not download LAT Standard data"
+        )
 
         raise RuntimeError()
 
