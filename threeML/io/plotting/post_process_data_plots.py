@@ -10,7 +10,9 @@ from past.utils import old_div
 import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
 from threeML.config.config import threeML_config
+from threeML.config.plotting_structure import BinnedSpectrumPlot
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.io.plotting.data_residual_plot import ResidualPlot
@@ -18,6 +20,7 @@ from threeML.io.plotting.step_plot import step_plot
 
 plt.style.use(get_path_of_data_file("threeml.mplstyle"))
 
+log = setup_logger(__name__)
 
 # This file contains plots which are plotted in data space after a model has been
 # assigned to the plugin.
@@ -47,7 +50,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     :param step: (optional) if True (default), show the folded model as steps, if False, the folded model is plotted
     :param model_subplot: (optional) axe(s) to plot to for overplotting
     with linear interpolation between each bin
-    :param data_per_plot: (optional) Can spezify how many detectors should be plotted in one plot. If there
+    :param data_per_plot: (optional) Can specify how many detectors should be plotted in one plot. If there
     are more detectors than this number it will split it up in several plots
     :param show_background: (optional) Also show the background
     :param source_only: (optional) Plot only source (total data - background)
@@ -86,7 +89,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             else:
 
-                custom_warnings.warn(
+                log.warning(
                     "Dataset %s is not of the SpectrumLike kind. Cannot be plotted by "
                     "display_spectrum_model_counts" % key
                 )
@@ -100,24 +103,27 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     # default settings
 
-    _sub_menu = threeML_config.plugins.ogip.fit_plot
+    _sub_menu: BinnedSpectrumPlot = threeML_config.plugins.ogip.fit_plot
 
     # Default is to show the model with steps
     step = _sub_menu.step
 
     data_cmap = _sub_menu.data_cmap.value
     model_cmap = _sub_menu.model_cmap.value
+    background_cmap = _sub_menu.background_cmap.value
 
     # Legend is on by default
     show_legend = _sub_menu.show_legend
 
     show_residuals = _sub_menu.show_residuals
 
+    show_background: bool = _sub_menu.show_background
+    
     # Default colors
 
     data_colors = cmap_intervals(len(data_keys), data_cmap)
     model_colors = cmap_intervals(len(data_keys), model_cmap)
-    background_colors = cmap_intervals(len(data_keys), model_cmap)
+    background_colors = cmap_intervals(len(data_keys), background_cmap)
 
     # Now override defaults according to the optional keywords, if present
 
@@ -154,10 +160,12 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             min_rates = list(min_rate)
 
-            assert len(min_rates) >= len(data_keys), (
-                "If you provide different minimum rates for each data set, you need"
-                "to provide an iterable of the same length of the number of datasets"
-            )
+            if len(min_rates) < len(data_keys):
+                log.error(
+                    "If you provide different minimum rates for each data set, you need"
+                    "to provide an iterable of the same length of the number of datasets"
+                )
+                raise ValueError()
 
     else:
 
@@ -184,12 +192,19 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     elif "data_colors" in kwargs:
         data_colors = kwargs.pop("data_colors")
 
-        assert len(data_colors) >= len(data_keys), (
-            "You need to provide at least a number of data colors equal to the "
-            "number of datasets"
-        )
+        if len(data_colors) < len(data_keys):
+            log.error(
+                "You need to provide at least a number of data colors equal to the "
+                "number of datasets"
+            )
+            raise ValueError()
 
-    elif "data_color" in kwargs:
+    elif _sub_menu.data_color is not None:
+
+        data_colors = [_sub_menu.data_color] * len(data_keys)
+
+    # always override
+    if ("data_color" in kwargs):
 
         data_colors = [kwargs.pop("data_color")] * len(data_keys)
 
@@ -207,12 +222,19 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     elif "model_colors" in kwargs:
         model_colors = kwargs.pop("model_colors")
 
-        assert len(model_colors) >= len(data_keys), (
-            "You need to provide at least a number of model colors equal to the "
-            "number of datasets"
-        )
+        if len(model_colors) < len(data_keys):
+            log.error(
+                "You need to provide at least a number of model colors equal to the "
+                "number of datasets"
+            )
+            raise ValueError()
 
-    elif "model_color" in kwargs:
+    elif _sub_menu.model_color is not None:
+
+        model_colors = [_sub_menu.model_color] * len(data_keys)
+
+    # always overide
+    if "model_color" in kwargs:
 
         model_colors = [kwargs.pop("model_color")] * len(data_keys)
 
@@ -231,11 +253,19 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     elif "background_colors" in kwargs:
         background_colors = kwargs.pop("background_colors")
 
-        assert len(background_colors) >= len(data_keys), (
-            "You need to provide at least a number of background colors equal to the "
-            "number of datasets"
-        )
-    elif "background_color" in kwargs:
+        if len(background_colors) < len(data_keys):
+            log.error(
+                "You need to provide at least a number of background colors equal to the "
+                "number of datasets"
+            )
+            raise ValueError()
+
+    elif _sub_menu.background_color is not None:
+
+        background_colors = [_sub_menu.background_color] * len(data_keys)
+
+    # always override
+    if "background_color" in kwargs:
 
         background_colors = [kwargs.pop("background_color")] * len(data_keys)
 
@@ -247,10 +277,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         model_labels = kwargs.pop("model_labels")
 
-        assert len(model_labels) == len(
-            data_keys
-        ), "you must have the same number of model labels as data sets"
-
+        if len(model_labels) != len(data_keys):
+            log.error(
+                "You must have the same number of model labels as data sets"
+            )
+            raise ValueError()
     else:
 
         model_labels = ["%s Model" %
@@ -260,9 +291,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         background_labels = kwargs.pop("background_labels")
 
-        assert len(background_labels) == len(
-            data_keys
-        ), "you must have the same number of background labels as data sets"
+        if len(background_labels) != len(data_keys):
+            log.error(
+                "You must have the same number of background labels as data sets"
+            )
+            raise ValueError()
 
     else:
 
@@ -273,7 +306,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         source_only = kwargs.pop("source_only")
 
-        assert type(source_only) == bool, "source_only must be a boolean"
+        if type(source_only) != bool:
+            log.error(
+                "source_only must be a boolean"
+            )
+            raise TypeError()
 
     else:
 
@@ -283,12 +320,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
         show_background = kwargs.pop("show_background")
 
-        assert type(
-            show_background) == bool, "show_background must be a boolean"
-
-    else:
-
-        show_background = False
+        if type(show_background) != bool:
+            log.error(
+                "show_background must be a boolean"
+            )
+            raise TypeError()
 
     if len(data_keys) <= data_per_plot:
         # If less than data_per_plot detectors need to be plotted,
@@ -478,18 +514,22 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
     if "data_colors" in kwargs:
         data_colors = kwargs.pop("data_colors")
 
-        assert len(data_colors) >= len(data_keys), (
-            "You need to provide at least a number of data colors equal to the "
-            "number of datasets"
-        )
+        if len(data_colors) < len(data_keys):
+            log.error(
+                "You need to provide at least a number of data colors equal to the "
+                "number of datasets"
+            )
+            raise ValueError()
 
     if "model_colors" in kwargs:
         model_colors = kwargs.pop("model_colors")
 
-        assert len(model_colors) >= len(data_keys), (
-            "You need to provide at least a number of model colors equal to the "
-            "number of datasets"
-        )
+        if len(model_colors) < len(data_keys):
+            log.error(
+                "You need to provide at least a number of model colors equal to the "
+                "number of datasets"
+            )
+            raise ValueError()
 
     residual_plot = ResidualPlot(**kwargs)
 

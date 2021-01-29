@@ -58,6 +58,26 @@ class BadCovariance(RuntimeError):
     pass
 
 
+class MinLargerMax(RuntimeError):
+    pass
+
+
+class NoFitYet(RuntimeError):
+    pass
+
+
+class DetDoesNotExist(RuntimeError):
+    pass
+
+
+class MinimizerNotAvailable(RuntimeError):
+    pass
+
+
+class TimeTypeNotKnown(RuntimeError):
+    pass
+
+
 class deprecated(object):
     def __init__(self, reason):
         if inspect.isclass(reason) or inspect.isfunction(reason):

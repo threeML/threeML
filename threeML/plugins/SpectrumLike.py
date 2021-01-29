@@ -6,7 +6,7 @@ import types
 from builtins import range, str, zip
 from collections.abc import Iterable
 from contextlib import contextmanager
-from typing import Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -20,8 +20,8 @@ from astromodels.utils.valid_variable import is_valid_variable_name
 from past.utils import old_div
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import (NegativeBackground,
-                                                  custom_warnings)
+from threeML.config.plotting_structure import BinnedSpectrumPlot
+from threeML.exceptions.custom_exceptions import NegativeBackground
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.data_residual_plot import ResidualPlot
@@ -2631,8 +2631,7 @@ class SpectrumLike(PluginPrototype):
                             energy_width_unrebinned[non_used_mask],
                         ),
                         yerr=background_rate_unrebinned_err[non_used_mask] /
-                        energy_width_unrebinned[non_used_mask]
-                        ,
+                        energy_width_unrebinned[non_used_mask],
                         fmt="",
                         # markersize=3,
                         linestyle="",
@@ -3074,10 +3073,10 @@ class SpectrumLike(PluginPrototype):
         show_legend: bool = True,
         min_rate: Union[int, float] = 1e-99,
         model_label: Optional[str] = None,
-        model_kwargs: Optional[dict] = None,
-        data_kwargs: Optional[dict] = None,
+        model_kwargs: Optional[Dict[str, Any]] = None,
+        data_kwargs: Optional[Dict[str, Any]] = None,
         background_label: Optional[str] = None,
-        background_kwargs: Optional[dict] = None,
+        background_kwargs: Optional[Dict[str, Any]] = None,
         source_only: bool = True,
         show_background: bool = False,
         **kwargs
@@ -3113,7 +3112,7 @@ class SpectrumLike(PluginPrototype):
         _default_model_kwargs = dict(color=model_color, alpha=1)
 
         _default_background_kwargs = dict(
-            color=background_color, alpha=1, linestyle="--")
+            color=background_color, alpha=1, ls="--")
 
         _sub_menu = threeML_config.plotting.residual_plot
 
@@ -3122,10 +3121,32 @@ class SpectrumLike(PluginPrototype):
             alpha=1,
             fmt=_sub_menu.marker,
             markersize=_sub_menu.size,
-            linestyle="",
+            ls="",
             elinewidth=_sub_menu.linewidth,
             capsize=0,
         )
+
+        # overwrite if these are in the confif
+
+        _kwargs_menu: BinnedSpectrumPlot = threeML_config.plugins.ogip.fit_plot
+
+        if _kwargs_menu.model_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.model_mpl_kwargs.items():
+
+                _default_model_kwargs[k] = v
+
+        if _kwargs_menu.data_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.data_mpl_kwargs.items():
+
+                _default_data_kwargs[k] = v
+
+        if _kwargs_menu.background_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.background_mpl_kwargs.items():
+
+                _default_background_kwargs[k] = v
 
         if model_kwargs is not None:
 
@@ -3169,6 +3190,25 @@ class SpectrumLike(PluginPrototype):
                 else:
 
                     _default_background_kwargs[k] = v
+
+        # since we define some defualts, lets not overwrite
+        # the users
+
+        _duplicates = (("ls", "linestyle"), ("lw", "linewidth"))
+
+        for d in _duplicates:
+
+            if (d[0] in _default_model_kwargs) and (d[0] in _default_model_kwargs):
+
+                _default_model_kwargs.pop(d[0])
+
+            if (d[0] in _default_data_kwargs) and (d[0] in _default_data_kwargs):
+
+                _default_data_kwargs.pop(d[0])
+
+            if (d[0] in _default_background_kwargs) and (d[0] in _default_background_kwargs):
+
+                _default_background_kwargs.pop(d[0])
 
         if model_label is None:
             model_label = "%s Model" % self._name

@@ -13,9 +13,17 @@ MPLCmap = Enum("MPLCmap", zip(plt.colormaps(), plt.colormaps()))
 class BinnedSpectrumPlot:
     data_cmap: MPLCmap = MPLCmap.Set1
     model_cmap: MPLCmap = MPLCmap.Set1
+    background_cmap: MPLCmap = MPLCmap.Set1
     step: bool = False
     show_legend: bool = True
     show_residuals: bool = True
+    data_color: Optional[str] = None
+    model_color: Optional[str] = None
+    background_color: Optional[str] = None
+    show_background: bool = False
+    data_mpl_kwargs: Optional[Dict[str, Any]] = None
+    model_mpl_kwargs: Optional[Dict[str, Any]] = None
+    background_mpl_kwargs: Optional[Dict[str, Any]] = None
 
 
 @dataclass
