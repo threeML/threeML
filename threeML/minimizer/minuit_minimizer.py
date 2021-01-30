@@ -166,7 +166,7 @@ class MinuitMinimizer(LocalMinimizer):
         print(self._last_migrad_results.fmin)
         print("\n")
         # Print params to get some info about the failure
-        self.minuit.print_param()
+        print( self.minuit.params )
 
     def _minimize(self):
         """

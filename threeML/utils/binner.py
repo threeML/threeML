@@ -339,7 +339,8 @@ class TemporalBinner(TimeIntervalSet):
         # as long as we have not reached the end of the interval
         # the loop will run
 
-        if threeML_config["interface"]["show_progress_bars"]:
+        if threeML_config.interface.progress_bars:
+
             pbar = tqdm(
                 total=arrival_times.shape[0], desc="Binning by significance")
 
@@ -420,13 +421,13 @@ class TemporalBinner(TimeIntervalSet):
             total_counts = counts
 
             # start searching from where the fast search ended
-            if threeML_config["interface"]["show_progress_bars"]:
+            if threeML_config.interface.progress_bars:
                 pbar.update(counts)
 
             for time in arrival_times[start_idx:]:
 
                 total_counts += 1
-                if threeML_config["interface"]["show_progress_bars"]:
+                if threeML_config.interface.progress_bars:
                     pbar.update(1)
                 if total_counts < min_counts:
 
