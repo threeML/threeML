@@ -38,7 +38,7 @@ from threeML.io.table import NumericMatrix
 from threeML.io.uncertainty_formatter import uncertainty_formatter
 from threeML.random_variates import RandomVariates
 
-plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 log = setup_logger(__name__)

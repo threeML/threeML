@@ -21,7 +21,7 @@ from threeML.io.suppress_stdout import suppress_stdout
 from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.gammaln import logfactorial
 from threeML.io.logging import setup_logger
-plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 __instrument_name = "Fermi LAT (standard classes)"

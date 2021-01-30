@@ -18,7 +18,7 @@ from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.io.plotting.step_plot import step_plot
 
-plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 log = setup_logger(__name__)
 

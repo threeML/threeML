@@ -17,7 +17,7 @@ from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.likelihood_functions import (
     half_chi2, poisson_log_likelihood_ideal_bkg)
 
-plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 log = setup_logger(__name__)

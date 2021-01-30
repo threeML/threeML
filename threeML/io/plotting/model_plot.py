@@ -15,7 +15,7 @@ from threeML.io.calculate_flux import (_collect_sums_into_dictionaries,
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 
-plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 def plot_point_source_spectra(*analysis_results, **kwargs):

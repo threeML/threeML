@@ -10,7 +10,7 @@ from threeML.config.config import threeML_config
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.step_plot import step_plot
 
-plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 # this file contains routines for plotting binned light curves

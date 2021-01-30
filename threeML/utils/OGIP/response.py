@@ -25,7 +25,7 @@ from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
-plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 log = setup_logger(__name__)

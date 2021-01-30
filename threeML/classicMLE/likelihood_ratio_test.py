@@ -14,7 +14,7 @@ from threeML.io.package_data import get_path_of_data_file
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.OGIP.pha import PHAWrite
 
-plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 log = setup_logger(__name__)

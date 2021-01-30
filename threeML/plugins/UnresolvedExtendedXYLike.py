@@ -18,7 +18,7 @@ from threeML.utils.statistics.likelihood_functions import (
 __instrument_name = "n.a."
 
 
-plt.style.use(get_path_of_data_file("threeml.mplstyle"))
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 class UnresolvedExtendedXYLike(XYLike):
