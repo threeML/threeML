@@ -20,7 +20,7 @@ jobs:
             id: cache-xspec
             with:
               path: ~/xspec_home
-              key: xspec
+              key: xspec-ver
           - name: Get XSPEC
             env:
               CACHE_HIT: ${{steps.cache-xspec.outputs.cache-hit}}
