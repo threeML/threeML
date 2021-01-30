@@ -104,15 +104,9 @@ def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_m
 
     if len(ft1s) == 1:
 
-
-<< << << < HEAD
-        print("Only one FT1 file provided. Skipping the merge...")
-        import shutil
-
-== == == =
         log.warning('Only one FT1 file provided. Skipping the merge...')
         import shutil
->>>>>> > master
+
         shutil.copyfile(ft1s[0], outfile)
         return outfile
 
@@ -192,25 +186,25 @@ def download_LAT_data(
         out = ",".join(valid_classes)
         log.error(
             f"Data type must be one of {out}"
-            )
+        )
         raise TypeError()
 
     if radius <= 0:
         log.error(
             "Radius of the Region of Interest must be > 0"
-            )
+        )
         raise ValueError()
 
     if not (0 <= ra <= 360.0):
         log.error(
             "R.A. must be 0 <= ra <= 360"
-            )
+        )
         raise ValueError()
 
     if not -90 <= dec <= 90:
         log.error(
             "Dec. must be -90 <= dec <= 90"
-            )
+        )
         raise ValueError()
 
     # create output directory if it does not exists
