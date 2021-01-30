@@ -22,16 +22,16 @@ except ImportError:
 from pathlib import Path
 
 from threeML.io.logging import setup_logger
-from .config.config import threeML_config
+from .config import threeML_config, show_configuration, get_current_configuration_copy
 
 log = setup_logger(__name__)
 log.propagate = False
 
-if threeML_config["logging"]["startup_warning"]:
+if threeML_config["logging"]["startup_warnings"]:
     log.info("Starting 3ML!")
 
 if os.environ.get("DISPLAY") is None:
-    if threeML_config["logging"]["startup_warning"]:
+    if threeML_config["logging"]["startup_warnings"]:
         log.warning(
         "no display variable set. using backend for graphics without display (agg)"
     )
@@ -75,7 +75,7 @@ try:
     from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 
 except ImportError:
-    if threeML_config["logging"]["startup_warning"]:
+    if threeML_config.logging.startup_warnings:
         log.warning(
         "The cthreeML package is not installed. You will not be able to use plugins which require "
         "the C/C++ interface (currently HAWC)"  #    custom_exceptions.CppInterfaceNotAvailable,
@@ -125,7 +125,7 @@ for i, module_full_path in enumerate(found_plugins):
     is_importable, failure_traceback = is_module_importable(module_full_path)
 
     if not is_importable:
-        if threeML_config["logging"]["startup_warning"]:
+        if threeML_config.logging.startup_warnings:
             log.warning(
             f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
             "and configured?"
@@ -182,7 +182,7 @@ def get_available_plugins():
 
 
 def _display_plugin_traceback(plugin):
-    if threeML_config["logging"]["startup_warning"]:
+    if threeML_config.logging.startup_warnings:
         log.warning("#############################################################")
         log.warning("\nCouldn't import plugin %s" % plugin)
         log.warning("\nTraceback:\n")
@@ -327,7 +327,7 @@ for var in var_to_check:
             num_threads = int(num_threads)
 
         except ValueError:
-            if threeML_config["logging"]["startup_warning"]:
+            if threeML_config.logging.startup_warnings:
                 log.warning(
                 "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
                 "for optimum performances." % var,
@@ -336,7 +336,7 @@ for var in var_to_check:
 
     else:
 
-        if threeML_config["logging"]["startup_warning"]:
+        if threeML_config.logging.startup_warnings:
             log.warning(
             "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
             % var

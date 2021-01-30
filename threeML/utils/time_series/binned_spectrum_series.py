@@ -325,7 +325,7 @@ class BinnedSpectrumSeries(TimeSeries):
 
             self._optimal_polynomial_grade = self._user_poly_order
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             def worker(counts):
 

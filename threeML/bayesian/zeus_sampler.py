@@ -115,7 +115,7 @@ class ZeusSampler(MCMCSampler):
                     )
                     log.debug("Zeus run done")
 
-            elif threeML_config["parallel"]["use-parallel"]:
+            elif threeML_config["parallel"]["use_parallel"]:
 
                 c = ParallelClient()
                 view = c[:]

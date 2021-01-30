@@ -17,7 +17,8 @@ from threeML.analysis_results import MLEResults
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
 from threeML.exceptions import custom_exceptions
-from threeML.exceptions.custom_exceptions import FitFailed, custom_warnings
+from threeML.exceptions.custom_exceptions import FitFailed, custom_warnings,\
+    NoFitYet, MinLargerMax, ForbiddenRegionOfParameterSpace, MinimizerNotAvailable
 from threeML.io.logging import setup_logger
 from threeML.io.results_table import ResultsTable
 from threeML.io.table import Table
@@ -80,13 +81,13 @@ class JointLikelihood(object):
 
         # Pre-defined minimizer
         default_minimizer = minimization.LocalMinimization(
-            threeML_config["mle"]["default minimizer"]
+            threeML_config["mle"]["default_minimizer"].value
         )
 
-        if threeML_config["mle"]["default minimizer algorithm"] is not None:
+        if threeML_config["mle"]["default_minimizer_algorithm"] is not None:
 
             default_minimizer.set_algorithm(
-                threeML_config["mle"]["default minimizer algorithm"]
+                threeML_config["mle"]["default_minimizer_algorithm"].value
             )
 
         self.set_minimizer(default_minimizer)
@@ -125,10 +126,12 @@ class JointLikelihood(object):
                 # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
                 # of the same plugin will overwrite each other's nuisance parameters
 
-                assert dataset.name in parameter_name, (
-                    "This is a bug of the plugin for %s: nuisance parameters "
-                    "must contain the instance name" % type(dataset)
-                )
+                if not dataset.name in parameter_name:
+                    log.error(
+                        f"This is a bug of the plugin for {type(dataset)}: "
+                        "nuisance parameters must contain the instance name"
+                    )
+                    raise NameError()
 
                 self._likelihood_model.add_external_parameter(parameter)
 
@@ -234,11 +237,7 @@ class JointLikelihood(object):
 
             log.warning("There is no free parameter in the current model")
 
-            # Create the minimizer anyway because it will be needed by the following code
-
-            self._minimizer = self._get_minimizer(
-                self.minus_log_like_profile, self._free_parameters
-            )
+            self._minimizer = None
 
             # Store the "minimum", which is just the current value
             self._current_minimum = float(self.minus_log_like_profile())
@@ -356,9 +355,11 @@ class JointLikelihood(object):
 
             total_number_of_data_points += dataset.get_number_of_data_points()
 
-        assert (
-            total == self._current_minimum
-        ), "Current minimum stored after fit and current do not correspond!"
+        if total != self._current_minimum:
+            log.error(
+                "Current minimum stored after fit and current do not correspond!"
+            )
+            raise ValueError()
 
         # compute additional statistics measures
 
@@ -374,10 +375,18 @@ class JointLikelihood(object):
             -total, len(self._free_parameters), total_number_of_data_points
         )
 
+        #Workaround for the case of a "fit" with no free parameters
+        #This happens e.g. if you calculate the TS of the only source
+        #in a one-source model.
+        if self._minimizer is not None:
+            covariance_matrix = self._minimizer.covariance_matrix
+        else:
+            covariance_matrix = None
+
         # Now instance an analysis results class
         self._analysis_results = MLEResults(
             self.likelihood_model,
-            self._minimizer.covariance_matrix,
+            covariance_matrix,
             minus_log_likelihood_values,
             statistical_measures=statistical_measures,
             n_samples=n_samples,
@@ -408,9 +417,11 @@ class JointLikelihood(object):
 
         # Check that the user performed a fit first
 
-        assert (
-            self._current_minimum is not None
-        ), "You have to run the .fit method before calling errors."
+        if self._current_minimum is None:
+            log.error(
+                 "You have to run the .fit method before calling errors."
+            )
+            raise NoFitYet()
 
         errors = self._minimizer.get_errors()
 
@@ -490,21 +501,28 @@ class JointLikelihood(object):
             param_2 = param_2.path
 
         # Check that the parameters exist
-        assert param_1 in self._likelihood_model.free_parameters, (
-            "Parameter %s is not a free parameters of the " "current model" % param_1
-        )
+        if param_1 not in self._likelihood_model.free_parameters:
+            log.error(
+                f"Parameter {param_1} is not a free parameters of the current model"
+            )
+            raise AssertionError()
+
 
         if param_2 is not None:
-            assert param_2 in self._likelihood_model.free_parameters, (
-                "Parameter %s is not a free parameters of the "
-                "current model" % param_2
-            )
+            if param_2 not in self._likelihood_model.free_parameters:
+                log.error(
+                    f"Parameter {param_2} is not a free parameters of the "
+                    "current model"
+                )
+                raise AssertionError()
 
         # Check that we have a valid fit
 
-        assert (
-            self._current_minimum is not None
-        ), "You have to run the .fit method before calling get_contours."
+        if self._current_minimum is None:
+            log.error(
+                "You have to run the .fit method before calling get_contours."
+                )
+            raise NoFitYet()
 
         # Then restore the best fit
 
@@ -512,30 +530,37 @@ class JointLikelihood(object):
 
         # Check minimal assumptions about the procedure
 
-        assert not (
-            param_1 == param_2), "You have to specify two different parameters"
+        if param_1==param_2:
+            log.error(
+                "You have to specify two different parameters"
+            )
+            raise ValueError()
 
-        assert (
-            param_1_minimum < param_1_maximum
-        ), "Minimum larger than maximum for parameter 1"
+        if not param_1_minimum<param_1_maximum:
+            log.error(
+                "Minimum larger than maximum for parameter 1"
+            )
+            raise MinLargerMax()
 
         min1, max1 = self.likelihood_model[param_1].bounds
 
         if min1 is not None:
-
-            assert param_1_minimum >= min1, (
-                "Requested low range for parameter %s (%s) "
-                "is below parameter minimum (%s)" % (
-                    param_1, param_1_minimum, min1)
-            )
+            if param_1_minimum < min1:
+                log.error(
+                    f"Requested low range for parameter {param_1} "
+                    f"({param_1_minimum}) is below parameter "
+                    f"minimum ({min1})"
+                )
+                raise ForbiddenRegionOfParameterSpace()
 
         if max1 is not None:
-
-            assert param_1_maximum <= max1, (
-                "Requested hi range for parameter %s (%s) "
-                "is above parameter maximum (%s)" % (
-                    param_1, param_1_maximum, max1)
-            )
+            if param_1_maximum > max1:
+                log.error(
+                    f"Requested hi range for parameter {param_1} "
+                    f"({param_1_maximum}) "
+                    f"is above parameter maximum ({max1})"
+                )
+                raise ForbiddenRegionOfParameterSpace()
 
         if param_2 is not None:
 
@@ -543,23 +568,27 @@ class JointLikelihood(object):
 
             if min2 is not None:
 
-                assert param_2_minimum >= min2, (
-                    "Requested low range for parameter %s (%s) "
-                    "is below parameter minimum (%s)" % (
-                        param_2, param_2_minimum, min2)
-                )
+                if param_2_minimum < min2:
+                    log.error(
+                        f"Requested low range for parameter {param_2} "
+                        f"(param_2_minim) "
+                        f"is below parameter minimum (min2)"
+                    )
+                    raise ForbiddenRegionOfParameterSpace()
 
             if max2 is not None:
 
-                assert param_2_maximum <= max2, (
-                    "Requested hi range for parameter %s (%s) "
-                    "is above parameter maximum (%s)" % (
-                        param_2, param_2_maximum, max2)
-                )
+                if param_2_maximum > max2:
+                    log.error(
+                        f"Requested hi range for parameter {param_2} "
+                        f"(param_2_maximum) "
+                        f"is above parameter maximum ({max2})"
+                    )
+                    raise ForbiddenRegionOfParameterSpace()
 
         # Check whether we are parallelizing or not
 
-        if not threeML_config["parallel"]["use-parallel"]:
+        if not threeML_config["parallel"]["use_parallel"]:
 
             a, b, cc = self.minimizer.contours(
                 param_1,
@@ -961,7 +990,8 @@ class JointLikelihood(object):
 
         if "%s" % summed_log_likelihood == "nan":
             log.warning(
-                "These parameters returned a logLike = Nan: %s" % (trial_values,),
+                "These parameters returned a logLike = Nan: %s" % (
+                    trial_values,),
             )
 
             return minimization.FIT_FAILED
@@ -999,20 +1029,24 @@ class JointLikelihood(object):
 
             self._minimizer_type = minimizer
 
+            log.info(f"set the minimizer to {minimizer.name}")
+            
         else:
 
-            assert minimizer.upper() in minimization._minimizers, (
-                "Minimizer %s is not available on this system. "
-                "Available minimizers: %s"
-                % (minimizer, ",".join(list(minimization._minimizers.keys())))
-            )
+            if minimizer.upper() not in minimization._minimizers:
+                minimizer_list =  ",".join(list(minimization._minimizers.keys()))
+                log.error(
+                    f"Minimizer {minimizer} is not available on this system. "
+                    f"Available minimizers: {minimizer_list}"
+                )
+                raise MinimizerNotAvailable()
 
             # The string can only specify a local minimization. This will return an error if that is not the case.
             # In order to setup global optimization the user needs to use the GlobalMinimization factory directly
 
             self._minimizer_type = minimization.LocalMinimization(minimizer)
 
-        log.info(f"set the minimizer to {minimizer}")
+            log.info(f"set the minimizer to {minimizer.upper()}")
 
     def _get_minimizer(self, *args, **kwargs):
 
@@ -1047,7 +1081,8 @@ class JointLikelihood(object):
 
         else:
 
-            log.warning("Cannot restore best fit, since fit has not been executed.")
+            log.warning(
+                "Cannot restore best fit, since fit has not been executed.")
 
     def _get_table_of_parameters(self, parameters):
 
@@ -1114,7 +1149,7 @@ class JointLikelihood(object):
         idx = cc == minimization.FIT_FAILED
 
         sub.plot(a[~idx], cc[~idx], lw=2,
-                 color=threeML_config["mle"]["profile color"])
+                 color=threeML_config["mle"]["profile_color"])
 
         # Now plot the failed fits as "x"
 
@@ -1123,9 +1158,9 @@ class JointLikelihood(object):
 
         # Decide colors
         colors = [
-            threeML_config["mle"]["profile level 1"],
-            threeML_config["mle"]["profile level 2"],
-            threeML_config["mle"]["profile level 3"],
+            threeML_config["mle"]["profile_level_1"],
+            threeML_config["mle"]["profile_level_2"],
+            threeML_config["mle"]["profile_level_3"],
         ]
 
         for s, d, c in zip(sigmas, delta_chi2, colors):
@@ -1208,10 +1243,10 @@ class JointLikelihood(object):
 
         # Define the color palette
         palette = plt.get_cmap(
-            threeML_config["mle"]["contour cmap"])  # cm.Pastel1
-        palette.set_over(threeML_config["mle"]["contour background"])
-        palette.set_under(threeML_config["mle"]["contour background"])
-        palette.set_bad(threeML_config["mle"]["contour background"])
+            threeML_config["mle"]["contour_cmap"].value)  # cm.Pastel1
+        palette.set_over(threeML_config["mle"]["contour_background"])
+        palette.set_under(threeML_config["mle"]["contour_background"])
+        palette.set_bad(threeML_config["mle"]["contour_background"])
 
         fig = plt.figure()
         sub = fig.add_subplot(111)
@@ -1223,9 +1258,9 @@ class JointLikelihood(object):
             cc,
             self._current_minimum + delta_chi2,
             colors=(
-                threeML_config["mle"]["contour level 1"],
-                threeML_config["mle"]["contour level 2"],
-                threeML_config["mle"]["contour level 3"],
+                threeML_config["mle"]["contour_level_1"],
+                threeML_config["mle"]["contour_level_2"],
+                threeML_config["mle"]["contour_level_3"],
             ),
         )
 
@@ -1247,10 +1282,10 @@ class JointLikelihood(object):
         :return: a DataFrame containing the null hypothesis and the alternative hypothesis -log(likelihood) values and
         the value for TS for the source for each loaded dataset
         """
-
-        assert source_name in self._likelihood_model, (
-            "Source %s is not in the current model" % source_name
-        )
+        if source_name not in self._likelihood_model:
+            log.error(
+                f"Source {source_name} is not in the current model"
+            )
 
         # Clone model
         model_clone = clone_model(self._likelihood_model)

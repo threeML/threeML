@@ -23,6 +23,11 @@ from threeML.plugins.UnbinnedPoissonLike import EventObservation
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.numba_utils import VectorFloat64
 
+from threeML.io.logging import debug_mode
+
+# useful for testing
+debug_mode()
+
 # Set up an ipyparallel cluster for the tests to use
 
 
@@ -485,6 +490,16 @@ def poisson_generator(tstart, tstop, slope, intercept, seed=1234):
             arrival_times.append(time)
 
     return arrival_times.arr
+
+
+@pytest.fixture(scope="session")
+def event_time_series():
+
+    events = poisson_generator(
+        tstart=-10, tstop=60, slope=0, intercept=100, seed=1234)
+
+    yield events
+    
 
 
 @pytest.fixture(scope="session")
