@@ -138,13 +138,18 @@ jobs:
 
                   PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 
+                  mamba create env -f ci/environment.yml
+
+                  mamba activate test_env
                   
-                  mamba install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest flake8 -c xspecmodels threeml fermi conda-forge
+                  mamba config --add channels xspecmodels conda-forge threeml
+                  
+                  mamba install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest flake8
 
             - name: Conda list
               shell: bash -l {0}
               run: |
-                  conda list
+                  mamba list
             - name: install it
               shell: bash -l {0}
               run: |
