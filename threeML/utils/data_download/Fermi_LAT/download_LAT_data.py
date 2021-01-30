@@ -79,15 +79,6 @@ class DivParser(html.parser.HTMLParser):
 # Keyword name to store the unique ID for the download
 _uid_fits_keyword = "QUERYUID"
 
-<< << << < HEAD
-
-
-def merge_LAT_data(ft1s, destination_directory=".", outfile="ft1_merged.fits"):
-
-
-== == == =
->>>>>> > master
-
 
 def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_merged.fits') -> Path:
 
