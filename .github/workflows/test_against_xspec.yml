@@ -6,78 +6,66 @@ on:
     #     - cron: "0 20 * * *"
 
 jobs:
-    setup-python:
+    xspec:
         name: Install Python
         runs-on: ubuntu-latest
         steps:
-      
           - name: Set up Python 3.8
             uses: actions/setup-python@v2
             with:
               python-version: 3.8
-
-      get-xspec:
-        needs: setup-python
-        name: Download XSPEC
-        steps:
-        - name: Cache XPSEC
-          uses: actions/cache@v1
-          id: cache-xspec
-          with:
-            path: ~/xspec_home
-                  key: xspec
-        - name: Get XSPEC
-          env:
-            CACHE_HIT: ${{steps.cache-xspec.outputs.cache-hit}}
-          run: |
-            echo "getting latest heasoft bundle";
-            if [[ "$CACHE_HIT" == 'true' ]]; then
-            
-            then
-
-            DID_DOWNLOAD=0;
-
-            else
-
-            wget -O heasoft-src.tar.gz 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&arch=src&src_pc_linux_ubuntu=Y&src_other_specify=&general=heasptools&general=heagen&xanadu=xspec' --header 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' --header 'Accept-Language: en-US' --header 'DNT: 1' --header 'Connection: keep-alive' --header 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' --header 'Upgrade-Insecure-Requests: 1' --header 'Sec-GPC: 1' --progress=dot:giga
-
-            DID_DOWNLOAD=1;
-            fi
-
-        - name: Extract XSPEC
-          run: |
-            
-            if [[ $DID_DOWNLOAD == "0" ]]; then
-               echo "unpacking heasoft";
-                if ! ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/; then
-                rm -rf heasoft*/;
-                tar -xzf heasoft-src.tar.gz;
-                ls heasoft*;
-                ls;   
-                echo "compiling xspec";
-                sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
-                ls heasoft*;
-                XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
+       
+          - name: Cache XPSEC
+            uses: actions/cache@v1
+            id: cache-xspec
+            with:
+              path: ~/xspec_home
+              key: xspec
+          - name: Get XSPEC
+            env:
+              CACHE_HIT: ${{steps.cache-xspec.outputs.cache-hit}}
+            run: |
+              echo "getting latest heasoft bundle";
+              if [[ "$CACHE_HIT" == 'true' ]]; then
               
-                pushd $XSPEC_BUILD_DIR;
-                mkdir -p ~/xspec_home/xspec-install/;
-                ./configure --prefix=~/xspec_home/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
-                ls ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/;
+              then
             
-                popd;
-                fi
-            fi
-         
-
+              DID_DOWNLOAD=0;
             
-
-
-      
-      install-3ml:
-        
-        - name: Checkout
-          uses: actions/checkout@v2
-        - name: Install dependencies
+              else
+            
+              wget -O heasoft-src.tar.gz 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&arch=src&src_pc_linux_ubuntu=Y&src_other_specify=&general=heasptools&general=heagen&xanadu=xspec' --header 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' --header 'Accept-Language: en-US' --header 'DNT: 1' --header 'Connection: keep-alive' --header 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' --header 'Upgrade-Insecure-Requests: 1' --header 'Sec-GPC: 1' --progress=dot:giga
+                
+              DID_DOWNLOAD=1;
+              fi
+                
+          - name: Extract XSPEC
+            run: |
+            
+              if [[ $DID_DOWNLOAD == "0" ]]; then
+              echo "unpacking heasoft";
+              if ! ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/; then
+              rm -rf heasoft*/;
+              tar -xzf heasoft-src.tar.gz;
+              ls heasoft*;
+              ls;   
+              echo "compiling xspec";
+              sudo apt-get install -y gfortran build-essential cmake liblapack3 liblapack-dev libatlas3-base libatlas-base-dev libblas3 libblas-dev libreadline-dev;
+              ls heasoft*;
+              XSPEC_BUILD_DIR=`ls -d heasoft-*/BUILD_DIR`;
+              
+              pushd $XSPEC_BUILD_DIR;
+              mkdir -p ~/xspec_home/xspec-install/;
+              ./configure --prefix=~/xspec_home/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
+              ls ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/;
+              
+              popd;
+              fi
+              fi
+                 
+          - name: Checkout
+            uses: actions/checkout@v2
+          - name: Install dependencies
             run: |
               python -m pip install --upgrade pip
               pip install --upgrade astromodels
