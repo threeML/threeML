@@ -1,6 +1,53 @@
 name: Test Against XSPEC
 
 on:
-  #push:
-  schedule:
-    - cron: "0 20 * * *"
+    #push:
+    schedule:
+        - cron: "0 20 * * *"
+
+jobs:
+    setup-python:
+        name: Install Python
+        runs-on: ubuntu-latest
+        steps:
+      
+          - name: Set up Python 3.8
+            uses: actions/setup-python@v2
+            with:
+              python-version: 3.8
+
+      get-xspec:
+        needs: setup-python
+        name: Download XSPEC
+        steps:
+        - name: Cache XPSEC
+          uses: actions/cache@v1
+          id: cache-xspec
+          with:
+            path: ~/xspec_home
+                  key: xspec
+        - name: Get XSPEC
+          run: |
+            CACHE_HIT: ${{steps.cache-xspec.outputs.cache-hit}}
+            
+
+            
+            export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
+            echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
+
+            
+
+
+      
+      install-3ml:
+        
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Install dependencies
+            run: |
+              python -m pip install --upgrade pip
+              pip install --upgrade astromodels
+              pip install --upgrade flake8 coverage pytest-cov cython
+              pip install -e .
+
+              
