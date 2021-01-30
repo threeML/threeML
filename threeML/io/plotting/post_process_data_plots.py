@@ -460,7 +460,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
         if key in list(analysis.data_list.keys()):
 
             if isinstance(
-                analysis.data_list[key], photolike
+                analysis.data_list[key], photolike.PhotometryLike
             ):
 
                 new_data_keys.append(key)
