@@ -118,7 +118,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
     show_residuals = _sub_menu.show_residuals
 
     show_background: bool = _sub_menu.show_background
-    
+
     # Default colors
 
     data_colors = cmap_intervals(len(data_keys), data_cmap)
@@ -348,7 +348,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             data = analysis.data_list[
                 key
-            ]  # type: threeML.plugins.SpectrumLike.SpectrumLike
+            ]  # type: speclike
 
             data.display_model(
                 data_color=data_color,
@@ -390,7 +390,7 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             data = analysis.data_list[
                 key
-            ]  # type: threeML.plugins.SpectrumLike.SpectrumLike
+            ]  # type: speclike
 
             data.display_model(
                 data_color=data_color,
@@ -460,7 +460,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
         if key in list(analysis.data_list.keys()):
 
             if isinstance(
-                analysis.data_list[key], threeML.plugins.PhotometryLike.PhotometryLike
+                analysis.data_list[key], photolike
             ):
 
                 new_data_keys.append(key)
@@ -538,7 +538,7 @@ def display_photometry_model_magnitudes(analysis, data=(), **kwargs):
 
         data = analysis.data_list[
             key
-        ]  # type: threeML.plugins.PhotometryLike.PhotometryLike
+        ]  # type: photolike
 
         # get the expected counts
 
