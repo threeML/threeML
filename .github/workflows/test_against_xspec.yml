@@ -20,7 +20,7 @@ jobs:
             id: cache-xspec
             with:
               path: ~/xspec_home
-              key: xspec-ver1
+              key: xspec-ver2
           - name: Get XSPEC
             env:
               CACHE_HIT: ${{steps.cache-xspec.outputs.cache-hit}}
@@ -71,7 +71,7 @@ jobs:
               
               pushd $XSPEC_BUILD_DIR;
               mkdir -p ~/xspec_home/xspec-install/;
-              ./configure --prefix=~/xspec_home/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
+              ./configure --prefix=/home/runner/xspec_home/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
               ls ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/;
               
               popd;
