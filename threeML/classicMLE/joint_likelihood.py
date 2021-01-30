@@ -241,11 +241,7 @@ class JointLikelihood(object):
 
             log.warning("There is no free parameter in the current model")
 
-            # Create the minimizer anyway because it will be needed by the following code
-
-            self._minimizer = self._get_minimizer(
-                self.minus_log_like_profile, self._free_parameters
-            )
+            self._minimizer = None
 
             # Store the "minimum", which is just the current value
             self._current_minimum = float(self.minus_log_like_profile())
@@ -383,10 +379,18 @@ class JointLikelihood(object):
             -total, len(self._free_parameters), total_number_of_data_points
         )
 
+        #Workaround for the case of a "fit" with no free parameters
+        #This happens e.g. if you calculate the TS of the only source
+        #in a one-source model.
+        if self._minimizer is not None:
+            covariance_matrix = self._minimizer.covariance_matrix
+        else:
+            covariance_matrix = None
+
         # Now instance an analysis results class
         self._analysis_results = MLEResults(
             self.likelihood_model,
-            self._minimizer.covariance_matrix,
+            covariance_matrix,
             minus_log_likelihood_values,
             statistical_measures=statistical_measures,
             n_samples=n_samples,
