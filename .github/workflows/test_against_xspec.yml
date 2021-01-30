@@ -28,12 +28,14 @@ jobs:
               echo "getting latest heasoft bundle";
               if [[ "$CACHE_HIT" == 'true' ]]; then
               
-              then
+              
             
               DID_DOWNLOAD=0;
             
               else
-            
+
+              mkdir -p ~/xspec_home
+              
               wget -O heasoft-src.tar.gz 'https://heasarc.gsfc.nasa.gov/cgi-bin/Tools/tarit/tarit.pl?mode=download&arch=src&src_pc_linux_ubuntu=Y&src_other_specify=&general=heasptools&general=heagen&xanadu=xspec' --header 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0' --header 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' --header 'Accept-Language: en-US' --header 'DNT: 1' --header 'Connection: keep-alive' --header 'Referer: https://heasarc.gsfc.nasa.gov/lheasoft/download.html' --header 'Upgrade-Insecure-Requests: 1' --header 'Sec-GPC: 1' --progress=dot:giga
                 
               DID_DOWNLOAD=1;
