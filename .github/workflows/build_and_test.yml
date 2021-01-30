@@ -139,7 +139,7 @@ jobs:
                   PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 
                   
-                  mamba install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest flake8
+                  mamba install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest flake8 -c xspecmodels threeml fermi conda-forge
 
             - name: Conda list
               shell: bash -l {0}
