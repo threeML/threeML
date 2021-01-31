@@ -31,11 +31,15 @@ First, let's import 3ML:
 ```python
 from threeML import *
 import matplotlib.pyplot as plt
-%matplotlib notebook
+from jupyterthemes import jtplot
+
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+plt.style.use("./threeml.mplstyle")
+silence_warnings()
 ```
 
 ```python nbsphinx="hidden"
-plt.style.use('./threeml.mplstyle')
 import warnings
 warnings.filterwarnings('ignore')
 ```
@@ -262,6 +266,12 @@ fluxes = jl.results.get_flux(100 * u.keV, 1 * u.MeV)
 # fluxes = results_reloaded.get_point_source_flux(100 * u.keV, 1 * u.MeV)
 ```
 
+We can change the energy range on the fly... even from the reloaded fit!
+
+```python
+fluxes = jl.results.get_flux(100 * u.eV, 1 * u.TeV)
+```
+
 We can also plot the spectrum with its error region, as:
 
 ```python
@@ -298,7 +308,7 @@ Then, we can perform our Bayesian analysis like:
 bs = BayesianAnalysis(new_model, data)
 bs.set_sampler('ultranest')
 bs.sampler.setup()
-# This uses the emcee sampler
+# This uses the ultranest sampler
 samples = bs.sample(quiet=True)
 ```
 
@@ -321,4 +331,8 @@ We can also produce easily a "corner plot", like:
 
 ```python
 bs.results.corner_plot();
+```
+
+```python
+
 ```

@@ -22,7 +22,15 @@ Let's start by generating our dataset:
 
 ```python
 from threeML import *
+from jupyterthemes import jtplot
 
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+plt.style.use("./threeml.mplstyle")
+silence_warnings()
+```
+
+```python
 # Let's generate some data with y = Powerlaw(x)
 
 gen_function = Powerlaw()
@@ -65,7 +73,7 @@ gof, all_results, all_like_values = xyl.goodness_of_fit()
 print("The null-hypothesis probability from simulations is %.2f" % gof['data'])
 ```
 
-The procedure outlined above works for any distribution for the data (Gaussian or Poisson). In this case we are using Gaussian data, thus the log(likelihood) is just half of a $\chi^2$. We can then also use the $\chi^2$ test, which give a close result without performing simulations:
+The procedure outlined above works for any distribution for the data (Gaussian or Poisson). In this case we are using Gaussian data, thus the log(likelihood) is just half of a $\chi^2$. We can then also use the $\chi^2$ test, which gives a close result without performing simulations:
 
 ```python
 import scipy.stats

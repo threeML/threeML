@@ -35,7 +35,12 @@ Users coming from XSPEC typically have a few questions about getting started wit
 ## How do I fake a dummy response to fit optical data or a background model?
 * DON'T DO THAT!
 * Since 3ML is not limited to a rigid data format, we have custom plugins for photometric data. You simply need to provide the filter name and magnitude. See the docs for more details. 
-* We have the ability to model background spectra along with source spectrum
+* We have the ability to model background spectra along with source spectrum. Check out the background modeling n the docs.
+
+## How do I choose the likelihood statistic for my fit?
+* It is possible, but if your PHA files are formatted correctly, we probe them and choose the **correct** likelihood for your data.
+* We do support rebinning of data, but not for the purposes of moving from the Poisson regime to the so-called $\chi^2$ regime. This is an incorrect and bad practice. 
+
 
 ```python
 
