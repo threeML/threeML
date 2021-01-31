@@ -21,21 +21,15 @@ For optical photometry, we provide the **PhotometryLike** plugin that handles fo
 
 ```python
 import numpy as np
-
 import matplotlib.pyplot as plt
-
-
-
 from threeML import *
-
 # we will need XPSEC models for extinction
 from astromodels.xspec import *
 
 # The filter library takes a while to load so you must import it explicitly.
-from threeml.utils.photometry import get_photometric_filter_library
+from threeML.utils.photometry import get_photometric_filter_library
 
 threeML_filter_library = get_photometric_filter_library()
-
 from jupyterthemes import jtplot
 
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
