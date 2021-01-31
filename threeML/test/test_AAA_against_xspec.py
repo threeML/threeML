@@ -134,9 +134,9 @@ def test_OGIP_response_against_xspec():
 
         # Then load rsp and arf in XSpec
 
-        rsp_file = get_path_of_data_file("ogip_test_xmm_pn.rmf")
+        rsp_file = str(get_path_of_data_file("ogip_test_xmm_pn.rmf"))
 
-        arf_file = get_path_of_data_file("ogip_test_xmm_pn.arf")
+        arf_file = str(get_path_of_data_file("ogip_test_xmm_pn.arf"))
 
         fs1 = xspec.FakeitSettings(
             rsp_file, arf_file, exposure=1.0, fileName="_fake_spectrum.pha"
