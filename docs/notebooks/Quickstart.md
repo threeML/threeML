@@ -23,7 +23,7 @@ Let's start by generating our dataset:
 ```python
 from threeML import *
 from jupyterthemes import jtplot
-
+import matplotlib.pyplot as plt
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 plt.style.use("./threeml.mplstyle")

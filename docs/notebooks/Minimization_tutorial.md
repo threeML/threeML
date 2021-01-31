@@ -34,11 +34,16 @@ Let's start by importing what we need in the following:
 
 ```python
 from threeML import *
+from threeML.io.package_data import get_path_of_data_file
 
 import matplotlib.pyplot as plt
-
+from jupyterthemes import jtplot
 %matplotlib inline
-
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+silence_warnings()
+plt.style.use(str(get_path_of_data_file("./threeml.mplstyle")))
+import warnings
+warnings.simplefilter('ignore')
 
 from threeML.minimizer.tutorial_material import *
 ```
