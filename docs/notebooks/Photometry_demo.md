@@ -53,7 +53,7 @@ Let's say we have our own 1-m telescope with a Johnson filter and we happen to r
 ```python
 import speclite.filters as spec_filters
 
-my_backyard_telescope_filter = spec_filters.load_filter('bessell-r')
+my_backyard_telescope_filter = spec_filters.load_filter('bessell-R')
 
 # NOTE:
 my_backyard_telescope_filter.name
