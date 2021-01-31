@@ -158,7 +158,7 @@ Explore the docstring to see all the available options. Default configurations c
 * Use asymmetric errors and alter the default color map
 
 ```python
-threeML_config['model plot']['point source plot']['fit cmap'] = 'plasma'
+threeML_config['model_plot']['point_source_plot']['fit_cmap'] = 'plasma'
 _ = plot_point_source_spectra(mle1, equal_tailed=False)
 ```
 
@@ -177,7 +177,7 @@ _ = plot_point_source_spectra(mle1, fit_colors='orange', contour_colors='blue')
 Further modifications to plotting style, legend style, etc. can be modified either in the 3ML configuration:
 
 ```python
-threeML_config['model plot']['point source plot']
+show_configuration("model_plot")
 ```
 
 or by directly passing dictionary arguments to the the plot command. Examine the docstring for more details!
