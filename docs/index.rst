@@ -23,6 +23,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
     intro
     notebooks/configuration
     notebooks/logging
+    notebooks/xspec_users
     notebooks/Minimization_tutorial
     notebooks/Bayesian_tutorial
     plugins

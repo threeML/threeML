@@ -263,6 +263,4 @@ _ = plot_point_source_spectra(mle1,
 _=plt.ylim(bottom=1E-4)
 ```
 
-```python
 
-```
