@@ -25,7 +25,7 @@ from threeML.io.package_data import get_path_of_data_file
 from jupyterthemes import jtplot
 
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-plt.style.use("./threeml.mplstyle")
+plt.style.use(str(get_path_of_data_file("./threeml.mplstyle")))
 import warnings
 warnings.simplefilter('ignore')
 ```
@@ -83,15 +83,12 @@ All time series objects share the same commands to get you to a plugin.
 Let's have a look at the GBM TTE lightcurve.
 
 ```python
-threeML_config['lightcurve']['lightcurve color'] = '#07AE44'
-
 fig = gbm_tte.view_lightcurve(start=-20,stop=200)
 ```
 
 Perhaps we want to fit the time interval from 0-10 seconds. We make a selection like this:
 
 ```python
-threeML_config['lightcurve']['selection color'] = '#4C3CB7'
 
 gbm_tte.set_active_time_interval('0-10')
 fig = gbm_tte.view_lightcurve(start=-20,stop=200);
@@ -111,8 +108,6 @@ $$ B_i = \int_{T_1}^{T_2}P(t;\vec{\theta}) {\rm d}t $$
 
 
 ```python
-threeML_config['lightcurve']['background color'] = '#FC2530'
-
 gbm_tte.set_background_interval('-24--5','100-200')
 gbm_tte.view_lightcurve(start=-20,stop=200);
 ```
