@@ -22,21 +22,26 @@ First we load the analysis results:
 
 
 ```python
-%matplotlib inline
-jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-
 
 import matplotlib.pyplot as plt
 
-plt.style.use("./threeml.mplstyle")
+
 import numpy as np
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
+plt.style.use("./threeml.mplstyle")
+
+from jupyterthemes import jtplot
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+
+
+%matplotlib inline
+
 ```
 
 ```python
-#mle1 = load_analysis_results(get_path_of_data_file("datasets/toy_xy_mle1.fits"))
+mle1 = load_analysis_results(get_path_of_data_file("datasets/toy_xy_mle1.fits"))
 bayes1 = load_analysis_results(get_path_of_data_file("datasets/toy_xy_bayes2.fits"))
 ```
 
