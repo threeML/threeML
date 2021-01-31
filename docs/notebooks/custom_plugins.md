@@ -159,7 +159,7 @@ class PluginPrototype(object):
         pass
 
     @abc.abstractmethod
-    def inner_fit(self):parametersparametersparameters
+    def inner_fit(self):
         """
         This is used for the profile likelihood. Keeping fixed all parameters in the
         LikelihoodModel, this method minimizes the logLike over the remaining nuisance
