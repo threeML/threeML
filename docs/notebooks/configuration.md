@@ -60,32 +60,61 @@ logging:
 ```
 
 ```python
-
+show_configuration("plugins")
 ```
 
-Editing the configuration for your own personal analysis style is can be acheived with any standard text editor except MicroSoft Word. 
+The configuration now includes the values from the files. 
+
+### Environment variables
+
+It is possible to set configuration values from environment variables. For example, if you are working in a HPC cluster environment and need to log to w write-safe directory:
+```~/.config/threeml/cluster_logging.yml```
+```yaml
+logging:
+  path: ${env:USER_LOG_DIR}
+  developer: off
+  console: off
+  startup_warnings: off
+```
+
+where ```USER_LOG_DIR``` could be a directory where you are allowed to write to disk. At run time, we convert this variable to a path. However, any value can be set. Thus, you can make an adaptable configuration that mutates based on your local workstation. 
 
 
-But perhaps you want to change a parameter in the middle of a session? The configuration behaves like a nested dictionary. Let's take a look at what we can configure:
+
+## Run-time configuration changes
 
 
-Perhaps we want the default for fitting Fermi LAT LLE backgrounds to be unbinned just for this session.
+But perhaps you want to change a parameter in the middle of a session? The configuration behaves like a nested dictionary but it has both *dot* and key access. Let's take a look at what we can configure:
+
+
+Perhaps we want the default colors for light curves to be altered for this session:
 
 ```python
-threeML_config["lle"]
+threeML_config.time_series.background_color
 ```
 
 ```python
-threeML_config["lle"]["background unbinned"] = True
-threeML_config["lle"]
+threeML_config['time_series']['background_color']
 ```
 
+```python
+threeML_config.time_series.background_color = 'green'
+show_configuration('time_series')
+```
+
+<!-- #region -->
 From this point on in this session, fitting LLE backgrounds will be unbinned. When we close python, the next time we start 3ML, the values set in the configuration file be loaded.
 
-Do not worry about entering incorrect values in the file as 3ML checks both the structure and types of the parameters. If you corrupt your file, 3ML will save a copy of it and restore the default so that you can still use 3ML. 
+Do not worry about entering incorrect values in the file as 3ML checks both the structure and types of the parameters. 
 
-If you have a defualt configuration you would like to add, consider opening a pull request. We would love to hear your ideas. 
+
+If you modify your configuration at run time and want to save it to a file (**in your configration directory**) try this:
+<!-- #endregion -->
 
 ```python
+from threeML import get_current_configuration_copy
 
+get_current_configuration_copy("my_config.yml", overwrite=True)
 ```
+
+If you have a default configuration you would like to add, consider opening a pull request. We would love to hear your ideas. 
