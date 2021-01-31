@@ -31,8 +31,10 @@ from threeML import *
 # we will need XPSEC models for extinction
 from astromodels.xspec import *
 
-# The filter library takes a while to load so you must import it explicitly..
-from threeML.utils.photometry.filter_library import threeML_filter_library
+# The filter library takes a while to load so you must import it explicitly.
+from threeml.utils.photometry import get_photometric_filter_library
+
+threeML_filter_library = get_photometric_filter_library()
 
 from jupyterthemes import jtplot
 
