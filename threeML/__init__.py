@@ -290,8 +290,7 @@ from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from .data_list import DataList
 from .io.calculate_flux import calculate_point_source_flux
 # Import the plot_style context manager and the function to create new styles
-from .io.plotting.plot_style import (create_new_plotting_style,
-                                     get_available_plotting_styles, plot_style)
+
 from .parallel.parallel_client import parallel_computation
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
@@ -342,6 +341,9 @@ for var in var_to_check:
             % var
             #            RuntimeWarning,
         )
+
+
+            
 del os
 del Path
 del warnings

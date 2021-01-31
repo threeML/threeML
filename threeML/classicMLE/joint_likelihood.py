@@ -20,11 +20,15 @@ from threeML.exceptions import custom_exceptions
 from threeML.exceptions.custom_exceptions import FitFailed, custom_warnings,\
     NoFitYet, MinLargerMax, ForbiddenRegionOfParameterSpace, MinimizerNotAvailable
 from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
 from threeML.io.table import Table
 from threeML.minimizer import minimization
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.statistics.stats_tools import aic, bic
+
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+
 
 log = setup_logger(__name__)
 

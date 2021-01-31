@@ -6,7 +6,7 @@ import types
 from builtins import range, str, zip
 from collections.abc import Iterable
 from contextlib import contextmanager
-from typing import Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -20,9 +20,10 @@ from astromodels.utils.valid_variable import is_valid_variable_name
 from past.utils import old_div
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import (NegativeBackground,
-                                                  custom_warnings)
+from threeML.config.plotting_structure import BinnedSpectrumPlot
+from threeML.exceptions.custom_exceptions import NegativeBackground
 from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.data_residual_plot import ResidualPlot
 from threeML.io.plotting.light_curve_plots import (channel_plot,
                                                    disjoint_patch_plot)
@@ -35,6 +36,9 @@ from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.string_utils import dash_separated_string_to_tuple
+
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+
 
 log = setup_logger(__name__)
 
@@ -2549,7 +2553,7 @@ class SpectrumLike(PluginPrototype):
                     energy_min_unrebinned[non_used_mask],
                     energy_max_unrebinned[non_used_mask],
                     observed_rate_unrebinned[non_used_mask],
-                    color=threeML_config["plugins"]["ogip"]["data_plot"]["counts_color"],
+                    color=threeML_config.plugins.ogip.data_plot.counts_color,
                     lw=1.5,
                     alpha=1,
                 )
@@ -2583,7 +2587,7 @@ class SpectrumLike(PluginPrototype):
                         energy_min_unrebinned[non_used_mask],
                         energy_max_unrebinned[non_used_mask],
                         background_rate_unrebinned[non_used_mask],
-                        color=threeML_config["plugins"]["ogip"]["data_plot"]["background_color"],
+                        color=threeML_config.plugins.ogip.data_plot.background_color,
                         alpha=0.8,
                     )
             else:
@@ -2616,7 +2620,7 @@ class SpectrumLike(PluginPrototype):
                     alpha=0.9,
                     capsize=0,
                     # label=data._name,
-                    color=threeML_config["plugins"]["ogip"]["data_plot"]["counts_color"],
+                    color=threeML_config.plugins.ogip.data_plot.counts_color,
                 )
 
                 if self._background_noise_model is not None:
@@ -2626,10 +2630,8 @@ class SpectrumLike(PluginPrototype):
                             background_rate_unrebinned[non_used_mask],
                             energy_width_unrebinned[non_used_mask],
                         ),
-                        yerr=old_div(
-                            background_rate_unrebinned_err[non_used_mask],
-                            energy_width_unrebinned[non_used_mask],
-                        ),
+                        yerr=background_rate_unrebinned_err[non_used_mask] /
+                        energy_width_unrebinned[non_used_mask],
                         fmt="",
                         # markersize=3,
                         linestyle="",
@@ -2637,7 +2639,7 @@ class SpectrumLike(PluginPrototype):
                         alpha=0.9,
                         capsize=0,
                         # label=data._name,
-                        color=threeML_config["plugins"]["ogip"]["data_plot"]["background_color"],
+                        color=threeML_config.plugins.ogip.data_plot.background_color,
                     )
 
             # make some nice top and bottom plot ranges
@@ -2669,8 +2671,8 @@ class SpectrumLike(PluginPrototype):
                 top,
                 bottom,
                 ~self._mask,
-                color="k",
-                alpha=0.4,
+                color=threeML_config.plugins.ogip.data_plot.masked_channels_color,
+                alpha=0.5,
             )
 
             # plot the bad quality channels if requested
@@ -2688,7 +2690,7 @@ class SpectrumLike(PluginPrototype):
                     bottom,
                     self._observed_spectrum.quality.bad,
                     color="none",
-                    edgecolor="#FE3131",
+                    edgecolor=threeML_config.plugins.ogip.data_plot.bad_channels_color,
                     hatch="/",
                     alpha=0.95,
                 )
@@ -2706,7 +2708,7 @@ class SpectrumLike(PluginPrototype):
                     bottom,
                     self._observed_spectrum.quality.bad,
                     color="none",
-                    edgecolor="#C79BFE",
+                    edgecolor=threeML_config.plugins.ogip.data_plot.warn_channels_color,
                     hatch="/",
                     alpha=0.95,
                 )
@@ -3071,10 +3073,10 @@ class SpectrumLike(PluginPrototype):
         show_legend: bool = True,
         min_rate: Union[int, float] = 1e-99,
         model_label: Optional[str] = None,
-        model_kwargs: Optional[dict] = None,
-        data_kwargs: Optional[dict] = None,
+        model_kwargs: Optional[Dict[str, Any]] = None,
+        data_kwargs: Optional[Dict[str, Any]] = None,
         background_label: Optional[str] = None,
-        background_kwargs: Optional[dict] = None,
+        background_kwargs: Optional[Dict[str, Any]] = None,
         source_only: bool = True,
         show_background: bool = False,
         **kwargs
@@ -3110,7 +3112,7 @@ class SpectrumLike(PluginPrototype):
         _default_model_kwargs = dict(color=model_color, alpha=1)
 
         _default_background_kwargs = dict(
-            color=background_color, alpha=1, linestyle="--")
+            color=background_color, alpha=1, ls="--")
 
         _sub_menu = threeML_config.plotting.residual_plot
 
@@ -3119,10 +3121,32 @@ class SpectrumLike(PluginPrototype):
             alpha=1,
             fmt=_sub_menu.marker,
             markersize=_sub_menu.size,
-            linestyle="",
+            ls="",
             elinewidth=_sub_menu.linewidth,
             capsize=0,
         )
+
+        # overwrite if these are in the confif
+
+        _kwargs_menu: BinnedSpectrumPlot = threeML_config.plugins.ogip.fit_plot
+
+        if _kwargs_menu.model_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.model_mpl_kwargs.items():
+
+                _default_model_kwargs[k] = v
+
+        if _kwargs_menu.data_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.data_mpl_kwargs.items():
+
+                _default_data_kwargs[k] = v
+
+        if _kwargs_menu.background_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.background_mpl_kwargs.items():
+
+                _default_background_kwargs[k] = v
 
         if model_kwargs is not None:
 
@@ -3166,6 +3190,25 @@ class SpectrumLike(PluginPrototype):
                 else:
 
                     _default_background_kwargs[k] = v
+
+        # since we define some defualts, lets not overwrite
+        # the users
+
+        _duplicates = (("ls", "linestyle"), ("lw", "linewidth"))
+
+        for d in _duplicates:
+
+            if (d[0] in _default_model_kwargs) and (d[1] in _default_model_kwargs):
+
+                _default_model_kwargs.pop(d[0])
+
+            if (d[0] in _default_data_kwargs) and (d[1] in _default_data_kwargs):
+
+                _default_data_kwargs.pop(d[0])
+
+            if (d[0] in _default_background_kwargs) and (d[1] in _default_background_kwargs):
+
+                _default_background_kwargs.pop(d[0])
 
         if model_label is None:
             model_label = "%s Model" % self._name
