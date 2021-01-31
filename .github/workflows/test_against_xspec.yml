@@ -83,6 +83,11 @@ jobs:
             uses: actions/checkout@v2
           - name: Install dependencies
             run: |
+              export HEADAS=`ls -d ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/`;
+              echo "loading xspec from " $HEADAS;
+              source ${HEADAS}/headas-init.sh;
+              python -c 'import xspec' || true;
+              
               python -m pip install --upgrade pip
               pip install --upgrade astromodels
               pip install --upgrade flake8 coverage pytest-cov cython
