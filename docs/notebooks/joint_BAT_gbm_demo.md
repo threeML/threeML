@@ -109,9 +109,6 @@ jl_no_eac.fit()
 
 The fit has resulted in a very typical Band function fit. Let's look in count space at how good of a fit we have obtained.
 
-```python
-threeML_config["ogip"]["model plot cmap"] = "Set1"
-```
 
 ```python
 display_spectrum_model_counts(
