@@ -32,7 +32,7 @@ from threeML import *
 from astromodels.xspec import *
 
 # The filter library takes a while to load so you must import it explicitly..
-from threeML.plugins.photometry.filter_library import threeML_filter_library
+from threeML.utils.photometry.filter_library import threeML_filter_library
 
 from jupyterthemes import jtplot
 
@@ -73,7 +73,7 @@ Our data are entered as keywords with the name of the filter as the keyword and 
 <!-- #endregion -->
 
 ```python
-my_backyard_telescope = PhotometryLike('backyard_astronomy',
+my_backyard_telescope = PhotometryLike.from_kwargs('backyard_astronomy',
                          filters=my_backyard_telescope_filter, # the filter
                          R=(20,.1) ) # the magnitude and error
 
@@ -114,7 +114,7 @@ fangs_r = spec_filters.FilterResponse(
 
 fangs = spec_filters.load_filters('fangs-g', 'fangs-r')
 
-fangslike = PhotometryLike('fangs',filters=fangs,g=(20,.1),r=(18,.1))
+fangslike = PhotometryLike.from_kwargs('fangs',filters=fangs,g=(20,.1),r=(18,.1))
 
 
 fangslike.display_filters()
@@ -129,7 +129,7 @@ Now we will look at GROND. We get the filter from the 3ML filter library.
 
 
 ```python
-grond = PhotometryLike('GROND',
+grond = PhotometryLike.from_kwargs('GROND',
                        filters=threeML_filter_library.ESO.GROND,
                        #g=(21.5.93,.23), # we exclude these filters
                        #r=(22.,0.12),
