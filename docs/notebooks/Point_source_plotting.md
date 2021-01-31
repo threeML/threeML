@@ -22,7 +22,6 @@ First we load the analysis results:
 
 
 ```python
-
 import matplotlib.pyplot as plt
 
 
@@ -31,18 +30,61 @@ import numpy as np
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 plt.style.use("./threeml.mplstyle")
+import warnings
+warnings.simplefilter("ignore")
 
+
+silence_warnings()
+
+%matplotlib inline
 from jupyterthemes import jtplot
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 
 
-%matplotlib inline
+```
 
+## Generate some data
+
+```python
+p = Powerlaw(K=10,piv=10,index=-1.5)
+
+p.K.prior = Log_uniform_prior(lower_bound=1, upper_bound=15)
+p.index.prior = Uniform_prior(lower_bound=-3, upper_bound=0)
+
+g1 = Gaussian(F=200,mu=10,sigma=1)
+g1.F.prior = Log_uniform_prior(lower_bound=100, upper_bound=300)
+g1.mu.prior= Log_uniform_prior(lower_bound=1, upper_bound=50)
+g1.sigma.prior = Log_uniform_prior(lower_bound=.01, upper_bound=10)
+
+g2 = Gaussian(F=100,mu=50,sigma=1)
+g2.F.prior = Log_uniform_prior(lower_bound=10, upper_bound=300)
+g2.mu.prior= Log_uniform_prior(lower_bound=1, upper_bound=300)
+g2.sigma.prior = Log_uniform_prior(lower_bound=.01, upper_bound=10)
+
+f = p + g1 + g2
+x = np.logspace(0,3,50)
+
+xy = XYLike.from_function("test", f, x, poisson_data=True )
+
+xy.plot(x_scale="log",y_scale="log");
+
+ps = PointSource("test",0,0, spectral_shape=f)
+model = Model(ps)
+dl = DataList(xy)
 ```
 
 ```python
-mle1 = load_analysis_results(get_path_of_data_file("datasets/toy_xy_mle1.fits"))
-bayes1 = load_analysis_results(get_path_of_data_file("datasets/toy_xy_bayes2.fits"))
+bayes = BayesianAnalysis(model, dl)
+bayes.set_sampler("emcee")
+bayes.sampler.setup(n_burn_in=100,n_walkers=20, n_iterations=500)
+bayes.sample(quiet=True)
+bayes1 = bayes.results
+```
+
+```python
+jl = JointLikelihood(model, dl)
+jl.fit(quiet=True)
+mle1 = jl.results
 ```
 
 ## Plotting a single analysis result
@@ -106,7 +148,7 @@ _ = plot_point_source_spectra(bayes1,
                               use_components=True
                              )
 
-_=plt.ylim(bottom=1)
+_=plt.ylim(bottom=.1,top=1000)
 ```
 
 Notice that the duplicated components have the subscripts *n1* and *n2*. If we want to specify which components to plot, we must use these subscripts.
