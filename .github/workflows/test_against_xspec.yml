@@ -73,9 +73,10 @@ jobs:
               mkdir -p ~/xspec_home/xspec-install/;
               ./configure --prefix=/home/runner/xspec_home/xspec-install/ --with-components="Xspec" && make && make install | grep -v hd_install;
               ls ~/xspec_home/xspec-install/x86_64-pc-linux-gnu-libc*/;
-              rm -rf $XSPEC_BUILD_DIR heasoft-src.tar.gz heasoft-*/
-              popd;
               
+              ls 
+              popd;
+              rm -rf $XSPEC_BUILD_DIR ~/xspec_home/heasoft-src.tar.gz
               fi
                  
           - name: Checkout
@@ -87,4 +88,8 @@ jobs:
               pip install --upgrade flake8 coverage pytest-cov cython
               pip install -e .
 
+
+          - name: Test xspec
+            run: |
+              python -m pytest -vv -k threeML/test/test_AAA_against_xspec.py
               
