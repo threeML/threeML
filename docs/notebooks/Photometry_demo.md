@@ -126,7 +126,7 @@ Now we will look at GROND. We get the filter from the 3ML filter library.
 
 ```python
 grond = PhotometryLike.from_kwargs('GROND',
-                       filters=threeML_filter_library.ESO.GROND,
+                       filters=threeML_filter_library.LaSilla.GROND,
                        #g=(21.5.93,.23), # we exclude these filters
                        #r=(22.,0.12),
                        i=(21.8,.01),
