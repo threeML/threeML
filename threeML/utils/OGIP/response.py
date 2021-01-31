@@ -22,6 +22,7 @@ from threeML.io.file_utils import (file_existing_and_readable,
                                    sanitize_filename)
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.io.logging import setup_logger
+
 from threeML.io.package_data import get_path_of_data_file
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
@@ -223,9 +224,18 @@ class InstrumentResponse(object):
         flux gets calculated here.
         """
         if precalc_fluxes is None:
-            fluxes = self._integral_function(
-                # self._mc_energies[:-1], self._mc_energies[1:]
-            )
+
+            try:
+                fluxes = self._integral_function(
+                    # self._mc_energies[:-1], self._mc_energies[1:]
+                )
+            except(TypeError):
+
+                fluxes = self._integral_function(
+                    self._mc_energies[:-1], self._mc_energies[1:]
+                )
+
+
         else:
             fluxes = precalc_fluxes
 
