@@ -106,7 +106,7 @@ def test_OGIP_response_against_xspec():
         # Fake a spectrum so we can actually compute the convoluted model
 
         # Get path of response file
-        rsp_file = get_path_of_data_file("ogip_test_gbm_n6.rsp")
+        rsp_file = str(get_path_of_data_file("ogip_test_gbm_n6.rsp"))
 
         fs1 = xspec.FakeitSettings(
             rsp_file, exposure=1.0, fileName="_fake_spectrum.pha"
