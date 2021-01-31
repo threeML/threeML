@@ -41,6 +41,10 @@ Users coming from XSPEC typically have a few questions about getting started wit
 * It is possible, but if your PHA files are formatted correctly, we probe them and choose the **correct** likelihood for your data.
 * We do support rebinning of data, but not for the purposes of moving from the Poisson regime to the so-called $\chi^2$ regime. This is an incorrect and bad practice. 
 
+## Can I trust the results of the fits?
+* With each build of 3ML, we always test the code automatically against XSPEC to ensure fitting (up to factor) and RSP convolution give the same results.
+* You can always try yourself as the file types are the same. Expect differences in fit results that could be due to the underlying fitting engines.
+
 
 ```python
 
