@@ -17,27 +17,57 @@ jupyter:
 
 The 3ML configuration sets up defaults that are read in at runtime and is a session wide state that the user can modify at any point during an analysis to alter behavior throughout 3ML.
 
-The configuration is a YAML file stored in ```bash  ~/.threeML/threeML_config.yml```.
-If you do not have a local copy, it is easy to create a default:
-
+The configuration is a hierarchical you can import and modify.
 
 ```python
-from threeML import threeML_config
+from threeML import threeML_config, show_configuration
 
-threeML_config.copy_default_config_file()
+show_configuration()
+```
+
+## Local configuration
+
+
+You can store a local configuration read in at the beginning of every session. By default, 3ML looking in ``` ~/.config/threeml/*.yml``` for configuration files.
+
+* You can set your own location with the environment variable ```THREEML_CONFIG``` 
+* All YAML files in this directiory are considered to be configuration files.
+
+Multiple configuration files can be added allowing you to have readable seperation between different topics.
+
+E.g, here are two configuration files that modify some plotting defaults and logging defaults in separate files.
+
+```~/.config/threeml/plotting.yml```
+```yaml
+plugins:
+  ogip:
+    fit_plot:
+      model_cmap: Spectral
+      data_color: grey
+      background_color: k
+      background_mpl_kwargs:
+        lw: .8
+        ls: "-"
+
 
 ```
 
-<!-- #region -->
-Editing the confgiuration for your own personal analysis style is can be acheived with any standard text editor except MicroSoft Word. 
+```~/.config/threeml/logging.yml```
+```yaml
+logging:
+  developer: on
+  startup_warnings: off
+```
+
+```python
+
+```
+
+Editing the configuration for your own personal analysis style is can be acheived with any standard text editor except MicroSoft Word. 
 
 
 But perhaps you want to change a parameter in the middle of a session? The configuration behaves like a nested dictionary. Let's take a look at what we can configure:
-<!-- #endregion -->
 
-```python
-threeML_config
-```
 
 Perhaps we want the default for fitting Fermi LAT LLE backgrounds to be unbinned just for this session.
 
