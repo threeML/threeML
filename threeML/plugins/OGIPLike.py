@@ -15,7 +15,7 @@ __instrument_name = "All OGIP-compliant instruments"
 log = setup_logger(__name__)
 
 _valid_obs_types = (str, Path, PHASpectrum, PHAII)
-_valid_bkg_types = (str, Path, PHAII, SpectrumLike, XYLike)
+_valid_bkg_types = (str, Path, PHASpectrum, PHAII, SpectrumLike, XYLike)
 
 
 class OGIPLike(DispersionSpectrumLike):
@@ -43,7 +43,7 @@ class OGIPLike(DispersionSpectrumLike):
                 break
         else:
 
-            log.error("observation must be a FITS file name or PHASpectrum")
+            log.error(f"observation must be a FITS file name or PHASpectrum, not {type(observation)}")
             raise RuntimeError()
 
         for t in _valid_bkg_types:
@@ -53,7 +53,7 @@ class OGIPLike(DispersionSpectrumLike):
         else:
 
             log.error(
-                "background must be a FITS file name, PHASpectrum, a Plugin or None")
+                f"background must be a FITS file name, PHASpectrum, a Plugin or None, not {type(background)}")
 
             raise RuntimeError()
 
