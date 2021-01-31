@@ -50,20 +50,20 @@ jobs:
           pip install -e .
           
           
-      # - name: Execute the notebooks
-      #   shell: bash -l {0}
-      #   run: |
+      - name: Execute the notebooks
+        shell: bash -l {0}
+        run: |
 
-      #     jupytext --to ipynb --execute docs/notebooks/*.md
+          jupytext --to ipynb --execute docs/notebooks/*.md
 
-      # - uses: actions/upload-artifact@v2
-      #   with:
-      #     name: notebooks-for-${{ github.sha }}
-      #     path: docs/tutorials
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-${{ github.sha }}
+          path: docs/tutorials
 
-      # - name: Trigger RTDs build
-      #   uses: dfm/rtds-action@v1
-      #   with:
-      #     webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
-      #     webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
-      #     commit_ref: ${{ github.ref }}
+      - name: Trigger RTDs build
+        uses: dfm/rtds-action@v1
+        with:
+          webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
+          webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
+          commit_ref: ${{ github.ref }}
