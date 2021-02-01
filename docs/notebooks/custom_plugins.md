@@ -29,7 +29,8 @@ While many general and instrument specific plugins are already provided in 3ML, 
 The basic functionality of any plugin is prototyped in the PluginPrototype class. This is under the main directory in the 3ML source code, but let's examine it here:
 
 
-```python
+```
+
 class PluginPrototype(object):
     __metaclass__ = abc.ABCMeta
 
