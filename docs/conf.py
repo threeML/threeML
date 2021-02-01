@@ -14,12 +14,37 @@
 
 import sys
 import os
-
+from pathlib import Path
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 #sys.path.insert(0, os.path.abspath('../threeML/classicMLE'))
+
+
+
+
+DOCS = Path(__file__).parent
+
+# -- Generate API documentation ------------------------------------------------
+def run_apidoc(app):
+    """Generage API documentation"""
+    import better_apidoc
+
+    better_apidoc.APP = app
+    better_apidoc.main(
+        [
+            "better-apidoc",
+            # "-t",
+            # str(docs / "_templates"),
+            "--force",
+            "--no-toc",
+            "--separate",
+            "-o",
+            str(DOCS / "api"),
+            str(DOCS / ".." / "threeml" ),
+        ]
+    )
 
 
 import mock
@@ -338,3 +363,5 @@ texinfo_documents = [
 #     'examples/scales': 'examples/screenshot/scales.png',
 #     'examples/moebius': 'examples/screenshot/moebius.png',
 #     'examples/bars': 'examples/screenshot/bars.gif',
+def setup(app):
+    app.connect("builder-inited", run_apidoc)
