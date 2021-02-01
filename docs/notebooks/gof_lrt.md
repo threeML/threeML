@@ -24,17 +24,22 @@ Instead, we can [almost](www.google.com) always use the bootstrap method to esti
 <!-- #endregion -->
 
 ```python
-%matplotlib inline
 import matplotlib.pyplot as plt
-from jupyterthemes import jtplot
 
+
+from threeML import *
+
+
+from jupyterthemes import jtplot
+%matplotlib inline
 jtplot.style(context='talk', fscale=1, ticks=True, grid=False)
-plt.style.use('./threeml.mplstyle')
+
+set_threeML_style()
+silence_warnings()
 
 import scipy.stats as stats
 import numpy as np
 
-from threeML import *
 
 import warnings
 warnings.simplefilter('ignore')
@@ -84,11 +89,10 @@ Now that the data are fit, we can assess the goodness of fit via simulating synt
 gof_obj = GoodnessOfFit(jl)
 ```
 
-Now we will monte carlo some datasets. This can be computationally expensive, so we will use 3ML's built in context manager for accessing ipython clusters. If we have a profile that is connected to a super computer, then we can simulate and fit all the datasets very quickly. 
+Now we will monte carlo some datasets. This can be computationally expensive, so we will use 3ML's built in context manager for accessing ipython clusters. If we have a profile that is connected to a super computer, then we can simulate and fit all the datasets very quickly. Just use ```with parallel_computation():```
 
 ```python
-with parallel_computation():
-    gof, data_frame, like_data_frame = gof_obj.by_mc(n_iterations=8000)
+gof, data_frame, like_data_frame = gof_obj.by_mc(n_iterations=1000)
 ```
 
 Three things are returned, the GOF for each plugin (in our case one) as well as the total GOF, a data frame with the fitted values for each synthetic dataset, and the likelihoods for all the fits. We can see that the data have a reasonable GOF:
@@ -188,8 +192,7 @@ lrt = LikelihoodRatioTest(jl_null,jl_alternative)
 Now we MC synthetic datasets again.
 
 ```python
-with parallel_computation():
-    lrt_results = lrt.by_mc(8*600)
+lrt_results = lrt.by_mc(1000)
 ```
 
 This returns three things, the null hypothesis probability, the test statistics for all the data sets, and the fitted values. We see that our null hyp. prob is:
