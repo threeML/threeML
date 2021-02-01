@@ -137,17 +137,14 @@ spectral_model =  XS_phabs()* XS_zphabs() * XS_powerlaw()
 
 
 spectral_model.nh_1=0.101
+spectral_model.nh_1.bounds = (None, None)
 spectral_model.nh_1.fix = True
 
 spectral_model.nh_2=0.1114424
 spectral_model.nh_2.fix = True
-
+spectral_model.nh_2.bounds = (None, None)
 spectral_model.redshift_2 = 0.618
 spectral_model.redshift_2.fix =True
-```
-
-```python
-spectral_model.display()
 ```
 
 ## With astromodels PHABS
@@ -156,7 +153,6 @@ We can build the exact same models in native astromodels thanks to **Dominique E
 
 
 ```python
-
 phabs_local = PhAbs(NH=0.101)
 phabs_local.NH.fix=True
 phabs_local.redshift.fix=True
