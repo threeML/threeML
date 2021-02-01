@@ -217,7 +217,11 @@ class BadPlugin(PluginPrototype):
 ```
 
 ```python
-bad_plugin = BadPlugin('name',{})
+try:
+    bad_plugin = BadPlugin('name',{})
+    
+except(TypeError) as e:
+    print(e)
 ```
 
 So, let's instead build a proper plugin
@@ -253,7 +257,7 @@ class GoodPlugin(PluginPrototype):
         
     def get_log_like(self):
         
-        # this isn't going to be very usefull
+        # this isn't going to be very useful
         return -99.
     
     def inner_fit(self):
