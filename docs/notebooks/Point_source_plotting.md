@@ -29,7 +29,7 @@ import numpy as np
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
-plt.style.use("./threeml.mplstyle")
+set_threeML_style()
 import warnings
 warnings.simplefilter("ignore")
 
@@ -56,10 +56,10 @@ g1.F.prior = Log_uniform_prior(lower_bound=100, upper_bound=300)
 g1.mu.prior= Log_uniform_prior(lower_bound=1, upper_bound=50)
 g1.sigma.prior = Log_uniform_prior(lower_bound=.01, upper_bound=10)
 
-g2 = Gaussian(F=100,mu=50,sigma=1)
-g2.F.prior = Log_uniform_prior(lower_bound=10, upper_bound=300)
-g2.mu.prior= Log_uniform_prior(lower_bound=1, upper_bound=300)
-g2.sigma.prior = Log_uniform_prior(lower_bound=.01, upper_bound=10)
+g2 = Gaussian(F=200,mu=50,sigma=1)
+g2.F.prior = Log_uniform_prior(lower_bound=90, upper_bound=300)
+g2.mu.prior= Log_uniform_prior(lower_bound=10, upper_bound=100)
+g2.sigma.prior = Log_uniform_prior(lower_bound=.01, upper_bound=2)
 
 f = p + g1 + g2
 x = np.logspace(0,3,50)
@@ -76,7 +76,7 @@ dl = DataList(xy)
 ```python
 bayes = BayesianAnalysis(model, dl)
 bayes.set_sampler("emcee")
-bayes.sampler.setup(n_burn_in=100,n_walkers=20, n_iterations=500)
+bayes.sampler.setup(n_burn_in=500,n_walkers=100, n_iterations=500)
 bayes.sample(quiet=True)
 bayes1 = bayes.results
 ```
@@ -92,7 +92,7 @@ mle1 = jl.results
 The easiest way to plot is to call **plot_point_source_spectra**. By default, it plots in photon space with a range of 10-40000 keV evaluated at 100 logrithmic points:
 
 ```python
-_ = plot_point_source_spectra(mle1,ene_min=1,ene_max=1E3)
+_ = plot_point_source_spectra(bayes1,ene_min=1,ene_max=1E3, num_ene=300)
 ```
 
 ### Flux and energy units
@@ -141,11 +141,12 @@ _ = plot_point_source_spectra(mle1,
 
 Sometimes it is interesting to see the components in a composite model. We can specify the **use_components** switch. Here we will use *Bayesian* results. Note that all features work with MLE of Bayesian results.
 
-```python
+```python tags=["nbsphinx-thumbnail"]
 _ = plot_point_source_spectra(bayes1,
                               ene_min=1,
                               ene_max=1E3,
-                              use_components=True
+                              use_components=True,
+                              num_ene=300
                              )
 
 _=plt.ylim(bottom=.1,top=1000)
