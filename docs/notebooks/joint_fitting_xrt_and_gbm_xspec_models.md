@@ -35,7 +35,8 @@ from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 
 # we will need XPSEC models for extinction
-#from astromodels.xspec import *
+from astromodels.xspec import *
+from astromodels.xspec.xspec_settings import *
 
 from jupyterthemes import jtplot
 
