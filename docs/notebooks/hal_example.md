@@ -77,11 +77,12 @@ from hawc_hal import HAL, HealpixConeROI
 import matplotlib.pyplot as plt
 from threeML import *
 
+%matplotlib inline
 from jupyterthemes import jtplot
 jtplot.style(context='talk', fscale=1, ticks=True, grid=False)
-plt.style.use('./threeml.mplstyle')
+set_threeML_style()
 
-%matplotlib inline
+
 
 # Define the ROI. 
 ra_crab, dec_crab = 83.63,22.02

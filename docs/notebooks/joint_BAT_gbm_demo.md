@@ -121,9 +121,7 @@ It seems that the effective areas between GBM and BAT do not agree! We can look 
 ```python
 gof_object = GoodnessOfFit(jl_no_eac)
 
-with parallel_computation():
-
-    gof, res_frame, lh_frame = gof_object.by_mc(n_iterations=8000)
+gof, res_frame, lh_frame = gof_object.by_mc(n_iterations=1000)
 ```
 
 ```python
@@ -161,11 +159,10 @@ display_spectrum_model_counts(
 ```python
 gof_object = GoodnessOfFit(jl_eac)
 
-with parallel_computation():
 
-    gof, res_frame, lh_frame = gof_object.by_mc(
-        n_iterations=8000, continue_on_failure=True
-    )
+
+gof, res_frame, lh_frame = gof_object.by_mc(
+        n_iterations=1000, continue_on_failure=True )
 ```
 
 ```python
