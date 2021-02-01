@@ -48,7 +48,9 @@ jobs:
 
           pip install zeus-mcmc
           pip install -e .
-          
+
+          pip install --no-binary :all: root_numpy
+          pip install git+https://github.com/threeml/hawc_hal.git
           
       - name: Execute the notebooks
         shell: bash -l {0}

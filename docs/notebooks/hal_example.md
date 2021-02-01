@@ -46,7 +46,7 @@ def get_hawc_file( filename, odir = "./", overwrite = False ):
         req = requests.get(url+filename, verify=False,stream=True)
         req.raw.decode_content = True
         with open( odir + filename, 'wb') as f:
-            shutil.copyfileobj(r.raw, f)    
+            shutil.copyfileobj(req.raw, f)    
         
     return odir + filename
         
