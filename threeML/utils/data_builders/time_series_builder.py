@@ -1,6 +1,7 @@
 import copy
 import re
 from pathlib import Path
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 import astropy.io.fits as fits
 import matplotlib.pyplot as plt
@@ -69,16 +70,19 @@ class BinningMethodError(RuntimeError):
     pass
 
 
+_rsp_valid_types = [InstrumentResponse, InstrumentResponseSet, str, Path]
+
+
 class TimeSeriesBuilder(object):
     def __init__(
         self,
         name: str,
         time_series: TimeSeries,
-        response=None,
+        response: Optional["Response"] = None,
         poly_order: int = -1,
         unbinned: bool = False,
         verbose: bool = True,
-        restore_poly_fit=None,
+        restore_poly_fit: Optional[str] = None,
         container_type=BinnedSpectrumWithDispersion,
         **kwargs,
     ):
@@ -99,11 +103,17 @@ class TimeSeriesBuilder(object):
         :param restore_poly_fit: file from which to read a prefitted background
         """
 
-        assert isinstance(
-            time_series, TimeSeries), "must be a TimeSeries instance"
+        if not isinstance(
+                time_series, TimeSeries):
 
-        assert issubclass(
-            container_type, Histogram), "must be a subclass of Histogram"
+            log.error("must be a TimeSeries instance")
+            raise RuntimeError()
+
+            if not issubclass(
+                    container_type, Histogram):
+
+                log.error("must be a subclass of Histogram")
+                raise RuntimeError()
 
         self._name: str = name
 
@@ -113,12 +123,12 @@ class TimeSeriesBuilder(object):
 
         # make sure we have a proper response
 
-        if response is not None:
-            assert (
-                isinstance(response, InstrumentResponse)
-                or isinstance(response, InstrumentResponseSet)
-                or isinstance(response, str)
-            ), "Response must be an instance of InstrumentResponse"
+        for t in _rsp_valid_types:
+            is isinstance(response, t): break
+
+        else:
+            log.error("Response must be an instance of InstrumentResponse")
+            raise RuntimeError()
 
         # deal with RSP weighting if need be
 
@@ -573,9 +583,12 @@ class TimeSeriesBuilder(object):
         :return:
         """
 
-        assert isinstance(
+        if not isinstance(
             self._time_series, EventList
-        ), "can only bin event lists currently"
+        ):
+            log.error("can only bin event lists currently")
+
+            raise RuntimeError()
 
         # if 'use_energy_mask' in kwargs:
         #
@@ -655,9 +668,12 @@ class TimeSeriesBuilder(object):
                     log.error("stop must be and array in custom mode")
                     raise RuntimeError()
 
-            assert len(start) == len(
+            if len(start) != len(
                 stop
-            ), "must have equal number of start and stop times"
+            ):
+                log.error("must have equal number of start and stop times")
+
+                raise RuntimeError()
 
             self._time_series.bin_by_custom(start, stop)
 
@@ -714,13 +730,16 @@ class TimeSeriesBuilder(object):
 
             log.debug("will extract a single spectrum")
 
-            assert (
-                self._observed_spectrum is not None
-            ), "Must have selected an active time interval"
+            if self._observed_spectrum is None:
+                log.error("Must have selected an active time interval")
+                raise RuntimeError()
 
-            assert isinstance(
+            if not isinstance(
                 self._observed_spectrum, BinnedSpectrum
-            ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
+            ):
+                log.error(
+                    "You are attempting to create a SpectrumLike plugin from the wrong data type")
+                raise RuntimeError()
 
             if this_background_spectrum is None:
 
@@ -779,9 +798,9 @@ class TimeSeriesBuilder(object):
 
             log.debug(f"extracting a series of spectra")
 
-            assert (
-                self._time_series.bins is not None
-            ), "This time series does not have any bins!"
+            if self._time_series.bins is None:
+                log.error("This time series does not have any bins!")
+                raise RuntimeError()
 
             # save the original interval if there is one
             old_interval = copy.copy(self._active_interval)
@@ -800,23 +819,14 @@ class TimeSeriesBuilder(object):
             these_bins = self._time_series.bins  # type: TimeIntervalSet
 
             if start is not None:
-                assert stop is not None, "must specify a start AND a stop time"
+                if stop is None:
+                    log.error("must specify a start AND a stop time")
+                    raise RuntimeError()
 
             if stop is not None:
-                assert stop is not None, "must specify a start AND a stop time"
-
-                these_bins = these_bins.containing_interval(
-                    start, stop, inner=False)
-
-            # loop through the intervals and create spec likes
-
-            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
-
-                self.set_active_time_interval(interval.to_string())
-
-                assert isinstance(
-                    self._observed_spectrum, BinnedSpectrum
-                ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
+                if start is None:
+                    log.error("must specify a start AND a stop time")
+                    raise RuntimeError()
 
                 if extract_measured_background:
 
@@ -991,9 +1001,14 @@ class TimeSeriesBuilder(object):
 
             log.debug("using BALROG to build time series")
 
-            assert has_balrog, "you must install the gbm_drm_gen package to use balrog"
+            if not has_balrog:
+                log.error(
+                    "you must install the gbm_drm_gen package to use balrog")
+                raise RuntimeError()
 
-            assert cspec_file is not None, "must include a cspecfile"
+            if cspec_file is None:
+                log.error("must include a cspecfile")
+                raise RuntimeError()
 
             if poshist_file is not None:
 
@@ -1073,9 +1088,13 @@ class TimeSeriesBuilder(object):
 
         else:
 
-            assert isinstance(
+            if not isinstance(
                 rsp_file, InstrumentResponse
-            ), "The provided response is not a 3ML InstrumentResponse"
+            ):
+                log.error(
+                    "The provided response is not a 3ML InstrumentResponse")
+                raise RuntimeError()
+
             rsp = rsp_file
 
         # pass to the super class
