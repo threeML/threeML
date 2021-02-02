@@ -179,30 +179,32 @@ ptsrc = PointSource(trigger,ra,dec,spectral_shape=spectral_model)
 model = Model(ptsrc)
 ```
 
+<!-- #region heading_collapsed=true -->
 #### Fitting
+<!-- #endregion -->
 
-```python
+```python hidden=true
 data = DataList(xrt,nai3)
 
 jl = JointLikelihood(model, data, verbose=False)
 model.display()
 ```
 
-```python
+```python hidden=true
 res = jl.fit()
 display_spectrum_model_counts(jl,min_rate=[.5,.1]);
 ```
 
-```python
-res = jl.get_contours(spectral_model_native.index_3,-2.5,-1.5,50)
+```python hidden=true
+res = jl.get_contours(spectral_model.index_3,-2.5,-1.5,50)
 ```
 
-```python
-jl.get_contours(spectral_model_native.K_3,.1,.3,25,
-                spectral_model_native.index_3,-2.5,-1.5,50);
+```python hidden=true
+jl.get_contours(spectral_model.K_3,.1,.3,25,
+                spectral_model.index_3,-2.5,-1.5,50);
 ```
 
-```python
+```python hidden=true
 plot_point_source_spectra(jl.results,show_legend=False, emin=.01*u.keV);
 ```
 
