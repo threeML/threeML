@@ -830,6 +830,19 @@ class TimeSeriesBuilder(object):
                     log.error("must specify a start AND a stop time")
                     raise RuntimeError()
 
+            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
+
+                self.set_active_time_interval(interval.to_string())
+
+                if not isinstance(
+                    self._observed_spectrum, BinnedSpectrum
+                ):
+
+                    log.error(
+                        "You are attempting to create a SpectrumLike plugin from the wrong data type")
+
+                    raise RuntimeError()
+
                 if extract_measured_background:
 
                     this_background_spectrum = self._measured_background_spectrum
