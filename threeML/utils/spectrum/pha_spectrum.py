@@ -611,9 +611,11 @@ def _read_pha_or_pha2_file(
 
     elif typeII == False:
 
-        assert (
-            not treat_as_time_series
-        ), "This is not a PHAII file but you specified to treat it as a time series"
+        if treat_as_time_series:
+
+            log.error(
+                "This is not a PHAII file but you specified to treat it as a time series")
+            raise RuntimeError()
 
         # PHA 1 file
         if has_rates:
@@ -627,7 +629,9 @@ def _read_pha_or_pha2_file(
 
         else:
 
-            rates = old_div(data.field(data_column_name), exposure)
+            counts = data.field(data_column_name).astype(np.int64)
+
+            rates = counts / exposure
 
             rate_errors = None
 
