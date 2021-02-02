@@ -19,22 +19,28 @@ One of the key features of 3ML is the abil ity to fit multi-messenger data prope
 
 
 ```python
-
 import matplotlib.pyplot as plt
-from jupyterthemes import jtplot
 
-jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-plt.style.use("./threeml.mplstyle")
+
+import numpy as np
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 
-import os
-
 import warnings
-%matplotlib inline
-
 warnings.simplefilter("ignore")
+
+
+silence_warnings()
+
+%matplotlib inline
+from jupyterthemes import jtplot
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+
+set_threeML_style()
+
+
+
 ```
 
 ## Plugin setup
@@ -111,9 +117,14 @@ The fit has resulted in a very typical Band function fit. Let's look in count sp
 
 
 ```python
+threeML_config.plugins.ogip.fit_plot.model_cmap = "Set1"
+threeML_config.plugins.ogip.fit_plot.n_colors = 3
 display_spectrum_model_counts(
-    jl_no_eac, step=False, min_rate=[0.01, 10.0, 10.0], data_colors=["grey", "k", "k"]
-)
+    jl_no_eac, 
+    min_rate=[0.01, 10.0, 10.0], data_colors=["grey", "k", "k"], 
+    show_background=False,
+    source_only=True
+);
 ```
 
 It seems that the effective areas between GBM and BAT do not agree! We can look at the goodness of fit for the various data sets.
@@ -121,7 +132,7 @@ It seems that the effective areas between GBM and BAT do not agree! We can look 
 ```python
 gof_object = GoodnessOfFit(jl_no_eac)
 
-gof, res_frame, lh_frame = gof_object.by_mc(n_iterations=1000)
+gof, res_frame, lh_frame = gof_object.by_mc(n_iterations=100)
 ```
 
 ```python
@@ -145,7 +156,7 @@ model_eac = Model(PointSource("joint_fit_eac", 0, 0, spectral_shape=band))
 
 jl_eac = JointLikelihood(model_eac, data_list)
 
-jl_eac.fit()
+jl_eac.fit();
 ```
 
 Now we have a much better fit to all data sets
@@ -153,7 +164,7 @@ Now we have a much better fit to all data sets
 ```python tags=["nbsphinx-thumbnail"]
 display_spectrum_model_counts(
     jl_eac, step=False, min_rate=[0.01, 10.0, 10.0], data_colors=["grey", "k", "k"]
-)
+);
 ```
 
 ```python
@@ -162,7 +173,7 @@ gof_object = GoodnessOfFit(jl_eac)
 
 
 gof, res_frame, lh_frame = gof_object.by_mc(
-        n_iterations=1000, continue_on_failure=True )
+        n_iterations=100, continue_on_failure=True )
 ```
 
 ```python
@@ -183,7 +194,7 @@ plot_spectra(
     contour_cmap="Set1",
     flux_unit="erg2/(keV s cm2)",
     equal_tailed=True,
-)
+);
 ```
 
 We can easily see that the models are different 

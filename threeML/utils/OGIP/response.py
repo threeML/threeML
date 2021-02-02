@@ -16,13 +16,13 @@ import numpy as np
 from matplotlib.colors import SymLogNorm
 from past.utils import old_div
 
+from threeML.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import (file_existing_and_readable,
                                    fits_file_existing_and_readable,
                                    sanitize_filename)
 from threeML.io.fits_file import FITSExtension, FITSFile
 from threeML.io.logging import setup_logger
-
 from threeML.io.package_data import get_path_of_data_file
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
@@ -235,7 +235,6 @@ class InstrumentResponse(object):
                     self._mc_energies[:-1], self._mc_energies[1:]
                 )
 
-
         else:
             fluxes = precalc_fluxes
 
@@ -297,9 +296,10 @@ class InstrumentResponse(object):
         # Find minimum non-zero element
         vmin = self._matrix[self._matrix > 0].min()
 
-        cmap = copy.deepcopy(cm.ocean)
+        cmap = copy.deepcopy(cm.get_cmap(
+            threeML_config.plugins.ogip.response_cmap.value))
 
-        cmap.set_under("gray")
+        cmap.set_under(threeML_config.plugins.ogip.response_zero_color)
 
         mappable = ax.pcolormesh(
             self._mc_energies[idx_mc:],

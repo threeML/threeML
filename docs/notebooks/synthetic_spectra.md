@@ -30,21 +30,26 @@ Most of the current plugins support the ability to generate synthetic data direc
 In many of the examples, the basic XYLike plugin has been used to generate synthetic data. Here, we will revisit the plugin for completeness.
 
 ```python
-from threeML import *
-import numpy as np
-
-%matplotlib inline
-jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-
-
 import matplotlib.pyplot as plt
 
-plt.style.use("./threeml.mplstyle")
 
+import numpy as np
+
+from threeML import *
+from threeML.io.package_data import get_path_of_data_file
 
 import warnings
-
 warnings.simplefilter("ignore")
+
+
+silence_warnings()
+
+%matplotlib inline
+from jupyterthemes import jtplot
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+
+set_threeML_style()
+
 ```
 
 ```python
@@ -66,15 +71,13 @@ xyl_generator = XYLike.from_function(
 xyl_generator.plot(x_scale="log", y_scale="log")
 ```
 
-<!-- #region heading_collapsed=true -->
 #### SpectrumLike
 
 Generating synthetic spectra from SpectrumLike (non-energy dispersed count spectra) can take many forms with different inputs.
 
 First, let's set the energy bins we will use for all generated spectra
-<!-- #endregion -->
 
-```python hidden=true
+```python
 
 energies = np.logspace(0,2,51)
 
@@ -83,20 +86,16 @@ low_edge = energies[:-1]
 high_edge = energies[1:]
 ```
 
-<!-- #region hidden=true -->
 Now, let's use a blackbody for the source spectrum.
-<!-- #endregion -->
 
-```python hidden=true
+```python
 # get a BPL source function
 source_function = Blackbody(K=1, kT = 5.)
 ```
 
-<!-- #region hidden=true -->
 ##### Poisson spectrum with no background
-<!-- #endregion -->
 
-```python hidden=true
+```python
 spectrum_generator = SpectrumLike.from_function('fake',
                                                source_function=source_function,
                                                energy_min=low_edge,
@@ -106,11 +105,9 @@ spectrum_generator = SpectrumLike.from_function('fake',
 spectrum_generator.view_count_spectrum()
 ```
 
-<!-- #region hidden=true -->
 ##### Gaussian spectrum with no background
-<!-- #endregion -->
 
-```python hidden=true
+```python
 spectrum_generator = SpectrumLike.from_function('fake',
                                                source_function=source_function,
                                                source_errors= 0.5 * source_function(low_edge),
@@ -121,11 +118,9 @@ spectrum_generator = SpectrumLike.from_function('fake',
 spectrum_generator.view_count_spectrum()
 ```
 
-<!-- #region hidden=true -->
 ##### Poisson spectrum with Poisson Background
-<!-- #endregion -->
 
-```python hidden=true
+```python
 
 # power law background function
 background_function = Powerlaw(K=.7,index=-1.5, piv=10.)
@@ -140,11 +135,9 @@ spectrum_generator = SpectrumLike.from_function('fake',
 spectrum_generator.view_count_spectrum()
 ```
 
-<!-- #region hidden=true -->
 ##### Poisson spectrum with Gaussian background
-<!-- #endregion -->
 
-```python hidden=true
+```python
 
 spectrum_generator = SpectrumLike.from_function('fake',
                                                source_function=source_function,
@@ -255,4 +248,16 @@ Now we can now generate synthetic datasets from the fitted model. This will incl
 synthetic_ogip = ogip_data.get_simulated_dataset()
 
 synthetic_ogip.view_count_spectrum()
+```
+
+```python
+
+```
+
+```python
+
+```
+
+```python
+
 ```

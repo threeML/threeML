@@ -14,6 +14,7 @@ class BinnedSpectrumPlot:
     data_cmap: MPLCmap = MPLCmap.Set1
     model_cmap: MPLCmap = MPLCmap.Set1
     background_cmap: MPLCmap = MPLCmap.Set1
+    n_colors: int = 5
     step: bool = False
     show_legend: bool = True
     show_residuals: bool = True

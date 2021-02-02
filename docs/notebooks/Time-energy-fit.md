@@ -20,15 +20,26 @@ jupyter:
 First we import what we need:
 
 ```python
-from threeML import *
-
 import matplotlib.pyplot as plt
 
-from jupyterthemes import jtplot
+
+import numpy as np
+
+from threeML import *
+from threeML.io.package_data import get_path_of_data_file
+
+import warnings
+warnings.simplefilter("ignore")
+
+
+silence_warnings()
 
 %matplotlib inline
+from jupyterthemes import jtplot
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-plt.style.use("./threeml.mplstyle")
+
+set_threeML_style()
+
 
 
 ```

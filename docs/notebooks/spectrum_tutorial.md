@@ -42,11 +42,27 @@ Let's start by examining an observation where the total counts are Poisson distr
 
 
 ```python
-from threeML import *
-
-%matplotlib notebook
 import matplotlib.pyplot as plt
+
+
 import numpy as np
+
+from threeML import *
+from threeML.io.package_data import get_path_of_data_file
+
+import warnings
+warnings.simplefilter("ignore")
+
+
+silence_warnings()
+
+%matplotlib inline
+from jupyterthemes import jtplot
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+
+set_threeML_style()
+
+
 ```
 
 We will construct a simulated spectrum over the energy range 10-1000 keV. The spectrum will have logrithmic energy boundaries.
@@ -315,6 +331,9 @@ dispersion_spectrum_generator = DispersionSpectrumLike.from_function('test',
 We can view the response and the count spectrum created.
 
 ```python
+threeML_config.plugins.ogip.response_zero_color = "k"
+threeML_config.plugins.ogip.response_cmap = "magma"
+
 _ = dispersion_spectrum_generator.display_rsp()
 ```
 
