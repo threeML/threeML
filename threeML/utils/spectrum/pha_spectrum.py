@@ -15,7 +15,7 @@ from past.utils import old_div
 from threeML.io.logging import setup_logger
 from threeML.utils.OGIP.pha import PHAII
 from threeML.utils.OGIP.response import InstrumentResponse, OGIPResponse
-from threeML.utils.progress_bar import tqdm, trange
+from threeML.utils.progress_bar import trange
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrumWithDispersion, Quality)
 from threeML.utils.spectrum.binned_spectrum_set import BinnedSpectrumSet
@@ -1183,12 +1183,12 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
         # now get the time intervals
 
-        _allowed_time_keys = (("TIME", "ENDTIME"),("TSTART", "TSTOP"))
+        _allowed_time_keys = (("TIME", "ENDTIME"), ("TSTART", "TSTOP"))
 
         for keys in _allowed_time_keys:
 
             try:
-                
+
                 start_times = data.field(keys[0])
                 stop_times = data.field(keys[1])
                 break
@@ -1199,10 +1199,11 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
         else:
 
-            log.error(f"Could not find times in {pha_file_or_instance}. Tried: {_allowed_time_keys}")
+            log.error(
+                f"Could not find times in {pha_file_or_instance}. Tried: {_allowed_time_keys}")
 
             raise RuntimeError()
-            
+
         time_intervals = TimeIntervalSet.from_starts_and_stops(
             start_times, stop_times)
 

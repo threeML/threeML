@@ -299,9 +299,13 @@ class PHAWrite(object):
 
         if self._write_bak_file:
 
+            log.debug("will attempt to also write a BAK file")
+            
             keys = ["pha", "bak"]
 
         else:
+
+            log.debug("not attempting to write a BAK file")
 
             keys = ["pha"]
 
