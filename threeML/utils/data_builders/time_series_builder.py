@@ -1,7 +1,6 @@
 import copy
 import re
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Union
 
 import astropy.io.fits as fits
 import matplotlib.pyplot as plt
@@ -24,7 +23,6 @@ from threeML.utils.polarization.binned_polarization import \
 from threeML.utils.progress_bar import tqdm
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum, BinnedSpectrumWithDispersion)
-from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.binned_spectrum_series import \
@@ -71,19 +69,16 @@ class BinningMethodError(RuntimeError):
     pass
 
 
-_rsp_valid_types = [InstrumentResponse, InstrumentResponseSet, str, Path]
-
-
 class TimeSeriesBuilder(object):
     def __init__(
         self,
         name: str,
         time_series: TimeSeries,
-        response: Optional[InstrumentResponse] = None,
+        response=None,
         poly_order: int = -1,
         unbinned: bool = False,
         verbose: bool = True,
-        restore_poly_fit: Optional[str] = None,
+        restore_poly_fit=None,
         container_type=BinnedSpectrumWithDispersion,
         **kwargs,
     ):
@@ -104,17 +99,11 @@ class TimeSeriesBuilder(object):
         :param restore_poly_fit: file from which to read a prefitted background
         """
 
-        if not isinstance(
-                time_series, TimeSeries):
+        assert isinstance(
+            time_series, TimeSeries), "must be a TimeSeries instance"
 
-            log.error("must be a TimeSeries instance")
-            raise RuntimeError()
-
-            if not issubclass(
-                    container_type, Histogram):
-
-                log.error("must be a subclass of Histogram")
-                raise RuntimeError()
+        assert issubclass(
+            container_type, Histogram), "must be a subclass of Histogram"
 
         self._name: str = name
 
@@ -124,13 +113,12 @@ class TimeSeriesBuilder(object):
 
         # make sure we have a proper response
 
-        for t in _rsp_valid_types:
-            if isinstance(response, t):
-                break
-
-        else:
-            log.error("Response must be an instance of InstrumentResponse")
-            raise RuntimeError()
+        if response is not None:
+            assert (
+                isinstance(response, InstrumentResponse)
+                or isinstance(response, InstrumentResponseSet)
+                or isinstance(response, str)
+            ), "Response must be an instance of InstrumentResponse"
 
         # deal with RSP weighting if need be
 
@@ -585,12 +573,9 @@ class TimeSeriesBuilder(object):
         :return:
         """
 
-        if not isinstance(
+        assert isinstance(
             self._time_series, EventList
-        ):
-            log.error("can only bin event lists currently")
-
-            raise RuntimeError()
+        ), "can only bin event lists currently"
 
         # if 'use_energy_mask' in kwargs:
         #
@@ -670,12 +655,9 @@ class TimeSeriesBuilder(object):
                     log.error("stop must be and array in custom mode")
                     raise RuntimeError()
 
-            if len(start) != len(
+            assert len(start) == len(
                 stop
-            ):
-                log.error("must have equal number of start and stop times")
-
-                raise RuntimeError()
+            ), "must have equal number of start and stop times"
 
             self._time_series.bin_by_custom(start, stop)
 
@@ -732,16 +714,13 @@ class TimeSeriesBuilder(object):
 
             log.debug("will extract a single spectrum")
 
-            if self._observed_spectrum is None:
-                log.error("Must have selected an active time interval")
-                raise RuntimeError()
+            assert (
+                self._observed_spectrum is not None
+            ), "Must have selected an active time interval"
 
-            if not isinstance(
+            assert isinstance(
                 self._observed_spectrum, BinnedSpectrum
-            ):
-                log.error(
-                    "You are attempting to create a SpectrumLike plugin from the wrong data type")
-                raise RuntimeError()
+            ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
 
             if this_background_spectrum is None:
 
@@ -800,9 +779,9 @@ class TimeSeriesBuilder(object):
 
             log.debug(f"extracting a series of spectra")
 
-            if self._time_series.bins is None:
-                log.error("This time series does not have any bins!")
-                raise RuntimeError()
+            assert (
+                self._time_series.bins is not None
+            ), "This time series does not have any bins!"
 
             # save the original interval if there is one
             old_interval = copy.copy(self._active_interval)
@@ -821,27 +800,23 @@ class TimeSeriesBuilder(object):
             these_bins = self._time_series.bins  # type: TimeIntervalSet
 
             if start is not None:
-                if stop is None:
-                    log.error("must specify a start AND a stop time")
-                    raise RuntimeError()
+                assert stop is not None, "must specify a start AND a stop time"
 
             if stop is not None:
-                if start is None:
-                    log.error("must specify a start AND a stop time")
-                    raise RuntimeError()
+                assert stop is not None, "must specify a start AND a stop time"
+
+                these_bins = these_bins.containing_interval(
+                    start, stop, inner=False)
+
+            # loop through the intervals and create spec likes
 
             for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
 
                 self.set_active_time_interval(interval.to_string())
 
-                if not isinstance(
+                assert isinstance(
                     self._observed_spectrum, BinnedSpectrum
-                ):
-
-                    log.error(
-                        "You are attempting to create a SpectrumLike plugin from the wrong data type")
-
-                    raise RuntimeError()
+                ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
 
                 if extract_measured_background:
 
@@ -855,8 +830,11 @@ class TimeSeriesBuilder(object):
 
                     this_background_spectrum = self._background_spectrum
 
-                    log.debug(
-                        f"trying extract background as model in {self._name}")
+                these_bins = these_bins.containing_interval(
+                    start, stop, inner=False)
+
+                log.debug(
+                    f"trying extract background as model in {self._name}")
 
                 if this_background_spectrum is None:
                     log.warning(
@@ -1016,14 +994,9 @@ class TimeSeriesBuilder(object):
 
             log.debug("using BALROG to build time series")
 
-            if not has_balrog:
-                log.error(
-                    "you must install the gbm_drm_gen package to use balrog")
-                raise RuntimeError()
+            assert has_balrog, "you must install the gbm_drm_gen package to use balrog"
 
-            if cspec_file is None:
-                log.error("must include a cspecfile")
-                raise RuntimeError()
+            assert cspec_file is not None, "must include a cspecfile"
 
             if poshist_file is not None:
 
@@ -1103,13 +1076,9 @@ class TimeSeriesBuilder(object):
 
         else:
 
-            if not isinstance(
+            assert isinstance(
                 rsp_file, InstrumentResponse
-            ):
-                log.error(
-                    "The provided response is not a 3ML InstrumentResponse")
-                raise RuntimeError()
-
+            ), "The provided response is not a 3ML InstrumentResponse"
             rsp = rsp_file
 
         # pass to the super class
@@ -1342,43 +1311,11 @@ class TimeSeriesBuilder(object):
         )
 
     @classmethod
-    def from_phaII(cls, name: str,
-                   phaII_file: Union[str, Path],
-                   rsp_file: Optional[Union[str, Path]] = None,
-                   arf_file: Optional[Union[str, Path]] = None,
-                   restore_background: Optional[str] = None,
-                   trigger_time: Optional[float] = None,
-                   poly_order: int = -1,
-                   verbose: bool = False
+    def from_phaII(cls):
 
-                   ):
-        """
-        Read from a generic PHAII fits file
-        """
-
-        spectrum_set = PHASpectrumSet(
-            phaII_file, rsp_file=rsp_file, arf_file=arf_file)
-
-        event_list = BinnedSpectrumSeries(
-            spectrum_set, first_channel=0, verbose=verbose)
-
-        if rsp_file is not None:
-
-            rsp = OGIPResponse(rsp_file, arf_file=arf_file)
-
-        else:
-
-            rsp = None
-
-        return cls(name,
-                   event_list,
-                   response=rsp,
-                   poly_order=poly_order,
-                   unbinned=False,
-                   verbose=verbose,
-                   restore_poly_fit=restore_background,
-                   container_type=BinnedSpectrumWithDispersion
-                   )
+        raise NotImplementedError(
+            "Reading from a generic PHAII file is not yet supportedgb"
+        )
 
     @classmethod
     def from_polar_spectrum(
@@ -1551,6 +1488,72 @@ class TimeSeriesBuilder(object):
 
             # now we make one response to save time
 
+            # get the bins from the time series
+            # for event lists, these are from created bins
+            # for binned spectra sets, these are the native bines
+
+            these_bins = self._time_series.bins  # type: TimeIntervalSet
+
+            if start is not None:
+                assert stop is not None, "must specify a start AND a stop time"
+
+            if stop is not None:
+                assert stop is not None, "must specify a start AND a stop time"
+
+                these_bins = these_bins.containing_interval(
+                    start, stop, inner=False)
+
+            # loop through the intervals and create spec likes
+
+            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
+
+                self.set_active_time_interval(interval.to_string())
+
+                if extract_measured_background:
+
+                    this_background_spectrum = self._measured_background_spectrum
+
+                else:
+
+                    this_background_spectrum = self._background_spectrum
+
+                    if this_background_spectrum is None:
+                        log.warning(
+                            "No bakckground selection has been made. This plugin will contain no background!"
+                        )
+
+                try:
+
+                    pl = PolarLike(
+                        name="%s%s%d" % (self._name, interval_name, i),
+                        observation=self._observed_spectrum,
+                        background=this_background_spectrum,
+                        response=self._response,
+                        verbose=self._verbose,
+                        #               tstart=self._tstart,
+                        #               tstop=self._tstop
+                    )
+
+                    list_of_polarlikes.append(pl)
+
+                except (NegativeBackground):
+                    log.error(
+                        "Something is wrong with interval %s. skipping." % interval
+                    )
+
+            # restore the old interval
+
+            if old_interval is not None:
+
+                self.set_active_time_interval(*old_interval)
+
+            else:
+
+                self._active_interval = None
+
+            self._verbose = old_verbose
+
+            return list_of_polarlikes
             # get the bins from the time series
             # for event lists, these are from created bins
             # for binned spectra sets, these are the native bines
