@@ -92,7 +92,7 @@ gof_obj = GoodnessOfFit(jl)
 Now we will monte carlo some datasets. This can be computationally expensive, so we will use 3ML's built in context manager for accessing ipython clusters. If we have a profile that is connected to a super computer, then we can simulate and fit all the datasets very quickly. Just use ```with parallel_computation():```
 
 ```python
-gof, data_frame, like_data_frame = gof_obj.by_mc(n_iterations=1000)
+gof, data_frame, like_data_frame = gof_obj.by_mc(n_iterations=1000, continue_on_failure=True)
 ```
 
 Three things are returned, the GOF for each plugin (in our case one) as well as the total GOF, a data frame with the fitted values for each synthetic dataset, and the likelihoods for all the fits. We can see that the data have a reasonable GOF:
@@ -192,7 +192,7 @@ lrt = LikelihoodRatioTest(jl_null,jl_alternative)
 Now we MC synthetic datasets again.
 
 ```python
-lrt_results = lrt.by_mc(1000)
+lrt_results = lrt.by_mc(1000,continue_on_failure=True)
 ```
 
 This returns three things, the null hypothesis probability, the test statistics for all the data sets, and the fitted values. We see that our null hyp. prob is:
