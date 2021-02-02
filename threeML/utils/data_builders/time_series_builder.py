@@ -830,11 +830,8 @@ class TimeSeriesBuilder(object):
 
                     this_background_spectrum = self._background_spectrum
 
-                these_bins = these_bins.containing_interval(
-                    start, stop, inner=False)
-
-                log.debug(
-                    f"trying extract background as model in {self._name}")
+                    log.debug(
+                        f"trying extract background as model in {self._name}")
 
                 if this_background_spectrum is None:
                     log.warning(
