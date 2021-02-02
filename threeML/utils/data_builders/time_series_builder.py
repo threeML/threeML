@@ -79,7 +79,7 @@ class TimeSeriesBuilder(object):
         self,
         name: str,
         time_series: TimeSeries,
-        response: Optional["Response"] = None,
+        response: Optional[InstrumentResponse] = None,
         poly_order: int = -1,
         unbinned: bool = False,
         verbose: bool = True,
