@@ -98,16 +98,16 @@ def _read_pha_or_pha2_file(
 
         pha_file_or_instance: Path = Path(pha_file_or_instance)
 
-        ext = pha_file_or_instance.stem
+        ext = pha_file_or_instance.suffix
 
         if "{" in ext:
             spectrum_number = int(ext.split("{")[-1].replace("}", ""))
 
-            pha_file_or_instance = pha_file_or_instance.split("{")[0]
+            pha_file_or_instance = str(pha_file_or_instance).split("{")[0]
 
         # Read the data
 
-        file_name: Path = pha_file_or_instance
+        file_name: Path = Path(pha_file_or_instance)
 
         # create a FITS_FILE instance
 
