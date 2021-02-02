@@ -23,10 +23,14 @@ While we have covered most of the functionality of RandomVariates in the Analysi
 
 from threeML import *
 
+from jupyterthemes import jtplot
 %matplotlib inline
-jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-import matplotlib.pyplot as plt
-plt.style.use("./threeml.mplstyle")
+jtplot.style(context='talk', fscale=1, ticks=True, grid=False)
+
+set_threeML_style()
+silence_warnings()
+
+
 
 ```
 
