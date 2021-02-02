@@ -5,6 +5,7 @@ import os
 import warnings
 from builtins import range
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 import astropy.io.fits as fits
 import numpy as np
@@ -56,14 +57,17 @@ _might_be_columns["observed"] = (
 _might_be_columns["background"] = ("EXPOSURE,BACKSCAL").split(",")
 
 
+_valid_input_types = (str, Path, PHAII)
+
+
 def _read_pha_or_pha2_file(
-    pha_file_or_instance,
-    spectrum_number=None,
-    file_type="observed",
-    rsp_file=None,
-    arf_file=None,
-    treat_as_time_series=False,
-):
+    pha_file_or_instance: Union[str, Path, PHAII],
+    spectrum_number: Optional[int] = None,
+    file_type: str = "observed",
+    rsp_file: Optional[str] = None,
+    arf_file: Optional[str] = None,
+    treat_as_time_series: bool = False,
+) -> Dict[str, Any]:
     """
     A function to extract information from pha and pha2 files. It is kept separate because the same method is
     used for reading time series (MUCH faster than building a lot of individual spectra) and single spectra.
@@ -78,13 +82,23 @@ def _read_pha_or_pha2_file(
     :return:
     """
 
-    assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
-        pha_file_or_instance, PHAII
-    ) or isinstance(pha_file_or_instance, Path), "Must provide a FITS file name or PHAII instance"
+    for t in _valid_input_types:
 
-    if isinstance(pha_file_or_instance, six.string_types) or isinstance(pha_file_or_instance, Path):
+        if isinstance(pha_file_or_instance, t):
+            break
 
-        ext = os.path.splitext(pha_file_or_instance)[-1]
+    else:
+
+        log.error(
+            f"Must provide a FITS file name or PHAII instance. Got {type(pha_file_or_instance)}")
+
+        raise RuntimeError()
+
+    if not isinstance(pha_file_or_instance, PHAII):
+
+        pha_file_or_instance: Path = Path(pha_file_or_instance)
+
+        ext = pha_file_or_instance.stem
 
         if "{" in ext:
             spectrum_number = int(ext.split("{")[-1].replace("}", ""))
@@ -93,7 +107,7 @@ def _read_pha_or_pha2_file(
 
         # Read the data
 
-        filename = pha_file_or_instance
+        file_name: Path = pha_file_or_instance
 
         # create a FITS_FILE instance
 
@@ -105,13 +119,13 @@ def _read_pha_or_pha2_file(
 
         # we simply create a dummy filename
 
-        filename = "pha_instance"
+        file_name: Path = Path("pha_instance")
 
     else:
 
-        raise RuntimeError("This is a bug")
+        log.error("This is a bug. Should never get here!")
 
-    file_name = filename
+        raise RuntimeError()
 
     assert file_type.lower() in [
         "observed",
@@ -127,7 +141,7 @@ def _read_pha_or_pha2_file(
     except:
 
         log.error(
-            f"The input file {pha_file_or_instance} is not in PHA format")
+            f"The input file {file_name} is not in PHA format")
         raise RuntimeError(
 
         )
@@ -146,7 +160,10 @@ def _read_pha_or_pha2_file(
         if (header.get("CORRFILE").upper().strip() != "NONE") and (
             header.get("CORRFILE").upper().strip() != ""
         ):
-            raise RuntimeError("CORRFILE is not yet supported")
+
+            log.error("CORRFILE is not yet supported")
+
+            raise RuntimeError()
 
     # See if there is there is a QUALITY==0 in the header
 
@@ -378,10 +395,10 @@ def _read_pha_or_pha2_file(
 
             else:
 
-                raise RuntimeError(
-                    "Keyword %s not found. File %s is not a proper PHA "
-                    "file" % (keyname, filename)
-                )
+                log.error(f"Keyword {keyname} not found. File {file_name} is not a proper PHA "
+                          "file")
+
+                raise RuntimeError()
 
     is_poisson = gathered_keywords["poisserr"]
 
@@ -425,6 +442,8 @@ def _read_pha_or_pha2_file(
         # PHA II file
         if has_rates:
 
+            log.debug(f"{file_name} has rates and NOT counts")
+
             if not treat_as_time_series:
 
                 rates = data.field(data_column_name)[spectrum_number - 1, :]
@@ -446,12 +465,18 @@ def _read_pha_or_pha2_file(
 
         else:
 
+            log.debug(f"{file_name} has counts and NOT rates")
+
             if not treat_as_time_series:
 
-                rates = old_div(
-                    data.field(data_column_name)[
-                        spectrum_number - 1, :], exposure
-                )
+                # extract the counts
+
+                counts = data.field(data_column_name)[
+                    spectrum_number - 1, :].astype(np.int64)
+
+                # count the rates
+
+                rates = counts / exposure
 
                 rate_errors = None
 
@@ -463,8 +488,9 @@ def _read_pha_or_pha2_file(
 
             else:
 
-                rates = old_div(data.field(data_column_name),
-                                np.atleast_2d(exposure).T)
+                counts = data.field(data_column_name).astype(np.int64)
+
+                rates = counts / np.atleast_2d(exposure).T
 
                 rate_errors = None
 
@@ -664,36 +690,53 @@ def _read_pha_or_pha2_file(
 
         # Now that we have read it, some safety checks
 
-        assert rates.shape[0] == gathered_keywords["detchans"], (
-            "The data column (RATES or COUNTS) has a different number of entries than the "
-            "DETCHANS declared in the header"
-        )
+        if rates.shape[0] != gathered_keywords["detchans"]:
+            log.error("The data column (RATES or COUNTS) has a different number of entries than the "
+                      "DETCHANS declared in the header"
+                      )
+            raise RuntimeError()
 
     quality = Quality.from_ogip(quality)
 
     if not treat_as_time_series:
 
-        counts = rates * exposure
+        log.debug(f"{file_name} is not a time series")
+
+        if has_rates:
+
+            counts = rates * exposure
 
         if not is_poisson:
+
+            log.debug(f"{file_name} is not Poisson")
 
             count_errors = rate_errors * exposure
 
         else:
+
+            log.debug(f"{file_name} is Poisson")
 
             count_errors = None
 
     else:
 
+        log.debug(f"{file_name} is a time series")
+
         exposure = np.atleast_2d(exposure).T
 
-        counts = rates * exposure
+        if has_rates:
+
+            counts = rates * exposure
 
         if not is_poisson:
+
+            log.debug(f"{file_name} is not Poisson")
 
             count_errors = rate_errors * exposure
 
         else:
+
+            log.debug(f"{file_name} is Poisson")
 
             count_errors = None
 
@@ -719,11 +762,11 @@ def _read_pha_or_pha2_file(
 class PHASpectrum(BinnedSpectrumWithDispersion):
     def __init__(
         self,
-        pha_file_or_instance,
-        spectrum_number=None,
-        file_type="observed",
-        rsp_file=None,
-        arf_file=None,
+        pha_file_or_instance: Union[str, Path, PHAII],
+        spectrum_number: Optional[int] = None,
+        file_type: str = "observed",
+        rsp_file: Optional[str] = None,
+        arf_file: Optional[str] = None,
     ):
         """
         A spectrum with dispersion build from an OGIP-compliant PHA FITS file. Both Type I & II files can be read. Type II
@@ -741,11 +784,19 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         # extract the spectrum number if needed
 
-        assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
-            pha_file_or_instance, PHAII
-        ), "Must provide a FITS file name or PHAII instance"
+        for t in _valid_input_types:
 
-        pha_information = _read_pha_or_pha2_file(
+            if isinstance(pha_file_or_instance, t):
+                break
+
+        else:
+
+            log.error(
+                f"Must provide a FITS file name or PHAII instance. Got {type(pha_file_or_instance)}")
+
+            raise RuntimeError()
+
+        pha_information: Dict[str, Any] = _read_pha_or_pha2_file(
             pha_file_or_instance,
             spectrum_number,
             file_type,
@@ -804,7 +855,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         self._grouping = grouping
 
     @property
-    def filename(self):
+    def filename(self) -> str:
 
         return self._file_name
 
@@ -987,7 +1038,7 @@ p
 
 class PHASpectrumSet(BinnedSpectrumSet):
     def __init__(
-        self, pha_file_or_instance, file_type="observed", rsp_file=None, arf_file=None
+        self, pha_file_or_instance: Union[str, Path, PHAII], file_type: str = "observed", rsp_file: Optional[str] = None, arf_file: Optional[str] = None
     ):
         """
         A spectrum with dispersion build from an OGIP-compliant PHA FITS file. Both Type I & II files can be read. Type II
@@ -1005,9 +1056,17 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
         # extract the spectrum number if needed
 
-        assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
-            pha_file_or_instance, PHAII
-        ) or isinstance(pha_file_or_instance, Path), "Must provide a FITS file name or PHAII instance"
+        for t in _valid_input_types:
+
+            if isinstance(pha_file_or_instance, t):
+                break
+
+        else:
+
+            log.error(
+                f"Must provide a FITS file name or PHAII instance. Got {type(pha_file_or_instance)}")
+
+            raise RuntimeError()
 
         with fits.open(pha_file_or_instance) as f:
 
@@ -1037,9 +1096,10 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
             else:
 
+                log.error("This file does not contain a RATE nor a COUNTS column. "
+                          "This is not a valid PHA file")
+
                 raise RuntimeError(
-                    "This file does not contain a RATE nor a COUNTS column. "
-                    "This is not a valid PHA file"
                 )
 
                 # Determine if this is a PHA I or PHA II
@@ -1049,8 +1109,9 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
             else:
 
-                raise RuntimeError(
-                    "This appears to be a PHA I and not PHA II file")
+                log.error("This appears to be a PHA I and not PHA II file")
+
+                raise RuntimeError()
 
         pha_information = _read_pha_or_pha2_file(
             pha_file_or_instance,
@@ -1122,9 +1183,26 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
         # now get the time intervals
 
-        start_times = data.field("TIME")
-        stop_times = data.field("ENDTIME")
+        _allowed_time_keys = (("TIME", "ENDTIME"),("TSTART", "TSTOP"))
 
+        for keys in _allowed_time_keys:
+
+            try:
+                
+                start_times = data.field(keys[0])
+                stop_times = data.field(keys[1])
+                break
+
+            except(KeyError):
+
+                pass
+
+        else:
+
+            log.error(f"Could not find times in {pha_file_or_instance}. Tried: {_allowed_time_keys}")
+
+            raise RuntimeError()
+            
         time_intervals = TimeIntervalSet.from_starts_and_stops(
             start_times, stop_times)
 
