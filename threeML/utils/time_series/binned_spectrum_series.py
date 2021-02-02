@@ -98,42 +98,47 @@ class BinnedSpectrumSeries(TimeSeries):
 
         cnts = []
         width = []
+        width_dead = []
 
         log.debug(f"viewing light curve with dead time: {with_dead_time}")
 
-        for bin in bins:
+        for time_bin in bins:
 
             cnts.append(self.counts_over_interval(
-                bin.start_time, bin.stop_time))
+                time_bin.start_time, time_bin.stop_time))
 
             # use the actual exposure
 
-            if with_dead_time:
+            
 
-                width.append(self.exposure_over_interval(
-                    bin.start_time, bin.stop_time))
+            width_dead.append(self.exposure_over_interval(
+                    time_bin.start_time, time_bin.stop_time))
 
             # just use the "defined edges"
 
-            else:
+            
 
-                width.append(bin.duration)
+            width.append(time_bin.duration)
 
         # now we want to get the estimated background from the polynomial fit
 
         if self.poly_fit_exists:
 
             bkg = []
-            for j, tb in enumerate(bins):
+            for j, time_bin in enumerate(bins):
                 tmpbkg = 0.0
                 for poly in self.polynomials:
 
-                    tmpbkg += poly.integral(tb.start_time, tb.stop_time)
-
+                    tmpbkg += poly.integral(time_bin.start_time, time_bin.stop_time)
+                    
+                
                 bkg.append(tmpbkg/width[j])
-
+                
+            
+            
         else:
 
+            
             bkg = None
 
         # pass all this to the light curve plotter
@@ -159,7 +164,7 @@ class BinnedSpectrumSeries(TimeSeries):
         fig = binned_light_curve_plot(
             time_bins=bins.bin_stack,
             cnts=np.array(cnts),
-            width=np.array(width),
+            width=np.array(width_dead),
             bkg=bkg,
             selection=selection,
             bkg_selections=bkg_selection,
