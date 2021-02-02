@@ -37,8 +37,9 @@ jobs:
           
           conda install mamba -c conda-forge
 
-          mamba evn create -f ci/environment.yml
+          mamba env create -f ci/environment.yml
 
+          mamba activate test_env
           
           
           miniconda_os=Linux
