@@ -35,14 +35,14 @@ from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 
 # we will need XPSEC models for extinction
-from astromodels.xspec import *
-from astromodels.xspec.xspec_settings import *
+# from astromodels.xspec import *
+# from astromodels.xspec.xspec_settings import *
 
 from jupyterthemes import jtplot
 
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-plt.style.use("./threeml.mplstyle")
+set_threeML_style()
 silence_warnings()
 
 ```
@@ -58,14 +58,16 @@ ra=280.52
 
 p = Path("datasets/xrt")
 
-xrt = OGIPLike("XRT",observation= str(get_path_of_data_file(p /"xrt_src.pha")),
-                   background= str(get_path_of_data_file(p /"xrt_bkg.pha")),
-                   response= str(get_path_of_data_file(p /"xrt.rmf")),
-                   arf_file= str(get_path_of_data_file(p /"xrt.arf")))
+xrt = OGIPLike("XRT",observation= get_path_of_data_file(p /"xrt_src.pha"),
+                   background= get_path_of_data_file(p /"xrt_bkg.pha"),
+                   response= get_path_of_data_file(p /"xrt.rmf"),
+                   arf_file= get_path_of_data_file(p /"xrt.arf"))
 
 
 
-xrt.view_count_spectrum();
+fig = xrt.view_count_spectrum()
+ax = fig.get_axes()[0]
+ax.set_xlim(1e-1);
 ```
 
 ```python
@@ -124,16 +126,16 @@ nai3.view_count_spectrum();
 ## Setup the model
 
 **astromodels** allows you to use XSPEC models if you have XSPEC installed.
-Set all the normal parameters you would in XSPEC and build a model the normal **3ML/astromodel** way!
+Set all the normal parameters you would in XSPEC and build a model the normal **3ML/astromodels** way! Here we will use the ```phabs``` model from XSPEC and mix it with powerlaw model in astromodels.
 
 
 
-## With XSPEC
+### With XSPEC
 
 ```python
 xspec_abund('angr')
 
-spectral_model =  XS_phabs()* XS_zphabs() * XS_powerlaw()
+spectral_model =  XS_phabs()* XS_zphabs() * Powerlaw()
 
 
 spectral_model.nh_1=0.101
@@ -147,9 +149,10 @@ spectral_model.redshift_2 = 0.618
 spectral_model.redshift_2.fix =True
 ```
 
-## With astromodels PHABS
+### With astromodels PHABS
 
 We can build the exact same models in native astromodels thanks to **Dominique Eckert**.
+Here, there is no extra function for redshifting the absorption model, just pass a redshift.
 
 
 ```python
@@ -179,38 +182,36 @@ ptsrc = PointSource(trigger,ra,dec,spectral_shape=spectral_model)
 model = Model(ptsrc)
 ```
 
-<!-- #region heading_collapsed=true -->
 #### Fitting
-<!-- #endregion -->
 
-```python hidden=true
+```python
 data = DataList(xrt,nai3)
 
 jl = JointLikelihood(model, data, verbose=False)
 model.display()
 ```
 
-```python hidden=true
+```python
 res = jl.fit()
 display_spectrum_model_counts(jl,min_rate=[.5,.1]);
 ```
 
-```python hidden=true
+```python
 res = jl.get_contours(spectral_model.index_3,-2.5,-1.5,50)
 ```
 
-```python hidden=true
+```python
 jl.get_contours(spectral_model.K_3,.1,.3,25,
                 spectral_model.index_3,-2.5,-1.5,50);
 ```
 
-```python hidden=true
+```python
 plot_point_source_spectra(jl.results,show_legend=False, emin=.01*u.keV);
 ```
 
 ### Fit with astromodels PhAbs
 
-Now lets repeat the fit in pur astromodels
+Now lets repeat the fit in pure astromodels.
 
 ```python
 ptsrc_native = PointSource(trigger,ra,dec,spectral_shape=spectral_model_native)
@@ -233,4 +234,10 @@ display_spectrum_model_counts(jl_native,min_rate=[.5,.1]);
 
 ```python
 plot_point_source_spectra(jl.results,jl_native.results,show_legend=False, emin=.01*u.keV);
+```
+
+Both approaches give the same answer as they should. 
+
+```python
+
 ```
