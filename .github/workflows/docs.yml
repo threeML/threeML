@@ -39,7 +39,7 @@ jobs:
 
           mamba env create -f ci/environment.yml
 
-          mamba activate test_env
+          
           
           
           miniconda_os=Linux
@@ -47,6 +47,7 @@ jobs:
 
           sudo apt-get install texlive
 
+          conda activate test_env
           mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
           
