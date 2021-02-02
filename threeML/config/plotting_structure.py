@@ -46,17 +46,17 @@ class ContourStyle:
     alpha: float = 0.4
 
 
-class LegendLoc(Enum):
-    best = 'best'
-    lower_left = 'lower left'
-    lower_right = 'lower right'
-    upper_left = 'upper left'
-    upper_right = 'upper right'
+# class LegendLoc(Enum):
+#     best = 'best'
+#     lower_left = 'lower left'
+#     lower_right = 'lower right'
+#     upper_left = 'upper left'
+#     upper_right = 'upper right'
 
 
 @dataclass
 class LegendStyle:
-    loc: LegendLoc = LegendLoc.best
+    loc: str = "best"
     fancybox: bool = True
     shadow: bool = True
 

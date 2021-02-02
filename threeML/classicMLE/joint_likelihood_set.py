@@ -10,12 +10,11 @@ from threeML.analysis_results import AnalysisResultsSet
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
+from threeML.io.logging import setup_logger, silence_console_log
 from threeML.minimizer.minimization import (LocalMinimization, _Minimization,
                                             _minimizers)
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.progress_bar import trange
-from threeML.io.logging import setup_logger
-
 
 log = setup_logger(__name__)
 
@@ -225,7 +224,6 @@ class JointLikelihoodSet(object):
 
         # Generate the data frame which will contain all results
 
-
         self._continue_on_failure = continue_on_failure
 
         self._compute_covariance = compute_covariance
@@ -236,11 +234,12 @@ class JointLikelihoodSet(object):
 
             # Parallel computation
 
-            client = ParallelClient(**options_for_parallel_computation)
+            with silence_console_log(and_progress_bars=False):
+                client = ParallelClient(**options_for_parallel_computation)
 
-            results = client.execute_with_progress_bar(
-                self.worker, list(range(self._n_iterations))
-            )
+                results = client.execute_with_progress_bar(
+                    self.worker, list(range(self._n_iterations))
+                )
 
         else:
 
@@ -248,9 +247,11 @@ class JointLikelihoodSet(object):
 
             results = []
 
-            for i in trange(self._n_iterations, desc="Goodness of fit computation"):
+            with silence_console_log(and_progress_bars=False):
 
-                results.append(self.worker(i))
+                for i in trange(self._n_iterations, desc="Goodness of fit computation"):
+
+                    results.append(self.worker(i))
 
         assert len(results) == self._n_iterations, (
             "Something went wrong, I have %s results "

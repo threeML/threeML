@@ -8,7 +8,7 @@ import numpy as np
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
-from threeML.io.logging import setup_logger
+from threeML.io.logging import setup_logger, silence_console_log
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SpectrumLike import NegativeBackground, SpectrumLike
@@ -390,15 +390,16 @@ class TimeSeriesBuilder(object):
 
         file_name: Path = sanitize_filename(file_name)
 
-        ogip_list = [
-            OGIPLike.from_general_dispersion_spectrum(sl)
-            for sl in self.to_spectrumlike(
-                from_bins=True,
-                start=start,
-                stop=stop,
-                extract_measured_background=extract_measured_background,
-            )
-        ]
+        with silence_console_log(and_progress_bars=False):
+            ogip_list = [
+                OGIPLike.from_general_dispersion_spectrum(sl)
+                for sl in self.to_spectrumlike(
+                    from_bins=True,
+                    start=start,
+                    stop=stop,
+                    extract_measured_background=extract_measured_background,
+                )
+            ]
 
         # write out the PHAII file
 
@@ -810,61 +811,46 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
+            with silence_console_log(and_progress_bars=False):
 
-                self.set_active_time_interval(interval.to_string())
+                for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
 
-                assert isinstance(
-                    self._observed_spectrum, BinnedSpectrum
-                ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
+                    self.set_active_time_interval(interval.to_string())
 
-                if extract_measured_background:
+                    assert isinstance(
+                        self._observed_spectrum, BinnedSpectrum
+                    ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
 
-                    this_background_spectrum = self._measured_background_spectrum
+                    if extract_measured_background:
 
-                    log.debug(
-                        f"trying extract background as measurement in {self._name}"
-                    )
-
-                else:
-
-                    this_background_spectrum = self._background_spectrum
-
-                    log.debug(
-                        f"trying extract background as model in {self._name}")
-
-                if this_background_spectrum is None:
-                    log.warning(
-                        "No bakckground selection has been made. This plugin will contain no background!"
-                    )
-
-                try:
-
-                    plugin_name = f"{self._name}{interval_name}{i}"
-
-                    if self._response is None:
+                        this_background_spectrum = self._measured_background_spectrum
 
                         log.debug(
-                            f"creating a SpectrumLike plugin named {plugin_name}")
-
-                        sl = SpectrumLike(
-                            name=plugin_name,
-                            observation=self._observed_spectrum,
-                            background=this_background_spectrum,
-                            verbose=self._verbose,
-                            tstart=self._tstart,
-                            tstop=self._tstop,
+                            f"trying extract background as measurement in {self._name}"
                         )
 
                     else:
 
-                        if not self._use_balrog:
+                        this_background_spectrum = self._background_spectrum
+
+                        log.debug(
+                            f"trying extract background as model in {self._name}")
+
+                    if this_background_spectrum is None:
+                        log.warning(
+                            "No bakckground selection has been made. This plugin will contain no background!"
+                        )
+
+                    try:
+
+                        plugin_name = f"{self._name}{interval_name}{i}"
+
+                        if self._response is None:
 
                             log.debug(
-                                f"creating a DispersionSpectrumLike plugin named {plugin_name}"
-                            )
+                                f"creating a SpectrumLike plugin named {plugin_name}")
 
-                            sl = DispersionSpectrumLike(
+                            sl = SpectrumLike(
                                 name=plugin_name,
                                 observation=self._observed_spectrum,
                                 background=this_background_spectrum,
@@ -875,29 +861,46 @@ class TimeSeriesBuilder(object):
 
                         else:
 
-                            log.debug(
-                                f"creating a BALROGLike plugin named {plugin_name}"
-                            )
+                            if not self._use_balrog:
 
-                            sl = gbm_drm_gen.BALROGLike(
-                                name=plugin_name,
-                                observation=self._observed_spectrum,
-                                background=this_background_spectrum,
-                                verbose=self._verbose,
-                                time=0.5 * (self._tstart + self._tstop),
-                                tstart=self._tstart,
-                                tstop=self._tstop,
-                            )
+                                log.debug(
+                                    f"creating a DispersionSpectrumLike plugin named {plugin_name}"
+                                )
 
-                    list_of_speclikes.append(sl)
+                                sl = DispersionSpectrumLike(
+                                    name=plugin_name,
+                                    observation=self._observed_spectrum,
+                                    background=this_background_spectrum,
+                                    verbose=self._verbose,
+                                    tstart=self._tstart,
+                                    tstop=self._tstop,
+                                )
 
-                except (NegativeBackground):
+                            else:
 
-                    log.error(
-                        f"Something is wrong with interval {interval} skipping."
-                    )
+                                log.debug(
+                                    f"creating a BALROGLike plugin named {plugin_name}"
+                                )
 
-            # restore the old interval
+                                sl = gbm_drm_gen.BALROGLike(
+                                    name=plugin_name,
+                                    observation=self._observed_spectrum,
+                                    background=this_background_spectrum,
+                                    verbose=self._verbose,
+                                    time=0.5 * (self._tstart + self._tstop),
+                                    tstart=self._tstart,
+                                    tstop=self._tstop,
+                                )
+
+                        list_of_speclikes.append(sl)
+
+                    except (NegativeBackground):
+
+                        log.error(
+                            f"Something is wrong with interval {interval} skipping."
+                        )
+
+                # restore the old interval
 
             if old_interval is not None:
 

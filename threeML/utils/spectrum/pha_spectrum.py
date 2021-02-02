@@ -2,7 +2,6 @@ from __future__ import division
 
 import collections
 import os
-import warnings
 from builtins import range
 from pathlib import Path
 
@@ -716,6 +715,9 @@ def _read_pha_or_pha2_file(
     return out
 
 
+_valid_file_types = [Path, str, PHAII]
+
+
 class PHASpectrum(BinnedSpectrumWithDispersion):
     def __init__(
         self,
@@ -741,9 +743,14 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         # extract the spectrum number if needed
 
-        assert isinstance(pha_file_or_instance, six.string_types) or isinstance(
-            pha_file_or_instance, PHAII
-        ), "Must provide a FITS file name or PHAII instance"
+        for t in _valid_file_types:
+            if isinstance(pha_file_or_instance, t):
+                break
+
+        else:
+            log.error("Must provide a FITS file name or PHAII instance")
+
+            raise RuntimeError()
 
         pha_information = _read_pha_or_pha2_file(
             pha_file_or_instance,

@@ -299,7 +299,7 @@ def debug_mode():
 
 
 @contextmanager
-def silence_console_log():
+def silence_console_log(and_progress_bars=True):
     """
     temporarily silence the console and progress bars
     """
@@ -309,9 +309,10 @@ def silence_console_log():
     threeML_console_log_handler.setLevel(logging.ERROR)
     threeML_usr_log_handler.setLevel(logging.ERROR)
 
-    progress_state = threeML_config.interface.progress_bars
+    if and_progress_bars:
+        progress_state = threeML_config.interface.progress_bars
 
-    threeML_config.interface.progress_bars = 'off'
+        threeML_config.interface.progress_bars = 'off'
 
     try:
         yield
@@ -321,7 +322,9 @@ def silence_console_log():
         threeML_console_log_handler.setLevel(current_console_logging_level)
         threeML_usr_log_handler.setLevel(current_usr_logging_level)
 
-        threeML_config.interface.progress_bars = progress_state
+        if and_progress_bars:
+
+            threeML_config.interface.progress_bars = progress_state
 
 
 def setup_logger(name):

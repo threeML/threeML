@@ -1,5 +1,6 @@
 ![CI](https://github.com/threeML/threeML/workflows/CI/badge.svg?branch=master&event=push)
 ![Python Package using Conda](https://github.com/threeML/threeML/workflows/Python%20Package%20using%20Conda/badge.svg)
+![Test Against XSPEC](https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg)
 [![codecov](https://codecov.io/gh/threeML/threeML/branch/master/graph/badge.svg)](https://codecov.io/gh/threeML/threeML)
 [![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)

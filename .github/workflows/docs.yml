@@ -1,0 +1,71 @@
+name: Docs
+on: [push, release]
+
+jobs:
+  notebooks:
+    name: "Build the notebooks for the docs"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache conda
+        uses: actions/cache@v1
+        with:
+          path: ~/conda_pkgs_dir
+          key: conda-ubuntu-python-cache-3.8-${{ hashFiles('environment-ci.yml') }}
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: false
+          auto-activate-base: false
+          activate-environment: test_env
+          python-version: 3.8
+          channels: conda-forge, xspecmodels, threeml, fermi, defaults
+          environment-file: ci/environment.yml
+
+      - name: Init Environment
+        shell: bash -l {0}
+        run: |
+          # Make sure we fail in case of error
+          
+          miniconda_os=Linux
+          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+
+          sudo apt-get install texlive
+
+          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          
+      - name: Install the package
+        shell: bash -l {0}
+        run: |
+
+          pip install zeus-mcmc
+          pip install -e .
+
+          pip install --no-binary :all: root_numpy
+          pip install git+https://github.com/threeml/hawc_hal.git
+          
+      - name: Execute the notebooks
+        shell: bash -l {0}
+        run: |
+
+          jupytext --to ipynb --execute docs/notebooks/*.md
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-${{ github.sha }}
+          path: docs/tutorials
+
+      - name: Trigger RTDs build
+        uses: dfm/rtds-action@v1
+        with:
+          webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
+          webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
+          commit_ref: ${{ github.ref }}

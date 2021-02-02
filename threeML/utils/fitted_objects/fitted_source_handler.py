@@ -156,7 +156,7 @@ class GenericFittedSourceHandler(object):
             with use_astromodels_memoization(False):
 
                 for variables in tqdm(
-                    itertools.product(*self._independent_variable_range),
+                    list(itertools.product(*self._independent_variable_range)),
                     desc="Propagating errors",
                 ):
                     variates.append(self._propagated_function(*variables))

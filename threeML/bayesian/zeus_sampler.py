@@ -145,7 +145,7 @@ class ZeusSampler(MCMCSampler):
                 log.debug("Zeus run done")
 
         self._sampler = sampler
-        self._raw_samples = sampler.flatten(discard=self._n_burn_in)
+        self._raw_samples = sampler.get_chain(flat=True, discard=self._n_burn_in)
 
         # Compute the corresponding values of the likelihood
 
