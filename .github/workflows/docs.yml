@@ -24,23 +24,31 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: false
-          auto-activate-base: false
-          activate-environment: test_env
+          auto-activate-base: true
           python-version: 3.8
-          channels: conda-forge, xspecmodels, threeml, fermi, defaults
-          environment-file: ci/environment.yml
+          channels: conda-forge #, xspecmodels, threeml, fermi, defaults
+         # environment-file: ci/environment.yml
 
       - name: Init Environment
         shell: bash -l {0}
         run: |
           # Make sure we fail in case of error
+
+          
+          conda install mamba -c conda-forge
+
+          mamba evn create -f ci/environment.yml
+
+          
           
           miniconda_os=Linux
           compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
           sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+
+          
           
       - name: Install the package
         shell: bash -l {0}
