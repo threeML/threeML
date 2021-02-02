@@ -47,7 +47,7 @@ Let's look at the simple case of the power law already define in astromodels.
 <!-- #endregion -->
 
 ```python
-class Powerlaw(Function1D):
+class Powerlaw(Function1D, metaclass=FunctionMeta):
         r"""
         description :
             A simple power-law
@@ -73,7 +73,6 @@ class Powerlaw(Function1D):
       
         """
 
-        __metaclass__ = FunctionMeta
 
         def _set_units(self, x_unit, y_unit):
             # The index is always dimensionless
@@ -127,26 +126,23 @@ This is where the function is evaluated. The first argumument **must be called x
 A model is defined in a python session. If you save the results of a fit to an AnalysisResults file and try to load this file without loading this model, you will get a error,
 
 
-## Custom models with Cython
+## Custom models in other langauges
 
-What if your model is built from a C++ function and you want to fit that directly to the data? Cython provides and interface for both importing C++ functions as well as typing python code in order to provide speed. However, there are some caveats that we must consider when using Cython (and other interfaces that do not play nice with units). First, we need to talk about how 3ML performs a fit. Since astromodels keeps track of units, spectral models called with and array of energies/wavelengths will return an astropy Quantity. Astropy Quantities are *very* slow to evaluate, and we want fits to be fast. Thus, models can be called with (slow) and without (fast) units. Cython calls will crash if an array of Quantities are passed to the function. So, we will have to provide a work around. 
-
-Let's create a quick Cython function. The same will apply to Cython functions that are wrapping C++ function calls.
+What if your model is built from a C++ function and you want to fit that directly to the data? using Cython, pybind, f2py, etc, you can wrap these models and call them easily.
 <!-- #endregion -->
 
 ```python
-%load_ext Cython
-```
 
-```cython magic_args="--annotate"
-
-cpdef cython_function(a):
+def cpp_function_wrapper(a):
     # we could wrap a c++ function here
+    # with cython, pybind11, etc
+    
     return a
+
 ```
 
 ```python
-cython_function(2.)
+cpp_function_wrapper(2.)
 ```
 
 Now we will define a spectral model that will handle both the unit and non-unit call.
@@ -154,7 +150,7 @@ Now we will define a spectral model that will handle both the unit and non-unit 
 ```python
 import astropy.units as astropy_units
 
-class CythonModel(Function1D):
+class CppModel(Function1D,metaclass=FunctionMeta):
         r"""
         description :
             A spectral model wrapping a cython function
@@ -169,18 +165,16 @@ class CythonModel(Function1D):
                 delta : 0.1
         """
 
-        __metaclass__ = FunctionMeta
-
         def _set_units(self, x_unit, y_unit):
 
             # The normalization has the same units as the y
 
             self.a.unit = y_unit
 
-        # noinspection PyPep8Naming
+        
         def evaluate(self, x, a):
             
-            # check is the function is being alled with units
+            # check is the function is being called with units
             
             if isinstance(a, astropy_units.Quantity):
                 
@@ -199,7 +193,7 @@ class CythonModel(Function1D):
                 unit_ = 1.
 
             # call the cython function
-            flux = cython_function(a_)
+            flux = cpp_function_wrapper(a_)
 
             # add back the unit if needed
             return flux * unit_
@@ -208,11 +202,11 @@ class CythonModel(Function1D):
 We can check the unit and non-unit call by making a point source and evaluating it
 
 ```python
-cython_spectrum = CythonModel()
+cpp_spectrum = CppModel()
 
 from astromodels import PointSource
 
-point_source = PointSource('ps',0,0,spectral_shape=cython_spectrum)
+point_source = PointSource('ps',0,0,spectral_shape=cpp_spectrum)
 
 print(point_source(10.))
 point_source(10. * astropy_units.keV)
@@ -290,4 +284,8 @@ reloaded_table_model = TemplateModel('my_template')
 
 ```python
 reloaded_table_model(energies)
+```
+
+```python
+
 ```
