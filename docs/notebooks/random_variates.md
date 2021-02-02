@@ -21,7 +21,7 @@ While we have covered most of the functionality of RandomVariates in the Analysi
 
 ```python
 
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from threeML import *
 
 from jupyterthemes import jtplot
