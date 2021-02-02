@@ -76,7 +76,11 @@ class BinnedSpectrumSeries(TimeSeries):
 
         return self._binned_spectrum_set
 
-    def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False):
+    def view_lightcurve(self, start=-10,
+                        stop=20.0,
+                        dt=1.0,
+                        use_binner=False,
+                        with_dead_time=True):
         # type: (float, float, float, bool) -> None
         """
         :param start:
@@ -95,11 +99,25 @@ class BinnedSpectrumSeries(TimeSeries):
         cnts = []
         width = []
 
+        log.debug(f"viewing light curve with dead time: {with_dead_time}")
+
         for bin in bins:
 
             cnts.append(self.counts_over_interval(
                 bin.start_time, bin.stop_time))
-            width.append(bin.duration)
+
+            # use the actual exposure
+
+            if with_dead_time:
+
+                width.append(self.exposure_over_interval(
+                    bin.start_time, bin.stop_time))
+
+            # just use the "defined edges"
+
+            else:
+
+                width.append(bin.duration)
 
         # now we want to get the estimated background from the polynomial fit
 
@@ -109,9 +127,10 @@ class BinnedSpectrumSeries(TimeSeries):
             for j, tb in enumerate(bins):
                 tmpbkg = 0.0
                 for poly in self.polynomials:
+
                     tmpbkg += poly.integral(tb.start_time, tb.stop_time)
 
-                bkg.append(old_div(tmpbkg, width[j]))
+                bkg.append(tmpbkg/width[j])
 
         else:
 
@@ -305,16 +324,15 @@ class BinnedSpectrumSeries(TimeSeries):
         # The total cnts (over channels) is binned
 
         if self._user_poly_order == -1:
-            with silence_console_log():
 
-                self._optimal_polynomial_grade = (
-                    self._fit_global_and_determine_optimum_grade(
-                        selected_counts.sum(axis=1),
-                        selected_midpoints,
-                        selected_exposure,
-                        bayes=bayes,
-                    )
+            self._optimal_polynomial_grade = (
+                self._fit_global_and_determine_optimum_grade(
+                    selected_counts.sum(axis=1),
+                    selected_midpoints,
+                    selected_exposure,
+                    bayes=bayes,
                 )
+            )
 
             log.info(
                 "Auto-determined polynomial order: %d"
@@ -329,22 +347,21 @@ class BinnedSpectrumSeries(TimeSeries):
 
             def worker(counts):
 
-                polynomial, _ = polyfit(
-                    selected_midpoints,
-                    counts,
-                    self._optimal_polynomial_grade,
-                    selected_exposure,
-                    bayes=bayes,
-                )
+                with silence_console_log():
+                    polynomial, _ = polyfit(
+                        selected_midpoints,
+                        counts,
+                        self._optimal_polynomial_grade,
+                        selected_exposure,
+                        bayes=bayes,
+                    )
 
                 return polynomial
 
             client = ParallelClient()
 
-            with silence_console_log():
-
-                polynomials = client.execute_with_progress_bar(
-                    worker, selected_counts.T, name=f"Fitting {self._instrument} background")
+            polynomials = client.execute_with_progress_bar(
+                worker, selected_counts.T, name=f"Fitting {self._instrument} background")
 
         else:
 
@@ -353,12 +370,11 @@ class BinnedSpectrumSeries(TimeSeries):
             # now fit the light curve of each channel
             # and save the estimated polynomial
 
-            with silence_console_log():
+            for counts in tqdm(
+                selected_counts.T, desc=f"Fitting {self._instrument} background"
+            ):
 
-                for counts in tqdm(
-                    selected_counts.T, desc=f"Fitting {self._instrument} background"
-                ):
-
+                with silence_console_log():
                     polynomial, _ = polyfit(
                         selected_midpoints,
                         counts,
@@ -461,6 +477,17 @@ class BinnedSpectrumSeries(TimeSeries):
         )
 
         self._active_dead_time = total_time - self._exposure
+
+    def dead_time_over_interval(self, start, stop):
+        """
+        computer the dead time over the interval
+        """
+        mask = self._select_bins(start, stop)
+
+        start = np.array(self.bins.starts)[mask][0]
+        stop = np.array(self.bins.stops)[mask][-1]
+
+        return (stop - start) - self.exposure_over_interval(start, stop)
 
     def exposure_over_interval(self, start, stop):
         """

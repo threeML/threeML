@@ -24,6 +24,7 @@ from threeML.utils.polarization.binned_polarization import \
 from threeML.utils.progress_bar import tqdm
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum, BinnedSpectrumWithDispersion)
+from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.binned_spectrum_series import \
@@ -124,7 +125,8 @@ class TimeSeriesBuilder(object):
         # make sure we have a proper response
 
         for t in _rsp_valid_types:
-            is isinstance(response, t): break
+            if isinstance(response, t):
+                break
 
         else:
             log.error("Response must be an instance of InstrumentResponse")
@@ -1327,11 +1329,43 @@ class TimeSeriesBuilder(object):
         )
 
     @classmethod
-    def from_phaII(cls):
+    def from_phaII(cls, name: str,
+                   phaII_file: Union[str, Path],
+                   rsp_file: Optional[Union[str, Path]] = None,
+                   arf_file: Optional[Union[str, Path]] = None,
+                   restore_background: Optional[str] = None,
+                   trigger_time: Optional[float] = None,
+                   poly_order: int = -1,
+                   verbose: bool = False
 
-        raise NotImplementedError(
-            "Reading from a generic PHAII file is not yet supportedgb"
-        )
+                   ):
+        """
+        Read from a generic PHAII fits file
+        """
+
+        spectrum_set = PHASpectrumSet(
+            phaII_file, rsp_file=rsp_file, arf_file=arf_file)
+
+        event_list = BinnedSpectrumSeries(
+            spectrum_set, first_channel=0, verbose=verbose)
+
+        if rsp_file is not None:
+
+            rsp = OGIPResponse(rsp_file, arf_file=arf_file)
+
+        else:
+
+            rsp = None
+
+        return cls(name,
+                   event_list,
+                   response=rsp,
+                   poly_order=poly_order,
+                   unbinned=False,
+                   verbose=verbose,
+                   restore_poly_fit=restore_background,
+                   container_type=BinnedSpectrumWithDispersion
+                   )
 
     @classmethod
     def from_polar_spectrum(

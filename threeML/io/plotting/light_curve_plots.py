@@ -52,7 +52,7 @@ def binned_light_curve_plot(
 
     step_plot(
         time_bins,
-        old_div(cnts, width),
+        cnts/ width,
         ax,
         color=light_curve_color,
         label="Light Curve",
@@ -131,8 +131,9 @@ def binned_light_curve_plot(
         )
 
     if bkg is not None:
-        # now plot the estimated background
 
+        # now plot the estimated background
+        # the bkg is a rate 
         ax.plot(mean_time, bkg, background_color, lw=2.0, label="Background")
 
     # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
