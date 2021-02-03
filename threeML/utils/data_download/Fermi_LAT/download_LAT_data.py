@@ -15,11 +15,11 @@ from pathlib import Path
 import astropy.io.fits as pyfits
 
 from threeML.config.config import threeML_config
+from threeML.exceptions.custom_exceptions import TimeTypeNotKnown
 from threeML.io.download_from_http import ApacheDirectory
 from threeML.io.file_utils import sanitize_filename
 from threeML.io.logging import setup_logger
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
-from threeML.exceptions.custom_exceptions import TimeTypeNotKnown
 
 log = setup_logger(__name__)
 
@@ -94,8 +94,10 @@ def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_m
         return outfile
 
     if len(ft1s) == 1:
+
         log.warning('Only one FT1 file provided. Skipping the merge...')
         import shutil
+
         shutil.copyfile(ft1s[0], outfile)
         return outfile
 
@@ -175,25 +177,25 @@ def download_LAT_data(
         out = ",".join(valid_classes)
         log.error(
             f"Data type must be one of {out}"
-            )
+        )
         raise TypeError()
 
     if radius <= 0:
         log.error(
             "Radius of the Region of Interest must be > 0"
-            )
+        )
         raise ValueError()
 
     if not (0 <= ra <= 360.0):
         log.error(
             "R.A. must be 0 <= ra <= 360"
-            )
+        )
         raise ValueError()
 
     if not -90 <= dec <= 90:
         log.error(
             "Dec. must be -90 <= dec <= 90"
-            )
+        )
         raise ValueError()
 
     # create output directory if it does not exists
@@ -281,7 +283,14 @@ def download_LAT_data(
 
         )
 
-        return merge_LAT_data(prev_downloaded_ft1s, destination_directory, outfile='L%s_FT1.fits' % query_unique_id), prev_downloaded_ft2
+        return (
+            merge_LAT_data(
+                prev_downloaded_ft1s,
+                destination_directory,
+                outfile="L%s_FT1.fits" % query_unique_id,
+            ),
+            prev_downloaded_ft2,
+        )
 
     # Print them out
 
@@ -420,7 +429,10 @@ def download_LAT_data(
 
         try:
 
-            _ = urllib.request.urlretrieve(http_address, fakeName,)
+            _ = urllib.request.urlretrieve(
+                http_address,
+                fakeName,
+            )
 
         except socket.timeout:
 
@@ -521,4 +533,9 @@ def download_LAT_data(
     # If FT2 is first, switch them, otherwise do nothing
     # if re.match(".+SC[0-9][0-9].fits", downloaded_files[0]) is not None:
 
-    return merge_LAT_data(FT1, destination_directory, outfile='L%s_FT1.fits' % query_unique_id), FT2
+    return (
+        merge_LAT_data(
+            FT1, destination_directory, outfile="L%s_FT1.fits" % query_unique_id
+        ),
+        FT2,
+    )

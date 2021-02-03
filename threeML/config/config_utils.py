@@ -91,6 +91,17 @@ def get_current_configuration_copy(file_name: str = "threeML_config.yml", overwr
 
     else:
 
+        _read_only_keys = ["LAT", "GBM", "catalogs"]
+
+        _valid_keys = []
+
+        for k, v in threeML_config.items():
+            if k not in _read_only_keys:
+
+                _valid_keys.append(k)
+
+        config_copy = OmegaConf.masked_copy(threeML_config, _valid_keys)
+
         with outfile.open("w") as f:
 
-            f.write(OmegaConf.to_yaml(threeML_config))
+            f.write(OmegaConf.to_yaml(config_copy, sort_keys=True, resolve=True))

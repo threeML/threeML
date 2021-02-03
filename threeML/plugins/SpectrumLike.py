@@ -1241,7 +1241,7 @@ class SpectrumLike(PluginPrototype):
 
             self._apply_mask_to_original_vectors()
 
-    def get_simulated_dataset(self, new_name=None, **kwargs):
+    def get_simulated_dataset(self, new_name: Optional[str]=None, **kwargs):
         """
         Returns another Binned instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
@@ -1249,14 +1249,18 @@ class SpectrumLike(PluginPrototype):
         :return: an BinnedSpectrum or child instance
         """
 
-        assert (
-            self._like_model is not None
-        ), "You need to set up a model before randomizing"
+        if self._like_model is None:
+            
+            log.error("You need to set up a model before randomizing")
+
+            raise RuntimeError()
 
         # Keep track of how many syntethic datasets we have generated
 
         self._n_synthetic_datasets += 1
 
+        log.debug(f"now have {self._n_synthetic_datasets}")
+        
         # Generate a name for the new dataset if needed
         if new_name is None:
             new_name = "%s_sim_%i" % (self.name, self._n_synthetic_datasets)
@@ -1319,6 +1323,8 @@ class SpectrumLike(PluginPrototype):
                     new_scale_factor=1.0,  # because it was adjusted
                 )
 
+                log.debug(f"made {sum(randomized_background_counts)} bkg counts")
+                
             elif self._background_plugin is not None:
 
                 new_background = self._likelihood_evaluator.synthetic_background_plugin

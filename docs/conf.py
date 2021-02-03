@@ -12,8 +12,11 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
+import sys
+from pathlib import Path
+
+import mock
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -22,7 +25,30 @@ sys.path.insert(0, os.path.abspath('..'))
 #sys.path.insert(0, os.path.abspath('../threeML/classicMLE'))
 
 
-import mock
+DOCS = Path(__file__).parent
+
+# -- Generate API documentation ------------------------------------------------
+
+
+def run_apidoc(app):
+    """Generage API documentation"""
+    import better_apidoc
+
+    better_apidoc.APP = app
+    better_apidoc.main(
+        [
+            "better-apidoc",
+            # "-t",
+            # str(docs / "_templates"),
+            "--force",
+            "--no-toc",
+            "--separate",
+            "-o",
+            str(DOCS / "api"),
+            str(DOCS / ".." / "threeml"),
+        ]
+    )
+
 
 MOCK_MODULES = ['fermipy']
 for mod_name in MOCK_MODULES:
@@ -43,9 +69,25 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-#    'sphinx_gallery.gen_gallery',
+    #    'sphinx_gallery.gen_gallery',
     'sphinx_gallery.load_style',
+    "rtds_action"
+
 ]
+
+
+# The path where the artifact should be extracted
+# Note: this is relative to the conf.py file!
+rtds_action_path = "notebooks/"
+
+# The "prefix" used in the `upload-artifact` step of the action
+rtds_action_artifact_prefix = "notebooks-for-"
+
+
+rtds_action_github_repo = "threeml/threeml"
+
+# A GitHub personal access token is required, more info below
+rtds_action_github_token = os.environ["GITHUB_TOKEN"]
 
 
 # Add any paths that contain templates here, relative to this directory.
@@ -124,7 +166,7 @@ html_theme_options = {
     'style_external_links': True,
     # 'vcs_pageview_mode': 'edit',
     'style_nav_header_background': '#0B4BA8',
-    #'only_logo': False,
+    # 'only_logo': False,
 }
 
 html_logo = "media/logo.png"
@@ -243,25 +285,25 @@ htmlhelp_basename = 'TheMulti-MissionMaximumLikelihoodframeworkdoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    # 'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    # 'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    # 'preamble': '',
 
-# Latex figure (float) alignment
-#'figure_align': 'htbp',
+    # Latex figure (float) alignment
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'TheMulti-MissionMaximumLikelihoodframework.tex', u'The Multi-Mission Maximum Likelihood framework Documentation',
-   u'G.Vianello', 'manual'),
+    (master_doc, 'TheMulti-MissionMaximumLikelihoodframework.tex', u'The Multi-Mission Maximum Likelihood framework Documentation',
+     u'G.Vianello', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -304,9 +346,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'TheMulti-MissionMaximumLikelihoodframework', u'The Multi-Mission Maximum Likelihood framework Documentation',
-   author, 'TheMulti-MissionMaximumLikelihoodframework', 'One line description of project.',
-   'Miscellaneous'),
+    (master_doc, 'TheMulti-MissionMaximumLikelihoodframework', u'The Multi-Mission Maximum Likelihood framework Documentation',
+     author, 'TheMulti-MissionMaximumLikelihoodframework', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 
@@ -322,3 +364,5 @@ texinfo_documents = [
 #     'examples/scales': 'examples/screenshot/scales.png',
 #     'examples/moebius': 'examples/screenshot/moebius.png',
 #     'examples/bars': 'examples/screenshot/bars.gif',
+def setup(app):
+    app.connect("builder-inited", run_apidoc)

@@ -9,9 +9,9 @@ Contents:
 .. toctree::
    :maxdepth: 4
 
-   notebooks/custom_plugins.ipynb
-   notebooks/spectrum_tutorial.ipynb
-   notebooks/Building_Plugins_from_TimeSeries.ipynb
-   notebooks/Background_modeling.ipynb
-   notebooks/Photometry_demo.ipynb
-   notebooks/hal_example.ipynb
+   notebooks/custom_plugins
+   notebooks/spectrum_tutorial
+   notebooks/Building_Plugins_from_TimeSeries
+   notebooks/Background_modeling
+   notebooks/Photometry_demo
+   notebooks/hal_example

@@ -1,7 +1,7 @@
 import os
 import time
 import numpy as np
-
+from pathlib import Path
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config

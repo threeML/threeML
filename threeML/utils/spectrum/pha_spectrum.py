@@ -2,7 +2,6 @@ from __future__ import division
 
 import collections
 import os
-import warnings
 from builtins import range
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union

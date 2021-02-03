@@ -121,9 +121,11 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
     # Default colors
 
-    data_colors = cmap_intervals(len(data_keys), data_cmap)
-    model_colors = cmap_intervals(len(data_keys), model_cmap)
-    background_colors = cmap_intervals(len(data_keys), background_cmap)
+    _cmap_len = max(len(data_keys), _sub_menu.n_colors)
+    
+    data_colors = cmap_intervals(_cmap_len, data_cmap)
+    model_colors = cmap_intervals(_cmap_len, model_cmap)
+    background_colors = cmap_intervals(_cmap_len, background_cmap)
 
     # Now override defaults according to the optional keywords, if present
 

@@ -12,8 +12,8 @@ from .plotting_structure import BinnedSpectrumPlot, DataHistPlot, MPLCmap
 class OGIP:
     fit_plot: BinnedSpectrumPlot = BinnedSpectrumPlot()
     data_plot: DataHistPlot = DataHistPlot()
-
-
+    response_cmap: MPLCmap = MPLCmap.viridis
+    response_zero_color: str = "k"
 @dataclass
 class Photo:
     fit_plot: BinnedSpectrumPlot = BinnedSpectrumPlot()

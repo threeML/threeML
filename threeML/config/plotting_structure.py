@@ -14,6 +14,7 @@ class BinnedSpectrumPlot:
     data_cmap: MPLCmap = MPLCmap.Set1
     model_cmap: MPLCmap = MPLCmap.Set1
     background_cmap: MPLCmap = MPLCmap.Set1
+    n_colors: int = 5
     step: bool = False
     show_legend: bool = True
     show_residuals: bool = True
@@ -46,17 +47,17 @@ class ContourStyle:
     alpha: float = 0.4
 
 
-class LegendLoc(Enum):
-    best = 'best'
-    lower_left = 'lower left'
-    lower_right = 'lower right'
-    upper_left = 'upper left'
-    upper_right = 'upper right'
+# class LegendLoc(Enum):
+#     best = 'best'
+#     lower_left = 'lower left'
+#     lower_right = 'lower right'
+#     upper_left = 'upper left'
+#     upper_right = 'upper right'
 
 
 @dataclass
 class LegendStyle:
-    loc: LegendLoc = LegendLoc.best
+    loc: str = "best"
     fancybox: bool = True
     shadow: bool = True
 

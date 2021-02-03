@@ -295,7 +295,7 @@ from .parallel.parallel_client import parallel_computation
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
 
-# Import the DataList class
+from .io import get_threeML_style, set_threeML_style
 
 
 # Import optical filters
