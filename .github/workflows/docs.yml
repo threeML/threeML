@@ -49,6 +49,7 @@ jobs:
           pip install zeus-mcmc
           pip install -e .
 
+          pip install black
           pip install --no-binary :all: root_numpy
           pip install git+https://github.com/threeml/hawc_hal.git
           
@@ -56,7 +57,7 @@ jobs:
         shell: bash -l {0}
         run: |
 
-          jupytext --to ipynb --execute docs/notebooks/*.md
+          jupytext --to ipynb --pipe black --execute docs/notebooks/*.md
 
       - uses: actions/upload-artifact@v2
         with:

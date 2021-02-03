@@ -8,7 +8,7 @@ Contents:
 .. toctree::
    :maxdepth: 3
 
-   notebooks/spectral_models
-   notebooks/extended_models
-   notebooks/xspec_models
+   notebooks/spectral_models.ipynb
+   notebooks/extended_models.ipynb
+   notebooks/xspec_models.ipynb
 
