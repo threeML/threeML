@@ -68,7 +68,7 @@ xyl_generator = XYLike.from_function(
 )
 
 
-xyl_generator.plot(x_scale="log", y_scale="log")
+xyl_generator.plot(x_scale="log", y_scale="log");
 ```
 
 #### SpectrumLike
@@ -102,7 +102,7 @@ spectrum_generator = SpectrumLike.from_function('fake',
                                                energy_max=high_edge)
 
 
-spectrum_generator.view_count_spectrum()
+spectrum_generator.view_count_spectrum();
 ```
 
 ##### Gaussian spectrum with no background
@@ -115,7 +115,7 @@ spectrum_generator = SpectrumLike.from_function('fake',
                                                energy_max=high_edge)
 
 
-spectrum_generator.view_count_spectrum()
+spectrum_generator.view_count_spectrum();
 ```
 
 ##### Poisson spectrum with Poisson Background
@@ -132,7 +132,7 @@ spectrum_generator = SpectrumLike.from_function('fake',
                                                energy_max=high_edge)
 
 
-spectrum_generator.view_count_spectrum()
+spectrum_generator.view_count_spectrum();
 ```
 
 ##### Poisson spectrum with Gaussian background
@@ -147,7 +147,7 @@ spectrum_generator = SpectrumLike.from_function('fake',
                                                energy_max=high_edge)
 
 
-spectrum_generator.view_count_spectrum()
+spectrum_generator.view_count_spectrum();
 ```
 
 #### DispersionSpectrumLike
@@ -197,7 +197,7 @@ fit_function = Powerlaw()
 
 xyl.fit(fit_function)
 
-xyl.plot(x_scale="log", y_scale="log")
+xyl.plot(x_scale="log", y_scale="log");
 ```
 
 Once our fit has been finished, we can produce simulated data sets from those model parameters.
@@ -205,7 +205,7 @@ Once our fit has been finished, we can produce simulated data sets from those mo
 ```python
 synthetic_xyl = xyl.get_simulated_dataset()
 
-synthetic_xyl.plot(x_scale="log", y_scale="log")
+synthetic_xyl.plot(x_scale="log", y_scale="log");
 ```
 
 #### SpectrumLike and DispersionSpectrumLike (OGIPLike)
@@ -247,17 +247,5 @@ Now we can now generate synthetic datasets from the fitted model. This will incl
 ```python
 synthetic_ogip = ogip_data.get_simulated_dataset()
 
-synthetic_ogip.view_count_spectrum()
-```
-
-```python
-
-```
-
-```python
-
-```
-
-```python
-
+synthetic_ogip.view_count_spectrum();
 ```
