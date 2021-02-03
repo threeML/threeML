@@ -117,7 +117,7 @@ def plot_spectra(*analysis_results, **kwargs):
             _defaults["ene_min"], _defaults["ene_max"], _defaults["num_ene"]
         )  # type: u.Quantity
 
-        _defaults["energy_unit"] = energy_range.unit
+        #_defaults["energy_unit"] = energy_range.unit
 
         if _defaults["xscale"] == "log":
             energy_range = (
@@ -128,6 +128,9 @@ def plot_spectra(*analysis_results, **kwargs):
                 )
                 * energy_range.unit
             )
+
+            energy_range = energy_range.to(
+                _defaults["energy_unit"], equivalencies=u.spectral())
 
     else:
 
@@ -834,15 +837,18 @@ class SpectralContourPlot(object):
             if self._show_legend:
                 self._ax_right.legend(**self._legend_kwargs)
 
-        self._ax.set_xlim([self._emin, self._emax])
+        self._ax.set_xlim([self._emin.to(_defaults["energy_unit"], equivalencies=u.spectral(
+        )), self._emax.to(_defaults["energy_unit"], equivalencies=u.spectral())])
 
         if isinstance(self._emin, u.Quantity) and self._show_legend:
 
             # This workaround is needed because of a bug in astropy that would break the plotting of the legend
             # (see issue #7504 in the Astropy github repo)
 
-            eemin = self._emin.to(self._ax.xaxis.get_units()).value
-            eemax = self._emax.to(self._ax.xaxis.get_units()).value
+            eemin = self._emin.to(self._ax.xaxis.get_units(),
+                                  equivalencies=u.spectral()).value
+            eemax = self._emax.to(self._ax.xaxis.get_units(),
+                                  equivalencies=u.spectral()).value
 
             self._ax.set_xlim([eemin, eemax])
 
