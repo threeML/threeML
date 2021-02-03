@@ -15,7 +15,7 @@ from threeML.io.calculate_flux import (_collect_sums_into_dictionaries,
 from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
-from threeML.io.progress_bar import tqdm
+from threeML.utils.progress_bar import tqdm
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
@@ -236,7 +236,7 @@ def plot_spectra(*analysis_results, **kwargs):
             subplot=_defaults["subplot"],
         )
 
-        for key in tqdm(list(mle_analyses.keys()), desc="processing MLE spectra"):
+        for key in list(mle_analyses.keys()):
 
             # we won't assume to plot the total until the end
 
@@ -370,7 +370,7 @@ def plot_spectra(*analysis_results, **kwargs):
 
         # we will do the exact same thing for the bayesian analyses
 
-        for key in tqdm(list(bayesian_analyses.keys()), desc="processing Bayes spectra"):
+        for key in list(bayesian_analyses.keys()):
 
             plot_total = False
 
