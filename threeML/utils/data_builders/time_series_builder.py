@@ -1554,3 +1554,69 @@ class TimeSeriesBuilder(object):
             self._verbose = old_verbose
 
             return list_of_polarlikes
+            # get the bins from the time series
+            # for event lists, these are from created bins
+            # for binned spectra sets, these are the native bines
+
+            these_bins = self._time_series.bins  # type: TimeIntervalSet
+
+            if start is not None:
+                assert stop is not None, "must specify a start AND a stop time"
+
+            if stop is not None:
+                assert stop is not None, "must specify a start AND a stop time"
+
+                these_bins = these_bins.containing_interval(
+                    start, stop, inner=False)
+
+            # loop through the intervals and create spec likes
+
+            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
+
+                self.set_active_time_interval(interval.to_string())
+
+                if extract_measured_background:
+
+                    this_background_spectrum = self._measured_background_spectrum
+
+                else:
+
+                    this_background_spectrum = self._background_spectrum
+
+                    if this_background_spectrum is None:
+                        log.warning(
+                            "No bakckground selection has been made. This plugin will contain no background!"
+                        )
+
+                try:
+
+                    pl = PolarLike(
+                        name="%s%s%d" % (self._name, interval_name, i),
+                        observation=self._observed_spectrum,
+                        background=this_background_spectrum,
+                        response=self._response,
+                        verbose=self._verbose,
+                        #               tstart=self._tstart,
+                        #               tstop=self._tstop
+                    )
+
+                    list_of_polarlikes.append(pl)
+
+                except (NegativeBackground):
+                    log.error(
+                        "Something is wrong with interval %s. skipping." % interval
+                    )
+
+            # restore the old interval
+
+            if old_interval is not None:
+
+                self.set_active_time_interval(*old_interval)
+
+            else:
+
+                self._active_interval = None
+
+            self._verbose = old_verbose
+
+            return list_of_polarlikes

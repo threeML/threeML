@@ -5,19 +5,16 @@ import numpy as np
 from astromodels import (Constant, Cubic, Gaussian, Line, Log_normal, Model,
                          PointSource, Quadratic)
 
-from threeML.exceptions.custom_exceptions import FitFailed, BadCovariance
-from threeML.minimizer.grid_minimizer import AllFitFailed
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
+from threeML.exceptions.custom_exceptions import BadCovariance, FitFailed
 from threeML.io.logging import setup_logger, silence_console_log
-from threeML.minimizer.minimization import (GlobalMinimization,
-                                            LocalMinimization,
-                                            CannotComputeCovariance
-
-                                            
-                                            )
+from threeML.minimizer.grid_minimizer import AllFitFailed
+from threeML.minimizer.minimization import (CannotComputeCovariance,
+                                            GlobalMinimization,
+                                            LocalMinimization)
 from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
                                                  UnbinnedPoissonLike)
 from threeML.plugins.XYLike import XYLike
@@ -26,8 +23,6 @@ log = setup_logger(__name__)
 
 # we include the line twice to mimic a constant
 _grade_model_lookup = (Line, Line, Quadratic, Cubic, Quadratic)
-
-
 
 
 class Polynomial(object):
@@ -133,6 +128,9 @@ class Polynomial(object):
         doc="""Gets or sets the coefficients of the polynomial.""",
     )
 
+    def __repr__(self):
+        return f"({self._coefficients})"
+
     def __call__(self, x):
 
         result = 0
@@ -226,6 +224,8 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
 
     avg = np.mean(y/exposure)
 
+    log.debug(f"starting polyfit with avg norm {avg}")
+
     with silence_console_log():
 
         xy = XYLike("series", x=x, y=y, exposure=exposure,
@@ -267,6 +267,8 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
                 jl.fit(quiet=True)
 
             except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
+
+                log.debug("1st fit failed")
 
                 try:
 
@@ -364,7 +366,7 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
 
     log.debug(f"starting unbinned_polyfit with grade {grade}")
     log.debug(f"have {len(events)} events with {exposure} exposure")
-    
+
     # create 3ML plugins and fit them with 3ML!
     # should eventuallly allow better config
 
@@ -424,7 +426,8 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
 
             local_minimizer = LocalMinimization("minuit")
 
-            my_grid = {model.dummy.spectrum.main.shape.a: np.logspace(0, 3, 10)}
+            my_grid = {
+                model.dummy.spectrum.main.shape.a: np.logspace(0, 3, 10)}
 
             grid_minimizer.setup(
                 second_minimization=local_minimizer, grid=my_grid)
@@ -433,7 +436,6 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
 
             # if the fit falis, retry and then just accept
 
-            
             try:
 
                 jl.fit(quiet=True)
