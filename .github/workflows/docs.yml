@@ -57,8 +57,9 @@ jobs:
         shell: bash -l {0}
         run: |
 
-          jupytext --to ipynb --pipe black --execute docs/notebooks/*.md
-
+          jupytext --to ipynb --pipe black --execute docs/md_docs/*.md
+          mv md_docs/*.ipynb notebooks/
+          
       - uses: actions/upload-artifact@v2
         with:
           name: notebooks-for-${{ github.sha }}
