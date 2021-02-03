@@ -49,7 +49,6 @@ from jupyterthemes import jtplot
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 
 set_threeML_style()
-
 ```
 
 ```python
@@ -224,7 +223,7 @@ ogip_data = OGIPLike(
 
 ogip_data.view_count_spectrum()
 # define the function
-fit_function = Cutoff_powerlaw()
+fit_function = Cutoff_powerlaw(K=1e-3, xc=1000, index=-0.66)
 
 # define the point source
 point_source = PointSource("ps", 0, 0, spectral_shape=fit_function)
@@ -232,14 +231,7 @@ point_source = PointSource("ps", 0, 0, spectral_shape=fit_function)
 # define the model
 model = Model(point_source)
 
-# create a data list
-datalist = DataList(ogip_data)
-
-# make the joint likelihood
-jl = JointLikelihood(model, datalist)
-
-# fit
-jl.fit()
+ogip_data.set_model(model)
 ```
 
 Now we can now generate synthetic datasets from the fitted model. This will include the background sampled properly from the profile likelihood. The instrument response is automatically passed to the new plugin.
