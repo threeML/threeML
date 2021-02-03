@@ -12,6 +12,7 @@ from astropy.visualization import quantity_support
 from threeML.config.config import threeML_config
 from threeML.io.calculate_flux import (_collect_sums_into_dictionaries,
                                        _setup_analysis_dictionaries)
+from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
 from threeML.io.progress_bar import tqdm
@@ -19,9 +20,12 @@ from threeML.io.progress_bar import tqdm
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
+log = setup_logger(__name__)
+
+
 def plot_point_source_spectra(*analysis_results, **kwargs):
 
-    warnings.warn(
+    log.error(
         "plot_point_source_spectra() has been replaced by plot_spectra().")
     return plot_spectra(*analysis_results, **kwargs)
 
@@ -97,16 +101,15 @@ def plot_spectra(*analysis_results, **kwargs):
 
     if isinstance(_defaults["ene_min"], u.Quantity):
 
-        
-        
-        assert isinstance(
-            _defaults["ene_max"], u.Quantity
-        ), "both energy arguments must be Quantities"
+        if not isinstance(_defaults["ene_max"], u.Quantity):
+            log.error("both energy arguments must be Quantities")
+            raise RuntimeError()
 
     if isinstance(_defaults["ene_max"], u.Quantity):
-        assert isinstance(
-            _defaults["ene_min"], u.Quantity
-        ), "both energy arguments must be Quantities"
+
+        if not isinstance(_defaults["ene_min"], u.Quantity):
+            log.error("both energy arguments must be Quantities")
+            raise RuntimeError()
 
     if isinstance(_defaults["ene_max"], u.Quantity):
 
@@ -233,7 +236,7 @@ def plot_spectra(*analysis_results, **kwargs):
             subplot=_defaults["subplot"],
         )
 
-        for key in list(mle_analyses.keys()):
+        for key in tqdm(list(mle_analyses.keys()), desc="processing MLE spectra"):
 
             # we won't assume to plot the total until the end
 
@@ -367,7 +370,7 @@ def plot_spectra(*analysis_results, **kwargs):
 
         # we will do the exact same thing for the bayesian analyses
 
-        for key in list(bayesian_analyses.keys()):
+        for key in tqdm(list(bayesian_analyses.keys()), desc="processing Bayes spectra"):
 
             plot_total = False
 
