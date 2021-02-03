@@ -45,7 +45,7 @@ def run_apidoc(app):
             "--separate",
             "-o",
             str(DOCS / "api"),
-            str(DOCS / ".." / "threeml"),
+            str(DOCS / ".." / "threeML"),
         ]
     )
 
