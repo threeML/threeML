@@ -14,6 +14,7 @@ from threeML.io.calculate_flux import (_collect_sums_into_dictionaries,
                                        _setup_analysis_dictionaries)
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
+from threeML.io.progress_bar import tqdm
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
@@ -71,8 +72,8 @@ def plot_spectra(*analysis_results, **kwargs):
         "best_fit": "median",
         "energy_unit": _sub_menu.ene_unit,
         "flux_unit": _sub_menu.flux_unit,
-        "ene_min": _sub_menu.emin,
-        "ene_max": _sub_menu.emax,
+        "ene_min": _sub_menu.emin * u.Unit(_sub_menu.ene_unit),
+        "ene_max": _sub_menu.emax * u.Unit(_sub_menu.ene_unit),
         "num_ene": _sub_menu.num_ene,
         "use_components": False,
         "components_to_use": [],
@@ -95,6 +96,9 @@ def plot_spectra(*analysis_results, **kwargs):
             _defaults[key] = value
 
     if isinstance(_defaults["ene_min"], u.Quantity):
+
+        
+        
         assert isinstance(
             _defaults["ene_max"], u.Quantity
         ), "both energy arguments must be Quantities"
