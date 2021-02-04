@@ -64,7 +64,7 @@ jobs:
         run: |
 
           jupytext --to ipynb --pipe black --execute docs/md_docs/*.md
-          mv md_docs/*.ipynb notebooks/
+          mv docs/md_docs/*.ipynb docs/notebooks/
           
       - uses: actions/upload-artifact@v2
         with:
