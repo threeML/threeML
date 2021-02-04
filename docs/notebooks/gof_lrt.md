@@ -177,7 +177,7 @@ or $-2 \log(\Lambda)$ which would be $\chi^2_{\nu}$ distributed where $\nu$ is t
 # calculate the test statistic
 TS = 2*(jl_null.results.get_statistic_frame()['-log(likelihood)']['total'] - jl_alternative.results.get_statistic_frame()['-log(likelihood)']['total'])
 
-print('null hyp. prob.: %f' %stats.chi2.pdf(TS,1))
+print(f'null hyp. prob.: {stats.chi2.pdf(TS,1)}' )
 
 ```
 
