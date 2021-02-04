@@ -1319,7 +1319,7 @@ class TimeSeriesBuilder(object):
             "Reading from a generic PHAII file is not yet supportedgb"
         )
 
-   @classmethod
+    @classmethod
     def from_konus_pha(
         cls,
         name,
