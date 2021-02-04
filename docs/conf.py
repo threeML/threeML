@@ -72,7 +72,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
     'sphinx_gallery.load_style',
-    "rtds_action"
+#    "rtds_action"
 
 ]
 
@@ -82,15 +82,15 @@ napoleon_use_param = False
 
 # The path where the artifact should be extracted
 # Note: this is relative to the conf.py file!
-rtds_action_path = "notebooks"
-# The "prefix" used in the `upload-artifact` step of the action
-rtds_action_artifact_prefix = "notebooks-for-"
+# rtds_action_path = "notebooks"
+# # The "prefix" used in the `upload-artifact` step of the action
+# rtds_action_artifact_prefix = "notebooks-for-"
 
 
-rtds_action_github_repo = "threeML/threeML"
+# rtds_action_github_repo = "threeML/threeML"
 
-# A GitHub personal access token is required, more info below
-rtds_action_github_token = os.environ["GITHUB_TOKEN"]
+# # A GitHub personal access token is required, more info below
+# rtds_action_github_token = os.environ["GITHUB_TOKEN"]
 
 
 # Add any paths that contain templates here, relative to this directory.
@@ -135,6 +135,28 @@ author = u'G.Vianello'
 # Usually you set "language" from the command line for these cases.
 language = None
 
+
+# The name of the Pygments (syntax highlighting) style to use.
+# The light-dark theme toggler overloads this, but set default anyway
+pygments_style = 'none'
+
+# Create local pygments copies
+# Previously used: https://github.com/richleland/pygments-css
+# But do not want to depend on some random repository
+from pygments.formatters import HtmlFormatter  # noqa: E402
+from pygments.styles import get_all_styles  # noqa: E402
+path = os.path.join('_static', 'pygments')
+if not os.path.isdir(path):
+    os.mkdir(path)
+for style in get_all_styles():
+    path = os.path.join('_static', 'pygments', style + '.css')
+    if os.path.isfile(path):
+        continue
+    with open(path, 'w') as f:
+        f.write(HtmlFormatter(style=style).get_style_defs('.highlight'))
+
+
+
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
 #today = ''
@@ -165,11 +187,19 @@ pygments_style = 'sphinx'
 
 html_theme = 'sphinx_rtd_theme'
 
+# html_theme_options = {
+#     'style_external_links': True,
+#     # 'vcs_pageview_mode': 'edit',
+# #    'style_nav_header_background': '#0B4BA8',
+#     # 'only_logo': False,
+# }
+
 html_theme_options = {
-    'style_external_links': True,
-    # 'vcs_pageview_mode': 'edit',
-    'style_nav_header_background': '#0B4BA8',
-    # 'only_logo': False,
+    'logo_only':False,
+    'display_version': False,
+    'collapse_navigation': True,
+    'navigation_depth': 4,
+    'prev_next_buttons_location': 'bottom',  # top and bottom
 }
 
 html_logo = "media/logo.png"
@@ -177,6 +207,10 @@ html_show_sourcelink = False
 html_favicon = "media/favicon.ico"
 
 autosectionlabel_prefix_document = True
+
+
+
+html_static_path = ['_static']
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
