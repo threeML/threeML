@@ -49,13 +49,17 @@ Let's examine how to handle both cases.
 ```python deletable=true editable=true
 from threeML import *
 
-%matplotlib inline
 ```
 
 ```python nbsphinx="hidden"
+from jupyterthemes import jtplot
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+set_threeML_style()
+silence_warnings()
+import astropy.units as u
 import warnings
-
-warnings.simplefilter('ignore')
+warnings.filterwarnings('ignore')
 ```
 
 <!-- #region deletable=true editable=true -->

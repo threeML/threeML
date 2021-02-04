@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 ```
 
 ```python nbsphinx="hidden"
-
+from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 set_threeML_style()

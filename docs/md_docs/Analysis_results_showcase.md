@@ -23,24 +23,17 @@ The structure is nearly the same between MLE and Bayesian analyses in order to m
 ```python nbsphinx="hidden"
 from threeML import *
 from threeML.analysis_results import *
-
+import astropy.units as u
 ```
 
 ```python nbsphinx="hidden"
-
 silence_logs()
 from tqdm.auto import tqdm
-
 from jupyterthemes import jtplot
-
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-
 import matplotlib.pyplot as plt
-
 set_threeML_style()
-
-import astropy.units as u
 ```
 
 Let's take a look at what we can do with an AR. First, we will simulate some data.

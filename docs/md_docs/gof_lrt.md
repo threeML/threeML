@@ -25,15 +25,11 @@ Instead, we can [almost](www.google.com) always use the bootstrap method to esti
 
 ```python
 import matplotlib.pyplot as plt
-
-
 from threeML import *
-
-
 ```
 
 ```python nbsphinx="hidden"
-
+from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 set_threeML_style()
