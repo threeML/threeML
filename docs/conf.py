@@ -82,15 +82,15 @@ napoleon_use_param = False
 
 # The path where the artifact should be extracted
 # Note: this is relative to the conf.py file!
-# rtds_action_path = "notebooks"
+rtds_action_path = "notebooks"
 # # The "prefix" used in the `upload-artifact` step of the action
-# rtds_action_artifact_prefix = "notebooks-for-"
+rtds_action_artifact_prefix = "notebooks-for-"
 
 
-# rtds_action_github_repo = "threeML/threeML"
+rtds_action_github_repo = "threeML/threeML"
 
 # # A GitHub personal access token is required, more info below
-# rtds_action_github_token = os.environ["GITHUB_TOKEN"]
+rtds_action_github_token = os.environ["GITHUB_TOKEN"]
 
 
 # Add any paths that contain templates here, relative to this directory.
