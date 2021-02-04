@@ -30,13 +30,21 @@ from astromodels.xspec import *
 from threeML.utils.photometry import get_photometric_filter_library
 
 threeML_filter_library = get_photometric_filter_library()
-from jupyterthemes import jtplot
 
-jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-plt.style.use("./threeml.mplstyle")
-
-%matplotlib inline
 ```
+
+```python nbsphinx="hidden"
+from jupyterthemes import jtplot
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+silence_warnings()
+set_threeML_style()
+import warnings
+warnings.simplefilter('ignore')
+
+```
+
+
 
 ## Setup
 

@@ -21,28 +21,25 @@ First we import what we need:
 
 ```python
 import matplotlib.pyplot as plt
-
-
 import numpy as np
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 
-import warnings
-warnings.simplefilter("ignore")
+```
 
-
-silence_warnings()
+```python nbsphinx="hidden"
 
 %matplotlib inline
-from jupyterthemes import jtplot
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-
 set_threeML_style()
+silence_warnings()
 
-
-
+import warnings
+warnings.filterwarnings('ignore')
 ```
+
+
 
 ## Generating the datasets
 

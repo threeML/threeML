@@ -25,10 +25,21 @@ Let's explore how we can use **XSPEC** spectral models in 3ML.
 <!-- #endregion -->
 
 ```python
-%matplotlib notebook
 import matplotlib.pyplot as plt
 import numpy as np
 ```
+
+```python nbsphinx="hidden"
+
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+set_threeML_style()
+silence_warnings()
+
+import warnings
+warnings.filterwarnings('ignore')
+```
+
 
 We do not load the models by default as this takes some time and 3ML should load quickly. However, if you need the **XSPEC** models, they are imported from astromodels like this:
 

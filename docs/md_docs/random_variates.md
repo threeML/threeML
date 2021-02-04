@@ -20,19 +20,19 @@ When we perform a fit or load and analysis result, the parmeters of our model be
 While we have covered most of the functionality of RandomVariates in the AnalysisResults section, we want to highlight a few of the details here.
 
 ```python
-
 import matplotlib.pyplot as plt
 from threeML import *
+```
 
-from jupyterthemes import jtplot
+```python nbsphinx="hidden"
+
 %matplotlib inline
-jtplot.style(context='talk', fscale=1, ticks=True, grid=False)
-
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 set_threeML_style()
 silence_warnings()
 
-
-
+import warnings
+warnings.filterwarnings('ignore')
 ```
 
 Let's load back our fit of the line + gaussian from the AnalysisResults section.

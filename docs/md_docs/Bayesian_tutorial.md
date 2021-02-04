@@ -34,14 +34,19 @@ Let's take a look at its usage for a simple likelihood.
 <!-- #endregion -->
 
 ```python
-%matplotlib notebook
-import matplotlib.pyplot as plt
 from threeML import *
 from threeML.bayesian.tutorial_material import *
 ```
 
 ```python nbsphinx="hidden"
-plt.style.use('./threeml.mplstyle')
+from jupyterthemes import jtplot
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+silence_warnings()
+set_threeML_style()
+import warnings
+warnings.simplefilter('ignore')
+
 ```
 
 Let’s get a BayesianAnalysis object like the one we would have in a normal 3ML analysis. We use a custom function, prepared for this tutorial, which gives a BayesianAnalysis object having a very simple model with one free parameter ($\mu$), and with a likelihood having a very simple shape:

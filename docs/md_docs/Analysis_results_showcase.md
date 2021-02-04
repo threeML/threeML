@@ -20,11 +20,15 @@ jupyter:
 The structure is nearly the same between MLE and Bayesian analyses in order to make a seamless functionality between all analyses.
 
 
-```python
+```python nbsphinx="hidden"
 from threeML import *
-silence_logs()
 from threeML.analysis_results import *
 
+```
+
+```python nbsphinx="hidden"
+
+silence_logs()
 from tqdm.auto import tqdm
 
 from jupyterthemes import jtplot
@@ -32,11 +36,9 @@ from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 
-
 import matplotlib.pyplot as plt
 
-plt.style.use("./threeml.mplstyle")
-
+set_threeML_style()
 
 import astropy.units as u
 ```

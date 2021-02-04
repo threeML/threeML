@@ -31,15 +31,16 @@ First, let's import 3ML:
 ```python
 from threeML import *
 import matplotlib.pyplot as plt
-from jupyterthemes import jtplot
 
-%matplotlib inline
-jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-plt.style.use("./threeml.mplstyle")
-silence_warnings()
 ```
 
 ```python nbsphinx="hidden"
+
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+set_threeML_style()
+silence_warnings()
+
 import warnings
 warnings.filterwarnings('ignore')
 ```

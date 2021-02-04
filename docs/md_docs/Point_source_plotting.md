@@ -23,25 +23,24 @@ First we load the analysis results:
 
 ```python
 import matplotlib.pyplot as plt
-
-
 import numpy as np
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
-set_threeML_style()
-import warnings
-warnings.simplefilter("ignore")
-
-
-silence_warnings()
-
-%matplotlib inline
-from jupyterthemes import jtplot
-jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-
 
 ```
+
+```python nbsphinx="hidden"
+from jupyterthemes import jtplot
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+silence_warnings()
+set_threeML_style()
+import warnings
+warnings.simplefilter('ignore')
+
+```
+
 
 ## Generate some data
 

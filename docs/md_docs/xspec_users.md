@@ -23,15 +23,15 @@ XSPEC is an amazing tool built by dedicated, friendly experts. If XSPEC is your 
 * 3ML is a lighter install and natively in Python rather than a Python wrapper around XSPEC
 * 3ML does many operations in parallel on HPC environments with little effort
 * 3ML has many many more optimizers and Bayesian samplers:
-  * minuit
-  * PAGMO (dozens and dozens of methods)
-  * scipy optimizers
-  * global and local optimizer combinations
-  * emcee
-  * multinest
-  * ultranest
-  * dynesty
-  * zeus
+  * [minuit](https://iminuit.readthedocs.io/en/stable/)
+  * [PAGMO](https://esa.github.io/pagmo2/) (dozens and dozens of methods)
+  * [scipy](https://docs.scipy.org/doc/scipy/reference/optimize.html) optimizers
+  * global and local optimizer combinations()
+  * [emcee](https://emcee.readthedocs.io/en/stable/)
+  * [multinest](https://github.com/farhanferoz/MultiNest)
+  * [dynesty](https://dynesty.readthedocs.io/en/latest/)
+  * [zeus](https://zeus-mcmc.readthedocs.io/en/latest/)
+  * [ultranest](https://johannesbuchner.github.io/UltraNest/)
   * and more as they come into existance
 * No parsing of text files to save results! 3ML has a serializable fit results format (FITS or HDF5) that is portable and machine readable.
 * The modularity of 3ML means that the types of data it can fit will grow quickly
@@ -50,7 +50,7 @@ XSPEC is an amazing tool built by dedicated, friendly experts. If XSPEC is your 
 * We are currently building our own set of standard models in XSPEC. We already have APEC, PhAbs, Wabs, Tbabs etc. So you can try those out first. 
 
 ## Can I trust the results of the fits? 
-![Test Against XSPEC](https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg)
+* ![Test Against XSPEC](https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg)
 * With each build of 3ML, we always test the code automatically against XSPEC to ensure fitting (up to factor) and RSP convolution give the same results.
 * You can always try yourself as the file types are the same. Expect differences in fit results that could be due to the underlying fitting engines.
 

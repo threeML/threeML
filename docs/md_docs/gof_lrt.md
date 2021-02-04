@@ -30,20 +30,19 @@ import matplotlib.pyplot as plt
 from threeML import *
 
 
-from jupyterthemes import jtplot
-%matplotlib inline
-jtplot.style(context='talk', fscale=1, ticks=True, grid=False)
+```
 
+```python nbsphinx="hidden"
+
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 set_threeML_style()
 silence_warnings()
 
-import scipy.stats as stats
-import numpy as np
-
-
 import warnings
-warnings.simplefilter('ignore')
+warnings.filterwarnings('ignore')
 ```
+
 
 Let's go back to simulations. We will simulate a straight line. 
 

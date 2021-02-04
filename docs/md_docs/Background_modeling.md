@@ -50,7 +50,9 @@ Let's examine how to handle both cases.
 from threeML import *
 
 %matplotlib inline
+```
 
+```python nbsphinx="hidden"
 import warnings
 
 warnings.simplefilter('ignore')

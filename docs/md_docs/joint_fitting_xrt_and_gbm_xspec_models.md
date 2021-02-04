@@ -24,9 +24,6 @@ We demostrate this with joint fitting data from GBM and XRT while simultaneously
 
 You must have you HEASARC initiated so that **astromodels** can find the XSPEC libraries. 
 
-
-
-
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
@@ -38,14 +35,20 @@ from threeML.io.package_data import get_path_of_data_file
 from astromodels.xspec import *
 from astromodels.xspec.xspec_settings import *
 
-from jupyterthemes import jtplot
+```
+
+
+```python nbsphinx="hidden"
 
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 set_threeML_style()
 silence_warnings()
 
+import warnings
+warnings.filterwarnings('ignore')
 ```
+
 
 ## Load XRT data
 

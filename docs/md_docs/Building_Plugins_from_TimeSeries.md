@@ -14,19 +14,19 @@ jupyter:
 ---
 
 ```python
-
-
 import matplotlib.pyplot as plt
 import numpy as np
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
+```
 
+```python nbsphinx="hidden"
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 silence_warnings()
-plt.style.use(str(get_path_of_data_file("./threeml.mplstyle")))
+set_threeML_style()
 import warnings
 warnings.simplefilter('ignore')
 ```

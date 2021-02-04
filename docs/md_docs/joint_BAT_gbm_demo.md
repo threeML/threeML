@@ -20,28 +20,28 @@ One of the key features of 3ML is the abil ity to fit multi-messenger data prope
 
 ```python
 import matplotlib.pyplot as plt
-
-
 import numpy as np
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 
-import warnings
-warnings.simplefilter("ignore")
-
-
-silence_warnings()
-
-%matplotlib inline
-from jupyterthemes import jtplot
-jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-
-set_threeML_style()
-
 
 
 ```
+
+
+```python nbsphinx="hidden"
+
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+set_threeML_style()
+silence_warnings()
+
+import warnings
+warnings.filterwarnings('ignore')
+```
+
+
 
 ## Plugin setup
 

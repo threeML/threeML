@@ -22,13 +22,20 @@ Let's start by generating our dataset:
 
 ```python
 from threeML import *
+```
+
+```python nbsphinx="hidden"
 from jupyterthemes import jtplot
-import matplotlib.pyplot as plt
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
-plt.style.use("./threeml.mplstyle")
 silence_warnings()
+set_threeML_style()
+import warnings
+warnings.simplefilter('ignore')
+
 ```
+
+
 
 ```python
 # Let's generate some data with y = Powerlaw(x)

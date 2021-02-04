@@ -36,17 +36,19 @@ Let's start by importing what we need in the following:
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 
-import matplotlib.pyplot as plt
+```
+
+```python nbsphinx="hidden"
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 silence_warnings()
-plt.style.use(str(get_path_of_data_file("./threeml.mplstyle")))
+set_threeML_style()
 import warnings
 warnings.simplefilter('ignore')
-
 from threeML.minimizer.tutorial_material import *
 ```
+
 
 Let's get a JointLikelihood object like the one we would have in a normal 3ML analysis. We use a custom function, prepared for this tutorial, which gives a JointLikelihood object having a very simple model with one free parameter ($\mu$), and with a likelihood having a very simple shape:
 
