@@ -37,17 +37,16 @@ XSPEC is an amazing tool built by dedicated, friendly experts. If XSPEC is your 
 * The modularity of 3ML means that the types of data it can fit will grow quickly
 
 
-
 ## Do I need a new plugin for my instrument?
 * If it is an X-ray instrument that has PHA1 data, BAK files, RSPs and ARFs, nope! This is handled by the OGIPLike plugin. 
-* Think of OGIPLike to be a XSPEC-like object. Feed your data in and pass it to to the JointLikelihood or BayesianAnalysis objects. You need one plugin per observation. 
+* Think of OGIPLike as an XSPEC-like object. Feed your data in and pass it to to the JointLikelihood or BayesianAnalysis objects. You need one plugin per observation. 
 * OGIPLike is simply provides a wrapper around DispersionSpectrumLike that reads standard OGIP files. We are strict about following the OGIP standard.
 
 
 ## Can I use XSPEC models?
 * Yes!
 * astromodels provides and interface to XSPEC models. See details in the modeling section.
-* We are currently building our own set of standard models in XSPEC. We already have APEC, PhAbs, Wabs, Tbabs etc. So you can try those out first. 
+* We are currently building our own set of standard models in XSPEC. We already have **APEC**, **PhAbs**, **Wabs**, **Tbabs** etc. So you can try those out first. 
 
 ## Can I trust the results of the fits? 
 * ![Test Against XSPEC](https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg)

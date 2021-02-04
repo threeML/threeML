@@ -1,4 +1,4 @@
----
+\---
 jupyter:
   jupytext:
     formats: ipynb,md
@@ -32,8 +32,6 @@ import numpy as np
 ```python nbsphinx="hidden"
 from jupyterthemes import jtplot
 %matplotlib inline
-silence_warnings()
-
 import warnings
 warnings.filterwarnings('ignore')
 ```

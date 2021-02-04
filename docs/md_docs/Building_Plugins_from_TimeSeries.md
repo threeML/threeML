@@ -25,7 +25,9 @@ from threeML.io.package_data import get_path_of_data_file
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+
 silence_warnings()
+
 set_threeML_style()
 import warnings
 warnings.simplefilter('ignore')
