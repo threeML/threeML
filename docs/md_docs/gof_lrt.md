@@ -25,6 +25,7 @@ Instead, we can [almost](www.google.com) always use the bootstrap method to esti
 
 ```python
 import matplotlib.pyplot as plt
+import scipy.stats as stats
 from threeML import *
 ```
 
