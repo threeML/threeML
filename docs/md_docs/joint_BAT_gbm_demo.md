@@ -31,7 +31,7 @@ import numpy as np
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
-
+from threeML.io.logging import silence_console_log
 
 
 ```
@@ -117,7 +117,7 @@ data_list = DataList(bat, nai6, bgo0)
 
 jl_no_eac = JointLikelihood(model_no_eac, data_list)
 
-jl_no_eac.fit()
+jl_no_eac.fit();
 ```
 
 The fit has resulted in a very typical Band function fit. Let's look in count space at how good of a fit we have obtained.
@@ -177,9 +177,9 @@ display_spectrum_model_counts(
 ```python
 gof_object = GoodnessOfFit(jl_eac)
 
-
-
-gof, res_frame, lh_frame = gof_object.by_mc(
+# for display purposes we are keeping the output clear
+with silence_console_log(and_progress_bars=False):
+    gof, res_frame, lh_frame = gof_object.by_mc(
         n_iterations=100, continue_on_failure=True )
 ```
 
