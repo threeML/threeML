@@ -306,8 +306,8 @@ def silence_console_log(and_progress_bars=True):
     current_console_logging_level = threeML_console_log_handler.level
     current_usr_logging_level = threeML_usr_log_handler.level
 
-    threeML_console_log_handler.setLevel(logging.ERROR)
-    threeML_usr_log_handler.setLevel(logging.ERROR)
+    threeML_console_log_handler.setLevel(logging.CRITICAL)
+    threeML_usr_log_handler.setLevel(logging.CRITICAL)
 
     if and_progress_bars:
         progress_state = threeML_config.interface.progress_bars
