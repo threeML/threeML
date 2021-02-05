@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
-
+import astropy.units as u
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 
@@ -129,16 +129,16 @@ _ = plot_spectra(mle1,
 
 # energy ranges can also be specified in units
 _ = plot_spectra(mle1,
-                              ene_min=1*astropy_units.keV,
-                              ene_max=1*astropy_units.MeV)
+                              ene_min=1*u.keV,
+                              ene_max=1*u.MeV)
 
 _ = plot_spectra(mle1,
-                              ene_min=1E3*astropy_units.Hz,
-                              ene_max=1E7*astropy_units.Hz)
+                              ene_min=1E3*u.Hz,
+                              ene_max=1E7*u.Hz)
 
 _ = plot_spectra(mle1,
-                              ene_min=1E1*astropy_units.nm,
-                              ene_max=1E3*astropy_units.nm,
+                              ene_min=1E1*u.nanometer,
+                              ene_max=1E3*u.nanometer,
                               xscale='linear') # plotting with a linear scale
 
 ```

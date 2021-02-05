@@ -3,6 +3,7 @@ from builtins import object
 __author__ = "grburgess"
 
 import warnings
+from typing import List
 
 import astropy.units as u
 import matplotlib.pyplot as plt
@@ -30,7 +31,7 @@ def plot_point_source_spectra(*analysis_results, **kwargs):
     return plot_spectra(*analysis_results, **kwargs)
 
 
-def plot_spectra(*analysis_results, **kwargs):
+def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
     """
 
     plotting routine for fitted point source spectra
@@ -146,7 +147,7 @@ def plot_spectra(*analysis_results, **kwargs):
             u.Unit(_defaults["energy_unit"])
         _defaults["ene_max"] = _defaults["ene_max"] * \
             u.Unit(_defaults["energy_unit"])
-        
+
     (
         mle_analyses,
         bayesian_analyses,
@@ -844,9 +845,19 @@ class SpectralContourPlot(object):
             if self._show_legend:
                 self._ax_right.legend(**self._legend_kwargs)
 
-        self._ax.set_xlim([self._emin.to(_defaults["energy_unit"], equivalencies=u.spectral(
-        )), self._emax.to(_defaults["energy_unit"], equivalencies=u.spectral())])
+        log.debug(
+            f'converting {self._emin.unit} to {_defaults["energy_unit"]}')
 
+        try:
+            self._ax.set_xlim([self._emin.to(_defaults["energy_unit"],
+                                         equivalencies=u.spectral()),
+                           self._emax.to(_defaults["energy_unit"],
+                                         equivalencies=u.spectral())])
+
+        except:
+
+            pass
+        
         if isinstance(self._emin, u.Quantity) and self._show_legend:
 
             # This workaround is needed because of a bug in astropy that would break the plotting of the legend
