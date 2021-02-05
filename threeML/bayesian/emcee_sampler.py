@@ -7,6 +7,7 @@ from astromodels import ModelAssertionViolation, use_astromodels_memoization
 from threeML.bayesian.sampler_base import MCMCSampler
 from threeML.config import threeML_config
 from threeML.config.config import threeML_config
+from threeML.io.detect_notebook import is_inside_notebook
 from threeML.io.logging import setup_logger
 from threeML.parallel.parallel_client import ParallelClient
 
@@ -104,7 +105,12 @@ class EmceeSampler(MCMCSampler):
 
             if threeML_config.interface.progress_bars:
 
-                progress = "notebook"
+                if is_inside_notebook():
+
+                    progress = "notebook"
+
+                else:
+                    progress = True
 
             else:
 
