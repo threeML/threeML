@@ -29,6 +29,14 @@ The logging of 3ML is configurable in the configuration file.
 
 <!-- #endregion -->
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
 ```python
 from threeML import threeML_config
 

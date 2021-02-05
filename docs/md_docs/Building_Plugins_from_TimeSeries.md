@@ -119,7 +119,7 @@ $$ B_i = \int_{T_1}^{T_2}P(t;\vec{\theta}) {\rm d}t $$
 
 ```python
 gbm_tte.set_background_interval('-24--5','100-200')
-gbm_tte.view_lightcurve(start=-20,stop=200);
+fig = gbm_tte.view_lightcurve(start=-20,stop=200);
 ```
 
 For event list data, binned or unbinned background fits are possible. For pre-binned data, only a binned fit is possible. 

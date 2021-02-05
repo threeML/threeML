@@ -87,7 +87,7 @@ my_backyard_telescope = PhotometryLike.from_kwargs('backyard_astronomy',
                          filters=my_backyard_telescope_filter, # the filter
                          R=(20,.1) ) # the magnitude and error
 
-my_backyard_telescope.display_filters()
+_ = my_backyard_telescope.display_filters()
 ```
 
 ## 3ML filter library
@@ -127,7 +127,7 @@ fangs = spec_filters.load_filters('fangs-g', 'fangs-r')
 fangslike = PhotometryLike.from_kwargs('fangs',filters=fangs,g=(20,.1),r=(18,.1))
 
 
-fangslike.display_filters()
+_ = fangslike.display_filters()
 ```
 
 ## GROND Example
@@ -151,7 +151,7 @@ grond = PhotometryLike.from_kwargs('GROND',
 ```
 
 ```python
-grond.display_filters()
+_ = grond.display_filters()
 ```
 
 ### Model specification

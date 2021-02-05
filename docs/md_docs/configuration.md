@@ -19,6 +19,14 @@ The 3ML configuration sets up defaults that are read in at runtime and is a sess
 
 The configuration is a hierarchical you can import and modify.
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
 ```python
 from threeML import threeML_config, show_configuration
 

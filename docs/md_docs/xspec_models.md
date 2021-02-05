@@ -38,7 +38,11 @@ import numpy as np
 ```python nbsphinx="hidden"
 from jupyterthemes import jtplot
 %matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 
+silence_warnings()
+
+set_threeML_style()
 ```
 
 

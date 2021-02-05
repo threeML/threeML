@@ -72,7 +72,7 @@ x = np.logspace(0,3,50)
 
 xy = XYLike.from_function("test", f, x, poisson_data=True )
 
-xy.plot(x_scale="log",y_scale="log");
+fig = xy.plot(x_scale="log",y_scale="log");
 
 ps = PointSource("test",0,0, spectral_shape=f)
 model = Model(ps)

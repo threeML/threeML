@@ -192,7 +192,7 @@ best_fit_parameters, likelihood_values = jl.fit()
 ```python
 for p in plugins:
 
-    p.plot(x_scale='log', y_scale='log');
+    _ = p.plot(x_scale='log', y_scale='log');
 ```
 
 ```python

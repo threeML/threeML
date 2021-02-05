@@ -16,6 +16,13 @@ jupyter:
 # HAL (HAWC Accelerated Likelihood) plugin
 
 
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
 The High-Altitude Water Cherenkov Observatory ([HAWC](https://www.hawc-observatory.org/)) is a ground-based wide-field TeV gamma-ray observatory located in Mexico, scanning about 2/3 of the northern sky every day. It is sensitive to gamma rays in the energy range from hundreds of GeV to hundreds of TeV. In addition to gamma ray-induced air showers, HAWC also detects signals from cosmic-ray induced air showers, which make up the main (and partially irreducible) background. HAWC uses a forward-folding likelihood analysis, similar to the approach that is used e.g. by many Fermi-LAT analyses. Most of HAWC's data are only available to collaboration members. However, HAWC has released several [partial-sky datasets](https://data.hawc-observatory.org/) to the public, and is committed to releasing more in the future. If you are interested in a particular HAWC dataset, you can find contact information for HAWC working group leaders on the linked webpage.
 
 The HAL (HAWC accelerated likelihood) plugin for threeML is provided in a separate python package, `hawc_hal`. Before running this example offline, make sure that the `HAL` plugin is installed. The `hawc_hal` package needs `root_numpy` as a dependency. It can be installed as follows (skip the first step if you already have threeML/astromodels installed):
@@ -76,7 +83,7 @@ Some parameters of note:
 from hawc_hal import HAL, HealpixConeROI
 import matplotlib.pyplot as plt
 from threeML import *
-
+silence_warnings()
 %matplotlib inline
 from jupyterthemes import jtplot
 jtplot.style(context='talk', fscale=1, ticks=True, grid=False)

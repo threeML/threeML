@@ -77,7 +77,7 @@ xrt = OGIPLike("XRT",observation= get_path_of_data_file(p /"xrt_src.pha"),
 
 fig = xrt.view_count_spectrum()
 ax = fig.get_axes()[0]
-ax.set_xlim(1e-1);
+_ =ax.set_xlim(1e-1);
 ```
 
 ```python
@@ -105,7 +105,7 @@ ts = TimeSeriesBuilder.from_gbm_cspec_or_ctime(name="gbm_n3",
 
 ts.set_background_interval(*bkg_selection)
 ts.save_background("n3_bkg.h5",overwrite=True)
-ts.view_lightcurve(-50,450);
+fig = ts.view_lightcurve(-50,450);
 ```
 
 ```python
@@ -119,7 +119,7 @@ ts = TimeSeriesBuilder.from_gbm_tte("gbm_n3",
 
 ts.set_active_time_interval(src_selection)
 
-ts.view_lightcurve(90, 160);
+fig = ts.view_lightcurve(90, 160);
 ```
 
 ```python
@@ -130,7 +130,7 @@ Make energy selections and check them out
 
 ```python
 nai3.set_active_measurements("8-900")
-nai3.view_count_spectrum();
+fig = nai3.view_count_spectrum();
 ```
 
 ## Setup the model
@@ -211,12 +211,12 @@ res = jl.get_contours(spectral_model.index_3,-2.5,-1.5,50)
 ```
 
 ```python
-jl.get_contours(spectral_model.K_3,.1,.3,25,
+_ = jl.get_contours(spectral_model.K_3,.1,.3,25,
                 spectral_model.index_3,-2.5,-1.5,50);
 ```
 
 ```python
-plot_point_source_spectra(jl.results,show_legend=False, emin=.01*u.keV);
+fig = plot_point_source_spectra(jl.results,show_legend=False, emin=.01*u.keV);
 ```
 
 ### Fit with astromodels PhAbs
@@ -239,11 +239,11 @@ model.display()
 
 ```python
 res = jl_native.fit()
-display_spectrum_model_counts(jl_native,min_rate=[.5,.1]);
+fig = display_spectrum_model_counts(jl_native,min_rate=[.5,.1]);
 ```
 
 ```python
-plot_point_source_spectra(jl.results,jl_native.results,show_legend=False, emin=.01*u.keV);
+fig = plot_point_source_spectra(jl.results,jl_native.results,show_legend=False, emin=.01*u.keV);
 ```
 
 Both approaches give the same answer as they should. 

@@ -113,7 +113,3 @@ ax.set_xlabel('log norm');
 .. note::
     Some operations will destroy the RV by accessing only its NDArray substructure. For example, using an RV with astropy units will return an array of samples with the given units. 
 <!-- #endraw -->
-
-```python
-
-```
