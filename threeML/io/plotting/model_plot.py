@@ -140,6 +140,13 @@ def plot_spectra(*analysis_results, **kwargs):
             _defaults["num_ene"],
         ) * u.Unit(_defaults["energy_unit"])
 
+        # scale the units to the defaults
+
+        _defaults["ene_min"] = _defaults["ene_min"] * \
+            u.Unit(_defaults["energy_unit"])
+        _defaults["ene_max"] = _defaults["ene_max"] * \
+            u.Unit(_defaults["energy_unit"])
+        
     (
         mle_analyses,
         bayesian_analyses,

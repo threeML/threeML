@@ -212,7 +212,7 @@ _=display_photometry_model_magnitudes(jl)
 ```
 
 ```python
-_ = plot_point_source_spectra(jl.results,flux_unit='erg/(cm2 s keV)',
+_ = plot_spectra(jl.results,flux_unit='erg/(cm2 s keV)',
                               xscale='linear',
                               energy_unit='nm',ene_min=1E3, ene_max=1E5, num_ene=200 )
 ```

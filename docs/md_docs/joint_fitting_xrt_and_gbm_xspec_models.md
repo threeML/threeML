@@ -216,7 +216,7 @@ _ = jl.get_contours(spectral_model.K_3,.1,.3,25,
 ```
 
 ```python
-fig = plot_point_source_spectra(jl.results,show_legend=False, emin=.01*u.keV);
+fig = plot_spectra(jl.results,show_legend=False, emin=.01*u.keV);
 ```
 
 ### Fit with astromodels PhAbs
@@ -243,7 +243,7 @@ fig = display_spectrum_model_counts(jl_native,min_rate=[.5,.1]);
 ```
 
 ```python
-fig = plot_point_source_spectra(jl.results,jl_native.results,show_legend=False, emin=.01*u.keV);
+fig = plot_spectra(jl.results,jl_native.results,show_legend=False, emin=.01*u.keV);
 ```
 
 Both approaches give the same answer as they should. 

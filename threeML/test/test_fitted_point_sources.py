@@ -1,15 +1,15 @@
+import os
 from builtins import zip
-import pytest
-from threeML import *
-from threeML.plugins.OGIPLike import OGIPLike
-from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
-from threeML.io.calculate_flux import _calculate_point_source_flux
+
 import astropy.units as u
 import matplotlib.pyplot as plt
-import os
+import pytest
 
+from threeML import *
+from threeML.io.calculate_flux import _calculate_point_source_flux
 from threeML.io.package_data import get_path_of_data_dir
-
+from threeML.plugins.OGIPLike import OGIPLike
+from threeML.utils.fitted_objects.fitted_point_sources import InvalidUnitError
 
 # Init some globals
 
@@ -163,14 +163,14 @@ def test_fitted_point_source_plotting(analysis_to_test):
 
             for x in analysis_to_test:
 
-                _ = plot_point_source_spectra(
+                _ = plot_spectra(
                     x, flux_unit=u1, energy_unit=e_unit, num_ene=5
                 )
 
-                _ = plot_point_source_spectra(x, **plot_keywords)
+                _ = plot_spectra(x, **plot_keywords)
 
                 with pytest.raises(InvalidUnitError):
-                    _ = plot_point_source_spectra(x, flux_unit=bad_flux_units[0])
+                    _ = plot_spectra(x, flux_unit=bad_flux_units[0])
 
             plt.close("all")
 
@@ -195,12 +195,12 @@ def test_fitted_point_source_flux_calculations(analysis_to_test):
 
 def test_units_on_energy_range(analysis_to_test):
 
-    _ = plot_point_source_spectra(
+    _ = plot_spectra(
         analysis_to_test[0], ene_min=1.0 * u.keV, ene_max=1 * u.MeV
     )
 
-    with pytest.raises(AssertionError):
-        plot_point_source_spectra(analysis_to_test[0], ene_min=1.0, ene_max=1 * u.MeV)
+    with pytest.raises(RuntimeError):
+        plot_spectra(analysis_to_test[0], ene_min=1.0, ene_max=1 * u.MeV)
 
-    with pytest.raises(AssertionError):
-        plot_point_source_spectra(analysis_to_test[0], ene_min=1.0 * u.keV, ene_max=1.0)
+    with pytest.raises(RuntimeError):
+        plot_spectra(analysis_to_test[0], ene_min=1.0 * u.keV, ene_max=1.0)

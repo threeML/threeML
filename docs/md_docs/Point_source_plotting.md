@@ -95,10 +95,10 @@ mle1 = jl.results
 
 ## Plotting a single analysis result
 
-The easiest way to plot is to call **plot_point_source_spectra**. By default, it plots in photon space with a range of 10-40000 keV evaluated at 100 logrithmic points:
+The easiest way to plot is to call **plot_spectra**. By default, it plots in photon space with a range of 10-40000 keV evaluated at 100 logrithmic points:
 
 ```python
-_ = plot_point_source_spectra(bayes1,ene_min=1,ene_max=1E3, num_ene=300)
+_ = plot_spectra(bayes1,ene_min=1,ene_max=1E3, num_ene=300)
 ```
 
 ### Flux and energy units
@@ -114,29 +114,29 @@ We use astropy units to specify both the flux and energy units.
 
 
 ```python
-_ = plot_point_source_spectra(mle1,ene_min=1,ene_max=1E3,flux_unit='1/(m2 s MeV)')
-_ = plot_point_source_spectra(mle1,ene_min=1,ene_max=1E3,flux_unit='erg/(cm2 day keV)')
-_ = plot_point_source_spectra(mle1,ene_min=1,ene_max=1E3,flux_unit='keV2/(cm2 s keV)')
+_ = plot_spectra(mle1,ene_min=1,ene_max=1E3,flux_unit='1/(m2 s MeV)')
+_ = plot_spectra(mle1,ene_min=1,ene_max=1E3,flux_unit='erg/(cm2 day keV)')
+_ = plot_spectra(mle1,ene_min=1,ene_max=1E3,flux_unit='keV2/(cm2 s keV)')
 ```
 
 #### changing energy units
 
 ```python
-_ = plot_point_source_spectra(mle1,
+_ = plot_spectra(mle1,
                               ene_min=.001,
                               ene_max=1E3,
                               energy_unit='MeV')
 
 # energy ranges can also be specified in units
-_ = plot_point_source_spectra(mle1,
+_ = plot_spectra(mle1,
                               ene_min=1*astropy_units.keV,
                               ene_max=1*astropy_units.MeV)
 
-_ = plot_point_source_spectra(mle1,
+_ = plot_spectra(mle1,
                               ene_min=1E3*astropy_units.Hz,
                               ene_max=1E7*astropy_units.Hz)
 
-_ = plot_point_source_spectra(mle1,
+_ = plot_spectra(mle1,
                               ene_min=1E1*astropy_units.nm,
                               ene_max=1E3*astropy_units.nm,
                               xscale='linear') # plotting with a linear scale
@@ -148,7 +148,7 @@ _ = plot_point_source_spectra(mle1,
 Sometimes it is interesting to see the components in a composite model. We can specify the **use_components** switch. Here we will use *Bayesian* results. Note that all features work with MLE of Bayesian results.
 
 ```python tags=["nbsphinx-thumbnail"]
-_ = plot_point_source_spectra(bayes1,
+_ = plot_spectra(bayes1,
                               ene_min=1,
                               ene_max=1E3,
                               use_components=True,
@@ -161,7 +161,7 @@ _=plt.ylim(bottom=.1,top=1000)
 Notice that the duplicated components have the subscripts *n1* and *n2*. If we want to specify which components to plot, we must use these subscripts.
 
 ```python
-_ = plot_point_source_spectra(mle1,
+_ = plot_spectra(mle1,
                               flux_unit='erg/(cm2 s keV)',
                               ene_min=1,
                               ene_max=1E3,
@@ -176,7 +176,7 @@ If we want to see the total model with the components, just add *total* to the c
 Additionally, we can change the confidence interval for the contours from the default of 1$\sigma$ (0.68) to 2$\sigma$ (0.95).
 
 ```python
-_ = plot_point_source_spectra(bayes1,
+_ = plot_spectra(bayes1,
                               flux_unit='erg/(cm2 s keV)',
                               ene_min=1,
                               ene_max=1E3,
@@ -190,7 +190,7 @@ _=plt.ylim(bottom=1E-9)
 ```
 
 ```python
-_ = plot_point_source_spectra(mle1,
+_ = plot_spectra(mle1,
                               flux_unit='erg/(cm2 s keV)',
                               ene_min=1,
                               ene_max=1E3,
@@ -213,19 +213,19 @@ Explore the docstring to see all the available options. Default configurations c
 
 ```python
 threeML_config['model_plot']['point_source_plot']['fit_cmap'] = 'plasma'
-_ = plot_point_source_spectra(mle1, equal_tailed=False)
+_ = plot_spectra(mle1, equal_tailed=False)
 ```
 
 * turn of contours and the legend and increase the number of points plotted
 
 ```python
-_ = plot_point_source_spectra(mle1, show_legend=False, show_contours=False, num_ene=500)
+_ = plot_spectra(mle1, show_legend=False, show_contours=False, num_ene=500)
 ```
 
 * colors or color maps can be specfied
 
 ```python
-_ = plot_point_source_spectra(mle1, fit_colors='orange', contour_colors='blue')
+_ = plot_spectra(mle1, fit_colors='orange', contour_colors='blue')
 ```
 
 Further modifications to plotting style, legend style, etc. can be modified either in the 3ML configuration:
@@ -242,7 +242,7 @@ or by directly passing dictionary arguments to the the plot command. Examine the
 Any number of results can be plotted together. Simply provide them as arguments. You can mix and match MLE and Bayesian results as well as plotting their components.
 
 ```python
-_ = plot_point_source_spectra(mle1, bayes1,ene_min=1)
+_ = plot_spectra(mle1, bayes1,ene_min=1)
 
 _=plt.ylim(bottom=1E-1)
 ```
@@ -250,7 +250,7 @@ _=plt.ylim(bottom=1E-1)
 Specify particular colors for each analysis and broaden the contours
 
 ```python
-_ = plot_point_source_spectra(mle1,
+_ = plot_spectra(mle1,
                               bayes1,
                               ene_min=1.,
                               confidence_level=.95,
@@ -263,7 +263,7 @@ _ =plt.ylim(bottom=1E-1)
 As with single results, we can choose to plot the components for all the sources.
 
 ```python
-_ = plot_point_source_spectra(mle1,
+_ = plot_spectra(mle1,
                               bayes1,
                               ene_min=1.,
                              use_components=True)

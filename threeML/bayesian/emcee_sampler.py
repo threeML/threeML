@@ -1,13 +1,17 @@
+from typing import Dict, List, Optional
+
 import emcee
 import numpy as np
-
-from threeML.io.logging import setup_logger
-from threeML.bayesian.sampler_base import MCMCSampler
-from threeML.config.config import threeML_config
-from threeML.parallel.parallel_client import ParallelClient
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
+from threeML.bayesian.sampler_base import MCMCSampler
+from threeML.config import threeML_config
+from threeML.config.config import threeML_config
+from threeML.io.logging import setup_logger
+from threeML.parallel.parallel_client import ParallelClient
+
 log = setup_logger(__name__)
+
 
 class EmceeSampler(MCMCSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
@@ -22,11 +26,12 @@ class EmceeSampler(MCMCSampler):
 
         """
 
-        super(EmceeSampler, self).__init__(likelihood_model, data_list, **kwargs)
+        super(EmceeSampler, self).__init__(
+            likelihood_model, data_list, **kwargs)
 
-    def setup(self, n_iterations, n_burn_in=None, n_walkers=20, seed=None):
+    def setup(self, n_iterations: int, n_burn_in: Optional[int] = None, n_walkers: int = 20, seed=None, **kwargs):
 
-        log.debug(f"Setup for Emcee sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"\
+        log.debug(f"Setup for Emcee sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"
                   f"n_walkers: {n_walkers}, seed: {seed}.")
 
         self._n_iterations = int(n_iterations)
@@ -42,6 +47,14 @@ class EmceeSampler(MCMCSampler):
         self._n_walkers = int(n_walkers)
 
         self._seed = seed
+
+        self._kwargs = kwargs
+
+        # we control progress with the config
+
+        if "progress" in self._kwargs:
+
+            _ = self._kwargs.pop("progress")
 
         self._is_setup = True
 
@@ -88,8 +101,17 @@ class EmceeSampler(MCMCSampler):
 
             log.debug("Start emcee run")
             # Sample the burn-in
+
+            if threeML_config.interface.progress_bars:
+
+                progress = "notebook"
+
+            else:
+
+                progress = False
+
             pos, prob, state = sampler.run_mcmc(
-                initial_state=p0, nsteps=self._n_burn_in, progress=loud
+                initial_state=p0, nsteps=self._n_burn_in, progress=progress
             )
             log.debug("Emcee run done")
 
