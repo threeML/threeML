@@ -32,6 +32,15 @@ Many minimizers are based on the idea of gradient descent, i.e., they compute th
 
 Let's start by importing what we need in the following:
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
+
 ```python
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file

@@ -13,6 +13,13 @@ jupyter:
     name: python3
 ---
 
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
 ```python
 import matplotlib.pyplot as plt
 import numpy as np

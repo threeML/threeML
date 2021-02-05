@@ -19,6 +19,13 @@ jupyter:
 
 First we import what we need:
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+```
+
+
 ```python
 import matplotlib.pyplot as plt
 import numpy as np

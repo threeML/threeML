@@ -18,6 +18,12 @@ jupyter:
 For optical photometry, we provide the **PhotometryLike** plugin that handles forward folding of a spectral model through filter curves. Let's have a look at the avaiable procedures.
 
 
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
 
 ```python
 import numpy as np

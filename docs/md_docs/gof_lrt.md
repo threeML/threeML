@@ -23,6 +23,13 @@ It is often that we we need to know how well our model fits our data. While in  
 Instead, we can [almost](www.google.com) always use the bootstrap method to estimate the quality of an MLE analysis. In 3ML, we can do this with the quite simply after a fit.
 <!-- #endregion -->
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+```
+
+
 ```python
 import matplotlib.pyplot as plt
 import scipy.stats as stats

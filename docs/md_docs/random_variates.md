@@ -19,6 +19,15 @@ When we perform a fit or load and analysis result, the parmeters of our model be
 
 While we have covered most of the functionality of RandomVariates in the AnalysisResults section, we want to highlight a few of the details here.
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
+
 ```python
 import matplotlib.pyplot as plt
 from threeML import *

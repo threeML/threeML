@@ -46,6 +46,14 @@ Let's examine how to handle both cases.
 
 <!-- #endregion -->
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
 ```python deletable=true editable=true
 from threeML import *
 

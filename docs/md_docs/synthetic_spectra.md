@@ -29,6 +29,14 @@ Most of the current plugins support the ability to generate synthetic data direc
 
 In many of the examples, the basic XYLike plugin has been used to generate synthetic data. Here, we will revisit the plugin for completeness.
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
 ```python
 import matplotlib.pyplot as plt
 import numpy as np

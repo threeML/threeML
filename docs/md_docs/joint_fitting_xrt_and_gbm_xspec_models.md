@@ -24,6 +24,13 @@ We demostrate this with joint fitting data from GBM and XRT while simultaneously
 
 You must have you HEASARC initiated so that **astromodels** can find the XSPEC libraries. 
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+```
+
+
 ```python
 import numpy as np
 import matplotlib.pyplot as plt

@@ -28,6 +28,14 @@ Generally, an analysis in 3ML is performed in 3 steps:
 
 First, let's import 3ML:
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
 ```python
 from threeML import *
 import matplotlib.pyplot as plt
