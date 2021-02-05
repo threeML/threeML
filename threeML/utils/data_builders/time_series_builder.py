@@ -31,6 +31,8 @@ from threeML.utils.time_series.event_list import (
     EventList, EventListWithDeadTime, EventListWithDeadTimeFraction,
     EventListWithLiveTime)
 from threeML.utils.time_series.time_series import TimeSeries
+from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
+
 
 log = setup_logger(__name__)
 
@@ -1316,6 +1318,47 @@ class TimeSeriesBuilder(object):
         raise NotImplementedError(
             "Reading from a generic PHAII file is not yet supportedgb"
         )
+
+    @classmethod
+    def from_konus_pha(
+        cls,
+        name,
+        pha_file,
+        rsp_file,
+        arf_file,
+        restore_background=None,
+        trigger_time=None,
+        poly_order=-1,
+        verbose=True
+    ):
+        """ A plugin to natively bin, view, and handle Konus-Wind PHA data. 
+        One can choose a background polynomial order by hand (up to 4th order) or leave it as the default polyorder=-1 to decide by LRT test
+        :param name: name for your choosing
+        :param pha_file: Konus-Wind PHAII file
+        :param rsp_file: Associated response file
+        :param arf_file: Associated auxiliary response file
+        :param trigger_time: trigger time if needed
+        :param poly_order: 0-4 or -1 for auto
+        :param verbose: verbose (bool)
+        """
+
+        # Load the relevant information from the PHA file
+
+        spectrum_set = PHASpectrumSet(pha_file, rsp_file=rsp_file, arf_file=arf_file)
+
+        event_list = BinnedSpectrumSeries(spectrum_set, first_channel=1, verbose=verbose)
+
+        rsp = OGIPResponse(rsp_file, arf_file=arf_file)
+
+        return cls(name,
+               event_list,
+               response=rsp,
+               poly_order=poly_order,
+               unbinned=False,
+               verbose=verbose,
+               restore_poly_fit=restore_background,
+               container_type=BinnedSpectrumWithDispersion
+               )
 
     @classmethod
     def from_polar_spectrum(
