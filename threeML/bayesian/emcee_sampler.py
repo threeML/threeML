@@ -135,7 +135,7 @@ class EmceeSampler(MCMCSampler):
 
         acc = np.mean(sampler.acceptance_fraction)
 
-        log.info("\nMean acceptance fraction: %s\n" % acc)
+        log.info(f"Mean acceptance fraction: {acc}")
 
         self._sampler = sampler
         self._raw_samples = sampler.get_chain(flat=True)
