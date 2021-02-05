@@ -39,7 +39,7 @@ def download_LLE_trigger_data(trigger_name, destination_directory="."):
     if_directory_not_existing_then_make(destination_directory)
 
     # Figure out the directory on the server
-    url = threeML_config["LAT"]["public HTTP location"]
+    url = threeML_config["LAT"]["public_http_location"]
 
     year = "20%s" % sanitized_trigger_name_[:2]
     directory = "triggers/%s/bn%s/current" % (year, sanitized_trigger_name_)

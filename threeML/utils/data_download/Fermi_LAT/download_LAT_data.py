@@ -486,7 +486,7 @@ def download_LAT_data(
 
             # Continue to next iteration
 
-    remotePath = "%s/queries/" % threeML_config.LAT.public_HTTP_location
+    remotePath = "%s/queries/" % threeML_config.LAT.public_http_location
 
     if links != None:
 

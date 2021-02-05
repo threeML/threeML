@@ -4,7 +4,7 @@ on: [push, release]
 jobs:
   notebooks:
     name: "Build the notebooks for the docs"
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -35,10 +35,16 @@ jobs:
         run: |
           # Make sure we fail in case of error
           
-          miniconda_os=Linux
-          compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+          # miniconda_os=Linux
+          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
-          sudo apt-get install texlive
+          miniconda_os=MacOSX
+          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+
+          brew install --cask basictex
+
+          eval "$(/usr/libexec/path_helper)"
+          #sudo apt-get install texlive
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
           
@@ -49,6 +55,7 @@ jobs:
           pip install zeus-mcmc
           pip install -e .
 
+          pip install black
           pip install --no-binary :all: root_numpy
           pip install git+https://github.com/threeml/hawc_hal.git
           
@@ -56,12 +63,13 @@ jobs:
         shell: bash -l {0}
         run: |
 
-          jupytext --to ipynb --execute docs/notebooks/*.md
-
+          jupytext --to ipynb --pipe black --execute docs/md_docs/*.md
+          mv docs/md_docs/*.ipynb docs/notebooks/
+          
       - uses: actions/upload-artifact@v2
         with:
           name: notebooks-for-${{ github.sha }}
-          path: docs/tutorials
+          path: docs/notebooks
 
       - name: Trigger RTDs build
         uses: dfm/rtds-action@v1

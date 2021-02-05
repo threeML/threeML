@@ -3,6 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+3ML
+===
+  
 .. image:: ../logo/logo.png
 
 Astrophysical sources are observed by different instruments at different wavelengths with an unprecedented quality. Putting all these data together to form a coherent view, however, is a very difficult task. Indeed, each instrument and data type has its own ad-hoc software and handling procedure, which present steep learning curves and do not talk to each other.
@@ -21,11 +24,11 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
     
     installation
     intro
-    notebooks/configuration
-    notebooks/logging
-    notebooks/xspec_users
-    notebooks/Minimization_tutorial
-    notebooks/Bayesian_tutorial
+    notebooks/configuration.ipynb
+    notebooks/logging.ipynb
+    notebooks/xspec_users.ipynb
+    notebooks/Minimization_tutorial.ipynb
+    notebooks/Bayesian_tutorial.ipynb
     plugins
     modeling
     faq
@@ -35,13 +38,13 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
 .. nbgallery::
    :caption: Features and examples:
 
-   notebooks/grb080916C
-   notebooks/joint_BAT_gbm_demo
-   notebooks/joint_fitting_xrt_and_gbm_xspec_models
-   notebooks/Time-energy-fit
-   notebooks/Analysis_results_showcase
-   notebooks/random_variates
-   notebooks/Point_source_plotting
-   notebooks/synthetic_spectra
-   notebooks/gof_lrt
+   notebooks/grb080916C.ipynb
+   notebooks/joint_BAT_gbm_demo.ipynb
+   notebooks/joint_fitting_xrt_and_gbm_xspec_models.ipynb
+   notebooks/Time-energy-fit.ipynb
+   notebooks/Analysis_results_showcase.ipynb
+   notebooks/random_variates.ipynb
+   notebooks/Point_source_plotting.ipynb
+   notebooks/synthetic_spectra.ipynb
+   notebooks/gof_lrt.ipynb
     
