@@ -19,6 +19,15 @@ When we perform a fit or load and analysis result, the parmeters of our model be
 
 While we have covered most of the functionality of RandomVariates in the AnalysisResults section, we want to highlight a few of the details here.
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
+
 ```python
 import matplotlib.pyplot as plt
 from threeML import *
@@ -104,7 +113,3 @@ ax.set_xlabel('log norm');
 .. note::
     Some operations will destroy the RV by accessing only its NDArray substructure. For example, using an RV with astropy units will return an array of samples with the given units. 
 <!-- #endraw -->
-
-```python
-
-```

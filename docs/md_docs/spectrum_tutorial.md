@@ -40,6 +40,12 @@ The most basic spectrum plugin is **SpectrumLike** which handles spectra with an
 Let's start by examining an observation where the total counts are Poisson distributed and the measured background ground has been observed by viewing an off-source region and hence is also Poisson.
 
 
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
 
 ```python
 import matplotlib.pyplot as plt

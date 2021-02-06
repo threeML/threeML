@@ -18,13 +18,20 @@ jupyter:
 One of the key features of 3ML is the abil ity to fit multi-messenger data properly. A simple example of this is the joint fitting of two instruments whose data obey different likelihoods. Here, we have GBM data which obey a Poisson-Gaussian profile likelihoog (<a href=http://heasarc.gsfc.nasa.gov/docs/xanadu/xspec/manual/node293.html> PGSTAT</a> in XSPEC lingo) and Swift BAT which data which are the result of a "fit" via a coded mask and hence obey a Gaussian ( $\chi^2$ ) likelihood.
 
 
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
-
+np.random.seed(12345)
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
-
+from threeML.io.logging import silence_console_log
 
 
 ```
@@ -110,7 +117,7 @@ data_list = DataList(bat, nai6, bgo0)
 
 jl_no_eac = JointLikelihood(model_no_eac, data_list)
 
-jl_no_eac.fit()
+jl_no_eac.fit();
 ```
 
 The fit has resulted in a very typical Band function fit. Let's look in count space at how good of a fit we have obtained.
@@ -170,10 +177,10 @@ display_spectrum_model_counts(
 ```python
 gof_object = GoodnessOfFit(jl_eac)
 
-
-
+# for display purposes we are keeping the output clear
+# with silence_console_log(and_progress_bars=False):
 gof, res_frame, lh_frame = gof_object.by_mc(
-        n_iterations=100, continue_on_failure=True )
+    n_iterations=100, continue_on_failure=True )
 ```
 
 ```python

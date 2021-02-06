@@ -3,6 +3,7 @@ from builtins import object
 __author__ = "grburgess"
 
 import warnings
+from typing import List
 
 import astropy.units as u
 import matplotlib.pyplot as plt
@@ -12,20 +13,25 @@ from astropy.visualization import quantity_support
 from threeML.config.config import threeML_config
 from threeML.io.calculate_flux import (_collect_sums_into_dictionaries,
                                        _setup_analysis_dictionaries)
+from threeML.io.logging import setup_logger
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
+from threeML.utils.progress_bar import tqdm
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
+log = setup_logger(__name__)
+
+
 def plot_point_source_spectra(*analysis_results, **kwargs):
 
-    warnings.warn(
+    log.error(
         "plot_point_source_spectra() has been replaced by plot_spectra().")
     return plot_spectra(*analysis_results, **kwargs)
 
 
-def plot_spectra(*analysis_results, **kwargs):
+def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
     """
 
     plotting routine for fitted point source spectra
@@ -95,14 +101,16 @@ def plot_spectra(*analysis_results, **kwargs):
             _defaults[key] = value
 
     if isinstance(_defaults["ene_min"], u.Quantity):
-        assert isinstance(
-            _defaults["ene_max"], u.Quantity
-        ), "both energy arguments must be Quantities"
+
+        if not isinstance(_defaults["ene_max"], u.Quantity):
+            log.error("both energy arguments must be Quantities")
+            raise RuntimeError()
 
     if isinstance(_defaults["ene_max"], u.Quantity):
-        assert isinstance(
-            _defaults["ene_min"], u.Quantity
-        ), "both energy arguments must be Quantities"
+
+        if not isinstance(_defaults["ene_min"], u.Quantity):
+            log.error("both energy arguments must be Quantities")
+            raise RuntimeError()
 
     if isinstance(_defaults["ene_max"], u.Quantity):
 
@@ -110,7 +118,7 @@ def plot_spectra(*analysis_results, **kwargs):
             _defaults["ene_min"], _defaults["ene_max"], _defaults["num_ene"]
         )  # type: u.Quantity
 
-        _defaults["energy_unit"] = energy_range.unit
+        #_defaults["energy_unit"] = energy_range.unit
 
         if _defaults["xscale"] == "log":
             energy_range = (
@@ -122,6 +130,9 @@ def plot_spectra(*analysis_results, **kwargs):
                 * energy_range.unit
             )
 
+            energy_range = energy_range.to(
+                _defaults["energy_unit"], equivalencies=u.spectral())
+
     else:
 
         energy_range = np.logspace(
@@ -129,6 +140,13 @@ def plot_spectra(*analysis_results, **kwargs):
             np.log10(_defaults["ene_max"]),
             _defaults["num_ene"],
         ) * u.Unit(_defaults["energy_unit"])
+
+        # scale the units to the defaults
+
+        _defaults["ene_min"] = _defaults["ene_min"] * \
+            u.Unit(_defaults["energy_unit"])
+        _defaults["ene_max"] = _defaults["ene_max"] * \
+            u.Unit(_defaults["energy_unit"])
 
     (
         mle_analyses,
@@ -827,15 +845,28 @@ class SpectralContourPlot(object):
             if self._show_legend:
                 self._ax_right.legend(**self._legend_kwargs)
 
-        self._ax.set_xlim([self._emin, self._emax])
+        log.debug(
+            f'converting {self._emin.unit} to {_defaults["energy_unit"]}')
+
+        try:
+            self._ax.set_xlim([self._emin.to(_defaults["energy_unit"],
+                                             equivalencies=u.spectral()),
+                               self._emax.to(_defaults["energy_unit"],
+                                             equivalencies=u.spectral())])
+
+        except:
+
+            pass
 
         if isinstance(self._emin, u.Quantity) and self._show_legend:
 
             # This workaround is needed because of a bug in astropy that would break the plotting of the legend
             # (see issue #7504 in the Astropy github repo)
 
-            eemin = self._emin.to(self._ax.xaxis.get_units()).value
-            eemax = self._emax.to(self._ax.xaxis.get_units()).value
+            eemin = self._emin.to(self._ax.xaxis.get_units(),
+                                  equivalencies=u.spectral()).value
+            eemax = self._emax.to(self._ax.xaxis.get_units(),
+                                  equivalencies=u.spectral()).value
 
             self._ax.set_xlim([eemin, eemax])
 

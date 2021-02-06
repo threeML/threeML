@@ -23,6 +23,13 @@ It is often that we we need to know how well our model fits our data. While in  
 Instead, we can [almost](www.google.com) always use the bootstrap method to estimate the quality of an MLE analysis. In 3ML, we can do this with the quite simply after a fit.
 <!-- #endregion -->
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+```
+
+
 ```python
 import matplotlib.pyplot as plt
 import scipy.stats as stats
@@ -57,7 +64,7 @@ xyl_generator = XYLike.from_function("sim_data", function = gen_function,
 y = xyl_generator.y
 y_err = xyl_generator.yerr
 
-xyl_generator.plot();
+fig = xyl_generator.plot();
 
 
 ```
@@ -77,7 +84,7 @@ jl = JointLikelihood(model, datalist)
 
 jl.fit();
 
-xyl.plot();
+fig = xyl.plot();
 
 ```
 
@@ -132,7 +139,7 @@ spectrum_generator = SpectrumLike.from_function('fake',
 ```
 
 ```python
-spectrum_generator.view_count_spectrum();
+fig = spectrum_generator.view_count_spectrum();
 ```
 
 We simulated a weak cutoff powerlaw. But if this was real data, we wouldn't know that there was a cutoff. So we would fit both a power law (the null model) and a cutoff power law (the alternative model).
@@ -156,12 +163,12 @@ datalist = DataList(spectrum_generator)
 
 ```python
 jl_null = JointLikelihood(model_null,datalist)
-jl_null.fit();
+_ = jl_null.fit();
 ```
 
 ```python
 jl_alternative = JointLikelihood(model_alternative,datalist)
-jl_alternative.fit();
+_ = jl_alternative.fit();
 ```
 
 Ok, we now have our log(likelihoods) from each model. If we took Wilks' theorem to heart, then we would compute:
@@ -175,7 +182,7 @@ or $-2 \log(\Lambda)$ which would be $\chi^2_{\nu}$ distributed where $\nu$ is t
 # calculate the test statistic
 TS = 2*(jl_null.results.get_statistic_frame()['-log(likelihood)']['total'] - jl_alternative.results.get_statistic_frame()['-log(likelihood)']['total'])
 
-print('null hyp. prob.: %f' %stats.chi2.pdf(TS,1))
+print(f'null hyp. prob.: {stats.chi2.pdf(TS,1)}' )
 
 ```
 
@@ -205,14 +212,14 @@ We can visualize why by plotting the distributions of TS and seeing if it follow
 
 ```python
 lrt.plot_TS_distribution(bins=100, ec='k',fc='white',lw=1.2);
-plt.legend()
+_ = plt.legend()
 ```
 
 The curve is slightly higher than we expect. Let's rescale the curve by 1/2:
 
 ```python tags=["nbsphinx-thumbnail"]
 lrt.plot_TS_distribution(scale=0.5,bins=100,ec='k',fc='white',lw=1.2);
-plt.legend()
+_ = plt.legend()
 ```
 
 Thus, we see that 3ML provides an automatic, and possibly efficient way to avoid the nasty problems of the LRT.

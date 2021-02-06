@@ -18,6 +18,12 @@ jupyter:
 For optical photometry, we provide the **PhotometryLike** plugin that handles forward folding of a spectral model through filter curves. Let's have a look at the avaiable procedures.
 
 
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
 
 ```python
 import numpy as np
@@ -81,7 +87,7 @@ my_backyard_telescope = PhotometryLike.from_kwargs('backyard_astronomy',
                          filters=my_backyard_telescope_filter, # the filter
                          R=(20,.1) ) # the magnitude and error
 
-my_backyard_telescope.display_filters()
+_ = my_backyard_telescope.display_filters()
 ```
 
 ## 3ML filter library
@@ -121,7 +127,7 @@ fangs = spec_filters.load_filters('fangs-g', 'fangs-r')
 fangslike = PhotometryLike.from_kwargs('fangs',filters=fangs,g=(20,.1),r=(18,.1))
 
 
-fangslike.display_filters()
+_ = fangslike.display_filters()
 ```
 
 ## GROND Example
@@ -145,7 +151,7 @@ grond = PhotometryLike.from_kwargs('GROND',
 ```
 
 ```python
-grond.display_filters()
+_ = grond.display_filters()
 ```
 
 ### Model specification
@@ -206,7 +212,7 @@ _=display_photometry_model_magnitudes(jl)
 ```
 
 ```python
-_ = plot_point_source_spectra(jl.results,flux_unit='erg/(cm2 s keV)',
+_ = plot_spectra(jl.results,flux_unit='erg/(cm2 s keV)',
                               xscale='linear',
                               energy_unit='nm',ene_min=1E3, ene_max=1E5, num_ene=200 )
 ```

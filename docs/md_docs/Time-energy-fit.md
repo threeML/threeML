@@ -19,6 +19,13 @@ jupyter:
 
 First we import what we need:
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+```
+
+
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
@@ -89,8 +96,8 @@ fig, ax = plt.subplots()
 
 datasets = [generate_one(k, ax) for k in normalizations]
 
-ax.set_xlabel("Energy")
-ax.set_ylabel("Flux")
+_ = ax.set_xlabel("Energy")
+_ = ax.set_ylabel("Flux")
 ```
 
 ## Setup the model
@@ -185,7 +192,7 @@ best_fit_parameters, likelihood_values = jl.fit()
 ```python
 for p in plugins:
 
-    p.plot(x_scale='log', y_scale='log');
+    _ = p.plot(x_scale='log', y_scale='log');
 ```
 
 ```python

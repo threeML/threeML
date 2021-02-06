@@ -1,16 +1,17 @@
 from __future__ import print_function
-from builtins import range
-from threeML.minimizer.minimization import (
-    LocalMinimizer,
-    CannotComputeErrors,
-    FitFailed,
-    CannotComputeCovariance,
-)
-
-from iminuit import Minuit
 
 import collections
+from builtins import range
+
 import numpy as np
+from iminuit import Minuit
+
+from threeML.io.logging import setup_logger
+from threeML.minimizer.minimization import (CannotComputeCovariance,
+                                            CannotComputeErrors, FitFailed,
+                                            LocalMinimizer)
+
+log = setup_logger(__name__)
 
 
 class MINOSFailed(Exception):
@@ -162,11 +163,17 @@ class MinuitMinimizer(LocalMinimizer):
         :return:
         """
 
-        print("Last status:\n")
-        print(self._last_migrad_results.fmin)
-        print("\n")
+        log.error("Last status:")
+
+        for line in str(self._last_migrad_results.fmin).splitlines():
+            log.error(line)
+
         # Print params to get some info about the failure
-        print( self.minuit.params )
+
+        for line in str(self.minuit.params).splitlines():
+            log.error(line)
+
+        
 
     def _minimize(self):
         """
@@ -235,8 +242,11 @@ class MinuitMinimizer(LocalMinimizer):
             # Print current status
             self._print_current_status()
 
+            log.error(
+                "HESSE failed. Most probably some of your parameters are unconstrained.")
+
             raise CannotComputeCovariance(
-                "HESSE failed. Most probably some of your parameters are unconstrained."
+
             )
 
         return covariance

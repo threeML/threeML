@@ -7,6 +7,7 @@ from threeML.utils.fitted_objects.fitted_point_sources import (
     FittedPointSourceSpectralHandler,
 )
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.utils.progress_bar import tqdm
 
 import numpy as np
 import pandas as pd
@@ -142,7 +143,7 @@ def _setup_analysis_dictionaries(
 
     # go through the MLE analysis and build up some fitted sources
 
-    for key in list(mle_analyses.keys()):
+    for key in tqdm(list(mle_analyses.keys()), desc = "processing MLE analyses"):
 
         # if we want to use this source
 
@@ -230,7 +231,7 @@ def _setup_analysis_dictionaries(
 
     # repeat for the bayes analyses
 
-    for key in list(bayesian_analyses.keys()):
+    for key in tqdm(list(bayesian_analyses.keys()), desc="processing Bayesian analyses"):
 
         # if we have a source to use
 

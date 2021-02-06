@@ -20,6 +20,14 @@ In this simple example we will generate some simulated data, and fit them with 3
 
 Let's start by generating our dataset:
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
 ```python
 from threeML import *
 ```

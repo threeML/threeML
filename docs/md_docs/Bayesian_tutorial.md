@@ -33,6 +33,13 @@ Let's take a look at its usage for a simple likelihood.
 
 <!-- #endregion -->
 
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+```
+
+
 ```python
 from threeML import *
 from threeML.bayesian.tutorial_material import *

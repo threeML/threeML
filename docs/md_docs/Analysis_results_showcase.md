@@ -50,7 +50,7 @@ xy = XYLike.from_function(
     "sim_data", function=gen_function, x=x, yerr=0.2 * gen_function(x)
 )
 
-xy.plot();
+fig = xy.plot();
 ```
 
 <!-- #region -->
@@ -365,7 +365,7 @@ np.allclose(ar2_reloaded.samples, ar2.samples)
 We can examine the marginal distributions of the parameters:
 
 ```python
-ar2.corner_plot();
+fig = ar2.corner_plot();
 
 ```
 

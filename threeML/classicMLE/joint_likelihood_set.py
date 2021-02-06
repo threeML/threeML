@@ -48,9 +48,12 @@ class JointLikelihoodSet(object):
 
             # Only one instance, let's check that it is actually a model
 
-            assert isinstance(model_or_models, Model), (
-                "The model getter function should return a model or a list of " "models"
-            )
+            if not isinstance(model_or_models, Model):
+
+                log.error(
+                    "The model getter function should return a model or a list of " "models")
+
+                raise RuntimeError()
 
             # Save that
             self._n_models = 1
@@ -66,9 +69,13 @@ class JointLikelihoodSet(object):
             # Check that all models are instances of Model
             for this_model in model_or_models:
 
-                assert isinstance(
+                if not isinstance(
                     this_model, Model
-                ), "The model getter function should return a model or a list of models"
+                ):
+                    log.error(
+                        "The model getter function should return a model or a list of models")
+
+                    raise RuntimeError()
 
             # No need for a wrapper in this case
 
@@ -109,12 +116,13 @@ class JointLikelihoodSet(object):
 
         else:
 
-            assert minimizer.upper() in _minimizers, (
-                "Minimizer %s is not available on this system. "
-                "Available minimizers: %s"
-                % (minimizer, ",".join(list(_minimizers.keys())))
-            )
+            if not minimizer.upper() in _minimizers:
+                log.error("Minimizer %s is not available on this system. "
+                          "Available minimizers: %s"
+                          % (minimizer, ",".join(list(_minimizers.keys())))
+                          )
 
+                raise RuntimeError()
             # The string can only specify a local minimization. This will return an error if that is not the case.
             # In order to setup global optimization the user needs to use the GlobalMinimization factory directly
 
@@ -197,10 +205,7 @@ class JointLikelihoodSet(object):
 
         except Exception as e:
 
-            log.error("\n\n**** FIT FAILED! ***")
-            log.error("Reason:")
-            log.error(repr(e))
-            log.error("\n\n")
+            log.exception("**** FIT FAILED! ***")
 
             if self._continue_on_failure:
 

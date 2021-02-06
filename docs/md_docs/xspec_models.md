@@ -24,16 +24,25 @@ For details on installing **astromodels** with **XSPEC** support, visit the 3ML 
 Let's explore how we can use **XSPEC** spectral models in 3ML. 
 <!-- #endregion -->
 
+
+```python nbsphinx="hidden"
+import warnings
+warnings.filterwarnings('ignore')
+```
+
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
 ```
 
 ```python nbsphinx="hidden"
+from threeML import set_threeML_style
 from jupyterthemes import jtplot
 %matplotlib inline
-import warnings
-warnings.filterwarnings('ignore')
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+
+
+set_threeML_style()
 ```
 
 
