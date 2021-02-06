@@ -476,7 +476,7 @@ class FermiLATLike(PluginPrototype):
 
         log_like = self.like.logLike.value()
 
-        return log_like - logfactorial(self.like.total_nobs())
+        return log_like - logfactorial(int(self.like.total_nobs()))
 
     #
     def __reduce__(self):
