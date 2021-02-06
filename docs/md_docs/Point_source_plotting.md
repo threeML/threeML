@@ -242,9 +242,9 @@ or by directly passing dictionary arguments to the the plot command. Examine the
 Any number of results can be plotted together. Simply provide them as arguments. You can mix and match MLE and Bayesian results as well as plotting their components.
 
 ```python
-_ = plot_spectra(mle1, bayes1,ene_min=1)
+_ = plot_spectra(mle1, bayes1, ene_min=1)
 
-_=plt.ylim(bottom=1E-1)
+#_=plt.ylim(bottom=1E-1)
 ```
 
 Specify particular colors for each analysis and broaden the contours

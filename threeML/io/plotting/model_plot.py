@@ -77,8 +77,8 @@ def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
         "best_fit": "median",
         "energy_unit": _sub_menu.ene_unit,
         "flux_unit": _sub_menu.flux_unit,
-        "ene_min": _sub_menu.emin * u.Unit(_sub_menu.ene_unit),
-        "ene_max": _sub_menu.emax * u.Unit(_sub_menu.ene_unit),
+        "ene_min": _sub_menu.emin,
+        "ene_max": _sub_menu.emax,
         "num_ene": _sub_menu.num_ene,
         "use_components": False,
         "components_to_use": [],
@@ -850,14 +850,14 @@ class SpectralContourPlot(object):
 
         try:
             self._ax.set_xlim([self._emin.to(_defaults["energy_unit"],
-                                         equivalencies=u.spectral()),
-                           self._emax.to(_defaults["energy_unit"],
-                                         equivalencies=u.spectral())])
+                                             equivalencies=u.spectral()),
+                               self._emax.to(_defaults["energy_unit"],
+                                             equivalencies=u.spectral())])
 
         except:
 
             pass
-        
+
         if isinstance(self._emin, u.Quantity) and self._show_legend:
 
             # This workaround is needed because of a bug in astropy that would break the plotting of the legend

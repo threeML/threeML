@@ -96,8 +96,8 @@ fig, ax = plt.subplots()
 
 datasets = [generate_one(k, ax) for k in normalizations]
 
-ax.set_xlabel("Energy")
-ax.set_ylabel("Flux")
+_ = ax.set_xlabel("Energy")
+_ = ax.set_ylabel("Flux")
 ```
 
 ## Setup the model
