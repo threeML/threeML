@@ -28,7 +28,7 @@ warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
-
+np.random.seed(12345)
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.logging import silence_console_log
@@ -178,9 +178,9 @@ display_spectrum_model_counts(
 gof_object = GoodnessOfFit(jl_eac)
 
 # for display purposes we are keeping the output clear
-with silence_console_log(and_progress_bars=False):
-    gof, res_frame, lh_frame = gof_object.by_mc(
-        n_iterations=100, continue_on_failure=True )
+# with silence_console_log(and_progress_bars=False):
+gof, res_frame, lh_frame = gof_object.by_mc(
+    n_iterations=100, continue_on_failure=True )
 ```
 
 ```python
