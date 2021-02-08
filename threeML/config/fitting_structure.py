@@ -4,14 +4,18 @@ from typing import Any, Dict, List, Optional
 
 import matplotlib.pyplot as plt
 from omegaconf import II, MISSING, SI, OmegaConf
+
 from .plotting_structure import MPLCmap
+
 
 class Sampler(Enum):
     emcee = "emcee"
     multinest = "multinest"
     zeus = "zeus"
-    dynesty = "dynesty"
+    dynesty_nested = "dynesty_nested"
+    dynesty_dynamic = "dynesty_dynamic"
     ultranest = "ultranest"
+    autoemcee = "autoemcee"
 
 
 _sampler_default = {'emcee': {'n_burnin': 1}}
@@ -27,7 +31,10 @@ class Optimizer(Enum):
 class BayesianDefault:
     default_sampler: Sampler = Sampler.emcee
     default_setup: Optional[Dict[str, Any]] = field(
-        default_factory=lambda: {'n_burnin': 1})
+        default_factory=lambda: {'n_burnin': 250,
+                            'n_iterations': 500,
+                            "n_walkers": 50,
+                            "seed": 5123})
 
 
 @dataclass

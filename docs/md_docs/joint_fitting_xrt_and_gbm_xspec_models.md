@@ -51,9 +51,6 @@ from jupyterthemes import jtplot
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 set_threeML_style()
 silence_warnings()
-
-import warnings
-warnings.filterwarnings('ignore')
 ```
 
 
@@ -81,7 +78,7 @@ _ =ax.set_xlim(1e-1);
 ```
 
 ```python
-xrt.view_count_spectrum(scale_background=False);
+fit = xrt.view_count_spectrum(scale_background=False);
 ```
 
 ## Load GBM data
@@ -203,7 +200,7 @@ model.display()
 
 ```python
 res = jl.fit()
-display_spectrum_model_counts(jl,min_rate=[.5,.1]);
+fig = display_spectrum_model_counts(jl,min_rate=[.5,.1]);
 ```
 
 ```python
@@ -237,7 +234,7 @@ jl_native = JointLikelihood(model_native, data, verbose=False)
 model.display()
 ```
 
-```python
+```python tags=["nbsphinx-thumbnail"]
 res = jl_native.fit()
 fig = display_spectrum_model_counts(jl_native,min_rate=[.5,.1]);
 ```

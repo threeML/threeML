@@ -41,9 +41,6 @@ from jupyterthemes import jtplot
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 set_threeML_style()
 silence_warnings()
-
-import warnings
-warnings.filterwarnings('ignore')
 ```
 
 
@@ -73,6 +70,9 @@ def generate_one(K, ax):
     y_err = xyl_generator.yerr
 
     ax.loglog(x, gen_function(x))
+    
+    ax.set_xlabel("Energy")
+    ax.set_ylabel("Flux")
 
     return x, y, y_err
 ```
@@ -91,13 +91,10 @@ normalizations = 0.23 * time_tags ** (-3.5)
 
 Now that we have a simple function to create the datasets, let's build them.
 
-```python tags=["nbsphinx-thumbnail"]
+```python tags=["nbsphinx-thumbbail"]
 fig, ax = plt.subplots()
 
 datasets = [generate_one(k, ax) for k in normalizations]
-
-_ = ax.set_xlabel("Energy")
-_ = ax.set_ylabel("Flux")
 ```
 
 ## Setup the model
