@@ -42,9 +42,6 @@ jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 set_threeML_style()
 silence_warnings()
 ```
-
-
-
 ## Generating the datasets
 
 Then we generate a simulated dataset for a source with a cutoff powerlaw spectrum with a constant photon index and cutoff but with a normalization that changes with time following a powerlaw:

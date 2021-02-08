@@ -179,6 +179,14 @@ spectrum_generator = DispersionSpectrumLike.from_function(
 fig = spectrum_generator.view_count_spectrum()
 ```
 
+```python
+
+```
+
+```python
+
+```
+
 ### Generating spectra from fitted models
 
 When performing goodness of fit tests, likelihood ratio tests (both automatic in 3ML) or posterior predictive checks, we need to generate synthetic data from our fitted models. Therefore, we proved methods to do this for most current plugins.
