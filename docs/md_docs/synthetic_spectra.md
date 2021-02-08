@@ -165,7 +165,7 @@ from threeML.utils.OGIP.response import OGIPResponse
 response = OGIPResponse(get_path_of_data_file("datasets/ogip_powerlaw.rsp"))
 ```
 
-```python tags=["nbsphinx-thumbnail"]
+```python
 # rescale the functions for the response
 source_function = Blackbody(K=1e-7, kT=500.0)
 background_function = Powerlaw(K=1, index=-1.5, piv=1.0e3)
@@ -175,16 +175,10 @@ spectrum_generator = DispersionSpectrumLike.from_function(
     background_function=background_function,
     response=response,
 )
+```
 
+```python tags=["nbsphinx-thumbnail"]
 fig = spectrum_generator.view_count_spectrum()
-```
-
-```python
-
-```
-
-```python
-
 ```
 
 ### Generating spectra from fitted models
