@@ -22,8 +22,8 @@ The configuration is a hierarchical you can import and modify.
 
 ```python nbsphinx="hidden"
 import warnings
-warnings.filterwarnings('ignore')
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+warnings.simplefilter('ignore')
+
 ```
 
 

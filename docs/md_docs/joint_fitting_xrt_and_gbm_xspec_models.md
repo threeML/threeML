@@ -27,7 +27,7 @@ You must have you HEASARC initiated so that **astromodels** can find the XSPEC l
 
 ```python nbsphinx="hidden"
 import warnings
-warnings.filterwarnings('ignore')
+warnings.simplefilter('ignore')
 ```
 
 

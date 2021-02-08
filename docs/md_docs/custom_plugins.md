@@ -18,8 +18,8 @@ jupyter:
 
 ```python nbsphinx="hidden"
 import warnings
-warnings.filterwarnings('ignore')
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+warnings.simplefilter('ignore')
+
 ```
 
 

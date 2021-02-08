@@ -22,7 +22,7 @@ First we import what we need:
 
 ```python nbsphinx="hidden"
 import warnings
-warnings.filterwarnings('ignore')
+warnings.simplefilter('ignore')
 ```
 
 

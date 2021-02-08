@@ -32,7 +32,7 @@ In many of the examples, the basic XYLike plugin has been used to generate synth
 
 ```python nbsphinx="hidden"
 import warnings
-warnings.filterwarnings('ignore')
+warnings.simplefilter('ignore')
 ```
 
 

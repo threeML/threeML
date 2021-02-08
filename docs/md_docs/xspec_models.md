@@ -27,7 +27,7 @@ Let's explore how we can use **XSPEC** spectral models in 3ML.
 
 ```python nbsphinx="hidden"
 import warnings
-warnings.filterwarnings('ignore')
+warnings.simplefilter('ignore')
 ```
 
 ```python

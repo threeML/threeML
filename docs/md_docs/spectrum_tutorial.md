@@ -42,8 +42,8 @@ Let's start by examining an observation where the total counts are Poisson distr
 
 ```python nbsphinx="hidden"
 import warnings
-warnings.filterwarnings('ignore')
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+warnings.simplefilter('ignore')
+
 ```
 
 
@@ -62,8 +62,6 @@ jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 set_threeML_style()
 silence_warnings()
 
-import warnings
-warnings.filterwarnings('ignore')
 ```
 
 

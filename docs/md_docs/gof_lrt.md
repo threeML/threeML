@@ -26,7 +26,7 @@ Instead, we can [almost](www.google.com) always use the bootstrap method to esti
 
 ```python nbsphinx="hidden"
 import warnings
-warnings.filterwarnings('ignore')
+warnings.simplefilter('ignore')
 ```
 
 
@@ -45,8 +45,6 @@ jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 set_threeML_style()
 silence_warnings()
 
-import warnings
-warnings.filterwarnings('ignore')
 ```
 
 

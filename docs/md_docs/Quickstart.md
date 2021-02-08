@@ -23,8 +23,8 @@ Let's start by generating our dataset:
 
 ```python nbsphinx="hidden"
 import warnings
-warnings.filterwarnings('ignore')
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+warnings.simplefilter('ignore')
+
 ```
 
 
@@ -38,8 +38,7 @@ from jupyterthemes import jtplot
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
 silence_warnings()
 set_threeML_style()
-import warnings
-warnings.simplefilter('ignore')
+
 
 ```
 
