@@ -8,7 +8,11 @@ import itertools
 import numpy as np
 from astromodels import use_astromodels_memoization
 
+from threeML.config import threeML_config
+from threeML.io.logging import setup_logger
 from threeML.utils.progress_bar import tqdm
+
+log = setup_logger(__name__)
 
 
 class GenericFittedSourceHandler(object):
@@ -70,9 +74,10 @@ class GenericFittedSourceHandler(object):
         """
 
         # assure that the shapes will be the same
-        assert (
-            other._out_shape == self._out_shape
-        ), "cannot sum together arrays with different shapes!"
+        if other._out_shape != self._out_shape:
+            log.error("cannot sum together arrays with different shapes!")
+
+            raise RuntimeError()
 
         # this will get the value container for the other values
 
@@ -120,9 +125,15 @@ class GenericFittedSourceHandler(object):
 
                 # Do not use more than 1000 values (would make computation too slow for nothing)
 
-                if len(this_variate) > 1000:
-                    this_variate = np.random.choice(this_variate, size=1000)
+                if len(this_variate) > threeML_config.point_source.max_number_samples:
 
+                    log.debug(
+                        f"Reduced {name} from {len(this_variate)} to {threeML_config.point_source.max_number_samples}")
+
+                    
+                    this_variate = np.random.choice(
+                        this_variate, size=threeML_config.point_source.max_number_samples)
+                    
                 arguments[name] = this_variate
 
             else:

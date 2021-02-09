@@ -1075,7 +1075,7 @@ class _AnalysisResults(object):
 
     def get_point_source_flux(self, *args, **kwargs):
 
-        log.warning("get_point_source_flux() has been replaced by get_flux()")
+        log.error("get_point_source_flux() has been replaced by get_flux()")
         return self.get_flux(*args, **kwargs)
 
     def get_flux(
@@ -1089,6 +1089,7 @@ class _AnalysisResults(object):
         components_to_use=(),
         sum_sources=False,
         include_extended=False,
+        verbose=False
     ):
         """
 
@@ -1145,7 +1146,8 @@ class _AnalysisResults(object):
 
             # Format the errors and display the resulting data frame
 
-            display(mle_results.apply(_format_error, axis=1))
+            if verbose:
+                display(mle_results.apply(_format_error, axis=1))
 
             # Return the dataframe
             return mle_results
@@ -1153,8 +1155,8 @@ class _AnalysisResults(object):
         elif bayes_results is not None:
 
             # Format the errors and display the resulting data frame
-
-            display(bayes_results.apply(_format_error, axis=1))
+            if verbose:
+                display(bayes_results.apply(_format_error, axis=1))
 
             # Return the dataframe
             return bayes_results
