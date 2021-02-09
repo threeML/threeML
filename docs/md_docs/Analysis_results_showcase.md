@@ -21,6 +21,8 @@ The structure is nearly the same between MLE and Bayesian analyses in order to m
 
 
 ```python nbsphinx="hidden"
+import numpy as np
+np.seterr(all="ignore")
 from threeML import *
 from threeML.analysis_results import *
 import astropy.units as u

@@ -23,6 +23,7 @@ warnings.simplefilter('ignore')
 ```python
 import matplotlib.pyplot as plt
 import numpy as np
+np.seterr(all="ignore")
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file

@@ -31,7 +31,7 @@ Let's explore the possibilites.
 
 ```
 
-```python
+```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter("ignore")
 
@@ -48,7 +48,7 @@ from threeML.io.package_data import get_path_of_data_file
 
 ```
 
-```python
+```python nbsphinx="hidden"
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)

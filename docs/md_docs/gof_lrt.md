@@ -27,6 +27,8 @@ Instead, we can [almost](www.google.com) always use the bootstrap method to esti
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 

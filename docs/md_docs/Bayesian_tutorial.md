@@ -36,7 +36,8 @@ Let's take a look at its usage for a simple likelihood.
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
-
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 

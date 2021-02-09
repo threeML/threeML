@@ -43,13 +43,13 @@ Let's start by examining an observation where the total counts are Poisson distr
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
-
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 
 ```python
 import matplotlib.pyplot as plt
-import numpy as np
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file

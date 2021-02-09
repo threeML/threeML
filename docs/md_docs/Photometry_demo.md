@@ -21,12 +21,12 @@ For optical photometry, we provide the **PhotometryLike** plugin that handles fo
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
-
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 
 ```python
-import numpy as np
 import matplotlib.pyplot as plt
 from threeML import *
 # we will need XPSEC models for extinction

@@ -23,12 +23,13 @@ First we import what we need:
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 
 ```python
 import matplotlib.pyplot as plt
-import numpy as np
 
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
