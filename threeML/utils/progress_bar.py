@@ -55,8 +55,12 @@ def tqdm(itr=None, **kwargs):
 
     color = _get_color.color()
 
-    if len(list(itr)) == 0:
-        return itr
+    if itr is not None:
+
+
+        
+        if len(list(itr)) == 0:
+            return itr
     
     return (_tqdm(itr, colour=color, **kwargs) if threeML_config.interface.progress_bars else itr)
 
