@@ -900,9 +900,12 @@ class SpectrumLike(PluginPrototype):
         """
 
         if self._like_model is not None:
-            assert source_name in self._like_model.sources, (
+            if source_name not in self._like_model.sources:
+                log.error(
                 "Source %s is not contained in " "the likelihood model" % source_name
             )
+
+                raise RuntimeError()
 
         self._source_name = source_name
 
