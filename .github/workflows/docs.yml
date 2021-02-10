@@ -65,7 +65,7 @@ jobs:
 
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
-          cp threeml/threeML/data/doc_config.yml ~/.config/threeML/
+          cp threeML/data/doc_config.yml ~/.config/threeML/
           
           jupytext --to ipynb --pipe black --execute docs/md_docs/*.md
           mv docs/md_docs/*.ipynb docs/notebooks/
