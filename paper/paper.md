@@ -23,10 +23,10 @@ affiliations:
 date: 13 August 2017
 bibliography: paper.bib
 
-# Optional fields if submitting to a AAS journal too, see this blog post:
-# https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-aas-journal: Astrophysical Journal <- The name of the AAS journal.
+<!-- # Optional fields if submitting to a AAS journal too, see this blog post: -->
+<!-- # https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing -->
+<!-- aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it. -->
+<!-- aas-journal: Astrophysical Journal <- The name of the AAS journal. -->
 ---
 
 # Summary
@@ -59,10 +59,10 @@ having to rewrite their model or data interfaces.
 
 Multi-wavelength or spectral modeling software has existed for many
 decades to handle the task of fitting astrophysical models to
-observatory data. Most of these tools such as `XSPEC`[@], `Ciao`[@] or
-`Sherpa`[@] which primarily focus on the modeling of data at X-ray
+observatory data. Most of these tools such as `XSPEC`[@xspec], `Ciao`[@ciao] or
+`Sherpa`[@sherpa] which primarily focus on the modeling of data at X-ray
 wavelengths interface with data by enforcing a common data format such
-as FITS[@] which implies that any observatory wishing to uses these
+as FITS[@fits] which implies that any observatory wishing to uses these
 softwares to fit their data must for their data into this format. If a
 user desires to fit data from multiple instruments, spanning several
 wavelengths simultaneously, than all of this data must be correctly
@@ -72,6 +72,7 @@ reformatting into the formats required for existing tools. Moreover,
 most of these modern observatories have complex analysis algorithms
 expressing detailed likelihoods which can not interface with existing
 multi-wavelength software; much less with each other.
+
 # Statement of need
 
 `3ML` provides an abstract data interface via a plugin architecture to
@@ -123,7 +124,7 @@ richness of the native instrument data.
 
 3ML also extends beyond multi-wavelength data to the multi-messenger
 regime by providing abstract interfaces for modeling polarization,
-particle and spatial data. TMORE
+particle and spatial data. MORE
 
 
 # Data Analysis
@@ -168,12 +169,12 @@ For a quick reference, the following citation commands can be used:
 
 # Figures
 
-Figures can be included like this:
-![Caption for example figure.\label{fig:example}](figure.png)
-and referenced from text using \autoref{fig:example}.
+<!-- Figures can be included like this: -->
+<!-- ![Caption for example figure.\label{fig:example}](figure.png) -->
+<!-- and referenced from text using \autoref{fig:example}. -->
 
-Figure sizes can be customized by adding an optional second parameter:
-![Caption for example figure.](figure.png){ width=20% }
+<!-- Figure sizes can be customized by adding an optional second parameter: -->
+<!-- ![Caption for example figure.](figure.png){ width=20% } -->
 
 # Acknowledgements
 
