@@ -59,7 +59,7 @@ having to rewrite their model or data interfaces.
 
 Multi-wavelength or spectral modeling software has existed for many
 decades to handle the task of fitting astrophysical models to
-observatory data. Most of these tools such as `XSPEC` [@xspec], `Ciao` [@ciao] or
+observatory data. Most of these tools such as `XSPEC` `[@xspec]`, `Ciao` [@ciao] or
 `Sherpa` [@sherpa] which primarily focus on the modeling of data at X-ray
 wavelengths interface with data by enforcing a common data format such
 as FITS [@fits] which implies that any observatory wishing to uses these
