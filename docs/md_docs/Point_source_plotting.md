@@ -24,13 +24,15 @@ First we load the analysis results:
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
-
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 
 ```python
+%%capture
 import matplotlib.pyplot as plt
-import numpy as np
+
 import astropy.units as u
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file

@@ -24,11 +24,15 @@ Let's start by generating our dataset:
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
+import numpy as np
+np.seterr(all="ignore")
+
 
 ```
 
 
 ```python
+%%capture
 from threeML import *
 ```
 

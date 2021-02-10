@@ -21,13 +21,15 @@ One of the key features of 3ML is the abil ity to fit multi-messenger data prope
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
-
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 
 ```python
+%%capture
 import matplotlib.pyplot as plt
-import numpy as np
+
 np.random.seed(12345)
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file

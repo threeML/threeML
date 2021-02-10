@@ -63,9 +63,18 @@ jobs:
         shell: bash -l {0}
         run: |
 
+          # copy the doc configuration over
+          mkdir -p ~/.config/threeML
+          cp threeML/data/doc_config.yml ~/.config/threeML/
+          
           jupytext --to ipynb --pipe black --execute docs/md_docs/*.md
           mv docs/md_docs/*.ipynb docs/notebooks/
-          
+        env:
+          OMP_NUM_THREADS: 1
+          MKL_NUM_THREADS: 1
+          NUMEXPR_NUM_THREADS: 1
+          MPLBACKEND: "Agg"
+
       - uses: actions/upload-artifact@v2
         with:
           name: notebooks-for-${{ github.sha }}

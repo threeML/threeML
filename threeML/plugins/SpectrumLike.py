@@ -900,9 +900,12 @@ class SpectrumLike(PluginPrototype):
         """
 
         if self._like_model is not None:
-            assert source_name in self._like_model.sources, (
+            if source_name not in self._like_model.sources:
+                log.error(
                 "Source %s is not contained in " "the likelihood model" % source_name
             )
+
+                raise RuntimeError()
 
         self._source_name = source_name
 
@@ -1241,7 +1244,7 @@ class SpectrumLike(PluginPrototype):
 
             self._apply_mask_to_original_vectors()
 
-    def get_simulated_dataset(self, new_name: Optional[str]=None, **kwargs):
+    def get_simulated_dataset(self, new_name: Optional[str] = None, **kwargs):
         """
         Returns another Binned instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
@@ -1250,7 +1253,7 @@ class SpectrumLike(PluginPrototype):
         """
 
         if self._like_model is None:
-            
+
             log.error("You need to set up a model before randomizing")
 
             raise RuntimeError()
@@ -1260,7 +1263,7 @@ class SpectrumLike(PluginPrototype):
         self._n_synthetic_datasets += 1
 
         log.debug(f"now have {self._n_synthetic_datasets}")
-        
+
         # Generate a name for the new dataset if needed
         if new_name is None:
             new_name = "%s_sim_%i" % (self.name, self._n_synthetic_datasets)
@@ -1323,8 +1326,9 @@ class SpectrumLike(PluginPrototype):
                     new_scale_factor=1.0,  # because it was adjusted
                 )
 
-                log.debug(f"made {sum(randomized_background_counts)} bkg counts")
-                
+                log.debug(
+                    f"made {sum(randomized_background_counts)} bkg counts")
+
             elif self._background_plugin is not None:
 
                 new_background = self._likelihood_evaluator.synthetic_background_plugin
@@ -1669,11 +1673,13 @@ class SpectrumLike(PluginPrototype):
         # check if we set a source name that the source is in the model
 
         if self._source_name is not None:
-            assert self._source_name in self._like_model.sources, (
-                "Source %s is not contained in "
-                "the likelihood model" % self._source_name
-            )
+            if self._source_name not in self._like_model.sources:
+                log.error(
+                    "Source %s is not contained in "
+                    "the likelihood model" % self._source_name
+                )
 
+                raise RuntimeError()
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
 
@@ -1805,6 +1811,8 @@ class SpectrumLike(PluginPrototype):
 
         if self._source_name is None:
 
+            log.debug(f"{self.name} is using all point sources")
+            
             n_point_sources = likelihood_model.get_number_of_point_sources()
 
             # Make a function which will stack all point sources (OGIP do not support spatial dimension)
@@ -1836,11 +1844,16 @@ class SpectrumLike(PluginPrototype):
                         energies, tag=self._tag
                     )
 
+
+                log.debug(f"{self.name} is using only the point source {self._source_name}")
+
             except KeyError:
 
+                log.error(
+                    "This SpectumLike plugin has been assigned to source %s, "
+                    "which does not exist in the current model" % self._source_name)
+                
                 raise KeyError(
-                    "This XYLike plugin has been assigned to source %s, "
-                    "which does not exist in the current model" % self._source_name
                 )
 
         # The following integrates the diffFlux function using Simpson's rule
@@ -2844,19 +2857,15 @@ class SpectrumLike(PluginPrototype):
         expected_model_rate = self.expected_model_rate
 
         # Observed rate
-        observed_rate = old_div(self.observed_counts,
-                                self._observed_spectrum.exposure)
-        observed_rate_err = old_div(
-            self.observed_count_errors, self._observed_spectrum.exposure)
+        observed_rate = self.observed_counts / self._observed_spectrum.exposure
+        observed_rate_err = self.observed_count_errors / self._observed_spectrum.exposure
 
         # Background rate
         if (self._background_noise_model is not None) or (self._background_plugin is not None):
-            background_rate = old_div(self.background_counts,
-                                      self._background_exposure) *\
-                self._area_ratio
-            background_rate_err = old_div(self.background_count_errors,
-                                          self._background_exposure) *\
-                self._area_ratio
+            background_rate = (self.background_counts /
+                               self._background_exposure) * self._area_ratio
+            background_rate_err = (
+                self.background_count_errors / self._background_exposure) * self._area_ratio
         else:
             background_rate = np.zeros(len(observed_rate))
             background_rate_err = np.zeros(len(observed_rate))
@@ -2873,9 +2882,8 @@ class SpectrumLike(PluginPrototype):
             this_rebinner = self._rebinner
 
         # get the rebinned counts
-        new_observed_rate, new_model_rate, new_background_rate = \
-            this_rebinner.rebin(
-                observed_rate, expected_model_rate, background_rate)
+        new_observed_rate, new_model_rate, new_background_rate = this_rebinner.rebin(
+            observed_rate, expected_model_rate, background_rate)
         (new_observed_rate_err,) = this_rebinner.rebin_errors(observed_rate_err)
         (new_background_rate_err,) = this_rebinner.rebin_errors(background_rate_err)
 

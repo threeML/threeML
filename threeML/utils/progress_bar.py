@@ -2,6 +2,7 @@ from matplotlib import cm
 from matplotlib.colors import to_hex
 import numpy as np
 
+from functools import partial
 from tqdm.auto import tqdm as _tqdm
 from tqdm.auto import trange as _trange
 
@@ -12,7 +13,8 @@ from threeML.config.config import threeML_config
 
 #_colors = []
 
-c_itr = 0
+_tqdm =partial(_tqdm, dynamic_ncols=True)
+_trange =partial(_trange, dynamic_ncols=True)
 
 
 class _Get_Color(object):
@@ -55,6 +57,13 @@ def tqdm(itr=None, **kwargs):
 
     color = _get_color.color()
 
+    # if itr is not None:
+
+
+        
+    #     if len(list(itr)) == 0:
+    #         return itr
+    
     return (_tqdm(itr, colour=color, **kwargs) if threeML_config.interface.progress_bars else itr)
 
 
