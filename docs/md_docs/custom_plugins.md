@@ -19,7 +19,8 @@ jupyter:
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
-
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 
@@ -213,6 +214,7 @@ Let's build a simple (and useless) plugin to see how the process works. First, w
 <!-- #endregion -->
 
 ```python
+%%capture
 from threeML import PluginPrototype
 ```
 

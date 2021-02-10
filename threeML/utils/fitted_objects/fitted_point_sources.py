@@ -1,19 +1,28 @@
 from __future__ import division
-from builtins import range
+
 from past.utils import old_div
-from builtins import object
 
 __author__ = "grburgess"
 
-from astropy import units as u
-import numpy as np
-import scipy.integrate as integrate
 import collections
 
+import numba as nb
+import numpy as np
+import scipy.integrate as integrate
+from astropy import units as u
 
-from threeML.utils.fitted_objects.fitted_source_handler import (
-    GenericFittedSourceHandler,
-)
+from threeML.config import threeML_config
+from threeML.config.point_source_structure import IntegrateMethod
+from threeML.io.logging import setup_logger
+from threeML.utils.fitted_objects.fitted_source_handler import \
+    GenericFittedSourceHandler
+
+log = setup_logger(__name__)
+
+
+@nb.njit(fastmath=True, cache=True)
+def _trapz(x, y):
+    return np.trapz(x, y)
 
 
 class NotCompositeModelError(RuntimeError):
@@ -89,7 +98,8 @@ class FluxConversion(object):
 
         else:
 
-            self._conversion = tmp.unit.to(self._flux_unit, equivalencies=u.spectral())
+            self._conversion = tmp.unit.to(
+                self._flux_unit, equivalencies=u.spectral())
             self._is_dimensionless = False
 
     @property
@@ -158,6 +168,20 @@ class DifferentialFluxConversion(FluxConversion):
         )
 
 
+def trap_integral(func, e1, e2, **args):
+
+    if e2/e1 > 100:
+
+        e_grid = np.logspace(np.log10(e1), np.log10(e2), 50)
+
+    else:
+        e_grid = np.linspace(e1, e2, 50)
+
+    y = func(e_grid, args)
+
+    return _trapz(y, e_grid)
+
+    
 class IntegralFluxConversion(FluxConversion):
     def __init__(self, flux_unit, energy_unit, flux_model, test_model):
         """
@@ -191,19 +215,41 @@ class IntegralFluxConversion(FluxConversion):
         def nufnu_integrand(x, param_specification):
             return x * x * flux_model(x, **param_specification)
 
-        self._model_builder = {
-            "photon_flux": lambda e1, e2, **param_specification: integrate.quad(
-                photon_integrand, e1, e2, args=(param_specification)
-            )[0],
-            "energy_flux": lambda e1, e2, **param_specification: integrate.quad(
-                energy_integrand, e1, e2, args=(param_specification)
-            )[0],
-            "nufnu_flux": lambda e1, e2, **param_specification: integrate.quad(
-                nufnu_integrand, e1, e2, args=(param_specification)
-            )[0],
-        }
+        if threeML_config.point_source.integrate_flux_method == IntegrateMethod.trapz:
+        
+            self._model_builder = {
+                "photon_flux": lambda e1, e2, **param_specification: trap_integral(
+                    photon_integrand, e1, e2, **param_specification
+                ),
+                "energy_flux": lambda e1, e2, **param_specification: trap_integral(
+                    energy_integrand, e1, e2, **param_specification
+                ),
+                "nufnu_flux": lambda e1, e2, **param_specification: trap_integral(
+                    nufnu_integrand, e1, e2, **param_specification
+                ),
+            }
+        elif threeML_config.point_source.integrate_flux_method == IntegrateMethod.quad:
+            
+            self._model_builder = {
+                "photon_flux": lambda e1, e2, **param_specification: integrate.quad(
+                    photon_integrand, e1, e2, args=(param_specification)
+                )[0],
+                "energy_flux": lambda e1, e2, **param_specification: integrate.quad(
+                    energy_integrand, e1, e2, args=(param_specification)
+                )[0],
+                "nufnu_flux": lambda e1, e2, **param_specification: integrate.quad(
+                    nufnu_integrand, e1, e2, args=(param_specification)
+                )[0],
+            }
 
-        super(IntegralFluxConversion, self).__init__(flux_unit, energy_unit, flux_model)
+        else:
+
+            log.error("This is not a valid integratio method")
+
+            raise RuntimeError
+            
+        super(IntegralFluxConversion, self).__init__(
+            flux_unit, energy_unit, flux_model)
 
 
 class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):

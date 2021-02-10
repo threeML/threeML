@@ -83,7 +83,7 @@ def test_assigning_source_name():
 
     jl = JointLikelihood(model, DataList(spectrum_generator))
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(RuntimeError):
 
         spectrum_generator.assign_to_source("bad_name")
 
@@ -99,7 +99,7 @@ def test_assigning_source_name():
 
     spectrum_generator.assign_to_source("bad_name")
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(RuntimeError):
 
         jl = JointLikelihood(model, DataList(spectrum_generator))
 

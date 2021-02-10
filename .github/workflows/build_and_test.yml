@@ -54,6 +54,7 @@ jobs:
               run: |
                   python -m pytest -vv --cov=threeML --cov-report=xml
               env:
+                  PYTEST_ADDOPTS: "--color=yes"
                   OMP_NUM_THREADS: 1
                   MKL_NUM_THREADS: 1
                   NUMEXPR_NUM_THREADS: 1
@@ -156,13 +157,13 @@ jobs:
                   # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
                   flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
- 
             - name: test it
               shell: bash -l {0}
               run: |
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
+                  PYTEST_ADDOPTS: "--color=yes"
                   OMP_NUM_THREADS: 1
                   MKL_NUM_THREADS: 1
                   NUMEXPR_NUM_THREADS: 1
@@ -318,14 +319,15 @@ jobs:
                   fi
 
                   conda install --use-local -c conda-forge threeml
-            
+
             - name: Test conda build
               shell: bash -l {0}
               run: |
-              
+
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
+                  PYTEST_ADDOPTS: "--color=yes"
                   OMP_NUM_THREADS: 1
                   MKL_NUM_THREADS: 1
                   NUMEXPR_NUM_THREADS: 1

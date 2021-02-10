@@ -23,12 +23,14 @@ While we have covered most of the functionality of RandomVariates in the Analysi
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
-
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 
 
 ```python
+%%capture
 import matplotlib.pyplot as plt
 from threeML import *
 ```
