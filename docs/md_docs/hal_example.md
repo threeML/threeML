@@ -81,6 +81,7 @@ Some parameters of note:
 `hawc.set_active_measurements(1, 9)`: HAWC divides its data in general *analysis bins*, each labeled with a string. The dataset provided here uses 9 bins labeled with integers from 1 to 9 and binned according to the fraction of PMTs hit by a particular shower, which is correlated to the energy of the primary particle. See [Abeysekara et al., 2017](https://iopscience.iop.org/article/10.3847/1538-4357/aa7555/meta) for details about the meaning of the bins. There are two ways to set the 'active' bins (bins to be considered for the fit) in the `HAL` plugin: `set_active_measurement(bin_id_min=1, bin_id_max=9)` (can only be used with numerical bins) and `set_active_measurement(bin_list=[1,2,3,4,5,6,7,8,9])`.
 
 ```python
+%%capture
 from hawc_hal import HAL, HealpixConeROI
 import matplotlib.pyplot as plt
 from threeML import *

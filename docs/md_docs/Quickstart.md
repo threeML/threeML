@@ -32,6 +32,7 @@ np.seterr(all="ignore")
 
 
 ```python
+%%capture
 from threeML import *
 ```
 

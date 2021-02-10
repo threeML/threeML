@@ -27,6 +27,7 @@ np.seterr(all="ignore")
 
 
 ```python
+%%capture
 import matplotlib.pyplot as plt
 
 np.random.seed(12345)

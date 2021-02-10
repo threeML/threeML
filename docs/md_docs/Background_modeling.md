@@ -56,6 +56,7 @@ np.seterr(all="ignore")
 
 
 ```python deletable=true editable=true
+%%capture
 from threeML import *
 
 ```

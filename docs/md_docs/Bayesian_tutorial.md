@@ -42,6 +42,7 @@ np.seterr(all="ignore")
 
 
 ```python
+%%capture
 from threeML import *
 from threeML.bayesian.tutorial_material import *
 ```

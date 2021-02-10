@@ -29,6 +29,7 @@ np.seterr(all="ignore")
 
 
 ```python
+%%capture
 from threeML import threeML_config, show_configuration
 
 show_configuration()

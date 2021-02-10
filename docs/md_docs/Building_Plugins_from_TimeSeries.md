@@ -21,6 +21,7 @@ warnings.simplefilter('ignore')
 
 
 ```python
+%%capture
 import matplotlib.pyplot as plt
 import numpy as np
 np.seterr(all="ignore")

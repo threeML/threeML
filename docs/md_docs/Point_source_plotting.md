@@ -30,6 +30,7 @@ np.seterr(all="ignore")
 
 
 ```python
+%%capture
 import matplotlib.pyplot as plt
 
 import astropy.units as u

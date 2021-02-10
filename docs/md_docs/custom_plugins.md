@@ -214,6 +214,7 @@ Let's build a simple (and useless) plugin to see how the process works. First, w
 <!-- #endregion -->
 
 ```python
+%%capture
 from threeML import PluginPrototype
 ```
 

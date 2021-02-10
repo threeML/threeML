@@ -34,6 +34,7 @@ np.seterr(all="ignore")
 
 
 ```python
+%%capture
 import matplotlib.pyplot as plt
 from pathlib import Path
 from threeML import *

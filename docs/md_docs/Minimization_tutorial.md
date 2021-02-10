@@ -42,6 +42,7 @@ warnings.simplefilter('ignore')
 
 
 ```python
+%%capture
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 

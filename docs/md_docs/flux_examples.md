@@ -38,6 +38,7 @@ warnings.simplefilter("ignore")
 ```
 
 ```python
+%%capture
 import matplotlib.pyplot as plt
 import numpy as np
 np.seterr(all="ignore")
@@ -201,7 +202,7 @@ ax = fig.get_axes()[0]
 ax.set_ylim(1e-6)
 ```
 
-Lets grab the result. Rememer, we can save the results to disk, so all of the following ooperations can be run at a later time without having to redo all the above steps!
+Lets grab the result. Remember, we can save the results to disk, so all of the following operations can be run at a later time without having to redo all the above steps!
 
 ```python
 result = ba.results
@@ -212,7 +213,7 @@ result.corner_plot();
 
 Now we will compute fluxes. We can compute them an many different units, over any energy range also specified in any units. 
 
-The flux is computed by integrating the function over energy. By defualt, a fast trapazoid method is used. If you need more accuracy, you can change the method int he configuration.
+The flux is computed by integrating the function over energy. By default, a fast trapezoid method is used. If you need more accuracy, you can change the method in the configuration.
 
 
 ```python

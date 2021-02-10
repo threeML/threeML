@@ -37,6 +37,7 @@ import matplotlib.pyplot as plt
 ```
 
 ```python nbsphinx="hidden"
+%%capture
 from threeML import set_threeML_style
 from jupyterthemes import jtplot
 %matplotlib inline

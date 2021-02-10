@@ -33,6 +33,7 @@ np.seterr(all="ignore")
 
 
 ```python
+%%capture
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 from threeML import *
