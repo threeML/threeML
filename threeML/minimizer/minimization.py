@@ -1381,6 +1381,18 @@ except ImportError:
 else:
 
     _minimizers["SCIPY"] = ScipyMinimizer
+try:
+
+    from threeML.minimizer.pyswarms_minimizer import PySwarmsMinimizer
+
+except ImportError:
+    if threeML_config.logging.startup_warnings:
+        log.warning("PySwarms minimizer is not available")
+
+else:
+
+    _minimizers["PYSWARMS"] = PySwarmsMinimizer
+
 
 # Check that we have at least one minimizer available
 

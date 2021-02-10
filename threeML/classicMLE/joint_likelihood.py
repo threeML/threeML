@@ -291,13 +291,13 @@ class JointLikelihood(object):
                 if not quiet:
 
                     log.info(
-                        "\n\nResults after global minimizer (before secondary optimization):"
+                        "Results after global minimizer (before secondary optimization):"
                     )
 
                     global_results.display()
 
                     log.info(
-                        "\nTotal log-likelihood minimum: %.3f\n"
+                        "Total log-likelihood minimum: %.3f"
                         % global_log_likelihood_minimum
                     )
 

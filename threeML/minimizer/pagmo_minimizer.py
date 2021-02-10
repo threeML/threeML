@@ -7,9 +7,11 @@ from threeML.utils.progress_bar import tqdm, trange
 
 from threeML.minimizer.minimization import GlobalMinimizer
 from threeML.parallel.parallel_client import is_parallel_computation_active
-
+from threeML.io.logging import setup_logger
 import pygmo as pg
 
+
+log = setup_logger(__name__)
 
 class PAGMOWrapper(object):
     def __init__(self, function, parameters, dim):
@@ -25,10 +27,10 @@ class PAGMOWrapper(object):
 
             if cur_min is None or cur_max is None:
 
-                raise RuntimeError(
-                    "In order to use the PAGMO minimizer, you have to provide a minimum and a "
-                    "maximum for all parameters in the model."
-                )
+                log.error("In order to use the PAGMO minimizer, you have to provide a minimum and a "
+                    "maximum for all parameters in the model.")
+                
+                raise RuntimeError( )
 
             minima.append(cur_min)
             maxima.append(cur_max)
