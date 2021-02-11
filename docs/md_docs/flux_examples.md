@@ -185,7 +185,7 @@ data = DataList(spectrum_generator_1, spectrum_generator_2)
 
 ## Fitting the data
 
-Now we fit the data as we normally would. We use Bayesina analysis here.
+Now we fit the data as we normally would. We use Bayesian analysis here.
 
 ```python
 ba = BayesianAnalysis(model, data)
@@ -204,9 +204,9 @@ ax.set_ylim(1e-6)
 
 Lets grab the result. Remember, we can save the results to disk, so all of the following operations can be run at a later time without having to redo all the above steps!
 
-```python
+```python tags=["nbsphinx-thumbnail"]
 result = ba.results
-result.corner_plot();
+fig = result.corner_plot();
 ```
 
 ## Computing fluxes

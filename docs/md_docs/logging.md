@@ -39,6 +39,7 @@ np.seterr(all="ignore")
 
 
 ```python
+%%capture
 from threeML import threeML_config
 
 threeML_config["logging"]
