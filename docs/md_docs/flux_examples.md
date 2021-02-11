@@ -183,32 +183,6 @@ Now we simply make our our data list
 data = DataList(spectrum_generator_1, spectrum_generator_2)
 ```
 
-## Fitting the data
-
-Now we fit the data as we normally would. We use Bayesina analysis here.
-
-```python
-ba = BayesianAnalysis(model, data)
-ba.set_sampler("ultranest")
-ba.sampler.setup(frac_remain=0.5)
-_ = ba.sample()
-```
-
-Let's examine the fits.
-
-```python
-fig = display_spectrum_model_counts(ba);
-ax = fig.get_axes()[0]
-ax.set_ylim(1e-6)
-```
-
-Lets grab the result. Remember, we can save the results to disk, so all of the following operations can be run at a later time without having to redo all the above steps!
-
-```python
-result = ba.results
-result.corner_plot();
-```
-
 ## Computing fluxes
 
 Now we will compute fluxes. We can compute them an many different units, over any energy range also specified in any units. 
@@ -272,3 +246,29 @@ flux["flux"]
 ```python
 flux["flux"]["src1: total"]
 ```
+## Fitting the data
+
+Now we fit the data as we normally would. We use Bayesina analysis here.
+
+```python
+ba = BayesianAnalysis(model, data)
+ba.set_sampler("ultranest")
+ba.sampler.setup(frac_remain=0.5)
+_ = ba.sample()
+```
+
+Let's examine the fits.
+
+```python
+fig = display_spectrum_model_counts(ba);
+ax = fig.get_axes()[0]
+ax.set_ylim(1e-6)
+```
+
+Lets grab the result. Remember, we can save the results to disk, so all of the following operations can be run at a later time without having to redo all the above steps!
+
+```python tags=["nbsphinx-thumbbail"]
+result = ba.results
+fig = result.corner_plot();
+```
+
