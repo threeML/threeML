@@ -123,8 +123,8 @@ def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_m
     gtselect['rad'] = 'INDEF'
     gtselect['tmin'] = 'INDEF'
     gtselect['tmax'] = 'INDEF'
-    gtselect['emin'] = '%3f' % Emin
-    gtselect['emax'] = '%3f' % Emax
+    gtselect['emin'] = '%.3f' % Emin
+    gtselect['emax'] = '%.3f' % Emax
     gtselect['zmax'] = 180
     gtselect.run()
     return outfile
@@ -257,8 +257,18 @@ def download_LAT_data(
     query_parameters["destination"] = "query"
     query_parameters["spacecraft"] = "checked"
 
+    # Print them out
+
+    log.info("Query parameters:")
+
+    for k, v in query_parameters.items():
+
+        log.info("%30s = %s" % (k, v))
+
+
     # Compute a unique ID for this query
     query_unique_id = get_unique_deterministic_tag(str(query_parameters))
+    log.info( "Query ID: %s" % query_unique_id)
 
     # Look if there are FT1 and FT2 files in the output directory matching this unique ID
 
@@ -314,17 +324,12 @@ def download_LAT_data(
                 prev_downloaded_ft1s,
                 destination_directory,
                 outfile="L%s_FT1.fits" % query_unique_id,
+                Emin = Emin,
+                Emax = Emax
             ),
             prev_downloaded_ft2,
         )
 
-    # Print them out
-
-    log.info("Query parameters:")
-
-    for k, v in query_parameters.items():
-
-        log.info("%30s = %s" % (k, v))
 
     # POST encoding
 
@@ -561,9 +566,11 @@ def download_LAT_data(
 
     return (
         merge_LAT_data(
-            FT1, destination_directory, outfile="L%s_FT1.fits" % query_unique_id
+            FT1,
+            destination_directory,
+            outfile="L%s_FT1.fits" % query_unique_id,
+            Emin = Emin,
+            Emax = Emax
         ),
-        FT2,
-        Emin,
-        Emax
+        FT2
     )
