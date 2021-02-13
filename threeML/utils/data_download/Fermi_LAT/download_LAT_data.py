@@ -80,7 +80,7 @@ class DivParser(html.parser.HTMLParser):
 _uid_fits_keyword = "QUERYUID"
 
 
-def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_merged.fits') -> Path:
+def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_merged.fits', Emin: float = 30.0, Emax: float = 1e6) -> Path:
 
     outfile: Path = Path(destination_directory) / outfile
 
@@ -108,7 +108,7 @@ def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_m
     infile_list = infile.open('w')
 
     for ft1 in ft1s:
-        infile_list.write(ft1 + '\n')
+        infile_list.write(str(ft1) + '\n')
 
     infile_list.close()
 
@@ -116,15 +116,15 @@ def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_m
 
     gtselect = GtApp('gtselect')
 
-    gtselect['infile'] = '@' + infile
-    gtselect['outfile'] = outfile
+    gtselect['infile'] = '@' + str(infile)
+    gtselect['outfile'] = str(outfile)
     gtselect['ra'] = 'INDEF'
     gtselect['dec'] = 'INDEF'
     gtselect['rad'] = 'INDEF'
     gtselect['tmin'] = 'INDEF'
     gtselect['tmax'] = 'INDEF'
-    gtselect['emin'] = '30'
-    gtselect['emax'] = '1000000'
+    gtselect['emin'] = '%3f' % Emin
+    gtselect['emax'] = '%3f' % Emax
     gtselect['zmax'] = 180
     gtselect.run()
     return outfile
@@ -139,6 +139,8 @@ def download_LAT_data(
     time_type: str,
     data_type: str = "Photon",
     destination_directory: str = ".",
+    Emin: float = 30.,
+    Emax: float = 1000000.
 ) -> Path:
     """
     Download data from the public LAT data server (of course you need a working internet connection). Data are
@@ -161,6 +163,8 @@ def download_LAT_data(
     :param data_type: type of data to download. Use Photon if you use Source or cleaner classes, Extended otherwise.
     Default is Photon.
     :param destination_directory: directory where you want to save the data (default: current directory)
+    :param Emin: minimum photon energy (in MeV) to download (default: 30 MeV, must be between 30 and 1e6 MeV)
+    :param Emax: maximum photon energy (in MeV) to download (default: 1e6 MeV, must be betwen 30 and 1e6 MeV )
     :return: the path to the downloaded FT1 and FT2 file
     """
     _known_time_types = ["MET", "Gregorian", "MJD"]
@@ -198,6 +202,30 @@ def download_LAT_data(
         )
         raise ValueError()
 
+    fermiEmin = 30
+    fermiEmax = 1e6
+    
+    if Emin < fermiEmin:
+        log.warning( f"Setting Emin from {Emin} to 30 MeV (minimum available energy for Fermi-LAT data)" )
+        Emin = fermiEmin
+        
+    if Emin > fermiEmax:
+        log.warning( f"Setting Emin from {Emin} to 1 TeV (maximum available energy for Fermi-LAT data)" )
+        Emin = fermiEmax
+    
+    if Emax < fermiEmin:
+        log.warning( f"Setting Emax from {Emax} to 30 MeV (minimum available energy for Fermi-LAT data)" )
+        Emax = fermiEmin
+        
+    if Emax > fermiEmax:
+        log.warning( f"Setting Emax from {Emax} to 1 TeV (maximum available energy for Fermi-LAT data)" )
+        Emax = fermiEmax
+
+    if Emin >= Emax:
+        log.error( f"Minimum energy ({Emin}) must be less than maximum energy ({Emax}) for download." )
+        raise ValueError()
+        
+
     # create output directory if it does not exists
     destination_directory = sanitize_filename(
         destination_directory, abspath=True)
@@ -224,9 +252,7 @@ def download_LAT_data(
     query_parameters["shapefield"] = "%s" % radius
     query_parameters["timefield"] = "%s,%s" % (tstart, tstop)
     query_parameters["timetype"] = "%s" % time_type
-    query_parameters[
-        "energyfield"
-    ] = "30,1000000"  # Download everything, we will chose later
+    query_parameters["energyfield"] = "%.3f,%.3f" % (Emin, Emax)
     query_parameters["photonOrExtendedOrNone"] = data_type
     query_parameters["destination"] = "query"
     query_parameters["spacecraft"] = "checked"
@@ -538,4 +564,6 @@ def download_LAT_data(
             FT1, destination_directory, outfile="L%s_FT1.fits" % query_unique_id
         ),
         FT2,
+        Emin,
+        Emax
     )
