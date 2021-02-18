@@ -122,7 +122,7 @@ then:
 
 ```bash
 > pip install numpy scipy ipython astropy numba cython
-> pip install git+https://github.com/threeML/3ML.git 
+> pip install git+https://github.com/threeML/threeml.git 
 > pip install git+https://github.com/threeML/astromodels.git --upgrade
 ```
 
@@ -147,6 +147,3 @@ Please inform us if you have problems related to your FORTRAN distribution.
 
 <!-- #endregion -->
 
-```python
-
-```
