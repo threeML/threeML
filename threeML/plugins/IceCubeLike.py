@@ -25,11 +25,11 @@ from threeML.plugin_prototype import PluginPrototype
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from astromodels import PointSource,ExtendedSource
 import astropy.units as u
-from mla import models
-from mla import spectral
-from mla import analysis
-from mla import injectors
-from mla import time_profiles
+import mla.time_profiles
+import mla.threeml.models
+import mla.analysis
+import mla.sources
+import mla.threeml.test_statistics
 __instrument_name = "IceCube"
 
 __all__=["NeutrinoPointSource","NeutrinoExtendedSource"]
@@ -266,12 +266,16 @@ class Spectrum(object):
 
 class IceCubeLike(PluginPrototype):
 
-    def __init__(self,name, exp, mc, grl , background, signal_time_profile = (50000,70000),
-                background_time_profile = (50000,70000),background_window = 14, fit_position = False, verbose=False, **kwargs):
+    def __init__(self, name, data, sim, grl , exp, signal_time_profile = (50000,70000),
+                 background_time_profile = (50000,70000), background_window = 14, withinwindow = False ,
+                 fix_flux_norm = False,
+                 fit_position = False, verbose=False, testsource = None,
+                 test_background_time_profile = (50000,70000),
+                 test_signal_time_profile = (50000,70000), **kwargs):
         r"""Constructor of the class.
         Args:
-            exp:data
-            mc: Monte Carlo
+            data:background data
+            sim: Monte Carlo
             grl: Good run list
             background: Background
             signal_time_profile: Signal time profile object.Same as background_time_profile if None.
@@ -283,25 +287,45 @@ class IceCubeLike(PluginPrototype):
         nuisance_parameters = {}
         super(IceCubeLike, self).__init__(name, nuisance_parameters)
         self.parameter = kwargs
-        self.event_model = models.ThreeMLEventModel(background, mc, grl, **kwargs)
-        self.verbose = verbose
-        self.dec = None
-        self.ra = None
-        injector = injectors.TimeDependentPsInjector(source = {'ra':np.pi/2,'dec': np.pi/6})
+        self.fix_flux_norm = fix_flux_norm
+        if testsource is not None:
+            self.source = mla.sources.Source("TXS",np.deg2rad(77.3583),np.deg2rad(5.6931))
+        else:
+            self.source = testsource
         
         if not issubclass(type(background_time_profile) ,time_profiles.GenericProfile):
-            background_time_profile = time_profiles.UniformProfile(background_time_profile[0],
-                                                                   background_time_profile[1])
+            background_time_profile = mla.time_profiles.UniformProfile(background_time_profile[0],
+                                                                       background_time_profile[1])
         if not issubclass(type(signal_time_profile) ,time_profiles.GenericProfile):
-            signal_time_profile = time_profiles.UniformProfile(signal_time_profile[0],
-                                                               signal_time_profile[1])    
-                                                               
-        injector.set_background_profile(self.event_model,background_time_profile,background_window)
-        injector.set_signal_profile(signal_time_profile)
-        self.Analysis = analysis.ThreeMLPsAnalysis(injector = injector)
-        self.Analysis.set_data(exp)
-        self.test_signal_time_profile = None
-        self.test_background_time_profile = None
+            signal_time_profile = mla.time_profiles.UniformProfile(signal_time_profile[0],
+                                                                   signal_time_profile[1])   
+        if not issubclass(type(test_signal_time_profile) ,time_profiles.GenericProfile):
+            test_signal_time_profile = time_profiles.UniformProfile(test_signal_time_profile[0],
+                                                                    test_signal_time_profile[1])
+        if not issubclass(type(test_background_time_profile) ,time_profiles.GenericProfile):
+            test_background_time_profile = time_profiles.UniformProfile(test_background_time_profile[0],
+                                                                        test_background_time_profile[1]) 
+        self.test_signal_time_profile = test_signal_time_profile
+        self.test_background_time_profile = test_background_time_profile                                                       
+        event_model = mla.threemlmodels.ThreeMLEventModel(self.source, 
+                                                          data, 
+                                                          sim, 
+                                                          grl, 
+                                                          None,
+                                                          background_time_profile,
+                                                          signal_time_profile,
+                                                          withinwindow = withinwindow
+                                                          **kwargs)
+        self.verbose = verbose
+        ts_preprocessor = mla.threeml.test_statistics.TdPreprocessor(sig_time_profile = signal_time_profile,
+                                                                     bg_time_profile = background_time_profile)
+        test_statistic = mla.threeml.test_statistics.threeml_ps_test_statistic     
+        self.analysis = mla.analysis.Analysis(event_model,ts_preprocessor,test_statistic,self.source)
+        self.preprocessing = self.analysis.test_statistic.ts_preprocessor(self.analysis.model,
+                                                                          self.analysis.source,
+                                                                          self._data,
+                                                                          self.test_signal_time_profile,
+                                                                          self.test_background_time_profile)
         return
         
     def set_model(self, likelihood_model_instance ):
@@ -315,21 +339,23 @@ class IceCubeLike(PluginPrototype):
                 self.source_name = source_name
                 ra = source.position.get_ra()
                 dec = source.position.get_dec()
-                ra = ra*np.pi/180 #convert it to radian
-                dec = dec*np.pi/180 #convert it to radian
                 if self.ra == ra and self.dec == dec :
                     pass
                 else:
                     self.ra = ra
                     self.dec = dec
-                    self.Analysis.injector.set_position(ra,dec)
-                    self.event_model.update_position(ra,dec)
-                    spectrum = Spectrum(likelihood_model_instance)
-                    self.event_model.update_model(spectrum)
-            self.model=likelihood_model_instance
-            #self.source_name=likelihood_model_instance.get_point_source_name(id=0)
-            #self.spectrum=Spectrum(likelihood_model_instance)
-            #self.llh_model.update_spectrum(self.spectrum)
+                    self.analysis.source.r_asc = np.deg2rad(ra)
+                    self.analysis.source.dec = np.deg2rad(dec)
+                    self.analysis.source.name = source_name
+                    self.analysis.model._init_reduced_sim(self.analysis.source)
+                    self.analysis.model._init_reduced_sim_reconstructed(self.analysis.source)
+                    self.analysis.model._init_sob_ratio(self.analysis.source)
+                    self.analysis.model._spectrum = spectrum
+            self.preprocessing = self.analysis.test_statistic.ts_preprocessor(self.analysis.model,
+                                                                              self.analysis.source,
+                                                                              self._data,
+                                                                              self.test_signal_time_profile,
+                                                                              self.test_background_time_profile)
                 
 
         if self.source_name is None:
@@ -338,44 +364,85 @@ class IceCubeLike(PluginPrototype):
 
     def set_test_time_profile(self,
                               test_signal_time_profile:Optional[time_profiles.GenericProfile],
-                              test_background_time_profile:Optional[time_profiles.GenericProfile]):
+                              test_background_time_profile:Optional[time_profiles.GenericProfile]) -> None:
         """ set the time profile for eval ts so it is not using injector's time profile"""
+        if not issubclass(type(test_signal_time_profile) ,time_profiles.GenericProfile):
+            test_signal_time_profile = time_profiles.UniformProfile(test_signal_time_profile[0],
+                                                                    test_signal_time_profile[1])
+        if not issubclass(type(test_background_time_profile) ,time_profiles.GenericProfile):
+            test_background_time_profile = time_profiles.UniformProfile(test_background_time_profile[0],
+                                                                        test_background_time_profile[1]) 
         self.test_signal_time_profile = test_signal_time_profile
         self.test_background_time_profile = test_background_time_profile
     
         
-    def inject_background_and_signal(self,nsignal = None, spectrum = None):
+    def inject_background_and_signal(self, **kwargs) -> None:
+        """docstring"""
+        self.analysis.model.events = mla.analysis.produce_trial(self.analysis, flux_norm = 1, **kwargs)
+        self.preprocessing = self.analysis.test_statistic.ts_preprocessor(self.analysis.model,
+                                                                          self.analysis.source,
+                                                                          self._data,
+                                                                          self.test_signal_time_profile,
+                                                                          self.test_background_time_profile)
+        return 
 
-        data = self.Analysis.produce_trial(self.event_model, spectrum = spectrum, nsignal=nsignal)
-          
-        self.set_data(data)
-        return
-    
-    
-        
+    def update_data(self, data) -> None:
+        """docstring"""
+        self.analysis.model.events = data
+        self.preprocessing = self.analysis.test_statistic.ts_preprocessor(self.analysis.model,
+                                                                          self.analysis.source,
+                                                                          self._data,
+                                                                          self.test_signal_time_profile,
+                                                                          self.test_background_time_profile)
+        return         
+ 
     def update_model(self):   
-        self.spectrum=Spectrum(self.model)
-        self.event_model.update_model(self.spectrum)    
-        #self.llh_model.update_energy_weight()
+        spectrum=Spectrum(self.model)
+        self.event_model._spectrum = self.spectrum  
         return
     
-    def set_data(self,data):
-        self.Analysis.set_data(data)
-        return
     
     def get_log_like(self):
         self.update_model()
-        llh=self.Analysis.calculate_TS(self.event_model,
-                                       test_signal_time_profile=self.test_signal_time_profile,
-                                       test_background_time_profile=self.test_background_time_profile)
-        if self.verbose:
-            print(llh)
-        return llh[0]
+        if self.fix_flux_norm:
+            llh=self.analysis.test_statistic(None,
+                                             self.preprocessing)
+            if self.verbose:
+                ns = self.analysis.test_statistic(None,
+                                                  self.preprocessing,
+                                                  return_ns = True)
+                print(ns, llh)
+        else:
+            ns = self.event_model._spectrum(self.event_model._reduced_sim['trueE']
+                 ) * self.event_model._reduced_sim['trueE'] * self.event_model.background_time_profile.exposure
+            test_params = np.array([(ns)],dtype=[('ns', 'f8')]).reshape((1,1))
+            llh=self.analysis.test_statistic(test_params,
+                                             self.preprocessing)   
+            if self.verbose:
+                print(ns, llh)    
+                
+        return llh
         
     def inner_fit(self):
         return self.get_log_like()
 
+    @property
+    def data(self) -> np.ndarray:
+        """Getter for data.
+        """
+        return self._data
 
+    @property
+    def ra(self) -> float:
+        """Getter for ra.
+        """
+        return self._ra
+        
+    @property
+    def dec(self) -> float:
+        """Getter for ra.
+        """
+        return self._dec
 
 """
 class sensitivity(object):
