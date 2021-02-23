@@ -1,9 +1,9 @@
-import numpy as np
 import abc
 import collections
 import math
-from future.utils import with_metaclass
 
+import numpy as np
+from future.utils import with_metaclass
 
 try:
 
@@ -25,23 +25,37 @@ except:
     using_mpi = False
 
 
-from threeML.analysis_results import BayesianResults
-from threeML.utils.statistics.stats_tools import aic, bic, dic
-from threeML.exceptions.custom_exceptions import LikelihoodIsInfinite, custom_warnings
+from astromodels.core.model import Model
 from astromodels.functions.function import ModelAssertionViolation
 
+from threeML.analysis_results import BayesianResults
+from threeML.data_list import DataList
+from threeML.exceptions.custom_exceptions import (LikelihoodIsInfinite,
+                                                  custom_warnings)
+from threeML.io.logging import setup_logger
+from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
+from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.utils.numba_utils import nb_sum
+from threeML.utils.statistics.stats_tools import aic, bic, dic
+from threeML.utils.spectrum.share_spectrum import ShareSpectrum
+
+log = setup_logger(__name__)
+
+
 class SamplerBase(with_metaclass(abc.ABCMeta, object)):
-    def __init__(self, likelihood_model=None, data_list=None, **kwargs):
+    def __init__(self, likelihood_model: Model, data_list: DataList, **kwargs):
         """
 
         The base class for all bayesian samplers. Provides a common interface
-        to access samples and byproducts of fits. 
+        to access samples and byproducts of fits.
 
 
         :param likelihood_model: the likelihood model
-        :param data_list: the data list 
-        :returns: 
-        :rtype: 
+        :param data_list: the data list
+        :param share_spectrum: (optional) Should the spectrum be shared between detectors
+        with the same input energy bins?
+        :returns:
+        :rtype:
 
         """
 
@@ -53,75 +67,24 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         self._results = None
         self._is_setup = False
         self._is_registered = False
-
-        if (likelihood_model is not None) and (data_list is not None):
-
-            self._register_model_and_data(likelihood_model, data_list)
-
-    def set_model_and_data(self, likelihood_model, data_list):
-        """
-
-        set the likelihood model and data list after instantiation
-
-        :param likelihood_model: the likelihood model
-        :param data_list: the data list
-        :returns: 
-        :rtype: 
-
-        """
-
-        self._register_model_and_data(likelihood_model, data_list)
-
-    def _register_model_and_data(self, likelihood_model, data_list):
-        """
-
-        make sure the model and data list are set up
-
-        :param likelihood_model: 
-        :param data_list: 
-        :returns: 
-        :rtype: 
-
-        """
-
-        # Verify that all the free parameters have priors
-        for parameter_name, parameter in likelihood_model.free_parameters.items():
-
-            if not parameter.has_prior():
-                raise RuntimeError(
-                    "You need to define priors for all free parameters before instancing a "
-                    "Bayesian analysis"
-                )
-
-        # Process optional keyword parameters
-
-        self._verbose = False
-
         self._likelihood_model = likelihood_model
-
         self._data_list = data_list
 
-        for dataset in list(self._data_list.values()):
+        self._n_plugins = len(list(self._data_list.keys()))
 
-            dataset.set_model(self._likelihood_model)
-
-            # Now get the nuisance parameters from the data and add them to the model
-            # NOTE: it is important that this is *after* the setting of the model, as some
-            # plugins might need to adjust the number of nuisance parameters depending on the
-            # likelihood model
-
-            for parameter_name, parameter in list(dataset.nuisance_parameters.items()):
-                # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
-                # of the same plugin will overwrite each other's nuisance parameters
-
-                assert dataset.name in parameter_name, (
-                    "This is a bug of the plugin for %s: nuisance parameters "
-                    "must contain the instance name" % type(dataset)
-                )
-
-                self._likelihood_model.add_external_parameter(parameter)
-
-        self._is_registered = True
+        # Share spectrum flag if the spectrum should only be calculated
+        # once when different data_list entries have the same input energy bins.
+        # Can speed up the fits a lot if many similar detectors are used.
+        if "share_spectrum" in kwargs:
+            self._share_spectrum = kwargs["share_spectrum"]
+            assert (
+                type(self._share_spectrum) == bool
+            ), "share_spectrum must be False or True."
+            if self._share_spectrum:
+                self._share_spectrum_object = ShareSpectrum(self._data_list)
+                log.debug("Share spectrum has been initalized")
+        else:
+            self._share_spectrum = False
 
     @abc.abstractmethod
     def setup(self):
@@ -194,12 +157,12 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         """
         Sets the model parameters to the mean of the marginal distributions
         """
-
+        idx = self._log_probability_values.argmax()
         for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
-            # Add the samples for this parameter for this source
 
-            mean_par = np.median(self._samples[parameter_name])
-            parameter.value = mean_par
+            par = self._samples[parameter_name][idx]
+
+            parameter.value = par
 
     def _build_samples_dictionary(self):
         """
@@ -219,8 +182,8 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         """
         build the results after a fit is performed
 
-        :returns: 
-        :rtype: 
+        :returns:
+        :rtype:
 
         """
 
@@ -264,10 +227,12 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
         # compute the point estimates
 
         statistical_measures["AIC"] = aic(
-            total_log_posterior, len(self._free_parameters), total_n_data_points
+            total_log_posterior, len(
+                self._free_parameters), total_n_data_points
         )
         statistical_measures["BIC"] = bic(
-            total_log_posterior, len(self._free_parameters), total_n_data_points
+            total_log_posterior, len(
+                self._free_parameters), total_n_data_points
         )
 
         this_dic, pdic = dic(self)
@@ -369,11 +334,45 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
         try:
 
-            # Loop over each dataset and get the likelihood values for each set
+            log_like_values = np.zeros(self._n_plugins)
 
-            log_like_values = [
-                dataset.get_log_like() for dataset in list(self._data_list.values())
-            ]
+            # Loop over each dataset and get the likelihood values for each set
+            if not self._share_spectrum:
+                # Old way; every dataset independendly - This is fine if the
+                # spectrum calc is fast.
+
+                for i, dataset in enumerate(self._data_list.values()):
+
+                    log_like_values[i] = dataset.get_log_like()
+
+            else:
+                # If the calculation for the input spectrum of one of the sources is expensive
+                # we want to avoid calculating the same thing several times.
+
+                # Precalc the spectrum for all different Ebin_in that are used in the plugins
+                precalc_fluxes = []
+
+                for base_key, e_edges in zip(self._share_spectrum_object.base_plugin_key,
+                                            self._share_spectrum_object.data_ein_edges):
+                    if e_edges is None:
+                        precalc_fluxes.append(None)
+                    else:
+                        precalc_fluxes.append(
+                            self._data_list[base_key]._integral_flux()
+                        )
+
+                # Use these precalculated spectra to get the log_like for all plugins
+                for i, dataset in enumerate(list(self._data_list.values())):
+                    # call get log_like with precalculated spectrum
+                    if self._share_spectrum_object.data_ein_edges[
+                            self._share_spectrum_object.data_ebin_connect[i]] is not None:
+                        log_like_values[i] = dataset.get_log_like(
+                            precalc_fluxes=precalc_fluxes[
+                                self._share_spectrum_object.data_ebin_connect[i]
+                            ]
+                        )
+                    else:
+                        log_like_values[i] = dataset.get_log_like()
 
         except ModelAssertionViolation:
 
@@ -389,14 +388,13 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
         # Sum the values of the log-like
 
-        log_like = np.sum(log_like_values)
+        log_like = nb_sum(log_like_values)
 
         if not np.isfinite(log_like):
             # Issue warning
 
-            custom_warnings.warn(
+            log.warning(
                 "Likelihood value is infinite for parameters %s" % trial_values,
-                LikelihoodIsInfinite,
             )
 
             return -np.inf
@@ -407,7 +405,8 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 class MCMCSampler(SamplerBase):
     def __init__(self, likelihood_model, data_list, **kwargs):
 
-        super(MCMCSampler, self).__init__(likelihood_model, data_list, **kwargs)
+        super(MCMCSampler, self).__init__(
+            likelihood_model, data_list, **kwargs)
 
     def _get_starting_points(self, n_walkers, variance=0.1):
 
@@ -433,7 +432,8 @@ class MCMCSampler(SamplerBase):
 class UnitCubeSampler(SamplerBase):
     def __init__(self, likelihood_model, data_list, **kwargs):
 
-        super(UnitCubeSampler, self).__init__(likelihood_model, data_list, **kwargs)
+        super(UnitCubeSampler, self).__init__(
+            likelihood_model, data_list, **kwargs)
 
     def _construct_unitcube_posterior(self, return_copy=False):
         """
@@ -453,13 +453,13 @@ class UnitCubeSampler(SamplerBase):
 
             log_like = self._log_like(trial_values)
 
-            if self._verbose:
-                n_par = len(self._free_parameters)
+            # if self._verbose:
+            #     n_par = len(self._free_parameters)
 
-                print(
-                    "Trial values %s gave a log_like of %s"
-                    % (["%.2g" % trial_values[i] for i in range(n_par)], log_like)
-                )
+            #     print(
+            #         "Trial values %s gave a log_like of %s"
+            #         % (["%.2g" % trial_values[i] for i in range(n_par)], log_like)
+            #     )
 
             return log_like
 

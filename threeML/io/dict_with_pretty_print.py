@@ -27,4 +27,4 @@ class DictWithPrettyPrint(collections.OrderedDict):
 
         string_repr = self.__str__()
 
-        return '<pre>%s</pre>' % string_repr
+        return "<pre>%s</pre>" % string_repr

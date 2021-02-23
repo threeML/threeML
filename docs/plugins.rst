@@ -14,3 +14,4 @@ Contents:
    notebooks/Building_Plugins_from_TimeSeries.ipynb
    notebooks/Background_modeling.ipynb
    notebooks/Photometry_demo.ipynb
+   notebooks/hal_example.ipynb

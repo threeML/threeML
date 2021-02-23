@@ -3,7 +3,7 @@ from builtins import map
 from astromodels import Model, PointSource, Uniform_prior, Log_uniform_prior
 from threeML.data_list import DataList
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
-from threeML.minimizer.tutorial_material import Simple, Complex,  CustomLikelihoodLike
+from threeML.minimizer.tutorial_material import Simple, Complex, CustomLikelihoodLike
 
 from astromodels import use_astromodels_memoization
 
@@ -31,7 +31,6 @@ class BayesianAnalysisWrap(BayesianAnalysis):
             finally:
 
                 self.likelihood_model.test.spectrum.main.shape.stop_tracking()
-
 
 
 def get_bayesian_analysis_object_simple_likelihood():
@@ -104,7 +103,7 @@ def array_to_cmap(values, cmap, use_log=False):
     return rgb_colors
 
 
-def plot_likelihood_function(bayes, fig=None, show_prior = False):
+def plot_likelihood_function(bayes, fig=None, show_prior=False):
     if fig is None:
 
         fig, sub = plt.subplots(1, 1)
@@ -125,7 +124,7 @@ def plot_likelihood_function(bayes, fig=None, show_prior = False):
         bayes.likelihood_model.test.spectrum.main.shape.mu.value = mu
         log_like.append(-bayes.sampler._log_like(mu))
 
-    _ = sub.plot(mus, log_like, 'k--',alpha=.8)
+    _ = sub.plot(mus, log_like, "k--", alpha=0.8)
 
     if show_prior:
 
@@ -135,11 +134,7 @@ def plot_likelihood_function(bayes, fig=None, show_prior = False):
 
             prior.append(-bayes.sampler._log_prior([mu]))
 
-        _ = sub.plot(mus, prior, 'r')
-
-
-
-
+        _ = sub.plot(mus, prior, "r")
 
     _ = sub.set_xlabel(r"$\mu$")
     _ = sub.set_ylabel(r"$-\log{L(\mu)}$")
@@ -150,7 +145,7 @@ def plot_likelihood_function(bayes, fig=None, show_prior = False):
     return bayes
 
 
-def plot_sample_path(bayes,burn_in=None, truth=None):
+def plot_sample_path(bayes, burn_in=None, truth=None):
     """
 
     :param jl:
@@ -158,41 +153,43 @@ def plot_sample_path(bayes,burn_in=None, truth=None):
     :return:
     """
 
-    qx_ = np.array(bayes.likelihood_model.test.spectrum.main.shape._traversed_points, dtype=float)
-    qy_ = np.array(bayes.likelihood_model.test.spectrum.main.shape._returned_values, dtype=float)
+    qx_ = np.array(
+        bayes.likelihood_model.test.spectrum.main.shape._traversed_points, dtype=float
+    )
+    qy_ = np.array(
+        bayes.likelihood_model.test.spectrum.main.shape._returned_values, dtype=float
+    )
 
-    fig, (ax, ax1) = plt.subplots(2, 1, sharex=False, gridspec_kw={'height_ratios': [2, 1]})
+    fig, (ax, ax1) = plt.subplots(
+        2, 1, sharex=False, gridspec_kw={"height_ratios": [2, 1]}
+    )
 
     time = np.arange(len(qx_)) + 1
 
-    colors = array_to_cmap(time, 'viridis')
+    colors = array_to_cmap(time, "viridis")
 
-    ax.scatter(qx_, qy_, c=np.atleast_2d(colors), s=17, alpha=.4)
+    ax.scatter(qx_, qy_, c=np.atleast_2d(colors), s=17, alpha=0.4)
     ax1.scatter(time, qx_, c=np.atleast_2d(colors), s=10)
     # for i, (qx, qy) in enumerate(zip(qx_, qy_)):
     #     ax.scatter(qx, qy, c=np.atleast_2d(colors[i]), s=17, alpha=.4)
 
     #     ax1.scatter(time[i], qx, c=np.atleast_2d(colors[i]), s=10)
 
-
     if truth is not None:
 
-        ax1.axhline(truth,ls='--',color='k',label=r'True $\mu=$%d'%truth)
+        ax1.axhline(truth, ls="--", color="k", label=r"True $\mu=$%d" % truth)
 
     if burn_in is not None:
 
-        ax1.axvline(burn_in,ls=':',color='#FC2530',label='Burn in')
+        ax1.axvline(burn_in, ls=":", color="#FC2530", label="Burn in")
 
-    ax1.legend(loc='upper right',fontsize=7,frameon=False)
-
-
+    ax1.legend(loc="upper right", fontsize=7, frameon=False)
 
     # Now plot the likelihood function
     plot_likelihood_function(bayes, fig)
 
-    ax1.set_xlabel('Iteration Number')
+    ax1.set_xlabel("Iteration Number")
     ax1.set_ylabel(r"$\mu$")
-    fig.subplots_adjust(hspace=.2)
+    fig.subplots_adjust(hspace=0.2)
 
     return fig
-

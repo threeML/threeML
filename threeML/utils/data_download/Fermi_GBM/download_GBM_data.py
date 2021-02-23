@@ -1,49 +1,72 @@
 from __future__ import print_function
-from builtins import map
-from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make, file_existing_and_readable
-from threeML.config.config import threeML_config
-from threeML.io.download_from_http import ApacheDirectory, RemoteDirectoryNotFound
-from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
-
-from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
 
 import gzip
-import shutil
 import os
-import numpy as np
-from collections import OrderedDict
 import re
+import shutil
+from builtins import map
+from collections import OrderedDict
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
+
+import numpy as np
+
+from threeML.config.config import threeML_config
+from threeML.exceptions.custom_exceptions import TriggerDoesNotExist,\
+    DetDoesNotExist
+from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
+from threeML.io.download_from_http import (ApacheDirectory,
+                                           RemoteDirectoryNotFound)
+from threeML.io.file_utils import (file_existing_and_readable,
+                                   if_directory_not_existing_then_make,
+                                   sanitize_filename)
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 
-def _validate_fermi_trigger_name(trigger):
+def _validate_fermi_trigger_name(trigger: str) -> str:
 
     _trigger_name_match = re.compile("^(bn|grb?)? ?(\d{9})$")
 
-    _valid_trigger_args = ['080916009', 'bn080916009', 'GRB080916009']
+    _valid_trigger_args = ["080916009", "bn080916009", "GRB080916009"]
 
-    assert_string = "The trigger %s is not valid. Must be in the form %s" % (trigger,
-                                                                             ', or '.join(
-                                                                                 _valid_trigger_args))
+    assert_string = "The trigger %s is not valid. Must be in the form %s" % (
+        trigger,
+        ", or ".join(_valid_trigger_args),
+    )
 
-    assert type(trigger) == str, "triggers must be strings"
+    if not isinstance(trigger, str):
+        log.error(
+            "Triggers must be strings"
+        )
+        raise TypeError()
 
     trigger = trigger.lower()
 
     search = _trigger_name_match.match(trigger)
 
-    assert search is not None, assert_string
+    if search is None:
+        log.error(assert_string)
+        raise NameError()
 
-    assert search.group(2) is not None, assert_string
+    if search.group(2) is None:
+        log.error(assert_string)
+        raise NameError()
 
     trigger = search.group(2)
+
+    log.debug(f"validated {trigger}")
 
     return trigger
 
 
-_detector_list = 'n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,na,nb,b0,b1'.split(",")
+_detector_list = "n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,na,nb,b0,b1".split(",")
 
 
-def download_GBM_trigger_data(trigger_name, detectors=None, destination_directory='.', compress_tte=True):
+def download_GBM_trigger_data(
+    trigger_name: str, detectors: Optional[List[str]] = None, destination_directory: str = ".", compress_tte: bool = True
+) -> Dict[str, Any]:
     """
     Download the latest GBM TTE and RSP files from the HEASARC server. Will get the
     latest file version and prefer RSP2s over RSPs. If the files already exist in your destination
@@ -61,10 +84,11 @@ def download_GBM_trigger_data(trigger_name, detectors=None, destination_director
 
     # Let's doctor up the input just in case the user tried something strange
 
-    sanitized_trigger_name_ = _validate_fermi_trigger_name(trigger_name)
+    sanitized_trigger_name_: str = _validate_fermi_trigger_name(trigger_name)
 
     # create output directory if it does not exists
-    destination_directory = sanitize_filename(destination_directory, abspath=True)
+    destination_directory: Path = sanitize_filename(
+        destination_directory, abspath=True)
 
     if_directory_not_existing_then_make(destination_directory)
 
@@ -73,20 +97,26 @@ def download_GBM_trigger_data(trigger_name, detectors=None, destination_director
 
         for det in detectors:
 
-            assert det in _detector_list, "Detector %s in the provided list is not a valid detector. " \
-                                          "Valid choices are: %s" % (det, _detector_list)
+            if det not in _detector_list:
+                log.error(
+                    f"Detector {det} in the provided list is not a valid detector. "
+                    f"Valid choices are: {_detector_list}"
+                )
+                raise DetDoesNotExist()
 
     else:
 
-        detectors = list(_detector_list)
+        detectors: List[str] = list(_detector_list)
 
     # Open heasarc web page
 
-    url = threeML_config['gbm']['public HTTP location']
-    year = '20%s' % sanitized_trigger_name_[:2]
-    directory = '/triggers/%s/bn%s/current' % (year, sanitized_trigger_name_)
+    url = threeML_config.GBM.public_http_location
+    year = f"20{sanitized_trigger_name_[:2]}"
+    directory = f"/triggers/{year}/bn{sanitized_trigger_name_}/current"
 
-    heasarc_web_page_url = '%s/%s' % (url, directory)
+    heasarc_web_page_url = f"{url}/{directory}"
+
+    log.debug(f"going to look in {heasarc_web_page_url}")
 
     try:
 
@@ -94,7 +124,12 @@ def download_GBM_trigger_data(trigger_name, detectors=None, destination_director
 
     except RemoteDirectoryNotFound:
 
-        raise TriggerDoesNotExist("Trigger %s does not exist at %s" % (sanitized_trigger_name_, heasarc_web_page_url))
+        log.exception(
+            f"Trigger {sanitized_trigger_name_} does not exist at {heasarc_web_page_url}")
+
+        raise TriggerDoesNotExist(
+
+        )
 
     # Now select the files we want to download, then we will download them later
     # We do it in two steps because we want to be able to choose what to download once we
@@ -131,25 +166,29 @@ def download_GBM_trigger_data(trigger_name, detectors=None, destination_director
         # We do not care here about the other files (tcat, bcat and so on),
         # nor about files which pertain to other detectors
 
-        if file_type not in ['cspec', 'tte'] or ext not in ['rsp','rsp2','pha','fit'] or detname not in detectors:
+        if (
+            file_type not in ["cspec", "tte"]
+            or ext not in ["rsp", "rsp2", "pha", "fit"]
+            or detname not in detectors
+        ):
 
             continue
 
         # cspec files can be rsp, rsp2 or pha files. Classify them
 
-        if file_type == 'cspec':
+        if file_type == "cspec":
 
-            if ext == 'rsp':
+            if ext == "rsp":
 
-                remote_files_info[detname]['rsp'] = this_file
+                remote_files_info[detname]["rsp"] = this_file
 
-            elif ext == 'rsp2':
+            elif ext == "rsp2":
 
-                remote_files_info[detname]['rsp2'] = this_file
+                remote_files_info[detname]["rsp2"] = this_file
 
-            elif ext == 'pha':
+            elif ext == "pha":
 
-                remote_files_info[detname]['cspec'] = this_file
+                remote_files_info[detname]["cspec"] = this_file
 
             else:
 
@@ -161,31 +200,46 @@ def download_GBM_trigger_data(trigger_name, detectors=None, destination_director
 
     # Now download the files
 
-    download_info = DictWithPrettyPrint([(det, DictWithPrettyPrint()) for det in detectors])
+    download_info = DictWithPrettyPrint(
+        [(det, DictWithPrettyPrint()) for det in detectors]
+    )
 
     for detector in list(remote_files_info.keys()):
+
+        log.debug(f"trying to download GBM detector {detector}")
 
         remote_detector_info = remote_files_info[detector]
         local_detector_info = download_info[detector]
 
         # Get CSPEC file
-        local_detector_info['cspec'] = downloader.download(remote_detector_info['cspec'], destination_directory,
-                                                           progress=True)
+        local_detector_info["cspec"] = downloader.download(
+            remote_detector_info["cspec"], destination_directory, progress=True
+        )
 
         # Get the RSP2 file if it exists, otherwise get the RSP file
-        if 'rsp2' in remote_detector_info:
+        if "rsp2" in remote_detector_info:
 
-            local_detector_info['rsp'] = downloader.download(remote_detector_info['rsp2'], destination_directory,
-                                                              progress=True)
+            log.debug(f"{detector} has RSP2 responses")
+
+            local_detector_info["rsp"] = downloader.download(
+                remote_detector_info["rsp2"], destination_directory, progress=True
+            )
 
         else:
 
-            local_detector_info['rsp'] = downloader.download(remote_detector_info['rsp'], destination_directory,
-                                                             progress=True)
+            log.debug(f"{detector} has RSP responses")
+
+            local_detector_info["rsp"] = downloader.download(
+                remote_detector_info["rsp"], destination_directory, progress=True
+            )
 
         # Get TTE file (compressing it if requested)
-        local_detector_info['tte'] = downloader.download(remote_detector_info['tte'], destination_directory,
-                                                         progress=True, compress=compress_tte)
+        local_detector_info["tte"] = downloader.download(
+            remote_detector_info["tte"],
+            destination_directory,
+            progress=True,
+            compress=compress_tte,
+        )
 
     return download_info
 
@@ -210,10 +264,10 @@ def _get_latest_version(filenames):
     for fn in filenames:
 
         # get the first part of the file
-        fn_stub, vn_stub = fn.split('_v')
+        fn_stub, vn_stub = fn.split("_v")
 
         # split the vn string and extension
-        vn_string, ext = vn_stub.split('.')
+        vn_string, ext = vn_stub.split(".")
 
         # convert the vn to a number
         vn = 0
@@ -238,7 +292,7 @@ def _get_latest_version(filenames):
 
         ext = np.array(extentions[key])
 
-        idx = ext == 'rsp2'
+        idx = ext == "rsp2"
 
         # if there are no rsp2 in the files
         if idx.sum() == 0:
@@ -260,7 +314,7 @@ def _get_latest_version(filenames):
     return final_file_names
 
 
-def cleanup_downloaded_GBM_data(detector_information_dict):
+def cleanup_downloaded_GBM_data(detector_information_dict) -> None:
     """
     deletes data downloaded with download_GBM_trigger_data.
     :param detector_information_dict: the return dictionary from download_GBM_trigger_data
@@ -274,4 +328,4 @@ def cleanup_downloaded_GBM_data(detector_information_dict):
 
             os.remove(data_file)
 
-    print('\n')
+    print("\n")

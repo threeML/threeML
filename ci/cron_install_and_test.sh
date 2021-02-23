@@ -22,34 +22,14 @@ elif  (( $TRAVIS_BUILD_NUMBER % 4 == 1 )); then
 # Testing with xspec and root
 elif  (( $TRAVIS_BUILD_NUMBER % 4 == 2 )); then
 
-    if (( $TRAVIS_PYTHON_VERSION == 2.7 )); then
-
-        echo "Testing with xspec-modelsonly and root with python $TRAVIS_PYTHON_VERSION"
-        bash install_3ML.sh --batch --with-xspec --with-root --python $TRAVIS_PYTHON_VERSION
-
-    else
-
-        echo "Root5 is not available for python 3."
-        echo "Cannot test with xspec-modelsonly and root. Exiting."
-        exit 0
-
-    fi
+    echo "Testing with xspec-modelsonly and root with python $TRAVIS_PYTHON_VERSION"
+    bash install_3ML.sh --batch --with-xspec --with-root --python $TRAVIS_PYTHON_VERSION
 
 # Testing with Fermi software
 else
 
-    if (( $TRAVIS_PYTHON_VERSION == 2.7 )); then
-
-        echo "Testing with xspec-modelsonly and Fermi software with python $TRAVIS_PYTHON_VERSION"
-        bash install_3ML.sh --batch --with-xspec --with-fermi --python $TRAVIS_PYTHON_VERSION
-
-    else
-
-        echo "Fermi tools are not available for python 3 yet."
-        echo "Cannot test with xspec-modelsonly and Fermi software. Exiting."
-        exit 0
-        
-    fi
+    echo "Testing with xspec-modelsonly and Fermi software with python $TRAVIS_PYTHON_VERSION"
+    bash install_3ML.sh --batch --with-xspec --with-fermi --python $TRAVIS_PYTHON_VERSION
 
 fi
 

@@ -1,10 +1,12 @@
 import os
 import time
 import numpy as np
-
-
+from pathlib import Path
+from astromodels import ModelAssertionViolation, use_astromodels_memoization
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
+from threeML.io.logging import setup_logger
+import logging
 
 
 try:
@@ -18,7 +20,6 @@ except:
 else:
 
     has_ultranest = True
-
 
 
 try:
@@ -41,23 +42,36 @@ except:
     using_mpi = False
 
 
-class UltraNestSampler(UnitCubeSampler):
+un_logger = logging.getLogger("ultranest")
+un_logger.propagate = False
+    
+log = setup_logger(__name__)
 
+class UltraNestSampler(UnitCubeSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
 
         assert has_ultranest, "You must install UltraNest to use this sampler"
-        
+
         super(UltraNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
-    def setup(self, min_num_live_points=400, dlogz=0.5, chain_name=None, wrapped_params=None, **kwargs):
-
+    def setup(
+        self,
+        min_num_live_points=400,
+        dlogz=0.5,
+        chain_name=None,
+        wrapped_params=None,
+        **kwargs
+    ):
+        log.debug(f"Setup for UltraNest sampler: min_num_live_points:{min_num_live_points}, "\
+                  f"chain_name:{chain_name}, dlogz: {dlogz}, wrapped_params: {wrapped_params}. "\
+                  f"Other input: {kwargs}")
         self._kwargs = {}
         self._kwargs["min_num_live_points"] = min_num_live_points
         self._kwargs["dlogz"] = dlogz
         self._kwargs["chain_name"] = chain_name
 
         self._wrapped_params = wrapped_params
-        
+
         for k, v in kwargs.items():
 
             self._kwargs[k] = v
@@ -74,7 +88,7 @@ class UltraNestSampler(UnitCubeSampler):
         """
         if not self._is_setup:
 
-            print("You forgot to setup the sampler!")
+            log.info("You forgot to setup the sampler!")
             return
 
         loud = not quiet
@@ -114,17 +128,19 @@ class UltraNestSampler(UnitCubeSampler):
                     # create mcmc chains directory only on first engine
 
                     if not os.path.exists(mcmc_chains_out_dir):
+                        log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                         os.makedirs(mcmc_chains_out_dir)
 
             else:
 
                 if not os.path.exists(mcmc_chains_out_dir):
+                    log.debug(f"Create {mcmc_chains_out_dir} for ultranest output")
                     os.makedirs(mcmc_chains_out_dir)
 
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             raise RuntimeError(
                 "If you want to run ultranest in parallell you need to use an ad-hoc method"
@@ -138,10 +154,13 @@ class UltraNestSampler(UnitCubeSampler):
                 transform=ultranest_prior,
                 log_dir=chain_name,
                 vectorized=False,
-                wrapped_params=self._wrapped_params
+                wrapped_params=self._wrapped_params,
             )
 
-            sampler.run(show_status=loud, **self._kwargs)
+            with use_astromodels_memoization(False):
+                log.debug("Start ultranest run")
+                sampler.run(show_status=loud, **self._kwargs)
+                log.debug("Ultranest run done")
 
         process_fit = False
 
@@ -175,15 +194,22 @@ class UltraNestSampler(UnitCubeSampler):
 
             self._sampler = sampler
 
-            ws = results['weighted_samples']
+            ws = results["weighted_samples"]
 
-            weights = ws['w']
+            # Workaround to support older versions of ultranest
+            try:
+                wsamples = ws['v']
+                weights = ws['w']
+                logl = ws['L']
+            except KeyError:
+                wsamples = ws['points']
+                weights = ws['weights']
+                logl = ws['logl']
 
             # Get the log. likelihood values from the chain
 
-            SQRTEPS = (float(np.finfo(np.float64).eps))**0.5
-            if abs(np.sum(weights) -
-                   1.) > SQRTEPS:  # same tol as in np.random.choice.
+            SQRTEPS = (float(np.finfo(np.float64).eps)) ** 0.5
+            if abs(np.sum(weights) - 1.0) > SQRTEPS:  # same tol as in np.random.choice.
                 raise ValueError("weights do not sum to 1")
 
             rstate = np.random
@@ -203,9 +229,9 @@ class UltraNestSampler(UnitCubeSampler):
                 else:
                     j += 1
 
-            self._log_like_values = ws['L'][idx]
+            self._log_like_values = logl[idx]
 
-            self._raw_samples = ws['v'][idx]
+            self._raw_samples = wsamples[idx]
 
             # now get the log probability
 

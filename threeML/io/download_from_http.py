@@ -1,10 +1,18 @@
-from builtins import object
-import requests
-import re
 import os
+import re
+from builtins import object
+from pathlib import Path
 
-from threeML.io.progress_bar import progress_bar, ProgressBarBase
-from threeML.io.file_utils import sanitize_filename, path_exists_and_is_directory, file_existing_and_readable
+import requests
+
+from threeML.config.config import threeML_config
+from threeML.io.file_utils import (file_existing_and_readable,
+                                   path_exists_and_is_directory,
+                                   sanitize_filename)
+from threeML.io.logging import setup_logger
+from threeML.utils.progress_bar import tqdm
+
+log = setup_logger(__name__)
 
 
 class RemoteDirectoryNotFound(IOError):
@@ -28,13 +36,17 @@ class ApacheDirectory(object):
         # Make sure the request was ok
         if not self._request_result.ok:
 
-            if self._request_result.reason == 'Not Found':
+            if self._request_result.reason == "Not Found":
 
-                raise RemoteDirectoryNotFound("Remote directory %s does not exist" % url)
+                raise RemoteDirectoryNotFound(
+                    "Remote directory %s does not exist" % url
+                )
 
             else:
 
-                raise HTTPError("HTTP request failed with reason: %s" % self._request_result.reason)
+                raise HTTPError(
+                    "HTTP request failed with reason: %s" % self._request_result.reason
+                )
 
         self._text = self._request_result.text
 
@@ -47,7 +59,7 @@ class ApacheDirectory(object):
 
         for entry in self._entries:
 
-            if entry[1] == 'FILE':
+            if entry[1] == "FILE":
 
                 self._files.append(entry[0])
 
@@ -67,7 +79,7 @@ class ApacheDirectory(object):
         # <img src="/icons/unknown.gif" alt="[   ]">
         # <a href="glg_cspec_b0_bn100101988_v02.rsp">glg_cspec_b0_bn100101988_v02.rsp</a>
         #                16-Nov-2012 15:14   96K
-        regexp = re.compile('<img src=.+ alt=(.+)>\s?<a href=.+>(.+)</a>.+')
+        regexp = re.compile("<img src=.+ alt=(.+)>\s?<a href=.+>(.+)</a>.+")
 
         # Apache puts files in a <pre></pre> tag, so lines are ended simply with \n
         lines = self._text.split("\n")
@@ -112,25 +124,39 @@ class ApacheDirectory(object):
 
         return self._directories
 
-    def download(self, remote_filename, destination_path, new_filename=None, progress=True, compress=False):
+    def download(
+        self,
+        remote_filename,
+        destination_path: str,
+        new_filename=None,
+        progress=True,
+        compress=False,
+    ):
 
-        assert remote_filename in self.files, "File %s is not contained in this directory (%s)" % (remote_filename,
-                                                                                                   self._request_result.url)
+        assert (
+            remote_filename in self.files
+        ), "File %s is not contained in this directory (%s)" % (
+            remote_filename,
+            self._request_result.url,
+        )
 
-        destination_path = sanitize_filename(destination_path, abspath=True)
+        destination_path: Path = sanitize_filename(
+            destination_path, abspath=True)
 
-        assert path_exists_and_is_directory(destination_path), "Provided destination does not exist or " \
-                                                               "is not a directory" % destination_path
+        assert path_exists_and_is_directory(destination_path), (
+            f"Provided destination {destination_path} does not exist or "
+            "is not a directory"
+        )
 
         # If no filename is specified, use the same name that the file has on the remote server
 
         if new_filename is None:
-            new_filename = remote_filename.split("/")[-1]
+            new_filename: str = remote_filename.split("/")[-1]
 
         # Get the fully qualified path for the remote and the local file
 
-        remote_path = self._request_result.url + remote_filename
-        local_path = os.path.join(destination_path, new_filename)
+        remote_path: str = self._request_result.url + remote_filename
+        local_path: Path = destination_path / new_filename
 
         # Ask the server for the file, but do not download it just yet
         # (stream=True will get the HTTP header but nothing else)
@@ -142,14 +168,19 @@ class ApacheDirectory(object):
 
         # Figure out the size of the file
 
-        file_size = int(this_request.headers['Content-Length'])
+        file_size = int(this_request.headers["Content-Length"])
+
+        log.debug(f"downloading {remote_filename} of size {file_size}")
 
         # Now check if we really need to download this file
 
         if compress:
             # Add a .gz at the end of the file path
 
-            local_path += '.gz'
+            log.debug(
+                f"file {remote_filename} will be downloaded and compressed")
+
+            local_path: Path = Path(f"{local_path}.gz")
 
         if file_existing_and_readable(local_path):
 
@@ -160,7 +191,18 @@ class ApacheDirectory(object):
                 # it will have a smaller size
 
                 # No need to download it again
+
+                log.info(f"file {remote_filename} is already downloaded!")
+
                 return local_path
+
+        if local_path.is_file():
+
+            first_byte = os.path.getsize(local_path)
+
+        else:
+
+            first_byte = 0
 
         # Chunk size shouldn't bee too small otherwise we are causing a bottleneck in the download speed
         chunk_size = 1024 * 10
@@ -172,35 +214,41 @@ class ApacheDirectory(object):
 
             opener = gzip.open
 
-
-
-
         else:
 
             opener = open
 
-        if progress:
+        if threeML_config["interface"]["progress_bars"]:
 
             # Set a title for the progress bar
             bar_title = "Downloading %s" % new_filename
 
-            with progress_bar(file_size, scale=1024 * 1024, units='Mb',
-                              title=bar_title) as bar:  # type: ProgressBarBase
+            total_size = int(this_request.headers.get('content-length', 0))
 
-                with opener(local_path, 'wb') as f:
+            bar = tqdm(
+                initial=first_byte,
+                unit_scale=True,
+                unit_divisor=1024,
+                unit="B",
+                total=int(this_request.headers["Content-Length"]),
+                desc=bar_title,
+            )
 
-                    for chunk in this_request.iter_content(chunk_size=chunk_size):
+            with opener(local_path, "wb") as f:
 
-                        if chunk:  # filter out keep-alive new chunks
+                for chunk in this_request.iter_content(chunk_size=chunk_size):
 
-                            f.write(chunk)
-                            bar.increase(len(chunk))
+                    if chunk:  # filter out keep-alive new chunks
+
+                        f.write(chunk)
+                        bar.update(len(chunk))
 
             this_request.close()
+            bar.close()
 
         else:
 
-            with opener(local_path, 'wb') as f:
+            with opener(local_path, "wb") as f:
 
                 for chunk in this_request.iter_content(chunk_size=chunk_size):
 
@@ -233,9 +281,9 @@ class ApacheDirectory(object):
 
                     continue
 
-            this_local_file = self.download(file, destination_path, progress=progress)
+            this_local_file = self.download(
+                file, destination_path, progress=progress)
 
             local_files.append(this_local_file)
 
         return local_files
-

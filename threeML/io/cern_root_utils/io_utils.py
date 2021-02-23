@@ -1,6 +1,7 @@
 import ROOT
 import contextlib
 
+
 def get_list_of_keys(root_file, dir=""):
     """
     Given a ROOT file, it returns the list of object names contained in the file in the provided directory.

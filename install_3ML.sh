@@ -9,6 +9,7 @@ INSTALL_ROOT="no"
 INSTALL_FERMI="no"
 BATCH="no"
 PYTHON_VERSION="3.7"
+ENV_NAME="threeML"
 
 while [ "${1:-}" != "" ]; do
     case "$1" in
@@ -27,8 +28,11 @@ while [ "${1:-}" != "" ]; do
       "--python")
         PYTHON_VERSION="$2"
         ;;
+      "--env-name")
+        ENV_NAME="$2"
+        ;;
       "-h" | "--help")
-        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [--python {2.7 or 3.7}] [-h] [--help] [--batch]" && exit 0
+        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [--python {2.7 or 3.7}] [--env-name NAME] [-h] [--help] [--batch]" && exit 0
         ;;
     esac
     shift
@@ -47,6 +51,7 @@ echo "Installing root:                               "${INSTALL_ROOT}
 echo "Installing fermi:                              "${INSTALL_FERMI}
 echo "Batch execution (assume yes to all questions): "${BATCH}
 echo "Python version:                                "${PYTHON_VERSION}
+echo "Conda environment name:                        "${ENV_NAME}
 echo ""
 
 # Make a small download script in Python to avoid dependencies on 
@@ -179,7 +184,7 @@ export PATH=${PATH}
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
-source activate threeML
+source activate ${ENV_NAME}
 
 EOM
 
@@ -191,7 +196,7 @@ setenv NUMEXPR_NUM_THREADS 1
 setenv CONDA_ENVS_PATH $(conda info | grep "envs directories" | cut -f2 -d":" )
 
 source ${CONDA_PREFIX}/bin/deactivate.csh >& /dev/null
-source ${CONDA_PREFIX}/bin/activate.csh threeML
+source ${CONDA_PREFIX}/bin/activate.csh ${ENV_NAME}
 
 EOM
  
@@ -261,34 +266,37 @@ conda config --add channels threeml
 
 conda config --add channels conda-forge
 
-conda config --add channels conda-forge/label/cf201901
-
-PACKAGES_TO_INSTALL="astromodels threeml"
+PACKAGES_TO_INSTALL="astromodels>=2 threeml>=2"
 
 if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
 
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly=6.22.1"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly=6.25"
+    conda config --add channels xspecmodels
 
 fi
 
 if [[ "${INSTALL_ROOT}" == "yes" ]]; then
 
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} root5"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} root=6.22"
 
 fi
 
 if [[ "${INSTALL_FERMI}" == "yes" ]]; then
 
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools fermipy"
-
-    #conda config --add channels conda-forge/label/cf201901
-    conda config --add channels fermi
+    if [[ $PYTHON_VERSION == "2.7" ]]; then
+        conda config --add channels fermi/label/master
+        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools=1.4 clhep=2.4.1.0"
+    else
+        conda config --add channels fermi
+        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2"
+    fi
+    
 
 fi
 
 # Now we have conda installed, let's install 3ML
 
-conda create --yes --name threeML python=$PYTHON_VERSION ${PACKAGES_TO_INSTALL}
+conda create --yes --name ${ENV_NAME} python=$PYTHON_VERSION ${PACKAGES_TO_INSTALL}
 
 line
 echo "Generating setup scripts"
@@ -470,12 +478,10 @@ which python
 python --version
 EOM
 
-conda activate threeML
+conda activate ${ENV_NAME}
 
-# Workaround needed to meet the requirement on ccfits on linux systems
-if [[ "$os_guessed" == "linux" ]] && [[ "${INSTALL_XSPEC}" == "yes" ]]; then
-    conda install --yes -c conda-forge ccfits=2.5
-fi
+# Fix needed to solve the "readinto" AttributeError due to older future package
+#conda install --yes -c conda-forge future
 
 mv activate.csh $CONDA_PREFIX/bin
 mv deactivate.csh $CONDA_PREFIX/bin

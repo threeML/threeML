@@ -1,34 +1,36 @@
 from __future__ import division
-from builtins import zip
-from builtins import range
-from past.utils import old_div
-from builtins import object
-import numpy
+
 import collections
 import os
+from builtins import object, range, zip
 
+import BinnedAnalysis
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
-
+import numpy
+import pyLikelihood as pyLike
+import UnbinnedAnalysis
 from astromodels import Parameter
 from astromodels.core.model_parser import ModelParser
+from GtBurst import FuncFactory, LikelihoodComponent
+from matplotlib import gridspec
+from past.utils import old_div
 
-from threeML.plugin_prototype import PluginPrototype
 from threeML.io.file_utils import get_random_unique_name
-from threeML.plugins.gammaln import logfactorial
+from threeML.io.package_data import get_path_of_data_file
 from threeML.io.suppress_stdout import suppress_stdout
+from threeML.plugin_prototype import PluginPrototype
+from threeML.utils.statistics.gammaln import logfactorial
+from threeML.io.logging import setup_logger
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
-import UnbinnedAnalysis
-import BinnedAnalysis
-import pyLikelihood as pyLike
-from GtBurst import LikelihoodComponent
-from GtBurst import FuncFactory
 
 __instrument_name = "Fermi LAT (standard classes)"
 
 
-class MyPointSource(LikelihoodComponent.GenericSource):
 
+log = setup_logger(__name__)
+
+class MyPointSource(LikelihoodComponent.GenericSource):
     def __init__(self, source, name, temp_file):
         self.source = source
         self.source.name = name
@@ -38,18 +40,24 @@ class MyPointSource(LikelihoodComponent.GenericSource):
 
 
 class LikelihoodModelConverter(object):
-
-    def __init__(self, likelihoodModel, irfs):
+    def __init__(self, likelihoodModel, irfs, source_name=None):
+        """
+        :param likelihoodModel: likelihood model
+        :param source_name: name of source (must be contained in likelihood model)
+        :return: none
+        """
 
         self.likelihoodModel = likelihoodModel
 
         self.irfs = irfs
 
+        self._source_name = source_name
+
     def setFileSpectrumEnergies(self, emin_kev, emax_kev, nEnergies):
 
-        self.energiesKeV = numpy.logspace(numpy.log10(emin_kev),
-                                          numpy.log10(emax_kev),
-                                          nEnergies)
+        self.energiesKeV = numpy.logspace(
+            numpy.log10(emin_kev), numpy.log10(emax_kev), nEnergies
+        )
 
     def writeXml(self, xmlfile, ra, dec, roi):
 
@@ -61,20 +69,34 @@ class LikelihoodModelConverter(object):
         allSourcesForPyLike = []
         temp_files = []
 
-        nPtsrc = self.likelihoodModel.get_number_of_point_sources()
+        # Flag for whether we are attributing the dataset to a single source in the model
+        sourceName = self._source_name
 
-        for ip in range(nPtsrc):
+        if sourceName is None:
 
-            this_src = self._makeFileSpectrum(ip)
+            nPtsrc = self.likelihoodModel.get_number_of_point_sources()
 
+            for ip in range(nPtsrc):
+
+                this_src = self._makeFileSpectrum(ip)
+
+                allSourcesForPyLike.append(this_src)
+                temp_files.append(this_src.temp_file)
+
+        else:
+            # We pass from the model just one source
+
+            log.info('Setting single point source %s ... ' % sourceName)
+
+            index = self.likelihoodModel.point_sources.keys().index(sourceName)
+            this_src = self._makeFileSpectrum(index)
             allSourcesForPyLike.append(this_src)
+
             temp_files.append(this_src.temp_file)
 
         # Now the same for extended sources
-
         nExtSrc = self.likelihoodModel.get_number_of_extended_sources()
-
-        if (nExtSrc > 0):
+        if nExtSrc > 0:
             raise NotImplemented("Cannot support extended sources yet!")
 
         iso = LikelihoodComponent.IsotropicTemplate(self.irfs)
@@ -89,7 +111,8 @@ class LikelihoodModelConverter(object):
         self._unique_filename = get_random_unique_name()
 
         gal = LikelihoodComponent.GalaxyAndExtragalacticDiffuse(
-            self.irfs, ra, dec, 2.5 * roi, cutout_name=self._unique_filename)
+            self.irfs, ra, dec, 2.5 * roi, cutout_name=self._unique_filename
+        )
         gal.source.spectrum.Value.max = 1.5
         gal.source.spectrum.Value.min = 0.5
         gal.source.spectrum.setAttributes()
@@ -108,8 +131,8 @@ class LikelihoodModelConverter(object):
 
         name = self.likelihoodModel.get_point_source_name(ip)
 
-        values = self.likelihoodModel.get_point_source_fluxes(ip,
-                                                              self.energiesKeV)
+        values = self.likelihoodModel.get_point_source_fluxes(
+            ip, self.energiesKeV)
 
         tempName = "__%s_%s.txt" % (name, get_random_unique_name())
 
@@ -126,26 +149,31 @@ class LikelihoodModelConverter(object):
         # This is convoluted, but that's the ST way of doing things...
         # The final product is a class with a writeXml method
 
-        src = '\n'.join((('<source name= "%s" ' % name) + 'type="PointSource">',
-                         '   <spectrum type="PowerLaw2"/>',
-                         '   <!-- point source units are cm^-2 s^-1 MeV^-1 -->',
-                         '   <spatialModel type="SkyDirFunction"/>',
-                         '</source>\n'))
-        src = FuncFactory.minidom.parseString(src).getElementsByTagName('source')[0]
+        src = "\n".join(
+            (
+                ('<source name= "%s" ' % name) + 'type="PointSource">',
+                '   <spectrum type="PowerLaw2"/>',
+                "   <!-- point source units are cm^-2 s^-1 MeV^-1 -->",
+                '   <spatialModel type="SkyDirFunction"/>',
+                "</source>\n",
+            )
+        )
+        src = FuncFactory.minidom.parseString(
+            src).getElementsByTagName("source")[0]
         src = FuncFactory.Source(src)
 
         src.spectrum = FuncFactory.FileFunction()
         src.spectrum.file = tempName
-        src.spectrum.parameters['Normalization'].value = 1.0
-        src.spectrum.parameters['Normalization'].max = 1.1
-        src.spectrum.parameters['Normalization'].min = 0.9
-        src.spectrum.parameters['Normalization'].free = False
+        src.spectrum.parameters["Normalization"].value = 1.0
+        src.spectrum.parameters["Normalization"].max = 1.1
+        src.spectrum.parameters["Normalization"].min = 0.9
+        src.spectrum.parameters["Normalization"].free = False
         src.spectrum.setAttributes()
-        src.deleteChildElements('spectrum')
+        src.deleteChildElements("spectrum")
         src.node.appendChild(src.spectrum.node)
 
         src.spatialModel = FuncFactory.SkyDirFunction()
-        src.deleteChildElements('spatialModel')
+        src.deleteChildElements("spatialModel")
         src.node.appendChild(src.spatialModel.node)
 
         ra, dec = self.likelihoodModel.get_point_source_position(ip)
@@ -159,10 +187,21 @@ class LikelihoodModelConverter(object):
 
 
 class FermiLATUnpickler(object):
+    def __call__(
+        self,
+        name,
+        eventFile,
+        ft2File,
+        livetimeCube,
+        kind,
+        exposureMap,
+        likelihoodModel,
+        innerMinimization,
+    ):
 
-    def __call__(self, name, eventFile, ft2File, livetimeCube, kind, exposureMap, likelihoodModel, innerMinimization):
-
-        instance = FermiLATLike(name, eventFile, ft2File, livetimeCube, kind, exposureMap)
+        instance = FermiLATLike(
+            name, eventFile, ft2File, livetimeCube, kind, exposureMap
+        )
 
         instance.setInnerMinimization(innerMinimization)
 
@@ -171,11 +210,19 @@ class FermiLATUnpickler(object):
         return instance
 
 
-
 class FermiLATLike(PluginPrototype):
-
-    def __init__(self, name, eventFile, ft2File, livetimeCube, kind, exposureMap=None,
-                 sourceMaps=None, binnedExpoMap=None):
+    def __init__(
+        self,
+        name,
+        eventFile,
+        ft2File,
+        livetimeCube,
+        kind,
+        exposureMap=None,
+        sourceMaps=None,
+        binnedExpoMap=None,
+        source_name=None,
+    ):
 
         # Initially the nuisance parameters dict is empty, as we don't know yet
         # the likelihood model. They will be updated in set_model
@@ -210,74 +257,94 @@ class FermiLATLike(PluginPrototype):
 
         self.effCorrLimit = 0.1
 
-        if (kind.upper() != "UNBINNED" and kind.upper() != "BINNED"):
+        if kind.upper() != "UNBINNED" and kind.upper() != "BINNED":
 
-            raise RuntimeError("Accepted values for the kind parameter are: " +
-                               "binned, unbinned. You specified: %s" % (kind))
+            raise RuntimeError(
+                "Accepted values for the kind parameter are: "
+                + "binned, unbinned. You specified: %s" % (kind)
+            )
 
         else:
 
             self.kind = kind.upper()
 
-        if (kind.upper() == 'UNBINNED'):
+        if kind.upper() == "UNBINNED":
 
             assert exposureMap is not None, "You have to provide an exposure map"
 
             self.eventFile = eventFile
             self.exposureMap = exposureMap
             # Read the files and generate the pyLikelihood object
-            self.obs = UnbinnedAnalysis.UnbinnedObs(self.eventFile,
-                                                    self.ft2File,
-                                                    expMap=self.exposureMap,
-                                                    expCube=self.livetimeCube,
-                                                    irfs=self.irf)
+            self.obs = UnbinnedAnalysis.UnbinnedObs(
+                self.eventFile,
+                self.ft2File,
+                expMap=self.exposureMap,
+                expCube=self.livetimeCube,
+                irfs=self.irf,
+            )
 
-        elif (kind.upper() == "BINNED"):
+        elif kind.upper() == "BINNED":
 
             assert sourceMaps is not None, "You have to provide a source map"
-            assert binnedExpoMap is not None, "You have to provided a (binned) exposure map"
+            assert (
+                binnedExpoMap is not None
+            ), "You have to provided a (binned) exposure map"
 
             self.sourceMaps = sourceMaps
             self.binnedExpoMap = binnedExpoMap
 
-            self.obs = BinnedAnalysis.BinnedObs(srcMaps=self.sourceMaps,
-                                                expCube=self.livetimeCube,
-                                                binnedExpMap=self.binnedExpoMap,
-                                                irfs=self.irf)
+            self.obs = BinnedAnalysis.BinnedObs(
+                srcMaps=self.sourceMaps,
+                expCube=self.livetimeCube,
+                binnedExpMap=self.binnedExpoMap,
+                irfs=self.irf,
+            )
         pass
 
         # Activate inner minimization by default
         self.setInnerMinimization(True)
 
+        self._source_name = source_name
+
     pass
 
-    def set_model(self, likelihoodModel):
-        '''
+    def set_model(self, likelihoodModel, source_name=None):
+        """
         Set the model to be used in the joint minimization.
         Must be a LikelihoodModel instance.
-        '''
 
-        with suppress_stdout():
+        This method can also set or override a previously set source name.
+        """
 
-            self.lmc = LikelihoodModelConverter(likelihoodModel,
-                                                self.irf)
+        # with suppress_stdout():
 
-            self.lmc.setFileSpectrumEnergies(self.emin, self.emax, self.Nenergies)
+        if self._source_name is not None:
+            if (source_name is not None) and (source_name != self._source_name):
+                log.warning('Changing target source from %s to %s' %
+                      (self._source_name, source_name))
+                self._source_name = source_name
 
-            xmlFile = '%s.xml' % get_random_unique_name()
+            assert self._source_name in likelihoodModel.point_sources, (
+                'Source %s is not a source in the likelihood model! ' % self._source_name)
 
-            temp_files = self.lmc.writeXml(xmlFile, self.ra, self.dec, self.rad)
+        self.lmc = LikelihoodModelConverter(
+            likelihoodModel, self.irf, source_name=self._source_name)
+        self.lmc.setFileSpectrumEnergies(self.emin, self.emax, self.Nenergies)
 
-        if (self.kind == "BINNED"):
-            self.like = BinnedAnalysis.BinnedAnalysis(self.obs,
-                                                      xmlFile,
-                                                      optimizer='DRMNFB')
+        xmlFile = str("%s.xml" % get_random_unique_name())
+
+        temp_files = self.lmc.writeXml(xmlFile, self.ra, self.dec, self.rad)
+
+        if self.kind == "BINNED":
+            self.like = BinnedAnalysis.BinnedAnalysis(
+                self.obs, xmlFile, optimizer="DRMNFB"
+            )
 
         else:
-
-            self.like = UnbinnedAnalysis.UnbinnedAnalysis(self.obs,
-                                                          xmlFile,
-                                                          optimizer='DRMNFB')
+            #import pdb;pdb.set_trace()
+            self.like = UnbinnedAnalysis.UnbinnedAnalysis(
+                self.obs, xmlFile, optimizer="DRMNFB"
+            )
 
         self.likelihoodModel = likelihoodModel
 
@@ -299,11 +366,18 @@ class FermiLATLike(PluginPrototype):
 
         self.update_nuisance_parameters(new_nuisance_parameters)
 
+    def clear_source_name(self):
+        if self._source_name is not None:
+            log.info('Clearing %s as a source for this plugin.' %
+                  self._source_name)
+            self._source_name = None
+        else:
+            log.error('Source not named. Use set_model to set a source.')
 
     def get_name(self):
-        '''
+        """
         Return a name for this dataset (likely set during the constructor)
-        '''
+        """
         return self.name
 
     def setInnerMinimization(self, s):
@@ -315,70 +389,111 @@ class FermiLATLike(PluginPrototype):
             self.nuisance_parameters[parameter].free = self.fit_nuisance_params
 
     def inner_fit(self):
-        '''
+        """
         This is used for the profile likelihood. Keeping fixed all parameters in the
         modelManager, this method minimize the logLike over the remaining nuisance
         parameters, i.e., the parameters belonging only to the model for this
         particular detector
-        '''
+        """
 
         return self.get_log_like()
 
     def _updateGtlikeModel(self):
-        '''
+        """
         #Slow! But no other options at the moment
         self.like.writeXml(self.xmlModel)
         self.like.logLike.reReadXml(self.xmlModel)
-        '''
+        """
 
         energies = self.lmc.energiesKeV
 
-        for id, srcName in enumerate(self.likelihoodModel.point_sources.keys()):
+        if self._source_name is None:
+            for id, srcName in enumerate(self.likelihoodModel.point_sources.keys()):
 
-            values = self.likelihoodModel.get_point_source_fluxes(id, energies, tag=self._tag)
+                values = self.likelihoodModel.get_point_source_fluxes(
+                    id, energies, tag=self._tag
+                )
 
+                # on the second iteration, self.like doesn't have the second srcName defined so that needs to be carried from flags
+                gtlikeSrcModel = self.like[srcName]
+
+                my_function = gtlikeSrcModel.getSrcFuncs()["Spectrum"]
+                my_file_function = pyLike.FileFunction_cast(my_function)
+
+                my_file_function.setParam("Normalization", 1)
+
+                # Cap the values to avoid numerical errors
+
+                capped_values = numpy.minimum(
+                    numpy.maximum(values * 1000, 1e-25), 1e5)
+
+                my_file_function.setSpectrum(energies / 1000.0, capped_values)
+                gtlikeSrcModel.setSpectrum(my_file_function)
+
+                # TODO: extended sources
+        else:
+            srcName = self._source_name
+            id = self.likelihoodModel.point_sources.keys().index(srcName)
+
+            values = self.likelihoodModel.get_point_source_fluxes(
+                id, energies, tag=self._tag
+            )
+
+            # on the second iteration, self.like doesn't have the second srcName defined so that needs to be carried from flags
             gtlikeSrcModel = self.like[srcName]
 
-            my_function = gtlikeSrcModel.getSrcFuncs()['Spectrum']
+            my_function = gtlikeSrcModel.getSrcFuncs()["Spectrum"]
             my_file_function = pyLike.FileFunction_cast(my_function)
 
             my_file_function.setParam("Normalization", 1)
 
             # Cap the values to avoid numerical errors
 
-            capped_values = numpy.minimum(numpy.maximum(values * 1000, 1e-25), 1e5)
+            capped_values = numpy.minimum(
+                numpy.maximum(values * 1000, 1e-25), 1e5)
 
             my_file_function.setSpectrum(energies / 1000.0, capped_values)
             gtlikeSrcModel.setSpectrum(my_file_function)
 
-            # TODO: extended sources
-
         self.like.syncSrcParams()
 
     def get_log_like(self):
-        '''
+        """
         Return the value of the log-likelihood with the current values for the
         parameters stored in the ModelManager instance
-        '''
+        """
 
         self._updateGtlikeModel()
 
         if self.fit_nuisance_params:
 
             for parameter in self.nuisance_parameters:
-                self.setNuisanceParameterValue(parameter, self.nuisance_parameters[parameter].value)
+                self.setNuisanceParameterValue(
+                    parameter, self.nuisance_parameters[parameter].value
+                )
 
             self.like.syncSrcParams()
-            
+
         log_like = self.like.logLike.value()
 
-        return log_like - logfactorial(self.like.total_nobs())
+        return log_like - logfactorial(int(self.like.total_nobs()))
+
     #
     def __reduce__(self):
 
-        return FermiLATUnpickler(), (self.name, self.eventFile, self.ft2File,
-                                     self.livetimeCube, self.kind, self.exposureMap, self.likelihoodModel,
-                                     self.fit_nuisance_params)
+        return (
+            FermiLATUnpickler(),
+            (
+                self.name,
+                self.eventFile,
+                self.ft2File,
+                self.livetimeCube,
+                self.kind,
+                self.exposureMap,
+                self.likelihoodModel,
+                self.fit_nuisance_params,
+            ),
+        )
 
     # def __setstate__(self, likelihoodModel):
     #
@@ -402,7 +517,8 @@ class FermiLATLike(PluginPrototype):
         ec = (e1 + e2) / 2.0
         de = (e2 - e1) / 2.0
 
-        sum_model = numpy.zeros_like(self.like._srcCnts(self.like.sourceNames()[0]))
+        sum_model = numpy.zeros_like(
+            self.like._srcCnts(self.like.sourceNames()[0]))
 
         fig = plt.figure()
 
@@ -416,11 +532,16 @@ class FermiLATLike(PluginPrototype):
 
             sub.plot(ec, self.like._srcCnts(sourceName), label=sourceName)
 
-        sub.plot(ec, sum_model, label='Total Model')
+        sub.plot(ec, sum_model, label="Total Model")
 
-        sub.errorbar(ec, self.like.nobs, xerr=de,
-                     yerr=numpy.sqrt(self.like.nobs),
-                     fmt='.', label='Counts')
+        sub.errorbar(
+            ec,
+            self.like.nobs,
+            xerr=de,
+            yerr=numpy.sqrt(self.like.nobs),
+            fmt=".",
+            label="Counts",
+        )
 
         plt.legend(bbox_to_anchor=(1.05, 1), loc=2, numpoints=1)
 
@@ -432,13 +553,18 @@ class FermiLATLike(PluginPrototype):
 
         resid = old_div((self.like.nobs - sum_model), sum_model)
 
-        sub1.axhline(0, linestyle='--')
-        sub1.errorbar(ec, resid, xerr=de,
-                      yerr=old_div(numpy.sqrt(self.like.nobs), sum_model),
-                      capsize=0, fmt='.')
+        sub1.axhline(0, linestyle="--")
+        sub1.errorbar(
+            ec,
+            resid,
+            xerr=de,
+            yerr=old_div(numpy.sqrt(self.like.nobs), sum_model),
+            capsize=0,
+            fmt=".",
+        )
 
         sub.set_xscale("log")
-        sub.set_yscale("log", nonposy='clip')
+        sub.set_yscale("log", nonposy="clip")
 
         sub.set_ylabel("Counts per bin")
 
@@ -473,13 +599,17 @@ class FermiLATLike(PluginPrototype):
             bounds = self.getNuisanceParameterBounds(name)
             delta = self.getNuisanceParameterDelta(name)
 
-            nuisanceParameters["%s_%s" % (self.name, name)] = Parameter("%s_%s" % (self.name, name),
-                                                                        value,
-                                                                        min_value=bounds[0],
-                                                                        max_value=bounds[1],
-                                                                        delta=delta)
+            nuisanceParameters["%s_%s" % (self.name, name)] = Parameter(
+                "%s_%s" % (self.name, name),
+                value,
+                min_value=bounds[0],
+                max_value=bounds[1],
+                delta=delta,
+            )
 
-            nuisanceParameters["%s_%s" % (self.name, name)].free = self.fit_nuisance_params
+            nuisanceParameters[
+                "%s_%s" % (self.name, name)
+            ].free = self.fit_nuisance_params
 
         return nuisanceParameters
 
@@ -501,7 +631,7 @@ class FermiLATLike(PluginPrototype):
 
         assert like_src is not None
 
-        return like_src.funcs['Spectrum'].getParam(pname)
+        return like_src.funcs["Spectrum"].getParam(pname)
 
     def setNuisanceParameterValue(self, paramName, value):
 
@@ -528,4 +658,3 @@ class FermiLATLike(PluginPrototype):
         value = p.getValue()
 
         return value / 100.0
-

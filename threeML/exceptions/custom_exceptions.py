@@ -4,6 +4,7 @@ import functools
 
 # Monkeypatch the print of warning so we can customize them
 
+
 def my_format_warning(message, category, filename, lineo, line=None):
     """
     Override the default showwarning to customize the appearance of warnings
@@ -16,12 +17,13 @@ def my_format_warning(message, category, filename, lineo, line=None):
 
 custom_warnings.formatwarning = my_format_warning
 
+
 class NegativeBackground(RuntimeError):
     pass
 
+
 class TriggerDoesNotExist(RuntimeError):
     pass
-
 
 
 class ForbiddenRegionOfParameterSpace(RuntimeWarning):
@@ -51,6 +53,31 @@ class FitFailed(RuntimeError):
 class ConfigurationFileCorrupt(RuntimeWarning):
     pass
 
+
+class BadCovariance(RuntimeError):
+    pass
+
+
+class MinLargerMax(RuntimeError):
+    pass
+
+
+class NoFitYet(RuntimeError):
+    pass
+
+
+class DetDoesNotExist(RuntimeError):
+    pass
+
+
+class MinimizerNotAvailable(RuntimeError):
+    pass
+
+
+class TimeTypeNotKnown(RuntimeError):
+    pass
+
+
 class deprecated(object):
     def __init__(self, reason):
         if inspect.isclass(reason) or inspect.isfunction(reason):
@@ -59,7 +86,7 @@ class deprecated(object):
 
     def __call__(self, cls_or_func):
         if inspect.isfunction(cls_or_func):
-            if hasattr(cls_or_func, 'func_code'):
+            if hasattr(cls_or_func, "func_code"):
                 _code = cls_or_func.func_code
             else:
                 _code = cls_or_func.__code__
@@ -79,9 +106,13 @@ class deprecated(object):
 
         @functools.wraps(cls_or_func)
         def new_func(*args, **kwargs):
-            custom_warnings.simplefilter('always', DeprecationWarning)  # turn off filter
-            custom_warnings.warn_explicit(msg, category=DeprecationWarning, filename=filename, lineno=lineno)
-            custom_warnings.simplefilter('default', DeprecationWarning)  # reset filter
+            custom_warnings.simplefilter(
+                "always", DeprecationWarning
+            )  # turn off filter
+            custom_warnings.warn_explicit(
+                msg, category=DeprecationWarning, filename=filename, lineno=lineno
+            )
+            custom_warnings.simplefilter("default", DeprecationWarning)  # reset filter
             return cls_or_func(*args, **kwargs)
 
         return new_func

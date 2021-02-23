@@ -1,72 +1,56 @@
-from builtins import str
 import os
-from contextlib import contextmanager
-import tempfile
 import shutil
+import tempfile
 import uuid
+from builtins import str
+from contextlib import contextmanager
+from pathlib import Path
+
 from threeML.exceptions.custom_exceptions import custom_warnings
 
 
-def file_existing_and_readable(filename):
+def sanitize_filename(filename, abspath: bool=False) -> Path:
 
-    sanitized_filename = sanitize_filename(filename)
+    path: Path = Path(filename)
 
-    if os.path.exists(sanitized_filename):
-
-        # Try to open it
-
-        try:
-
-            with open(sanitized_filename):
-
-                pass
-
-        except:
-
-            return False
-
-        else:
-
-            return True
-
-    else:
-
-        return False
-
-
-def path_exists_and_is_directory(path):
-
-    sanitized_path = sanitize_filename(path, abspath=True)
-
-    if os.path.exists(sanitized_path):
-
-        if os.path.isdir(path):
-
-            return True
-
-        else:
-
-            return False
-
-    else:
-
-        return False
-
-
-def sanitize_filename(filename, abspath=False):
-
-    sanitized = os.path.expandvars(os.path.expanduser(filename))
+    sanitized = path.expanduser()
 
     if abspath:
 
-        return os.path.abspath(sanitized)
+        return sanitized.absolute()
 
     else:
 
         return sanitized
 
 
-def if_directory_not_existing_then_make(directory):
+def file_existing_and_readable(filename) -> bool:
+    
+    sanitized_filename: Path = sanitize_filename(filename)
+
+    return sanitized_filename.is_file()
+
+
+def fits_file_existing_and_readable(filename) -> bool:
+    """
+    checks if a FITS file exists ignoring extension ({})
+    info
+
+    """
+    base_filename = str(filename).split("{")[0]
+    
+    return file_existing_and_readable(base_filename)
+    
+
+
+def path_exists_and_is_directory(path) -> bool:
+
+    sanitized_path: Path = sanitize_filename(path, abspath=True)
+
+    return sanitized_path.is_dir()
+
+
+def if_directory_not_existing_then_make(directory) -> None:
     """
     If the given directory does not exists, then make it
 
@@ -74,11 +58,17 @@ def if_directory_not_existing_then_make(directory):
     :return: None
     """
 
-    sanitized_directory = sanitize_filename(directory)
-    
-    if not os.path.exists(sanitized_directory):
+    sanitized_directory: Path = sanitize_filename(directory)
 
-        os.makedirs(sanitized_directory)
+    try:
+
+        sanitized_directory.mkdir(parents=True, exist_ok=False)
+
+    except (FileExistsError):
+
+        # should add logging here!
+
+        pass
 
 
 def get_random_unique_name():
@@ -92,7 +82,7 @@ def get_random_unique_name():
 
 
 @contextmanager
-def temporary_directory(prefix='', within_directory=None):
+def temporary_directory(prefix="", within_directory=None):
     """
     This context manager creates a temporary directory in the most secure possible way (with no race condition), and
     removes it at the end.
@@ -119,19 +109,17 @@ def temporary_directory(prefix='', within_directory=None):
 @contextmanager
 def within_directory(directory):
 
-    current_dir = os.getcwd()
+    path: Path = Path(directory)
 
-    if not os.path.exists(directory):
+    assert path.is_dir(), f"path {path} does not exist!"
 
-        raise IOError("Directory %s does not exists!" % os.path.abspath(directory))
+    current_dir: Path = Path(".")
 
+    os.chdir(path)
     try:
-        os.chdir(directory)
 
-    except OSError:
+        yield
 
-        raise IOError("Cannot access %s" % os.path.abspath(directory))
+    finally:
 
-    yield
-
-    os.chdir(current_dir)
+        os.chdir(current_dir)

@@ -5,12 +5,14 @@ Define the interface for a plugin class.
 from builtins import object
 import abc
 from astromodels.utils.valid_variable import is_valid_variable_name
-import warnings
+
 import functools
 from astromodels import IndependentVariable
 from future.utils import with_metaclass
+from threeML.io.logging import setup_logger
 
 
+log =setup_logger(__name__)
 # def set_external_property(method):
 #     """
 #     Sets external property values if they exist
@@ -33,14 +35,18 @@ from future.utils import with_metaclass
 #     return wrapper
 
 
-class PluginPrototype(with_metaclass(abc.ABCMeta, object)):
+class PluginPrototype(object, metaclass=abc.ABCMeta):
     def __init__(self, name, nuisance_parameters):
-        assert is_valid_variable_name(name), "The name %s cannot be used as a name. You need to use a valid " \
-                                             "python identifier: no spaces, cannot start with numbers, cannot contain " \
-                                             "operators symbols such as -, +, *, /" % name
+        assert is_valid_variable_name(name), (
+            "The name %s cannot be used as a name. You need to use a valid "
+            "python identifier: no spaces, cannot start with numbers, cannot contain "
+            "operators symbols such as -, +, *, /" % name
+        )
 
         # Make sure total is not used as a name (need to use it for other things, like the total value of the statistic)
-        assert name.lower() != "total", "Sorry, you cannot use 'total' as name for a plugin."
+        assert (
+            name.lower() != "total"
+        ), "Sorry, you cannot use 'total' as name for a plugin."
 
         self._name = name
 
@@ -56,7 +62,10 @@ class PluginPrototype(with_metaclass(abc.ABCMeta, object)):
         self._tag = None
 
     def get_name(self):
-        warnings.warn("Do not use get_name() for plugins, use the .name property", DeprecationWarning)
+        log.warning(
+            "Do not use get_name() for plugins, use the .name property",
+           
+        )
 
         return self.name
 
@@ -102,11 +111,12 @@ class PluginPrototype(with_metaclass(abc.ABCMeta, object)):
         evaluated on the likelihood
         """
 
-        warnings.warn(
+        log.warning(
             "get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are "
-            "unreliable", )
+            "unreliable",
+        )
 
-        return 1.
+        return 1.0
 
     def _get_tag(self):
 
@@ -138,20 +148,28 @@ class PluginPrototype(with_metaclass(abc.ABCMeta, object)):
 
         else:
 
-            raise ValueError("Tag specification should be (independent_variable, start[, end])")
+            raise ValueError(
+                "Tag specification should be (independent_variable, start[, end])"
+            )
 
         # Let's do a lazy check
 
         if not isinstance(independent_variable, IndependentVariable):
 
-            warnings.warn("When tagging a plugin, you should use an IndependentVariable instance. You used instead "
-                          "an instance of a %s object. This might lead to crashes or "
-                          "other problems." % type(independent_variable))
+            log.warning(
+                "When tagging a plugin, you should use an IndependentVariable instance. You used instead "
+                "an instance of a %s object. This might lead to crashes or "
+                "other problems." % type(independent_variable)
+            )
 
         self._tag = (independent_variable, start, end)
 
-    tag = property(_get_tag, _set_tag, doc="Gets/sets the tag for this instance, as (independent variable, start, "
-                                           "[end])")
+    tag = property(
+        _get_tag,
+        _set_tag,
+        doc="Gets/sets the tag for this instance, as (independent variable, start, "
+        "[end])",
+    )
 
     ######################################################################
     # The following methods must be implemented by each plugin

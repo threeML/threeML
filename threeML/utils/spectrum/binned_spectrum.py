@@ -13,7 +13,6 @@ from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares
 
 
 class Channel(Interval):
-
     @property
     def channel_width(self):
 
@@ -34,7 +33,6 @@ class ChannelSet(IntervalSet):
         :return:
         """
 
-
         new_ebounds = cls.from_list_of_edges(instrument_response.ebounds)
 
         return new_ebounds
@@ -42,7 +40,8 @@ class ChannelSet(IntervalSet):
     @property
     def channels_widths(self):
 
-        return np.array([channel.channel_width for channel in self._intervals ])
+        return np.array([channel.channel_width for channel in self._intervals])
+
 
 class Quality(object):
     def __init__(self, quality):
@@ -51,22 +50,22 @@ class Quality(object):
         :param quality: a quality array
         """
 
-        #total_length = len(quality)
+        # total_length = len(quality)
 
         quality = quality.astype(str)
-        
+
         n_elements = 1
         for dim in quality.shape:
 
             n_elements *= dim
 
-        good = quality == 'good'
-        warn = quality == 'warn'
-        bad  = quality == 'bad'
+        good = quality == "good"
+        warn = quality == "warn"
+        bad = quality == "bad"
 
-        
-        
-        assert n_elements == (good.sum() + warn.sum() + bad.sum()), 'quality can only contain "good", "warn", and "bad"'
+        assert n_elements == (
+            good.sum() + warn.sum() + bad.sum()
+        ), 'quality can only contain "good", "warn", and "bad"'
 
         self._good = good
         self._warn = warn
@@ -80,9 +79,7 @@ class Quality(object):
 
     def get_slice(self, idx):
 
-
-        return Quality(self._quality[idx,:])
-
+        return Quality(self._quality[idx, :])
 
     @property
     def good(self):
@@ -107,13 +104,12 @@ class Quality(object):
         warn = ogip_quality == 2
         bad = np.logical_and(~good, ~warn)
 
+        quality = np.empty_like(ogip_quality, dtype="|S4")
+        quality[:] = "good"
 
-        quality = np.empty_like(ogip_quality,dtype='|S4')
-        quality[:] = 'good'
-
-        #quality[good] = 'good'
-        quality[warn] = 'warn'
-        quality[bad] = 'bad'
+        # quality[good] = 'good'
+        quality[warn] = "warn"
+        quality[bad] = "bad"
 
         return cls(quality)
 
@@ -127,7 +123,7 @@ class Quality(object):
         :return:
         """
 
-        ogip_quality = np.zeros(self._quality.shape,dtype=np.int32)
+        ogip_quality = np.zeros(self._quality.shape, dtype=np.int32)
 
         ogip_quality[self.warn] = 2
         ogip_quality[self.bad] = 5
@@ -142,18 +138,30 @@ class Quality(object):
         :return:
         """
 
-        quality = np.array(['good' for i in range(int(n_channels))])
+        quality = np.array(["good" for i in range(int(n_channels))])
 
         return cls(quality)
-
 
 
 class BinnedSpectrum(Histogram):
 
     INTERVAL_TYPE = Channel
 
-    def __init__(self, counts, exposure, ebounds, count_errors=None, sys_errors=None, quality=None, scale_factor=1.,
-                 is_poisson=False, mission=None, instrument=None, tstart=None, tstop=None):
+    def __init__(
+        self,
+        counts,
+        exposure,
+        ebounds,
+        count_errors=None,
+        sys_errors=None,
+        quality=None,
+        scale_factor=1.0,
+        is_poisson=False,
+        mission=None,
+        instrument=None,
+        tstart=None,
+        tstop=None,
+    ):
         """
         A general binned histogram of either Poisson or non-Poisson rates. While the input is in counts, 3ML spectra work
         in rates, so this class uses the exposure to construct the rates from the counts.
@@ -184,7 +192,7 @@ class BinnedSpectrum(Histogram):
 
             # make one from the edges
 
-            ebounds = ChannelSet.from_list_of_edges(ebounds) #type: ChannelSet
+            ebounds = ChannelSet.from_list_of_edges(ebounds)  # type: ChannelSet
 
         self._ebounds = ebounds
 
@@ -210,7 +218,6 @@ class BinnedSpectrum(Histogram):
 
         rates = old_div(counts, self._exposure)
 
-
         if quality is not None:
 
             # check that we are using the 3ML quality type
@@ -225,10 +232,9 @@ class BinnedSpectrum(Histogram):
 
             self._quality = Quality.create_all_good(len(rates))
 
-
         if mission is None:
 
-            self._mission = 'UNKNOWN'
+            self._mission = "UNKNOWN"
 
         else:
 
@@ -236,25 +242,25 @@ class BinnedSpectrum(Histogram):
 
         if instrument is None:
 
-            self._instrument = 'UNKNOWN'
+            self._instrument = "UNKNOWN"
 
         else:
 
             self._instrument = instrument
 
-
         self._tstart = tstart
 
         self._tstop = tstop
 
-
         # pass up to the binned spectrum
 
-        super(BinnedSpectrum, self).__init__(list_of_intervals=ebounds,
-                                             contents=rates,
-                                             errors=rate_errors,
-                                             sys_errors=sys_errors,
-                                             is_poisson=is_poisson)
+        super(BinnedSpectrum, self).__init__(
+            list_of_intervals=ebounds,
+            contents=rates,
+            errors=rate_errors,
+            sys_errors=sys_errors,
+            is_poisson=is_poisson,
+        )
 
     @property
     def n_channel(self):
@@ -281,7 +287,9 @@ class BinnedSpectrum(Histogram):
         """
         :return: total rate error
         """
-        assert self.is_poisson == False, "Cannot request errors on rates for a Poisson spectrum"
+        assert (
+            self.is_poisson == False
+        ), "Cannot request errors on rates for a Poisson spectrum"
 
         return sqrt_sum_of_squares(self._errors)
 
@@ -299,7 +307,7 @@ class BinnedSpectrum(Histogram):
         :return: count error per channel
         """
 
-        #VS: impact of this change is unclear to me, it seems to make sense and the tests pass
+        # VS: impact of this change is unclear to me, it seems to make sense and the tests pass
         if self.is_poisson:
             return None
         else:
@@ -318,8 +326,8 @@ class BinnedSpectrum(Histogram):
         """
         :return: total count error
         """
-        
-        #VS: impact of this change is unclear to me, it seems to make sense and the tests pass
+
+        # VS: impact of this change is unclear to me, it seems to make sense and the tests pass
         if self.is_poisson:
             return None
         else:
@@ -394,7 +402,13 @@ class BinnedSpectrum(Histogram):
 
         return self._instrument
 
-    def clone(self, new_counts=None, new_count_errors=None, new_exposure=None, new_scale_factor=None):
+    def clone(
+        self,
+        new_counts=None,
+        new_count_errors=None,
+        new_exposure=None,
+        new_scale_factor=None,
+    ):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -416,19 +430,29 @@ class BinnedSpectrum(Histogram):
 
             new_scale_factor = self._scale_factor
 
-        return BinnedSpectrum(counts=new_counts,
-                              ebounds=ChannelSet.from_list_of_edges(self.edges),
-                              exposure=new_exposure,
-                              count_errors=new_count_errors,
-                              sys_errors=self._sys_errors,
-                              quality=self._quality,
-                              scale_factor=new_scale_factor,
-                              is_poisson=self._is_poisson,
-                              mission=self._mission,
-                              instrument=self._instrument)
+        return BinnedSpectrum(
+            counts=new_counts,
+            ebounds=ChannelSet.from_list_of_edges(self.edges),
+            exposure=new_exposure,
+            count_errors=new_count_errors,
+            sys_errors=self._sys_errors,
+            quality=self._quality,
+            scale_factor=new_scale_factor,
+            is_poisson=self._is_poisson,
+            mission=self._mission,
+            instrument=self._instrument,
+        )
 
     @classmethod
-    def from_pandas(cls,pandas_dataframe,exposure,scale_factor=1.,is_poisson=False,mission=None,instrument=None):
+    def from_pandas(
+        cls,
+        pandas_dataframe,
+        exposure,
+        scale_factor=1.0,
+        is_poisson=False,
+        mission=None,
+        instrument=None,
+    ):
         """
         Build a spectrum from data contained within a pandas data frame.
 
@@ -456,12 +480,11 @@ class BinnedSpectrum(Histogram):
 
         # get the required columns
 
-        emin = np.array(pandas_dataframe['emin'])
-        emax = np.array(pandas_dataframe['emax'])
-        counts = np.array(pandas_dataframe['counts'])
+        emin = np.array(pandas_dataframe["emin"])
+        emax = np.array(pandas_dataframe["emax"])
+        counts = np.array(pandas_dataframe["counts"])
         ebounds = emin.tolist()
         ebounds.append(emax[-1])
-
 
         ebounds = ChannelSet.from_list_of_edges(ebounds)
 
@@ -470,28 +493,30 @@ class BinnedSpectrum(Histogram):
         sys_errors = None
         quality = None
 
-        if 'count_errors' in list(pandas_dataframe.keys()):
+        if "count_errors" in list(pandas_dataframe.keys()):
 
-            count_errors = np.array(pandas_dataframe['count_errors'])
+            count_errors = np.array(pandas_dataframe["count_errors"])
 
-        if 'sys_errors' in list(pandas_dataframe.keys()):
-            sys_errors = np.array(pandas_dataframe['sys_errors'])
+        if "sys_errors" in list(pandas_dataframe.keys()):
+            sys_errors = np.array(pandas_dataframe["sys_errors"])
 
-        if 'quality' in list(pandas_dataframe.keys()):
-            quality = Quality(np.array(pandas_dataframe['quality']))
+        if "quality" in list(pandas_dataframe.keys()):
+            quality = Quality(np.array(pandas_dataframe["quality"]))
 
-        return cls(counts=counts,
-                   exposure=exposure,
-                   ebounds=ebounds,
-                   count_errors=count_errors,
-                   sys_errors=sys_errors,
-                   quality=quality,
-                   scale_factor=scale_factor,
-                   is_poisson=is_poisson,
-                   mission=mission,
-                   instrument=instrument)
+        return cls(
+            counts=counts,
+            exposure=exposure,
+            ebounds=ebounds,
+            count_errors=count_errors,
+            sys_errors=sys_errors,
+            quality=quality,
+            scale_factor=scale_factor,
+            is_poisson=is_poisson,
+            mission=mission,
+            instrument=instrument,
+        )
 
-    def to_pandas(self,use_rate=True):
+    def to_pandas(self, use_rate=True):
         """
         make a pandas table from the spectrum.
 
@@ -499,37 +524,39 @@ class BinnedSpectrum(Histogram):
         :return:
         """
 
-
-
         if use_rate:
 
-            out_name = 'rates'
+            out_name = "rates"
             out_values = self.rates
 
         else:
 
-            out_name = 'counts'
+            out_name = "counts"
             out_values = self.rates * self.exposure
 
-        out_dict = {'emin': self.starts, 'emax': self.stops,out_name:out_values, 'quality': self.quality}
+        out_dict = {
+            "emin": self.starts,
+            "emax": self.stops,
+            out_name: out_values,
+            "quality": self.quality,
+        }
 
         if self.rate_errors is not None:
 
             if use_rate:
 
-                out_dict['rate_errors'] = self.rate_errors
+                out_dict["rate_errors"] = self.rate_errors
 
             else:
 
-                out_dict['count_errors'] =self.rate_errors * self.exposure
+                out_dict["count_errors"] = self.rate_errors * self.exposure
 
         if self.sys_errors is not None:
 
-            out_dict['sys_errors'] = None
-
+            out_dict["sys_errors"] = None
 
         return pd.DataFrame(out_dict)
-    
+
     @classmethod
     def from_time_series(cls, time_series, use_poly=False, from_model=False, **kwargs):
         """
@@ -538,8 +565,6 @@ class BinnedSpectrum(Histogram):
         :param use_poly:
         :return:
         """
-        raise NotImplementedError('This is still under construction')
-
 
         pha_information = time_series.get_information_dict(use_poly)
 
@@ -548,42 +573,49 @@ class BinnedSpectrum(Histogram):
         if use_poly:
             is_poisson = False
 
-        return cls(instrument=pha_information['instrument'],
-                   mission=pha_information['telescope'],
-                   tstart=pha_information['tstart'],
-                   telapse=pha_information['telapse'],
-                   #channel=pha_information['channel'],
-                   counts=pha_information['counts'],
-                   count_errors=pha_information['counts error'],
-                   quality=pha_information['quality'],
-                   grouping=pha_information['grouping'],
-                   exposure=pha_information['exposure'],
-                   backscale=1.,
-                   is_poisson=is_poisson)
+        return cls(
+            instrument=pha_information["instrument"],
+            mission=pha_information["telescope"],
+            tstart=pha_information["tstart"],
+            tstop=pha_information["tstart"]+pha_information["telapse"],
+            #telapse=pha_information["telapse"],
+            # channel=pha_information['channel'],
+            counts=pha_information["counts"],
+            count_errors=pha_information["counts error"],
+            quality=pha_information["quality"],
+            #grouping=pha_information["grouping"],
+            exposure=pha_information["exposure"],
+            #backscale=1.0,
+            is_poisson=is_poisson,
+            ebounds=pha_information["edges"]
+        )
 
-    def __add__(self,other):
+    def __add__(self, other):
         assert self == other, "The bins are not equal"
 
-        new_sys_errors=self.sys_errors
+        new_sys_errors = self.sys_errors
         if new_sys_errors is None:
-            new_sys_errors=other.sys_errors
+            new_sys_errors = other.sys_errors
         elif other.sys_errors is not None:
             new_sys_errors += other.sys_errors
 
         new_exposure = self.exposure + other.exposure
 
         if self.count_errors is None and other.count_errors is None:
-            new_count_errors = None 
+            new_count_errors = None
         else:
-            assert self.count_errors is not None or other.count_errors is not None, 'only one of the two spectra have errors, can not add!'
-            new_count_errors = (self.count_errors**2 + other.count_errors**2) ** 0.5
+            assert (
+                self.count_errors is not None or other.count_errors is not None
+            ), "only one of the two spectra have errors, can not add!"
+            new_count_errors = (self.count_errors ** 2 + other.count_errors ** 2) ** 0.5
 
         new_counts = self.counts + other.counts
 
-
-        new_spectrum = self.clone(new_counts=new_counts,
-                                  new_count_errors=new_count_errors,
-                                  new_exposure=new_exposure)
+        new_spectrum = self.clone(
+            new_counts=new_counts,
+            new_count_errors=new_count_errors,
+            new_exposure=new_exposure,
+        )
 
         if self.tstart is None:
             if other.tstart is None:
@@ -597,8 +629,8 @@ class BinnedSpectrum(Histogram):
             new_spectrum._tstart = self.tstart
 
         else:
-            
-            new_spectrum._tstart = min(self.tstart,other.tstart)
+
+            new_spectrum._tstart = min(self.tstart, other.tstart)
 
         if self.tstop is None:
             if other.tstop is None:
@@ -612,11 +644,10 @@ class BinnedSpectrum(Histogram):
             new_spectrum._tstop = self.tstop
 
         else:
-            
-            new_spectrum._tstop = min(self.tstop,other.tstop)
+
+            new_spectrum._tstop = min(self.tstop, other.tstop)
 
         return new_spectrum
-
 
     def add_inverse_variance_weighted(self, other):
         assert self == other, "The bins are not equal"
@@ -624,27 +655,43 @@ class BinnedSpectrum(Histogram):
         if self.is_poisson or other.is_poisson:
             raise Exception("Inverse_variance_weighting not implemented for poisson")
 
-        new_sys_errors=self.sys_errors
+        new_sys_errors = self.sys_errors
         if new_sys_errors is None:
-            new_sys_errors=other.sys_errors
+            new_sys_errors = other.sys_errors
         elif other.sys_errors is not None:
             new_sys_errors += other.sys_errors
 
         new_exposure = self.exposure + other.exposure
 
-        new_rate_errors = np.array([ (e1**-2 + e2**-2)**-0.5 for e1,e2 in zip(self.rate_errors,other._errors) ] )
-        new_rates = np.array( [ (c1*e1**-2 + c2*e2**-2) for c1,e1,c2,e2 in zip(self.rates,self._errors,other.rates, other._errors) ] ) * new_rate_errors**2
-        
+        new_rate_errors = np.array(
+            [
+                (e1 ** -2 + e2 ** -2) ** -0.5
+                for e1, e2 in zip(self.rate_errors, other._errors)
+            ]
+        )
+        new_rates = (
+            np.array(
+                [
+                    (c1 * e1 ** -2 + c2 * e2 ** -2)
+                    for c1, e1, c2, e2 in zip(
+                        self.rates, self._errors, other.rates, other._errors
+                    )
+                ]
+            )
+            * new_rate_errors ** 2
+        )
+
         new_count_errors = new_rate_errors * new_exposure
         new_counts = new_rates * new_exposure
 
-        new_counts[np.isnan(new_counts)]=0
-        new_count_errors[np.isnan(new_count_errors)]=0
+        new_counts[np.isnan(new_counts)] = 0
+        new_count_errors[np.isnan(new_count_errors)] = 0
 
-        new_spectrum = self.clone(new_counts=new_counts,
-                                  new_count_errors=new_count_errors)
+        new_spectrum = self.clone(
+            new_counts=new_counts, new_count_errors=new_count_errors
+        )
 
-        new_spectrum._exposure = new_exposure 
+        new_spectrum._exposure = new_exposure
 
         if self.tstart is None:
             if other.tstart is None:
@@ -658,8 +705,8 @@ class BinnedSpectrum(Histogram):
             new_spectrum._tstart = self.tstart
 
         else:
-            
-            new_spectrum._tstart = min(self.tstart,other.tstart)
+
+            new_spectrum._tstart = min(self.tstart, other.tstart)
 
         if self.tstop is None:
             if other.tstop is None:
@@ -673,21 +720,28 @@ class BinnedSpectrum(Histogram):
             new_spectrum._tstop = self.tstop
 
         else:
-            
-            new_spectrum._tstop = min(self.tstop,other.tstop)
 
-
-        
+            new_spectrum._tstop = min(self.tstop, other.tstop)
 
         return new_spectrum
 
 
-
-
 class BinnedSpectrumWithDispersion(BinnedSpectrum):
-
-    def __init__(self, counts, exposure, response, count_errors=None, sys_errors=None, quality=None, scale_factor=1.,
-                 is_poisson=False, mission=None, instrument=None, tstart=None, tstop=None ):
+    def __init__(
+        self,
+        counts,
+        exposure,
+        response,
+        count_errors=None,
+        sys_errors=None,
+        quality=None,
+        scale_factor=1.0,
+        is_poisson=False,
+        mission=None,
+        instrument=None,
+        tstart=None,
+        tstop=None,
+    ):
         """
         A binned spectrum that must be deconvolved via a dispersion or response matrix
 
@@ -704,28 +758,28 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         :param instrument:
         """
 
-
-        assert isinstance(response, InstrumentResponse), 'The response is not a valid instance of InstrumentResponse'
+        assert isinstance(
+            response, InstrumentResponse
+        ), "The response is not a valid instance of InstrumentResponse"
 
         self._rsp = response
 
         ebounds = ChannelSet.from_instrument_response(response)
 
-
-
-        super(BinnedSpectrumWithDispersion, self).__init__(counts=counts,
-                                                           exposure=exposure,
-                                                           ebounds=ebounds,
-                                                           count_errors=count_errors,
-                                                           sys_errors=sys_errors,
-                                                           quality=quality,
-                                                           scale_factor=scale_factor,
-                                                           is_poisson=is_poisson,
-                                                           mission=mission,
-                                                           instrument=instrument,
-                                                           tstart=tstart,
-                                                           tstop=tstop)
-
+        super(BinnedSpectrumWithDispersion, self).__init__(
+            counts=counts,
+            exposure=exposure,
+            ebounds=ebounds,
+            count_errors=count_errors,
+            sys_errors=sys_errors,
+            quality=quality,
+            scale_factor=scale_factor,
+            is_poisson=is_poisson,
+            mission=mission,
+            instrument=instrument,
+            tstart=tstart,
+            tstop=tstop,
+        )
 
     @property
     def response(self):
@@ -733,7 +787,9 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         return self._rsp
 
     @classmethod
-    def from_time_series(cls, time_series, response=None, use_poly=False, extract=False):
+    def from_time_series(
+        cls, time_series, response=None, use_poly=False, extract=False
+    ):
         """
 
         :param time_series:
@@ -741,7 +797,9 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         :return:
         """
 
-        assert not (use_poly and extract), 'cannot extract background counts and use the poly'
+        assert not (
+            use_poly and extract
+        ), "cannot extract background counts and use the poly"
 
         pha_information = time_series.get_information_dict(use_poly, extract)
 
@@ -750,26 +808,30 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         if use_poly:
             is_poisson = False
 
+        return cls(
+            instrument=pha_information["instrument"],
+            mission=pha_information["telescope"],
+            tstart=pha_information["tstart"],
+            tstop=pha_information["tstart"] + pha_information["telapse"],
+            # channel=pha_information['channel'],
+            counts=pha_information["counts"],
+            count_errors=pha_information["counts error"],
+            quality=pha_information["quality"],
+            # grouping=pha_information['grouping'],
+            exposure=pha_information["exposure"],
+            response=response,
+            scale_factor=1.0,
+            is_poisson=is_poisson,
+        )
 
-
-
-
-
-        return cls(instrument=pha_information['instrument'],
-                   mission=pha_information['telescope'],
-                   tstart=pha_information['tstart'],
-                   tstop=pha_information['tstart'] + pha_information['telapse'],
-                   #channel=pha_information['channel'],
-                   counts =pha_information['counts'],
-                   count_errors=pha_information['counts error'],
-                   quality=pha_information['quality'],
-                   #grouping=pha_information['grouping'],
-                   exposure=pha_information['exposure'],
-                   response=response,
-                   scale_factor=1.,
-                   is_poisson=is_poisson)
-
-    def clone(self, new_counts=None, new_count_errors=None, new_sys_errors=None, new_exposure=None, new_scale_factor=None):
+    def clone(
+        self,
+        new_counts=None,
+        new_count_errors=None,
+        new_sys_errors=None,
+        new_exposure=None,
+        new_scale_factor=None,
+    ):
         """
         make a new spectrum with new counts and errors and all other
         parameters the same
@@ -789,7 +851,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
 
         if new_sys_errors is None:
             new_sys_errors = self.sys_errors
-        
+
         if new_exposure is None:
             new_exposure = self.exposure
 
@@ -797,33 +859,23 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
 
             new_scale_factor = self._scale_factor
 
-        return BinnedSpectrumWithDispersion(counts=new_counts,
-                                            exposure=new_exposure,
-                                            response=self._rsp,
-                                            count_errors=new_count_errors,
-                                            sys_errors=new_sys_errors,
-                                            quality=self._quality,
-                                            scale_factor=new_scale_factor,
-                                            is_poisson=self._is_poisson,
-                                            mission=self._mission,
-                                            instrument=self._instrument)
+        return BinnedSpectrumWithDispersion(
+            counts=new_counts,
+            exposure=new_exposure,
+            response=self._rsp,
+            count_errors=new_count_errors,
+            sys_errors=new_sys_errors,
+            quality=self._quality,
+            scale_factor=new_scale_factor,
+            is_poisson=self._is_poisson,
+            mission=self._mission,
+            instrument=self._instrument,
+        )
 
-    def __add__(self,other):
-        #TODO implement equality in InstrumentResponse class
+    def __add__(self, other):
+        # TODO implement equality in InstrumentResponse class
         assert self.response is other.response
 
-        new_spectrum = super(BinnedSpectrumWithDispersion,self).__add__(other)
+        new_spectrum = super(BinnedSpectrumWithDispersion, self).__add__(other)
 
         return new_spectrum
-
-
-
-
-
-
-
-
-
-
-
-

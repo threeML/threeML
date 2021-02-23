@@ -21,8 +21,6 @@ def interval_to_errors(value, low_bound, hi_bound):
     return error_minus, error_plus
 
 
-
-
 def get_uncertainty_tokens(x):
     """
     Split the given uncertainty in number, error and exponent.
@@ -33,13 +31,17 @@ def get_uncertainty_tokens(x):
 
     try:
 
-        number, uncertainty, exponent = re.match('\(?(\-?[0-9]+\.?[0-9]*) ([0-9]+\.?[0-9]*)\)?(e[\+|\-][0-9]+)?',
-                                                 x.__str__().replace("+/-", " ").replace("nan", "0")).groups()
+        number, uncertainty, exponent = re.match(
+            "\(?(\-?[0-9]+\.?[0-9]*) ([0-9]+\.?[0-9]*)\)?(e[\+|\-][0-9]+)?",
+            x.__str__().replace("+/-", " ").replace("nan", "0"),
+        ).groups()
 
     except:
 
-        raise RuntimeError("Could not extract number, uncertainty and exponent from %s. "
-                           "This is likely a bug." % x.__str__())
+        raise RuntimeError(
+            "Could not extract number, uncertainty and exponent from %s. "
+            "This is likely a bug." % x.__str__()
+        )
 
     return number, uncertainty, exponent
 
@@ -63,7 +65,6 @@ def uncertainty_formatter(value, low_bound, hi_bound):
 
     error_m, error_p = interval_to_errors(value, low_bound, hi_bound)
 
-
     # Compute the sign of the errors
     # NOTE: sometimes value is not within low_bound - hi_bound, so these sign might not always
     # be -1 and +1 respectively
@@ -73,7 +74,13 @@ def uncertainty_formatter(value, low_bound, hi_bound):
 
     # Scale the values to the order of magnitude of the value
 
-    order_of_magnitude = max([_order_of_magnitude(value), _order_of_magnitude(error_m), _order_of_magnitude(error_p)])
+    order_of_magnitude = max(
+        [
+            _order_of_magnitude(value),
+            _order_of_magnitude(error_m),
+            _order_of_magnitude(error_p),
+        ]
+    )
 
     scaled_value = old_div(value, order_of_magnitude)
     scaled_error_m = old_div(error_m, order_of_magnitude)
