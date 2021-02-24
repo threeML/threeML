@@ -444,7 +444,7 @@ class FermipyLike(PluginPrototype):
             self._configuration, likelihood_model_instance
         )
 
-    def _update_model_in_fermipy(self):
+    def _update_model_in_fermipy(self, update_dictionary = False, delta = 0.0, force_update = False):
 
         # Substitute all spectra for point sources with FileSpectrum, so that we will be able to control
         # them from 3ML
@@ -453,7 +453,22 @@ class FermipyLike(PluginPrototype):
         ):  # type: astromodels.PointSource
 
             # Update this source only if it has free parameters (to gain time)
-            if point_source.has_free_parameters():
+            if point_source.has_free_parameters() or force_update:
+
+                #Update source position if free
+                if force_update or ( point_source.position.ra.free or point_source.position.dec.free ):
+ 
+                    model_pos = point_source.position.sky_coord
+                    fermipy_pos = self._gta.roi.get_source_by_name(point_source.name).skydir
+                
+                    if  model_pos.separation( fermipy_pos ).to("degree").value > delta :
+                        #modeled after how this is done in fermipy
+                        #(cf https://fermipy.readthedocs.io/en/latest/_modules/fermipy/sourcefind.html#SourceFind.localize)
+                        temp_source = self._gta.delete_source(point_source.name)
+                        temp_source.set_position( model_pos )
+                        self._gta.add_source(point_source.name, temp_source, free=False)
+                        self._gta.free_source(point_source.name, False)
+                        self._gta.set_source_spectrum(point_source.name, "FileFunction", update_source=update_dictionary)
 
                 # Now set the spectrum of this source to the right one
                 dnde = point_source(self._pts_energies)  # ph / (cm2 s keV)
@@ -461,8 +476,11 @@ class FermipyLike(PluginPrototype):
 
                 # NOTE: I use update_source=False because it makes things 100x faster and I verified that
                 # it does not change the result.
+                # (HF: Not sure who wrote the above but I think sometimes we do want to update fermipy dictionaries.)
 
-                self._gta.set_source_dnde(point_source.name, dnde_MeV, False)
+                self._gta.set_source_dnde(point_source.name, dnde_MeV, update_source = update_dictionary)
+                
+                
             else:
 
                 # Nothing to do for a fixed source_
@@ -506,3 +524,4 @@ class FermipyLike(PluginPrototype):
         logLike value.
         """
         return self.get_log_like()
+
