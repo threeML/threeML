@@ -525,3 +525,21 @@ class FermipyLike(PluginPrototype):
         """
         return self.get_log_like()
 
+    def get_number_of_data_points(self):
+        """
+        Return the number of spatial/energy bins
+
+        :return: number of bins
+        """
+        
+        num = len(self._gta.components) * self._gta._enumbins
+        
+        if self._gta.projtype == "WCS":
+
+            num = num * self._gta.npix[0] * self._gta.npix[1]
+
+        if self._gta.projtype == "HPX":
+        
+            num = num * np.max(self.geom.npix) ##Need to test this!
+            
+        return num
