@@ -532,14 +532,14 @@ class FermipyLike(PluginPrototype):
         :return: number of bins
         """
         
-        num = len(self._gta.components) * self._gta._enumbins
+        num = len(self._gta.components)
         
         if self._gta.projtype == "WCS":
 
-            num = num * self._gta.npix[0] * self._gta.npix[1]
+            num = num * self._gta._enumbins * int(self._gta.npix[0]) * int(self._gta.npix[1])
 
         if self._gta.projtype == "HPX":
         
-            num = num * np.max(self.geom.npix) ##Need to test this!
+            num = num * np.sum(self.geom.npix)
             
         return num
