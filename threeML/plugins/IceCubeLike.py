@@ -300,11 +300,11 @@ class IceCubeLike(PluginPrototype):
             signal_time_profile = mla.time_profiles.UniformProfile(signal_time_profile[0],
                                                                    signal_time_profile[1])   
         if not issubclass(type(test_signal_time_profile) ,time_profiles.GenericProfile):
-            test_signal_time_profile = time_profiles.UniformProfile(test_signal_time_profile[0],
-                                                                    test_signal_time_profile[1])
+            test_signal_time_profile = mla.time_profiles.UniformProfile(test_signal_time_profile[0],
+                                                                        test_signal_time_profile[1])
         if not issubclass(type(test_background_time_profile) ,time_profiles.GenericProfile):
-            test_background_time_profile = time_profiles.UniformProfile(test_background_time_profile[0],
-                                                                        test_background_time_profile[1]) 
+            test_background_time_profile = mla.time_profiles.UniformProfile(test_background_time_profile[0],
+                                                                            test_background_time_profile[1]) 
         self.test_signal_time_profile = test_signal_time_profile
         self.test_background_time_profile = test_background_time_profile                                                       
         event_model = mla.threemlmodels.ThreeMLEventModel(self.source, 
@@ -317,9 +317,10 @@ class IceCubeLike(PluginPrototype):
                                                           withinwindow = withinwindow
                                                           **kwargs)
         self.verbose = verbose
-        ts_preprocessor = mla.threeml.test_statistics.TdPreprocessor(sig_time_profile = signal_time_profile,
-                                                                     bg_time_profile = background_time_profile)
-        test_statistic = mla.threeml.test_statistics.threeml_ps_test_statistic     
+        ts_preprocessor = mla._test_statistics.TdPreprocessor(sig_time_profile = signal_time_profile,
+                                                              bg_time_profile = background_time_profile)
+        test_statistic = mla.threeml.test_statistics.llh_test_statistic
+        sob_fun = mla.threeml.test_statistics.get_sob
         self.analysis = mla.analysis.Analysis(event_model,ts_preprocessor,test_statistic,self.source)
         self.preprocessing = self.analysis.test_statistic.ts_preprocessor(self.analysis.model,
                                                                           self.analysis.source,
@@ -363,15 +364,15 @@ class IceCubeLike(PluginPrototype):
             return
 
     def set_test_time_profile(self,
-                              test_signal_time_profile:Optional[time_profiles.GenericProfile],
-                              test_background_time_profile:Optional[time_profiles.GenericProfile]) -> None:
+                              test_signal_time_profile:Optional[mla.time_profiles.GenericProfile],
+                              test_background_time_profile:Optional[mla.time_profiles.GenericProfile]) -> None:
         """ set the time profile for eval ts so it is not using injector's time profile"""
         if not issubclass(type(test_signal_time_profile) ,time_profiles.GenericProfile):
-            test_signal_time_profile = time_profiles.UniformProfile(test_signal_time_profile[0],
-                                                                    test_signal_time_profile[1])
+            test_signal_time_profile = mla.time_profiles.UniformProfile(test_signal_time_profile[0],
+                                                                        test_signal_time_profile[1])
         if not issubclass(type(test_background_time_profile) ,time_profiles.GenericProfile):
-            test_background_time_profile = time_profiles.UniformProfile(test_background_time_profile[0],
-                                                                        test_background_time_profile[1]) 
+            test_background_time_profile = mla.time_profiles.UniformProfile(test_background_time_profile[0],
+                                                                            test_background_time_profile[1]) 
         self.test_signal_time_profile = test_signal_time_profile
         self.test_background_time_profile = test_background_time_profile
     
