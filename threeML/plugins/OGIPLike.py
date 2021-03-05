@@ -114,7 +114,7 @@ class OGIPLike(DispersionSpectrumLike):
             name=name, observation=pha, background=bak, verbose=verbose
         )
 
-    def get_simulated_dataset(self, new_name: str = None, **kwargs):
+    def get_simulated_dataset(self, new_name: str = None, spectrum_number: int = 1, **kwargs):
         # type: (str, dict) -> OGIPLike
         """
         Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
@@ -127,7 +127,7 @@ class OGIPLike(DispersionSpectrumLike):
 
         # pass the response thru to the constructor
         return super(OGIPLike, self).get_simulated_dataset(
-            new_name=new_name, spectrum_number=1, response=self._rsp, **kwargs
+            new_name=new_name, spectrum_number=spectrum_number, response=self._rsp, **kwargs
         )
 
     @property
