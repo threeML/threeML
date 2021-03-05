@@ -1,10 +1,10 @@
 import shutil
+
 import pytest
 
 from threeML import *
-from threeML.io.network import internet_connection_is_active
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
-
+from threeML.io.network import internet_connection_is_active
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
@@ -25,8 +25,8 @@ else:
 # This defines a decorator which can be applied to single tests to
 # skip them if the condition is not met
 skip_if_LAT_is_not_available = pytest.mark.skipif(not has_Fermi,
-    reason="Fermi Science Tools not installed",
-)
+                                                  reason="Fermi Science Tools not installed",
+                                                  )
 
 
 @skip_if_internet_is_not_available
@@ -89,7 +89,8 @@ def test_download_LLE_data():
 
     with pytest.raises(AssertionError):
 
-        download_LLE_trigger_data(trigger_name=80916009, destination_directory=temp_dir)
+        download_LLE_trigger_data(
+            trigger_name=80916009, destination_directory=temp_dir)
 
     with pytest.raises(AssertionError):
 

@@ -1,19 +1,22 @@
 from __future__ import division
-from builtins import str
-from builtins import map
-from past.utils import old_div
-import numpy
-import re
-from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
 
+import re
+from builtins import map, str
+
+import numpy
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
+from past.utils import old_div
 
-from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.config.config import threeML_config
-from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
+from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
+from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
+from threeML.io.logging import setup_logger
 
+from .VirtualObservatoryCatalog import VirtualObservatoryCatalog
+
+log = setup_logger(__name__)
 
 _trigger_name_match = re.compile("^GRB\d{9}$")
 _3FGL_name_match = re.compile("^3FGL J\d{4}.\d(\+|-)\d{4}\D?$")
@@ -35,7 +38,7 @@ def _gbm_and_lle_valid_source_check(source):
 
     if match is None:
 
-        custom_warnings.warn(warn_string)
+        log.warning(warn_string)
 
         answer = False
 
@@ -59,7 +62,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMBurstCatalog, self).__init__(
             "fermigbrst",
-            threeML_config["catalogs"]["Fermi"]["GBM burst catalog"],
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM burst catalog"].url,
             "Fermi-LAT/GBM burst catalog",
         )
 
@@ -92,7 +95,11 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
     def apply_format(self, table):
         new_table = table[
-            "name", "ra", "dec", "trigger_time", "t90",
+            "name",
+            "ra",
+            "dec",
+            "trigger_time",
+            "t90",
         ]
 
         new_table["ra"].format = "5.3f"
@@ -209,9 +216,10 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         available_intervals = {"fluence": "flnc", "peak": "pflx"}
 
-        assert interval in list(available_intervals.keys()), (
-            "interval not recognized. choices are %s"
-            % (" ,".join(list(available_intervals.keys())))
+        assert interval in list(
+            available_intervals.keys()
+        ), "interval not recognized. choices are %s" % (
+            " ,".join(list(available_intervals.keys()))
         )
 
         sources = {}
@@ -683,7 +691,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
         super(FermiLATSourceCatalog, self).__init__(
             "fermilpsc",
-            threeML_config["catalogs"]["Fermi"]["LAT FGL"],
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["LAT FGL"].url,
             "Fermi-LAT/LAT source catalog",
         )
 
@@ -710,7 +718,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
         if match is None:
 
-            custom_warnings.warn(warn_string)
+            log.warning(warn_string)
 
             answer = False
 
@@ -722,22 +730,26 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
     def apply_format(self, table):
         def translate(key):
+            if isinstance(key, bytes):
+                key = key.decode("ascii")
             if key.lower() == "psr":
                 return threefgl_types[key]
             if key.lower() in list(threefgl_types.keys()):
                 return threefgl_types[key.lower()]
-            return "unknown"
+            return key
 
         # Translate the 3 letter code to a more informative category, according
         # to the dictionary above
 
-        table["source_type"] = numpy.array(list(map(translate, table["source_type"])))
+        table["short_source_type"] = table["source_type"]
+        table["source_type"] = numpy.array(list(map(translate, table["short_source_type"])))
 
-        try:
+        if "Search_Offset" in table.columns:
 
             new_table = table[
                 "name",
                 "source_type",
+                "short_source_type",
                 "ra",
                 "dec",
                 "assoc_name",
@@ -748,10 +760,10 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
             return new_table.group_by("Search_Offset")
 
         # we may have not done a cone search!
-        except (ValueError):
+        else:
 
             new_table = table[
-                "name", "source_type", "ra", "dec", "assoc_name", "tevcat_assoc"
+                "name", "source_type", "short_source_type" "ra", "dec", "assoc_name", "tevcat_assoc"
             ]
 
             return new_table.group_by("name")
@@ -768,7 +780,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         for name, row in self._last_query_results.T.items():
             if name[-1] == "e":
                 # Extended source
-                custom_warnings.warn(
+                log.warning(
                     "Source %s is extended, support for extended source is not here yet. I will ignore"
                     "it" % name
                 )
@@ -827,17 +839,17 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
 
         super(FermiLLEBurstCatalog, self).__init__(
             "fermille",
-            threeML_config["catalogs"]["Fermi"]["LLE catalog"],
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["LLE catalog"].url,
             "Fermi-LAT/LLE catalog",
         )
 
     def apply_format(self, table):
         new_table = table["name", "ra", "dec", "trigger_time", "trigger_type"]
 
-        #Remove rows with masked elements in trigger_time column
+        # Remove rows with masked elements in trigger_time column
         if new_table.masked:
-            new_table = new_table[~new_table['trigger_time'].mask]
-        
+            new_table = new_table[~new_table["trigger_time"].mask]
+
         new_table["ra"].format = "5.3f"
         new_table["dec"].format = "5.3f"
 

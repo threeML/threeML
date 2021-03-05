@@ -4,6 +4,7 @@ import numpy as np
 
 from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
 from threeML.data_list import DataList
+from threeML.io.logging import silence_console_log
 from astromodels import clone_model
 
 

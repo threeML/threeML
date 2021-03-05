@@ -1,7 +1,7 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import zip
-from builtins import range
+from __future__ import division, print_function
+
+from builtins import range, zip
+
 from past.utils import old_div
 
 __author__ = "grburgess"
@@ -13,17 +13,21 @@ import os
 import numpy as np
 import pandas as pd
 from pandas import HDFStore
+from threeML.utils.progress_bar import tqdm, trange
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
-from threeML.io.progress_bar import progress_bar
+from threeML.io.logging import setup_logger, silence_console_log
+from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
 from threeML.io.rich_display import display
+from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.binner import TemporalBinner
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit
 from threeML.utils.time_series.time_series import TimeSeries
-from threeML.io.plotting.light_curve_plots import binned_light_curve_plot
+
+log = setup_logger(__name__)
 
 
 class ReducingNumberOfThreads(Warning):
@@ -104,9 +108,11 @@ class EventList(TimeSeries):
 
         self._temporal_binner = None
 
-        assert self._arrival_times.shape[0] == self._measurement.shape[0], (
-            "Arrival time (%d) and energies (%d) have different shapes"
-            % (self._arrival_times.shape[0], self._measurement.shape[0])
+        assert (
+            self._arrival_times.shape[0] == self._measurement.shape[0]
+        ), "Arrival time (%d) and energies (%d) have different shapes" % (
+            self._arrival_times.shape[0],
+            self._measurement.shape[0],
         )
 
     @property
@@ -136,14 +142,14 @@ class EventList(TimeSeries):
     def bin_by_significance(self, start, stop, sigma, mask=None, min_counts=1):
         """
 
-       Interface to the temporal binner's significance binning model
+        Interface to the temporal binner's significance binning model
 
-        :param start: start of the interval to bin on
-        :param stop:  stop of the interval ot bin on
-        :param sigma: sigma-level of the bins
-        :param mask: (bool) use the energy mask to decide on ,significance
-        :param min_counts:  minimum number of counts per bin
-        :return:
+         :param start: start of the interval to bin on
+         :param stop:  stop of the interval ot bin on
+         :param sigma: sigma-level of the bins
+         :param mask: (bool) use the energy mask to decide on ,significance
+         :param min_counts:  minimum number of counts per bin
+         :return:
         """
 
         if mask is not None:
@@ -154,7 +160,8 @@ class EventList(TimeSeries):
             this_mask = np.zeros_like(self._arrival_times, dtype=np.bool)
 
             for channel in phas:
-                this_mask = np.logical_or(this_mask, self._measurement == channel)
+                this_mask = np.logical_or(
+                    this_mask, self._measurement == channel)
 
             events = self._arrival_times[this_mask]
 
@@ -164,8 +171,8 @@ class EventList(TimeSeries):
 
         events = events[np.logical_and(events <= stop, events >= start)]
 
-        tmp_bkg_getter = lambda a, b: self.get_total_poly_count(a, b, mask)
-        tmp_err_getter = lambda a, b: self.get_total_poly_error(a, b, mask)
+        def tmp_bkg_getter(a, b): return self.get_total_poly_count(a, b, mask)
+        def tmp_err_getter(a, b): return self.get_total_poly_error(a, b, mask)
 
         # self._temporal_binner.bin_by_significance(tmp_bkg_getter,
         #                                           background_error_getter=tmp_err_getter,
@@ -191,7 +198,8 @@ class EventList(TimeSeries):
         """
 
         events = self._arrival_times[
-            np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)
+            np.logical_and(self._arrival_times >= start,
+                           self._arrival_times <= stop)
         ]
 
         self._temporal_binner = TemporalBinner.bin_by_constant(events, dt)
@@ -212,14 +220,16 @@ class EventList(TimeSeries):
     def bin_by_bayesian_blocks(self, start, stop, p0, use_background=False):
 
         events = self._arrival_times[
-            np.logical_and(self._arrival_times >= start, self._arrival_times <= stop)
+            np.logical_and(self._arrival_times >= start,
+                           self._arrival_times <= stop)
         ]
 
         # self._temporal_binner = TemporalBinner(events)
 
         if use_background:
 
-            integral_background = lambda t: self.get_total_poly_count(start, t)
+            def integral_background(
+                t): return self.get_total_poly_count(start, t)
 
             self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(
                 events, p0, bkg_integral_distribution=integral_background
@@ -227,7 +237,8 @@ class EventList(TimeSeries):
 
         else:
 
-            self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(events, p0)
+            self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(
+                events, p0)
 
     def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False):
         # type: (float, float, float, bool) -> None
@@ -266,7 +277,8 @@ class EventList(TimeSeries):
             bins = np.arange(start, stop + dt, dt)
 
         cnts, bins = np.histogram(self.arrival_times, bins=bins)
-        time_bins = np.array([[bins[i], bins[i + 1]] for i in range(len(bins) - 1)])
+        time_bins = np.array([[bins[i], bins[i + 1]]
+                              for i in range(len(bins) - 1)])
 
         # width = np.diff(bins)
         width = []
@@ -381,7 +393,7 @@ class EventList(TimeSeries):
 
         return np.logical_and(start <= self._arrival_times, self._arrival_times <= stop)
 
-    def _fit_polynomials(self):
+    def _fit_polynomials(self, bayes=False):
         """
 
         Binned fit to each channel. Sets the polynomial array that will be used to compute
@@ -393,11 +405,6 @@ class EventList(TimeSeries):
         """
 
         self._poly_fit_exists = True
-
-        self._fit_method_info["bin type"] = "Binned"
-        self._fit_method_info["fit method"] = threeML_config["event list"][
-            "binned fit method"
-        ]
 
         # Select all the events that are in the background regions
         # and make a mask
@@ -444,7 +451,8 @@ class EventList(TimeSeries):
             m = np.mean((bins[i], bins[i + 1]))
             mean_time.append(m)
 
-            exposure_per_bin.append(self.exposure_over_interval(bins[i], bins[i + 1]))
+            exposure_per_bin.append(
+                self.exposure_over_interval(bins[i], bins[i + 1]))
 
         mean_time = np.array(mean_time)
 
@@ -470,17 +478,20 @@ class EventList(TimeSeries):
 
         if self._user_poly_order == -1:
 
-            self._optimal_polynomial_grade = self._fit_global_and_determine_optimum_grade(
-                cnts[non_zero_mask],
-                mean_time[non_zero_mask],
-                exposure_per_bin[non_zero_mask],
-            )
-            if self._verbose:
-                print(
-                    "Auto-determined polynomial order: %d"
-                    % self._optimal_polynomial_grade
+            
+
+            self._optimal_polynomial_grade = (
+                self._fit_global_and_determine_optimum_grade(
+                    cnts[non_zero_mask],
+                    mean_time[non_zero_mask],
+                    exposure_per_bin[non_zero_mask],
+                    bayes=bayes
                 )
-                print("\n")
+            )
+
+            log.info(
+                "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
+            )
 
         else:
 
@@ -490,12 +501,45 @@ class EventList(TimeSeries):
             range(self._first_channel, self._n_channels + self._first_channel)
         )
 
-        polynomials = []
+        if threeML_config["parallel"]["use_parallel"]:
 
-        with progress_bar(
-            self._n_channels, title="Fitting %s background" % self._instrument
-        ) as p:
-            for channel in channels:
+            def worker(channel):
+
+                channel_mask = total_poly_energies == channel
+
+                # Mask background events and current channel
+                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+                # Select the masked events
+
+                current_events = total_poly_events[channel_mask]
+
+                cnts, bins = np.histogram(current_events, bins=these_bins)
+
+                polynomial, _ = polyfit(
+                    mean_time[non_zero_mask],
+                    cnts[non_zero_mask],
+                    self._optimal_polynomial_grade,
+                    exposure_per_bin[non_zero_mask],
+                    bayes=bayes
+                )
+
+                return polynomial
+
+            client = ParallelClient()
+
+
+
+            polynomials = client.execute_with_progress_bar(
+                    worker, channels, name=f"Fitting {self._instrument} background")
+
+        else:
+
+            polynomials = []
+
+            
+
+            for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
+
                 channel_mask = total_poly_energies == channel
 
                 # Mask background events and current channel
@@ -515,24 +559,18 @@ class EventList(TimeSeries):
                     cnts[non_zero_mask],
                     self._optimal_polynomial_grade,
                     exposure_per_bin[non_zero_mask],
+                    bayes=bayes
                 )
 
                 polynomials.append(polynomial)
-                p.increase()
 
         # We are now ready to return the polynomials
 
         self._polynomials = polynomials
 
-    def _unbinned_fit_polynomials(self):
+    def _unbinned_fit_polynomials(self, bayes=False):
 
         self._poly_fit_exists = True
-
-        # inform the type of fit we have
-        self._fit_method_info["bin type"] = "Unbinned"
-        self._fit_method_info["fit method"] = threeML_config["event list"][
-            "unbinned fit method"
-        ]
 
         # Select all the events that are in the background regions
         # and make a mask
@@ -578,15 +616,16 @@ class EventList(TimeSeries):
 
         if self._user_poly_order == -1:
 
-            self._optimal_polynomial_grade = self._unbinned_fit_global_and_determine_optimum_grade(
-                total_poly_events, poly_exposure
-            )
-            if self._verbose:
-                print(
-                    "Auto-determined polynomial order: %d"
-                    % self._optimal_polynomial_grade
+
+            self._optimal_polynomial_grade = (
+                self._unbinned_fit_global_and_determine_optimum_grade(
+                    total_poly_events, poly_exposure, bayes=bayes
                 )
-                print("\n")
+            )
+
+            log.info(
+                "Auto-determined polynomial order: %d" % self._optimal_polynomial_grade
+            )
 
         else:
 
@@ -601,12 +640,9 @@ class EventList(TimeSeries):
         t_start = self._poly_intervals.start_times
         t_stop = self._poly_intervals.stop_times
 
-        polynomials = []
+        if threeML_config["parallel"]["use_parallel"]:
 
-        with progress_bar(
-            self._n_channels, title="Fitting %s background" % self._instrument
-        ) as p:
-            for channel in channels:
+            def worker(channel):
                 channel_mask = total_poly_energies == channel
 
                 # Mask background events and current channel
@@ -621,10 +657,42 @@ class EventList(TimeSeries):
                     t_start,
                     t_stop,
                     poly_exposure,
+                    bayes=bayes
+                )
+
+                return polynomial
+
+            client = ParallelClient()
+
+
+            polynomials = client.execute_with_progress_bar(
+                    worker, channels, name=f"Fitting {self._instrument} background")
+
+        else:
+
+            polynomials = []
+
+            
+
+            for channel in tqdm(channels, desc=f"Fitting {self._instrument} background"):
+                channel_mask = total_poly_energies == channel
+
+                # Mask background events and current channel
+                # poly_chan_mask = np.logical_and(poly_mask, channel_mask)
+                # Select the masked events
+
+                current_events = total_poly_events[channel_mask]
+
+                polynomial, _ = unbinned_polyfit(
+                    current_events,
+                    self._optimal_polynomial_grade,
+                    t_start,
+                    t_stop,
+                    poly_exposure,
+                    bayes=bayes
                 )
 
                 polynomials.append(polynomial)
-                p.increase()
 
         # We are now ready to return the polynomials
 
@@ -692,9 +760,11 @@ class EventListWithDeadTime(EventList):
 
             self._dead_time = np.asarray(dead_time)
 
-            assert self._arrival_times.shape[0] == self._dead_time.shape[0], (
-                "Arrival time (%d) and Dead Time (%d) have different shapes"
-                % (self._arrival_times.shape[0], self._dead_time.shape[0])
+            assert (
+                self._arrival_times.shape[0] == self._dead_time.shape[0]
+            ), "Arrival time (%d) and Dead Time (%d) have different shapes" % (
+                self._arrival_times.shape[0],
+                self._dead_time.shape[0],
             )
 
         else:
@@ -773,7 +843,8 @@ class EventListWithDeadTime(EventList):
         if self._poly_fit_exists:
 
             if not self._poly_fit_exists:
-                raise RuntimeError("A polynomial fit to the channels does not exist!")
+                raise RuntimeError(
+                    "A polynomial fit to the channels does not exist!")
 
             for chan in range(self._n_channels):
 
@@ -784,7 +855,8 @@ class EventListWithDeadTime(EventList):
                     self._time_intervals.start_times, self._time_intervals.stop_times
                 ):
                     # Now integrate the appropriate background polynomial
-                    total_counts += self._polynomials[chan].integral(tmin, tmax)
+                    total_counts += self._polynomials[chan].integral(
+                        tmin, tmax)
                     counts_err += (
                         self._polynomials[chan].integral_error(tmin, tmax)
                     ) ** 2
@@ -877,9 +949,11 @@ class EventListWithDeadTimeFraction(EventList):
 
             self._dead_time_fraction = np.asarray(dead_time_fraction)
 
-            assert self._arrival_times.shape[0] == self._dead_time_fraction.shape[0], (
-                "Arrival time (%d) and Dead Time (%d) have different shapes"
-                % (self._arrival_times.shape[0], self._dead_time_fraction.shape[0])
+            assert (
+                self._arrival_times.shape[0] == self._dead_time_fraction.shape[0]
+            ), "Arrival time (%d) and Dead Time (%d) have different shapes" % (
+                self._arrival_times.shape[0],
+                self._dead_time_fraction.shape[0],
             )
 
         else:
@@ -901,7 +975,8 @@ class EventListWithDeadTimeFraction(EventList):
 
         if self._dead_time_fraction is not None:
 
-            interval_deadtime = (self._dead_time_fraction[mask]).mean() * interval
+            interval_deadtime = (
+                self._dead_time_fraction[mask]).mean() * interval
 
         else:
 
@@ -959,7 +1034,11 @@ class EventListWithDeadTimeFraction(EventList):
         if self._poly_fit_exists:
 
             if not self._poly_fit_exists:
-                raise RuntimeError("A polynomial fit to the channels does not exist!")
+
+                log.error("A polynomial fit to the channels does not exist!")
+                
+                raise RuntimeError(
+                    )
 
             for chan in range(self._n_channels):
 
@@ -970,7 +1049,8 @@ class EventListWithDeadTimeFraction(EventList):
                     self._time_intervals.start_times, self._time_intervals.stop_times
                 ):
                     # Now integrate the appropriate background polynomial
-                    total_counts += self._polynomials[chan].integral(tmin, tmax)
+                    total_counts += self._polynomials[chan].integral(
+                        tmin, tmax)
                     counts_err += (
                         self._polynomials[chan].integral_error(tmin, tmax)
                     ) ** 2
@@ -1044,14 +1124,18 @@ class EventListWithLiveTime(EventList):
         :param  dec:
         """
 
-        assert len(live_time) == len(live_time_starts), (
-            "Live time fraction (%d) and live time start (%d) have different shapes"
-            % (len(live_time), len(live_time_starts))
+        assert len(live_time) == len(
+            live_time_starts
+        ), "Live time fraction (%d) and live time start (%d) have different shapes" % (
+            len(live_time),
+            len(live_time_starts),
         )
 
-        assert len(live_time) == len(live_time_stops), (
-            "Live time fraction (%d) and live time stop (%d) have different shapes"
-            % (len(live_time), len(live_time_stops))
+        assert len(live_time) == len(
+            live_time_stops
+        ), "Live time fraction (%d) and live time stop (%d) have different shapes" % (
+            len(live_time),
+            len(live_time_stops),
         )
 
         super(EventListWithLiveTime, self).__init__(
@@ -1098,7 +1182,8 @@ class EventListWithLiveTime(EventList):
 
             # we want to take a fraction of the live time covered
 
-            dt = self._live_time_stops[inside_idx] - self._live_time_starts[inside_idx]
+            dt = self._live_time_stops[inside_idx] - \
+                self._live_time_starts[inside_idx]
 
             fraction = old_div((stop - start), dt)
 
@@ -1150,7 +1235,8 @@ class EventListWithLiveTime(EventList):
 
             # we want the distance from the last full bin
 
-            distance_from_next_bin = stop - self._live_time_starts[right_remainder_idx]
+            distance_from_next_bin = stop - \
+                self._live_time_starts[right_remainder_idx]
 
             fraction = old_div(distance_from_next_bin, dt)
 
@@ -1217,7 +1303,8 @@ class EventListWithLiveTime(EventList):
         if self._poly_fit_exists:
 
             if not self._poly_fit_exists:
-                raise RuntimeError("A polynomial fit to the channels does not exist!")
+                raise RuntimeError(
+                    "A polynomial fit to the channels does not exist!")
 
             # for chan in range(self._first_channel, self._n_channels + self._first_channel):
             for chan in range(self._n_channels):
@@ -1229,7 +1316,8 @@ class EventListWithLiveTime(EventList):
                     self._time_intervals.start_times, self._time_intervals.stop_times
                 ):
                     # Now integrate the appropriate background polynomial
-                    total_counts += self._polynomials[chan].integral(tmin, tmax)
+                    total_counts += self._polynomials[chan].integral(
+                        tmin, tmax)
                     counts_err += (
                         self._polynomials[chan].integral_error(tmin, tmax)
                     ) ** 2

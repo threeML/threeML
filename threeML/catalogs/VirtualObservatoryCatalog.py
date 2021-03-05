@@ -1,4 +1,4 @@
-from builtins import object
+
 from astromodels import *
 import astropy
 
@@ -13,6 +13,9 @@ from astropy.coordinates.name_resolve import get_icrs_coordinates
 import astropy.table as astro_table
 
 from threeML.io.network import internet_connection_is_active
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 # Workaround to support astropy 4.1+
 astropy_old = True
@@ -99,7 +102,13 @@ class VirtualObservatoryCatalog(object):
                 # Workaround to comply with newer versions of astroquery
                 if isinstance(votable, astropy.io.votable.tree.Table):
                     table = votable.to_table()
-                
+
+                if table is None:
+
+                    log.error("Your search returned nothing")
+                    
+                    return None
+                    
                 table.convert_bytestring_to_unicode()
 
                 pandas_df = (

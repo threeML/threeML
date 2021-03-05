@@ -24,12 +24,17 @@ def aic(log_like, n_parameters, n_data_points):
 
 
     """
+    try:
+        val = -2.0 * log_like + 2 * n_parameters
+        val += (
+            2 * n_parameters * (n_parameters + 1) / float(n_data_points - n_parameters - 1)
+        )
 
-    val = -2.0 * log_like + 2 * n_parameters
-    val += (
-        2 * n_parameters * (n_parameters + 1) / float(n_data_points - n_parameters - 1)
-    )
+    except:
 
+        val = 0
+
+        
     if not np.isfinite(val):
         val = 0
 

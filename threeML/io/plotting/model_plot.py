@@ -2,27 +2,36 @@ from builtins import object
 
 __author__ = "grburgess"
 
+import warnings
+from typing import List
+
 import astropy.units as u
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy.visualization import quantity_support
-import warnings
 
 from threeML.config.config import threeML_config
-from threeML.io.calculate_flux import (
-    _setup_analysis_dictionaries,
-    _collect_sums_into_dictionaries,
-)
+from threeML.io.calculate_flux import (_collect_sums_into_dictionaries,
+                                       _setup_analysis_dictionaries)
+from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.cmap_cycle import cmap_intervals
+from threeML.utils.progress_bar import tqdm
+
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+
+
+log = setup_logger(__name__)
 
 
 def plot_point_source_spectra(*analysis_results, **kwargs):
 
-    warnings.warn("plot_point_source_spectra() has been replaced by plot_spectra().")
+    log.error(
+        "plot_point_source_spectra() has been replaced by plot_spectra().")
     return plot_spectra(*analysis_results, **kwargs)
 
 
-def plot_spectra(*analysis_results, **kwargs):
+def plot_spectra(*analysis_results, **kwargs) -> plt.Figure:
     """
 
     plotting routine for fitted point source spectra
@@ -56,36 +65,30 @@ def plot_spectra(*analysis_results, **kwargs):
 
     quantity_support()
 
+    _sub_menu = threeML_config.model_plot.point_source_plot
+
     _defaults = {
-        "fit_cmap": threeML_config["model plot"]["point source plot"]["fit cmap"],
-        "contour_cmap": threeML_config["model plot"]["point source plot"][
-            "contour cmap"
-        ],
+        "fit_cmap": _sub_menu.fit_cmap.value,
+        "contour_cmap": _sub_menu.contour_cmap.value,
         "contour_colors": None,
         "fit_colors": None,
         "confidence_level": 0.68,
         "equal_tailed": True,
         "best_fit": "median",
-        "energy_unit": "keV",
-        "flux_unit": "1/(keV s cm2)",
-        "ene_min": 10.0,
-        "ene_max": 1e4,
-        "num_ene": 100,
+        "energy_unit": _sub_menu.ene_unit,
+        "flux_unit": _sub_menu.flux_unit,
+        "ene_min": _sub_menu.emin,
+        "ene_max": _sub_menu.emax,
+        "num_ene": _sub_menu.num_ene,
         "use_components": False,
         "components_to_use": [],
         "sources_to_use": [],
         "sum_sources": False,
         "show_contours": True,
-        "plot_style_kwargs": threeML_config["model plot"]["point source plot"][
-            "plot style"
-        ],
-        "contour_style_kwargs": threeML_config["model plot"]["point source plot"][
-            "contour style"
-        ],
-        "show_legend": True,
-        "legend_kwargs": threeML_config["model plot"]["point source plot"][
-            "legend style"
-        ],
+        "plot_style_kwargs": _sub_menu.plot_style,
+        "contour_style_kwargs": _sub_menu.contour_style,
+        "show_legend": _sub_menu.show_legend,
+        "legend_kwargs": _sub_menu.legend_style,
         "subplot": None,
         "xscale": "log",
         "yscale": "log",
@@ -98,14 +101,16 @@ def plot_spectra(*analysis_results, **kwargs):
             _defaults[key] = value
 
     if isinstance(_defaults["ene_min"], u.Quantity):
-        assert isinstance(
-            _defaults["ene_max"], u.Quantity
-        ), "both energy arguments must be Quantities"
+
+        if not isinstance(_defaults["ene_max"], u.Quantity):
+            log.error("both energy arguments must be Quantities")
+            raise RuntimeError()
 
     if isinstance(_defaults["ene_max"], u.Quantity):
-        assert isinstance(
-            _defaults["ene_min"], u.Quantity
-        ), "both energy arguments must be Quantities"
+
+        if not isinstance(_defaults["ene_min"], u.Quantity):
+            log.error("both energy arguments must be Quantities")
+            raise RuntimeError()
 
     if isinstance(_defaults["ene_max"], u.Quantity):
 
@@ -113,7 +118,7 @@ def plot_spectra(*analysis_results, **kwargs):
             _defaults["ene_min"], _defaults["ene_max"], _defaults["num_ene"]
         )  # type: u.Quantity
 
-        _defaults["energy_unit"] = energy_range.unit
+        #_defaults["energy_unit"] = energy_range.unit
 
         if _defaults["xscale"] == "log":
             energy_range = (
@@ -125,6 +130,9 @@ def plot_spectra(*analysis_results, **kwargs):
                 * energy_range.unit
             )
 
+            energy_range = energy_range.to(
+                _defaults["energy_unit"], equivalencies=u.spectral())
+
     else:
 
         energy_range = np.logspace(
@@ -132,6 +140,13 @@ def plot_spectra(*analysis_results, **kwargs):
             np.log10(_defaults["ene_max"]),
             _defaults["num_ene"],
         ) * u.Unit(_defaults["energy_unit"])
+
+        # scale the units to the defaults
+
+        _defaults["ene_min"] = _defaults["ene_min"] * \
+            u.Unit(_defaults["energy_unit"])
+        _defaults["ene_max"] = _defaults["ene_max"] * \
+            u.Unit(_defaults["energy_unit"])
 
     (
         mle_analyses,
@@ -161,7 +176,8 @@ def plot_spectra(*analysis_results, **kwargs):
 
         if _defaults["fit_colors"] is None:
 
-            color_fit = cmap_intervals(num_sources_to_plot + 1, _defaults["fit_cmap"])
+            color_fit = cmap_intervals(
+                num_sources_to_plot + 1, _defaults["fit_cmap"])
 
         else:
 
@@ -181,7 +197,8 @@ def plot_spectra(*analysis_results, **kwargs):
 
             else:
                 raise ValueError(
-                    "Can not setup color, wrong type:", type(_defaults["fit_colors"])
+                    "Can not setup color, wrong type:", type(
+                        _defaults["fit_colors"])
                 )
 
         if _defaults["contour_colors"] is None:
@@ -195,7 +212,8 @@ def plot_spectra(*analysis_results, **kwargs):
             # duck typing
             if isinstance(_defaults["contour_colors"], (str, str)):
 
-                color_contour = [_defaults["contour_colors"]] * num_sources_to_plot
+                color_contour = [
+                    _defaults["contour_colors"]] * num_sources_to_plot
 
             elif isinstance(_defaults["contour_colors"], list):
 
@@ -512,7 +530,8 @@ def plot_spectra(*analysis_results, **kwargs):
         )
 
         color_fit = cmap_intervals(num_sources_to_plot, _defaults["fit_cmap"])
-        color_contour = cmap_intervals(num_sources_to_plot, _defaults["contour_cmap"])
+        color_contour = cmap_intervals(
+            num_sources_to_plot, _defaults["contour_cmap"])
         color_itr = 0
 
         if _defaults["use_components"] and list(component_sum_dict_mle.keys()):
@@ -826,15 +845,28 @@ class SpectralContourPlot(object):
             if self._show_legend:
                 self._ax_right.legend(**self._legend_kwargs)
 
-        self._ax.set_xlim([self._emin, self._emax])
+        log.debug(
+            f'converting {self._emin.unit} to {_defaults["energy_unit"]}')
+
+        try:
+            self._ax.set_xlim([self._emin.to(_defaults["energy_unit"],
+                                             equivalencies=u.spectral()),
+                               self._emax.to(_defaults["energy_unit"],
+                                             equivalencies=u.spectral())])
+
+        except:
+
+            pass
 
         if isinstance(self._emin, u.Quantity) and self._show_legend:
 
             # This workaround is needed because of a bug in astropy that would break the plotting of the legend
             # (see issue #7504 in the Astropy github repo)
 
-            eemin = self._emin.to(self._ax.xaxis.get_units()).value
-            eemax = self._emax.to(self._ax.xaxis.get_units()).value
+            eemin = self._emin.to(self._ax.xaxis.get_units(),
+                                  equivalencies=u.spectral()).value
+            eemax = self._emax.to(self._ax.xaxis.get_units(),
+                                  equivalencies=u.spectral()).value
 
             self._ax.set_xlim([eemin, eemax])
 

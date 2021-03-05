@@ -1,24 +1,29 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import zip
-from builtins import range
-from builtins import object
-from past.utils import old_div
+from __future__ import division, print_function
+
+from builtins import object, range, zip
 
 __author__ = "grburgess"
 
 import collections
 import os
+from pathlib import Path
 
+import h5py
 import numpy as np
 import pandas as pd
-from pandas import HDFStore
+from threeML.utils.progress_bar import tqdm, trange
 
+from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
+from threeML.io.logging import setup_logger
+from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.spectrum.binned_spectrum import Quality
 from threeML.utils.time_interval import TimeIntervalSet
-from threeML.utils.time_series.polynomial import polyfit, unbinned_polyfit, Polynomial
+from threeML.utils.time_series.polynomial import (Polynomial, polyfit,
+                                                  unbinned_polyfit)
+
+log = setup_logger(__name__)
 
 
 class ReducingNumberOfThreads(Warning):
@@ -41,16 +46,16 @@ def ceildiv(a, b):
 class TimeSeries(object):
     def __init__(
         self,
-        start_time,
-        stop_time,
-        n_channels,
+        start_time: float,
+        stop_time: float,
+        n_channels: int,
         native_quality=None,
-        first_channel=1,
-        ra=None,
-        dec=None,
-        mission=None,
-        instrument=None,
-        verbose=True,
+        first_channel: int = 1,
+        ra: float = None,
+        dec: float = None,
+        mission: str = None,
+        instrument: str = None,
+        verbose: bool = True,
         edges=None,
     ):
         """
@@ -76,9 +81,9 @@ class TimeSeries(object):
         :param  dec:
         """
 
-        self._verbose = verbose
-        self._n_channels = n_channels
-        self._first_channel = first_channel
+        self._verbose: bool = verbose
+        self._n_channels: int = n_channels
+        self._first_channel: int = first_channel
         self._native_quality = native_quality
 
         # we haven't made selections yet
@@ -109,7 +114,7 @@ class TimeSeries(object):
 
         if instrument is None:
 
-            custom_warnings.warn("No instrument name is given. Setting to UNKNOWN")
+            log.warning("No instrument name is given. Setting to UNKNOWN")
 
             self._instrument = "UNKNOWN"
 
@@ -119,7 +124,7 @@ class TimeSeries(object):
 
         if mission is None:
 
-            custom_warnings.warn("No mission name is given. Setting to UNKNOWN")
+            log.warning("No mission name is given. Setting to UNKNOWN")
 
             self._mission = "UNKNOWN"
 
@@ -138,12 +143,12 @@ class TimeSeries(object):
         raise RuntimeError("Must be implemented in subclass")
 
     @property
-    def poly_fit_exists(self):
+    def poly_fit_exists(self) -> bool:
 
         return self._poly_fit_exists
 
     @property
-    def n_channels(self):
+    def n_channels(self) -> int:
 
         return self._n_channels
 
@@ -159,7 +164,7 @@ class TimeSeries(object):
         else:
             RuntimeError("A polynomial fit has not been made.")
 
-    def get_poly_info(self):
+    def get_poly_info(self) -> dict:
         """
         Return a pandas panel frame with the polynomial coeffcients
         and errors
@@ -192,9 +197,11 @@ class TimeSeries(object):
             return pan
 
         else:
-            RuntimeError("A polynomial fit has not been made.")
 
-    def get_total_poly_count(self, start, stop, mask=None):
+            log.error("A polynomial fit has not been made.")
+            RuntimeError()
+
+    def get_total_poly_count(self, start: float, stop: float, mask=None) -> int:
         """
 
         Get the total poly counts
@@ -213,7 +220,7 @@ class TimeSeries(object):
 
         return total_counts
 
-    def get_total_poly_error(self, start, stop, mask=None):
+    def get_total_poly_error(self, start: float, stop: float, mask=None) -> float:
         """
 
         Get the total poly error
@@ -242,7 +249,7 @@ class TimeSeries(object):
 
             raise RuntimeError("This EventList has no binning specified")
 
-    def __set_poly_order(self, value):
+    def __set_poly_order(self, value: int):
         """ Set poly order only in allowed range and redo fit """
 
         assert type(value) is int, "Polynomial order must be integer"
@@ -253,18 +260,21 @@ class TimeSeries(object):
 
         self._user_poly_order = value
 
+        log.debug(f"poly order set to {value}")
+
         if self._poly_fit_exists:
 
-            print(
-                "Refitting background with new polynomial order (%d) and existing selections"
-                % value
+            log.info(
+                f"Refitting background with new polynomial order ({value}) and existing selections"
             )
 
             if self._time_selection_exists:
 
+                log.debug("recomputing time selection")
+
                 self.set_polynomial_fit_interval(
                     *self._poly_intervals.to_string().split(","),
-                    unbinned=self._unbinned
+                    unbinned=self._unbinned,
                 )
 
             else:
@@ -299,12 +309,12 @@ class TimeSeries(object):
         """
         return self._time_intervals
 
-    def exposure_over_interval(self, tmin, tmax):
+    def exposure_over_interval(self, tmin, tmax) -> float:
         """ calculate the exposure over a given interval  """
 
         raise RuntimeError("Must be implemented in sub class")
 
-    def counts_over_interval(self, start, stop):
+    def counts_over_interval(self, start, stop) -> int:
         """
         return the number of counts in the selected interval
         :param start: start of interval
@@ -327,7 +337,7 @@ class TimeSeries(object):
 
         raise RuntimeError("Must be implemented in sub class")
 
-    def set_polynomial_fit_interval(self, *time_intervals, **options):
+    def set_polynomial_fit_interval(self, *time_intervals, **kwargs) -> None:
         """Set the time interval to fit the background.
         Multiple intervals can be input as separate arguments
         Specified as 'tmin-tmax'. Intervals are in seconds. Example:
@@ -335,15 +345,18 @@ class TimeSeries(object):
         set_polynomial_fit_interval("-10.0-0.0","10.-15.")
 
         :param time_intervals: intervals to fit on
-        :param options:
+        :param unbinned:
+        :param bayes:
+        :param kwargs:
 
         """
 
         # Find out if we want to binned or unbinned.
         # TODO: add the option to config file
-        if "unbinned" in options:
-            unbinned = options.pop("unbinned")
-            assert type(unbinned) == bool, "unbinned option must be True or False"
+        if "unbinned" in kwargs:
+            unbinned = kwargs.pop("unbinned")
+            assert type(
+                unbinned) == bool, "unbinned option must be True or False"
 
         else:
 
@@ -353,6 +366,25 @@ class TimeSeries(object):
 
             unbinned = True
 
+
+        # check if we are doing a bayesian
+        # fit and record this info
+            
+        if "bayes" in kwargs:
+            bayes = kwargs.pop("bayes")
+
+        else:
+
+            bayes = False
+
+        if bayes:
+
+            self._fit_method_info["fit method"] = "bayes"
+
+        else:
+
+            self._fit_method_info["fit method"] = "bayes"
+            
         # we create some time intervals
 
         poly_intervals = TimeIntervalSet.from_strings(*time_intervals)
@@ -371,7 +403,7 @@ class TimeSeries(object):
             t2 = time_interval.stop_time
 
             if (self._stop_time <= t1) or (t2 <= self._start_time):
-                custom_warnings.warn(
+                log.warning(
                     "The time interval %f-%f is out side of the arrival times and will be dropped"
                     % (t1, t2)
                 )
@@ -379,7 +411,7 @@ class TimeSeries(object):
             else:
 
                 if t1 < self._start_time:
-                    custom_warnings.warn(
+                    log.warning(
                         "The time interval %f-%f started before the first arrival time (%f), so we are changing the intervals to %f-%f"
                         % (t1, t2, self._start_time, self._start_time, t2)
                     )
@@ -387,7 +419,7 @@ class TimeSeries(object):
                     t1 = self._start_time  # + 1
 
                 if t2 > self._stop_time:
-                    custom_warnings.warn(
+                    log.warning(
                         "The time interval %f-%f ended after the last arrival time (%f), so we are changing the intervals to %f-%f"
                         % (t1, t2, self._stop_time, t1, self._stop_time)
                     )
@@ -416,61 +448,62 @@ class TimeSeries(object):
 
             self._unbinned = True  # keep track!
 
-            self._unbinned_fit_polynomials()
+            self._unbinned_fit_polynomials(bayes=bayes)
 
         else:
 
             self._unbinned = False
 
-            self._fit_polynomials()
+            self._fit_polynomials(bayes=bayes)
 
         # we have a fit now
 
         self._poly_fit_exists = True
 
-        if self._verbose:
-            print(
-                "%s %d-order polynomial fit with the %s method"
-                % (
-                    self._fit_method_info["bin type"],
-                    self._optimal_polynomial_grade,
-                    self._fit_method_info["fit method"],
-                )
-            )
-            print("\n")
+        log.info(
+            f"{self._fit_method_info['bin type']} {self._optimal_polynomial_grade}-order polynomial fit with the {self._fit_method_info['fit method']} method"
+        )
 
         # recalculate the selected counts
 
         if self._time_selection_exists:
-            self.set_active_time_intervals(*self._time_intervals.to_string().split(","))
+            self.set_active_time_intervals(
+                *self._time_intervals.to_string().split(","))
 
-    def get_information_dict(self, use_poly=False, extract=False):
+    def get_information_dict(
+        self, use_poly: bool = False, extract: bool = False
+    ) -> dict:
         """
         Return a PHAContainer that can be read by different builders
 
         :param use_poly: (bool) choose to build from the polynomial fits
         """
         if not self._time_selection_exists:
-            raise RuntimeError("No time selection exists! Cannot calculate rates")
+            log.error("No time selection exists! Cannot calculate rates")
+            raise RuntimeError()
 
         if extract:
+
+            log.debug("using extract method")
 
             is_poisson = True
 
             counts_err = None
             counts = self._poly_selected_counts
-            rates = old_div(self._counts, self._poly_exposure)
+            rates = self._counts / self._poly_exposure
             rate_err = None
             exposure = self._poly_exposure
 
         elif use_poly:
 
+            log.debug("using poly method")
+
             is_poisson = False
 
             counts_err = self._poly_count_err
             counts = self._poly_counts
-            rate_err = old_div(self._poly_count_err, self._exposure)
-            rates = old_div(self._poly_counts, self._exposure)
+            rate_err = self._poly_count_err / self._exposure
+            rates = self._poly_counts / self._exposure
             exposure = self._exposure
 
             # removing negative counts
@@ -489,7 +522,7 @@ class TimeSeries(object):
 
             counts_err = None
             counts = self._counts
-            rates = old_div(self._counts, self._exposure)
+            rates = self._counts / self._exposure
             rate_err = None
 
             exposure = self._exposure
@@ -511,7 +544,8 @@ class TimeSeries(object):
             self._time_intervals.absolute_stop_time
             - self._time_intervals.absolute_start_time
         )
-        container_dict["channel"] = np.arange(self._n_channels) + self._first_channel
+        container_dict["channel"] = np.arange(
+            self._n_channels) + self._first_channel
         container_dict["counts"] = counts
         container_dict["counts error"] = counts_err
         container_dict["rates"] = rates
@@ -556,7 +590,8 @@ class TimeSeries(object):
         if self._poly_fit_exists:
 
             for i, interval in enumerate(self.poly_intervals):
-                info_dict["polynomial selection (%d)" % (i + 1)] = interval.__repr__()
+                info_dict["polynomial selection (%d)" % (
+                    i + 1)] = interval.__repr__()
 
             info_dict["polynomial order"] = self._optimal_polynomial_grade
 
@@ -565,7 +600,7 @@ class TimeSeries(object):
 
         return pd.Series(info_dict, index=list(info_dict.keys()))
 
-    def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure):
+    def _fit_global_and_determine_optimum_grade(self, cnts, bins, exposure, bayes=False):
         """
         Provides the ability to find the optimum polynomial grade for *binned* counts by fitting the
         total (all channels) to 0-4 order polynomials and then comparing them via a likelihood ratio test.
@@ -574,6 +609,7 @@ class TimeSeries(object):
         :param cnts: counts per bin
         :param bins: the bins used
         :param exposure: exposure per bin
+        :param bayes:
         :return: polynomial grade
         """
 
@@ -581,22 +617,38 @@ class TimeSeries(object):
         max_grade = 4
         log_likelihoods = []
 
-        for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = polyfit(bins, cnts, grade, exposure)
+        log.debug("attempting to find best poly with binned data")
 
-            log_likelihoods.append(log_like)
+        if threeML_config["parallel"]["use_parallel"]:
+
+            def worker(grade):
+
+                polynomial, log_like = polyfit(
+                    bins, cnts, grade, exposure, bayes=bayes)
+
+                return log_like
+
+            client = ParallelClient()
+
+            log_likelihoods = client.execute_with_progress_bar(
+                worker, list(range(min_grade, max_grade + 1)), name="Finding best polynomial Order")
+
+        else:
+
+            for grade in trange(min_grade, max_grade + 1, desc="Finding best polynomial Order"):
+                polynomial, log_like = polyfit(
+                    bins, cnts, grade, exposure, bayes=bayes)
+
+                log_likelihoods.append(log_like)
 
         # Found the best one
         delta_loglike = np.array(
-            [2 * (x[0] - x[1]) for x in zip(log_likelihoods[:-1], log_likelihoods[1:])]
+            [2 * (x[0] - x[1])
+             for x in zip(log_likelihoods[:-1], log_likelihoods[1:])]
         )
 
-        # print("\ndelta log-likelihoods:")
-
-        # for i in range(max_grade):
-        #    print("%s -> %s: delta Log-likelihood = %s" % (i, i + 1, deltaLoglike[i]))
-
-        # print("")
+        log.debug(f"log likes {log_likelihoods}")
+        log.debug(f" delta loglikes {delta_loglike}")
 
         delta_threshold = 9.0
 
@@ -613,10 +665,10 @@ class TimeSeries(object):
 
         return best_grade
 
-    def _unbinned_fit_global_and_determine_optimum_grade(self, events, exposure):
+    def _unbinned_fit_global_and_determine_optimum_grade(self, events, exposure, bayes=False):
         """
         Provides the ability to find the optimum polynomial grade for *unbinned* events by fitting the
-        total (all channels) to 0-4 order polynomials and then comparing them via a likelihood ratio test.
+        total (all channels) to 0-2 order polynomials and then comparing them via a likelihood ratio test.
 
 
         :param events: an event list
@@ -628,23 +680,46 @@ class TimeSeries(object):
         # grade
 
         min_grade = 0
-        max_grade = 4
+        max_grade = 2
         log_likelihoods = []
 
         t_start = self._poly_intervals.start_times
         t_stop = self._poly_intervals.stop_times
 
-        for grade in range(min_grade, max_grade + 1):
-            polynomial, log_like = unbinned_polyfit(
-                events, grade, t_start, t_stop, exposure
-            )
+        log.debug("attempting to find best fit poly with unbinned")
 
-            log_likelihoods.append(log_like)
+        if threeML_config["parallel"]["use_parallel"]:
+
+            def worker(grade):
+
+                polynomial, log_like = unbinned_polyfit(
+                    events, grade, t_start, t_stop, exposure, bayes=bayes
+                )
+
+                return log_like
+
+            client = ParallelClient()
+
+            log_likelihoods = client.execute_with_progress_bar(
+                worker, list(range(min_grade, max_grade + 1)), name="Finding best polynomial Order")
+
+        else:
+
+            for grade in trange(min_grade, max_grade + 1, desc="Finding best polynomial Order"):
+                polynomial, log_like = unbinned_polyfit(
+                    events, grade, t_start, t_stop, exposure, bayes=bayes
+                )
+
+                log_likelihoods.append(log_like)
 
         # Found the best one
         delta_loglike = np.array(
-            [2 * (x[0] - x[1]) for x in zip(log_likelihoods[:-1], log_likelihoods[1:])]
+            [2 * (x[0] - x[1])
+             for x in zip(log_likelihoods[:-1], log_likelihoods[1:])]
         )
+
+        log.debug(f"log likes {log_likelihoods}")
+        log.debug(f" delta loglikes {delta_loglike}")
 
         delta_threshold = 9.0
 
@@ -683,81 +758,92 @@ class TimeSeries(object):
 
         filename = "%s.h5" % filename[0]
 
-        filename_sanitized = sanitize_filename(filename)
+        filename_sanitized: Path = sanitize_filename(filename)
 
         # Check that it does not exists
-        if os.path.exists(filename_sanitized):
+        if filename_sanitized.exists():
 
             if overwrite:
 
                 try:
 
-                    os.remove(filename_sanitized)
+                    filename_sanitized.unlink()
 
                 except:
 
-                    raise IOError(
-                        "The file %s already exists and cannot be removed (maybe you do not have "
-                        "permissions to do so?). " % filename_sanitized
+                    log.error(
+                        f"The file {filename_sanitized} already exists and cannot be removed (maybe you do not have "
+                        "permissions to do so?). "
                     )
+
+                    raise IOError()
 
             else:
 
-                raise IOError("The file %s already exists!" % filename_sanitized)
+                log.error(f"The file {filename_sanitized} already exists!")
+                raise IOError()
 
-        with HDFStore(filename_sanitized) as store:
+        with h5py.File(filename_sanitized, "w") as store:
 
             # extract the polynomial information and save it
 
             if self._poly_fit_exists:
 
-                coeff = []
-                err = []
+                coeff = np.empty(
+                    (self._n_channels, self._optimal_polynomial_grade + 1))
+                err = np.empty(
+                    (
+                        self._n_channels,
+                        self._optimal_polynomial_grade + 1,
+                        self._optimal_polynomial_grade + 1,
+                    )
+                )
 
-                for poly in self._polynomials:
-                    coeff.append(poly.coefficients)
-                    err.append(poly.covariance_matrix)
-                df_coeff = pd.Series(coeff)
-                df_err = pd.Series(err)
+                for i, poly in enumerate(self._polynomials):
+
+                    coeff[i, :] = poly.coefficients
+
+                    err[i, ...] = poly.covariance_matrix
+
+                # df_coeff = pd.Series(coeff)
+                # df_err = pd.Series(err)
 
             else:
 
-                raise RuntimeError("the polynomials have not been fit yet")
+                log.error("the polynomials have not been fit yet")
+                raise RuntimeError()
 
-            df_coeff.to_hdf(store, "coefficients")
-            df_err.to_hdf(store, "covariance")
+            store.create_dataset("coefficients", data=np.array(coeff))
+            store.create_dataset("covariance", data=np.array(err))
 
-            store.get_storer("coefficients").attrs.metadata = {
-                "poly_order": self._optimal_polynomial_grade,
-                "poly_selections": list(
-                    zip(
-                        self._poly_intervals.start_times,
-                        self._poly_intervals.stop_times,
-                    )
-                ),
-                "unbinned": self._unbinned,
-                "fit_method": self._fit_method_info["fit method"],
-            }
+            store.attrs["poly_order"] = self._optimal_polynomial_grade
+            store.attrs["poly_selections"] = list(
+                zip(
+                    self._poly_intervals.start_times,
+                    self._poly_intervals.stop_times,
+                )
+            )
+            store.attrs["unbinned"] = self._unbinned
+            store.attrs["fit_method"] = self._fit_method_info["fit method"]
 
-        if self._verbose:
-            print("\nSaved fitted background to %s.\n" % filename)
+        log.info(f"Saved fitted background to {filename_sanitized}")
 
     def restore_fit(self, filename):
 
-        filename_sanitized = sanitize_filename(filename)
+        filename_sanitized: Path = sanitize_filename(filename)
 
-        with HDFStore(filename_sanitized) as store:
+        with h5py.File(filename_sanitized, "r") as store:
 
-            coefficients = store["coefficients"]
+            coefficients = store["coefficients"][()]
 
-            covariance = store["covariance"]
+            covariance = store["covariance"][()]
 
             self._polynomials = []
 
             # create new polynomials
 
             for i in range(len(coefficients)):
-                coeff = np.array(coefficients.loc[i])
+                coeff = np.array(coefficients[i])
 
                 # make sure we get the right order
                 # pandas stores the non-needed coeff
@@ -765,11 +851,12 @@ class TimeSeries(object):
 
                 coeff = coeff[np.isfinite(coeff)]
 
-                cov = covariance.loc[i]
+                cov = covariance[i]
 
-                self._polynomials.append(Polynomial.from_previous_fit(coeff, cov))
+                self._polynomials.append(
+                    Polynomial.from_previous_fit(coeff, cov))
 
-            metadata = store.get_storer("coefficients").attrs.metadata
+            metadata = store.attrs
 
             self._optimal_polynomial_grade = metadata["poly_order"]
             poly_selections = np.array(metadata["poly_selections"])
@@ -789,7 +876,7 @@ class TimeSeries(object):
             self._fit_method_info["fit method"] = metadata["fit_method"]
 
         # go thru and count the counts!
-
+        log.debug("resest the poly form the file")
         self._poly_fit_exists = True
 
         # we must go thru and collect the polynomial exposure and counts
@@ -808,7 +895,8 @@ class TimeSeries(object):
 
         self._poly_selected_counts = np.sum(self._poly_selected_counts, axis=0)
         if self._time_selection_exists:
-            self.set_active_time_intervals(*self._time_intervals.to_string().split(","))
+            self.set_active_time_intervals(
+                *self._time_intervals.to_string().split(","))
 
     def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False):
 

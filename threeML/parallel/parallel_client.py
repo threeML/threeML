@@ -1,21 +1,19 @@
 # Custom warning
-import warnings
+import math
+import re
+import signal
+import subprocess
 import sys
 import time
-import re
-import math
-import subprocess
+import warnings
 from contextlib import contextmanager
-import signal
 from distutils.spawn import find_executable
 
-
 from threeML.config.config import threeML_config
-from threeML.io.progress_bar import (
-    progress_bar,
-    multiple_progress_bars,
-    CannotGenerateHTMLBar,
-)
+from threeML.io.logging import setup_logger
+from threeML.utils.progress_bar import tqdm
+
+log = setup_logger(__name__)
 
 try:
     from subprocess import DEVNULL  # py3k
@@ -62,33 +60,33 @@ def parallel_computation(profile=None, start_cluster=True):
 
     # Memorize the state of the use-parallel config
 
-    old_state = bool(threeML_config["parallel"]["use-parallel"])
+    old_state = bool(threeML_config["parallel"]["use_parallel"])
 
-    old_profile = str(threeML_config["parallel"]["IPython profile name"])
+    old_profile = str(threeML_config["parallel"]["profile_name"])
 
-    # Set the use-parallel feature on, if available
+    # Set the use_parallel feature on, if available
 
     if has_parallel:
 
-        threeML_config["parallel"]["use-parallel"] = True
+        threeML_config["parallel"]["use_parallel"] = True
 
     else:
 
         # No parallel environment available. Issue a warning and continue with serial computation
 
-        warnings.warn(
+        log.warning(
             "You requested parallel computation, but no parallel environment is available. You need "
             "to install the ipyparallel package. Continuing with serial computation...",
-            NoParallelEnvironment,
+
         )
 
-        threeML_config["parallel"]["use-parallel"] = False
+        threeML_config["parallel"]["use_parallel"] = False
 
     # Now use the specified profile (if any), otherwise the default one
 
     if profile is not None:
 
-        threeML_config["parallel"]["IPython profile name"] = str(profile)
+        threeML_config["parallel"]["profile_name"] = str(profile)
 
     # Here is where the content of the with parallel_computation statement gets
     # executed
@@ -158,14 +156,14 @@ def parallel_computation(profile=None, start_cluster=True):
         yield
 
     # Revert back
-    threeML_config["parallel"]["use-parallel"] = old_state
+    threeML_config["parallel"]["use_parallel"] = old_state
 
-    threeML_config["parallel"]["IPython profile name"] = old_profile
+    threeML_config["parallel"]["profile_name"] = old_profile
 
 
 def is_parallel_computation_active():
 
-    return bool(threeML_config["parallel"]["use-parallel"])
+    return bool(threeML_config["parallel"]["use_parallel"])
 
 
 if has_parallel:
@@ -187,7 +185,7 @@ if has_parallel:
 
             if "profile" not in kwargs.keys():
 
-                kwargs["profile"] = threeML_config["parallel"]["IPython profile name"]
+                kwargs["profile"] = threeML_config["parallel"]["profile_name"]
 
             super(ParallelClient, self).__init__(*args, **kwargs)
 
@@ -223,7 +221,7 @@ if has_parallel:
 
             if n_items < n_total_engines:
 
-                warnings.warn("More engines than items to process")
+                log.warning("More engines than items to process")
 
                 # Limit the view to the needed engines
 
@@ -243,7 +241,8 @@ if has_parallel:
 
                 if chunk_size is None:
 
-                    chunk_size = int(math.ceil(n_items / float(n_active_engines) / 20))
+                    chunk_size = int(
+                        math.ceil(n_items / float(n_active_engines) / 20))
 
             # We need this to keep the instance alive
             self._current_amr = lview.imap(
@@ -252,7 +251,7 @@ if has_parallel:
 
             return self._current_amr
 
-        def execute_with_progress_bar(self, worker, items, chunk_size=None):
+        def execute_with_progress_bar(self, worker, items, chunk_size=None, name="progress"):
 
             # Let's make a wrapper which will allow us to recover the order
             def wrapper(x):
@@ -263,21 +262,15 @@ if has_parallel:
 
             items_wrapped = [(i, item) for i, item in enumerate(items)]
 
-            n_iterations = len(items)
+            amr = self._interactive_map(
+                wrapper, items_wrapped, ordered=False, chunk_size=chunk_size
+            )
 
-            with progress_bar(n_iterations) as p:
+            results = []
 
-                amr = self._interactive_map(
-                    wrapper, items_wrapped, ordered=False, chunk_size=chunk_size
-                )
+            for i, res in enumerate(tqdm(amr, desc=name)):
 
-                results = []
-
-                for i, res in enumerate(amr):
-
-                    results.append(res)
-
-                    p.increase()
+                results.append(res)
 
             # Reorder the list according to the id
             return list(map(lambda x: x[1], sorted(results, key=lambda x: x[0])))

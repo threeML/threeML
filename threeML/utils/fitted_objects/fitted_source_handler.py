@@ -1,15 +1,18 @@
-from builtins import map
-from builtins import zip
-from builtins import object
+from builtins import map, object, zip
 
 __author__ = "grburgess"
 
-import itertools
 import functools
-import numpy as np
+import itertools
 
-from threeML.io.progress_bar import progress_bar
+import numpy as np
 from astromodels import use_astromodels_memoization
+
+from threeML.config import threeML_config
+from threeML.io.logging import setup_logger
+from threeML.utils.progress_bar import tqdm
+
+log = setup_logger(__name__)
 
 
 class GenericFittedSourceHandler(object):
@@ -49,7 +52,8 @@ class GenericFittedSourceHandler(object):
         # keep from confusing itertools
 
         if len(self._independent_variable_range) == 1:
-            self._independent_variable_range = (self._independent_variable_range[0],)
+            self._independent_variable_range = (
+                self._independent_variable_range[0],)
 
         # figure out the output shape of the best fit and errors
 
@@ -70,9 +74,10 @@ class GenericFittedSourceHandler(object):
         """
 
         # assure that the shapes will be the same
-        assert (
-            other._out_shape == self._out_shape
-        ), "cannot sum together arrays with different shapes!"
+        if other._out_shape != self._out_shape:
+            log.error("cannot sum together arrays with different shapes!")
+
+            raise RuntimeError()
 
         # this will get the value container for the other values
 
@@ -120,9 +125,15 @@ class GenericFittedSourceHandler(object):
 
                 # Do not use more than 1000 values (would make computation too slow for nothing)
 
-                if len(this_variate) > 1000:
-                    this_variate = np.random.choice(this_variate, size=1000)
+                if len(this_variate) > threeML_config.point_source.max_number_samples:
 
+                    log.debug(
+                        f"Reduced {name} from {len(this_variate)} to {threeML_config.point_source.max_number_samples}")
+
+                    
+                    this_variate = np.random.choice(
+                        this_variate, size=threeML_config.point_source.max_number_samples)
+                    
                 arguments[name] = this_variate
 
             else:
@@ -153,17 +164,13 @@ class GenericFittedSourceHandler(object):
             # scroll through the independent variables
             n_iterations = np.product(self._out_shape)
 
-            with progress_bar(n_iterations, title="Propagating errors") as p:
+            with use_astromodels_memoization(False):
 
-                with use_astromodels_memoization(False):
-
-                    for variables in itertools.product(
-                        *self._independent_variable_range
-                    ):
-                        variates.append(self._propagated_function(*variables))
-
-                        p.increase()
-
+                for variables in tqdm(
+                    list(itertools.product(*self._independent_variable_range)),
+                    desc="Propagating errors",
+                ):
+                    variates.append(self._propagated_function(*variables))
         # otherwise just evaluate
         else:
 
@@ -423,7 +430,8 @@ class VariatesContainer(object):
 
             other_values = other.values
 
-            summed_values = [v + vo for v, vo in zip(self._values, other_values)]
+            summed_values = [v + vo for v,
+                             vo in zip(self._values, other_values)]
 
             return VariatesContainer(
                 summed_values,

@@ -1,10 +1,17 @@
+from typing import Dict, List, Optional
+
 import emcee
 import numpy as np
+from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
 from threeML.bayesian.sampler_base import MCMCSampler
+from threeML.config import threeML_config
 from threeML.config.config import threeML_config
+from threeML.io.detect_notebook import is_inside_notebook
+from threeML.io.logging import setup_logger
 from threeML.parallel.parallel_client import ParallelClient
-from astromodels import ModelAssertionViolation, use_astromodels_memoization
+
+log = setup_logger(__name__)
 
 
 class EmceeSampler(MCMCSampler):
@@ -13,16 +20,20 @@ class EmceeSampler(MCMCSampler):
         Sample using the emcee sampler. For details:
         https://emcee.readthedocs.io/en/stable/
 
-        :param likelihood_model: 
-        :param data_list: 
-        :returns: 
-        :rtype: 
+        :param likelihood_model:
+        :param data_list:
+        :returns:
+        :rtype:
 
         """
 
-        super(EmceeSampler, self).__init__(likelihood_model, data_list, **kwargs)
+        super(EmceeSampler, self).__init__(
+            likelihood_model, data_list, **kwargs)
 
-    def setup(self, n_iterations, n_burn_in=None, n_walkers=20, seed=None):
+    def setup(self, n_iterations: int, n_burn_in: Optional[int] = None, n_walkers: int = 20, seed=None, **kwargs):
+
+        log.debug(f"Setup for Emcee sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"
+                  f"n_walkers: {n_walkers}, seed: {seed}.")
 
         self._n_iterations = int(n_iterations)
 
@@ -38,11 +49,22 @@ class EmceeSampler(MCMCSampler):
 
         self._seed = seed
 
+        self._kwargs = kwargs
+
+        # we control progress with the config
+
+        if "progress" in self._kwargs:
+
+            _ = self._kwargs.pop("progress")
+
         self._is_setup = True
 
     def sample(self, quiet=False):
 
-        assert self._is_setup, "You forgot to setup the sampler!"
+        if not self._is_setup:
+
+            log.info("You forgot to setup the sampler!")
+            return
 
         loud = not quiet
 
@@ -58,7 +80,7 @@ class EmceeSampler(MCMCSampler):
         # same set of parameters
         with use_astromodels_memoization(False):
 
-            if threeML_config["parallel"]["use-parallel"]:
+            if threeML_config["parallel"]["use_parallel"]:
 
                 c = ParallelClient()
                 view = c[:]
@@ -78,10 +100,26 @@ class EmceeSampler(MCMCSampler):
 
                 sampler._random.seed(self._seed)
 
+            log.debug("Start emcee run")
             # Sample the burn-in
+
+            if threeML_config.interface.progress_bars:
+
+                if is_inside_notebook():
+
+                    progress = "notebook"
+
+                else:
+                    progress = True
+
+            else:
+
+                progress = False
+
             pos, prob, state = sampler.run_mcmc(
-                initial_state=p0, nsteps=self._n_burn_in, progress=loud
+                initial_state=p0, nsteps=self._n_burn_in, progress=progress
             )
+            log.debug("Emcee run done")
 
             # Reset sampler
 
@@ -92,30 +130,29 @@ class EmceeSampler(MCMCSampler):
             # Run the true sampling
 
             _ = sampler.run_mcmc(
-                initial_state=state, nsteps=self._n_iterations, progress=loud
-            )
+                initial_state=state, nsteps=self._n_iterations, progress=progress)
 
-        acc = np.mean(sampler.acceptance_fraction)
+        acc=np.mean(sampler.acceptance_fraction)
 
-        print("\nMean acceptance fraction: %s\n" % acc)
+        log.info(f"Mean acceptance fraction: {acc}")
 
-        self._sampler = sampler
-        self._raw_samples = sampler.get_chain(flat=True)
+        self._sampler=sampler
+        self._raw_samples=sampler.get_chain(flat=True)
 
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
-        log_prior = [self._log_prior(x) for x in self._raw_samples]
+        log_prior=[self._log_prior(x) for x in self._raw_samples]
 
         # Now we get the log posterior and we remove the log prior
 
-        self._log_like_values = sampler.get_log_prob(flat=True) - log_prior
+        self._log_like_values=sampler.get_log_prob(flat=True) - log_prior
 
         # we also want to store the log probability
 
-        self._log_probability_values = sampler.get_log_prob(flat=True)
+        self._log_probability_values=sampler.get_log_prob(flat=True)
 
-        self._marginal_likelihood = None
+        self._marginal_likelihood=None
 
         self._build_samples_dictionary()
 

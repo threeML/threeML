@@ -1,6 +1,6 @@
 import numpy as np
 
-
+from threeML.io.logging import setup_logger
 from threeML.bayesian.sampler_base import MCMCSampler
 from threeML.config.config import threeML_config
 
@@ -42,6 +42,7 @@ except:
 
     using_mpi = False
 
+log = setup_logger(__name__)
 
 class ZeusSampler(MCMCSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
@@ -51,6 +52,9 @@ class ZeusSampler(MCMCSampler):
         super(ZeusSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(self, n_iterations, n_burn_in=None, n_walkers=20, seed=None):
+
+        log.debug(f"Setup for Zeus sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"\
+                  f"n_walkers: {n_walkers}, seed: {seed}.")
 
         self._n_iterations = int(n_iterations)
 
@@ -70,7 +74,10 @@ class ZeusSampler(MCMCSampler):
 
     def sample(self, quiet=False):
 
-        assert self._is_setup, "You forgot to setup the sampler!"
+        if not self._is_setup:
+
+            log.info("You forgot to setup the sampler!")
+            return
 
         loud = not quiet
 
@@ -102,12 +109,13 @@ class ZeusSampler(MCMCSampler):
                     #     sampler._random.seed(self._seed)
 
                     # Run the true sampling
-
+                    log.debug("Start zeus run")
                     _ = sampler.run(
                         p0, self._n_iterations + self._n_burn_in, progress=loud,
                     )
+                    log.debug("Zeus run done")
 
-            elif threeML_config["parallel"]["use-parallel"]:
+            elif threeML_config["parallel"]["use_parallel"]:
 
                 c = ParallelClient()
                 view = c[:]
@@ -132,11 +140,12 @@ class ZeusSampler(MCMCSampler):
 
             # Sample the burn-in
             if not using_mpi:
-
+                log.debug("Start zeus run")
                 _ = sampler.run(p0, self._n_iterations + self._n_burn_in, progress=loud)
+                log.debug("Zeus run done")
 
         self._sampler = sampler
-        self._raw_samples = sampler.flatten(discard=self._n_burn_in)
+        self._raw_samples = sampler.get_chain(flat=True, discard=self._n_burn_in)
 
         # Compute the corresponding values of the likelihood
 

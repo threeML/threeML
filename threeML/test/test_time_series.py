@@ -11,6 +11,10 @@ from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
 from .conftest import get_test_datasets_directory
 import astropy.io.fits as fits
+from threeML import debug_mode
+
+
+debug_mode()
 
 datasets_directory = get_test_datasets_directory()
 
@@ -54,68 +58,76 @@ def test_event_list_constructor():
     assert evt_list._mission == "UNKNOWN"
 
 
-def test_unbinned_fit():
-    with within_directory(datasets_directory):
-        start, stop = 0, 50
+def test_unbinned_fit(event_time_series):
 
-        poly = [1]
+    start, stop = 0, 50
 
-        arrival_times = np.loadtxt("test_event_data.txt")
+    poly = [1]
 
-        evt_list = EventListWithDeadTime(
-            arrival_times=arrival_times,
-            measurement=np.zeros_like(arrival_times),
-            n_channels=1,
-            start_time=arrival_times[0],
-            stop_time=arrival_times[-1],
-            dead_time=np.zeros_like(arrival_times),
-        )
+    arrival_times = event_time_series
 
-        evt_list.set_polynomial_fit_interval(
-            "%f-%f" % (start + 1, stop - 1), unbinned=True
-        )
+    print(len(event_time_series))
+    
+    evt_list = EventListWithDeadTime(
+        arrival_times=arrival_times,
+        measurement=np.zeros_like(arrival_times),
+        n_channels=1,
+        start_time=arrival_times[0],
+        stop_time=arrival_times[-1],
+        dead_time=np.zeros_like(arrival_times),
+    )
 
-        results = evt_list.get_poly_info()["coefficients"]
+    evt_list.set_polynomial_fit_interval(
+        "%f-%f" % (start + 1, stop - 1), unbinned=True, bayes=False
+    )
 
-        evt_list.set_active_time_intervals("0-1")
+    results = evt_list.get_poly_info()["coefficients"]
 
-        assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
+    print(results)
+    
+    evt_list.set_active_time_intervals("0-10")
 
-        assert evt_list._poly_counts.sum() > 0
-
-        evt_list.__repr__()
+    assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 10])
 
 
-def test_binned_fit():
-    with within_directory(datasets_directory):
-        start, stop = 0, 50
+    print(evt_list._poly_counts)
 
-        poly = [1]
+    assert evt_list._poly_counts.sum() > 0
 
-        arrival_times = np.loadtxt("test_event_data.txt")
+    evt_list.__repr__()
 
-        evt_list = EventListWithDeadTime(
-            arrival_times=arrival_times,
-            measurement=np.zeros_like(arrival_times),
-            n_channels=1,
-            start_time=arrival_times[0],
-            stop_time=arrival_times[-1],
-            dead_time=np.zeros_like(arrival_times),
-        )
 
-        evt_list.set_polynomial_fit_interval(
-            "%f-%f" % (start + 1, stop - 1), unbinned=False
-        )
+def test_binned_fit(event_time_series):
+    
+    start, stop = 0, 50
 
-        evt_list.set_active_time_intervals("0-1")
+    poly = [1]
 
-        results = evt_list.get_poly_info()["coefficients"]
+    arrival_times = event_time_series
 
-        assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
+    evt_list = EventListWithDeadTime(
+        arrival_times=arrival_times,
+        measurement=np.zeros_like(arrival_times),
+        n_channels=1,
+        start_time=arrival_times[0],
+        stop_time=arrival_times[-1],
+        dead_time=np.zeros_like(arrival_times),
+    )
 
-        assert evt_list._poly_counts.sum() > 0
+    evt_list.set_polynomial_fit_interval(
+        "%f-%f" % (start + 1, stop - 1), unbinned=False
+    )
 
-        evt_list.__repr__()
+    evt_list.set_active_time_intervals("0-1")
+
+    results = evt_list.get_poly_info()["coefficients"]
+    
+
+    assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
+
+    assert evt_list._poly_counts.sum() > 0
+
+    evt_list.__repr__()
 
 
 def test_read_gbm_cspec():
@@ -126,7 +138,7 @@ def test_read_gbm_cspec():
             "NAI3",
             os.path.join(data_dir, "glg_cspec_n3_bn080916009_v01.pha"),
             rsp_file=os.path.join(data_dir, "glg_cspec_n3_bn080916009_v00.rsp2"),
-            poly_order=-1,
+            poly_order=1,
         )
 
         nai3.set_active_time_interval("0-1")
@@ -166,7 +178,7 @@ def test_read_gbm_tte():
         )
 
         nai3.set_active_time_interval("0-1")
-        nai3.set_background_interval("-20--10", "100-200")
+        nai3.set_background_interval("-20--10", "100-200", unbinned=False)
 
         speclike = nai3.to_spectrumlike()
 
@@ -230,7 +242,7 @@ def test_read_gbm_tte():
 
         nai3.view_lightcurve(use_binner=True)
 
-        nai3.write_pha_from_binner("test_from_nai3", overwrite=True)
+        nai3.write_pha_from_binner("test_from_nai3", overwrite=True, force_rsp_write=True)
 
 
 def test_reading_of_written_pha():
@@ -265,7 +277,7 @@ def test_read_lle():
 
         lle.set_active_time_interval("0-10")
 
-        lle.set_background_interval("-150-0", "100-250")
+        lle.set_background_interval("-150-0", "100-250", unbinned=False)
 
         speclike = lle.to_spectrumlike()
 

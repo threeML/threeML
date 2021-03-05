@@ -13,6 +13,8 @@ from threeML import BayesianAnalysis, Uniform_prior, Log_uniform_prior
 from threeML.analysis_results import (
     MLEResults,
     load_analysis_results,
+    load_analysis_results_hdf,
+    convert_fits_analysis_result_to_hdf,
     AnalysisResultsSet,
 )
 from astromodels import Line, Gaussian, Powerlaw
@@ -129,6 +131,25 @@ def test_analysis_results_input_output(xy_fitted_joint_likelihood):
 
     _results_are_same(ar, ar_reloaded)
 
+def test_analysis_results_input_output_hdf(xy_fitted_joint_likelihood):
+
+    jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
+
+    jl.restore_best_fit()
+
+    ar = jl.results  # type: MLEResults
+
+    temp_file = "__test_mle.h5"
+
+    ar.write_to(temp_file, overwrite=True, as_hdf=True)
+
+    ar_reloaded = load_analysis_results_hdf(temp_file)
+
+    os.remove(temp_file)
+
+    _results_are_same(ar, ar_reloaded)
+
+    
 
 def test_analysis_set_input_output(xy_fitted_joint_likelihood):
 
@@ -163,6 +184,70 @@ def test_analysis_set_input_output(xy_fitted_joint_likelihood):
         _results_are_same(res1, res2)
 
 
+def test_conversion_fits2hdf(xy_fitted_joint_likelihood):
+
+    jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
+
+    jl.restore_best_fit()
+
+    ar = jl.results  # type: MLEResults
+
+    ar2 = jl.results
+
+    analysis_set = AnalysisResultsSet([ar, ar2])
+
+    analysis_set.set_bins("testing", [-1, 1], [3, 5], unit="s")
+
+    temp_file = "_analysis_set_test.fits"
+
+    analysis_set.write_to(temp_file, overwrite=True)
+
+    convert_fits_analysis_result_to_hdf(temp_file)
+
+    analysis_set_reloaded = load_analysis_results_hdf("_analysis_set_test.h5")
+
+        # Test they are the same
+    assert len(analysis_set_reloaded) == len(analysis_set)
+
+    for res1, res2 in zip(analysis_set, analysis_set_reloaded):
+
+        _results_are_same(res1, res2)
+
+    
+        
+def test_analysis_set_input_output_hdf(xy_fitted_joint_likelihood):
+
+    # Collect twice the same analysis results just to see if we can
+    # save them in a file as set of results
+
+    jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
+
+    jl.restore_best_fit()
+
+    ar = jl.results  # type: MLEResults
+
+    ar2 = jl.results
+
+    analysis_set = AnalysisResultsSet([ar, ar2])
+
+    analysis_set.set_bins("testing", [-1, 1], [3, 5], unit="s")
+
+    temp_file = "_analysis_set_test_hdf"
+
+    analysis_set.write_to(temp_file, overwrite=True, as_hdf=True)
+
+    analysis_set_reloaded = load_analysis_results_hdf(temp_file)
+
+    os.remove(temp_file)
+
+    # Test they are the same
+    assert len(analysis_set_reloaded) == len(analysis_set)
+
+    for res1, res2 in zip(analysis_set, analysis_set_reloaded):
+
+        _results_are_same(res1, res2)
+
+
 def test_error_propagation(xy_fitted_joint_likelihood):
 
     jl, _, _ = xy_fitted_joint_likelihood  # type: JointLikelihood, None, None
@@ -172,8 +257,8 @@ def test_error_propagation(xy_fitted_joint_likelihood):
     ar = jl.results  # type: MLEResults
 
     # You can use the results for propagating errors non-linearly for analytical functions
-    p1 = ar.get_variates("fake.spectrum.main.composite.a_1")
-    p2 = ar.get_variates("fake.spectrum.main.composite.b_1")
+    p1 = ar.get_variates("fake.spectrum.main.composite.b_1")
+    p2 = ar.get_variates("fake.spectrum.main.composite.a_1")
 
     # Test the printing
     print(p1)

@@ -1,11 +1,16 @@
-from builtins import str
 import collections
-import numpy as np
 import itertools
+from builtins import str
 
-from threeML.minimizer.minimization import GlobalMinimizer
-from threeML.io.progress_bar import progress_bar
+import numpy as np
 from astromodels import Parameter
+
+from threeML.config.config import threeML_config
+from threeML.io.logging import setup_logger
+from threeML.minimizer.minimization import GlobalMinimizer
+from threeML.utils.progress_bar import tqdm
+
+log = setup_logger(__name__)
 
 
 class AllFitFailed(RuntimeError):
@@ -33,7 +38,7 @@ class GridMinimizer(GlobalMinimizer):
         # This list will contain callbacks, if any
         self._callbacks = []
 
-    def _setup(self, user_setup_dict):
+    def _setup(self, user_setup_dict) -> None:
 
         if user_setup_dict is None:
 
@@ -53,6 +58,8 @@ class GridMinimizer(GlobalMinimizer):
         # Setup grid
 
         for parameter, grid in user_setup_dict["grid"].items():
+
+            log.debug(f"added {parameter} to the grid")
 
             self.add_parameter_to_grid(parameter, grid)
 
@@ -115,9 +122,10 @@ class GridMinimizer(GlobalMinimizer):
 
             except ValueError:
 
-                raise ValueError(
-                    "Could not find parameter %s in current model" % parameter_path
-                )
+                log.error("Could not find parameter %s in current model" %
+                          parameter_path)
+
+                raise ValueError()
 
             parameter = v[idx]
 
@@ -144,6 +152,8 @@ class GridMinimizer(GlobalMinimizer):
                 % (grid.min(), parameter.min_value, parameter.name)
             )
 
+            log.debug(f"grid successfully added: {grid}")
+
         self._grid[parameter.path] = grid
 
     def _minimize(self):
@@ -167,67 +177,70 @@ class GridMinimizer(GlobalMinimizer):
 
         n_iterations = np.prod([x.shape for x in list(self._grid.values())])
 
-        with progress_bar(n_iterations, title="Grid minimization") as progress:
+        if threeML_config.interface.progress_bars:
+            p = tqdm(total=n_iterations, desc="Grid Minimization")
 
-            for values_tuple in itertools.product(*list(self._grid.values())):
+        for values_tuple in itertools.product(*list(self._grid.values())):
 
-                # Reset everything to the original values, so that the fit will always start
-                # from there, instead that from the values obtained in the last iterations, which
-                # might have gone completely awry
+            # Reset everything to the original values, so that the fit will always start
+            # from there, instead that from the values obtained in the last iterations, which
+            # might have gone completely awry
 
-                for par_name, par_value in self._original_values.items():
+            for par_name, par_value in self._original_values.items():
 
-                    self.parameters[par_name].value = par_value
+                self.parameters[par_name].value = par_value
 
-                # Now set the parameters in the grid to their starting values
+            # Now set the parameters in the grid to their starting values
 
-                for i, this_value in enumerate(values_tuple):
+            for i, this_value in enumerate(values_tuple):
 
-                    self.parameters[parameters[i]].value = this_value
+                self.parameters[parameters[i]].value = this_value
 
-                # Get a new instance of the minimizer. We need to do this instead of reusing an existing instance
-                # because some minimizers (like iminuit) keep internal track of their status, so that reusing
-                # a minimizer will create correlation between the different points
-                # NOTE: this line necessarily needs to be after the values of the parameters has been set to the
-                # point, because the init method of the minimizer instance will use those values to set the starting
-                # point for the fit
+            # Get a new instance of the minimizer. We need to do this instead of reusing an existing instance
+            # because some minimizers (like iminuit) keep internal track of their status, so that reusing
+            # a minimizer will create correlation between the different points
+            # NOTE: this line necessarily needs to be after the values of the parameters has been set to the
+            # point, because the init method of the minimizer instance will use those values to set the starting
+            # point for the fit
 
-                _minimizer = self._2nd_minimization.get_instance(
-                    self.function, self.parameters, verbosity=0
-                )
+            _minimizer = self._2nd_minimization.get_instance(
+                self.function, self.parameters, verbosity=0
+            )
 
-                # Perform fit
+            # Perform fit
 
-                try:
+            try:
 
-                    # We call _minimize() and not minimize() so that the best fit values are
-                    # in the internal system.
+                # We call _minimize() and not minimize() so that the best fit values are
+                # in the internal system.
 
-                    this_best_fit_values_internal, this_minimum = _minimizer._minimize()
+                this_best_fit_values_internal, this_minimum = _minimizer._minimize()
 
-                except:
+            except:
 
-                    # A failure is not a problem here, only if all of the fit fail then we have a problem
-                    # but this case is handled later
+                # A failure is not a problem here, only if all of the fit fail then we have a problem
+                # but this case is handled later
 
-                    continue
+                continue
 
-                # If this minimum is the overall minimum, save the result
+            # If this minimum is the overall minimum, save the result
 
-                if this_minimum < overall_minimum:
+            if this_minimum < overall_minimum:
 
-                    overall_minimum = this_minimum
-                    internal_best_fit_values = this_best_fit_values_internal
+                overall_minimum = this_minimum
+                internal_best_fit_values = this_best_fit_values_internal
 
-                # Use callbacks (if any)
-                for callback in self._callbacks:
+            # Use callbacks (if any)
+            for callback in self._callbacks:
 
-                    callback(values_tuple, this_minimum)
+                callback(values_tuple, this_minimum)
 
-                progress.increase()
+            if threeML_config.interface.progress_bars:
+                p.update(1)
 
         if internal_best_fit_values is None:
-
-            raise AllFitFailed("All fit starting from values in the grid have failed!")
+            log.error("All fit starting from values in the grid have failed!")
+            raise AllFitFailed(
+            )
 
         return internal_best_fit_values, overall_minimum

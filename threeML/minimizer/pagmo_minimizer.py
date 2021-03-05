@@ -3,8 +3,9 @@ from builtins import range
 from builtins import object
 import numpy as np
 import os
+from threeML.utils.progress_bar import tqdm, trange
+
 from threeML.minimizer.minimization import GlobalMinimizer
-from threeML.io.progress_bar import progress_bar
 from threeML.parallel.parallel_client import is_parallel_computation_active
 
 import pygmo as pg
@@ -180,22 +181,20 @@ class PAGMOMinimizer(GlobalMinimizer):
             xOpts = []
             fOpts = np.zeros(islands)
 
-            with progress_bar(iterations=islands, title="pygmo minimization") as p:
+            for island_id in trange(islands, desc="pygmo minimization"):
 
-                for island_id in range(islands):
+                pop = pg.population(prob=wrapper, size=pop_size)
 
-                    pop = pg.population(prob=wrapper, size=pop_size)
+                for i in range(evolution_cycles):
 
-                    for i in range(evolution_cycles):
+                    pop = self._setup_dict["algorithm"].evolve(pop)
 
-                        pop = self._setup_dict["algorithm"].evolve(pop)
+                # Gather results
 
-                    # Gather results
+                xOpts.append(pop.champion_x)
+                fOpts[island_id] = pop.champion_f[0]
 
-                    xOpts.append(pop.champion_x)
-                    fOpts[island_id] = pop.champion_f[0]
 
-                    p.increase()
 
         # Find best and worst islands
 

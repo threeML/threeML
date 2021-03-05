@@ -1,12 +1,14 @@
+import ftplib
+import os
+import urllib.error
+import urllib.parse
+import urllib.request
+
 from future import standard_library
 
-standard_library.install_aliases()
-import urllib.parse
-import ftplib
-import urllib.request, urllib.parse, urllib.error
-import os
+from threeML.utils.progress_bar import tqdm
 
-from threeML.io.progress_bar import progress_bar
+standard_library.install_aliases()
 
 
 def download_file_from_ftp(ftp_url, destination_directory):
@@ -72,28 +74,24 @@ def download_files_from_directory_ftp(
 
     downloaded_files = []
 
-    with progress_bar(len(filenames)) as p:
+    for i, filename in enumerate(tqdm(filenames)):
 
-        for i, filename in enumerate(filenames):
+        if namefilter != None and filename.find(namefilter) < 0:
 
-            if namefilter != None and filename.find(namefilter) < 0:
+            # Filename does not match, do not download it
+            continue
 
-                p.increase()
+        else:
 
-                # Filename does not match, do not download it
-                continue
+            local_filename = os.path.join(destination_directory, filename)
 
-            else:
+            urllib.request.urlretrieve(
+                "ftp://%s/%s/%s" % (serverAddress, directory, filename),
+                local_filename,
+            )
 
-                local_filename = os.path.join(destination_directory, filename)
+            urllib.request.urlcleanup()
 
-                urllib.request.urlretrieve(
-                    "ftp://%s/%s/%s" % (serverAddress, directory, filename),
-                    local_filename,
-                )
-
-                urllib.request.urlcleanup()
-
-                downloaded_files.append(local_filename)
+            downloaded_files.append(local_filename)
 
     return downloaded_files

@@ -8,7 +8,10 @@ import pandas as pd
 from threeML.utils.fermi_relative_mission_time import (
     compute_fermi_relative_mission_times,
 )
+from threeML.io.logging import setup_logger
 
+
+log = setup_logger(__name__)
 
 class LLEFile(object):
     def __init__(self, lle_file, ft2_file, rsp_file):
@@ -53,7 +56,7 @@ class LLEFile(object):
             except:
 
                 # For whatever reason
-                warnings.warn(
+                log.warning(
                     "There is no trigger time in the LLE file. Must be set manually or using MET relative times."
                 )
 
@@ -77,7 +80,7 @@ class LLEFile(object):
 
         if not np.all(ft2_livetime <= 1.0):
 
-            warnings.warn(
+            log.warning(
                 "You are using a 30s FT2 file. You should use a 1s Ft2 file otherwise the livetime "
                 "correction will not be accurate!"
             )

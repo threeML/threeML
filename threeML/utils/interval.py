@@ -2,7 +2,9 @@ import re
 import copy
 from operator import itemgetter, attrgetter
 import numpy as np
+from threeML.io.logging import setup_logger
 
+log = setup_logger(__name__)
 
 class IntervalsDoNotOverlap(RuntimeError):
     pass
@@ -13,10 +15,10 @@ class IntervalsNotContiguous(RuntimeError):
 
 
 class Interval(object):
-    def __init__(self, start, stop, swap_if_inverted=False):
+    def __init__(self, start: float, stop: float, swap_if_inverted: bool=False):
 
-        self._start = float(start)
-        self._stop = float(stop)
+        self._start: float = float(start)
+        self._stop: float = float(stop)
 
         # Note that this allows to have intervals of zero duration
 
@@ -24,22 +26,24 @@ class Interval(object):
 
             if swap_if_inverted:
 
-                self._start = stop
-                self._stop = start
+                self._start: float = stop
+                self._stop: float = start
 
             else:
 
-                raise RuntimeError(
+                log.exception(
                     "Invalid time interval! TSTART must be before TSTOP and TSTOP-TSTART >0. "
                     "Got tstart = %s and tstop = %s" % (start, stop)
                 )
 
+                raise RuntimeError()
+
     @property
-    def start(self):
+    def start(self) -> float:
         return self._start
 
     @property
-    def stop(self):
+    def stop(self) -> float:
         return self._stop
 
     @classmethod
@@ -47,12 +51,12 @@ class Interval(object):
 
         return cls(*args, **kwargs)
 
-    def _get_width(self):
+    def _get_width(self) -> float:
 
         return self._stop - self._start
 
     @property
-    def mid_point(self):
+    def mid_point(self) -> float:
 
         return (self._start + self._stop) / 2.0
 
@@ -65,6 +69,7 @@ class Interval(object):
         )
 
     def intersect(self, interval):
+        #type: (Interval) -> Interval 
         """
         Returns a new time interval corresponding to the intersection between this interval and the provided one.
 
@@ -75,8 +80,9 @@ class Interval(object):
         """
 
         if not self.overlaps_with(interval):
+            log.exception("Current interval does not overlap with provided interval")
             raise IntervalsDoNotOverlap(
-                "Current interval does not overlap with provided interval"
+                
             )
 
         new_start = max(self._start, interval.start)
@@ -85,6 +91,7 @@ class Interval(object):
         return self.new(new_start, new_stop)
 
     def merge(self, interval):
+        #type: (Interval) -> Interval 
         """
         Returns a new interval corresponding to the merge of the current and the provided time interval. The intervals
         must overlap.
@@ -106,6 +113,7 @@ class Interval(object):
             raise IntervalsDoNotOverlap("Could not merge non-overlapping intervals!")
 
     def overlaps_with(self, interval):
+        #type: (Interval) -> bool 
         """
         Returns whether the current time interval and the provided one overlap or not
 
@@ -134,7 +142,7 @@ class Interval(object):
 
             return False
 
-    def to_string(self):
+    def to_string(self) -> str:
         """
         returns a string representation of the time interval that is like the
         argument of many interval reading funcitons

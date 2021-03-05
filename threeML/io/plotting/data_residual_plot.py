@@ -10,7 +10,14 @@ from threeML.io.plotting.step_plot import step_plot
 from threeML.config.config import threeML_config
 
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.logging import setup_logger
 
+from threeML.io.package_data import get_path_of_data_file
+
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+
+
+log = setup_logger(__name__)
 
 class ResidualPlot(object):
     def __init__(self, **kwargs):
@@ -242,7 +249,7 @@ class ResidualPlot(object):
             self._residual_axis.set_xlabel(xlabel)
 
             if self.ratio_residuals:
-                custom_warnings.warn(
+                log.warning(
                     "Residuals plotted as ratios: beware that they are not statistical quantites, and can not be used to asses fit quality"
                 )
                 self._residual_axis.set_ylabel("Residuals\n(fraction of model)")

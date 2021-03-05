@@ -1,24 +1,35 @@
 from __future__ import division
-from builtins import map
-from builtins import str
-from builtins import range
-from past.utils import old_div
-from builtins import object
-import astropy.io.fits as pyfits
-import numpy as np
-import warnings
-import matplotlib.cm as cm
-from matplotlib.colors import SymLogNorm
-import matplotlib.pyplot as plt
-from operator import itemgetter, attrgetter
+
 import copy
+import warnings
+from builtins import map, object, range, str
+from operator import attrgetter, itemgetter
+from pathlib import Path
+from typing import Optional
 
+import astropy.io.fits as pyfits
 import astropy.units as u
+import matplotlib.cm as cm
+import matplotlib.pyplot as plt
+import numba as nb
+import numpy as np
+from matplotlib.colors import SymLogNorm
+from past.utils import old_div
 
-from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
-from threeML.io.fits_file import FITSExtension, FITSFile
-from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
+from threeML.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.file_utils import (file_existing_and_readable,
+                                   fits_file_existing_and_readable,
+                                   sanitize_filename)
+from threeML.io.fits_file import FITSExtension, FITSFile
+from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
+from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
+
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+
+
+log = setup_logger(__name__)
 
 
 class NoCoverageIntervals(RuntimeError):
@@ -66,7 +77,7 @@ class InstrumentResponse(object):
         # we simply store all the variables to the class
 
         self._matrix = np.array(matrix, float)
-
+        self._matrix_transpose = self._matrix.T
         # Make sure there are no nans or inf
         assert np.all(np.isfinite(self._matrix)), "Infinity or nan in matrix"
 
@@ -93,30 +104,27 @@ class InstrumentResponse(object):
         assert self._matrix.shape == (
             self._ebounds.shape[0] - 1,
             self._mc_energies.shape[0] - 1,
-        ), (
-            "Matrix has the wrong shape. Got %s, expecting %s"
-            % (
-                self._matrix.shape,
-                [self._ebounds.shape[0] - 1, self._mc_energies.shape[0] - 1],
-            )
+        ), "Matrix has the wrong shape. Got %s, expecting %s" % (
+            self._matrix.shape,
+            [self._ebounds.shape[0] - 1, self._mc_energies.shape[0] - 1],
         )
 
         if self._mc_energies.max() < self._ebounds.max():
 
-            custom_warnings.warn(
+            log.warning(
                 "Maximum MC energy (%s) is smaller "
                 "than maximum EBOUNDS energy (%s)"
                 % (self._mc_energies.max(), self.ebounds.max()),
-                RuntimeWarning,
+                # RuntimeWarning,
             )
 
         if self._mc_energies.min() > self._ebounds.min():
 
-            custom_warnings.warn(
+            log.warning(
                 "Minimum MC energy (%s) is larger than "
                 "minimum EBOUNDS energy (%s)"
                 % (self._mc_energies.min(), self._ebounds.min()),
-                RuntimeWarning,
+                #   RuntimeWarning,
             )
 
     # This will be overridden by subclasses
@@ -177,6 +185,7 @@ class InstrumentResponse(object):
         assert new_matrix.shape == self._matrix.shape
 
         self._matrix = new_matrix
+        self._matrix_transpose = self._matrix.T
 
     @property
     def ebounds(self):
@@ -208,11 +217,26 @@ class InstrumentResponse(object):
 
         self._integral_function = integral_function
 
-    def convolve(self):
+    def convolve(self, precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
+        """
+        Convolve the source flux with the response
+        :param precalc_fluxes: The precalulated flux. If this is None, the
+        flux gets calculated here.
+        """
+        if precalc_fluxes is None:
 
-        true_fluxes = self._integral_function(
-            self._mc_energies[:-1], self._mc_energies[1:]
-        )
+            try:
+                fluxes = self._integral_function(
+                    # self._mc_energies[:-1], self._mc_energies[1:]
+                )
+            except(TypeError):
+
+                fluxes = self._integral_function(
+                    self._mc_energies[:-1], self._mc_energies[1:]
+                )
+
+        else:
+            fluxes = precalc_fluxes
 
         # Sometimes some channels have 0 lenths, or maybe they start at 0, where
         # many functions (like a power law) are not defined. In the response these
@@ -220,15 +244,14 @@ class InstrumentResponse(object):
         # inf * zero != zero. Thus, let's force this. We avoid checking this situation
         # in details because this would have a HUGE hit on performances
 
-        idx = np.isfinite(true_fluxes)
-        true_fluxes[~idx] = 0
+        idx = np.isfinite(fluxes)
+        fluxes[~idx] = 0
 
-        folded_counts = np.dot(true_fluxes, self._matrix.T)
+        folded_counts = np.dot(fluxes, self._matrix_transpose)
 
         return folded_counts
 
     def energy_to_channel(self, energy):
-
         """Finds the channel containing the provided energy.
         NOTE: returns the channel index (starting at zero),
         not the channel number (likely starting from 1).
@@ -240,7 +263,8 @@ class InstrumentResponse(object):
         # Get the index of the first ebounds upper bound larger than energy
         # (but never go below zero or above the last channel)
         idx = min(
-            max(0, np.searchsorted(self._ebounds, energy) - 1), len(self._ebounds) - 1
+            max(0, np.searchsorted(self._ebounds, energy) -
+                1), len(self._ebounds) - 1
         )
 
         return idx
@@ -272,9 +296,10 @@ class InstrumentResponse(object):
         # Find minimum non-zero element
         vmin = self._matrix[self._matrix > 0].min()
 
-        cmap = copy.deepcopy(cm.ocean)
+        cmap = copy.deepcopy(cm.get_cmap(
+            threeML_config.plugins.ogip.response_cmap.value))
 
-        cmap.set_under("gray")
+        cmap.set_under(threeML_config.plugins.ogip.response_zero_color)
 
         mappable = ax.pcolormesh(
             self._mc_energies[idx_mc:],
@@ -310,7 +335,7 @@ class InstrumentResponse(object):
         :return: None
         """
 
-        filename = sanitize_filename(filename, abspath=True)
+        filename: Path = sanitize_filename(filename, abspath=True)
 
         fits_file = RSP(
             self.monte_carlo_energies,
@@ -334,7 +359,8 @@ class InstrumentResponse(object):
 
         # create the dummy matrix
 
-        dummy_matrix = np.eye(ebounds.shape[0] - 1, monte_carlo_energies.shape[0] - 1)
+        dummy_matrix = np.eye(
+            ebounds.shape[0] - 1, monte_carlo_energies.shape[0] - 1)
 
         return cls(dummy_matrix, ebounds, monte_carlo_energies)
 
@@ -349,27 +375,27 @@ class OGIPResponse(InstrumentResponse):
 
         # Now make sure that the response file exist
 
-        rsp_file = sanitize_filename(rsp_file)
+        rsp_file: Path = sanitize_filename(rsp_file)
 
-        assert file_existing_and_readable(rsp_file.split("{")[0]), (
-            "OGIPResponse file %s not existing or not " "readable" % rsp_file
+        assert fits_file_existing_and_readable(rsp_file), (
+            f"OGIPResponse file {rsp_file} not existing or not " "readable"
         )
 
         # Check if we are dealing with a .rsp2 file (containing more than
         # one response). This is checked by looking for the syntax
         # [responseFile]{[responseNumber]}
 
-        if "{" in rsp_file:
+        if "{" in str(rsp_file):
 
-            tokens = rsp_file.split("{")
-            rsp_file = tokens[0]
+            tokens = str(rsp_file).split("{")
+            rsp_file: Path = sanitize_filename(tokens[0])
             rsp_number = int(tokens[-1].split("}")[0].replace(" ", ""))
 
         else:
 
             rsp_number = 1
 
-        self._rsp_file = rsp_file
+        self._rsp_file: Path = rsp_file
 
         # Read the response
         with pyfits.open(rsp_file) as f:
@@ -382,14 +408,14 @@ class OGIPResponse(InstrumentResponse):
                 header = f["MATRIX", rsp_number].header
 
                 if arf_file is None:
-                    warnings.warn(
+                    log.warning(
                         "The response is in an extension called MATRIX, which usually means you also "
                         "need an ancillary file (ARF) which you didn't provide. You should refer to the "
                         "documentation  of the instrument and make sure you don't need an ARF."
                     )
 
             except Exception as e:
-                warnings.warn(
+                log.warning(
                     "The default choice for MATRIX extension failed:"
                     + repr(e)
                     + "available: "
@@ -436,7 +462,7 @@ class OGIPResponse(InstrumentResponse):
         # Read the ARF if there is any
         # NOTE: this has to happen *after* calling the parent constructor
 
-        if arf_file is not None and arf_file.lower() != "none":
+        if arf_file is not None and str(arf_file).lower() != "none":
 
             self._read_arf_file(arf_file)
 
@@ -460,7 +486,8 @@ class OGIPResponse(InstrumentResponse):
         e_min = ebounds_extension.data.field("E_MIN").astype(float)
         e_max = ebounds_extension.data.field("E_MAX").astype(float)
 
-        assert self._are_contiguous(e_min, e_max), "EBOUNDS channel are not contiguous!"
+        assert self._are_contiguous(
+            e_min, e_max), "EBOUNDS channel are not contiguous!"
 
         # The returned array must have the edges of the intervals. Doing so reduces the amount of memory used
         # by 1/2
@@ -518,7 +545,7 @@ class OGIPResponse(InstrumentResponse):
             tlmin_fchan = header["TLMIN%i" % f_chan_column_pos]
 
         except (KeyError):
-            warnings.warn(
+            log.warning(
                 "No TLMIN keyword found. This DRM does not follow OGIP standards. Assuming TLMIN=1"
             )
             tlmin_fchan = 1
@@ -563,8 +590,8 @@ class OGIPResponse(InstrumentResponse):
                 this_n_chan = int(np.squeeze(n_chan[i][j]))
                 this_f_chan = int(np.squeeze(f_chan[i][j]))
 
-                rsp[i, this_f_chan : this_f_chan + this_n_chan] = matrix[i][
-                    m_start : m_start + this_n_chan
+                rsp[i, this_f_chan: this_f_chan + this_n_chan] = matrix[i][
+                    m_start: m_start + this_n_chan
                 ]
 
                 m_start += this_n_chan
@@ -572,7 +599,7 @@ class OGIPResponse(InstrumentResponse):
         return rsp.T
 
     @property
-    def rsp_filename(self):
+    def rsp_filename(self) -> Path:
         """
         Returns the name of the RSP/RMF file from which the response has been loaded
         """
@@ -587,7 +614,7 @@ class OGIPResponse(InstrumentResponse):
 
         return self._arf_file
 
-    def _read_arf_file(self, arf_file):
+    def _read_arf_file(self, arf_file: str):
         """
         read an arf file and apply it to the current_matrix
 
@@ -597,12 +624,12 @@ class OGIPResponse(InstrumentResponse):
         :return:
         """
 
-        arf_file = sanitize_filename(arf_file)
+        arf_file: Path = sanitize_filename(arf_file)
 
         self._arf_file = arf_file
 
-        assert file_existing_and_readable(arf_file.split("{")[0]), (
-            "Ancillary file %s not existing or not " "readable" % arf_file
+        assert fits_file_existing_and_readable(arf_file), (
+            f"Ancillary file {arf_file} not existing or not " "readable"
         )
 
         with pyfits.open(arf_file) as f:
@@ -701,10 +728,10 @@ class InstrumentResponseSet(object):
 
                     custom_warnings.simplefilter("always", RuntimeWarning)
 
-                    custom_warnings.warn(
+                    log.warning(
                         "Removing matrix %s (numbering starts at zero) because it has a coverage of "
                         "zero seconds" % i,
-                        RuntimeWarning,
+                        # RuntimeWarning,
                     )
 
                 to_be_removed.append(i)
@@ -789,7 +816,8 @@ class InstrumentResponseSet(object):
             # we will read all the matrices and save them
             for rsp_number in range(1, n_responses + 1):
 
-                this_response = OGIPResponse(rsp2_file + "{%i}" % rsp_number)
+                this_response = OGIPResponse(
+                    str(rsp2_file) + "{%i}" % rsp_number)
 
                 list_of_matrices.append(this_response)
 
@@ -874,7 +902,8 @@ class InstrumentResponseSet(object):
 
         # Weight matrices
         matrix = np.dot(
-            np.array(list(map(attrgetter("matrix"), self._matrix_list))).T, weights.T
+            np.array(
+                list(map(attrgetter("matrix"), self._matrix_list))).T, weights.T
         ).T
 
         # Now generate the instance of the response
@@ -890,7 +919,6 @@ class InstrumentResponseSet(object):
         return matrix_instance
 
     def _weight_response(self, interval_of_interest, switch):
-
         """
 
         :param interval_start : start time of the interval
@@ -919,7 +947,8 @@ class InstrumentResponseSet(object):
                 "Could not find any matrix applicable to %s\n Have intervals:%s"
                 % (
                     interval_of_interest,
-                    ", ".join([str(interval) for interval in self._coverage_intervals]),
+                    ", ".join([str(interval)
+                               for interval in self._coverage_intervals]),
                 )
             )
 
@@ -1096,9 +1125,14 @@ class MATRIX(FITSExtension):
         n_mc_channels = len(mc_energies) - 1
         n_channels = len(channel_energies) - 1
 
-        assert matrix.shape == (n_channels, n_mc_channels), (
-            "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
-            % (n_channels, n_mc_channels, matrix.shape[0], matrix.shape[1])
+        assert matrix.shape == (
+            n_channels,
+            n_mc_channels,
+        ), "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
+            n_channels,
+            n_mc_channels,
+            matrix.shape[0],
+            matrix.shape[1],
         )
 
         ones = np.ones(n_mc_channels, np.int16)
@@ -1135,7 +1169,8 @@ class SPECRESP_MATRIX(MATRIX):
 
         # This is essentially exactly the same as MATRIX, but with a different extension name
 
-        super(SPECRESP_MATRIX, self).__init__(mc_energies, channel_energies, matrix)
+        super(SPECRESP_MATRIX, self).__init__(
+            mc_energies, channel_energies, matrix)
 
         # Change the extension name
         self.hdu.header.set("EXTNAME", "SPECRESP MATRIX")
@@ -1172,8 +1207,8 @@ class RMF(FITSFile):
 
 class RSP(FITSFile):
     """
-        A response file, the OGIP format for a matrix representing both energy dispersion effects and effective area,
-        in the same matrix.
+    A response file, the OGIP format for a matrix representing both energy dispersion effects and effective area,
+    in the same matrix.
 
     """
 

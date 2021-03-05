@@ -1,21 +1,27 @@
+from pathlib import Path
+
 import pandas as pd
 from astromodels.utils.valid_variable import is_valid_variable_name
 
-
-from threeML.plugins.XYLike import XYLike
-from threeML.utils.OGIP.pha import PHAII
-from threeML.utils.OGIP.pha import PHAWrite
-from threeML.utils.spectrum.pha_spectrum import PHASpectrum
+from threeML.io.logging import setup_logger
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.plugins.XYLike import XYLike
+from threeML.utils.OGIP.pha import PHAII, PHAWrite
+from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 
 __instrument_name = "All OGIP-compliant instruments"
+
+log = setup_logger(__name__)
+
+_valid_obs_types = (str, Path, PHASpectrum, PHAII)
+_valid_bkg_types = (str, Path, PHASpectrum, PHAII, SpectrumLike, XYLike)
 
 
 class OGIPLike(DispersionSpectrumLike):
     def __init__(
         self,
-        name,
+        name: str,
         observation,
         background=None,
         response=None,
@@ -32,22 +38,26 @@ class OGIPLike(DispersionSpectrumLike):
 
         # Read the pha file (or the PHAContainer instance)
 
-        assert (
-            isinstance(observation, str)
-            or isinstance(observation, PHASpectrum)
-            or isinstance(observation, PHAII)
-        ), "observation must be a FITS file name or PHASpectrum"
+        for t in _valid_obs_types:
+            if isinstance(observation, t):
+                break
+        else:
 
-        assert (
-            isinstance(background, str)
-            or isinstance(background, PHASpectrum)
-            or (background is None)
-            or isinstance(background, PHAII)
-            or isinstance(background, SpectrumLike)
-            or isinstance(background, XYLike)
-        ), "background must be a FITS file name, PHASpectrum, a Plugin or None"
+            log.error(f"observation must be a FITS file name or PHASpectrum, not {type(observation)}")
+            raise RuntimeError()
 
-        if isinstance(observation, str) or isinstance(observation, PHAII):
+        for t in _valid_bkg_types:
+            if isinstance(background, t) or (background is None):
+                break
+
+        else:
+
+            log.error(
+                f"background must be a FITS file name, PHASpectrum, a Plugin or None, not {type(background)}")
+
+            raise RuntimeError()
+
+        if not isinstance(observation, PHASpectrum):
 
             pha = PHASpectrum(
                 observation,
@@ -69,6 +79,8 @@ class OGIPLike(DispersionSpectrumLike):
 
         if background is None:
 
+            log.debug(f"{name} has no bkg set")
+
             background = pha.background_file
 
             # assert background is not None, "No background file provided, and the PHA file does not specify one."
@@ -82,7 +94,7 @@ class OGIPLike(DispersionSpectrumLike):
 
             bak = None
 
-        elif isinstance(background, str) or isinstance(observation, PHAII):
+        elif not isinstance(background, PHASpectrum):
 
             bak = PHASpectrum(
                 background,
@@ -102,7 +114,7 @@ class OGIPLike(DispersionSpectrumLike):
             name=name, observation=pha, background=bak, verbose=verbose
         )
 
-    def get_simulated_dataset(self, new_name=None, **kwargs):
+    def get_simulated_dataset(self, new_name: str = None, **kwargs):
         # type: (str, dict) -> OGIPLike
         """
         Returns another OGIPLike instance where data have been obtained by randomizing the current expectation from the
@@ -123,7 +135,7 @@ class OGIPLike(DispersionSpectrumLike):
 
         return self._observed_spectrum.grouping
 
-    def write_pha(self, file_name, overwrite=False, force_rsp_write=False):
+    def write_pha(self, file_name: str, overwrite: bool = False, force_rsp_write: bool = False) -> None:
         """
         Create a pha file of the current pha selections
 
@@ -151,7 +163,8 @@ class OGIPLike(DispersionSpectrumLike):
         else:
             bak_file = None
 
-        this_out = {"pha file": self._observed_spectrum.filename, "bak file": bak_file}
+        this_out = {"pha file": self._observed_spectrum.filename,
+                    "bak file": bak_file}
 
         this_df = pd.Series(this_out)
 

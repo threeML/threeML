@@ -1,12 +1,16 @@
 import os
 import time
+from pathlib import Path
+from typing import Optional
 
 import numpy as np
-
+from astromodels import ModelAssertionViolation, use_astromodels_memoization
+from astromodels.core.model import Model
 
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
-from astromodels import ModelAssertionViolation, use_astromodels_memoization
+from threeML.data_list import DataList
+from threeML.io.logging import setup_logger
 
 try:
 
@@ -40,9 +44,14 @@ except:
 
     using_mpi = False
 
+log = setup_logger(__name__)
+
 
 class MultiNestSampler(UnitCubeSampler):
-    def __init__(self, likelihood_model=None, data_list=None, **kwargs):
+    def __init__(self,
+                 likelihood_model: Optional[Model] = None,
+                 data_list: Optional[DataList] = None,
+                 **kwargs):
         """
         Implements the MultiNest sampler of https://github.com/farhanferoz/MultiNest
         via the python wrapper of https://github.com/JohannesBuchner/PyMultiNest
@@ -56,19 +65,20 @@ class MultiNestSampler(UnitCubeSampler):
 
         assert has_pymultinest, "You must install MultiNest to use this sampler"
 
-        super(MultiNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
+        super(MultiNestSampler, self).__init__(
+            likelihood_model, data_list, **kwargs)
 
     def setup(
         self,
-        n_live_points,
-        chain_name="chains/fit-",
-        resume=False,
-        importance_nested_sampling=False,
+        n_live_points: int,
+        chain_name: str = "chains/fit-",
+        resume: bool = False,
+        importance_nested_sampling: bool = False,
         **kwargs
     ):
         """
         Setup the MultiNest Sampler. For details see:
-        
+
 
         :param n_live_points: number of live points for the evaluation
         :param chain_name: the chain name
@@ -77,7 +87,9 @@ class MultiNestSampler(UnitCubeSampler):
         :rtype: 
 
         """
-
+        log.debug(f"Setup for MultiNest sampler: n_live_points:{n_live_points}, chain_name:{chain_name},"
+                  f"resume: {resume}, importance_nested_sampling: {importance_nested_sampling}."
+                  f"Other input: {kwargs}")
         self._kwargs = {}
         self._kwargs["n_live_points"] = n_live_points
         self._kwargs["outputfiles_basename"] = chain_name
@@ -91,7 +103,7 @@ class MultiNestSampler(UnitCubeSampler):
 
         self._is_setup = True
 
-    def sample(self, quiet=False):
+    def sample(self, quiet: bool = False):
         """
         sample using the MultiNest numerical integration method
 
@@ -101,7 +113,7 @@ class MultiNestSampler(UnitCubeSampler):
         """
         if not self._is_setup:
 
-            print("You forgot to setup the sampler!")
+            log.info("You forgot to setup the sampler!")
             return
 
         assert (
@@ -123,12 +135,9 @@ class MultiNestSampler(UnitCubeSampler):
         # the disk to write and if not,
         # create one
 
-        chain_name = self._kwargs.pop("chain_name")
+        chain_name = Path(self._kwargs.pop("chain_name"))
 
-        mcmc_chains_out_dir = ""
-        tmp = chain_name.split("/")
-        for s in tmp[:-1]:
-            mcmc_chains_out_dir += s + "/"
+        chain_dir = chain_name.parent
 
         if using_mpi:
 
@@ -144,30 +153,34 @@ class MultiNestSampler(UnitCubeSampler):
 
                 # create mcmc chains directory only on first engine
 
-                if not os.path.exists(mcmc_chains_out_dir):
-                    os.makedirs(mcmc_chains_out_dir)
+                if not chain_dir.exists():
+                    log.debug(
+                        f"Create {chain_dir} for multinest output")
+                    chain_dir.mkdir()
 
         else:
 
-            if not os.path.exists(mcmc_chains_out_dir):
-                os.makedirs(mcmc_chains_out_dir)
+            if not chain_dir.exists():
+                log.debug(
+                    f"Create {chain_dir} for multinest output")
+                chain_dir.mkdir()
 
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
-            raise RuntimeError(
-                "If you want to run multinest in parallell you need to use an ad-hoc method"
-            )
+            log.error(
+                "If you want to run multinest in parallell you need to use an ad-hoc method")
 
         else:
 
             with use_astromodels_memoization(False):
-            
+                log.debug("Start multinest run")
                 sampler = pymultinest.run(
                     loglike, multinest_prior, n_dim, n_dim, **self._kwargs
                 )
+                log.debug("Multinest run done")
 
         # Use PyMULTINEST analyzer to gather parameter info
 

@@ -8,30 +8,47 @@ from astromodels import Model, PointSource
 from threeML.classicMLE.goodness_of_fit import GoodnessOfFit
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.data_list import DataList
+from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.package_data import get_path_of_data_file
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.XYLike import XYLike
-from threeML.utils.statistics.likelihood_functions import half_chi2
 from threeML.utils.statistics.likelihood_functions import (
-    poisson_log_likelihood_ideal_bkg,
-)
-from threeML.exceptions.custom_exceptions import custom_warnings
+    half_chi2, poisson_log_likelihood_ideal_bkg)
 
 __instrument_name = "n.a."
 
 
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+
+
 class UnresolvedExtendedXYLike(XYLike):
     def __init__(
-        self, name, x, y, yerr=None, poisson_data=False, quiet=False, source_name=None
+        self,
+        name,
+        x,
+        y,
+        yerr=None,
+        exposure=None,
+        poisson_data=False,
+        quiet=False,
+        source_name=None,
     ):
 
         super(UnresolvedExtendedXYLike, self).__init__(
-            name, x, y, yerr, poisson_data, quiet, source_name
+            name=name,
+            x=x,
+            y=y,
+            yerr=yerr,
+            exposure=exposure,
+            poisson_data=poisson_data,
+            quiet=quiet,
+            source_name=source_name,
         )
 
     def assign_to_source(self, source_name):
         """
         Assign these data to the given source (instead of to the sum of all sources, which is the default)
-        
+
         :param source_name: name of the source (must be contained in the likelihood model)
         :return: none
         """
@@ -61,7 +78,8 @@ class UnresolvedExtendedXYLike(XYLike):
             # Make sure that the source is in the model
             assert self._source_name in likelihood_model_instance.sources, (
                 "This XYLike plugin refers to the source %s, "
-                "but that source is not in the likelihood model" % (self._source_name)
+                "but that source is not in the likelihood model" % (
+                    self._source_name)
             )
 
         self._likelihood_model = likelihood_model_instance

@@ -12,6 +12,19 @@ skip_if_ultranest_is_not_available = pytest.mark.skipif(
     not has_ultranest, reason="No ultranest available"
 )
 
+
+try:
+    import autoemcee
+except:
+    has_autoemcee = False
+else:
+    has_autoemcee = True
+skip_if_autoemcee_is_not_available = pytest.mark.skipif(
+    not has_autoemcee, reason="No autoemcee available"
+)
+
+
+
 try:
     import dynesty
 except:
@@ -141,6 +154,23 @@ def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
     check_results(res)
 
 
+@skip_if_autoemcee_is_not_available
+def test_autoemcee(bayes_fitter, completed_bn090217206_bayesian_analysis):
+
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("autoemcee")
+
+    bayes.sampler.setup()
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    check_results(res)
+
+    
+
 @skip_if_dynesty_is_not_available
 def test_dynesty_nested(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
@@ -207,3 +237,44 @@ def test_bayes_plots(completed_bn090217206_bayesian_analysis):
     bayes.plot_chains()
 
     bayes.restore_median_fit()
+
+def test_bayes_shared(fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1):
+
+    jl, _, _ = fitted_joint_likelihood_bn090217206_nai6_nai9_bgo1
+
+    jl.restore_best_fit()
+
+    model = jl.likelihood_model
+    data_list = jl.data_list
+    powerlaw = jl.likelihood_model.bn090217206.spectrum.main.Powerlaw
+
+    powerlaw.index.prior = Uniform_prior(lower_bound=-5.0, upper_bound=5.0)
+    powerlaw.K.prior = Log_uniform_prior(lower_bound=1.0, upper_bound=10)
+
+    bayes = BayesianAnalysis(model, data_list)
+
+    bayes.set_sampler("emcee", share_spectrum=True)
+    bayes.sampler.setup(n_walkers=50, n_burn_in=50, n_iterations=100, seed=1234)
+    samples = bayes.sample()
+
+    res_shared = bayes.results.get_data_frame()
+
+    bayes = BayesianAnalysis(model, data_list)
+
+    bayes.set_sampler("emcee", share_spectrum=False)
+    bayes.sampler.setup(n_walkers=50, n_burn_in=50, n_iterations=100, seed=1234)
+    samples = bayes.sample()
+
+    res_not_shared = bayes.results.get_data_frame()
+    
+    assert np.isclose(
+        res_shared["value"]["bn090217206.spectrum.main.Powerlaw.K"],
+        res_not_shared["value"]["bn090217206.spectrum.main.Powerlaw.K"],
+        rtol=0.1,
+    )
+
+    assert np.isclose(
+        res_shared["value"]["bn090217206.spectrum.main.Powerlaw.index"],
+        res_not_shared["value"]["bn090217206.spectrum.main.Powerlaw.index"],
+        rtol=0.1,
+    )

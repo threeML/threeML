@@ -1,6 +1,6 @@
 from threeML import *
 from threeML.plugins.XYLike import XYLike
-
+import os
 
 def get_signal():
     # Generate a test signal
@@ -9,7 +9,7 @@ def get_signal():
     generator.mu_2 = 5.0
     generator.sigma_2 = 0.32
     generator.F_2 = 70.4
-    generator.b_1 = 40.0
+    generator.a_1 = 40.0
 
     signal = generator(x)
 
@@ -201,7 +201,7 @@ def test_XYLike_chi2():
     # Verify that the fit converged where it should have
     assert np.allclose(
         res[0]["value"].values,
-        [0.82896119, 40.20269202, 62.80359114, 5.04080011, 0.27286713],
+        [40.20269202, 0.82896119, 62.80359114, 5.04080011, 0.27286713],
         rtol=0.05,
     )
 
@@ -230,8 +230,8 @@ def test_XYLike_poisson():
     fitfun.F_2 = 60.0
     fitfun.F_2.bounds = (0, 200.0)
     fitfun.mu_2 = 5.0
-    fitfun.a_1.bounds = (0.1, 5.0)
-    fitfun.b_1.bounds = (0.1, 100.0)
+    fitfun.b_1.bounds = (0.1, 5.0)
+    fitfun.a_1.bounds = (0.1, 100.0)
 
     res = xy.fit(fitfun)
 
@@ -239,7 +239,7 @@ def test_XYLike_poisson():
 
     # print res[0]['value']
     assert np.allclose(
-        res[0]["value"], [0.783748, 40.344599, 71.560055, 4.989727, 0.330570], rtol=0.05
+        res[0]["value"], [40.344599, 0.783748, 71.560055, 4.989727, 0.330570], rtol=0.05
     )
 
 
@@ -278,7 +278,7 @@ def test_XYLike_assign_to_source():
     _ = jl.fit()
 
     predicted_parameters = np.array(
-        [0.82896119, 40.20269202, 62.80359114, 5.04080011, 0.27286713]
+        [40.20269202, 0.82896119, 62.80359114, 5.04080011, 0.27286713]
     )
 
     assert np.allclose(

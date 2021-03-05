@@ -1,27 +1,47 @@
-from __future__ import print_function
-from __future__ import division
-from builtins import str
-from builtins import map
-from builtins import range
-from builtins import object
-from past.utils import old_div
+from __future__ import division, print_function
+
 import collections
 import datetime
 import functools
 import inspect
 import math
+import os
+from builtins import map, object, range, str
+from pathlib import Path
 
 import astromodels
 import astropy.units as u
+import h5py
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import yaml
 from astromodels.core.model_parser import ModelParser
 from astromodels.core.my_yaml import my_yaml
-import yaml
 from astromodels.core.parameter import Parameter
 from corner import corner
-import matplotlib.pyplot as plt
+from past.utils import old_div
 
+from threeML import __version__
+from threeML.config.config import threeML_config
+from threeML.exceptions.custom_exceptions import BadCovariance
+from threeML.io.calculate_flux import _calculate_point_source_flux
+from threeML.io.file_utils import sanitize_filename
+from threeML.io.fits_file import FITSExtension, FITSFile, fits
+from threeML.io.hdf5_utils import (recursively_load_dict_contents_from_group,
+                                   recursively_save_dict_contents_to_group)
+from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
+from threeML.io.results_table import ResultsTable
+from threeML.io.rich_display import display
+from threeML.io.table import NumericMatrix
+from threeML.io.uncertainty_formatter import uncertainty_formatter
+from threeML.random_variates import RandomVariates
+
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+
+
+log = setup_logger(__name__)
 
 try:
 
@@ -31,21 +51,14 @@ except:
 
     has_chainconsumer = False
 
+    log.debug("chainconsumer is NOT installed")
+
 else:
 
     has_chainconsumer = True
 
-from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.io.file_utils import sanitize_filename
-from threeML.io.fits_file import fits, FITSFile, FITSExtension
-from threeML.io.rich_display import display
-from threeML.io.table import NumericMatrix
-from threeML.io.uncertainty_formatter import uncertainty_formatter
-from threeML.io.results_table import ResultsTable
-from threeML import __version__
-from threeML.random_variates import RandomVariates
-from threeML.io.calculate_flux import _calculate_point_source_flux
-from threeML.config.config import threeML_config
+    log.debug("chainconsumer is installed")
+
 
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
 # them with normal characters when we write the keyword, and we substitute them back when we read it back
@@ -72,7 +85,7 @@ def _escape_back_yaml_from_fits(yaml_code):
     return yaml_code
 
 
-def load_analysis_results(fits_file):
+def load_analysis_results(fits_file: str):
     """
     Load the results of one or more analysis from a FITS file produced by 3ML
 
@@ -80,17 +93,63 @@ def load_analysis_results(fits_file):
     :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
     """
 
+    fits_file: Path = fits_file
+
     with fits.open(fits_file) as f:
 
         n_results = [x.name for x in f].count("ANALYSIS_RESULTS")
 
         if n_results == 1:
 
+            log.debug(f"{fits_file} AR opened with 1 result")
+
             return _load_one_results(f["ANALYSIS_RESULTS", 1])
 
         else:
 
+            log.debug(f"{fits_file} AR opened with {n_results} results")
+
             return _load_set_of_results(f, n_results)
+
+
+def load_analysis_results_hdf(hdf_file: str):
+    """
+    Load the results of one or more analysis from a FITS file produced by 3ML
+
+    :param fits_file: path to the FITS file containing the results, as output by MLEResults or BayesianResults
+    :return: a new instance of either MLEResults or Bayesian results dending on the type of the input FITS file
+    """
+
+    hdf_file: Path = sanitize_filename(hdf_file)
+
+    with h5py.File(hdf_file, "r") as f:
+
+        n_results = f.attrs["n_results"]
+
+        if n_results == 1:
+
+            log.debug(f"{hdf_file} AR opened with {n_results} result")
+
+            return _load_one_results_hdf(f["AnalysisResults_0"])
+
+        else:
+
+            log.debug(f"{hdf_file} AR opened with {n_results} results")
+
+            return _load_set_of_results_hdf(f, n_results)
+
+
+def convert_fits_analysis_result_to_hdf(fits_result_file: str):
+
+    ar = load_analysis_results(fits_result_file)  # type: _AnalysisResults
+
+    new_file_name_base, _ = os.path.splitext(fits_result_file)
+
+    new_file_name: Path = sanitize_filename(f"{new_file_name_base}.h5")
+
+    ar.write_to(new_file_name, overwrite=True, as_hdf=True)
+
+    log.info(f"Converted {fits_result_file} to {new_file_name}")
 
 
 def _load_one_results(fits_extension):
@@ -98,7 +157,8 @@ def _load_one_results(fits_extension):
     analysis_type = fits_extension.header.get("RESUTYPE")
 
     # Gather the optimized model
-    serialized_model = _escape_back_yaml_from_fits(fits_extension.header.get("MODEL"))
+    serialized_model = _escape_back_yaml_from_fits(
+        fits_extension.header.get("MODEL"))
     model_dict = my_yaml.load(serialized_model, Loader=yaml.FullLoader)
 
     optimized_model = ModelParser(model_dict=model_dict).get_model()
@@ -132,7 +192,8 @@ def _load_one_results(fits_extension):
 
         # Get covariance matrix
 
-        covariance_matrix = np.atleast_2d(fits_extension.data.field("COVARIANCE").T)
+        covariance_matrix = np.atleast_2d(
+            fits_extension.data.field("COVARIANCE").T)
 
         # Instance and return
 
@@ -158,12 +219,115 @@ def _load_one_results(fits_extension):
         )
 
 
+def _load_one_results_hdf(hdf_obj):
+    # Gather analysis type
+    analysis_type = hdf_obj.attrs["RESUTYPE"]
+
+    # Gather the optimized model
+    model_dict = recursively_load_dict_contents_from_group(hdf_obj, "MODEL")
+
+    optimized_model = ModelParser(model_dict=model_dict).get_model()
+
+    # Gather statistics values
+    statistic_values = collections.OrderedDict()
+
+    measure_values = collections.OrderedDict()
+
+    for key in list(hdf_obj.attrs.keys()):
+
+        if key.find("STAT") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("STAT", ""))
+            value = float(hdf_obj.attrs[key])
+            name = hdf_obj.attrs["PN%i" % id]
+            statistic_values[name] = value
+
+        if key.find("MEAS") == 0:
+            # Found a keyword with a statistic for a plugin
+            # Gather info about it
+
+            id = int(key.replace("MEAS", ""))
+            name = hdf_obj.attrs[key]
+            value = float(hdf_obj.attrs["MV%i" % id])
+            measure_values[name] = value
+
+    if analysis_type == "MLE":
+
+        # Get covariance matrix
+
+        covariance_matrix = np.atleast_2d(hdf_obj["COVARIANCE"][()].T)
+
+        # Instance and return
+
+        return MLEResults(
+            optimized_model,
+            covariance_matrix,
+            statistic_values,
+            statistical_measures=measure_values,
+        )
+
+    elif analysis_type == "Bayesian":
+
+        # Gather samples
+        samples = hdf_obj["SAMPLES"][()]
+
+        # Instance and return
+
+        return BayesianResults(
+            optimized_model,
+            samples.T,
+            statistic_values,
+            statistical_measures=measure_values,
+        )
+
+
+def _load_set_of_results_hdf(hdf_obj, n_results):
+    # Gather all results
+    all_results = []
+
+    for i in range(n_results):
+
+        grp = hdf_obj["AnalysisResults_%d" % i]
+
+        all_results.append(_load_one_results_hdf(grp))
+
+    this_set = AnalysisResultsSet(all_results)
+
+    # Now gather the SEQUENCE extension and set the characterization frame accordingly
+
+    seq_type = hdf_obj.attrs["SEQ_TYPE"]
+
+    # Build the data tuple
+    seq_grp = hdf_obj["SEQUENCE"]
+
+    data_list = []
+
+    for name, grp in seq_grp.items():
+
+        if grp.attrs["UNIT"] == "NONE_TYPE":
+
+            this_tuple = (name, grp["DATA"][()])
+
+        else:
+
+            this_tuple = (name, grp["DATA"][()] * u.Unit(grp.attrs["UNIT"]))
+
+        data_list.append(this_tuple)
+
+    this_set.characterize_sequence(seq_type, tuple(data_list))
+
+    return this_set
+
+
 def _load_set_of_results(open_fits_file, n_results):
     # Gather all results
     all_results = []
 
     for i in range(n_results):
-        all_results.append(_load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1]))
+        all_results.append(_load_one_results(
+            open_fits_file["ANALYSIS_RESULTS", i + 1]))
 
     this_set = AnalysisResultsSet(all_results)
 
@@ -186,7 +350,8 @@ def _load_set_of_results(open_fits_file, n_results):
 
         else:
 
-            this_tuple = (column.name, record[column.name] * u.Unit(column.unit))
+            this_tuple = (
+                column.name, record[column.name] * u.Unit(column.unit))
 
         data_list.append(this_tuple)
 
@@ -214,6 +379,156 @@ class SEQUENCE(FITSExtension):
 
         # Update keywords
         self.hdu.header.set("SEQ_TYPE", name)
+
+
+class ANALYSIS_RESULTS_HDF(object):
+    def __init__(self, analysis_results, hdf_obj):
+
+        optimized_model = analysis_results.optimized_model
+
+        # Gather the dictionary with free parameters
+
+        free_parameters = optimized_model.free_parameters
+
+        n_parameters = len(free_parameters)
+
+        # Gather covariance matrix (if any)
+
+        if analysis_results.analysis_type == "MLE":
+
+            assert isinstance(analysis_results, MLEResults)
+
+            covariance_matrix = analysis_results.covariance_matrix
+
+            # Check that the covariance matrix has the right shape
+
+            assert covariance_matrix.shape == (
+                n_parameters,
+                n_parameters,
+            ), "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
+                n_parameters,
+                n_parameters,
+                covariance_matrix.shape[0],
+                covariance_matrix.shape[1],
+            )
+
+            # Empty samples set
+            samples = np.zeros(n_parameters)
+
+        else:
+
+            assert isinstance(analysis_results, BayesianResults)
+
+            # Empty covariance matrix
+
+            covariance_matrix = np.zeros(n_parameters)
+
+            # Gather the samples
+            samples = analysis_results._samples_transposed
+
+        # yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
+
+        # save the model to recursive dictionaries
+
+        hdf_obj.attrs["created"] = datetime.datetime.now().isoformat()
+        hdf_obj.attrs["3mlver"] = "%s" % __version__
+
+        hdf_obj.attrs["RESUTYPE"] = analysis_results.analysis_type
+
+        recursively_save_dict_contents_to_group(
+            hdf_obj, "MODEL", optimized_model.to_dict_with_types()
+        )
+        # Get data frame with parameters (always use equal tail errors)
+
+        data_frame = analysis_results.get_data_frame(error_type="equal tail")
+
+        hdf_obj.create_dataset(
+            "NAME",
+            data=np.array(list(free_parameters.keys()),
+                          dtype=h5py.string_dtype()),
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+
+        hdf_obj.create_dataset(
+            "VALUE",
+            data=data_frame["value"],
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+
+        hdf_obj.create_dataset(
+            "NEGATIVE_ERROR",
+            data=data_frame["negative_error"].values,
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+        hdf_obj.create_dataset(
+            "POSITIVE_ERROR",
+            data=data_frame["positive_error"].values,
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+        hdf_obj.create_dataset(
+            "ERROR",
+            data=data_frame["error"].values,
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+
+        hdf_obj.create_dataset(
+            "UNIT",
+            data=np.array(data_frame["unit"].values, dtype=np.unicode_).astype(
+                h5py.string_dtype()
+            ),
+            compression="gzip",
+            compression_opts=9,
+            shuffle=True,
+        )
+
+        if analysis_results.analysis_type == "MLE":
+
+            hdf_obj.create_dataset(
+                "COVARIANCE",
+                data=covariance_matrix,
+                compression="gzip",
+                compression_opts=9,
+                shuffle=True,
+            )
+
+        elif analysis_results.analysis_type == "Bayesian":
+
+            hdf_obj.create_dataset(
+                "SAMPLES",
+                data=samples,
+                compression="gzip",
+                compression_opts=9,
+                shuffle=True,
+            )
+        else:
+
+            raise RuntimeError("This AR is invalid!")
+
+        # Now add two keywords for each instrument
+        stat_series = analysis_results.optimal_statistic_values  # type: pd.Series
+
+        for i, (plugin_instance_name, stat_value) in enumerate(stat_series.items()):
+
+            hdf_obj.attrs["STAT%i" % i] = stat_value
+            hdf_obj.attrs["PN%i" % i] = plugin_instance_name
+
+        # Now add the statistical measures
+
+        measure_series = analysis_results.statistical_measures  # type: pd.Series
+
+        for i, (measure, measure_value) in enumerate(measure_series.items()):
+            hdf_obj.attrs["MEAS%i" % i] = measure
+            hdf_obj.attrs["MV%i" % i] = measure_value
 
 
 class ANALYSIS_RESULTS(FITSExtension):
@@ -251,14 +566,14 @@ class ANALYSIS_RESULTS(FITSExtension):
 
             # Check that the covariance matrix has the right shape
 
-            assert covariance_matrix.shape == (n_parameters, n_parameters), (
-                "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
-                % (
-                    n_parameters,
-                    n_parameters,
-                    covariance_matrix.shape[0],
-                    covariance_matrix.shape[1],
-                )
+            assert covariance_matrix.shape == (
+                n_parameters,
+                n_parameters,
+            ), "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
+                n_parameters,
+                n_parameters,
+                covariance_matrix.shape[0],
+                covariance_matrix.shape[1],
             )
 
             # Empty samples set
@@ -277,10 +592,12 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         # Serialize the model so it can be placed in the header
 
-        yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
+        yaml_model_serialization = my_yaml.dump(
+            optimized_model.to_dict_with_types())
 
         # Replace characters which cannot be contained in a FITS header with other characters
-        yaml_model_serialization = _escape_yaml_for_fits(yaml_model_serialization)
+        yaml_model_serialization = _escape_yaml_for_fits(
+            yaml_model_serialization)
 
         # Get data frame with parameters (always use equal tail errors)
 
@@ -301,7 +618,8 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         # Init FITS extension
 
-        super(ANALYSIS_RESULTS, self).__init__(data_tuple, self._HEADER_KEYWORDS)
+        super(ANALYSIS_RESULTS, self).__init__(
+            data_tuple, self._HEADER_KEYWORDS)
 
         # Update keywords with their values for this instance
         self.hdu.header.set("MODEL", yaml_model_serialization)
@@ -323,7 +641,8 @@ class ANALYSIS_RESULTS(FITSExtension):
         measure_series = analysis_results.statistical_measures  # type: pd.Series
 
         for i, (measure, measure_value) in enumerate(measure_series.items()):
-            self.hdu.header.set("MEAS%i" % i, measure, comment="Measure type %i" % i)
+            self.hdu.header.set("MEAS%i" % i, measure,
+                                comment="Measure type %i" % i)
             self.hdu.header.set(
                 "MV%i" % i, measure_value, comment="Measure value %i" % i
             )
@@ -349,7 +668,8 @@ class AnalysisResultsFITS(FITSFile):
             # We got elements to write the SEQUENCE extension
 
             # Make SEQUENCE extension
-            sequence_ext = SEQUENCE(kwargs["sequence_name"], kwargs["sequence_tuple"])
+            sequence_ext = SEQUENCE(
+                kwargs["sequence_name"], kwargs["sequence_tuple"])
 
             extensions.append(sequence_ext)
 
@@ -367,7 +687,8 @@ class AnalysisResultsFITS(FITSFile):
         super(AnalysisResultsFITS, self).__init__(fits_extensions=extensions)
 
         # Set a couple of keywords in the primary header
-        self._hdu_list[0].header.set("DATE", datetime.datetime.now().isoformat())
+        self._hdu_list[0].header.set(
+            "DATE", datetime.datetime.now().isoformat())
         self._hdu_list[0].header.set(
             "ORIGIN",
             "3ML",
@@ -432,7 +753,8 @@ class _AnalysisResults(object):
         self._free_parameters = self._optimized_model.free_parameters
 
         # Gather also the optimized values of the parameters
-        self._values = np.array([x.value for x in list(self._free_parameters.values())])
+        self._values = np.array(
+            [x.value for x in list(self._free_parameters.values())])
 
         # Set the analysis type
         self._analysis_type = analysis_type
@@ -452,18 +774,31 @@ class _AnalysisResults(object):
 
         return self._analysis_type
 
-    def write_to(self, filename, overwrite=False):
+    def write_to(self, filename: str, overwrite: bool = False, as_hdf: bool = False):
         """
-        Write results to a FITS file
+        Write results to a FITS or HDF5 file
 
-        :param filename:
-        :param overwrite:
+        :param filename: the file name
+        :param overwrite: overwrite the file?
+        :param: save as an HDF5 file
         :return: None
         """
 
-        fits_file = AnalysisResultsFITS(self)
+        if not as_hdf:
 
-        fits_file.writeto(sanitize_filename(filename), overwrite=overwrite)
+            fits_file = AnalysisResultsFITS(self)
+
+            fits_file.writeto(sanitize_filename(filename), overwrite=overwrite)
+
+        else:
+
+            with h5py.File(sanitize_filename(filename), "w") as f:
+
+                f.attrs["n_results"] = 1
+
+                grp = f.create_group("AnalysisResults_0")
+
+                ANALYSIS_RESULTS_HDF(self, grp)
 
     def get_variates(self, param_path):
 
@@ -520,7 +855,8 @@ class _AnalysisResults(object):
         # Get the arguments of function which have not been specified
         # in the calling sequence (the **kwargs dictionary)
         # (they will be excluded from the vectorization)
-        to_be_excluded = [item for item in arguments if item not in list(kwargs.keys())]
+        to_be_excluded = [
+            item for item in arguments if item not in list(kwargs.keys())]
 
         # Vectorize the function
         vectorized = np.vectorize(function, excluded=to_be_excluded)
@@ -530,7 +866,8 @@ class _AnalysisResults(object):
         wrapper = functools.partial(vectorized, **kwargs)
 
         # Finally make so that the result is always a RandomVariate
-        wrapper2 = lambda *args, **kwargs: RandomVariates(wrapper(*args, **kwargs))
+        wrapper2 = lambda *args, **kwargs: RandomVariates(
+            wrapper(*args, **kwargs))
 
         return wrapper2
 
@@ -695,7 +1032,8 @@ class _AnalysisResults(object):
 
                 if this_par.has_transformation():
 
-                    best_fit_internal = this_par.transformation.forward(values[-1])
+                    best_fit_internal = this_par.transformation.forward(
+                        values[-1])
 
                     _, neg_error = this_par.internal_to_external_delta(
                         best_fit_internal, -std_dev
@@ -737,7 +1075,7 @@ class _AnalysisResults(object):
 
     def get_point_source_flux(self, *args, **kwargs):
 
-        custom_warnings.warn("get_point_source_flux() has been replaced by get_flux()")
+        log.error("get_point_source_flux() has been replaced by get_flux()")
         return self.get_flux(*args, **kwargs)
 
     def get_flux(
@@ -751,6 +1089,7 @@ class _AnalysisResults(object):
         components_to_use=(),
         sum_sources=False,
         include_extended=False,
+        verbose=False
     ):
         """
 
@@ -766,7 +1105,7 @@ class _AnalysisResults(object):
         :param components_to_use: (optional) list of string names of the components to plot: including 'total'
         :param sum_sources: (optional) if True, also the sum of all sources will be plotted
         :param include_extended: (optional) if True, plot extended source spectra (spatially integrated) as well.
-        
+
         :return:
         """
 
@@ -807,7 +1146,8 @@ class _AnalysisResults(object):
 
             # Format the errors and display the resulting data frame
 
-            display(mle_results.apply(_format_error, axis=1))
+            if verbose:
+                display(mle_results.apply(_format_error, axis=1))
 
             # Return the dataframe
             return mle_results
@@ -815,8 +1155,8 @@ class _AnalysisResults(object):
         elif bayes_results is not None:
 
             # Format the errors and display the resulting data frame
-
-            display(bayes_results.apply(_format_error, axis=1))
+            if verbose:
+                display(bayes_results.apply(_format_error, axis=1))
 
             # Return the dataframe
             return bayes_results
@@ -942,7 +1282,8 @@ class BayesianResults(_AnalysisResults):
 
                     labels[-1] = renamed_parameters[parameter.path]
 
-            priors.append(self._optimized_model.parameters[parameter_name].prior)
+            priors.append(
+                self._optimized_model.parameters[parameter_name].prior)
 
         # default arguments
         default_args = {
@@ -1003,7 +1344,8 @@ class BayesianResults(_AnalysisResults):
 
             labels.append(short_name)
 
-            priors.append(self._optimized_model.parameters[parameter_name].prior)
+            priors.append(
+                self._optimized_model.parameters[parameter_name].prior)
 
         # Rename the parameters if needed.
 
@@ -1018,7 +1360,10 @@ class BayesianResults(_AnalysisResults):
 
         # Must remove underscores!
 
-        for i, val, in enumerate(labels):
+        for (
+            i,
+            val,
+        ) in enumerate(labels):
 
             if "$" not in labels[i]:
                 labels[i] = val.replace("_", "")
@@ -1137,7 +1482,10 @@ class BayesianResults(_AnalysisResults):
 
             # Must remove underscores!
 
-            for i, val, in enumerate(labels_other):
+            for (
+                i,
+                val,
+            ) in enumerate(labels_other):
 
                 if "$" not in labels_other[i]:
                     labels_other[i] = val.replace("_", " ")
@@ -1173,14 +1521,18 @@ class BayesianResults(_AnalysisResults):
 
         # Must remove underscores!
 
-        for i, val, in enumerate(labels):
+        for (
+            i,
+            val,
+        ) in enumerate(labels):
 
             if "$" not in labels[i]:
                 labels[i] = val.replace("_", " ")
 
         if names is not None:
 
-            cc.add_chain(self._samples_transposed.T, parameters=labels, name=names[0])
+            cc.add_chain(self._samples_transposed.T,
+                         parameters=labels, name=names[0])
 
         else:
 
@@ -1257,7 +1609,7 @@ class BayesianResults(_AnalysisResults):
 
         assert stepsize > 10, "Too few samples for this method to be effective"
 
-        print("Stepsize for sliding window is %s" % stepsize)
+        log.info("Stepsize for sliding window is %s" % stepsize)
 
         for j, parameter_name in enumerate(self._free_parameters.keys()):
 
@@ -1289,7 +1641,8 @@ class BayesianResults(_AnalysisResults):
             this_bootstrap_variances = []
 
             for i in range(n_subsets):
-                samples = np.random.choice(this_samples, n_samples_in_each_subset)
+                samples = np.random.choice(
+                    this_samples, n_samples_in_each_subset)
 
                 this_bootstrap_averages.append(np.average(samples))
                 this_bootstrap_variances.append(np.std(samples))
@@ -1314,15 +1667,18 @@ class BayesianResults(_AnalysisResults):
 
             fig.suptitle(parameter_name)
 
-            plot_one_histogram(subs[0], averages[parameter_name], "sliding window")
-            plot_one_histogram(subs[0], bootstrap_averages[parameter_name], "bootstrap")
+            plot_one_histogram(
+                subs[0], averages[parameter_name], "sliding window")
+            plot_one_histogram(
+                subs[0], bootstrap_averages[parameter_name], "bootstrap")
 
             subs[0].set_ylabel("N subsets")
             subs[0].set_xlabel("Average")
 
             subs[0].legend()
 
-            plot_one_histogram(subs[1], variances[parameter_name], "sliding window")
+            plot_one_histogram(
+                subs[1], variances[parameter_name], "sliding window")
             plot_one_histogram(
                 subs[1], bootstrap_variances[parameter_name], "bootstrap"
             )
@@ -1416,14 +1772,21 @@ class MLEResults(_AnalysisResults):
 
         if covariance_matrix.shape != ():
 
-            assert covariance_matrix.shape == expected_shape, (
-                "Covariance matrix has wrong shape. "
-                "Got %s, should be %s" % (covariance_matrix.shape, expected_shape)
+            assert (
+                covariance_matrix.shape == expected_shape
+            ), "Covariance matrix has wrong shape. " "Got %s, should be %s" % (
+                covariance_matrix.shape,
+                expected_shape,
             )
 
-            assert np.all(
+            if not np.all(
                 np.isfinite(covariance_matrix)
-            ), "Covariance matrix contains Nan or inf. Cannot continue."
+            ):
+
+                log.error(
+                    "Covariance matrix contains Nan or inf. Cannot continue.")
+
+                raise BadCovariance()
 
             # Generate samples from the multivariate normal distribution, i.e., accounting for the covariance of the
             # parameters
@@ -1477,7 +1840,7 @@ class MLEResults(_AnalysisResults):
         # Warn the user if more than 1% of the samples have been lost
 
         if n_removed_samples > samples.shape[0] / 100.0:
-            custom_warnings.warn(
+            log.warning(
                 "%s percent of samples have been thrown away because they failed the constraints "
                 "on the parameters. This results might not be suitable for error propagation. "
                 "Enlarge the boundaries until you loose less than 1 percent of the samples."
@@ -1492,7 +1855,8 @@ class MLEResults(_AnalysisResults):
 
             if parameter.has_transformation():
 
-                samples[:, i] = parameter.transformation.backward(samples[:, i])
+                samples[:, i] = parameter.transformation.backward(
+                    samples[:, i])
 
         # Finally build the class
 
@@ -1638,7 +2002,8 @@ class AnalysisResultsSet(collections.Sequence):
 
         else:
 
-            data_tuple = (("LOWER_BOUND", lower_bounds), ("UPPER_BOUND", upper_bounds))
+            data_tuple = (("LOWER_BOUND", lower_bounds),
+                          ("UPPER_BOUND", upper_bounds))
 
         self.characterize_sequence(name, data_tuple)
 
@@ -1658,14 +2023,17 @@ class AnalysisResultsSet(collections.Sequence):
         self._sequence_name = str(name)
 
         for i, this_tuple in enumerate(data_tuple):
-            assert len(this_tuple[1]) == len(self), (
-                "Column %i in tuple has length of "
-                "%i (should be %i)" % (i, len(data_tuple), len(self))
+            assert len(this_tuple[1]) == len(
+                self
+            ), "Column %i in tuple has length of " "%i (should be %i)" % (
+                i,
+                len(data_tuple),
+                len(self),
             )
 
         self._sequence_tuple = data_tuple
 
-    def write_to(self, filename, overwrite=False):
+    def write_to(self, filename, overwrite=False, as_hdf=False):
         """
         Write this set of results to a FITS file.
 
@@ -1682,10 +2050,42 @@ class AnalysisResultsSet(collections.Sequence):
 
             self.characterize_sequence("unspecified", frame_tuple)
 
-        fits = AnalysisResultsFITS(
-            *self,
-            sequence_tuple=self._sequence_tuple,
-            sequence_name=self._sequence_name
-        )
+        if not as_hdf:
 
-        fits.writeto(sanitize_filename(filename), overwrite=overwrite)
+            fits = AnalysisResultsFITS(
+                *self,
+                sequence_tuple=self._sequence_tuple,
+                sequence_name=self._sequence_name,
+            )
+
+            fits.writeto(sanitize_filename(filename), overwrite=overwrite)
+        else:
+
+            with h5py.File(sanitize_filename(filename), "w") as f:
+
+                f.attrs["n_results"] = len(self)
+
+                f.attrs["SEQ_TYPE"] = self._sequence_name
+                seq_grp = f.create_group("SEQUENCE")
+
+                for name, value in self._sequence_tuple:
+
+                    sub_grp = seq_grp.create_group(name)
+
+                    try:
+
+                        sub_grp.attrs["UNIT"] = value.unit.to_string()
+
+                        sub_grp.create_dataset("DATA", data=value.value)
+
+                    except:
+
+                        sub_grp.attrs["UNIT"] = "NONE_TYPE"
+
+                        sub_grp.create_dataset("DATA", data=value)
+
+                for i, ar in enumerate(self):
+
+                    grp = f.create_group("AnalysisResults_%d" % i)
+
+                    ANALYSIS_RESULTS_HDF(ar, grp)

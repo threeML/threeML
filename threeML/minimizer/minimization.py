@@ -1,23 +1,25 @@
 from __future__ import division
-from builtins import zip
-from builtins import str
-from builtins import range
-from past.utils import old_div
-from builtins import object
+
 import collections
 import math
+from builtins import object, range, str, zip
+
 import numpy as np
 import pandas as pd
 import scipy.optimize
+from past.utils import old_div
 
-from threeML.io.progress_bar import progress_bar
+from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
-from threeML.utils.differentiation import get_hessian, ParameterOnBoundary
+from threeML.io.logging import setup_logger
+from threeML.utils.differentiation import ParameterOnBoundary, get_hessian
+from threeML.utils.progress_bar import tqdm
 
 # Set the warnings to be issued always for this module
 
 custom_warnings.simplefilter("always", RuntimeWarning)
 
+log = setup_logger(__name__)
 
 # Special constants
 FIT_FAILED = 1e12
@@ -69,9 +71,10 @@ def get_minimizer(minimizer_type):
 
     except KeyError:
 
-        raise MinimizerNotAvailable(
-            "Minimizer %s is not available on your system" % minimizer_type
-        )
+        log.error("Minimizer %s is not available on your system" %
+                  minimizer_type)
+
+        raise MinimizerNotAvailable()
 
 
 class FunctionWrapper(object):
@@ -93,7 +96,8 @@ class FunctionWrapper(object):
 
         for i, parameter_name in enumerate(self._fixed_parameters_names):
 
-            this_index = list(self._all_parameters.keys()).index(parameter_name)
+            this_index = list(self._all_parameters.keys()
+                              ).index(parameter_name)
 
             self._indexes_of_fixed_par[this_index] = True
 
@@ -164,7 +168,8 @@ class ProfileLikelihood(object):
 
             if minimizer_instance.algorithm_name is not None:
 
-                self._optimizer.set_algorithm(minimizer_instance.algorithm_name)
+                self._optimizer.set_algorithm(
+                    minimizer_instance.algorithm_name)
 
         else:
 
@@ -260,27 +265,24 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros_like(steps1)
 
-        with progress_bar(len(steps1), title="Profiling likelihood") as p:
+        for i, step in enumerate(tqdm(steps1, desc="Profiling likelihood")):
 
-            for i, step in enumerate(steps1):
+            if self._n_free_parameters > 0:
 
-                if self._n_free_parameters > 0:
+                # Profile out the free parameters
 
-                    # Profile out the free parameters
+                self._wrapper.set_fixed_values(step)
 
-                    self._wrapper.set_fixed_values(step)
+                _, this_log_like = self._optimizer.minimize(
+                    compute_covar=False)
 
-                    _, this_log_like = self._optimizer.minimize(compute_covar=False)
+            else:
 
-                else:
+                # No free parameters, just compute the likelihood
 
-                    # No free parameters, just compute the likelihood
+                this_log_like = self._function(step)
 
-                    this_log_like = self._function(step)
-
-                log_likes[i] = this_log_like
-
-                p.increase()
+            log_likes[i] = this_log_like
 
         return log_likes
 
@@ -288,40 +290,44 @@ class ProfileLikelihood(object):
 
         log_likes = np.zeros((len(steps1), len(steps2)))
 
-        with progress_bar(len(steps1) * len(steps2), title="Profiling likelihood") as p:
+        if threeML_config.interface.progress_bars:
 
-            for i, step1 in enumerate(steps1):
+            p = tqdm(total=len(steps1) * len(steps2),
+                     desc="Profiling likelihood")
 
-                for j, step2 in enumerate(steps2):
+        for i, step1 in enumerate(steps1):
 
-                    if self._n_free_parameters > 0:
+            for j, step2 in enumerate(steps2):
 
-                        # Profile out the free parameters
+                if self._n_free_parameters > 0:
 
-                        self._wrapper.set_fixed_values([step1, step2])
+                    # Profile out the free parameters
 
-                        try:
+                    self._wrapper.set_fixed_values([step1, step2])
 
-                            _, this_log_like = self._optimizer.minimize(
-                                compute_covar=False
-                            )
+                    try:
 
-                        except FitFailed:
+                        _, this_log_like = self._optimizer.minimize(
+                            compute_covar=False
+                        )
 
-                            # If the user is stepping too far it might be that the fit fails. It is usually not a
-                            # problem
+                    except FitFailed:
 
-                            this_log_like = np.nan
+                        # If the user is stepping too far it might be that the fit fails. It is usually not a
+                        # problem
 
-                    else:
+                        this_log_like = np.nan
 
-                        # No free parameters, just compute the likelihood
+                else:
 
-                        this_log_like = self._function(step1, step2)
+                    # No free parameters, just compute the likelihood
 
-                    log_likes[i, j] = this_log_like
+                    this_log_like = self._function(step1, step2)
 
-                    p.increase()
+                log_likes[i, j] = this_log_like
+
+                if threeML_config.interface.progress_bars:
+                    p.update(1)
 
         return log_likes
 
@@ -331,7 +337,9 @@ class ProfileLikelihood(object):
 
 
 class _Minimization(object):
-    def __init__(self, minimizer_type):
+    def __init__(self, minimizer_type: str):
+
+        self._name = minimizer_type
 
         self._minimizer_type = get_minimizer(minimizer_type=minimizer_type)
 
@@ -350,6 +358,10 @@ class _Minimization(object):
             )
 
         self._setup_dict = setup_dict
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     def set_algorithm(self, algorithm):
 
@@ -510,23 +522,26 @@ class Minimizer(object):
 
                     # Bounded only in the negative direction. Make sure we are not at the boundary
                     if np.isclose(
-                        current_value, current_min, old_div(abs(current_value), 20)
+                        current_value, current_min, old_div(
+                            abs(current_value), 20)
                     ):
 
-                        custom_warnings.warn(
+                        log.warning(
                             "The current value of parameter %s is very close to "
                             "its lower bound when starting the fit. Fixing it"
                             % par.name
                         )
 
-                        current_value = current_value + 0.1 * abs(current_value)
+                        current_value = current_value + \
+                            0.1 * abs(current_value)
 
                         current_delta = 0.05 * abs(current_value)
 
                     else:
 
                         current_delta = min(
-                            current_delta, abs(current_value - current_min) / 10.0
+                            current_delta, abs(
+                                current_value - current_min) / 10.0
                         )
 
             else:
@@ -536,23 +551,26 @@ class Minimizer(object):
                     # Bounded only in the positive direction
                     # Bounded only in the negative direction. Make sure we are not at the boundary
                     if np.isclose(
-                        current_value, current_max, old_div(abs(current_value), 20)
+                        current_value, current_max, old_div(
+                            abs(current_value), 20)
                     ):
 
-                        custom_warnings.warn(
+                        log.warnings(
                             "The current value of parameter %s is very close to "
                             "its upper bound when starting the fit. Fixing it"
                             % par.name
                         )
 
-                        current_value = current_value - 0.04 * abs(current_value)
+                        current_value = current_value - \
+                            0.04 * abs(current_value)
 
                         current_delta = 0.02 * abs(current_value)
 
                     else:
 
                         current_delta = min(
-                            current_delta, abs(current_max - current_value) / 2.0
+                            current_delta, abs(
+                                current_max - current_value) / 2.0
                         )
 
             # Sometimes, if the value was 0, the delta could be 0 as well which would crash
@@ -642,7 +660,8 @@ class Minimizer(object):
 
         if compute_covar:
 
-            covariance = self._compute_covariance_matrix(internal_best_fit_values)
+            covariance = self._compute_covariance_matrix(
+                internal_best_fit_values)
 
         else:
 
@@ -650,7 +669,8 @@ class Minimizer(object):
 
         # Finally store everything
 
-        self._store_fit_results(internal_best_fit_values, function_minimum, covariance)
+        self._store_fit_results(internal_best_fit_values,
+                                function_minimum, covariance)
 
         return external_best_fit_values, function_minimum
 
@@ -703,10 +723,8 @@ class Minimizer(object):
 
                 else:
 
-                    custom_warnings.warn(
-                        "Negative element on diagonal of covariance matrix",
-                        CannotComputeErrors,
-                    )
+                    log.warning(
+                        "Negative element on diagonal of covariance matrix")
 
                     error = np.nan
 
@@ -829,15 +847,14 @@ class Minimizer(object):
 
         try:
 
-            hessian_matrix = get_hessian(self.function, best_fit_values, minima, maxima)
+            hessian_matrix = get_hessian(
+                self.function, best_fit_values, minima, maxima)
 
         except ParameterOnBoundary:
 
-            custom_warnings.warn(
+            log.warning(
                 "One or more of the parameters are at their boundaries. Cannot compute covariance and"
-                " errors",
-                CannotComputeCovariance,
-            )
+                " errors")
 
             n_dim = len(best_fit_values)
 
@@ -851,7 +868,7 @@ class Minimizer(object):
 
         except:
 
-            custom_warnings.warn(
+            log.warning(
                 "Cannot invert Hessian matrix, looks like the matrix is singular"
             )
 
@@ -871,10 +888,10 @@ class Minimizer(object):
 
         except:
 
-            custom_warnings.warn(
+            log.warning(
                 "Covariance matrix is NOT semi-positive definite. Cannot estimate errors. This can "
-                "happen for many reasons, the most common being one or more unconstrained parameters",
-                CannotComputeCovariance,
+                "happen for many reasons, the most common being one or more unconstrained parameters"
+
             )
 
         return covariance_matrix
@@ -930,7 +947,8 @@ class Minimizer(object):
 
             if extreme_allowed is None:
 
-                extreme_allowed = best_fit_value + sign * 10 * abs(best_fit_value)
+                extreme_allowed = best_fit_value + \
+                    sign * 10 * abs(best_fit_value)
 
             # We need to look for a value for the parameter where the difference between the minimum of the
             # log-likelihood and the likelihood for that value differs by more than target_delta_log_likelihood.
@@ -981,10 +999,11 @@ class Minimizer(object):
 
                 if delta < -0.1:
 
-                    custom_warnings.warn(
+                    log.warning(
                         "Found a better minimum (%.2f) for %s = %s during error "
-                        "computation." % (this_log_like, parameter_name, trial),
-                        BetterMinimumDuringProfiling,
+                        "computation." % (
+                            this_log_like, parameter_name, trial)
+
                     )
 
                     xs = [x.value for x in list(self.parameters.values())]
@@ -1018,16 +1037,16 @@ class Minimizer(object):
 
                 # We found a better minimum, restart from scratch
 
-                custom_warnings.warn("Restarting search...", RuntimeWarning)
+                log.warning("Restarting search...")
 
                 continue
 
             if minimum_bound is None:
 
                 # Cannot find error in this direction (it's probably outside the allowed boundaries)
-                custom_warnings.warn(
-                    "Cannot find boundary for parameter %s" % parameter_name,
-                    CannotComputeErrors,
+                log.warning(
+                    "Cannot find boundary for parameter %s" % parameter_name
+
                 )
 
                 error = np.nan
@@ -1038,7 +1057,8 @@ class Minimizer(object):
                 # Define the "biased likelihood", since brenq only finds zeros of function
 
                 biased_likelihood = (
-                    lambda x: pl(x) - self._m_log_like_minimum - target_delta_log_like
+                    lambda x: pl(x) - self._m_log_like_minimum -
+                    target_delta_log_like
                 )
 
                 try:
@@ -1052,10 +1072,8 @@ class Minimizer(object):
                     )  # type: float
                 except:
 
-                    custom_warnings.warn(
-                        "Cannot find boundary for parameter %s" % parameter_name,
-                        CannotComputeErrors,
-                    )
+                    log.warning(
+                        "Cannot find boundary for parameter %s" % parameter_name)
 
                     error = np.nan
                     break
@@ -1125,23 +1143,23 @@ class Minimizer(object):
 
         errors = collections.OrderedDict()
 
-        with progress_bar(2 * len(self.parameters), title="Computing errors") as p:
+        p = tqdm(total=2 * len(self.parameters), desc="Computing errors")
 
-            for parameter_name in self.parameters:
+        for parameter_name in self.parameters:
 
-                negative_error = self._get_one_error(
-                    parameter_name, target_delta_log_like, -1
-                )
+            negative_error = self._get_one_error(
+                parameter_name, target_delta_log_like, -1
+            )
 
-                p.increase()
+            p.update(1)
 
-                positive_error = self._get_one_error(
-                    parameter_name, target_delta_log_like, +1
-                )
+            positive_error = self._get_one_error(
+                parameter_name, target_delta_log_like, +1
+            )
 
-                p.increase()
+            p.update(1)
 
-                errors[parameter_name] = (negative_error, positive_error)
+            errors[parameter_name] = (negative_error, positive_error)
 
         return errors
 
@@ -1158,7 +1176,6 @@ class Minimizer(object):
         progress=True,
         **options
     ):
-
         """
             Generate confidence contours for the given parameters by stepping for the given number of steps between
             the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to
@@ -1268,7 +1285,7 @@ class Minimizer(object):
 
         else:
 
-            custom_warnings.warn(
+            log.warning(
                 "No best fit to restore before contours computation. "
                 "Perform the fit before running contours to remove this warnings."
             )
@@ -1288,7 +1305,8 @@ class Minimizer(object):
         return (
             param_1_steps,
             param_2_steps,
-            np.array(results).reshape((param_1_steps.shape[0], param_2_steps.shape[0])),
+            np.array(results).reshape(
+                (param_1_steps.shape[0], param_2_steps.shape[0])),
         )
 
 
@@ -1309,8 +1327,8 @@ try:
     from threeML.minimizer.minuit_minimizer import MinuitMinimizer
 
 except ImportError:
-
-    custom_warnings.warn("Minuit minimizer not available", ImportWarning)
+    if threeML_config.logging.startup_warnings:
+        log.warning("Minuit minimizer not available")
 
 else:
 
@@ -1321,8 +1339,8 @@ try:
     from threeML.minimizer.ROOT_minimizer import ROOTMinimizer
 
 except ImportError:
-
-    custom_warnings.warn("ROOT minimizer not available", ImportWarning)
+    if threeML_config.logging.startup_warnings:
+        log.warning("ROOT minimizer not available")
 
 else:
 
@@ -1333,8 +1351,8 @@ try:
     from threeML.minimizer.multinest_minimizer import MultinestMinimizer
 
 except ImportError:
-
-    custom_warnings.warn("Multinest minimizer not available", ImportWarning)
+    if threeML_config.logging.startup_warnings:
+        log.warning("Multinest minimizer not available")
 
 else:
 
@@ -1345,8 +1363,8 @@ try:
     from threeML.minimizer.pagmo_minimizer import PAGMOMinimizer
 
 except ImportError:
-
-    custom_warnings.warn("PyGMO is not available", ImportWarning)
+    if threeML_config.logging.startup_warnings:
+        log.warning("PyGMO is not available")
 
 else:
 
@@ -1357,8 +1375,8 @@ try:
     from threeML.minimizer.scipy_minimizer import ScipyMinimizer
 
 except ImportError:
-
-    custom_warnings.warn("Scipy minimizer is not available", ImportWarning)
+    if threeML_config.logging.startup_warnings:
+        log.warning("Scipy minimizer is not available")
 
 else:
 
@@ -1372,8 +1390,10 @@ if len(_minimizers) == 0:
         "You do not have any minimizer available! You need to install at least iminuit."
     )
 
-# Add the GRID minimizer here since it needs at least one other minimizer
 
-from threeML.minimizer.grid_minimizer import GridMinimizer
+else:
+    # Add the GRID minimizer here since it needs at least one other minimizer
 
-_minimizers["GRID"] = GridMinimizer
+    from threeML.minimizer.grid_minimizer import GridMinimizer
+
+    _minimizers["GRID"] = GridMinimizer

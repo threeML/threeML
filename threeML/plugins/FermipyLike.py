@@ -4,11 +4,12 @@ import astromodels
 import numpy as np
 import os
 import yaml
+import astropy.io.fits as fits
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
 from threeML.plugin_prototype import PluginPrototype
-from threeML.plugins.gammaln import logfactorial
+from threeML.utils.statistics.gammaln import logfactorial
 from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 from threeML.utils.power_of_two_utils import is_power_of_2
 from threeML.io.package_data import get_path_of_data_file
@@ -117,10 +118,10 @@ def _get_fermipy_instance(configuration, likelihood_model):
     # analysis a lot)
     # NOTE: these are going to be absolute paths
 
-    galactic_template = sanitize_filename(
-        findGalacticTemplate(irfs, ra_center, dec_center, roi_radius), True
-    )
-    isotropic_template = sanitize_filename(findIsotropicTemplate(irfs), True)
+    galactic_template = str( sanitize_filename(
+        findGalacticTemplate(irfs, ra_center, dec_center, roi_radius), True  # noqa: F821
+    ) )
+    isotropic_template = str( sanitize_filename(findIsotropicTemplate(irfs), True) ) # noqa: F821
 
     # Add them to the fermipy model
 
@@ -159,7 +160,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
     # Now we can finally instance the GTAnalysis instance
     configuration["model"] = fermipy_model
 
-    gta = GTAnalysis(configuration)
+    gta = GTAnalysis(configuration)  # noqa: F821
 
     # This will take a long time if it's the first time we run with this model
     gta.setup()
@@ -303,7 +304,7 @@ class FermipyLike(PluginPrototype):
 
             # Sanitize file name, as fermipy is not very good at handling relative paths or env. variables
 
-            filename = sanitize_filename(self._configuration["data"][datum], True)
+            filename = str( sanitize_filename(self._configuration["data"][datum], True) )
 
             self._configuration["data"][datum] = filename
 
@@ -354,8 +355,8 @@ class FermipyLike(PluginPrototype):
             get_path_of_data_file("fermipy_basic_config.yml")
         )  # type: dict
 
-        evfile = sanitize_filename(evfile)
-        scfile = sanitize_filename(scfile)
+        evfile = str(sanitize_filename(evfile) )
+        scfile = str(sanitize_filename(scfile) )
 
         assert os.path.exists(evfile), "The provided evfile %s does not exist" % evfile
         assert os.path.exists(scfile), "The provided scfile %s does not exist" % scfile
@@ -389,6 +390,13 @@ class FermipyLike(PluginPrototype):
         )
 
         basic_config["selection"]["zmax"] = zmax
+
+        with fits.open(scfile) as ft2_:
+            tmin = float(ft2_[0].header["TSTART"])
+            tmax = float(ft2_[0].header["TSTOP"])
+        
+        basic_config["selection"]["tmin"] = tmin
+        basic_config["selection"]["tmax"] = tmax
 
         evclass = int(evclass)
         assert is_power_of_2(evclass), "The provided evclass is not a power of 2."
@@ -487,7 +495,7 @@ class FermipyLike(PluginPrototype):
 
             raise
 
-        return value - logfactorial(self._gta.like.total_nobs())
+        return value - logfactorial(int(self._gta.like.total_nobs()))
 
     def inner_fit(self):
         """
