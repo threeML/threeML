@@ -1001,7 +1001,7 @@ class JointLikelihood(object):
             return minimization.FIT_FAILED
 
         if self.verbose:
-            sys.stderr.write(
+            log.info(
                 "trial values: %s -> logL = %.3f\n"
                 % (",".join(["%.5g" % x for x in trial_values]), summed_log_likelihood)
             )

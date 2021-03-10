@@ -20,6 +20,10 @@ from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
 from threeML.plugin_prototype import PluginPrototype
 
+from threeML.io.logging import setup_logger
+log = setup_logger(__name__)
+
+
 defaultMinChannel = 0
 defaultMaxChannel = 9
 
@@ -217,7 +221,7 @@ class HAWCLike(PluginPrototype):
         self._bin_list = bin_list
 
         if self._instanced:
-            sys.stderr.write(
+            log.warning(
                 "Since the plugins was already used before, the change in active measurements"
                 + "will not be effective until you create a new JointLikelihood or Bayesian"
                 + "instance"
