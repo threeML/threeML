@@ -233,7 +233,7 @@ fig, ax=plt.subplots()
 # we only want to visualize the relevant sources...
 src_to_plot=['Crab','PSR_J0534p2200']
 # Now loop over all point sources and plot them
-for source_name, point_source in model.point_sources.iteritems():
+for source_name, point_source in model.point_sources.items():
     for src in src_to_plot: 
         if src in source_name: 
             # Plot the sum of all components for this source
@@ -243,7 +243,7 @@ for source_name, point_source in model.point_sources.iteritems():
 
             if len(point_source.components) > 1:
 
-                for component_name, component in point_source.components.iteritems():
+                for component_name, component in point_source.components.items():
                     ax.loglog(energies,component.shape(energies),
                               '--',label=f"{component_name} of {source_name}")
     
