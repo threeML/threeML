@@ -197,7 +197,7 @@ Or we might want to produce a contour plot
 
 ```python
 res = jl.get_contours(
-    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K',1.3e-13,1.7e-13, 20, 
+    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K',0.7e-13,1.3e-13, 20,
     'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index',-2.0,-1.6, 20
 )
 ```
