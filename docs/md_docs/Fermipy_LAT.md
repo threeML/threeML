@@ -263,20 +263,13 @@ We can also do a bayesian analysis.
 This will set priors based on the current defined min-max (log-uniform or uniform)
 
 
-
 ```python
-model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K.set_uninformative_prior(
-    Log_uniform_prior
-)
-model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index.set_uninformative_prior(
-    Uniform_prior
-)
-model._2MASS_J05262938p2247232.spectrum.main.Powerlaw.K.set_uninformative_prior(
-    Log_uniform_prior
-)
-model._4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.set_uninformative_prior(
-    Log_uniform_prior
-)
+
+for param in model.free_parameters.values():
+    if param.has_transformation():
+        param.set_uninformative_prior( Log_uniform_prior )
+    else:
+        param.set_uninformative_prior( Uniform_prior )
 ```
 
 ```python
