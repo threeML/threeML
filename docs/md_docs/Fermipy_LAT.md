@@ -254,6 +254,8 @@ ax.set_xlabel("Energy (MeV)")
 ax.set_ylabel(r"Flux (ph cm$^{-2}$ s$^{-1}$ keV$^{-1}$")
 ax.set_ylim([1e-20,1e-3])
 
+#show the plot
+fig
 ```
 
 We can also do a bayesian analysis.
