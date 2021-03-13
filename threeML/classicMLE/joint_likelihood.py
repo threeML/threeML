@@ -495,6 +495,9 @@ class JointLikelihood(object):
                  size param_1_steps.
         """
 
+        # Clone model to restore later
+        model_clone = clone_model(self._likelihood_model)
+
         if hasattr(param_1, "value"):
 
             # Substitute with the name
@@ -781,7 +784,7 @@ class JointLikelihood(object):
 
                 aidx, bidx = np.unravel_index(idx, cc.shape)
 
-                print(
+                log.warning(
                     "\nFound a better minimum: %s with %s = %s and %s = %s. Run again your fit starting from here."
                     % (cc.min(), param_1, a[aidx], param_2, b[bidx])
                 )
@@ -790,11 +793,16 @@ class JointLikelihood(object):
 
                 idx = cc.argmin()
 
-                print(
+                log.warning(
                     "Found a better minimum: %s with %s = %s. Run again your fit starting from here."
                     % (cc.min(), param_1, a[idx])
                 )
-
+        
+        else:
+            #restore model
+            for param in self._likelihood_model.parameters:
+                self._likelihood_model.parameters[param].value = model_clone[param].value
+        
         return a, b, cc, fig
 
     def plot_all_contours(self, nsteps_1d, nsteps_2d=0, n_sigma=5, log_norm=True):
