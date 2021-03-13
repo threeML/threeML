@@ -197,7 +197,7 @@ Or we might want to produce a contour plot
 
 ```python
 res = jl.get_contours(
-    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K',1.3e-13,1.7e-13, 20, 
+    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K',0.7e-13,1.3e-13, 20,
     'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index',-2.0,-1.6, 20
 )
 ```
@@ -233,7 +233,7 @@ fig, ax=plt.subplots()
 # we only want to visualize the relevant sources...
 src_to_plot=['Crab','PSR_J0534p2200']
 # Now loop over all point sources and plot them
-for source_name, point_source in model.point_sources.iteritems():
+for source_name, point_source in model.point_sources.items():
     for src in src_to_plot: 
         if src in source_name: 
             # Plot the sum of all components for this source
@@ -243,7 +243,7 @@ for source_name, point_source in model.point_sources.iteritems():
 
             if len(point_source.components) > 1:
 
-                for component_name, component in point_source.components.iteritems():
+                for component_name, component in point_source.components.items():
                     ax.loglog(energies,component.shape(energies),
                               '--',label=f"{component_name} of {source_name}")
     
@@ -254,6 +254,8 @@ ax.set_xlabel("Energy (MeV)")
 ax.set_ylabel(r"Flux (ph cm$^{-2}$ s$^{-1}$ keV$^{-1}$")
 ax.set_ylim([1e-20,1e-3])
 
+#show the plot
+fig
 ```
 
 We can also do a bayesian analysis.
@@ -261,20 +263,13 @@ We can also do a bayesian analysis.
 This will set priors based on the current defined min-max (log-uniform or uniform)
 
 
-
 ```python
-model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K.set_uninformative_prior(
-    Log_uniform_prior
-)
-model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index.set_uninformative_prior(
-    Uniform_prior
-)
-model._2MASS_J05262938p2247232.spectrum.main.Powerlaw.K.set_uninformative_prior(
-    Log_uniform_prior
-)
-model._4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.set_uninformative_prior(
-    Log_uniform_prior
-)
+
+for param in model.free_parameters.values():
+    if param.has_transformation():
+        param.set_uninformative_prior( Log_uniform_prior )
+    else:
+        param.set_uninformative_prior( Uniform_prior )
 ```
 
 ```python

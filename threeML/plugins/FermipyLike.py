@@ -443,6 +443,8 @@ class FermipyLike(PluginPrototype):
         self._gta, self._pts_energies = _get_fermipy_instance(
             self._configuration, likelihood_model_instance
         )
+        self._update_model_in_fermipy( update_dictionary = True, force_update = True)
+        
 
     def _update_model_in_fermipy(self, update_dictionary = False, delta = 0.0, force_update = False):
 
@@ -473,7 +475,7 @@ class FermipyLike(PluginPrototype):
                 # Now set the spectrum of this source to the right one
                 dnde = point_source(self._pts_energies)  # ph / (cm2 s keV)
                 dnde_MeV = dnde * 1000.0  # ph / (cm2 s MeV)
-
+                dnde_MeV = np.maximum(dnde_MeV, 1e-300) 
                 # NOTE: I use update_source=False because it makes things 100x faster and I verified that
                 # it does not change the result.
                 # (HF: Not sure who wrote the above but I think sometimes we do want to update fermipy dictionaries.)

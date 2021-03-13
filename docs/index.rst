@@ -38,14 +38,15 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
 .. nbgallery::
    :caption: Features and examples:
 
+   notebooks/Analysis_results_showcase.ipynb
+   notebooks/random_variates.ipynb
+   notebooks/Point_source_plotting.ipynb
    notebooks/grb080916C.ipynb
    notebooks/joint_BAT_gbm_demo.ipynb
    notebooks/joint_fitting_xrt_and_gbm_xspec_models.ipynb
    notebooks/flux_examples.ipynb
+   notebooks/Fermipy_LAT.ipynb
    notebooks/Time-energy-fit.ipynb
-   notebooks/Analysis_results_showcase.ipynb
-   notebooks/random_variates.ipynb
-   notebooks/Point_source_plotting.ipynb
    notebooks/synthetic_spectra.ipynb
    notebooks/gof_lrt.ipynb
     
