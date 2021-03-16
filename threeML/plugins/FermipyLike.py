@@ -346,6 +346,8 @@ class FermipyLike(PluginPrototype):
         evclass=128,
         evtype=3,
         filter="DATA_QUAL>0 && LAT_CONFIG==1",
+        fermipy_verbosity = 2,
+        fermitools_chatter = 2,
     ):
 
         from fermipy.config import ConfigManager
@@ -408,6 +410,11 @@ class FermipyLike(PluginPrototype):
         basic_config["selection"]["evtype"] = evtype
 
         basic_config["selection"]["filter"] = filter
+
+        basic_config["logging"]["verbosity"] = fermipy_verbosity
+        #(In fermipy convention, 0 = critical only, 1 also errors, 2 also warnings, 3 also info, 4 also debug)
+        basic_config["logging"]["chatter"] = fermitools_chatter #0 = no screen output. 2 = some output, 4 = lot of output.
+
 
         return DictWithPrettyPrint(basic_config)
 

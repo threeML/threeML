@@ -5,8 +5,8 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.7.1
+      format_version: '1.3'
+      jupytext_version: 1.10.2
   kernelspec:
     display_name: Python 3
     language: python
@@ -41,6 +41,7 @@ import scipy as sp
 from threeML import *
 
 ```
+
 
 ```python nbsphinx="hidden"
 from jupyterthemes import jtplot
@@ -118,14 +119,13 @@ evfile, scfile = download_LAT_data(
 3ML provides and intreface into [Fermipy](https://fermipy.readthedocs.io/en/latest/) via the **FermipyLike** plugin. We can use it to generate basic configuration files.
 
 
-<!-- #raw -->
+
 .. note::
     Currently, the FermipyLike plugin does not provide an interface to handle extended sources. This will change
 
-<!-- #endraw -->
 
 ```python
-config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec)
+config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec, fermipy_verbosity = 1, fermitools_chatter = 0)
 
 # See what we just got
 
@@ -305,6 +305,7 @@ res = bayes.sample()
 
 ```
 
+
 You can access to the parameter range like this (HPD):
 
 ```python
@@ -324,4 +325,9 @@ print('Index (95%%): %10.2e,%10.2e' % this_idx.highest_posterior_density_interva
 
 ```python
 corner_figure = bayes.results.corner_plot()
+corner_figure
+```
+
+```python
+
 ```
