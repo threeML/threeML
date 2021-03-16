@@ -157,7 +157,7 @@ class EventList(TimeSeries):
             # create phas to check
             phas = np.arange(self._first_channel, self._n_channels)[mask]
 
-            this_mask = np.zeros_like(self._arrival_times, dtype=np.bool)
+            this_mask = np.zeros_like(self._arrival_times, dtype=bool)
 
             for channel in phas:
                 this_mask = np.logical_or(

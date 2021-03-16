@@ -211,7 +211,7 @@ class TimeSeries(object):
         :return:
         """
         if mask is None:
-            mask = np.ones_like(self._polynomials, dtype=np.bool)
+            mask = np.ones_like(self._polynomials, dtype=bool)
 
         total_counts = 0
 
@@ -230,7 +230,7 @@ class TimeSeries(object):
         :return:
         """
         if mask is None:
-            mask = np.ones_like(self._polynomials, dtype=np.bool)
+            mask = np.ones_like(self._polynomials, dtype=bool)
 
         total_counts = 0
 
