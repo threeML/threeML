@@ -528,7 +528,112 @@ def _sanitize_3fgl_name(fgl_name):
 
 def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
     """
-    Translate a spectrum from the 3FGL into an astromodels spectrum
+    Translate a spectrum from the nFGL into an astromodels point source
+    """
+
+    name = _sanitize_3fgl_name(fgl_name)
+
+    spectrum_type = catalog_entry["spectrum_type"]
+    ra = float(catalog_entry["ra"])
+    dec = float(catalog_entry["dec"])
+
+    if spectrum_type == "PowerLaw":
+
+        this_spectrum = Powerlaw()
+
+        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+
+        this_spectrum.index = float(catalog_entry["pl_index"]) * -1
+        this_spectrum.index.fix = fix
+        this_spectrum.K = float(catalog_entry["pl_flux_density"]) / (
+            u.cm ** 2 * u.s * u.MeV
+        )
+        this_spectrum.K.fix = fix
+        this_spectrum.K.bounds = (
+            this_spectrum.K.value / 1000.0,
+            this_spectrum.K.value * 1000,
+        )
+        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
+
+    elif spectrum_type == "LogParabola":
+
+        this_spectrum = Log_parabola()
+
+        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+
+        this_spectrum.alpha = float(catalog_entry["lp_index"]) * -1
+        this_spectrum.alpha.fix = fix
+        this_spectrum.beta = float(catalog_entry["lp_beta"])
+        this_spectrum.beta.fix = fix
+        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
+        this_spectrum.K = float(catalog_entry["lp_flux_density"]) / (
+            u.cm ** 2 * u.s * u.MeV
+        )
+        this_spectrum.K.fix = fix
+        this_spectrum.K.bounds = (
+            this_spectrum.K.value / 1000.0,
+            this_spectrum.K.value * 1000,
+        )
+
+    elif spectrum_type == "PLExpCutoff":
+
+        this_spectrum = Cutoff_powerlaw()
+
+        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+
+        this_spectrum.index = float(catalog_entry["plec_index"]) * -1
+        this_spectrum.index.fix = fix
+        this_spectrum.piv = float(catalog_entry["pivot_energy"]) * u.MeV
+        this_spectrum.K = float(catalog_entry["plec_flux_density"]) / (
+            u.cm ** 2 * u.s * u.MeV
+        )
+        this_spectrum.K.fix = fix
+        this_spectrum.K.bounds = (
+            this_spectrum.K.value / 1000.0,
+            this_spectrum.K.value * 1000,
+        )
+        this_spectrum.xc = float(catalog_entry["cutoff"]) * u.MeV
+        this_spectrum.xc.fix = fix
+
+    elif spectrum_type in ["PLSuperExpCutoff", "PLSuperExpCutoff2"]:
+        # This is the new definition, from the 4FGL catalog.
+        # Note that in version 19 of the 4FGL, cutoff spectra are designated as PLSuperExpCutoff
+        # rather than PLSuperExpCutoff2 as in version , but the same parametrization is used.
+        this_spectrum = Super_cutoff_powerlaw()
+
+        this_source = PointSource(name, ra=ra, dec=dec, spectral_shape=this_spectrum)
+        a = float(catalog_entry["plec_exp_factor"])
+        E0 = float(catalog_entry["pivot_energy"])
+        b = float(catalog_entry["plec_exp_index"])
+        conv = math.exp(a * E0 ** b)
+        this_spectrum.index = float(catalog_entry["plec_index"]) * -1
+        this_spectrum.index.fix = fix
+        this_spectrum.gamma = b
+        this_spectrum.gamma.fix = fix
+        this_spectrum.piv = E0 * u.MeV
+        this_spectrum.K = (
+            conv * float(catalog_entry["plec_flux_density"]) / (u.cm ** 2 * u.s * u.MeV)
+        )
+        this_spectrum.K.fix = fix
+        this_spectrum.K.bounds = (
+            this_spectrum.K.value / 1000.0,
+            this_spectrum.K.value * 1000,
+        )
+        this_spectrum.xc = a ** (old_div(-1.0, b)) * u.MeV
+        this_spectrum.xc.fix = fix
+
+    else:
+
+        raise NotImplementedError(
+            "Spectrum type %s is not a valid 4FGL type" % spectrum_type
+        )
+
+    return this_source
+
+
+def _get_extended_source_from_3fgl(fgl_name, catalog_entry, fix=False):
+    """
+    Translate a spectrum from the nFGL into an astromodels extended source
     """
 
     name = _sanitize_3fgl_name(fgl_name)
@@ -681,6 +786,10 @@ class ModelFrom3FGL(Model):
                 else:
 
                     for par in src.spectrum.main.shape.parameters:
+                        
+                        if par == "piv": #don't free pivot energy
+                            continue
+                        
                         src.spectrum.main.shape.parameters[par].free = free
 
 
@@ -778,6 +887,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         sources = []
         source_names = []
         for name, row in self._last_query_results.T.items():
+                
             if name[-1] == "e":
                 # Extended source
                 log.warning(
@@ -819,7 +929,13 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
             source_names.append(this_name)
 
-            this_source = _get_point_source_from_3fgl(this_name, row, fix=True)
+            if row["extended_source_name"] is not None and row["extended_source_name"] != "":
+        
+                this_source = _get_extended_source_from_3fgl(this_name, row, fix=True)
+                
+            else:
+    
+                this_source = _get_point_source_from_3fgl(this_name, row, fix=True)
 
             sources.append(this_source)
 
