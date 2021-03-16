@@ -5,8 +5,8 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.7.1
+      format_version: '1.3'
+      jupytext_version: 1.10.2
   kernelspec:
     display_name: Python 3
     language: python
@@ -41,6 +41,7 @@ import scipy as sp
 from threeML import *
 
 ```
+
 
 ```python nbsphinx="hidden"
 from jupyterthemes import jtplot
@@ -142,6 +143,11 @@ and even add sections
 
 ```python
 config["gtlike"] = {"edisp": False}
+
+config["logging"] = {}
+config["logging"]["verbosity"] = 1 #print only error and critical messages. 
+#In fermipy convention, 0 would mean critical only, 2 would include warnings, 3 also info, 4 also debug) 
+config["logging"]["chatter"] = 0 #no screen output. 2 means some output, 4 means a lot of output.
 
 config.display()
 ```
@@ -305,6 +311,7 @@ res = bayes.sample()
 
 ```
 
+
 You can access to the parameter range like this (HPD):
 
 ```python
@@ -324,4 +331,9 @@ print('Index (95%%): %10.2e,%10.2e' % this_idx.highest_posterior_density_interva
 
 ```python
 corner_figure = bayes.results.corner_plot()
+corner_figure
+```
+
+```python
+
 ```
