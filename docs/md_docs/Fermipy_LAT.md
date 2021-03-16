@@ -119,14 +119,13 @@ evfile, scfile = download_LAT_data(
 3ML provides and intreface into [Fermipy](https://fermipy.readthedocs.io/en/latest/) via the **FermipyLike** plugin. We can use it to generate basic configuration files.
 
 
-<!-- #raw -->
+
 .. note::
     Currently, the FermipyLike plugin does not provide an interface to handle extended sources. This will change
 
-<!-- #endraw -->
 
 ```python
-config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec)
+config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec, fermipy_verbosity = 1, fermitools_chatter = 0)
 
 # See what we just got
 
@@ -143,11 +142,6 @@ and even add sections
 
 ```python
 config["gtlike"] = {"edisp": False}
-
-config["logging"] = {}
-config["logging"]["verbosity"] = 1 #print only error and critical messages. 
-#In fermipy convention, 0 would mean critical only, 2 would include warnings, 3 also info, 4 also debug) 
-config["logging"]["chatter"] = 0 #no screen output. 2 means some output, 4 means a lot of output.
 
 config.display()
 ```
