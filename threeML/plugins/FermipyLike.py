@@ -187,7 +187,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
                 log.critical( f"Source {extended_source.name} does not have a template file set; must call read_file first()"  )
                 
             this_source["SpatialModel"] = "SpatialMap"
-            this_source["Spatial_Filename"] = s._fitsfile
+            this_source["Spatial_Filename"] = theShape._fitsfile
 
         else:
         
