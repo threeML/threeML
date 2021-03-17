@@ -152,7 +152,46 @@ def _get_fermipy_instance(configuration, likelihood_model):
         likelihood_model.extended_sources.values()
     ):  # type: astromodels.ExtendedSource
 
-        raise NotImplementedError("Extended sources are not supported yet")
+        this_source = {"Index": 2.56233, "Scale": 572.78, "Prefactor": 2.4090e-12}
+        this_source["name"] = extended_source.name
+        # The spectrum used here is unconsequential, as it will be substituted by a FileFunction
+        # later on. So I will just use PowerLaw for everything
+        this_source["SpectrumType"] = "PowerLaw"
+        
+        theShape = extended_source.spatial_shape
+        
+        if theShape.name == "Disk_on_sphere":
+            this_source["SpatialModel"] = "RadialDisk"
+            this_source["ra"] = theShape.lon0.value
+            this_source["dec"] = theShape.lat0.value
+            this_source["SpatialWidth"] = theShape.radius.value
+
+        elif theShape.name == "Gaussian_on_sphere":
+            this_source["SpatialModel"] = "RadialGaussian"
+            this_source["ra"] = theShape.lon0.value
+            this_source["dec"] = theShape.lat0.value
+            #fermipy/fermi tools expect 68% containment radius = 1.36 sigma
+            this_source["SpatialWidth"] = 1.36 * theShape.sigma.value
+
+        elif theShape.name == "SpatialTemplate_2D":
+            
+            try:
+                (ra_min, ra_max), (dec_min, dec_max) = theShape.get_boundaries()
+                this_source["ra"] = 0.5 * (ra_min, ra_max)
+                this_source["dec"] = 0.5 * (dec_min, dec_max)
+                
+            except:
+                log.critical( f"Source {extended_source.name} does not have a template file set; must call read_file first()"  )
+                
+            this_source["SpatialModel"] = "SpatialMap"
+            this_source["Spatial_Filename"] = s._fitsfile
+
+        else:
+        
+            log.critical(f"Extended source {extended_source.name}: shape {theShape.name} not yet implemented for FermipyLike")
+
+        sources.append(this_source)
+
 
     # Add all sources to the model
     fermipy_model["sources"] = sources
@@ -197,7 +236,7 @@ def _get_fermipy_instance(configuration, likelihood_model):
             assert np.all(energies_keV == this_energies_keV)
 
         dnde = point_source(energies_keV)  # ph / (cm2 s keV)
-        dnde_per_MeV = dnde * 1000.0  # ph / (cm2 s MeV)
+        dnde_per_MeV = np.maximum(dnde * 1000.0, 1e-300) # ph / (cm2 s MeV)
         gta.set_source_dnde(point_source.name, dnde_per_MeV, False)
 
     # Same for extended source
@@ -205,7 +244,32 @@ def _get_fermipy_instance(configuration, likelihood_model):
         likelihood_model.extended_sources.values()
     ):  # type: astromodels.ExtendedSource
 
-        raise NotImplementedError("Extended sources are not supported yet")
+        # Fix this source, so fermipy will not optimize by itself the parameters
+        gta.free_source(extended_source.name, False)
+
+        # This will substitute the current spectrum with a FileFunction with the same shape and flux
+        gta.set_source_spectrum(extended_source.name, "FileFunction", update_source=False)
+
+        # Get the energies at which to evaluate this source
+        this_log_energies, _flux = gta.get_source_dnde(extended_source.name)
+        this_energies_keV = (
+            10 ** this_log_energies * 1e3
+        )  # fermipy energies are in GeV, we need keV
+
+        if energies_keV is None:
+
+            energies_keV = this_energies_keV
+
+        else:
+
+            # This is to make sure that all sources are evaluated at the same energies
+
+            if not np.all(energies_keV == this_energies_keV):
+                log.critical("All sources should be evaluated at the same energies.")
+
+        dnde = extended_source.get_spatially_integrated_flux(energies_keV)  # ph / (cm2 s keV)
+        dnde_per_MeV = np.maximum(dnde * 1000.0, 1e-300) # ph / (cm2 s MeV)
+        gta.set_source_dnde(extended_source.name, dnde_per_MeV, False)
 
     return gta, energies_keV
 
@@ -461,47 +525,91 @@ class FermipyLike(PluginPrototype):
             self._likelihood_model.point_sources.values()
         ):  # type: astromodels.PointSource
 
-            # Update this source only if it has free parameters (to gain time)
-            if point_source.has_free_parameters() or force_update:
-
-                #Update source position if free
-                if force_update or ( point_source.position.ra.free or point_source.position.dec.free ):
- 
-                    model_pos = point_source.position.sky_coord
-                    fermipy_pos = self._gta.roi.get_source_by_name(point_source.name).skydir
-                
-                    if  model_pos.separation( fermipy_pos ).to("degree").value > delta :
-                        #modeled after how this is done in fermipy
-                        #(cf https://fermipy.readthedocs.io/en/latest/_modules/fermipy/sourcefind.html#SourceFind.localize)
-                        temp_source = self._gta.delete_source(point_source.name)
-                        temp_source.set_position( model_pos )
-                        self._gta.add_source(point_source.name, temp_source, free=False)
-                        self._gta.free_source(point_source.name, False)
-                        self._gta.set_source_spectrum(point_source.name, "FileFunction", update_source=update_dictionary)
-
-                # Now set the spectrum of this source to the right one
-                dnde = point_source(self._pts_energies)  # ph / (cm2 s keV)
-                dnde_MeV = dnde * 1000.0  # ph / (cm2 s MeV)
-                dnde_MeV = np.maximum(dnde_MeV, 1e-300) 
-                # NOTE: I use update_source=False because it makes things 100x faster and I verified that
-                # it does not change the result.
-                # (HF: Not sure who wrote the above but I think sometimes we do want to update fermipy dictionaries.)
-
-                self._gta.set_source_dnde(point_source.name, dnde_MeV, update_source = update_dictionary)
-                
-                
-            else:
-
-                # Nothing to do for a fixed source_
-
+  
+            #Update this source only if it has free parameters (to gain time)
+            if not ( point_source.has_free_parameters() or force_update):
                 continue
 
+            #Update source position if free
+            if force_update or ( point_source.position.ra.free or point_source.position.dec.free ):
+ 
+                model_pos = point_source.position.sky_coord
+                fermipy_pos = self._gta.roi.get_source_by_name(point_source.name).skydir
+                
+                if  model_pos.separation( fermipy_pos ).to("degree").value > delta :
+                    #modeled after how this is done in fermipy
+                    #(cf https://fermipy.readthedocs.io/en/latest/_modules/fermipy/sourcefind.html#SourceFind.localize)
+                    temp_source = self._gta.delete_source(point_source.name)
+                    temp_source.set_position( model_pos )
+                    self._gta.add_source(point_source.name, temp_source, free=False)
+                    self._gta.free_source(point_source.name, False)
+                    self._gta.set_source_spectrum(point_source.name, "FileFunction", update_source=update_dictionary)
+
+            # Now set the spectrum of this source to the right one
+            dnde = point_source(self._pts_energies)  # ph / (cm2 s keV)
+            dnde_MeV = np.maximum(dnde * 1000.0, 1e-300)  # ph / (cm2 s MeV)
+            # NOTE: I use update_source=False because it makes things 100x faster and I verified that
+            # it does not change the result.
+            # (HF: Not sure who wrote the above but I think sometimes we do want to update fermipy dictionaries.)
+
+            self._gta.set_source_dnde(point_source.name, dnde_MeV, update_source = update_dictionary)
+                
         # Same for extended source
         for extended_source in list(
             self._likelihood_model.extended_sources.values()
         ):  # type: astromodels.ExtendedSource
 
-            raise NotImplementedError("Extended sources are not supported yet")
+            #Update this source only if it has free parameters (to gain time)
+            if not ( extended_source.has_free_parameters() or force_update):
+                continue
+
+            theShape = extended_source.spatial_shape
+            if theShape.has_free_parameters or force_update:
+        
+                fermipySource = self._gta.roi.get_source_by_name(extended_source.name)
+                fermipyPars = [fermipySource["ra"], fermipySource["dec"], fermipySource["SpatialWidth"] ]
+
+                if theShape.name == "Disk_on_sphere":
+                
+                    amPars = [theShape.lon0.value, theShape.lat0.value, theShape.radius.value]
+                    if not np.allclose( fermipyPars, amPars, 1e-10):
+                
+                        temp_source = self._gta.delete_source(extended_source.name)
+                        temp_source.set_spatial_model("RadialDisk", {'ra': theShape.lon0.value,
+                            'dec': theShape.lat0.value, 'SpatialWidth': theShape.radius.value})
+                        # from fermipy: FIXME: Issue with source map cache with source is initialized as fixed.
+                        self._gta.add_source(extended_source.name, temp_source, free=True)
+                        self._gta.free_source(extended_source.name, free=False)
+
+                elif theShape.name == "Gaussian_on_sphere":
+
+                    amPars = [theShape.lon0.value, theShape.lat0.value, 1.36*theShape.sigma.value]
+                    if not np.allclose( fermipyPars, amPars, 1e-10):
+                
+                        temp_source = self._gta.delete_source(extended_source.name)
+                        temp_source.set_spatial_model("RadialGaussian", {'ra': theShape.lon0.value,
+                            'dec': theShape.lat0.value, 'SpatialWidth': 1.36*theShape.sigma.value})
+                        # from fermipy: FIXME: Issue with source map cache with source is initialized as fixed.
+                        self._gta.add_source(extended_source.name, temp_source, free=True)
+                        self._gta.free_source(extended_source.name, free=False)
+
+                elif theShape.name == "SpatialTemplate_2D":
+                    #for now, assume we're not updating the fits file
+                    pass
+
+                else:
+                    #eventually, implement other shapes here.
+                    pass
+
+            # Now set the spectrum of this source to the right one
+            dnde = extended_source.get_spatially_integrated_flux(self._pts_energies)  # ph / (cm2 s keV)
+            dnde_MeV = np.maximum(dnde * 1000.0, 1e-300)  # ph / (cm2 s MeV)
+            # NOTE: I use update_source=False because it makes things 100x faster and I verified that
+            # it does not change the result.
+            # (HF: Not sure who wrote the above but I think sometimes we do want to update fermipy dictionaries.)
+            self._gta.set_source_dnde(extended_source.name, dnde_MeV, update_source = update_dictionary)
+                
+
 
     def get_log_like(self):
         """
