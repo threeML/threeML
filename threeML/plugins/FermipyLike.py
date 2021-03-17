@@ -15,6 +15,9 @@ from threeML.utils.power_of_two_utils import is_power_of_2
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 
+from threeML.io.logging import setup_logger
+log = setup_logger(__name__)
+
 __instrument_name = "Fermi LAT (with fermipy)"
 
 
