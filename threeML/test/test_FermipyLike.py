@@ -14,7 +14,7 @@ skip_if_fermipy_is_not_available = pytest.mark.skipif(
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
-@pytest.mark.xfail
+#@pytest.mark.xfail
 def test_FermipyLike():
     from threeML.plugins.FermipyLike import FermipyLike
 
