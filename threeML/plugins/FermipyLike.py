@@ -583,6 +583,8 @@ class FermipyLike(PluginPrototype):
                         # from fermipy: FIXME: Issue with source map cache with source is initialized as fixed.
                         self._gta.add_source(extended_source.name, temp_source, free=True)
                         self._gta.free_source(extended_source.name, free=False)
+                        self._gta.set_source_spectrum(extended_source.name, "FileFunction", update_source=update_dictionary)
+
 
                 elif theShape.name == "Gaussian_on_sphere":
 
@@ -595,10 +597,7 @@ class FermipyLike(PluginPrototype):
                         # from fermipy: FIXME: Issue with source map cache with source is initialized as fixed.
                         self._gta.add_source(extended_source.name, temp_source, free=True)
                         self._gta.free_source(extended_source.name, free=False)
-                        
-                        log.debug( fermipyPars)
-                        log.debug( amPars )
-                        log.debug( [fermipySource["ra"], fermipySource["dec"], fermipySource["SpatialWidth"] ] )
+                        self._gta.set_source_spectrum(extended_source.name, "FileFunction", update_source=update_dictionary)
 
                 elif theShape.name == "SpatialTemplate_2D":
                     #for now, assume we're not updating the fits file
@@ -615,7 +614,6 @@ class FermipyLike(PluginPrototype):
             # it does not change the result.
             # (HF: Not sure who wrote the above but I think sometimes we do want to update fermipy dictionaries.)
             self._gta.set_source_dnde(extended_source.name, dnde_MeV, update_source = update_dictionary)
-                
 
 
     def get_log_like(self):
