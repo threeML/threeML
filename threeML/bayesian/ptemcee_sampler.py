@@ -1,6 +1,5 @@
 from typing import Dict, List, Optional
 
-import emcee
 import numpy as np
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 
@@ -14,7 +13,20 @@ from threeML.parallel.parallel_client import ParallelClient
 log = setup_logger(__name__)
 
 
-class EmceeSampler(MCMCSampler):
+try:
+
+    import ptemcee
+
+except:
+
+    has_ptemcee = False
+
+else:
+
+    has_ptemcee = True
+
+
+class PtEmceeSampler(MCMCSampler):
     def __init__(self, likelihood_model=None, data_list=None, **kwargs):
         """
         Sample using the emcee sampler. For details:
@@ -27,7 +39,7 @@ class EmceeSampler(MCMCSampler):
 
         """
 
-        super(EmceeSampler, self).__init__(
+        super(PtEmceeSampler, self).__init__(
             likelihood_model, data_list, **kwargs)
 
     def setup(self, n_iterations: int, n_burn_in: Optional[int] = None, n_walkers: int = 20, seed=None, **kwargs):
@@ -74,7 +86,7 @@ class EmceeSampler(MCMCSampler):
 
         # Get starting point
 
-        p0 = emcee.State(self._get_starting_points(self._n_walkers))
+        p0 = ptemcee.State(self._get_starting_points(self._n_walkers))
 
         # Deactivate memoization in astromodels, which is useless in this case since we will never use twice the
         # same set of parameters
@@ -85,13 +97,13 @@ class EmceeSampler(MCMCSampler):
                 c = ParallelClient()
                 view = c[:]
 
-                sampler = emcee.EnsembleSampler(
+                sampler = ptemcee.Sampler(
                     self._n_walkers, n_dim, self.get_posterior, pool=view
                 )
 
             else:
 
-                sampler = emcee.EnsembleSampler(
+                sampler = ptemcee.Sampler(
                     self._n_walkers, n_dim, self.get_posterior
                 )
 
@@ -125,34 +137,34 @@ class EmceeSampler(MCMCSampler):
 
             sampler.reset()
 
-            state = emcee.State(pos, prob, random_state=state)
+            state = ptemcee.State(pos, prob, random_state=state)
 
             # Run the true sampling
 
             _ = sampler.run_mcmc(
                 initial_state=state, nsteps=self._n_iterations, progress=progress)
 
-        acc=np.mean(sampler.acceptance_fraction)
+        acc = np.mean(sampler.acceptance_fraction)
 
         log.info(f"Mean acceptance fraction: {acc}")
 
-        self._sampler=sampler
-        self._raw_samples=sampler.get_chain(flat=True)
+        self._sampler = sampler
+        self._raw_samples = sampler.get_chain(flat=True)
 
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
-        log_prior=[self._log_prior(x) for x in self._raw_samples]
+        log_prior = [self._log_prior(x) for x in self._raw_samples]
 
         # Now we get the log posterior and we remove the log prior
 
-        self._log_like_values=sampler.get_log_prob(flat=True) - log_prior
+        self._log_like_values = sampler.get_log_prob(flat=True) - log_prior
 
         # we also want to store the log probability
 
-        self._log_probability_values=sampler.get_log_prob(flat=True)
+        self._log_probability_values = sampler.get_log_prob(flat=True)
 
-        self._marginal_likelihood=None
+        self._marginal_likelihood = None
 
         self._build_samples_dictionary()
 
