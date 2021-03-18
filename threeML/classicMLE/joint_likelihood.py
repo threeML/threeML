@@ -27,6 +27,14 @@ from threeML.minimizer import minimization
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.statistics.stats_tools import aic, bic
 
+
+try:
+    from threeML.plugins.FermipyLike import FermipyLike
+    has_fermipy = True
+except:
+    has_fermipy = False
+    
+    
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
@@ -351,6 +359,9 @@ class JointLikelihood(object):
 
         for dataset in list(self._data_list.values()):
 
+            if has_fermipy and (type(dataset) == FermipyLike):
+                dataset._update_model_in_fermipy(update_dictionary = True, force_update = True)
+
             ml = dataset.inner_fit() * (-1)
 
             minus_log_likelihood_values[dataset.name] = ml
@@ -358,10 +369,11 @@ class JointLikelihood(object):
             total += ml
 
             total_number_of_data_points += dataset.get_number_of_data_points()
-
+            
+            
         if total != self._current_minimum:
             log.error(
-                "Current minimum stored after fit and current do not correspond!"
+                f"Current minimum stored after fit ({self._current_minimum}) and current ({total}) do not correspond!"
             )
             raise ValueError()
 
@@ -1002,7 +1014,7 @@ class JointLikelihood(object):
 
         if self.verbose:
             log.info(
-                "trial values: %s -> logL = %.3f\n"
+                "trial values: %s -> logL = %.3f"
                 % (",".join(["%.5g" % x for x in trial_values]), summed_log_likelihood)
             )
 

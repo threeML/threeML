@@ -595,6 +595,10 @@ class FermipyLike(PluginPrototype):
                         # from fermipy: FIXME: Issue with source map cache with source is initialized as fixed.
                         self._gta.add_source(extended_source.name, temp_source, free=True)
                         self._gta.free_source(extended_source.name, free=False)
+                        
+                        log.debug( fermipyPars)
+                        log.debug( amPars )
+                        log.debug( [fermipySource["ra"], fermipySource["dec"], fermipySource["SpatialWidth"] ] )
 
                 elif theShape.name == "SpatialTemplate_2D":
                     #for now, assume we're not updating the fits file
