@@ -495,9 +495,6 @@ class JointLikelihood(object):
                  size param_1_steps.
         """
 
-        # Clone model to restore later
-        model_clone = clone_model(self._likelihood_model)
-
         if hasattr(param_1, "value"):
 
             # Substitute with the name
@@ -800,8 +797,7 @@ class JointLikelihood(object):
         
         else:
             #restore model
-            for param in self._likelihood_model.parameters:
-                self._likelihood_model.parameters[param].value = model_clone[param].value
+            self.restore_best_fit()
         
         return a, b, cc, fig
 
