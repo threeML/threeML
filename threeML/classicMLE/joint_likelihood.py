@@ -27,13 +27,6 @@ from threeML.minimizer import minimization
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.statistics.stats_tools import aic, bic
 
-
-try:
-    from threeML.plugins.FermipyLike import FermipyLike
-    has_fermipy = True
-except:
-    has_fermipy = False
-    
     
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
@@ -358,9 +351,6 @@ class JointLikelihood(object):
         total_number_of_data_points = 0
 
         for dataset in list(self._data_list.values()):
-
-            if has_fermipy and (type(dataset) == FermipyLike):
-                dataset._update_model_in_fermipy(update_dictionary = True, force_update = True)
 
             ml = dataset.inner_fit() * (-1)
 
