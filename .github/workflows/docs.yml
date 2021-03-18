@@ -69,6 +69,7 @@ jobs:
           
           jupytext --to ipynb --pipe black --execute docs/md_docs/*.md
           mv docs/md_docs/*.ipynb docs/notebooks/
+          ls docs/notebooks
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
