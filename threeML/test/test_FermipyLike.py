@@ -16,6 +16,7 @@ skip_if_fermipy_is_not_available = pytest.mark.skipif(
 @skip_if_fermipy_is_not_available
 #@pytest.mark.xfail
 def test_FermipyLike_fromVO():
+
     from threeML.plugins.FermipyLike import FermipyLike
 
     # Crab coordinates

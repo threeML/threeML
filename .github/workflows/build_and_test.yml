@@ -75,7 +75,7 @@ jobs:
         strategy:
             matrix:
                 os: ["ubuntu-latest", "macos-latest"]
-                python-version: [3.8]
+                python-version: [3.7]
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
@@ -98,19 +98,20 @@ jobs:
             - name: Init Env
               shell: bash -l {0}
               run: |
+
                   # Make sure we fail in case of error
-                  if [[ ${{matrix.os}} == ubuntu-latest ]];
-                  then
-                  miniconda_os=Linux
-                  compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-                  else  # osx
-                  miniconda_os=MacOSX
-                  compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+                  # if [[ ${{matrix.os}} == ubuntu-latest ]];
+                  # then
+                  # miniconda_os=Linux
+                  # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+                  # else  # osx
+                  # miniconda_os=MacOSX
+                  # compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
 
                   # On macOS we also need the conda libx11 libraries used to build xspec
                   # We also need to pin down ncurses, for now only on macos.
-                  xorg="xorg-libx11"
-                  fi
+                  # xorg="xorg-libx11"
+                  # fi
 
                   # Get the version in the __version__ environment variable
                   #python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
@@ -125,21 +126,21 @@ jobs:
 
                   #libgfortranver="3.0"
                   #NUMPYVER=1.15
-                  MATPLOTLIBVER=2
-                  XSPECVER="6.25"
-                  xspec_channel=xspecmodels
+                  # MATPLOTLIBVER=2
+                  # XSPECVER="6.25"
+                  # xspec_channel=xspecmodels
 
                   # Figure out requested dependencies
-                  if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
-                  if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
-                  if [ -n "${XSPECVER}" ];
-                  then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
-                  fi
+                  # if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
+                  # if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
+                  # if [ -n "${XSPECVER}" ];
+                  # then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
+                  # fi
 
 
-                  PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
+                  # PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 
-                  conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest flake8
+                  # conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest flake8
 
             - name: Conda list
               shell: bash -l {0}
@@ -261,18 +262,18 @@ jobs:
               run: |
 
                   # Make sure we fail in case of error
-                  if [[ ${{matrix.os}} == ubuntu-latest ]];
-                  then
-                  miniconda_os=Linux
-                  compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-                  else  # osx
-                  miniconda_os=MacOSX
-                  compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+                  # if [[ ${{matrix.os}} == ubuntu-latest ]];
+                  # then
+                  # miniconda_os=Linux
+                  # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+                  # else  # osx
+                  # miniconda_os=MacOSX
+                  # compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
 
                   # On macOS we also need the conda libx11 libraries used to build xspec
                   # We also need to pin down ncurses, for now only on macos.
-                  xorg="xorg-libx11"
-                  fi
+                  # xorg="xorg-libx11"
+                  # fi
 
                   # Get the version in the __version__ environment variable
                   #python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
@@ -288,21 +289,21 @@ jobs:
 
                   #libgfortranver="3.0"
                   #NUMPYVER=1.15
-                  MATPLOTLIBVER=2
-                  XSPECVER="6.25"
-                  xspec_channel=xspecmodels
+                  # MATPLOTLIBVER=2
+                  # XSPECVER="6.25"
+                  # xspec_channel=xspecmodels
 
                   # Figure out requested dependencies
-                  if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
-                  if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
-                  if [ -n "${XSPECVER}" ];
-                  then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
-                  fi
+                  # if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
+                  # if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
+                  # if [ -n "${XSPECVER}" ];
+                  # then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
+                  # fi
 
 
-                  PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
+                  # PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
 
-                  conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest
+                  # conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest
 
             - name: Build the Distribution
               shell: bash -l {0}
