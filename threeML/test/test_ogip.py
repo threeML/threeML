@@ -3,6 +3,7 @@ from builtins import object
 import pytest
 import os
 import numpy.testing as npt
+from astropy.io import fits
 from .conftest import get_test_datasets_directory
 from threeML import *
 from threeML.io.file_utils import within_directory

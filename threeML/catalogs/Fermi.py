@@ -3,7 +3,7 @@ from __future__ import division
 import re
 from builtins import map, str
 
-import numpy
+import numpy as np
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
 from past.utils import old_div
@@ -605,7 +605,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         a = float(catalog_entry["plec_exp_factor"])
         E0 = float(catalog_entry["pivot_energy"])
         b = float(catalog_entry["plec_exp_index"])
-        conv = math.exp(a * E0 ** b)
+        conv = np.exp(a * E0 ** b)
         this_spectrum.index = float(catalog_entry["plec_index"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.gamma = b
@@ -742,7 +742,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         # to the dictionary above
 
         table["short_source_type"] = table["source_type"]
-        table["source_type"] = numpy.array(list(map(translate, table["short_source_type"])))
+        table["source_type"] = np.array(list(map(translate, table["short_source_type"])))
 
         if "Search_Offset" in table.columns:
 
