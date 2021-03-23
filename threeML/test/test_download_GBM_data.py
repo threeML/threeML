@@ -4,7 +4,7 @@ import pytest
 
 from threeML import *
 from threeML.io.network import internet_connection_is_active
-from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
+from threeML.exceptions.custom_exceptions import TriggerDoesNotExist, DetDoesNotExist
 
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
@@ -63,13 +63,13 @@ def test_download_GBM_data():
 
     # now test that bad detectors block us
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(DetDoesNotExist):
 
         download_GBM_trigger_data(
             trigger_name="080916009", detectors="n1", destination_directory=temp_dir
         )
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(DetDoesNotExist):
 
         download_GBM_trigger_data(
             trigger_name="080916009",
