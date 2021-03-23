@@ -5,6 +5,8 @@ import numpy as np
 import os
 import yaml
 import astropy.io.fits as fits
+from astropy.stats import circmean
+from astropy import units as u
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import sanitize_filename
@@ -180,8 +182,8 @@ def _get_fermipy_instance(configuration, likelihood_model):
             
             try:
                 (ra_min, ra_max), (dec_min, dec_max) = theShape.get_boundaries()
-                this_source["ra"] = 0.5 * (ra_min, ra_max)
-                this_source["dec"] = 0.5 * (dec_min, dec_max)
+                this_source["ra"] = circmean( [ra_min, ra_max]*u.deg ).value
+                this_source["dec"] = circmean( [dec_min, dec_max]*u.deg ).value
                 
             except:
                 log.critical( f"Source {extended_source.name} does not have a template file set; must call read_file first()"  )
