@@ -174,12 +174,12 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
     ra = float(catalog_entry["ra"])
     dec = float(catalog_entry["dec"])
 
-    if catalog_entry["Spatial_Function"] == "RadialDisk":
+    if catalog_entry["spatial_function"] == "RadialDisk":
         this_shape = Disk_on_sphere()
-    elif catalog_entry["Spatial_Function"] == "RadialGaussian":
+    elif catalog_entry["spatial_function"] == "RadialGaussian":
         this_shape = Gaussian_on_sphere()
-    elif catalog_entry["Spatial_Function"] == "SpatialMap":
-        this_shape = Spatial_Template_2D()
+    elif catalog_entry["spatial_function"] == "SpatialMap":
+        this_shape = SpatialTemplate_2D()
     else:
         log.error("Spatial_Function {} not implemented yet" % catalog_entry["Spatial_Function"] )
         raise NotImplementedError()
@@ -274,7 +274,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         raise NotImplementedError()
 
 
-    if catalog_entry["Spatial_Function"] == "RadialDisk":
+    if catalog_entry["spatial_function"] == "RadialDisk":
     
         this_shape.lon0 = ra * u.degree
         this_shape.lon0.fix = True
@@ -284,7 +284,7 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_shape.radius.fix = True
         this_shape.radius.bounds = (0, catalog_entry["Model_SemiMajor"]) * u.degree
         
-    elif catalog_entry["Spatial_Function"] == "RadialGaussian":
+    elif catalog_entry["spatial_function"] == "RadialGaussian":
         
         #factor 1/1.36 is the conversion from 68% containment radius to sigma
         #Max of sigma/radius is used for get_boundaries().
@@ -293,22 +293,24 @@ def _get_extended_source_from_fgl(fgl_name, catalog_entry, fix=False):
         this_shape.lon0.fix = True
         this_shape.lat0 = dec * u.degree
         this_shape.lat0.fix = True
-        this_shape.sigma = catalog_entry["Model_SemiMajor"] / 1.36 * u.degree
+        this_shape.sigma = catalog_entry["model_semimajor"] / 1.36 * u.degree
         this_shape.sigma.fix = True
-        this_shape.sigma.bounds = (0, catalog_entry["Model_SemiMajor"] / 1.36) * u.degree
+        this_shape.sigma.bounds = (0, catalog_entry["model_semimajor"] / 1.36) * u.degree
 
-    elif catalog_entry["Spatial_Function"] == "SpatialMap":
+    elif catalog_entry["spatial_function"] == "SpatialMap":
         
-        the_file = catalog_entry["Spatial_Filename"]
+        the_file = catalog_entry["spatial_filename"]
         if isinstance(the_file, bytes):
             the_file = the_file.decode("ascii")
         
         if "FERMIPY_DATA_DIR" not in os.environ:
             os.environ["FERMIPY_DATA_DIR"] = resource_dir("fermipy", "data" )
         
-        the_template = os.path.join( catalog_entry["extdir"] , the_file )
+        the_dir = os.path.join( os.path.expandvars( catalog_entry["extdir"] ), "Templates" )
+        
+        the_template = os.path.join( the_dir, the_file )
 
-        this_shape.load_template(the_template)
+        this_shape.load_file(the_template)
 
 
     return this_source
