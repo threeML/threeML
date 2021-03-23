@@ -91,7 +91,9 @@ def test_FermipyLike_fromVO():
     jl = JointLikelihood(model, data)
 
     res = jl.fit()
-    
+
+@skip_if_internet_is_not_available
+@skip_if_fermipy_is_not_available
 def test_FermipyLike_fromDisk():
     from threeML.plugins.FermipyLike import FermipyLike
 
