@@ -6,6 +6,8 @@ from builtins import map, str
 import numpy
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
+from astropy.stats import circmean
+from astropy import units as u
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -332,7 +334,7 @@ class ModelFromFGL(Model):
         :param normalization_only: if True, frees only the normalization of the source (default: True)
         :return: none
         """
-        self._free_or_fix(True, radius, normalization_only)
+        self._free_or_fix_ps(True, radius, normalization_only)
 
     def fix_point_sources_within_radius(self, radius, normalization_only=True):
         """
@@ -342,9 +344,9 @@ class ModelFromFGL(Model):
         :param normalization_only: if True, fixes only the normalization of the source (default: True)
         :return: none
         """
-        self._free_or_fix(False, radius, normalization_only)
+        self._free_or_fix_ps(False, radius, normalization_only)
 
-    def _free_or_fix(self, free, radius, normalization_only):
+    def _free_or_fix_ps(self, free, radius, normalization_only):
 
         for src_name in self.point_sources:
 
@@ -355,6 +357,64 @@ class ModelFromFGL(Model):
                 self._dec_center,
                 src.position.ra.value,
                 src.position.dec.value,
+            )
+
+            if this_d <= radius:
+
+                if normalization_only:
+
+                    src.spectrum.main.shape.K.free = free
+
+                else:
+
+                    for par in src.spectrum.main.shape.parameters:
+                        
+                        if par == "piv": #don't free pivot energy
+                            continue
+                        
+                        src.spectrum.main.shape.parameters[par].free = free
+
+    def free_extended_sources_within_radius(self, radius, normalization_only=True):
+        """
+        Free the parameters for the point sources within the given radius of the center of the search cone
+
+        :param radius: radius in degree
+        :param normalization_only: if True, frees only the normalization of the source (default: True)
+        :return: none
+        """
+        self._free_or_fix_ext(True, radius, normalization_only)
+
+    def fix_extended_sources_within_radius(self, radius, normalization_only=True):
+        """
+        Fixes the parameters for the point sources within the given radius of the center of the search cone
+
+        :param radius: radius in degree
+        :param normalization_only: if True, fixes only the normalization of the source (default: True)
+        :return: none
+        """
+        self._free_or_fix_ext(False, radius, normalization_only)
+
+    def _free_or_fix_ext(self, free, radius, normalization_only):
+
+        for src_name in self.extended_sources:
+
+            src = self.extended_sources[src_name]
+            
+            try:
+                ra, dec = src.spatial_shape.lon0.value, src.spatial_shape.lat0.value
+                
+            except:
+            
+                (ra_min, ra_max), (dec_min, dec_max) = src.spatial_shape.get_boundaries()
+                ra = circmean( [ra_min, ra_max]*u.deg ).value
+                dec = circmean( [dec_min, dec_max]*u.deg ).value
+
+
+            this_d = angular_distance(
+                self._ra_center,
+                self._dec_center,
+                ra,
+                dec,
             )
 
             if this_d <= radius:
