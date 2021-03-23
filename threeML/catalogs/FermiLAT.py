@@ -208,7 +208,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
 class FermiPySourceCatalog(FermiLATSourceCatalog):
 
-    def __init__(self, catalog_name = "4FGL", update=False):
+    def __init__(self, catalog_name = "4FGL", update=True):
 
         self._update = update
     
