@@ -1,4 +1,5 @@
 import shutil
+import os
 import pytest
 
 from threeML import *
@@ -38,17 +39,17 @@ def test_download_GBM_data():
 
     # Now test that bad names block us
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(NameError):
 
         download_GBM_trigger_data(
             trigger_name="blah080916009", destination_directory=temp_dir
         )
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
 
         download_GBM_trigger_data(trigger_name=80916009, destination_directory=temp_dir)
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(NameError):
 
         download_GBM_trigger_data(
             trigger_name="bn08a916009", destination_directory=temp_dir
