@@ -120,8 +120,9 @@ def test_FermipyLike_fromDisk():
 
     # Let's free all the normalizations within 3 deg from the center
     model.free_point_sources_within_radius(3.0, normalization_only=True)
-
-    assert len(model.free_parameters) == 4
+    model.free_extended_sources_within_radius(3.0, normalization_only=True)
+    
+    assert len(model.free_parameters) == 5
     
     # but then let's fix the sync and the IC components of the Crab
     # (cannot fit them with just one day of data)
