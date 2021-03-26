@@ -7,6 +7,7 @@ import numpy as np
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
 from past.utils import old_div
+import math
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -605,7 +606,7 @@ def _get_point_source_from_3fgl(fgl_name, catalog_entry, fix=False):
         a = float(catalog_entry["plec_exp_factor"])
         E0 = float(catalog_entry["pivot_energy"])
         b = float(catalog_entry["plec_exp_index"])
-        conv = np.exp(a * E0 ** b)
+        conv = math.exp(a * E0 ** b)
         this_spectrum.index = float(catalog_entry["plec_index"]) * -1
         this_spectrum.index.fix = fix
         this_spectrum.gamma = b
