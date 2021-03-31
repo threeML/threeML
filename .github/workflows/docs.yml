@@ -11,14 +11,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.7
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache conda
         uses: actions/cache@v1
         with:
           path: ~/conda_pkgs_dir
-          key: conda-ubuntu-python-cache-3.8-${{ hashFiles('environment-ci.yml') }}
+          key: conda-ubuntu-python-cache-3.7-${{ hashFiles('environment-ci.yml') }}
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
@@ -26,7 +26,7 @@ jobs:
           auto-update-conda: false
           auto-activate-base: false
           activate-environment: test_env
-          python-version: 3.8
+          python-version: 3.7
           channels: conda-forge, xspecmodels, threeml, fermi, defaults
           environment-file: ci/environment.yml
 
@@ -82,7 +82,7 @@ jobs:
           path: docs/notebooks
 
       - name: Trigger RTDs build
-        uses: dfm/rtds-action@v1
+        uses: dfm/rtds-action@main
         with:
           webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
           webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
