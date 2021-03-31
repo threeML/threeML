@@ -1,5 +1,8 @@
 import pytest
 
+from threeML.io.logging import setup_logger
+log = setup_logger(__name__)
+
 from threeML import *
 from threeML.io.network import internet_connection_is_active
 
@@ -14,7 +17,6 @@ skip_if_fermipy_is_not_available = pytest.mark.skipif(
 
 @skip_if_internet_is_not_available
 @skip_if_fermipy_is_not_available
-#@pytest.mark.xfail
 def test_FermipyLike_fromVO():
 
     from threeML.plugins.FermipyLike import FermipyLike
@@ -62,15 +64,23 @@ def test_FermipyLike_fromVO():
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
 
-    evfile, scfile = download_LAT_data(
-        ra,
-        dec,
-        20.0,
-        tstart,
-        tstop,
-        time_type="Gregorian",
-        destination_directory="Crab_data",
-    )
+    try:
+
+        evfile, scfile = download_LAT_data(
+            ra,
+            dec,
+            20.0,
+            tstart,
+            tstop,
+            time_type="Gregorian",
+            destination_directory="Crab_data",
+        )
+
+    except RuntimeError:
+    
+        log.warning("Problems with LAT data download, will not proceed with tests.")
+        
+        return
 
     # Configuration for Fermipy
 
@@ -146,15 +156,23 @@ def test_FermipyLike_fromDisk():
     # Note that this will understand if you already download these files, and will
     # not do it twice unless you change your selection or the outdir
 
-    evfile, scfile = download_LAT_data(
-        ra,
-        dec,
-        20.0,
-        tstart,
-        tstop,
-        time_type="Gregorian",
-        destination_directory="Crab_data",
-    )
+    try:
+
+        evfile, scfile = download_LAT_data(
+            ra,
+            dec,
+            20.0,
+            tstart,
+            tstop,
+            time_type="Gregorian",
+            destination_directory="Crab_data",
+        )
+
+    except RuntimeError:
+    
+        log.warning("Problems with LAT data download, will not proceed with tests.")
+        
+        return
 
     # Configuration for Fermipy
 
