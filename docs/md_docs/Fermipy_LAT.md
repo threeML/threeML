@@ -222,8 +222,8 @@ res[-1]
 **Pro-trick:** We can also axcess the GTAnalysis object of fermipy:
 
 ```python
-res = jl.fit()
-LAT.gta.write_roi('test',make_plots=True)
+#res = jl.fit()
+#LAT.gta.write_roi('test',make_plots=True)
 ```
 
 All the plots are saved in the output directory as png files:
@@ -231,11 +231,11 @@ All the plots are saved in the output directory as png files:
 
 
 ```python
-pngs=Path(f"{fermipy_output_directory}").glob("*png")
-for png in pngs:
-    print(png)
-    my_image=Image(str(png))
-    display(my_image)
+#pngs=Path(f"{fermipy_output_directory}").glob("*png")
+#for png in pngs:
+#    print(png)
+#    my_image=Image(str(png))
+#    display(my_image)
 ```
 
 We can also plot the resulting model:
