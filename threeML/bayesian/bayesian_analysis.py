@@ -103,6 +103,7 @@ if len(_available_samplers) == 0:
     log.error("There are NO samplers available!")
     log.error("emcee is installed by default, something is wrong!")
 
+    raise RuntimeError()
 
 class BayesianAnalysis(object):
     def __init__(self, likelihood_model: Model, data_list: DataList, **kwargs):
