@@ -81,7 +81,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v2
             - name: Cache conda
-              uses: actions/cache@v1
+              uses: actions/cache@v2
               with:
                   path: ~/conda_pkgs_dir
                   key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
