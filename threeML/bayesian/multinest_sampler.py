@@ -173,6 +173,9 @@ class MultiNestSampler(UnitCubeSampler):
             log.error(
                 "If you want to run multinest in parallell you need to use an ad-hoc method")
 
+
+            raise RuntimeError()
+            
         else:
 
             with use_astromodels_memoization(False):
