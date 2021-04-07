@@ -82,10 +82,10 @@ jobs:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
 
-      - name: Sleep for 5 minutes
-        uses: jakejarvis/wait-action@master
+      - name: Sleep for 5 min
+        uses: juliangruber/sleep-action@v1
         with:
-          time: '5m'
+          time: 5m
 
       - name: Trigger RTDs build
         uses: dfm/rtds-action@main
