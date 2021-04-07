@@ -42,6 +42,7 @@ print(power_law.index)
 ```
 
 ```python
+import numpy as np
 x = np.logspace(0, 2, 50)
 
 xyl_generator = XYLike.from_function("sim_data", function = power_law, 
