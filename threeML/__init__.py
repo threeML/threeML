@@ -22,16 +22,16 @@ except ImportError:
 from pathlib import Path
 
 from threeML.io.logging import setup_logger
-from .config.config import threeML_config
+from .config import threeML_config, show_configuration, get_current_configuration_copy
 
 log = setup_logger(__name__)
 log.propagate = False
 
-if threeML_config["logging"]["startup_warning"]:
+if threeML_config["logging"]["startup_warnings"]:
     log.info("Starting 3ML!")
 
 if os.environ.get("DISPLAY") is None:
-    if threeML_config["logging"]["startup_warning"]:
+    if threeML_config["logging"]["startup_warnings"]:
         log.warning(
         "no display variable set. using backend for graphics without display (agg)"
     )
@@ -75,7 +75,7 @@ try:
     from cthreeML.pyModelInterfaceCache import pyToCppModelInterfaceCache
 
 except ImportError:
-    if threeML_config["logging"]["startup_warning"]:
+    if threeML_config.logging.startup_warnings:
         log.warning(
         "The cthreeML package is not installed. You will not be able to use plugins which require "
         "the C/C++ interface (currently HAWC)"  #    custom_exceptions.CppInterfaceNotAvailable,
@@ -125,7 +125,7 @@ for i, module_full_path in enumerate(found_plugins):
     is_importable, failure_traceback = is_module_importable(module_full_path)
 
     if not is_importable:
-        if threeML_config["logging"]["startup_warning"]:
+        if threeML_config.logging.startup_warnings:
             log.warning(
             f"Could not import plugin {module_full_path.name}. Do you have the relative instrument software installed "
             "and configured?"
@@ -182,7 +182,7 @@ def get_available_plugins():
 
 
 def _display_plugin_traceback(plugin):
-    if threeML_config["logging"]["startup_warning"]:
+    if threeML_config.logging.startup_warnings:
         log.warning("#############################################################")
         log.warning("\nCouldn't import plugin %s" % plugin)
         log.warning("\nTraceback:\n")
@@ -290,13 +290,12 @@ from .classicMLE.likelihood_ratio_test import LikelihoodRatioTest
 from .data_list import DataList
 from .io.calculate_flux import calculate_point_source_flux
 # Import the plot_style context manager and the function to create new styles
-from .io.plotting.plot_style import (create_new_plotting_style,
-                                     get_available_plotting_styles, plot_style)
+
 from .parallel.parallel_client import parallel_computation
 # Added by JM. step generator for time-resolved fits
 from .utils.step_parameter_generator import step_generator
 
-# Import the DataList class
+from .io import get_threeML_style, set_threeML_style
 
 
 # Import optical filters
@@ -327,7 +326,7 @@ for var in var_to_check:
             num_threads = int(num_threads)
 
         except ValueError:
-            if threeML_config["logging"]["startup_warning"]:
+            if threeML_config.logging.startup_warnings:
                 log.warning(
                 "Your env. variable %s is not an integer, which doesn't make sense. Set it to 1 "
                 "for optimum performances." % var,
@@ -336,12 +335,15 @@ for var in var_to_check:
 
     else:
 
-        if threeML_config["logging"]["startup_warning"]:
+        if threeML_config.logging.startup_warnings:
             log.warning(
             "Env. variable %s is not set. Please set it to 1 for optimal performances in 3ML"
             % var
             #            RuntimeWarning,
         )
+
+
+            
 del os
 del Path
 del warnings

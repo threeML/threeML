@@ -2,6 +2,7 @@ from matplotlib import cm
 from matplotlib.colors import to_hex
 import numpy as np
 
+from functools import partial
 from tqdm.auto import tqdm as _tqdm
 from tqdm.auto import trange as _trange
 
@@ -12,7 +13,8 @@ from threeML.config.config import threeML_config
 
 #_colors = []
 
-c_itr = 0
+_tqdm =partial(_tqdm, dynamic_ncols=True)
+_trange =partial(_trange, dynamic_ncols=True)
 
 
 class _Get_Color(object):
@@ -20,7 +22,7 @@ class _Get_Color(object):
     def __init__(self, n_colors=5):
 
         cmap = cm.get_cmap(
-            threeML_config["interface"]["multi_progress_cmap"])
+            threeML_config.interface.multi_progress_cmap)
 
         self._colors = [to_hex(c) for c in cmap(np.linspace(0,1,n_colors))]
 
@@ -29,7 +31,7 @@ class _Get_Color(object):
 
     def color(self):
 
-        if threeML_config["interface"]["multi_progress_color"]:
+        if threeML_config.interface.multi_progress_color:
 
             color = self._colors[self.c_itr]
 
@@ -43,7 +45,7 @@ class _Get_Color(object):
 
         else:
 
-            color = threeML_config["interface"]["progress_bar_color"]
+            color = threeML_config.interface.progress_bar_color
 
         return color
 
@@ -55,14 +57,21 @@ def tqdm(itr=None, **kwargs):
 
     color = _get_color.color()
 
-    return (_tqdm(itr, colour=color, **kwargs) if threeML_config["interface"]["show_progress_bars"] else itr)
+    # if itr is not None:
+
+
+        
+    #     if len(list(itr)) == 0:
+    #         return itr
+    
+    return (_tqdm(itr, colour=color, **kwargs) if threeML_config.interface.progress_bars else itr)
 
 
 def trange(*args, **kwargs):
 
     color = _get_color.color()
 
-    return (_trange(*args, colour=color, **kwargs) if threeML_config["interface"]["show_progress_bars"] else range(*args))
+    return (_trange(*args, colour=color, **kwargs) if threeML_config.interface.progress_bars else range(*args))
 
 
 __all__ = ["tqdm", "trange"]

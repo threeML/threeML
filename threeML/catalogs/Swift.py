@@ -1,24 +1,25 @@
-from future import standard_library
-
-standard_library.install_aliases()
-from builtins import map
-from builtins import str
-from builtins import range
-import numpy as np
-import pandas as pd
 import re
-import urllib.request, urllib.error, urllib.parse
+import urllib.error
+import urllib.parse
+import urllib.request
+from builtins import map, range, str
 
 import astropy.table as astro_table
+import numpy as np
+import pandas as pd
+from future import standard_library
 
-from threeML.catalogs.VirtualObservatoryCatalog import VirtualObservatoryCatalog
-from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.catalogs.VirtualObservatoryCatalog import \
+    VirtualObservatoryCatalog
 from threeML.config.config import threeML_config
 from threeML.io.get_heasarc_table_as_pandas import get_heasarc_table_as_pandas
+from threeML.io.logging import setup_logger
 from threeML.io.rich_display import display
 
-import astropy.time as astro_time
+standard_library.install_aliases()
 
+
+log = setup_logger(__name__)
 
 _gcn_match = re.compile("^\d{4}GCN\D?\.*(\d*)\.*\d\D$")
 _trigger_name_match = re.compile("^GRB \d{6}[A-Z]$")
@@ -37,7 +38,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         super(SwiftGRBCatalog, self).__init__(
             "swiftgrb",
-            threeML_config["catalogs"]["Swift"]["Swift GRB catalog"],
+            threeML_config["catalogs"]["Swift"]["catalogs"]["Swift GRB catalog"].url,
             "Swift GRB catalog",
         )
 
@@ -81,7 +82,7 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
         if match is None:
 
-            custom_warnings.warn(warn_string)
+            log.warning(warn_string)
 
             answer = False
 
@@ -151,7 +152,8 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
 
             table = astro_table.Table.from_pandas(query_results)
 
-            name_column = astro_table.Column(name="name", data=query_results.index)
+            name_column = astro_table.Column(
+                name="name", data=query_results.index)
             table.add_column(name_column, index=0)
 
             out = self.apply_format(table)
@@ -202,7 +204,8 @@ class SwiftGRBCatalog(VirtualObservatoryCatalog):
             try:
 
                 trigger_number = (
-                    re.search("GBM *(\d{9}|\d{6}\.\d{3}), *trigger *\d*", string)
+                    re.search(
+                        "GBM *(\d{9}|\d{6}\.\d{3}), *trigger *\d*", string)
                     .group(1)
                     .replace(".", "")
                 )

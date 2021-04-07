@@ -8,7 +8,7 @@ import numpy as np
 
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import file_existing_and_readable, sanitize_filename
-from threeML.io.logging import setup_logger
+from threeML.io.logging import setup_logger, silence_console_log
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.plugins.SpectrumLike import NegativeBackground, SpectrumLike
@@ -31,6 +31,8 @@ from threeML.utils.time_series.event_list import (
     EventList, EventListWithDeadTime, EventListWithDeadTimeFraction,
     EventListWithLiveTime)
 from threeML.utils.time_series.time_series import TimeSeries
+from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
+
 
 log = setup_logger(__name__)
 
@@ -390,15 +392,16 @@ class TimeSeriesBuilder(object):
 
         file_name: Path = sanitize_filename(file_name)
 
-        ogip_list = [
-            OGIPLike.from_general_dispersion_spectrum(sl)
-            for sl in self.to_spectrumlike(
-                from_bins=True,
-                start=start,
-                stop=stop,
-                extract_measured_background=extract_measured_background,
-            )
-        ]
+        with silence_console_log(and_progress_bars=False):
+            ogip_list = [
+                OGIPLike.from_general_dispersion_spectrum(sl)
+                for sl in self.to_spectrumlike(
+                    from_bins=True,
+                    start=start,
+                    stop=stop,
+                    extract_measured_background=extract_measured_background,
+                )
+            ]
 
         # write out the PHAII file
 
@@ -810,61 +813,46 @@ class TimeSeriesBuilder(object):
 
             # loop through the intervals and create spec likes
 
-            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
+            with silence_console_log(and_progress_bars=False):
 
-                self.set_active_time_interval(interval.to_string())
+                for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
 
-                assert isinstance(
-                    self._observed_spectrum, BinnedSpectrum
-                ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
+                    self.set_active_time_interval(interval.to_string())
 
-                if extract_measured_background:
+                    assert isinstance(
+                        self._observed_spectrum, BinnedSpectrum
+                    ), "You are attempting to create a SpectrumLike plugin from the wrong data type"
 
-                    this_background_spectrum = self._measured_background_spectrum
+                    if extract_measured_background:
 
-                    log.debug(
-                        f"trying extract background as measurement in {self._name}"
-                    )
-
-                else:
-
-                    this_background_spectrum = self._background_spectrum
-
-                    log.debug(
-                        f"trying extract background as model in {self._name}")
-
-                if this_background_spectrum is None:
-                    log.warning(
-                        "No bakckground selection has been made. This plugin will contain no background!"
-                    )
-
-                try:
-
-                    plugin_name = f"{self._name}{interval_name}{i}"
-
-                    if self._response is None:
+                        this_background_spectrum = self._measured_background_spectrum
 
                         log.debug(
-                            f"creating a SpectrumLike plugin named {plugin_name}")
-
-                        sl = SpectrumLike(
-                            name=plugin_name,
-                            observation=self._observed_spectrum,
-                            background=this_background_spectrum,
-                            verbose=self._verbose,
-                            tstart=self._tstart,
-                            tstop=self._tstop,
+                            f"trying extract background as measurement in {self._name}"
                         )
 
                     else:
 
-                        if not self._use_balrog:
+                        this_background_spectrum = self._background_spectrum
+
+                        log.debug(
+                            f"trying extract background as model in {self._name}")
+
+                    if this_background_spectrum is None:
+                        log.warning(
+                            "No bakckground selection has been made. This plugin will contain no background!"
+                        )
+
+                    try:
+
+                        plugin_name = f"{self._name}{interval_name}{i}"
+
+                        if self._response is None:
 
                             log.debug(
-                                f"creating a DispersionSpectrumLike plugin named {plugin_name}"
-                            )
+                                f"creating a SpectrumLike plugin named {plugin_name}")
 
-                            sl = DispersionSpectrumLike(
+                            sl = SpectrumLike(
                                 name=plugin_name,
                                 observation=self._observed_spectrum,
                                 background=this_background_spectrum,
@@ -875,29 +863,46 @@ class TimeSeriesBuilder(object):
 
                         else:
 
-                            log.debug(
-                                f"creating a BALROGLike plugin named {plugin_name}"
-                            )
+                            if not self._use_balrog:
 
-                            sl = gbm_drm_gen.BALROGLike(
-                                name=plugin_name,
-                                observation=self._observed_spectrum,
-                                background=this_background_spectrum,
-                                verbose=self._verbose,
-                                time=0.5 * (self._tstart + self._tstop),
-                                tstart=self._tstart,
-                                tstop=self._tstop,
-                            )
+                                log.debug(
+                                    f"creating a DispersionSpectrumLike plugin named {plugin_name}"
+                                )
 
-                    list_of_speclikes.append(sl)
+                                sl = DispersionSpectrumLike(
+                                    name=plugin_name,
+                                    observation=self._observed_spectrum,
+                                    background=this_background_spectrum,
+                                    verbose=self._verbose,
+                                    tstart=self._tstart,
+                                    tstop=self._tstop,
+                                )
 
-                except (NegativeBackground):
+                            else:
 
-                    log.error(
-                        f"Something is wrong with interval {interval} skipping."
-                    )
+                                log.debug(
+                                    f"creating a BALROGLike plugin named {plugin_name}"
+                                )
 
-            # restore the old interval
+                                sl = gbm_drm_gen.BALROGLike(
+                                    name=plugin_name,
+                                    observation=self._observed_spectrum,
+                                    background=this_background_spectrum,
+                                    verbose=self._verbose,
+                                    time=0.5 * (self._tstart + self._tstop),
+                                    tstart=self._tstart,
+                                    tstop=self._tstop,
+                                )
+
+                        list_of_speclikes.append(sl)
+
+                    except (NegativeBackground):
+
+                        log.error(
+                            f"Something is wrong with interval {interval} skipping."
+                        )
+
+                # restore the old interval
 
             if old_interval is not None:
 
@@ -1315,6 +1320,47 @@ class TimeSeriesBuilder(object):
         )
 
     @classmethod
+    def from_konus_pha(
+        cls,
+        name,
+        pha_file,
+        rsp_file,
+        arf_file,
+        restore_background=None,
+        trigger_time=None,
+        poly_order=-1,
+        verbose=True
+    ):
+        """ A plugin to natively bin, view, and handle Konus-Wind PHA data. 
+        One can choose a background polynomial order by hand (up to 4th order) or leave it as the default polyorder=-1 to decide by LRT test
+        :param name: name for your choosing
+        :param pha_file: Konus-Wind PHAII file
+        :param rsp_file: Associated response file
+        :param arf_file: Associated auxiliary response file
+        :param trigger_time: trigger time if needed
+        :param poly_order: 0-4 or -1 for auto
+        :param verbose: verbose (bool)
+        """
+
+        # Load the relevant information from the PHA file
+
+        spectrum_set = PHASpectrumSet(pha_file, rsp_file=rsp_file, arf_file=arf_file)
+
+        event_list = BinnedSpectrumSeries(spectrum_set, first_channel=1, verbose=verbose)
+
+        rsp = OGIPResponse(rsp_file, arf_file=arf_file)
+
+        return cls(name,
+               event_list,
+               response=rsp,
+               poly_order=poly_order,
+               unbinned=False,
+               verbose=verbose,
+               restore_poly_fit=restore_background,
+               container_type=BinnedSpectrumWithDispersion
+               )
+
+    @classmethod
     def from_polar_spectrum(
         cls,
         name,
@@ -1485,6 +1531,72 @@ class TimeSeriesBuilder(object):
 
             # now we make one response to save time
 
+            # get the bins from the time series
+            # for event lists, these are from created bins
+            # for binned spectra sets, these are the native bines
+
+            these_bins = self._time_series.bins  # type: TimeIntervalSet
+
+            if start is not None:
+                assert stop is not None, "must specify a start AND a stop time"
+
+            if stop is not None:
+                assert stop is not None, "must specify a start AND a stop time"
+
+                these_bins = these_bins.containing_interval(
+                    start, stop, inner=False)
+
+            # loop through the intervals and create spec likes
+
+            for i, interval in enumerate(tqdm(these_bins, desc="Creating plugins")):
+
+                self.set_active_time_interval(interval.to_string())
+
+                if extract_measured_background:
+
+                    this_background_spectrum = self._measured_background_spectrum
+
+                else:
+
+                    this_background_spectrum = self._background_spectrum
+
+                    if this_background_spectrum is None:
+                        log.warning(
+                            "No bakckground selection has been made. This plugin will contain no background!"
+                        )
+
+                try:
+
+                    pl = PolarLike(
+                        name="%s%s%d" % (self._name, interval_name, i),
+                        observation=self._observed_spectrum,
+                        background=this_background_spectrum,
+                        response=self._response,
+                        verbose=self._verbose,
+                        #               tstart=self._tstart,
+                        #               tstop=self._tstop
+                    )
+
+                    list_of_polarlikes.append(pl)
+
+                except (NegativeBackground):
+                    log.error(
+                        "Something is wrong with interval %s. skipping." % interval
+                    )
+
+            # restore the old interval
+
+            if old_interval is not None:
+
+                self.set_active_time_interval(*old_interval)
+
+            else:
+
+                self._active_interval = None
+
+            self._verbose = old_verbose
+
+            return list_of_polarlikes
             # get the bins from the time series
             # for event lists, these are from created bins
             # for binned spectra sets, these are the native bines

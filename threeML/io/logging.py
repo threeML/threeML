@@ -11,9 +11,10 @@ from astromodels.utils.logging import (ColoredFormatter, LogFilter,
                                        astromodels_console_log_handler,
                                        astromodels_dev_log_handler,
                                        astromodels_usr_log_handler)
-from colorama import Back, Fore, Style
+
 
 from threeML.config.config import threeML_config
+
 
 # set up the console logging
 
@@ -190,23 +191,23 @@ def silence_progress_bars():
     Turn off the progress bars
     """
 
-    threeML_config["interface"]["show_progress_bars"] = False
+    threeML_config["interface"]["progress_bars"] = "off"
 
 
 def activate_progress_bars():
     """
     Turn on the progress bars
     """
-    threeML_config["interface"]["show_progress_bars"] = True
+    threeML_config["interface"]["progress_bars"] = 'on'
 
 
 def toggle_progress_bars():
     """
     toggle the state of the progress bars
     """
-    state = threeML_config["interface"]["show_progress_bars"]
+    state = threeML_config["interface"]["progress_bars"]
 
-    threeML_config["interface"]["show_progress_bars"] = not state
+    threeML_config["interface"]["progress_bars"] = not state
 
 
 def silence_warnings():
@@ -298,19 +299,20 @@ def debug_mode():
 
 
 @contextmanager
-def silence_console_log():
+def silence_console_log(and_progress_bars=True):
     """
     temporarily silence the console and progress bars
     """
     current_console_logging_level = threeML_console_log_handler.level
     current_usr_logging_level = threeML_usr_log_handler.level
 
-    threeML_console_log_handler.setLevel(logging.ERROR)
-    threeML_usr_log_handler.setLevel(logging.ERROR)
+    threeML_console_log_handler.setLevel(logging.CRITICAL)
+    threeML_usr_log_handler.setLevel(logging.CRITICAL)
 
-    progress_state = threeML_config["interface"]["show_progress_bars"]
+    if and_progress_bars:
+        progress_state = threeML_config.interface.progress_bars
 
-    threeML_config["interface"]["show_progress_bars"] = False
+        threeML_config.interface.progress_bars = 'off'
 
     try:
         yield
@@ -320,8 +322,10 @@ def silence_console_log():
         threeML_console_log_handler.setLevel(current_console_logging_level)
         threeML_usr_log_handler.setLevel(current_usr_logging_level)
 
-        threeML_config["interface"]["show_progress_bars"] = progress_state
-       
+        if and_progress_bars:
+
+            threeML_config.interface.progress_bars = progress_state
+
 
 def setup_logger(name):
 

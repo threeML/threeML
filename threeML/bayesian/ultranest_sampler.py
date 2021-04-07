@@ -1,7 +1,7 @@
 import os
 import time
 import numpy as np
-
+from pathlib import Path
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
@@ -140,7 +140,7 @@ class UltraNestSampler(UnitCubeSampler):
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             raise RuntimeError(
                 "If you want to run ultranest in parallell you need to use an ad-hoc method"

@@ -10,12 +10,11 @@ from threeML.analysis_results import AnalysisResultsSet
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
+from threeML.io.logging import setup_logger, silence_console_log
 from threeML.minimizer.minimization import (LocalMinimization, _Minimization,
                                             _minimizers)
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.progress_bar import trange
-from threeML.io.logging import setup_logger
-
 
 log = setup_logger(__name__)
 
@@ -49,9 +48,12 @@ class JointLikelihoodSet(object):
 
             # Only one instance, let's check that it is actually a model
 
-            assert isinstance(model_or_models, Model), (
-                "The model getter function should return a model or a list of " "models"
-            )
+            if not isinstance(model_or_models, Model):
+
+                log.error(
+                    "The model getter function should return a model or a list of " "models")
+
+                raise RuntimeError()
 
             # Save that
             self._n_models = 1
@@ -67,9 +69,13 @@ class JointLikelihoodSet(object):
             # Check that all models are instances of Model
             for this_model in model_or_models:
 
-                assert isinstance(
+                if not isinstance(
                     this_model, Model
-                ), "The model getter function should return a model or a list of models"
+                ):
+                    log.error(
+                        "The model getter function should return a model or a list of models")
+
+                    raise RuntimeError()
 
             # No need for a wrapper in this case
 
@@ -110,12 +116,13 @@ class JointLikelihoodSet(object):
 
         else:
 
-            assert minimizer.upper() in _minimizers, (
-                "Minimizer %s is not available on this system. "
-                "Available minimizers: %s"
-                % (minimizer, ",".join(list(_minimizers.keys())))
-            )
+            if not minimizer.upper() in _minimizers:
+                log.error("Minimizer %s is not available on this system. "
+                          "Available minimizers: %s"
+                          % (minimizer, ",".join(list(_minimizers.keys())))
+                          )
 
+                raise RuntimeError()
             # The string can only specify a local minimization. This will return an error if that is not the case.
             # In order to setup global optimization the user needs to use the GlobalMinimization factory directly
 
@@ -198,10 +205,7 @@ class JointLikelihoodSet(object):
 
         except Exception as e:
 
-            log.error("\n\n**** FIT FAILED! ***")
-            log.error("Reason:")
-            log.error(repr(e))
-            log.error("\n\n")
+            log.exception("**** FIT FAILED! ***")
 
             if self._continue_on_failure:
 
@@ -225,22 +229,22 @@ class JointLikelihoodSet(object):
 
         # Generate the data frame which will contain all results
 
-
         self._continue_on_failure = continue_on_failure
 
         self._compute_covariance = compute_covariance
 
         # let's iterate, perform the fit and fill the data frame
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             # Parallel computation
 
-            client = ParallelClient(**options_for_parallel_computation)
+            with silence_console_log(and_progress_bars=False):
+                client = ParallelClient(**options_for_parallel_computation)
 
-            results = client.execute_with_progress_bar(
-                self.worker, list(range(self._n_iterations))
-            )
+                results = client.execute_with_progress_bar(
+                    self.worker, list(range(self._n_iterations))
+                )
 
         else:
 
@@ -248,9 +252,11 @@ class JointLikelihoodSet(object):
 
             results = []
 
-            for i in trange(self._n_iterations, desc="Goodness of fit computation"):
+            with silence_console_log(and_progress_bars=False):
 
-                results.append(self.worker(i))
+                for i in trange(self._n_iterations, desc="Goodness of fit computation"):
+
+                    results.append(self.worker(i))
 
         assert len(results) == self._n_iterations, (
             "Something went wrong, I have %s results "

@@ -12,6 +12,19 @@ skip_if_ultranest_is_not_available = pytest.mark.skipif(
     not has_ultranest, reason="No ultranest available"
 )
 
+
+try:
+    import autoemcee
+except:
+    has_autoemcee = False
+else:
+    has_autoemcee = True
+skip_if_autoemcee_is_not_available = pytest.mark.skipif(
+    not has_autoemcee, reason="No autoemcee available"
+)
+
+
+
 try:
     import dynesty
 except:
@@ -140,6 +153,23 @@ def test_ultranest(bayes_fitter, completed_bn090217206_bayesian_analysis):
 
     check_results(res)
 
+
+@skip_if_autoemcee_is_not_available
+def test_autoemcee(bayes_fitter, completed_bn090217206_bayesian_analysis):
+
+    bayes, _ = completed_bn090217206_bayesian_analysis
+
+    bayes.set_sampler("autoemcee")
+
+    bayes.sampler.setup()
+
+    bayes.sample()
+
+    res = bayes.results.get_data_frame()
+
+    check_results(res)
+
+    
 
 @skip_if_dynesty_is_not_available
 def test_dynesty_nested(bayes_fitter, completed_bn090217206_bayesian_analysis):

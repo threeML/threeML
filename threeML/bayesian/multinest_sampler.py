@@ -168,11 +168,14 @@ class MultiNestSampler(UnitCubeSampler):
         # Multinest must be run parallel via an external method
         # see the demo in the examples folder!!
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             log.error(
                 "If you want to run multinest in parallell you need to use an ad-hoc method")
 
+
+            raise RuntimeError()
+            
         else:
 
             with use_astromodels_memoization(False):

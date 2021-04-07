@@ -1,12 +1,16 @@
 from __future__ import division
-from builtins import zip
-from builtins import range
-from past.utils import old_div
+
+from builtins import range, zip
+
 import matplotlib.pyplot as plt
 import numpy as np
+from past.utils import old_div
 
 from threeML.config.config import threeML_config
+from threeML.io.package_data import get_path_of_data_file
 from threeML.io.plotting.step_plot import step_plot
+
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
 # this file contains routines for plotting binned light curves
@@ -39,18 +43,16 @@ def binned_light_curve_plot(
     # round
     np.round(time_bins, decimals=4, out=time_bins)
 
-    light_curve_color = threeML_config["lightcurve"]["lightcurve color"]
-    selection_color = threeML_config["lightcurve"]["selection color"]
-    background_color = threeML_config["lightcurve"]["background color"]
-    background_selection_color = threeML_config["lightcurve"][
-        "background selection color"
-    ]
+    light_curve_color = threeML_config.time_series.light_curve_color
+    selection_color = threeML_config.time_series.selection_color
+    background_color = threeML_config.time_series.background_color
+    background_selection_color = threeML_config.time_series.background_selection_color
 
     # first plot the full lightcurve
 
     step_plot(
         time_bins,
-        old_div(cnts, width),
+        cnts/ width,
         ax,
         color=light_curve_color,
         label="Light Curve",
@@ -63,7 +65,8 @@ def binned_light_curve_plot(
         np.round(selection, decimals=4, out=selection)
 
         for tmin, tmax in selection:
-            tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
+            tmp_mask = np.logical_and(
+                time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
 
             all_masks.append(tmp_mask)
 
@@ -97,7 +100,8 @@ def binned_light_curve_plot(
 
         all_masks = []
         for tmin, tmax in bkg_selections:
-            tmp_mask = np.logical_and(time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
+            tmp_mask = np.logical_and(
+                time_bins[:, 0] >= tmin, time_bins[:, 1] <= tmax)
 
             all_masks.append(tmp_mask)
 
@@ -127,8 +131,9 @@ def binned_light_curve_plot(
         )
 
     if bkg is not None:
-        # now plot the estimated background
 
+        # now plot the estimated background
+        # the bkg is a rate 
         ax.plot(mean_time, bkg, background_color, lw=2.0, label="Background")
 
     # ax.fill_between(selection, bottom, top, color="#fc8d62", alpha=.4)
@@ -146,7 +151,6 @@ def channel_plot(ax, chan_min, chan_max, counts, **kwargs):
     chans = np.vstack([chan_min, chan_max]).T
     width = chan_max - chan_min
 
-    
     step_plot(chans, old_div(counts, width), ax, **kwargs)
     ax.set_xscale("log")
     ax.set_yscale("log")
@@ -214,7 +218,6 @@ def slice_disjoint(arr):
 
 def plot_tte_lightcurve(tte_file, start=-10, stop=50, dt=1):
     # type: (str, float, float, float) -> plt.Figure
-
     """
     quick plot of a TTE light curve
     :param tte_file: GBM TTE file name
@@ -236,7 +239,8 @@ def plot_tte_lightcurve(tte_file, start=-10, stop=50, dt=1):
 
     bins = np.arange(start, stop, step=dt)
 
-    counts, bins = np.histogram(tte.arrival_times - tte.trigger_time, bins=bins)
+    counts, bins = np.histogram(
+        tte.arrival_times - tte.trigger_time, bins=bins)
 
     width = np.diff(bins)
 

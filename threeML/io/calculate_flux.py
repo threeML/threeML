@@ -2,16 +2,21 @@ from builtins import range
 
 __author__ = "grburgess"
 
-# from threeML.io.rich_display import display
-from threeML.utils.fitted_objects.fitted_point_sources import (
-    FittedPointSourceSpectralHandler,
-)
-from threeML.exceptions.custom_exceptions import custom_warnings
+import collections
 
 import numpy as np
 import pandas as pd
-import collections
 
+from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.logging import setup_logger
+# from threeML.io.rich_display import display
+from threeML.utils.fitted_objects.fitted_point_sources import \
+    FittedPointSourceSpectralHandler
+from threeML.utils.progress_bar import tqdm
+
+
+
+log  =setup_logger(__name__)
 
 def _setup_analysis_dictionaries(
     analysis_results,
@@ -71,7 +76,8 @@ def _setup_analysis_dictionaries(
                     mle_sources.setdefault(source_name, []).append(1)
 
                     if len(mle_sources[source_name]) > 1:
-                        name = "%s_%d" % (source_name, len(mle_sources[source_name]))
+                        name = "%s_%d" % (source_name, len(
+                            mle_sources[source_name]))
 
                     else:
 
@@ -107,7 +113,8 @@ def _setup_analysis_dictionaries(
                     # keep track of duplicate sources
 
                     if len(bayes_sources[source_name]) > 1:
-                        name = "%s_%d" % (source_name, len(bayes_sources[source_name]))
+                        name = "%s_%d" % (source_name, len(
+                            bayes_sources[source_name]))
 
                     else:
 
@@ -142,7 +149,7 @@ def _setup_analysis_dictionaries(
 
     # go through the MLE analysis and build up some fitted sources
 
-    for key in list(mle_analyses.keys()):
+    for key in tqdm(list(mle_analyses.keys()), desc="processing MLE analyses"):
 
         # if we want to use this source
 
@@ -230,7 +237,7 @@ def _setup_analysis_dictionaries(
 
     # repeat for the bayes analyses
 
-    for key in list(bayesian_analyses.keys()):
+    for key in tqdm(list(bayesian_analyses.keys()), desc="processing Bayesian analyses"):
 
         # if we have a source to use
 
@@ -545,7 +552,7 @@ def _compute_output_with_components(_defaults, component_sum_dict, total_analysi
 
 def calculate_point_source_flux(*args, **kwargs):
 
-    custom_warnings.warn(
+    log.error(
         "The use of calculate_point_source_flux is deprecated. Please use the .get_point_source_flux()"
         " method of the JointLikelihood.results or the BayesianAnalysis.results member. For example:"
         " jl.results.get_point_source_flux()."
@@ -569,7 +576,7 @@ def _calculate_point_source_flux(ene_min, ene_max, *analyses, **kwargs):
     :param components_to_use: (optional) list of string names of the components to plot: including 'total'
     will also plot the total spectrum
     :param include_extended: (optional) if True, plot extended source spectra (spatially integrated) as well.
-    
+
     :return: mle_dataframe, bayes_dataframe
     """
 

@@ -6,11 +6,14 @@ from astromodels import (Constant, Cubic, Gaussian, Line, Log_normal, Model,
                          PointSource, Quadratic)
 
 from threeML.bayesian.bayesian_analysis import BayesianAnalysis
-from threeML.classicMLE.joint_likelihood import FitFailed, JointLikelihood
+from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.config.config import threeML_config
 from threeML.data_list import DataList
+from threeML.exceptions.custom_exceptions import BadCovariance, FitFailed
 from threeML.io.logging import setup_logger, silence_console_log
-from threeML.minimizer.minimization import (GlobalMinimization,
+from threeML.minimizer.grid_minimizer import AllFitFailed
+from threeML.minimizer.minimization import (CannotComputeCovariance,
+                                            GlobalMinimization,
                                             LocalMinimization)
 from threeML.plugins.UnbinnedPoissonLike import (EventObservation,
                                                  UnbinnedPoissonLike)
@@ -20,10 +23,6 @@ log = setup_logger(__name__)
 
 # we include the line twice to mimic a constant
 _grade_model_lookup = (Line, Line, Quadratic, Cubic, Quadratic)
-
-
-class CannotComputeCovariance(RuntimeWarning):
-    pass
 
 
 class Polynomial(object):
@@ -129,6 +128,9 @@ class Polynomial(object):
         doc="""Gets or sets the coefficients of the polynomial.""",
     )
 
+    def __repr__(self):
+        return f"({self._coefficients})"
+
     def __call__(self, x):
 
         result = 0
@@ -189,6 +191,11 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
 
     log.debug(f"starting polyfit with grade {grade} ")
 
+    if threeML_config.time_series.default_fit_method is not None:
+
+        bayes = threeML_config.time_series.default_fit_method
+        log.debug("using a default poly fit method")
+
     nan_mask = np.isnan(y)
 
     y = y[~nan_mask]
@@ -216,6 +223,8 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
     model = Model(ps)
 
     avg = np.mean(y/exposure)
+
+    log.debug(f"starting polyfit with avg norm {avg}")
 
     with silence_console_log():
 
@@ -257,13 +266,15 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
 
                 jl.fit(quiet=True)
 
-            except:
+            except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
+
+                log.debug("1st fit failed")
 
                 try:
 
                     jl.fit(quiet=True)
 
-                except:
+                except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
 
                     log.debug("all MLE fits failed")
 
@@ -276,11 +287,13 @@ def polyfit(x: Iterable[float], y: Iterable[float], grade: int, exposure: Iterab
             final_polynomial = Polynomial(coeff)
 
             try:
-                final_polynomial.set_covariace_matrix(jl.results.covariance_matrix)
+                final_polynomial.set_covariace_matrix(
+                    jl.results.covariance_matrix)
 
             except:
 
                 log.exception(f"Fit failed in channel")
+                raise FitFailed()
 
             min_log_likelihood = xy.get_log_like()
 
@@ -352,11 +365,17 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
     """
 
     log.debug(f"starting unbinned_polyfit with grade {grade}")
+    log.debug(f"have {len(events)} events with {exposure} exposure")
 
     # create 3ML plugins and fit them with 3ML!
     # should eventuallly allow better config
 
-    # seelct the model based on the grade
+    # select the model based on the grade
+
+    if threeML_config.time_series.default_fit_method is not None:
+
+        bayes = threeML_config.time_series.default_fit_method
+        log.debug("using a default poly fit method")
 
     if len(events) == 0:
 
@@ -407,9 +426,11 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
 
             local_minimizer = LocalMinimization("minuit")
 
-            my_grid = {model.dummy.spectrum.main.shape.a: np.logspace(0, 3, 3)}
+            my_grid = {
+                model.dummy.spectrum.main.shape.a: np.logspace(0, 3, 10)}
 
-            grid_minimizer.setup(second_minimization=local_minimizer, grid=my_grid)
+            grid_minimizer.setup(
+                second_minimization=local_minimizer, grid=my_grid)
 
             jl.set_minimizer(grid_minimizer)
 
@@ -419,13 +440,13 @@ def unbinned_polyfit(events: Iterable[float], grade: int, t_start: float, t_stop
 
                 jl.fit(quiet=True)
 
-            except:
+            except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
 
                 try:
 
                     jl.fit(quiet=True)
 
-                except:
+                except(FitFailed, BadCovariance, AllFitFailed, CannotComputeCovariance):
 
                     log.debug("all MLE fits failed, returning zero")
 

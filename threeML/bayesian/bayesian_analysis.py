@@ -6,26 +6,104 @@ import numpy as np
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
 from astromodels.core.model import Model
 
-from threeML.bayesian.dynesty_sampler import (DynestyDynamicSampler,
-                                              DynestyNestedSampler)
-from threeML.bayesian.emcee_sampler import EmceeSampler
-from threeML.bayesian.multinest_sampler import MultiNestSampler
-from threeML.bayesian.ultranest_sampler import UltraNestSampler
-from threeML.bayesian.zeus_sampler import ZeusSampler
+from threeML.config import threeML_config
 from threeML.data_list import DataList
 from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
 
-_available_samplers = {}
-_available_samplers["multinest"] = MultiNestSampler
-_available_samplers["zeus"] = ZeusSampler
-_available_samplers["ultranest"] = UltraNestSampler
-_available_samplers["emcee"] = EmceeSampler
-_available_samplers["dynesty_nested"] = DynestyNestedSampler
-_available_samplers["dynesty_dynamic"] = DynestyDynamicSampler
-# _available_samplers["nuts"] = NUTSSampler
 
+_possible_samplers = ["emcee", "mutinest", "zeus", "ultranest",
+                      "dynesty_nested", "dynesty_dynamic", "autoemcee"]
+
+
+_available_samplers = {}
+
+try:
+
+    import emcee
+
+    from threeML.bayesian.emcee_sampler import EmceeSampler
+
+    _available_samplers["emcee"] = EmceeSampler
+
+except(ImportError):
+
+    log.debug("no emcee")
+
+
+try:
+
+    import dynesty
+
+    from threeML.bayesian.dynesty_sampler import (DynestyDynamicSampler,
+                                                  DynestyNestedSampler)
+    _available_samplers["dynesty_nested"] = DynestyNestedSampler
+    _available_samplers["dynesty_dynamic"] = DynestyDynamicSampler
+
+
+except(ImportError):
+
+    log.debug("no dynesty")
+
+try:
+
+    import pymultinest
+
+    from threeML.bayesian.multinest_sampler import MultiNestSampler
+
+    _available_samplers["multinest"] = MultiNestSampler
+
+except(ImportError):
+
+    log.debug("no multinest")
+
+try:
+
+    import zeus
+
+    from threeML.bayesian.zeus_sampler import ZeusSampler
+
+    _available_samplers["zeus"] = ZeusSampler
+
+except(ImportError):
+
+    log.debug("no zeus")
+
+
+try:
+
+    import ultranest
+
+    from threeML.bayesian.ultranest_sampler import UltraNestSampler
+
+    _available_samplers["ultranest"] = UltraNestSampler
+
+
+except(ImportError):
+
+    log.debug("no ultranest")
+
+
+try:
+
+    import autoemcee
+
+    from threeML.bayesian.autoemcee_sampler import AutoEmceeSampler
+
+    _available_samplers["autoemcee"] = AutoEmceeSampler
+
+except(ImportError):
+
+    log.debug("no autoemcee")
+
+# we should always have at least emcee available
+if len(_available_samplers) == 0:
+
+    log.error("There are NO samplers available!")
+    log.error("emcee is installed by default, something is wrong!")
+
+    raise RuntimeError()
 
 class BayesianAnalysis(object):
     def __init__(self, likelihood_model: Model, data_list: DataList, **kwargs):
@@ -115,25 +193,50 @@ class BayesianAnalysis(object):
 
         self._is_registered = True
 
-    def set_sampler(self, sampler_name: str, **kwargs):
+    def set_sampler(self, sampler_name: str = "default", **kwargs):
         """
         Set the sampler
         :param sampler_name: (str) Name of sampler
+
         :param share_spectrum: (optional) Option to share the spectrum calc
         between detectors with the same input energy bins
         """
-        assert (
-            sampler_name in _available_samplers
-        ), "%s is not a valid sampler please choose from %s" % (
-            sampler_name,
-            ",".join(list(_available_samplers.keys())),
-        )
+
+        using_default = False
+
+        if sampler_name == "default":
+
+            sampler_name = threeML_config.bayesian.default_sampler.value
+
+            log.info(f"using default sampler {sampler_name}")
+
+            using_default = True
+
+        if sampler_name not in _available_samplers:
+
+            log.error(
+                f"{sampler_name} is not a valid sampler please choose from {','.join(list(_available_samplers.keys()))}")
+
+            raise RuntimeError()
 
         self._sampler = _available_samplers[sampler_name](
             self._likelihood_model, self._data_list, **kwargs
         )
 
-        log.info(f"Sampler set to {sampler_name}")
+        if not using_default:
+
+            log.info(f"sampler set to {sampler_name}")
+
+        else:
+
+            # now we will setup the samnpler with the
+            # paramters from thre config
+
+            default_params = threeML_config.bayesian.default_setup
+
+            self.sampler.setup(**default_params)
+
+            log.info("sampler is setup with default parameters")
 
     @property
     def sampler(self):
@@ -141,6 +244,7 @@ class BayesianAnalysis(object):
         return self._sampler
 
     def sample(self, quiet=False):
+
         with use_astromodels_memoization(False):
 
             self._sampler.sample(quiet=quiet)

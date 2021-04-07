@@ -14,6 +14,9 @@ from threeML.utils.unique_deterministic_tag import get_unique_deterministic_tag
 from threeML.utils.power_of_two_utils import is_power_of_2
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 __instrument_name = "Fermi LAT (with fermipy)"
 
@@ -25,19 +28,18 @@ __instrument_name = "Fermi LAT (with fermipy)"
 
 
 # A lookup map for the correspondence between IRFS and evclass
+# See https://fermi.gsfc.nasa.gov/ssc/data/analysis/documentation/Cicerone/Cicerone_Data/LAT_DP.html#PhotonClassification
 evclass_irf = {
-    2: "P8R2_TRANSIENT100E_V6",
-    4: "P8R2_TRANSIENT100_V6",
-    8: "P8R2_TRANSIENT020E_V6",
-    16: "P8R2_TRANSIENT020_V6",
-    32: "P8R2_TRANSIENT010E_V6",
-    64: "P8R2_TRANSIENT010_V6",
-    128: "P8R2_SOURCE_V6",
-    256: "P8R2_CLEAN_V6",
-    512: "P8R2_ULTRACLEAN_V6",
-    1024: "P8R2_ULTRACLEANVETO_V6",
-    32768: "P8R2_TRANSIENT100S_V6",
-    65536: "P8R2_TRANSIENT015S_V6",
+    8: "P8R3_TRANSIENT020E_V3",
+    16: "P8R3_TRANSIENT020_V3",
+    32: "P8R3_TRANSIENT010E_V3",
+    64: "P8R3_TRANSIENT010_V3",
+    128: "P8R3_SOURCE_V3",
+    256: "P8R3_CLEAN_V3",
+    512: "P8R3_ULTRACLEAN_V3",
+    1024: "P8R3_ULTRACLEANVETO_V3",
+    2048: "P8R3_SOURCEVETO_V3",
+    65536: "P8R3_TRANSIENT015S_V3",
 }
 
 
@@ -55,15 +57,17 @@ def _get_unique_tag_from_configuration(configuration):
 
     for section, keys in keys_for_hash:
 
-        assert section in configuration, (
-            "Configuration lacks section %s, which is required" % section
-        )
+        if not section in configuration:
+            log.critical(
+                "Configuration lacks section %s, which is required" % section
+            )
 
         for key in keys:
 
-            assert key in configuration[section], (
-                "Section %s in configuration lacks key %s, which is required" % key
-            )
+            if not key in configuration[section]:
+                log.critical(
+                    "Section %s in configuration lacks key %s, which is required" % key
+                )
 
             string_to_hash.append("%s" % configuration[section][key])
 
@@ -93,12 +97,15 @@ def _get_fermipy_instance(configuration, likelihood_model):
     # Get IRFS
     irfs = evclass_irf[int(configuration["selection"]["evclass"])]
 
+    log.info(f"Using IRFs {irfs}")
+
     if "gtlike" in configuration and "irfs" in configuration["gtlike"]:
 
-        assert irfs.upper() == configuration["gtlike"]["irfs"].upper(), (
-            "Evclass points to IRFS %s, while you specified %s into he "
-            "configuration" % (irfs, configuration["gtlike"]["irfs"])
-        )
+        if irfs.upper() != configuration["gtlike"]["irfs"].upper():
+            log.critical(
+                "Evclass points to IRFS %s, while you specified %s in the "
+                "configuration" % (irfs, configuration["gtlike"]["irfs"])
+            )
 
     else:
 
@@ -194,7 +201,8 @@ def _get_fermipy_instance(configuration, likelihood_model):
 
             # This is to make sure that all sources are evaluated at the same energies
 
-            assert np.all(energies_keV == this_energies_keV)
+            if not np.all(energies_keV == this_energies_keV):
+                log.critical("All sources should be evaluated at the same energies.")
 
         dnde = point_source(energies_keV)  # ph / (cm2 s keV)
         dnde_per_MeV = dnde * 1000.0  # ph / (cm2 s MeV)
@@ -255,9 +263,10 @@ class FermipyLike(PluginPrototype):
             # Assume this is a file name
             configuration_file = sanitize_filename(fermipy_config)
 
-            assert os.path.exists(fermipy_config), (
-                "Configuration file %s does not exist" % configuration_file
-            )
+            if not os.path.exists(fermipy_config):
+                log.critical(
+                    "Configuration file %s does not exist" % configuration_file
+                )
 
             # Read the configuration
             with open(configuration_file) as f:
@@ -293,12 +302,10 @@ class FermipyLike(PluginPrototype):
         # Now check that the data exists
 
         # As minimum there must be a evfile and a scfile
-        assert (
-            "evfile" in self._configuration["data"]
-        ), "You must provide a evfile in the data section"
-        assert (
-            "scfile" in self._configuration["data"]
-        ), "You must provide a scfile in the data section"
+        if not "evfile" in self._configuration["data"]:
+            log.critical( "You must provide a evfile in the data section" )
+        if not "scfile" in self._configuration["data"]:
+            log.critical( "You must provide a scfile in the data section" )
 
         for datum in self._configuration["data"]:
 
@@ -308,9 +315,8 @@ class FermipyLike(PluginPrototype):
 
             self._configuration["data"][datum] = filename
 
-            assert os.path.exists(
-                self._configuration["data"][datum]
-            ), "File %s (%s) not found" % (filename, datum)
+            if not os.path.exists( self._configuration["data"][datum] ):
+                log.critical( "File %s (%s) not found" % (filename, datum) )
 
         # Prepare the 'fileio' part
         # Save all output in a directory with a unique name which depends on the configuration,
@@ -324,12 +330,11 @@ class FermipyLike(PluginPrototype):
         self._configuration["fileio"] = {"outdir": self._unique_id}
 
         # Ensure that there is a complete definition of a Region Of Interest (ROI)
-        assert ("ra" in self._configuration["selection"]) and (
-            "dec" in self._configuration["selection"]
-        ), (
-            "You have to provide 'ra' and 'dec' in the 'selection' section of the configuration. Source name "
-            "resolution, as well as Galactic coordinates, are not currently supported"
-        )
+        if not (("ra" in self._configuration["selection"]) and ("dec" in self._configuration["selection"])):
+            log.critical(
+                "You have to provide 'ra' and 'dec' in the 'selection' section of the configuration. Source name "
+                "resolution, as well as Galactic coordinates, are not currently supported"
+            )
 
         # This is empty at the beginning, will be instanced in the set_model method
         self._gta = None
@@ -346,6 +351,8 @@ class FermipyLike(PluginPrototype):
         evclass=128,
         evtype=3,
         filter="DATA_QUAL>0 && LAT_CONFIG==1",
+        fermipy_verbosity = 2,
+        fermitools_chatter = 2,
     ):
 
         from fermipy.config import ConfigManager
@@ -358,8 +365,10 @@ class FermipyLike(PluginPrototype):
         evfile = str(sanitize_filename(evfile) )
         scfile = str(sanitize_filename(scfile) )
 
-        assert os.path.exists(evfile), "The provided evfile %s does not exist" % evfile
-        assert os.path.exists(scfile), "The provided scfile %s does not exist" % scfile
+        if not os.path.exists(evfile):
+            log.critical( "The provided evfile %s does not exist" % evfile )
+        if not os.path.exists(scfile):
+            log.critical( "The provided scfile %s does not exist" % scfile )
 
         basic_config["data"]["evfile"] = evfile
         basic_config["data"]["scfile"] = scfile
@@ -367,12 +376,14 @@ class FermipyLike(PluginPrototype):
         ra = float(ra)
         dec = float(dec)
 
-        assert 0 <= ra <= 360, (
-            "The provided R.A. (%s) is not valid. Should be 0 <= ra <= 360.0" % ra
-        )
-        assert -90 <= dec <= 90, (
-            "The provided Dec (%s) is not valid. Should be -90 <= dec <= 90.0" % dec
-        )
+        if not (( 0 <= ra) and ( ra <= 360 )):
+            log.critical(
+                "The provided R.A. (%s) is not valid. Should be 0 <= ra <= 360.0" % ra
+            )
+        if not ((-90 <= dec) and (dec <= 90)):
+            log.critical (
+                "The provided Dec (%s) is not valid. Should be -90 <= dec <= 90.0" % dec
+            )
 
         basic_config["selection"]["ra"] = ra
         basic_config["selection"]["dec"] = dec
@@ -384,10 +395,11 @@ class FermipyLike(PluginPrototype):
         basic_config["selection"]["emax"] = emax
 
         zmax = float(zmax)
-        assert 0.0 <= zmax <= 180.0, (
-            "The provided Zenith angle cut (zmax = %s) is not valid. "
-            "Should be 0 <= zmax <= 180.0" % zmax
-        )
+        if not (( 0.0 <= zmax) and (zmax <= 180.0)):
+            log.critical(
+                "The provided Zenith angle cut (zmax = %s) is not valid. "
+                "Should be 0 <= zmax <= 180.0" % zmax
+            )
 
         basic_config["selection"]["zmax"] = zmax
 
@@ -399,7 +411,8 @@ class FermipyLike(PluginPrototype):
         basic_config["selection"]["tmax"] = tmax
 
         evclass = int(evclass)
-        assert is_power_of_2(evclass), "The provided evclass is not a power of 2."
+        if not is_power_of_2(evclass):
+            log.critical( "The provided evclass is not a power of 2." )
 
         basic_config["selection"]["evclass"] = evclass
 
@@ -408,6 +421,11 @@ class FermipyLike(PluginPrototype):
         basic_config["selection"]["evtype"] = evtype
 
         basic_config["selection"]["filter"] = filter
+
+        basic_config["logging"]["verbosity"] = fermipy_verbosity
+        #(In fermipy convention, 0 = critical only, 1 also errors, 2 also warnings, 3 also info, 4 also debug)
+        basic_config["logging"]["chatter"] = fermitools_chatter #0 = no screen output. 2 = some output, 4 = lot of output.
+
 
         return DictWithPrettyPrint(basic_config)
 
@@ -423,10 +441,11 @@ class FermipyLike(PluginPrototype):
     @property
     def gta(self):
 
-        assert self._gta is not None, (
-            "You have to perform a fit or a bayesian analysis before accessing the "
-            "gta object"
-        )
+        if self._gta is None:
+            log.warning(
+                "You have to perform a fit or a bayesian analysis before accessing the "
+                "gta object. Returning None"
+            )
 
         return self._gta
 
@@ -443,8 +462,10 @@ class FermipyLike(PluginPrototype):
         self._gta, self._pts_energies = _get_fermipy_instance(
             self._configuration, likelihood_model_instance
         )
+        self._update_model_in_fermipy( update_dictionary = True, force_update = True)
+        
 
-    def _update_model_in_fermipy(self):
+    def _update_model_in_fermipy(self, update_dictionary = False, delta = 0.0, force_update = False):
 
         # Substitute all spectra for point sources with FileSpectrum, so that we will be able to control
         # them from 3ML
@@ -453,16 +474,34 @@ class FermipyLike(PluginPrototype):
         ):  # type: astromodels.PointSource
 
             # Update this source only if it has free parameters (to gain time)
-            if point_source.has_free_parameters():
+            if point_source.has_free_parameters() or force_update:
+
+                #Update source position if free
+                if force_update or ( point_source.position.ra.free or point_source.position.dec.free ):
+ 
+                    model_pos = point_source.position.sky_coord
+                    fermipy_pos = self._gta.roi.get_source_by_name(point_source.name).skydir
+                
+                    if  model_pos.separation( fermipy_pos ).to("degree").value > delta :
+                        #modeled after how this is done in fermipy
+                        #(cf https://fermipy.readthedocs.io/en/latest/_modules/fermipy/sourcefind.html#SourceFind.localize)
+                        temp_source = self._gta.delete_source(point_source.name)
+                        temp_source.set_position( model_pos )
+                        self._gta.add_source(point_source.name, temp_source, free=False)
+                        self._gta.free_source(point_source.name, False)
+                        self._gta.set_source_spectrum(point_source.name, "FileFunction", update_source=update_dictionary)
 
                 # Now set the spectrum of this source to the right one
                 dnde = point_source(self._pts_energies)  # ph / (cm2 s keV)
                 dnde_MeV = dnde * 1000.0  # ph / (cm2 s MeV)
-
+                dnde_MeV = np.maximum(dnde_MeV, 1e-300) 
                 # NOTE: I use update_source=False because it makes things 100x faster and I verified that
                 # it does not change the result.
+                # (HF: Not sure who wrote the above but I think sometimes we do want to update fermipy dictionaries.)
 
-                self._gta.set_source_dnde(point_source.name, dnde_MeV, False)
+                self._gta.set_source_dnde(point_source.name, dnde_MeV, update_source = update_dictionary)
+                
+                
             else:
 
                 # Nothing to do for a fixed source_
@@ -495,7 +534,7 @@ class FermipyLike(PluginPrototype):
 
             raise
 
-        return value - logfactorial(self._gta.like.total_nobs())
+        return value - logfactorial(int(self._gta.like.total_nobs()))
 
     def inner_fit(self):
         """
@@ -506,3 +545,22 @@ class FermipyLike(PluginPrototype):
         logLike value.
         """
         return self.get_log_like()
+
+    def get_number_of_data_points(self):
+        """
+        Return the number of spatial/energy bins
+
+        :return: number of bins
+        """
+        
+        num = len(self._gta.components)
+        
+        if self._gta.projtype == "WCS":
+
+            num = num * self._gta._enumbins * int(self._gta.npix[0]) * int(self._gta.npix[1])
+
+        if self._gta.projtype == "HPX":
+        
+            num = num * np.sum(self.geom.npix)
+            
+        return num

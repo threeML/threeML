@@ -5,26 +5,32 @@ import warnings
 from builtins import map, object, range, str
 from operator import attrgetter, itemgetter
 from pathlib import Path
+from typing import Optional
+
 import astropy.io.fits as pyfits
 import astropy.units as u
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-from typing import Optional
+import numba as nb
 import numpy as np
 from matplotlib.colors import SymLogNorm
 from past.utils import old_div
-import numba as nb
 
+from threeML.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
 from threeML.io.file_utils import (file_existing_and_readable,
                                    fits_file_existing_and_readable,
                                    sanitize_filename)
 from threeML.io.fits_file import FITSExtension, FITSFile
+from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
-from threeML.io.logging import setup_logger
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+
 
 log = setup_logger(__name__)
+
 
 class NoCoverageIntervals(RuntimeError):
     pass
@@ -109,7 +115,7 @@ class InstrumentResponse(object):
                 "Maximum MC energy (%s) is smaller "
                 "than maximum EBOUNDS energy (%s)"
                 % (self._mc_energies.max(), self.ebounds.max()),
-                #RuntimeWarning,
+                # RuntimeWarning,
             )
 
         if self._mc_energies.min() > self._ebounds.min():
@@ -118,7 +124,7 @@ class InstrumentResponse(object):
                 "Minimum MC energy (%s) is larger than "
                 "minimum EBOUNDS energy (%s)"
                 % (self._mc_energies.min(), self._ebounds.min()),
-             #   RuntimeWarning,
+                #   RuntimeWarning,
             )
 
     # This will be overridden by subclasses
@@ -211,17 +217,24 @@ class InstrumentResponse(object):
 
         self._integral_function = integral_function
 
-
-    def convolve(self, precalc_fluxes: Optional[np.array]=None) -> np.ndarray:
+    def convolve(self, precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
         """
         Convolve the source flux with the response
         :param precalc_fluxes: The precalulated flux. If this is None, the
         flux gets calculated here.
         """
         if precalc_fluxes is None:
-            fluxes = self._integral_function(
-               # self._mc_energies[:-1], self._mc_energies[1:]
-            )
+
+            try:
+                fluxes = self._integral_function(
+                    # self._mc_energies[:-1], self._mc_energies[1:]
+                )
+            except(TypeError):
+
+                fluxes = self._integral_function(
+                    self._mc_energies[:-1], self._mc_energies[1:]
+                )
+
         else:
             fluxes = precalc_fluxes
 
@@ -239,7 +252,6 @@ class InstrumentResponse(object):
         return folded_counts
 
     def energy_to_channel(self, energy):
-
         """Finds the channel containing the provided energy.
         NOTE: returns the channel index (starting at zero),
         not the channel number (likely starting from 1).
@@ -251,7 +263,8 @@ class InstrumentResponse(object):
         # Get the index of the first ebounds upper bound larger than energy
         # (but never go below zero or above the last channel)
         idx = min(
-            max(0, np.searchsorted(self._ebounds, energy) - 1), len(self._ebounds) - 1
+            max(0, np.searchsorted(self._ebounds, energy) -
+                1), len(self._ebounds) - 1
         )
 
         return idx
@@ -283,9 +296,10 @@ class InstrumentResponse(object):
         # Find minimum non-zero element
         vmin = self._matrix[self._matrix > 0].min()
 
-        cmap = copy.deepcopy(cm.ocean)
+        cmap = copy.deepcopy(cm.get_cmap(
+            threeML_config.plugins.ogip.response_cmap.value))
 
-        cmap.set_under("gray")
+        cmap.set_under(threeML_config.plugins.ogip.response_zero_color)
 
         mappable = ax.pcolormesh(
             self._mc_energies[idx_mc:],
@@ -345,7 +359,8 @@ class InstrumentResponse(object):
 
         # create the dummy matrix
 
-        dummy_matrix = np.eye(ebounds.shape[0] - 1, monte_carlo_energies.shape[0] - 1)
+        dummy_matrix = np.eye(
+            ebounds.shape[0] - 1, monte_carlo_energies.shape[0] - 1)
 
         return cls(dummy_matrix, ebounds, monte_carlo_energies)
 
@@ -471,7 +486,8 @@ class OGIPResponse(InstrumentResponse):
         e_min = ebounds_extension.data.field("E_MIN").astype(float)
         e_max = ebounds_extension.data.field("E_MAX").astype(float)
 
-        assert self._are_contiguous(e_min, e_max), "EBOUNDS channel are not contiguous!"
+        assert self._are_contiguous(
+            e_min, e_max), "EBOUNDS channel are not contiguous!"
 
         # The returned array must have the edges of the intervals. Doing so reduces the amount of memory used
         # by 1/2
@@ -574,8 +590,8 @@ class OGIPResponse(InstrumentResponse):
                 this_n_chan = int(np.squeeze(n_chan[i][j]))
                 this_f_chan = int(np.squeeze(f_chan[i][j]))
 
-                rsp[i, this_f_chan : this_f_chan + this_n_chan] = matrix[i][
-                    m_start : m_start + this_n_chan
+                rsp[i, this_f_chan: this_f_chan + this_n_chan] = matrix[i][
+                    m_start: m_start + this_n_chan
                 ]
 
                 m_start += this_n_chan
@@ -715,7 +731,7 @@ class InstrumentResponseSet(object):
                     log.warning(
                         "Removing matrix %s (numbering starts at zero) because it has a coverage of "
                         "zero seconds" % i,
-                        #RuntimeWarning,
+                        # RuntimeWarning,
                     )
 
                 to_be_removed.append(i)
@@ -800,7 +816,8 @@ class InstrumentResponseSet(object):
             # we will read all the matrices and save them
             for rsp_number in range(1, n_responses + 1):
 
-                this_response = OGIPResponse(str(rsp2_file) + "{%i}" % rsp_number)
+                this_response = OGIPResponse(
+                    str(rsp2_file) + "{%i}" % rsp_number)
 
                 list_of_matrices.append(this_response)
 
@@ -885,7 +902,8 @@ class InstrumentResponseSet(object):
 
         # Weight matrices
         matrix = np.dot(
-            np.array(list(map(attrgetter("matrix"), self._matrix_list))).T, weights.T
+            np.array(
+                list(map(attrgetter("matrix"), self._matrix_list))).T, weights.T
         ).T
 
         # Now generate the instance of the response
@@ -901,7 +919,6 @@ class InstrumentResponseSet(object):
         return matrix_instance
 
     def _weight_response(self, interval_of_interest, switch):
-
         """
 
         :param interval_start : start time of the interval
@@ -930,7 +947,8 @@ class InstrumentResponseSet(object):
                 "Could not find any matrix applicable to %s\n Have intervals:%s"
                 % (
                     interval_of_interest,
-                    ", ".join([str(interval) for interval in self._coverage_intervals]),
+                    ", ".join([str(interval)
+                               for interval in self._coverage_intervals]),
                 )
             )
 
@@ -1151,7 +1169,8 @@ class SPECRESP_MATRIX(MATRIX):
 
         # This is essentially exactly the same as MATRIX, but with a different extension name
 
-        super(SPECRESP_MATRIX, self).__init__(mc_energies, channel_energies, matrix)
+        super(SPECRESP_MATRIX, self).__init__(
+            mc_energies, channel_energies, matrix)
 
         # Change the extension name
         self.hdu.header.set("EXTNAME", "SPECRESP MATRIX")

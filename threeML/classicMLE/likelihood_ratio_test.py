@@ -1,26 +1,32 @@
 from builtins import object
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import scipy.stats as stats
-
 from astromodels import clone_model
 
 from threeML.classicMLE.joint_likelihood import JointLikelihood
 from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
 from threeML.data_list import DataList
-from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
 from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.OGIP.pha import PHAWrite
 
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+
+
+log = setup_logger(__name__)
+
 
 class LikelihoodRatioTest(object):
-    def __init__(self, joint_likelihood_instance0, joint_likelihood_instance1):
+    def __init__(self, joint_likelihood_instance0: JointLikelihood, joint_likelihood_instance1: JointLikelihood) -> None:
 
-        self._joint_likelihood_instance0 = (
+        self._joint_likelihood_instance0: JointLikelihood = (
             joint_likelihood_instance0
         )  # type: JointLikelihood
-        self._joint_likelihood_instance1 = (
+        self._joint_likelihood_instance1: JointLikelihood = (
             joint_likelihood_instance1
         )  # type: JointLikelihood
 
@@ -28,7 +34,7 @@ class LikelihoodRatioTest(object):
         self._joint_likelihood_instance0.restore_best_fit()
         self._joint_likelihood_instance1.restore_best_fit()
 
-        self._reference_TS = 2 * (
+        self._reference_TS: float = 2 * (
             self._joint_likelihood_instance0.current_minimum
             - self._joint_likelihood_instance1.current_minimum
         )
@@ -36,7 +42,7 @@ class LikelihoodRatioTest(object):
         # Safety check that the user has provided the models in the right order
         if self._reference_TS < 0:
 
-            custom_warnings.warn(
+            log.warning(
                 "The reference TS is negative, either you specified the likelihood objects "
                 "in the wrong order, or the fit for the alternative hyp. has failed. Since the "
                 "two hyp. are nested, by definition the more complex hypothesis should give a "
@@ -53,7 +59,7 @@ class LikelihoodRatioTest(object):
             # Since this check might fail if the user loaded twice the same data, only issue a warning, instead of
             # an exception.
 
-            custom_warnings.warn(
+            log.warning(
                 "The data lists for the null hyp. and for the alternative hyp. seems to be different."
                 " If you loaded twice the same data and made the same data selections, disregard this "
                 "message. Otherwise, consider the fact that the LRT is meaningless if the two data "
@@ -66,7 +72,7 @@ class LikelihoodRatioTest(object):
         self._save_pha = False
         self._data_container = []
 
-    def get_simulated_data(self, id):
+    def get_simulated_data(self, id: int):
 
         # Generate a new data set for each plugin contained in the data list
 
@@ -77,7 +83,8 @@ class LikelihoodRatioTest(object):
             # Make sure that the active likelihood model is the null hypothesis
             # This is needed if the user has used the same DataList instance for both
             # JointLikelihood instances
-            dataset.set_model(self._joint_likelihood_instance0.likelihood_model)
+            dataset.set_model(
+                self._joint_likelihood_instance0.likelihood_model)
 
             new_data = dataset.get_simulated_dataset("%s_sim" % dataset.name)
 
@@ -96,8 +103,10 @@ class LikelihoodRatioTest(object):
         # Make a copy of the best fit models, so that we don't touch the original models during the fit, and we
         # also always restart from the best fit (instead of the last iteration)
 
-        new_model0 = clone_model(self._joint_likelihood_instance0.likelihood_model)
-        new_model1 = clone_model(self._joint_likelihood_instance1.likelihood_model)
+        new_model0 = clone_model(
+            self._joint_likelihood_instance0.likelihood_model)
+        new_model1 = clone_model(
+            self._joint_likelihood_instance1.likelihood_model)
 
         return new_model0, new_model1
 
@@ -118,7 +127,10 @@ class LikelihoodRatioTest(object):
         self._save_pha = save_pha
 
         # Create the joint likelihood set
-        jl_set = JointLikelihoodSet(
+
+        log.debug("preparing to do joint likelihood LRT")
+        
+        jl_set: JointLikelihoodSet = JointLikelihoodSet(
             self.get_simulated_data,
             self.get_models,
             n_iterations,
@@ -130,7 +142,8 @@ class LikelihoodRatioTest(object):
         jl_set.set_minimizer(self._joint_likelihood_instance0.minimizer_in_use)
 
         # Run the set
-        data_frame, like_data_frame = jl_set.go(continue_on_failure=continue_on_failure)
+        data_frame, like_data_frame = jl_set.go(
+            continue_on_failure=continue_on_failure)
 
         # Get the TS values
 
@@ -138,6 +151,8 @@ class LikelihoodRatioTest(object):
             like_data_frame["-log(likelihood)"][:, "model_0", "total"]
             - like_data_frame["-log(likelihood)"][:, "model_1", "total"]
         )  # type: pd.Series
+
+
 
         TS = pd.Series(TS_.values, name="TS")
 
@@ -159,7 +174,7 @@ class LikelihoodRatioTest(object):
 
     def plot_TS_distribution(self, show_chi2=True, scale=1.0, **hist_kwargs):
         """
-        
+
         :param show_chi2: 
         :param scale: 
         :param hist_kwargs: 

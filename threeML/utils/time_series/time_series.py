@@ -211,7 +211,7 @@ class TimeSeries(object):
         :return:
         """
         if mask is None:
-            mask = np.ones_like(self._polynomials, dtype=np.bool)
+            mask = np.ones_like(self._polynomials, dtype=bool)
 
         total_counts = 0
 
@@ -230,7 +230,7 @@ class TimeSeries(object):
         :return:
         """
         if mask is None:
-            mask = np.ones_like(self._polynomials, dtype=np.bool)
+            mask = np.ones_like(self._polynomials, dtype=bool)
 
         total_counts = 0
 
@@ -619,7 +619,7 @@ class TimeSeries(object):
 
         log.debug("attempting to find best poly with binned data")
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             def worker(grade):
 
@@ -688,7 +688,7 @@ class TimeSeries(object):
 
         log.debug("attempting to find best fit poly with unbinned")
 
-        if threeML_config["parallel"]["use-parallel"]:
+        if threeML_config["parallel"]["use_parallel"]:
 
             def worker(grade):
 

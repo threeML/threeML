@@ -3,10 +3,11 @@ from __future__ import division
 import re
 from builtins import map, str
 
-import numpy
+import numpy as np
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
 from past.utils import old_div
+import math
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -62,7 +63,7 @@ class FermiGBMBurstCatalog(VirtualObservatoryCatalog):
 
         super(FermiGBMBurstCatalog, self).__init__(
             "fermigbrst",
-            threeML_config["catalogs"]["Fermi"]["GBM burst catalog"],
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["GBM burst catalog"].url,
             "Fermi-LAT/GBM burst catalog",
         )
 
@@ -691,7 +692,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
         super(FermiLATSourceCatalog, self).__init__(
             "fermilpsc",
-            threeML_config["catalogs"]["Fermi"]["LAT FGL"],
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["LAT FGL"].url,
             "Fermi-LAT/LAT source catalog",
         )
 
@@ -730,22 +731,26 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
 
     def apply_format(self, table):
         def translate(key):
+            if isinstance(key, bytes):
+                key = key.decode("ascii")
             if key.lower() == "psr":
                 return threefgl_types[key]
             if key.lower() in list(threefgl_types.keys()):
                 return threefgl_types[key.lower()]
-            return "unknown"
+            return key
 
         # Translate the 3 letter code to a more informative category, according
         # to the dictionary above
 
-        table["source_type"] = numpy.array(list(map(translate, table["source_type"])))
+        table["short_source_type"] = table["source_type"]
+        table["source_type"] = np.array(list(map(translate, table["short_source_type"])))
 
-        try:
+        if "Search_Offset" in table.columns:
 
             new_table = table[
                 "name",
                 "source_type",
+                "short_source_type",
                 "ra",
                 "dec",
                 "assoc_name",
@@ -756,10 +761,10 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
             return new_table.group_by("Search_Offset")
 
         # we may have not done a cone search!
-        except (ValueError):
+        else:
 
             new_table = table[
-                "name", "source_type", "ra", "dec", "assoc_name", "tevcat_assoc"
+                "name", "source_type", "short_source_type" "ra", "dec", "assoc_name", "tevcat_assoc"
             ]
 
             return new_table.group_by("name")
@@ -835,7 +840,7 @@ class FermiLLEBurstCatalog(VirtualObservatoryCatalog):
 
         super(FermiLLEBurstCatalog, self).__init__(
             "fermille",
-            threeML_config["catalogs"]["Fermi"]["LLE catalog"],
+            threeML_config["catalogs"]["Fermi"]["catalogs"]["LLE catalog"].url,
             "Fermi-LAT/LLE catalog",
         )
 

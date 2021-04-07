@@ -64,67 +64,65 @@ def test_event_list_constructor():
     assert evt_list._mission == "UNKNOWN"
 
 
-def test_unbinned_fit():
+def test_unbinned_fit(event_time_series):
 
-    with within_directory(datasets_dir):
+    start, stop = 0, 50
 
-        start, stop = 0, 50
+    poly = [1]
 
-        poly = [1]
+    arrival_times = event_time_series
 
-        arrival_times = np.loadtxt("test_event_data.txt")
+    evt_list = EventListWithDeadTime(
+        arrival_times=arrival_times,
+        measurement=np.zeros_like(arrival_times),
+        n_channels=1,
+        start_time=arrival_times[0],
+        stop_time=arrival_times[-1],
+        dead_time=np.zeros_like(arrival_times),
+    )
 
-        evt_list = EventListWithDeadTime(
-            arrival_times=arrival_times,
-            measurement=np.zeros_like(arrival_times),
-            n_channels=1,
-            start_time=arrival_times[0],
-            stop_time=arrival_times[-1],
-            dead_time=np.zeros_like(arrival_times),
-        )
+    evt_list.set_polynomial_fit_interval(
+        "%f-%f" % (start + 1, stop - 1), unbinned=True
+    )
 
-        evt_list.set_polynomial_fit_interval(
-            "%f-%f" % (start + 1, stop - 1), unbinned=True
-        )
+    results = evt_list.get_poly_info()["coefficients"]
 
-        results = evt_list.get_poly_info()["coefficients"]
+    evt_list.set_active_time_intervals("0-1")
 
-        evt_list.set_active_time_intervals("0-1")
+    assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
 
-        assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
+    assert evt_list._poly_counts.sum() > 0
 
-        assert evt_list._poly_counts.sum() > 0
-
-        evt_list.__repr__()
+    evt_list.__repr__()
 
 
-def test_binned_fit():
-    with within_directory(datasets_dir):
-        start, stop = 0, 50
+def test_binned_fit(event_time_series):
+    
+    start, stop = 0, 50
 
-        poly = [1]
+    poly = [1]
 
-        arrival_times = np.loadtxt("test_event_data.txt")
+    arrival_times = event_time_series
 
-        evt_list = EventListWithDeadTime(
-            arrival_times=arrival_times,
-            measurement=np.zeros_like(arrival_times),
-            n_channels=1,
-            start_time=arrival_times[0],
-            stop_time=arrival_times[-1],
-            dead_time=np.zeros_like(arrival_times),
-        )
+    evt_list = EventListWithDeadTime(
+        arrival_times=arrival_times,
+        measurement=np.zeros_like(arrival_times),
+        n_channels=1,
+        start_time=arrival_times[0],
+        stop_time=arrival_times[-1],
+        dead_time=np.zeros_like(arrival_times),
+    )
 
-        evt_list.set_polynomial_fit_interval(
-            "%f-%f" % (start + 1, stop - 1), unbinned=False
-        )
+    evt_list.set_polynomial_fit_interval(
+        "%f-%f" % (start + 1, stop - 1), unbinned=False
+    )
 
-        evt_list.set_active_time_intervals("0-1")
+    evt_list.set_active_time_intervals("0-1")
 
-        results = evt_list.get_poly_info()["coefficients"]
+    results = evt_list.get_poly_info()["coefficients"]
 
-        assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
+    assert evt_list.time_intervals == TimeIntervalSet.from_list_of_edges([0, 1])
 
-        assert evt_list._poly_counts.sum() > 0
+    assert evt_list._poly_counts.sum() > 0
 
-        evt_list.__repr__()
+    evt_list.__repr__()

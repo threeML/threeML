@@ -218,7 +218,7 @@ class ApacheDirectory(object):
 
             opener = open
 
-        if threeML_config["interface"]["show_progress_bars"]:
+        if threeML_config["interface"]["progress_bars"]:
 
             # Set a title for the progress bar
             bar_title = "Downloading %s" % new_filename
