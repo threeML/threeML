@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache conda
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ~/conda_pkgs_dir
           key: conda-ubuntu-python-cache-3.7-${{ hashFiles('environment-ci.yml') }}
