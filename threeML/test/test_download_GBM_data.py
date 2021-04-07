@@ -1,7 +1,6 @@
 import shutil
 import os
 import pytest
-import os
 
 from threeML import *
 from threeML.io.network import internet_connection_is_active

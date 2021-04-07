@@ -148,7 +148,7 @@ def test_pagmo(joint_likelihood_bn090217206_nai):
 
 
 #@skip_if_ROOT_is_available
-#def _test_parallel_pagmo(joint_likelihood_bn090217206_nai):
+#def test_parallel_pagmo(joint_likelihood_bn090217206_nai):
 #
 #    with parallel_computation(start_cluster=False):
 #

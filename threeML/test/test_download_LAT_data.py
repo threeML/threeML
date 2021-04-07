@@ -1,7 +1,6 @@
 import shutil
 import os
 import pytest
-import os
 
 from threeML import *
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
