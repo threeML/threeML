@@ -41,6 +41,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    notebooks/Analysis_results_showcase.ipynb
    notebooks/random_variates.ipynb
    notebooks/Point_source_plotting.ipynb
+   notebooks/Building_Plugins_from_TimeSeries.ipynb
    notebooks/grb080916C.ipynb
    notebooks/joint_BAT_gbm_demo.ipynb
    notebooks/joint_fitting_xrt_and_gbm_xspec_models.ipynb
