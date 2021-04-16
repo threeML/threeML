@@ -55,7 +55,7 @@ pip install astromodels threeml
 ```bash
 conda  install astromodels threeml -c threeml conda-forge 
 ```
-Please refer to the [Installation instructions](https://threeml.readthedocs.io/en/latest/installation.html) for more details and trouble-shooting.
+Please refer to the [Installation instructions](https://threeml.readthedocs.io/en/stable/notebooks/installation.html) for more details and trouble-shooting.
 
 ## Press
 * [Software in development at Stanford advances the modeling of astronomical observations](https://news.stanford.edu/2017/12/07/software-advances-modeling-astronomical-observations/)
