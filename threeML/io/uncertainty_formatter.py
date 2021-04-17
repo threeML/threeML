@@ -1,14 +1,20 @@
 from __future__ import division
-from past.utils import old_div
-import uncertainties
+
 import re
+
 import numpy as np
+import uncertainties
+from past.utils import old_div
+
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 
 def interval_to_errors(value, low_bound, hi_bound):
     """
     Convert error intervals to errors
-    
+
     :param value: central value 
     :param low_bound: interval low bound
     :param hi_bound: interval high bound
@@ -29,20 +35,36 @@ def get_uncertainty_tokens(x):
     :return: number, error and exponent
     """
 
+    this_str = x.__str__()
+
+    is_inf = False
+    
+    if "inf" in this_str:
+        is_inf = True
+
+
+        this_str = this_str.replace("inf", "nan")
+        
+    
     try:
 
         number, uncertainty, exponent = re.match(
             "\(?(\-?[0-9]+\.?[0-9]*) ([0-9]+\.?[0-9]*)\)?(e[\+|\-][0-9]+)?",
-            x.__str__().replace("+/-", " ").replace("nan", "0"),
+            this_str.replace("+/-", " ").replace("nan", "0"),
         ).groups()
 
     except:
 
-        raise RuntimeError(
-            "Could not extract number, uncertainty and exponent from %s. "
-            "This is likely a bug." % x.__str__()
-        )
+        log.error(
+            f"Could not extract number, uncertainty and exponent from  {x.__str__()}. This is likely a bug.")
 
+        raise RuntimeError()
+
+    if is_inf:
+
+        uncertainty = "inf"
+
+    
     return number, uncertainty, exponent
 
 
@@ -65,6 +87,21 @@ def uncertainty_formatter(value, low_bound, hi_bound):
 
     error_m, error_p = interval_to_errors(value, low_bound, hi_bound)
 
+    error_p_is_nan = False
+    error_m_is_nan = False
+
+    if not np.isfinite(error_p):
+
+        log.warning(f"the positive uncertainty is not finite ")
+
+        error_p_is_nan = True
+
+    if not np.isfinite(error_m):
+
+        log.warning(f"the negative uncertainty is not finite ")
+
+        error_m_is_nan = True
+
     # Compute the sign of the errors
     # NOTE: sometimes value is not within low_bound - hi_bound, so these sign might not always
     # be -1 and +1 respectively
@@ -74,13 +111,17 @@ def uncertainty_formatter(value, low_bound, hi_bound):
 
     # Scale the values to the order of magnitude of the value
 
-    order_of_magnitude = max(
-        [
-            _order_of_magnitude(value),
-            _order_of_magnitude(error_m),
-            _order_of_magnitude(error_p),
-        ]
-    )
+    tmp = [_order_of_magnitude(value)]
+
+    if not error_m_is_nan:
+
+        tmp.append(_order_of_magnitude(error_m))
+
+    if not error_p_is_nan:
+
+        tmp.append(_order_of_magnitude(error_p))
+
+    order_of_magnitude = max(tmp)
 
     scaled_value = old_div(value, order_of_magnitude)
     scaled_error_m = old_div(error_m, order_of_magnitude)
