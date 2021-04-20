@@ -295,20 +295,20 @@ def test_gbm_workflow():
 def test_uncertainty_formatter():
 
 
-    uncertainty_formatter(1, -1, 2)
+    assert '1.0 -2.0 +1.0' == uncertainty_formatter(1, -1, 2)
 
-    uncertainty_formatter(1e3, -1, 2)
+    assert '(1.0 +/- 1.0) x 10^3' == uncertainty_formatter(1e3, -1, 2)
 
-    uncertainty_formatter(1, -1, np.nan)
+    assert '1.0 -2.0 +0' == uncertainty_formatter(1, -1, np.nan)
 
-    uncertainty_formatter(1, np.nan, 2)
+    assert '1.0 +0 +1.0' == uncertainty_formatter(1, np.nan, 2)
 
-    uncertainty_formatter(1, np.nan, np.nan)
+    assert  '1.0 +/- 0' == uncertainty_formatter(1, np.nan, np.nan)
 
 
-    uncertainty_formatter(1, -1, np.inf)
+    assert '1.0 -2.0 +inf' == uncertainty_formatter(1, -1, np.inf)
 
-    uncertainty_formatter(1, np.inf, 2)
+    assert '1.0 +inf +1.0' == uncertainty_formatter(1, np.inf, 2)
 
-    uncertainty_formatter(1, np.inf, np.inf)
+    assert '1.0 +/- inf' == uncertainty_formatter(1, np.inf, np.inf)
     
