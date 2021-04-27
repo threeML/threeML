@@ -103,13 +103,13 @@ class LikelihoodModelConverter(object):
 
         if source_name is None:
 
-            nPtsrc = self.likelihoodModel.get_number_of_point_sources()
+            nPtsrc = self.likelihood_model.get_number_of_point_sources()
 
             for ip in range(nPtsrc):
 
-                this_src = self._makeFileSpectrum(ip)
+                this_src = self._make_file_spectrum(ip)
 
-                allSourcesForPyLike.append(this_src)
+                all_sources_for_pylike.append(this_src)
                 temp_files.append(this_src.temp_file)
 
         else:
@@ -117,14 +117,14 @@ class LikelihoodModelConverter(object):
 
             log.info('Setting single point source %s ... ' % source_name)
 
-            index = self.likelihoodModel.point_sources.keys().index(source_name)
-            this_src = self._makeFileSpectrum(index)
-            allSourcesForPyLike.append(this_src)
+            index = self.likelihood_model.point_sources.keys().index(source_name)
+            this_src = self._make_file_spectrum(index)
+            all_sources_for_pylike.append(this_src)
 
             temp_files.append(this_src.temp_file)
 
         # Now the same for extended sources
-        nExtSrc = self.likelihoodModel.get_number_of_extended_sources()
+        nExtSrc = self.likelihood_model.get_number_of_extended_sources()
         if nExtSrc > 0:
             raise NotImplemented("Cannot support extended sources yet!")
 
@@ -359,7 +359,7 @@ class FermiLATLike(PluginPrototype):
     def set_model(self, likelihood_model, source_name=None):
         """
         Set the model to be used in the joint minimization.
-        Must be a LikelihoodModel instance.
+        Must be a likelihood_model instance.
 
         This method can also set or override a previously set source name.
         """
@@ -372,7 +372,7 @@ class FermiLATLike(PluginPrototype):
                       (self._source_name, source_name))
                 self._source_name = source_name
 
-            assert self._source_name in likelihoodModel.point_sources, (
+            assert self._source_name in likelihood_model.point_sources, (
                 'Source %s is not a source in the likelihood model! ' % self._source_name)
         
         self.lmc = LikelihoodModelConverter(likelihood_model, self.irf, source_name=self._source_name)
@@ -454,14 +454,14 @@ class FermiLATLike(PluginPrototype):
         energies = self.lmc.energies_kev
 
         if self._source_name is None:
-            for id, srcName in enumerate(self.likelihoodModel.point_sources.keys()):
+            for id, src_name in enumerate(self.likelihood_model.point_sources.keys()):
 
-                values = self.likelihoodModel.get_point_source_fluxes(
+                values = self.likelihood_model.get_point_source_fluxes(
                     id, energies, tag=self._tag
                 )
 
-                # on the second iteration, self.like doesn't have the second srcName defined so that needs to be carried from flags
-                gtlike_src_model = self.like[srcName]
+                # on the second iteration, self.like doesn't have the second src_name defined so that needs to be carried from flags
+                gtlike_src_model = self.like[src_name]
 
                 my_function = gtlike_src_model.getSrcFuncs()["Spectrum"]
                 my_file_function = pyLike.FileFunction_cast(my_function)
@@ -478,15 +478,15 @@ class FermiLATLike(PluginPrototype):
 
                 # TODO: extended sources
         else:
-            srcName = self._source_name
-            id = self.likelihoodModel.point_sources.keys().index(srcName)
+            src_name = self._source_name
+            id = self.likelihood_model.point_sources.keys().index(src_name)
 
-            values = self.likelihoodModel.get_point_source_fluxes(
+            values = self.likelihood_model.get_point_source_fluxes(
                 id, energies, tag=self._tag
             )
 
-            # on the second iteration, self.like doesn't have the second srcName defined so that needs to be carried from flags
-            gtlike_src_model = self.like[srcName]
+            # on the second iteration, self.like doesn't have the second src_name defined so that needs to be carried from flags
+            gtlike_src_model = self.like[src_name]
 
             my_function = gtlike_src_model.getSrcFuncs()["Spectrum"]
             my_file_function = pyLike.FileFunction_cast(my_function)
@@ -632,12 +632,12 @@ class FermiLATLike(PluginPrototype):
     def _set_nuisance_parameters(self):
 
         # Get the list of the sources
-        sources = list(self._like.model.srcNames)
+        sources = list(self.like.model.srcNames)
 
         free_param_names = []
         for src_name in sources:
             thisNamesV = pyLike.StringVector()
-            thisSrc = self._like.logLike.getSource(src_name)
+            thisSrc = self.like.logLike.getSource(src_name)
             thisSrc.spectrum().getFreeParamNames(thisNamesV)
             thisNames = map(lambda x: "%s_%s" % (src_name, x), thisNamesV)
             free_param_names.extend(thisNames)
@@ -673,13 +673,13 @@ class FermiLATLike(PluginPrototype):
 
         src = "_".join(tokens[:-1])
 
-        like_src = self._like.model[src]
+        like_src = self.like.model[src]
 
         if like_src is None:
 
             src = "_".join(tokens[1:-1])
 
-            like_src = self._like.model[src]
+            like_src = self.like.model[src]
 
         assert like_src is not None
 
