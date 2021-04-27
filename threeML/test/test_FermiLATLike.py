@@ -29,9 +29,9 @@ skip_if_LAT_is_not_available = pytest.mark.skipif(not has_Fermi,
                                                   )
 
 
-#@skip_if_internet_is_not_available
+@skip_if_internet_is_not_available
 #@pytest.mark.xfail
-#@skip_if_LAT_is_not_available
+@skip_if_LAT_is_not_available
 def test_make_LAT_dataset():
 
     trigger_time=243216766

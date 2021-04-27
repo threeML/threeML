@@ -586,14 +586,14 @@ def make_LAT_dataset(ra: float,
                      Emin: float = 30.,
                      Emax: float = 1000000.):
     import datetime
-    from GtBurst import dataHandling
+    from GtBurst.dataHandling import met2date,_makeDatasetsOutOfLATdata
 
     metdate = 239241601
 
     if tstart>metdate: assert("Start time must bge relative to triggertime")
     if tstop>metdate:  assert("Stop time must bge relative to triggertime")
 
-    grb_name = dataHandling.met2date(trigger_time, opt='grbname')
+    grb_name = met2date(trigger_time, opt='grbname')
 
     destination_directory = os.path.join(destination_directory,'bn%s' % grb_name)
 
@@ -620,7 +620,7 @@ def make_LAT_dataset(ra: float,
 
         os.rename(str(ft2), new_ft2 )
 
-    dataHandling._makeDatasetsOutOfLATdata(new_ft1, new_ft2,
+    _makeDatasetsOutOfLATdata(new_ft1, new_ft2,
                                            grb_name,
                                            tstart, tstop,
                                            ra, dec,
