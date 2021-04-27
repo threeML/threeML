@@ -11,10 +11,10 @@ import shutil
 import yaml
 
 try:
-    #from GtBurst import IRFS
+    from GtBurst import IRFS
     from GtBurst.Configuration import Configuration
 
-    #irfs = IRFS.IRFS.keys()
+    irfs = IRFS.IRFS.keys()
     #irfs.append('auto')
 
     configuration = Configuration()
