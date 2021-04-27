@@ -1,44 +1,62 @@
 #!/bin/bash
 
+# Make sure we fail in case of errors
+set -e
+
 # Process options
 INSTALL_XSPEC="no"
-INSTALL_XS_LITE="no"
 INSTALL_ROOT="no"
+INSTALL_FERMI="no"
 BATCH="no"
+PYTHON_VERSION="3.7"
+ENV_NAME="threeML"
 
 while [ "${1:-}" != "" ]; do
     case "$1" in
       "--with-xspec")
         INSTALL_XSPEC="yes"
         ;;
-      "--with-xspec-lite")
-        INSTALL_XS_LITE="yes"
-        ;;
       "--with-root")
         INSTALL_ROOT="yes"
+        ;;
+      "--with-fermi")
+        INSTALL_FERMI="yes"
         ;;
       "--batch")
         BATCH="yes"
         ;;
+      "--python")
+        PYTHON_VERSION="$2"
+        ;;
+      "--env-name")
+        ENV_NAME="$2"
+        ;;
       "-h" | "--help")
-        echo "install_3ML.sh [--with-xspec] [--with-root] [-h] [--help] [--batch]" && exit 0
+        echo "install_3ML.sh [--with-xspec] [--with-root] [--with-fermi] [--python {2.7 or 3.7}] [--env-name NAME] [-h] [--help] [--batch]" && exit 0
         ;;
     esac
     shift
   done
 
-# (xspec-lite is an hidden option on purpose, it is only meant to be used by Travis)
+if [[ ${PYTHON_VERSION} != "2.7" ]] && [[ ${PYTHON_VERSION} != "3.7" ]]; then 
+    echo "WARNING: python version should 2.7 or 3.7. Setting to 3.7..."
+    export PYTHON_VERSION="3.7"
+fi
 
+echo ""
 echo "Options:"
 echo "--------"
 echo "Installing xspec:                              "${INSTALL_XSPEC}
-echo "Installing root :                              "${INSTALL_ROOT}
+echo "Installing root:                               "${INSTALL_ROOT}
+echo "Installing fermi:                              "${INSTALL_FERMI}
 echo "Batch execution (assume yes to all questions): "${BATCH}
+echo "Python version:                                "${PYTHON_VERSION}
+echo "Conda environment name:                        "${ENV_NAME}
 echo ""
 
 # Make a small download script in Python to avoid dependencies on 
 # utilities such as wget
-rm __download.py >& /dev/null
+#rm __download.py >& /dev/null
 
 cat > __download.py <<- EOM
 import sys
@@ -118,13 +136,13 @@ install_conda() {
             
             # Linux
             
-            python __download.py https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh Miniconda2-latest.sh
+            python __download.py https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh Miniconda3-latest.sh
     
     elif [[ "$os_guessed" == "osx" ]]; then
             
             # Mac OSX
             
-            python __download.py https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh Miniconda2-latest.sh
+            python __download.py https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh Miniconda3-latest.sh
             
             
     else
@@ -137,7 +155,7 @@ install_conda() {
             
     fi
     
-    if bash Miniconda2-latest.sh -p ~/miniconda2 -b -u ; then
+    if bash Miniconda3-latest.sh -p ~/miniconda3 -b -u ; then
     
         echo "Installation of Conda successful"
     
@@ -149,7 +167,7 @@ install_conda() {
     
     fi
     
-    rm -rf Miniconda2-latest.sh
+    rm -rf Miniconda3-latest.sh
     
 }
 
@@ -166,7 +184,7 @@ export PATH=${PATH}
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
-source activate threeML
+source activate ${ENV_NAME}
 
 EOM
 
@@ -178,7 +196,7 @@ setenv NUMEXPR_NUM_THREADS 1
 setenv CONDA_ENVS_PATH $(conda info | grep "envs directories" | cut -f2 -d":" )
 
 source ${CONDA_PREFIX}/bin/deactivate.csh >& /dev/null
-source ${CONDA_PREFIX}/bin/activate.csh threeML
+source ${CONDA_PREFIX}/bin/activate.csh ${ENV_NAME}
 
 EOM
  
@@ -201,7 +219,7 @@ if conda --version >& /dev/null ; then
     
     # Gather conda default environment path
     
-    conda_path=$(conda info | grep "default environment" | cut -f2 -d":" | cut -f2 -d" ")
+    conda_path=$(conda info | grep "base environment" | cut -f2 -d":" | cut -f2 -d" ")
     
     echo "Found an already existing installation of conda in ${conda_path}"
 
@@ -227,7 +245,7 @@ else
     
     # If we are here, we need to install conda
     
-    conda_path=${HOME}/miniconda2
+    conda_path=${HOME}/miniconda
     
     install_conda
     
@@ -237,33 +255,48 @@ line
 echo "Installing 3ML"
 line
 
-PACKAGES_TO_INSTALL="threeml"
+export PATH=${conda_path}/bin:${PATH}
+
+source $conda_path/etc/profile.d/conda.sh
+conda deactivate
+
+conda config --add channels defaults
+
+conda config --add channels threeml
+
+conda config --add channels conda-forge
+
+PACKAGES_TO_INSTALL="astromodels>=2 threeml>=2 iminuit>=2"
 
 if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
 
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly"
-
-fi
-
-if [[ "${INSTALL_XS_LITE}" == "yes" ]]; then
-
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly-lite"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly=6.25"
+    conda config --add channels xspecmodels
 
 fi
 
 if [[ "${INSTALL_ROOT}" == "yes" ]]; then
 
-    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} root5"
+    PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} root=6.22"
+
+fi
+
+if [[ "${INSTALL_FERMI}" == "yes" ]]; then
+
+    if [[ $PYTHON_VERSION == "2.7" ]]; then
+        conda config --add channels fermi/label/master
+        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools=1.4 clhep=2.4.1.0"
+    else
+        conda config --add channels fermi
+        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2 root=6.22.2 astropy=3.2.3 fermipy>=1"
+    fi
+    
 
 fi
 
 # Now we have conda installed, let's install 3ML
 
-export PATH=${conda_path}/bin:${PATH}
-
-source deactivate
-
-conda create --name threeML -y -c conda-forge -c threeml python=2.7 numpy scipy matplotlib ${PACKAGES_TO_INSTALL}
+conda create --yes --name ${ENV_NAME} python=$PYTHON_VERSION ${PACKAGES_TO_INSTALL}
 
 line
 echo "Generating setup scripts"
@@ -445,9 +478,16 @@ which python
 python --version
 EOM
 
-source activate threeML
+conda activate ${ENV_NAME}
+
+# Fix needed to solve the "readinto" AttributeError due to older future package
+#conda install --yes -c conda-forge future
 
 mv activate.csh $CONDA_PREFIX/bin
 mv deactivate.csh $CONDA_PREFIX/bin
 
-source deactivate
+conda deactivate
+
+line
+echo "Done"
+line

@@ -1,3 +1,6 @@
+from __future__ import division
+from past.utils import old_div
+from builtins import object
 from threeML.plugin_prototype import PluginPrototype
 from threeML.exceptions.custom_exceptions import custom_warnings
 
@@ -10,11 +13,14 @@ import matplotlib.pyplot as plt
 
 
 class IntervalContainer(object):
-
-    def __init__(self, start, stop, parameter_values, likelihood_values, n_integration_points):
+    def __init__(
+        self, start, stop, parameter_values, likelihood_values, n_integration_points
+    ):
 
         # Make sure there is no NaN or infinity
-        assert np.all(np.isfinite(likelihood_values)), "Infinity or NaN in likelihood values"
+        assert np.all(
+            np.isfinite(likelihood_values)
+        ), "Infinity or NaN in likelihood values"
 
         likelihood_values = np.asarray(likelihood_values)
         parameter_values = np.asarray(parameter_values)
@@ -23,21 +29,23 @@ class IntervalContainer(object):
         self._stop = stop
 
         # Make sure the number of integration points is uneven, and that there are at minimum 11 points
-        #n_integration_points = max(int(n_integration_points), 11)
+        # n_integration_points = max(int(n_integration_points), 11)
 
         if n_integration_points % 2 == 0:
 
             # n_points is even, it shouldn't be otherwise things like Simpson rule will have problems
             n_integration_points += 1
 
-            custom_warnings.warn("The number of integration points should not be even. Adding +1")
+            custom_warnings.warn(
+                "The number of integration points should not be even. Adding +1"
+            )
 
         self._n_integration_points = int(n_integration_points)
 
         # Build interpolation of the likelihood curve
-        self._minus_likelihood_interp = scipy.interpolate.InterpolatedUnivariateSpline(np.log10(parameter_values),
-                                                                                       -likelihood_values,
-                                                                                       k=1, ext=0)
+        self._minus_likelihood_interp = scipy.interpolate.InterpolatedUnivariateSpline(
+            np.log10(parameter_values), -likelihood_values, k=1, ext=0
+        )
 
         # Find maximum of loglike
         idx = likelihood_values.argmax()
@@ -45,10 +53,12 @@ class IntervalContainer(object):
         self._min_par_value = parameter_values.min()
         self._max_par_value = parameter_values.max()
 
-        res = scipy.optimize.minimize_scalar(self._minus_likelihood_interp,
-                                      bounds=(np.log10(self._min_par_value), np.log10(self._max_par_value)),
-                                      method='bounded',
-                                      options={'maxiter': 10000, 'disp': True, 'xatol': 1e-3})
+        res = scipy.optimize.minimize_scalar(
+            self._minus_likelihood_interp,
+            bounds=(np.log10(self._min_par_value), np.log10(self._max_par_value)),
+            method="bounded",
+            options={"maxiter": 10000, "disp": True, "xatol": 1e-3},
+        )
 
         # res = scipy.optimize.minimize(self._minus_likelihood_interp, x0=[np.log10(parameter_values[idx])],
         #                               jac=lambda x:self._minus_likelihood_interp.derivative(1)(x),
@@ -59,7 +69,7 @@ class IntervalContainer(object):
 
         assert res.success, "Could not find minimum"
 
-        self._minimum = (10**res.x, float(res.fun))
+        self._minimum = (10 ** res.x, float(res.fun))
 
     @property
     def start(self):
@@ -77,11 +87,20 @@ class IntervalContainer(object):
 
         return -self._minus_likelihood_interp(np.log10(parameter_value))
 
-    def get_measurement(self, delta_log_like=0.5, ul_log_like=2.71/2.0,
-                        low_bound_extreme=0.0, hi_bound_extreme=np.inf):
+    def get_measurement(
+        self,
+        delta_log_like=0.5,
+        ul_log_like=2.71 / 2.0,
+        low_bound_extreme=0.0,
+        hi_bound_extreme=np.inf,
+    ):
 
         # Find when the likelihood changes by delta_log_like unit
-        bounding_f = lambda x: self._minus_likelihood_interp(np.log10(x)) - self._minimum[1] - delta_log_like
+        bounding_f = (
+            lambda x: self._minus_likelihood_interp(np.log10(x))
+            - self._minimum[1]
+            - delta_log_like
+        )
 
         if bounding_f(self._min_par_value) <= 0:
 
@@ -92,8 +111,9 @@ class IntervalContainer(object):
         else:
 
             # Look for negative bound using BRENTQ
-            low_bound_cl, res = scipy.optimize.brentq(bounding_f, self._min_par_value, self._minimum[0],
-                                                      full_output=True)
+            low_bound_cl, res = scipy.optimize.brentq(
+                bounding_f, self._min_par_value, self._minimum[0], full_output=True
+            )
 
             assert res.converged, "Could not find lower bound"
 
@@ -108,11 +128,16 @@ class IntervalContainer(object):
             # If there was no lower limit, then compute upper bound for 95% confidence
             if low_bound_cl == low_bound_extreme:
 
-                bounding_f = lambda x: self._minus_likelihood_interp(np.log10(x)) - self._minimum[1] - ul_log_like
+                bounding_f = (
+                    lambda x: self._minus_likelihood_interp(np.log10(x))
+                    - self._minimum[1]
+                    - ul_log_like
+                )
 
             # Look for positive bound using BRENTQ
-            hi_bound_cl, res = scipy.optimize.brentq(bounding_f, self._minimum[0], self._max_par_value,
-                                                     full_output=True)
+            hi_bound_cl, res = scipy.optimize.brentq(
+                bounding_f, self._minimum[0], self._max_par_value, full_output=True
+            )
 
             assert res.converged, "Could not find upper bound"
 
@@ -120,10 +145,9 @@ class IntervalContainer(object):
 
 
 class CastroLike(PluginPrototype):
-
     def __init__(self, name, interval_containers):
 
-        self._interval_containers = sorted(interval_containers, key=lambda x:x.start)
+        self._interval_containers = sorted(interval_containers, key=lambda x: x.start)
 
         # By default all containers are active
         self._active_containers = self._interval_containers
@@ -146,9 +170,13 @@ class CastroLike(PluginPrototype):
         # Loop over the active containers and fill the list
         for container in self._active_containers:
 
-            xxs.append(np.logspace(np.log10(container.start),
-                                   np.log10(container.stop),
-                                   container.n_integration_points))
+            xxs.append(
+                np.logspace(
+                    np.log10(container.start),
+                    np.log10(container.stop),
+                    container.n_integration_points,
+                )
+            )
 
             total_n += container.n_integration_points
 
@@ -156,7 +184,9 @@ class CastroLike(PluginPrototype):
 
         all_xx = np.concatenate(xxs)
 
-        assert all_xx.shape[0] == total_n, "One or more containers are overlapping. This is not supported."
+        assert (
+            all_xx.shape[0] == total_n
+        ), "One or more containers are overlapping. This is not supported."
 
         return all_xx, np.split(all_xx, splits), splits
 
@@ -177,11 +207,11 @@ class CastroLike(PluginPrototype):
 
     @property
     def start(self):
-        return min(map(lambda x: x.start, self._active_containers))
+        return min([x.start for x in self._active_containers])
 
     @property
     def stop(self):
-        return max(map(lambda x: x.stop, self._active_containers))
+        return max([x.stop for x in self._active_containers])
 
     @property
     def active_containers(self):
@@ -203,7 +233,9 @@ class CastroLike(PluginPrototype):
         log_l = 0.0
 
         # Evaluate once for all
-        all_yy = np.split(self._likelihood_model.get_total_flux(self._all_xx), self._splits)
+        all_yy = np.split(
+            self._likelihood_model.get_total_flux(self._all_xx), self._splits
+        )
 
         for i, interval_container in enumerate(self._active_containers):
 
@@ -220,14 +252,13 @@ class CastroLike(PluginPrototype):
 
             length = interval_container.stop - interval_container.start
 
-            expected_flux = scipy.integrate.simps(yy, xx) / length
+            expected_flux = old_div(scipy.integrate.simps(yy, xx), length)
 
             this_log_l = interval_container(expected_flux)
 
             log_l += this_log_l
 
         return log_l
-
 
     def inner_fit(self):
         """
@@ -285,9 +316,18 @@ class CastroLike(PluginPrototype):
 
                 uls_yerrs.append(dy)
 
-        sub.errorbar(xs, ys, xerr=xerrs, yerr=yerrs, fmt=',', ecolor=color, mfc=color)
+        sub.errorbar(xs, ys, xerr=xerrs, yerr=yerrs, fmt=",", ecolor=color, mfc=color)
 
-        sub.errorbar(uls_xs, uls_ys, xerr=uls_xerrs, yerr=uls_yerrs, uplims=True, fmt=',', ecolor=color, mfc=color)
+        sub.errorbar(
+            uls_xs,
+            uls_ys,
+            xerr=uls_xerrs,
+            yerr=uls_yerrs,
+            uplims=True,
+            fmt=",",
+            ecolor=color,
+            mfc=color,
+        )
 
         xxs = np.append(xs, uls_xs)
         xxerrs = np.append(xerrs, uls_xerrs)
@@ -312,7 +352,7 @@ class CastroLike(PluginPrototype):
 
                 sub = fig.axes[0]
 
-        xs, xerrs = self._plot(self._active_containers, sub, 'blue')
+        xs, xerrs = self._plot(self._active_containers, sub, "blue")
 
         # Find out which containers are not active
         inactive_containers = []
@@ -325,7 +365,7 @@ class CastroLike(PluginPrototype):
 
         if len(inactive_containers) > 0:
 
-            self._plot(inactive_containers, sub, 'gray')
+            self._plot(inactive_containers, sub, "gray")
 
         sub.set_xscale("log")
         sub.set_yscale("log")
@@ -338,12 +378,14 @@ class CastroLike(PluginPrototype):
             min_idx = xs.argmin()
             max_idx = xs.argmax()
 
-            xx = np.logspace(np.log10(xs[min_idx] - xerrs[min_idx]),
-                             np.log10(xs[max_idx] + xerrs[max_idx]),
-                             n_points)
+            xx = np.logspace(
+                np.log10(xs[min_idx] - xerrs[min_idx]),
+                np.log10(xs[max_idx] + xerrs[max_idx]),
+                n_points,
+            )
 
             yy = self._likelihood_model.get_total_flux(xx)
 
-            _ = sub.plot(xx, yy, linestyle='--', color='red')
+            _ = sub.plot(xx, yy, linestyle="--", color="red")
 
         return fig

@@ -1,12 +1,24 @@
-import urllib
-import os
-import astropy.time as astro_time
-import datetime
-import astropy.io.votable as votable
-from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make, file_existing_and_readable
-import warnings
-import yaml
+from pathlib import Path
+from typing import Union
 import codecs
+import datetime
+import os
+import urllib.error
+import urllib.parse
+import urllib.request
+import warnings
+from builtins import map
+
+import astropy.io.votable as votable
+import astropy.time as astro_time
+import yaml
+
+from threeML.io.file_utils import (file_existing_and_readable,
+                                   if_directory_not_existing_then_make,
+                                   sanitize_filename)
+from threeML.io.logging import setup_logger
+
+log = setup_logger(__name__)
 
 
 def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_days=1):
@@ -33,45 +45,51 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     # point to the cache directory and create it if it is not existing
 
-    cache_directory = os.path.join(os.path.expanduser('~'), '.threeML', '.cache')
-
+    cache_directory: Path = Path("~/.threeML/.cache").expanduser()
+    
     if_directory_not_existing_then_make(cache_directory)
 
-    cache_file = os.path.join(cache_directory, '%s_cache.yml' % heasarc_table_name)
+    cache_file = cache_directory /  f"{heasarc_table_name}_cache.yml"
 
     cache_file_sanatized = sanitize_filename(cache_file)
 
     # build and sanitize the votable XML file that will be saved
 
-    file_name = os.path.join(cache_directory, '%s_votable.xml' % heasarc_table_name)
+    file_name = cache_directory / f"{heasarc_table_name}_votable.xml"
 
     file_name_sanatized = sanitize_filename(file_name)
 
     if not file_existing_and_readable(cache_file_sanatized):
 
-        print("The cache for %s does not yet exist. We will try to build it\n" % heasarc_table_name)
+        log.info(
+            "The cache for %s does not yet exist. We will try to build it\n"
+            % heasarc_table_name
+        )
 
         write_cache = True
         cache_exists = False
 
-
     else:
 
-        with open(cache_file_sanatized) as cache:
+        with cache_file_sanatized.open() as cache:
 
             # the cache file is two lines. The first is a datetime string that
             # specifies the last time the XML file was obtained
 
-            yaml_cache = yaml.safe_load(cache)
+            yaml_cache = yaml.load(cache, Loader=yaml.SafeLoader)
 
-            cached_time = astro_time.Time(datetime.datetime(*map(int, yaml_cache['last save'].split('-'))))
+            cached_time = astro_time.Time(
+                datetime.datetime(
+                    *list(map(int, yaml_cache["last save"].split("-"))))
+            )
 
             # the second line how many seconds to keep the file around
 
-            cache_valid_for = float(yaml_cache['cache time'])
+            cache_valid_for = float(yaml_cache["cache time"])
 
             # now we will compare it to the current time in UTC
-            current_time = astro_time.Time(datetime.datetime.utcnow(), scale='utc')
+            current_time = astro_time.Time(
+                datetime.datetime.utcnow(), scale="utc")
 
             delta_time = current_time - cached_time
 
@@ -91,58 +109,84 @@ def get_heasarc_table_as_pandas(heasarc_table_name, update=False, cache_time_day
 
     if write_cache or update:
 
-        print("Building cache for %s.\n" % heasarc_table_name)
+        log.info(f"Building cache for {heasarc_table_name}")
 
         # go to HEASARC and get the requested table
-        heasarc_url = 'http://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=%s' % heasarc_table_name
+        heasarc_url = (
+            "http://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=%s"
+            % heasarc_table_name
+        )
 
         try:
 
-            urllib.urlretrieve(heasarc_url, filename=file_name_sanatized)
+            urllib.request.urlretrieve(
+                heasarc_url, filename=file_name_sanatized)
 
-        except(IOError):
+        except (IOError):
 
-            warnings.warn('The cache is outdated but the internet cannot be reached. Please check your connection')
+            log.warning(
+                "The cache is outdated but the internet cannot be reached. Please check your connection"
+            )
 
         else:
 
-            # Make sure the lines are interpreted as Unicode (otherwise some characters will fail)
-            with open(file_name_sanatized) as table_file:
+            # # Make sure the lines are interpreted as Unicode (otherwise some characters will fail)
+            with file_name_sanatized.open() as table_file:
 
-                new_lines = map(lambda x: x.decode("utf-8", errors="ignore"), table_file.readlines())
+                # might have to add this in for back compt J MICHAEL
+
+                # new_lines = [x. for x in table_file.readlines()]
+
+                new_lines = table_file.readlines()
 
             # now write the decoded lines back to the file
             with codecs.open(file_name_sanatized, "w+", "utf-8") as table_file:
 
                 table_file.write("".join(new_lines))
 
-            # save the time that we go this table
+            #        save the time that we go this table
 
-            with open(cache_file_sanatized, 'w') as cache:
+            with open(cache_file_sanatized, "w") as cache:
 
                 yaml_dict = {}
 
-                current_time = astro_time.Time(datetime.datetime.utcnow(), scale='utc')
+                current_time = astro_time.Time(
+                    datetime.datetime.utcnow(), scale="utc")
 
-                yaml_dict['last save'] = current_time.datetime.strftime('%Y-%m-%d-%H-%M-%S')
+                yaml_dict["last save"] = current_time.datetime.strftime(
+                    "%Y-%m-%d-%H-%M-%S"
+                )
 
-                seconds_in_day = 86400.
+                seconds_in_day = 86400.0
 
-                yaml_dict['cache time'] = seconds_in_day * cache_time_days
+                yaml_dict["cache time"] = seconds_in_day * cache_time_days
 
                 yaml.dump(yaml_dict, stream=cache, default_flow_style=False)
 
     # use astropy routines to read the votable
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        vo_table = votable.parse(file_name_sanatized)
+        vo_table = votable.parse(str(file_name_sanatized))
 
     table = vo_table.get_first_table().to_table(use_names_over_ids=True)
 
-    # create a pandas table indexed by name
+    if table is not None:
 
-    pandas_df = table.to_pandas().set_index('name')
+        # make sure we do not use this as byte code
+        table.convert_bytestring_to_unicode()
 
-    del vo_table
+        # create a pandas table indexed by name
 
-    return pandas_df
+        pandas_df = table.to_pandas().set_index("name")
+
+        del vo_table
+
+        return pandas_df
+
+    else:
+
+        log.error("Your search did not return any results")
+
+        del vo_table
+
+        return None

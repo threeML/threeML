@@ -1,10 +1,18 @@
+import numba as nb
 import numpy as np
 
-from threeML.io.progress_bar import progress_bar
-from threeML.utils.bayesian_blocks import bayesian_blocks, bayesian_blocks_not_unique
+from threeML.config.config import threeML_config
+from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.logging import setup_logger
+from threeML.utils.bayesian_blocks import (bayesian_blocks,
+                                           bayesian_blocks_not_unique)
+from threeML.utils.numba_utils import VectorFloat64, VectorInt64
+from threeML.utils.progress_bar import tqdm
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
-from threeML.exceptions.custom_exceptions import custom_warnings
+
+log = setup_logger(__name__)
+
 
 class NotEnoughData(RuntimeError):
     pass
@@ -24,15 +32,21 @@ class Rebinner(object):
         total = np.sum(vector_to_rebin_on)
 
         if total < min_value_per_bin:
-            raise NotEnoughData("Vector total is %s, cannot rebin at %s per bin" % (total, min_value_per_bin))
+
+            log.error("Vector total is %s, cannot rebin at %s per bin"
+                      % (total, min_value_per_bin))
+
+            raise NotEnoughData()
 
         # Check if we have a mask, if not prepare a empty one
         if mask is not None:
 
             mask = np.array(mask, bool)
 
-            assert mask.shape[0] == len(vector_to_rebin_on), "The provided mask must have the same number of " \
-                                                             "elements as the vector to rebin on"
+            assert mask.shape[0] == len(vector_to_rebin_on), (
+                "The provided mask must have the same number of "
+                "elements as the vector to rebin on"
+            )
 
         else:
 
@@ -124,10 +138,18 @@ class Rebinner(object):
         if bin_open:
             self._stops.append(len(vector_to_rebin_on))
 
-        assert len(self._starts) == len(self._stops), "This is a bug: the starts and stops of the bins are not in " \
-                                                      "equal number"
+        assert len(self._starts) == len(self._stops), (
+            "This is a bug: the starts and stops of the bins are not in " "equal number"
+        )
 
         self._min_value_per_bin = min_value_per_bin
+
+        self._n_bins = len(self._starts)
+        self._starts = np.array(self._starts)
+        self._stops = np.array(self._stops)
+
+        log.debug(
+            f"Vector was rebinned from {len(vector_to_rebin_on)} to {self._n_bins}")
 
     @property
     def n_bins(self):
@@ -137,7 +159,7 @@ class Rebinner(object):
         :return:
         """
 
-        return len(self._starts)
+        return self._n_bins
 
     @property
     def grouping(self):
@@ -150,26 +172,22 @@ class Rebinner(object):
 
         for vector in vectors:
 
-            assert len(vector) == len(self._mask), "The vector to rebin must have the same number of elements of the" \
-                                                   "original (not-rebinned) vector"
+            assert len(vector) == len(self._mask), (
+                "The vector to rebin must have the same number of elements of the"
+                "original (not-rebinned) vector"
+            )
 
             # Transform in array because we need to use the mask
-            vector_a = np.array(vector)
 
-            rebinned_vector = []
+            if vector.dtype == np.int64:
 
-            for low_bound, hi_bound in zip(self._starts, self._stops):
+                rebinned_vectors.append(_rebin_vector_int(
+                    vector, self._starts, self._stops, self._mask, self._n_bins))
 
-                rebinned_vector.append(np.sum(vector_a[low_bound:hi_bound]))
+            else:
 
-            # Vector might not contain counts, so we use a relative comparison to check that we didn't miss
-            # anything.
-            # NOTE: we add 1e-100 because if both rebinned_vector and vector_a contains only 0, the check would
-            # fail when it shouldn't
-
-            assert abs((np.sum(rebinned_vector) + 1e-100) / (np.sum(vector_a[self._mask]) + 1e-100) - 1) < 1e-4
-
-            rebinned_vectors.append(np.array(rebinned_vector))
+                rebinned_vectors.append(_rebin_vector_float(
+                    vector, self._starts, self._stops, self._mask, self._n_bins))
 
         return rebinned_vectors
 
@@ -189,14 +207,17 @@ class Rebinner(object):
 
         for vector in vectors:  # type: np.ndarray[np.ndarray]
 
-            assert len(vector) == len(self._mask), "The vector to rebin must have the same number of elements of the" \
-                                                   "original (not-rebinned) vector"
+            assert len(vector) == len(self._mask), (
+                "The vector to rebin must have the same number of elements of the"
+                "original (not-rebinned) vector"
+            )
 
             rebinned_vector = []
 
             for low_bound, hi_bound in zip(self._starts, self._stops):
 
-                rebinned_vector.append(np.sqrt(np.sum(vector[low_bound:hi_bound] ** 2)))
+                rebinned_vector.append(
+                    np.sqrt(np.sum(vector[low_bound:hi_bound] ** 2)))
 
             rebinned_vectors.append(np.array(rebinned_vector))
 
@@ -204,7 +225,8 @@ class Rebinner(object):
 
     def get_new_start_and_stop(self, old_start, old_stop):
 
-        assert len(old_start) == len(self._mask) and len(old_stop) == len(self._mask)
+        assert len(old_start) == len(self._mask) and len(
+            old_stop) == len(self._mask)
 
         new_start = np.zeros(len(self._starts))
         new_stop = np.zeros(len(self._starts))
@@ -215,41 +237,6 @@ class Rebinner(object):
 
         return new_start, new_stop
 
-        # def save_active_measurements(self, mask):
-        #     """
-        #     Saves the set active measurements so that they can be restored if the binning is reset.
-        #
-        #
-        #     Returns:
-        #         none
-        #
-        #     """
-        #
-        #     self._saved_mask = mask
-        #     self._saved_idx = np.array(slice_disjoint((mask).nonzero()[0])).T
-        #
-        # @property
-        # def saved_mask(self):
-        #
-        #     return self._saved_mask
-        #
-        # @property
-        # def saved_selection(self):
-        #
-        #     return self._saved_idx
-        #
-        # @property
-        # def min_counts(self):
-        #
-        #     return self._min_value_per_bin
-        #
-        # @property
-        # def edges(self):
-        #
-        #     # return the low and high bins
-        #     return np.array(self._edges[:-1]) + 1, np.array(self._edges[1:])
-
-
 
 class TemporalBinner(TimeIntervalSet):
     """
@@ -258,7 +245,16 @@ class TemporalBinner(TimeIntervalSet):
     """
 
     @classmethod
-    def bin_by_significance(cls, arrival_times, background_getter, background_error_getter=None, sigma_level=10, min_counts=1, tstart=None, tstop=None):
+    def bin_by_significance(
+        cls,
+        arrival_times,
+        background_getter,
+        background_error_getter=None,
+        sigma_level=10,
+        min_counts=1,
+        tstart=None,
+        tstop=None,
+    ):
         """
 
         Bin the data to a given significance level for a given background method and sigma
@@ -272,8 +268,6 @@ class TemporalBinner(TimeIntervalSet):
 
         :return:
         """
-
-
 
         if tstart is None:
 
@@ -314,15 +308,19 @@ class TemporalBinner(TimeIntervalSet):
 
         # first we need to see if the interval provided has enough counts
 
-        _, counts = TemporalBinner._select_events(arrival_times,current_start, arrival_times[-1])
+        _, counts = TemporalBinner._select_events(
+            arrival_times, current_start, arrival_times[-1]
+        )
 
         # if it does not, the flag for the big loop never gets set
-        end_all_search = not TemporalBinner._check_exceeds_sigma_interval(current_start,
-                                                                arrival_times[-1],
-                                                                counts,
-                                                                sigma_level,
-                                                                background_getter,
-                                                                background_error_getter)
+        end_all_search = not TemporalBinner._check_exceeds_sigma_interval(
+            current_start,
+            arrival_times[-1],
+            counts,
+            sigma_level,
+            background_getter,
+            background_error_getter,
+        )
 
         # We will start the search at the mid point of the whole interval
 
@@ -340,138 +338,153 @@ class TemporalBinner(TimeIntervalSet):
         # this is the main loop
         # as long as we have not reached the end of the interval
         # the loop will run
-        with progress_bar(arrival_times.shape[0]) as pbar:
-            while (not end_all_search):
 
-                # start of the fast search
-                # we reset the flag for the interval
-                # having been decreased in the last pass
-                decreased_interval = False
+        if threeML_config.interface.progress_bars:
 
-                while (not end_fast_search):
+            pbar = tqdm(
+                total=arrival_times.shape[0], desc="Binning by significance")
 
-                    # we calculate the sigma of the current region
-                    _, counts = TemporalBinner._select_events(arrival_times,current_start, current_stop)
+        while not end_all_search:
 
-                    sigma_exceeded = TemporalBinner._check_exceeds_sigma_interval(current_start,
-                                                                        current_stop,
-                                                                        counts,
-                                                                        sigma_level,
-                                                                        background_getter,
-                                                                        background_error_getter)
+            # start of the fast search
+            # we reset the flag for the interval
+            # having been decreased in the last pass
+            decreased_interval = False
 
-                    time_step = abs(current_stop - current_start)
+            while not end_fast_search:
 
-                    # if we do not exceed the sigma
-                    # we need to increase the time interval
-                    if not sigma_exceeded:
+                # we calculate the sigma of the current region
+                _, counts = TemporalBinner._select_events(
+                    arrival_times, current_start, current_stop
+                )
 
-                        # however, if in the last pass we had to decrease
-                        # the interval, it means we have found where we
-                        # we need to start the slow search
-                        if decreased_interval:
+                sigma_exceeded = TemporalBinner._check_exceeds_sigma_interval(
+                    current_start,
+                    current_stop,
+                    counts,
+                    sigma_level,
+                    background_getter,
+                    background_error_getter,
+                )
 
-                            # mark where we are in the list
-                            start_idx = searchsorted(arrival_times, current_stop)
+                time_step = abs(current_stop - current_start)
 
-                            # end the fast search
+                # if we do not exceed the sigma
+                # we need to increase the time interval
+                if not sigma_exceeded:
+
+                    # however, if in the last pass we had to decrease
+                    # the interval, it means we have found where we
+                    # we need to start the slow search
+                    if decreased_interval:
+
+                        # mark where we are in the list
+                        start_idx = searchsorted(arrival_times, current_stop)
+
+                        # end the fast search
+                        end_fast_search = True
+
+                    # otherwise we increase the interval
+                    else:
+
+                        # unless, we would increase it too far
+                        if (
+                            current_stop + time_step * increase_factor
+                        ) >= arrival_times[-1]:
+
+                            # mark where we are in the interval
+                            start_idx = searchsorted(
+                                arrival_times, current_stop)
+
+                            # then we also want to go ahead and get out of the fast search
                             end_fast_search = True
 
-                        # otherwise we increase the interval
                         else:
 
-                            # unless, we would increase it too far
-                            if (current_stop + time_step * increase_factor) >= arrival_times[-1]:
+                            # increase the interval
+                            current_stop += time_step * increase_factor
 
-                                # mark where we are in the interval
-                                start_idx = searchsorted(arrival_times, current_stop)
+                # if we did exceede the sigma level we will need to step
+                # back in time to find where it was NOT exceeded
+                else:
 
-                                # then we also want to go ahead and get out of the fast search
-                                end_fast_search = True
+                    # decrease the interval
+                    current_stop -= time_step * decrease_factor
 
-                            else:
+                    # inform the loop that we have been back stepping
+                    decreased_interval = True
 
-                                # increase the interval
-                                current_stop += time_step * increase_factor
+            # Now we are ready for the slow forward search
+            # where we count up all the photons
 
-                    # if we did exceede the sigma level we will need to step
-                    # back in time to find where it was NOT exceeded
+            # we have already counted up the photons to this point
+            total_counts = counts
+
+            # start searching from where the fast search ended
+            if threeML_config.interface.progress_bars:
+                pbar.update(counts)
+
+            for time in arrival_times[start_idx:]:
+
+                total_counts += 1
+                if threeML_config.interface.progress_bars:
+                    pbar.update(1)
+                if total_counts < min_counts:
+
+                    continue
+
+                else:
+
+                    # first use the background function to know the number of background counts
+                    bkg = background_getter(current_start, time)
+
+                    sig = Significance(total_counts, bkg)
+
+                    if background_error_getter is not None:
+
+                        bkg_error = background_error_getter(
+                            current_start, time)
+
+                        sigma = sig.li_and_ma_equivalent_for_gaussian_background(
+                            bkg_error
+                        )[0]
+
                     else:
 
-                        # decrease the interval
-                        current_stop -= time_step * decrease_factor
+                        sigma = sig.li_and_ma()[0]
 
-                        # inform the loop that we have been back stepping
-                        decreased_interval = True
+                        # now test if we have enough sigma
 
-                # Now we are ready for the slow forward search
-                # where we count up all the photons
+                    if sigma >= sigma_level:
 
-                # we have already counted up the photons to this point
-                total_counts = counts
+                        # if we succeeded we want to mark the time bins
+                        stops.append(time)
 
-                # start searching from where the fast search ended
-                pbar.increase(counts)
+                        starts.append(current_start)
 
-                for time in arrival_times[start_idx:]:
+                        # set up the next fast search
+                        # by looking past this interval
+                        current_start = time
 
-                    total_counts += 1
-                    pbar.increase()
-                    if total_counts < min_counts:
+                        current_stop = 0.5 * (arrival_times[-1] + time)
 
-                        continue
+                        end_fast_search = False
 
-                    else:
+                        # get out of the for loop
+                        break
 
-                        # first use the background function to know the number of background counts
-                        bkg = background_getter(current_start, time)
+            # if we never exceeded the sigma level by the
+            # end of the search, we never will
+            if end_fast_search:
 
-                        sig = Significance(total_counts, bkg)
-
-                        if background_error_getter is not None:
-
-                            bkg_error = background_error_getter(current_start, time)
-
-                            sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
-
-
-                        else:
-
-                            sigma = sig.li_and_ma()[0]
-
-                            # now test if we have enough sigma
-
-                        if sigma >= sigma_level:
-
-                            # if we succeeded we want to mark the time bins
-                            stops.append(time)
-
-                            starts.append(current_start)
-
-                            # set up the next fast search
-                            # by looking past this interval
-                            current_start = time
-
-                            current_stop = 0.5 * (arrival_times[-1] + time)
-
-                            end_fast_search = False
-
-                            # get out of the for loop
-                            break
-
-                # if we never exceeded the sigma level by the
-                # end of the search, we never will
-                if end_fast_search:
-
-                    # so lets kill the main search
-                    end_all_search = True
-
-
-
+                # so lets kill the main search
+                end_all_search = True
 
         if not starts:
 
-            print("The requested sigma level could not be achieved in the interval. Try decreasing it.")
+            log.error(
+                "The requested sigma level could not be achieved in the interval. Try decreasing it."
+            )
 
         else:
 
@@ -521,23 +534,36 @@ class TemporalBinner(TimeIntervalSet):
         """
 
         try:
-        
-            final_edges = bayesian_blocks(arrival_times, arrival_times[0], arrival_times[-1], p0, bkg_integral_distribution)
+
+            final_edges = bayesian_blocks(
+                arrival_times,
+                arrival_times[0],
+                arrival_times[-1],
+                p0,
+                bkg_integral_distribution,
+            )
 
         except Exception as e:
 
-            if 'duplicate' in str(e):
+            if "duplicate" in str(e):
 
-                custom_warnings.warn('There where possible duplicate time tags in the data. We will try to run a different algorithm')
-            
-                final_edges = bayesian_blocks_not_unique(arrival_times, arrival_times[0], arrival_times[-1], p0)
+                log.warning(
+                    "There were possible duplicate time tags in the data. We will try to run a different algorithm"
+                )
 
-            
+                final_edges = bayesian_blocks_not_unique(
+                    arrival_times, arrival_times[0], arrival_times[-1], p0
+                )
+            else:
+
+                print(e)
+
+                raise RuntimeError()
+
         starts = np.asarray(final_edges)[:-1]
         stops = np.asarray(final_edges)[1:]
 
-        return  cls.from_starts_and_stops(starts, stops)
-
+        return cls.from_starts_and_stops(starts, stops)
 
     @classmethod
     def bin_by_custom(cls, starts, stops):
@@ -550,13 +576,17 @@ class TemporalBinner(TimeIntervalSet):
         :return:
         """
 
-
         return cls.from_starts_and_stops(starts, stops)
 
     @staticmethod
-    def _check_exceeds_sigma_interval(start, stop, counts, sigma_level, background_getter,
-                                      background_error_getter=None):
-
+    def _check_exceeds_sigma_interval(
+        start,
+        stop,
+        counts,
+        sigma_level,
+        background_getter,
+        background_error_getter=None,
+    ):
         """
 
         see if an interval exceeds a given sigma level
@@ -579,8 +609,8 @@ class TemporalBinner(TimeIntervalSet):
 
             bkg_error = background_error_getter(start, stop)
 
-            sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[0]
-
+            sigma = sig.li_and_ma_equivalent_for_gaussian_background(bkg_error)[
+                0]
 
         else:
 
@@ -597,7 +627,7 @@ class TemporalBinner(TimeIntervalSet):
             return False
 
     @staticmethod
-    def _select_events(arrival_times, start, stop ):
+    def _select_events(arrival_times, start, stop):
         """
         get the events and total counts over an interval
 
@@ -613,3 +643,58 @@ class TemporalBinner(TimeIntervalSet):
         idx = np.logical_and(lt_idx, gt_idx)
 
         return idx, arrival_times[idx].shape[0]
+
+
+#####
+@nb.njit(fastmath=True)
+def _rebin_vector_float(vector, start, stop, mask, N):
+    """
+    faster rebinner using numba
+    """
+    rebinned_vector = VectorFloat64(0)
+
+    for n in range(N):
+
+        rebinned_vector.append(np.sum(vector[start[n]:stop[n]]))
+
+    arr = rebinned_vector.arr
+
+    test = np.abs(
+        (np.sum(arr) + 1e-100)
+        / (np.sum(vector[mask]) + 1e-100)
+        - 1
+    )
+
+    assert (
+
+        test < 1e-4
+    )
+
+    return arr
+
+
+@nb.njit(fastmath=True)
+def _rebin_vector_int(vector, start, stop, mask, N):
+    """
+    faster rebinner using numba
+    """
+    rebinned_vector = VectorInt64(0)
+
+    for n in range(N):
+
+        rebinned_vector.append(np.sum(vector[start[n]:stop[n]]))
+
+    arr = rebinned_vector.arr
+
+    test = np.abs(
+        (np.sum(arr) + 1e-100)
+        / (np.sum(vector[mask]) + 1e-100)
+        - 1
+    )
+
+    assert (
+
+        test < 1e-4
+    )
+
+    return arr

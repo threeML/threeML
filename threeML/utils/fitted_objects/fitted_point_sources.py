@@ -1,12 +1,28 @@
-__author__ = 'grburgess'
+from __future__ import division
 
-from astropy import units as u
-import numpy as np
-import scipy.integrate as integrate
+from past.utils import old_div
+
+__author__ = "grburgess"
+
 import collections
 
+import numba as nb
+import numpy as np
+import scipy.integrate as integrate
+from astropy import units as u
 
-from threeML.utils.fitted_objects.fitted_source_handler import GenericFittedSourceHandler
+from threeML.config import threeML_config
+from threeML.config.point_source_structure import IntegrateMethod
+from threeML.io.logging import setup_logger
+from threeML.utils.fitted_objects.fitted_source_handler import \
+    GenericFittedSourceHandler
+
+log = setup_logger(__name__)
+
+
+@nb.njit(fastmath=True, cache=True)
+def _trapz(x, y):
+    return np.trapz(x, y)
 
 
 class NotCompositeModelError(RuntimeError):
@@ -18,7 +34,6 @@ class InvalidUnitError(RuntimeError):
 
 
 class FluxConversion(object):
-
     def __init__(self, flux_unit, energy_unit, flux_model):
         """
         a generic flux conversion class to handle transforming spectra
@@ -34,7 +49,7 @@ class FluxConversion(object):
 
         self._model = flux_model
 
-        self._test_value = 1. * energy_unit
+        self._test_value = 1.0 * energy_unit
 
         self._flux_type = None
 
@@ -46,8 +61,7 @@ class FluxConversion(object):
 
         # scroll thru conversions until one works
 
-        for k,v in self._flux_lookup.iteritems():
-
+        for k, v in self._flux_lookup.items():
 
             try:
 
@@ -55,14 +69,15 @@ class FluxConversion(object):
 
                 self._flux_type = k
 
-            except(u.UnitConversionError):
+            except (u.UnitConversionError):
 
                 continue
 
-
         if self._flux_type is None:
 
-            raise InvalidUnitError('The flux_unit provided is not a valid flux quantity')
+            raise InvalidUnitError(
+                "The flux_unit provided is not a valid flux quantity"
+            )
 
     def _calculate_conversion(self):
 
@@ -71,18 +86,21 @@ class FluxConversion(object):
 
         tmp = self._model_converter[self._flux_type](self._test_value)
 
-        if tmp.unit == u.dimensionless_unscaled or tmp.unit == self._test_value.unit or tmp.unit == (self._test_value.unit)**2:
+        if (
+            tmp.unit == u.dimensionless_unscaled
+            or tmp.unit == self._test_value.unit
+            or tmp.unit == (self._test_value.unit) ** 2
+        ):
 
             # this is a multiplicative model
-            self._conversion = 1.
+            self._conversion = 1.0
             self._is_dimensionless = True
-
 
         else:
 
-            self._conversion = tmp.unit.to(self._flux_unit, equivalencies=u.spectral())
+            self._conversion = tmp.unit.to(
+                self._flux_unit, equivalencies=u.spectral())
             self._is_dimensionless = False
-
 
     @property
     def is_dimensionless(self):
@@ -110,9 +128,9 @@ class FluxConversion(object):
 
         return self._conversion
 
-class DifferentialFluxConversion(FluxConversion):
 
-    def __init__(self, flux_unit, energy_unit, flux_model,test_model):
+class DifferentialFluxConversion(FluxConversion):
+    def __init__(self, flux_unit, energy_unit, flux_model, test_model):
         """
         Handles differential flux conversion and model building
         for point sources
@@ -124,34 +142,49 @@ class DifferentialFluxConversion(FluxConversion):
         :param flux_model: the base flux model to use
         """
 
+        self._flux_lookup = {
+            "photon_flux": 1.0 / (u.keV * u.cm ** 2 * u.s),
+            "energy_flux": old_div(u.erg, (u.keV * u.cm ** 2 * u.s)),
+            "nufnu_flux": old_div(u.erg ** 2, (u.keV * u.cm ** 2 * u.s)),
+        }
+
+        self._model_converter = {
+            "photon_flux": test_model,
+            "energy_flux": lambda x: x * test_model(x),
+            "nufnu_flux": lambda x: x * x * test_model(x),
+        }
+
+        self._model_builder = {
+            "photon_flux": flux_model,
+            "energy_flux": lambda x, **param_specification: x
+            * flux_model(x, **param_specification),
+            "nufnu_flux": lambda x, **param_specification: x
+            * x
+            * flux_model(x, **param_specification),
+        }
+
+        super(DifferentialFluxConversion, self).__init__(
+            flux_unit, energy_unit, flux_model
+        )
 
 
-        self._flux_lookup = {"photon_flux":  1. / (u.keV * u.cm ** 2 * u.s),
-                             "energy_flux": u.erg / (u.keV * u.cm ** 2 * u.s),
-                             "nufnu_flux": u.erg**2 / (u.keV * u.cm ** 2 * u.s)}
+def trap_integral(func, e1, e2, **args):
 
+    if e2/e1 > 100:
 
+        e_grid = np.logspace(np.log10(e1), np.log10(e2), 50)
 
+    else:
+        e_grid = np.linspace(e1, e2, 50)
 
+    y = func(e_grid, args)
 
-        self._model_converter = {"photon_flux": test_model,
-                                 "energy_flux": lambda x: x * test_model(x),
-                                 "nufnu_flux": lambda x: x * x * test_model(x)}
+    return _trapz(y, e_grid)
 
-
-        self._model_builder = {"photon_flux": flux_model,
-                               "energy_flux": lambda x, **param_specification: x * flux_model(x,**param_specification),
-                               "nufnu_flux": lambda x, **param_specification: x * x * flux_model(x, **param_specification)}
-
-        super(DifferentialFluxConversion, self).__init__(flux_unit,
-                                                         energy_unit,
-                                                         flux_model)
-
-
+    
 class IntegralFluxConversion(FluxConversion):
-
-    def __init__(self, flux_unit, energy_unit, flux_model,test_model):
-         """
+    def __init__(self, flux_unit, energy_unit, flux_model, test_model):
+        """
          Handles integral flux conversion and model building
          for point sources
 
@@ -161,36 +194,77 @@ class IntegralFluxConversion(FluxConversion):
          :param flux_model: the base flux model to use
          """
 
-         self._flux_lookup = {"photon_flux": 1. / ( u.cm ** 2 * u.s),
-                             "energy_flux": u.erg / ( u.cm ** 2 * u.s),
-                             "nufnu_flux": u.erg**2 / ( u.cm ** 2 * u.s)}
+        self._flux_lookup = {
+            "photon_flux": 1.0 / (u.cm ** 2 * u.s),
+            "energy_flux": old_div(u.erg, (u.cm ** 2 * u.s)),
+            "nufnu_flux": old_div(u.erg ** 2, (u.cm ** 2 * u.s)),
+        }
 
-         self._model_converter = {"photon_flux": lambda x: x * test_model(x),
-                                     "energy_flux": lambda x: x * x * test_model(x),
-                                     "nufnu_flux": lambda x: x ** 3 * test_model(x)}
+        self._model_converter = {
+            "photon_flux": lambda x: x * test_model(x),
+            "energy_flux": lambda x: x * x * test_model(x),
+            "nufnu_flux": lambda x: x ** 3 * test_model(x),
+        }
 
+        def photon_integrand(x, param_specification):
+            return flux_model(x, **param_specification)
 
-         def photon_integrand(x,param_specification):
-             return flux_model(x, **param_specification)
+        def energy_integrand(x, param_specification):
+            return x * flux_model(x, **param_specification)
 
-         def energy_integrand(x,param_specification):
-             return x * flux_model(x, **param_specification)
+        def nufnu_integrand(x, param_specification):
+            return x * x * flux_model(x, **param_specification)
 
-         def nufnu_integrand(x, param_specification):
-             return x * x * flux_model(x, **param_specification)
+        if threeML_config.point_source.integrate_flux_method == IntegrateMethod.trapz:
+        
+            self._model_builder = {
+                "photon_flux": lambda e1, e2, **param_specification: trap_integral(
+                    photon_integrand, e1, e2, **param_specification
+                ),
+                "energy_flux": lambda e1, e2, **param_specification: trap_integral(
+                    energy_integrand, e1, e2, **param_specification
+                ),
+                "nufnu_flux": lambda e1, e2, **param_specification: trap_integral(
+                    nufnu_integrand, e1, e2, **param_specification
+                ),
+            }
+        elif threeML_config.point_source.integrate_flux_method == IntegrateMethod.quad:
+            
+            self._model_builder = {
+                "photon_flux": lambda e1, e2, **param_specification: integrate.quad(
+                    photon_integrand, e1, e2, args=(param_specification)
+                )[0],
+                "energy_flux": lambda e1, e2, **param_specification: integrate.quad(
+                    energy_integrand, e1, e2, args=(param_specification)
+                )[0],
+                "nufnu_flux": lambda e1, e2, **param_specification: integrate.quad(
+                    nufnu_integrand, e1, e2, args=(param_specification)
+                )[0],
+            }
 
-         self._model_builder = {"photon_flux": lambda e1, e2, **param_specification: integrate.quad(photon_integrand, e1, e2,args=(param_specification))[0],
-                               "energy_flux": lambda e1, e2, **param_specification: integrate.quad(energy_integrand, e1, e2,args=(param_specification))[0],
-                               "nufnu_flux": lambda e1, e2, **param_specification: integrate.quad(nufnu_integrand, e1, e2,args=(param_specification))[0]}
+        else:
 
+            log.error("This is not a valid integratio method")
 
-         super(IntegralFluxConversion, self).__init__(flux_unit,
-                                                     energy_unit,
-                                                     flux_model)
+            raise RuntimeError
+            
+        super(IntegralFluxConversion, self).__init__(
+            flux_unit, energy_unit, flux_model)
 
 
 class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
-    def __init__(self, analysis_result, source, energy_range, energy_unit, flux_unit, confidence_level=0.68, equal_tailed=True, component=None, is_differential_flux=True):
+    def __init__(
+        self,
+        analysis_result,
+        source,
+        energy_range,
+        energy_unit,
+        flux_unit,
+        confidence_level=0.68,
+        equal_tailed=True,
+        component=None,
+        is_differential_flux=True,
+    ):
         """
 
         A 3ML fitted point source.
@@ -211,15 +285,12 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
         self._point_source = analysis_result.optimized_model.sources[source]
 
-
         # extract the components
-
 
         try:
             composite_model = self._point_source.spectrum.main.composite
 
             self._components = self._solve_for_component_flux(composite_model)
-
 
         except:
 
@@ -229,10 +300,10 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
             if self._components is not None:
 
-                model = self._components[component]['function'].evaluate_at
-                parameters =  self._components[component]['function'].parameters
-                test_model = self._components[component]['function']
-                parameter_names = self._components[component]['parameter_names']
+                model = self._components[component]["function"].evaluate_at
+                parameters = self._components[component]["function"].parameters
+                test_model = self._components[component]["function"]
+                parameter_names = self._components[component]["parameter_names"]
 
             else:
 
@@ -243,8 +314,12 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
             model = self._point_source.spectrum.main.shape.evaluate_at
             parameters = self._point_source.spectrum.main.shape.parameters
             test_model = self._point_source.spectrum.main.shape
-            parameter_names = [par.name for par in self._point_source.spectrum.main.shape.parameters.values()]
-
+            parameter_names = [
+                par.name
+                for par in list(
+                    self._point_source.spectrum.main.shape.parameters.values()
+                )
+            ]
 
         energy_unit = u.Unit(energy_unit)
 
@@ -253,13 +328,15 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         # astropy so that we can easily except energy, wavelength, or frequency
         # energy units
 
-        if isinstance(energy_range,u.Quantity):
+        if isinstance(energy_range, u.Quantity):
 
-            energy_range = (energy_range).to('keV', equivalencies=u.spectral())
+            energy_range = (energy_range).to("keV", equivalencies=u.spectral())
 
         else:
 
-            energy_range = (energy_range * energy_unit).to('keV', equivalencies=u.spectral())
+            energy_range = (energy_range * energy_unit).to(
+                "keV", equivalencies=u.spectral()
+            )
 
         energy_unit = energy_range.unit
 
@@ -275,31 +352,33 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
         if is_differential_flux:
 
-            converter = DifferentialFluxConversion(flux_unit, energy_unit, model, test_model)
+            converter = DifferentialFluxConversion(
+                flux_unit, energy_unit, model, test_model
+            )
 
             flux_function = converter.model
 
             self._conversion = converter.conversion_factor
 
-
-
-
-            super(FittedPointSourceSpectralHandler, self).__init__(analysis_result,
-                                                                   flux_function,
-                                                                   parameter_names,
-                                                                   parameters,
-                                                                   confidence_level,
-                                                                   equal_tailed,
-                                                                   energy_range)
+            super(FittedPointSourceSpectralHandler, self).__init__(
+                analysis_result,
+                flux_function,
+                parameter_names,
+                parameters,
+                confidence_level,
+                equal_tailed,
+                energy_range,
+            )
 
         else:
 
-            converter = IntegralFluxConversion(flux_unit, energy_unit, model, test_model)
+            converter = IntegralFluxConversion(
+                flux_unit, energy_unit, model, test_model
+            )
 
             flux_function = converter.model
 
             self._conversion = converter.conversion_factor
-
 
             # we treat the energy range as the range we want to integrate over
 
@@ -310,17 +389,18 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
             # inherited as well and go right to the general and
             # use the e1, e2 as the integral bounds
 
-            super(FittedPointSourceSpectralHandler, self).__init__(analysis_result,
-                                                                   flux_function,
-                                                                   parameter_names,
-                                                                   parameters,
-                                                                   confidence_level,
-                                                                   equal_tailed,
-                                                                   e1,
-                                                                   e2)
+            super(FittedPointSourceSpectralHandler, self).__init__(
+                analysis_result,
+                flux_function,
+                parameter_names,
+                parameters,
+                confidence_level,
+                equal_tailed,
+                e1,
+                e2,
+            )
 
         self._is_dimensionless = converter.is_dimensionless
-
 
     @property
     def is_dimensionless(self):
@@ -336,7 +416,7 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
 
         return self._components
 
-    def _transform(self,value):
+    def _transform(self, value):
         """
         transform the values into the proper flux unit and apply the units
         :param value:
@@ -344,7 +424,6 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         """
 
         return self._conversion * self._flux_unit * value
-
 
     @staticmethod
     def _solve_for_component_flux(composite_model):
@@ -362,10 +441,15 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
         names = [f.name for f in composite_model.functions]
 
         counts = collections.Counter(names)
-        for s, num in counts.items():
+        for s, num in list(counts.items()):
             if num > 1:  # ignore strings that only appear once
-                for suffix in range(1, num + 1):  # suffix starts at 1 and increases by 1 each time
-                    names[names.index(s)] = "%s_n%i" % (s, suffix)  # replace each appearance of s
+                for suffix in range(
+                    1, num + 1
+                ):  # suffix starts at 1 and increases by 1 each time
+                    names[names.index(s)] = "%s_n%i" % (
+                        s,
+                        suffix,
+                    )  # replace each appearance of s
 
         for i, function in enumerate(composite_model.functions):
 
@@ -374,20 +458,14 @@ class FittedPointSourceSpectralHandler(GenericFittedSourceHandler):
             # extract the parameter names using the static_name property
             # because this is what the children will use in evaluate_at
 
-            parameter_names = [par.static_name for par in function.parameters.values()]
+            parameter_names = [
+                par.static_name for par in list(function.parameters.values())
+            ]
 
-            tmp_dict['parameter_names'] = parameter_names
+            tmp_dict["parameter_names"] = parameter_names
 
-            tmp_dict['function'] = function
-
-
+            tmp_dict["function"] = function
 
             function_dict[names[i]] = tmp_dict
 
         return function_dict
-
-
-
-
-
-

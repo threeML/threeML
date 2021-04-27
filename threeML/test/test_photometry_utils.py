@@ -1,91 +1,64 @@
 import pytest
 import speclite.filters as spec_filters
-from astromodels import *
-from threeML.utils.photometry.filter_set import FilterSet, NotASpeclikeFilter
+import numpy as np
 
 from threeML.classicMLE.joint_likelihood import JointLikelihood
-from threeML.data_list import DataList
-from threeML.io.plotting.post_process_data_plots import display_photometry_model_magnitudes
-from threeML.plugins.PhotometryLike import PhotometryLike
-from threeML.utils.photometry.filter_library import threeML_filter_library
+from threeML.io.plotting.post_process_data_plots import \
+    display_photometry_model_magnitudes
 
-
-def get_plugin():
-
-
-    grond = PhotometryLike('GROND',
-                           filters=threeML_filter_library.ESO.GROND,
-                           g=(19.92, .1),
-                           r=(19.75, .1),
-                           i=(19.65, .1),
-                           z=(19.56, .1),
-                           J=(19.38, .1),
-                           H=(19.22, .1),
-                           K=(19.07, .1))
-
-    return grond
-
-
-def get_model_and_datalist():
-
-    grond = get_plugin()
-
-    spec = Powerlaw()  # * XS_zdust() * XS_zdust()
-
-    datalist = DataList(grond)
-
-    model = Model(PointSource('grb', 0, 0, spectral_shape=spec))
-
-    return model, datalist
-
+from threeML.utils.photometry.filter_set import FilterSet, NotASpeclikeFilter
 
 
 
 
 def test_filter_set():
 
-    sf = spec_filters.load_filters('bessell-*')
+    sf = spec_filters.load_filters("bessell-*")
 
     fs1 = FilterSet(sf)
 
-    #sf = spec_filters.load_filter('bessell-r')
+    # sf = spec_filters.load_filter('bessell-r')
 
-    #fs2 = FilterSet(sf)
+    # fs2 = FilterSet(sf)
 
     with pytest.raises(NotASpeclikeFilter):
 
-        fs2 = FilterSet('a')
+        fs2 = FilterSet("a")
 
 
+def test_constructor(grond_plugin):
+
+    assert not grond_plugin.is_poisson
+
+    grond_plugin.display_filters()
+
+    assert grond_plugin._mask.sum() == 7
+
+    grond_plugin.band_g.on = False
+
+    assert grond_plugin._mask.sum() == 6
 
 
-def test_constructor():
+    grond_plugin.band_g.on = True
+
+    assert grond_plugin._mask.sum() == 7
 
 
-    grond = PhotometryLike('GROND',
-                           filters=threeML_filter_library.ESO.GROND,
-                           g=(19.92, .1),
-                           r=(19.75, .1),
-                           i=(19.65, .1),
-                           z=(19.56, .1),
-                           J=(19.38, .1),
-                           H=(19.22, .1),
-                           K=(19.07, .1))
+    grond_plugin.band_g.off = True
 
-    assert not grond.is_poisson
+    assert grond_plugin._mask.sum() == 6
 
 
+    grond_plugin.band_g.off = False
 
-    grond.display_filters()
-
-
-
+    assert grond_plugin._mask.sum() == 7
 
 
+    
 
-def test_fit():
+def test_fit(photometry_data_model):
 
-    model, datalist= get_model_and_datalist()
+    model, datalist = photometry_data_model
 
     jl = JointLikelihood(model, datalist)
 
@@ -93,41 +66,5 @@ def test_fit():
 
     _ = display_photometry_model_magnitudes(jl)
 
-
-# def test_filter_selection():
-#
-#     pi = get_plugin()
-#
-#     n_filters_original = sum(pi._mask)
-#
-#     original_fnames = pi._filter_set.filter_names
-#
-#     pi.set_inactive_filters(*original_fnames)
-#
-#     assert sum(pi._mask) == 0
-#
-#     pi.set_active_filters(*original_fnames)
-#
-#     assert sum(pi._mask) == n_filters_original
-#
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    np.testing.assert_allclose([model.grb.spectrum.main.Powerlaw.K.value,model.grb.spectrum.main.Powerlaw.index.value], [0.00296,-1.505936], rtol=1e-3)
+    

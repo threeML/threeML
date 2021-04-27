@@ -1,19 +1,22 @@
+from builtins import object
 import collections
 import numpy as np
 
 from threeML.classicMLE.joint_likelihood_set import JointLikelihoodSet
 from threeML.data_list import DataList
+from threeML.io.logging import silence_console_log
 from astromodels import clone_model
 
 
 class GoodnessOfFit(object):
-
     def __init__(self, joint_likelihood_instance, like_data_frame=None):
 
         self._jl_instance = joint_likelihood_instance
 
         # Make sure we have a fit
-        assert self._jl_instance.results is not None, "You have to perform a fit before using GoodnessOfFit"
+        assert (
+            self._jl_instance.results is not None
+        ), "You have to perform a fit before using GoodnessOfFit"
 
         if like_data_frame is None:
 
@@ -22,7 +25,7 @@ class GoodnessOfFit(object):
         # Restore best fit and store the reference value for the likelihood
         self._jl_instance.restore_best_fit()
 
-        self._reference_like = like_data_frame['-log(likelihood)']
+        self._reference_like = like_data_frame["-log(likelihood)"]
 
         # Store best model
         self._best_fit_model = clone_model(self._jl_instance.likelihood_model)
@@ -36,7 +39,7 @@ class GoodnessOfFit(object):
 
         new_datas = []
 
-        for dataset in self._jl_instance.data_list.values():
+        for dataset in list(self._jl_instance.data_list.values()):
 
             new_data = dataset.get_simulated_dataset("%s_sim" % dataset.name)
 
@@ -67,7 +70,12 @@ class GoodnessOfFit(object):
         """
 
         # Create the joint likelihood set
-        jl_set = JointLikelihoodSet(self.get_simulated_data, self.get_model, n_iterations, iteration_name='simulation')
+        jl_set = JointLikelihoodSet(
+            self.get_simulated_data,
+            self.get_model,
+            n_iterations,
+            iteration_name="simulation",
+        )
 
         # Use the same minimizer as in the joint likelihood object
         # NOTE: we use a clone so that the original best fit will not be touched
@@ -82,15 +90,21 @@ class GoodnessOfFit(object):
         gof = collections.OrderedDict()
 
         # Total
-        idx = like_data_frame['-log(likelihood)'][:, "total"].values >= self._reference_like['total']  # type: np.ndarray
+        idx = (
+            like_data_frame["-log(likelihood)"][:, "total"].values
+            >= self._reference_like["total"]
+        )  # type: np.ndarray
 
-        gof['total'] = np.sum(idx) / float(n_iterations)
+        gof["total"] = np.sum(idx) / float(n_iterations)
 
-        for dataset in self._jl_instance.data_list.values():
+        for dataset in list(self._jl_instance.data_list.values()):
 
             sim_name = "%s_sim" % dataset.name
 
-            idx = (like_data_frame['-log(likelihood)'][:, sim_name].values >= self._reference_like[dataset.name])
+            idx = (
+                like_data_frame["-log(likelihood)"][:, sim_name].values
+                >= self._reference_like[dataset.name]
+            )
 
             gof[dataset.name] = np.sum(idx) / float(n_iterations)
 

@@ -1,9 +1,12 @@
+from __future__ import print_function
 from threeML.io.file_utils import sanitize_filename, if_directory_not_existing_then_make
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import TriggerDoesNotExist
 from threeML.io.download_from_http import ApacheDirectory, RemoteDirectoryNotFound
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
-from threeML.utils.data_download.Fermi_GBM.download_GBM_data import _validate_fermi_trigger_name
+from threeML.utils.data_download.Fermi_GBM.download_GBM_data import (
+    _validate_fermi_trigger_name,
+)
 
 import re
 import os
@@ -11,11 +14,11 @@ import numpy as np
 from collections import OrderedDict
 
 
-_trigger_name_match=re.compile("^(bn|grb?)? ?(\d{9})$")
-_file_type_match = re.compile('gll_(\D{2,5})_bn\d{9}_v\d{2}\.\D{3}')
+_trigger_name_match = re.compile("^(bn|grb?)? ?(\d{9})$")
+_file_type_match = re.compile("gll_(\D{2,5})_bn\d{9}_v\d{2}\.\D{3}")
 
 
-def download_LLE_trigger_data(trigger_name, destination_directory='.'):
+def download_LLE_trigger_data(trigger_name, destination_directory="."):
     """
     Download the latest Fermi LAT LLE and RSP files from the HEASARC server. Will get the
     latest file versions. If the files already exist in your destination
@@ -36,12 +39,12 @@ def download_LLE_trigger_data(trigger_name, destination_directory='.'):
     if_directory_not_existing_then_make(destination_directory)
 
     # Figure out the directory on the server
-    url = threeML_config['LAT']['public HTTP location']
+    url = threeML_config["LAT"]["public_http_location"]
 
-    year = '20%s' % sanitized_trigger_name_[:2]
-    directory = 'triggers/%s/bn%s/current' % (year, sanitized_trigger_name_)
+    year = "20%s" % sanitized_trigger_name_[:2]
+    directory = "triggers/%s/bn%s/current" % (year, sanitized_trigger_name_)
 
-    heasarc_web_page_url = '%s/%s' % (url, directory)
+    heasarc_web_page_url = "%s/%s" % (url, directory)
 
     try:
 
@@ -49,14 +52,19 @@ def download_LLE_trigger_data(trigger_name, destination_directory='.'):
 
     except RemoteDirectoryNotFound:
 
-        raise TriggerDoesNotExist("Trigger %s does not exist at %s" % (sanitized_trigger_name_, heasarc_web_page_url))
+        raise TriggerDoesNotExist(
+            "Trigger %s does not exist at %s"
+            % (sanitized_trigger_name_, heasarc_web_page_url)
+        )
 
     # Download only the lle, pt, cspec and rsp file (i.e., do not get all the png, pdf and so on)
-    pattern = 'gll_(lle|pt|cspec)_bn.+\.(fit|rsp|pha)'
+    pattern = "gll_(lle|pt|cspec)_bn.+\.(fit|rsp|pha)"
 
     destination_directory_sanitized = sanitize_filename(destination_directory)
 
-    downloaded_files = downloader.download_all_files(destination_directory_sanitized, progress=True, pattern=pattern)
+    downloaded_files = downloader.download_all_files(
+        destination_directory_sanitized, progress=True, pattern=pattern
+    )
 
     # Put the files in a structured dictionary
 
@@ -66,20 +74,20 @@ def download_LLE_trigger_data(trigger_name, destination_directory='.'):
 
         file_type = _file_type_match.match(os.path.basename(download)).group(1)
 
-        if file_type == 'cspec':
+        if file_type == "cspec":
 
             # a cspec file can be 2 things: a CSPEC spectral set (with .pha) extension,
             # or a response matrix (with a .rsp extension)
 
             ext = os.path.splitext(os.path.basename(download))[1]
 
-            if ext == '.rsp':
+            if ext == ".rsp":
 
-                file_type = 'rsp'
+                file_type = "rsp"
 
-            elif ext == '.pha':
+            elif ext == ".pha":
 
-                file_type = 'cspec'
+                file_type = "cspec"
 
             else:
 
@@ -87,9 +95,9 @@ def download_LLE_trigger_data(trigger_name, destination_directory='.'):
 
         # The pt file is really an ft2 file
 
-        if file_type == 'pt':
+        if file_type == "pt":
 
-            file_type = 'ft2'
+            file_type = "ft2"
 
         download_info[file_type] = download
 
@@ -116,10 +124,10 @@ def _get_latest_version(filenames):
     for fn in filenames:
 
         # get the first part of the file
-        fn_stub, vn_stub = fn.split('_v')
+        fn_stub, vn_stub = fn.split("_v")
 
         # split the vn string and extension
-        vn_string, ext = vn_stub.split('.')
+        vn_string, ext = vn_stub.split(".")
 
         # convert the vn to a number
         vn = 0
@@ -138,7 +146,7 @@ def _get_latest_version(filenames):
 
     # Now we we go through and make selections
 
-    for key in vn_as_num.keys():
+    for key in list(vn_as_num.keys()):
 
         ext = np.array(extentions[key])
         vn = np.array(vn_as_num[key])
@@ -161,10 +169,10 @@ def cleanup_downloaded_LLE_data(detector_information_dict):
     :param detector_information_dict: the return dictionary from download_LLE_trigger_data
     """
 
-    for data_file in detector_information_dict.values():
+    for data_file in list(detector_information_dict.values()):
 
-        print("Removing: %s"%data_file)
+        print("Removing: %s" % data_file)
 
         os.remove(data_file)
 
-    print('\n')
+    print("\n")

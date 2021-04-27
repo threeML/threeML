@@ -1,17 +1,31 @@
 import copy
+from typing import Optional
 
+import numpy as np
 import pandas as pd
 
+from threeML.io.logging import setup_logger
 from threeML.plugins.SpectrumLike import SpectrumLike
 from threeML.utils.OGIP.response import InstrumentResponse
-from threeML.utils.spectrum.binned_spectrum import BinnedSpectrumWithDispersion, ChannelSet
+from threeML.utils.spectrum.binned_spectrum import (
+    BinnedSpectrumWithDispersion, ChannelSet)
+
+log = setup_logger(__name__)
 
 __instrument_name = "General binned spectral data with energy dispersion"
 
 
 class DispersionSpectrumLike(SpectrumLike):
-
-    def __init__(self, name, observation, background=None, background_exposure=None,verbose=True, tstart=None, tstop=None):
+    def __init__(
+        self,
+        name: str,
+        observation,
+        background=None,
+        background_exposure=None,
+        verbose=True,
+        tstart=None,
+        tstop=None,
+    ):
         """
         A plugin for generic spectral data with energy dispersion, accepts an observed binned spectrum,
         and a background binned spectrum or plugin with the background data.
@@ -34,27 +48,37 @@ class DispersionSpectrumLike(SpectrumLike):
         XYLike plugin
         :param verbose: turn on/off verbose logging
                 """
-        assert isinstance(observation,
-                          BinnedSpectrumWithDispersion), "observed spectrum is not an instance of BinnedSpectrumWithDispersion"
+        assert isinstance(
+            observation, BinnedSpectrumWithDispersion
+        ), "observed spectrum is not an instance of BinnedSpectrumWithDispersion"
 
-        assert observation.response is not None, "the observed spectrum does not have a response"
+        assert (
+            observation.response is not None
+        ), "the observed spectrum does not have a response"
 
         # assign the response to the plugins
 
         self._rsp = observation.response  # type: InstrumentResponse
 
-        super(DispersionSpectrumLike, self).__init__(name=name,
-                                                     observation=observation,
-                                                     background=background,
-                                                     background_exposure=background_exposure,
-                                                     verbose=verbose,
-                                                     tstart=tstart,
-                                                     tstop=tstop)
+        super(DispersionSpectrumLike, self).__init__(
+            name=name,
+            observation=observation,
+            background=background,
+            background_exposure=background_exposure,
+            verbose=verbose,
+            tstart=tstart,
+            tstop=tstop,
+
+        )
+
+        self._predefined_energies = self._rsp.monte_carlo_energies
 
     def set_model(self, likelihoodModel):
         """
         Set the model to be used in the joint minimization.
         """
+
+        log.debug(f"model set for {self._name}")
 
         # Store likelihood model
 
@@ -62,23 +86,46 @@ class DispersionSpectrumLike(SpectrumLike):
 
         # We assume there are no extended sources, since we cannot handle them here
 
-        assert self._like_model.get_number_of_extended_sources() == 0, "OGIP-like plugins do not support " \
-                                                                       "extended sources"
+        assert self._like_model.get_number_of_extended_sources() == 0, (
+            "OGIP-like plugins do not support " "extended sources"
+        )
 
         # Get the differential flux function, and the integral function, with no dispersion,
         # we simply integrate the model over the bins
 
-        differential_flux, integral = self._get_diff_flux_and_integral(self._like_model)
+        differential_flux, integral = self._get_diff_flux_and_integral(self._like_model,
+                                                                       integrate_method=self._model_integrate_method)
+
+        log.debug(f"{self._name} passing intfral flux function to RSP")
 
         self._rsp.set_function(integral)
+        self._integral_flux = integral
 
-    def _evaluate_model(self):
+    def _evaluate_model(self, precalc_fluxes: Optional[np.array] = None):
         """
         evaluates the full model over all channels
         :return:
         """
 
-        return self._rsp.convolve()
+        return self._rsp.convolve(precalc_fluxes=precalc_fluxes)
+
+    def set_model_integrate_method(self,
+                                   method: str):
+        """
+        Change the integrate method for the model integration
+        :param method: (str) which method should be used (simpson or trapz)
+        """
+        assert method in [
+            "simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        self._model_integrate_method = method
+        log.info(f"{self._name} changing model integration method to {method}")
+
+        # if like_model already set, upadte the integral function
+        if self._like_model is not None:
+            differential_flux, integral = self._get_diff_flux_and_integral(self._like_model,
+                                                                           integrate_method=method)
+            self._rsp.set_function(integral)
+            self._integral_flux = integral
 
     def get_simulated_dataset(self, new_name=None, **kwargs):
         """
@@ -89,8 +136,9 @@ class DispersionSpectrumLike(SpectrumLike):
          """
 
         # pass the response thru to the constructor
-        return super(DispersionSpectrumLike, self).get_simulated_dataset(new_name=new_name,
-                                                                         **kwargs)
+        return super(DispersionSpectrumLike, self).get_simulated_dataset(
+            new_name=new_name, **kwargs
+        )
 
     def get_pha_files(self):
         info = {}
@@ -98,12 +146,12 @@ class DispersionSpectrumLike(SpectrumLike):
         # we want to pass copies so that
         # the user doesn't grab the instance
         # and try to modify things. protection
-        info['pha'] = copy.copy(self._observed_spectrum)
+        info["pha"] = copy.copy(self._observed_spectrum)
 
         if self._background_spectrum is not None:
-            info['bak'] = copy.copy(self._background_spectrum)
+            info["bak"] = copy.copy(self._background_spectrum)
 
-        info['rsp'] = copy.copy(self._rsp)
+        info["rsp"] = copy.copy(self._rsp)
 
         return info
 
@@ -116,19 +164,20 @@ class DispersionSpectrumLike(SpectrumLike):
         self._rsp.plot_matrix()
 
     @property
-    def response(self):
+    def response(self) -> InstrumentResponse:
         return self._rsp
 
     def _output(self):
         # type: () -> pd.Series
 
-        super_out = super(DispersionSpectrumLike, self)._output()  # type: pd.Series
+        super_out = super(DispersionSpectrumLike,
+                          self)._output()  # type: pd.Series
 
-        the_df = pd.Series({'response': self._rsp.rsp_filename})
+        the_df = pd.Series({"response": self._rsp.rsp_filename})
 
         return super_out.append(the_df)
 
-    def write_pha(self, filename, overwrite=False, force_rsp_write=False):
+    def write_pha(self, filename: str, overwrite: bool = False, force_rsp_write: bool = False) -> None:
         """
         Writes the observation, background and (optional) rsp to PHAII fits files
 
@@ -146,10 +195,14 @@ class DispersionSpectrumLike(SpectrumLike):
         from threeML.plugins.OGIPLike import OGIPLike
 
         ogiplike = OGIPLike.from_general_dispersion_spectrum(self)
-        ogiplike.write_pha(file_name=filename, overwrite=overwrite, force_rsp_write=force_rsp_write)
+        ogiplike.write_pha(
+            file_name=filename, overwrite=overwrite, force_rsp_write=force_rsp_write
+        )
 
     @staticmethod
-    def _build_fake_observation(fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs):
+    def _build_fake_observation(
+        fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs
+    ):
         """
         This is the fake observation builder for SpectrumLike which builds data
         for a binned spectrum without dispersion. It must be overridden in child classes.
@@ -162,28 +215,42 @@ class DispersionSpectrumLike(SpectrumLike):
         :return:
         """
 
-        assert 'response' in kwargs, 'A response was not provided. Cannor build synthetic observation'
+        assert (
+            "response" in kwargs
+        ), "A response was not provided. Cannor build synthetic observation"
 
-        response = kwargs.pop('response')
+        response = kwargs.pop("response")
 
-        observation = BinnedSpectrumWithDispersion(fake_data,
-                                                   exposure=1.,
-                                                   response=response,
-                                                   count_errors=source_errors,
-                                                   sys_errors=source_sys_errors,
-                                                   quality=None,
-                                                   scale_factor=1.,
-                                                   is_poisson=is_poisson,
-                                                   mission='fake_mission',
-                                                   instrument='fake_instrument',
-                                                   tstart=0.,
-                                                   tstop=1.)
+        observation = BinnedSpectrumWithDispersion(
+            fake_data,
+            exposure=1.0,
+            response=response,
+            count_errors=source_errors,
+            sys_errors=source_sys_errors,
+            quality=None,
+            scale_factor=1.0,
+            is_poisson=is_poisson,
+            mission="fake_mission",
+            instrument="fake_instrument",
+            tstart=0.0,
+            tstop=1.0,
+        )
 
         return observation
 
     @classmethod
-    def from_function(cls, name, source_function, response, source_errors=None, source_sys_errors=None,
-                      background_function=None, background_errors=None, background_sys_errors=None):
+    def from_function(
+        cls,
+        name: str,
+        source_function,
+        response,
+        source_errors=None,
+        source_sys_errors=None,
+        background_function=None,
+        background_errors=None,
+        background_sys_errors=None,
+    ):
+        # type: () -> DispersionSpectrumLike
         """
 
         Construct a simulated spectrum from a given source function and (optional) background function. If source and/or background errors are not supplied, the likelihood is assumed to be Poisson.
@@ -205,7 +272,15 @@ class DispersionSpectrumLike(SpectrumLike):
 
         # pass the variables to the super class
 
-        return super(DispersionSpectrumLike, cls).from_function(name, source_function, energy_min, energy_max,
-                                                                source_errors, source_sys_errors,
-                                                                background_function, background_errors,
-                                                                background_sys_errors, response=response)
+        return super(DispersionSpectrumLike, cls).from_function(
+            name,
+            source_function,
+            energy_min,
+            energy_max,
+            source_errors,
+            source_sys_errors,
+            background_function,
+            background_errors,
+            background_sys_errors,
+            response=response,
+        )

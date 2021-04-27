@@ -1,7 +1,14 @@
+from builtins import zip
+from builtins import range
 import ROOT
 import numpy as np
+import ctypes
 
-from threeML.minimizer.minimization import LocalMinimizer, FitFailed, CannotComputeCovariance
+from threeML.minimizer.minimization import (
+    LocalMinimizer,
+    FitFailed,
+    CannotComputeCovariance,
+)
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 
 # These are the status returned by Minuit
@@ -10,27 +17,34 @@ from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 #     status = 3    : Edm is above max
 #     status = 4    : Reached call limit
 #     status = 5    : Any other failure
-_status_translation = {1: 'Covariance was made pos. defined',
-                       2: 'Hesse is invalid',
-                       3: 'Edm is above maximum',
-                       4: 'Reached call limit',
-                       5: 'Unknown failure'}
+_status_translation = {
+    1: "Covariance was made pos. defined",
+    2: "Hesse is invalid",
+    3: "Edm is above maximum",
+    4: "Reached call limit",
+    5: "Unknown failure",
+}
 
 # Status for HESSE
 # status += 100*hesseStatus where hesse status is:
 # status = 1 : hesse failed
 # status = 2 : matrix inversion failed
 # status = 3 : matrix is not pos defined
-_hesse_status_translation = {100: 'HESSE failed',
-                             200: 'Covariance matrix inversion failed',
-                             300: 'Covariance matrix is not positive defined'}
+_hesse_status_translation = {
+    100: "HESSE failed",
+    200: "Covariance matrix inversion failed",
+    300: "Covariance matrix is not positive defined",
+}
 
+#root_class = None
+#try:
+#    root_class = ROOT.TPyMultiGenFunction
+#except AttributeError:
+#    root_class = ROOT.Math.IMultiGenFunction
 
-class FuncWrapper(ROOT.TPyMultiGenFunction):
-
-    def __init__(self, function, dimensions):
-
-        ROOT.TPyMultiGenFunction.__init__(self, self)
+class FuncWrapper(ROOT.Math.IMultiGenFunction):
+    
+    def setup(self, function, dimensions):
         self.function = function
         self.dimensions = int(dimensions)
 
@@ -38,15 +52,19 @@ class FuncWrapper(ROOT.TPyMultiGenFunction):
         return self.dimensions
 
     def DoEval(self, args):
-
-        new_args = map(lambda i:args[i],range(self.dimensions))
-
+        new_args = [args[i] for i in range(self.dimensions)]
         return self.function(*new_args)
+    
+    def Clone(self):
+        f = FuncWrapper()
+        f.setup(f.function, f.dimensions)
+        ROOT.SetOwnership(f, False)
+        return f
 
 
 class ROOTMinimizer(LocalMinimizer):
 
-    valid_setup_keys = ('ftol', 'max_function_calls', 'strategy')
+    valid_setup_keys = ("ftol", "max_function_calls", "strategy")
 
     def __init__(self, function, parameters, verbosity=0, setup_dict=None):
 
@@ -56,9 +74,7 @@ class ROOTMinimizer(LocalMinimizer):
 
         # Defaults
 
-        setup_dict = {'ftol': 1.0,
-                      'max_function_calls': 100000,
-                      'strategy': 1}
+        setup_dict = {"ftol": 1.0, "max_function_calls": 100000, "strategy": 1}
 
         # Update defaults if needed
         if user_setup_dict is not None:
@@ -69,37 +85,46 @@ class ROOTMinimizer(LocalMinimizer):
 
         # Setup the minimizer algorithm
 
-        self.functor = FuncWrapper(self.function, self.Npar)
-        self.minimizer = ROOT.Math.Factory.CreateMinimizer("Minuit2", "Minimize")
+        self.functor = FuncWrapper()
+        self.functor.setup(self.function, self.Npar)
+        self.minimizer = ROOT.Minuit2.Minuit2Minimizer("Minimize")
         self.minimizer.Clear()
-        self.minimizer.SetMaxFunctionCalls(setup_dict['max_function_calls'])
+        self.minimizer.SetMaxFunctionCalls(setup_dict["max_function_calls"])
         self.minimizer.SetPrintLevel(self.verbosity)
         self.minimizer.SetErrorDef(0.5)
-        self.minimizer.SetStrategy(setup_dict['strategy'])
-        self.minimizer.SetTolerance(setup_dict['ftol'])
+        self.minimizer.SetStrategy(setup_dict["strategy"])
+        self.minimizer.SetTolerance(setup_dict["ftol"])
 
         self.minimizer.SetFunction(self.functor)
         self.minimizer.SetPrintLevel(int(self.verbosity))
 
         # Set up the parameters in internal reference
 
-        for i, (par_name, (cur_value, cur_delta, cur_min, cur_max)) in enumerate(self._internal_parameters.items()):
+        for i, (par_name, (cur_value, cur_delta, cur_min, cur_max)) in enumerate(
+            self._internal_parameters.items()
+        ):
 
             if cur_min is not None and cur_max is not None:
 
                 # Variable with lower and upper limit
 
-                self.minimizer.SetLimitedVariable(i, par_name, cur_value, cur_delta, cur_min, cur_max)
+                self.minimizer.SetLimitedVariable(
+                    i, par_name, cur_value, cur_delta, cur_min, cur_max
+                )
 
             elif cur_min is not None and cur_max is None:
 
                 # Lower limited
-                self.minimizer.SetLowerLimitedVariable(i, par_name, cur_value, cur_delta, cur_min)
+                self.minimizer.SetLowerLimitedVariable(
+                    i, par_name, cur_value, cur_delta, cur_min
+                )
 
             elif cur_min is None and cur_max is not None:
 
                 # upper limited
-                self.minimizer.SetUpperLimitedVariable(i, par_name, cur_value, cur_delta, cur_max)
+                self.minimizer.SetUpperLimitedVariable(
+                    i, par_name, cur_value, cur_delta, cur_max
+                )
 
             else:
 
@@ -119,12 +144,18 @@ class ROOTMinimizer(LocalMinimizer):
 
             if status in _status_translation:
 
-                msg = "MIGRAD did not converge. Reason: %s (status: %i)" % (_status_translation[status], status)
+                msg = "MIGRAD did not converge. Reason: %s (status: %i)" % (
+                    _status_translation[status],
+                    status,
+                )
 
             else:
 
-                msg = "MIGRAD failed with status %i " \
-                      "(see https://root.cern.ch/root/html/ROOT__Minuit2__Minuit2Minimizer.html)" % status
+                msg = (
+                    "MIGRAD failed with status %i "
+                    "(see https://root.cern.ch/root/html/ROOT__Minuit2__Minuit2Minimizer.html)"
+                    % status
+                )
 
             raise FitFailed(msg)
 
@@ -132,7 +163,9 @@ class ROOTMinimizer(LocalMinimizer):
 
         minimum = self.minimizer.MinValue()
 
-        best_fit_values = np.array(map(lambda x: x[0], zip(self.minimizer.X(), range(self.Npar))))
+        best_fit_values = np.array(
+            [x[0] for x in zip(self.minimizer.X(), list(range(self.Npar)))]
+        )
 
         return best_fit_values, minimum
 
@@ -152,8 +185,10 @@ class ROOTMinimizer(LocalMinimizer):
 
             failure_reason = _hesse_status_translation[status_after_hesse]
 
-            raise CannotComputeCovariance("HESSE failed. Reason: %s (status: %i)" % (failure_reason,
-                                                                                     status_after_hesse))
+            raise CannotComputeCovariance(
+                "HESSE failed. Reason: %s (status: %i)"
+                % (failure_reason, status_after_hesse)
+            )
 
         # Gather the covariance matrix and return it
 
@@ -163,7 +198,7 @@ class ROOTMinimizer(LocalMinimizer):
 
             for j in range(self.Npar):
 
-                covariance_matrix[i,j] = self.minimizer.CovMatrix(i,j)
+                covariance_matrix[i, j] = self.minimizer.CovMatrix(i, j)
 
         return covariance_matrix
 
@@ -175,16 +210,15 @@ class ROOTMinimizer(LocalMinimizer):
 
         for i, par_name in enumerate(self.parameters):
 
-            err_low = ROOT.Double(0)
-            err_up = ROOT.Double(0)
+            err_low = ctypes.c_double(0)
+            err_up = ctypes.c_double(0)
 
             self.minimizer.GetMinosError(i, err_low, err_up)
 
-            errors[par_name] = (err_low, err_up)
+            errors[par_name] = (err_low.value, err_up.value)
 
         return errors
 
         # GetMinosError(unsigned
         # int
         # i, double & errLow, double & errUp, int = 0)
-

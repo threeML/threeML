@@ -1,4 +1,6 @@
+from builtins import map
 import pytest
+import numpy as np
 
 from astromodels import *
 from threeML.plugins.XYLike import XYLike
@@ -22,9 +24,9 @@ def test_energy_time_fit():
 
         x = np.logspace(0, 2, 50)
 
-        xyl_generator = XYLike.from_function("sim_data", function=gen_function,
-                                             x=x,
-                                             yerr=0.3 * gen_function(x))
+        xyl_generator = XYLike.from_function(
+            "sim_data", function=gen_function, x=x, yerr=0.3 * gen_function(x)
+        )
 
         y = xyl_generator.y
         y_err = xyl_generator.yerr
@@ -41,7 +43,7 @@ def test_energy_time_fit():
 
     normalizations = 0.23 * time_tags ** (-1.2)
 
-    datasets = map(generate_one, normalizations)
+    datasets = list(map(generate_one, normalizations))
 
     # Now set up the fit and fit it
 
@@ -86,4 +88,8 @@ def test_energy_time_fit():
 
     # Make sure we are within 10% of the expected result
 
-    assert np.allclose(best_fit_parameters['value'].values, [0.25496115, -1.2282951 , -2.01508341], rtol=0.1)
+    assert np.allclose(
+        best_fit_parameters["value"].values,
+        [0.25496115, -1.2282951, -2.01508341],
+        rtol=0.1,
+    )

@@ -5,9 +5,7 @@ import collections
 import pandas as pd
 
 
-
 class TimeInterval(Interval):
-
     def __add__(self, number):
         """
         Return a new time interval equal to the original time interval shifted to the right by number
@@ -50,9 +48,11 @@ class TimeInterval(Interval):
 
     def __repr__(self):
 
-        return "time interval %s - %s (duration: %s)" % (self.start_time, self.stop_time, self.duration)
-
-
+        return "time interval %s - %s (duration: %s)" % (
+            self.start_time,
+            self.stop_time,
+            self.duration,
+        )
 
 
 class TimeIntervalSet(IntervalSet):
@@ -60,8 +60,8 @@ class TimeIntervalSet(IntervalSet):
     A set of time intervals
 
     """
-    INTERVAL_TYPE = TimeInterval
 
+    INTERVAL_TYPE = TimeInterval
 
     @property
     def start_times(self):
@@ -131,7 +131,9 @@ class TimeIntervalSet(IntervalSet):
         :return: new TimeIntervalSet instance
         """
 
-        new_set = self.new([time_interval - number for time_interval in self._intervals])
+        new_set = self.new(
+            [time_interval - number for time_interval in self._intervals]
+        )
 
         return new_set
 
@@ -139,26 +141,21 @@ class TimeIntervalSet(IntervalSet):
 
         time_interval_dict = collections.OrderedDict()
 
-        time_interval_dict['Start'] = []
-        time_interval_dict['Stop'] = []
-        time_interval_dict['Duration'] = []
-        time_interval_dict['Midpoint'] = []
-
-
+        time_interval_dict["Start"] = []
+        time_interval_dict["Stop"] = []
+        time_interval_dict["Duration"] = []
+        time_interval_dict["Midpoint"] = []
 
         for i, interval in enumerate(self._intervals):
 
-
-            time_interval_dict['Start'].append(interval.start)
-            time_interval_dict['Stop'].append(interval.stop)
-            time_interval_dict['Duration'].append(interval.duration)
-            time_interval_dict['Midpoint'].append(interval.half_time)
+            time_interval_dict["Start"].append(interval.start)
+            time_interval_dict["Stop"].append(interval.stop)
+            time_interval_dict["Duration"].append(interval.duration)
+            time_interval_dict["Midpoint"].append(interval.half_time)
 
         df = pd.DataFrame(data=time_interval_dict)
 
         return df
-
-
 
     def display(self):
         """
@@ -169,10 +166,6 @@ class TimeIntervalSet(IntervalSet):
 
         display(self._create_pandas())
 
-
     def __repr__(self):
 
         return self._create_pandas().to_string()
-
-
-

@@ -1,22 +1,36 @@
+from __future__ import division, print_function
+
 import collections
 import sys
+from builtins import object, range, zip
+
 import astromodels.core.model
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.optimize
 import scipy.stats
-from astromodels import ModelAssertionViolation
-from astromodels import clone_model
+from astromodels import Model, ModelAssertionViolation, clone_model
+from past.utils import old_div
+
 from threeML.analysis_results import MLEResults
 from threeML.config.config import threeML_config
+from threeML.data_list import DataList
 from threeML.exceptions import custom_exceptions
-from threeML.exceptions.custom_exceptions import custom_warnings, FitFailed
+from threeML.exceptions.custom_exceptions import FitFailed, custom_warnings,\
+    NoFitYet, MinLargerMax, ForbiddenRegionOfParameterSpace, MinimizerNotAvailable
+from threeML.io.logging import setup_logger
+from threeML.io.package_data import get_path_of_data_file
 from threeML.io.results_table import ResultsTable
 from threeML.io.table import Table
 from threeML.minimizer import minimization
 from threeML.parallel.parallel_client import ParallelClient
 from threeML.utils.statistics.stats_tools import aic, bic
+
+plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
+
+
+log = setup_logger(__name__)
 
 
 class ReducingNumberOfThreads(Warning):
@@ -32,8 +46,13 @@ class NotANumberInLikelihood(Warning):
 
 
 class JointLikelihood(object):
-
-    def __init__(self, likelihood_model, data_list, verbose=False, record=True):
+    def __init__(
+        self,
+        likelihood_model: Model,
+        data_list: DataList,
+        verbose: bool = False,
+        record: bool = True,
+    ):
         """
         Implement a joint likelihood analysis.
 
@@ -45,29 +64,35 @@ class JointLikelihood(object):
         :return:
         """
 
-        self._analysis_type = "mle"
+        log.debug("creating new MLE analysis")
+
+        self._analysis_type: str = "mle"
 
         # Process optional keyword parameters
-        self.verbose = verbose
+        self.verbose: bool = verbose
 
-        self._likelihood_model = likelihood_model  # type: astromodels.core.model.Model
+        self._likelihood_model: Model = likelihood_model
 
-        self._data_list = data_list
+        self._data_list: DataList = data_list
 
         self._assign_model_to_data(self._likelihood_model)
 
         # This is to keep track of the number of calls to the likelihood
         # function
-        self._record = bool(record)
-        self._ncalls = 0
-        self._record_calls = {}
+        self._record: bool = bool(record)
+        self._ncalls: int = 0
+        self._record_calls: dict = {}
 
         # Pre-defined minimizer
-        default_minimizer = minimization.LocalMinimization(threeML_config['mle']['default minimizer'])
+        default_minimizer = minimization.LocalMinimization(
+            threeML_config["mle"]["default_minimizer"].value
+        )
 
-        if threeML_config['mle']['default minimizer algorithm'] is not None:
+        if threeML_config["mle"]["default_minimizer_algorithm"] is not None:
 
-            default_minimizer.set_algorithm(threeML_config['mle']['default minimizer algorithm'])
+            default_minimizer.set_algorithm(
+                threeML_config["mle"]["default_minimizer_algorithm"].value
+            )
 
         self.set_minimizer(default_minimizer)
 
@@ -87,9 +112,11 @@ class JointLikelihood(object):
 
         self._analysis_results = None
 
-    def _assign_model_to_data(self, model):
+    def _assign_model_to_data(self, model) -> None:
 
-        for dataset in self._data_list.values():
+        log.debug("REGISTERING MODEL")
+
+        for dataset in list(self._data_list.values()):
 
             dataset.set_model(model)
 
@@ -103,13 +130,19 @@ class JointLikelihood(object):
                 # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
                 # of the same plugin will overwrite each other's nuisance parameters
 
-                assert dataset.name in parameter_name, "This is a bug of the plugin for %s: nuisance parameters " \
-                                                       "must contain the instance name" % type(dataset)
+                if not dataset.name in parameter_name:
+                    log.error(
+                        f"This is a bug of the plugin for {type(dataset)}: "
+                        "nuisance parameters must contain the instance name"
+                    )
+                    raise NameError()
 
                 self._likelihood_model.add_external_parameter(parameter)
 
+        log.debug("MODEL REGISTERED!")
+
     @property
-    def likelihood_model(self):
+    def likelihood_model(self) -> Model:
         """
         :return: likelihood model for this analysis
         """
@@ -117,7 +150,7 @@ class JointLikelihood(object):
         return self._likelihood_model
 
     @property
-    def data_list(self):
+    def data_list(self) -> DataList:
         """
         :return: data list for this analysis
         """
@@ -125,7 +158,7 @@ class JointLikelihood(object):
         return self._data_list
 
     @property
-    def current_minimum(self):
+    def current_minimum(self) -> float:
         """
         :return: current minimum of the joint likelihood (available only after the fit() method)
         """
@@ -149,7 +182,9 @@ class JointLikelihood(object):
 
         except AttributeError:
 
-            raise RuntimeError("You need to run a fit before accessing the covariance matrix")
+            raise RuntimeError(
+                "You need to run a fit before accessing the covariance matrix"
+            )
 
     @property
     def correlation_matrix(self):
@@ -163,19 +198,25 @@ class JointLikelihood(object):
 
         except AttributeError:
 
-            raise RuntimeError("You need to run a fit before accessing the correlation matrix")
+            raise RuntimeError(
+                "You need to run a fit before accessing the correlation matrix"
+            )
 
     @property
-    def analysis_type(self):
+    def analysis_type(self) -> str:
         return self._analysis_type
 
     def _update_free_parameters(self):
-
         """Update the dictionary of free parameters"""
 
         self._free_parameters = self._likelihood_model.free_parameters
 
-    def fit(self, quiet=False, compute_covariance=True, n_samples=5000):
+    def fit(
+        self,
+        quiet: bool = False,
+        compute_covariance: bool = True,
+        n_samples: int = 5000,
+    ):
         """
         Perform a fit of the current likelihood model on the datasets
 
@@ -188,6 +229,7 @@ class JointLikelihood(object):
         # Update the list of free parameters, to be safe against changes the user might do between
         # the creation of this class and the calling of this method
 
+        log.debug("beginning the fit!")
         self._update_free_parameters()
 
         # Empty the call recorder
@@ -197,12 +239,9 @@ class JointLikelihood(object):
         # Check if we have free parameters, otherwise simply return the value of the log like
         if len(self._free_parameters) == 0:
 
-            custom_warnings.warn("There is no free parameter in the current model", RuntimeWarning)
+            log.warning("There is no free parameter in the current model")
 
-            # Create the minimizer anyway because it will be needed by the following code
-
-            self._minimizer = self._get_minimizer(self.minus_log_like_profile,
-                                                  self._free_parameters)
+            self._minimizer = None
 
             # Store the "minimum", which is just the current value
             self._current_minimum = float(self.minus_log_like_profile())
@@ -215,10 +254,23 @@ class JointLikelihood(object):
             if isinstance(self._minimizer_type, minimization.GlobalMinimization):
 
                 # Do global minimization first
+                log.debug(f"starting global optimization")
 
-                global_minimizer = self._get_minimizer(self.minus_log_like_profile, self._free_parameters)
+                if quiet:
 
-                xs, global_log_likelihood_minimum = global_minimizer.minimize(compute_covar=False)
+                    verbosity = 0
+
+                else:
+
+                    verbosity = 1
+
+                global_minimizer = self._get_minimizer(
+                    self.minus_log_like_profile, self._free_parameters, verbosity=verbosity
+                )
+
+                xs, global_log_likelihood_minimum = global_minimizer.minimize(
+                    compute_covar=False
+                )
 
                 # Gather global results
                 paths = []
@@ -226,43 +278,55 @@ class JointLikelihood(object):
                 errors = []
                 units = []
 
-                for par in self._free_parameters.values():
+                for par in list(self._free_parameters.values()):
 
                     paths.append(par.path)
                     values.append(par.value)
                     errors.append(0)
                     units.append(par.unit)
 
-                global_results = ResultsTable(paths, values, errors, errors, units)
+                global_results = ResultsTable(
+                    paths, values, errors, errors, units)
 
                 if not quiet:
 
-                    print("\n\nResults after global minimizer (before secondary optimization):")
+                    log.info(
+                        "\n\nResults after global minimizer (before secondary optimization):"
+                    )
 
                     global_results.display()
 
-                    print("\nTotal log-likelihood minimum: %.3f\n" % global_log_likelihood_minimum)
+                    log.info(
+                        "\nTotal log-likelihood minimum: %.3f\n"
+                        % global_log_likelihood_minimum
+                    )
 
                 # Now set up secondary minimizer
-                self._minimizer = self._minimizer_type.get_second_minimization_instance(self.minus_log_like_profile,
-                                                                                        self._free_parameters)
+                self._minimizer = self._minimizer_type.get_second_minimization_instance(
+                    self.minus_log_like_profile, self._free_parameters
+                )
 
             else:
 
                 # Only local minimization to be performed
 
-                self._minimizer = self._get_minimizer(self.minus_log_like_profile,
-                                                      self._free_parameters)
+                log.debug("starting local optimization")
+
+                self._minimizer = self._get_minimizer(
+                    self.minus_log_like_profile, self._free_parameters
+                )
 
             # Perform the fit, but first flush stdout (so if we have verbose=True the messages there will follow
             # what is already in the buffer)
             sys.stdout.flush()
 
-            xs, log_likelihood_minimum = self._minimizer.minimize(compute_covar=compute_covariance)
+            xs, log_likelihood_minimum = self._minimizer.minimize(
+                compute_covar=compute_covariance
+            )
 
             if log_likelihood_minimum == minimization.FIT_FAILED:
-
-                raise FitFailed("The fit failed to converge.")
+                log.error("The fit failed to converge.")
+                raise FitFailed()
 
             # Store the current minimum for the -log likelihood
 
@@ -285,7 +349,7 @@ class JointLikelihood(object):
 
         total_number_of_data_points = 0
 
-        for dataset in self._data_list.values():
+        for dataset in list(self._data_list.values()):
 
             ml = dataset.inner_fit() * (-1)
 
@@ -295,7 +359,11 @@ class JointLikelihood(object):
 
             total_number_of_data_points += dataset.get_number_of_data_points()
 
-        assert total == self._current_minimum, "Current minimum stored after fit and current do not correspond!"
+        if total != self._current_minimum:
+            log.error(
+                "Current minimum stored after fit and current do not correspond!"
+            )
+            raise ValueError()
 
         # compute additional statistics measures
 
@@ -304,13 +372,29 @@ class JointLikelihood(object):
         # for MLE we can only compute the AIC and BIC as they
         # are point estimates
 
-        statistical_measures['AIC'] = aic(-total,len(self._free_parameters),total_number_of_data_points)
-        statistical_measures['BIC'] = bic(-total,len(self._free_parameters),total_number_of_data_points)
+        statistical_measures["AIC"] = aic(
+            -total, len(self._free_parameters), total_number_of_data_points
+        )
+        statistical_measures["BIC"] = bic(
+            -total, len(self._free_parameters), total_number_of_data_points
+        )
 
+        #Workaround for the case of a "fit" with no free parameters
+        #This happens e.g. if you calculate the TS of the only source
+        #in a one-source model.
+        if self._minimizer is not None:
+            covariance_matrix = self._minimizer.covariance_matrix
+        else:
+            covariance_matrix = None
 
         # Now instance an analysis results class
-        self._analysis_results = MLEResults(self.likelihood_model, self._minimizer.covariance_matrix,
-                                            minus_log_likelihood_values,statistical_measures=statistical_measures, n_samples=n_samples)
+        self._analysis_results = MLEResults(
+            self.likelihood_model,
+            covariance_matrix,
+            minus_log_likelihood_values,
+            statistical_measures=statistical_measures,
+            n_samples=n_samples,
+        )
 
         # Show the results
 
@@ -318,10 +402,13 @@ class JointLikelihood(object):
 
             self._analysis_results.display()
 
-        return self._analysis_results.get_data_frame(), self._analysis_results.get_statistic_frame()
+        return (
+            self._analysis_results.get_data_frame(),
+            self._analysis_results.get_statistic_frame(),
+        )
 
     @property
-    def results(self):
+    def results(self) -> MLEResults:
 
         return self._analysis_results
 
@@ -334,7 +421,11 @@ class JointLikelihood(object):
 
         # Check that the user performed a fit first
 
-        assert self._current_minimum is not None, "You have to run the .fit method before calling errors."
+        if self._current_minimum is None:
+            log.error(
+                 "You have to run the .fit method before calling errors."
+            )
+            raise NoFitYet()
 
         errors = self._minimizer.get_errors()
 
@@ -343,13 +434,16 @@ class JointLikelihood(object):
 
         # Print a table with the errors
 
-        parameter_names = self._free_parameters.keys()
-        best_fit_values = map(lambda x: x.value, self._free_parameters.values())
+        parameter_names = list(self._free_parameters.keys())
+        best_fit_values = [x.value for x in list(
+            self._free_parameters.values())]
         negative_errors = [errors[k][0] for k in parameter_names]
         positive_errors = [errors[k][1] for k in parameter_names]
-        units = [par.unit for par in self._free_parameters.values()]
+        units = [par.unit for par in list(self._free_parameters.values())]
 
-        results_table = ResultsTable(parameter_names, best_fit_values, negative_errors, positive_errors, units)
+        results_table = ResultsTable(
+            parameter_names, best_fit_values, negative_errors, positive_errors, units
+        )
 
         if not quiet:
 
@@ -357,9 +451,19 @@ class JointLikelihood(object):
 
         return results_table.frame
 
-    def get_contours(self, param_1, param_1_minimum, param_1_maximum, param_1_n_steps,
-                     param_2=None, param_2_minimum=None, param_2_maximum=None, param_2_n_steps=None,
-                     progress=True, **options):
+    def get_contours(
+        self,
+        param_1,
+        param_1_minimum,
+        param_1_maximum,
+        param_1_n_steps,
+        param_2=None,
+        param_2_minimum=None,
+        param_2_maximum=None,
+        param_2_n_steps=None,
+        progress=True,
+        **options,
+    ):
         """
         Generate confidence contours for the given parameters by stepping for the given number of steps between
         the given boundaries. Call it specifying only source_1, param_1, param_1_minimum and param_1_maximum to
@@ -391,27 +495,38 @@ class JointLikelihood(object):
                  size param_1_steps.
         """
 
-        if hasattr(param_1,"value"):
+        if hasattr(param_1, "value"):
 
             # Substitute with the name
             param_1 = param_1.path
 
-        if hasattr(param_2,'value'):
+        if hasattr(param_2, "value"):
 
             param_2 = param_2.path
 
         # Check that the parameters exist
-        assert param_1 in self._likelihood_model.free_parameters, "Parameter %s is not a free parameters of the " \
-                                                                 "current model" % param_1
+        if param_1 not in self._likelihood_model.free_parameters:
+            log.error(
+                f"Parameter {param_1} is not a free parameters of the current model"
+            )
+            raise AssertionError()
+
 
         if param_2 is not None:
-            assert param_2 in self._likelihood_model.free_parameters, "Parameter %s is not a free parameters of the " \
-                                                                      "current model" % param_2
-
+            if param_2 not in self._likelihood_model.free_parameters:
+                log.error(
+                    f"Parameter {param_2} is not a free parameters of the "
+                    "current model"
+                )
+                raise AssertionError()
 
         # Check that we have a valid fit
 
-        assert self._current_minimum is not None, "You have to run the .fit method before calling get_contours."
+        if self._current_minimum is None:
+            log.error(
+                "You have to run the .fit method before calling get_contours."
+                )
+            raise NoFitYet()
 
         # Then restore the best fit
 
@@ -419,21 +534,37 @@ class JointLikelihood(object):
 
         # Check minimal assumptions about the procedure
 
-        assert not (param_1 == param_2), "You have to specify two different parameters"
+        if param_1==param_2:
+            log.error(
+                "You have to specify two different parameters"
+            )
+            raise ValueError()
 
-        assert param_1_minimum < param_1_maximum, "Minimum larger than maximum for parameter 1"
+        if not param_1_minimum<param_1_maximum:
+            log.error(
+                "Minimum larger than maximum for parameter 1"
+            )
+            raise MinLargerMax()
 
         min1, max1 = self.likelihood_model[param_1].bounds
 
         if min1 is not None:
-
-            assert param_1_minimum >= min1, "Requested low range for parameter %s (%s) " \
-                                            "is below parameter minimum (%s)" % (param_1, param_1_minimum, min1)
+            if param_1_minimum < min1:
+                log.error(
+                    f"Requested low range for parameter {param_1} "
+                    f"({param_1_minimum}) is below parameter "
+                    f"minimum ({min1})"
+                )
+                raise ForbiddenRegionOfParameterSpace()
 
         if max1 is not None:
-
-            assert param_1_maximum <= max1, "Requested hi range for parameter %s (%s) " \
-                                            "is above parameter maximum (%s)" % (param_1, param_1_maximum, max1)
+            if param_1_maximum > max1:
+                log.error(
+                    f"Requested hi range for parameter {param_1} "
+                    f"({param_1_maximum}) "
+                    f"is above parameter maximum ({max1})"
+                )
+                raise ForbiddenRegionOfParameterSpace()
 
         if param_2 is not None:
 
@@ -441,21 +572,40 @@ class JointLikelihood(object):
 
             if min2 is not None:
 
-                assert param_2_minimum >= min2, "Requested low range for parameter %s (%s) " \
-                                                "is below parameter minimum (%s)" % (param_2, param_2_minimum, min2)
+                if param_2_minimum < min2:
+                    log.error(
+                        f"Requested low range for parameter {param_2} "
+                        f"(param_2_minim) "
+                        f"is below parameter minimum (min2)"
+                    )
+                    raise ForbiddenRegionOfParameterSpace()
 
             if max2 is not None:
 
-                assert param_2_maximum <= max2, "Requested hi range for parameter %s (%s) " \
-                                                "is above parameter maximum (%s)" % (param_2, param_2_maximum, max2)
+                if param_2_maximum > max2:
+                    log.error(
+                        f"Requested hi range for parameter {param_2} "
+                        f"(param_2_maximum) "
+                        f"is above parameter maximum ({max2})"
+                    )
+                    raise ForbiddenRegionOfParameterSpace()
 
         # Check whether we are parallelizing or not
 
-        if not threeML_config['parallel']['use-parallel']:
+        if not threeML_config["parallel"]["use_parallel"]:
 
-            a, b, cc = self.minimizer.contours(param_1, param_1_minimum, param_1_maximum, param_1_n_steps,
-                                               param_2, param_2_minimum, param_2_maximum, param_2_n_steps,
-                                               progress, **options)
+            a, b, cc = self.minimizer.contours(
+                param_1,
+                param_1_minimum,
+                param_1_maximum,
+                param_1_n_steps,
+                param_2,
+                param_2_minimum,
+                param_2_maximum,
+                param_2_n_steps,
+                progress,
+                **options,
+            )
 
             # Collapse the second dimension of the results if we are doing a 1d contour
 
@@ -483,8 +633,10 @@ class JointLikelihood(object):
 
                 n_engines = int(param_1_n_steps)
 
-                custom_warnings.warn("The number of engines is larger than the number of steps. Using only %s engines."
-                                     % n_engines, ReducingNumberOfThreads)
+                log.warning(
+                    "The number of engines is larger than the number of steps. Using only %s engines."
+                    % n_engines,
+                )
 
             # Check if the number of steps is divisible by the number
             # of threads, otherwise issue a warning and make it so
@@ -495,8 +647,10 @@ class JointLikelihood(object):
 
                 param_1_n_steps = (param_1_n_steps // n_engines) * n_engines
 
-                custom_warnings.warn("Number of steps is not a multiple of the number of threads. Reducing steps to %s"
-                                     % param_1_n_steps, ReducingNumberOfSteps)
+                log.warning(
+                    "Number of steps is not a multiple of the number of threads. Reducing steps to %s"
+                    % param_1_n_steps,
+                )
 
             # Compute the number of splits, i.e., how many lines in the grid for each engine.
             # (note that this is guaranteed to be an integer number after the previous checks)
@@ -510,7 +664,8 @@ class JointLikelihood(object):
                 # One array
                 pcc = np.zeros(param_1_n_steps)
 
-                pa = np.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
+                pa = np.linspace(
+                    param_1_minimum, param_1_maximum, param_1_n_steps)
                 pb = None
 
             else:
@@ -518,8 +673,10 @@ class JointLikelihood(object):
                 pcc = np.zeros((param_1_n_steps, param_2_n_steps))
 
                 # Prepare the two axes of the parameter space
-                pa = np.linspace(param_1_minimum, param_1_maximum, param_1_n_steps)
-                pb = np.linspace(param_2_minimum, param_2_maximum, param_2_n_steps)
+                pa = np.linspace(
+                    param_1_minimum, param_1_maximum, param_1_n_steps)
+                pb = np.linspace(
+                    param_2_minimum, param_2_maximum, param_2_n_steps)
 
             # Define the parallel worker which will go through the computation
 
@@ -532,24 +689,39 @@ class JointLikelihood(object):
 
                 # Re-create the minimizer
 
-                backup_freeParameters = map(lambda x:x.value, self._likelihood_model.free_parameters.values())
+                backup_freeParameters = [
+                    x.value
+                    for x in list(self._likelihood_model.free_parameters.values())
+                ]
 
-                this_minimizer = self._get_minimizer(self.minus_log_like_profile,
-                                                     self._free_parameters)
+                this_minimizer = self._get_minimizer(
+                    self.minus_log_like_profile, self._free_parameters
+                )
 
                 this_p1min = pa[start_index * p1_split_steps]
                 this_p1max = pa[(start_index + 1) * p1_split_steps - 1]
 
                 # print("From %s to %s" % (this_p1min, this_p1max))
 
-                aa, bb, ccc = this_minimizer.contours(param_1, this_p1min, this_p1max, p1_split_steps,
-                                                      param_2, param_2_minimum, param_2_maximum,
-                                                      param_2_n_steps,
-                                                      progress=True, **options)
+                aa, bb, ccc = this_minimizer.contours(
+                    param_1,
+                    this_p1min,
+                    this_p1max,
+                    p1_split_steps,
+                    param_2,
+                    param_2_minimum,
+                    param_2_maximum,
+                    param_2_n_steps,
+                    progress=True,
+                    **options,
+                )
 
                 # Restore best fit values
 
-                for val, par in zip(backup_freeParameters, self._likelihood_model.free_parameters.values()):
+                for val, par in zip(
+                    backup_freeParameters,
+                    list(self._likelihood_model.free_parameters.values()),
+                ):
 
                     par.value = val
 
@@ -557,17 +729,23 @@ class JointLikelihood(object):
 
             # Now re-assemble the vector of results taking the different parts from the engines
 
-            all_results = client.execute_with_progress_bar(worker, range(n_engines), chunk_size=1)
+            all_results = client.execute_with_progress_bar(
+                worker, list(range(n_engines)), chunk_size=1
+            )
 
             for i, these_results in enumerate(all_results):
 
                 if param_2 is None:
 
-                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps] = these_results[:, 0]
+                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps] = these_results[
+                        :, 0
+                    ]
 
                 else:
 
-                    pcc[i * p1_split_steps: (i + 1) * p1_split_steps, :] = these_results
+                    pcc[
+                        i * p1_split_steps: (i + 1) * p1_split_steps, :
+                    ] = these_results
 
             # Give the results the names that the following code expect. These are kept separate for debugging
             # purposes
@@ -583,7 +761,8 @@ class JointLikelihood(object):
 
             # 2d contour
 
-            fig = self._plot_contours("%s" % (param_1), a, "%s" % (param_2,), b, cc)
+            fig = self._plot_contours(
+                "%s" % (param_1), a, "%s" % (param_2,), b, cc)
 
         else:
 
@@ -602,97 +781,152 @@ class JointLikelihood(object):
 
                 aidx, bidx = np.unravel_index(idx, cc.shape)
 
-                print("\nFound a better minimum: %s with %s = %s and %s = %s. Run again your fit starting from here."
-                      % (cc.min(), param_1, a[aidx], param_2, b[bidx]))
+                log.warning(
+                    "\nFound a better minimum: %s with %s = %s and %s = %s. Run again your fit starting from here."
+                    % (cc.min(), param_1, a[aidx], param_2, b[bidx])
+                )
 
             else:
 
                 idx = cc.argmin()
 
-                print("Found a better minimum: %s with %s = %s. Run again your fit starting from here."
-                      % (cc.min(), param_1, a[idx]))
-
+                log.warning(
+                    "Found a better minimum: %s with %s = %s. Run again your fit starting from here."
+                    % (cc.min(), param_1, a[idx])
+                )
+        
+        else:
+            #restore model
+            self.restore_best_fit()
+        
         return a, b, cc, fig
 
-    def plot_all_contours( self, nsteps_1d, nsteps_2d = 0, n_sigma = 5, log_norm = True):
-    
+    def plot_all_contours(self, nsteps_1d, nsteps_2d=0, n_sigma=5, log_norm=True):
+
         figs = []
         names = []
-        
-        res = self.get_errors(False)
-        
-        
-        if nsteps_1d >= 0:
-          for param in self._likelihood_model.free_parameters:
-            print param
 
-            center = res["value"][param]
-            do_log = (False,)
-            lower = center + res["negative_error"][param] * n_sigma
-            upper = center + res["positive_error"][param] * n_sigma
-           
-            if log_norm and self._likelihood_model.free_parameters[param].is_normalization:
-              do_log = (True,)
-              lower = center * (1.0 + res["negative_error"][param]/center)**n_sigma
-              upper = center * (1.0 + res["positive_error"][param]/center)**n_sigma
-            
-            
-            lower = max( self.likelihood_model[param].bounds[0], lower)
-            upper = min( self.likelihood_model[param].bounds[1], upper)
-            
-            #print param, lower, center, upper 
-            
-            try:
-              a,b,cc, fig = self.get_contours( param, lower, upper, nsteps_1d, log=do_log)
-              figs.append( fig )
-              names.append( param)
-            except Exception as e:
-              print e
+        res = self.get_errors(False)
+
+        if nsteps_1d >= 0:
+            for param in self._likelihood_model.free_parameters:
+
+                center = res["value"][param]
+                do_log = (False,)
+                lower = center + res["negative_error"][param] * n_sigma
+                upper = center + res["positive_error"][param] * n_sigma
+
+                if (
+                    log_norm
+                    and self._likelihood_model.free_parameters[param].is_normalization
+                ):
+                    do_log = (True,)
+                    lower = (
+                        center
+                        * (1.0 + old_div(res["negative_error"][param], center))
+                        ** n_sigma
+                    )
+                    upper = (
+                        center
+                        * (1.0 + old_div(res["positive_error"][param], center))
+                        ** n_sigma
+                    )
+
+                lower = max(self.likelihood_model[param].bounds[0], lower)
+                upper = min(self.likelihood_model[param].bounds[1], upper)
+
+                # print param, lower, center, upper
+
+                try:
+                    a, b, cc, fig = self.get_contours(
+                        param, lower, upper, nsteps_1d, log=do_log
+                    )
+                    figs.append(fig)
+                    names.append(param)
+                except Exception as e:
+                    print(e)
 
         if nsteps_2d >= 0:
-    
-          for param_1 in self._likelihood_model.free_parameters:
 
-            do_log = ( False, False)
-            center_1 = res["value"][param_1]
-            lower_1 = center_1 + res["negative_error"][param_1] * n_sigma
-            upper_1 = center_1 + res["positive_error"][param_1] * n_sigma
+            for param_1 in self._likelihood_model.free_parameters:
 
-            if log_norm and self._likelihood_model.free_parameters[param_1].is_normalization:
-              do_log = (True, False)
-              lower_1 = center_1 * (1.0 + res["negative_error"][param_1]/center_1)**n_sigma
-              upper_1 = center_1 * (1.0 + res["positive_error"][param_1]/center_1)**n_sigma
-         
-            lower_1 = max( self.likelihood_model[param_1].bounds[0], lower_1)
-            upper_1 = min( self.likelihood_model[param_1].bounds[1], upper_1)
-            
-            for param_2 in self._likelihood_model.free_parameters:
-            
-              if param_2 <= param_1:
-                continue
-              print param_1, param_2
-              center_2 = res["value"][param_2]
-              lower_2 = center_2 + res["negative_error"][param_2] * n_sigma
-              upper_2 = center_2 + res["positive_error"][param_2] * n_sigma
+                do_log = (False, False)
+                center_1 = res["value"][param_1]
+                lower_1 = center_1 + res["negative_error"][param_1] * n_sigma
+                upper_1 = center_1 + res["positive_error"][param_1] * n_sigma
 
-              if log_norm and self._likelihood_model.free_parameters[param_2].is_normalization:
-                do_log = (do_log[0],True)
-                lower_2 = center_2 * (1.0 + res["negative_error"][param_2]/center_2)**n_sigma
-                upper_2 = center_2 * (1.0 + res["positive_error"][param_2]/center_2)**n_sigma
-        
-              lower_2 = max( self.likelihood_model[param_2].bounds[0], lower_2)
-              upper_2 = min( self.likelihood_model[param_2].bounds[1], upper_2)
-              
-              #print param_1, lower_1, center_1, upper_1 
-              #print param_2, lower_2, center_2, upper_2 
-              try:
-                a,b,cc, fig = self.get_contours( param_1, lower_1, upper_1, nsteps_2d, param_2, lower_2, upper_2, nsteps_2d, log= do_log)
-                figs.append( fig )
-                names.append( "%s-%s" % (param_1, param_2) )
-              except Exception as e:
-                print e
+                if (
+                    log_norm
+                    and self._likelihood_model.free_parameters[param_1].is_normalization
+                ):
+                    do_log = (True, False)
+                    lower_1 = (
+                        center_1
+                        * (1.0 + old_div(res["negative_error"][param_1], center_1))
+                        ** n_sigma
+                    )
+                    upper_1 = (
+                        center_1
+                        * (1.0 + old_div(res["positive_error"][param_1], center_1))
+                        ** n_sigma
+                    )
+
+                lower_1 = max(
+                    self.likelihood_model[param_1].bounds[0], lower_1)
+                upper_1 = min(
+                    self.likelihood_model[param_1].bounds[1], upper_1)
+
+                for param_2 in self._likelihood_model.free_parameters:
+
+                    if param_2 <= param_1:
+                        continue
+
+                    center_2 = res["value"][param_2]
+                    lower_2 = center_2 + \
+                        res["negative_error"][param_2] * n_sigma
+                    upper_2 = center_2 + \
+                        res["positive_error"][param_2] * n_sigma
+
+                    if (
+                        log_norm
+                        and self._likelihood_model.free_parameters[
+                            param_2
+                        ].is_normalization
+                    ):
+                        do_log = (do_log[0], True)
+                        lower_2 = (
+                            center_2
+                            * (1.0 + old_div(res["negative_error"][param_2], center_2))
+                            ** n_sigma
+                        )
+                        upper_2 = (
+                            center_2
+                            * (1.0 + old_div(res["positive_error"][param_2], center_2))
+                            ** n_sigma
+                        )
+
+                    lower_2 = max(
+                        self.likelihood_model[param_2].bounds[0], lower_2)
+                    upper_2 = min(
+                        self.likelihood_model[param_2].bounds[1], upper_2)
+
+                    try:
+                        a, b, cc, fig = self.get_contours(
+                            param_1,
+                            lower_1,
+                            upper_1,
+                            nsteps_2d,
+                            param_2,
+                            lower_2,
+                            upper_2,
+                            nsteps_2d,
+                            log=do_log,
+                        )
+                        figs.append(fig)
+                        names.append("%s-%s" % (param_1, param_2))
+                    except Exception as e:
+                        print(e)
         return figs, names
-
 
     def minus_log_like_profile(self, *trial_values):
         """
@@ -733,7 +967,7 @@ class JointLikelihood(object):
 
         summed_log_likelihood = 0
 
-        for dataset in self._data_list.values():
+        for dataset in list(self._data_list.values()):
 
             try:
 
@@ -744,8 +978,9 @@ class JointLikelihood(object):
                 # This is a zone of the parameter space which is not allowed. Return
                 # a big number for the likelihood so that the fit engine will avoid it
 
-                custom_warnings.warn("Fitting engine in forbidden space: %s" % (trial_values,),
-                                     custom_exceptions.ForbiddenRegionOfParameterSpace)
+                log.warning(
+                    "Fitting engine in forbidden space: %s" % (trial_values,),
+                )
 
                 return minimization.FIT_FAILED
 
@@ -761,15 +996,19 @@ class JointLikelihood(object):
         # I use this weird check because it is not guaranteed that the plugins return np.nan,
         # especially if they are written in something other than python
 
-        if "%s" % summed_log_likelihood == 'nan':
-            custom_warnings.warn("These parameters returned a logLike = Nan: %s" % (trial_values,),
-                                 NotANumberInLikelihood)
+        if "%s" % summed_log_likelihood == "nan":
+            log.warning(
+                "These parameters returned a logLike = Nan: %s" % (
+                    trial_values,),
+            )
 
             return minimization.FIT_FAILED
 
         if self.verbose:
-            sys.stderr.write("trial values: %s -> logL = %.3f\n" % (",".join(map(lambda x:"%.5g" % x, trial_values)),
-                                                                    summed_log_likelihood))
+            log.info(
+                "trial values: %s -> logL = %.3f\n"
+                % (",".join(["%.5g" % x for x in trial_values]), summed_log_likelihood)
+            )
 
         # Record this call
         if self._record:
@@ -798,16 +1037,24 @@ class JointLikelihood(object):
 
             self._minimizer_type = minimizer
 
+            log.info(f"set the minimizer to {minimizer.name}")
+            
         else:
 
-            assert minimizer.upper() in minimization._minimizers, \
-                "Minimizer %s is not available on this system. " \
-                "Available minimizers: %s" % (minimizer, ",".join(minimization._minimizers.keys()))
+            if minimizer.upper() not in minimization._minimizers:
+                minimizer_list =  ",".join(list(minimization._minimizers.keys()))
+                log.error(
+                    f"Minimizer {minimizer} is not available on this system. "
+                    f"Available minimizers: {minimizer_list}"
+                )
+                raise MinimizerNotAvailable()
 
             # The string can only specify a local minimization. This will return an error if that is not the case.
             # In order to setup global optimization the user needs to use the GlobalMinimization factory directly
 
             self._minimizer_type = minimization.LocalMinimization(minimizer)
+
+            log.info(f"set the minimizer to {minimizer.upper()}")
 
     def _get_minimizer(self, *args, **kwargs):
 
@@ -819,7 +1066,8 @@ class JointLikelihood(object):
 
         if self._minimizer_callback is not None:
 
-            self._minimizer_callback(minimizer_instance, self._likelihood_model)
+            self._minimizer_callback(
+                minimizer_instance, self._likelihood_model)
 
         return minimizer_instance
 
@@ -841,14 +1089,15 @@ class JointLikelihood(object):
 
         else:
 
-            custom_warnings.warn("Cannot restore best fit, since fit has not been executed.")
+            log.warning(
+                "Cannot restore best fit, since fit has not been executed.")
 
     def _get_table_of_parameters(self, parameters):
 
         data = []
         max_length_of_name = 0
 
-        for k, v in parameters.iteritems():
+        for k, v in parameters.items():
 
             current_name = "%s_of_%s" % (k[1], k[0])
 
@@ -857,9 +1106,11 @@ class JointLikelihood(object):
             if len(v.name) > max_length_of_name:
                 max_length_of_name = len(current_name)
 
-        table = Table(rows=data,
-                      names=["Name", "Value", "Unit"],
-                      dtype=('S%i' % max_length_of_name, str, 'S15'))
+        table = Table(
+            rows=data,
+            names=["Name", "Value", "Unit"],
+            dtype=("S%i" % max_length_of_name, str, "S15"),
+        )
 
         return table
 
@@ -894,39 +1145,54 @@ class JointLikelihood(object):
         # Compute the corresponding delta chisq. (chisq has 1 d.o.f.)
 
         # noinspection PyTypeChecker
-        delta_chi2 = np.array(scipy.stats.chi2.ppf(probabilities, 1) / 2.0)  # two-sided!
+        delta_chi2 = np.array(
+            scipy.stats.chi2.ppf(probabilities, 1) / 2.0
+        )  # two-sided!
 
         fig = plt.figure()
         sub = fig.add_subplot(111)
 
         # Neutralize values of the loglike too high
         # (fit failed)
-        idx = (cc == minimization.FIT_FAILED)
+        idx = cc == minimization.FIT_FAILED
 
-        sub.plot(a[~idx], cc[~idx], lw=2, color=threeML_config['mle']['profile color'])
+        sub.plot(a[~idx], cc[~idx], lw=2,
+                 color=threeML_config["mle"]["profile_color"])
 
         # Now plot the failed fits as "x"
 
-        sub.plot(a[idx], [cc.min()] * a[idx].shape[0], 'x', c='red', markersize=2)
+        sub.plot(a[idx], [cc.min()] * a[idx].shape[0],
+                 "x", c="red", markersize=2)
 
         # Decide colors
-        colors = [threeML_config['mle']['profile level 1'],
-                  threeML_config['mle']['profile level 2'],
-                  threeML_config['mle']['profile level 3']]
+        colors = [
+            threeML_config["mle"]["profile_level_1"],
+            threeML_config["mle"]["profile_level_2"],
+            threeML_config["mle"]["profile_level_3"],
+        ]
 
         for s, d, c in zip(sigmas, delta_chi2, colors):
-            sub.axhline(self._current_minimum + d, linestyle='--',
-                        color=c, label=r'%s $\sigma$' % s, lw=2)
+            sub.axhline(
+                self._current_minimum + d,
+                linestyle="--",
+                color=c,
+                label=r"%s $\sigma$" % s,
+                lw=2,
+            )
 
         # Fix the axis to cover from the minimum to the 3 sigma line
-        sub.set_ylim([self._current_minimum - delta_chi2[0],
-                      self._current_minimum + (delta_chi2[-1] * 2)])
+        sub.set_ylim(
+            [
+                self._current_minimum - delta_chi2[0],
+                self._current_minimum + (delta_chi2[-1] * 2),
+            ]
+        )
 
         plt.legend(loc=0, frameon=True)
 
         sub.set_xlabel(name1)
         sub.set_ylabel("-log( likelihood )")
-  
+
         plt.tight_layout()
 
         return fig
@@ -948,8 +1214,13 @@ class JointLikelihood(object):
         delta = cc.max() - cc.min()
 
         if delta < 0.5:
-            print("\n\nThe maximum difference in statistic is %s among all the points in the grid." % delta)
-            print(" This is too small. Enlarge the search region to display a contour plot")
+            print(
+                "\n\nThe maximum difference in statistic is %s among all the points in the grid."
+                % delta
+            )
+            print(
+                " This is too small. Enlarge the search region to display a contour plot"
+            )
 
             return None
 
@@ -979,18 +1250,27 @@ class JointLikelihood(object):
         bounds.append(cc.max())
 
         # Define the color palette
-        palette = plt.get_cmap(threeML_config['mle']['contour cmap'])  # cm.Pastel1
-        palette.set_over(threeML_config['mle']['contour background'])
-        palette.set_under(threeML_config['mle']['contour background'])
-        palette.set_bad(threeML_config['mle']['contour background'])
+        palette = plt.get_cmap(
+            threeML_config["mle"]["contour_cmap"].value)  # cm.Pastel1
+        palette.set_over(threeML_config["mle"]["contour_background"])
+        palette.set_under(threeML_config["mle"]["contour_background"])
+        palette.set_bad(threeML_config["mle"]["contour_background"])
 
         fig = plt.figure()
         sub = fig.add_subplot(111)
 
         # Draw the line contours
-        sub.contour(b, a, cc, self._current_minimum + delta_chi2,
-                    colors=(threeML_config['mle']['contour level 1'], threeML_config['mle']['contour level 2'],
-                            threeML_config['mle']['contour level 3']))
+        sub.contour(
+            b,
+            a,
+            cc,
+            self._current_minimum + delta_chi2,
+            colors=(
+                threeML_config["mle"]["contour_level_1"],
+                threeML_config["mle"]["contour_level_2"],
+                threeML_config["mle"]["contour_level_3"],
+            ),
+        )
 
         # Set the axes labels
 
@@ -1010,8 +1290,10 @@ class JointLikelihood(object):
         :return: a DataFrame containing the null hypothesis and the alternative hypothesis -log(likelihood) values and
         the value for TS for the source for each loaded dataset
         """
-
-        assert source_name in self._likelihood_model, "Source %s is not in the current model" % source_name
+        if source_name not in self._likelihood_model:
+            log.error(
+                f"Source {source_name} is not in the current model"
+            )
 
         # Clone model
         model_clone = clone_model(self._likelihood_model)
@@ -1026,19 +1308,22 @@ class JointLikelihood(object):
         another_jl.set_minimizer(self.minimizer_in_use)
 
         # We do not need the covariance matrix, just the likelihood value
-        _, null_hyp_mlike_df = another_jl.fit(quiet=True, compute_covariance=False, n_samples=1)
+        _, null_hyp_mlike_df = another_jl.fit(
+            quiet=True, compute_covariance=False, n_samples=1
+        )
 
         # Compute TS for all datasets
         TSs = []
         alt_hyp_mlikes = []
         null_hyp_mlikes = []
 
-        for dataset in self._data_list.values():
+        for dataset in list(self._data_list.values()):
 
             this_name = dataset.name
 
-            null_hyp_mlike = null_hyp_mlike_df.loc[this_name, '-log(likelihood)']
-            alt_hyp_mlike = alt_hyp_mlike_df.loc[this_name, '-log(likelihood)']
+            null_hyp_mlike = null_hyp_mlike_df.loc[this_name,
+                                                   "-log(likelihood)"]
+            alt_hyp_mlike = alt_hyp_mlike_df.loc[this_name, "-log(likelihood)"]
 
             this_TS = 2 * (null_hyp_mlike - alt_hyp_mlike)
 
@@ -1046,11 +1331,11 @@ class JointLikelihood(object):
             alt_hyp_mlikes.append(alt_hyp_mlike)
             null_hyp_mlikes.append(null_hyp_mlike)
 
-        TS_df = pd.DataFrame(index=self._data_list.keys())
+        TS_df = pd.DataFrame(index=list(self._data_list.keys()))
 
-        TS_df['Null hyp.'] = null_hyp_mlikes
-        TS_df['Alt. hyp.'] = alt_hyp_mlikes
-        TS_df['TS'] = TSs
+        TS_df["Null hyp."] = null_hyp_mlikes
+        TS_df["Alt. hyp."] = alt_hyp_mlikes
+        TS_df["TS"] = TSs
 
         # Reassign the original likelihood model to the datasets
         self._assign_model_to_data(self._likelihood_model)
