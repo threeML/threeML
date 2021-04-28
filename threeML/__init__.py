@@ -38,7 +38,7 @@ if os.environ.get("DISPLAY") is None:
 
     import matplotlib as mpl
 
-    mpl.use("TkAgg")
+    mpl.use("Agg")
 
 # Import version (this has to be placed before the import of serialization
 # since __version__ needs to be defined at that stage)

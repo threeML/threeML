@@ -58,7 +58,7 @@ jobs:
                   OMP_NUM_THREADS: 1
                   MKL_NUM_THREADS: 1
                   NUMEXPR_NUM_THREADS: 1
-                  MPLBACKEND: "TkAgg"
+                  MPLBACKEND: "Agg"
 
             # we do not need to run coverage on pip
             # - name: Upload coverage to Codecov
@@ -131,7 +131,7 @@ jobs:
                   OMP_NUM_THREADS: 1
                   MKL_NUM_THREADS: 1
                   NUMEXPR_NUM_THREADS: 1
-                  MPLBACKEND: "TkAgg"
+                  MPLBACKEND: "Agg"
 
             - name: Upload coverage to Codecov
               uses: codecov/codecov-action@v1
