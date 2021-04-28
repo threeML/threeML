@@ -380,7 +380,7 @@ class FermiLATLike(PluginPrototype):
         self.lmc.set_file_spectrum_energies(self.emin, self.emax, self.n_energies)
 
         xmlFile = str("%s.xml" % get_random_unique_name())
-        temp_files = self.lmc.writeXml(xmlFile, self.ra, self.dec, self.rad)
+        temp_files = self.lmc.write_xml(xmlFile, self.ra, self.dec, self.rad)
 
         if self.kind == "BINNED":
             self.like = BinnedAnalysis.BinnedAnalysis(
@@ -447,7 +447,7 @@ class FermiLATLike(PluginPrototype):
     def _update_gtlike_model(self):
         """
         #Slow! But no other options at the moment
-        self.like.writeXml(self.xmlModel)
+        self.like.write_xml(self.xmlModel)
         self.like.logLike.reReadXml(self.xmlModel)
         """
 

@@ -27,6 +27,7 @@ except (ImportError):
 
 from threeML.io.file_utils import file_existing_and_readable
 
+from threeML import FermiLATLike
 
 class LATLikelihoodParameter(object):
 
@@ -399,7 +400,7 @@ class TransientLATDataBuilder(object):
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name,
-            default_value=None,
+            default_value=100,
             help_string="Lower bound energy for flux/upper limit computation",
             is_number=True)
 
@@ -411,7 +412,7 @@ class TransientLATDataBuilder(object):
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name,
-            default_value=None,
+            default_value=10000,
             help_string="Upper bound energy for flux/upper limit computation",
             is_number=True)
 
@@ -593,8 +594,8 @@ class TransientLATDataBuilder(object):
         # run this baby
 
         subprocess.call(os.path.join(site_pkg, cmd), shell=True)
-
-        return self._create_lat_observations_from_run(intervals_before_run)
+        self.lat_observations = self._create_lat_observations_from_run(intervals_before_run)
+        return self.lat_observations
 
     def _create_lat_observations_from_run(self, intervals_before_run):
         """
@@ -666,11 +667,21 @@ class TransientLATDataBuilder(object):
                     print('The livetime_cube does not exist. Please examine!')
 
                 # now create a LAT observation object
-                this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop)
+                this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, self._parameters['liketype'].get_disp_value(), self._triggername)
 
                 lat_observations.append(this_obs)
 
         return lat_observations
+
+    def to_LATLike(self):
+
+        _lat_like_plugins=[]
+
+        for _lat_ob in self.lat_observations:
+
+            _lat_like_plugins.append(_lat_ob.to_LATLike())
+
+        return _lat_like_plugins
 
     def display(self, get=False):
         """
@@ -742,7 +753,7 @@ class TransientLATDataBuilder(object):
 
 class LATObservation(object):
 
-    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop):
+    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop,liketype,triggername):
         """
         A container to formalize the storage of Fermi LAT 
         observation files
@@ -753,6 +764,8 @@ class LATObservation(object):
         :param livetime_cube: 
         :param tstart:
         :param tstop:
+        :param liketype:
+        :param triggername:
         :returns: 
         :rtype: 
 
@@ -764,6 +777,8 @@ class LATObservation(object):
         self._livetime_cube = livetime_cube
         self._tstart = tstart
         self._tstop = tstop
+        self._liketype =liketype
+        self._triggername = triggername
 
     @property
     def event_file(self):
@@ -789,6 +804,14 @@ class LATObservation(object):
     def tstop(self):
         return self.tstop
 
+    @property
+    def liketype(self):
+        return self._liketype
+
+    @property
+    def triggername(self):
+        return self._triggername
+
     def __repr__(self):
 
         output = collections.OrderedDict()
@@ -798,7 +821,24 @@ class LATObservation(object):
         output['ft2_file'] = self._ft2_file
         output['exposure_map'] = self._exposure_map
         output['livetime_cube'] = self._livetime_cube
+        output['triggername'] = self._triggername
+        output['liketype'] = self._liketype
 
         df = pd.Series(output)
 
         return df.to_string()
+
+    def to_LATLike(self):
+
+        _fermi_lat_like =  FermiLATLike(
+                     name = 'LAT%dX%d' % (self._tstart, self._tstop),
+                     event_file = self._event_file,
+                     ft2_file = self._ft2_file,
+                     livetime_cube_file = self._livetime_cube,
+                     kind = self._liketype,
+                     exposure_map_file=self._exposure_map,
+                     source_maps=None,
+                     binned_expo_map=None)
+                     #source_name=self._triggername)
+
+        return _fermi_lat_like
