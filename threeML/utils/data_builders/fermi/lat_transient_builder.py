@@ -63,7 +63,7 @@ class LATLikelihoodParameter(object):
 
         # make sure that the value set is allowed
         if self._allowed_values is not None:
-            assert self._current_value in self._allowed_values, 'The value of %s is not in %s' % (self._name, 'test')
+            assert self._current_value in self._allowed_values, 'The value of %s is not in %s' % (self._name, self._allowed_values )
 
         # construct the class
 
@@ -88,7 +88,7 @@ class LATLikelihoodParameter(object):
 
     def __set_value(self, value):
         if self._allowed_values is not None:
-            assert value in self._allowed_values, 'The value of %s is not in %s' % (self._name, 'test')
+            assert value in self._allowed_values, 'The value %s of %s is not in %s' % (value,self._name, self._allowed_values)
 
         self._current_value = value
 
@@ -122,7 +122,6 @@ _required_parameters = [
     'roi',
     'tstarts',
     'tstops',
-    'log_bins',
     'irf',
     'galactic_model',
     'particle_model',
@@ -131,7 +130,7 @@ _required_parameters = [
 _optional_parameters = [
     'ra', 'dec', 'bin_file', 'tsmin', 'strategy', 'thetamax', 'spectralfiles', 'liketype', 'optimizeposition',
     'datarepository', 'ltcube', 'expomap', 'ulphindex', 'flemin', 'flemax', 'fgl_mode', 'tsmap_spec', 'filter_GTI',
-    'likelihood_profile', 'remove_fits_files'
+    'likelihood_profile', 'remove_fits_files','log_bins'
 ]
 
 
@@ -250,7 +249,7 @@ class TransientLATDataBuilder(object):
 
         self._parameters[name] = LATLikelihoodParameter(
             name=name,
-            default_value='auto',
+            default_value='p8_source',
             help_string="Instrument Function to be used (IRF)",
             is_number=False,
             allowed_values=irfs)
@@ -277,7 +276,7 @@ class TransientLATDataBuilder(object):
             name=name,
             help_string="Particle model",
             is_number=False,
-            allowed_values=['isotr with pow spectrum', 'isotr template', 'none', 'bkge'])
+            allowed_values=['isotr with pow spectrum', 'isotr template', 'none', 'bkge', 'auto'])
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 

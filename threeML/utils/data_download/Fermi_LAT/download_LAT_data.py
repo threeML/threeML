@@ -98,7 +98,7 @@ def merge_LAT_data(ft1s, destination_directory: str = ".", outfile: str = 'ft1_m
         log.warning('Only one FT1 file provided. Skipping the merge...')
         import shutil
 
-        shutil.copyfile(ft1s[0], outfile)
+        os.rename(ft1s[0], outfile)
         return outfile
 
     _filelist = "_filelist.txt"
@@ -232,7 +232,7 @@ def download_LAT_data(
 
     if not destination_directory.exists():
 
-        destination_directory.mkdir()
+        destination_directory.mkdir(parents=True)
 
     # This will complete automatically the form available at
     # http://fermi.gsfc.nasa.gov/cgi-bin/ssc/LAT/LATDataQuery.cgi
@@ -628,3 +628,4 @@ def make_LAT_dataset(ra: float,
                                            destination_directory,
                                            cspecstart=-1000,
                                            cspecstop=1000)
+    return grb_name
