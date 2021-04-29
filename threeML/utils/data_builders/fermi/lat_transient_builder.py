@@ -13,6 +13,7 @@ import yaml
 try:
     from GtBurst import IRFS
     from GtBurst.Configuration import Configuration
+    from threeML import FermiLATLike
 
     irfs = IRFS.IRFS.keys()
     #irfs.append('auto')
@@ -26,8 +27,6 @@ except (ImportError):
     has_fermitools = False
 
 from threeML.io.file_utils import file_existing_and_readable
-
-from threeML import FermiLATLike
 
 class LATLikelihoodParameter(object):
 
@@ -559,6 +558,8 @@ class TransientLATDataBuilder(object):
         # located. This should be the first entry... might break in teh future!
 
         site_pkg = site.getsitepackages()[0]
+        cmd = os.path.join(site_pkg, cmd)
+        print('About to run the following command:\n%s' % cmd)
 
         # see what we already have
 
@@ -593,7 +594,7 @@ class TransientLATDataBuilder(object):
 
         # run this baby
 
-        subprocess.call(os.path.join(site_pkg, cmd), shell=True)
+        subprocess.call(cmd, shell=True)
         self.lat_observations = self._create_lat_observations_from_run(intervals_before_run)
         return self.lat_observations
 

@@ -39,14 +39,13 @@ radius       = 10.0
 irf = 'p8_transient020e'
 datarepository = 'FermiData'
 
-@skip_if_internet_is_not_available
 #@pytest.mark.xfail
+@skip_if_internet_is_not_available
 @skip_if_LAT_is_not_available
 def test_make_LAT_dataset():
 
 
-    grb_name = make_LAT_dataset(
-                                ra,
+    grb_name = make_LAT_dataset(ra,
                                 dec,
                                 radius = radius+10,
                                 trigger_time=trigger_time,
@@ -57,7 +56,6 @@ def test_make_LAT_dataset():
                                 Emin=30.,
                                 Emax= 1000000.)
 
-    #from threeML.utils.data_builders.fermi.lat_transient_builder import TransientLATDataBuilder
     analysis_builder = TransientLATDataBuilder(grb_name,
                                                outfile=grb_name,
                                                roi=radius,
@@ -78,9 +76,9 @@ def test_make_LAT_dataset():
     results=[]
     for myplug in LAT_Like_plugins:
 
-        data     = DataList(myplug)
+        data = DataList(myplug)
 
-        test_source       = PointSource("test_source", ra, dec, spectrum)
+        test_source = PointSource("test_source", ra, dec, spectrum)
 
         my_model = Model(test_source)
 
@@ -106,3 +104,4 @@ def test_make_LAT_dataset():
 
 if __name__=='__main__':
     test_make_LAT_dataset()
+    plt.show()
