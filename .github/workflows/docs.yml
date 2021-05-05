@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache conda
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ~/conda_pkgs_dir
           key: conda-ubuntu-python-cache-3.7-${{ hashFiles('environment-ci.yml') }}
@@ -41,6 +41,7 @@ jobs:
           miniconda_os=MacOSX
           compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
 
+          brew update
           brew install --cask basictex
 
           eval "$(/usr/libexec/path_helper)"
@@ -80,6 +81,11 @@ jobs:
         with:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
+
+      - name: Sleep for 5 min
+        uses: juliangruber/sleep-action@v1
+        with:
+          time: 5m
 
       - name: Trigger RTDs build
         uses: dfm/rtds-action@main

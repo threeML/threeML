@@ -1,10 +1,11 @@
 from pathlib import Path
 
 import pytest
+import numpy as np
 
 from threeML import *
 from threeML.io.network import internet_connection_is_active
-
+from threeML.io.uncertainty_formatter import uncertainty_formatter
 skip_if_internet_is_not_available = pytest.mark.skipif(
     not internet_connection_is_active(), reason="No active internet connection"
 )
@@ -287,3 +288,27 @@ def test_gbm_workflow():
     dl_files = p.glob("*_bkg.h5")
 
     [x.unlink() for x in dl_files]
+
+
+
+
+def test_uncertainty_formatter():
+
+
+    assert '1.0 -2.0 +1.0' == uncertainty_formatter(1, -1, 2)
+
+    assert '(1.0 +/- 1.0) x 10^3' == uncertainty_formatter(1e3, -1, 2)
+
+    assert '1.0 -2.0 +0' == uncertainty_formatter(1, -1, np.nan)
+
+    assert '1.0 +0 +1.0' == uncertainty_formatter(1, np.nan, 2)
+
+    assert  '1.0 +/- 0' == uncertainty_formatter(1, np.nan, np.nan)
+
+
+    assert '1.0 -2.0 +inf' == uncertainty_formatter(1, -1, np.inf)
+
+    assert '1.0 +inf +1.0' == uncertainty_formatter(1, np.inf, 2)
+
+    assert '1.0 +/- inf' == uncertainty_formatter(1, np.inf, np.inf)
+    

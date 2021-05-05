@@ -1,16 +1,18 @@
-name: Python Package using Conda
+name: Install and test using Conda
 
 on:
   #push:
   schedule:
-    - cron: "0 20 1 * *"
+    - cron: "0 20 * * 1"
   
 jobs:
-  test-threeml:
+  test-install-threeml:
     strategy:
+      fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
         python-version: [3.7]
+        package: [" ", "--with-xspec", "--with-xspec --with-root", "--with-xspec --with-fermi"]
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
@@ -19,16 +21,15 @@ jobs:
       uses: conda-incubator/setup-miniconda@v2
       with:
         auto-update-conda: true
-        auto-activate-base: false
-        python-version: ${{ matrix.python-version }}
+        auto-activate-base: true
+        activate-environment: ""
         channels: conda-forge, xspecmodels, threeml, defaults
     - name: Install threeML
       run: |
-        bash install_3ML.sh --batch --python 3.7
+        bash install_3ML.sh --batch --python ${{ matrix.python-version }} ${{ matrix.package }}
     - name: test threeML
       run: |
         source threeML_init.sh
-        conda install colorama
         pytest -vv --pyargs threeML
         pytest -vv --pyargs astromodels
       env:
@@ -36,5 +37,3 @@ jobs:
         MKL_NUM_THREADS: 1
         NUMEXPR_NUM_THREADS: 1
         MPLBACKEND: "Agg"
-
-

@@ -1,5 +1,6 @@
 from builtins import map
 import pytest
+import numpy as np
 
 from astromodels import *
 from threeML.plugins.XYLike import XYLike
