@@ -3,10 +3,11 @@ from __future__ import division
 import re
 from builtins import map, str
 
-import numpy
+import numpy as np
 from astromodels import *
 from astromodels.utils.angular_distance import angular_distance
 from past.utils import old_div
+import math
 
 from threeML.config.config import threeML_config
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -742,7 +743,7 @@ class FermiLATSourceCatalog(VirtualObservatoryCatalog):
         # to the dictionary above
 
         table["short_source_type"] = table["source_type"]
-        table["source_type"] = numpy.array(list(map(translate, table["short_source_type"])))
+        table["source_type"] = np.array(list(map(translate, table["short_source_type"])))
 
         if "Search_Offset" in table.columns:
 

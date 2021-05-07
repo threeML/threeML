@@ -150,7 +150,7 @@ class SpectrumLike(PluginPrototype):
         # select channels that were flagged as bad.
 
         self._mask = np.asarray(
-            np.ones(self._observed_spectrum.n_channels), np.bool)
+            np.ones(self._observed_spectrum.n_channels), bool)
 
         # Now create the nuisance parameter for the effective area correction, which is fixed
         # by default. This factor multiplies the model so that it can account for calibration uncertainties on the

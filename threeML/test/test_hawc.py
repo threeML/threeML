@@ -5,6 +5,7 @@ from builtins import range
 from past.utils import old_div
 import pytest
 import os
+import numpy as np
 
 from threeML import *
 

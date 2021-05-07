@@ -781,7 +781,7 @@ class JointLikelihood(object):
 
                 aidx, bidx = np.unravel_index(idx, cc.shape)
 
-                print(
+                log.warning(
                     "\nFound a better minimum: %s with %s = %s and %s = %s. Run again your fit starting from here."
                     % (cc.min(), param_1, a[aidx], param_2, b[bidx])
                 )
@@ -790,11 +790,15 @@ class JointLikelihood(object):
 
                 idx = cc.argmin()
 
-                print(
+                log.warning(
                     "Found a better minimum: %s with %s = %s. Run again your fit starting from here."
                     % (cc.min(), param_1, a[idx])
                 )
-
+        
+        else:
+            #restore model
+            self.restore_best_fit()
+        
         return a, b, cc, fig
 
     def plot_all_contours(self, nsteps_1d, nsteps_2d=0, n_sigma=5, log_norm=True):
@@ -1001,7 +1005,7 @@ class JointLikelihood(object):
             return minimization.FIT_FAILED
 
         if self.verbose:
-            sys.stderr.write(
+            log.info(
                 "trial values: %s -> logL = %.3f\n"
                 % (",".join(["%.5g" % x for x in trial_values]), summed_log_likelihood)
             )
