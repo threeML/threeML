@@ -43,7 +43,8 @@ class OGIPLike(DispersionSpectrumLike):
                 break
         else:
 
-            log.error(f"observation must be a FITS file name or PHASpectrum, not {type(observation)}")
+            log.error(
+                f"observation must be a FITS file name or PHASpectrum, not {type(observation)}")
             raise RuntimeError()
 
         for t in _valid_bkg_types:

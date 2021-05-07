@@ -1285,12 +1285,20 @@ class BayesianResults(_AnalysisResults):
             priors.append(
                 self._optimized_model.parameters[parameter_name].prior)
 
+        cmap = plt.get_cmap("viridis")
+
+        cmap.with_extremes(under="white", over="white", bad="white")
+            
         # default arguments
         default_args = {
             "show_titles": True,
             "title_fmt": ".2g",
             "labels": labels,
+            "bins":25,
             "quantiles": [0.16, 0.50, 0.84],
+            "fill_contours": True,
+            "contourf_kwargs": {"cmap": cmap, "colors": None, "extend": "both"},
+            "levels": [1-np.exp(-4.5), 1-np.exp(-2.0), 1-np.exp(-0.5)]
         }
 
         # Update the default arguents with the one provided (if any). Note that .update also adds new keywords,
