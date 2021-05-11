@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum, Flag
 from typing import Any, Dict, List, Optional
-
+import numpy as np
 import matplotlib.pyplot as plt
 from omegaconf import II, MISSING, SI, OmegaConf
 
@@ -47,6 +47,20 @@ class ContourStyle:
     alpha: float = 0.4
 
 
+@dataclass
+class CornerStyle:
+    show_titles: bool = True
+    title_fmt: str = ".2g"
+    bins: int = 25
+    quantiles: List[float] =  field(default_factory= lambda:[0.16, 0.50, 0.84])
+    fill_contours: bool = True
+    cmap: MPLCmap = MPLCmap.viridis
+    extremes: str = "white"
+    contourf_kwargs:  Dict[str, Any] = field(
+        default_factory=lambda: {"colors": None, "extend": "both"})
+    levels: List[float] = field(default_factory= lambda:[0.99, 0.865,0.393])
+
+    
 # class LegendLoc(Enum):
 #     best = 'best'
 #     lower_left = 'lower left'
