@@ -1259,7 +1259,7 @@ class BayesianResults(_AnalysisResults):
         :param kwargs: arguments to be passed to the corner function
         :return: a matplotlib.figure instance
         """
-
+        
         assert (
             len(list(self._free_parameters.keys()))
             == self._samples_transposed.T[0].shape[0]
@@ -1290,7 +1290,8 @@ class BayesianResults(_AnalysisResults):
         cmap = plt.get_cmap(corner_style.cmap.value)
 
         cmap.with_extremes(under=corner_style.extremes, over=corner_style.extremes, bad=corner_style.extremes)
-
+        cmap.set_extremes(under=corner_style.extremes, over=corner_style.extremes, bad=corner_style.extremes)
+        
         contourf_kwargs = dict(corner_style.contourf_kwargs)
         contourf_kwargs["cmap"] = cmap
                             

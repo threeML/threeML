@@ -50,6 +50,7 @@ class ContourStyle:
 @dataclass
 class CornerStyle:
     show_titles: bool = True
+    smooth: float = 0.9
     title_fmt: str = ".2g"
     bins: int = 25
     quantiles: List[float] =  field(default_factory= lambda:[0.16, 0.50, 0.84])
