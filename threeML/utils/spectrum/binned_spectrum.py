@@ -194,7 +194,7 @@ class BinnedSpectrum(Histogram):
 
         self._exposure: float = exposure
 
-        self._scale_factor: color = scale_factor
+        self._scale_factor: float = scale_factor
 
         # if we do not have a ChannelSet,
 
