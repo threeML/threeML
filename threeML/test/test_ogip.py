@@ -69,7 +69,7 @@ def test_loading_a_loose_ogip_pha_file():
 
     with within_directory(__example_dir):
         ogip = OGIPLike("test_ogip", observation="example_integral.pha")
-\
+
         pha_info = ogip.get_pha_files()
 
         assert ogip.name == "test_ogip"
