@@ -40,7 +40,6 @@ from threeML.random_variates import RandomVariates
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
-
 log = setup_logger(__name__)
 
 try:

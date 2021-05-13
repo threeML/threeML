@@ -6,11 +6,17 @@ from threeML import JointLikelihood, DataList
 from threeML.io.package_data import get_path_of_data_file
 from threeML.plugins.DispersionSpectrumLike import DispersionSpectrumLike
 from threeML.plugins.SpectrumLike import SpectrumLike
+from threeML.plugins.OGIPLike import OGIPLike
 from threeML.utils.OGIP.response import OGIPResponse
 from threeML.exceptions.custom_exceptions import NegativeBackground
+from threeML.io.file_utils import within_directory
+from .conftest import get_test_datasets_directory
 import warnings
 
 warnings.simplefilter("ignore")
+
+
+__example_dir = get_test_datasets_directory()
 
 
 def test_assigning_source_name():
@@ -277,6 +283,12 @@ def test_spectrum_like_with_background_model():
         np.isclose([K_variates.average, kT_variates.average], [sim_K, sim_kT], rtol=0.5)
     )
 
+
+    ## test with ogiplike 
+    with within_directory(__example_dir):
+        ogip = OGIPLike("test_ogip", observation="test.pha{1}", background=background_plugin)
+
+    
 
 def test_all_statistics():
 

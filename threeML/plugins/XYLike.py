@@ -279,6 +279,19 @@ class XYLike(PluginPrototype):
 
         self._source_name = source_name
 
+
+    @property
+    def likelihood_model(self) -> Model:
+
+        if self._likelihood_model is None:
+
+            log.error( f"plugin {self._name} does not have a likelihood model" )
+
+            raise RuntimeError()
+
+        return self._likelihood_model
+
+        
     @property
     def x(self):
 
