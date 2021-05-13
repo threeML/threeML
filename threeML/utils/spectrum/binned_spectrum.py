@@ -14,8 +14,8 @@ from threeML.utils.interval import Interval, IntervalSet
 from threeML.utils.statistics.stats_tools import sqrt_sum_of_squares
 from threeML.io.logging import setup_logger
 
-
 log = setup_logger(__name__)
+
 
 class Channel(Interval):
     @property
@@ -68,14 +68,11 @@ class Quality(object):
         warn: np.ndarray = quality == "warn"
         bad: np.ndarray = quality == "bad"
 
-        if not n_elements == (
-            good.sum() + warn.sum() + bad.sum()
-        ):
+        if not n_elements == (good.sum() + warn.sum() + bad.sum()):
 
             log.error('quality can only contain "good", "warn", and "bad"')
 
             raise RuntimeError()
-            
 
         self._good: np.ndarray = good
         self._warn: np.ndarray = warn
@@ -162,11 +159,11 @@ class BinnedSpectrum(Histogram):
         counts,
         exposure,
         ebounds: Union[np.ndarray, ChannelSet],
-        count_errors: Optional[np.ndarray]=None,
-        sys_errors: Optional[np.ndarray]=None,
+        count_errors: Optional[np.ndarray] = None,
+        sys_errors: Optional[np.ndarray] = None,
         quality=None,
-        scale_factor: float=1.0,
-        is_poisson: bool=False,
+        scale_factor: float = 1.0,
+        is_poisson: bool = False,
         mission: Optional[str] = None,
         instrument: Optional[str] = None,
         tstart: Optional[float] = None,
@@ -202,7 +199,8 @@ class BinnedSpectrum(Histogram):
 
             # make one from the edges
 
-            ebounds: ChannelSet = ChannelSet.from_list_of_edges(ebounds)  # type: ChannelSet
+            ebounds: ChannelSet = ChannelSet.from_list_of_edges(
+                ebounds)  # type: ChannelSet
 
         self._ebounds: ChannelSet = ebounds
 
@@ -216,7 +214,7 @@ class BinnedSpectrum(Histogram):
 
             # convert counts to rate
 
-            rate_errors = count_errors/self._exposure
+            rate_errors = count_errors / self._exposure
 
         else:
 
@@ -230,7 +228,7 @@ class BinnedSpectrum(Histogram):
 
         # convert rates to counts
 
-        rates = counts/self._exposure
+        rates = counts / self._exposure
 
         if quality is not None:
 
@@ -305,12 +303,11 @@ class BinnedSpectrum(Histogram):
         """
         :return: total rate error
         """
-        
+
         if self.is_poisson:
             log.error("Cannot request errors on rates for a Poisson spectrum")
 
             raise RuntimeError()
-            
 
         return sqrt_sum_of_squares(self._errors)
 
@@ -327,7 +324,7 @@ class BinnedSpectrum(Histogram):
         """
         :return: count error per channel
         """
-            
+
         # VS: impact of this change is unclear to me, it seems to make sense and the tests pass
         if self.is_poisson:
             return None
@@ -349,7 +346,6 @@ class BinnedSpectrum(Histogram):
         :return: total count error
         """
 
-        
         # # VS: impact of this change is unclear to me, it seems to make sense and the tests pass
         if self.is_poisson:
 
@@ -380,7 +376,7 @@ class BinnedSpectrum(Histogram):
         :return: errors on the rates
         """
         if self.is_poisson:
-             return None
+            return None
         else:
 
             return self._errors
@@ -583,7 +579,11 @@ class BinnedSpectrum(Histogram):
         return pd.DataFrame(out_dict)
 
     @classmethod
-    def from_time_series(cls, time_series, use_poly=False, from_model=False, **kwargs):
+    def from_time_series(cls,
+                         time_series,
+                         use_poly=False,
+                         from_model=False,
+                         **kwargs):
         """
 
         :param time_series:
@@ -602,7 +602,7 @@ class BinnedSpectrum(Histogram):
             instrument=pha_information["instrument"],
             mission=pha_information["telescope"],
             tstart=pha_information["tstart"],
-            tstop=pha_information["tstart"]+pha_information["telapse"],
+            tstop=pha_information["tstart"] + pha_information["telapse"],
             #telapse=pha_information["telapse"],
             # channel=pha_information['channel'],
             counts=pha_information["counts"],
@@ -612,8 +612,7 @@ class BinnedSpectrum(Histogram):
             exposure=pha_information["exposure"],
             #backscale=1.0,
             is_poisson=is_poisson,
-            ebounds=pha_information["edges"]
-        )
+            ebounds=pha_information["edges"])
 
     def __add__(self, other):
         assert self == other, "The bins are not equal"

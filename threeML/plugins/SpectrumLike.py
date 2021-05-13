@@ -39,7 +39,6 @@ from threeML.utils.string_utils import dash_separated_string_to_tuple
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
-
 log = setup_logger(__name__)
 
 NO_REBIN = 1e-99
@@ -55,7 +54,8 @@ class SpectrumLike(PluginPrototype):
         self,
         name: str,
         observation: BinnedSpectrum,
-        background: Optional[Union[BinnedSpectrum, XYLike, "SpectrumLike"]]=None,
+        background: Optional[Union[BinnedSpectrum, XYLike,
+                                   "SpectrumLike"]] = None,
         verbose: bool = True,
         background_exposure=None,
         tstart: Optional[Union[float, int]] = None,

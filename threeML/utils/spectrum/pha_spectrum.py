@@ -24,14 +24,12 @@ log = setup_logger(__name__)
 
 _required_keywords = {}
 _required_keywords["observed"] = (
-    "mission:TELESCOP,instrument:INSTRUME,filter:FILTER,"
-    + "exposure:EXPOSURE,backfile:BACKFILE,"
-    + "respfile:RESPFILE,"
-    + "ancrfile:ANCRFILE,hduclass:HDUCLASS,"
-    + "hduclas1:HDUCLAS1,poisserr:POISSERR,"
-    + "chantype:CHANTYPE,detchans:DETCHANS,"
-    "backscal:BACKSCAL"
-).split(",")
+    "mission:TELESCOP,instrument:INSTRUME,filter:FILTER," +
+    "exposure:EXPOSURE,backfile:BACKFILE," + "respfile:RESPFILE," +
+    "ancrfile:ANCRFILE,hduclass:HDUCLASS," +
+    "hduclas1:HDUCLAS1,poisserr:POISSERR," +
+    "chantype:CHANTYPE,detchans:DETCHANS,"
+    "backscal:BACKSCAL").split(",")
 
 # python types, not fits
 _required_keyword_types = {"POISSERR": bool}
