@@ -63,7 +63,7 @@ def _read_pha_or_pha2_file(
     pha_file_or_instance: Union[str, Path, PHAII],
     spectrum_number: Optional[int] = None,
     file_type: str = "observed",
-    rsp_file: Optional[str] = None,
+    rsp_file: Optional[Union[str, InstrumentResponse]] = None,
     arf_file: Optional[str] = None,
     treat_as_time_series: bool = False,
 ) -> Dict[str, Any]:
@@ -126,10 +126,14 @@ def _read_pha_or_pha2_file(
 
         raise RuntimeError()
 
-    assert file_type.lower() in [
+    if not file_type.lower() in [
         "observed",
         "background",
-    ], "Unrecognized filetype keyword value"
+    ]:
+
+        log.error("Unrecognized filetype keyword value")
+
+        raise RuntimeError()
 
     file_type = file_type.lower()
 
@@ -428,9 +432,11 @@ def _read_pha_or_pha2_file(
     if file_type == "background":
         # we need the rsp ebounds from response to build the histogram
 
-        assert isinstance(
-            rsp_file, InstrumentResponse
-        ), "You must supply and OGIPResponse to extract the energy bounds"
+        if not isinstance( rsp_file, InstrumentResponse ):
+
+            log.error("You must supply and OGIPResponse to extract the energy bounds")
+
+            raise RuntimeError()
 
         rsp = rsp_file
 
@@ -768,9 +774,9 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         pha_file_or_instance: Union[str, Path, PHAII],
         spectrum_number: Optional[int] = None,
         file_type: str = "observed",
-        rsp_file: Optional[str] = None,
+        rsp_file: Optional[Union[str, InstrumentResponse]] = None,
         arf_file: Optional[str] = None,
-    ):
+    ) -> None:
         """
         A spectrum with dispersion build from an OGIP-compliant PHA FITS file. Both Type I & II files can be read. Type II
         spectra are selected either by specifying the spectrum_number or via the {spectrum_number} file name convention used
@@ -810,15 +816,15 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         # default the grouping to all open bins
         # this will only be altered if the spectrum is rebinned
-        self._grouping = np.ones_like(pha_information["counts"])
+        self._grouping: np.ndarray = np.ones_like(pha_information["counts"])
 
         # this saves the extra properties to the class
 
         self._gathered_keywords = pha_information["gathered_keywords"]
 
-        self._file_type = file_type
+        self._file_type: str = file_type
 
-        self._file_name = pha_information["file_name"]
+        self._file_name: str = pha_information["file_name"]
 
         # pass the needed spectrum values back up
         # remember that Spectrum reads counts, but returns
@@ -838,7 +844,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
             tstop=pha_information["tstop"],
         )
 
-    def _return_file(self, key):
+    def _return_file(self, key)-> Union[None, str]:
 
         if key in self._gathered_keywords:
 
@@ -848,7 +854,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
             return None
 
-    def set_ogip_grouping(self, grouping):
+    def set_ogip_grouping(self, grouping) -> None:
         """
         If the counts are rebinned, this updates the grouping
         :param grouping:
@@ -863,7 +869,7 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
         return self._file_name
 
     @property
-    def background_file(self):
+    def background_file(self) -> Union[None, str]:
         """
         Returns the background file definied in the header, or None if there is none defined
 p
@@ -878,7 +884,7 @@ p
         return back_file
 
     @property
-    def scale_factor(self):
+    def scale_factor(self) -> float:
         """
         This is a scale factor (in the BACKSCAL keyword) which must be used to rescale background and source
         regions
@@ -888,7 +894,7 @@ p
         return self._gathered_keywords["backscal"]
 
     @property
-    def response_file(self):
+    def response_file(self) -> Union[str, None]:
         """
             Returns the response file definied in the header, or None if there is none defined
 
@@ -897,7 +903,7 @@ p
         return self._return_file("respfile")
 
     @property
-    def ancillary_file(self):
+    def ancillary_file(self) -> Union[str, None]:
         """
             Returns the ancillary file definied in the header, or None if there is none defined
 
@@ -906,7 +912,7 @@ p
         return self._return_file("ancrfile")
 
     @property
-    def grouping(self):
+    def grouping(self) -> np.ndarray:
 
         return self._grouping
 
@@ -916,7 +922,7 @@ p
         new_count_errors=None,
         new_exposure=None,
         new_scale_factor=None,
-    ):
+    ) -> "PHASpectrum":
         """
         make a new spectrum with new counts and errors and all other
         parameters the same

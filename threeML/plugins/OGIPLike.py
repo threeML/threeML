@@ -97,7 +97,7 @@ class OGIPLike(DispersionSpectrumLike):
 
             bak = None
 
-        if isinstance(background, SpectrumLike) or isinstance(background, XYLike):
+        elif isinstance(background, SpectrumLike) or isinstance(background, XYLike):
 
             # this will be a background
             
