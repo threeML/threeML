@@ -55,13 +55,13 @@ class SpectrumLike(PluginPrototype):
         self,
         name: str,
         observation: BinnedSpectrum,
-        background=None,
+        background: Optional[Union[BinnedSpectrum, XYLike, SpectrumLike]]=None,
         verbose: bool = True,
         background_exposure=None,
         tstart: Optional[Union[float, int]] = None,
         tstop: Optional[Union[float, int]] = None,
-    ):
-        # type: (str, BinnedSpectrum, BinnedSpectrum, bool) -> None
+    )-> None:
+        
         """
         A plugin for generic spectral data, accepts an observed binned spectrum,
         and a background binned spectrum or plugin with the background data.
@@ -86,28 +86,30 @@ class SpectrumLike(PluginPrototype):
         """
 
         # Just a toggle for verbosity
-        self._verbose = bool(verbose)
-        self._name = name
+        self._verbose: bool = bool(verbose)
+        self._name: str = name
 
-        assert is_valid_variable_name(name), (
-            "Name %s is not a valid name for a plugin. You must use a name which is "
+        if not is_valid_variable_name(name):
+
+            log.error(
+            f"Name {name} is not a valid name for a plugin. You must use a name which is "
             "a valid python identifier: no spaces, no operators (+,-,/,*), "
-            "it cannot start with a number, no special characters" % name
+            "it cannot start with a number, no special characters"
         )
 
-        assert isinstance(
-            observation, BinnedSpectrum
-        ), "The observed spectrum is not an instance of BinnedSpectrum"
+        if not isinstance( observation, BinnedSpectrum ):
+
+            log.error("The observed spectrum is not an instance of BinnedSpectrum")
 
         # Precomputed observed (for speed)
 
-        self._observed_spectrum = observation  # type: BinnedSpectrum
+        self._observed_spectrum: BinnedSpectrum = observation
 
-        self._has_contiguous_energies = observation.is_contiguous()
+        self._has_contiguous_energies: bool = observation.is_contiguous()
 
-        self._predefined_energies = observation.edges
+        self._predefined_energies: np.ndarray = observation.edges
 
-        self._observed_counts = self._observed_spectrum.counts  # type: np.ndarray
+        self._observed_counts: np.ndarray = self._observed_spectrum.counts 
 
         # initialize the background
 
@@ -123,9 +125,9 @@ class SpectrumLike(PluginPrototype):
         ) = background_parameters
 
         # Init everything else to None
-        self._like_model = None
-        self._rebinner = None
-        self._source_name = None
+        self._like_model: Optional[Model] = None
+        self._rebinner: Optional[Rebinner] = None
+        self._source_name: Optional[str] = None
 
         # probe the noise models and then setup the appropriate count errors
 
@@ -140,8 +142,8 @@ class SpectrumLike(PluginPrototype):
         ) = self._count_errors_initialization()
 
         # Init the integral methods for background and model integration to default
-        self._model_integrate_method = "simpson"
-        self._background_integrate_method = "simpson"
+        self._model_integrate_method: str = "simpson"
+        self._background_integrate_method: str = "simpson"
 
         # Initialize a mask that selects all the data.
         # We will initially use the quality mask for the PHA file
@@ -149,14 +151,14 @@ class SpectrumLike(PluginPrototype):
         # the native quality so that we can warn the user if they decide to
         # select channels that were flagged as bad.
 
-        self._mask = np.asarray(
+        self._mask: np.ndarray = np.asarray(
             np.ones(self._observed_spectrum.n_channels), bool)
 
         # Now create the nuisance parameter for the effective area correction, which is fixed
         # by default. This factor multiplies the model so that it can account for calibration uncertainties on the
         # global effective area. By default it is limited to stay within 20%
 
-        self._nuisance_parameter = Parameter(
+        self._nuisance_parameter: Parameter = Parameter(
             "cons_%s" % name,
             1.0,
             min_value=0.8,
@@ -166,7 +168,7 @@ class SpectrumLike(PluginPrototype):
             desc="Effective area correction for %s" % name,
         )
 
-        nuisance_parameters = collections.OrderedDict()
+        nuisance_parameters: Dict[str, Parameter] = collections.OrderedDict()
         nuisance_parameters[self._nuisance_parameter.name] = self._nuisance_parameter
 
         # if we have a background model we are going
@@ -453,7 +455,7 @@ class SpectrumLike(PluginPrototype):
         return observation_noise_model, background_noise_model
 
     def _background_setup(self,
-                          background,
+                          background: Union[None, BinnedSpectrum, XYLike, SpectrumLike],
                           observation: BinnedSpectrum):
         """
 
@@ -466,10 +468,10 @@ class SpectrumLike(PluginPrototype):
 
         # setup up defaults as none
 
-        background_plugin = None
-        background_spectrum = None
-        background_counts = None
-        scaled_background_counts = None
+        background_plugin: Optional[Union[XYLike, SpectrumLike]] = None
+        background_spectrum: Optional[BinnedSpectrum] = None
+        background_counts: Optional[np.ndarray] = None
+        scaled_background_counts: Optional[np.ndarray] = None
 
         if background is not None:
 
@@ -483,22 +485,28 @@ class SpectrumLike(PluginPrototype):
 
                 background_plugin = background
 
+                log.debug("using a background plugin")
+                
             else:
 
                 # if the background is not a plugin then we need to make sure it is a spectrum
                 # and that the spectrum is the same size as the observation
 
-                assert isinstance(
-                    background, BinnedSpectrum
-                ), "The background spectrum is not an instance of BinnedSpectrum"
+                if not isinstance(background, BinnedSpectrum ):
 
-                assert observation.n_channels == background.n_channels, (
-                    "Data file and background file have different " "number of channels"
-                )
 
-                background_spectrum = background  # type: BinnedSpectrum
+                    log.error("The background spectrum is not an instance of BinnedSpectrum")
+                    raise RuntimeError()
 
-                background_counts = background_spectrum.counts  # type: np.ndarray
+                if not observation.n_channels == background.n_channels:
+
+                    log.error( "Data file and background file have different " "number of channels" )
+
+                    raise RuntimeError()
+                    
+                background_spectrum = background
+
+                background_counts = background_spectrum.counts
 
                 # this assumes the observed spectrum is already set!
 
@@ -912,15 +920,17 @@ class SpectrumLike(PluginPrototype):
     @property
     def likelihood_model(self) -> Model:
 
-        assert self._like_model is not None, (
-            "plugin %s does not have a likelihood model" % self._name
-        )
+        if self._like_model is None:
+
+            log.error( f"plugin {self._name} does not have a likelihood model" )
+
+            raise RuntimeError()
 
         return self._like_model
 
-    def get_pha_files(self) -> dict:
+    def get_pha_files(self) -> Dict[str, BinnedSpectrum]:
 
-        info = {}
+        info: Dict[str, BinnedSpectrum] = {}
 
         # we want to pass copies so that
         # the user doesn't grab the instance

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional, Union
 
 import pandas as pd
 from astromodels.utils.valid_variable import is_valid_variable_name
@@ -22,14 +23,16 @@ class OGIPLike(DispersionSpectrumLike):
     def __init__(
         self,
         name: str,
-        observation,
-        background=None,
-        response=None,
-        arf_file=None,
-        spectrum_number=None,
-        verbose=True,
+        observation: Union[str, Path, PHASpectrum, PHAII],
+        background: Optional[Union[str, Path, PHASpectrum, PHAII, SpectrumLike, XYLike]]=None,
+        response: Optional[str]=None,
+        arf_file: Optional[str]=None,
+        spectrum_number: Optional[int]=None,
+        verbose: bool=True,
     ):
 
+
+        
         assert is_valid_variable_name(name), (
             "Name %s is not a valid name for a plugin. You must use a name which is "
             "a valid python identifier: no spaces, no operators (+,-,/,*), "
@@ -94,6 +97,12 @@ class OGIPLike(DispersionSpectrumLike):
 
             bak = None
 
+        if isinstance(background, SpectrumLike) or isinstance(XYLike):
+
+            # this will be a background
+            
+            bak = background
+            
         elif not isinstance(background, PHASpectrum):
 
             bak = PHASpectrum(
