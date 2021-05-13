@@ -55,7 +55,7 @@ class SpectrumLike(PluginPrototype):
         self,
         name: str,
         observation: BinnedSpectrum,
-        background: Optional[Union[BinnedSpectrum, XYLike, SpectrumLike]]=None,
+        background: Optional[Union[BinnedSpectrum, XYLike, "SpectrumLike"]]=None,
         verbose: bool = True,
         background_exposure=None,
         tstart: Optional[Union[float, int]] = None,
@@ -455,7 +455,7 @@ class SpectrumLike(PluginPrototype):
         return observation_noise_model, background_noise_model
 
     def _background_setup(self,
-                          background: Union[None, BinnedSpectrum, XYLike, SpectrumLike],
+                          background: Union[None, BinnedSpectrum, XYLike, "SpectrumLike"],
                           observation: BinnedSpectrum):
         """
 
@@ -468,7 +468,7 @@ class SpectrumLike(PluginPrototype):
 
         # setup up defaults as none
 
-        background_plugin: Optional[Union[XYLike, SpectrumLike]] = None
+        background_plugin: Optional[Union[XYLike, "SpectrumLike"]] = None
         background_spectrum: Optional[BinnedSpectrum] = None
         background_counts: Optional[np.ndarray] = None
         scaled_background_counts: Optional[np.ndarray] = None
