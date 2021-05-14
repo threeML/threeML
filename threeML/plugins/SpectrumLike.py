@@ -459,8 +459,8 @@ class SpectrumLike(PluginPrototype):
 
         return observation_noise_model, background_noise_model
 
-    def _background_setup(self,
-                          background: Union[None, BinnedSpectrum, XYLike, "SpectrumLike"],
+    def _background_setup(self, background: Union[None, BinnedSpectrum, XYLike,
+                                                  "SpectrumLike"],
                           observation: BinnedSpectrum):
         """
 
@@ -1461,7 +1461,7 @@ class SpectrumLike(PluginPrototype):
         return cls(*args, **kwargs)
 
     @property
-    def simulated_parameters(self):
+    def simulated_parameters(self) -> Model:
         """
         Return the simulated dataset parameters
         :return: a likelihood model copy
@@ -1475,7 +1475,7 @@ class SpectrumLike(PluginPrototype):
 
         return self._simulation_storage
 
-    def rebin_on_background(self, min_number_of_counts):
+    def rebin_on_background(self, min_number_of_counts: float) -> None:
         """
         Rebin the spectrum guaranteeing the provided minimum number of counts in each background bin. This is usually
         required for spectra with very few background counts to make the Poisson profile likelihood meaningful.
@@ -1514,7 +1514,7 @@ class SpectrumLike(PluginPrototype):
 
             log.info("rebinning had no effect")
 
-    def rebin_on_source(self, min_number_of_counts):
+    def rebin_on_source(self, min_number_of_counts: int) -> None:
         """
         Rebin the spectrum guaranteeing the provided minimum number of counts in each source bin.
 
@@ -1545,7 +1545,7 @@ class SpectrumLike(PluginPrototype):
 
             log.info("rebinning had no effect")
 
-    def _apply_rebinner(self, rebinner):
+    def _apply_rebinner(self, rebinner: Rebinner) -> None:
 
         self._rebinner = rebinner
 
@@ -1578,7 +1578,7 @@ class SpectrumLike(PluginPrototype):
 
         log.info("Now using %s bins" % self._rebinner.n_bins)
 
-    def remove_rebinning(self):
+    def remove_rebinning(self) -> None:
         """
         Remove the rebinning scheme set with rebin_on_background.
 
@@ -1590,7 +1590,7 @@ class SpectrumLike(PluginPrototype):
 
         self._rebinner = None
 
-    def _get_expected_background_counts_scaled(self, background_spectrum):
+    def _get_expected_background_counts_scaled(self, background_spectrum: BinnedSpectrum) -> None:
         """
         Get the background counts expected in the source interval and in the source region, based on the observed
         background.
@@ -1619,26 +1619,26 @@ class SpectrumLike(PluginPrototype):
         return bkg_counts
 
     @property
-    def current_observed_counts(self):
+    def current_observed_counts(self) -> np.ndarray:
         return self._current_observed_counts
 
     @property
-    def current_background_counts(self):
+    def current_background_counts(self) -> np.ndarray:
         return self._current_background_counts
 
     @property
-    def current_scaled_background_counts(self):
+    def current_scaled_background_counts(self) -> np.ndarray:
         return self._current_scaled_background_counts
 
     @property
-    def current_background_count_errors(self):
+    def current_background_count_errors(self) -> np.ndarray:
         return self._current_back_count_errors
 
     @property
-    def current_observed_count_errors(self):
+    def current_observed_count_errors(self) -> np.ndarray:
         return self._current_observed_count_errors
 
-    def _set_background_noise_model(self, new_model):
+    def _set_background_noise_model(self, new_model: str) -> None:
 
         # Do not make differences between upper and lower cases
         if new_model is not None:
@@ -1668,7 +1668,7 @@ class SpectrumLike(PluginPrototype):
          Verify that this makes statistical sense."
         )
 
-    def _get_background_noise_model(self):
+    def _get_background_noise_model(self) -> str:
 
         return self._background_noise_model
 
@@ -1678,7 +1678,7 @@ class SpectrumLike(PluginPrototype):
         doc="Sets/gets the noise model for the background spectrum",
     )
 
-    def _set_observation_noise_model(self, new_model):
+    def _set_observation_noise_model(self, new_model: str) -> None:
 
         # Do not make differences between upper and lower cases
         new_model = new_model.lower()
@@ -1706,7 +1706,7 @@ class SpectrumLike(PluginPrototype):
                  Verify that this makes statistical sense."
         )
 
-    def _get_observation_noise_model(self):
+    def _get_observation_noise_model(self) -> str:
 
         return self._observation_noise_model
 
@@ -1716,7 +1716,7 @@ class SpectrumLike(PluginPrototype):
         doc="Sets/gets the noise model for the background spectrum",
     )
 
-    def get_log_like(self, precalc_fluxes: Optional[np.array] = None):
+    def get_log_like(self, precalc_fluxes: Optional[np.ndarray] = None) -> float:
         """
         Calls the likelihood from the pre-setup likelihood evaluator that "knows" of the currently set
         noise models
@@ -1729,11 +1729,11 @@ class SpectrumLike(PluginPrototype):
 
         return loglike
 
-    def inner_fit(self):
+    def inner_fit(self) -> float:
 
         return self.get_log_like()
 
-    def set_model(self, likelihoodModel):
+    def set_model(self, likelihoodModel: Model) -> None:
         """
         Set the model to be used in the joint minimization.
         """
@@ -1770,7 +1770,7 @@ class SpectrumLike(PluginPrototype):
 
         self._integral_flux = integral
 
-    def _evaluate_model(self, precalc_fluxes: Optional[np.array] = None):
+    def _evaluate_model(self, precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
         """
         Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.
         This can be overloaded to convolve the model with a response, for example
@@ -1800,7 +1800,7 @@ class SpectrumLike(PluginPrototype):
             )
 
     def get_model(self,
-                  precalc_fluxes: Optional[np.array] = None):
+                  precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
         """
         The model integrated over the energy bins. Note that it only returns the  model for the
         currently active channels/measurements
@@ -1824,7 +1824,7 @@ class SpectrumLike(PluginPrototype):
 
         return self._nuisance_parameter.value * model
 
-    def _evaluate_background_model(self):
+    def _evaluate_background_model(self) -> np.ndarray:
         """
         Since there is no dispersion, we simply evaluate the model by integrating over the energy bins.
         This can be overloaded to convolve the model with a response, for example
@@ -1851,7 +1851,7 @@ class SpectrumLike(PluginPrototype):
                 ])
 
     def get_background_model(self,
-                             without_mask: bool = False):
+                             without_mask: bool = False) -> np.ndarray:
         """
         The background model integrated over the energy bins. Note that it only returns the  model for the
         currently active channels/measurements
@@ -2019,7 +2019,7 @@ class SpectrumLike(PluginPrototype):
 
     def use_effective_area_correction(self,
                                       min_value: Union[int, float] = 0.8,
-                                      max_value: Union[int, float] = 1.2):
+                                      max_value: Union[int, float] = 1.2) -> None:
         """
         Activate the use of the effective area correction, which is a multiplicative factor in front of the model which
         might be used to mitigate the effect of intercalibration mismatch between different instruments.
@@ -2044,7 +2044,7 @@ class SpectrumLike(PluginPrototype):
         self._nuisance_parameter.set_uninformative_prior(Uniform_prior)
 
     def fix_effective_area_correction(self,
-                                      value: Union[int, float] = 1):
+                                      value: Union[int, float] = 1) -> None:
         """
         Fix the multiplicative factor (see use_effective_area_correction) to the provided value (default: 1)
 
@@ -2056,7 +2056,7 @@ class SpectrumLike(PluginPrototype):
         self._nuisance_parameter.fix = True
 
     def set_model_integrate_method(self,
-                                   method: str):
+                                   method: str) -> None:
         """
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
