@@ -121,21 +121,24 @@ class DispersionSpectrumLike(SpectrumLike):
 
         return self._rsp.convolve(precalc_fluxes=precalc_fluxes)
 
-    def set_model_integrate_method(self,
-                                   method: str):
+    def set_model_integrate_method(self, method: str):
         """
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        assert method in [
-            "simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        if not method in ["simpson", "trapz"]:
+
+            log.error("Only simpson and trapz are valid intergate methods.")
+
+            raise RuntimeError()
+
         self._model_integrate_method = method
         log.info(f"{self._name} changing model integration method to {method}")
 
         # if like_model already set, upadte the integral function
         if self._like_model is not None:
-            differential_flux, integral = self._get_diff_flux_and_integral(self._like_model,
-                                                                           integrate_method=method)
+            differential_flux, integral = self._get_diff_flux_and_integral(
+                self._like_model, integrate_method=method)
             self._rsp.set_function(integral)
             self._integral_flux = integral
 
@@ -148,9 +151,8 @@ class DispersionSpectrumLike(SpectrumLike):
          """
 
         # pass the response thru to the constructor
-        return super(DispersionSpectrumLike, self).get_simulated_dataset(
-            new_name=new_name, **kwargs
-        )
+        return super(DispersionSpectrumLike,
+                     self).get_simulated_dataset(new_name=new_name, **kwargs)
 
     def get_pha_files(self):
         info = {}
@@ -227,9 +229,11 @@ class DispersionSpectrumLike(SpectrumLike):
         :return:
         """
 
-        assert (
-            "response" in kwargs
-        ), "A response was not provided. Cannor build synthetic observation"
+        if not  ( "response" in kwargs):
+
+            log.error("A response was not provided. Cannor build synthetic observation")
+
+            raise RuntimeError()
 
         response = kwargs.pop("response")
 

@@ -31,7 +31,7 @@ from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.binner import Rebinner
-from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet
+from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet, Quality
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.utils.statistics.stats_tools import Significance
@@ -60,8 +60,7 @@ class SpectrumLike(PluginPrototype):
         background_exposure=None,
         tstart: Optional[Union[float, int]] = None,
         tstop: Optional[Union[float, int]] = None,
-    )-> None:
-        
+    ) -> None:
         """
         A plugin for generic spectral data, accepts an observed binned spectrum,
         and a background binned spectrum or plugin with the background data.
@@ -92,14 +91,14 @@ class SpectrumLike(PluginPrototype):
         if not is_valid_variable_name(name):
 
             log.error(
-            f"Name {name} is not a valid name for a plugin. You must use a name which is "
-            "a valid python identifier: no spaces, no operators (+,-,/,*), "
-            "it cannot start with a number, no special characters"
-        )
+                f"Name {name} is not a valid name for a plugin. You must use a name which is "
+                "a valid python identifier: no spaces, no operators (+,-,/,*), "
+                "it cannot start with a number, no special characters")
 
-        if not isinstance( observation, BinnedSpectrum ):
+        if not isinstance(observation, BinnedSpectrum):
 
-            log.error("The observed spectrum is not an instance of BinnedSpectrum")
+            log.error(
+                "The observed spectrum is not an instance of BinnedSpectrum")
 
         # Precomputed observed (for speed)
 
@@ -109,7 +108,7 @@ class SpectrumLike(PluginPrototype):
 
         self._predefined_energies: np.ndarray = observation.edges
 
-        self._observed_counts: np.ndarray = self._observed_spectrum.counts 
+        self._observed_counts: np.ndarray = self._observed_spectrum.counts
 
         # initialize the background
 
@@ -169,7 +168,8 @@ class SpectrumLike(PluginPrototype):
         )
 
         nuisance_parameters: Dict[str, Parameter] = collections.OrderedDict()
-        nuisance_parameters[self._nuisance_parameter.name] = self._nuisance_parameter
+        nuisance_parameters[
+            self._nuisance_parameter.name] = self._nuisance_parameter
 
         # if we have a background model we are going
         # to link all those parameters to new nuisance parameters
@@ -181,8 +181,8 @@ class SpectrumLike(PluginPrototype):
             self._background_noise_model = "modeled"
 
             for par_name, parameter in list(
-                self._background_plugin.likelihood_model.parameters.items()
-            ):
+                    self._background_plugin.likelihood_model.parameters.items(
+                    )):
 
                 # create a new parameters that is like the one from the background model
 
@@ -195,8 +195,7 @@ class SpectrumLike(PluginPrototype):
 
                 differential_flux, integral = self._get_diff_flux_and_integral(
                     self._background_plugin.likelihood_model,
-                    integrate_method=self._background_integrate_method
-                )
+                    integrate_method=self._background_integrate_method)
 
                 self._background_integral_flux = integral
 
@@ -268,9 +267,8 @@ class SpectrumLike(PluginPrototype):
         # no checks are involved because the appropriate
         # noise models are pre-selected
 
-        self._likelihood_evaluator = statistic_lookup[self.observation_noise_model][
-            self.background_noise_model
-        ](self)
+        self._likelihood_evaluator = statistic_lookup[
+            self.observation_noise_model][self.background_noise_model](self)
 
     def _count_errors_initialization(self):
         """
@@ -308,18 +306,18 @@ class SpectrumLike(PluginPrototype):
         try:
 
             error_tuple = count_errors_lookup[self._observation_noise_model][
-                self._background_noise_model
-            ]  # type: tuple
+                self._background_noise_model]  # type: tuple
 
         except (KeyError):
 
-            RuntimeError(
-                "The noise combination of source: %s, background: %s  is not supported"
-                % (self._observation_noise_model, self._background_noise_model)
+            log.error(
+                f"The noise combination of source: {self._observation_noise_model}, background: {self._background_noise_model}  is not supported"
             )
 
+            RuntimeError()
+
         for errors, counts, name in zip(
-            error_tuple,
+                error_tuple,
             [self._observed_counts, self._background_counts],
             ["observed", "background"],
         ):
@@ -330,10 +328,13 @@ class SpectrumLike(PluginPrototype):
                 zero_idx = errors == 0  # type: np.ndarray
 
                 # check that zero error => zero counts
-                assert np.all(errors[zero_idx] == counts[zero_idx]), (
-                    "Error in %s spectrum: if the error on the background is zero, "
-                    "also the expected %s must be zero" % name
-                )
+                if not np.all(errors[zero_idx] == counts[zero_idx]):
+
+                    log.error(
+                        f"Error in {name} spectrum: if the error on the background is zero, "
+                        "also the expected %s must be zero")
+
+                    raise RuntimeError()
 
         observed_count_errors, background_count_errors = error_tuple
 
@@ -369,14 +370,15 @@ class SpectrumLike(PluginPrototype):
                     self._background_counts = self._background_counts.astype(
                         np.int64)
 
-                    assert np.all(
-                        self._observed_counts >= 0
-                    ), "Error in PHA: negative counts!"
+                    if not np.all(self._observed_counts >= 0):
+
+                        log.error("Error in PHA: negative counts!")
+
+                        raise RuntimeError()
 
                     if not np.all(self._background_counts >= 0):
                         raise NegativeBackground(
-                            "Error in background spectrum: negative counts!"
-                        )
+                            "Error in background spectrum: negative counts!")
 
                 else:
 
@@ -418,14 +420,18 @@ class SpectrumLike(PluginPrototype):
 
                 self._observed_count_errors = None
                 self._observed_counts = self._observed_counts.astype(np.int64)
+                
+                if not np.all( self._observed_counts >= 0 ):
 
-                assert np.all(
-                    self._observed_counts >= 0
-                ), "Error in PHA: negative counts!"
+                    log.error("Error in PHA: negative counts!")
 
-                assert np.all(
-                    self._observed_counts >= 0
-                ), "Error in PHA: negative counts!"
+                    raise RuntimeError()
+
+                if not np.all( self._observed_counts >= 0 ):
+
+                    log.error("Error in PHA: negative counts!")
+
+                    raise RuntimeError()
 
                 observation_noise_model = "poisson"
                 background_noise_model = None
@@ -615,9 +621,13 @@ class SpectrumLike(PluginPrototype):
         :return: ratio between source and background area
         """
 
-        assert (self._background_plugin is not None) or (
+        if not ((self._background_plugin is not None) or (
             self._background_spectrum
-        ) is not None, "No background exists!"
+        ) is not None):
+
+            log.error("No background exists!")
+
+            raise RuntimeError()
 
         return self._area_ratio
 
@@ -627,9 +637,13 @@ class SpectrumLike(PluginPrototype):
 
         :return:  ratio between source and background exposure
         """
-        assert (self._background_plugin is not None) or (
+        if not ((self._background_plugin is not None) or (
             self._background_spectrum
-        ) is not None, "No background exists!"
+        ) is not None):
+
+            log.error("No background exists!")
+
+            raise RuntimeError()
 
         return self._exposure_ratio
 
@@ -645,9 +659,13 @@ class SpectrumLike(PluginPrototype):
         #     return 1
         #
         # return self._observed_spectrum.exposure / self.background_exposure * self._observed_spectrum.scale_factor / self.background_scale_factor
-        assert (self._background_plugin is not None) or (
+        if not ((self._background_plugin is not None) or (
             self._background_spectrum
-        ) is not None, "No background exists!"
+        ) is not None):
+
+            log.error("No background exists!")
+
+            raise RuntimeError()
 
         return self._total_scale_factor
 
@@ -672,11 +690,13 @@ class SpectrumLike(PluginPrototype):
     @property
     def background_spectrum(self) -> BinnedSpectrum:
 
-        assert (
-            self._background_spectrum is not None
-        ), "This SpectrumLike instance has no background"
+         if self._background_spectrum is None:
+             
+             log.error("This SpectrumLike instance has no background")
 
-        return self._background_spectrum
+             raise  RuntimeError()
+             
+         return self._background_spectrum
 
     @property
     def background_plugin(self):
@@ -809,16 +829,24 @@ class SpectrumLike(PluginPrototype):
 
         else:
 
-            assert len(source_errors) == len(
+            if not len(source_errors) == len(
                 energy_min
-            ), "source error array is not the same dimension as the energy array"
+            ):
+
+                log.error("source error array is not the same dimension as the energy array")
+
+                raise RuntimeError()
 
             is_poisson = False
 
         if source_sys_errors is not None:
-            assert len(source_sys_errors) == len(
+            if not len(source_sys_errors) == len(
                 energy_min
-            ), "background  systematic error array is not the same dimension as the energy array"
+            ):
+
+                log.error("background  systematic error array is not the same dimension as the energy array")
+
+                raise RuntimeError()
 
         # call the class dependent observation builder
 
@@ -841,16 +869,23 @@ class SpectrumLike(PluginPrototype):
 
             else:
 
-                assert len(background_errors) == len(
+                if not len(background_errors) == len(
                     energy_min
-                ), "background error array is not the same dimension as the energy array"
+                ):
 
+                    log.error("background error array is not the same dimension as the energy array")
+
+                    raise RuntimeError()
+                    
                 is_poisson = False
 
             if background_sys_errors is not None:
-                assert len(background_sys_errors) == len(
+                if not len(background_sys_errors) == len(
                     energy_min
-                ), "background  systematic error array is not the same dimension as the energy array"
+                ):
+                    log.error("background systematic error array is not the same dimension as the energy array")
+
+                    raise RuntimeError()
 
             tmp_background = BinnedSpectrum(
                 fake_background,
@@ -1028,10 +1063,11 @@ class SpectrumLike(PluginPrototype):
         # We will build the high res mask even if we are
         # already rebinned so that it can be saved
 
-        assert self._rebinner is None, (
-            "You cannot select active measurements if you have a rebinning active. "
-            "Remove it first with remove_rebinning"
-        )
+        if self._rebinner is not None:
+            
+            log.error("You cannot select active measurements if you have a rebinning active. "
+            "Remove it first with remove_rebinning")
+        
 
         if "use_quality" in kwargs:
 
@@ -1062,10 +1098,12 @@ class SpectrumLike(PluginPrototype):
 
             # Just make sure than no further selections have been made.
 
-            assert (
-                len(args) == 1
-            ), "If you specify 'all', you cannot specify more than one energy range."
+            if not ( len(args) == 1 ):
 
+                log.error("If you specify 'all', you cannot specify more than one energy range.")
+
+                raise RuntimeError()
+                
             # Convert the mask to all True (we use all channels)
             self._mask[:] = True
 
@@ -1073,10 +1111,12 @@ class SpectrumLike(PluginPrototype):
 
             # Convert the to native PHA masking specified in quality
 
-            assert (
-                len(args) == 1
-            ), "If you specify 'reset', you cannot specify more than one energy range."
+            if not ( len(args) == 1 ):
 
+                log.error("If you specify 'reset', you cannot specify more than one energy range.")
+
+                raise RuntimeError()
+                
             self._mask = self._observed_spectrum.quality.good
 
         else:
@@ -1092,12 +1132,15 @@ class SpectrumLike(PluginPrototype):
 
                     if s[0].lower() == "c":
 
-                        assert (
-                            int(s[1:]) <= self._observed_spectrum.n_channels
-                        ), "%s is larger than the number of channels: %d" % (
+                        if not ( int(s[1:]) <= self._observed_spectrum.n_channels ):
+
+                            log.error(f"%s is larger than the number of channels: %d" % (
                             s,
                             self._observed_spectrum.n_channels,
-                        )
+                        ))
+
+                            raise RuntimeError()
+                                      
                         idx[i] = int(s[1:])
 
                     else:
@@ -1105,11 +1148,15 @@ class SpectrumLike(PluginPrototype):
                         idx[i] = self._observed_spectrum.containing_bin(
                             float(s))
 
-                assert idx[0] < idx[1], (
+                if not idx[0] < idx[1]:
+
+                    log.error(
                     "The channel and energy selection (%s) are out of order and translates to %s-%s"
                     % (selections, idx[0], idx[1])
                 )
 
+                    raise RuntimeError()
+                    
                 # we do the opposite of the exclude command!
                 self._mask[idx[0]: idx[1] + 1] = True
 
@@ -1137,12 +1184,17 @@ class SpectrumLike(PluginPrototype):
 
                     if s[0].lower() == "c":
 
-                        assert (
+                        if not (
                             int(s[1:]) <= self._observed_spectrum.n_channels
-                        ), "%s is larger than the number of channels: %d" % (
-                            s,
+                        ):
+
+                            log.error("%s is larger than the number of channels: %d" % (
+                                s,
                             self._observed_spectrum.n_channels,
-                        )
+                        ))
+
+                            raise RuntimeError()
+                                      
                         idx[i] = int(s[1:])
 
                     else:
@@ -1150,10 +1202,13 @@ class SpectrumLike(PluginPrototype):
                         idx[i] = self._observed_spectrum.containing_bin(
                             float(s))
 
-                assert idx[0] < idx[1], (
+                if not idx[0] < idx[1]:
+
+                    log.error(
                     "The channel and energy selection (%s) are out of order and translate to %s-%s"
                     % (selections, idx[0], idx[1])
                 )
+                    raise RuntimeError()
 
                 # we do the opposite of the exclude command!
                 self._mask[idx[0]: idx[1] + 1] = False
@@ -1412,7 +1467,11 @@ class SpectrumLike(PluginPrototype):
         :return: a likelihood model copy
         """
 
-        assert self._simulation_storage is not None, "This is not a simulated data set"
+        if self._simulation_storage is None:
+
+            log.error("This is not a simulated data set")
+
+            raise RuntimeError()
 
         return self._simulation_storage
 
@@ -1433,9 +1492,11 @@ class SpectrumLike(PluginPrototype):
 
         # NOTE: the rebinner takes care of the mask already
 
-        assert (
-            self._background_spectrum is not None
-        ), "This data has no background, cannot rebin on background!"
+        if self._background_spectrum is None:
+
+            log.error("This data has no background, cannot rebin on background!")
+
+            raise RuntimeError()
 
         rebinner: Rebinner = Rebinner(self._background_counts,
                                       min_number_of_counts, self._mask)
@@ -1583,12 +1644,16 @@ class SpectrumLike(PluginPrototype):
         if new_model is not None:
             new_model = new_model.lower()
 
-            assert (
+            if not (
                 new_model in _known_noise_models
-            ), "Noise model %s not recognized. " "Allowed models are: %s" % (
+            ):
+
+                log.error("Noise model %s not recognized. " "Allowed models are: %s" % (
                 new_model,
                 ", ".join(_known_noise_models),
-            )
+                ))
+
+                raise RuntimeError()
 
         self._background_noise_model = new_model
 
@@ -1618,12 +1683,15 @@ class SpectrumLike(PluginPrototype):
         # Do not make differences between upper and lower cases
         new_model = new_model.lower()
 
-        assert (
+        if not (
             new_model in _known_noise_models
-        ), "Noise model %s not recognized. " "Allowed models are: %s" % (
+        ):
+
+            log.error("Noise model %s not recognized. " "Allowed models are: %s" % (
             new_model,
             ", ".join(_known_noise_models),
-        )
+        ))
+            raise RuntimeError()
 
         self._observation_noise_model = new_model
 
@@ -1676,9 +1744,13 @@ class SpectrumLike(PluginPrototype):
 
         # We assume there are no extended sources, since we cannot handle them here
 
-        assert self._like_model.get_number_of_extended_sources() == 0, (
+        if not self._like_model.get_number_of_extended_sources() == 0:
+
+            log.error(
             "SpectrumLike plugins do not support " "extended sources"
         )
+
+            raise RuntimeError()
 
         # check if we set a source name that the source is in the model
 
@@ -1816,8 +1888,12 @@ class SpectrumLike(PluginPrototype):
                                     integrate_method: str = "simpson") -> Tuple[types.FunctionType,
                                                                                 types.FunctionType]:
 
-        assert integrate_method in [
-            "simpson", "trapz"], "Only simpson and trapz are valid integral_methods."
+        if not integrate_method in [
+            "simpson", "trapz"]:
+
+            log.error("Only simpson and trapz are valid integral_methods.")
+
+            raise RuntimeError()
 
         if self._source_name is None:
 
@@ -1985,8 +2061,13 @@ class SpectrumLike(PluginPrototype):
         Change the integrate method for the model integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        assert method in [
-            "simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        if not method in [
+            "simpson", "trapz"]:
+
+            log.error("Only simpson and trapz are valid intergate methods.")
+
+            raise RuntimeError()
+            
         self._model_integrate_method = method
         log.info(f"{self._name} changing model integration method to {method}")
 
@@ -1997,13 +2078,18 @@ class SpectrumLike(PluginPrototype):
             self._integral_flux = integral
 
     def set_background_integrate_method(self,
-                                        method: str):
+                                        method: str) -> None:
         """
         Change the integrate method for the background integration
         :param method: (str) which method should be used (simpson or trapz)
         """
-        assert method in [
-            "simpson", "trapz"], "Only simpson and trapz are valid intergate methods."
+        if not method in [
+            "simpson", "trapz"]:
+
+            log.error("Only simpson and trapz are valid intergate methods.")
+
+            raise RuntimeError()
+            
         self._background_integrate_method = method
         log.info(
             f"{self._name} changing background integration method to {method}")
@@ -2015,7 +2101,7 @@ class SpectrumLike(PluginPrototype):
             self._background_integral_flux = integral
 
     @property
-    def mask(self):
+    def mask(self) -> np.ndarray:
         """
         The channel mask
         :return:
@@ -2024,20 +2110,20 @@ class SpectrumLike(PluginPrototype):
         return self._mask
 
     @property
-    def tstart(self):
+    def tstart(self) -> float:
         return self._tstart
 
     @property
-    def tstop(self):
+    def tstop(self) -> float:
         return self._tstop
 
     @property
-    def expected_model_rate(self):
+    def expected_model_rate(self) -> np.ndarray:
 
         return self._evaluate_model() * self._nuisance_parameter.value
 
     @property
-    def observed_counts(self):
+    def observed_counts(self) -> np.ndarray:
         """
 
         :return: the observed counts
@@ -2046,7 +2132,7 @@ class SpectrumLike(PluginPrototype):
         return self._observed_counts
 
     @property
-    def observed_count_errors(self):
+    def observed_count_errors(self) -> Optional[np.ndarray]:
         """
 
         :return: the observed counts errors
@@ -2068,7 +2154,7 @@ class SpectrumLike(PluginPrototype):
         return cnt_err
 
     @property
-    def background_counts(self):
+    def background_counts(self) -> Optional[np.ndarray]:
         """
 
         :return: the observed background counts
@@ -2120,7 +2206,7 @@ class SpectrumLike(PluginPrototype):
         return background_counts
 
     @property
-    def background_count_errors(self):
+    def background_count_errors(self) -> Optional[np.ndarray]:
         """
 
         :return: the observed background count errors
@@ -2171,7 +2257,7 @@ class SpectrumLike(PluginPrototype):
         return background_errors
 
     @property
-    def source_rate(self):
+    def source_rate(self) -> np.ndarray:
         """
         The source rate of the model. If there is background or a background background plugin present,
         the source is background subtracted, but only for visual purposes. If no background is present,
@@ -2200,7 +2286,7 @@ class SpectrumLike(PluginPrototype):
         return src_rate
 
     @property
-    def source_rate_error(self):
+    def source_rate_error(self) -> np.ndarray:
         """
         The source rate error of the model. If there is background or a background background plugin present,
         the source is background subtracted, but only for visual purposes. If no background is present,
@@ -2232,12 +2318,12 @@ class SpectrumLike(PluginPrototype):
         return src_rate_err
 
     @property
-    def quality(self):
+    def quality(self) -> Quality:
 
         return self._observed_spectrum.quality
 
     @property
-    def energy_boundaries(self, mask=True):
+    def energy_boundaries(self, mask: bool=True) -> Tuple[float]:
         """
         Energy boundaries of channels currently in use (rebinned, if a rebinner is active)
 
@@ -2264,7 +2350,7 @@ class SpectrumLike(PluginPrototype):
         return energy_min, energy_max
 
     @property
-    def n_data_points(self):
+    def n_data_points(self) -> int:
 
         if self._rebinner is not None:
 
@@ -2275,7 +2361,7 @@ class SpectrumLike(PluginPrototype):
             return int(self._mask.sum())
 
     @property
-    def significance(self):
+    def significance(self) -> float:
         """
         :return: the significance of the data over background
         """
@@ -2319,7 +2405,7 @@ class SpectrumLike(PluginPrototype):
         return significance[0]
 
     @property
-    def significance_per_channel(self):
+    def significance_per_channel(self) -> np.ndarray:
         """
         :return: the significance of the data over background per channel
         """
@@ -2820,7 +2906,7 @@ class SpectrumLike(PluginPrototype):
 
         return pd.Series(data=obs, index=list(obs.keys()))
 
-    def get_number_of_data_points(self):
+    def get_number_of_data_points(self) -> int:
         """
         returns the number of active data bins
         :return:
@@ -3038,6 +3124,8 @@ class SpectrumLike(PluginPrototype):
 
                 else:
 
+                    log.error("This is a bug!")
+                    
                     raise RuntimeError("This is a bug")
 
             else:
@@ -3050,6 +3138,8 @@ class SpectrumLike(PluginPrototype):
                     )
 
                 else:
+
+                    log.error("Not yet implemeted!")
 
                     raise NotImplementedError("Not yet implemented")
 
@@ -3174,7 +3264,11 @@ class SpectrumLike(PluginPrototype):
 
         if model_kwargs is not None:
 
-            assert type(model_kwargs) == dict, "model_kwargs must be a dict"
+            if not type(model_kwargs) == dict:
+
+                log.error("model_kwargs must be a dict")
+
+                raise RuntimeError()
 
             for k, v in list(model_kwargs.items()):
 
@@ -3188,7 +3282,11 @@ class SpectrumLike(PluginPrototype):
 
         if data_kwargs is not None:
 
-            assert type(data_kwargs) == dict, "data_kwargs must be a dict"
+            if not type(data_kwargs) == dict:
+
+                log.error("data_kwargs must be a dict")
+
+                raise RuntimeError()
 
             for k, v in list(data_kwargs.items()):
 
@@ -3202,8 +3300,12 @@ class SpectrumLike(PluginPrototype):
 
         if background_kwargs is not None:
 
-            assert type(
-                background_kwargs) == dict, "background_kwargs must be a dict"
+            if not type(
+                background_kwargs) == dict:
+
+                log.error("background_kwargs must be a dict")
+
+                raise RuntimeError()
 
             for k, v in list(background_kwargs.items()):
 
