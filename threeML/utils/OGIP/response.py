@@ -661,7 +661,8 @@ class OGIPResponse(InstrumentResponse):
 
         if not fits_file_existing_and_readable(arf_file):
 
-            log.error( f"Ancillary file {arf_file} not existing or not " "readable" )
+            log.error(f"Ancillary file {arf_file} not existing or not "
+                      "readable")
 
             raise RuntimeError()
 
