@@ -420,14 +420,14 @@ class SpectrumLike(PluginPrototype):
 
                 self._observed_count_errors = None
                 self._observed_counts = self._observed_counts.astype(np.int64)
-                
-                if not np.all( self._observed_counts >= 0 ):
+
+                if not np.all(self._observed_counts >= 0):
 
                     log.error("Error in PHA: negative counts!")
 
                     raise RuntimeError()
 
-                if not np.all( self._observed_counts >= 0 ):
+                if not np.all(self._observed_counts >= 0):
 
                     log.error("Error in PHA: negative counts!")
 
@@ -444,9 +444,8 @@ class SpectrumLike(PluginPrototype):
         # Print the auto-probed noise models
 
         if self._background_plugin is not None:
-            log.info(
-                "Background modeled from plugin: %s" % self._background_plugin.name
-            )
+            log.info("Background modeled from plugin: %s" %
+                     self._background_plugin.name)
 
             bkg_noise = self._background_plugin.observation_noise_model
 
@@ -1068,7 +1067,8 @@ class SpectrumLike(PluginPrototype):
             log.error("You cannot select active measurements if you have a rebinning active. "
             "Remove it first with remove_rebinning")
         
-
+            raise RuntimeError()
+            
         if "use_quality" in kwargs:
 
             use_quality = kwargs.pop("use_quality")
@@ -1277,7 +1277,7 @@ class SpectrumLike(PluginPrototype):
                 self._current_back_count_errors = self._back_count_errors[self._mask]
 
     @contextmanager
-    def _without_mask_nor_rebinner(self):
+    def _without_mask_nor_rebinner(self) -> None:
 
         # Store mask and rebinner for later use
 
@@ -1309,7 +1309,7 @@ class SpectrumLike(PluginPrototype):
 
             self._apply_mask_to_original_vectors()
 
-    def get_simulated_dataset(self, new_name: Optional[str] = None, **kwargs):
+    def get_simulated_dataset(self, new_name: Optional[str] = None, **kwargs) -> "SpectrumLike":
         """
         Returns another Binned instance where data have been obtained by randomizing the current expectation from the
         model, as well as from the background (depending on the respective noise models)
