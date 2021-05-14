@@ -270,7 +270,7 @@ class SpectrumLike(PluginPrototype):
         self._likelihood_evaluator = statistic_lookup[
             self.observation_noise_model][self.background_noise_model](self)
 
-    def _count_errors_initialization(self):
+    def _count_errors_initialization(self) -> Tuple[np.ndarray]:
         """
         compute the  count errors for the observed and background spectra
 
