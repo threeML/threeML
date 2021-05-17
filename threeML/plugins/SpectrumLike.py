@@ -317,7 +317,7 @@ class SpectrumLike(PluginPrototype):
             RuntimeError()
 
         for errors, counts, name in zip(
-                error_tuple,
+            error_tuple,
             [self._observed_counts, self._background_counts],
             ["observed", "background"],
         ):
@@ -332,7 +332,7 @@ class SpectrumLike(PluginPrototype):
 
                     log.error(
                         f"Error in {name} spectrum: if the error on the background is zero, "
-                        "also the expected %s must be zero")
+                        f"also the expected background counts must be zero")
 
                     raise RuntimeError()
 
@@ -377,8 +377,10 @@ class SpectrumLike(PluginPrototype):
                         raise RuntimeError()
 
                     if not np.all(self._background_counts >= 0):
-                        raise NegativeBackground(
-                            "Error in background spectrum: negative counts!")
+                      
+                        log.error("Error in background spectrum: negative counts!")
+                        
+                        raise RuntimeError()
 
                 else:
 
@@ -386,9 +388,10 @@ class SpectrumLike(PluginPrototype):
                     background_noise_model = "gaussian"
 
                     if not np.all(self._background_counts >= 0):
-                        raise NegativeBackground(
-                            "Error in background spectrum: negative background!"
-                        )
+                      
+                        log.error("Error in background spectrum: negative background!")
+                        
+                        raise RuntimeError()
 
             else:
 
@@ -843,7 +846,7 @@ class SpectrumLike(PluginPrototype):
                 energy_min
             ):
 
-                log.error("background  systematic error array is not the same dimension as the energy array")
+                log.error("background systematic error array is not the same dimension as the energy array")
 
                 raise RuntimeError()
 
@@ -1135,9 +1138,9 @@ class SpectrumLike(PluginPrototype):
                         if not ( int(s[1:]) <= self._observed_spectrum.n_channels ):
 
                             log.error(f"%s is larger than the number of channels: %d" % (
-                            s,
-                            self._observed_spectrum.n_channels,
-                        ))
+                                s,
+                                self._observed_spectrum.n_channels,
+                              ))
 
                             raise RuntimeError()
                                       
