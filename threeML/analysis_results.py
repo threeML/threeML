@@ -58,7 +58,6 @@ else:
 
     log.debug("chainconsumer is installed")
 
-
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
 # them with normal characters when we write the keyword, and we substitute them back when we read it back
 _subs = (
@@ -325,8 +324,8 @@ def _load_set_of_results(open_fits_file, n_results):
     all_results = []
 
     for i in range(n_results):
-        all_results.append(_load_one_results(
-            open_fits_file["ANALYSIS_RESULTS", i + 1]))
+        all_results.append(
+            _load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1]))
 
     this_set = AnalysisResultsSet(all_results)
 
@@ -349,8 +348,8 @@ def _load_set_of_results(open_fits_file, n_results):
 
         else:
 
-            this_tuple = (
-                column.name, record[column.name] * u.Unit(column.unit))
+            this_tuple = (column.name,
+                          record[column.name] * u.Unit(column.unit))
 
         data_list.append(this_tuple)
 
@@ -395,28 +394,42 @@ class ANALYSIS_RESULTS_HDF(object):
 
         if analysis_results.analysis_type == "MLE":
 
-            assert isinstance(analysis_results, MLEResults)
+            if not isinstance(analysis_results, MLEResults):
+
+                log.error("this is not and MLEREsults")
+
+                raise RuntimeError()
 
             covariance_matrix = analysis_results.covariance_matrix
 
             # Check that the covariance matrix has the right shape
 
-            assert covariance_matrix.shape == (
-                n_parameters,
-                n_parameters,
-            ), "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
-                n_parameters,
-                n_parameters,
-                covariance_matrix.shape[0],
-                covariance_matrix.shape[1],
-            )
+            if not covariance_matrix.shape == (
+                    n_parameters,
+                    n_parameters,
+            ):
+
+                log.error(
+                    "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
+                    % (
+                        n_parameters,
+                        n_parameters,
+                        covariance_matrix.shape[0],
+                        covariance_matrix.shape[1],
+                    ))
+
+                raise RuntimeError()
 
             # Empty samples set
             samples = np.zeros(n_parameters)
 
         else:
 
-            assert isinstance(analysis_results, BayesianResults)
+            if not isinstance(analysis_results, BayesianResults):
+
+                log.error("This is not a BayesiResults")
+
+                raise RuntimeError()
 
             # Empty covariance matrix
 
@@ -435,8 +448,7 @@ class ANALYSIS_RESULTS_HDF(object):
         hdf_obj.attrs["RESUTYPE"] = analysis_results.analysis_type
 
         recursively_save_dict_contents_to_group(
-            hdf_obj, "MODEL", optimized_model.to_dict_with_types()
-        )
+            hdf_obj, "MODEL", optimized_model.to_dict_with_types())
         # Get data frame with parameters (always use equal tail errors)
 
         data_frame = analysis_results.get_data_frame(error_type="equal tail")
@@ -559,29 +571,41 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         if analysis_results.analysis_type == "MLE":
 
-            assert isinstance(analysis_results, MLEResults)
+            if not isinstance(analysis_results, MLEResults):
+
+                log.error("This is not a MLEResults")
+
+                raise RuntimeError()
 
             covariance_matrix = analysis_results.covariance_matrix
 
             # Check that the covariance matrix has the right shape
 
-            assert covariance_matrix.shape == (
+            if not covariance_matrix.shape == (
                 n_parameters,
                 n_parameters,
-            ), "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
+            ):
+
+                log.error("Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
                 n_parameters,
                 n_parameters,
                 covariance_matrix.shape[0],
                 covariance_matrix.shape[1],
-            )
+            ))
+
+                raise RuntimeError()
 
             # Empty samples set
             samples = np.zeros(n_parameters)
 
         else:
 
-            assert isinstance(analysis_results, BayesianResults)
+            if not isinstance(analysis_results, BayesianResults):
 
+                log.error("This is not a BayesianResults")
+
+                raise RuntimeError()
+                
             # Empty covariance matrix
 
             covariance_matrix = np.zeros(n_parameters)
