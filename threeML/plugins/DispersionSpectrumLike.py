@@ -231,7 +231,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
         if not  ( "response" in kwargs):
 
-            log.error("A response was not provided. Cannor build synthetic observation")
+            log.error("A response was not provided. Cannot build synthetic observation")
 
             raise RuntimeError()
 
