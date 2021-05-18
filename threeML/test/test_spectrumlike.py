@@ -337,7 +337,7 @@ def test_all_statistics():
         spectrum_generator._background_counts
     )
 
-    with pytest.raises(NegativeBackground):
+    with pytest.raises(RuntimeError):
         spectrum_generator._probe_noise_models()
 
     # test Poisson w/ ideal bkg
