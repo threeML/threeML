@@ -380,7 +380,7 @@ class SpectrumLike(PluginPrototype):
                       
                         log.error("Error in background spectrum: negative counts!")
                         
-                        raise RuntimeError()
+                        raise NegativeBackground()
 
                 else:
 
@@ -391,7 +391,7 @@ class SpectrumLike(PluginPrototype):
                       
                         log.error("Error in background spectrum: negative background!")
                         
-                        raise RuntimeError()
+                        raise NegativeBackground()
 
             else:
 
