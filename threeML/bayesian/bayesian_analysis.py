@@ -182,10 +182,13 @@ class BayesianAnalysis(object):
                 # Enforce that the nuisance parameter contains the instance name, because otherwise multiple instance
                 # of the same plugin will overwrite each other's nuisance parameters
 
-                assert dataset.name in parameter_name, (
-                    "This is a bug of the plugin for %s: nuisance parameters "
+                if not dataset.name in parameter_name:
+
+                    log.error("This is a bug of the plugin for %s: nuisance parameters "
                     "must contain the instance name" % type(dataset)
                 )
+
+                    raise AssertionError()
 
                 self._likelihood_model.add_external_parameter(parameter)
 
@@ -245,10 +248,41 @@ class BayesianAnalysis(object):
 
     def sample(self, quiet=False):
 
+        try:
+
+            for k, v in self._likelihood_model.free_parameters.items():
+
+                # remove the transformations for speed
+                # as they are only useful for MLE
+                
+                v.remove_transformation()
+
+        except:
+
+            # this is an older version of astromodels
+            
+            pass
+                
         with use_astromodels_memoization(False):
 
             self._sampler.sample(quiet=quiet)
 
+         try:
+
+            for k, v in self._likelihood_model.free_parameters.items():
+
+                # restore the transformations now that we
+                # are done with the fit
+                
+                v.restore_transformation()
+
+        except:
+
+            # this is an older version of astromodels
+            
+            pass
+        
+            
     @property
     def results(self):
 
