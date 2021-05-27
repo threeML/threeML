@@ -267,7 +267,7 @@ class BayesianAnalysis(object):
 
             self._sampler.sample(quiet=quiet)
 
-         try:
+        try:
 
             for k, v in self._likelihood_model.free_parameters.items():
 
