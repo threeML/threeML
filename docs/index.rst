@@ -51,3 +51,6 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    notebooks/synthetic_spectra.ipynb
    notebooks/gof_lrt.ipynb
     
+ThreeML is supported by the National Science Foundation (NSF) 
+
+.. image:: ../logo/NSF_4-Color_bitmap_Logo.png
