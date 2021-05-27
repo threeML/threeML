@@ -299,7 +299,7 @@ class MinuitMinimizer(LocalMinimizer):
             minus_error = self.minuit.merrors[minuit_name].lower
             plus_error = self.minuit.merrors[minuit_name].upper
 
-            if par.has_transformation():
+            if par.has_transformation:
 
                 # Need to transform in the external reference
 

@@ -186,7 +186,7 @@ class ProfileLikelihood(object):
         :return: transformed steps
         """
 
-        if self._all_parameters[parameter_name].has_transformation():
+        if self._all_parameters[parameter_name].has_transformation:
 
             new_steps = self._all_parameters[parameter_name].transformation.forward(
                 steps
@@ -1107,7 +1107,7 @@ class Minimizer(object):
 
             parameter = self.parameters[par_name]
 
-            if parameter.has_transformation():
+            if parameter.has_transformation:
 
                 _, negative_error_external = parameter.internal_to_external_delta(
                     best_fit_values[parameter.path], negative_error

@@ -1053,7 +1053,7 @@ class _AnalysisResults(object):
 
                 std_dev = np.sqrt(covariance[i, i])
 
-                if this_par.has_transformation():
+                if this_par.has_transformation:
 
                     best_fit_internal = this_par.transformation.forward(
                         values[-1])
@@ -1876,7 +1876,7 @@ class MLEResults(_AnalysisResults):
         # Now transform in the external space
         for i, parameter in enumerate(optimized_model.free_parameters.values()):
 
-            if parameter.has_transformation():
+            if parameter.has_transformation:
 
                 samples[:, i] = parameter.transformation.backward(
                     samples[:, i])
