@@ -279,7 +279,7 @@ This will set priors based on the current defined min-max (log-uniform or unifor
 ```python
 
 for param in model.free_parameters.values():
-    if param.has_transformation:
+    if param.has_transformation():
         param.set_uninformative_prior( Log_uniform_prior )
     else:
         param.set_uninformative_prior( Uniform_prior )
