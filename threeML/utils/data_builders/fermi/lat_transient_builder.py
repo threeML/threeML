@@ -343,6 +343,17 @@ class TransientLATDataBuilder(object):
 
         ##################################
 
+        name = 'bin_file'
+
+        self._parameters[name] = LATLikelihoodParameter(
+                name = name,
+                default_value = None,
+                help_string = "A text file readable by numpy and the columns to read.\nFor example, '--bin_file res.txt start end' will get the start and stop times from the columns 'start' and 'end' in the file res.txt.",
+                is_bool = False
+                is_number = False)
+
+        ##################################
+
         name = 'optimizeposition'
 
         self._parameters[name] = LATLikelihoodParameter(
@@ -484,9 +495,9 @@ class TransientLATDataBuilder(object):
         # Now if there are keywords from a configuration to read,
         # lets do it
 
-        self._proccess_keywords(**init_values)
+        self._process_keywords(**init_values)
 
-    def _proccess_keywords(self, **kwargs):
+    def _process_keywords(self, **kwargs):
         """
         processes the keywords from a dictionary 
         likely loaded from a yaml config
