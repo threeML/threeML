@@ -250,6 +250,8 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
         # Instance the result
 
+        self.restore_median_fit()
+        
         self._results = BayesianResults(
             self._likelihood_model,
             self._raw_samples,
