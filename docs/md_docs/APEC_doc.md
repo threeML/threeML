@@ -51,7 +51,7 @@ from threeML import *
 The intensity of the various lines in the model is set relative to the Solar abundance. Therefore, one must set the Solar abundance table to predict the line intensity, using the ``init_session`` method of the APEC class. By default, i.e. if the ``init_session`` method is ran with no argument, the code defaults to [Anders & Grevesse (1989)](https://ui.adsabs.harvard.edu/abs/1989GeCoA..53..197A/abstract). 
 
 ```python
-from astromodels.functions import APEC
+from astromodels.functions.apec import APEC
 
 
 modapec = APEC()
