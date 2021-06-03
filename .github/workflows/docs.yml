@@ -53,9 +53,11 @@ jobs:
         shell: bash -l {0}
         run: |
 
+          export ATOMDB=$HOME/atomdb
+
           pip install zeus-mcmc
           pip install -e .
-
+          pip install pyatomdb
           pip install black
           pip install --no-binary :all: root_numpy
           pip install git+https://github.com/threeml/hawc_hal.git
