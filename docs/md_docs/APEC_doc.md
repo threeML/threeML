@@ -46,12 +46,12 @@ Once ``pyatomdb`` is properly installed, it is available as a "Function1D" objec
 
 from threeML import * 
 
-modapec = APEC()
 ```
 
 The intensity of the various lines in the model is set relative to the Solar abundance. Therefore, one must set the Solar abundance table to predict the line intensity, using the ``init_session`` method of the APEC class. By default, i.e. if the ``init_session`` method is ran with no argument, the code defaults to [Anders & Grevesse (1989)](https://ui.adsabs.harvard.edu/abs/1989GeCoA..53..197A/abstract). 
 
 ```python
+modapec = APEC()
 modapec.init_session(abund_table='AG89')
 ```
 
@@ -86,7 +86,7 @@ ktgrid = [0.2,0.5,1.0,2.0,3.0,5.0,7.0,9.0,12.0,15.0] # Temperature grid
 
 ```
 
-```python
+```python tags=["nbsphinx-thumbnail"]
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
