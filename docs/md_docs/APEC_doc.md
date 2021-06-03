@@ -45,6 +45,7 @@ Once ``pyatomdb`` is properly installed, it is available as a "Function1D" objec
 %%capture
 
 from threeML import * 
+from astromodels.functions import APEC
 
 ```
 
