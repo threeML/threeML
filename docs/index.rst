@@ -50,6 +50,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    notebooks/Time-energy-fit.ipynb
    notebooks/synthetic_spectra.ipynb
    notebooks/gof_lrt.ipynb
+   notebooks/APEC_doc.ipynb
     
 ThreeML is supported by the National Science Foundation (NSF) 
 
