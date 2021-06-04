@@ -62,7 +62,8 @@ jobs:
           pip install --no-binary :all: root_numpy
           pip install git+https://github.com/threeml/hawc_hal.git
         
-
+          python -c "import pyatomdb"
+          
           
       - name: Execute the notebooks
         shell: bash -l {0}
