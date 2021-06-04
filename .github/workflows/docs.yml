@@ -54,7 +54,7 @@ jobs:
         run: |
 
           echo "ATOMDB=$HOME/pyatomdb" >> $GITHUB_ENV
-
+          export ATOMDB=$HOME/pyatomdb
           pip install zeus-mcmc
           pip install -e .
           pip install pyatomdb
@@ -70,6 +70,8 @@ jobs:
         run: |
 
           echo "ATOMDB=$HOME/pyatomdb" >> $GITHUB_ENV
+
+          export ATOMDB=$HOME/pyatomdb
           
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
