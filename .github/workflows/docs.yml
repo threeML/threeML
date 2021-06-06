@@ -55,6 +55,9 @@ jobs:
 
           echo "ATOMDB=$HOME/pyatomdb" >> $GITHUB_ENV
           export ATOMDB=$HOME/pyatomdb
+
+          echo $ATOMDB
+          
           pip install zeus-mcmc
           pip install -e .
           pip install pyatomdb
