@@ -67,18 +67,14 @@ jobs:
           pip install git+https://github.com/threeml/hawc_hal.git
         
           python -c "import pyatomdb"
+
         env:
-          ATOMDB: "/Users/runner/pyatomdb"
+          ATOMDB: /Users/runner/pyatomdb
           
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
 
-
-          export ATOMDB=$HOME/pyatomdb
-          echo "ATOMDB=$ATOMDB" >> $GITHUB_ENV
-          
-          echo "atomdb is:  {$ATOMDB}"
           
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
@@ -87,12 +83,13 @@ jobs:
           jupytext --to ipynb --pipe black --execute docs/md_docs/*.md
           mv docs/md_docs/*.ipynb docs/notebooks/
           ls docs/notebooks
+
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
           NUMEXPR_NUM_THREADS: 1
           MPLBACKEND: "Agg"
-          ATOMDB: "/Users/runner/pyatomdb"
+          ATOMDB: /Users/runner/pyatomdb
 
           
       - uses: actions/upload-artifact@v2
