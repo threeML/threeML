@@ -47,7 +47,6 @@ jobs:
 
                   export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
                   echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
-
                   echo "HOME= ${HOME}"
                   echo "Building ${PKG_VERSION} ..."
                   echo "Python version: ${{matrix.python-version}}"
