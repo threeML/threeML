@@ -265,6 +265,15 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
 
         _, background_model_counts = self.get_current_value()
 
+        # a bad background model can produce
+        # more background counts than observed counts
+        # which results in negative background model counts
+        # we will filter that
+
+        idx = background_model_counts < 0
+
+        background_model_counts[idx] = 0.
+
 
         if np.any(np.isnan(background_model_counts)):
 
