@@ -1,24 +1,15 @@
-from builtins import object
 import copy
+from builtins import object
 from typing import Optional
 
-import numpy as np
 import numba as nb
-
-
-from threeML.utils.numba_utils import nb_sum
-from threeML.utils.statistics.likelihood_functions import half_chi2
-from threeML.utils.statistics.likelihood_functions import (
-    poisson_log_likelihood_ideal_bkg,
-)
-from threeML.utils.statistics.likelihood_functions import (
-    poisson_observed_gaussian_background,
-)
-from threeML.utils.statistics.likelihood_functions import (
-    poisson_observed_poisson_background,
-)
+import numpy as np
 
 from threeML.io.logging import setup_logger
+from threeML.utils.numba_utils import nb_sum
+from threeML.utils.statistics.likelihood_functions import (
+    half_chi2, poisson_log_likelihood_ideal_bkg,
+    poisson_observed_gaussian_background, poisson_observed_poisson_background)
 
 log = setup_logger(__name__)
 
@@ -274,6 +265,15 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
 
         _, background_model_counts = self.get_current_value()
 
+
+        if np.any(np.isnan(background_model_counts)):
+
+            log.error("NaN count in background model counts")
+            
+            log.error(f"{background_model_counts}")
+            
+            raise RuntimeError()
+        
         # Now randomize the expectations
 
         # Randomize expectations for the source
