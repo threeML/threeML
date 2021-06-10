@@ -243,7 +243,9 @@ from threeML.analysis_results import (convert_fits_analysis_result_to_hdf,
                                       load_analysis_results,
                                       load_analysis_results_hdf)
 # Import catalogs
-from threeML.catalogs import *
+from threeML.catalogs import (FermiGBMBurstCatalog, FermiGBMTriggerCatalog,
+                              FermiLATSourceCatalog, FermiLLEBurstCatalog, SwiftGRBCatalog)
+
 from threeML.io import (activate_warnings, silence_warnings,
                         update_logging_level,
                         silence_logs,
