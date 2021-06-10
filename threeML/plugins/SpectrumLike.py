@@ -1360,7 +1360,7 @@ class SpectrumLike(PluginPrototype):
 
                 raise RuntimeError()
 
-            if not np.any(np.isnan(source_model_counts)):
+            if np.any(np.isnan(source_model_counts)):
 
                 log.error("there are NaN counts for this simulation")
 
