@@ -273,6 +273,15 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
             log.error(f"{background_model_counts}")
             
             raise RuntimeError()
+
+        if not np.all(background_model_counts >= 0):
+
+            log.error("negative count in background model counts")
+            
+            log.error(f"{background_model_counts}")
+            
+            raise RuntimeError()
+
         
         # Now randomize the expectations
 
