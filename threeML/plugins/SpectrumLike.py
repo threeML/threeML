@@ -1348,7 +1348,7 @@ class SpectrumLike(PluginPrototype):
 
             # Get the source model for all channels (that's why we don't use the .folded_model property)
 
-            source_model_counts = self._evaluate_model() * self.exposure *self._nuisance_parameter
+            source_model_counts = self._evaluate_model() * self.exposure *self._nuisance_parameter.value
 
             if not np.all(source_model_counts >= 0.):
 
