@@ -349,11 +349,11 @@ class TransientLATDataBuilder(object):
                 name = name,
                 default_value = None,
                 help_string = "A text file readable by numpy and the columns to read.\nFor example, '--bin_file res.txt start end' will get the start and stop times from the columns 'start' and 'end' in the file res.txt.",
-                is_bool = False
+                is_bool = False,
                 is_number = False)
 
         #confirm this is needed
-        assert !(self._parameters['bin_file'].value is None and self._parameters['liketype'] == 'binned'), 'Require a bin_file for binned analysis\n %s'%self._parameters['bin_file'].display()
+        #assert !(self._parameters['bin_file'].value is None and self._parameters['liketype'] == 'binned'), 'Require a bin_file for binned analysis\n %s'%self._parameters['bin_file'].display()
 
         ##################################
 
