@@ -352,9 +352,6 @@ class TransientLATDataBuilder(object):
                 is_bool = False,
                 is_number = False)
 
-        #confirm this is needed
-        #assert !(self._parameters['bin_file'].value is None and self._parameters['liketype'] == 'binned'), 'Require a bin_file for binned analysis\n %s'%self._parameters['bin_file'].display()
-
         ##################################
 
         name = 'optimizeposition'
