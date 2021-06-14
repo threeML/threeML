@@ -130,7 +130,7 @@ _required_parameters = [
 _optional_parameters = [
     'ra', 'dec', 'bin_file', 'tsmin', 'strategy', 'thetamax', 'spectralfiles', 'liketype', 'optimizeposition',
     'datarepository', 'ltcube', 'expomap', 'ulphindex', 'flemin', 'flemax', 'fgl_mode', 'tsmap_spec', 'filter_GTI',
-    'likelihood_profile', 'remove_fits_files','log_bins'
+    'likelihood_profile', 'remove_fits_files','log_bins', 'bin_file'
 ]
 
 
@@ -352,6 +352,9 @@ class TransientLATDataBuilder(object):
                 is_bool = False
                 is_number = False)
 
+        #confirm this is needed
+        assert !(self._parameters['bin_file'].value is None and self._parameters['liketype'] == 'binned'), 'Require a bin_file for binned analysis\n %s'%self._parameters['bin_file'].display()
+
         ##################################
 
         name = 'optimizeposition'
@@ -519,7 +522,7 @@ class TransientLATDataBuilder(object):
 
     def __setattr__(self, name, value):
         """
-        OVerride this so that we cannot erase parameters
+        Override this so that we cannot erase parameters
         
         """
 
@@ -678,8 +681,13 @@ class TransientLATDataBuilder(object):
                 if not file_existing_and_readable(livetime_cube):
                     print('The livetime_cube does not exist. Please examine!')
 
+                bin_file = os.path.join(interval, self._parameters['bin_file'].value)
+
+                if not file_existing_and_readable(bin_file):
+                    print('The bin_file at %s does not exist. Please examine!'%bin_file)
+
                 # now create a LAT observation object
-                this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, self._parameters['liketype'].get_disp_value(), self._triggername)
+                this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, self._parameters['liketype'].get_disp_value(), self._triggername, bin_file)
 
                 lat_observations.append(this_obs)
 
@@ -765,7 +773,7 @@ class TransientLATDataBuilder(object):
 
 class LATObservation(object):
 
-    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop,liketype,triggername):
+    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, liketype, triggername, bin_file):
         """
         A container to formalize the storage of Fermi LAT 
         observation files
@@ -791,6 +799,7 @@ class LATObservation(object):
         self._tstop = tstop
         self._liketype =liketype
         self._triggername = triggername
+        self._bin_file = bin_file
 
     @property
     def event_file(self):
@@ -821,6 +830,10 @@ class LATObservation(object):
         return self._liketype
 
     @property
+    def bin_file(self):
+        return self._bin_file
+
+    @property
     def triggername(self):
         return self._triggername
 
@@ -835,6 +848,7 @@ class LATObservation(object):
         output['livetime_cube'] = self._livetime_cube
         output['triggername'] = self._triggername
         output['liketype'] = self._liketype
+        output['bin_file'] = self._bin_file
 
         df = pd.Series(output)
 
@@ -850,7 +864,8 @@ class LATObservation(object):
                      kind = self._liketype,
                      exposure_map_file=self._exposure_map,
                      source_maps=None,
-                     binned_expo_map=None)
+                     binned_expo_map=None,
+                     bin_file = self._bin_file)
                      #source_name=self._triggername)
 
         return _fermi_lat_like
