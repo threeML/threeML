@@ -10,9 +10,10 @@ import shutil
 
 import yaml
 
-try:
+try: 
     from GtBurst import IRFS
     from GtBurst.Configuration import Configuration
+    import pdb;pdb.set_trace()
     from threeML import FermiLATLike
 
     irfs = IRFS.IRFS.keys()
@@ -25,6 +26,7 @@ try:
 except (ImportError):
 
     has_fermitools = False
+    print('No fermitools installed')
 
 from threeML.io.file_utils import file_existing_and_readable
 

@@ -1,3 +1,5 @@
+#import threeML
+#import pdb;pdb.set_trace()
 from lat_transient_builder import TransientLATDataBuilder
 
 lt = TransientLATDataBuilder(triggername = 'bn080916009',
@@ -16,4 +18,4 @@ lt = TransientLATDataBuilder(triggername = 'bn080916009',
         liketype = 'unbinned')#bin_file = ''
 
 lt.run()
-import pdb;pdb.set_trace()
+#import pdb;pdb.set_trace()
