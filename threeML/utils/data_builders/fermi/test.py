@@ -15,7 +15,8 @@ lt = TransientLATDataBuilder(triggername = 'bn080916009',
         emax = 100000.,
         ra = 119.88999939 ,
         dec = -56.7000007629 ,
-        liketype = 'unbinned')#bin_file = ''
+        liketype = 'binned',
+        log_bins = '1., 10000., 30')#bin_file = ''
 
 lt.run()
 #import pdb;pdb.set_trace()

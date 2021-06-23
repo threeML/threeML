@@ -205,7 +205,10 @@ class TransientLATDataBuilder(object):
         name = 'tstarts'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, help_string="Comma-separated list of start times (with respect to trigger)", is_number=False)
+                name=name,
+                default_value = None,
+                help_string="Comma-separated list of start times (with respect to trigger)", 
+                is_number=False)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
@@ -214,7 +217,9 @@ class TransientLATDataBuilder(object):
         name = 'tstops'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, help_string="Comma-separated list of stop times (with respect to trigger)", is_number=False)
+            name=name,
+            default_value = None,
+            help_string="Comma-separated list of stop times (with respect to trigger)", is_number=False)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
@@ -350,11 +355,25 @@ class TransientLATDataBuilder(object):
         self._parameters[name] = LATLikelihoodParameter(
                 name = name,
                 default_value = None,
-                help_string = "A text file readable by numpy and the columns to read.\nFor example, '--bin_file res.txt start end' will get the start and stop times from the columns 'start' and 'end' in the file res.txt.",
+                help_string = "A string containing a text file readable by numpy and the columns to read.\nFor example, 'res.txt start end' will get the start and stop times from the columns 'start' and 'end' in the file res.txt.",
                 is_bool = False,
                 is_number = False)
 
         ##################################
+
+        name = 'log_bins'
+
+        self._parameters[name] = LatLikelihoodParameter(
+                name = name
+                default_value = None
+                help_string = "Use logarithmically-spaced bins. Specify [tmi
+n] [tmax] [n] as a single string. \nFor example, inputting the string '1.0 10000.0 30' uses 30 logarithmically spaced bins between 1.0 and 10k seconds. You should
+either use this, or --tstarts and --tstops",
+                is_number = False
+                is_bool = False)
+
+        ##################################
+
 
         name = 'optimizeposition'
 
@@ -518,7 +537,7 @@ class TransientLATDataBuilder(object):
             else:
                 # add warning that there is something strange in the configuration
                 pass
-
+ 
     def __setattr__(self, name, value):
         """
         Override this so that we cannot erase parameters
@@ -643,9 +662,12 @@ class TransientLATDataBuilder(object):
                 )
             else:
 
-                tstart, tstop = [
-                    float(x) for x in re.match('^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval).groups()
-                ]
+                # check that either tstarts,tstops or log_bins are defined
+                if self._parameters['tstarts'].value is not None or self._parameters['tstops'].value is not None:
+                    tstart, tstop = [
+                        float(x) for x in re.match('^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval).groups()]
+                else:
+                    assert self._parameters['log_bins'].value is None, 'Choose either to use tstarts and tstops, or to use log_bins'
 
                 event_file = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername)
 
@@ -680,10 +702,18 @@ class TransientLATDataBuilder(object):
                 if not file_existing_and_readable(livetime_cube):
                     print('The livetime_cube does not exist. Please examine!')
 
-                bin_file = os.path.join(interval, self._parameters['bin_file'].value)
+                # optional bin_file parameter
+                if self._parameters['bin_file'].value is not None:
+                    
+                    # liketype matches
+                    assert self._parameters['liketype'] == 'binned', 'liketype must be binned to use bin_file parameter %s'%self._parameters['bin_file'].value
 
-                if not file_existing_and_readable(bin_file):
-                    print('The bin_file at %s does not exist. Please examine!'%bin_file)
+                    # value carries a few arguments, take first value- path
+                    bin_file_path = self._parameters['bin_file'].value.split()[0]
+                    bin_file = os.path.join(interval, bin_file_path)
+
+                    if not file_existing_and_readable(bin_file):
+                        print('The bin_file at %s does not exist. Please examine!'%bin_file)
 
                 # now create a LAT observation object
                 this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, self._parameters['liketype'].get_disp_value(), self._triggername, bin_file)
