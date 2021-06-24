@@ -42,6 +42,7 @@ warnings.simplefilter('ignore')
 
 
 ```python
+%%capture
 from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 
@@ -152,6 +153,8 @@ The idea behind this is very simple: the user defines a grid of values for the p
 For example, let's define a grid of 10 values for $\mu$. This means that 3ML will perform 10 local minimizations starting each time from a different point in the grid:
 
 ```python
+import numpy as np
+
 # Create an instance of the GRID minimizer
 grid_minimizer = GlobalMinimization("grid")
     

@@ -36,11 +36,13 @@ Let's take a look at its usage for a simple likelihood.
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
-
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 
 ```python
+%%capture
 from threeML import *
 from threeML.bayesian.tutorial_material import *
 ```
@@ -267,9 +269,13 @@ _ =ax.set_xlabel(r'f($\mu$)')
 
 As with any approach, the Bayesian capabilities of 3ML are a tool. Understanding and proper use of the posterior and marginal distributions requires special care. For further reading on the Bayesian analysis and its applications to spectral analysis check out the following resources:
 * [Michael Betancourt](https://betanalpha.github.io/writing/) spends a ton of time trying to teach proper statistical methodology to applied fields. If you are using Bayesian techniques, you must read his work.
+
 * [Frequentism and bayesianism: a python-driven primer](https://arxiv.org/abs/1411.5018)
+
 * [Bayes in the sky: Bayesian inference and model selection in cosmology](http://www.tandfonline.com/doi/abs/10.1080/00107510802066753)
+
 * [X-ray spectral modelling of the AGN obscuring region in the CDFS: Bayesian model selection and catalogue](https://www.aanda.org/articles/aa/full_html/2014/04/aa22971-13/aa22971-13.html)
+
 * [Analysis of energy spectra with low photon counts via Bayesian posterior simulation](http://iopscience.iop.org/article/10.1086/318656/meta)
 
 ```python

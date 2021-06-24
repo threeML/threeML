@@ -33,11 +33,13 @@ The logging of 3ML is configurable in the configuration file.
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
-
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 
 ```python
+%%capture
 from threeML import threeML_config
 
 threeML_config["logging"]

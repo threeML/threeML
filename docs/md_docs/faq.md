@@ -18,6 +18,7 @@ jupyter:
 The spectral/spatial shapes that are input into the models and subsequently used during the fit are objects. There parameters are members of those objects and when they are changed by the user or the fitting engine, the parameter values in those objects are modified. 
 
 ```python
+%%capture
 from threeML import *
 
 power_law = Powerlaw()
@@ -41,6 +42,7 @@ print(power_law.index)
 ```
 
 ```python
+import numpy as np
 x = np.logspace(0, 2, 50)
 
 xyl_generator = XYLike.from_function("sim_data", function = power_law, 

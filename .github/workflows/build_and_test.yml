@@ -54,6 +54,7 @@ jobs:
               run: |
                   python -m pytest -vv --cov=threeML --cov-report=xml
               env:
+                  PYTEST_ADDOPTS: "--color=yes"
                   OMP_NUM_THREADS: 1
                   MKL_NUM_THREADS: 1
                   NUMEXPR_NUM_THREADS: 1
@@ -74,13 +75,13 @@ jobs:
         strategy:
             matrix:
                 os: ["ubuntu-latest", "macos-latest"]
-                python-version: [3.8]
+                python-version: [3.7]
         runs-on: ${{ matrix.os }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
             - name: Cache conda
-              uses: actions/cache@v1
+              uses: actions/cache@v2
               with:
                   path: ~/conda_pkgs_dir
                   key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
@@ -97,48 +98,12 @@ jobs:
             - name: Init Env
               shell: bash -l {0}
               run: |
-                  # Make sure we fail in case of error
-                  if [[ ${{matrix.os}} == ubuntu-latest ]];
-                  then
-                  miniconda_os=Linux
-                  compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-                  else  # osx
-                  miniconda_os=MacOSX
-                  compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
-                  # On macOS we also need the conda libx11 libraries used to build xspec
-                  # We also need to pin down ncurses, for now only on macos.
-                  xorg="xorg-libx11"
-                  fi
-
-                  # Get the version in the __version__ environment variable
-                  #python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
-
-                  #export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
 
                   export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
 
                   echo "HOME= ${HOME}"
                   echo "Building ${PKG_VERSION} ..."
                   echo "Python version: ${{matrix.python-version}}"
-
-                  #libgfortranver="3.0"
-                  #NUMPYVER=1.15
-                  MATPLOTLIBVER=2
-                  XSPECVER="6.25"
-                  xspec_channel=xspecmodels
-
-                  # Figure out requested dependencies
-                  if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
-                  if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
-                  if [ -n "${XSPECVER}" ];
-                  then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
-                  fi
-
-
-                  PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
-
-                  conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest flake8
 
             - name: Conda list
               shell: bash -l {0}
@@ -156,13 +121,13 @@ jobs:
                   # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
                   flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
- 
             - name: test it
               shell: bash -l {0}
               run: |
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
+                  PYTEST_ADDOPTS: "--color=yes"
                   OMP_NUM_THREADS: 1
                   MKL_NUM_THREADS: 1
                   NUMEXPR_NUM_THREADS: 1
@@ -219,233 +184,3 @@ jobs:
             - name: Check long_description
               run: |
                   python -m twine check dist/*
-
-    build-conda:
-        name: Build and verify with Conda
-        if: startsWith(github.event.ref, 'refs/tags') == false
-        runs-on: ${{ matrix.os }}
-        strategy:
-            matrix:
-                os: [ubuntu-latest, macos-latest]
-                python-version: [3.7]
-
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-              with:
-                  fetch-depth: 0
-            - name: Set up Python
-              uses: actions/setup-python@v2
-              with:
-                  python-version: ${{ matrix.python-version }}
-            - name: Cache conda
-              uses: actions/cache@v1
-              with:
-                  path: ~/conda_pkgs_dir
-                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
-            - name: Add conda ${{ matrix.python-version }} to system path
-              uses: conda-incubator/setup-miniconda@v2
-              with:
-                  activate-environment: "test_env"
-                  auto-activate-base: false
-                  architecture: "x64"
-                  conda-build-version: 3.18
-                  python-version: ${{ matrix.python-version }}
-                  auto-update-conda: true
-                  environment-file: ci/environment.yml
-                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
-
-            - name: Init Env
-              shell: bash -l {0}
-              run: |
-
-                  # Make sure we fail in case of error
-                  if [[ ${{matrix.os}} == ubuntu-latest ]];
-                  then
-                  miniconda_os=Linux
-                  compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-                  else  # osx
-                  miniconda_os=MacOSX
-                  compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
-                  # On macOS we also need the conda libx11 libraries used to build xspec
-                  # We also need to pin down ncurses, for now only on macos.
-                  xorg="xorg-libx11"
-                  fi
-
-                  # Get the version in the __version__ environment variable
-                  #python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
-
-                  #export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
-
-                  export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
-                  echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
-
-                  echo "HOME= ${HOME}"
-                  echo "Building ${PKG_VERSION} ..."
-                  echo "Python version: ${{matrix.python-version}}"
-
-                  #libgfortranver="3.0"
-                  #NUMPYVER=1.15
-                  MATPLOTLIBVER=2
-                  XSPECVER="6.25"
-                  xspec_channel=xspecmodels
-
-                  # Figure out requested dependencies
-                  if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
-                  if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
-                  if [ -n "${XSPECVER}" ];
-                  then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
-                  fi
-
-
-                  PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
-
-                  conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest
-
-            - name: Build the Distribution
-              shell: bash -l {0}
-              run: |
-                  # Build package
-
-                  if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
-
-                  conda build --python=${{matrix.python-version}} conda-dist/recipes/threeml
-
-                  else
-                  # there is some strange error about the prefix length
-                  conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
-                  fi
-
-                  conda install --use-local -c conda-forge threeml
-            
-            - name: Test conda build
-              shell: bash -l {0}
-              run: |
-              
-                  python -m pytest -vv --cov=threeML --cov-report=xml
-
-              env:
-                  OMP_NUM_THREADS: 1
-                  MKL_NUM_THREADS: 1
-                  NUMEXPR_NUM_THREADS: 1
-                  MPLBACKEND: "Agg"
-
-    publish-conda:
-        name: Publish to Conda
-        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-        runs-on: ${{ matrix.os }}
-        strategy:
-            matrix:
-                os: [ubuntu-latest, macos-latest]
-                python-version: [3.7]
-
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-              with:
-                  fetch-depth: 0
-            - name: Set up Python
-              uses: actions/setup-python@v2
-              with:
-                  python-version: ${{ matrix.python-version }}
-            - name: Cache conda
-              uses: actions/cache@v1
-              with:
-                  path: ~/conda_pkgs_dir
-                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
-            - name: Add conda ${{ matrix.python-version }} to system path
-              uses: conda-incubator/setup-miniconda@v2
-              with:
-                  activate-environment: "test_env"
-                  auto-activate-base: false
-                  architecture: "x64"
-                  conda-build-version: 3.18
-                  python-version: ${{ matrix.python-version }}
-                  auto-update-conda: true
-                  environment-file: ci/environment.yml
-                  channels: conda-forge, xspecmodels, threeml, defaults
-
-            - name: Init Env
-              shell: bash -l {0}
-              run: |
-
-                  # Make sure we fail in case of error
-                  if [[ ${{matrix.os}} == ubuntu-latest ]];
-                  then
-                  miniconda_os=Linux
-                  compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-                  else  # osx
-                  miniconda_os=MacOSX
-                  compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
-
-                  # On macOS we also need the conda libx11 libraries used to build xspec
-                  # We also need to pin down ncurses, for now only on macos.
-                  xorg="xorg-libx11"
-                  fi
-
-                  # Get the version in the __version__ environment variable
-                  #python ci/set_minor_version.py --patch $TRAVIS_BUILD_NUMBER --version_file threeML/version.py
-
-                  #export PKG_VERSION=$(cd threeML && python -c "import version;print(version.__version__)")
-
-                  export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
-                  echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
-
-                  echo "HOME= ${HOME}"
-                  echo "Building ${PKG_VERSION} ..."
-                  echo "Python version: ${{matrix.python-version}}"
-
-                  #libgfortranver="3.0"
-                  #NUMPYVER=1.15
-                  MATPLOTLIBVER=2
-                  XSPECVER="6.25"
-                  xspec_channel=xspecmodels
-
-                  # Figure out requested dependencies
-                  if [ -n "${MATPLOTLIBVER}" ]; then MATPLOTLIB="matplotlib=${MATPLOTLIBVER}"; fi
-                  if [ -n "${NUMPYVER}" ]; then NUMPY="numpy=${NUMPYVER}"; fi
-                  if [ -n "${XSPECVER}" ];
-                  then export XSPEC="xspec-modelsonly=${XSPECVER} ${xorg}";
-                  fi
-
-
-                  PKG="pytest>=3.6 pandas>=0.23 ultranest interpolation>=2.1.5"
-
-                  conda install ${PKG} codecov pytest-cov git ${MATPLOTLIB} ${NUMPY} ${XSPEC} astropy ${compilers} scipy astropy astromodels emcee pymultinest ultranest
-
-            - name: Build the Distribution
-              shell: bash -l {0}
-              run: |
-                  # Build package
-
-                  if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
-
-                  conda build --python=${{matrix.python-version}} conda-dist/recipes/threeml
-
-                  else
-                  # there is some strange error about the prefix length
-                  conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
-                  fi
-
-            - name: Publish to Conda
-              shell: bash -l {0}
-              run: |
-
-                  conda install -c conda-forge anaconda-client
-                  echo "Uploading ${{matrix.os}}"
-
-                  if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
-
-
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/share/miniconda/conda-bld/linux-64/*.tar.bz2 --force
-
-                  else
-
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/local/miniconda/conda-bld/osx-64/*.tar.bz2 --force
-
-                  fi
-
-              env:
-                  UPLOAD_TOKEN: ${{secrets.CONDA_TOKEN}}
-                  CURRENT_OS: ${{matrix.os}}

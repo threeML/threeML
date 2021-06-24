@@ -28,11 +28,13 @@ You must have you HEASARC initiated so that **astromodels** can find the XSPEC l
 ```python nbsphinx="hidden"
 import warnings
 warnings.simplefilter('ignore')
+import numpy as np
+np.seterr(all="ignore")
 ```
 
 
 ```python
-import numpy as np
+%%capture
 import matplotlib.pyplot as plt
 from pathlib import Path
 from threeML import *

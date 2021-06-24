@@ -3,6 +3,7 @@ from builtins import object
 import pytest
 import os
 import numpy.testing as npt
+from astropy.io import fits
 from .conftest import get_test_datasets_directory
 from threeML import *
 from threeML.io.file_utils import within_directory
@@ -281,19 +282,19 @@ def test_ogip_energy_selection():
         assert sum(ogip._mask) == 126
 
         # Test that energies cannot be input backwards
-        with pytest.raises(AssertionError):
+        with pytest.raises(RuntimeError):
             ogip.set_active_measurements("50-30")
 
-        with pytest.raises(AssertionError):
+        with pytest.raises(RuntimeError):
             ogip.set_active_measurements("c20-c10")
 
-        with pytest.raises(AssertionError):
+        with pytest.raises(RuntimeError):
             ogip.set_active_measurements("c100-0")
 
-        with pytest.raises(AssertionError):
+        with pytest.raises(RuntimeError):
             ogip.set_active_measurements("c1-c200")
 
-        with pytest.raises(AssertionError):
+        with pytest.raises(RuntimeError):
             ogip.set_active_measurements("10-c200")
 
         ogip.set_active_measurements("reset")
@@ -314,7 +315,7 @@ def test_ogip_rebinner():
 
         assert ogip.n_data_points < 128
 
-        with pytest.raises(AssertionError):
+        with pytest.raises(RuntimeError):
             ogip.set_active_measurements("all")
 
         ogip.remove_rebinning()
@@ -340,7 +341,7 @@ def test_simulating_data_sets():
 
         ogip = OGIPLike("test_ogip", observation="test.pha{1}")
 
-        with pytest.raises(AssertionError):
+        with pytest.raises(RuntimeError):
             _ = ogip.simulated_parameters
 
         n_data_points = 128

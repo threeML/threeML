@@ -20,10 +20,10 @@ class EmceeSampler(MCMCSampler):
         Sample using the emcee sampler. For details:
         https://emcee.readthedocs.io/en/stable/
 
-        :param likelihood_model: 
-        :param data_list: 
-        :returns: 
-        :rtype: 
+        :param likelihood_model:
+        :param data_list:
+        :returns:
+        :rtype:
 
         """
 
@@ -130,30 +130,29 @@ class EmceeSampler(MCMCSampler):
             # Run the true sampling
 
             _ = sampler.run_mcmc(
-                initial_state=state, nsteps=self._n_iterations, progress=loud
-            )
+                initial_state=state, nsteps=self._n_iterations, progress=progress)
 
-        acc = np.mean(sampler.acceptance_fraction)
+        acc=np.mean(sampler.acceptance_fraction)
 
         log.info(f"Mean acceptance fraction: {acc}")
 
-        self._sampler = sampler
-        self._raw_samples = sampler.get_chain(flat=True)
+        self._sampler=sampler
+        self._raw_samples=sampler.get_chain(flat=True)
 
         # Compute the corresponding values of the likelihood
 
         # First we need the prior
-        log_prior = [self._log_prior(x) for x in self._raw_samples]
+        log_prior=[self._log_prior(x) for x in self._raw_samples]
 
         # Now we get the log posterior and we remove the log prior
 
-        self._log_like_values = sampler.get_log_prob(flat=True) - log_prior
+        self._log_like_values=sampler.get_log_prob(flat=True) - log_prior
 
         # we also want to store the log probability
 
-        self._log_probability_values = sampler.get_log_prob(flat=True)
+        self._log_probability_values=sampler.get_log_prob(flat=True)
 
-        self._marginal_likelihood = None
+        self._marginal_likelihood=None
 
         self._build_samples_dictionary()
 

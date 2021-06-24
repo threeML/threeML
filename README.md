@@ -55,7 +55,7 @@ pip install astromodels threeml
 ```bash
 conda  install astromodels threeml -c threeml conda-forge 
 ```
-Please refer to the [Installation instructions](https://threeml.readthedocs.io/en/latest/installation.html) for more details and trouble-shooting.
+Please refer to the [Installation instructions](https://threeml.readthedocs.io/en/stable/notebooks/installation.html) for more details and trouble-shooting.
 
 ## Press
 * [Software in development at Stanford advances the modeling of astronomical observations](https://news.stanford.edu/2017/12/07/software-advances-modeling-astronomical-observations/)
@@ -94,4 +94,5 @@ The SVO Filter Profile Service. Rodrigo, C., Solano, E., Bayo, A. http://ivoa.ne
 The Filter Profile Service Access Protocol. Rodrigo, C., Solano, E. http://ivoa.net/documents/Notes/SVOFPSDAL/index.html
 
 
+<img src="https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png"  width="100"> ThreeML is supported by National Science Fundation (NSF) <img src="https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png"  width="100">
 

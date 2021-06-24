@@ -1,0 +1,164 @@
+name: Conda Build and Publish
+on:
+    push:
+    pull_request:
+    schedule:
+        - cron: "0 11 * * *"
+
+jobs:
+    build-conda:
+        name: Build and verify with Conda
+        if: startsWith(github.event.ref, 'refs/tags') == false
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macos-latest]
+                python-version: [3.7]
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Cache conda
+              uses: actions/cache@v2
+              with:
+                  path: ~/conda_pkgs_dir
+                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
+            - name: Add conda ${{ matrix.python-version }} to system path
+              uses: conda-incubator/setup-miniconda@v2
+              with:
+                  activate-environment: "test_env"
+                  auto-activate-base: false
+                  architecture: "x64"
+                  conda-build-version: 3.18
+                  python-version: ${{ matrix.python-version }}
+                  auto-update-conda: true
+                  environment-file: ci/environment.yml
+                  channels: conda-forge, xspecmodels, threeml, fermi, defaults
+
+            - name: Init Env
+              shell: bash -l {0}
+              run: |
+
+                  export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
+                  echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
+
+                  echo "HOME= ${HOME}"
+                  echo "Building ${PKG_VERSION} ..."
+                  echo "Python version: ${{matrix.python-version}}"
+
+            - name: Build the Distribution
+              shell: bash -l {0}
+              run: |
+                  # Build package
+
+                  if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
+
+                  conda build --python=${{matrix.python-version}} conda-dist/recipes/threeml
+
+                  else
+                  # there is some strange error about the prefix length
+                  conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
+                  fi
+
+                  conda install --use-local -c conda-forge threeml
+
+            - name: Test conda build
+              shell: bash -l {0}
+              run: |
+
+                  python -m pytest -vv --cov=threeML --cov-report=xml
+
+              env:
+                  PYTEST_ADDOPTS: "--color=yes"
+                  OMP_NUM_THREADS: 1
+                  MKL_NUM_THREADS: 1
+                  NUMEXPR_NUM_THREADS: 1
+                  MPLBACKEND: "Agg"
+
+    publish-conda:
+        name: Publish to Conda
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macos-latest]
+                python-version: [3.7]
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Cache conda
+              uses: actions/cache@v2
+              with:
+                  path: ~/conda_pkgs_dir
+                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
+            - name: Add conda ${{ matrix.python-version }} to system path
+              uses: conda-incubator/setup-miniconda@v2
+              with:
+                  activate-environment: "test_env"
+                  auto-activate-base: false
+                  architecture: "x64"
+                  conda-build-version: 3.18
+                  python-version: ${{ matrix.python-version }}
+                  auto-update-conda: true
+                  environment-file: ci/environment.yml
+                  channels: conda-forge, xspecmodels, threeml, defaults
+
+            - name: Init Env
+              shell: bash -l {0}
+              run: |
+
+                  export PKG_VERSION=$(python -c "import versioneer;print(versioneer.get_version())")
+                  echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
+
+                  echo "HOME= ${HOME}"
+                  echo "Building ${PKG_VERSION} ..."
+                  echo "Python version: ${{matrix.python-version}}"
+
+            - name: Build the Distribution
+              shell: bash -l {0}
+              run: |
+                  # Build package
+
+                  if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
+
+                  conda build --python=${{matrix.python-version}} conda-dist/recipes/threeml
+
+                  else
+                  # there is some strange error about the prefix length
+                  conda build --no-build-id --python=${{matrix.python-version}} conda-dist/recipes/threeml
+                  fi
+
+            - name: Publish to Conda
+              shell: bash -l {0}
+              run: |
+
+                  conda install -c conda-forge anaconda-client
+                  echo "Uploading ${{matrix.os}}"
+
+                  if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
+
+
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/share/miniconda/conda-bld/linux-64/*.tar.bz2 --force
+
+                  else
+
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/local/miniconda/conda-bld/osx-64/*.tar.bz2 --force
+
+                  fi
+
+              env:
+                  UPLOAD_TOKEN: ${{secrets.CONDA_TOKEN}}
+                  CURRENT_OS: ${{matrix.os}}

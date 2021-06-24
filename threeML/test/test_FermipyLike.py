@@ -1,4 +1,5 @@
 import pytest
+import numpy as np
 
 from threeML import *
 from threeML.io.network import internet_connection_is_active

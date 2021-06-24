@@ -130,7 +130,7 @@ class AutoEmceeSampler(UnitCubeSampler):
 
             log.error("You forgot to setup the sampler!")
 
-            return
+            raise RuntimeError()
 
         loud = not quiet
 

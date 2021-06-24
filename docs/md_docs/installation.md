@@ -1,3 +1,19 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,md
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.2'
+      jupytext_version: 1.7.1
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+<!-- #region -->
 # Installation
 3ML brings together multiple instrument and fitting software packages into a common framework. Thus, installing all the pieces can be a bit of a task for the user. In order to make this a less painless process, we have packaged most of the external dependencies into conda (see below). However, if you want more control over your install, 3ML is available on PyPI via pip. If you have issues with the installs, first check that you have properly installed all the external dependencies that *you* plan on using. Are their libraries accessible on you system's standard paths? If you think that you have everything setup properly and the install does not work for you, please [submit an issue](https://github.com/threeML/threeML/issues) and we will do our best to find a solution.
 
@@ -47,7 +63,7 @@ If you would like to install 3ML and astromodels on their own and have more cont
 pip install astromodels
 ```
 
-3. Install 3ML
+3. install 3ML
 
 ```bash
 pip install threeml
@@ -92,10 +108,7 @@ be used in 3ML. If you have ROOT, make sure that this works before running the s
     5.34/36
     ```
 
-## Install using pip (advanced)
-
-Since this method alters the python environment you have on your system, 
-we suggest you use this method only if you understand the implications.
+## Install from source (advanced)
 
 Remove any previous installation you might have with:
 
@@ -108,15 +121,15 @@ Remove any previous installation you might have with:
 then:
 
 ```bash
-> pip install numpy scipy ipython
-> pip install git+https://github.com/giacomov/3ML.git 
-> pip install git+https://github.com/giacomov/astromodels.git --upgrade
+> pip install numpy scipy ipython astropy numba cython
+> pip install git+https://github.com/threeML/threeml.git 
+> pip install git+https://github.com/threeML/astromodels.git --upgrade
 ```
 
 In order to use the HAWC plugin, you will also need to install cthreeML (run this *after* setting up the HAWC environment):
 
 ```bash
-> pip install git+https://github.com/giacomov/cthreeML.git
+> pip install git+https://github.com/threeML/cthreeML.git
 ```
 
 * NOTE: If you do not have permission to install packages in your current python 
@@ -126,7 +139,11 @@ end of each ```pip``` command.
 ### Tips for Mac users
 The following paths need to be added to you DYLD_LIBRARY path if you have FORTRAN installed via these package managers:
 
-* Homebrew: DYLD_LIBRARY_PATH=/usr/local/lib/gcc/<version number>:$DYLD_LIBRARY_PATH
-* Fink: DYLD_LIBRARY_PATH=/sw/lib/gcc<version number>/lib:$DYLD_LIBRARY_PATH
+* Homebrew: ```DYLD_LIBRARY_PATH=/usr/local/lib/gcc/<version number>:$DYLD_LIBRARY_PATH```
+
+* Fink: ```DYLD_LIBRARY_PATH=/sw/lib/gcc<version number>/lib:$DYLD_LIBRARY_PATH```
 
 Please inform us if you have problems related to your FORTRAN distribution.
+
+<!-- #endregion -->
+
