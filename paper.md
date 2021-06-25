@@ -26,22 +26,28 @@ date: "13 August 2017"
 
 # Summary
 
-Astrophysical sources are observed by different instruments at
-different wavelengths with an unprecedented quality. Putting all these
-data together to form a coherent view, however, is a very difficult
-task. Indeed, each instrument and data type has its own ad-hoc
-software and handling procedure, which present steep learning curves
-and do not talk to each other.
+In the current era, astrophysical sources are observed by a plethora
+of different instruments at different wavelengths via different
+messengers with an unprecedented quality. Putting all this
+observational data together to form a coherent view, however, is a
+very difficult task. Indeed, each instrument and data type have their
+own ad-hoc software and handling procedure in order to maximize the
+resolution and sensitivity of each observation. As such, these
+analysis softwares can rarely talk to one another thereby forcing
+scientists to utilize sub-optimal, and often statistically unsound
+methods to analyze joint datasets.
 
-The Multi-Mission Maximum Likelihood framework (3ML) provides a common
-high-level interface and model definition, which allows for an easy,
-coherent and intuitive modeling of sources using all the available
-data, no matter their origin. At the same time, thanks to its
-architecture based on plug-ins, 3ML uses under the hood the official
-software of each instrument, the only one certified and maintained by
-the collaboration which built the instrument itself. This guarantees
-that 3ML is always using the best possible methodology to deal with
-the data of each instrument.
+The Multi-Mission Maximum Likelihood framework (```3ML```) provides a
+common high-level interface, which allows for an easy, coherent and
+intuitive modeling of sources using all the available data, no matter
+their origin. At the same time, thanks to its architecture based on
+plug-ins, 3ML uses under the hood the official software of each
+instrument, the only one certified and maintained by the collaboration
+which built the instrument itself. This guarantees that 3ML is always
+using the best possible methodology to deal with the data of each
+instrument. Combined with it's associated modeling language,
+```astromodels```, ```3ML``` is the solution to the modern error of
+multi-wavelength and multi-messenger observations.
 
 Though Maximum Likelihood is in the name for historical reasons, 3ML
 is an interface to several Bayesian inference algorithms such as MCMC
