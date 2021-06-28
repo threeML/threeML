@@ -367,4 +367,4 @@ class BayesianAnalysis(object):
         Sets the model parameters to the mean of the marginal distributions
         """
 
-        self._sampler.restore_median_fit
+        self._sampler.restore_median_fit()

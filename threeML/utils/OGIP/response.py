@@ -5,7 +5,11 @@ import warnings
 from builtins import map, object, range, str
 from operator import attrgetter, itemgetter
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union, List, Dict, Any
+
+from numpy.ma import shape
+
+from collections.abc import Callable
 
 import astropy.io.fits as pyfits
 import astropy.units as u
@@ -27,7 +31,6 @@ from threeML.io.package_data import get_path_of_data_file
 from threeML.utils.time_interval import TimeInterval, TimeIntervalSet
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
-
 
 log = setup_logger(__name__)
 
@@ -53,7 +56,11 @@ class GapInCoverageIntervals(RuntimeError):
 
 
 class InstrumentResponse(object):
-    def __init__(self, matrix, ebounds, monte_carlo_energies, coverage_interval=None):
+    def __init__(self,
+                 matrix: np.ndarray,
+                 ebounds: np.ndarray,
+                 monte_carlo_energies: np.ndarray,
+                 coverage_interval: Optional[TimeInterval] = None):
         """
 
         Generic response class that accepts a full matrix, detector energy boundaries (ebounds) and monte carlo energies,
@@ -76,60 +83,68 @@ class InstrumentResponse(object):
 
         # we simply store all the variables to the class
 
-        self._matrix = np.array(matrix, float)
-        self._matrix_transpose = self._matrix.T
+        self._matrix: np.ndarray = np.array(matrix, float)
+        self._matrix_transpose: np.ndarray = self._matrix.T
         # Make sure there are no nans or inf
-        assert np.all(np.isfinite(self._matrix)), "Infinity or nan in matrix"
 
-        self._ebounds = np.array(ebounds, float)
+        if not np.all(np.isfinite(self._matrix)):
 
-        self._mc_energies = np.array(monte_carlo_energies)
+            log.error("Infinity or nan in matrix")
 
-        self._integral_function = None
+            raise RuntimeError()
+
+        self._ebounds: np.ndarray = np.array(ebounds, float)
+
+        self._mc_energies: np.ndarray = np.array(monte_carlo_energies)
+
+        self._integral_function: Optional[Callable] = None
 
         # Store the time interval
+
+        self._coverage_interval: Optional[TimeInterval] = None
+
         if coverage_interval is not None:
 
-            assert isinstance(
-                coverage_interval, TimeInterval
-            ), "The coverage interval must be a TimeInterval instance"
+            if not isinstance(coverage_interval, TimeInterval):
+
+                log.error(
+                    "The coverage interval must be a TimeInterval instance")
+
+                raise RuntimeError()
 
             self._coverage_interval = coverage_interval
 
-        else:
-
-            self._coverage_interval = None
-
         # Safety checks
-        assert self._matrix.shape == (
-            self._ebounds.shape[0] - 1,
-            self._mc_energies.shape[0] - 1,
-        ), "Matrix has the wrong shape. Got %s, expecting %s" % (
-            self._matrix.shape,
-            [self._ebounds.shape[0] - 1, self._mc_energies.shape[0] - 1],
-        )
+        if not self._matrix.shape == (
+                self._ebounds.shape[0] - 1,
+                self._mc_energies.shape[0] - 1,
+        ):
+
+            log.error(
+                f"Matrix has the wrong shape. Got {self._matrix.shape}, expecting {   [self._ebounds.shape[0] - 1, self._mc_energies.shape[0] - 1]}"
+            )
+
+            raise RuntimeError()
 
         if self._mc_energies.max() < self._ebounds.max():
 
-            log.warning(
-                "Maximum MC energy (%s) is smaller "
-                "than maximum EBOUNDS energy (%s)"
-                % (self._mc_energies.max(), self.ebounds.max()),
-                # RuntimeWarning,
-            )
+            log.warning("Maximum MC energy (%s) is smaller "
+                        "than maximum EBOUNDS energy (%s)" %
+                        (self._mc_energies.max(), self.ebounds.max()),
+                        # RuntimeWarning,
+                        )
 
         if self._mc_energies.min() > self._ebounds.min():
 
-            log.warning(
-                "Minimum MC energy (%s) is larger than "
-                "minimum EBOUNDS energy (%s)"
-                % (self._mc_energies.min(), self._ebounds.min()),
-                #   RuntimeWarning,
-            )
+            log.warning("Minimum MC energy (%s) is larger than "
+                        "minimum EBOUNDS energy (%s)" %
+                        (self._mc_energies.min(), self._ebounds.min()),
+                        #   RuntimeWarning,
+                        )
 
     # This will be overridden by subclasses
     @property
-    def rsp_filename(self):
+    def rsp_filename(self) -> None:
         """
         Returns the name of the RSP/RMF file from which the response has been loaded
         """
@@ -138,7 +153,7 @@ class InstrumentResponse(object):
 
     # This will be overridden by subclasses
     @property
-    def arf_filename(self):
+    def arf_filename(self) -> None:
         """
         Returns the name of the ARF file (or None if there is none)
         """
@@ -146,7 +161,7 @@ class InstrumentResponse(object):
         return None
 
     @property
-    def first_channel(self):
+    def first_channel(self) -> int:
 
         # This is needed to write to PHA files. We use always 1 (and consistently we always use 1 in the MATRIX files
         # too, to avoid confusion (and because XSpec default is 1)
@@ -154,7 +169,7 @@ class InstrumentResponse(object):
         return 1
 
     @property
-    def coverage_interval(self):
+    def coverage_interval(self) -> TimeInterval:
         """
         Returns the time interval that this matrix is applicable to. None if it wasn't defined and the matrix is
         applicable everywhere
@@ -166,7 +181,7 @@ class InstrumentResponse(object):
         return self._coverage_interval
 
     @property
-    def matrix(self):
+    def matrix(self) -> np.ndarray:
         """
         Return the matrix representing the response
 
@@ -175,20 +190,24 @@ class InstrumentResponse(object):
         """
         return self._matrix
 
-    def replace_matrix(self, new_matrix):
+    def replace_matrix(self, new_matrix) -> None:
         """
         Replace the read matrix with a new one of the same shape
 
         :return: none
         """
 
-        assert new_matrix.shape == self._matrix.shape
+        if not new_matrix.shape == self._matrix.shape:
+
+            log.error("matrix is not the right shape!")
+
+            raise RuntimeError()
 
         self._matrix = new_matrix
         self._matrix_transpose = self._matrix.T
 
     @property
-    def ebounds(self):
+    def ebounds(self) -> np.ndarray:
         """
 
         Returns the ebounds of the RSP.
@@ -198,7 +217,7 @@ class InstrumentResponse(object):
         return self._ebounds
 
     @property
-    def monte_carlo_energies(self):
+    def monte_carlo_energies(self) -> np.ndarray:
         """
         Returns the boundaries of the Monte Carlo bins (true energy bins)
 
@@ -207,7 +226,7 @@ class InstrumentResponse(object):
 
         return self._mc_energies
 
-    def set_function(self, integral_function=None):
+    def set_function(self, integral_function=None) -> None:
         """
         Set the function to be used for the convolution
 
@@ -217,7 +236,8 @@ class InstrumentResponse(object):
 
         self._integral_function = integral_function
 
-    def convolve(self, precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
+    def convolve(self,
+                 precalc_fluxes: Optional[np.array] = None) -> np.ndarray:
         """
         Convolve the source flux with the response
         :param precalc_fluxes: The precalulated flux. If this is None, the
@@ -229,11 +249,10 @@ class InstrumentResponse(object):
                 fluxes = self._integral_function(
                     # self._mc_energies[:-1], self._mc_energies[1:]
                 )
-            except(TypeError):
+            except (TypeError):
 
-                fluxes = self._integral_function(
-                    self._mc_energies[:-1], self._mc_energies[1:]
-                )
+                fluxes = self._integral_function(self._mc_energies[:-1],
+                                                 self._mc_energies[1:])
 
         else:
             fluxes = precalc_fluxes
@@ -251,7 +270,7 @@ class InstrumentResponse(object):
 
         return folded_counts
 
-    def energy_to_channel(self, energy):
+    def energy_to_channel(self, energy: float) -> int:
         """Finds the channel containing the provided energy.
         NOTE: returns the channel index (starting at zero),
         not the channel number (likely starting from 1).
@@ -262,14 +281,13 @@ class InstrumentResponse(object):
 
         # Get the index of the first ebounds upper bound larger than energy
         # (but never go below zero or above the last channel)
-        idx = min(
-            max(0, np.searchsorted(self._ebounds, energy) -
-                1), len(self._ebounds) - 1
-        )
+        idx = min(max(0,
+                      np.searchsorted(self._ebounds, energy) - 1),
+                  len(self._ebounds) - 1)
 
         return idx
 
-    def plot_matrix(self):
+    def plot_matrix(self) -> plt.Figure:
 
         fig, ax = plt.subplots()
 
@@ -296,8 +314,8 @@ class InstrumentResponse(object):
         # Find minimum non-zero element
         vmin = self._matrix[self._matrix > 0].min()
 
-        cmap = copy.deepcopy(cm.get_cmap(
-            threeML_config.plugins.ogip.response_cmap.value))
+        cmap = copy.deepcopy(
+            cm.get_cmap(threeML_config.plugins.ogip.response_cmap.value))
 
         cmap.set_under(threeML_config.plugins.ogip.response_zero_color)
 
@@ -323,7 +341,11 @@ class InstrumentResponse(object):
 
         return fig
 
-    def to_fits(self, filename, telescope_name, instrument_name, overwrite=False):
+    def to_fits(self,
+                filename: str,
+                telescope_name: str,
+                instrument_name: str,
+                overwrite: bool = False) -> None:
         """
         Write the current matrix into a OGIP FITS file
 
@@ -348,7 +370,9 @@ class InstrumentResponse(object):
         fits_file.writeto(filename, overwrite=overwrite)
 
     @classmethod
-    def create_dummy_response(cls, ebounds, monte_carlo_energies):
+    def create_dummy_response(
+            cls, ebounds: np.ndarray,
+            monte_carlo_energies: np.ndarray) -> "InstrumentResponse":
         """
         Creates a dummy identity response of the shape of the ebounds and mc energies
 
@@ -359,14 +383,14 @@ class InstrumentResponse(object):
 
         # create the dummy matrix
 
-        dummy_matrix = np.eye(
-            ebounds.shape[0] - 1, monte_carlo_energies.shape[0] - 1)
+        dummy_matrix = np.eye(ebounds.shape[0] - 1,
+                              monte_carlo_energies.shape[0] - 1)
 
         return cls(dummy_matrix, ebounds, monte_carlo_energies)
 
 
 class OGIPResponse(InstrumentResponse):
-    def __init__(self, rsp_file, arf_file=None):
+    def __init__(self, rsp_file: str, arf_file: Optional[str] = None) -> None:
         """
 
         :param rsp_file:
@@ -377,9 +401,12 @@ class OGIPResponse(InstrumentResponse):
 
         rsp_file: Path = sanitize_filename(rsp_file)
 
-        assert fits_file_existing_and_readable(rsp_file), (
-            f"OGIPResponse file {rsp_file} not existing or not " "readable"
-        )
+        if not fits_file_existing_and_readable(rsp_file):
+
+            log.error(
+                f"OGIPResponse file {rsp_file} not existing or not readable")
+
+            raise RuntimeError()
 
         # Check if we are dealing with a .rsp2 file (containing more than
         # one response). This is checked by looking for the syntax
@@ -416,11 +443,9 @@ class OGIPResponse(InstrumentResponse):
 
             except Exception as e:
                 log.warning(
-                    "The default choice for MATRIX extension failed:"
-                    + repr(e)
-                    + "available: "
-                    + " ".join([repr(e.header.get("EXTNAME")) for e in f])
-                )
+                    "The default choice for MATRIX extension failed:" +
+                    repr(e) + "available: " +
+                    " ".join([repr(e.header.get("EXTNAME")) for e in f]))
 
                 # Other detectors might use the SPECRESP MATRIX name instead, usually when the response has been
                 # already convoluted with the effective area
@@ -455,27 +480,26 @@ class OGIPResponse(InstrumentResponse):
 
         else:
 
-            super(OGIPResponse, self).__init__(
-                matrix=matrix, ebounds=ebounds, monte_carlo_energies=mc_channels
-            )
+            super(OGIPResponse,
+                  self).__init__(matrix=matrix,
+                                 ebounds=ebounds,
+                                 monte_carlo_energies=mc_channels)
 
         # Read the ARF if there is any
         # NOTE: this has to happen *after* calling the parent constructor
+
+        self._arf_file: Optional[str] = None
 
         if arf_file is not None and str(arf_file).lower() != "none":
 
             self._read_arf_file(arf_file)
 
-        else:
-
-            self._arf_file = None
-
     @staticmethod
-    def _are_contiguous(arr1, arr2):
+    def _are_contiguous(arr1, arr2) -> bool:
 
         return np.allclose(arr1[1:], arr2[:-1])
 
-    def _read_ebounds(self, ebounds_extension):
+    def _read_ebounds(self, ebounds_extension) -> np.ndarray:
         """
         reads the ebounds from an OGIP response
 
@@ -486,8 +510,11 @@ class OGIPResponse(InstrumentResponse):
         e_min = ebounds_extension.data.field("E_MIN").astype(float)
         e_max = ebounds_extension.data.field("E_MAX").astype(float)
 
-        assert self._are_contiguous(
-            e_min, e_max), "EBOUNDS channel are not contiguous!"
+        if not self._are_contiguous(e_min, e_max):
+
+            log.error("EBOUNDS channel are not contiguous!")
+
+            raise RuntimeError()
 
         # The returned array must have the edges of the intervals. Doing so reduces the amount of memory used
         # by 1/2
@@ -495,7 +522,7 @@ class OGIPResponse(InstrumentResponse):
 
         return ebounds
 
-    def _read_mc_channels(self, data):
+    def _read_mc_channels(self, data) -> np.ndarray:
         """
         reads the mc_channels from an OGIP response
 
@@ -507,9 +534,10 @@ class OGIPResponse(InstrumentResponse):
         energ_lo = data.field("ENERG_LO").astype(float)
         energ_hi = data.field("ENERG_HI").astype(float)
 
-        assert self._are_contiguous(
-            energ_lo, energ_hi
-        ), "Monte carlo channels are not contiguous"
+        if not self._are_contiguous(energ_lo, energ_hi):
+            log.error("Monte carlo channels are not contiguous")
+
+            raise RuntimeError()
 
         # The returned array must have the edges of the intervals. Doing so reduces the amount of memory used
         # by 1/2
@@ -518,7 +546,7 @@ class OGIPResponse(InstrumentResponse):
         return mc_channels
 
     @property
-    def first_channel(self):
+    def first_channel(self) -> int:
         """
         The first channel of the channel array. Corresponds to
         TLMIN keyword in FITS files
@@ -527,13 +555,17 @@ class OGIPResponse(InstrumentResponse):
         """
         return int(self._first_channel)
 
-    def _read_matrix(self, data, header, column_name="MATRIX"):
+    def _read_matrix(self,
+                     data,
+                     header,
+                     column_name: str = "MATRIX") -> np.ndarray:
 
         n_channels = header.get("DETCHANS")
 
-        assert (
-            n_channels is not None
-        ), "Matrix is improperly formatted. No DETCHANS keyword."
+        if n_channels is None:
+            log.error("Matrix is improperly formatted. No DETCHANS keyword.")
+
+            raise RuntimeError()
 
         # The header contains a keyword which tells us the first legal channel. It is TLMIN of the F_CHAN column
         # NOTE: TLMIN keywords start at 1, so TLMIN1 is the minimum legal value for the first column. So we need
@@ -590,9 +622,8 @@ class OGIPResponse(InstrumentResponse):
                 this_n_chan = int(np.squeeze(n_chan[i][j]))
                 this_f_chan = int(np.squeeze(f_chan[i][j]))
 
-                rsp[i, this_f_chan: this_f_chan + this_n_chan] = matrix[i][
-                    m_start: m_start + this_n_chan
-                ]
+                rsp[i, this_f_chan:this_f_chan +
+                    this_n_chan] = matrix[i][m_start:m_start + this_n_chan]
 
                 m_start += this_n_chan
 
@@ -607,14 +638,14 @@ class OGIPResponse(InstrumentResponse):
         return self._rsp_file
 
     @property
-    def arf_filename(self):
+    def arf_filename(self) -> Optional[Path]:
         """
         Returns the name of the ARF file (or None if there is none)
         """
 
         return self._arf_file
 
-    def _read_arf_file(self, arf_file: str):
+    def _read_arf_file(self, arf_file: str) -> None:
         """
         read an arf file and apply it to the current_matrix
 
@@ -628,9 +659,12 @@ class OGIPResponse(InstrumentResponse):
 
         self._arf_file = arf_file
 
-        assert fits_file_existing_and_readable(arf_file), (
-            f"Ancillary file {arf_file} not existing or not " "readable"
-        )
+        if not fits_file_existing_and_readable(arf_file):
+
+            log.error(f"Ancillary file {arf_file} not existing or not "
+                      "readable")
+
+            raise RuntimeError()
 
         with pyfits.open(arf_file) as f:
 
@@ -651,9 +685,13 @@ class OGIPResponse(InstrumentResponse):
         energ_lo = data.field("ENERG_LO")
         energ_hi = data.field("ENERG_HI")
 
-        assert self._are_contiguous(
+        if not self._are_contiguous(
             energ_lo, energ_hi
-        ), "Monte carlo energies in ARF are not contiguous!"
+        ):
+
+            log.error("Monte carlo energies in ARF are not contiguous!")
+
+            raise RuntimeError()
 
         arf_mc_channels = np.append(energ_lo, [energ_hi[-1]])
 
@@ -685,7 +723,7 @@ class InstrumentResponseSet(object):
 
     """
 
-    def __init__(self, matrix_list, exposure_getter, counts_getter, reference_time=0.0):
+    def __init__(self, matrix_list: List[InstrumentResponse], exposure_getter: Callable, counts_getter: Callable, reference_time: float=0.0):
         """
 
         :param matrix_list:
@@ -700,17 +738,19 @@ class InstrumentResponseSet(object):
 
         # Store list of matrices
 
-        self._matrix_list = list(matrix_list)  # type: list[InstrumentResponse]
+        self._matrix_list: Union[List[InstrumentResponse], np.ndarray] = list(matrix_list)
 
         # Create the corresponding list of coverage intervals
 
-        self._coverage_intervals = TimeIntervalSet(
+        self._coverage_intervals: TimeIntervalSet = TimeIntervalSet(
             [x.coverage_interval for x in self._matrix_list]
         )
 
         # Make sure that all matrices have coverage interval set
 
         if None in self._coverage_intervals:
+
+            log.error("You need to specify the coverage interval for all matrices in the matrix_list")
 
             raise NoCoverageIntervals(
                 "You need to specify the coverage interval for all matrices in the matrix_list"
@@ -756,8 +796,10 @@ class InstrumentResponseSet(object):
         # Now make sure that the coverage intervals are contiguous (i.e., there are no gaps)
         if not self._coverage_intervals.is_contiguous():
 
+            log.error("The provided responses have coverage intervals which are not contiguous!")
+            
             raise NonContiguousCoverageIntervals(
-                "The provided responses have coverage intervals which are not contiguous!"
+                
             )
 
         # Apply the reference time shift, if any
@@ -765,46 +807,47 @@ class InstrumentResponseSet(object):
 
         # Store callable
 
-        self._exposure_getter = exposure_getter  # type: callable
+        self._exposure_getter: Callable = exposure_getter
 
-        self._counts_getter = counts_getter  # type: callable
+        self._counts_getter: Callable = counts_getter
 
         # Store reference time
 
-        self._reference_time = float(reference_time)
+        self._reference_time: float = float(reference_time)
 
     @property
-    def reference_time(self):
+    def reference_time(self) -> float:
 
         return self._reference_time
 
-    def __getitem__(self, item):
+    def __getitem__(self, item) -> InstrumentResponse:
 
         return self._matrix_list[item]
 
-    def __len__(self):
+    def __len__(self) -> int:
 
         return len(self._matrix_list)
 
     @classmethod
     def from_rsp2_file(
         cls,
-        rsp2_file,
-        exposure_getter,
-        counts_getter,
-        reference_time=0.0,
-        half_shifted=True,
-    ):
+        rsp2_file: Union[str, Path],
+        exposure_getter: Callable,
+        counts_getter: Callable,
+        reference_time: float=0.0,
+        half_shifted: bool=True,
+    ) -> "InstrumentResponseSet":
 
         # This assumes the Fermi/GBM rsp2 file format
 
         # make the rsp file proper
-        rsp_file = sanitize_filename(rsp2_file)
+        rsp_file: Path = sanitize_filename(rsp2_file)
 
-        assert file_existing_and_readable(rsp_file), (
-            "OGIPResponse file %s not existing or not readable" % rsp_file
-        )
+        if not file_existing_and_readable(rsp_file):
+            log.error( "OGIPResponse file %s not existing or not readable" % rsp_file )
 
+            raise RuntimeError()
+            
         # Will fill up the list of matrices
         list_of_matrices = []
 
@@ -876,17 +919,21 @@ class InstrumentResponseSet(object):
     #
     #     ax.plot(mean_true_rsp_time, self._weight, '+k', label='weight')
 
-    def weight_by_exposure(self, *intervals):
+    def weight_by_exposure(self, *intervals) -> InstrumentResponse:
 
         return self._get_weighted_matrix("exposure", *intervals)
 
-    def weight_by_counts(self, *intervals):
+    def weight_by_counts(self, *intervals) -> InstrumentResponse:
 
         return self._get_weighted_matrix("counts", *intervals)
 
-    def _get_weighted_matrix(self, switch, *intervals):
+    def _get_weighted_matrix(self, switch: str, *intervals) -> InstrumentResponse:
 
-        assert len(intervals) > 0, "You have to provide at least one interval"
+        if not len(intervals) > 0:
+
+            log.error("You have to provide at least one interval")
+
+            raise RuntimeError()
 
         intervals_set = TimeIntervalSet.from_strings(*intervals)
 
@@ -918,7 +965,7 @@ class InstrumentResponseSet(object):
 
         return matrix_instance
 
-    def _weight_response(self, interval_of_interest, switch):
+    def _weight_response(self, interval_of_interest: TimeInterval, switch: str) -> np.ndarray:
         """
 
         :param interval_start : start time of the interval
@@ -943,14 +990,15 @@ class InstrumentResponseSet(object):
 
         if not np.any(matrices_mask):
 
-            raise NoMatrixForInterval(
-                "Could not find any matrix applicable to %s\n Have intervals:%s"
+            log.error("Could not find any matrix applicable to %s\n Have intervals:%s"
                 % (
                     interval_of_interest,
                     ", ".join([str(interval)
                                for interval in self._coverage_intervals]),
                 )
             )
+            
+            raise NoMatrixForInterval()
 
         # Compute the weights
 
@@ -1000,28 +1048,32 @@ class InstrumentResponseSet(object):
                 weights[i] = 0.0
 
         # if all weights are zero, there is something clearly wrong with the exposure or the counts computation
-        assert (
-            np.sum(weights) > 0
-        ), "All weights are zero. There must be a bug in the exposure or counts computation"
+        if not np.sum(weights) > 0:
+            
+            log.error("All weights are zero. There must be a bug in the exposure or counts computation")
 
+            raise RuntimeError()
+            
         # Check that the first matrix with weight > 0 has an effective interval starting at the beginning of
         # the interval of interest (otherwise it means that part of the interval of interest is not covered!)
 
         if effective_intervals[0].start_time != interval_of_interest.start_time:
 
-            raise IntervalOfInterestNotCovered(
+            log.error(
                 "The interval of interest (%s) is not covered by %s"
-                % (interval_of_interest, effective_intervals[0])
-            )
+                % (interval_of_interest, effective_intervals[0]))
+            
+            raise IntervalOfInterestNotCovered( )
 
         # Check that the last matrix with weight > 0 has an effective interval starting at the beginning of
         # the interval of interest (otherwise it means that part of the interval of interest is not covered!)
 
         if effective_intervals[-1].stop_time != interval_of_interest.stop_time:
-            raise IntervalOfInterestNotCovered(
-                "The interval of interest (%s) is not covered by %s"
-                % (interval_of_interest, effective_intervals[0])
-            )
+
+            log.error("The interval of interest (%s) is not covered by %s"
+                % (interval_of_interest, effective_intervals[0]))
+            
+            raise IntervalOfInterestNotCovered( )
 
         # Lastly, check that there is no interruption in coverage (bad time intervals are *not* supported)
         all_tstarts = np.array([x.start_time for x in effective_intervals])
@@ -1029,19 +1081,21 @@ class InstrumentResponseSet(object):
 
         if not np.all((all_tstops[:-1] == all_tstarts[1:])):
 
+            log.error("Gap in coverage! Bad time intervals are not supported!")
+            
             raise GapInCoverageIntervals(
-                "Gap in coverage! Bad time intervals are not supported!"
+                
             )
 
         return weights
 
     @property
-    def ebounds(self):
+    def ebounds(self) -> np.ndarray:
 
         return self._matrix_list[0].ebounds
 
     @property
-    def monte_carlo_energies(self):
+    def monte_carlo_energies(self) -> np.ndarray:
 
         return self._matrix_list[0].monte_carlo_energies
 
