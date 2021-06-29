@@ -2909,7 +2909,7 @@ class SpectrumLike(PluginPrototype):
             # Find the rates for these channels
             r = observed_rate[idx]
 
-            if r.max() == 0:
+            if r.max() == 0 or min_rate < 0:
 
                 # All empty, cannot weight
                 this_mean_energy = (e_min + e_max) / 2.0
