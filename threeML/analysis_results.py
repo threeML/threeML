@@ -209,11 +209,12 @@ def _load_one_results(fits_extension):
 
         try:
             # Gather log probability
-            log_probability = fits_extension.data.field("LOG_PROB")
+            log_probability = fits_extension.data.field("LOG_PROB")[0]
 
         except:
 
             log_probability = None
+
             
         # Instance and return
 
@@ -286,7 +287,7 @@ def _load_one_results_hdf(hdf_obj):
             
         except:
 
-            pass
+            log_probability = None
             
         # Instance and return
 
@@ -617,7 +618,7 @@ class ANALYSIS_RESULTS(FITSExtension):
             covariance_matrix = analysis_results.covariance_matrix
 
             # empty array
-            log_probability = np.zeros(n_parameters)
+            dummy = np.zeros(n_parameters)
             
             # Check that the covariance matrix has the right shape
 
@@ -655,10 +656,17 @@ class ANALYSIS_RESULTS(FITSExtension):
 
             # log probability
 
+            # dummy to handle fits file
             log_probability = analysis_results.log_probability
+
+            dummy = np.zeros(samples.shape)
+            
+            dummy[0] = log_probability
+            
+
             
         # Serialize the model so it can be placed in the header
-       yaml_model_serialization = my_yaml.dump(
+        yaml_model_serialization = my_yaml.dump(
             optimized_model.to_dict_with_types())
 
         # Replace characters which cannot be contained in a FITS header with other characters
@@ -670,7 +678,7 @@ class ANALYSIS_RESULTS(FITSExtension):
         data_frame = analysis_results.get_data_frame(error_type="equal tail")
 
         # Prepare columns
-
+        
         data_tuple = [
             ("NAME", list(free_parameters.keys())),
             ("VALUE", data_frame["value"].values),
@@ -679,8 +687,9 @@ class ANALYSIS_RESULTS(FITSExtension):
             ("ERROR", data_frame["error"].values),
             ("UNIT", np.array(data_frame["unit"].values, np.unicode_)),
             ("COVARIANCE", covariance_matrix),
-            ("SAMPLES", samples),
-            ("LOG_PROB", log_probability)
+            ("LOG_PROB", dummy),
+            ("SAMPLES", samples)
+            
         ]
 
         # Init FITS extension
@@ -793,6 +802,7 @@ class _AnalysisResults(object):
 
         self._n_free_parameters = len(optimized_model.free_parameters)
 
+        
         assert samples.shape[1] == self._n_free_parameters, (
             "Number of free parameters (%s) and set of samples (%s) "
             "do not agree." % (samples.shape[1], self._n_free_parameters)
