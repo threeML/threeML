@@ -801,7 +801,6 @@ class _AnalysisResults(object):
         # Safety checks
 
         self._n_free_parameters = len(optimized_model.free_parameters)
-
         
         assert samples.shape[1] == self._n_free_parameters, (
             "Number of free parameters (%s) and set of samples (%s) "
@@ -1818,11 +1817,14 @@ class BayesianResults(_AnalysisResults):
 
         return variates.highest_posterior_density_interval(cl)
 
-    def restore_median_fit(self):
+    def get_median_fit_model(self):
         """
         Sets the model parameters to the mean of the marginal distributions
         """
 
+        new_model = astromodels.clone_model(self._optimized_model)
+        
+        
         if self._log_probability is None:
 
             log.error("this is an older analysis results file and does not contain the log probability")
@@ -1832,13 +1834,13 @@ class BayesianResults(_AnalysisResults):
         
         idx = self._log_probability.argmax()
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, (parameter_name, parameter) in enumerate(new_model.free_parameters.items()):
 
-            par = self._samples[parameter_name][idx]
+            par = self._samples_transposed[i, idx]
 
             parameter.value = par
 
-    
+        return new_model
 
 class MLEResults(_AnalysisResults):
     """
