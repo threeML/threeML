@@ -1,6 +1,6 @@
 __author__ = "grburgess <J. Michael Burgess>"
 
-from astromodels.functions.functions import DiracDelta, StepFunctionUpper
+from astromodels import DiracDelta, StepFunctionUpper
 import numpy as np
 
 
