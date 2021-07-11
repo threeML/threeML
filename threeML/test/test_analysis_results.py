@@ -338,6 +338,8 @@ def test_corner_plotting(xy_completed_bayesian_analysis):
 
     ar.corner_plot()
 
+    ar.corner_plot(components = [*ar._free_parameters.keys()][0:2])
+
 
 def test_one_free_parameter_input_output():
 
