@@ -208,6 +208,15 @@ def _load_one_results(fits_extension):
         # Gather samples
         samples = fits_extension.data.field("SAMPLES")
 
+        try:
+            # Gather log probability
+            log_probability = fits_extension.data.field("LOG_PROB")[0]
+
+        except:
+
+            log_probability = None
+
+            
         # Instance and return
 
         return BayesianResults(
@@ -215,6 +224,7 @@ def _load_one_results(fits_extension):
             samples.T,
             statistic_values,
             statistical_measures=measure_values,
+            log_probabilty=log_probability
         )
 
 
@@ -272,6 +282,14 @@ def _load_one_results_hdf(hdf_obj):
         # Gather samples
         samples = hdf_obj["SAMPLES"][()]
 
+        try:
+            # Gather log probabiltiy
+            log_probability = hdf_obj["LOG_PROB"][()]
+            
+        except:
+
+            log_probability = None
+            
         # Instance and return
 
         return BayesianResults(
@@ -279,6 +297,7 @@ def _load_one_results_hdf(hdf_obj):
             samples.T,
             statistic_values,
             statistical_measures=measure_values,
+            log_probabilty=log_probability
         )
 
 
@@ -424,6 +443,11 @@ class ANALYSIS_RESULTS_HDF(object):
             # Empty samples set
             samples = np.zeros(n_parameters)
 
+
+            # Empty log prob set
+            log_probability = np.zeros(n_parameters)
+
+            
         else:
 
             if not isinstance(analysis_results, BayesianResults):
@@ -439,6 +463,10 @@ class ANALYSIS_RESULTS_HDF(object):
             # Gather the samples
             samples = analysis_results._samples_transposed
 
+            # Gather log probabilty
+
+            log_probability = analysis_results._log_probability
+            
         # yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
 
         # save the model to recursive dictionaries
@@ -522,6 +550,16 @@ class ANALYSIS_RESULTS_HDF(object):
                 compression_opts=9,
                 shuffle=True,
             )
+
+            hdf_obj.create_dataset(
+                "LOG_PROB",
+                data=log_probability,
+                compression="gzip",
+                compression_opts=9,
+                shuffle=True,
+            )
+
+            
         else:
 
             raise RuntimeError("This AR is invalid!")
@@ -580,6 +618,9 @@ class ANALYSIS_RESULTS(FITSExtension):
 
             covariance_matrix = analysis_results.covariance_matrix
 
+            # empty array
+            dummy = np.zeros(n_parameters)
+            
             # Check that the covariance matrix has the right shape
 
             if not covariance_matrix.shape == (
@@ -614,8 +655,18 @@ class ANALYSIS_RESULTS(FITSExtension):
             # Gather the samples
             samples = analysis_results._samples_transposed
 
-        # Serialize the model so it can be placed in the header
+            # log probability
 
+            # dummy to handle fits file
+            log_probability = analysis_results.log_probability
+
+            dummy = np.zeros(samples.shape)
+            
+            dummy[0] = log_probability
+            
+
+            
+        # Serialize the model so it can be placed in the header
         yaml_model_serialization = my_yaml.dump(
             optimized_model.to_dict_with_types())
 
@@ -628,7 +679,7 @@ class ANALYSIS_RESULTS(FITSExtension):
         data_frame = analysis_results.get_data_frame(error_type="equal tail")
 
         # Prepare columns
-
+        
         data_tuple = [
             ("NAME", list(free_parameters.keys())),
             ("VALUE", data_frame["value"].values),
@@ -637,7 +688,9 @@ class ANALYSIS_RESULTS(FITSExtension):
             ("ERROR", data_frame["error"].values),
             ("UNIT", np.array(data_frame["unit"].values, np.unicode_)),
             ("COVARIANCE", covariance_matrix),
-            ("SAMPLES", samples),
+            ("LOG_PROB", dummy),
+            ("SAMPLES", samples)
+            
         ]
 
         # Init FITS extension
@@ -749,7 +802,7 @@ class _AnalysisResults(object):
         # Safety checks
 
         self._n_free_parameters = len(optimized_model.free_parameters)
-
+        
         assert samples.shape[1] == self._n_free_parameters, (
             "Number of free parameters (%s) and set of samples (%s) "
             "do not agree." % (samples.shape[1], self._n_free_parameters)
@@ -1222,13 +1275,15 @@ class BayesianResults(_AnalysisResults):
     """
 
     def __init__(
-        self, optimized_model, samples, posterior_values, statistical_measures
+            self, optimized_model, samples, posterior_values, statistical_measures, log_probabilty
     ):
 
         super(BayesianResults, self).__init__(
             optimized_model, samples, posterior_values, "Bayesian", statistical_measures
         )
 
+        self._log_probability = log_probabilty
+        
     def get_correlation_matrix(self):
         """
         Estimate the covariance matrix from the samples
@@ -1346,6 +1401,16 @@ class BayesianResults(_AnalysisResults):
 
         return fig
 
+    @property
+    def log_probability(self):
+        """
+        The log probability values
+
+        :returns: 
+
+        """
+        return self._log_probability
+    
     def corner_plot_cc(self, parameters=None, renamed_parameters=None, **cc_kwargs):
         """
         Corner plots using chainconsumer which allows for nicer plotting of
@@ -1773,6 +1838,30 @@ class BayesianResults(_AnalysisResults):
 
         return variates.highest_posterior_density_interval(cl)
 
+    def get_median_fit_model(self):
+        """
+        Sets the model parameters to the mean of the marginal distributions
+        """
+
+        new_model = astromodels.clone_model(self._optimized_model)
+        
+        
+        if self._log_probability is None:
+
+            log.error("this is an older analysis results file and does not contain the log probability")
+
+            raise RuntimeError()
+        
+        
+        idx = self._log_probability.argmax()
+
+        for i, (parameter_name, parameter) in enumerate(new_model.free_parameters.items()):
+
+            par = self._samples_transposed[i, idx]
+
+            parameter.value = par
+
+        return new_model
 
 class MLEResults(_AnalysisResults):
     """
