@@ -187,6 +187,10 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
         """
 
+        # set the median fit
+
+        self.restore_median_fit()
+        
         # Find maximum of the log posterior
         idx = self._log_probability_values.argmax()
 
