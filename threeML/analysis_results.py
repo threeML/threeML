@@ -8,6 +8,7 @@ import math
 import os
 from builtins import map, object, range, str
 from pathlib import Path
+from typing import List, Optional, Dict
 
 import astromodels
 import astropy.units as u
@@ -1272,26 +1273,44 @@ class BayesianResults(_AnalysisResults):
 
         display(self.get_statistic_measure_frame())
 
-    def corner_plot(self, renamed_parameters=None, **kwargs):
+    def corner_plot(self, renamed_parameters : Optional[Dict] = None, components : Optional[List] = None, **kwargs):
         """
         Produce the corner plot showing the marginal distributions in one and two directions.
 
         :param renamed_parameters: a python dictionary of parameters to rename.
              Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
              {'old label': 'new label'}, where 'old label' is the full path of the parameter
+        :param components: a python list of parameter paths to use in the corner plot 
         :param kwargs: arguments to be passed to the corner function
         :return: a matplotlib.figure instance
         """
 
-        assert (
-            len(list(self._free_parameters.keys()))
-            == self._samples_transposed.T[0].shape[0]
-        ), ("Mismatch between sample" " dimensions and number of free" " parameters")
+        if components is None:
+            assert (
+                len(list(self._free_parameters.keys()))
+                == self._samples_transposed.T[0].shape[0]
+            ), ("Mismatch between sample" " dimensions and number of free" " parameters")
+            
+            components  = self._free_parameters.keys()
+            samples = self._samples_transposed.T
+        else:
+            assert len(components) >= 2, 'Must have at least two parameters to compare contours'
+            samples = []
+            for name in components:
+                try:
+                    # Get appropriate sample column from given name
+                    samples.append(
+                            self._samples_transposed[
+                                list(self._free_parameters.keys()).index(name)
+                                ])
+                except ValueError:
+                    raise ValueError('Parameter %s must be a free parameter'%name)
+            samples = np.array(samples).T
 
         labels = []
-        priors = []
+        #priors = []
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, parameter_name in enumerate(components):
 
             short_name = parameter_name.split(".")[-1]
 
@@ -1301,12 +1320,14 @@ class BayesianResults(_AnalysisResults):
 
             if renamed_parameters is not None:
 
-                if parameter.path in renamed_parameters:
+                # Hopefully this doesn't break backward compatibility -- 
+                # parameter.path == keys in _free_parameters
+                if parameter_name in renamed_parameters:
 
-                    labels[-1] = renamed_parameters[parameter.path]
+                    labels[-1] = renamed_parameters[parameter_name]
 
-            priors.append(
-                self._optimized_model.parameters[parameter_name].prior)
+            #priors.append(
+            #    self._optimized_model.parameters[parameter_name].prior)
 
         # default arguments
         default_args = {
@@ -1321,7 +1342,7 @@ class BayesianResults(_AnalysisResults):
         # the one in default_args
         default_args.update(kwargs)
 
-        fig = corner(self._samples_transposed.T, **default_args)
+        fig = corner(samples, **default_args)
 
         return fig
 
