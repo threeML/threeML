@@ -30,7 +30,7 @@ def test_basic_analysis_get_errors(fitted_joint_likelihood_bn090217206_nai):
 
     err = jl.get_errors()
 
-    assert np.allclose(err["negative_error"], [-0.196, -0.0148], rtol=1e-1)
+    assert np.allclose(err["negative_error"], [-0.0352, -0.0148], rtol=1e-1)
 
 
 def test_basic_analysis_contour_1d(fitted_joint_likelihood_bn090217206_nai):
