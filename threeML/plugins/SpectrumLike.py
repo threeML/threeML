@@ -1348,8 +1348,31 @@ class SpectrumLike(PluginPrototype):
 
             # Get the source model for all channels (that's why we don't use the .folded_model property)
 
-            source_model_counts = self._evaluate_model() * self.exposure
+            source_model_counts = self._evaluate_model() * self.exposure *self._nuisance_parameter.value
 
+            if not np.all(source_model_counts >= 0.):
+
+                log.error("there are negative counts for this simulation")
+
+                for k, v in self._like_model.free_parameters.items():
+
+                    log.error(f"{k} {v}")
+
+                raise RuntimeError()
+
+            if np.any(np.isnan(source_model_counts)):
+
+                log.error("there are NaN counts for this simulation")
+
+                for k, v in self._like_model.free_parameters.items():
+
+                    log.error(f"{k} {v}")
+
+                raise RuntimeError()
+
+                
+
+            
             # The likelihood evaluator keeps track of the proper likelihood needed to randomize
             # quantities. It properly returns None if needed. This avoids multiple checks and dupilcate
             # code for the MANY cases we can have. As new cases are added, this code will adapt.
