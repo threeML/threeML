@@ -3,6 +3,7 @@ from __future__ import division, print_function
 from builtins import range, zip
 
 import numpy as np
+import matplotlib.pyplot as plt
 from past.utils import old_div
 
 from threeML.config.config import threeML_config
@@ -76,11 +77,15 @@ class BinnedSpectrumSeries(TimeSeries):
 
         return self._binned_spectrum_set
 
-    def view_lightcurve(self, start=-10,
-                        stop=20.0,
-                        dt=1.0,
-                        use_binner=False,
-                        with_dead_time=True):
+    def view_lightcurve(self,
+                        start: float = -10,
+                        stop: float = 20.0,
+                        dt: float = 1.0,
+                        use_binner: bool = False,
+                        use_echans_start: int = 0,
+                        use_echans_stop: int = -1,
+                        with_dead_time=True
+    ) -> plt.Figure:
         # type: (float, float, float, bool) -> None
         """
         :param start:
@@ -89,6 +94,42 @@ class BinnedSpectrumSeries(TimeSeries):
         :param use_binner:
 
         """
+
+        # validate echan mask input
+        if not isinstance(use_echans_start, int):
+            log.error(f"The use_echans_start variable must be a integer."
+                      f" Input is {use_echans_start}.")
+            raise AssertionError()
+
+        if not np.abs(use_echans_start) < self.n_channels:
+            log.error(f"The use_echans_start variable must be"
+                      f"between {(-1)*(self.n_channels-1)} and {self.n_channels-1}."
+                      f" Input is {use_echans_start}.")
+            raise AssertionError()
+
+        if not isinstance(use_echans_stop, int):
+            log.error(f"The use_echans_stop variable must be a integer."
+                      f" Input is {use_echans_stop}.")
+            raise AssertionError()
+
+        if not np.abs(use_echans_stop) < self.n_channels:
+            log.error(f"The use_echans_stop variable must be"
+                      f"between {(-1)*(self.n_channels-1)} and {self.n_channels-1}."
+                      f" Input is {use_echans_start}.")
+            raise AssertionError()
+
+        if use_echans_start < 0:
+            use_echans_start = self.n_channels+use_echans_start
+
+        if use_echans_stop < 0:
+            use_echans_stop = self.n_channels+use_echans_stop
+
+        if not use_echans_stop >= use_echans_start:
+            log.error(f"The use_echans_stop variable must be larger"
+                      f" or equal than the use_echans_start variable"
+                      f" Input is use_echans_start: {use_echans_start}"
+                      f" > use_echans_stop: {use_echans_stop}")
+            raise AssertionError()
 
         # git a set of bins containing the intervals
 
@@ -104,8 +145,13 @@ class BinnedSpectrumSeries(TimeSeries):
 
         for time_bin in bins:
 
-            cnts.append(self.counts_over_interval(
-                time_bin.start_time, time_bin.stop_time))
+            cnts.append(
+                np.sum(
+                    self.count_per_channel_over_interval(
+                        time_bin.start_time, time_bin.stop_time
+                    )[use_echans_start:use_echans_stop+1]
+                )
+            )
 
             # use the actual exposure
 
@@ -127,7 +173,7 @@ class BinnedSpectrumSeries(TimeSeries):
             bkg = []
             for j, time_bin in enumerate(bins):
                 tmpbkg = 0.0
-                for poly in self.polynomials:
+                for poly in self.polynomials[use_echans_start:use_echans_stop+1]:
 
                     tmpbkg += poly.integral(time_bin.start_time, time_bin.stop_time)
                     
