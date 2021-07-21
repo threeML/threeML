@@ -282,10 +282,10 @@ class EventList(TimeSeries):
             raise AssertionError()
 
         if use_echans_start < 0:
-            use_echans_start = self.n_channels+use_echans_start+1
+            use_echans_start = self.n_channels+use_echans_start
 
         if use_echans_stop < 0:
-            use_echans_stop = self.n_channels+use_echans_stop+1
+            use_echans_stop = self.n_channels+use_echans_stop
 
         if not use_echans_stop >= use_echans_start:
             log.error(f"The use_echans_stop variable must be larger"
