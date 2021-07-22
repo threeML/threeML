@@ -240,6 +240,26 @@ def test_read_gbm_tte():
 
         assert len(nai3.bins) == 5
 
+
+        nai3.view_lightcurve(start=-10, stop=10, dt=1,
+                             use_echans_start=1,
+                             use_echans_stop=4)
+
+        with pytest.raises(AssertionError):
+            nai3.view_lightcurve(start=-10, stop=10, dt=1,
+                                 use_echans_start=1.2,
+                                 use_echans_stop=4)
+
+        with pytest.raises(AssertionError):
+            nai3.view_lightcurve(start=-10, stop=10, dt=1,
+                                 use_echans_start=4,
+                                 use_echans_stop=2)
+
+        with pytest.raises(AssertionError):
+            nai3.view_lightcurve(start=-10, stop=10, dt=1,
+                                 use_echans_start=0,
+                                 use_echans_stop=200)
+
         nai3.view_lightcurve(use_binner=True)
 
         nai3.write_pha_from_binner("test_from_nai3", overwrite=True, force_rsp_write=True)
