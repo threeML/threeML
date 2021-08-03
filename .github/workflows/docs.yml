@@ -53,11 +53,11 @@ jobs:
         shell: bash -l {0}
         run: |
 
-          echo "ATOMDB=$HOME/pyatomdb" >> $GITHUB_ENV
+#          echo "ATOMDB=$HOME/pyatomdb" >> $GITHUB_ENV
 
           pip install zeus-mcmc
           pip install -e .
-          pip install pyatomdb
+ #         pip install pyatomdb
           pip install black
           pip install --no-binary :all: root_numpy
           pip install git+https://github.com/threeml/hawc_hal.git
@@ -68,7 +68,7 @@ jobs:
         shell: bash -l {0}
         run: |
 
-          echo "ATOMDB=$HOME/pyatomdb" >> $GITHUB_ENV
+  #        echo "ATOMDB=$HOME/pyatomdb" >> $GITHUB_ENV
           
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
