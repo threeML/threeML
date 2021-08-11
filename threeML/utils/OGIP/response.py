@@ -386,7 +386,7 @@ class InstrumentResponse(object):
         dummy_matrix = np.eye(ebounds.shape[0] - 1,
                               monte_carlo_energies.shape[0] - 1)
 
-        return cls(dummy_matrix, ebounds, monte_carlo_energies)
+        return InstrumentResponse(dummy_matrix, ebounds, monte_carlo_energies)
 
 
 class OGIPResponse(InstrumentResponse):
