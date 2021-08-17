@@ -28,19 +28,20 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: ~/conda_pkgs_dir
-                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
+                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
             - name: Add conda ${{ matrix.python-version }} to system path
               uses: conda-incubator/setup-miniconda@v2
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
                   architecture: "x64"
-                  conda-build-version: 3.18
+                  conda-build-version: 3.21
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ci/environment.yml
                   channels: conda-forge, xspecmodels, threeml, fermi, defaults
-
+                  use-only-tar-bz2: true
+                  
             - name: Init Env
               shell: bash -l {0}
               run: |
@@ -103,19 +104,20 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: ~/conda_pkgs_dir
-                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
+                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
             - name: Add conda ${{ matrix.python-version }} to system path
               uses: conda-incubator/setup-miniconda@v2
               with:
                   activate-environment: "test_env"
                   auto-activate-base: false
                   architecture: "x64"
-                  conda-build-version: 3.18
+                  conda-build-version: 3.21
                   python-version: ${{ matrix.python-version }}
                   auto-update-conda: true
                   environment-file: ci/environment.yml
                   channels: conda-forge, xspecmodels, threeml, defaults
-
+                  use-only-tar-bz2: true
+                  
             - name: Init Env
               shell: bash -l {0}
               run: |
