@@ -2,8 +2,38 @@ Release Notes
 =============
 
 
+
+Version 2.2
+-----------
+
+
+v2.2.3
+^^^^^^^^
+*Tue, 17 Aug 2020 06:30:08 + 0000*
+* view light curves with channel sub selection
+  https://github.com/threeML/threeML/pull/475
+* specify parameters in corner plotting
+  https://github.com/threeML/threeML/pull/470
+* added Fermi trigger catalog
+  https://github.com/threeML/threeML/pull/467
+* more python type hints
+* 
+  
+* Bug fixes:
+  * restore median fit at end of bayesian fit
+    https://github.com/threeML/threeML/pull/471
+  * fixed OGIP background model reading
+    https://github.com/threeML/threeML/pull/461
+  * fixed uncertainty format going NaN
+    https://github.com/threeML/threeML/pull/458
+  * better restore median fit function
+    https://github.com/threeML/threeML/pull/459
+
+
+
 Version 2.1
 -----------
+
 
 
 v2.1.1
