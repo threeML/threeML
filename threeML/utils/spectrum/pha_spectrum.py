@@ -991,7 +991,7 @@ p
         return pha
 
     @classmethod
-    def from_dispersion_spectrum(cls, dispersion_spectrum, file_type="observed"):
+    def from_dispersion_spectrum(cls, dispersion_spectrum, file_type="observed", response=None):
         # type: (BinnedSpectrumWithDispersion, str) -> PHASpectrum
 
         if dispersion_spectrum.is_poisson:
@@ -1035,11 +1035,24 @@ p
             is_poisson=dispersion_spectrum.is_poisson,
         )
 
+        if file_type == "background":
+
+            if response is None:
+
+                log.error("passed a background file but no response to extract energy spectra.")
+
+                raise AssertionError()
+
+        else:
+
+            response = dispersion_spectrum.response
+
+        
         return cls(
             pha_file_or_instance=pha,
             spectrum_number=1,
             file_type=file_type,
-            rsp_file=dispersion_spectrum.response,
+            rsp_file=response
         )
 
 

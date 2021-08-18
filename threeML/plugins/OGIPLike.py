@@ -210,8 +210,12 @@ class OGIPLike(DispersionSpectrumLike):
         if background is None:
             background_pha = None
         else:
+
+            # we need to pass the response from the observations
+            # to figure out the bounds of the background
+            
             background_pha = PHASpectrum.from_dispersion_spectrum(
-                background, file_type="background")
+                background, file_type="background", response=observed.response)
 
         return cls(
             dispersion_like.name,
