@@ -191,6 +191,14 @@ class SpectrumLike(PluginPrototype):
 
                 nuisance_parameters[local_name] = parameter
 
+                if parameter.prior is not None:
+
+                    nuisance_parameters[local_name].prior = parameter.prior
+
+                    log.debug(f"{par_name} has passed its prior")
+                    
+                
+                
                 # now get the background likelihood model
 
                 differential_flux, integral = self._get_diff_flux_and_integral(
