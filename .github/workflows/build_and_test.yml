@@ -80,11 +80,16 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
+            
             - name: Cache conda
               uses: actions/cache@v2
+              env:
+                # Increase this value to reset cache if etc/example-environment.yml has not changed
+                CACHE_NUMBER: 0
               with:
                   path: ~/conda_pkgs_dir
-                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('environment-ci.yml') }}
+                  key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
+            
             - name: Setup Miniconda
               uses: conda-incubator/setup-miniconda@v2
               with:
@@ -95,6 +100,7 @@ jobs:
                   python-version: ${{ matrix.python-version }}
                   channels: conda-forge, xspecmodels, threeml, fermi, defaults
                   environment-file: ci/environment.yml
+                  use-only-tar-bz2: true
 
             - name: Init Env
               shell: bash -l {0}
