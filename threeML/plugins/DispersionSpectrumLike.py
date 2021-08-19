@@ -215,7 +215,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
     @staticmethod
     def _build_fake_observation(
-        fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs
+            fake_data, channel_set, source_errors, source_sys_errors, is_poisson, exposure, scale_factor, **kwargs
     ):
         """
         This is the fake observation builder for SpectrumLike which builds data
@@ -239,17 +239,17 @@ class DispersionSpectrumLike(SpectrumLike):
 
         observation = BinnedSpectrumWithDispersion(
             fake_data,
-            exposure=1.0,
+            exposure=exposure,
             response=response,
             count_errors=source_errors,
             sys_errors=source_sys_errors,
             quality=None,
-            scale_factor=1.0,
+            scale_factor=scale_factor,
             is_poisson=is_poisson,
             mission="fake_mission",
             instrument="fake_instrument",
             tstart=0.0,
-            tstop=1.0,
+            tstop=exposure,
         )
 
         return observation
@@ -265,6 +265,8 @@ class DispersionSpectrumLike(SpectrumLike):
         background_function=None,
         background_errors=None,
         background_sys_errors=None,
+        exposure=1.0,
+        scale_factor=1.0
     ):
         # type: () -> DispersionSpectrumLike
         """
@@ -279,6 +281,8 @@ class DispersionSpectrumLike(SpectrumLike):
         :param background_function: (optional) astromodels background function
         :param background_errors: (optional) gaussian background errors
         :param background_sys_errors: (optional) background systematic errors
+        :param exposure: the exposure to assume
+        :param scale_factor: the scale factor between source exposure / bkg exposure
         :return: simulated DispersionSpectrumLike plugin
         """
 
@@ -299,4 +303,6 @@ class DispersionSpectrumLike(SpectrumLike):
             background_errors,
             background_sys_errors,
             response=response,
+            exposure=exposure,
+            scale_factor=scale_factor
         )

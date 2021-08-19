@@ -31,7 +31,8 @@ from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.binner import Rebinner
-from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet, Quality
+from threeML.utils.spectrum.binned_spectrum import (BinnedSpectrum, ChannelSet,
+                                                    Quality)
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.utils.statistics.stats_tools import Significance
@@ -738,7 +739,7 @@ class SpectrumLike(PluginPrototype):
 
     @staticmethod
     def _build_fake_observation(
-        fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs
+            fake_data, channel_set, source_errors, source_sys_errors, is_poisson, exposure, scale_factor, **kwargs
     ) -> BinnedSpectrum:
         """
         This is the fake observation builder for SpectrumLike which builds data
@@ -754,17 +755,17 @@ class SpectrumLike(PluginPrototype):
 
         observation = BinnedSpectrum(
             fake_data,
-            exposure=1.0,
+            exposure=exposure,
             ebounds=channel_set.edges,
             count_errors=source_errors,
             sys_errors=source_sys_errors,
             quality=None,
-            scale_factor=1.0,
+            scale_factor=scale_factor,
             is_poisson=is_poisson,
             mission="fake_mission",
             instrument="fake_instrument",
             tstart=0.0,
-            tstop=1.0,
+            tstop=exposure,
         )
 
         return observation
@@ -807,6 +808,8 @@ class SpectrumLike(PluginPrototype):
         background_function=None,
         background_errors=None,
         background_sys_errors=None,
+        exposure=1.0,
+        scale_factor=1.0,
         **kwargs,
     ):
         """
@@ -822,6 +825,8 @@ class SpectrumLike(PluginPrototype):
         :param background_function: (optional) astromodels background function
         :param background_errors: (optional) gaussian background errors
         :param background_sys_errors: (optional) background systematic errors
+        :param exposure: the exposure to assume
+        :param scale_factor: the scale factor between source exposure / bkg exposure
         :return: simulated SpectrumLike plugin
         """
 
@@ -866,6 +871,8 @@ class SpectrumLike(PluginPrototype):
             source_errors,
             source_sys_errors,
             is_poisson,
+            exposure,
+            scale_factor,
             **kwargs,
         )
 
@@ -1422,7 +1429,8 @@ class SpectrumLike(PluginPrototype):
                     new_counts=randomized_background_counts,
                     new_count_errors=randomized_background_count_err,
                     new_exposure=self._observed_spectrum.exposure,  # because it was adjusted
-                    new_scale_factor=1.0,  # because it was adjusted
+                    #new_scale_factor=1.0,  # because it was adjusted
+                    new_scale_factor=1. / self._total_scale_factor
                 )
 
                 log.debug(
