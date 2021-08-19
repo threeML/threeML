@@ -28,7 +28,7 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          mamba-version: "*"
+          #mamba-version: "*"
           activate-environment: test_env
           python-version: ${{ matrix.python-version }}
           channels: conda-forge, xspecmodels, threeml, fermi, defaults
@@ -52,10 +52,10 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
           # temporary fix for fermi tools
-          mamba install -c conda-forge clhep=2.4.4.1
+          conda install -c conda-forge clhep=2.4.4.1
 
           
       - name: Install the package

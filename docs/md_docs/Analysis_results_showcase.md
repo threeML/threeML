@@ -21,7 +21,7 @@ The structure is nearly the same between MLE and Bayesian analyses in order to m
 
 
 ```python nbsphinx="hidden"
-
+%capture
 import numpy as np
 np.seterr(all="ignore")
 from threeML import *
