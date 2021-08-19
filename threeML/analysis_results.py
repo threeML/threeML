@@ -1384,12 +1384,26 @@ class BayesianResults(_AnalysisResults):
             #priors.append(
             #    self._optimized_model.parameters[parameter_name].prior)
 
+        corner_style = threeML_config.bayesian.corner_style
+            
+        cmap = plt.get_cmap(corner_style.cmap.value)
+
+        cmap.with_extremes(under=corner_style.extremes, over=corner_style.extremes, bad=corner_style.extremes)
+        cmap.set_extremes(under=corner_style.extremes, over=corner_style.extremes, bad=corner_style.extremes)
+        
+        contourf_kwargs = dict(corner_style.contourf_kwargs)
+        contourf_kwargs["cmap"] = cmap
+                            
         # default arguments
         default_args = {
-            "show_titles": True,
-            "title_fmt": ".2g",
+            "show_titles": corner_style.show_titles,
+            "title_fmt": corner_style.title_fmt,
             "labels": labels,
-            "quantiles": [0.16, 0.50, 0.84],
+            "bins":corner_style.bins,
+            "quantiles": corner_style.quantiles,
+            "fill_contours": corner_style.fill_contours,
+            "contourf_kwargs": contourf_kwargs,
+            "levels": corner_style.levels
         }
 
         # Update the default arguents with the one provided (if any). Note that .update also adds new keywords,

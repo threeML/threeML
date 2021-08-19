@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional
 import matplotlib.pyplot as plt
 from omegaconf import II, MISSING, SI, OmegaConf
 
-from .plotting_structure import MPLCmap
+from .plotting_structure import MPLCmap, CornerStyle
 
 
 class Sampler(Enum):
@@ -36,7 +36,10 @@ class BayesianDefault:
                             "n_walkers": 50,
                             "seed": 5123})
 
+    corner_style: CornerStyle = CornerStyle()
+    
 
+    
 @dataclass
 class MLEDefault:
     default_minimizer: Optimizer = Optimizer.minuit

@@ -17,7 +17,7 @@ v2.2.3
 * added Fermi trigger catalog
   https://github.com/threeML/threeML/pull/467
 * more python type hints
-* 
+* easier to configure corner plots 
   
 * Bug fixes:
   * restore median fit at end of bayesian fit

@@ -105,6 +105,7 @@ if len(_available_samplers) == 0:
 
     raise RuntimeError()
 
+
 class BayesianAnalysis(object):
     def __init__(self, likelihood_model: Model, data_list: DataList, **kwargs):
         """

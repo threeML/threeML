@@ -16,19 +16,24 @@ jobs:
         uses: actions/checkout@v2
       - name: Cache conda
         uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-ubuntu-python-cache-3.7-${{ hashFiles('environment-ci.yml') }}
-
+          key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
+              
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
-          auto-update-conda: false
+          auto-update-conda: true
           auto-activate-base: false
+          #mamba-version: "*"
           activate-environment: test_env
-          python-version: 3.7
+          python-version: ${{ matrix.python-version }}
           channels: conda-forge, xspecmodels, threeml, fermi, defaults
           environment-file: ci/environment.yml
+          use-only-tar-bz2: true
 
       - name: Init Environment
         shell: bash -l {0}
@@ -48,6 +53,10 @@ jobs:
           #sudo apt-get install texlive
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+
+          # temporary fix for fermi tools
+          conda install -c conda-forge clhep=2.4.4.1
+
           
       - name: Install the package
         shell: bash -l {0}
@@ -61,7 +70,7 @@ jobs:
           pip install black
           pip install --no-binary :all: root_numpy
           pip install git+https://github.com/threeml/hawc_hal.git
-        
+          pip install git+https://github.com/desihub/speclite.git
 
           
       - name: Execute the notebooks
