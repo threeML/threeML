@@ -1365,6 +1365,24 @@ class SpectrumLike(PluginPrototype):
 
             source_model_counts = self._evaluate_model() * self.exposure *self._nuisance_parameter.value
 
+            # sometimes the first channel has ZERO
+            # for its lower bound which can cause
+            # an inf or NaN for a given model
+
+            # we will set that to zero (better solution??)
+            # this should not affect most instruments as
+            # this is usually a crappy channel in the first
+            # place
+            
+            if not np.isfinite(source_model_counts[0]):
+
+                source_model_counts[0] = 0
+
+                log.warning("simulated spectrum had infinite counts in first channel")
+                log.warning("setting to ZERO")
+
+
+            
             if not np.all(source_model_counts >= 0.):
 
                 log.error("there are negative counts for this simulation")
