@@ -42,6 +42,10 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install --upgrade astromodels
                   pip install --upgrade flake8 coverage pytest-cov cython
+
+                  # temp fix for speclite
+                  pip install git+https://github.com/desihub/speclite.git
+                  
                   pip install -e .
             - name: Lint with flake8
               run: |
