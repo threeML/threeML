@@ -53,17 +53,23 @@ jobs:
         shell: bash -l {0}
         run: |
 
+
+
           pip install zeus-mcmc
           pip install -e .
 
           pip install black
           pip install --no-binary :all: root_numpy
           pip install git+https://github.com/threeml/hawc_hal.git
+        
+
           
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
 
+
+          
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/

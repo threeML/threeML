@@ -447,6 +447,8 @@ class TimeSeriesBuilder(object):
         stop: float = 20.0,
         dt: float = 1.0,
         use_binner: bool = False,
+        use_echans_start: int = 0,
+        use_echans_stop: int = -1
     ) -> plt.Figure:
         # type: (float, float, float, bool) -> None
         """
@@ -460,7 +462,10 @@ class TimeSeriesBuilder(object):
 
         """
 
-        return self._time_series.view_lightcurve(start, stop, dt, use_binner)
+        return self._time_series.view_lightcurve(start, stop, dt,
+                                                 use_binner,
+                                                 use_echans_start,
+                                                 use_echans_stop)
 
     @property
     def tstart(self) -> float:

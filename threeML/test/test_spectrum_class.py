@@ -94,7 +94,7 @@ def test_spectrum_constructor():
 
     specLike.get_simulated_dataset()
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(RuntimeError):
         specLike.rebin_on_background(min_number_of_counts=1e-1)
 
 
