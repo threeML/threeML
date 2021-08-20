@@ -20,7 +20,7 @@ When we perform a fit or load and analysis result, the parmeters of our model be
 While we have covered most of the functionality of RandomVariates in the AnalysisResults section, we want to highlight a few of the details here.
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 from threeML import *
 ```
 
-```python nbsphinx="hidden"
+```python 
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
