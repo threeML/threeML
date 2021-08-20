@@ -14,11 +14,6 @@ jobs:
           python-version: 3.7
       - name: install latex
         uses: xu-cheng/texlive-action/small@v1
-        with:
-          shell: bash -l {0}
-          run: |
-            apk add make
-            make
           
       - name: Init Environment
         shell: bash -l {0}
