@@ -21,8 +21,10 @@ jobs:
           set -e
           # brew update
           # brew install --cask basictex
-          apt-get install texlive
-          eval "$(/usr/libexec/path_helper)"
+ 
+          sudo apt-get update && apt-get install -y --no-install-recommends texlive-latex-base texlive-fonts-recommended
+
+#          eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
           pip install -U cython
