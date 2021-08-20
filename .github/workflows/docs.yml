@@ -2,16 +2,80 @@ name: Docs
 on: [push, release]
 
 jobs:
-  notebooks:
-    name: "Build the notebooks for the docs"
+  fast_notebooks:
+    name: "Build the fast notebooks"
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
-
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.7
+
+      - name: Init Environment
+        shell: bash -l {0}
+        run: |
+          # Make sure we fail in case of error
+
+          # miniconda_os=Linux
+          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+
+          miniconda_os=MacOSX
+          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+
+          brew update
+          brew install --cask basictex
+
+          eval "$(/usr/libexec/path_helper)"
+          #sudo apt-get install texlive
+
+          pip install jupytext jupyterthemes jupyter_latex_envs emcee ultranest
+          pip install astropy
+          pip install astromodels
+          pip install zeus-mcmc
+          pip install git+https://github.com/desihub/speclite.git
+          pip install black
+          pip install --no-binary :all: root_numpy
+
+          
+      - name: Install the package
+        shell: bash -l {0}
+        run: |
+          pip install -e .
+
+      - name: Execute the notebooks
+        shell: bash -l {0}
+        run: |
+
+
+
+          # copy the doc configuration over
+          mkdir -p ~/.config/threeML
+          cp threeML/data/doc_config.yml ~/.config/threeML/
+
+          jupytext --to ipynb --pipe black --execute docs/md_docs/fast_execute/*.md
+
+          mv docs/md_docs/fast_execute/*.ipynb docs/notebooks/
+
+          ls docs/notebooks
+
+        env:
+          OMP_NUM_THREADS: 1
+          MKL_NUM_THREADS: 1
+          NUMEXPR_NUM_THREADS: 1
+          MPLBACKEND: "Agg"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-fast
+          path: docs/notebooks
+
+ 
+  hal_notebooks:
+    name: "Build the HAL notebooks"
+    runs-on: macos-latest
+    steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Cache conda
@@ -21,8 +85,8 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key: conda-${{ matrix.os }}-python-${{ matrix.python-version }}-${{ hashFiles('ci/environment.yml') }}
-              
+          key: conda-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
+
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -31,15 +95,15 @@ jobs:
           #mamba-version: "*"
           activate-environment: test_env
           python-version: ${{ matrix.python-version }}
-          channels: conda-forge, xspecmodels, threeml, fermi, defaults
-          environment-file: ci/environment.yml
+          channels: conda-forge, threeml, defaults
+          environment-file: ci/environment_hal.yml
           use-only-tar-bz2: true
 
       - name: Init Environment
         shell: bash -l {0}
         run: |
           # Make sure we fail in case of error
-          
+
           # miniconda_os=Linux
           # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
@@ -57,14 +121,10 @@ jobs:
           # temporary fix for fermi tools
           conda install -c conda-forge clhep=2.4.4.1
 
-          
       - name: Install the package
         shell: bash -l {0}
         run: |
 
-
-
-          pip install zeus-mcmc
           pip install -e .
 
           pip install black
@@ -72,19 +132,16 @@ jobs:
           pip install git+https://github.com/threeml/hawc_hal.git
           pip install git+https://github.com/desihub/speclite.git
 
-          
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
 
-
-          
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
-          
-          jupytext --to ipynb --pipe black --execute docs/md_docs/*.md
-          mv docs/md_docs/*.ipynb docs/notebooks/
+
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/hal_example.md
+          mv docs/md_docs/slow_execute/hal_example.ipynb docs/notebooks/
           ls docs/notebooks
         env:
           OMP_NUM_THREADS: 1
@@ -94,14 +151,223 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
+          name: notebooks-for-hal
+          path: docs/notebooks
+
+  fermi_notebooks:
+    name: "Build the Fermi notebooks"
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache conda
+        uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key: conda-fermi_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+          #mamba-version: "*"
+          activate-environment: test_env
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge, fermi, threeml, defaults
+          environment-file: ci/environment_fermi.yml
+          use-only-tar-bz2: true
+
+      - name: Init Environment
+        shell: bash -l {0}
+        run: |
+          # Make sure we fail in case of error
+
+          # miniconda_os=Linux
+          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+
+          miniconda_os=MacOSX
+          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+
+          brew update
+          brew install --cask basictex
+
+          eval "$(/usr/libexec/path_helper)"
+          #sudo apt-get install texlive
+
+          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+
+          # temporary fix for fermi tools
+          conda install -c conda-forge clhep=2.4.4.1
+
+      - name: Install the package
+        shell: bash -l {0}
+        run: |
+
+          pip install -e .
+
+          pip install black
+          pip install --no-binary :all: root_numpy
+          pip install git+https://github.com/desihub/speclite.git
+
+      - name: Execute the notebooks
+        shell: bash -l {0}
+        run: |
+
+          # copy the doc configuration over
+          mkdir -p ~/.config/threeML
+          cp threeML/data/doc_config.yml ~/.config/threeML/
+
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_Lat.md
+          mv docs/md_docs/slow_execute/Fermipy_LAt.ipynb docs/notebooks/
+          ls docs/notebooks
+        env:
+          OMP_NUM_THREADS: 1
+          MKL_NUM_THREADS: 1
+          NUMEXPR_NUM_THREADS: 1
+          MPLBACKEND: "Agg"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-fermi
+          path: docs/notebooks
+
+
+          
+  xspec_notebooks:
+    name: "Build the XSPEC notebooks"
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache conda
+        uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key: conda-xspec_notebooks-python-3.7-${{ hashFiles('ci/environment_xspec.yml') }}
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+          #mamba-version: "*"
+          activate-environment: test_env
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge, threeml, xspecmodels, defaults
+          environment-file: ci/environment_xspec.yml
+          use-only-tar-bz2: true
+
+      - name: Init Environment
+        shell: bash -l {0}
+        run: |
+          # Make sure we fail in case of error
+
+          # miniconda_os=Linux
+          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+
+          miniconda_os=MacOSX
+          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+
+          brew update
+          brew install --cask basictex
+
+          eval "$(/usr/libexec/path_helper)"
+          #sudo apt-get install texlive
+
+          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+
+          # temporary fix for fermi tools
+
+
+      - name: Install the package
+        shell: bash -l {0}
+        run: |
+
+          pip install -e .
+
+          pip install black
+          pip install --no-binary :all: root_numpy
+          pip install git+https://github.com/desihub/speclite.git
+
+      - name: Execute the notebooks
+        shell: bash -l {0}
+        run: |
+
+          # copy the doc configuration over
+          mkdir -p ~/.config/threeML
+          cp threeML/data/doc_config.yml ~/.config/threeML/
+
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/xspec_models.md
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/joint_fitting_xrt_and_gbm_xspec_models.md
+
+          mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
+          ls docs/notebooks
+          
+          
+        env:
+          OMP_NUM_THREADS: 1
+          MKL_NUM_THREADS: 1
+          NUMEXPR_NUM_THREADS: 1
+          MPLBACKEND: "Agg"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-xspec
+          path: docs/notebooks
+
+          
+  upload_notebooks:
+    needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks]
+    name: "Upload notebooks and trigger RTD"
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+
+      - uses: actions/download-artifact@master
+        with:
+          name: notebooks-for-fermi
+          path: docs/notebooks
+
+      - uses: actions/download-artifact@master
+        with:
+          name: notebooks-for-fast
+          path: docs/notebooks
+
+      - uses: actions/download-artifact@master
+        with:
+          name: notebooks-for-hal
+          path: docs/notebooks
+
+      - uses: actions/download-artifact@master
+        with:
+          name: notebooks-for-xspec
+          path: docs/notebooks
+
+          
+      - uses: actions/upload-artifact@v2
+        with:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
+
 
       - name: Sleep for 5 min
         uses: juliangruber/sleep-action@v1
         with:
           time: 5m
 
+
+
+          
       - name: Trigger RTDs build
         uses: dfm/rtds-action@main
         with:
