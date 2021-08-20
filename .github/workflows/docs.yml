@@ -4,7 +4,7 @@ on: [push, release]
 jobs:
   fast_notebooks:
     name: "Build the fast notebooks"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -16,13 +16,6 @@ jobs:
       - name: Init Environment
         shell: bash -l {0}
         run: |
-          # Make sure we fail in case of error
-
-          # miniconda_os=Linux
-          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
-
-          miniconda_os=MacOSX
-          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
 
           brew update
           brew install --cask basictex
@@ -30,16 +23,18 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          pip install cython
-          pip install numpy scipy matplotlib
-          pip install jupytext jupyterthemes jupyter_latex_envs emcee ultranest
-          pip install astropy
-          pip install astromodels
+          pip install -U cython
+          pip install -U numpy scipy matplotlib
+          pip install -U jupytext jupyterthemes jupyter_latex_envs
+          pip install -U astropy
+          pip install emcee ultranest
+          
+          
           pip install zeus-mcmc
           pip install git+https://github.com/desihub/speclite.git
           pip install black
           
-          
+          pip install astromodels
           
           
       - name: Install the package
@@ -50,9 +45,6 @@ jobs:
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
-
-
-
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
@@ -362,6 +354,12 @@ jobs:
           name: notebooks-for-${{ github.sha }}
           path: docs/notebooks
 
+      - name: Check that all notebooks are there
+        shell: bash -l {0}
+        run: |
+
+          ls docs/notebooks
+          
 
       - name: Sleep for 5 min
         uses: juliangruber/sleep-action@v1
