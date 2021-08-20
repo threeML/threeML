@@ -340,7 +340,7 @@ jobs:
           activate-environment: test_env
           python-version: ${{ matrix.python-version }}
           channels: conda-forge, threeml, defaults
-          environment-file: ci/environment_xspec.yml
+          environment-file: ci/environment_hal.yml
           use-only-tar-bz2: true
 
       - name: Init Environment
@@ -360,7 +360,7 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee ultranest
 
           # temporary fix for fermi tools
 
@@ -383,9 +383,12 @@ jobs:
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
 
-          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/grb080916C.md
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Bayesian_tutorial.md
+          
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Minimization_tutorial.md
+          
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/grb080916C.md
+
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/joint_BAT_gbm_demo.md
           
 
