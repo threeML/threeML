@@ -3,13 +3,10 @@ from __future__ import division
 import copy
 import warnings
 from builtins import map, object, range, str
+from collections.abc import Callable
 from operator import attrgetter, itemgetter
 from pathlib import Path
-from typing import Optional, Union, List, Dict, Any
-
-from numpy.ma import shape
-
-from collections.abc import Callable
+from typing import Any, Dict, List, Optional, Union
 
 import astropy.io.fits as pyfits
 import astropy.units as u
@@ -18,6 +15,7 @@ import matplotlib.pyplot as plt
 import numba as nb
 import numpy as np
 from matplotlib.colors import SymLogNorm
+from numpy.ma import shape
 from past.utils import old_div
 
 from threeML.config import threeML_config
@@ -95,7 +93,7 @@ class InstrumentResponse(object):
 
         self._ebounds: np.ndarray = np.array(ebounds, float)
 
-        self._mc_energies: np.ndarray = np.array(monte_carlo_energies)
+        self._monte_carlo_energies: np.ndarray = np.array(monte_carlo_energies)
 
         self._integral_function: Optional[Callable] = None
 
@@ -117,28 +115,28 @@ class InstrumentResponse(object):
         # Safety checks
         if not self._matrix.shape == (
                 self._ebounds.shape[0] - 1,
-                self._mc_energies.shape[0] - 1,
+                self._monte_carlo_energies.shape[0] - 1,
         ):
 
             log.error(
-                f"Matrix has the wrong shape. Got {self._matrix.shape}, expecting {   [self._ebounds.shape[0] - 1, self._mc_energies.shape[0] - 1]}"
+                f"Matrix has the wrong shape. Got {self._matrix.shape}, expecting {   [self._ebounds.shape[0] - 1, self._monte_carlo_energies.shape[0] - 1]}"
             )
 
             raise RuntimeError()
 
-        if self._mc_energies.max() < self._ebounds.max():
+        if self._monte_carlo_energies.max() < self._ebounds.max():
 
             log.warning("Maximum MC energy (%s) is smaller "
                         "than maximum EBOUNDS energy (%s)" %
-                        (self._mc_energies.max(), self.ebounds.max()),
+                        (self._monte_carlo_energies.max(), self.ebounds.max()),
                         # RuntimeWarning,
                         )
 
-        if self._mc_energies.min() > self._ebounds.min():
+        if self._monte_carlo_energies.min() > self._ebounds.min():
 
             log.warning("Minimum MC energy (%s) is larger than "
                         "minimum EBOUNDS energy (%s)" %
-                        (self._mc_energies.min(), self._ebounds.min()),
+                        (self._monte_carlo_energies.min(), self._ebounds.min()),
                         #   RuntimeWarning,
                         )
 
@@ -224,7 +222,7 @@ class InstrumentResponse(object):
         :return: array
         """
 
-        return self._mc_energies
+        return self._monte_carlo_energies
 
     def set_function(self, integral_function=None) -> None:
         """
@@ -247,12 +245,12 @@ class InstrumentResponse(object):
 
             try:
                 fluxes = self._integral_function(
-                    # self._mc_energies[:-1], self._mc_energies[1:]
+                    # self._monte_carlo_energies[:-1], self._monte_carlo_energies[1:]
                 )
             except (TypeError):
 
-                fluxes = self._integral_function(self._mc_energies[:-1],
-                                                 self._mc_energies[1:])
+                fluxes = self._integral_function(self._monte_carlo_energies[:-1],
+                                                 self._monte_carlo_energies[1:])
 
         else:
             fluxes = precalc_fluxes
@@ -296,7 +294,7 @@ class InstrumentResponse(object):
 
         # Some times the lower edges may be zero, so we skip them
 
-        if self._mc_energies[0] == 0:
+        if self._monte_carlo_energies[0] == 0:
             idx_mc = 1
 
         if self._ebounds[0] == 0:
@@ -304,8 +302,8 @@ class InstrumentResponse(object):
 
         # ax.imshow(image[idx_eb:, idx_mc:], extent=(self._ebounds[idx_eb],
         #                                            self._ebounds[-1],
-        #                                            self._mc_energies[idx_mc],
-        #                                            self._mc_energies[-1]),
+        #                                            self._monte_carlo_energies[idx_mc],
+        #                                            self._monte_carlo_energies[-1]),
         #           aspect='equal',
         #           cmap=cm.BrBG_r,
         #           origin='lower',
@@ -320,7 +318,7 @@ class InstrumentResponse(object):
         cmap.set_under(threeML_config.plugins.ogip.response_zero_color)
 
         mappable = ax.pcolormesh(
-            self._mc_energies[idx_mc:],
+            self._monte_carlo_energies[idx_mc:],
             self._ebounds[idx_eb:],
             self._matrix,
             cmap=cmap,
@@ -388,6 +386,21 @@ class InstrumentResponse(object):
 
         return InstrumentResponse(dummy_matrix, ebounds, monte_carlo_energies)
 
+    def clone(self) -> "InstrumentResponse":
+        """
+        return a new response with the contents of this response
+        
+        :returns: 
+
+        """
+        
+        return InstrumentResponse(matrix=copy.deepcopy(self._matrix),
+                                  ebounds=copy.deepcopy(self._ebounds),
+                                  monte_carlo_energies=copy.deepcopy(self._monte_carlo_energies),
+                                  coverage_interval = self._coverage_interval
+                                  )
+
+    
 
 class OGIPResponse(InstrumentResponse):
     def __init__(self, rsp_file: str, arf_file: Optional[str] = None) -> None:

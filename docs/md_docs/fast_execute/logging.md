@@ -30,7 +30,7 @@ The logging of 3ML is configurable in the configuration file.
 <!-- #endregion -->
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np

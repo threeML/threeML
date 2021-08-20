@@ -16,7 +16,7 @@ jupyter:
 # Building Custom Plugins
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np

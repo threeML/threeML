@@ -25,7 +25,7 @@ Let's explore how we can use **XSPEC** spectral models in 3ML.
 <!-- #endregion -->
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -36,7 +36,7 @@ np.seterr(all="ignore")
 import matplotlib.pyplot as plt
 ```
 
-```python nbsphinx="hidden"
+```python 
 %%capture
 from threeML import set_threeML_style
 from jupyterthemes import jtplot
