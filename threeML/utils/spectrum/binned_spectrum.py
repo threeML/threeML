@@ -789,7 +789,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
             raise RuntimeError()
             
 
-        self._rsp: InstrumentResponse = response
+        self._response: InstrumentResponse = response
 
         ebounds: ChannelSet = ChannelSet.from_instrument_response(response)
 
@@ -811,7 +811,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
     @property
     def response(self) -> InstrumentResponse:
 
-        return self._rsp
+        return self._response
 
     @classmethod
     def from_time_series(
@@ -889,7 +889,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         return BinnedSpectrumWithDispersion(
             counts=new_counts,
             exposure=new_exposure,
-            response=self._rsp.clone(), # clone a NEW response
+            response=self._response.clone(), # clone a NEW response
             count_errors=new_count_errors,
             sys_errors=new_sys_errors,
             quality=self._quality,

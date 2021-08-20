@@ -140,7 +140,7 @@ class OGIPLike(DispersionSpectrumLike):
         # pass the response thru to the constructor
         return super(OGIPLike, self).get_simulated_dataset(new_name=new_name,
                                                            spectrum_number=1,
-                                                           response=self._rsp,
+                                                           response=self._response.clone(),
                                                            **kwargs)
 
     @property

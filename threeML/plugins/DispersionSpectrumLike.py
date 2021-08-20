@@ -3,6 +3,7 @@ from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
+from astromodels import Model
 
 from threeML.io.logging import setup_logger
 from threeML.plugins.SpectrumLike import SpectrumLike
@@ -10,8 +11,6 @@ from threeML.plugins.XYLike import XYLike
 from threeML.utils.OGIP.response import InstrumentResponse
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum, BinnedSpectrumWithDispersion, ChannelSet)
-
-from astromodels import Model
 
 log = setup_logger(__name__)
 
@@ -69,7 +68,7 @@ class DispersionSpectrumLike(SpectrumLike):
 
         # assign the response to the plugins
 
-        self._rsp: InstrumentResponse = observation.response
+        self._response: InstrumentResponse = observation.response
 
         super(DispersionSpectrumLike, self).__init__(
             name=name,
@@ -81,9 +80,9 @@ class DispersionSpectrumLike(SpectrumLike):
             tstop=tstop,
         )
 
-        self._predefined_energies: np.ndarray = self._rsp.monte_carlo_energies
+        self._predefined_energies: np.ndarray = self._response.monte_carlo_energies
 
-    def set_model(self, likelihoodModel: Model):
+    def set_model(self, likelihoodModel: Model) -> None:
         """
         Set the model to be used in the joint minimization.
         """
@@ -108,9 +107,13 @@ class DispersionSpectrumLike(SpectrumLike):
 
         log.debug(f"{self._name} passing intfral flux function to RSP")
 
-        self._rsp.set_function(integral)
         self._integral_flux = integral
 
+        # pass to the response matrix
+        
+        self._response.set_function(self._integral_flux)
+
+        
     def _evaluate_model(self,
                         precalc_fluxes: Optional[np.array] = None
                         ) -> np.ndarray:
@@ -119,7 +122,7 @@ class DispersionSpectrumLike(SpectrumLike):
         :return:
         """
 
-        return self._rsp.convolve(precalc_fluxes=precalc_fluxes)
+        return self._response.convolve(precalc_fluxes=precalc_fluxes)
 
     def set_model_integrate_method(self, method: str):
         """
@@ -139,8 +142,10 @@ class DispersionSpectrumLike(SpectrumLike):
         if self._like_model is not None:
             differential_flux, integral = self._get_diff_flux_and_integral(
                 self._like_model, integrate_method=method)
-            self._rsp.set_function(integral)
+
             self._integral_flux = integral
+                        
+            self._response.set_function(self._integral_flux)
 
     def get_simulated_dataset(self, new_name=None, **kwargs):
         """
@@ -165,7 +170,7 @@ class DispersionSpectrumLike(SpectrumLike):
         if self._background_spectrum is not None:
             info["bak"] = copy.copy(self._background_spectrum)
 
-        info["rsp"] = copy.copy(self._rsp)
+        info["rsp"] = copy.copy(self._response)
 
         return info
 
@@ -175,11 +180,11 @@ class DispersionSpectrumLike(SpectrumLike):
         :return:
         """
 
-        self._rsp.plot_matrix()
+        self._response.plot_matrix()
 
     @property
     def response(self) -> InstrumentResponse:
-        return self._rsp
+        return self._response
 
     def _output(self):
         # type: () -> pd.Series
@@ -187,7 +192,7 @@ class DispersionSpectrumLike(SpectrumLike):
         super_out = super(DispersionSpectrumLike,
                           self)._output()  # type: pd.Series
 
-        the_df = pd.Series({"response": self._rsp.rsp_filename})
+        the_df = pd.Series({"response": self._response.rsp_filename})
 
         return super_out.append(the_df)
 

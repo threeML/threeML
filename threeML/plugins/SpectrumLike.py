@@ -1363,7 +1363,7 @@ class SpectrumLike(PluginPrototype):
 
             # Get the source model for all channels (that's why we don't use the .folded_model property)
 
-            source_model_counts = self._evaluate_model() * self.exposure *self._nuisance_parameter.value
+            source_model_counts = self._evaluate_model() * self.exposure * self._nuisance_parameter.value
 
             # sometimes the first channel has ZERO
             # for its lower bound which can cause
@@ -1373,6 +1373,8 @@ class SpectrumLike(PluginPrototype):
             # this should not affect most instruments as
             # this is usually a crappy channel in the first
             # place
+
+            
             
             if not np.isfinite(source_model_counts[0]):
 
@@ -1383,7 +1385,7 @@ class SpectrumLike(PluginPrototype):
 
 
             
-            if not np.all(source_model_counts >= 0.):
+            if not np.all(source_model_counts >= 0.) and (self._observation_noise_model == "poisson"):
 
                 log.error("there are negative counts for this simulation")
 
