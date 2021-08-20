@@ -19,9 +19,9 @@ jobs:
         shell: bash -l {0}
         run: |
           set -e
-          brew update
-          brew install --cask basictex
-
+          # brew update
+          # brew install --cask basictex
+          apt-get install texlive
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
