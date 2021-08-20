@@ -30,14 +30,17 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
+          pip install cython
+          pip install numpy scipy matplotlib
           pip install jupytext jupyterthemes jupyter_latex_envs emcee ultranest
           pip install astropy
           pip install astromodels
           pip install zeus-mcmc
           pip install git+https://github.com/desihub/speclite.git
           pip install black
-          pip install --no-binary :all: root_numpy
-
+          
+          
+          
           
       - name: Install the package
         shell: bash -l {0}
@@ -68,7 +71,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: notebooks-for-fast
+          name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
 
  
@@ -151,7 +154,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: notebooks-for-hal
+          name: notebooks-for-hal-${{ github.sha }}
           path: docs/notebooks
 
   fermi_notebooks:
@@ -232,7 +235,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: notebooks-for-fermi
+          name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
 
 
@@ -319,7 +322,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: notebooks-for-xspec
+          name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
 
           
@@ -335,22 +338,22 @@ jobs:
 
       - uses: actions/download-artifact@master
         with:
-          name: notebooks-for-fermi
+          name: notebooks-for-fermi-${{ github.sha }}
           path: docs/notebooks
 
       - uses: actions/download-artifact@master
         with:
-          name: notebooks-for-fast
+          name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
 
       - uses: actions/download-artifact@master
         with:
-          name: notebooks-for-hal
+          name: notebooks-for-hal-${{ github.sha }}
           path: docs/notebooks
 
       - uses: actions/download-artifact@master
         with:
-          name: notebooks-for-xspec
+          name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
 
           
