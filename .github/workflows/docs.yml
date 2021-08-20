@@ -23,7 +23,7 @@ jobs:
       - name: Init Environment
         shell: bash -l {0}
         run: |
-
+          set -e
           brew update
           brew install --cask basictex
 
@@ -104,6 +104,7 @@ jobs:
       - name: Init Environment
         shell: bash -l {0}
         run: |
+          set -e
           # Make sure we fail in case of error
 
           # miniconda_os=Linux
@@ -187,7 +188,7 @@ jobs:
         shell: bash -l {0}
         run: |
           # Make sure we fail in case of error
-
+          set -e
           # miniconda_os=Linux
           # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
@@ -270,7 +271,7 @@ jobs:
         shell: bash -l {0}
         run: |
           # Make sure we fail in case of error
-
+          set -e
           # miniconda_os=Linux
           # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
@@ -354,7 +355,7 @@ jobs:
         shell: bash -l {0}
         run: |
           # Make sure we fail in case of error
-
+          set -e
           # miniconda_os=Linux
           # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
 
