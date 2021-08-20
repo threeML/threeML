@@ -6,8 +6,10 @@ from builtins import str
 from contextlib import contextmanager
 from pathlib import Path
 
-from threeML.exceptions.custom_exceptions import custom_warnings
+from threeML.io.logging import setup_logger
 
+
+log = setup_logger(__name__)
 
 def sanitize_filename(filename, abspath: bool=False) -> Path:
 
@@ -95,6 +97,8 @@ def temporary_directory(prefix="", within_directory=None):
 
     directory = tempfile.mkdtemp(prefix=prefix, dir=within_directory)
 
+    log.debug(f"created temp directory {directory}")
+    
     yield directory
 
     try:
@@ -103,7 +107,7 @@ def temporary_directory(prefix="", within_directory=None):
 
     except:
 
-        custom_warnings.warn("Couldn't remove temporary directory %s" % directory)
+        log.warning("Couldn't remove temporary directory %s" % directory)
 
 
 @contextmanager
