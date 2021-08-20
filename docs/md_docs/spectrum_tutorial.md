@@ -40,7 +40,7 @@ The most basic spectrum plugin is **SpectrumLike** which handles spectra with an
 Let's start by examining an observation where the total counts are Poisson distributed and the measured background ground has been observed by viewing an off-source region and hence is also Poisson.
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -56,7 +56,7 @@ from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 ```
 
-```python nbsphinx="hidden"
+```python 
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)

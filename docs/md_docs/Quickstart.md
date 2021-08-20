@@ -21,7 +21,7 @@ In this simple example we will generate some simulated data, and fit them with 3
 Let's start by generating our dataset:
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -36,7 +36,7 @@ np.seterr(all="ignore")
 from threeML import *
 ```
 
-```python nbsphinx="hidden"
+```python 
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)

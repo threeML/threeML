@@ -16,7 +16,7 @@ jupyter:
 # HAL (HAWC Accelerated Likelihood) plugin
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np

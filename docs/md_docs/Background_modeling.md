@@ -47,7 +47,7 @@ Let's examine how to handle both cases.
 <!-- #endregion -->
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -61,7 +61,7 @@ from threeML import *
 
 ```
 
-```python nbsphinx="hidden"
+```python 
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)

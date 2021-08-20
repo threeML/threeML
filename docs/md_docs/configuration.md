@@ -20,7 +20,7 @@ The 3ML configuration sets up defaults that are read in at runtime and is a sess
 The configuration is a hierarchical you can import and modify.
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np

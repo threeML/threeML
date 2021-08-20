@@ -31,7 +31,8 @@ from threeML.io.rich_display import display
 from threeML.plugin_prototype import PluginPrototype
 from threeML.plugins.XYLike import XYLike
 from threeML.utils.binner import Rebinner
-from threeML.utils.spectrum.binned_spectrum import BinnedSpectrum, ChannelSet, Quality
+from threeML.utils.spectrum.binned_spectrum import (BinnedSpectrum, ChannelSet,
+                                                    Quality)
 from threeML.utils.spectrum.pha_spectrum import PHASpectrum
 from threeML.utils.spectrum.spectrum_likelihood import statistic_lookup
 from threeML.utils.statistics.stats_tools import Significance
@@ -738,7 +739,7 @@ class SpectrumLike(PluginPrototype):
 
     @staticmethod
     def _build_fake_observation(
-        fake_data, channel_set, source_errors, source_sys_errors, is_poisson, **kwargs
+            fake_data, channel_set, source_errors, source_sys_errors, is_poisson, exposure, scale_factor, **kwargs
     ) -> BinnedSpectrum:
         """
         This is the fake observation builder for SpectrumLike which builds data
@@ -754,17 +755,17 @@ class SpectrumLike(PluginPrototype):
 
         observation = BinnedSpectrum(
             fake_data,
-            exposure=1.0,
+            exposure=exposure,
             ebounds=channel_set.edges,
             count_errors=source_errors,
             sys_errors=source_sys_errors,
             quality=None,
-            scale_factor=1.0,
+            scale_factor=scale_factor,
             is_poisson=is_poisson,
             mission="fake_mission",
             instrument="fake_instrument",
             tstart=0.0,
-            tstop=1.0,
+            tstop=exposure,
         )
 
         return observation
@@ -807,6 +808,8 @@ class SpectrumLike(PluginPrototype):
         background_function=None,
         background_errors=None,
         background_sys_errors=None,
+        exposure=1.0,
+        scale_factor=1.0,
         **kwargs,
     ):
         """
@@ -822,6 +825,8 @@ class SpectrumLike(PluginPrototype):
         :param background_function: (optional) astromodels background function
         :param background_errors: (optional) gaussian background errors
         :param background_sys_errors: (optional) background systematic errors
+        :param exposure: the exposure to assume
+        :param scale_factor: the scale factor between source exposure / bkg exposure
         :return: simulated SpectrumLike plugin
         """
 
@@ -866,6 +871,8 @@ class SpectrumLike(PluginPrototype):
             source_errors,
             source_sys_errors,
             is_poisson,
+            exposure,
+            scale_factor,
             **kwargs,
         )
 
@@ -1356,9 +1363,29 @@ class SpectrumLike(PluginPrototype):
 
             # Get the source model for all channels (that's why we don't use the .folded_model property)
 
-            source_model_counts = self._evaluate_model() * self.exposure *self._nuisance_parameter.value
+            source_model_counts = self._evaluate_model() * self.exposure * self._nuisance_parameter.value
 
-            if not np.all(source_model_counts >= 0.):
+            # sometimes the first channel has ZERO
+            # for its lower bound which can cause
+            # an inf or NaN for a given model
+
+            # we will set that to zero (better solution??)
+            # this should not affect most instruments as
+            # this is usually a crappy channel in the first
+            # place
+
+            
+            
+            if not np.isfinite(source_model_counts[0]):
+
+                source_model_counts[0] = 0
+
+                log.warning("simulated spectrum had infinite counts in first channel")
+                log.warning("setting to ZERO")
+
+
+            
+            if not np.all(source_model_counts >= 0.) and (self._observation_noise_model == "poisson"):
 
                 log.error("there are negative counts for this simulation")
 
@@ -1422,7 +1449,8 @@ class SpectrumLike(PluginPrototype):
                     new_counts=randomized_background_counts,
                     new_count_errors=randomized_background_count_err,
                     new_exposure=self._observed_spectrum.exposure,  # because it was adjusted
-                    new_scale_factor=1.0,  # because it was adjusted
+                    #new_scale_factor=1.0,  # because it was adjusted
+                    new_scale_factor=1. / self._total_scale_factor
                 )
 
                 log.debug(
