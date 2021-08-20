@@ -3,13 +3,10 @@ from __future__ import division
 import copy
 import warnings
 from builtins import map, object, range, str
+from collections.abc import Callable
 from operator import attrgetter, itemgetter
 from pathlib import Path
-from typing import Optional, Union, List, Dict, Any
-
-from numpy.ma import shape
-
-from collections.abc import Callable
+from typing import Any, Dict, List, Optional, Union
 
 import astropy.io.fits as pyfits
 import astropy.units as u
@@ -18,6 +15,7 @@ import matplotlib.pyplot as plt
 import numba as nb
 import numpy as np
 from matplotlib.colors import SymLogNorm
+from numpy.ma import shape
 from past.utils import old_div
 
 from threeML.config import threeML_config
@@ -388,6 +386,21 @@ class InstrumentResponse(object):
 
         return InstrumentResponse(dummy_matrix, ebounds, monte_carlo_energies)
 
+    def clone(self) -> "InstrumentResponse":
+        """
+        return a new response with the contents of this response
+        
+        :returns: 
+
+        """
+        
+        return InstrumentResponse(matrix=copy.deepcopy(self._matrix),
+                                  ebounds=copy.deepcopy(self._ebounds),
+                                  monte_carlo_energies=copy.deepcopy(self._monte_carlo_energies),
+                                  coverage_intreval = self._coverage_interval
+                                  )
+
+    
 
 class OGIPResponse(InstrumentResponse):
     def __init__(self, rsp_file: str, arf_file: Optional[str] = None) -> None:

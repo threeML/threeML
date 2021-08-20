@@ -889,7 +889,7 @@ class BinnedSpectrumWithDispersion(BinnedSpectrum):
         return BinnedSpectrumWithDispersion(
             counts=new_counts,
             exposure=new_exposure,
-            response=self._rsp,
+            response=self._rsp.clone(), # clone a NEW response
             count_errors=new_count_errors,
             sys_errors=new_sys_errors,
             quality=self._quality,
