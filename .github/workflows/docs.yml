@@ -12,7 +12,14 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.7
-
+      - name: install latex
+        uses: xu-cheng/texlive-action/small@v1
+        with:
+          shell: bash -l {0}
+          run: |
+            apk add make
+            make
+          
       - name: Init Environment
         shell: bash -l {0}
         run: |
@@ -316,10 +323,98 @@ jobs:
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
+  multinest_notebooks:
+    name: "Build the multinest notebooks"
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cache conda
+        uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
+        with:
+          path: ~/conda_pkgs_dir
+          key: conda-mv_notebooks-python-3.7-${{ hashFiles('ci/environment_hal.yml') }}
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+          #mamba-version: "*"
+          activate-environment: test_env
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge, threeml, defaults
+          environment-file: ci/environment_xspec.yml
+          use-only-tar-bz2: true
+
+      - name: Init Environment
+        shell: bash -l {0}
+        run: |
+          # Make sure we fail in case of error
+
+          # miniconda_os=Linux
+          # compilers="gcc_linux-64 gxx_linux-64 gfortran_linux-64"
+
+          miniconda_os=MacOSX
+          compilers="clang_osx-64 clangxx_osx-64 gfortran_osx-64"
+
+          brew update
+          brew install --cask basictex
+
+          eval "$(/usr/libexec/path_helper)"
+          #sudo apt-get install texlive
+
+          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+
+          # temporary fix for fermi tools
+
+
+      - name: Install the package
+        shell: bash -l {0}
+        run: |
+
+          pip install -e .
+
+          pip install black
+          pip install --no-binary :all: root_numpy
+          pip install git+https://github.com/desihub/speclite.git
+
+      - name: Execute the notebooks
+        shell: bash -l {0}
+        run: |
+
+          # copy the doc configuration over
+          mkdir -p ~/.config/threeML
+          cp threeML/data/doc_config.yml ~/.config/threeML/
+
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/grb080916C.md
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Bayesian_tutorial.md
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Minimization_tutorial.md
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/joint_BAT_gbm_demo.md
+          
+
+          mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
+          ls docs/notebooks
+          
+          
+        env:
+          OMP_NUM_THREADS: 1
+          MKL_NUM_THREADS: 1
+          NUMEXPR_NUM_THREADS: 1
+          MPLBACKEND: "Agg"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-multinest-${{ github.sha }}
+          path: docs/notebooks
 
           
+          
   upload_notebooks:
-    needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks]
+    needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
     name: "Upload notebooks and trigger RTD"
     runs-on: macos-latest
     
@@ -348,10 +443,9 @@ jobs:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
 
-          
-      - uses: actions/upload-artifact@v2
+      - uses: actions/download-artifact@master
         with:
-          name: notebooks-for-${{ github.sha }}
+          name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
 
       - name: Check that all notebooks are there
@@ -359,6 +453,13 @@ jobs:
         run: |
 
           ls docs/notebooks
+
+          
+          
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-${{ github.sha }}
+          path: docs/notebooks
           
 
       - name: Sleep for 5 min
