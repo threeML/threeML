@@ -157,7 +157,7 @@ jobs:
         uses: actions/cache@v2
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 0
+          CACHE_NUMBER: 1
         with:
           path: ~/conda_pkgs_dir
           key: conda-${{ env.CACHE_NUMBER }}-fermi_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
@@ -167,7 +167,7 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          #mamba-version: "*"
+          mamba-version: "*"
           activate-environment: test_env
           python-version: ${{ matrix.python-version }}
           channels: conda-forge, fermi, threeml, defaults
@@ -191,20 +191,20 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
           # temporary fix for fermi tools
-          conda install -c conda-forge clhep=2.4.4.1
+          mamba install -c conda-forge clhep=2.4.4.1
 
       - name: Install the package
         shell: bash -l {0}
         run: |
 
-          pip install -e .
+          pip3 install -e .
 
-          pip install black
-          pip install --no-binary :all: root_numpy
-          pip install git+https://github.com/desihub/speclite.git
+          pip3 install black
+          pip3 install --no-binary :all: root_numpy
+          pip3 install git+https://github.com/desihub/speclite.git
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -240,7 +240,7 @@ jobs:
         uses: actions/cache@v2
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 0
+          CACHE_NUMBER: 1
         with:
           path: ~/conda_pkgs_dir
           key: conda-${{ env.CACHE_NUMBER }}-xspec_notebooks-python-3.7-${{ hashFiles('ci/environment_xspec.yml') }}
@@ -250,7 +250,7 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          #mamba-version: "*"
+          mamba-version: "*"
           activate-environment: test_env
           python-version: ${{ matrix.python-version }}
           channels: conda-forge, threeml, xspecmodels, defaults
@@ -274,7 +274,7 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
           # temporary fix for fermi tools
 
@@ -283,11 +283,11 @@ jobs:
         shell: bash -l {0}
         run: |
 
-          pip install -e .
+          pip3 install -e .
 
-          pip install black
-          pip install --no-binary :all: root_numpy
-          pip install git+https://github.com/desihub/speclite.git
+          pip3 install black
+          pip3 install --no-binary :all: root_numpy
+          pip3 install git+https://github.com/desihub/speclite.git
 
       - name: Execute the notebooks
         shell: bash -l {0}
@@ -479,7 +479,10 @@ jobs:
         shell: bash -l {0}
         run: |
 
-          pip install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
+          brew install sphinx-doc pandoc
+          
+          pip3 install recommonmark mock
+          pip3 install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
 
           sphinx-apidoc -f -o ../docs/api/ ../threeML
         
