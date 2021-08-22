@@ -288,7 +288,6 @@ jobs:
           pip3 install black
           pip3 install --no-binary :all: root_numpy
           pip3 install git+https://github.com/desihub/speclite.git
-
       - name: Execute the notebooks
         shell: bash -l {0}
         run: |
@@ -454,26 +453,26 @@ jobs:
 
           ls docs/notebooks
 
-      - name: Cache conda
-        uses: actions/cache@v2
-        env:
-          # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 0
-        with:
-          path: ~/conda_pkgs_dir
-          key: conda-${{ env.CACHE_NUMBER }}-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
+      # - name: Cache conda
+      #   uses: actions/cache@v2
+      #   env:
+      #     # Increase this value to reset cache if etc/example-environment.yml has not changed
+      #     CACHE_NUMBER: 0
+      #   with:
+      #     path: ~/conda_pkgs_dir
+      #     key: conda-${{ env.CACHE_NUMBER }}-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
 
-      - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          auto-update-conda: true
-          auto-activate-base: false
-          #mamba-version: "*"
-          activate-environment: test_env
-          python-version: ${{ matrix.python-version }}
-          channels: conda-forge, threeml, defaults
-          environment-file: ci/environment_hal.yml
-          use-only-tar-bz2: true
+      # - name: Setup Miniconda
+      #   uses: conda-incubator/setup-miniconda@v2
+      #   with:
+      #     auto-update-conda: true
+      #     auto-activate-base: false
+      #     #mamba-version: "*"
+      #     activate-environment: test_env
+      #     python-version: ${{ matrix.python-version }}
+      #     channels: conda-forge, threeml, defaults
+      #     environment-file: ci/environment_hal.yml
+      #     use-only-tar-bz2: true
           
       - name: Build the API doc
         shell: bash -l {0}
@@ -484,7 +483,7 @@ jobs:
           pip3 install recommonmark mock
           pip3 install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
 
-          sphinx-apidoc -f -o ../docs/api/ ../threeML
+          sphinx-apidoc -f -o docs/api/ threeML
         
       - name: Build and Commit
         uses: sphinx-notes/pages@master
