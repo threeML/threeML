@@ -474,29 +474,25 @@ jobs:
           channels: conda-forge, threeml, defaults
           environment-file: ci/environment_hal.yml
           use-only-tar-bz2: true
-
-
           
-    - name: Build the API doc
-      shell: bash -l {0}
-      run: |
+      - name: Build the API doc
+        shell: bash -l {0}
+        run: |
 
-        pip install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
+          pip install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
 
-         sphinx-apidoc -f -o ../docs/api/ ../threeML
+          sphinx-apidoc -f -o ../docs/api/ ../threeML
         
-
+      - name: Build and Commit
+        uses: sphinx-notes/pages@master
+        with:
+          documentation_path: docs
         
-    - name: Build and Commit
-      uses: sphinx-notes/pages@master
-      with:
-        documentation_path: docs
-        
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: gh-pages
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
        
 
 
