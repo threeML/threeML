@@ -72,7 +72,8 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
     'sphinx_gallery.load_style',
-    "rtds_action"
+    "rtds_action",
+    "sphinx.ext.githubpages"
 
 ]
 
