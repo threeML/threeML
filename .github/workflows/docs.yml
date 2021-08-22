@@ -109,10 +109,10 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
           # temporary fix for fermi tools
-          conda install -c conda-forge clhep=2.4.4.1
+          mamba install -c conda-forge clhep=2.4.4.1
 
       - name: Install the package
         shell: bash -l {0}
@@ -359,7 +359,7 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee ultranest
+          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee ultranest
 
           # temporary fix for fermi tools
 
