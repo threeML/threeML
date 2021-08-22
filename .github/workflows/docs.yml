@@ -385,11 +385,11 @@ jobs:
 
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Bayesian_tutorial.md
 
-          cd docs/md_docs/slow_execute/
+          #          cd docs/md_docs/slow_execute/
           
-          jupytext --to ipynb --pipe black --execute Minimization_tutorial.md
+          # jupytext --to ipynb --pipe black --execute Minimization_tutorial.md
 
-          cd
+          # cd
           
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/grb080916C.md
 
@@ -454,25 +454,71 @@ jobs:
 
           ls docs/notebooks
 
-          
-          
-      - uses: actions/upload-artifact@v2
+      - name: Cache conda
+        uses: actions/cache@v2
+        env:
+          # Increase this value to reset cache if etc/example-environment.yml has not changed
+          CACHE_NUMBER: 0
         with:
-          name: notebooks-for-${{ github.sha }}
-          path: docs/notebooks
+          path: ~/conda_pkgs_dir
+          key: conda-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          auto-activate-base: false
+          #mamba-version: "*"
+          activate-environment: test_env
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge, threeml, defaults
+          environment-file: ci/environment_hal.yml
+          use-only-tar-bz2: true
+
+
+          
+    - name: Build the API doc
+      shell: bash -l {0}
+      run: |
+
+        pip install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
+
+         sphinx-apidoc -f -o ../docs/api/ ../threeML
+        
+
+        
+    - name: Build and Commit
+      uses: sphinx-notes/pages@master
+      with:
+        documentation_path: docs
+        
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+       
+
+
+
+        
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: notebooks-for-${{ github.sha }}
+      #     path: docs/notebooks
           
 
-      - name: Sleep for 5 min
-        uses: juliangruber/sleep-action@v1
-        with:
-          time: 5m
+      # - name: Sleep for 5 min
+      #   uses: juliangruber/sleep-action@v1
+      #   with:
+      #     time: 5m
 
 
 
           
-      - name: Trigger RTDs build
-        uses: dfm/rtds-action@main
-        with:
-          webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
-          webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
-          commit_ref: ${{ github.ref }}
+      # - name: Trigger RTDs build
+      #   uses: dfm/rtds-action@main
+      #   with:
+      #     webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
+      #     webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
+      #     commit_ref: ${{ github.ref }}

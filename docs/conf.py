@@ -25,29 +25,29 @@ sys.path.insert(0, os.path.abspath('..'))
 #sys.path.insert(0, os.path.abspath('../threeML/classicMLE'))
 
 
-DOCS = Path(__file__).parent
+# DOCS = Path(__file__).parent
 
-# -- Generate API documentation ------------------------------------------------
+# # -- Generate API documentation ------------------------------------------------
 
 
-def run_apidoc(app):
-    """Generage API documentation"""
-    import better_apidoc
+# def run_apidoc(app):
+#     """Generage API documentation"""
+#     import better_apidoc
 
-    better_apidoc.APP = app
-    better_apidoc.main(
-        [
-            "better-apidoc",
-            # "-t",
-            # str(docs / "_templates"),
-            "--force",
-            "--no-toc",
-            "--separate",
-            "-o",
-            str(DOCS / "api"),
-            str(DOCS / ".." / "threeML"),
-        ]
-    )
+#     better_apidoc.APP = app
+#     better_apidoc.main(
+#         [
+#             "better-apidoc",
+#             # "-t",
+#             # str(docs / "_templates"),
+#             "--force",
+#             "--no-toc",
+#             "--separate",
+#             "-o",
+#             str(DOCS / "api"),
+#             str(DOCS / ".." / "threeML"),
+#         ]
+#     )
 
 
 MOCK_MODULES = ['fermipy']
@@ -72,7 +72,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
     'sphinx_gallery.load_style',
-    "rtds_action",
+#    "rtds_action",
     "sphinx.ext.githubpages"
 
 ]
@@ -83,17 +83,17 @@ napoleon_use_param = False
 
 # The path where the artifact should be extracted
 # Note: this is relative to the conf.py file!
-rtds_action_path = "notebooks"
-# # The "prefix" used in the `upload-artifact` step of the action
-rtds_action_artifact_prefix = "notebooks-for-"
+# rtds_action_path = "notebooks"
+# # # The "prefix" used in the `upload-artifact` step of the action
+# rtds_action_artifact_prefix = "notebooks-for-"
 
 
-rtds_action_github_repo = "threeML/threeML"
+# rtds_action_github_repo = "threeML/threeML"
 
-# # A GitHub personal access token is required, more info below
-rtds_action_github_token = os.environ["GITHUB_TOKEN"]
+# # # A GitHub personal access token is required, more info below
+# rtds_action_github_token = os.environ["GITHUB_TOKEN"]
 
-rtds_action_error_if_missing = True
+# rtds_action_error_if_missing = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -312,5 +312,5 @@ texinfo_documents = [
 #     'examples/scales': 'examples/screenshot/scales.png',
 #     'examples/moebius': 'examples/screenshot/moebius.png',
 #     'examples/bars': 'examples/screenshot/bars.gif',
-def setup(app):
-    app.connect("builder-inited", run_apidoc)
+# def setup(app):
+#     app.connect("builder-inited", run_apidoc)
