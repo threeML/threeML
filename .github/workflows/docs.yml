@@ -240,7 +240,7 @@ jobs:
         uses: actions/cache@v2
         env:
           # Increase this value to reset cache if etc/example-environment.yml has not changed
-          CACHE_NUMBER: 1
+          CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
           key: conda-${{ env.CACHE_NUMBER }}-xspec_notebooks-python-3.7-${{ hashFiles('ci/environment_xspec.yml') }}
@@ -250,7 +250,7 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          mamba-version: "*"
+          #mamba-version: "*"
           activate-environment: test_env
           python-version: ${{ matrix.python-version }}
           channels: conda-forge, threeml, xspecmodels, defaults
@@ -274,7 +274,7 @@ jobs:
           eval "$(/usr/libexec/path_helper)"
           #sudo apt-get install texlive
 
-          mamba install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
+          conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
           # temporary fix for fermi tools
 
