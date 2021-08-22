@@ -16,33 +16,31 @@ jobs:
         uses: xu-cheng/texlive-action/small@v1
           
       - name: Init Environment
-        shell: bash -l {0}
+#        shell: bash -l {0}
         run: |
           set -e
           # brew update
           # brew install --cask basictex
  
-          pip install -U cython
-          pip install -U numpy scipy matplotlib
-          pip install -U jupytext jupyterthemes jupyter_latex_envs
-          pip install -U astropy
-          pip install emcee ultranest
+          pip3 install -U cython
+          pip3 install -U numpy scipy matplotlib
+          pip3 install -U jupytext jupyterthemes jupyter_latex_envs
+          pip3 install -U astropy
+          pip3 install emcee ultranest
           
           
-          pip install zeus-mcmc
-          pip install git+https://github.com/desihub/speclite.git
-          pip install black
+          pip3 install zeus-mcmc
+          pip3 install git+https://github.com/desihub/speclite.git
+          pip3 install black
           
-          pip install astromodels
+          pip3 install astromodels
           
           
       - name: Install the package
-        shell: bash -l {0}
         run: |
-          pip install -e .
+          pip3 install -e .
 
       - name: Execute the notebooks
-        shell: bash -l {0}
         run: |
           # copy the doc configuration over
           mkdir -p ~/.config/threeML
@@ -86,7 +84,7 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          #mamba-version: "*"
+          mamba-version: "*"
           activate-environment: test_env
           python-version: ${{ matrix.python-version }}
           channels: conda-forge, threeml, defaults
@@ -316,6 +314,7 @@ jobs:
         with:
           name: notebooks-for-xspec-${{ github.sha }}
           path: docs/notebooks
+
   multinest_notebooks:
     name: "Build the multinest notebooks"
     runs-on: macos-latest
@@ -336,7 +335,7 @@ jobs:
         with:
           auto-update-conda: true
           auto-activate-base: false
-          #mamba-version: "*"
+          mamba-version: "*"
           activate-environment: test_env
           python-version: ${{ matrix.python-version }}
           channels: conda-forge, threeml, defaults
@@ -421,7 +420,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
+        with:
+          fetch-depth: 0
 
       - uses: actions/download-artifact@master
         with:
@@ -489,6 +489,7 @@ jobs:
           documentation_path: docs
         
       - name: Push changes
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
