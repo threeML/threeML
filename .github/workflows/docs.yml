@@ -594,6 +594,7 @@ jobs:
 
           pip3 install numpy scipy numba astropy 
           pip3 install astromodels
+          pip3 install pandas
 
           brew install sphinx-doc pandoc
         
@@ -602,6 +603,9 @@ jobs:
 
           
           python setup.py develop
+
+          rm -rf docs/md_docs
+
           
       - uses: actions/download-artifact@master
         with:
