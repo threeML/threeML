@@ -652,7 +652,7 @@ jobs:
           documentation_path: docs
         
       - name: Push changes
-        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+#        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
