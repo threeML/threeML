@@ -120,8 +120,64 @@ jobs:
           name: notebooks-for-gof-${{ github.sha }}
           path: docs/notebooks
 
+  flux_notebooks:
+    name: "Build the flux examples notebook"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: install latex
+        uses: xu-cheng/texlive-action/small@v1
           
+      - name: Init Environment
+#        shell: bash -l {0}
+        run: |
+          set -e
+          # brew update
+          # brew install --cask basictex
  
+          pip3 install -U cython
+          pip3 install -U numpy scipy matplotlib
+          pip3 install -U jupytext jupyterthemes jupyter_latex_envs
+          pip3 install -U astropy
+          
+          pip3 install black
+          pip3 install ultranest
+          pip3 install astromodels
+          
+          
+      - name: Install the package
+        run: |
+          pip3 install -e .
+
+      - name: Execute the notebooks
+        run: |
+          # copy the doc configuration over
+          mkdir -p ~/.config/threeML
+          cp threeML/data/doc_config.yml ~/.config/threeML/
+
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/flux_examples.md
+
+          mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
+
+          ls docs/notebooks
+
+        env:
+          OMP_NUM_THREADS: 1
+          MKL_NUM_THREADS: 1
+          NUMEXPR_NUM_THREADS: 1
+          MPLBACKEND: "Agg"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-flux-${{ github.sha }}
+          path: docs/notebooks
+
+           
   hal_notebooks:
     name: "Build the HAL notebooks"
     runs-on: macos-latest
@@ -468,9 +524,53 @@ jobs:
           path: docs/notebooks
 
           
+  api_doc:
+    name: "Create the API stubs"
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+
+      - name: Install 3ML
+        run: |
+
+          pip3 install numpy scipy numba astropy 
+          pip3 install astromodels
+
+          python setup.py develop
+      
+      
+      - name: Build the API doc
+        
+        run: |
+
+          brew install sphinx-doc pandoc
+          
+          pip3 install recommonmark mock
+          pip3 install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
+          
+          sphinx-apidoc -f -o docs/api/ threeML
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: api-stubs-for-${{ github.sha }}
+          path: docs/api
+
+          
+        
+
           
   upload_notebooks:
-    needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks, gof_notebooks]
+    needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks, gof_notebooks, flux_notebooks, api_doc]
     name: "Upload notebooks and trigger RTD"
     runs-on: macos-latest
 
@@ -510,6 +610,11 @@ jobs:
           name: notebooks-for-gof-${{ github.sha }}
           path: docs/notebooks
 
+      - uses: actions/download-artifact@master
+        with:
+          name: notebooks-for-flux-${{ github.sha }}
+          path: docs/notebooks
+
           
       - uses: actions/download-artifact@master
         with:
@@ -526,43 +631,17 @@ jobs:
           name: notebooks-for-multinest-${{ github.sha }}
           path: docs/notebooks
 
+      - uses: actions/download-artifact@master
+        with:
+          name: api-stubs-for-${{ github.sha }}
+          path: docs/notebooks/api
+
+          
       - name: Check that all notebooks are there
         shell: bash -l {0}
         run: |
 
           ls docs/notebooks
-
-      # - name: Cache conda
-      #   uses: actions/cache@v2
-      #   env:
-      #     # Increase this value to reset cache if etc/example-environment.yml has not changed
-      #     CACHE_NUMBER: 0
-      #   with:
-      #     path: ~/conda_pkgs_dir
-      #     key: conda-${{ env.CACHE_NUMBER }}-hal_notebooks-python-3.7-${{ hashFiles('ci/environment_fermi.yml') }}
-
-      # - name: Setup Miniconda
-      #   uses: conda-incubator/setup-miniconda@v2
-      #   with:
-      #     auto-update-conda: true
-      #     auto-activate-base: false
-      #     #mamba-version: "*"
-      #     activate-environment: test_env
-      #     python-version: ${{ matrix.python-version }}
-      #     channels: conda-forge, threeml, defaults
-      #     environment-file: ci/environment_hal.yml
-      #     use-only-tar-bz2: true
-          
-      - name: Build the API doc
-        #shell: bash -l {0}
-        run: |
-
-          brew install sphinx-doc pandoc
-          
-          pip3 install recommonmark mock
-          pip3 install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
-
-          sphinx-apidoc -f -o docs/api/ threeML
         
       - name: Build and Commit
         uses: sphinx-notes/pages@master
