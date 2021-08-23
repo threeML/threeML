@@ -63,6 +63,64 @@ jobs:
           name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
 
+  gof_notebooks:
+    name: "Build the GOF/LRT notebook"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: install latex
+        uses: xu-cheng/texlive-action/small@v1
+          
+      - name: Init Environment
+#        shell: bash -l {0}
+        run: |
+          set -e
+          # brew update
+          # brew install --cask basictex
+ 
+          pip3 install -U cython
+          pip3 install -U numpy scipy matplotlib
+          pip3 install -U jupytext jupyterthemes jupyter_latex_envs
+          pip3 install -U astropy
+          
+          pip3 install black
+          
+          pip3 install astromodels
+          
+          
+      - name: Install the package
+        run: |
+          pip3 install -e .
+
+      - name: Execute the notebooks
+        run: |
+          # copy the doc configuration over
+          mkdir -p ~/.config/threeML
+          cp threeML/data/doc_config.yml ~/.config/threeML/
+
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/gof_lrt.md
+
+          mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
+
+          ls docs/notebooks
+
+        env:
+          OMP_NUM_THREADS: 1
+          MKL_NUM_THREADS: 1
+          NUMEXPR_NUM_THREADS: 1
+          MPLBACKEND: "Agg"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-gof-${{ github.sha }}
+          path: docs/notebooks
+
+          
  
   hal_notebooks:
     name: "Build the HAL notebooks"
@@ -415,6 +473,12 @@ jobs:
     needs: [fast_notebooks, fermi_notebooks, hal_notebooks, xspec_notebooks, multinest_notebooks]
     name: "Upload notebooks and trigger RTD"
     runs-on: macos-latest
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+          python-version: 3.7
+
     
     steps:
       - name: Checkout
@@ -422,6 +486,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install 3ML
+        run: |
+
+          pip3 install numpy scipy numba astropy 
+          pip3 install astromodels
+
+          python setup.py develop
+          
       - uses: actions/download-artifact@master
         with:
           name: notebooks-for-fermi-${{ github.sha }}
@@ -432,6 +504,12 @@ jobs:
           name: notebooks-for-fast-${{ github.sha }}
           path: docs/notebooks
 
+      - uses: actions/download-artifact@master
+        with:
+          name: notebooks-for-gof-${{ github.sha }}
+          path: docs/notebooks
+
+          
       - uses: actions/download-artifact@master
         with:
           name: notebooks-for-hal-${{ github.sha }}

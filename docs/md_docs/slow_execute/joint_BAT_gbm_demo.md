@@ -65,7 +65,7 @@ bat_rsp = get_path_of_data_file("datasets/bat/gbm_bat_joint_BAT.rsp")
 bat = OGIPLike("BAT", observation=bat_pha, response=bat_rsp)
 
 bat.set_active_measurements("15-150")
-bat.view_count_spectrum()
+bat.view_count_spectrum();
 ```
 
 ### Fermi GBM
@@ -81,7 +81,7 @@ nai6 = OGIPLike(
 
 
 nai6.set_active_measurements("8-900")
-nai6.view_count_spectrum()
+nai6.view_count_spectrum();
 
 bgo0 = OGIPLike(
     "b0",
@@ -92,7 +92,7 @@ bgo0 = OGIPLike(
 )
 
 bgo0.set_active_measurements("250-30000")
-bgo0.view_count_spectrum()
+bgo0.view_count_spectrum();
 ```
 
 ## Model setup
