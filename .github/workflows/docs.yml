@@ -537,36 +537,35 @@ jobs:
         fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
           
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.7
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
 
 
-      - name: Install 3ML
-        run: |
+    - name: Install 3ML
+      run: |
 
-          pip3 install numpy scipy numba astropy 
-          pip3 install astromodels
-
-          python setup.py develop
-      
-      
-      - name: Build the API doc
+        pip3 install numpy scipy numba astropy 
+        pip3 install astromodels
         
-        run: |
+        python setup.py develop
+      
+      
+    - name: Build the API doc
+      run: |
 
-          brew install sphinx-doc pandoc
+        brew install sphinx-doc pandoc
+        
+        pip3 install recommonmark mock
+        pip3 install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
           
-          pip3 install recommonmark mock
-          pip3 install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
-          
-          sphinx-apidoc -f -o docs/api/ threeML
+        sphinx-apidoc -f -o docs/api/ threeML
 
-      - uses: actions/upload-artifact@v2
-        with:
-          name: api-stubs-for-${{ github.sha }}
-          path: docs/api
+    - uses: actions/upload-artifact@v2
+      with:
+        name: api-stubs-for-${{ github.sha }}
+        path: docs/api
 
           
         
