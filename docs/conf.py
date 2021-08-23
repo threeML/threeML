@@ -77,8 +77,23 @@ extensions = [
 
 ]
 
+
 napoleon_google_docstring = True
-napoleon_use_param = False
+napoleon_use_param = True
+napoleon_include_private_wiqth_doc = True
+napoleon_include_init_with_doc = True
+
+
+autodoc_default_options = {
+    'members': 'var1, var2',
+    'member-order': 'bysource',
+    'special-members': '__init__',
+    'undoc-members': True,
+    'exclude-members': '__weakref__'
+}
+
+
+autodoc_typehints = 'signiture'
 
 
 # The path where the artifact should be extracted
