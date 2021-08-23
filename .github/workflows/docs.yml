@@ -589,12 +589,18 @@ jobs:
           python-version: 3.7
 
 
-      - name: Install 3ML
+      - name: Install 3ML and sphinx
         run: |
 
           pip3 install numpy scipy numba astropy 
           pip3 install astromodels
 
+          brew install sphinx-doc pandoc
+        
+          pip3 install recommonmark mock
+          pip3 install sphinx nbsphinx sphinx_rtd_theme sphinx-gallery
+
+          
           python setup.py develop
           
       - uses: actions/download-artifact@master
