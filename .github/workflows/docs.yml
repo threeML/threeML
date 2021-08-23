@@ -528,12 +528,15 @@ jobs:
     name: "Create the API stubs"
     runs-on: macos-latest
 
+    
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
 
+    - uses: actions/checkout@v2
+      with:
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+        fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+
+          
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -576,10 +579,10 @@ jobs:
 
     
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+    - uses: actions/checkout@v2
+      with:
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+        fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
 
       - name: Set up Python
         uses: actions/setup-python@v2
