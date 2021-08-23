@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jupyter: jupytext: formats: ipynb,md text_representation: extension: .md format_name: markdown format_version: ‘1.2’ jupytext_version: 1.7.1 kernelspec: display_name: Python 3 language: python name: python3 &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
+   
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+  <!--
+  <div class="admonition note">
+    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
+    </p>
+  </div>
+  -->
+  <li id="lightdark-li">
+    <label for="lightdark-checkbox" id="lightdark-label">
+      <input type="checkbox" id="lightdark-checkbox"/>
+      <div class="btn-neutral"></div>
+    </label>
+  </li>
+  
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3</li>
+    
+
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <script type="text/javascript" src=../../_static/custom.js></script>
+  
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<hr class="docutils" />
+<div class="section" id="jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3">
+<h1>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3<a class="headerlink" href="#jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3" title="Permalink to this headline">¶</a></h1>
+<!-- #region --></div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>3ML brings together multiple instrument and fitting software packages into a common framework. Thus, installing all the pieces can be a bit of a task for the user. In order to make this a less painless process, we have packaged most of the external dependencies into conda (see below). However, if you want more control over your install, 3ML is available on PyPI via pip. If you have issues with the installs, first check that you have properly installed all the external dependencies that <em>you</em> plan on using. Are their libraries accessible on you system’s standard paths? If you think that you have everything setup properly and the install does not work for you, please <a class="reference external" href="https://github.com/threeML/threeML/issues">submit an issue</a> and we will do our best to find a solution.</p>
+<div class="section" id="conda-installation-suggested">
+<h2>Conda installation (suggested)<a class="headerlink" href="#conda-installation-suggested" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://conda.io/docs/">Conda</a> is a platform independent package manager. It allows to install 3ML (and a lot of other software) without the need
+to compile anything, and in a completely separate environment from your system and your system python.</p>
+<div class="section" id="if-you-don-t-know-conda">
+<h3>If you don’t know Conda<a class="headerlink" href="#if-you-don-t-know-conda" title="Permalink to this headline">¶</a></h3>
+<p>If you are not familiar with conda, install 3ML with the automatic script which will take care of everything:</p>
+<ol class="simple">
+<li><p>Download the script from <a class="reference external" href="https://raw.githubusercontent.com/threeML/threeML/master/install_3ML.sh">here</a></p></li>
+<li><p>Run the script with <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">install_3ML.sh</span></code>. If you plan to use XSPEC models use <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">install_3ML.sh</span> <span class="pre">--with-xspec</span></code>.</p></li>
+<li><p>The script will install 3ML and then create a <code class="docutils literal notranslate"><span class="pre">threeML_init.sh</span></code> script and a <code class="docutils literal notranslate"><span class="pre">threeML_init.csh</span></code> script. Source the former if you are using Bash
+(<code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">threeML_init.sh</span></code>) and the second one if you are using Csh/Tcsh (<code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">threeML_init.csh</span></code>).</p></li>
+</ol>
+</div>
+<div class="section" id="if-you-already-know-conda">
+<h3>If you already know Conda<a class="headerlink" href="#if-you-already-know-conda" title="Permalink to this headline">¶</a></h3>
+<p>If you are familiar with Conda and you already have it installed, you can install 3ML by creating an environment with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create --name threeML -c conda-forge <span class="nv">python</span><span class="o">=</span><span class="m">3</span>.7 numpy scipy matplotlib
+</pre></div>
+</div>
+<p>then activating your environment and installing 3ML as:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate threeML
+conda install -c conda-forge -c threeml astromodels threeml
+</pre></div>
+</div>
+<p>Finally, if you also need XSPEC models you can install them by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install -c xspecmodels xspec-modelsonly
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pip">
+<h2>pip<a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h2>
+<p>If you would like to install 3ML and astromodels on their own and have more control over which dependencies you would like to use. Please to the following</p>
+<ol class="simple">
+<li><p>It is highly recommended you work within a python virtual environment to keep you base python clean</p></li>
+<li><p>install astromodels</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install astromodels
+</pre></div>
+</div>
+<ol class="simple">
+<li><p>install 3ML</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install threeml
+</pre></div>
+</div>
+<p>If you need to build other dependencies such as pagmo, multinest, XSPEC, etc., it is recommended you do this <strong>before</strong> installing astromodels!</p>
+</div>
+<div class="section" id="other-dependencies">
+<h2>Other dependencies<a class="headerlink" href="#other-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>You need to set up packages such as AERIE (for HAWC), or the Fermi Science Tools,
+before running the script, otherwise some of the functionalities will not work.</p>
+<ul>
+<li><p>AERIE for HAWC: make sure that this works before running the script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; liff-PointSourceExpectation --version
+INFO <span class="o">[</span>CommandLineConfigurator.cc, ParseCommandLine:137<span class="o">]</span>: 
+
+ liff-PointSourceExpectation
+ Aerie version: <span class="m">2</span>.04.00
+ Build type: Debug
+</pre></div>
+</div>
+<p>If it doesn’t, you need to set up the HAWC environment (refer to the appropriate
+documentation)</p>
+</li>
+<li><p>Fermi Science Tools for Fermi/LAT analysis: make sure that this works:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; gtirfs
+...
+P8R2_TRANSIENT100_V6::EDISP0
+P8R2_TRANSIENT100_V6::EDISP1
+...
+</pre></div>
+</div>
+<p>If it doesn’t, you need to configure and set up the Fermi Science Tools.</p>
+</li>
+<li><p>ROOT: ROOT is not required by 3ML, but it provides the Minuit2 minimizer which can
+be used in 3ML. If you have ROOT, make sure that this works before running the script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; root-config --version
+<span class="m">5</span>.34/36
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="install-from-source-advanced">
+<h2>Install from source (advanced)<a class="headerlink" href="#install-from-source-advanced" title="Permalink to this headline">¶</a></h2>
+<p>Remove any previous installation you might have with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; pip uninstall threeML
+&gt; pip uninstall astromodels
+&gt; pip uninstall cthreeML
+</pre></div>
+</div>
+<p>then:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; pip install numpy scipy ipython astropy numba cython
+&gt; pip install git+https://github.com/threeML/threeml.git 
+&gt; pip install git+https://github.com/threeML/astromodels.git --upgrade
+</pre></div>
+</div>
+<p>In order to use the HAWC plugin, you will also need to install cthreeML (run this <em>after</em> setting up the HAWC environment):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; pip install git+https://github.com/threeML/cthreeML.git
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>NOTE: If you do not have permission to install packages in your current python
+environment, you can still install the packages by adding the <code class="docutils literal notranslate"><span class="pre">--user</span></code> option at the
+end of each <code class="docutils literal notranslate"><span class="pre">pip</span></code> command.</p></li>
+</ul>
+<div class="section" id="tips-for-mac-users">
+<h3>Tips for Mac users<a class="headerlink" href="#tips-for-mac-users" title="Permalink to this headline">¶</a></h3>
+<p>The following paths need to be added to you DYLD_LIBRARY path if you have FORTRAN installed via these package managers:</p>
+<ul class="simple">
+<li><p>Homebrew: <code class="docutils literal notranslate"><span class="pre">DYLD_LIBRARY_PATH=/usr/local/lib/gcc/&lt;version</span> <span class="pre">number&gt;:$DYLD_LIBRARY_PATH</span></code></p></li>
+<li><p>Fink: <code class="docutils literal notranslate"><span class="pre">DYLD_LIBRARY_PATH=/sw/lib/gcc&lt;version</span> <span class="pre">number&gt;/lib:$DYLD_LIBRARY_PATH</span></code></p></li>
+</ul>
+<p>Please inform us if you have problems related to your FORTRAN distribution.</p>
+<!-- #endregion --></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

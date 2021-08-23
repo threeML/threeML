@@ -1,0 +1,506 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jupyter: jupytext: formats: ipynb,md text_representation: extension: .md format_name: markdown format_version: ‘1.2’ jupytext_version: 1.7.1 kernelspec: display_name: Python 3 language: python name: python3 &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
+   
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+  <!--
+  <div class="admonition note">
+    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
+    </p>
+  </div>
+  -->
+  <li id="lightdark-li">
+    <label for="lightdark-checkbox" id="lightdark-label">
+      <input type="checkbox" id="lightdark-checkbox"/>
+      <div class="btn-neutral"></div>
+    </label>
+  </li>
+  
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3</li>
+    
+
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <script type="text/javascript" src=../../_static/custom.js></script>
+  
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<hr class="docutils" />
+<div class="section" id="jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3">
+<h1>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3<a class="headerlink" href="#jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">capture</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">silence_warnings</span><span class="p">()</span>
+
+<span class="n">set_threeML_style</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="constructing-plugins-from-timeseries">
+<h1>Constructing plugins from TimeSeries<a class="headerlink" href="#constructing-plugins-from-timeseries" title="Permalink to this headline">¶</a></h1>
+<p>Many times we encounter event lists or sets of spectral histograms from which we would like to derive a single or set of plugins. For this purpose, we provide the <strong>TimeSeriesBuilder</strong> which provides a unified interface to time series data. Here we will demonstrate how to construct plugins from different data types.</p>
+<p>These utilities are helpers that allow you to <em>reduce data to pluigns</em> for spectral and temporal fitting. They are not plugins themselves.</p>
+<div class="section" id="constructing-time-series-objects-from-different-data-types">
+<h2>Constructing time series objects from different data types<a class="headerlink" href="#constructing-time-series-objects-from-different-data-types" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>TimeSeriesBuilder</strong> currently supports reading of the following data type:</p>
+<ul class="simple">
+<li><p>A generic PHAII data file</p></li>
+<li><p>GBM TTE/CSPEC/CTIME files</p></li>
+<li><p>LAT LLE files</p></li>
+<li><p>POLAR spectra and polarization light curves</p></li>
+<li><p>KONUS GRB data</p></li>
+</ul>
+<div class="alert alert-info"><p><strong>Note:</strong> If you would like to build a time series from your own custom data, consider creating a <code class="docutils literal notranslate"><span class="pre">TimeSeriesBuilder.from_your_data()</span></code> class method.</p>
+</div><div class="section" id="gbm-data">
+<h3>GBM Data<a class="headerlink" href="#gbm-data" title="Permalink to this headline">¶</a></h3>
+<p>Building plugins from GBM is achieved in the following fashion</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cspec_file</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s1">&#39;datasets/glg_cspec_n3_bn080916009_v01.pha&#39;</span><span class="p">)</span>
+<span class="n">tte_file</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s1">&#39;datasets/glg_tte_n3_bn080916009_v01.fit.gz&#39;</span><span class="p">)</span>
+<span class="n">gbm_rsp</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s1">&#39;datasets/glg_cspec_n3_bn080916009_v00.rsp2&#39;</span><span class="p">)</span>
+
+
+<span class="n">gbm_cspec</span> <span class="o">=</span> <span class="n">TimeSeriesBuilder</span><span class="o">.</span><span class="n">from_gbm_cspec_or_ctime</span><span class="p">(</span><span class="s1">&#39;nai3_cspec&#39;</span><span class="p">,</span>
+                                                      <span class="n">cspec_or_ctime_file</span><span class="o">=</span><span class="n">cspec_file</span><span class="p">,</span>
+                                                      <span class="n">rsp_file</span><span class="o">=</span><span class="n">gbm_rsp</span><span class="p">)</span>
+
+<span class="n">gbm_tte</span> <span class="o">=</span> <span class="n">TimeSeriesBuilder</span><span class="o">.</span><span class="n">from_gbm_tte</span><span class="p">(</span><span class="s1">&#39;nai3_tte&#39;</span><span class="p">,</span>
+                                          <span class="n">tte_file</span><span class="o">=</span><span class="n">tte_file</span><span class="p">,</span>
+                                          <span class="n">rsp_file</span><span class="o">=</span><span class="n">gbm_rsp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="lat-lle-data">
+<h3>LAT LLE data<a class="headerlink" href="#lat-lle-data" title="Permalink to this headline">¶</a></h3>
+<p>LAT LLE data is constructed in a similar fashion</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lle_file</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s1">&#39;datasets/gll_lle_bn080916009_v10.fit&#39;</span><span class="p">)</span>
+<span class="n">ft2_file</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s1">&#39;datasets/gll_pt_bn080916009_v10.fit&#39;</span><span class="p">)</span>
+<span class="n">lle_rsp</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s1">&#39;datasets/gll_cspec_bn080916009_v10.rsp&#39;</span><span class="p">)</span>
+
+<span class="n">lat_lle</span> <span class="o">=</span> <span class="n">TimeSeriesBuilder</span><span class="o">.</span><span class="n">from_lat_lle</span><span class="p">(</span><span class="s1">&#39;lat_lle&#39;</span><span class="p">,</span>
+                                        <span class="n">lle_file</span><span class="o">=</span><span class="n">lle_file</span><span class="p">,</span>
+                                        <span class="n">ft2_file</span><span class="o">=</span><span class="n">ft2_file</span><span class="p">,</span>
+                                        <span class="n">rsp_file</span><span class="o">=</span><span class="n">lle_rsp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="viewing-lightcurves-and-selecting-source-intervals">
+<h2>Viewing Lightcurves and selecting source intervals<a class="headerlink" href="#viewing-lightcurves-and-selecting-source-intervals" title="Permalink to this headline">¶</a></h2>
+<p>All time series objects share the same commands to get you to a plugin.
+Let’s have a look at the GBM TTE lightcurve.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="n">start</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span><span class="n">stop</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Perhaps we want to fit the time interval from 0-10 seconds. We make a selection like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">gbm_tte</span><span class="o">.</span><span class="n">set_active_time_interval</span><span class="p">(</span><span class="s1">&#39;0-10&#39;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="n">start</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span><span class="n">stop</span><span class="o">=</span><span class="mi">200</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>For event list style data like time tagged events, the selection is <em>exact</em>. However, pre-binned data in the form of e.g. PHAII files will have the selection automatically adjusted to the underlying temporal bins.</p>
+<p>Several discontinuous time selections can be made.</p>
+</div>
+<div class="section" id="fitting-a-polynomial-background">
+<h2>Fitting a polynomial background<a class="headerlink" href="#fitting-a-polynomial-background" title="Permalink to this headline">¶</a></h2>
+<p>In order to get to a plugin, we need to model and create an estimated background in each channel ($B_i$) for our interval of interest. The process that we have implemented is to fit temporal off-source regions to polynomials ($P(t;\vec{\theta})$) in time. First, a polynomial is fit to the total count rate. From this fit we determine the best polynomial order via a likelihood ratio test, unless the user supplies a polynomial order in the constructor or directly via the polynomial_order attribute. Then, this order of polynomial is fit to every channel in the data.</p>
+<p>From the polynomial fit, the polynomial is integrated in time over the active source interval to estimate the count rate in each channel. The estimated background and background errors then stored for each channel.</p>
+<p>$$ B_i = \int_{T_1}^{T_2}P(t;\vec{\theta}) {\rm d}t $$</p>
+<div class="highlight-python tags=[&quot;nbsphinx-thumbnail&quot;] notranslate"><div class="highlight"><pre><span></span>gbm_tte.set_background_interval(&#39;-24--5&#39;,&#39;100-200&#39;)
+fig = gbm_tte.view_lightcurve(start=-20,stop=200)
+</pre></div>
+</div>
+<div class="section" id="what-occurs-during-a-fit">
+<h3>What occurs during a fit?<a class="headerlink" href="#what-occurs-during-a-fit" title="Permalink to this headline">¶</a></h3>
+<p>In the background, the data type of the time series is analyzed (is it Poisson of Gaussian distributed?) and the time series are converted to plugins of counts / measurements vs. time. These plugins are then fit with either MLE or Bayesian methods just any other 3ML analysis. While this happens behinds the scene, it is possible to interface to these low-level operations are create your own custom background routines!</p>
+<p>For event list data, binned or unbinned background fits are possible. For pre-binned data, only a binned fit is possible.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">set_background_interval</span><span class="p">(</span><span class="s1">&#39;-24--5&#39;</span><span class="p">,</span><span class="s1">&#39;100-200&#39;</span><span class="p">,</span><span class="n">unbinned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="saving-the-background-fit">
+<h2>Saving the background fit<a class="headerlink" href="#saving-the-background-fit" title="Permalink to this headline">¶</a></h2>
+<p>The background polynomial coefficients can be saved to disk for faster manipulation of time series data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">save_background</span><span class="p">(</span><span class="s1">&#39;background_store&#39;</span><span class="p">,</span><span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte_reloaded</span> <span class="o">=</span> <span class="n">TimeSeriesBuilder</span><span class="o">.</span><span class="n">from_gbm_tte</span><span class="p">(</span><span class="s1">&#39;nai3_tte&#39;</span><span class="p">,</span>
+                                          <span class="n">tte_file</span><span class="o">=</span><span class="n">tte_file</span><span class="p">,</span>
+                                          <span class="n">rsp_file</span><span class="o">=</span><span class="n">gbm_rsp</span><span class="p">,</span>
+                                          <span class="n">restore_background</span><span class="o">=</span><span class="s1">&#39;background_store.h5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">gbm_tte_reloaded</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-a-plugin">
+<h2>Creating a plugin<a class="headerlink" href="#creating-a-plugin" title="Permalink to this headline">¶</a></h2>
+<p>With our background selections made, we can now create a plugin instance. In the case of GBM data, this results in a <strong>DispersionSpectrumLike</strong>
+plugin. Please refer to the Plugins documentation for more details.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_plugin</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">to_spectrumlike</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_plugin</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="time-resolved-binning-and-plugin-creation">
+<h2>Time-resolved binning and plugin creation<a class="headerlink" href="#time-resolved-binning-and-plugin-creation" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to temporally bin time series. There are up to four methods provided depending on the type of time series being used:</p>
+<ul class="simple">
+<li><p>Constant cadence (all time series)</p></li>
+<li><p>Custom (all time series)</p></li>
+<li><p>Significance (all time series)</p></li>
+<li><p>Bayesian Blocks (event lists)</p></li>
+</ul>
+<div class="section" id="constant-cadence">
+<h3>Constant Cadence<a class="headerlink" href="#constant-cadence" title="Permalink to this headline">¶</a></h3>
+<p>Constant cadence bins are defined by a start and a stop time along with a time delta.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">2.</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom">
+<h3>Custom<a class="headerlink" href="#custom" title="Permalink to this headline">¶</a></h3>
+<p>Custom time bins can be created by providing a contiguous list of start and stop times.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">time_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">.5</span><span class="p">,</span><span class="mf">.63</span><span class="p">,</span><span class="mf">20.</span><span class="p">,</span><span class="mf">21.</span><span class="p">])</span>
+
+<span class="n">starts</span> <span class="o">=</span> <span class="n">time_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">stops</span> <span class="o">=</span> <span class="n">time_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">gbm_tte</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">starts</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="n">stops</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;custom&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="significance">
+<h3>Significance<a class="headerlink" href="#significance" title="Permalink to this headline">¶</a></h3>
+<p>Time bins can be created by specifying a significance of signal to background if a background fit has been performed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mf">50.</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;significance&#39;</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="bayesian-blocks">
+<h3>Bayesian Blocks<a class="headerlink" href="#bayesian-blocks" title="Permalink to this headline">¶</a></h3>
+<p>The Bayesian Blocks algorithm (Scargle et al. 2013) can be used to bin event list by looking for significant changes in the rate.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mf">50.</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bayesblocks&#39;</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="mf">.01</span><span class="p">,</span> <span class="n">use_background</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="working-with-bins">
+<h3>Working with bins<a class="headerlink" href="#working-with-bins" title="Permalink to this headline">¶</a></h3>
+<p>The light curve can be displayed by supplying the use_binner option to display the time binning</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="n">use_binner</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The bins can all be writted to a PHAII file for analysis via OGIPLike.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_tte</span><span class="o">.</span><span class="n">write_pha_from_binner</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;out&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">force_rsp_write</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># if you need to write the RSP to a file. We try to choose the best option for you.</span>
+</pre></div>
+</div>
+<p>Similarly, we can create a list of plugins directly from the time series.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">my_plugins</span> <span class="o">=</span> <span class="n">gbm_tte</span><span class="o">.</span><span class="n">to_spectrumlike</span><span class="p">(</span><span class="n">from_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

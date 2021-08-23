@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jupyter: jupytext: formats: ipynb,md text_representation: extension: .md format_name: markdown format_version: ‘1.2’ jupytext_version: 1.7.1 kernelspec: display_name: Python 3 language: python name: python3 &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
+   
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+  <!--
+  <div class="admonition note">
+    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
+    </p>
+  </div>
+  -->
+  <li id="lightdark-li">
+    <label for="lightdark-checkbox" id="lightdark-label">
+      <input type="checkbox" id="lightdark-checkbox"/>
+      <div class="btn-neutral"></div>
+    </label>
+  </li>
+  
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3</li>
+    
+
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <script type="text/javascript" src=../../_static/custom.js></script>
+  
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<hr class="docutils" />
+<div class="section" id="jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3">
+<h1>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3<a class="headerlink" href="#jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="minimization">
+<h1>Minimization<a class="headerlink" href="#minimization" title="Permalink to this headline">¶</a></h1>
+<p>When using a Maximum Likelihood analysis we want to find the maximum of the likelihood $L(\vec{\theta})$ given one or more datasets (i.e., plugin instances) and one model containing one or more sources with free parameters $\vec{\theta}$. Most of the available algorithms for function optimization find the minimum, not the maximum, of a function. Also, since the likelihood function is usually the product of many probabilities, bounded to be $0 &lt; p &lt; 1$, $L(\vec{\theta})$ tend to be very small. Hence, it is much more tractable numerically to deal with the logarithm of the likelihood. Therefore, instead of finding the maximum of the likelihood $L$, we find the minimum of the $-\log{L(\vec{\theta})}$ function. Of course, the values of $\vec{\theta}$ minimizing $-\log{L}$ are the same that maximize $L$, i.e.:</p>
+<p>argmax$<em>{\vec{\theta}}~\left( L(\vec{\theta}) \right)$ = argmin$</em>{\vec{\theta}}~\left(-\log{L(\vec{\theta})}\right)$.</p>
+<p>Various minimizers are available in 3ML. We can divide them in two groups: local minimizers and global minimizers.</p>
+<div class="section" id="local-minimizers">
+<h2>Local minimizers<a class="headerlink" href="#local-minimizers" title="Permalink to this headline">¶</a></h2>
+<p>Most of the existing optimization algorithms are local minimizers (MINUIT, Levenberg–Marquardt, Netwton…).
+A local minimizer starts from the current values for the free parameters $\vec{\theta}$ and try to reach the closest minimum of a function $f(\vec{\theta})$ (in 3ML this is usually the $-\log{L}$).</p>
+<p>Many minimizers are based on the idea of gradient descent, i.e., they compute the local gradient of $f(\vec{\theta})$ and follow the function along the direction of steepest discent until the minimum. There are however also gradient-free algorithms, like for example <a class="reference external" href="http://www.pyopt.org/reference/optimizers.cobyla.html">COBYLA</a>. While going into the details of how each algorithm works is beyond the scope, we illustrate here an example by using the Minuit algorithm.</p>
+<p>Let’s start by importing what we need in the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">capture</span>
+<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">silence_warnings</span><span class="p">()</span>
+<span class="n">set_threeML_style</span><span class="p">()</span>
+
+<span class="kn">from</span> <span class="nn">threeML.minimizer.tutorial_material</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>Let’s get a JointLikelihood object like the one we would have in a normal 3ML analysis. We use a custom function, prepared for this tutorial, which gives a JointLikelihood object having a very simple model with one free parameter ($\mu$), and with a likelihood having a very simple shape:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This returns a JointLikelihood object with a simple likelihood function,</span>
+<span class="c1"># and the corresponding Model instance. These objects are what you will have</span>
+<span class="c1"># in a typical 3ML analysis. The Model contains one point source, named &quot;test&quot;,</span>
+<span class="c1"># with a spectrum called &quot;simple&quot;</span>
+<span class="n">jl</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">get_joint_likelihood_object_simple_likelihood</span><span class="p">()</span>
+
+<span class="c1"># Let&#39;s look at the likelihood function, which in this illustrative example</span>
+<span class="c1"># has a very simple shape</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plot_likelihood_function</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now let’s set up the Minuit minimizer and minimize the -log(L), starting from $\mu = 1$:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="c1"># The minuit minimizer is the default, so no setup is necessary</span>
+<span class="c1"># quiet = True means that no result will be printed</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># This plots the path that Minuit has traveled looking for the minimum</span>
+<span class="c1"># Arrows connect the different points, starting from 1.0 and going</span>
+<span class="c1"># to 40, the minimum</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_minimizer_path</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now let’s do the same, but starting from $\mu=80$:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">80.0</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_minimizer_path</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and from $\mu=20$:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">20.0</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_minimizer_path</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It is clear that, depending on the starting point, minuit makes different steps trying to reach the minimum. In this last case, at one point Minuit overshoots the minimum jumping all the way from $\sim 30$ to $\sim 80$, then realizes the mistake and goes back.</p>
+<p>In the case of a simple, convex likelihood like this one, Minuit finds easily the minimum independently of the starting point.</p>
+</div>
+<div class="section" id="global-minimization">
+<h2>Global minimization<a class="headerlink" href="#global-minimization" title="Permalink to this headline">¶</a></h2>
+<p>Now let us consider the case of a more complicated $-\log{L}$ function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jl</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">get_joint_likelihood_object_complex_likelihood</span><span class="p">()</span>
+
+<span class="n">_</span> <span class="o">=</span> <span class="n">plot_likelihood_function</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This likelihood function has 3 minima: 2 are local and one (at $\mu = 60$) is the global minimum. Let’s see how Minuit performs in this case. First we start from 1.0:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_minimizer_path</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Minuit has found the local minimum, not the global one. Now we start from 80:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mi">70</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">quiet</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_minimizer_path</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we found the global minimum. This is a simple example to show that the solution find by a local minimizers can depend on the starting point, and might not be the global minimum. In practice, one can rarely be guaranteed that the likelihood function has only one minimum. This is especially true in many dimensions and in cases of data with poor statistic.</p>
+<p>To alleviate this problem 3ML offers some “global minimizers”. While it is impossible to guarantee that a global minimum will be reached, these minimizers are much more robust towards this kind of problems, at the expenses of a considerable longer runtime.</p>
+<p>In 3ML each global minimizer must be associated with a local minimizer. The latter is used as final step to improve the solution found by the global minimizer and to compute the error matrix.</p>
+<div class="section" id="grid-minimizer">
+<h3>Grid minimizer<a class="headerlink" href="#grid-minimizer" title="Permalink to this headline">¶</a></h3>
+<p>The idea behind this is very simple: the user defines a grid of values for the parameters, which are used as starting points for minimization performed by a local minimizers. At the end, the solution with the smallest value for $-\log{L}$ will be used as final solution.</p>
+<p>For example, let’s define a grid of 10 values for $\mu$. This means that 3ML will perform 10 local minimizations starting each time from a different point in the grid:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># Create an instance of the GRID minimizer</span>
+<span class="n">grid_minimizer</span> <span class="o">=</span> <span class="n">GlobalMinimization</span><span class="p">(</span><span class="s2">&quot;grid&quot;</span><span class="p">)</span>
+    
+<span class="c1"># Create an instance of a local minimizer, which will be used by GRID</span>
+<span class="n">local_minimizer</span> <span class="o">=</span> <span class="n">LocalMinimization</span><span class="p">(</span><span class="s2">&quot;minuit&quot;</span><span class="p">)</span>
+
+<span class="c1"># Define a grid for mu as 10 steps between 2 and 80</span>
+<span class="n">my_grid</span> <span class="o">=</span> <span class="p">{</span><span class="n">model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">mu</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">10</span><span class="p">)}</span>
+
+<span class="c1"># Setup the global minimization</span>
+<span class="c1"># NOTE: the &quot;callbacks&quot; option is useless in a normal 3ML analysis, it is</span>
+<span class="c1"># here only to keep track of the evolution for the plot</span>
+<span class="n">grid_minimizer</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">second_minimization</span><span class="o">=</span><span class="n">local_minimizer</span><span class="p">,</span> <span class="n">grid</span> <span class="o">=</span> <span class="n">my_grid</span><span class="p">,</span> 
+                     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">get_callback</span><span class="p">(</span><span class="n">jl</span><span class="p">)])</span>
+
+<span class="c1"># Set the minimizer for the JointLikelihood object</span>
+<span class="n">jl</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="n">grid_minimizer</span><span class="p">)</span>
+
+<span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_minimizer_path</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The GRID minimizer has found the global minimum.</p>
+<p>Of course the GRID minimizer can be used in multiple dimensions (simply define a grid for the other parameters as well). It is a simple brute force solution that works well in practice, especially when the likelihood function computation is not too time-consuming. When there are many parameters, you should choose carefully the parameters to use in the grid. For example, when looking for a spectral line in a spectrum, it makes sense to use the location of the line as parameter in the grid, but not its normalization.</p>
+</div>
+<div class="section" id="pagmo-minimizer">
+<h3>PAGMO minimizer<a class="headerlink" href="#pagmo-minimizer" title="Permalink to this headline">¶</a></h3>
+<p>The Pagmo minimizer is an open-source optimization suite provided by the European Space Agency:</p>
+<p>https://esa.github.io/pagmo2/</p>
+<p>It contains a lot of algorithms for optimization of different kinds:</p>
+<p>https://esa.github.io/pagmo2/docs/algorithm_list.html</p>
+<p>and it is very powerful. In order to be able to use it you need to install the python package pygmo (make sure to have version &gt;= 2, as the old version 1.x has a different API and won’t work with 3ML).</p>
+<p>In Pagmo/pygmo, candidate solutions to the minimization are called “individuals”. A population of individuals over which an algorithm acts to improve the solutions is called “island”. An ensamble of islands that can share solutions along a defined topology and thus learn on their reciprocal progress is called “archipelago”. The evolution of the populations can be executed more than once (“evolution cycles”).</p>
+<p>After the pygmo section of the optimization has been completed, the secondary minimizer will be used to further improve on the solution (if possible) and to compute the covariance matrix.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reset the parameter to a value different from the best fit found</span>
+<span class="c1"># by previous algorithms</span>
+<span class="n">jl</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">get_joint_likelihood_object_complex_likelihood</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">2.5</span>
+
+<span class="c1"># Create an instance of the PAGMO minimizer</span>
+<span class="n">pagmo_minimizer</span> <span class="o">=</span> <span class="n">GlobalMinimization</span><span class="p">(</span><span class="s2">&quot;pagmo&quot;</span><span class="p">)</span>
+
+<span class="c1"># Select one of the many algorithms provided by pagmo</span>
+<span class="c1"># (see https://esa.github.io/pagmo2/docs/algorithm_list.html</span>
+<span class="c1"># for a list).</span>
+<span class="c1"># In this case we use the Artificial Bee Colony algorithm</span>
+<span class="c1"># (see here for a description: https://link.springer.com/article/10.1007/s10898-007-9149-x)</span>
+
+<span class="kn">import</span> <span class="nn">pygmo</span>
+<span class="n">my_algorithm</span> <span class="o">=</span> <span class="n">pygmo</span><span class="o">.</span><span class="n">algorithm</span><span class="p">(</span><span class="n">pygmo</span><span class="o">.</span><span class="n">bee_colony</span><span class="p">(</span><span class="n">gen</span><span class="o">=</span><span class="mi">20</span><span class="p">))</span>
+
+<span class="c1"># Create an instance of a local minimizer</span>
+<span class="n">local_minimizer</span> <span class="o">=</span> <span class="n">LocalMinimization</span><span class="p">(</span><span class="s2">&quot;minuit&quot;</span><span class="p">)</span>
+
+<span class="c1"># Setup the global minimization</span>
+<span class="n">pagmo_minimizer</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">second_minimization</span> <span class="o">=</span> <span class="n">local_minimizer</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="n">my_algorithm</span><span class="p">,</span>
+                      <span class="n">islands</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">population_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">evolution_cycles</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Set the minimizer for the JointLikelihood object</span>
+<span class="n">jl</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="n">pagmo_minimizer</span><span class="p">)</span>
+
+<span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="c1"># NOTE: given the inner working of pygmo, it is not possible</span>
+<span class="c1"># to plot the evolution</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="multinest-minimizer">
+<h3>Multinest minimizer<a class="headerlink" href="#multinest-minimizer" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/farhanferoz/MultiNest">MultiNest</a> is a Bayesian inference tool which calculates the evidence and explores the parameter space which may contain multiple posterior modes and pronounced (curving) degeneracies in moderately high dimensions. It is not strictly a minimizer. However, given its capacity to explore multiple modes of the likelihood function (i.e., multiple local minima), it can be used as a global minimizer.</p>
+<p>The Multinest minimizer in 3ML forms a posterior probability using the likelihood multiplied by uniformative priors. The priors are automatically chosen (uniform if the allowed parameter range is less than 2 orders of magnitudes or negative values are allowed, log-uniform otherwise). Then, Multinest is run in multimodal mode (multimodal=True). At the end of the run, among all the values of the $-\log{L}$ traversed by Multinest, the smaller one is chosen as starting point for the local minimizer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reset the parameter to a value different from the best fit found</span>
+<span class="c1"># by previous algorithms</span>
+<span class="n">jl</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="n">get_joint_likelihood_object_complex_likelihood</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">test</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">5.0</span>
+
+<span class="c1"># Create an instance of the multinest minimizer</span>
+<span class="n">multinest_minimizer</span> <span class="o">=</span> <span class="n">GlobalMinimization</span><span class="p">(</span><span class="s2">&quot;multinest&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create an instance of a local minimizer</span>
+<span class="n">local_minimizer</span> <span class="o">=</span> <span class="n">LocalMinimization</span><span class="p">(</span><span class="s2">&quot;minuit&quot;</span><span class="p">)</span>
+
+<span class="c1"># Setup the global minimization</span>
+<span class="n">multinest_minimizer</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">second_minimization</span> <span class="o">=</span> <span class="n">local_minimizer</span><span class="p">,</span> <span class="n">live_points</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Set the minimizer for the JointLikelihood object</span>
+<span class="n">jl</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="n">multinest_minimizer</span><span class="p">)</span>
+
+<span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="c1"># Plots the point traversed by Multinest</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plot_minimizer_path</span><span class="p">(</span><span class="n">jl</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

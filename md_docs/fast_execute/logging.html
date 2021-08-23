@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jupyter: jupytext: formats: ipynb,md text_representation: extension: .md format_name: markdown format_version: ‘1.2’ jupytext_version: 1.7.1 kernelspec: display_name: Python 3 language: python name: python3 &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
+   
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+  <!--
+  <div class="admonition note">
+    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
+    </p>
+  </div>
+  -->
+  <li id="lightdark-li">
+    <label for="lightdark-checkbox" id="lightdark-label">
+      <input type="checkbox" id="lightdark-checkbox"/>
+      <div class="btn-neutral"></div>
+    </label>
+  </li>
+  
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3</li>
+    
+
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <script type="text/javascript" src=../../_static/custom.js></script>
+  
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<hr class="docutils" />
+<div class="section" id="jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3">
+<h1>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3<a class="headerlink" href="#jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3" title="Permalink to this headline">¶</a></h1>
+<!-- #region --></div>
+<div class="section" id="logging-and-verbosity">
+<h1>Logging and Verbosity<a class="headerlink" href="#logging-and-verbosity" title="Permalink to this headline">¶</a></h1>
+<p>We have recently switched to reporting information to the user via logging. Logging in 3ML occurs in three different ways:</p>
+<ul class="simple">
+<li><p>to the console (jupyter or command line)</p></li>
+<li><p>a user log file</p></li>
+<li><p>a debug log file</p></li>
+</ul>
+<p>The first two files record information relvant to the average 3ML user. The debug file records low level information useful when trying to solve runtime errors.</p>
+<p>The logging of 3ML is configurable in the configuration file.</p>
+<!-- #endregion --><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">capture</span>
+<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="n">threeML_config</span>
+
+<span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;logging&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>First, <strong>the location of the log files can be set</strong> before start a 3ML session in python. By default, logging to the debug file is off (<strong>developer</strong> switch). The <strong>console</strong> and <strong>usr</strong> switches can also be disabled by default to completely silence 3ML. Additionally, the default logging level of 3ML can be set for both the usr and console logs.</p>
+<div class="section" id="logging-controls-and-verbosity">
+<h2>Logging controls and verbosity<a class="headerlink" href="#logging-controls-and-verbosity" title="Permalink to this headline">¶</a></h2>
+<p>During a 3ML session, it may be diserable to toggle the state of the logger for certain actions. While it is possible to access the logger and handlers from <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">threeml.io.logging</span></code> and following the <a class="reference external" href="https://docs.python.org/3/howto/logging.html">standard practices</a> of python logging, we provide some simple utilites to toggle the state the logger.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="n">silence_logs</span><span class="p">,</span> <span class="n">silence_warnings</span><span class="p">,</span> <span class="n">activate_logs</span><span class="p">,</span> <span class="n">activate_warnings</span><span class="p">,</span> <span class="n">update_logging_level</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;threeML&quot;</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Hello there&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If we want to shut off all logging for a few operations, we can call <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">silence_logs()</span></code> which diable all logs</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Now you see me&quot;</span><span class="p">)</span>
+
+<span class="c1"># logging will be silenced</span>
+<span class="n">silence_logs</span><span class="p">()</span>
+
+<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Now you don&#39;t&quot;</span><span class="p">)</span>
+
+<span class="c1"># now we can restore the LAST state of the logs </span>
+<span class="c1"># before we silenced them</span>
+<span class="n">activate_logs</span><span class="p">()</span>
+
+<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;I&#39;m back&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>3ML has a lot of useful warning information. Sometimes we just want to get on with out analysis and now have to see this. <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">silence_warnings()</span></code> removes warnings while maintained all other logs</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;I am tired of&quot;</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;being warned&quot;</span><span class="p">)</span>
+
+<span class="c1"># silence warnings temporarily</span>
+<span class="n">silence_warnings</span><span class="p">()</span>
+<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;so I will turn off&quot;</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;all the IMPORTANT warning info&quot;</span><span class="p">)</span>
+
+<span class="c1"># and bring them back</span>
+<span class="n">activate_warnings</span><span class="p">()</span>
+<span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;I hope your computer didn&#39;t crash in the mean time&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can also control the level of the console log:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">update_logging_level</span><span class="p">(</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span>
+
+<span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Now we can see low level logging&quot;</span><span class="p">)</span>
+
+<span class="n">update_logging_level</span><span class="p">(</span><span class="s2">&quot;CRITICAL&quot;</span><span class="p">)</span>
+
+<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;This is invisible&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="progress-bars">
+<h2>Progress bars<a class="headerlink" href="#progress-bars" title="Permalink to this headline">¶</a></h2>
+<p>Some analyses take a while and it is nice to see that something is happening, or at least point to the screen when our boss walks by and we are on twitter to show that we are still working. Thus, 3ML reports the progress of various tasks with progress bars.</p>
+<p>These are configurable from the configuration file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">threeML_config</span><span class="p">[</span><span class="s2">&quot;interface&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>We see that it is possible to show or not show progress for all of 3ML. However, it is also possible to toggle the progress bars during a session</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="n">silence_progress_bars</span><span class="p">,</span> <span class="n">activate_progress_bars</span><span class="p">,</span> <span class="n">toggle_progress_bars</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.progress_bar</span> <span class="kn">import</span> <span class="n">trange</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">activate_progress_bars</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;progressive&quot;</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="c1"># this will turn of progress for all of 3ML</span>
+<span class="n">silence_progress_bars</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;conservative&quot;</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="c1"># toggling the progress bar simply switches the state</span>
+<span class="n">toggle_progress_bars</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;more progress&quot;</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="loud-and-quiet">
+<h2>Loud and Quiet<a class="headerlink" href="#loud-and-quiet" title="Permalink to this headline">¶</a></h2>
+<p>If you want to silence everything or turn everything on, there are toggles for this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="n">quiet_mode</span><span class="p">,</span> <span class="n">loud_mode</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">quiet_mode</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;invisible&quot;</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;you will not see me&quot;</span><span class="p">)</span>
+
+<span class="n">loud_mode</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;visible&quot;</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;here I am&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

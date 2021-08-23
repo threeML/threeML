@@ -1,0 +1,603 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jupyter: jupytext: formats: ipynb,md text_representation: extension: .md format_name: markdown format_version: ‘1.2’ jupytext_version: 1.7.1 kernelspec: display_name: Python 3 language: python name: python3 &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
+   
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+  <!--
+  <div class="admonition note">
+    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
+    </p>
+  </div>
+  -->
+  <li id="lightdark-li">
+    <label for="lightdark-checkbox" id="lightdark-label">
+      <input type="checkbox" id="lightdark-checkbox"/>
+      <div class="btn-neutral"></div>
+    </label>
+  </li>
+  
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3</li>
+    
+
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <script type="text/javascript" src=../../_static/custom.js></script>
+  
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<hr class="docutils" />
+<div class="section" id="jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3">
+<h1>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3<a class="headerlink" href="#jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="analyzing-grb-080916c">
+<h1>Analyzing GRB 080916C<a class="headerlink" href="#analyzing-grb-080916c" title="Permalink to this headline">¶</a></h1>
+<p><img alt="Alt text" src="https://astrobites.org/wp-content/uploads/2014/10/NASAGRBwhoa-1024x576.jpg" />
+<em>(NASA/Swift/Cruz deWilde)</em></p>
+<p>To demonstrate the capabilities and features of 3ML in, we will go through a time-integrated and time-resolved analysis. This example serves as a standard way to analyze Fermi-GBM data with 3ML as well as a template for how you can design your instrument’s analysis pipeline with 3ML if you have similar data.</p>
+<p>3ML provides utilities to reduce time series data to plugins in a <em>correct</em> and <em>statistically justified</em> way (e.g., background fitting of Poisson data is done with a Poisson likelihood). The approach is generic and can be extended. For more details, see the <a class="reference external" href="https://threeml.readthedocs.io/en/stable/notebooks/Building_Plugins_from_TimeSeries.html">time series documentation</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">capture</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+
+<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">silence_warnings</span><span class="p">()</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
+<span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">set_threeML_style</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="examining-the-catalog">
+<h2>Examining the catalog<a class="headerlink" href="#examining-the-catalog" title="Permalink to this headline">¶</a></h2>
+<p>As with Swift and Fermi-LAT, 3ML provides a simple interface to the on-line Fermi-GBM catalog. Let’s get the information for GRB 080916C.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gbm_catalog</span> <span class="o">=</span> <span class="n">FermiGBMBurstCatalog</span><span class="p">()</span>
+<span class="n">gbm_catalog</span><span class="o">.</span><span class="n">query_sources</span><span class="p">(</span><span class="s2">&quot;GRB080916009&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To aid in quickly replicating the catalog analysis, and thanks to the tireless efforts of the Fermi-GBM team, we have added the ability to extract the analysis parameters from the catalog as well as build an <strong>astromodels</strong> model with the best fit parameters baked in. Using this information, one can quickly run through the catalog an replicate the entire analysis with a script. Let’s give it a try.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grb_info</span> <span class="o">=</span>  <span class="n">gbm_catalog</span><span class="o">.</span><span class="n">get_detector_information</span><span class="p">()[</span><span class="s2">&quot;GRB080916009&quot;</span><span class="p">]</span>
+
+<span class="n">gbm_detectors</span> <span class="o">=</span> <span class="n">grb_info</span><span class="p">[</span><span class="s1">&#39;detectors&#39;</span><span class="p">]</span>
+<span class="n">source_interval</span> <span class="o">=</span> <span class="n">grb_info</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">][</span><span class="s2">&quot;fluence&quot;</span><span class="p">]</span>
+<span class="n">background_interval</span> <span class="o">=</span> <span class="n">grb_info</span><span class="p">[</span><span class="s2">&quot;background&quot;</span><span class="p">][</span><span class="s2">&quot;full&quot;</span><span class="p">]</span>
+<span class="n">best_fit_model</span> <span class="o">=</span> <span class="n">grb_info</span><span class="p">[</span><span class="s2">&quot;best fit model&quot;</span><span class="p">][</span><span class="s2">&quot;fluence&quot;</span><span class="p">]</span>
+<span class="n">model</span> <span class="o">=</span>  <span class="n">gbm_catalog</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">best_fit_model</span><span class="p">,</span> <span class="s2">&quot;fluence&quot;</span><span class="p">)[</span><span class="s2">&quot;GRB080916009&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="downloading-the-data">
+<h2>Downloading the data<a class="headerlink" href="#downloading-the-data" title="Permalink to this headline">¶</a></h2>
+<p>We provide a simple interface to download the Fermi-GBM data. Using the information from the catalog that we have extracted, we can download just the data from the detectors that were used for the catalog analysis. This will download the CSPEC, TTE and instrument response files from the on-line database.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dload</span> <span class="o">=</span> <span class="n">download_GBM_trigger_data</span><span class="p">(</span><span class="s2">&quot;bn080916009&quot;</span><span class="p">,</span><span class="n">detectors</span><span class="o">=</span><span class="n">gbm_detectors</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s first examine the catalog fluence fit. Using the <strong>TimeSeriesBuilder</strong>, we can fit the background, set the source interval, and create a 3ML plugin for the analysis. We will loop through the detectors, set their appropriate channel selections, and ensure there are enough counts in each bin to make the <a class="reference external" href="https://giacomov.github.io/Bias-in-profile-poisson-likelihood/">PGStat profile likelihood valid</a>.</p>
+<ul class="simple">
+<li><p>First we use the CSPEC data to fit the background using the background selections. We use CSPEC because it has a longer duration for fitting the background.</p></li>
+<li><p>The background is saved to an HDF5 file that stores the polynomial coefficients and selections which we can read in to the TTE file later.</p></li>
+<li><p>The light curve is plotted.</p></li>
+<li><p>The source selection from the catalog is set and <strong>DispersionSpectrumLike</strong> plugin is created.</p></li>
+<li><p>The plugin has the standard GBM channel selections for spectral analysis set.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fluence_plugins</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">time_series</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">det</span> <span class="ow">in</span> <span class="n">gbm_detectors</span><span class="p">:</span>
+
+    
+    
+    <span class="n">ts_cspec</span> <span class="o">=</span> <span class="n">TimeSeriesBuilder</span><span class="o">.</span><span class="n">from_gbm_cspec_or_ctime</span><span class="p">(</span>
+    <span class="n">det</span><span class="p">,</span> <span class="n">cspec_or_ctime_file</span><span class="o">=</span><span class="n">dload</span><span class="p">[</span><span class="n">det</span><span class="p">][</span><span class="s2">&quot;cspec&quot;</span><span class="p">],</span> <span class="n">rsp_file</span><span class="o">=</span><span class="n">dload</span><span class="p">[</span><span class="n">det</span><span class="p">][</span><span class="s2">&quot;rsp&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">ts_cspec</span><span class="o">.</span><span class="n">set_background_interval</span><span class="p">(</span><span class="o">*</span><span class="n">background_interval</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
+    <span class="n">ts_cspec</span><span class="o">.</span><span class="n">save_background</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">det</span><span class="si">}</span><span class="s2">_bkg.h5&quot;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">ts_tte</span> <span class="o">=</span> <span class="n">TimeSeriesBuilder</span><span class="o">.</span><span class="n">from_gbm_tte</span><span class="p">(</span>
+        <span class="n">det</span><span class="p">,</span>
+        <span class="n">tte_file</span><span class="o">=</span><span class="n">dload</span><span class="p">[</span><span class="n">det</span><span class="p">][</span><span class="s2">&quot;tte&quot;</span><span class="p">],</span>
+        <span class="n">rsp_file</span><span class="o">=</span><span class="n">dload</span><span class="p">[</span><span class="n">det</span><span class="p">][</span><span class="s2">&quot;rsp&quot;</span><span class="p">],</span>
+        <span class="n">restore_background</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">det</span><span class="si">}</span><span class="s2">_bkg.h5&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="n">time_series</span><span class="p">[</span><span class="n">det</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts_tte</span>
+
+    <span class="n">ts_tte</span><span class="o">.</span><span class="n">set_active_time_interval</span><span class="p">(</span><span class="n">source_interval</span><span class="p">)</span>
+
+    <span class="n">ts_tte</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    
+    <span class="n">fluence_plugin</span> <span class="o">=</span> <span class="n">ts_tte</span><span class="o">.</span><span class="n">to_spectrumlike</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">det</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">):</span>
+        
+        <span class="n">fluence_plugin</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s2">&quot;250-30000&quot;</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        
+        <span class="n">fluence_plugin</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s2">&quot;9-900&quot;</span><span class="p">)</span>
+    
+    <span class="n">fluence_plugin</span><span class="o">.</span><span class="n">rebin_on_background</span><span class="p">(</span><span class="mf">1.</span><span class="p">)</span>
+    
+    <span class="n">fluence_plugins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fluence_plugin</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-up-the-fit">
+<h2>Setting up the fit<a class="headerlink" href="#setting-up-the-fit" title="Permalink to this headline">¶</a></h2>
+<p>Let’s see if we can reproduce the results from the catalog.</p>
+<div class="section" id="set-priors-for-the-model">
+<h3>Set priors for the model<a class="headerlink" href="#set-priors-for-the-model" title="Permalink to this headline">¶</a></h3>
+<p>We will fit the spectrum using Bayesian analysis, so we must set priors on the model parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">GRB080916009</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">alpha</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">Truncated_gaussian</span><span class="p">(</span><span class="n">lower_bound</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">GRB080916009</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">Truncated_gaussian</span><span class="p">(</span><span class="n">lower_bound</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">mu</span><span class="o">=-</span><span class="mf">2.25</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">GRB080916009</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">break_energy</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">Log_normal</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">GRB080916009</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">break_energy</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">GRB080916009</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">Log_uniform_prior</span><span class="p">(</span><span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">1E-3</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">=</span> <span class="mf">1E1</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">GRB080916009</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">shape</span><span class="o">.</span><span class="n">break_scale</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">Log_uniform_prior</span><span class="p">(</span><span class="n">lower_bound</span> <span class="o">=</span> <span class="mf">1E-4</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="clone-the-model-and-setup-the-bayesian-analysis-class">
+<h3>Clone the model and setup the Bayesian analysis class<a class="headerlink" href="#clone-the-model-and-setup-the-bayesian-analysis-class" title="Permalink to this headline">¶</a></h3>
+<p>Next, we clone the model we built from the catalog so that we can look at the results later and fit the cloned model. We pass this model and the <strong>DataList</strong> of the plugins to a <strong>BayesianAnalysis</strong> class and set the sampler to MultiNest.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_model</span> <span class="o">=</span> <span class="n">clone_model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+<span class="n">bayes</span> <span class="o">=</span> <span class="n">BayesianAnalysis</span><span class="p">(</span><span class="n">new_model</span><span class="p">,</span> <span class="n">DataList</span><span class="p">(</span><span class="o">*</span><span class="n">fluence_plugins</span><span class="p">))</span>
+
+<span class="c1"># share spectrum gives a linear speed up when</span>
+<span class="c1"># spectrumlike plugins have the same RSP input energies</span>
+<span class="n">bayes</span><span class="o">.</span><span class="n">set_sampler</span><span class="p">(</span><span class="s2">&quot;multinest&quot;</span><span class="p">,</span> <span class="n">share_spectrum</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="examine-at-the-catalog-fitted-model">
+<h3>Examine at the catalog fitted model<a class="headerlink" href="#examine-at-the-catalog-fitted-model" title="Permalink to this headline">¶</a></h3>
+<p>We can quickly examine how well the catalog fit matches the data. There appears to be a discrepancy between the data and the model! Let’s refit to see if we can fix it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">display_spectrum_model_counts</span><span class="p">(</span><span class="n">bayes</span><span class="p">,</span> <span class="n">min_rate</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="kc">False</span> <span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="run-the-sampler">
+<h3>Run the sampler<a class="headerlink" href="#run-the-sampler" title="Permalink to this headline">¶</a></h3>
+<p>We let MultiNest condition the model on the data</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bayes</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">n_live_points</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+<span class="n">bayes</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now our model seems to match much better with the data!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bayes</span><span class="o">.</span><span class="n">restore_median_fit</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">display_spectrum_model_counts</span><span class="p">(</span><span class="n">bayes</span><span class="p">,</span> <span class="n">min_rate</span><span class="o">=</span><span class="mi">20</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>But how different are we from the catalog model? Let’s plot our fit along with the catalog model. Luckily, 3ML can handle all the units for is</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">conversion</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">&#39;keV2/(cm2 s keV)&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;erg2/(cm2 s keV)&#39;</span><span class="p">)</span>
+<span class="n">energy_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">keV</span>
+<span class="n">vFv</span> <span class="o">=</span> <span class="p">(</span><span class="n">energy_grid</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">get_point_source_fluxes</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">energy_grid</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s1">&#39;erg2/(cm2 s keV)&#39;</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">plot_spectra</span><span class="p">(</span><span class="n">bayes</span><span class="o">.</span><span class="n">results</span><span class="p">,</span> <span class="n">flux_unit</span><span class="o">=</span><span class="s1">&#39;erg2/(cm2 s keV)&#39;</span><span class="p">);</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">get_axes</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">energy_grid</span><span class="p">,</span> <span class="n">vFv</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;catalog model&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="time-resolved-analysis">
+<h2>Time Resolved Analysis<a class="headerlink" href="#time-resolved-analysis" title="Permalink to this headline">¶</a></h2>
+<p>Now that we have examined fluence fit, we can move to performing a time-resolved analysis.</p>
+<div class="section" id="selecting-a-temporal-binning">
+<h3>Selecting a temporal binning<a class="headerlink" href="#selecting-a-temporal-binning" title="Permalink to this headline">¶</a></h3>
+<p>We first get the brightest NaI detector and create time bins via the Bayesian blocks algorithm. We can use the fitted background to make sure that our intervals are chosen in an unbiased way.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n3</span> <span class="o">=</span> <span class="n">time_series</span><span class="p">[</span><span class="s1">&#39;n3&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n3</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;bayesblocks&quot;</span><span class="p">,</span> <span class="n">use_background</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Sometimes, glitches in the GBM data cause spikes in the data that the Bayesian blocks algorithm detects as fast changes in the count rate. We will have to remove those intervals manually.</p>
+<div class="alert alert-info"><p><strong>Note:</strong> In the future, 3ML will provide an automated method to remove these unwanted spikes.</p>
+</div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">n3</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="n">use_binner</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bad_bins</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">n3</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">widths</span><span class="p">):</span>
+    
+    <span class="k">if</span> <span class="n">w</span> <span class="o">&lt;</span> <span class="mf">5E-2</span><span class="p">:</span>
+        <span class="n">bad_bins</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    
+    
+<span class="n">edges</span> <span class="o">=</span> <span class="p">[</span><span class="n">n3</span><span class="o">.</span><span class="n">bins</span><span class="o">.</span><span class="n">starts</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">n3</span><span class="o">.</span><span class="n">bins</span><span class="p">):</span>
+    
+    <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bad_bins</span><span class="p">:</span>        
+        <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
+
+<span class="n">starts</span><span class="o">=</span><span class="n">edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">stops</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+
+<span class="n">n3</span><span class="o">.</span><span class="n">create_time_bins</span><span class="p">(</span><span class="n">starts</span><span class="p">,</span> <span class="n">stops</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;custom&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now our light curve looks much more acceptable.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">n3</span><span class="o">.</span><span class="n">view_lightcurve</span><span class="p">(</span><span class="n">use_binner</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The time series objects can read time bins from each other, so we will map these time bins onto the other detectors’ time series and create a list of time plugins for each detector and each time bin created above.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">time_resolved_plugins</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">time_series</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">v</span><span class="o">.</span><span class="n">read_bins</span><span class="p">(</span><span class="n">n3</span><span class="p">)</span>
+    <span class="n">time_resolved_plugins</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">to_spectrumlike</span><span class="p">(</span><span class="n">from_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<!-- #region heading_collapsed=true --></div>
+<div class="section" id="setting-up-the-model">
+<h3>Setting up the model<a class="headerlink" href="#setting-up-the-model" title="Permalink to this headline">¶</a></h3>
+<p>For the time-resolved analysis, we will fit the classic <em>Band</em> function to the data. We will set some principled priors.</p>
+<!-- #endregion --><div class="highlight-python hidden=true notranslate"><div class="highlight"><pre><span></span>band = Band()
+band.alpha.prior = Truncated_gaussian(lower_bound = -1.5, upper_bound = 1, mu=-1, sigma=0.5)
+band.beta.prior = Truncated_gaussian(lower_bound = -5, upper_bound = -1.6, mu=-2, sigma=0.5)
+band.xp.prior = Log_normal(mu=2, sigma=1)
+band.xp.bounds = (0, None)
+band.K.prior = Log_uniform_prior(lower_bound=1E-10, upper_bound=1E3)
+ps = PointSource(&#39;grb&#39;, 0,0, spectral_shape=band)
+band_model = Model(ps)
+
+</pre></div>
+</div>
+</div>
+<div class="section" id="perform-the-fits">
+<h3>Perform the fits<a class="headerlink" href="#perform-the-fits" title="Permalink to this headline">¶</a></h3>
+<p>One way to perform Bayesian spectral fits to all the intervals is to loop through each one. There can are many ways to do this, so find an analysis pattern that works for you.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">models</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">analysis</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+
+    <span class="c1"># clone the model above so that we have a separate model</span>
+    <span class="c1"># for each fit</span>
+
+    <span class="n">this_model</span> <span class="o">=</span> <span class="n">clone_model</span><span class="p">(</span><span class="n">band_model</span><span class="p">)</span>
+
+    <span class="c1"># for each detector set up the plugin</span>
+    <span class="c1"># for this time interval</span>
+
+    <span class="n">this_data_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">time_resolved_plugins</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="n">pi</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">interval</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">):</span>
+            <span class="n">pi</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s2">&quot;250-30000&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pi</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s2">&quot;9-900&quot;</span><span class="p">)</span>
+
+        <span class="n">pi</span><span class="o">.</span><span class="n">rebin_on_background</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">this_data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+
+    <span class="c1"># create a data list</span>
+
+    <span class="n">dlist</span> <span class="o">=</span> <span class="n">DataList</span><span class="p">(</span><span class="o">*</span><span class="n">this_data_list</span><span class="p">)</span>
+
+    <span class="c1"># set up the sampler and fit</span>
+
+    <span class="n">bayes</span> <span class="o">=</span> <span class="n">BayesianAnalysis</span><span class="p">(</span><span class="n">this_model</span><span class="p">,</span> <span class="n">dlist</span><span class="p">)</span>
+    
+    <span class="c1"># get some speed with share spectrum</span>
+    <span class="n">bayes</span><span class="o">.</span><span class="n">set_sampler</span><span class="p">(</span><span class="s2">&quot;multinest&quot;</span><span class="p">,</span> <span class="n">share_spectrum</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+    <span class="n">bayes</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">n_live_points</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+    <span class="n">bayes</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+
+    <span class="c1"># at this stage we coudl also</span>
+    <span class="c1"># save the analysis result to</span>
+    <span class="c1"># disk but we will simply hold</span>
+    <span class="c1"># onto them in memory</span>
+
+    <span class="n">analysis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bayes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="examine-the-fits">
+<h3>Examine the fits<a class="headerlink" href="#examine-the-fits" title="Permalink to this headline">¶</a></h3>
+<p>Now we can look at the fits in count space to make sure they are ok.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">analysis</span><span class="p">:</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">restore_median_fit</span><span class="p">()</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">display_spectrum_model_counts</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">min_rate</span><span class="o">=</span><span class="p">[</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="o">-</span><span class="mi">99</span><span class="p">],</span> <span class="n">step</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, we can plot the models together to see how the spectra evolve with time.</p>
+<div class="highlight-python tags=[&quot;nbsphinx-thumbnail&quot;] notranslate"><div class="highlight"><pre><span></span>fig = plot_spectra(*[a.results for a in analysis[::1]], flux_unit=&quot;erg2/(cm2 s keV)&quot;, fit_cmap=&#39;viridis&#39;, contour_cmap=&#39;viridis&#39;, contour_style_kwargs=dict(alpha=0.1));
+</pre></div>
+</div>
+<p>This example can serve as a template for performing analysis on GBM data. However, as 3ML provides an abstract interface and modular building blocks, similar analysis pipelines can be built for any time series data.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

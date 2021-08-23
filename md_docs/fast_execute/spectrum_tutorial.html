@@ -1,0 +1,596 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jupyter: jupytext: formats: ipynb,md text_representation: extension: .md format_name: markdown format_version: ‘1.2’ jupytext_version: 1.7.1 kernelspec: display_name: Python 3 language: python name: python3 &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
+   
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+  <!--
+  <div class="admonition note">
+    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
+    </p>
+  </div>
+  -->
+  <li id="lightdark-li">
+    <label for="lightdark-checkbox" id="lightdark-label">
+      <input type="checkbox" id="lightdark-checkbox"/>
+      <div class="btn-neutral"></div>
+    </label>
+  </li>
+  
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3</li>
+    
+
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <script type="text/javascript" src=../../_static/custom.js></script>
+  
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<hr class="docutils" />
+<div class="section" id="jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3">
+<h1>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3<a class="headerlink" href="#jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="spectrum-plugins">
+<h1>Spectrum Plugins<a class="headerlink" href="#spectrum-plugins" title="Permalink to this headline">¶</a></h1>
+<p>The <strong>SpectrumLike</strong> plugin is designed to handle binned photon/particle spectra. It comes in three basic classes:</p>
+<ul class="simple">
+<li><p><strong>SpectrumLike</strong>: Generic binned spectral</p></li>
+<li><p><strong>DispersionSpectrumLike</strong>: Generic binned spectra with energy dispersion</p></li>
+<li><p><strong>OGIPLike</strong>: binned spectra with dispersion from OGIP PHA files</p></li>
+</ul>
+<p>The functionality of all three plugins is the same.</p>
+<div class="section" id="spectrumlike">
+<h2>SpectrumLike<a class="headerlink" href="#spectrumlike" title="Permalink to this headline">¶</a></h2>
+<p>The most basic spectrum plugin is <strong>SpectrumLike</strong> which handles spectra with and without backgrounds. There are six basic features of a spectrum:</p>
+<ul class="simple">
+<li><p>the energy boundries of the bins,</p></li>
+<li><p>the data in these energy bins,</p></li>
+<li><p>the statistical properties of the total spectrum</p>
+<ul>
+<li><p>Possion (counts are meausred in an on/off fashion),</p></li>
+<li><p>Gaussian (counts are the result of a masking process or a fit),</p></li>
+</ul>
+</li>
+<li><p>the exposure,</p></li>
+<li><p>the background (and its associated statistical properties),</p></li>
+<li><p>and any known systematic errors associated with the total or background spectrum.</p></li>
+</ul>
+<p>Let’s start by examining an observation where the total counts are Poisson distributed and the measured background ground has been observed by viewing an off-source region and hence is also Poisson.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">capture</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">set_threeML_style</span><span class="p">()</span>
+<span class="n">silence_warnings</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We will construct a simulated spectrum over the energy range 10-1000 keV. The spectrum will have logrithmic energy boundaries.</p>
+<p>We will simulate a blackbody source spectrum on top of powerlaw background.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">51</span><span class="p">)</span>
+
+<span class="n">low_edge</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">high_edge</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="c1"># get a blackbody source function</span>
+<span class="n">source_function</span> <span class="o">=</span> <span class="n">Blackbody</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="mf">9E-2</span><span class="p">,</span><span class="n">kT</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="c1"># power law background function</span>
+<span class="n">background_function</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">index</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">piv</span><span class="o">=</span><span class="mf">100.</span><span class="p">)</span>
+
+<span class="n">spectrum_generator</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;fake&#39;</span><span class="p">,</span>
+                                               <span class="n">source_function</span><span class="o">=</span><span class="n">source_function</span><span class="p">,</span>
+                                               <span class="n">background_function</span><span class="o">=</span><span class="n">background_function</span><span class="p">,</span>
+                                               <span class="n">energy_min</span><span class="o">=</span><span class="n">low_edge</span><span class="p">,</span>
+                                               <span class="n">energy_max</span><span class="o">=</span><span class="n">high_edge</span><span class="p">)</span>
+</pre></div>
+</div>
+<!-- #region --><div class="section" id="the-count-spectrum">
+<h3>The count spectrum<a class="headerlink" href="#the-count-spectrum" title="Permalink to this headline">¶</a></h3>
+<p>Let’s examine a few properties about the count spectrum including the contents stored in the plugin, viewing the count distribution, masking channels, and rebinnined the spectrum.</p>
+<p>We can examine the contents of our plugin with the display function:</p>
+<!-- #endregion --><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>These properties are accessible from the object. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">exposure</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">significance</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">observed_counts</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To view the count spectrum, we call the <em>view_count_spectrum</em> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>It is even possible see which channels are above a given significance threshold. Red regions are below the supplied significance regions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">(</span><span class="n">significance_level</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> In 3ML, the <strong>Significance</strong> module is used to compute significnaces. When total counts ($N_{\rm on}$) are Poisson distributed and the background or off-source counts ($N_{\rm off}$) are also Poisson distributed, the significance in $\sigma$ is calculated via the likelihood ratio derived in <a class="reference external" href="http://adsabs.harvard.edu/abs/1983ApJ...272..317L">Li &amp; Ma (1980)</a>:</p>
+<p>$$ \sigma = \sqrt{-2 \log \lambda} = \sqrt{2} \left( N_{\rm on} \log \left[ \frac{1+\alpha}{\alpha} \frac{N_{\rm on}}{N_{\rm on}+N_{\rm off}} \right] + N_{\rm off} \log \left[ (1 + \alpha)\frac{N_{\rm off}}{N_{\rm on}+N_{\rm off}} \right] \right)$$</p>
+<p>In the case that the background is Gaussian distributed, an equivalent likelihood ratio is used (see Vianello <em>in prep</em>).</p>
+<div class="section" id="selection">
+<h4>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h4>
+<p>Many times, there are channels that we are not valid for analysis due to poor instrument characteristics, overflow, or systematics. We then would like to mask or exclude these channels before fitting the spectrum. We provide several ways to do this and it is useful to consult the docstring. However, we review the process here.</p>
+<p><strong>NOTE to Xspec users: while XSpec uses integers and floats to distinguish between energies and channels
+specifications, 3ML does not, as it would be error-prone when writing scripts. Read the following documentation
+to know how to achieve the same functionality.</strong></p>
+<div class="section" id="energy-selections">
+<h5>Energy selections:<a class="headerlink" href="#energy-selections" title="Permalink to this headline">¶</a></h5>
+<p>They are specified as ‘emin-emax’. Energies are in keV.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s1">&#39;10-12.5&#39;</span><span class="p">,</span><span class="s1">&#39;56.0-100.0&#39;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>which will set the energy range 10-12.5 keV and 56-100 keV to be
+used in the analysis. Note that there is no difference in saying 10 or 10.0.</p>
+</div>
+<div class="section" id="channel-selections">
+<h5>Channel selections:<a class="headerlink" href="#channel-selections" title="Permalink to this headline">¶</a></h5>
+<p>They are specified as ‘c[channel min]-c[channel max]’.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s1">&#39;c10-c12&#39;</span><span class="p">,</span><span class="s1">&#39;c20-c50&#39;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will set channels 10-12 and 20-50 as active channels to be used in the analysis</p>
+</div>
+<div class="section" id="mixed-channel-and-energy-selections">
+<h5>Mixed channel and energy selections:<a class="headerlink" href="#mixed-channel-and-energy-selections" title="Permalink to this headline">¶</a></h5>
+<p>You can also specify mixed energy/channel selections, for example to go from 0.2 keV to channel 10 and from channel 20 to 1000 keV:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s1">&#39;0.2-c10&#39;</span><span class="p">,</span><span class="s1">&#39;c20-1000&#39;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="use-all-measurements-i-e-reset-to-initial-state">
+<h5>Use all measurements (i.e., reset to initial state):<a class="headerlink" href="#use-all-measurements-i-e-reset-to-initial-state" title="Permalink to this headline">¶</a></h5>
+<p>Use ‘all’ to select all measurements, as in:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exclude-measurements">
+<h5>Exclude measurements:<a class="headerlink" href="#exclude-measurements" title="Permalink to this headline">¶</a></h5>
+<p>Excluding measurements work as selecting measurements, but with the “exclude” keyword set to the energies and/or channels to be excluded. To exclude between channel 10 and 20 keV and 50 keV to channel 120 do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;c2-20&quot;</span><span class="p">,</span> <span class="s2">&quot;50-c40&quot;</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="select-and-exclude">
+<h5>Select and exclude:<a class="headerlink" href="#select-and-exclude" title="Permalink to this headline">¶</a></h5>
+<p>Call this method more than once if you need to select and exclude. For example, to select between 0.2 keV and channel 10, but exclude channel 30-50 and energy, do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s2">&quot;0.2-c10&quot;</span><span class="p">,</span><span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;c30-c50&quot;</span><span class="p">])</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="rebinning">
+<h3>Rebinning<a class="headerlink" href="#rebinning" title="Permalink to this headline">¶</a></h3>
+<p>We can rebin the spectra based off a minimum total or background rate requried. This is useful when using profile likelihoods, however, we do not change the underlying likelihood by binning up the data. For more information, consult the statistics section.</p>
+<p>To rebin a spectrum based off the total counts, we specify the minimum counts per bin we would like, say 100:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">set_active_measurements</span><span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+
+<span class="n">spectrum_generator</span><span class="o">.</span><span class="n">rebin_on_source</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We can remove the rebinning this way:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">remove_rebinning</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Instead, when using a profile likelihood which requires at least one background count per bin to be valid, we would call:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">rebin_on_background</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">remove_rebinning</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fitting">
+<h3>Fitting<a class="headerlink" href="#fitting" title="Permalink to this headline">¶</a></h3>
+<p>To fit the data, we need to create a function, a PointSouce, a Model, and either a JointLikelihood or BayesianAnalysis object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bb</span> <span class="o">=</span> <span class="n">Blackbody</span><span class="p">()</span>
+
+<span class="n">pts</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s1">&#39;mysource&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">spectral_shape</span><span class="o">=</span><span class="n">bb</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+
+<span class="c1"># MLE fitting</span>
+
+<span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">DataList</span><span class="p">(</span><span class="n">spectrum_generator</span><span class="p">))</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">count_fig1</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">display_model</span><span class="p">(</span><span class="n">min_rate</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">plot_spectra</span><span class="p">(</span><span class="n">jl</span><span class="o">.</span><span class="n">results</span><span class="p">,</span> <span class="n">flux_unit</span><span class="o">=</span><span class="s1">&#39;erg/(cm2 s keV)&#39;</span><span class="p">)</span>
+
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">1E-20</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Perhaps we want to fit a different model and compare the results. We change the spectral model and will overplot the fit’s expected counts with the fit to the blackbody.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">pl</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">()</span>
+
+<span class="n">pts</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s1">&#39;mysource&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">spectral_shape</span><span class="o">=</span><span class="n">pl</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span>
+
+<span class="c1"># MLE fitting</span>
+
+<span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">DataList</span><span class="p">(</span><span class="n">spectrum_generator</span><span class="p">))</span>
+
+<span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spectrum_generator</span><span class="o">.</span><span class="n">display_model</span><span class="p">(</span><span class="n">min_rate</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                 <span class="n">show_data</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                 <span class="n">show_residuals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                 <span class="n">data_color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">,</span>
+                                 <span class="n">model_color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span>
+                                 <span class="n">model_label</span><span class="o">=</span><span class="s1">&#39;powerlaw&#39;</span><span class="p">,</span>
+                                 <span class="n">model_subplot</span><span class="o">=</span><span class="n">count_fig1</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Examining the fit in count space lets us easily see that the fit with the powerlaw model is very poor. We can of course deterimine the fit quality numerically, but this is saved for another section.</p>
+</div>
+</div>
+<div class="section" id="dispersionspectrumlike">
+<h2>DispersionSpectrumLike<a class="headerlink" href="#dispersionspectrumlike" title="Permalink to this headline">¶</a></h2>
+<p>Instruments that exhibit energy dispersion must have their spectra fit through a process called forward folding. Let $R(\varepsilon,E)$ be our response converting between true (monte carlo) energy ($E$) and detector channel/energy ($\varepsilon$), $f(E, \vec{\phi}<em>{\rm s})$ be our photon model which is a function of $E$ and  source model parameters $\vec{\phi}</em>{\rm s}$. Then, the source counts ($S_{c} (\vec{\phi}<em>{\rm s})$) registered in the detector between channel (c) with energy boundaries $E</em>{{\rm min}, c}$ and  $E_{{\rm max}, c}$ (in the absence of background) are given by the convolution of the photon model with the response:</p>
+<p>$$S_{c} (\vec{\phi}<em>{\rm s}) =
+\int</em>{0}^\infty {\rm d} E , f(E, \vec{\phi}<em>{\rm s})
+\int</em>{E_{{\rm min}, c}}^{E_{{\rm max}, c}} {\rm d} \varepsilon
+, R(\varepsilon, E) $$</p>
+<p>Therefore, to fit the data in count space, we assume a photon model, fold it through the response, and calculate the predicted counts. This process is iterated on the source model parameters via likelihood minimization or posterior sampling until an optimal set of parameters is found.</p>
+<p>To handle dispersed spectra, 3ML provides the <strong>DispersionSpectrumLike</strong> plugin.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">threeML.plugins.DispersionSpectrumLike</span> <span class="kn">import</span> <span class="n">DispersionSpectrumLike</span>
+<span class="kn">from</span> <span class="nn">threeML.utils.OGIP.response</span> <span class="kn">import</span> <span class="n">OGIPResponse</span>
+<span class="kn">from</span> <span class="nn">threeML.io.package_data</span> <span class="kn">import</span> <span class="n">get_path_of_data_file</span>
+
+
+<span class="c1"># we will use a demo response</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">OGIPResponse</span><span class="p">(</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s1">&#39;datasets/ogip_powerlaw.rsp&#39;</span><span class="p">))</span>
+
+
+
+<span class="n">source_function</span> <span class="o">=</span> <span class="n">Broken_powerlaw</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="mf">1E-2</span><span class="p">,</span>
+                                  <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                  <span class="n">beta</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
+                                  <span class="n">xb</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+                                  <span class="n">piv</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="n">background_function</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                               <span class="n">index</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">,</span>
+                               <span class="n">piv</span><span class="o">=</span><span class="mf">100.</span><span class="p">)</span>
+
+<span class="n">dispersion_spectrum_generator</span> <span class="o">=</span> <span class="n">DispersionSpectrumLike</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">,</span>
+                                 <span class="n">source_function</span><span class="o">=</span><span class="n">source_function</span><span class="p">,</span>
+                                 <span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">,</span>
+                                 <span class="n">background_function</span><span class="o">=</span><span class="n">background_function</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can view the response and the count spectrum created.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">ogip</span><span class="o">.</span><span class="n">response_zero_color</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span>
+<span class="n">threeML_config</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">ogip</span><span class="o">.</span><span class="n">response_cmap</span> <span class="o">=</span> <span class="s2">&quot;magma&quot;</span>
+
+<span class="n">_</span> <span class="o">=</span> <span class="n">dispersion_spectrum_generator</span><span class="o">.</span><span class="n">display_rsp</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">dispersion_spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+<!-- #region --><p>All the functionality of <strong>SpectrumLike</strong> is inherited in <strong>DispersionSpectrumLike</strong>. Therefore, fitting, and examination of the data is the same.</p>
+</div>
+<div class="section" id="ogiplike">
+<h2>OGIPLike<a class="headerlink" href="#ogiplike" title="Permalink to this headline">¶</a></h2>
+<p>Finally, many x-ray mission provide data in the form of fits files known and pulse-height analysis (PHA) data. The keywords for the information in the data are known as the Office of Guest Investigators Program (OGIP) standard. While these data are always a form of binned spectra, 3ML provide a convience plugin for reading OGIP standard PHA Type I (single spectrum) and Type II (multiple spectrum) files.</p>
+<p>The <strong>OGIPLike</strong> plugin inherits from <strong>DispersionSpectrumLike</strong> and thus needs either a full response or a redistribution matrix (RMF) and ancillary response (ARF) file. The plugin will prove the keywords in the data files to automatically figure out the correct likelihood for the observation.</p>
+<!-- #endregion --><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ogip_data</span> <span class="o">=</span> <span class="n">OGIPLike</span><span class="p">(</span><span class="s1">&#39;ogip&#39;</span><span class="p">,</span>
+                     <span class="n">observation</span><span class="o">=</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s1">&#39;datasets/ogip_powerlaw.pha&#39;</span><span class="p">),</span>
+                     <span class="n">background</span> <span class="o">=</span> <span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s1">&#39;datasets/ogip_powerlaw.bak&#39;</span><span class="p">),</span>
+                     <span class="n">response</span><span class="o">=</span><span class="n">get_path_of_data_file</span><span class="p">(</span><span class="s1">&#39;datasets/ogip_powerlaw.rsp&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ogip_data</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">ogip_data</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>When using PHA Type II data, a spectrum number must be supplied to indicate which spectrum from the file to use. Users can also follow the XSPEC convention of specifying the spectrum number in the filename (e.g. ‘my_pha.fits{1}’)</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

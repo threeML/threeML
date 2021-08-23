@@ -1,0 +1,613 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "4db0c0a0",
+   "metadata": {},
+   "source": [
+    "# Spectral Models\n",
+    "\n",
+    "Spectral models are provided via astromodels. For details, visit the astromodels [documentation](http://astromodels.readthedocs.io/en/latest/Model_tutorial.html).\n",
+    "\n",
+    "The important points are breifly covered below.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "407dba89",
+   "metadata": {},
+   "source": [
+    "## Building Custom Models\n",
+    "\n",
+    "One of the most powerful aspects of astromodels and 3ML is the ability to quickly build custom models on the fly. The source code for a model can be pure python, FORTRAN linked via f2py, C++ linked via cython, etc. Anything that provides a python function can be used to fit data.\n",
+    "\n",
+    "To build a custom spectral model in 3ML, we need to import a few things that will allow astromodels to recognize your model."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "5c8a8945",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:40.951037Z",
+     "iopub.status.busy": "2021-08-23T09:21:40.950473Z",
+     "iopub.status.idle": "2021-08-23T09:21:43.135436Z",
+     "shell.execute_reply": "2021-08-23T09:21:43.134350Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[\u001b[35mWARNING \u001b[0m]\u001b[35m The naima package is not available. Models that depend on it will not be available\u001b[0m\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[\u001b[35mWARNING \u001b[0m]\u001b[35m The GSL library or the pygsl wrapper cannot be loaded. Models that depend on it will not be available.\u001b[0m\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[\u001b[35mWARNING \u001b[0m]\u001b[35m The ebltable package is not available. Models that depend on it will not be available\u001b[0m\n"
+     ]
+    }
+   ],
+   "source": [
+    "from astromodels.functions.function import (\n",
+    "    Function1D,\n",
+    "    FunctionMeta,\n",
+    "    ModelAssertionViolation,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "82ce1a33",
+   "metadata": {},
+   "source": [
+    "Function1D is the base class for 1D spectral models and FunctionMeta is ABC class that ensures all the needed parts of a model are in the class as well as making the class function as it should.\n",
+    "\n",
+    "\n",
+    "There are three basic parts to declaring a model:\n",
+    "\n",
+    "* the docstring\n",
+    "* the units setter\n",
+    "* the evaluate function\n",
+    "\n",
+    "Let's look at the simple case of the power law already define in astromodels.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "951d19e0",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:43.145706Z",
+     "iopub.status.busy": "2021-08-23T09:21:43.143434Z",
+     "iopub.status.idle": "2021-08-23T09:21:43.147928Z",
+     "shell.execute_reply": "2021-08-23T09:21:43.148421Z"
+    },
+    "lines_to_next_cell": 2
+   },
+   "outputs": [],
+   "source": [
+    "class Powerlaw(Function1D, metaclass=FunctionMeta):\n",
+    "    r\"\"\"\n",
+    "    description :\n",
+    "        A simple power-law\n",
+    "    latex : $ K~\\frac{x}{piv}^{index} $\n",
+    "    parameters :\n",
+    "        K :\n",
+    "            desc : Normalization (differential flux at the pivot value)\n",
+    "            initial value : 1.0\n",
+    "            is_normalization : True\n",
+    "            transformation : log10\n",
+    "            min : 1e-30\n",
+    "            max : 1e3\n",
+    "            delta : 0.1\n",
+    "        piv :\n",
+    "            desc : Pivot value\n",
+    "            initial value : 1\n",
+    "            fix : yes\n",
+    "        index :\n",
+    "            desc : Photon index\n",
+    "            initial value : -2\n",
+    "            min : -10\n",
+    "            max : 10\n",
+    "\n",
+    "    \"\"\"\n",
+    "\n",
+    "    def _set_units(self, x_unit, y_unit):\n",
+    "        # The index is always dimensionless\n",
+    "        self.index.unit = astropy_units.dimensionless_unscaled\n",
+    "\n",
+    "        # The pivot energy has always the same dimension as the x variable\n",
+    "        self.piv.unit = x_unit\n",
+    "\n",
+    "        # The normalization has the same units as the y\n",
+    "\n",
+    "        self.K.unit = y_unit\n",
+    "\n",
+    "    # noinspection PyPep8Naming\n",
+    "    def evaluate(self, x, K, piv, index):\n",
+    "\n",
+    "        xx = np.divide(x, piv)\n",
+    "\n",
+    "        return K * np.power(xx, index)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "af05bc29",
+   "metadata": {},
+   "source": [
+    "### The docstring\n",
+    "\n",
+    "We have used the docstring interface to provide a YAML description of the model. This sets up the important information used in the fitting process and record keeping. The docstring has three parts:\n",
+    "\n",
+    "- description\n",
+    "    - The description is a text string that provides readable info about the model. Nothing fancy, but good descriptions help to inform the user.\n",
+    "- latex\n",
+    "    - If the model is analytic, a latex formula can be included\n",
+    "- parameters\n",
+    "    - For each parameter, a description and initial value must be included. Transformations for fitting, min/max values and fixing the parameter can also be described here.\n",
+    "\n",
+    "\n",
+    "Keep in mind that this is in YAML format.\n",
+    "\n",
+    "### Set units\n",
+    "\n",
+    "3ML and astromodels keep track of units for you. However, a model must be set up to properly describe the units with astropy's unit system. Keep in mind that models are fit with a differential photon flux,\n",
+    "\n",
+    "$$\\frac{d N_p}{dA dt dE}$$\n",
+    "\n",
+    "so your units should reflect this convention. Therefore, proper normalizations should be taken into account.\n",
+    "\n",
+    "\n",
+    "### Evaluate\n",
+    "This is where the function is evaluated. The first argumument **must be called x** and the parameter names and ordering must reflect what is in the docstring. Any number of operations can take place inside the evaluate call, but remember that the return must be in the form of a differential photon flux.\n",
+    "\n",
+    "\n",
+    "A model is defined in a python session. If you save the results of a fit to an AnalysisResults file and try to load this file without loading this model, you will get a error,\n",
+    "\n",
+    "\n",
+    "## Custom models in other langauges\n",
+    "\n",
+    "What if your model is built from a C++ function and you want to fit that directly to the data? using Cython, pybind, f2py, etc, you can wrap these models and call them easily."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "840fbdb3",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:43.153971Z",
+     "iopub.status.busy": "2021-08-23T09:21:43.152551Z",
+     "iopub.status.idle": "2021-08-23T09:21:43.154737Z",
+     "shell.execute_reply": "2021-08-23T09:21:43.155198Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "\n",
+    "def cpp_function_wrapper(a):\n",
+    "    # we could wrap a c++ function here\n",
+    "    # with cython, pybind11, etc\n",
+    "\n",
+    "    return a"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "66be3f48",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:43.168896Z",
+     "iopub.status.busy": "2021-08-23T09:21:43.162891Z",
+     "iopub.status.idle": "2021-08-23T09:21:43.171572Z",
+     "shell.execute_reply": "2021-08-23T09:21:43.172000Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2.0"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cpp_function_wrapper(2.0)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8632d747",
+   "metadata": {},
+   "source": [
+    "Now we will define a spectral model that will handle both the unit and non-unit call."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "077e9871",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:43.182239Z",
+     "iopub.status.busy": "2021-08-23T09:21:43.180538Z",
+     "iopub.status.idle": "2021-08-23T09:21:43.182868Z",
+     "shell.execute_reply": "2021-08-23T09:21:43.183381Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import astropy.units as astropy_units\n",
+    "\n",
+    "\n",
+    "class CppModel(Function1D, metaclass=FunctionMeta):\n",
+    "    r\"\"\"\n",
+    "    description :\n",
+    "        A spectral model wrapping a cython function\n",
+    "    latex : $$\n",
+    "    parameters :\n",
+    "        a :\n",
+    "            desc : Normalization (differential flux)\n",
+    "            initial value : 1.0\n",
+    "            is_normalization : True\n",
+    "            min : 1e-30\n",
+    "            max : 1e3\n",
+    "            delta : 0.1\n",
+    "    \"\"\"\n",
+    "\n",
+    "    def _set_units(self, x_unit, y_unit):\n",
+    "\n",
+    "        # The normalization has the same units as the y\n",
+    "\n",
+    "        self.a.unit = y_unit\n",
+    "\n",
+    "    def evaluate(self, x, a):\n",
+    "\n",
+    "        # check is the function is being called with units\n",
+    "\n",
+    "        if isinstance(a, astropy_units.Quantity):\n",
+    "\n",
+    "            # get the values\n",
+    "            a_ = a.value\n",
+    "\n",
+    "            # save the unit\n",
+    "            unit_ = self.y_unit\n",
+    "\n",
+    "        else:\n",
+    "\n",
+    "            # we do not need to do anything here\n",
+    "            a_ = a\n",
+    "\n",
+    "            # this will basically be ignored\n",
+    "            unit_ = 1.0\n",
+    "\n",
+    "        # call the cython function\n",
+    "        flux = cpp_function_wrapper(a_)\n",
+    "\n",
+    "        # add back the unit if needed\n",
+    "        return flux * unit_"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "deaf14e3",
+   "metadata": {},
+   "source": [
+    "We can check the unit and non-unit call by making a point source and evaluating it"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "a7c7c39f",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:43.189799Z",
+     "iopub.status.busy": "2021-08-23T09:21:43.189228Z",
+     "iopub.status.idle": "2021-08-23T09:21:44.434573Z",
+     "shell.execute_reply": "2021-08-23T09:21:44.435001Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1.0\n"
+     ]
+    },
+    {
+     "data": {
+      "text/latex": [
+       "$1 \\; \\mathrm{\\frac{1}{keV\\,s\\,cm^{2}}}$"
+      ],
+      "text/plain": [
+       "<Quantity 1. 1 / (cm2 keV s)>"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cpp_spectrum = CppModel()\n",
+    "\n",
+    "from astromodels import PointSource\n",
+    "\n",
+    "point_source = PointSource(\"ps\", 0, 0, spectral_shape=cpp_spectrum)\n",
+    "\n",
+    "print(point_source(10.0))\n",
+    "point_source(10.0 * astropy_units.keV)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "db765799",
+   "metadata": {},
+   "source": [
+    "## Template (Table) Models\n",
+    "\n",
+    "3ML (via astromodels) provides the ability to construct models in tabluated form. This is very useful for models that are from numerical simualtions. While in other software special care must be taken to construct table models into FITS files, in 3ML the construction of the table model is taken care of for you. Here is an example of how to build a template model from a pre-existing function.\n",
+    "\n",
+    "### Constructing a template\n",
+    "First, we grab a function and make an energy grid."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "1bd5fb1b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:44.441408Z",
+     "iopub.status.busy": "2021-08-23T09:21:44.440760Z",
+     "iopub.status.idle": "2021-08-23T09:21:44.442997Z",
+     "shell.execute_reply": "2021-08-23T09:21:44.443608Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "from astromodels import Band\n",
+    "import numpy as np\n",
+    "\n",
+    "model = Band()\n",
+    "\n",
+    "# we won't need to modify the normalization\n",
+    "model.K = 1.0\n",
+    "\n",
+    "\n",
+    "# if no units are provided for the energy grid, keV will be assumed!\n",
+    "energies = np.logspace(1, 3, 50)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c22239f4",
+   "metadata": {},
+   "source": [
+    "Now we define a template model factory. This takes a name, a description, the energy grid and an array of parameter names as input."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "416a4a83",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:44.450579Z",
+     "iopub.status.busy": "2021-08-23T09:21:44.449424Z",
+     "iopub.status.idle": "2021-08-23T09:21:44.452586Z",
+     "shell.execute_reply": "2021-08-23T09:21:44.452995Z"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[\u001b[35mWARNING \u001b[0m]\u001b[35m Energy unit is not a Quantity instance, so units has not been provided. Using keV.\u001b[0m\n"
+     ]
+    }
+   ],
+   "source": [
+    "from astromodels import TemplateModelFactory\n",
+    "\n",
+    "tmf = TemplateModelFactory(\n",
+    "    \"my_template\", \"A test template\", energies, [\"alpha\", \"xp\", \"beta\"]\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "038e77e4",
+   "metadata": {},
+   "source": [
+    "Now, define our grid in parameter space. While we are using a function here, this grid could be from a text file, a database of simulations, etc. We then assign these grid points to the template model factory."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "e2b419c5",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:44.459484Z",
+     "iopub.status.busy": "2021-08-23T09:21:44.458879Z",
+     "iopub.status.idle": "2021-08-23T09:21:44.462680Z",
+     "shell.execute_reply": "2021-08-23T09:21:44.463095Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "alpha_grid = np.linspace(-1.5, 1, 15)\n",
+    "beta_grid = np.linspace(-3.5, -1.6, 15)\n",
+    "xp_grid = np.logspace(1, 3, 20)\n",
+    "\n",
+    "\n",
+    "tmf.define_parameter_grid(\"alpha\", alpha_grid)\n",
+    "tmf.define_parameter_grid(\"beta\", beta_grid)\n",
+    "tmf.define_parameter_grid(\"xp\", xp_grid)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cc3c7ccd",
+   "metadata": {},
+   "source": [
+    "Finally, we loop over our grid and set the interpolation data to the template model factory. The units of the fluxes must be a differential photon flux!"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "3ba86639",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:44.470311Z",
+     "iopub.status.busy": "2021-08-23T09:21:44.469659Z",
+     "iopub.status.idle": "2021-08-23T09:21:46.886220Z",
+     "shell.execute_reply": "2021-08-23T09:21:46.886699Z"
+    },
+    "lines_to_next_cell": 2
+   },
+   "outputs": [],
+   "source": [
+    "for a in alpha_grid:\n",
+    "\n",
+    "    for b in beta_grid:\n",
+    "\n",
+    "        for xp in xp_grid:\n",
+    "\n",
+    "            # change our model parameters\n",
+    "            model.alpha = a\n",
+    "            model.beta = b\n",
+    "            model.xp = xp\n",
+    "\n",
+    "            tmf.add_interpolation_data(model(energies), alpha=a, xp=xp, beta=b)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e8ee1d1f",
+   "metadata": {},
+   "source": [
+    "We can now save our model to disk. The formal is an HDF5 file which is saved to the astromodel data directory (~/.astromodels/data). The HDF5 file can easily be passed around to other users as all information defining the model is stored in the file. The other user would place the file in thier astromodels data directory."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "f01f040f",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:46.892170Z",
+     "iopub.status.busy": "2021-08-23T09:21:46.891387Z",
+     "iopub.status.idle": "2021-08-23T09:21:47.074862Z",
+     "shell.execute_reply": "2021-08-23T09:21:47.074254Z"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "tmf.save_data(overwrite=True)\n",
+    "\n",
+    "from astromodels import TemplateModel\n",
+    "\n",
+    "reloaded_table_model = TemplateModel(\"my_template\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "a5a4d9d0",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2021-08-23T09:21:47.097082Z",
+     "iopub.status.busy": "2021-08-23T09:21:47.089799Z",
+     "iopub.status.idle": "2021-08-23T09:21:49.060530Z",
+     "shell.execute_reply": "2021-08-23T09:21:49.061201Z"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([1.49086966e+00, 1.43117010e+00, 1.37151134e+00, 1.31187019e+00,\n",
+       "       1.25223305e+00, 1.19259749e+00, 1.13297396e+00, 1.07338763e+00,\n",
+       "       1.01388024e+00, 9.54512018e-01, 8.95363460e-01, 8.36537051e-01,\n",
+       "       7.78158661e-01, 7.20378565e-01, 6.63371907e-01, 6.07338417e-01,\n",
+       "       5.52501210e-01, 4.99104446e-01, 4.47409687e-01, 3.97690776e-01,\n",
+       "       3.50227162e-01, 3.05295643e-01, 2.63160667e-01, 2.24063443e-01,\n",
+       "       1.88210330e-01, 1.55761153e-01, 1.26818273e-01, 1.01829853e-01,\n",
+       "       8.10538848e-02, 6.39354690e-02, 5.03106841e-02, 3.95893700e-02,\n",
+       "       3.11527907e-02, 2.45140645e-02, 1.92900651e-02, 1.51793110e-02,\n",
+       "       1.19445674e-02, 9.39915463e-03, 7.39617472e-03, 5.82003410e-03,\n",
+       "       4.57977241e-03, 3.60381313e-03, 2.83583286e-03, 2.23151083e-03,\n",
+       "       1.75597111e-03, 1.38176992e-03, 1.08731180e-03, 8.55603333e-04,\n",
+       "       6.73272437e-04, 5.29796643e-04])"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "reloaded_table_model(energies)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "85290aa8",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,md"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.11"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

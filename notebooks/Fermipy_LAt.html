@@ -1,0 +1,2002 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Fermi-LAT via FermiPyLike &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/gallery.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <link rel="stylesheet" href="../_static/pygments/default.css" type="text/css" id="pygments-style">
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css">
+   
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">The Multi-Mission Maximum Likelihood framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+  <!--
+  <div class="admonition note">
+    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
+    </p>
+  </div>
+  -->
+  <li id="lightdark-li">
+    <label for="lightdark-checkbox" id="lightdark-label">
+      <input type="checkbox" id="lightdark-checkbox"/>
+      <div class="btn-neutral"></div>
+    </label>
+  </li>
+  
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Fermi-LAT via FermiPyLike</li>
+    
+
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <script type="text/javascript" src=../_static/custom.js></script>
+  
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Fermi-LAT-via-FermiPyLike">
+<h1>Fermi-LAT via FermiPyLike<a class="headerlink" href="#Fermi-LAT-via-FermiPyLike" title="Permalink to this headline">¶</a></h1>
+<p>In this Example we show how to use the fermipy plugin in threeML. We perform a Binned likelihood analysis and a Bayesian analysis of the Crab, optimizing the parameters of the Crab Pulsar (PSR J0534+2200) keeping fixed the parameters of the Crab Nebula. In the model, the nebula is described by two sources, one representing the synchrotron spectrum, the othet the Inverse Compton emission. In this example we show how to download Fermi-LAT data, how to build a model starting from the 4FGL, how to
+free and fix parameters of the sources in the model, and how to perform a spectral analysis using the fermipy plugin.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span> <span class="k">as</span> <span class="n">pyfits</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%capture</span>
+<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
+
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">set_threeML_style</span><span class="p">()</span>
+<span class="n">silence_warnings</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="The-Fermi-4FGL-catalog">
+<h2>The Fermi 4FGL catalog<a class="headerlink" href="#The-Fermi-4FGL-catalog" title="Permalink to this headline">¶</a></h2>
+<p>Let’s interrogate the 4FGL to get the sources in a radius of 20.0 deg around the Crab</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">lat_catalog</span> <span class="o">=</span> <span class="n">FermiLATSourceCatalog</span><span class="p">()</span>
+
+<span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">table</span> <span class="o">=</span> <span class="n">lat_catalog</span><span class="o">.</span><span class="n">search_around_source</span><span class="p">(</span><span class="s2">&quot;Crab&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">20.0</span><span class="p">)</span>
+
+<span class="n">table</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Trying https://heasarc.gsfc.nasa.gov/cgi-bin/vo/cone/coneGet.pl?table=fermilpsc&amp;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<i>Table masked=True length=147</i>
+<table id="table140425740318672" class="table-striped table-bordered table-condensed">
+<thead><tr><th>name</th><th>source_type</th><th>short_source_type</th><th>ra</th><th>dec</th><th>assoc_name</th><th>tevcat_assoc</th><th>Search_Offset</th></tr></thead>
+<thead><tr><th></th><th></th><th></th><th>deg</th><th>deg</th><th></th><th></th><th></th></tr></thead>
+<thead><tr><th>object</th><th>str32</th><th>object</th><th>float64</th><th>float64</th><th>object</th><th>object</th><th>float64</th></tr></thead>
+<tr><td>4FGL J0534.5+2200</td><td>pulsar, identified by pulsations</td><td>PSR</td><td>83.6367</td><td>22.0149</td><td>PSR J0534+2200</td><td>Crab pulsar</td><td>0.2022</td></tr>
+<tr><td>4FGL J0534.5+2201s</td><td>pulsar wind nebula</td><td>PWN</td><td>83.6331</td><td>22.0199</td><td>Crab Nebula</td><td>Crab</td><td>0.3243</td></tr>
+<tr><td>4FGL J0534.5+2201i</td><td>pulsar wind nebula</td><td>PWN</td><td>83.6330</td><td>22.0200</td><td>Crab Nebula</td><td>Crab</td><td>0.3304</td></tr>
+<tr><td>4FGL J0526.3+2246</td><td>active galaxy of uncertain type</td><td>bcu</td><td>81.5908</td><td>22.7778</td><td>NVSS J052622+224801</td><td></td><td>122.1994</td></tr>
+<tr><td>4FGL J0544.4+2238</td><td>unknown</td><td></td><td>86.1093</td><td>22.6418</td><td></td><td></td><td>142.4913</td></tr>
+<tr><td>4FGL J0521.7+2112</td><td>BL Lac type of blazar</td><td>bll</td><td>80.4445</td><td>21.2131</td><td>TXS 0518+211</td><td>VER J0521+211</td><td>184.2435</td></tr>
+<tr><td>4FGL J0528.3+1817</td><td>unknown</td><td>unk</td><td>82.0946</td><td>18.2943</td><td>1RXS J052829.6+181657</td><td></td><td>239.4351</td></tr>
+<tr><td>4FGL J0536.2+1733</td><td>BL Lac type of blazar</td><td>bll</td><td>84.0719</td><td>17.5534</td><td>TXS 0533+175</td><td></td><td>268.8090</td></tr>
+<tr><td>4FGL J0539.0+1644</td><td>active galaxy of uncertain type</td><td>bcu</td><td>84.7500</td><td>16.7432</td><td>NVSS J053855+164612</td><td></td><td>322.5278</td></tr>
+<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+<tr><td>4FGL J0512.8+4041</td><td>active galaxy of uncertain type</td><td>bcu</td><td>78.2186</td><td>40.6945</td><td>B3 0509+406</td><td></td><td>1153.9906</td></tr>
+<tr><td>4FGL J0639.6+3503</td><td>active galaxy of uncertain type</td><td>bcu</td><td>99.9024</td><td>35.0586</td><td>B2 0635+35</td><td></td><td>1157.9315</td></tr>
+<tr><td>4FGL J0552.8+0313</td><td>active galaxy of uncertain type</td><td>bcu</td><td>88.2180</td><td>3.2322</td><td>PKS 0550+032</td><td></td><td>1158.1471</td></tr>
+<tr><td>4FGL J0653.6+1636</td><td>active galaxy of uncertain type</td><td>bcu</td><td>103.4105</td><td>16.6106</td><td>2MASX J06533986+1636432</td><td></td><td>1164.7254</td></tr>
+<tr><td>4FGL J0658.7+2318</td><td>unknown</td><td></td><td>104.6808</td><td>23.3027</td><td></td><td></td><td>1166.9322</td></tr>
+<tr><td>4FGL J0555.1+0304</td><td>active galaxy of uncertain type</td><td>bcu</td><td>88.7776</td><td>3.0710</td><td>GB6 J0555+0304</td><td></td><td>1175.4617</td></tr>
+<tr><td>4FGL J0658.2+2709</td><td>active galaxy of uncertain type</td><td>bcu</td><td>104.5735</td><td>27.1501</td><td>B2 0655+27A</td><td></td><td>1181.6921</td></tr>
+<tr><td>4FGL J0642.4+1048</td><td>unknown</td><td></td><td>100.6081</td><td>10.8135</td><td></td><td></td><td>1183.9644</td></tr>
+<tr><td>4FGL J0506.9+0323</td><td>BL Lac type of blazar</td><td>bll</td><td>76.7314</td><td>3.3917</td><td>NVSS J050650+032401</td><td></td><td>1187.4462</td></tr>
+<tr><td>4FGL J0409.2+2542</td><td>unknown</td><td></td><td>62.3144</td><td>25.7022</td><td></td><td></td><td>1189.1462</td></tr>
+</table></div>
+</div>
+<p>This gets a 3ML model (a Model instance) from the table above, where every source in the 4FGL becomes a Source instance. Note that by default all parameters of all sources are fixed.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">lat_catalog</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Let’s free all the normalizations within 3 deg from the center.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span><span class="o">.</span><span class="n">free_point_sources_within_radius</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">normalization_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+Model summary:<br><br><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>N</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Point sources</th>
+      <td>147</td>
+    </tr>
+    <tr>
+      <th>Extended sources</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Particle sources</th>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div><br><br>Free parameters (5):<br><br><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>value</th>
+      <th>min_value</th>
+      <th>max_value</th>
+      <th>unit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>keV-1 s-1 cm-2</td>
+    </tr>
+    <tr>
+      <th>Crab_synch.spectrum.main.Powerlaw.K</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>keV-1 s-1 cm-2</td>
+    </tr>
+    <tr>
+      <th>Crab_IC.spectrum.main.Log_parabola.K</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>keV-1 s-1 cm-2</td>
+    </tr>
+    <tr>
+      <th>NVSS_J052622p224801.spectrum.main.Powerlaw.K</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>keV-1 s-1 cm-2</td>
+    </tr>
+    <tr>
+      <th>_4FGL_J0544d4p2238.spectrum.main.Powerlaw.K</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>keV-1 s-1 cm-2</td>
+    </tr>
+  </tbody>
+</table>
+</div><br><br>Fixed parameters (788):<br>(abridged. Use complete=True to see all fixed parameters)<br><br><br>Linked parameters (0):<br><br>(none)<br><br>Independent variables:<br><br>(none)<br></div>
+</div>
+<p>but then let’s fix the sync and the IC components of the Crab nebula (cannot fit them with just one month of data) (these two methods are equivalent)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;Crab_IC.spectrum.main.Log_parabola.K&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Crab_synch</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">Powerlaw</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</div>
+<p>However, let’s free the index of the Crab Pulsar</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span><span class="o">.</span><span class="n">PSR_J0534p2200</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">Super_cutoff_powerlaw</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">free</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+Model summary:<br><br><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>N</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Point sources</th>
+      <td>147</td>
+    </tr>
+    <tr>
+      <th>Extended sources</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Particle sources</th>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div><br><br>Free parameters (4):<br><br><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>value</th>
+      <th>min_value</th>
+      <th>max_value</th>
+      <th>unit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>keV-1 s-1 cm-2</td>
+    </tr>
+    <tr>
+      <th>PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index</th>
+      <td>-1.8833</td>
+      <td>-10.0</td>
+      <td>10.0</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>NVSS_J052622p224801.spectrum.main.Powerlaw.K</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>keV-1 s-1 cm-2</td>
+    </tr>
+    <tr>
+      <th>_4FGL_J0544d4p2238.spectrum.main.Powerlaw.K</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>keV-1 s-1 cm-2</td>
+    </tr>
+  </tbody>
+</table>
+</div><br><br>Fixed parameters (789):<br>(abridged. Use complete=True to see all fixed parameters)<br><br><br>Linked parameters (0):<br><br>(none)<br><br>Independent variables:<br><br>(none)<br></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Download data from Jan 01 2010 to February 1 2010</span>
+
+<span class="n">tstart</span> <span class="o">=</span> <span class="s2">&quot;2010-01-01 00:00:00&quot;</span>
+<span class="n">tstop</span> <span class="o">=</span> <span class="s2">&quot;2010-02-01 00:00:00&quot;</span>
+
+<span class="c1"># Note that this will understand if you already download these files, and will</span>
+<span class="c1"># not do it twice unless you change your selection or the outdir</span>
+
+<span class="n">evfile</span><span class="p">,</span> <span class="n">scfile</span> <span class="o">=</span> <span class="n">download_LAT_data</span><span class="p">(</span>
+    <span class="n">ra</span><span class="p">,</span>
+    <span class="n">dec</span><span class="p">,</span>
+    <span class="mf">20.0</span><span class="p">,</span>
+    <span class="n">tstart</span><span class="p">,</span>
+    <span class="n">tstop</span><span class="p">,</span>
+    <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;Gregorian&quot;</span><span class="p">,</span>
+    <span class="n">destination_directory</span><span class="o">=</span><span class="s2">&quot;Crab_data&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "5b3758677c0d49ec8e558f5962c94617", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "e3cee66006c748a89c44ec66d5f2f8fa", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+</div>
+<div class="section" id="Configuration-for-Fermipy">
+<h2>Configuration for Fermipy<a class="headerlink" href="#Configuration-for-Fermipy" title="Permalink to this headline">¶</a></h2>
+<p>3ML provides and intreface into <a class="reference external" href="https://fermipy.readthedocs.io/en/latest/">Fermipy</a> via the <strong>FermipyLike</strong> plugin. We can use it to generate basic configuration files.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, the FermipyLike plugin does not provide an interface to handle extended sources. This will change</p>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">config</span> <span class="o">=</span> <span class="n">FermipyLike</span><span class="o">.</span><span class="n">get_basic_config</span><span class="p">(</span>
+    <span class="n">evfile</span><span class="o">=</span><span class="n">evfile</span><span class="p">,</span>
+    <span class="n">scfile</span><span class="o">=</span><span class="n">scfile</span><span class="p">,</span>
+    <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span>
+    <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span>
+    <span class="n">fermipy_verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">fermitools_chatter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># See what we just got</span>
+
+<span class="n">config</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+binning:
+  binsperdec: 8
+  binsz: 0.1
+  roiwidth: 10.0
+data:
+  evfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L31c0b303b32412d3ad16855dca6114b1_FT1.fits
+  scfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L210823050554D396CEF226_SC00.fits
+logging:
+  chatter: 0
+  verbosity: 1
+selection:
+  dec: 22.0144947866347
+  emax: 100000.0
+  emin: 100.0
+  evclass: 128
+  evtype: 3
+  filter: DATA_QUAL&gt;0 &amp;&amp; LAT_CONFIG==1
+  ra: 83.63309095468972
+  tmax: 286675202.0
+  tmin: 283996802.0
+  zmax: 100.0
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre>binning:
+  binsperdec: 8
+  binsz: 0.1
+  roiwidth: 10.0
+data:
+  evfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L31c0b303b32412d3ad16855dca6114b1_FT1.fits
+  scfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L210823050554D396CEF226_SC00.fits
+logging:
+  chatter: 0
+  verbosity: 1
+selection:
+  dec: 22.0144947866347
+  emax: 100000.0
+  emin: 100.0
+  evclass: 128
+  evtype: 3
+  filter: DATA_QUAL>0 && LAT_CONFIG==1
+  ra: 83.63309095468972
+  tmax: 286675202.0
+  tmin: 283996802.0
+  zmax: 100.0
+</pre></div>
+</div>
+<p>You can of course modify the configuration as a dictionary</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;emax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">300000.0</span>
+</pre></div>
+</div>
+</div>
+<p>and even add sections</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;gtlike&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;edisp&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+
+<span class="n">config</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+binning:
+  binsperdec: 8
+  binsz: 0.1
+  roiwidth: 10.0
+data:
+  evfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L31c0b303b32412d3ad16855dca6114b1_FT1.fits
+  scfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L210823050554D396CEF226_SC00.fits
+gtlike:
+  edisp: false
+logging:
+  chatter: 0
+  verbosity: 1
+selection:
+  dec: 22.0144947866347
+  emax: 300000.0
+  emin: 100.0
+  evclass: 128
+  evtype: 3
+  filter: DATA_QUAL&gt;0 &amp;&amp; LAT_CONFIG==1
+  ra: 83.63309095468972
+  tmax: 286675202.0
+  tmin: 283996802.0
+  zmax: 100.0
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre>binning:
+  binsperdec: 8
+  binsz: 0.1
+  roiwidth: 10.0
+data:
+  evfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L31c0b303b32412d3ad16855dca6114b1_FT1.fits
+  scfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L210823050554D396CEF226_SC00.fits
+gtlike:
+  edisp: false
+logging:
+  chatter: 0
+  verbosity: 1
+selection:
+  dec: 22.0144947866347
+  emax: 300000.0
+  emin: 100.0
+  evclass: 128
+  evtype: 3
+  filter: DATA_QUAL>0 && LAT_CONFIG==1
+  ra: 83.63309095468972
+  tmax: 286675202.0
+  tmin: 283996802.0
+  zmax: 100.0
+</pre></div>
+</div>
+<div class="section" id="FermipyLike">
+<h3>FermipyLike<a class="headerlink" href="#FermipyLike" title="Permalink to this headline">¶</a></h3>
+<p>Let’s create an instance of the plugin/ Note that here no processing is made, because fermipy still doesn’t know about the model you want to use.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">LAT</span> <span class="o">=</span> <span class="n">FermipyLike</span><span class="p">(</span><span class="s2">&quot;LAT&quot;</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The plugin modifies the configuration as needed to get the output files in a unique place, which will stay the same as long as your selection does not change.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">config</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+binning:
+  binsperdec: 8
+  binsz: 0.1
+  roiwidth: 10.0
+data:
+  evfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L31c0b303b32412d3ad16855dca6114b1_FT1.fits
+  scfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L210823050554D396CEF226_SC00.fits
+fileio:
+  outdir: __be2624db072f5f870bfd19cdb50bae1e
+gtlike:
+  edisp: false
+logging:
+  chatter: 0
+  verbosity: 1
+selection:
+  dec: 22.0144947866347
+  emax: 300000.0
+  emin: 100.0
+  evclass: 128
+  evtype: 3
+  filter: DATA_QUAL&gt;0 &amp;&amp; LAT_CONFIG==1
+  ra: 83.63309095468972
+  tmax: 286675202.0
+  tmin: 283996802.0
+  zmax: 100.0
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<pre>binning:
+  binsperdec: 8
+  binsz: 0.1
+  roiwidth: 10.0
+data:
+  evfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L31c0b303b32412d3ad16855dca6114b1_FT1.fits
+  scfile: /Users/runner/work/threeML/threeML/docs/md_docs/slow_execute/Crab_data/L210823050554D396CEF226_SC00.fits
+fileio:
+  outdir: __be2624db072f5f870bfd19cdb50bae1e
+gtlike:
+  edisp: false
+logging:
+  chatter: 0
+  verbosity: 1
+selection:
+  dec: 22.0144947866347
+  emax: 300000.0
+  emin: 100.0
+  evclass: 128
+  evtype: 3
+  filter: DATA_QUAL>0 && LAT_CONFIG==1
+  ra: 83.63309095468972
+  tmax: 286675202.0
+  tmin: 283996802.0
+  zmax: 100.0
+</pre></div>
+</div>
+<p>Here is where the fermipy processing happens (the .setup method)</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fermipy_output_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;fileio&quot;</span><span class="p">][</span><span class="s2">&quot;outdir&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fermipy Output directoty: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">fermipy_output_directory</span><span class="p">)</span>
+
+<span class="c1"># This remove the output directory, to start a fresh analysis...</span>
+
+<span class="k">if</span> <span class="n">fermipy_output_directory</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">fermipy_output_directory</span><span class="p">)</span>
+
+<span class="c1"># Here is where the fermipy processing happens (the .setup method)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">DataList</span><span class="p">(</span><span class="n">LAT</span><span class="p">)</span>
+
+<span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Fermipy Output directoty: __be2624db072f5f870bfd19cdb50bae1e
+
+Found Galactic template for IRF. P8R3_SOURCE_V3: /usr/local/miniconda/envs/test_env/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+
+Cutting the template around the ROI:
+
+
+Found Isotropic template for irf P8R3_SOURCE_V3: /usr/local/miniconda/envs/test_env/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_SOURCE_V3_v1.txt
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+WARNING: Point source PKS_0459p060 lies 17.6422 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4C_p06d21 lies 17.7201 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _1ES_0647p250 lies 17.7261 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source NVSS_J065035p205556 lies 17.7267 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0551d7p0446 lies 17.7358 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source PSR_J0631p1036 lies 17.7822 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source GB6_J0648p1749 lies 17.8406 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0442d8p3609 lies 18.0652 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source B2_0552p39A lies 18.3298 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _1RXS_J064814d1p160708 lies 18.3613 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source MG2_J065230p1934 lies 18.3951 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source PKS_0502p049 lies 18.4206 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source RX_J0648d7p1516 lies 18.8083 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source GB6_J0620p3806 lies 18.8393 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source PSR_J0622p3749 lies 18.8555 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source GB6_J0653p2816 lies 18.9497 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source PMN_J0444p0717 lies 18.9991 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source MG1_J050533p0415 lies 19.0814 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0559d3p0352 lies 19.115 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source TXS_0431p092 lies 19.119 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source B3_0509p406 lies 19.2332 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source B2_0635p35 lies 19.2989 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source PKS_0550p032 lies 19.3025 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _2MASX_J06533986p1636432 lies 19.4121 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0658d7p2318 lies 19.4489 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source GB6_J0555p0304 lies 19.591 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source B2_0655p27A lies 19.6949 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0642d4p1048 lies 19.7327 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source NVSS_J050650p032401 lies 19.7908 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0409d2p2542 lies 19.8191 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Performing-the-fit">
+<h3>Performing the fit<a class="headerlink" href="#Performing-the-fit" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">jl</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="s2">&quot;ROOT&quot;</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Best fit values:
+
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>result</th>
+      <th>unit</th>
+    </tr>
+    <tr>
+      <th>parameter</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>PSR_J0534p2200...K</th>
+      <td>(1.01 +/- 0.04) x 10^-13</td>
+      <td>1 / (cm2 keV s)</td>
+    </tr>
+    <tr>
+      <th>PSR_J0534p2200...index</th>
+      <td>-1.876 +/- 0.026</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>NVSS_J052622p224801.spectrum.main.Powerlaw.K</th>
+      <td>(3.8 -2.7 +10) x 10^-17</td>
+      <td>1 / (cm2 keV s)</td>
+    </tr>
+    <tr>
+      <th>_4FGL_J0544d4p2238.spectrum.main.Powerlaw.K</th>
+      <td>(1.0 -0.7 +1.9) x 10^-16</td>
+      <td>1 / (cm2 keV s)</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Correlation matrix:
+
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<table id="table140424348095184">
+<tr><td>1.00</td><td>0.77</td><td>-0.05</td><td>-0.02</td></tr>
+<tr><td>0.77</td><td>1.00</td><td>0.07</td><td>0.13</td></tr>
+<tr><td>-0.05</td><td>0.07</td><td>1.00</td><td>0.02</td></tr>
+<tr><td>-0.02</td><td>0.13</td><td>0.02</td><td>1.00</td></tr>
+</table></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Values of -log(likelihood) at the minimum:
+
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>-log(likelihood)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>LAT</th>
+      <td>118113.801521</td>
+    </tr>
+    <tr>
+      <th>total</th>
+      <td>118113.801521</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Values of statistical measures:
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>statistical measures</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AIC</th>
+      <td>236235.603185</td>
+    </tr>
+    <tr>
+      <th>BIC</th>
+      <td>236277.773221</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Now let’s compute the errors on the best fit parameters</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">get_errors</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>result</th>
+      <th>unit</th>
+    </tr>
+    <tr>
+      <th>parameter</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>PSR_J0534p2200...K</th>
+      <td>(1.01 +/- 0.04) x 10^-13</td>
+      <td>1 / (cm2 keV s)</td>
+    </tr>
+    <tr>
+      <th>PSR_J0534p2200...index</th>
+      <td>-1.876 -0.027 +0.026</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>NVSS_J052622p224801.spectrum.main.Powerlaw.K</th>
+      <td>(4 -4 +5) x 10^-17</td>
+      <td>1 / (cm2 keV s)</td>
+    </tr>
+    <tr>
+      <th>_4FGL_J0544d4p2238.spectrum.main.Powerlaw.K</th>
+      <td>(1.0 -1.0 +1.2) x 10^-16</td>
+      <td>1 / (cm2 keV s)</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>We might also want to look at the profile of the likelihood for each parameter.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">get_contours</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">PSR_J0534p2200</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">Super_cutoff_powerlaw</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.6</span><span class="p">,</span> <span class="mi">30</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "77a593dc4a624c7a9836a7d6cecca314", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Fermipy_LAt_36_0.png" src="../_images/notebooks_Fermipy_LAt_36_0.png" />
+</div>
+</div>
+<p>Or we might want to produce a contour plot</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">get_contours</span><span class="p">(</span>
+    <span class="s2">&quot;PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K&quot;</span><span class="p">,</span>
+    <span class="mf">0.7e-13</span><span class="p">,</span>
+    <span class="mf">1.3e-13</span><span class="p">,</span>
+    <span class="mi">20</span><span class="p">,</span>
+    <span class="s2">&quot;PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index&quot;</span><span class="p">,</span>
+    <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="o">-</span><span class="mf">1.6</span><span class="p">,</span>
+    <span class="mi">20</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "ef9967c9d5a64360a8c6b1ade4c8e897", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">res</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Fermipy_LAt_39_0.png" src="../_images/notebooks_Fermipy_LAt_39_0.png" />
+</div>
+</div>
+<p><strong>Pro-trick:</strong> We can also axcess the GTAnalysis object of fermipy:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># res = jl.fit()</span>
+<span class="c1"># LAT.gta.write_roi(&#39;test&#39;,make_plots=True)</span>
+</pre></div>
+</div>
+</div>
+<p>All the plots are saved in the output directory as png files:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># pngs=Path(f&quot;{fermipy_output_directory}&quot;).glob(&quot;*png&quot;)</span>
+<span class="c1"># for png in pngs:</span>
+<span class="c1">#    print(png)</span>
+<span class="c1">#    my_image=Image(str(png))</span>
+<span class="c1">#    display(my_image)</span>
+</pre></div>
+</div>
+</div>
+<p>We can also plot the resulting model:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">energies</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="c1"># we only want to visualize the relevant sources...</span>
+<span class="n">src_to_plot</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Crab&quot;</span><span class="p">,</span> <span class="s2">&quot;PSR_J0534p2200&quot;</span><span class="p">]</span>
+<span class="c1"># Now loop over all point sources and plot them</span>
+<span class="k">for</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">point_source</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">point_sources</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">src_to_plot</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">source_name</span><span class="p">:</span>
+            <span class="c1"># Plot the sum of all components for this source</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">point_source</span><span class="p">(</span><span class="n">energies</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="n">source_name</span><span class="p">)</span>
+            <span class="c1"># If there is more than one component, plot them also separately</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">components</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+                <span class="k">for</span> <span class="n">component_name</span><span class="p">,</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">point_source</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span>
+                        <span class="n">energies</span><span class="p">,</span>
+                        <span class="n">component</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">energies</span><span class="p">),</span>
+                        <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+                        <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">source_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+<span class="c1"># Add a legend</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Energy (MeV)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Flux (ph cm$^{-2}$ s$^{-1}$ keV$^{-1}$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">1e-20</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">])</span>
+
+<span class="c1"># show the plot</span>
+<span class="n">fig</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Fermipy_LAt_45_0.png" src="../_images/notebooks_Fermipy_LAt_45_0.png" />
+</div>
+</div>
+<p>We can also do a bayesian analysis.</p>
+<p>This will set priors based on the current defined min-max (log-uniform or uniform)</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+
+<span></span><span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">has_transformation</span><span class="p">():</span>
+        <span class="n">param</span><span class="o">.</span><span class="n">set_uninformative_prior</span><span class="p">(</span><span class="n">Log_uniform_prior</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">param</span><span class="o">.</span><span class="n">set_uninformative_prior</span><span class="p">(</span><span class="n">Uniform_prior</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># It&#39;s better to remove the output directory,...</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">fermipy_output_directory</span><span class="p">)</span>
+
+<span class="n">bayes</span> <span class="o">=</span> <span class="n">BayesianAnalysis</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Found Galactic template for IRF. P8R3_SOURCE_V3: /usr/local/miniconda/envs/test_env/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+
+Cutting the template around the ROI:
+
+
+Found Isotropic template for irf P8R3_SOURCE_V3: /usr/local/miniconda/envs/test_env/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_SOURCE_V3_v1.txt
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+WARNING: Point source PKS_0459p060 lies 17.6422 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4C_p06d21 lies 17.7201 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _1ES_0647p250 lies 17.7261 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source NVSS_J065035p205556 lies 17.7267 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0551d7p0446 lies 17.7358 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source PSR_J0631p1036 lies 17.7822 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source GB6_J0648p1749 lies 17.8406 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0442d8p3609 lies 18.0652 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source B2_0552p39A lies 18.3298 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _1RXS_J064814d1p160708 lies 18.3613 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source MG2_J065230p1934 lies 18.3951 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source PKS_0502p049 lies 18.4206 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source RX_J0648d7p1516 lies 18.8083 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source GB6_J0620p3806 lies 18.8393 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source PSR_J0622p3749 lies 18.8555 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source GB6_J0653p2816 lies 18.9497 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source PMN_J0444p0717 lies 18.9991 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source MG1_J050533p0415 lies 19.0814 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0559d3p0352 lies 19.115 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source TXS_0431p092 lies 19.119 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source B3_0509p406 lies 19.2332 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source B2_0635p35 lies 19.2989 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source PKS_0550p032 lies 19.3025 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _2MASX_J06533986p1636432 lies 19.4121 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0658d7p2318 lies 19.4489 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source GB6_J0555p0304 lies 19.591 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source B2_0655p27A lies 19.6949 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0642d4p1048 lies 19.7327 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source NVSS_J050650p032401 lies 19.7908 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+WARNING: Point source _4FGL_J0409d2p2542 lies 19.8191 degrees from the ROI center at RA, Dec = 83.6331, 22.0145 7.57107
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">bayes</span><span class="o">.</span><span class="n">set_sampler</span><span class="p">(</span><span class="s2">&quot;emcee&quot;</span><span class="p">)</span>
+
+<span class="n">n_walkers</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">burn_in</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">500</span>
+
+<span class="n">bayes</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">n_iterations</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_burn_in</span><span class="o">=</span><span class="n">burn_in</span><span class="p">,</span> <span class="n">n_walkers</span><span class="o">=</span><span class="n">n_walkers</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">bayes</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "da0e4a16d2584c65a563a3114cec64fc", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "453b32bf4e4d49dca089781a1d3841d1", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Maximum a posteriori probability (MAP) point:
+
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>result</th>
+      <th>unit</th>
+    </tr>
+    <tr>
+      <th>parameter</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>PSR_J0534p2200...K</th>
+      <td>(1.01 +/- 0.04) x 10^-13</td>
+      <td>1 / (cm2 keV s)</td>
+    </tr>
+    <tr>
+      <th>PSR_J0534p2200...index</th>
+      <td>-1.877 -0.027 +0.026</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>NVSS_J052622p224801.spectrum.main.Powerlaw.K</th>
+      <td>(5 +/- 4) x 10^-17</td>
+      <td>1 / (cm2 keV s)</td>
+    </tr>
+    <tr>
+      <th>_4FGL_J0544d4p2238.spectrum.main.Powerlaw.K</th>
+      <td>(1.2 +/- 0.9) x 10^-16</td>
+      <td>1 / (cm2 keV s)</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Values of -log(posterior) at the minimum:
+
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>-log(posterior)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>LAT</th>
+      <td>-118079.504764</td>
+    </tr>
+    <tr>
+      <th>total</th>
+      <td>-118079.504764</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+Values of statistical measures:
+
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>statistical measures</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AIC</th>
+      <td>236167.009672</td>
+    </tr>
+    <tr>
+      <th>BIC</th>
+      <td>236209.179708</td>
+    </tr>
+    <tr>
+      <th>DIC</th>
+      <td>236168.084021</td>
+    </tr>
+    <tr>
+      <th>PDIC</th>
+      <td>2.402334</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>You can access to the parameter range like this (HPD):</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">this_K</span> <span class="o">=</span> <span class="n">bayes</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span>
+    <span class="s2">&quot;PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K&quot;</span>
+<span class="p">)</span>
+<span class="n">this_idx</span> <span class="o">=</span> <span class="n">bayes</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span>
+    <span class="s2">&quot;PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index&quot;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Highest_posterior_density_intervals :&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;K (68</span><span class="si">%%</span><span class="s2">):     </span><span class="si">%10.2e</span><span class="s2">,</span><span class="si">%10.2e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">this_K</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;K (95</span><span class="si">%%</span><span class="s2">):     </span><span class="si">%10.2e</span><span class="s2">,</span><span class="si">%10.2e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">this_K</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="n">cl</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Index (68</span><span class="si">%%</span><span class="s2">): </span><span class="si">%10.2e</span><span class="s2">,</span><span class="si">%10.2e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">this_idx</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="n">cl</span><span class="o">=</span><span class="mf">0.68</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Index (95</span><span class="si">%%</span><span class="s2">): </span><span class="si">%10.2e</span><span class="s2">,</span><span class="si">%10.2e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">this_idx</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="n">cl</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Highest_posterior_density_intervals :
+K (68%):       9.66e-14,  1.05e-13
+K (95%):       9.30e-14,  1.08e-13
+Index (68%):  -1.91e+00, -1.85e+00
+Index (95%):  -1.93e+00, -1.82e+00
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">corner_figure</span> <span class="o">=</span> <span class="n">bayes</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">corner_plot</span><span class="p">()</span>
+<span class="n">corner_figure</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Fermipy_LAt_52_0.png" src="../_images/notebooks_Fermipy_LAt_52_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"053e6de3f7f94543a4eafbad73f26a57": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_5283f105789548708a0b6eac9ddfff71", "placeholder": "\u200b", "style": "IPY_MODEL_c54905172a0b4e89b0a93ff2d82c94cf", "value": " 400/400 [04:16&lt;00:00,  2.16it/s]"}}, "063587e30c4d4893ae33d64fe5276d2a": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": "#46327e", "description_width": ""}}, "10d211f7d88b452ca9b13e43deea3432": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_1288f9ec816a4cc8aa7e090efdd00612", "placeholder": "\u200b", "style": "IPY_MODEL_5bbe5d1ff1f5488a9f282a47470ad2b5", "value": "100%"}}, "1288f9ec816a4cc8aa7e090efdd00612": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "27b7689ca4cf453da0335edbf8a6f496": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_c82f8148f34549329b90e8f57ff9d4b7", "max": 500.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_cbf666038a2340efa0f6250db0091b2c", "value": 500.0}}, "2908090e23db48c483323ce2afac5e83": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_f3eb9bfda93044268c3d89e52533c542", "placeholder": "\u200b", "style": "IPY_MODEL_69b744a5b15c4c20ac7de314506addd2", "value": " 16.3M/16.3M [00:12&lt;00:00, 1.66MB/s]"}}, "2c9d257447c74145a51c13913432127b": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "2cab5b8f2cc54ea2840cb96544b9855a": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_86e24a1b84444411bc434ba40636d27f", "max": 12453120.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_3f0a9e4fa71241d18c720343af5d9b3a", "value": 12453120.0}}, "359e132544bf49aca0ce2028ce309177": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "3b5e62e560b2487398421d627a3c1c60": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_ef3e8d179fcc46acaa45419b944c0e42", "placeholder": "\u200b", "style": "IPY_MODEL_abbee6832b3645caa6838fc181cceba2", "value": "Profiling likelihood: 100%"}}, "3f0a9e4fa71241d18c720343af5d9b3a": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": "#440154", "description_width": ""}}, "43d0801980e3417c9f6c2ef886870b48": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_9ae25f26eccf421b92ea66f90851d989", "max": 30.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_d9dfc0ef5c8848c482f2b5985b1b2154", "value": 30.0}}, "453b32bf4e4d49dca089781a1d3841d1": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_10d211f7d88b452ca9b13e43deea3432", "IPY_MODEL_27b7689ca4cf453da0335edbf8a6f496", "IPY_MODEL_dc79a1c4770f46aeac334e6217daab0d"], "layout": "IPY_MODEL_e2a617aa6fd04fce979ad85e4339ad4d"}}, "48c3fd0708e44c208da67aafe8c8c7af": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "4ebbe4befce14454a27d0004fedd1053": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_60caef5c53c241e7bd84f8e7c15cecc2", "placeholder": "\u200b", "style": "IPY_MODEL_cc064aade0a049a29c1549e05b2e1d8c", "value": "100%"}}, "5088a297fffe4dceabb398e04b7f1384": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_aae773157b45464b9fa3e59f56af8de1", "placeholder": "\u200b", "style": "IPY_MODEL_f2681f35042f4f73b5376693831d62ef", "value": "Downloading L210823050554D396CEF226_SC00.fits: 100%"}}, "5283f105789548708a0b6eac9ddfff71": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "5b3758677c0d49ec8e558f5962c94617": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_5088a297fffe4dceabb398e04b7f1384", "IPY_MODEL_2cab5b8f2cc54ea2840cb96544b9855a", "IPY_MODEL_8698c6e75a8b4aa5b5b078d259e6608b"], "layout": "IPY_MODEL_d2c74cde87164ed28d9a6a8ba4c1e2ea"}}, "5bbe5d1ff1f5488a9f282a47470ad2b5": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "5d0693c415b14b37b442d70738767282": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "60caef5c53c241e7bd84f8e7c15cecc2": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "64cf7be669e94c26baf7cad8a240a0f9": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "6581cfe662bd4887892307fd360bc638": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_f5734ff5effd44c1b8e88662f8b85e6e", "max": 400.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_94ea8d7392a841daa0a3e6a226626905", "value": 400.0}}, "69b744a5b15c4c20ac7de314506addd2": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "756ffd42952546a69fcfb17011e58b4b": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_d7bf4513101742ec83303c28bc5bb8e8", "placeholder": "\u200b", "style": "IPY_MODEL_e8343fba7a664766a42da2c6316746d2", "value": " 10/10 [00:02&lt;00:00,  4.11it/s]"}}, "77a593dc4a624c7a9836a7d6cecca314": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_beee0c498ed54e1d9ed8597184f4b2a7", "IPY_MODEL_43d0801980e3417c9f6c2ef886870b48", "IPY_MODEL_ca3691485dc64902bc2a86d5e1567fc8"], "layout": "IPY_MODEL_9bf8cf90eb014b689866a0d5b1748012"}}, "80ac8cb1ee16451797c21c5265c6966f": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "8698c6e75a8b4aa5b5b078d259e6608b": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_80ac8cb1ee16451797c21c5265c6966f", "placeholder": "\u200b", "style": "IPY_MODEL_8f32a1bcddd04e4db01d57d4d98f0f9f", "value": " 11.9M/11.9M [00:28&lt;00:00, 370kB/s]"}}, "86e24a1b84444411bc434ba40636d27f": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "8d6bae0bf86342918038ef19a955e311": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_f619e3fce03d4f96a8ecc67cd13654f0", "max": 10.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_cb83e97d7a804394b36dbcda7d16fe65", "value": 10.0}}, "8f32a1bcddd04e4db01d57d4d98f0f9f": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "94ea8d7392a841daa0a3e6a226626905": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": "#277f8e", "description_width": ""}}, "96e66129bd204749821d6b31b7318e2b": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9ae25f26eccf421b92ea66f90851d989": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9bf8cf90eb014b689866a0d5b1748012": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "a8afb58c85ad47d18d444a61eb54a14e": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "aae773157b45464b9fa3e59f56af8de1": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "abbee6832b3645caa6838fc181cceba2": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "ad100c35550f49728ec18522c1d54523": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "beee0c498ed54e1d9ed8597184f4b2a7": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_e436a55f19564aa8977424e8daeb2e73", "placeholder": "\u200b", "style": "IPY_MODEL_ad100c35550f49728ec18522c1d54523", "value": "Profiling likelihood: 100%"}}, "c017dfa78d404d19a366892b4b04fd27": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_a8afb58c85ad47d18d444a61eb54a14e", "placeholder": "\u200b", "style": "IPY_MODEL_359e132544bf49aca0ce2028ce309177", "value": "Downloading L210823050554D396CEF226_PH00.fits: 100%"}}, "c54905172a0b4e89b0a93ff2d82c94cf": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "c82f8148f34549329b90e8f57ff9d4b7": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "ca3691485dc64902bc2a86d5e1567fc8": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_2c9d257447c74145a51c13913432127b", "placeholder": "\u200b", "style": "IPY_MODEL_e2386cc6e9ee4ae690e13b94480632dd", "value": " 30/30 [00:14&lt;00:00,  2.64it/s]"}}, "cb83e97d7a804394b36dbcda7d16fe65": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "cbf666038a2340efa0f6250db0091b2c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "cc064aade0a049a29c1549e05b2e1d8c": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "d09878e3a382400aa429e667547f15ac": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "d2c74cde87164ed28d9a6a8ba4c1e2ea": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": "inline-flex", "flex": null, "flex_flow": "row wrap", "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": "100%"}}, "d7bf4513101742ec83303c28bc5bb8e8": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "d9dfc0ef5c8848c482f2b5985b1b2154": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "ProgressStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": "#365c8d", "description_width": ""}}, "da0e4a16d2584c65a563a3114cec64fc": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_4ebbe4befce14454a27d0004fedd1053", "IPY_MODEL_8d6bae0bf86342918038ef19a955e311", "IPY_MODEL_756ffd42952546a69fcfb17011e58b4b"], "layout": "IPY_MODEL_d09878e3a382400aa429e667547f15ac"}}, "dc79a1c4770f46aeac334e6217daab0d": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HTMLModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_feede39ef60d456285aa5cf60fe9f7e9", "placeholder": "\u200b", "style": "IPY_MODEL_48c3fd0708e44c208da67aafe8c8c7af", "value": " 500/500 [01:38&lt;00:00,  5.49it/s]"}}, "e2386cc6e9ee4ae690e13b94480632dd": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "e2a617aa6fd04fce979ad85e4339ad4d": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e3cee66006c748a89c44ec66d5f2f8fa": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_c017dfa78d404d19a366892b4b04fd27", "IPY_MODEL_e9abfc666b2d4dcc8800da2b21ac56a5", "IPY_MODEL_2908090e23db48c483323ce2afac5e83"], "layout": "IPY_MODEL_5d0693c415b14b37b442d70738767282"}}, "e436a55f19564aa8977424e8daeb2e73": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "e8343fba7a664766a42da2c6316746d2": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "e9abfc666b2d4dcc8800da2b21ac56a5": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "FloatProgressModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_96e66129bd204749821d6b31b7318e2b", "max": 17087040.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_063587e30c4d4893ae33d64fe5276d2a", "value": 17087040.0}}, "ef3e8d179fcc46acaa45419b944c0e42": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "ef9967c9d5a64360a8c6b1ade4c8e897": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "HBoxModel", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_3b5e62e560b2487398421d627a3c1c60", "IPY_MODEL_6581cfe662bd4887892307fd360bc638", "IPY_MODEL_053e6de3f7f94543a4eafbad73f26a57"], "layout": "IPY_MODEL_64cf7be669e94c26baf7cad8a240a0f9"}}, "f2681f35042f4f73b5376693831d62ef": {"model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "model_name": "DescriptionStyleModel", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "f3eb9bfda93044268c3d89e52533c542": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "f5734ff5effd44c1b8e88662f8b85e6e": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": "2", "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "f619e3fce03d4f96a8ecc67cd13654f0": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "feede39ef60d456285aa5cf60fe9f7e9": {"model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "model_name": "LayoutModel", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}}, "version_major": 2, "version_minor": 0}
+</script></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,370 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>threeML.io package &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
+   
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+  <!--
+  <div class="admonition note">
+    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
+    </p>
+  </div>
+  -->
+  <li id="lightdark-li">
+    <label for="lightdark-checkbox" id="lightdark-label">
+      <input type="checkbox" id="lightdark-checkbox"/>
+      <div class="btn-neutral"></div>
+    </label>
+  </li>
+  
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>threeML.io package</li>
+    
+
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <script type="text/javascript" src=../../_static/custom.js></script>
+  
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="threeml-io-package">
+<h1>threeML.io package<a class="headerlink" href="#threeml-io-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="threeML.io.cern_root_utils.html">threeML.io.cern_root_utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.cern_root_utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.cern_root_utils.html#threeml-io-cern-root-utils-io-utils-module">threeML.io.cern_root_utils.io_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.cern_root_utils.html#threeml-io-cern-root-utils-tobject-to-numpy-module">threeML.io.cern_root_utils.tobject_to_numpy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.cern_root_utils.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="threeML.io.plotting.html">threeML.io.plotting package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-cmap-cycle-module">threeML.io.plotting.cmap_cycle module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-data-residual-plot-module">threeML.io.plotting.data_residual_plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-get-style-module">threeML.io.plotting.get_style module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-light-curve-plots-module">threeML.io.plotting.light_curve_plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-model-plot-module">threeML.io.plotting.model_plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-model-plot-2d-module">threeML.io.plotting.model_plot_2D module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-model-plot-tags-module">threeML.io.plotting.model_plot_tags module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-post-process-data-plots-module">threeML.io.plotting.post_process_data_plots module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#threeml-io-plotting-step-plot-module">threeML.io.plotting.step_plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="threeML.io.plotting.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-calculate-flux-module">
+<h2>threeML.io.calculate_flux module<a class="headerlink" href="#threeml-io-calculate-flux-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-configuration-module">
+<h2>threeML.io.configuration module<a class="headerlink" href="#threeml-io-configuration-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-detect-notebook-module">
+<h2>threeML.io.detect_notebook module<a class="headerlink" href="#threeml-io-detect-notebook-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-dict-with-pretty-print-module">
+<h2>threeML.io.dict_with_pretty_print module<a class="headerlink" href="#threeml-io-dict-with-pretty-print-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-download-from-ftp-module">
+<h2>threeML.io.download_from_ftp module<a class="headerlink" href="#threeml-io-download-from-ftp-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-download-from-http-module">
+<h2>threeML.io.download_from_http module<a class="headerlink" href="#threeml-io-download-from-http-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-file-utils-module">
+<h2>threeML.io.file_utils module<a class="headerlink" href="#threeml-io-file-utils-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-fits-file-module">
+<h2>threeML.io.fits_file module<a class="headerlink" href="#threeml-io-fits-file-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-get-heasarc-table-as-pandas-module">
+<h2>threeML.io.get_heasarc_table_as_pandas module<a class="headerlink" href="#threeml-io-get-heasarc-table-as-pandas-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-hdf5-utils-module">
+<h2>threeML.io.hdf5_utils module<a class="headerlink" href="#threeml-io-hdf5-utils-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-logging-module">
+<h2>threeML.io.logging module<a class="headerlink" href="#threeml-io-logging-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-network-module">
+<h2>threeML.io.network module<a class="headerlink" href="#threeml-io-network-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-package-data-module">
+<h2>threeML.io.package_data module<a class="headerlink" href="#threeml-io-package-data-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-results-table-module">
+<h2>threeML.io.results_table module<a class="headerlink" href="#threeml-io-results-table-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-rich-display-module">
+<h2>threeML.io.rich_display module<a class="headerlink" href="#threeml-io-rich-display-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-serialization-module">
+<h2>threeML.io.serialization module<a class="headerlink" href="#threeml-io-serialization-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-suppress-stdout-module">
+<h2>threeML.io.suppress_stdout module<a class="headerlink" href="#threeml-io-suppress-stdout-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-table-module">
+<h2>threeML.io.table module<a class="headerlink" href="#threeml-io-table-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="threeml-io-uncertainty-formatter-module">
+<h2>threeML.io.uncertainty_formatter module<a class="headerlink" href="#threeml-io-uncertainty-formatter-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

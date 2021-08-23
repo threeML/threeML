@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jupyter: jupytext: formats: ipynb,md text_representation: extension: .md format_name: markdown format_version: ‘1.2’ jupytext_version: 1.7.1 kernelspec: display_name: Python 3 language: python name: python3 &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
+   
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+  <!--
+  <div class="admonition note">
+    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
+    </p>
+  </div>
+  -->
+  <li id="lightdark-li">
+    <label for="lightdark-checkbox" id="lightdark-label">
+      <input type="checkbox" id="lightdark-checkbox"/>
+      <div class="btn-neutral"></div>
+    </label>
+  </li>
+  
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3</li>
+    
+
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <script type="text/javascript" src=../../_static/custom.js></script>
+  
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<hr class="docutils" />
+<div class="section" id="jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3">
+<h1>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.2’
+jupytext_version: 1.7.1
+kernelspec:
+display_name: Python 3
+language: python
+name: python3<a class="headerlink" href="#jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-2-jupytext-version-1-7-1-kernelspec-display-name-python-3-language-python-name-python3" title="Permalink to this headline">¶</a></h1>
+<!-- #region --></div>
+<div class="section" id="goodness-of-fit-and-model-comparison">
+<h1>Goodness of Fit and Model Comparison<a class="headerlink" href="#goodness-of-fit-and-model-comparison" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="goodness-of-fit">
+<h2>Goodness of fit<a class="headerlink" href="#goodness-of-fit" title="Permalink to this headline">¶</a></h2>
+<p>It is often that we we need to know how well our model fits our data. While in  linear, Gaussian regimes and under certain regularity conditions, the reduced $\chi^2$ provides a measure of fit quality, most of the time it is unreliable and incorrect to use. For more on this, read <a class="reference external" href="https://arxiv.org/pdf/1012.3754.pdf">The Do’s and Don’ts of reduced chi2</a>.</p>
+<p>Instead, we can <a class="reference external" href="www.google.com">almost</a> always use the bootstrap method to estimate the quality of an MLE analysis. In 3ML, we can do this with the quite simply after a fit.</p>
+<!-- #endregion --><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">capture</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">stats</span>
+<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
+
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+
+<span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">set_threeML_style</span><span class="p">()</span>
+<span class="n">silence_warnings</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Let’s go back to simulations. We will simulate a straight line.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gen_function</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+
+<span class="n">xyl_generator</span> <span class="o">=</span> <span class="n">XYLike</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s2">&quot;sim_data&quot;</span><span class="p">,</span> <span class="n">function</span> <span class="o">=</span> <span class="n">gen_function</span><span class="p">,</span> 
+                                     <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> 
+                                     <span class="n">yerr</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">gen_function</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">xyl_generator</span><span class="o">.</span><span class="n">y</span>
+<span class="n">y_err</span> <span class="o">=</span> <span class="n">xyl_generator</span><span class="o">.</span><span class="n">yerr</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">xyl_generator</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span>
+
+</pre></div>
+</div>
+<p>So, now we simply need to fit the data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fit_function</span> <span class="o">=</span> <span class="n">Line</span><span class="p">()</span>
+
+<span class="n">xyl</span> <span class="o">=</span> <span class="n">XYLike</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">y_err</span><span class="p">)</span>
+
+<span class="n">datalist</span> <span class="o">=</span> <span class="n">DataList</span><span class="p">(</span><span class="n">xyl</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">PointSource</span><span class="p">(</span><span class="s1">&#39;xyl&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">spectral_shape</span><span class="o">=</span><span class="n">fit_function</span><span class="p">))</span>
+
+<span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">datalist</span><span class="p">)</span>
+
+<span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">();</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">xyl</span><span class="o">.</span><span class="n">plot</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Now that the data are fit, we can assess the goodness of fit via simulating synthetic data sets and seeing how often these datasets have a similar likelihood. To do this, pass the JointLikelihood object to the GoodnessOfFit class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gof_obj</span> <span class="o">=</span> <span class="n">GoodnessOfFit</span><span class="p">(</span><span class="n">jl</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we will monte carlo some datasets. This can be computationally expensive, so we will use 3ML’s built in context manager for accessing ipython clusters. If we have a profile that is connected to a super computer, then we can simulate and fit all the datasets very quickly. Just use <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">parallel_computation():</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gof</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">,</span> <span class="n">like_data_frame</span> <span class="o">=</span> <span class="n">gof_obj</span><span class="o">.</span><span class="n">by_mc</span><span class="p">(</span><span class="n">n_iterations</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">continue_on_failure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Three things are returned, the GOF for each plugin (in our case one) as well as the total GOF, a data frame with the fitted values for each synthetic dataset, and the likelihoods for all the fits. We can see that the data have a reasonable GOF:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gof</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="likelihood-ratio-tests">
+<h2>Likelihood Ratio Tests<a class="headerlink" href="#likelihood-ratio-tests" title="Permalink to this headline">¶</a></h2>
+<p>An essential part of MLE analysis is the likelihood ratio test (LRT) for comparing models. For <strong>nested models</strong> (those where one is a special case of the other), <a class="reference external" href="https://projecteuclid.org/euclid.aoms/1177732360">Wilks’ theorem</a> posits that the LRT is $\chi^2$ distributed, and thus the null model can be rejected with a probability read from a $\chi^2$ table.</p>
+<p>In a perfect world, this would always hold, but there are many regualrity conditions on Wilks’ theorem that are often violated in astromonical data. For a review, see <a class="reference external" href="http://iopscience.iop.org/0004-637X/571/1/545/">Protassov et al</a> and keep it close at heart whenever wanting to use the LRT.</p>
+<p>For these reasons, in 3ML we provide a method for computing the LRT via profiling the null model via bootstrap samples. This is valid for nested models and avoids the dangers of asymmptotics and parameters defined on the extreme boundries of their distributions (spectral line normalizations, extra spectral components, etc.). This method does not avoid other problems which may arise from systmatics present in the data. As with any analysis, it is important to doubt and try and prove the result wrong as well as understanding the data/instrument.</p>
+<p>Let’s start by simulating some data from a power law with an exponential cutoff on top of a background.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">51</span><span class="p">)</span>
+
+<span class="n">low_edge</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">high_edge</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="c1"># get a blackbody source function</span>
+<span class="n">source_function</span> <span class="o">=</span> <span class="n">Cutoff_powerlaw</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">index</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">xc</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span><span class="n">piv</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># power law background function</span>
+<span class="n">background_function</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">(</span><span class="n">K</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">index</span><span class="o">=-</span><span class="mf">2.</span><span class="p">,</span> <span class="n">piv</span><span class="o">=</span><span class="mf">100.</span><span class="p">)</span>
+
+<span class="n">spectrum_generator</span> <span class="o">=</span> <span class="n">SpectrumLike</span><span class="o">.</span><span class="n">from_function</span><span class="p">(</span><span class="s1">&#39;fake&#39;</span><span class="p">,</span>
+                                               <span class="n">source_function</span><span class="o">=</span><span class="n">source_function</span><span class="p">,</span>
+                                               <span class="n">background_function</span><span class="o">=</span><span class="n">background_function</span><span class="p">,</span>
+                                               <span class="n">energy_min</span><span class="o">=</span><span class="n">low_edge</span><span class="p">,</span>
+                                               <span class="n">energy_max</span><span class="o">=</span><span class="n">high_edge</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">spectrum_generator</span><span class="o">.</span><span class="n">view_count_spectrum</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>We simulated a weak cutoff powerlaw. But if this was real data, we wouldn’t know that there was a cutoff. So we would fit both a power law (the null model) and a cutoff power law (the alternative model).</p>
+<p>Let’s setup two models to fit the data via MLE in the standard 3ML way.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">powerlaw</span> <span class="o">=</span> <span class="n">Powerlaw</span><span class="p">(</span><span class="n">piv</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">cutoff_powerlaw</span> <span class="o">=</span> <span class="n">Cutoff_powerlaw</span><span class="p">(</span><span class="n">piv</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="n">ps_powerlaw</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s1">&#39;test_pl&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">powerlaw</span><span class="p">)</span>
+<span class="n">ps_cutoff_powerlaw</span> <span class="o">=</span> <span class="n">PointSource</span><span class="p">(</span><span class="s1">&#39;test_cpl&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">spectral_shape</span><span class="o">=</span><span class="n">cutoff_powerlaw</span><span class="p">)</span>
+
+<span class="n">model_null</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">ps_powerlaw</span><span class="p">)</span>
+<span class="n">model_alternative</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">ps_cutoff_powerlaw</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">datalist</span> <span class="o">=</span> <span class="n">DataList</span><span class="p">(</span><span class="n">spectrum_generator</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jl_null</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model_null</span><span class="p">,</span><span class="n">datalist</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">jl_null</span><span class="o">.</span><span class="n">fit</span><span class="p">();</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jl_alternative</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model_alternative</span><span class="p">,</span><span class="n">datalist</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">jl_alternative</span><span class="o">.</span><span class="n">fit</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Ok, we now have our log(likelihoods) from each model. If we took Wilks’ theorem to heart, then we would compute:</p>
+<p>$$\Lambda(x)=\frac{\sup{,\mathcal L(\theta\mid x):\theta\in\Theta_0,}}{\sup{,\mathcal L(\theta\mid x) : \theta\in\Theta,}}$$</p>
+<p>or $-2 \log(\Lambda)$ which would be $\chi^2_{\nu}$ distributed where $\nu$ is the number of extra parameters in the alternative model. In our case:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># calculate the test statistic</span>
+<span class="n">TS</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">jl_null</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_statistic_frame</span><span class="p">()[</span><span class="s1">&#39;-log(likelihood)&#39;</span><span class="p">][</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">jl_alternative</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_statistic_frame</span><span class="p">()[</span><span class="s1">&#39;-log(likelihood)&#39;</span><span class="p">][</span><span class="s1">&#39;total&#39;</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;null hyp. prob.: </span><span class="si">{</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">TS</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>But lets check this by simulating the null distribution.</p>
+<p>We create a LRT object by passing the null model and the alternative model (in that order).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lrt</span> <span class="o">=</span> <span class="n">LikelihoodRatioTest</span><span class="p">(</span><span class="n">jl_null</span><span class="p">,</span><span class="n">jl_alternative</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we MC synthetic datasets again.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lrt_results</span> <span class="o">=</span> <span class="n">lrt</span><span class="o">.</span><span class="n">by_mc</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="n">continue_on_failure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This returns three things, the null hypothesis probability, the test statistics for all the data sets, and the fitted values. We see that our null hyp. prob is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lrt</span><span class="o">.</span><span class="n">null_hypothesis_probability</span>
+</pre></div>
+</div>
+<p>which is slightly different from what we obtained analytically.</p>
+<p>We can visualize why by plotting the distributions of TS and seeing if it follows a $\chi^2_{1}$ distribution/</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lrt</span><span class="o">.</span><span class="n">plot_TS_distribution</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">fc</span><span class="o">=</span><span class="s1">&#39;white&#39;</span><span class="p">,</span><span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">);</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The curve is slightly higher than we expect. Let’s rescale the curve by 1/2:</p>
+<div class="highlight-python tags=[&quot;nbsphinx-thumbnail&quot;] notranslate"><div class="highlight"><pre><span></span>lrt.plot_TS_distribution(scale=0.5,bins=100,ec=&#39;k&#39;,fc=&#39;white&#39;,lw=1.2);
+_ = plt.legend()
+</pre></div>
+</div>
+<p>Thus, we see that 3ML provides an automatic, and possibly efficient way to avoid the nasty problems of the LRT.</p>
+<p>Both the GoodnessOfFit and LikelihoodRatioTest classes internally handle the generation of synthetic datasets. All current plugins have the ability to generate synthetic datasets based off their internal properties such as their background spectra and instrument responses.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

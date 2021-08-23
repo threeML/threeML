@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jupyter: jupytext: formats: ipynb,md text_representation: extension: .md format_name: markdown format_version: ‘1.3’ jupytext_version: 1.10.2 kernelspec: display_name: Python 3 language: python name: python3 &mdash; The Multi-Mission Maximum Likelihood framework  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/gallery.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.ico"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^0.21.0-alpha.0/dist/embed-amd.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <link rel="stylesheet" href="../../_static/pygments/default.css" type="text/css" id="pygments-style">
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css">
+   
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> The Multi-Mission Maximum Likelihood framework
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Intro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/logging.html">Logging and Verbosity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../xspec_users.html">Notes for XSPEC Users</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Bayesian_tutorial.html">Bayesian Posterior Sampling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plugins.html">Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/API.html#threeml">threeML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_notes.html">Release Notes</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features and examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Analysis_results_showcase.html">Analysis Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/random_variates.html">Random Variates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Point_source_plotting.html">Point source plotting basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Building_Plugins_from_TimeSeries.html">Constructing plugins from TimeSeries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/grb080916C.html">Analyzing GRB 080916C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_BAT_gbm_demo.html">Example joint fit between GBM and Swift BAT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/joint_fitting_xrt_and_gbm_xspec_models.html">Joint fitting XRT and GBM data with XSPEC models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/flux_examples.html">Point Source Fluxes and Multiple Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/Time-energy-fit.html">Time-energy fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/synthetic_spectra.html">Generating Synthetic Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/gof_lrt.html">Goodness of Fit and Model Comparison</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/APEC_doc.html">Fitting XMM-Newton data with the APEC model</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">The Multi-Mission Maximum Likelihood framework</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+  <!--
+  <div class="admonition note">
+    <p><a href="https://github.com/lukelbd">ProPlot author here</a>: Due to my day job as a graduate student, certain <a href="https://github.com/lukelbd/proplot/pulls?q=is%3Aopen+is%3Apr">feature additions</a> may be delayed to the summer of 2020. In the meantime, if you are interested in contributing to ProPlot, please see the <a href="https://proplot.readthedocs.io/en/latest/contributions.html">contribution guide</a>. Any amount of help is welcome!
+    </p>
+  </div>
+  -->
+  <li id="lightdark-li">
+    <label for="lightdark-checkbox" id="lightdark-label">
+      <input type="checkbox" id="lightdark-checkbox"/>
+      <div class="btn-neutral"></div>
+    </label>
+  </li>
+  
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.3’
+jupytext_version: 1.10.2
+kernelspec:
+display_name: Python 3
+language: python
+name: python3</li>
+    
+
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+  <script type="text/javascript" src=../../_static/custom.js></script>
+  
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<hr class="docutils" />
+<div class="section" id="jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-3-jupytext-version-1-10-2-kernelspec-display-name-python-3-language-python-name-python3">
+<h1>jupyter:
+jupytext:
+formats: ipynb,md
+text_representation:
+extension: .md
+format_name: markdown
+format_version: ‘1.3’
+jupytext_version: 1.10.2
+kernelspec:
+display_name: Python 3
+language: python
+name: python3<a class="headerlink" href="#jupyter-jupytext-formats-ipynb-md-text-representation-extension-md-format-name-markdown-format-version-1-3-jupytext-version-1-10-2-kernelspec-display-name-python-3-language-python-name-python3" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="fermi-lat-via-fermipylike">
+<h1>Fermi-LAT via FermiPyLike<a class="headerlink" href="#fermi-lat-via-fermipylike" title="Permalink to this headline">¶</a></h1>
+<p>In this Example we show how to use the fermipy plugin in threeML. We perform a Binned likelihood analysis and a Bayesian analysis of the Crab, optimizing the parameters of the Crab Pulsar (PSR J0534+2200) keeping fixed the parameters of the Crab Nebula. In the model, the nebula is described by two sources, one representing the synchrotron spectrum, the othet the Inverse Compton emission.
+In this example we show how to download Fermi-LAT data, how to build a model starting from the 4FGL, how to free and fix parameters of the sources in the model, and how to perform a spectral analysis using the fermipy plugin.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span><span class="n">display</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span> <span class="k">as</span> <span class="n">pyfits</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sp</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="n">capture</span>
+<span class="kn">from</span> <span class="nn">threeML</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterthemes</span> <span class="kn">import</span> <span class="n">jtplot</span>
+<span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<span class="n">jtplot</span><span class="o">.</span><span class="n">style</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">fscale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">set_threeML_style</span><span class="p">()</span>
+<span class="n">silence_warnings</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="the-fermi-4fgl-catalog">
+<h2>The Fermi 4FGL catalog<a class="headerlink" href="#the-fermi-4fgl-catalog" title="Permalink to this headline">¶</a></h2>
+<p>Let’s interrogate the 4FGL to get the sources in a radius of 20.0 deg around the Crab</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat_catalog</span> <span class="o">=</span> <span class="n">FermiLATSourceCatalog</span><span class="p">()</span>
+
+<span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">table</span> <span class="o">=</span> <span class="n">lat_catalog</span><span class="o">.</span><span class="n">search_around_source</span><span class="p">(</span><span class="s2">&quot;Crab&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">20.0</span><span class="p">)</span>
+
+<span class="n">table</span>
+</pre></div>
+</div>
+<p>This gets a 3ML model (a Model instance) from the table above, where every source in the 4FGL becomes a Source instance. Note that by default all parameters of all sources are fixed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">lat_catalog</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Let’s free all the normalizations within 3 deg from the center.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">free_point_sources_within_radius</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">normalization_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>but then let’s fix the sync and the IC components of the Crab nebula (cannot fit them with just one month of data) (these two methods are equivalent)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;Crab_IC.spectrum.main.Log_parabola.K&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fix</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">model</span><span class="o">.</span><span class="n">Crab_synch</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">Powerlaw</span><span class="o">.</span><span class="n">K</span><span class="o">.</span><span class="n">fix</span>     <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>However, let’s free the index of the Crab Pulsar</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">PSR_J0534p2200</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">Super_cutoff_powerlaw</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">free</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download data from Jan 01 2010 to February 1 2010</span>
+
+<span class="n">tstart</span> <span class="o">=</span> <span class="s2">&quot;2010-01-01 00:00:00&quot;</span>
+<span class="n">tstop</span>  <span class="o">=</span> <span class="s2">&quot;2010-02-01 00:00:00&quot;</span>
+
+<span class="c1"># Note that this will understand if you already download these files, and will</span>
+<span class="c1"># not do it twice unless you change your selection or the outdir</span>
+
+<span class="n">evfile</span><span class="p">,</span> <span class="n">scfile</span> <span class="o">=</span> <span class="n">download_LAT_data</span><span class="p">(</span>
+    <span class="n">ra</span><span class="p">,</span>
+    <span class="n">dec</span><span class="p">,</span>
+    <span class="mf">20.0</span><span class="p">,</span>
+    <span class="n">tstart</span><span class="p">,</span>
+    <span class="n">tstop</span><span class="p">,</span>
+    <span class="n">time_type</span><span class="o">=</span><span class="s2">&quot;Gregorian&quot;</span><span class="p">,</span>
+    <span class="n">destination_directory</span><span class="o">=</span><span class="s2">&quot;Crab_data&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration-for-fermipy">
+<h2>Configuration for Fermipy<a class="headerlink" href="#configuration-for-fermipy" title="Permalink to this headline">¶</a></h2>
+<p>3ML provides and intreface into <a class="reference external" href="https://fermipy.readthedocs.io/en/latest/">Fermipy</a> via the <strong>FermipyLike</strong> plugin. We can use it to generate basic configuration files.</p>
+<p>.. note::
+Currently, the FermipyLike plugin does not provide an interface to handle extended sources. This will change</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">FermipyLike</span><span class="o">.</span><span class="n">get_basic_config</span><span class="p">(</span><span class="n">evfile</span><span class="o">=</span><span class="n">evfile</span><span class="p">,</span> <span class="n">scfile</span><span class="o">=</span><span class="n">scfile</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span> <span class="n">fermipy_verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fermitools_chatter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># See what we just got</span>
+
+<span class="n">config</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can of course modify the configuration as a dictionary</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;selection&quot;</span><span class="p">][</span><span class="s2">&quot;emax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">300000.0</span>
+</pre></div>
+</div>
+<p>and even add sections</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;gtlike&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;edisp&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+
+<span class="n">config</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="fermipylike">
+<h3>FermipyLike<a class="headerlink" href="#fermipylike" title="Permalink to this headline">¶</a></h3>
+<p>Let’s create an instance of the plugin/ Note that here no processing is made, because fermipy still doesn’t know about the model you want to use.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">LAT</span> <span class="o">=</span> <span class="n">FermipyLike</span><span class="p">(</span><span class="s2">&quot;LAT&quot;</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The plugin modifies the configuration as needed to get the output files in a unique place, which will stay the same as long as your selection does not change.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Here is where the fermipy processing happens (the .setup method)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fermipy_output_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;fileio&#39;</span><span class="p">][</span><span class="s1">&#39;outdir&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fermipy Output directoty: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fermipy_output_directory</span><span class="p">)</span>
+
+<span class="c1">#This remove the output directory, to start a fresh analysis...</span>
+
+<span class="k">if</span> <span class="n">fermipy_output_directory</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>  <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">fermipy_output_directory</span><span class="p">)</span>
+
+<span class="c1"># Here is where the fermipy processing happens (the .setup method)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">DataList</span><span class="p">(</span><span class="n">LAT</span><span class="p">)</span>
+
+<span class="n">jl</span> <span class="o">=</span> <span class="n">JointLikelihood</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="performing-the-fit">
+<h3>Performing the fit<a class="headerlink" href="#performing-the-fit" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">jl</span><span class="o">.</span><span class="n">set_minimizer</span><span class="p">(</span><span class="s2">&quot;ROOT&quot;</span><span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now let’s compute the errors on the best fit parameters</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">get_errors</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We might also want to look at the profile of the likelihood for each parameter.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">get_contours</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">PSR_J0534p2200</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">Super_cutoff_powerlaw</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span><span class="o">-</span><span class="mf">1.6</span><span class="p">,</span><span class="mi">30</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Or we might want to produce a contour plot</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">jl</span><span class="o">.</span><span class="n">get_contours</span><span class="p">(</span>
+    <span class="s1">&#39;PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K&#39;</span><span class="p">,</span><span class="mf">0.7e-13</span><span class="p">,</span><span class="mf">1.3e-13</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="s1">&#39;PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index&#39;</span><span class="p">,</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span><span class="o">-</span><span class="mf">1.6</span><span class="p">,</span> <span class="mi">20</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python tags=[&quot;nbsphinx-thumbnail&quot;] notranslate"><div class="highlight"><pre><span></span>res[-1]
+</pre></div>
+</div>
+<p><strong>Pro-trick:</strong> We can also axcess the GTAnalysis object of fermipy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#res = jl.fit()</span>
+<span class="c1">#LAT.gta.write_roi(&#39;test&#39;,make_plots=True)</span>
+</pre></div>
+</div>
+<p>All the plots are saved in the output directory as png files:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#pngs=Path(f&quot;{fermipy_output_directory}&quot;).glob(&quot;*png&quot;)</span>
+<span class="c1">#for png in pngs:</span>
+<span class="c1">#    print(png)</span>
+<span class="c1">#    my_image=Image(str(png))</span>
+<span class="c1">#    display(my_image)</span>
+</pre></div>
+</div>
+<p>We can also plot the resulting model:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">energies</span><span class="o">=</span><span class="n">sp</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span> <span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">MeV</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="c1"># we only want to visualize the relevant sources...</span>
+<span class="n">src_to_plot</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Crab&#39;</span><span class="p">,</span><span class="s1">&#39;PSR_J0534p2200&#39;</span><span class="p">]</span>
+<span class="c1"># Now loop over all point sources and plot them</span>
+<span class="k">for</span> <span class="n">source_name</span><span class="p">,</span> <span class="n">point_source</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">point_sources</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">src_to_plot</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">source_name</span><span class="p">:</span> 
+            <span class="c1"># Plot the sum of all components for this source</span>
+
+            <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span> <span class="n">point_source</span><span class="p">(</span><span class="n">energies</span><span class="p">),</span><span class="n">label</span><span class="o">=</span><span class="n">source_name</span><span class="p">)</span>
+            <span class="c1"># If there is more than one component, plot them also separately</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">point_source</span><span class="o">.</span><span class="n">components</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+                <span class="k">for</span> <span class="n">component_name</span><span class="p">,</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">point_source</span><span class="o">.</span><span class="n">components</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">energies</span><span class="p">,</span><span class="n">component</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">energies</span><span class="p">),</span>
+                              <span class="s1">&#39;--&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">source_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+<span class="c1"># Add a legend</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Energy (MeV)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Flux (ph cm$^{-2}$ s$^{-1}$ keV$^{-1}$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">1e-20</span><span class="p">,</span><span class="mf">1e-3</span><span class="p">])</span>
+
+<span class="c1">#show the plot</span>
+<span class="n">fig</span>
+</pre></div>
+</div>
+<p>We can also do a bayesian analysis.</p>
+<p>This will set priors based on the current defined min-max (log-uniform or uniform)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">param</span><span class="o">.</span><span class="n">has_transformation</span><span class="p">():</span>
+        <span class="n">param</span><span class="o">.</span><span class="n">set_uninformative_prior</span><span class="p">(</span> <span class="n">Log_uniform_prior</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">param</span><span class="o">.</span><span class="n">set_uninformative_prior</span><span class="p">(</span> <span class="n">Uniform_prior</span> <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#It&#39;s better to remove the output directory,...</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">fermipy_output_directory</span><span class="p">)</span>
+
+<span class="n">bayes</span> <span class="o">=</span> <span class="n">BayesianAnalysis</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bayes</span><span class="o">.</span><span class="n">set_sampler</span><span class="p">(</span><span class="s1">&#39;emcee&#39;</span><span class="p">)</span>
+
+<span class="n">n_walkers</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">burn_in</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">500</span>
+
+<span class="n">bayes</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">n_iterations</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span><span class="n">n_burn_in</span><span class="o">=</span><span class="n">burn_in</span><span class="p">,</span><span class="n">n_walkers</span><span class="o">=</span><span class="n">n_walkers</span> <span class="p">)</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">bayes</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can access to the parameter range like this (HPD):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">this_K</span> <span class="o">=</span> <span class="n">bayes</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span>
+    <span class="s1">&#39;PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K&#39;</span>
+<span class="p">)</span>
+<span class="n">this_idx</span> <span class="o">=</span> <span class="n">bayes</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">get_variates</span><span class="p">(</span>
+    <span class="s1">&#39;PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index&#39;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Highest_posterior_density_intervals :&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;K (68</span><span class="si">%%</span><span class="s1">):     </span><span class="si">%10.2e</span><span class="s1">,</span><span class="si">%10.2e</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">this_K</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="n">cl</span><span class="o">=</span><span class="mf">.68</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;K (95</span><span class="si">%%</span><span class="s1">):     </span><span class="si">%10.2e</span><span class="s1">,</span><span class="si">%10.2e</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">this_K</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="n">cl</span><span class="o">=</span><span class="mf">.95</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Index (68</span><span class="si">%%</span><span class="s1">): </span><span class="si">%10.2e</span><span class="s1">,</span><span class="si">%10.2e</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">this_idx</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="n">cl</span><span class="o">=</span><span class="mf">.68</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Index (95</span><span class="si">%%</span><span class="s1">): </span><span class="si">%10.2e</span><span class="s1">,</span><span class="si">%10.2e</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">this_idx</span><span class="o">.</span><span class="n">highest_posterior_density_interval</span><span class="p">(</span><span class="n">cl</span><span class="o">=</span><span class="mf">.95</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">corner_figure</span> <span class="o">=</span> <span class="n">bayes</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">corner_plot</span><span class="p">()</span>
+<span class="n">corner_figure</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
