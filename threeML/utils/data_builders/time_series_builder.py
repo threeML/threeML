@@ -1245,7 +1245,7 @@ class TimeSeriesBuilder(object):
                     rsp2_file=rsp_file,
                     counts_getter=event_list.counts_over_interval,
                     exposure_getter=event_list.exposure_over_interval,
-                    reference_time=gbm_tte_file.trigger_time,
+                    reference_time=cdata.trigger_time,
                     half_shifted=half_shifted
                 )
 
