@@ -92,13 +92,14 @@ rtds_action_github_repo = "threeML/threeML"
 # # A GitHub personal access token is required, more info below
 rtds_action_github_token = os.environ["GITHUB_TOKEN"]
 
+rtds_action_error_if_missing = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-source_suffix = ['.rst', '.ipynb']
+source_suffix = ['.rst']
 # source_parsers = {
 #     '.md': CommonMarkParser,
 # }
@@ -112,7 +113,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'The Multi-Mission Maximum Likelihood framework'
-copyright = u'2017--2020, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei'
+copyright = u'2017--2021, G.Vianello, J. M. Burgess, N. Di Lalla, N. Omodei, H. Fleischhack'
 author = u'G.Vianello'
 
 # html_theme_options = {

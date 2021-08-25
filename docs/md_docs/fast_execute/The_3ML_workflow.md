@@ -29,7 +29,7 @@ Generally, an analysis in 3ML is performed in 3 steps:
 First, let's import 3ML:
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -45,7 +45,7 @@ import matplotlib.pyplot as plt
 
 ```
 
-```python nbsphinx="hidden"
+```python 
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)

@@ -8,6 +8,7 @@ import math
 import os
 from builtins import map, object, range, str
 from pathlib import Path
+from typing import List, Optional, Dict
 
 import astromodels
 import astropy.units as u
@@ -40,7 +41,6 @@ from threeML.random_variates import RandomVariates
 
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
-
 log = setup_logger(__name__)
 
 try:
@@ -58,7 +58,6 @@ else:
     has_chainconsumer = True
 
     log.debug("chainconsumer is installed")
-
 
 # These are special characters which cannot be safely saved in the keyword of a FITS file. We substitute
 # them with normal characters when we write the keyword, and we substitute them back when we read it back
@@ -209,6 +208,15 @@ def _load_one_results(fits_extension):
         # Gather samples
         samples = fits_extension.data.field("SAMPLES")
 
+        try:
+            # Gather log probability
+            log_probability = fits_extension.data.field("LOG_PROB")[0]
+
+        except:
+
+            log_probability = None
+
+            
         # Instance and return
 
         return BayesianResults(
@@ -216,6 +224,7 @@ def _load_one_results(fits_extension):
             samples.T,
             statistic_values,
             statistical_measures=measure_values,
+            log_probabilty=log_probability
         )
 
 
@@ -273,6 +282,14 @@ def _load_one_results_hdf(hdf_obj):
         # Gather samples
         samples = hdf_obj["SAMPLES"][()]
 
+        try:
+            # Gather log probabiltiy
+            log_probability = hdf_obj["LOG_PROB"][()]
+            
+        except:
+
+            log_probability = None
+            
         # Instance and return
 
         return BayesianResults(
@@ -280,6 +297,7 @@ def _load_one_results_hdf(hdf_obj):
             samples.T,
             statistic_values,
             statistical_measures=measure_values,
+            log_probabilty=log_probability
         )
 
 
@@ -326,8 +344,8 @@ def _load_set_of_results(open_fits_file, n_results):
     all_results = []
 
     for i in range(n_results):
-        all_results.append(_load_one_results(
-            open_fits_file["ANALYSIS_RESULTS", i + 1]))
+        all_results.append(
+            _load_one_results(open_fits_file["ANALYSIS_RESULTS", i + 1]))
 
     this_set = AnalysisResultsSet(all_results)
 
@@ -350,8 +368,8 @@ def _load_set_of_results(open_fits_file, n_results):
 
         else:
 
-            this_tuple = (
-                column.name, record[column.name] * u.Unit(column.unit))
+            this_tuple = (column.name,
+                          record[column.name] * u.Unit(column.unit))
 
         data_list.append(this_tuple)
 
@@ -396,28 +414,47 @@ class ANALYSIS_RESULTS_HDF(object):
 
         if analysis_results.analysis_type == "MLE":
 
-            assert isinstance(analysis_results, MLEResults)
+            if not isinstance(analysis_results, MLEResults):
+
+                log.error("this is not and MLEREsults")
+
+                raise RuntimeError()
 
             covariance_matrix = analysis_results.covariance_matrix
 
             # Check that the covariance matrix has the right shape
 
-            assert covariance_matrix.shape == (
-                n_parameters,
-                n_parameters,
-            ), "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
-                n_parameters,
-                n_parameters,
-                covariance_matrix.shape[0],
-                covariance_matrix.shape[1],
-            )
+            if not covariance_matrix.shape == (
+                    n_parameters,
+                    n_parameters,
+            ):
+
+                log.error(
+                    "Matrix has the wrong shape. Should be %i x %i, got %i x %i"
+                    % (
+                        n_parameters,
+                        n_parameters,
+                        covariance_matrix.shape[0],
+                        covariance_matrix.shape[1],
+                    ))
+
+                raise RuntimeError()
 
             # Empty samples set
             samples = np.zeros(n_parameters)
 
+
+            # Empty log prob set
+            log_probability = np.zeros(n_parameters)
+
+            
         else:
 
-            assert isinstance(analysis_results, BayesianResults)
+            if not isinstance(analysis_results, BayesianResults):
+
+                log.error("This is not a BayesiResults")
+
+                raise RuntimeError()
 
             # Empty covariance matrix
 
@@ -426,6 +463,10 @@ class ANALYSIS_RESULTS_HDF(object):
             # Gather the samples
             samples = analysis_results._samples_transposed
 
+            # Gather log probabilty
+
+            log_probability = analysis_results._log_probability
+            
         # yaml_model_serialization = my_yaml.dump(optimized_model.to_dict_with_types())
 
         # save the model to recursive dictionaries
@@ -436,8 +477,7 @@ class ANALYSIS_RESULTS_HDF(object):
         hdf_obj.attrs["RESUTYPE"] = analysis_results.analysis_type
 
         recursively_save_dict_contents_to_group(
-            hdf_obj, "MODEL", optimized_model.to_dict_with_types()
-        )
+            hdf_obj, "MODEL", optimized_model.to_dict_with_types())
         # Get data frame with parameters (always use equal tail errors)
 
         data_frame = analysis_results.get_data_frame(error_type="equal tail")
@@ -510,6 +550,16 @@ class ANALYSIS_RESULTS_HDF(object):
                 compression_opts=9,
                 shuffle=True,
             )
+
+            hdf_obj.create_dataset(
+                "LOG_PROB",
+                data=log_probability,
+                compression="gzip",
+                compression_opts=9,
+                shuffle=True,
+            )
+
+            
         else:
 
             raise RuntimeError("This AR is invalid!")
@@ -560,29 +610,44 @@ class ANALYSIS_RESULTS(FITSExtension):
 
         if analysis_results.analysis_type == "MLE":
 
-            assert isinstance(analysis_results, MLEResults)
+            if not isinstance(analysis_results, MLEResults):
+
+                log.error("This is not a MLEResults")
+
+                raise RuntimeError()
 
             covariance_matrix = analysis_results.covariance_matrix
 
+            # empty array
+            dummy = np.zeros(n_parameters)
+            
             # Check that the covariance matrix has the right shape
 
-            assert covariance_matrix.shape == (
+            if not covariance_matrix.shape == (
                 n_parameters,
                 n_parameters,
-            ), "Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
+            ):
+
+                log.error("Matrix has the wrong shape. Should be %i x %i, got %i x %i" % (
                 n_parameters,
                 n_parameters,
                 covariance_matrix.shape[0],
                 covariance_matrix.shape[1],
-            )
+            ))
+
+                raise RuntimeError()
 
             # Empty samples set
             samples = np.zeros(n_parameters)
 
         else:
 
-            assert isinstance(analysis_results, BayesianResults)
+            if not isinstance(analysis_results, BayesianResults):
 
+                log.error("This is not a BayesianResults")
+
+                raise RuntimeError()
+                
             # Empty covariance matrix
 
             covariance_matrix = np.zeros(n_parameters)
@@ -590,8 +655,18 @@ class ANALYSIS_RESULTS(FITSExtension):
             # Gather the samples
             samples = analysis_results._samples_transposed
 
-        # Serialize the model so it can be placed in the header
+            # log probability
 
+            # dummy to handle fits file
+            log_probability = analysis_results.log_probability
+
+            dummy = np.zeros(samples.shape)
+            
+            dummy[0] = log_probability
+            
+
+            
+        # Serialize the model so it can be placed in the header
         yaml_model_serialization = my_yaml.dump(
             optimized_model.to_dict_with_types())
 
@@ -604,7 +679,7 @@ class ANALYSIS_RESULTS(FITSExtension):
         data_frame = analysis_results.get_data_frame(error_type="equal tail")
 
         # Prepare columns
-
+        
         data_tuple = [
             ("NAME", list(free_parameters.keys())),
             ("VALUE", data_frame["value"].values),
@@ -613,7 +688,9 @@ class ANALYSIS_RESULTS(FITSExtension):
             ("ERROR", data_frame["error"].values),
             ("UNIT", np.array(data_frame["unit"].values, np.unicode_)),
             ("COVARIANCE", covariance_matrix),
-            ("SAMPLES", samples),
+            ("LOG_PROB", dummy),
+            ("SAMPLES", samples)
+            
         ]
 
         # Init FITS extension
@@ -725,7 +802,7 @@ class _AnalysisResults(object):
         # Safety checks
 
         self._n_free_parameters = len(optimized_model.free_parameters)
-
+        
         assert samples.shape[1] == self._n_free_parameters, (
             "Number of free parameters (%s) and set of samples (%s) "
             "do not agree." % (samples.shape[1], self._n_free_parameters)
@@ -1198,13 +1275,15 @@ class BayesianResults(_AnalysisResults):
     """
 
     def __init__(
-        self, optimized_model, samples, posterior_values, statistical_measures
+            self, optimized_model, samples, posterior_values, statistical_measures, log_probabilty
     ):
 
         super(BayesianResults, self).__init__(
             optimized_model, samples, posterior_values, "Bayesian", statistical_measures
         )
 
+        self._log_probability = log_probabilty
+        
     def get_correlation_matrix(self):
         """
         Estimate the covariance matrix from the samples
@@ -1249,26 +1328,44 @@ class BayesianResults(_AnalysisResults):
 
         display(self.get_statistic_measure_frame())
 
-    def corner_plot(self, renamed_parameters=None, **kwargs):
+    def corner_plot(self, renamed_parameters : Optional[Dict] = None, components : Optional[List] = None, **kwargs):
         """
         Produce the corner plot showing the marginal distributions in one and two directions.
 
         :param renamed_parameters: a python dictionary of parameters to rename.
              Useful when e.g. spectral indices in models have different names but you wish to compare them. Format is
              {'old label': 'new label'}, where 'old label' is the full path of the parameter
+        :param components: a python list of parameter paths to use in the corner plot 
         :param kwargs: arguments to be passed to the corner function
         :return: a matplotlib.figure instance
         """
 
-        assert (
-            len(list(self._free_parameters.keys()))
-            == self._samples_transposed.T[0].shape[0]
-        ), ("Mismatch between sample" " dimensions and number of free" " parameters")
+        if components is None:
+            assert (
+                len(list(self._free_parameters.keys()))
+                == self._samples_transposed.T[0].shape[0]
+            ), ("Mismatch between sample" " dimensions and number of free" " parameters")
+            
+            components  = self._free_parameters.keys()
+            samples = self._samples_transposed.T
+        else:
+            assert len(components) >= 2, 'Must have at least two parameters to compare contours'
+            samples = []
+            for name in components:
+                try:
+                    # Get appropriate sample column from given name
+                    samples.append(
+                            self._samples_transposed[
+                                list(self._free_parameters.keys()).index(name)
+                                ])
+                except ValueError:
+                    raise ValueError('Parameter %s must be a free parameter'%name)
+            samples = np.array(samples).T
 
         labels = []
-        priors = []
+        #priors = []
 
-        for i, (parameter_name, parameter) in enumerate(self._free_parameters.items()):
+        for i, parameter_name in enumerate(components):
 
             short_name = parameter_name.split(".")[-1]
 
@@ -1278,19 +1375,35 @@ class BayesianResults(_AnalysisResults):
 
             if renamed_parameters is not None:
 
-                if parameter.path in renamed_parameters:
+                # Hopefully this doesn't break backward compatibility -- 
+                # parameter.path == keys in _free_parameters
+                if parameter_name in renamed_parameters:
 
-                    labels[-1] = renamed_parameters[parameter.path]
+                    labels[-1] = renamed_parameters[parameter_name]
 
-            priors.append(
-                self._optimized_model.parameters[parameter_name].prior)
+            #priors.append(
+            #    self._optimized_model.parameters[parameter_name].prior)
 
+        corner_style = threeML_config.bayesian.corner_style
+            
+        cmap = plt.get_cmap(corner_style.cmap.value)
+
+        cmap.with_extremes(under=corner_style.extremes, over=corner_style.extremes, bad=corner_style.extremes)
+        cmap.set_extremes(under=corner_style.extremes, over=corner_style.extremes, bad=corner_style.extremes)
+        
+        contourf_kwargs = dict(corner_style.contourf_kwargs)
+        contourf_kwargs["cmap"] = cmap
+                            
         # default arguments
         default_args = {
-            "show_titles": True,
-            "title_fmt": ".2g",
+            "show_titles": corner_style.show_titles,
+            "title_fmt": corner_style.title_fmt,
             "labels": labels,
-            "quantiles": [0.16, 0.50, 0.84],
+            "bins":corner_style.bins,
+            "quantiles": corner_style.quantiles,
+            "fill_contours": corner_style.fill_contours,
+            "contourf_kwargs": contourf_kwargs,
+            "levels": corner_style.levels
         }
 
         # Update the default arguents with the one provided (if any). Note that .update also adds new keywords,
@@ -1298,10 +1411,20 @@ class BayesianResults(_AnalysisResults):
         # the one in default_args
         default_args.update(kwargs)
 
-        fig = corner(self._samples_transposed.T, **default_args)
+        fig = corner(samples, **default_args)
 
         return fig
 
+    @property
+    def log_probability(self):
+        """
+        The log probability values
+
+        :returns: 
+
+        """
+        return self._log_probability
+    
     def corner_plot_cc(self, parameters=None, renamed_parameters=None, **cc_kwargs):
         """
         Corner plots using chainconsumer which allows for nicer plotting of
@@ -1729,6 +1852,30 @@ class BayesianResults(_AnalysisResults):
 
         return variates.highest_posterior_density_interval(cl)
 
+    def get_median_fit_model(self):
+        """
+        Sets the model parameters to the mean of the marginal distributions
+        """
+
+        new_model = astromodels.clone_model(self._optimized_model)
+        
+        
+        if self._log_probability is None:
+
+            log.error("this is an older analysis results file and does not contain the log probability")
+
+            raise RuntimeError()
+        
+        
+        idx = self._log_probability.argmax()
+
+        for i, (parameter_name, parameter) in enumerate(new_model.free_parameters.items()):
+
+            par = self._samples_transposed[i, idx]
+
+            parameter.value = par
+
+        return new_model
 
 class MLEResults(_AnalysisResults):
     """

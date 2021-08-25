@@ -33,7 +33,7 @@ Many minimizers are based on the idea of gradient descent, i.e., they compute th
 Let's start by importing what we need in the following:
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 
@@ -48,7 +48,7 @@ from threeML.io.package_data import get_path_of_data_file
 
 ```
 
-```python nbsphinx="hidden"
+```python 
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
@@ -153,6 +153,8 @@ The idea behind this is very simple: the user defines a grid of values for the p
 For example, let's define a grid of 10 values for $\mu$. This means that 3ML will perform 10 local minimizations starting each time from a different point in the grid:
 
 ```python
+import numpy as np
+
 # Create an instance of the GRID minimizer
 grid_minimizer = GlobalMinimization("grid")
     

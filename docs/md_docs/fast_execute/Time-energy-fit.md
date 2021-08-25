@@ -20,7 +20,7 @@ jupyter:
 First we import what we need:
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -37,7 +37,7 @@ from threeML.io.package_data import get_path_of_data_file
 
 ```
 
-```python nbsphinx="hidden"
+```python 
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)

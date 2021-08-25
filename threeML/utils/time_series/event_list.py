@@ -13,6 +13,7 @@ import os
 import numpy as np
 import pandas as pd
 from pandas import HDFStore
+import matplotlib.pyplot as plt
 from threeML.utils.progress_bar import tqdm, trange
 
 from threeML.config.config import threeML_config
@@ -157,7 +158,7 @@ class EventList(TimeSeries):
             # create phas to check
             phas = np.arange(self._first_channel, self._n_channels)[mask]
 
-            this_mask = np.zeros_like(self._arrival_times, dtype=np.bool)
+            this_mask = np.zeros_like(self._arrival_times, dtype=bool)
 
             for channel in phas:
                 this_mask = np.logical_or(
@@ -240,7 +241,14 @@ class EventList(TimeSeries):
             self._temporal_binner = TemporalBinner.bin_by_bayesian_blocks(
                 events, p0)
 
-    def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False):
+    def view_lightcurve(self,
+                        start: float = -10,
+                        stop: float = 20.0,
+                        dt: float = 1.0,
+                        use_binner: bool = False,
+                        use_echans_start: int = 0,
+                        use_echans_stop: int = -1
+    ) -> plt.Figure:
         # type: (float, float, float, bool) -> None
         """
         :param start:
@@ -249,6 +257,46 @@ class EventList(TimeSeries):
         :param use_binner:
 
         """
+
+        # validate echan mask input
+        if not isinstance(use_echans_start, int):
+            log.error(f"The use_echans_start variable must be a integer."
+                      f" Input is {use_echans_start}.")
+            raise AssertionError()
+
+        if not np.abs(use_echans_start) < self.n_channels:
+            log.error(f"The use_echans_start variable must be"
+                      f"between {(-1)*(self.n_channels-1)} and {self.n_channels-1}."
+                      f" Input is {use_echans_start}.")
+            raise AssertionError()
+
+        if not isinstance(use_echans_stop, int):
+            log.error(f"The use_echans_stop variable must be a integer."
+                      f" Input is {use_echans_stop}.")
+            raise AssertionError()
+
+        if not np.abs(use_echans_stop) < self.n_channels:
+            log.error(f"The use_echans_stop variable must be"
+                      f"between {(-1)*(self.n_channels-1)} and {self.n_channels-1}."
+                      f" Input is {use_echans_start}.")
+            raise AssertionError()
+
+        if use_echans_start < 0:
+            use_echans_start = self.n_channels+use_echans_start
+
+        if use_echans_stop < 0:
+            use_echans_stop = self.n_channels+use_echans_stop
+
+        if not use_echans_stop >= use_echans_start:
+            log.error(f"The use_echans_stop variable must be larger"
+                      f" or equal than the use_echans_start variable"
+                      f" Input is use_echans_start: {use_echans_start}"
+                      f" > use_echans_stop: {use_echans_stop}")
+            raise AssertionError()
+
+        # get echan bins
+        echan_bins = np.arange(use_echans_start, use_echans_stop+2, 1)-0.5
+
 
         if use_binner:
 
@@ -276,7 +324,10 @@ class EventList(TimeSeries):
 
             bins = np.arange(start, stop + dt, dt)
 
-        cnts, bins = np.histogram(self.arrival_times, bins=bins)
+        cnts, bins, _ = np.histogram2d(self.arrival_times, self.measurement,
+                                       bins=(bins, echan_bins))
+        cnts = np.sum(cnts, axis=1)
+
         time_bins = np.array([[bins[i], bins[i + 1]]
                               for i in range(len(bins) - 1)])
 
@@ -302,7 +353,7 @@ class EventList(TimeSeries):
 
                 # sum up the counts over this interval
 
-                for poly in self.polynomials:
+                for poly in self.polynomials[use_echans_start:use_echans_stop+1]:
 
                     tmpbkg += poly.integral(tb[0], tb[1])
 

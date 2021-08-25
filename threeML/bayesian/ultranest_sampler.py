@@ -60,6 +60,7 @@ class UltraNestSampler(UnitCubeSampler):
         dlogz=0.5,
         chain_name=None,
         wrapped_params=None,
+        stepsampler=None,
         **kwargs
     ):
         log.debug(f"Setup for UltraNest sampler: min_num_live_points:{min_num_live_points}, "\
@@ -69,7 +70,9 @@ class UltraNestSampler(UnitCubeSampler):
         self._kwargs["min_num_live_points"] = min_num_live_points
         self._kwargs["dlogz"] = dlogz
         self._kwargs["chain_name"] = chain_name
-
+        self._kwargs["stepsampler"] = stepsampler
+        
+        
         self._wrapped_params = wrapped_params
 
         for k, v in kwargs.items():
@@ -157,6 +160,14 @@ class UltraNestSampler(UnitCubeSampler):
                 wrapped_params=self._wrapped_params,
             )
 
+            if self._kwargs['stepsampler'] is not None:
+
+                sampler.stepsampler = self._kwargs['stepsampler']
+
+            self._kwargs.pop('stepsampler')
+
+
+            
             with use_astromodels_memoization(False):
                 log.debug("Start ultranest run")
                 sampler.run(show_status=loud, **self._kwargs)

@@ -278,8 +278,10 @@ class PhotometryLike(XYLike):
 
             bands[band] = (y[i], yerr[i])
 
+        new_observation = PhotometericObservation.from_dict(bands)
+
         new_photo = PhotometryLike(
-            name, filters=self._filter_set.speclite_filters, **bands
+            name, filters=self._filter_set.speclite_filters, observation=new_observation
         )
 
         # apply the current mask

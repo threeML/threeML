@@ -1,24 +1,15 @@
-from builtins import object
 import copy
+from builtins import object
 from typing import Optional
 
-import numpy as np
 import numba as nb
-
-
-from threeML.utils.numba_utils import nb_sum
-from threeML.utils.statistics.likelihood_functions import half_chi2
-from threeML.utils.statistics.likelihood_functions import (
-    poisson_log_likelihood_ideal_bkg,
-)
-from threeML.utils.statistics.likelihood_functions import (
-    poisson_observed_gaussian_background,
-)
-from threeML.utils.statistics.likelihood_functions import (
-    poisson_observed_poisson_background,
-)
+import numpy as np
 
 from threeML.io.logging import setup_logger
+from threeML.utils.numba_utils import nb_sum
+from threeML.utils.statistics.likelihood_functions import (
+    half_chi2, poisson_log_likelihood_ideal_bkg,
+    poisson_observed_gaussian_background, poisson_observed_poisson_background)
 
 log = setup_logger(__name__)
 
@@ -71,6 +62,15 @@ class GaussianObservedStatistic(BinnedStatistic):
         return nb_sum(chi2_) * (-1), None
 
     def get_randomized_source_counts(self, source_model_counts):
+
+        if not np.isfinite(source_model_counts[0]):
+
+            source_model_counts[0] = 0
+
+            log.warning("simulated spectrum had infinite counts in first channel")
+            log.warning("setting to ZERO")
+
+
         idx = self._spectrum_plugin.observed_count_errors > 0
 
         randomized_source_counts = np.zeros_like(source_model_counts)
@@ -94,6 +94,9 @@ class GaussianObservedStatistic(BinnedStatistic):
 
             randomized_source_counts[idx] = 0
 
+
+
+            
         return randomized_source_counts
 
     def get_randomized_source_errors(self):
@@ -121,6 +124,15 @@ class PoissonObservedIdealBackgroundStatistic(BinnedStatistic):
 
         # TODO: check with giacomo if this is correct!
 
+        if not np.isfinite(source_model_counts[0]):
+
+            source_model_counts[0] = 0
+
+            log.warning("simulated spectrum had infinite counts in first channel")
+            log.warning("setting to ZERO")
+
+
+        
         randomized_source_counts = np.random.poisson(
             source_model_counts + self._spectrum_plugin._background_counts
         )
@@ -168,6 +180,15 @@ class PoissonObservedModeledBackgroundStatistic(BinnedStatistic):
             self._spectrum_plugin.background_plugin.get_simulated_dataset()
         )
 
+        if not np.isfinite(source_model_counts[0]):
+
+            source_model_counts[0] = 0
+
+            log.warning("simulated spectrum had infinite counts in first channel")
+            log.warning("setting to ZERO")
+
+
+        
         randomized_source_counts = np.random.poisson(
             source_model_counts + self._synthetic_background_plugin.observed_counts
         )
@@ -210,6 +231,13 @@ class PoissonObservedNoBackgroundStatistic(BinnedStatistic):
         # Randomize expectations for the source
         # we want the unscalled background counts
 
+        if not np.isfinite(source_model_counts[0]):
+
+            source_model_counts[0] = 0
+
+            log.warning("simulated spectrum had infinite counts in first channel")
+            log.warning("setting to ZERO")
+
         randomized_source_counts = np.random.poisson(source_model_counts)
 
         return randomized_source_counts
@@ -235,6 +263,15 @@ class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
 
         _, background_model_counts = self.get_current_value()
 
+
+        if not np.isfinite(source_model_counts[0]):
+
+            source_model_counts[0] = 0
+
+            log.warning("simulated spectrum had infinite counts in first channel")
+            log.warning("setting to ZERO")
+
+        
         # Now randomize the expectations
 
         # Randomize expectations for the source
@@ -250,7 +287,9 @@ class PoissonObservedPoissonBackgroundStatistic(BinnedStatistic):
 
         _, background_model_counts = self.get_current_value()
 
-        randomized_background_counts = np.random.poisson(background_model_counts)
+        # scale the background to the scale factor
+        
+        randomized_background_counts = np.random.poisson(background_model_counts / self._spectrum_plugin.scale_factor )
 
         return randomized_background_counts
 
@@ -274,6 +313,42 @@ class PoissonObservedGaussianBackgroundStatistic(BinnedStatistic):
 
         _, background_model_counts = self.get_current_value()
 
+        # a bad background model can produce
+        # more background counts than observed counts
+        # which results in negative background model counts
+        # we will filter that
+
+        idx = background_model_counts < 0
+
+        background_model_counts[idx] = 0.
+
+
+        if np.any(np.isnan(background_model_counts)):
+
+            log.error("NaN count in background model counts")
+            
+            log.error(f"{background_model_counts}")
+            
+            raise RuntimeError()
+
+        if not np.all(background_model_counts >= 0):
+
+            log.error("negative count in background model counts")
+            
+            log.error(f"{background_model_counts}")
+            
+            raise RuntimeError()
+
+
+        if not np.isfinite(source_model_counts[0]):
+
+            source_model_counts[0] = 0
+
+            log.warning("simulated spectrum had infinite counts in first channel")
+            log.warning("setting to ZERO")
+
+        
+        
         # Now randomize the expectations
 
         # Randomize expectations for the source

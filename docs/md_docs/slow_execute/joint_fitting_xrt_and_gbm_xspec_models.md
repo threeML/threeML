@@ -25,7 +25,7 @@ We demostrate this with joint fitting data from GBM and XRT while simultaneously
 You must have you HEASARC initiated so that **astromodels** can find the XSPEC libraries. 
 
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -47,7 +47,7 @@ from astromodels.xspec.xspec_settings import *
 ```
 
 
-```python nbsphinx="hidden"
+```python 
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)

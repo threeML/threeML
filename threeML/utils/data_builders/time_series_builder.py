@@ -23,6 +23,7 @@ from threeML.utils.polarization.binned_polarization import \
 from threeML.utils.progress_bar import tqdm
 from threeML.utils.spectrum.binned_spectrum import (
     BinnedSpectrum, BinnedSpectrumWithDispersion)
+from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
 from threeML.utils.statistics.stats_tools import Significance
 from threeML.utils.time_interval import TimeIntervalSet
 from threeML.utils.time_series.binned_spectrum_series import \
@@ -31,8 +32,6 @@ from threeML.utils.time_series.event_list import (
     EventList, EventListWithDeadTime, EventListWithDeadTimeFraction,
     EventListWithLiveTime)
 from threeML.utils.time_series.time_series import TimeSeries
-from threeML.utils.spectrum.pha_spectrum import PHASpectrumSet
-
 
 log = setup_logger(__name__)
 
@@ -447,6 +446,8 @@ class TimeSeriesBuilder(object):
         stop: float = 20.0,
         dt: float = 1.0,
         use_binner: bool = False,
+        use_echans_start: int = 0,
+        use_echans_stop: int = -1
     ) -> plt.Figure:
         # type: (float, float, float, bool) -> None
         """
@@ -460,7 +461,10 @@ class TimeSeriesBuilder(object):
 
         """
 
-        return self._time_series.view_lightcurve(start, stop, dt, use_binner)
+        return self._time_series.view_lightcurve(start, stop, dt,
+                                                 use_binner,
+                                                 use_echans_start,
+                                                 use_echans_stop)
 
     @property
     def tstart(self) -> float:
@@ -1063,11 +1067,35 @@ class TimeSeriesBuilder(object):
 
                 log.debug("detected and RSP2 file")
 
+
+                # the FSSC responses half shift the time
+                # but gbm_drm_gen does it properly
+
+                with fits.open(rsp_file) as f:
+
+                    try:
+                        if "RESPONSUM" in f[1].header["CREATOR"]:
+
+                            half_shifted = False
+
+                            log.debug("found a RESPONSUM response")
+                                                        
+
+                        else:
+
+                            half_shifted = True
+
+                    except:
+
+                        half_shifted = True
+                            
+
                 rsp = InstrumentResponseSet.from_rsp2_file(
                     rsp2_file=rsp_file,
                     counts_getter=event_list.counts_over_interval,
                     exposure_getter=event_list.exposure_over_interval,
                     reference_time=gbm_tte_file.trigger_time,
+                    half_shifted=half_shifted
                 )
 
             else:
@@ -1192,12 +1220,35 @@ class TimeSeriesBuilder(object):
 
                 log.debug("detected and RSP2 file")
 
+                # the FSSC responses half shift the time
+                # but gbm_drm_gen does it properly
+
+                with fits.open(rsp_file) as f:
+
+                    try:
+                        if "RESPONSUM" in f[1].header["CREATOR"]:
+
+                            half_shifted = False
+
+                            log.debug("found a RESPONSUM response")
+
+                        else:
+
+                            half_shifted = True
+
+                    except:
+
+                        half_shifted = True
+                            
+
                 rsp = InstrumentResponseSet.from_rsp2_file(
                     rsp2_file=rsp_file,
                     counts_getter=event_list.counts_over_interval,
                     exposure_getter=event_list.exposure_over_interval,
                     reference_time=cdata.trigger_time,
+                    half_shifted=half_shifted
                 )
+
 
             else:
 

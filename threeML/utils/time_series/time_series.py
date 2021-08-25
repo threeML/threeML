@@ -211,7 +211,7 @@ class TimeSeries(object):
         :return:
         """
         if mask is None:
-            mask = np.ones_like(self._polynomials, dtype=np.bool)
+            mask = np.ones_like(self._polynomials, dtype=bool)
 
         total_counts = 0
 
@@ -230,7 +230,7 @@ class TimeSeries(object):
         :return:
         """
         if mask is None:
-            mask = np.ones_like(self._polynomials, dtype=np.bool)
+            mask = np.ones_like(self._polynomials, dtype=bool)
 
         total_counts = 0
 
@@ -898,6 +898,7 @@ class TimeSeries(object):
             self.set_active_time_intervals(
                 *self._time_intervals.to_string().split(","))
 
-    def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False):
+    def view_lightcurve(self, start=-10, stop=20.0, dt=1.0, use_binner=False,
+                        use_echans_start=0, use_echans_stop=-1):
 
         raise NotImplementedError("must be implemented in subclass")

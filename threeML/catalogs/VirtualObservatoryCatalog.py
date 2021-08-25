@@ -7,8 +7,10 @@ from astroquery.vo_conesearch.vos_catalog import VOSCatalog
 from astroquery.vo_conesearch import conesearch
 from astroquery.vo_conesearch.exceptions import VOSError
 
+import warnings
 
 from astropy.coordinates.name_resolve import get_icrs_coordinates
+from astropy.coordinates import SkyCoord
 
 import astropy.table as astro_table
 
@@ -115,7 +117,7 @@ class VirtualObservatoryCatalog(object):
                     table.to_pandas().set_index("name").sort_values("Search_Offset")
                 )
 
-                str_df = pandas_df.select_dtypes([np.object])
+                str_df = pandas_df.select_dtypes([object])
                 
                 if astropy_old:
                     str_df = str_df.stack().str.decode("utf-8").unstack()

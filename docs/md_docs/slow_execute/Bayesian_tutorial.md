@@ -33,7 +33,7 @@ Let's take a look at its usage for a simple likelihood.
 
 <!-- #endregion -->
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -47,7 +47,7 @@ from threeML import *
 from threeML.bayesian.tutorial_material import *
 ```
 
-```python nbsphinx="hidden"
+```python 
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)

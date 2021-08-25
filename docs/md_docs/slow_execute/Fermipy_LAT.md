@@ -5,8 +5,8 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.7.1
+      format_version: '1.3'
+      jupytext_version: 1.10.2
   kernelspec:
     display_name: Python 3
     language: python
@@ -19,9 +19,11 @@ jupyter:
 In this Example we show how to use the fermipy plugin in threeML. We perform a Binned likelihood analysis and a Bayesian analysis of the Crab, optimizing the parameters of the Crab Pulsar (PSR J0534+2200) keeping fixed the parameters of the Crab Nebula. In the model, the nebula is described by two sources, one representing the synchrotron spectrum, the othet the Inverse Compton emission.
 In this example we show how to download Fermi-LAT data, how to build a model starting from the 4FGL, how to free and fix parameters of the sources in the model, and how to perform a spectral analysis using the fermipy plugin.
 
-
-
-```python
+```python 
+import warnings
+warnings.simplefilter('ignore')
+import numpy as np
+np.seterr(all="ignore")
 import shutil
 from IPython.display import Image,display
 import glob
@@ -30,15 +32,27 @@ import matplotlib as mpl
 from matplotlib import pyplot as plt
 from astropy.io import fits as pyfits
 import scipy as sp
-import numpy as np
+
+```
+
+
+```python
+%%capture
 from threeML import *
 
-from jupyterthemes import jtplot
-jtplot.style(context='talk', fscale=1, ticks=True, grid=False)
-set_threeML_style()
-
-%matplotlib inline
 ```
+
+
+```python 
+from jupyterthemes import jtplot
+%matplotlib inline
+jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
+set_threeML_style()
+silence_warnings()
+
+```
+
+
 
 ## The Fermi 4FGL catalog
 Let's interrogate the 4FGL to get the sources in a radius of 20.0 deg around the Crab
@@ -105,14 +119,13 @@ evfile, scfile = download_LAT_data(
 3ML provides and intreface into [Fermipy](https://fermipy.readthedocs.io/en/latest/) via the **FermipyLike** plugin. We can use it to generate basic configuration files.
 
 
-<!-- #raw -->
+
 .. note::
     Currently, the FermipyLike plugin does not provide an interface to handle extended sources. This will change
 
-<!-- #endraw -->
 
 ```python
-config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec)
+config = FermipyLike.get_basic_config(evfile=evfile, scfile=scfile, ra=ra, dec=dec, fermipy_verbosity = 1, fermitools_chatter = 0)
 
 # See what we just got
 
@@ -197,7 +210,7 @@ Or we might want to produce a contour plot
 
 ```python
 res = jl.get_contours(
-    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K',1.3e-13,1.7e-13, 20, 
+    'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K',0.7e-13,1.3e-13, 20,
     'PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index',-2.0,-1.6, 20
 )
 ```
@@ -209,8 +222,8 @@ res[-1]
 **Pro-trick:** We can also axcess the GTAnalysis object of fermipy:
 
 ```python
-res = jl.fit()
-LAT.gta.write_roi('test',make_plots=True)
+#res = jl.fit()
+#LAT.gta.write_roi('test',make_plots=True)
 ```
 
 All the plots are saved in the output directory as png files:
@@ -218,11 +231,11 @@ All the plots are saved in the output directory as png files:
 
 
 ```python
-pngs=Path(f"{fermipy_output_directory}").glob("*png")
-for png in pngs:
-    print(png)
-    my_image=Image(str(png))
-    display(my_image)
+#pngs=Path(f"{fermipy_output_directory}").glob("*png")
+#for png in pngs:
+#    print(png)
+#    my_image=Image(str(png))
+#    display(my_image)
 ```
 
 We can also plot the resulting model:
@@ -233,7 +246,7 @@ fig, ax=plt.subplots()
 # we only want to visualize the relevant sources...
 src_to_plot=['Crab','PSR_J0534p2200']
 # Now loop over all point sources and plot them
-for source_name, point_source in model.point_sources.iteritems():
+for source_name, point_source in model.point_sources.items():
     for src in src_to_plot: 
         if src in source_name: 
             # Plot the sum of all components for this source
@@ -243,7 +256,7 @@ for source_name, point_source in model.point_sources.iteritems():
 
             if len(point_source.components) > 1:
 
-                for component_name, component in point_source.components.iteritems():
+                for component_name, component in point_source.components.items():
                     ax.loglog(energies,component.shape(energies),
                               '--',label=f"{component_name} of {source_name}")
     
@@ -254,6 +267,8 @@ ax.set_xlabel("Energy (MeV)")
 ax.set_ylabel(r"Flux (ph cm$^{-2}$ s$^{-1}$ keV$^{-1}$")
 ax.set_ylim([1e-20,1e-3])
 
+#show the plot
+fig
 ```
 
 We can also do a bayesian analysis.
@@ -261,20 +276,13 @@ We can also do a bayesian analysis.
 This will set priors based on the current defined min-max (log-uniform or uniform)
 
 
-
 ```python
-model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.K.set_uninformative_prior(
-    Log_uniform_prior
-)
-model.PSR_J0534p2200.spectrum.main.Super_cutoff_powerlaw.index.set_uninformative_prior(
-    Uniform_prior
-)
-model._2MASS_J05262938p2247232.spectrum.main.Powerlaw.K.set_uninformative_prior(
-    Log_uniform_prior
-)
-model._4FGL_J0544d4p2238.spectrum.main.Powerlaw.K.set_uninformative_prior(
-    Log_uniform_prior
-)
+
+for param in model.free_parameters.values():
+    if param.has_transformation():
+        param.set_uninformative_prior( Log_uniform_prior )
+    else:
+        param.set_uninformative_prior( Uniform_prior )
 ```
 
 ```python
@@ -297,6 +305,7 @@ res = bayes.sample()
 
 ```
 
+
 You can access to the parameter range like this (HPD):
 
 ```python
@@ -316,4 +325,9 @@ print('Index (95%%): %10.2e,%10.2e' % this_idx.highest_posterior_density_interva
 
 ```python
 corner_figure = bayes.results.corner_plot()
+corner_figure
+```
+
+```python
+
 ```

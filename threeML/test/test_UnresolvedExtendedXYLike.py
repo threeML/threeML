@@ -4,7 +4,6 @@ from astromodels.functions.functions_2D import Gaussian_on_sphere
 import os
 import numpy as np
 
-
 def get_signal():
     # Generate a test signal
     generator = Line() + Gaussian()

@@ -13,7 +13,7 @@ jupyter:
     name: python3
 ---
 
-```python nbsphinx="hidden"
+```python 
 import warnings
 warnings.simplefilter('ignore')
 
@@ -30,7 +30,7 @@ from threeML import *
 from threeML.io.package_data import get_path_of_data_file
 ```
 
-```python nbsphinx="hidden"
+```python 
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
@@ -43,7 +43,10 @@ set_threeML_style()
 
 # Constructing plugins from TimeSeries
 
-Many times we encounter event lists or sets of spectral histograms from which we would like to derive a single or set of plugins. For this purpose, we provide the **TimeSeriesBuilder** which provides a unified interface to time series data. Here we will demonstrate how to construct plugins from different data types.
+Many times we encounter event lists or sets of spectral histograms from which we would like to derive a single or set of plugins. For this purpose, we provide the **TimeSeriesBuilder** which provides a unified interface to time series data. Here we will demonstrate how to construct plugins from different data types. 
+
+These utilities are helpers that allow you to *reduce data to pluigns* for spectral and temporal fitting. They are not plugins themselves.
+
 
 ## Constructing time series objects from different data types
 
@@ -51,8 +54,17 @@ The **TimeSeriesBuilder** currently supports reading of the following data type:
 * A generic PHAII data file
 * GBM TTE/CSPEC/CTIME files
 * LAT LLE files
+* POLAR spectra and polarization light curves
+* KONUS GRB data
 
-If you would like to build a time series from your own custom data, consider creating a TimeSeriesBuilder.from_your_data() class method.
+<div class="alert alert-info">
+
+**Note:** If you would like to build a time series from your own custom data, consider creating a ```TimeSeriesBuilder.from_your_data()``` class method.
+
+</div>
+
+
+
 
 ### GBM Data 
 
@@ -118,10 +130,16 @@ From the polynomial fit, the polynomial is integrated in time over the active so
 $$ B_i = \int_{T_1}^{T_2}P(t;\vec{\theta}) {\rm d}t $$
 
 
-```python
+```python tags=["nbsphinx-thumbnail"]
 gbm_tte.set_background_interval('-24--5','100-200')
-fig = gbm_tte.view_lightcurve(start=-20,stop=200);
+fig = gbm_tte.view_lightcurve(start=-20,stop=200)
 ```
+
+
+### What occurs during a fit?
+
+In the background, the data type of the time series is analyzed (is it Poisson of Gaussian distributed?) and the time series are converted to plugins of counts / measurements vs. time. These plugins are then fit with either MLE or Bayesian methods just any other 3ML analysis. While this happens behinds the scene, it is possible to interface to these low-level operations are create your own custom background routines! 
+
 
 For event list data, binned or unbinned background fits are possible. For pre-binned data, only a binned fit is possible. 
 
@@ -250,8 +268,4 @@ Similarly, we can create a list of plugins directly from the time series.
 
 ```python
 my_plugins = gbm_tte.to_spectrumlike(from_bins=True)
-```
-
-```python
-
 ```

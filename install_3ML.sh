@@ -266,7 +266,7 @@ conda config --add channels threeml
 
 conda config --add channels conda-forge
 
-PACKAGES_TO_INSTALL="astromodels>=2 threeml>=2"
+PACKAGES_TO_INSTALL="astromodels>=2 threeml>=2 iminuit>=2"
 
 if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
 
@@ -288,7 +288,7 @@ if [[ "${INSTALL_FERMI}" == "yes" ]]; then
         PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools=1.4 clhep=2.4.1.0"
     else
         conda config --add channels fermi
-        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2"
+        PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} fermitools>=2 root=6.22.2 astropy=3.2.3 fermipy>=1 clhep=2.4.4.1"
     fi
     
 
