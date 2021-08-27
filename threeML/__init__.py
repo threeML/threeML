@@ -271,7 +271,7 @@ from threeML.io.uncertainty_formatter import interval_to_errors
 # import time series builder, soon to replace the Fermi plugins
 from threeML.utils.data_builders import *
 from threeML.utils.data_download.Fermi_GBM.download_GBM_data import \
-    download_GBM_trigger_data
+    download_GBM_trigger_data, download_GBM_daily_data
 # Import the LAT data downloader
 from threeML.utils.data_download.Fermi_LAT.download_LAT_data import \
     download_LAT_data

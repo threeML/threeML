@@ -36,7 +36,7 @@ def _validate_fermi_date(year: str, month: str, day: str) -> str:
             log.error(f"{x} is not a valid, year, month, day")
             raise NameError()
 
-        if int x[0] == 0:
+        if int(x[0]) == 0:
 
             if (int(x[1]) <1) or (int(x[1])>9 ):
 
@@ -44,7 +44,7 @@ def _validate_fermi_date(year: str, month: str, day: str) -> str:
                 raise NameError()
         else:
 
-            if (int(x[1]) <0) or (int(x[1])>2 ):
+            if (int(x[1]) <0) or (int(x[1])>9 ):
 
                 log.error(f"{x} is not a valid, year, month, day")
                 raise NameError()
