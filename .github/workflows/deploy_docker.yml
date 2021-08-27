@@ -1,7 +1,9 @@
 name: Docker Image CI
 
 on:
-  push
+  release:
+    types:
+      [published]
   
 
 jobs:
@@ -23,11 +25,11 @@ jobs:
           run: |
             cd docker_base
             docker build . --file Dockerfile --tag threeml/base:${{steps.vars.outputs.tag}}
-        # - name: Push the tagged Docker image
-        #   run: docker push threeml/base:${{steps.vars.outputs.tag}}
+        - name: Push the tagged Docker image
+          run: docker push threeml/base:${{steps.vars.outputs.tag}}
         - name: Build the latest Docker image
           run: |
             cd docker_base
             docker build . --file Dockerfile --tag threeml/base:latest
-        # - name: Push the latest Docker image
-        #   run: docker push pjlamb12/angular-cli:latest
+        - name: Push the latest Docker image
+          run: docker push threeml/base:latest
