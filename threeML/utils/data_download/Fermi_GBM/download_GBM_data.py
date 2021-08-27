@@ -12,8 +12,8 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 
 from threeML.config.config import threeML_config
-from threeML.exceptions.custom_exceptions import TriggerDoesNotExist,\
-    DetDoesNotExist
+from threeML.exceptions.custom_exceptions import (DetDoesNotExist,
+                                                  TriggerDoesNotExist)
 from threeML.io.dict_with_pretty_print import DictWithPrettyPrint
 from threeML.io.download_from_http import (ApacheDirectory,
                                            RemoteDirectoryNotFound)
@@ -24,6 +24,33 @@ from threeML.io.logging import setup_logger
 
 log = setup_logger(__name__)
 
+
+
+def _validate_fermi_date(year: str, month: str, day: str) -> str:
+
+    _all = [year, month, day]
+
+    for x in _all:
+
+        if len(x) != 2:
+            log.error(f"{x} is not a valid, year, month, day")
+            raise NameError()
+
+        if int x[0] == 0:
+
+            if (int(x[1]) <1) or (int(x[1])>9 ):
+
+                log.error(f"{x} is not a valid, year, month, day")
+                raise NameError()
+        else:
+
+            if (int(x[1]) <0) or (int(x[1])>2 ):
+
+                log.error(f"{x} is not a valid, year, month, day")
+                raise NameError()
+
+    return f"{year}{month}{day}"
+    
 
 def _validate_fermi_trigger_name(trigger: str) -> str:
 
@@ -65,7 +92,7 @@ _detector_list = "n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,na,nb,b0,b1".split(",")
 
 
 def download_GBM_trigger_data(
-    trigger_name: str, detectors: Optional[List[str]] = None, destination_directory: str = ".", compress_tte: bool = True
+        trigger_name: str, detectors: Optional[List[str]] = None, destination_directory: str = ".", compress_tte: bool = True, cspec_only: bool=False
 ) -> Dict[str, Any]:
     """
     Download the latest GBM TTE and RSP files from the HEASARC server. Will get the
@@ -79,6 +106,7 @@ def download_GBM_trigger_data(
     :param detectors: list of detectors, default is all detectors
     :param destination_directory: download directory
     :param compress_tte: compress the TTE files via gzip (default True)
+    :param cspec_only: do not download TTE (faster)
     :return: a dictionary with information about the download
     """
 
@@ -166,8 +194,16 @@ def download_GBM_trigger_data(
         # We do not care here about the other files (tcat, bcat and so on),
         # nor about files which pertain to other detectors
 
+        if cspec_only:
+            
+            allowed_files = ["cspec"]
+
+        else:
+
+            allowed_files = ["cspec", "tte"]
+            
         if (
-            file_type not in ["cspec", "tte"]
+            file_type not in allowed_files
             or ext not in ["rsp", "rsp2", "pha", "fit"]
             or detname not in detectors
         ):
@@ -233,15 +269,190 @@ def download_GBM_trigger_data(
                 remote_detector_info["rsp"], destination_directory, progress=True
             )
 
-        # Get TTE file (compressing it if requested)
-        local_detector_info["tte"] = downloader.download(
-            remote_detector_info["tte"],
-            destination_directory,
-            progress=True,
-            compress=compress_tte,
-        )
+        if not cspec_only:
+            # Get TTE file (compressing it if requested)
+            local_detector_info["tte"] = downloader.download(
+                remote_detector_info["tte"],
+                destination_directory,
+                progress=True,
+                compress=compress_tte,
+            )
 
     return download_info
+
+
+def download_GBM_daily_data(
+        year: str,
+        month: str,
+        day: str,
+        detectors: Optional[List[str]] = None,
+        destination_directory: str = ".",
+        compress_tte: bool = True,
+        cspec_only: bool=True
+) -> Dict[str, Any]:
+    """
+    Download the latest GBM TTE and RSP files from the HEASARC server. Will get the
+    latest file version and prefer RSP2s over RSPs. If the files already exist in your destination
+    directory, they will be skipped in the download process. The output dictionary can be used
+    as input to the FermiGBMTTELike class.
+
+    example usage: download_GBM_trigger_data('080916009', detectors=['n0','na','b0'], destination_directory='.')
+
+    :param year: the last two digits of the year, e.g, '08'
+    :param year: the two digits of the month, e.g, '09'
+    :param year: the two digits of the day, e.g, '10'
+    :param detectors: list of detectors, default is all detectors
+    :param destination_directory: download directory
+    :param compress_tte: compress the TTE files via gzip (default True)
+    :param cspec_only: do not download TTE (faster)
+    :return: a dictionary with information about the download
+    """
+
+    # Let's doctor up the input just in case the user tried something strange
+
+    sanitized_trigger_name_: str = _validate_fermi_date(year, month, day)
+
+    # create output directory if it does not exists
+    destination_directory: Path = sanitize_filename(
+        destination_directory, abspath=True)
+
+    if_directory_not_existing_then_make(destination_directory)
+
+    # Sanitize detector list (if any)
+    if detectors is not None:
+
+        for det in detectors:
+
+            if det not in _detector_list:
+                log.error(
+                    f"Detector {det} in the provided list is not a valid detector. "
+                    f"Valid choices are: {_detector_list}"
+                )
+                raise DetDoesNotExist()
+
+    else:
+
+        detectors: List[str] = list(_detector_list)
+
+    # Open heasarc web page
+
+    url = threeML_config.GBM.public_http_location
+    year = f"20{year}"
+    directory = f"/daily/{year}/{month}/{day}/current"
+
+    heasarc_web_page_url = f"{url}/{directory}"
+
+    log.debug(f"going to look in {heasarc_web_page_url}")
+
+    try:
+
+        downloader = ApacheDirectory(heasarc_web_page_url)
+
+    except RemoteDirectoryNotFound:
+
+        log.exception(
+            f"Trigger {sanitized_trigger_name_} does not exist at {heasarc_web_page_url}")
+
+        raise TriggerDoesNotExist(
+
+        )
+
+    # Now select the files we want to download, then we will download them later
+    # We do it in two steps because we want to be able to choose what to download once we
+    # have the complete picture
+
+    # Get the list of remote files
+    remote_file_list = downloader.files
+
+    # This is the dictionary to keep track of the classification
+    remote_files_info = DictWithPrettyPrint([(det, {}) for det in detectors])
+
+    # Classify the files detector by detector
+
+    for this_file in remote_file_list:
+
+        # this_file is something like glg_tte_n9_bn100101988_v00.fit
+        tokens = this_file.split("_")
+
+        if len(tokens) != 5:
+
+            # Not a data file
+
+            continue
+
+        else:
+
+            # The "map" is necessary to transform the tokens to normal string (instead of unicode),
+            # because u"b0" != "b0" as a key for a dictionary
+
+            _, file_type, detname, _, version_ext = list(map(str, tokens))
+
+        version, ext = version_ext.split(".")
+
+        # We do not care here about the other files (tcat, bcat and so on),
+        # nor about files which pertain to other detectors
+
+        if cspec_only:
+            
+            allowed_files = ["cspec"]
+
+        else:
+
+            allowed_files = ["cspec", "tte"]
+            
+        if (
+            file_type not in allowed_files
+            or ext not in ["pha", "fit"]
+            or detname not in detectors
+        ):
+
+            continue
+
+        # cspec files can be rsp, rsp2 or pha files. Classify them
+
+        if file_type == "cspec":
+
+            if ext == "pha":
+
+                remote_files_info[detname]["cspec"] = this_file
+
+            else:
+
+                raise RuntimeError("Should never get here")
+
+        else:
+
+            remote_files_info[detname][file_type] = this_file
+
+    # Now download the files
+
+    download_info = DictWithPrettyPrint(
+        [(det, DictWithPrettyPrint()) for det in detectors]
+    )
+
+    for detector in list(remote_files_info.keys()):
+
+        log.debug(f"trying to download GBM detector {detector}")
+
+        remote_detector_info = remote_files_info[detector]
+        local_detector_info = download_info[detector]
+
+        # Get CSPEC file
+        local_detector_info["cspec"] = downloader.download(
+            remote_detector_info["cspec"], destination_directory, progress=True
+        )
+
+        if not cspec_only:
+            # Get TTE file (compressing it if requested)
+            local_detector_info["tte"] = downloader.download(
+                remote_detector_info["tte"],
+                destination_directory,
+                progress=True,
+                compress=compress_tte,
+            )
+
+    return download_info
+
 
 
 def _get_latest_version(filenames):
