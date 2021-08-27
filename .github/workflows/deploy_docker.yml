@@ -17,7 +17,7 @@ jobs:
         - name: Login to DockerHub Registry
           run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
         - name: Get the version
-        - uses: actions-ecosystem/action-get-latest-tag@v1
+          uses: actions-ecosystem/action-get-latest-tag@v1
           id: vars
 
         - name: Build the tagged Docker image for ${{steps.vars.outputs.tag}}
