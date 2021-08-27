@@ -20,10 +20,14 @@ jobs:
           id: vars
           run: echo ::set-output name=tag::$(echo ${GITHUB_REF:11})
         - name: Build the tagged Docker image for ${{steps.vars.outputs.tag}}
-          run: docker build . --file Dockerfile --tag threeml/base:${{steps.vars.outputs.tag}}
+          run: |
+            cd docker_base
+            docker build . --file Dockerfile --tag threeml/base:${{steps.vars.outputs.tag}}
         # - name: Push the tagged Docker image
         #   run: docker push threeml/base:${{steps.vars.outputs.tag}}
         - name: Build the latest Docker image
-          run: docker build . --file Dockerfile --tag threeml/base:latest
+          run: |
+            cd docker_base
+            docker build . --file Dockerfile --tag threeml/base:latest
         # - name: Push the latest Docker image
         #   run: docker push pjlamb12/angular-cli:latest
