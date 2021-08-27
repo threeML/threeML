@@ -6,10 +6,10 @@ set -e
 # Process options
 INSTALL_XSPEC="no"
 INSTALL_ROOT="no"
-INSTALL_FERMI="yes"
+INSTALL_FERMI="no"
 BATCH="no"
 PYTHON_VERSION="3.7"
-ENV_NAME="threeML_ltb"
+ENV_NAME="threeML"
 
 while [ "${1:-}" != "" ]; do
     case "$1" in
