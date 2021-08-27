@@ -10,9 +10,10 @@ import shutil
 
 import yaml
 
-try:
+try: 
     from GtBurst import IRFS
     from GtBurst.Configuration import Configuration
+    import pdb;pdb.set_trace()
     from threeML import FermiLATLike
 
     irfs = IRFS.IRFS.keys()
@@ -25,6 +26,7 @@ try:
 except (ImportError):
 
     has_fermitools = False
+    print('No fermitools installed')
 
 from threeML.io.file_utils import file_existing_and_readable
 
@@ -130,7 +132,7 @@ _required_parameters = [
 _optional_parameters = [
     'ra', 'dec', 'bin_file', 'tsmin', 'strategy', 'thetamax', 'spectralfiles', 'liketype', 'optimizeposition',
     'datarepository', 'ltcube', 'expomap', 'ulphindex', 'flemin', 'flemax', 'fgl_mode', 'tsmap_spec', 'filter_GTI',
-    'likelihood_profile', 'remove_fits_files','log_bins'
+    'likelihood_profile', 'remove_fits_files','log_bins', 'bin_file'
 ]
 
 
@@ -203,7 +205,10 @@ class TransientLATDataBuilder(object):
         name = 'tstarts'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, help_string="Comma-separated list of start times (with respect to trigger)", is_number=False)
+                name=name,
+                default_value = None,
+                help_string="Comma-separated list of start times (with respect to trigger)", 
+                is_number=False)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
@@ -212,7 +217,9 @@ class TransientLATDataBuilder(object):
         name = 'tstops'
 
         self._parameters[name] = LATLikelihoodParameter(
-            name=name, help_string="Comma-separated list of stop times (with respect to trigger)", is_number=False)
+            name=name,
+            default_value = None,
+            help_string="Comma-separated list of stop times (with respect to trigger)", is_number=False)
 
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
@@ -342,6 +349,31 @@ class TransientLATDataBuilder(object):
         super(TransientLATDataBuilder, self).__setattr__(name, self._parameters[name])
 
         ##################################
+
+        name = 'bin_file'
+
+        self._parameters[name] = LATLikelihoodParameter(
+                name = name,
+                default_value = None,
+                help_string = "A string containing a text file readable by numpy and the columns to read.\nFor example, 'res.txt start end' will get the start and stop times from the columns 'start' and 'end' in the file res.txt.",
+                is_bool = False,
+                is_number = False)
+
+        ##################################
+
+        name = 'log_bins'
+
+        self._parameters[name] = LatLikelihoodParameter(
+                name = name
+                default_value = None
+                help_string = "Use logarithmically-spaced bins. Specify [tmi
+n] [tmax] [n] as a single string. \nFor example, inputting the string '1.0 10000.0 30' uses 30 logarithmically spaced bins between 1.0 and 10k seconds. You should
+either use this, or --tstarts and --tstops",
+                is_number = False
+                is_bool = False)
+
+        ##################################
+
 
         name = 'optimizeposition'
 
@@ -484,9 +516,9 @@ class TransientLATDataBuilder(object):
         # Now if there are keywords from a configuration to read,
         # lets do it
 
-        self._proccess_keywords(**init_values)
+        self._process_keywords(**init_values)
 
-    def _proccess_keywords(self, **kwargs):
+    def _process_keywords(self, **kwargs):
         """
         processes the keywords from a dictionary 
         likely loaded from a yaml config
@@ -505,10 +537,10 @@ class TransientLATDataBuilder(object):
             else:
                 # add warning that there is something strange in the configuration
                 pass
-
+ 
     def __setattr__(self, name, value):
         """
-        OVerride this so that we cannot erase parameters
+        Override this so that we cannot erase parameters
         
         """
 
@@ -630,9 +662,12 @@ class TransientLATDataBuilder(object):
                 )
             else:
 
-                tstart, tstop = [
-                    float(x) for x in re.match('^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval).groups()
-                ]
+                # check that either tstarts,tstops or log_bins are defined
+                if self._parameters['tstarts'].value is not None or self._parameters['tstops'].value is not None:
+                    tstart, tstop = [
+                        float(x) for x in re.match('^interval(-?\d*\.\d*)-(-?\d*\.\d*)\/?$', interval).groups()]
+                else:
+                    assert self._parameters['log_bins'].value is None, 'Choose either to use tstarts and tstops, or to use log_bins'
 
                 event_file = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername)
 
@@ -667,8 +702,21 @@ class TransientLATDataBuilder(object):
                 if not file_existing_and_readable(livetime_cube):
                     print('The livetime_cube does not exist. Please examine!')
 
+                # optional bin_file parameter
+                if self._parameters['bin_file'].value is not None:
+                    
+                    # liketype matches
+                    assert self._parameters['liketype'] == 'binned', 'liketype must be binned to use bin_file parameter %s'%self._parameters['bin_file'].value
+
+                    # value carries a few arguments, take first value- path
+                    bin_file_path = self._parameters['bin_file'].value.split()[0]
+                    bin_file = os.path.join(interval, bin_file_path)
+
+                    if not file_existing_and_readable(bin_file):
+                        print('The bin_file at %s does not exist. Please examine!'%bin_file)
+
                 # now create a LAT observation object
-                this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, self._parameters['liketype'].get_disp_value(), self._triggername)
+                this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, self._parameters['liketype'].get_disp_value(), self._triggername, bin_file)
 
                 lat_observations.append(this_obs)
 
@@ -754,7 +802,7 @@ class TransientLATDataBuilder(object):
 
 class LATObservation(object):
 
-    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop,liketype,triggername):
+    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, liketype, triggername, bin_file):
         """
         A container to formalize the storage of Fermi LAT 
         observation files
@@ -780,6 +828,7 @@ class LATObservation(object):
         self._tstop = tstop
         self._liketype =liketype
         self._triggername = triggername
+        self._bin_file = bin_file
 
     @property
     def event_file(self):
@@ -810,6 +859,10 @@ class LATObservation(object):
         return self._liketype
 
     @property
+    def bin_file(self):
+        return self._bin_file
+
+    @property
     def triggername(self):
         return self._triggername
 
@@ -824,6 +877,7 @@ class LATObservation(object):
         output['livetime_cube'] = self._livetime_cube
         output['triggername'] = self._triggername
         output['liketype'] = self._liketype
+        output['bin_file'] = self._bin_file
 
         df = pd.Series(output)
 
@@ -839,7 +893,8 @@ class LATObservation(object):
                      kind = self._liketype,
                      exposure_map_file=self._exposure_map,
                      source_maps=None,
-                     binned_expo_map=None)
+                     binned_expo_map=None,
+                     bin_file = self._bin_file)
                      #source_name=self._triggername)
 
         return _fermi_lat_like
