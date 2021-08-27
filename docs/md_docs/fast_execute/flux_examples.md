@@ -5,8 +5,8 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.7.1
+      format_version: '1.3'
+      jupytext_version: 1.11.2
   kernelspec:
     display_name: Python 3
     language: python
@@ -31,7 +31,7 @@ Let's explore the possibilites.
 
 ```
 
-```python 
+```python
 import warnings
 warnings.simplefilter("ignore")
 
@@ -49,7 +49,7 @@ from threeML.io.package_data import get_path_of_data_file
 
 ```
 
-```python 
+```python
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
