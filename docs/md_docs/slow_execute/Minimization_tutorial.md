@@ -232,33 +232,3 @@ jl.fit()
 # NOTE: given the inner working of pygmo, it is not possible
 # to plot the evolution
 ```
-
-### Multinest minimizer
-
-[MultiNest](https://github.com/farhanferoz/MultiNest) is a Bayesian inference tool which calculates the evidence and explores the parameter space which may contain multiple posterior modes and pronounced (curving) degeneracies in moderately high dimensions. It is not strictly a minimizer. However, given its capacity to explore multiple modes of the likelihood function (i.e., multiple local minima), it can be used as a global minimizer.
-
-The Multinest minimizer in 3ML forms a posterior probability using the likelihood multiplied by uniformative priors. The priors are automatically chosen (uniform if the allowed parameter range is less than 2 orders of magnitudes or negative values are allowed, log-uniform otherwise). Then, Multinest is run in multimodal mode (multimodal=True). At the end of the run, among all the values of the $-\log{L}$ traversed by Multinest, the smaller one is chosen as starting point for the local minimizer.
-
-```python
-# Reset the parameter to a value different from the best fit found
-# by previous algorithms
-jl, model = get_joint_likelihood_object_complex_likelihood()
-model.test.spectrum.main.shape.mu = 5.0
-
-# Create an instance of the multinest minimizer
-multinest_minimizer = GlobalMinimization("multinest")
-
-# Create an instance of a local minimizer
-local_minimizer = LocalMinimization("minuit")
-
-# Setup the global minimization
-multinest_minimizer.setup(second_minimization = local_minimizer, live_points=100)
-
-# Set the minimizer for the JointLikelihood object
-jl.set_minimizer(multinest_minimizer)
-
-jl.fit()
-
-# Plots the point traversed by Multinest
-fig = plot_minimizer_path(jl, points=True)
-```
