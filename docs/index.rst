@@ -30,6 +30,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
     notebooks/Minimization_tutorial.ipynb
     notebooks/Bayesian_tutorial.ipynb
     notebooks/sampler_docs.ipynb
+    notebooks/optimizer_docs.ipynb
     plugins
     modeling
     faq
@@ -44,6 +45,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    notebooks/Point_source_plotting.ipynb
    notebooks/Building_Plugins_from_TimeSeries.ipynb
    notebooks/grb080916C.ipynb
+   notebooks/APEC_doc.ipynb
    notebooks/joint_BAT_gbm_demo.ipynb
    notebooks/joint_fitting_xrt_and_gbm_xspec_models.ipynb
    notebooks/flux_examples.ipynb
@@ -51,7 +53,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    notebooks/Time-energy-fit.ipynb
    notebooks/synthetic_spectra.ipynb
    notebooks/gof_lrt.ipynb
-   notebooks/APEC_doc.ipynb
+   
     
 ThreeML is supported by the National Science Foundation (NSF) 
 

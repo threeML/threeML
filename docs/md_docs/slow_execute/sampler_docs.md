@@ -42,12 +42,12 @@ threeML_config.bayesian.default_sampler
 threeML_config.bayesian.emcee_setup
 ```
 
+<!-- #region -->
 If you simply run `bayes_analysis.sample()` the default sampler and its default parameters will be used. 
 
-```python
 
-bayes_analysis
-```
+Let's make some data to fit.
+<!-- #endregion -->
 
 ```python
 sin = Sin(K=1, f=.1)
