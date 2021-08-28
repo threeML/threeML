@@ -81,7 +81,8 @@ xyl.plot();
 ## ROOT
 
 ```python
-sin = Sin(K=1, f=.5)
+sin.K=1
+sin.f=.5
 
 local_minimizer = LocalMinimization("ROOT")
 
@@ -92,10 +93,13 @@ mle_analysis.fit();
 xyl.plot();
 ```
 
+<!-- #region heading_collapsed=true -->
 ## scipy
+<!-- #endregion -->
 
-```python
-sin = Sin(K=1, f=.5)
+```python hidden=true
+sin.K=1
+sin.f=.5
 
 local_minimizer = LocalMinimization("scipy")
 
@@ -109,8 +113,9 @@ xyl.plot();
 
 ```
 
-```python
-sin = Sin(K=1, f=.5)
+```python hidden=true
+sin.K=1
+sin.f=.5
 
 local_minimizer = LocalMinimization("scipy")
 
@@ -125,8 +130,9 @@ xyl.plot();
 
 ```
 
-```python
-sin = Sin(K=1, f=.5)
+```python hidden=true
+sin.K=1
+sin.f=.5
 
 local_minimizer = LocalMinimization("scipy")
 
@@ -141,10 +147,13 @@ xyl.plot();
 
 ```
 
+<!-- #region heading_collapsed=true -->
 ## GRID Minimizer
+<!-- #endregion -->
 
-```python
-sin = Sin(K=1, f=.5)
+```python hidden=true
+sin.K=1
+sin.f=.5
 
 grid_minimizer = GlobalMinimization("grid")
 
@@ -166,6 +175,6 @@ xyl.plot();
 
 ```
 
-```python
+```python hidden=true
 
 ```
