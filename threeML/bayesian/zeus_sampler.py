@@ -53,6 +53,20 @@ class ZeusSampler(MCMCSampler):
 
     def setup(self, n_iterations, n_burn_in=None, n_walkers=20, seed=None):
 
+        """
+        set up the zeus sampler
+
+        :param n_iterations: 
+        :type n_iterations: 
+        :param n_burn_in: 
+        :type n_burn_in: 
+        :param n_walkers: 
+        :type n_walkers: 
+        :param seed: 
+        :type seed: 
+        :returns: 
+
+        """
         log.debug(f"Setup for Zeus sampler: n_iterations:{n_iterations}, n_burn_in:{n_burn_in},"\
                   f"n_walkers: {n_walkers}, seed: {seed}.")
 

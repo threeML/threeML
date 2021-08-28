@@ -237,7 +237,7 @@ class BayesianAnalysis(object):
             # now we will setup the samnpler with the
             # paramters from thre config
 
-            default_params = threeML_config.bayesian.default_setup
+            default_params = threeML_config.bayesian[f"{sampler_name}_setup"]
 
             self.sampler.setup(**default_params)
 
@@ -249,7 +249,22 @@ class BayesianAnalysis(object):
         return self._sampler
 
     def sample(self, quiet=False):
+        """
+        sample the posterior of the model with the selected algorithm
 
+        If no algorithm as been set, then the configured default algorithm
+        we default parameters will be run
+        
+        :param quiet: if True, then no output is displayed
+        :type quiet: 
+        :returns: 
+
+        """
+        if self._sampler is None:
+
+            # assuming the default sampler
+            self.set_sampler()
+        
         with use_astromodels_memoization(False):
 
             self._sampler.sample(quiet=quiet)

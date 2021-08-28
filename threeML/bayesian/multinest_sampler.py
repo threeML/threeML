@@ -1,4 +1,5 @@
 import os
+import shutil
 import time
 from pathlib import Path
 from typing import Optional
@@ -70,11 +71,11 @@ class MultiNestSampler(UnitCubeSampler):
 
     def setup(
         self,
-        n_live_points: int,
+        n_live_points: int = 400,
         chain_name: str = "chains/fit-",
         resume: bool = False,
         importance_nested_sampling: bool = False,
-        auto_clean: bool = False
+        auto_clean: bool = False,
         **kwargs
     ):
         """
@@ -83,6 +84,7 @@ class MultiNestSampler(UnitCubeSampler):
 
         :param n_live_points: number of live points for the evaluation
         :param chain_name: the chain name
+        :resume: resume from previous fit
         :param importance_nested_sampling: use INS
         :param auto_clean: automatically remove multinest chains after run
         :returns: 
@@ -258,7 +260,7 @@ class MultiNestSampler(UnitCubeSampler):
 
                 log.info(f"deleting the chain directory {chain_dir}")
                 
-                chain_dir.unlink()
+                shutil.rmtree(chain_dir)
 
                 
 
