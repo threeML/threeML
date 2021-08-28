@@ -1,0 +1,35 @@
+name: Docker Image CI
+
+on:
+  release:
+    types:
+      [published]
+  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+        - name: Get the docker file
+          run: |
+            git clone https://github.com/threeML/docker_base.git
+            cd docker_base
+          
+        - name: Login to DockerHub Registry
+          run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+        - name: Get the version
+          id: vars
+          run: echo ::set-output name=tag::$(echo ${GITHUB_REF:11})
+        - name: Build the tagged Docker image for ${{steps.vars.outputs.tag}}
+          run: |
+            cd docker_base
+            docker build . --file Dockerfile --tag threeml/base:${{steps.vars.outputs.tag}}
+        - name: Push the tagged Docker image
+          run: docker push threeml/base:${{steps.vars.outputs.tag}}
+        - name: Build the latest Docker image
+          run: |
+            cd docker_base
+            docker build . --file Dockerfile --tag threeml/base:latest
+        - name: Push the latest Docker image
+          run: docker push threeml/base:latest
