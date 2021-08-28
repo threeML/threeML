@@ -34,7 +34,6 @@ A live version of the documentation can be launched by clicking
     notebooks/Minimization_tutorial.ipynb
     notebooks/Bayesian_tutorial.ipynb
     notebooks/sampler_docs.ipynb
-    notebooks/optimizer_docs.ipynb
     plugins
     modeling
     faq
