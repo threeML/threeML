@@ -27,6 +27,9 @@ With any of the samplers, you can pass keywords to access their setups. Read eac
 
 ```python
 from threeML import *
+
+import numpy as np
+
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
