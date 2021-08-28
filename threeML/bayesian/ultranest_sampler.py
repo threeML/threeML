@@ -63,6 +63,27 @@ class UltraNestSampler(UnitCubeSampler):
         stepsampler=None,
         **kwargs
     ):
+        """
+        set up the Ultranest sampler. Consult the documentation:
+
+        https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler
+
+        :param min_num_live_points: 
+        :type min_num_live_points: 
+        :param dlogz: 
+        :type dlogz: 
+        :param chain_name: 
+        :type chain_name: 
+        :param wrapped_params: 
+        :type wrapped_params: 
+        :param stepsampler: 
+        :type stepsampler: 
+        :returns: 
+
+        """
+        
+        
+        
         log.debug(f"Setup for UltraNest sampler: min_num_live_points:{min_num_live_points}, "\
                   f"chain_name:{chain_name}, dlogz: {dlogz}, wrapped_params: {wrapped_params}. "\
                   f"Other input: {kwargs}")
