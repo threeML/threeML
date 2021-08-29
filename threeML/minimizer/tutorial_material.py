@@ -34,6 +34,7 @@ def get_callback(jl):
     return global_minim_callback
 
 
+
 class JointLikelihoodWrap(JointLikelihood):
     def fit(self, *args, **kwargs):
 

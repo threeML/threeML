@@ -5,8 +5,8 @@ jupyter:
     text_representation:
       extension: .md
       format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.7.1
+      format_version: '1.3'
+      jupytext_version: 1.11.2
   kernelspec:
     display_name: Python 3
     language: python
@@ -33,7 +33,7 @@ Let's take a look at its usage for a simple likelihood.
 
 <!-- #endregion -->
 
-```python 
+```python
 import warnings
 warnings.simplefilter('ignore')
 import numpy as np
@@ -47,7 +47,7 @@ from threeML import *
 from threeML.bayesian.tutorial_material import *
 ```
 
-```python 
+```python
 from jupyterthemes import jtplot
 %matplotlib inline
 jtplot.style(context="talk", fscale=1, ticks=True, grid=False)
@@ -268,6 +268,7 @@ _ =ax.set_xlabel(r'f($\mu$)')
 ```
 
 As with any approach, the Bayesian capabilities of 3ML are a tool. Understanding and proper use of the posterior and marginal distributions requires special care. For further reading on the Bayesian analysis and its applications to spectral analysis check out the following resources:
+
 * [Michael Betancourt](https://betanalpha.github.io/writing/) spends a ton of time trying to teach proper statistical methodology to applied fields. If you are using Bayesian techniques, you must read his work.
 
 * [Frequentism and bayesianism: a python-driven primer](https://arxiv.org/abs/1411.5018)

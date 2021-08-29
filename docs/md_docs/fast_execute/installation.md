@@ -18,7 +18,7 @@ jupyter:
 3ML brings together multiple instrument and fitting software packages into a common framework. Thus, installing all the pieces can be a bit of a task for the user. In order to make this a less painless process, we have packaged most of the external dependencies into conda (see below). However, if you want more control over your install, 3ML is available on PyPI via pip. If you have issues with the installs, first check that you have properly installed all the external dependencies that *you* plan on using. Are their libraries accessible on you system's standard paths? If you think that you have everything setup properly and the install does not work for you, please [submit an issue](https://github.com/threeML/threeML/issues) and we will do our best to find a solution.
 
 
-## Conda installation (suggested)
+## Conda installation
 
 [Conda](https://conda.io/docs/) is a platform independent package manager. It allows to install 3ML (and a lot of other software) without the need
 to compile anything, and in a completely separate environment from your system and your system python.
@@ -70,6 +70,22 @@ pip install threeml
 ```
 
 If you need to build other dependencies such as pagmo, multinest, XSPEC, etc., it is recommended you do this **before** installing astromodels!
+
+## Docker
+
+A docker with the complete 3ML environment and all dependencies can be installed with
+
+```bash
+docker pull threeml/notebook:latest
+```
+
+which will install a docker taht can be launched with 
+
+```bash
+docker run -it --rm -p 8888:8888 -v $PWD:/workdir -w /workdir threeml/notebook
+```
+
+which will launch a notebook server that can operate on the current directory. The notebooks and be accessed by typing `localhost:8888` in your browser.
 
 
 ## Other dependencies

@@ -216,9 +216,12 @@ jobs:
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
 
-          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_Lat.md
-          mv docs/md_docs/slow_execute/Fermipy_LAt.ipynb docs/notebooks/
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_LAT.md
+          #jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/optimizer_docs.md
+
+          mv docs/md_docs/slow_execute/*.ipynb docs/notebooks/
           ls docs/notebooks
+          
         env:
           OMP_NUM_THREADS: 1
           MKL_NUM_THREADS: 1
@@ -370,7 +373,7 @@ jobs:
         run: |
 
           pip install -e .
-
+          pip install zeus_mcmc dynesty
           pip install black
           pip install --no-binary :all: root_numpy
           pip install git+https://github.com/desihub/speclite.git
@@ -385,12 +388,9 @@ jobs:
 
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Bayesian_tutorial.md
 
-          
-          
-          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Minimization_tutorial.md
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/sampler_docs.md
 
-          
-          
+          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Minimization_tutorial.md          
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/grb080916C.md
 
           jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/joint_BAT_gbm_demo.md
