@@ -1102,7 +1102,7 @@ class SpectrumLike(PluginPrototype):
             # and channels marked bad by quality will be excluded unless included
             # by the arguments
 
-            self._mask = self._observed_spectrum.qaulity.good
+            self._mask = self._observed_spectrum.quality.good
 
         else:
 
