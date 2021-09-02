@@ -13,7 +13,6 @@ import yaml
 try: 
     from GtBurst import IRFS
     from GtBurst.Configuration import Configuration
-    import pdb;pdb.set_trace()
     from threeML import FermiLATLike
 
     irfs = IRFS.IRFS.keys()
@@ -355,7 +354,7 @@ class TransientLATDataBuilder(object):
         self._parameters[name] = LATLikelihoodParameter(
                 name = name,
                 default_value = None,
-                help_string = "A string containing a text file readable by numpy and the columns to read.\nFor example, 'res.txt start end' will get the start and stop times from the columns 'start' and 'end' in the file res.txt.",
+                help_string = "A string containing a text file 'res.txt start end' will get the start and stop times from the columns 'start' and 'end' in the file res.txt.",
                 is_bool = False,
                 is_number = False)
 
@@ -363,13 +362,11 @@ class TransientLATDataBuilder(object):
 
         name = 'log_bins'
 
-        self._parameters[name] = LatLikelihoodParameter(
-                name = name
-                default_value = None
-                help_string = "Use logarithmically-spaced bins. Specify [tmi
-n] [tmax] [n] as a single string. \nFor example, inputting the string '1.0 10000.0 30' uses 30 logarithmically spaced bins between 1.0 and 10k seconds. You should
-either use this, or --tstarts and --tstops",
-                is_number = False
+        self._parameters[name] = LATLikelihoodParameter(
+                name = name,
+                default_value = None,
+                help_string = "Use logarithmically-spaced bins. For example: '1.0 10000.0 30'",
+                is_number = False,
                 is_bool = False)
 
         ##################################
@@ -651,14 +648,14 @@ either use this, or --tstarts and --tstops",
         lat_observations = []
 
         # need a strategy to collect the intervals
-        intervals = glob('interval*-*')
+        intervals = sorted(glob('interval*-*'))
 
         for interval in intervals:
 
             if interval in intervals_before_run:
 
                 print(
-                    '%s existed before this run,\n it will not be auto included in the list,\n but you can manually see grab the data.'
+                    '%s existed before this run,\n it will not be auto included in the list,\n but you can manually see grab the data.' % interval
                 )
             else:
 
@@ -703,20 +700,20 @@ either use this, or --tstarts and --tstops",
                     print('The livetime_cube does not exist. Please examine!')
 
                 # optional bin_file parameter
-                if self._parameters['bin_file'].value is not None:
+                #if self._parameters['bin_file'].value is not None:
                     
                     # liketype matches
-                    assert self._parameters['liketype'] == 'binned', 'liketype must be binned to use bin_file parameter %s'%self._parameters['bin_file'].value
+                #    assert self._parameters['liketype'] == 'binned', 'liketype must be binned to use bin_file parameter %s'%self._parameters['bin_file'].value
 
                     # value carries a few arguments, take first value- path
-                    bin_file_path = self._parameters['bin_file'].value.split()[0]
-                    bin_file = os.path.join(interval, bin_file_path)
+                 #   bin_file_path = self._parameters['bin_file'].value.split()[0]
+                 #   bin_file = os.path.join(interval, bin_file_path)
 
-                    if not file_existing_and_readable(bin_file):
-                        print('The bin_file at %s does not exist. Please examine!'%bin_file)
+                 #   if not file_existing_and_readable(bin_file):
+                 #       print('The bin_file at %s does not exist. Please examine!'%bin_file)
 
                 # now create a LAT observation object
-                this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, self._parameters['liketype'].get_disp_value(), self._triggername, bin_file)
+                this_obs = LATObservation(event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, self._parameters['liketype'].get_disp_value(), self._triggername)#@, bin_file)
 
                 lat_observations.append(this_obs)
 
@@ -734,7 +731,7 @@ either use this, or --tstarts and --tstops",
 
     def display(self, get=False):
         """
-        Display the currently set parameters
+        Display the current set parameters
         """
 
         out = collections.OrderedDict()
@@ -802,7 +799,7 @@ either use this, or --tstarts and --tstops",
 
 class LATObservation(object):
 
-    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, liketype, triggername, bin_file):
+    def __init__(self, event_file, ft2_file, exposure_map, livetime_cube, tstart, tstop, liketype, triggername):#, bin_file):
         """
         A container to formalize the storage of Fermi LAT 
         observation files
@@ -828,7 +825,7 @@ class LATObservation(object):
         self._tstop = tstop
         self._liketype =liketype
         self._triggername = triggername
-        self._bin_file = bin_file
+        #self._bin_file = bin_file
 
     @property
     def event_file(self):
@@ -852,15 +849,15 @@ class LATObservation(object):
 
     @property
     def tstop(self):
-        return self.tstop
+        return self._tstop
 
     @property
     def liketype(self):
         return self._liketype
 
-    @property
-    def bin_file(self):
-        return self._bin_file
+    #@property
+    #def bin_file(self):
+    #    return self._bin_file
 
     @property
     def triggername(self):
@@ -877,7 +874,7 @@ class LATObservation(object):
         output['livetime_cube'] = self._livetime_cube
         output['triggername'] = self._triggername
         output['liketype'] = self._liketype
-        output['bin_file'] = self._bin_file
+        #output['bin_file'] = self._bin_file
 
         df = pd.Series(output)
 
@@ -886,15 +883,15 @@ class LATObservation(object):
     def to_LATLike(self):
 
         _fermi_lat_like =  FermiLATLike(
-                     name = 'LAT%dX%d' % (self._tstart, self._tstop),
+                     name = ('LAT%dX%d' % (self._tstart, self._tstop)).replace('-','n'),
                      event_file = self._event_file,
                      ft2_file = self._ft2_file,
                      livetime_cube_file = self._livetime_cube,
                      kind = self._liketype,
                      exposure_map_file=self._exposure_map,
                      source_maps=None,
-                     binned_expo_map=None,
-                     bin_file = self._bin_file)
+                     binned_expo_map=None)
+                    #,bin_file = self._bin_file)
                      #source_name=self._triggername)
 
         return _fermi_lat_like
