@@ -7,6 +7,7 @@ from builtins import object, range, zip
 import BinnedAnalysis
 import matplotlib.pyplot as plt
 import numpy
+import astropy.io.fits as fits
 import pyLikelihood as pyLike
 import UnbinnedAnalysis
 from astromodels import Parameter
@@ -15,12 +16,21 @@ from GtBurst import FuncFactory, LikelihoodComponent
 from matplotlib import gridspec
 from past.utils import old_div
 
+from threeML.config.config import threeML_config
+
 from threeML.io.file_utils import get_random_unique_name
 from threeML.io.package_data import get_path_of_data_file
 from threeML.io.suppress_stdout import suppress_stdout
+from threeML.io.plotting.data_residual_plot import ResidualPlot
+from threeML.io.logging import setup_logger
+
 from threeML.plugin_prototype import PluginPrototype
 from threeML.utils.statistics.gammaln import logfactorial
-from threeML.io.logging import setup_logger
+from threeML.utils.statistics.stats_tools import Significance
+
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+
 plt.style.use(str(get_path_of_data_file("threeml.mplstyle")))
 
 
@@ -299,6 +309,10 @@ class FermiLATLike(PluginPrototype):
         self.emax = 5e8
         self.n_energies = 200
 
+        with fits.open(event_file) as file:
+            self.DELTA_T_OBS = file[0].header['TSTOP'] - file[0].header['TSTART']
+
+
         # This is the limit on the effective area correction factor,
         # which is a multiplicative factor in front of the whole model
         # to account for inter-calibration issues. By default it can vary
@@ -553,6 +567,9 @@ class FermiLATLike(PluginPrototype):
 
     pass
 
+    def get_observation_duration(self):
+        return self.DELTA_T_OBS
+
     def display(self):
 
         e1 = self.like.energies[:-1]
@@ -596,13 +613,14 @@ class FermiLATLike(PluginPrototype):
         # Using model variance to account for low statistic
 
         resid = old_div((self.like.nobs - sum_model), sum_model)
+        resid_err=old_div(numpy.sqrt(self.like.nobs), sum_model)
 
         sub1.axhline(0, linestyle="--")
         sub1.errorbar(
             ec,
             resid,
             xerr=de,
-            yerr=old_div(numpy.sqrt(self.like.nobs), sum_model),
+            yerr=resid_err,
             capsize=0,
             fmt=".",
         )
@@ -628,6 +646,236 @@ class FermiLATLike(PluginPrototype):
         fig.subplots_adjust(hspace=0)
 
         return fig
+
+    def display_model(
+        self,
+        data_color: str = "k",
+        model_color: str = "r",
+        background_color: str = "b",
+        step: bool = True,
+        show_data: bool = True,
+        show_residuals: bool = True,
+        ratio_residuals: bool = False,
+        show_legend: bool = True,
+        min_rate: Union[int, float] = 1e-99,
+        model_label: Optional[str] = None,
+        model_kwargs: Optional[Dict[str, Any]] = None,
+        data_kwargs: Optional[
+        Dict[str, Any]] = None,
+        background_label: Optional[str] = None,
+        background_kwargs: Optional[Dict[str, Any]] = None,
+        source_only: bool = True,
+        show_background: bool = False,
+        ** kwargs
+    ) -> ResidualPlot:
+        """
+        Plot the current model with or without the data and the residuals. Multiple models can be plotted by supplying
+        a previous axis to 'model_subplot'.
+
+        Example usage:
+
+        fig = data.display_model()
+
+        fig2 = data2.display_model(model_subplot=fig.axes)
+
+
+        :param data_color: the color of the data
+        :param model_color: the color of the model
+        :param step: (bool) create a step count histogram or interpolate the model
+        :param show_data: (bool) show_the data with the model
+        :param show_residuals: (bool) shoe the residuals
+        :param ratio_residuals: (bool) use model ratio instead of residuals
+        :param show_legend: (bool) show legend
+        :param min_rate: the minimum rate per bin
+        :param model_label: (optional) the label to use for the model default is plugin name
+        :param model_subplot: (optional) axis or list of axes to plot to
+        :param model_kwargs: plotting kwargs affecting the plotting of the model
+        :param data_kwargs:  plotting kwargs affecting the plotting of the data and residuls
+        :return:
+        """
+
+        # set up the default plotting
+
+        _default_model_kwargs = dict(color=model_color, alpha=1)
+
+        _default_background_kwargs = dict(
+            color=background_color, alpha=1, ls="--")
+
+        _sub_menu = threeML_config.plotting.residual_plot
+
+        _default_data_kwargs = dict(
+            color=data_color,
+            alpha=1,
+            fmt=_sub_menu.marker,
+            markersize=_sub_menu.size,
+            ls="",
+            elinewidth=2,#_sub_menu.linewidth,
+            capsize=0,
+        )
+
+        # overwrite if these are in the confif
+
+        _kwargs_menu: BinnedSpectrumPlot = threeML_config.plugins.ogip.fit_plot
+
+        if _kwargs_menu.model_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.model_mpl_kwargs.items():
+
+                _default_model_kwargs[k] = v
+
+        if _kwargs_menu.data_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.data_mpl_kwargs.items():
+
+                _default_data_kwargs[k] = v
+
+        if _kwargs_menu.background_mpl_kwargs is not None:
+
+            for k, v in _kwargs_menu.background_mpl_kwargs.items():
+
+                _default_background_kwargs[k] = v
+
+        if model_kwargs is not None:
+
+            assert type(model_kwargs) == dict, "model_kwargs must be a dict"
+
+            for k, v in list(model_kwargs.items()):
+
+                if k in _default_model_kwargs:
+
+                    _default_model_kwargs[k] = v
+
+                else:
+
+                    _default_model_kwargs[k] = v
+
+        if data_kwargs is not None:
+
+            assert type(data_kwargs) == dict, "data_kwargs must be a dict"
+
+            for k, v in list(data_kwargs.items()):
+
+                if k in _default_data_kwargs:
+
+                    _default_data_kwargs[k] = v
+
+                else:
+
+                    _default_data_kwargs[k] = v
+
+        if background_kwargs is not None:
+
+            assert type(
+                background_kwargs) == dict, "background_kwargs must be a dict"
+
+            for k, v in list(background_kwargs.items()):
+
+                if k in _default_background_kwargs:
+
+                    _default_background_kwargs[k] = v
+
+                else:
+
+                    _default_background_kwargs[k] = v
+
+        # since we define some defualts, lets not overwrite
+        # the users
+
+        _duplicates = (("ls", "linestyle"), ("lw", "linewidth"))
+
+        for d in _duplicates:
+
+            if (d[0] in _default_model_kwargs) and (d[1] in _default_model_kwargs):
+
+                _default_model_kwargs.pop(d[0])
+
+            if (d[0] in _default_data_kwargs) and (d[1] in _default_data_kwargs):
+
+                _default_data_kwargs.pop(d[0])
+
+            if (d[0] in _default_background_kwargs) and (d[1] in _default_background_kwargs):
+
+                _default_background_kwargs.pop(d[0])
+
+        if model_label is None:
+            model_label = "%s Model" % self._name
+
+        residual_plot = ResidualPlot(
+            show_residuals=show_residuals, ratio_residuals=ratio_residuals, **kwargs
+        )
+
+        e1 = self.like.energies[:-1]*1000.0 # this has to be in keV
+        e2 = self.like.energies[1:]*1000.0  # this has to be in keV
+
+        ec = (e1 + e2) / 2.0
+        de = (e2 - e1) / 2.0
+
+        conversion_factor = de * self.DELTA_T_OBS
+        sum_model = numpy.zeros_like(
+            self.like._srcCnts(self.like.sourceNames()[0]))
+
+        sum_backgrounds = numpy.zeros_like(
+            self.like._srcCnts(self.like.sourceNames()[0]))
+
+        for source_name in self.like.sourceNames():
+
+            source_counts = self.like._srcCnts(source_name)
+
+            sum_model     = sum_model + source_counts
+            if source_name != self._source_name:
+                sum_backgrounds = sum_backgrounds + source_counts
+
+            residual_plot.add_model(
+                ec, source_counts/conversion_factor, label=source_name#, **_default_model_kwargs
+            )
+            #sub.plot(ec, self.like._srcCnts(source_name), label=source_name)
+        residual_plot.add_model(
+            ec, sum_model/conversion_factor, label='Total Model', **_default_model_kwargs
+        )
+
+        #sub.plot(ec, sum_model, label="Total Model")
+
+        y         = self.like.nobs
+        y_err     = numpy.sqrt(y)
+
+        significance_calc = Significance(
+            Non=y,
+            Noff=sum_backgrounds)
+
+        if ratio_residuals:
+            resid     = old_div((self.like.nobs - sum_model), sum_model)
+            resid_err = old_div(y_err, sum_model)
+        else:
+            #resid     = significance_calc.li_and_ma()
+            resid     = significance_calc.known_background()
+            resid_err = numpy.ones_like(resid)
+            pass
+
+        y         = y/conversion_factor
+        y_err     = y_err/conversion_factor
+
+        residual_plot.add_data(
+            ec[y>0],
+            y[y>0],
+            resid[y>0],
+            residual_yerr=resid_err[y>0],
+            yerr=y_err[y>0],
+            xerr=de[y>0],
+            label=self._name,
+            show_data=show_data,
+            **_default_data_kwargs,
+        )
+        y_label = "Net rate\n(counts s$^{-1}$ keV$^{-1}$)"
+
+        return residual_plot.finalize(
+            xlabel="Energy\n(keV)",
+            ylabel=y_label,
+            xscale="log",
+            yscale="log",
+            show_legend=show_legend,
+        )
+
+
 
     def _set_nuisance_parameters(self):
 
