@@ -9,7 +9,7 @@ from past.utils import old_div
 
 import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
-from threeML import FermiLATLike
+from threeML.plugins import FermiLATLike
 
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
