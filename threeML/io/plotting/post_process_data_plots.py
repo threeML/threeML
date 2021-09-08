@@ -9,6 +9,8 @@ from past.utils import old_div
 
 import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
+from threeML import FermiLATLike
+
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -83,6 +85,8 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
 
             if isinstance(
                 analysis.data_list[key], speclike.SpectrumLike
+            ) or isinstance(
+                analysis.data_list[key],FermiLATLike
             ):
 
                 new_data_keys.append(key)

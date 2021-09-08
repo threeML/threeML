@@ -161,6 +161,12 @@ class PhotometryLike(XYLike):
 
             setattr(self, f"band_{band}", node)
 
+
+    @property
+    def observation(self) -> PhotometericObservation:
+
+        return self._observation
+            
     @classmethod
     def from_kwargs(cls, name, filters, **kwargs):
         """
