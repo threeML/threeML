@@ -17,7 +17,6 @@ The Multi-Mission Maximum Likelihood framework (3ML) provides a common high-leve
 Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an interface to several **Bayesian** inference algorithms such as MCMC and nested sampling as well as likelihood optimization algorithms. Each approach to analysis can be seamlessly switched between allowing users to try different approaches quickly and without having to rewrite their model or data interfaces. 
 
 
-
 .. toctree::
     :maxdepth: 5
     :hidden:
@@ -29,6 +28,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
     xspec_users
     notebooks/Minimization_tutorial.ipynb
     notebooks/Bayesian_tutorial.ipynb
+    notebooks/sampler_docs.ipynb
     plugins
     modeling
     faq
@@ -43,6 +43,7 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    notebooks/Point_source_plotting.ipynb
    notebooks/Building_Plugins_from_TimeSeries.ipynb
    notebooks/grb080916C.ipynb
+   notebooks/APEC_doc.ipynb
    notebooks/joint_BAT_gbm_demo.ipynb
    notebooks/joint_fitting_xrt_and_gbm_xspec_models.ipynb
    notebooks/flux_examples.ipynb
@@ -50,4 +51,8 @@ Though **Maximum Likelihood** is in the name for historical reasons, 3ML is an i
    notebooks/Time-energy-fit.ipynb
    notebooks/synthetic_spectra.ipynb
    notebooks/gof_lrt.ipynb
+   
     
+ThreeML is supported by the National Science Foundation (NSF) 
+
+.. image:: ../logo/NSF_4-Color_bitmap_Logo.png

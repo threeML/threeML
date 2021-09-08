@@ -51,9 +51,8 @@ def get_matrix_set_elements():
     # Fake a count getter
     law = lambda x: 1.23 * x
     # The counts getter is the integral of the law
-    counts_getter = (
-        lambda t1, t2: 1.23 * 0.5 * (t2 ** 2.0 - t1 ** 2.0) * livetime_fraction
-    )
+    counts_getter = (lambda t1, t2: 1.23 * 0.5 *
+                     (t2**2.0 - t1**2.0) * livetime_fraction)
 
     return [rsp_a, rsp_b], exposure_getter, counts_getter
 
@@ -85,7 +84,7 @@ def test_instrument_response_constructor():
 
     # Now with coverage interval
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(RuntimeError):
 
         _ = InstrumentResponse(matrix, ebounds, mc_energies, "10-20")
 
@@ -98,7 +97,7 @@ def test_instrument_response_constructor():
     # Check that we do not accept nans in the matrix
     matrix[2, 2] = np.nan
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(RuntimeError):
 
         _ = InstrumentResponse(matrix, ebounds, mc_energies, "10-20")
 
@@ -115,7 +114,7 @@ def test_instrument_response_replace_matrix():
 
     assert np.all(rsp.matrix == new_matrix)
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(RuntimeError):
 
         rsp.replace_matrix(np.random.uniform(0, 1, 100).reshape(10, 10))
 

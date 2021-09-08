@@ -1,5 +1,5 @@
 ![CI](https://github.com/threeML/threeML/workflows/CI/badge.svg?branch=master&event=push)
-![Python Package using Conda](https://github.com/threeML/threeML/workflows/Python%20Package%20using%20Conda/badge.svg)
+[![Conda Build and Publish](https://github.com/threeML/threeML/actions/workflows/conda_build.yml/badge.svg)](https://github.com/threeML/threeML/actions/workflows/conda_build.yml)
 ![Test Against XSPEC](https://github.com/threeML/threeML/workflows/Test%20Against%20XSPEC/badge.svg)
 [![codecov](https://codecov.io/gh/threeML/threeML/branch/master/graph/badge.svg)](https://codecov.io/gh/threeML/threeML)
 [![Documentation Status](https://readthedocs.org/projects/threeml/badge/?version=latest)](http://threeml.readthedocs.io/en/latest/?badge=latest)
@@ -94,4 +94,5 @@ The SVO Filter Profile Service. Rodrigo, C., Solano, E., Bayo, A. http://ivoa.ne
 The Filter Profile Service Access Protocol. Rodrigo, C., Solano, E. http://ivoa.net/documents/Notes/SVOFPSDAL/index.html
 
 
+<img src="https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png"  width="100"> ThreeML is supported by National Science Foundation (NSF) <img src="https://www.nsf.gov/images/logos/NSF_4-Color_bitmap_Logo.png"  width="100">
 

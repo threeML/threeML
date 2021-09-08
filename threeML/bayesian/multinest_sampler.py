@@ -1,4 +1,5 @@
 import os
+import shutil
 import time
 from pathlib import Path
 from typing import Optional
@@ -70,19 +71,22 @@ class MultiNestSampler(UnitCubeSampler):
 
     def setup(
         self,
-        n_live_points: int,
+        n_live_points: int = 400,
         chain_name: str = "chains/fit-",
         resume: bool = False,
         importance_nested_sampling: bool = False,
+        auto_clean: bool = False,
         **kwargs
     ):
         """
         Setup the MultiNest Sampler. For details see:
-
+        https://github.com/farhanferoz/MultiNest
 
         :param n_live_points: number of live points for the evaluation
         :param chain_name: the chain name
-        :param importance_nested_sampling: use INS 
+        :resume: resume from previous fit
+        :param importance_nested_sampling: use INS
+        :param auto_clean: automatically remove multinest chains after run
         :returns: 
         :rtype: 
 
@@ -101,6 +105,8 @@ class MultiNestSampler(UnitCubeSampler):
 
             self._kwargs[k] = v
 
+        self._auto_clean = auto_clean
+            
         self._is_setup = True
 
     def sample(self, quiet: bool = False):
@@ -248,6 +254,14 @@ class MultiNestSampler(UnitCubeSampler):
             if loud:
                 self._results.display()
 
-            # now get the marginal likelihood
+            # now clean up the chains if requested
+            
+            if self._auto_clean:
+
+                log.info(f"deleting the chain directory {chain_dir}")
+                
+                shutil.rmtree(chain_dir)
+
+                
 
             return self.samples

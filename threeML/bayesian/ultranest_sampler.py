@@ -1,18 +1,20 @@
+import logging
 import os
 import time
-import numpy as np
 from pathlib import Path
+from typing import Optional
+
+import numpy as np
 from astromodels import ModelAssertionViolation, use_astromodels_memoization
+
 from threeML.bayesian.sampler_base import UnitCubeSampler
 from threeML.config.config import threeML_config
 from threeML.io.logging import setup_logger
-import logging
-
 
 try:
 
     import ultranest
-
+    
 except:
 
     has_ultranest = False
@@ -55,28 +57,65 @@ class UltraNestSampler(UnitCubeSampler):
         super(UltraNestSampler, self).__init__(likelihood_model, data_list, **kwargs)
 
     def setup(
-        self,
-        min_num_live_points=400,
-        dlogz=0.5,
-        chain_name=None,
-        wrapped_params=None,
-        **kwargs
+            self,
+            min_num_live_points: int=400,
+            dlogz: float=0.5,
+            chain_name: Optional[str] = None,
+            resume: str = 'overwrite',
+            wrapped_params=None,
+            stepsampler=None,
+            use_mlfriends: bool =True,
+            **kwargs
     ):
+        """
+        set up the Ultranest sampler. Consult the documentation:
+
+        https://johannesbuchner.github.io/UltraNest/ultranest.html?highlight=reactive#ultranest.integrator.ReactiveNestedSampler
+
+        :param min_num_live_points: minimum number of live points throughout the run
+        :type min_num_live_points: int 
+        :param dlogz: Target evidence uncertainty. This is the std between bootstrapped logz integrators.
+        :type dlogz: float
+        :param chain_name: where to store output files
+        :type chain_name: 
+        :param resume:  ('resume', 'resume-similar', 'overwrite' or 'subfolder') –
+if ‘overwrite’, overwrite previous data.
+if ‘subfolder’, create a fresh subdirectory in log_dir.
+if ‘resume’ or True, continue previous run if available. Only works when dimensionality, transform or likelihood are consistent.
+if ‘resume-similar’, continue previous run if available. Only works when dimensionality and transform are consistent. If a likelihood difference is detected, the existing likelihoods are updated until the live point order differs. Otherwise, behaves like resume.  
+        :type resume: str
+        :param wrapped_params:  (list of bools) – indicating whether this parameter wraps around (circular parameter).
+        :type wrapped_params: 
+        :param stepsampler: 
+        :type stepsampler:
+        :param use_mlfriends: Whether to use MLFriends+ellipsoidal+tellipsoidal region (better for multi-modal problems) or just ellipsoidal sampling (faster for high-dimensional, gaussian-like problems).
+        :type use_mlfriends: bool 
+        :returns: 
+
+        """
+        
+        
+        
         log.debug(f"Setup for UltraNest sampler: min_num_live_points:{min_num_live_points}, "\
                   f"chain_name:{chain_name}, dlogz: {dlogz}, wrapped_params: {wrapped_params}. "\
                   f"Other input: {kwargs}")
         self._kwargs = {}
         self._kwargs["min_num_live_points"] = min_num_live_points
         self._kwargs["dlogz"] = dlogz
-        self._kwargs["chain_name"] = chain_name
-
+        self._kwargs["log_dir"] = chain_name
+        self._kwargs["stepsampler"] = stepsampler
+        self._kwargs["resume"] = resume
+        
+        
         self._wrapped_params = wrapped_params
 
         for k, v in kwargs.items():
 
             self._kwargs[k] = v
 
-        self._is_setup = True
+        self._use_mlfriends: bool = use_mlfriends
+             
+        self._is_setup: bool = True
 
     def sample(self, quiet=False):
         """
@@ -87,7 +126,7 @@ class UltraNestSampler(UnitCubeSampler):
 
         """
         if not self._is_setup:
-
+            
             log.info("You forgot to setup the sampler!")
             return
 
@@ -106,7 +145,7 @@ class UltraNestSampler(UnitCubeSampler):
         # the disk to write and if not,
         # create one
 
-        chain_name = self._kwargs.pop("chain_name")
+        chain_name = self._kwargs.pop("log_dir")
         if chain_name is not None:
             mcmc_chains_out_dir = ""
             tmp = chain_name.split("/")
@@ -148,15 +187,31 @@ class UltraNestSampler(UnitCubeSampler):
 
         else:
 
+            resume = self._kwargs.pop("resume")
+
             sampler = ultranest.ReactiveNestedSampler(
                 param_names,
                 loglike,
                 transform=ultranest_prior,
                 log_dir=chain_name,
                 vectorized=False,
+                resume=resume,
                 wrapped_params=self._wrapped_params,
             )
 
+            if self._kwargs['stepsampler'] is not None:
+
+                sampler.stepsampler = self._kwargs['stepsampler']
+
+            self._kwargs.pop('stepsampler')
+
+            # use a different region class
+            
+            if not self._use_mlfriends:
+
+                self._kwargs["region_class"] = ultranest.mlfriends.RobustEllipsoidRegion
+            
+            
             with use_astromodels_memoization(False):
                 log.debug("Start ultranest run")
                 sampler.run(show_status=loud, **self._kwargs)
