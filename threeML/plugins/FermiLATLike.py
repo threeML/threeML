@@ -17,6 +17,7 @@ from matplotlib import gridspec
 from past.utils import old_div
 
 from threeML.config.config import threeML_config
+from threeML.config.plotting_structure import BinnedSpectrumPlot
 
 from threeML.io.file_utils import get_random_unique_name
 from threeML.io.package_data import get_path_of_data_file
