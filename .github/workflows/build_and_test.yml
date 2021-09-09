@@ -1,11 +1,21 @@
 name: CI
 on:
     push:
-    # paths-ignore:
-    #   - 'CHANGELOG.md'
+      branches:
+        - '*'
+        - '!master'
+        - '!dev'
+        
+      paths-ignore:
+        - "README.md"
+        - "**/docs/**"
+        - ".github/workflows/docs.yml"
+
     pull_request:
       branches:
         - master
+        - 'dev'
+
     schedule:
         - cron: "0 11 * * *"
 
