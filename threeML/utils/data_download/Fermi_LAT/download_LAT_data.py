@@ -575,57 +575,97 @@ def download_LAT_data(
         FT2
     )
 
-def make_LAT_dataset(ra: float,
-                     dec: float,
-                     radius: float,
-                     trigger_time : float,
-                     tstart: float,
-                     tstop: float,
-                     data_type: str = "Photon",
-                     destination_directory: str = ".",
-                     Emin: float = 30.,
-                     Emax: float = 1000000.):
-    import datetime
-    from GtBurst.dataHandling import met2date,_makeDatasetsOutOfLATdata
+class LAT_dataset():
 
-    metdate = 239241601
+    def __init__(self):
+        self.ft1=None
+        self.ft2=None
+        pass
 
-    if tstart>metdate: assert("Start time must bge relative to triggertime")
-    if tstop>metdate:  assert("Stop time must bge relative to triggertime")
+    def make_LAT_dataset(self,
+                         ra: float,
+                         dec: float,
+                         radius: float,
+                         trigger_time : float,
+                         tstart: float,
+                         tstop: float,
+                         data_type: str = "Photon",
+                         destination_directory: str = ".",
+                         Emin: float = 30.,
+                         Emax: float = 1000000.):
 
-    grb_name = met2date(trigger_time, opt='grbname')
+        self.trigger_time = trigger_time
+        self.ra           = ra
+        self.dec          = dec
+        self.METstart     = tstart+trigger_time
+        self.METstop      = tstop+trigger_time
+        self.Emin         = Emin
+        self.Emax         = Emax
 
-    destination_directory = os.path.join(destination_directory,'bn%s' % grb_name)
-
-    new_ft1 = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft1', grb_name))
-
-    new_ft2 = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft2', grb_name))
-
-    if (not os.path.exists(new_ft1) or not os.path.exists(new_ft2)):
-        ft1,ft2 = download_LAT_data(
-                                    ra,
-                                    dec,
-                                    radius,
-                                    trigger_time + tstart,
-                                    trigger_time + tstop,
-                                    time_type='MET',
-                                    data_type=data_type,
-                                    destination_directory=destination_directory,
-                                    Emin=Emin,
-                                    Emax=Emax
-        )
+        self.destination_directory = destination_directory
 
 
-        os.rename(str(ft1), new_ft1 )
+        import datetime
+        from GtBurst.dataHandling import met2date,_makeDatasetsOutOfLATdata
 
-        os.rename(str(ft2), new_ft2 )
+        metdate = 239241601
 
-    _makeDatasetsOutOfLATdata(new_ft1, new_ft2,
-                                           grb_name,
-                                           tstart, tstop,
-                                           ra, dec,
-                                           trigger_time,
-                                           destination_directory,
-                                           cspecstart=-1000,
-                                           cspecstop=1000)
-    return grb_name
+        if tstart>metdate: assert("Start time must bge relative to triggertime")
+        if tstop>metdate:  assert("Stop time must bge relative to triggertime")
+
+        grb_name = met2date(trigger_time, opt='grbname')
+
+        destination_directory = os.path.join(destination_directory,'bn%s' % grb_name)
+
+        new_ft1 = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft1', grb_name))
+
+        new_ft2 = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.fit" % ('ft2', grb_name))
+
+        eboundsFilename = os.path.join(destination_directory, "gll_%s_tr_bn%s_v00.rsp" % ('cspec', grb_name))
+
+        if (not os.path.exists(new_ft1) or not os.path.exists(new_ft2) or not os.path.exists(eboundsFilename)) :
+            ft1,ft2 = download_LAT_data(
+                                        ra,
+                                        dec,
+                                        radius,
+                                        trigger_time + tstart,
+                                        trigger_time + tstop,
+                                        time_type='MET',
+                                        data_type=data_type,
+                                        destination_directory=destination_directory,
+                                        Emin=Emin,
+                                        Emax=Emax
+            )
+
+
+            os.rename(str(ft1), new_ft1 )
+
+            os.rename(str(ft2), new_ft2 )
+
+            _, eboundsFilename, _, cspecfile = _makeDatasetsOutOfLATdata(new_ft1, new_ft2,
+                                                                             grb_name,
+                                                                             tstart, tstop,
+                                                                             ra, dec,
+                                                                             trigger_time,
+                                                                             destination_directory,
+                                                                             cspecstart=tstart,
+                                                                             cspecstop=tstop)
+        self.grb_name = grb_name
+        self.ft1      = new_ft1
+        self.ft2      = new_ft2
+        self.rspfile     = eboundsFilename
+        pass
+
+
+    def extract_events(self,roi, zmax, irf, thetamax=180.0,strategy='time'):
+        from GtBurst import dataHandling
+        global lastDisplay
+
+        LATdata = dataHandling.LATData(self.ft1, self.rspfile, self.ft2)
+
+        self.filt_file, nEvents = LATdata.performStandardCut(self.ra, self.dec, roi, irf, self.METstart, self.METstop, self.Emin, self.Emax, zmax,
+                                                           thetamax,
+                                                           True, strategy=strategy.lower())
+        log.info('Extracted %s events' % nEvents)
+
+

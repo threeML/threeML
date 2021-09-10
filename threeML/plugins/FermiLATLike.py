@@ -4,12 +4,11 @@ import collections
 import os
 from builtins import object, range, zip
 
-import BinnedAnalysis
 import matplotlib.pyplot as plt
 import numpy
 import astropy.io.fits as fits
 import pyLikelihood as pyLike
-import UnbinnedAnalysis
+import UnbinnedAnalysis,BinnedAnalysis
 from astromodels import Parameter
 from astromodels.core.model_parser import ModelParser
 from GtBurst import FuncFactory, LikelihoodComponent
@@ -939,7 +938,7 @@ class FermiLATLike(PluginPrototype):
         p = self._get_nuisance_parameter(paramName)
 
         p.setValue(value)
-
+        
     def get_nuisance_parameter_value(self, paramName):
 
         p = self._get_nuisance_parameter(paramName)

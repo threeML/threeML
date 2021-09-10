@@ -11,7 +11,7 @@ import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
 
 try:
-    from threeML.plugins import FermiLATLike
+    from threeML.plugins.FermiLATLike import FermiLATLike
     LATLike = True
 except:
     LATLike = False
