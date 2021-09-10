@@ -4,7 +4,7 @@ import pytest
 
 from threeML import *
 from threeML.io.network import internet_connection_is_active
-from threeML.utils.data_download.Fermi_LAT.download_LAT_data import make_LAT_dataset
+from threeML.utils.data_download.Fermi_LAT.download_LAT_data import LAT_dataset
 import astropy.units as u
 import numpy as np
 
@@ -32,32 +32,38 @@ skip_if_LAT_is_not_available = pytest.mark.skipif(not has_Fermi,
                                                   reason="Fermi Science Tools not installed",
                                                   )
 
-trigger_time = 243216766
-ra           = 119.84717
-dec          = -56.638333
-radius       = 10.0
-irf = 'p8_transient020e'
+trigger_time   = 243216766
+ra             = 119.84717
+dec            = -56.638333
+radius         = 10.0
+zmax           = 110.
+thetamax       = 180.0
+irf            = 'p8_transient020e'
 datarepository = 'FermiData'
+
 
 #@pytest.mark.xfail
 @skip_if_internet_is_not_available
 @skip_if_LAT_is_not_available
 def test_make_LAT_dataset():
+    myLATdataset = LAT_dataset()
 
+    myLATdataset.make_LAT_dataset(
+        ra,
+        dec,
+        radius = radius+10,
+        trigger_time=trigger_time,
+        tstart=-10,
+        tstop =100,
+        data_type="Extended",
+        destination_directory=datarepository,
+        Emin=30.,
+        Emax= 1000000.)
 
-    grb_name = make_LAT_dataset(ra,
-                                dec,
-                                radius = radius+10,
-                                trigger_time=trigger_time,
-                                tstart=-10,
-                                tstop =100,
-                                data_type="Extended",
-                                destination_directory=datarepository,
-                                Emin=30.,
-                                Emax= 1000000.)
+    myLATdataset.extract_events(radius, zmax, irf, thetamax, strategy='time')
 
-    analysis_builder = TransientLATDataBuilder(grb_name,
-                                               outfile=grb_name,
+    analysis_builder = TransientLATDataBuilder(myLATdataset.grb_name,
+                                               outfile=myLATdataset.grb_name,
                                                roi=radius,
                                                tstarts='0,10',
                                                tstops = '10,100',

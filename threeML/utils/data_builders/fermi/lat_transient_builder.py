@@ -10,6 +10,9 @@ import shutil
 
 import yaml
 
+pd.reset_option('display.float_format')
+
+
 try: 
     from GtBurst import IRFS
     from GtBurst.Configuration import Configuration
