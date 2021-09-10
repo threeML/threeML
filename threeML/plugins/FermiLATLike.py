@@ -938,7 +938,7 @@ class FermiLATLike(PluginPrototype):
         p = self._get_nuisance_parameter(paramName)
 
         p.setValue(value)
-        
+
     def get_nuisance_parameter_value(self, paramName):
 
         p = self._get_nuisance_parameter(paramName)
