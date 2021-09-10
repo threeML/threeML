@@ -137,6 +137,7 @@ jobs:
             - name: test it
               shell: bash -l {0}
               run: |
+                  python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:

@@ -72,8 +72,8 @@ jobs:
             - name: Test conda build
               shell: bash -l {0}
               run: |
-
-                  python -m pytest -vv --cov=threeML --cov-report=xml
+                python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+                python -m pytest -vv --cov=threeML --cov-report=xml
 
               env:
                   PYTEST_ADDOPTS: "--color=yes"
