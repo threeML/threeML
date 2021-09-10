@@ -195,7 +195,7 @@ def test_basic_bayesian_analysis_results_multicomp(
         [1.90814527e00, -1.20941618e00, 6.45755638e-06, 4.36948057e01]
     )
     expected_negative_errors = np.array(
-        [-3.02301749e-01, -2.93259914e-02, -1.70958890e-06, -3.92505021e00]
+        [-2.91662847e-01, -3.10753350e-02, -1.91482744e-06, -4.28729636e00]
     )
     expected_positive_errors = np.array(
         [2.65259894e-01, 3.24980566e-02, 1.78051424e-06, 4.00921638e00]
