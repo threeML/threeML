@@ -11,6 +11,7 @@ skip_if_internet_is_not_available = pytest.mark.skipif(
 )
 
 
+
 def test_basic_analysis_results(fitted_joint_likelihood_bn090217206_nai):
 
     jl, fit_results, like_frame = fitted_joint_likelihood_bn090217206_nai
@@ -201,6 +202,7 @@ def test_basic_bayesian_analysis_results_multicomp(
     )
 
     assert np.allclose(frame["value"].values, expected_central_values, rtol=0.1)
+
     assert np.allclose(
         frame["negative_error"].values, expected_negative_errors, rtol=0.1
     )
