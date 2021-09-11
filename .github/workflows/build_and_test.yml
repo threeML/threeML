@@ -137,6 +137,7 @@ jobs:
             - name: test it
               shell: bash -l {0}
               run: |
+                  wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
                   python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
                   python -m pytest -vv --cov=threeML --cov-report=xml
 
