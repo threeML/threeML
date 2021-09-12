@@ -77,7 +77,7 @@ class LikelihoodModelConverter:
 
         self.energies_kev = numpy.logspace(numpy.log10(emin_kev), numpy.log10(emax_kev), n_energies)
 
-    def write_xml(self, xmlfile, ra, dec, roi):
+    def write_xml(self, xmlfile, ra, dec, roi) -> List[str]:
         """FIXME! briefly describe function
 
         :param xmlfile: 
@@ -96,14 +96,14 @@ class LikelihoodModelConverter:
         # on the disk
 
         all_sources_for_pylike = []
+
         temp_files = []
 
-        
         if self.source_name is None:
 
-            nPtsrc = self.likelihood_model.get_number_of_point_sources()
+            n_pt_src = self.likelihood_model.get_number_of_point_sources()
 
-            for ip in range(nPtsrc):
+            for ip in range(n_pt_src):
 
                 this_src = self._make_file_spectrum(ip)
 
@@ -113,19 +113,21 @@ class LikelihoodModelConverter:
         else:
             # We pass from the model just one source
 
-            log.info('Setting single point source %s ... ' % source_name)
+            log.info(f'Setting single point source {self.likelihood_model} ... ')
 
-            index = self.likelihood_model.point_sources.keys().index(source_name)
+            index = self.likelihood_model.point_sources.keys().index(self.source_name)
             this_src = self._make_file_spectrum(index)
             all_sources_for_pylike.append(this_src)
 
             temp_files.append(this_src.temp_file)
 
         # Now the same for extended sources
-        nExtSrc = self.likelihood_model.get_number_of_extended_sources()
+        n_ext_src = self.likelihood_model.get_number_of_extended_sources()
 
-        if nExtSrc > 0:
+        if n_ext_src > 0:
 
+            log.error("Cannot support extended sources yet!")
+            
             raise NotImplemented("Cannot support extended sources yet!")
 
         iso = LikelihoodComponent.IsotropicTemplate(self.irfs)
@@ -501,33 +503,18 @@ class FermiLATLike(PluginPrototype):
 
         energies = self._lmc.energies_kev
 
-        if self._source_name is None:
-            for id, src_name in enumerate(self.likelihood_model.point_sources.keys()):
+        if self._source_name is not None:
 
-                values = self.likelihood_model.get_point_source_fluxes(
-                    id, energies, tag=self._tag
-                )
+            # create a tuple with only this source
+            
+            itr = ([self.likelihood_model.point_sources.keys().index(self._source_name)] , [self._source_name])
 
-                # on the second iteration, self.like doesn't have the second src_name defined so that needs to be carried from flags
-                gtlike_src_model = self.like[src_name]
-
-                my_function = gtlike_src_model.getSrcFuncs()["Spectrum"]
-                my_file_function = pyLike.FileFunction_cast(my_function)
-
-                my_file_function.setParam("Normalization", 1)
-
-                # Cap the values to avoid numerical errors
-
-                capped_values = numpy.minimum(
-                    numpy.maximum(values * 1000, 1e-25), 1e5)
-
-                my_file_function.setSpectrum(energies / 1000.0, capped_values)
-                gtlike_src_model.setSpectrum(my_file_function)
-
-                # TODO: extended sources
         else:
-            src_name = self._source_name
-            id = self.likelihood_model.point_sources.keys().index(src_name)
+
+            itr = enumerate(self.likelihood_model.point_sources.keys())
+
+            
+        for id, src_name in itr:
 
             values = self.likelihood_model.get_point_source_fluxes(
                 id, energies, tag=self._tag
@@ -537,6 +524,7 @@ class FermiLATLike(PluginPrototype):
             gtlike_src_model = self.like[src_name]
 
             my_function = gtlike_src_model.getSrcFuncs()["Spectrum"]
+
             my_file_function = pyLike.FileFunction_cast(my_function)
 
             my_file_function.setParam("Normalization", 1)
@@ -547,7 +535,10 @@ class FermiLATLike(PluginPrototype):
                 numpy.maximum(values * 1000, 1e-25), 1e5)
 
             my_file_function.setSpectrum(energies / 1000.0, capped_values)
+
             gtlike_src_model.setSpectrum(my_file_function)
+
+                # TODO: extended sources
 
         self.like.syncSrcParams()
 
