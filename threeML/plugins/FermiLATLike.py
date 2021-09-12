@@ -14,7 +14,6 @@ import numpy
 import pyLikelihood as pyLike
 import UnbinnedAnalysis
 from astromodels import Model, Parameter
-from astromodels.core.model_parser import ModelParser
 from GtBurst import FuncFactory, LikelihoodComponent
 from matplotlib import gridspec
 from past.utils import old_div
