@@ -334,7 +334,11 @@ class FermiLATLike(PluginPrototype):
 
         if kind.upper() == "UNBINNED":
 
-            assert exposure_map_file is not None, "You have to provide an exposure map"
+            if exposure_map_file is None:
+
+                log.error("You have to provide an exposure map")
+                
+                raise AssertionError()
 
             self._event_file = event_file
             self._exposure_map_file = exposure_map_file
@@ -347,8 +351,6 @@ class FermiLATLike(PluginPrototype):
                 irfs=self.irf)
 
         elif kind.upper() == "BINNED":
-
-        
             
             if source_maps is  None:
 
