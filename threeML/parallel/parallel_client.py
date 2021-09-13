@@ -1,9 +1,7 @@
 # Custom warning
 import math
-import re
 import signal
 import subprocess
-import sys
 import time
 import warnings
 from contextlib import contextmanager
