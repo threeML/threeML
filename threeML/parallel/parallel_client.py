@@ -246,7 +246,9 @@ if has_parallel:
 
             # We need this to keep the instance alive
             self._current_amr = lview.imap(
-                worker, items_to_process, chunksize=chunk_size, ordered=ordered
+                worker, items_to_process,
+                #chunksize=chunk_size,
+                ordered=ordered
             )
 
             return self._current_amr
