@@ -1,5 +1,3 @@
-import collections
-from builtins import range
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Union
@@ -63,10 +61,7 @@ class _PHAInfo:
     """
     
     counts: Iterable[float]
-    count_errors: Optional[Iterable[float]]
     rates: Iterable[float]
-    rate_errors: Optional[Iterable[float]]
-    sys_errors: Optional[Iterable[float]]
     exposure: Iterable[float]
     is_poisson: bool
     rsp: InstrumentResponse
@@ -75,8 +70,9 @@ class _PHAInfo:
     file_name: str
     tstart: Optional[Union[float, Iterable[float]]]
     tstop: Optional[Union[float, Iterable[float]]]
-                  
-
+    rate_errors: Optional[Iterable[float]]
+    sys_errors: Optional[Iterable[float]]                  
+    count_errors: Optional[Iterable[float]]
 
 def _read_pha_or_pha2_file(
     pha_file_or_instance: Union[str, Path, PHAII],
@@ -847,15 +843,16 @@ class PHASpectrum(BinnedSpectrumWithDispersion):
 
         # default the grouping to all open bins
         # this will only be altered if the spectrum is rebinned
-        self._grouping: np.ndarray = np.ones_like(pha_information["counts"])
+        
+        self._grouping: np.ndarray = np.ones_like(pha_information.counts)
 
         # this saves the extra properties to the class
 
-        self._gathered_keywords = pha_information["gathered_keywords"]
+        self._gathered_keywords = pha_information.gathered_keywords
 
         self._file_type: str = file_type
 
-        self._file_name: str = pha_information["file_name"]
+        self._file_name: str = pha_information.file_name
 
         # pass the needed spectrum values back up
         # remember that Spectrum reads counts, but returns
@@ -1127,7 +1124,7 @@ class PHASpectrumSet(BinnedSpectrumSet):
 
                 HDUidx = f.index_of("SPECTRUM")
 
-            except:
+            except KeyError:
 
                 raise RuntimeError(
                     "The input file %s is not in PHA format" % (
