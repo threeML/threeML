@@ -171,7 +171,7 @@ jobs:
           auto-activate-base: false
           #mamba-version: "*"
           activate-environment: test_env
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.7
           channels: conda-forge, fermi, threeml, defaults
           environment-file: ci/environment_fermi.yml
           use-only-tar-bz2: true
@@ -218,8 +218,8 @@ jobs:
           #jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_LAT.md
 
           # Update GtBurst:
-          wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
-          python $CONDA_PREFIX/lib/python${{ matrix.python-version }}/site-packages/fermitools/GtBurst/updater.py
+          wget https://raw.githubusercontent.com/fermi-lat/pyBurstAnalysisGUI/master/python/GtBurst/updater.py -O $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
+          python $CONDA_PREFIX/lib/python3.7/site-packages/fermitools/GtBurst/updater.py
 
           #jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
 
