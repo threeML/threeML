@@ -33,23 +33,30 @@ log.debug('debug')
 
 ```
 
-    Welcome to JupyROOT 6.22/06
+    Welcome to JupyROOT 6.22/02
 
 
     
-    WARNING RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 216 from PyObject
+    WARNING: version mismatch between CFITSIO header (v3.47) and linked library (v3.46).
     
-    
-    WARNING RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 216 from PyObject
-    
-    
-    WARNING RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 216 from PyObject
-    
-    Warning: cannot import _healpy_pixel_lib module
 
 
+    [[35mWARNING [0m][35m The naima package is not available. Models that depend on it will not be available[0m
+    [[35mWARNING [0m][35m The GSL library or the pygsl wrapper cannot be loaded. Models that depend on it will not be available.[0m
+    [[35mWARNING [0m][35m The ebltable package is not available. Models that depend on it will not be available[0m
     [[31mERROR   [0m][31m error[0m
     [[32mINFO    [0m][32m info[0m
+
+
+    
+    WARNING RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 216 from PyObject
+    
+    
+    WARNING RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 216 from PyObject
+    
+    
+    WARNING RuntimeWarning: numpy.ufunc size changed, may indicate binary incompatibility. Expected 192 from C header, got 216 from PyObject
+    
 
 
 ## GtBurst
@@ -135,17 +142,17 @@ myLATdataset.extract_events(roi, zmax, irfs, thetamax, strategy='time')
 ```
 
     time -p gtmktime scfile=/Users/omodei/GRBWorkDir/MY_PYTHON_MODULES/gitrepository/threeML/sandbox/FermiData/bn190114873/gll_ft2_tr_bn190114873_v00.fit sctable="SC_DATA" filter="(DATA_QUAL>0 || DATA_QUAL==-1) && LAT_CONFIG==1 && IN_SAA!=T && LIVETIME>0 && (ANGSEP(RA_ZENITH,DEC_ZENITH,54.51,-26.939)<=(110.0-10))" roicut=no evfile=/Users/omodei/GRBWorkDir/MY_PYTHON_MODULES/gitrepository/threeML/sandbox/FermiData/bn190114873/gll_ft1_tr_bn190114873_v00.fit evtable="EVENTS" outfile="gll_ft1_tr_bn190114873_v00_mkt.fit" apply_filter=yes overwrite=no header_obstimes=yes tstart=569192227.626 tstop=569193227.626 gtifile="default" chatter=2 clobber=yes debug=no gui=no mode="ql"
-    real 0.09
-    user 0.06
-    sys 0.02
+    real 0.13
+    user 0.35
+    sys 0.06
     
     Using 305 data
     
     time -p gtselect infile=gll_ft1_tr_bn190114873_v00_mkt.fit outfile=gll_ft1_tr_bn190114873_v00_filt.fit ra=54.51 dec=-26.939 rad=10.0 tmin=569192227.626 tmax=569193227.626 emin=100.0 emax=10000.0 zmin=0.0 zmax=110.0 evclass=8 evtype=3 convtype=-1 phasemin=0.0 phasemax=1.0 evtable="EVENTS" chatter=2 clobber=yes debug=no gui=no mode="ql"
     Done.
-    real 0.10
-    user 0.07
-    sys 0.02
+    real 0.15
+    user 0.37
+    sys 0.06
     
     Selected 251 events.
     [[32mINFO    [0m][32m Extracted 251 events[0m
@@ -159,9 +166,9 @@ Once we are happy, we can bin the light curve. We will perform a likelihood anal
 event_file = pyfits.open(myLATdataset.filt_file)
 event_times = sorted(event_file['EVENTS'].data['TIME']-myGRB['MET'])
 intervals=event_times[0::10]
-plt.hist(event_times);
-plt.hist(event_times,intervals,histtype='step')
-plt.show()
+_=plt.hist(event_times);
+_=plt.hist(event_times,intervals,histtype='step')
+#plt.show()
 ```
 
 
@@ -197,22 +204,22 @@ analysis_builder = TransientLATDataBuilder(myLATdataset.grb_name,
                                            galactic_model='template',
                                            particle_model='isotr template',
                                            datarepository='../FermiData')
-analysis_builder.display()
+df=analysis_builder.display(get=True)
 ```
 
     outfile                                                       190114873
     roi                                                                  10
     tstarts               2.6996,3.6358,3.9968,4.4024,4.7375,5.0909,5.54...
     tstops                3.6358,3.9968,4.4024,4.7375,5.0909,5.5471,5.98...
-    zmax                                                                 11
-    emin                                                                  1
-    emax                                                                  1
+    zmax                                                              110.0
+    emin                                                              100.0
+    emax                                                           100000.0
     irf                                                    p8_transient020e
     galactic_model                                                 template
     particle_model                                           isotr template
-    tsmin                                                                 2
+    tsmin                                                              20.0
     strategy                                                           time
-    thetamax                                                             18
+    thetamax                                                          180.0
     spectralfiles                                                        no
     liketype                                                       unbinned
     optimizeposition                                                     no
@@ -249,7 +256,7 @@ LAT_observations = analysis_builder.run(include_previous_intervals = True)
 ```
 
     About to run the following command:
-    /Users/omodei/miniconda/envs/threeml_ixpe_fermi/lib/python3.7/site-packages/fermitools/GtBurst/scripts/doTimeResolvedLike.py 190114873 --outfile '190114873' --roi 10.000000 --tstarts '2.6996,3.6358,3.9968,4.4024,4.7375,5.0909,5.5471,5.9896,6.3998,6.6889,7.0117,7.2936,7.7731,8.2167,8.8763,9.6573,10.5680,12.0568,14.6165,17.7834,21.4962,30.0798,40.8747,48.7118,73.7262' --tstops '3.6358,3.9968,4.4024,4.7375,5.0909,5.5471,5.9896,6.3998,6.6889,7.0117,7.2936,7.7731,8.2167,8.8763,9.6573,10.5680,12.0568,14.6165,17.7834,21.4962,30.0798,40.8747,48.7118,73.7262,172.5754' --zmax 110.000000 --emin 100.000000 --emax 100000.000000 --irf 'p8_transient020e' --galactic_model 'template' --particle_model 'isotr template' --tsmin 20.000000 --strategy 'time' --thetamax 180.000000 --spectralfiles 'no' --liketype 'unbinned' --optimizeposition 'no' --datarepository '../FermiData' --ltcube '' --expomap '' --ulphindex -2.000000 --flemin 100.000000 --flemax 10000.000000 --fgl_mode 'fast'   
+    /Users/omodei/miniconda/envs/threeML_all/lib/python3.7/site-packages/fermitools/GtBurst/scripts/doTimeResolvedLike.py 190114873 --outfile '190114873' --roi 10.000000 --tstarts '2.6996,3.6358,3.9968,4.4024,4.7375,5.0909,5.5471,5.9896,6.3998,6.6889,7.0117,7.2936,7.7731,8.2167,8.8763,9.6573,10.5680,12.0568,14.6165,17.7834,21.4962,30.0798,40.8747,48.7118,73.7262' --tstops '3.6358,3.9968,4.4024,4.7375,5.0909,5.5471,5.9896,6.3998,6.6889,7.0117,7.2936,7.7731,8.2167,8.8763,9.6573,10.5680,12.0568,14.6165,17.7834,21.4962,30.0798,40.8747,48.7118,73.7262,172.5754' --zmax 110.000000 --emin 100.000000 --emax 100000.000000 --irf 'p8_transient020e' --galactic_model 'template' --particle_model 'isotr template' --tsmin 20.000000 --strategy 'time' --thetamax 180.000000 --spectralfiles 'no' --liketype 'unbinned' --optimizeposition 'no' --datarepository '../FermiData' --ltcube '' --expomap '' --ulphindex -2.000000 --flemin 100.000000 --flemax 10000.000000 --fgl_mode 'fast'   
     The ft2 file does not exist. Please examine!
     we will grab the data file for you.
     copied ../FermiData/bn190114873/gll_ft2_tr_bn190114873_v00.fit to interval10.568-12.0568/gll_ft2_tr_bn190114873_v00.fit
@@ -493,6 +500,11 @@ LAT_observations = analysis_builder.run(include_previous_intervals = True)
     /Users/omodei/GRBWorkDir/MY_PYTHON_MODULES/gitrepository/threeML/sandbox/LATTransientBuilderExample/interval73.7262-172.5754 already exists, skipping
 
 
+    
+    WARNING: version mismatch between CFITSIO header (v3.47) and linked library (v3.46).
+    
+
+
 At this point we can create the FermiLATLike plugins from each of the observation: 
 
 
@@ -553,19 +565,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 93.92 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 75.96000000000001 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -606,12 +622,12 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     </tr>
     <tr>
       <th>GRB.spectrum.main.Powerlaw_flux.index</th>
-      <td>-3.0000 +/- 0.0031</td>
+      <td>-3.00000 +/- 0.00009</td>
       <td></td>
     </tr>
     <tr>
       <th>LAT2X3_IsotropicTemplate_Normalization</th>
-      <td>1.5 +/- 3.1</td>
+      <td>1.50 +/- 0.04</td>
       <td></td>
     </tr>
   </tbody>
@@ -625,10 +641,10 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table9706761232">
-<tr><td>1.00</td><td>-0.00</td><td>-0.01</td></tr>
-<tr><td>-0.00</td><td>1.00</td><td>0.00</td></tr>
-<tr><td>-0.01</td><td>0.00</td><td>1.00</td></tr>
+<table id="table5665098064">
+<tr><td>1.00</td><td>0.00</td><td>-0.00</td></tr>
+<tr><td>0.00</td><td>1.00</td><td>-0.00</td></tr>
+<tr><td>-0.00</td><td>-0.00</td><td>1.00</td></tr>
 </table>
 
 
@@ -662,11 +678,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT2X3</th>
-      <td>40.6745</td>
+      <td>40.674435</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>40.6745</td>
+      <td>40.674435</td>
     </tr>
   </tbody>
 </table>
@@ -703,11 +719,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>79.349</td>
+      <td>79.34887</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>81.349</td>
+      <td>81.34887</td>
     </tr>
   </tbody>
 </table>
@@ -718,19 +734,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 74.2 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 75.18 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -771,12 +791,12 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     </tr>
     <tr>
       <th>GRB.spectrum.main.Powerlaw_flux.index</th>
-      <td>-3.000 +/- 0.015</td>
+      <td>-3.00000 +/- 0.00016</td>
       <td></td>
     </tr>
     <tr>
       <th>LAT3X3_IsotropicTemplate_Normalization</th>
-      <td>1.50 +/- 0.05</td>
+      <td>1.5 +/- 0.4</td>
       <td></td>
     </tr>
   </tbody>
@@ -790,10 +810,10 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10831191760">
-<tr><td>1.00</td><td>-0.01</td><td>-0.00</td></tr>
-<tr><td>-0.01</td><td>1.00</td><td>-0.00</td></tr>
-<tr><td>-0.00</td><td>-0.00</td><td>1.00</td></tr>
+<table id="table5666493840">
+<tr><td>1.00</td><td>0.00</td><td>-0.00</td></tr>
+<tr><td>0.00</td><td>1.00</td><td>0.00</td></tr>
+<tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
 </table>
 
 
@@ -827,11 +847,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT3X3</th>
-      <td>29.5252</td>
+      <td>29.524708</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>29.5252</td>
+      <td>29.524708</td>
     </tr>
   </tbody>
 </table>
@@ -868,11 +888,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>57.0505</td>
+      <td>57.049416</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>59.0505</td>
+      <td>59.049416</td>
     </tr>
   </tbody>
 </table>
@@ -883,20 +903,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
-    [[31mERROR   [0m][31m cannot setLAT3X4_IsotropicTemplate_Normalization to 1.5651077244237945[0m
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 71.66 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 73.16 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -956,7 +979,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table7784110800">
+<table id="table5666531536">
 <tr><td>1.00</td><td>-0.19</td><td>-0.00</td></tr>
 <tr><td>-0.19</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -993,11 +1016,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT3X4</th>
-      <td>19.8912</td>
+      <td>19.891192</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>19.8912</td>
+      <td>19.891192</td>
     </tr>
   </tbody>
 </table>
@@ -1034,11 +1057,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>37.7824</td>
+      <td>37.782385</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>39.7824</td>
+      <td>39.782385</td>
     </tr>
   </tbody>
 </table>
@@ -1049,19 +1072,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 54.52 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 55.44 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -1121,7 +1148,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10831431568">
+<table id="table5666547088">
 <tr><td>1.00</td><td>-0.31</td><td>-0.00</td></tr>
 <tr><td>-0.31</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -1158,11 +1185,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT4X4</th>
-      <td>21.0058</td>
+      <td>21.005799</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>21.0058</td>
+      <td>21.005799</td>
     </tr>
   </tbody>
 </table>
@@ -1199,11 +1226,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>40.0116</td>
+      <td>40.011598</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>42.0116</td>
+      <td>42.011598</td>
     </tr>
   </tbody>
 </table>
@@ -1214,19 +1241,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 51.28 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 49.88 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -1286,7 +1317,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10831813584">
+<table id="table5666508880">
 <tr><td>1.00</td><td>-0.31</td><td>0.00</td></tr>
 <tr><td>-0.31</td><td>1.00</td><td>-0.00</td></tr>
 <tr><td>0.00</td><td>-0.00</td><td>1.00</td></tr>
@@ -1323,11 +1354,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT4X5</th>
-      <td>28.5349</td>
+      <td>28.53492</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>28.5349</td>
+      <td>28.53492</td>
     </tr>
   </tbody>
 </table>
@@ -1364,11 +1395,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>55.0698</td>
+      <td>55.06984</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>57.0698</td>
+      <td>57.06984</td>
     </tr>
   </tbody>
 </table>
@@ -1379,19 +1410,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 49.24 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 48.96 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -1451,7 +1486,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10831814288">
+<table id="table5666260944">
 <tr><td>1.00</td><td>-0.25</td><td>0.00</td></tr>
 <tr><td>-0.25</td><td>1.00</td><td>-0.00</td></tr>
 <tr><td>0.00</td><td>-0.00</td><td>1.00</td></tr>
@@ -1488,11 +1523,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT5X5</th>
-      <td>24.1777</td>
+      <td>24.17769</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>24.1777</td>
+      <td>24.17769</td>
     </tr>
   </tbody>
 </table>
@@ -1529,11 +1564,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>46.3554</td>
+      <td>46.355381</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>48.3554</td>
+      <td>48.355381</td>
     </tr>
   </tbody>
 </table>
@@ -1544,19 +1579,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 51.32 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 50.22 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -1616,7 +1655,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10831735632">
+<table id="table5666261008">
 <tr><td>1.00</td><td>-0.31</td><td>0.00</td></tr>
 <tr><td>-0.31</td><td>1.00</td><td>-0.00</td></tr>
 <tr><td>0.00</td><td>-0.00</td><td>1.00</td></tr>
@@ -1653,11 +1692,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT5X5</th>
-      <td>22.7373</td>
+      <td>22.737285</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>22.7373</td>
+      <td>22.737285</td>
     </tr>
   </tbody>
 </table>
@@ -1694,11 +1733,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>43.4746</td>
+      <td>43.474569</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>45.4746</td>
+      <td>45.474569</td>
     </tr>
   </tbody>
 </table>
@@ -1709,19 +1748,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 54.17999999999999 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 51.839999999999996 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -1781,7 +1824,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table6754635920">
+<table id="table5661812816">
 <tr><td>1.00</td><td>-0.30</td><td>-0.00</td></tr>
 <tr><td>-0.30</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -1818,11 +1861,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT5X6</th>
-      <td>25.8991</td>
+      <td>25.899097</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>25.8991</td>
+      <td>25.899097</td>
     </tr>
   </tbody>
 </table>
@@ -1859,11 +1902,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>49.7982</td>
+      <td>49.798193</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>51.7982</td>
+      <td>51.798193</td>
     </tr>
   </tbody>
 </table>
@@ -1874,19 +1917,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 49.46 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 51.04 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -1946,7 +1993,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table7784133584">
+<table id="table5666647504">
 <tr><td>1.00</td><td>-0.30</td><td>0.00</td></tr>
 <tr><td>-0.30</td><td>1.00</td><td>-0.00</td></tr>
 <tr><td>0.00</td><td>-0.00</td><td>1.00</td></tr>
@@ -1983,11 +2030,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT6X6</th>
-      <td>24.347</td>
+      <td>24.346972</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>24.347</td>
+      <td>24.346972</td>
     </tr>
   </tbody>
 </table>
@@ -2024,11 +2071,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>46.6939</td>
+      <td>46.693944</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>48.6939</td>
+      <td>48.693944</td>
     </tr>
   </tbody>
 </table>
@@ -2039,19 +2086,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 54.04 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 54.52 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -2111,7 +2162,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10832117584">
+<table id="table5666653072">
 <tr><td>1.00</td><td>-0.31</td><td>0.00</td></tr>
 <tr><td>-0.31</td><td>1.00</td><td>-0.00</td></tr>
 <tr><td>0.00</td><td>-0.00</td><td>1.00</td></tr>
@@ -2148,11 +2199,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT6X7</th>
-      <td>21.1192</td>
+      <td>21.119217</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>21.1192</td>
+      <td>21.119217</td>
     </tr>
   </tbody>
 </table>
@@ -2189,11 +2240,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>40.2384</td>
+      <td>40.238435</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>42.2384</td>
+      <td>42.238435</td>
     </tr>
   </tbody>
 </table>
@@ -2204,19 +2255,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 51.68000000000001 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 50.54 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -2276,7 +2331,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10832563792">
+<table id="table5666254288">
 <tr><td>1.00</td><td>-0.30</td><td>-0.00</td></tr>
 <tr><td>-0.30</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -2313,11 +2368,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT7X7</th>
-      <td>27.6851</td>
+      <td>27.685109</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>27.6851</td>
+      <td>27.685109</td>
     </tr>
   </tbody>
 </table>
@@ -2354,11 +2409,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>53.3702</td>
+      <td>53.370219</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>55.3702</td>
+      <td>55.370219</td>
     </tr>
   </tbody>
 </table>
@@ -2369,19 +2424,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 49.82 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 50.1 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -2441,7 +2500,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10832691536">
+<table id="table5661797648">
 <tr><td>1.00</td><td>-0.30</td><td>0.00</td></tr>
 <tr><td>-0.30</td><td>1.00</td><td>-0.00</td></tr>
 <tr><td>0.00</td><td>-0.00</td><td>1.00</td></tr>
@@ -2478,11 +2537,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT7X7</th>
-      <td>33.4063</td>
+      <td>33.40629</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>33.4063</td>
+      <td>33.40629</td>
     </tr>
   </tbody>
 </table>
@@ -2519,11 +2578,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>64.8126</td>
+      <td>64.81258</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>66.8126</td>
+      <td>66.81258</td>
     </tr>
   </tbody>
 </table>
@@ -2534,19 +2593,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 62.6 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 60.62 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -2606,7 +2669,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10832473296">
+<table id="table5666712144">
 <tr><td>1.00</td><td>-0.31</td><td>-0.00</td></tr>
 <tr><td>-0.31</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -2643,11 +2706,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT7X8</th>
-      <td>30.0043</td>
+      <td>30.004254</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>30.0043</td>
+      <td>30.004254</td>
     </tr>
   </tbody>
 </table>
@@ -2684,11 +2747,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>58.0085</td>
+      <td>58.008508</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>60.0085</td>
+      <td>60.008508</td>
     </tr>
   </tbody>
 </table>
@@ -2699,19 +2762,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 97.89999999999999 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 97.72 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -2771,7 +2838,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10832611536">
+<table id="table5666765712">
 <tr><td>1.00</td><td>-0.31</td><td>-0.01</td></tr>
 <tr><td>-0.31</td><td>1.00</td><td>0.01</td></tr>
 <tr><td>-0.01</td><td>0.01</td><td>1.00</td></tr>
@@ -2808,11 +2875,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT8X8</th>
-      <td>28.292</td>
+      <td>28.291974</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>28.292</td>
+      <td>28.291974</td>
     </tr>
   </tbody>
 </table>
@@ -2849,11 +2916,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>54.5839</td>
+      <td>54.583947</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>56.5839</td>
+      <td>56.583947</td>
     </tr>
   </tbody>
 </table>
@@ -2864,19 +2931,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 50.519999999999996 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 50.28 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -2936,7 +3007,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10833044880">
+<table id="table5666791568">
 <tr><td>1.00</td><td>-0.31</td><td>-0.00</td></tr>
 <tr><td>-0.31</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -2973,11 +3044,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT8X9</th>
-      <td>42.0937</td>
+      <td>42.093738</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>42.0937</td>
+      <td>42.093738</td>
     </tr>
   </tbody>
 </table>
@@ -3014,11 +3085,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>82.1875</td>
+      <td>82.187475</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>84.1875</td>
+      <td>84.187475</td>
     </tr>
   </tbody>
 </table>
@@ -3029,19 +3100,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 49.419999999999995 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 50.44 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -3101,7 +3176,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10833148304">
+<table id="table5661825424">
 <tr><td>1.00</td><td>-0.29</td><td>-0.00</td></tr>
 <tr><td>-0.29</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -3138,11 +3213,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT9X10</th>
-      <td>43.3574</td>
+      <td>43.35743</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>43.3574</td>
+      <td>43.35743</td>
     </tr>
   </tbody>
 </table>
@@ -3179,11 +3254,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>84.7149</td>
+      <td>84.714859</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>86.7149</td>
+      <td>86.714859</td>
     </tr>
   </tbody>
 </table>
@@ -3194,19 +3269,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 49.0 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 49.82 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -3266,7 +3345,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10833267792">
+<table id="table5661824976">
 <tr><td>1.00</td><td>-0.27</td><td>-0.00</td></tr>
 <tr><td>-0.27</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -3303,11 +3382,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT10X12</th>
-      <td>44.7004</td>
+      <td>44.700354</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>44.7004</td>
+      <td>44.700354</td>
     </tr>
   </tbody>
 </table>
@@ -3344,11 +3423,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>87.4007</td>
+      <td>87.400708</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>89.4007</td>
+      <td>89.400708</td>
     </tr>
   </tbody>
 </table>
@@ -3359,19 +3438,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 55.42 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 56.06 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -3431,7 +3514,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10833369232">
+<table id="table5666565200">
 <tr><td>1.00</td><td>-0.31</td><td>0.00</td></tr>
 <tr><td>-0.31</td><td>1.00</td><td>-0.00</td></tr>
 <tr><td>0.00</td><td>-0.00</td><td>1.00</td></tr>
@@ -3468,11 +3551,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT12X14</th>
-      <td>43.3579</td>
+      <td>43.357892</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>43.3579</td>
+      <td>43.357892</td>
     </tr>
   </tbody>
 </table>
@@ -3509,11 +3592,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>84.7158</td>
+      <td>84.715783</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>86.7158</td>
+      <td>86.715783</td>
     </tr>
   </tbody>
 </table>
@@ -3524,19 +3607,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 46.18 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 48.58 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -3596,7 +3683,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10833339856">
+<table id="table5661842000">
 <tr><td>1.00</td><td>-0.29</td><td>-0.00</td></tr>
 <tr><td>-0.29</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -3633,11 +3720,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT14X17</th>
-      <td>44.4271</td>
+      <td>44.427127</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>44.4271</td>
+      <td>44.427127</td>
     </tr>
   </tbody>
 </table>
@@ -3674,11 +3761,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>86.8543</td>
+      <td>86.854254</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>88.8543</td>
+      <td>88.854254</td>
     </tr>
   </tbody>
 </table>
@@ -3689,19 +3776,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 62.56 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 63.28 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -3761,7 +3852,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table9706833040">
+<table id="table5666953552">
 <tr><td>1.00</td><td>-0.29</td><td>-0.00</td></tr>
 <tr><td>-0.29</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -3798,11 +3889,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT17X21</th>
-      <td>56.0886</td>
+      <td>56.088644</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>56.0886</td>
+      <td>56.088644</td>
     </tr>
   </tbody>
 </table>
@@ -3839,11 +3930,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>110.177</td>
+      <td>110.177287</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>112.177</td>
+      <td>112.177287</td>
     </tr>
   </tbody>
 </table>
@@ -3854,19 +3945,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 49.120000000000005 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 49.66 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -3926,7 +4021,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10831200848">
+<table id="table5666973392">
 <tr><td>1.00</td><td>-0.26</td><td>-0.00</td></tr>
 <tr><td>-0.26</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -3963,11 +4058,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT21X30</th>
-      <td>56.9681</td>
+      <td>56.968111</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>56.9681</td>
+      <td>56.968111</td>
     </tr>
   </tbody>
 </table>
@@ -4004,11 +4099,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>111.936</td>
+      <td>111.936222</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>113.936</td>
+      <td>113.936222</td>
     </tr>
   </tbody>
 </table>
@@ -4019,19 +4114,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 49.32 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 49.2 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -4091,7 +4190,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10834287696">
+<table id="table5666892240">
 <tr><td>1.00</td><td>-0.23</td><td>-0.00</td></tr>
 <tr><td>-0.23</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -4128,11 +4227,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT30X40</th>
-      <td>55.7441</td>
+      <td>55.744111</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>55.7441</td>
+      <td>55.744111</td>
     </tr>
   </tbody>
 </table>
@@ -4169,11 +4268,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>109.488</td>
+      <td>109.488222</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>111.488</td>
+      <td>111.488222</td>
     </tr>
   </tbody>
 </table>
@@ -4184,19 +4283,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 49.82 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 51.480000000000004 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -4256,7 +4359,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10834341840">
+<table id="table5666845456">
 <tr><td>1.00</td><td>-0.24</td><td>-0.00</td></tr>
 <tr><td>-0.24</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -4293,11 +4396,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT40X48</th>
-      <td>47.3988</td>
+      <td>47.398844</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>47.3988</td>
+      <td>47.398844</td>
     </tr>
   </tbody>
 </table>
@@ -4334,11 +4437,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>92.7977</td>
+      <td>92.797688</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>94.7977</td>
+      <td>94.797688</td>
     </tr>
   </tbody>
 </table>
@@ -4349,19 +4452,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 49.84 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 48.8 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -4421,7 +4528,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10834298448">
+<table id="table5665279504">
 <tr><td>1.00</td><td>-0.32</td><td>-0.02</td></tr>
 <tr><td>-0.32</td><td>1.00</td><td>0.01</td></tr>
 <tr><td>-0.02</td><td>0.01</td><td>1.00</td></tr>
@@ -4458,11 +4565,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT48X73</th>
-      <td>69.0782</td>
+      <td>69.078228</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>69.0782</td>
+      <td>69.078228</td>
     </tr>
   </tbody>
 </table>
@@ -4499,11 +4606,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>136.156</td>
+      <td>136.156456</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>138.156</td>
+      <td>138.156456</td>
     </tr>
   </tbody>
 </table>
@@ -4514,19 +4621,23 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
     [[34mDEBUG   [0m][34m creating new MLE analysis[0m
     [[34mDEBUG   [0m][34m REGISTERING MODEL[0m
     
-    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
+    Found Isotropic template for irf P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/iso_P8R3_TRANSIENT020E_V3_v1.txt
     
-    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_ixpe_fermi/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
+    Found Galactic template for IRF. P8R3_TRANSIENT020E_V3: /Users/omodei/miniconda/envs/threeml_all/share/fermitools/refdata/fermi/galdiffuse/gll_iem_v07.fits
     
     Cutting the template around the ROI: 
     
+    [[34mDEBUG   [0m][34m Removing non-needed files[0m
+    [[34mDEBUG   [0m][34m removed {self._lmc._unique_filename}[0m
+    [[34mDEBUG   [0m][34m removed {xml_file}[0m
+    [[34mDEBUG   [0m][34m removed {temp_file}[0m
     [[34mDEBUG   [0m][34m MODEL REGISTERED![0m
     [[32mINFO    [0m][32m set the minimizer to minuit[0m
     [[32mINFO    [0m][32m set the minimizer to ROOT[0m
     [[34mDEBUG   [0m][34m beginning the fit![0m
     [[34mDEBUG   [0m][34m starting local optimization[0m
     [[35mWARNING [0m][35m get_number_of_data_points not implemented, values for statistical measurements such as AIC or BIC are unreliable[0m
-    [[35mWARNING [0m][35m 49.5 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
+    [[35mWARNING [0m][35m 50.739999999999995 percent of samples have been thrown away because they failed the constraints on the parameters. This results might not be suitable for error propagation. Enlarge the boundaries until you loose less than 1 percent of the samples.[0m
     Best fit values:
     
 
@@ -4586,7 +4697,7 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
 
 
 
-<table id="table10834322128">
+<table id="table5666379152">
 <tr><td>1.00</td><td>-0.36</td><td>0.02</td></tr>
 <tr><td>-0.36</td><td>1.00</td><td>-0.01</td></tr>
 <tr><td>0.02</td><td>-0.01</td><td>1.00</td></tr>
@@ -4623,11 +4734,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>LAT73X172</th>
-      <td>79.7989</td>
+      <td>79.798918</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>79.7989</td>
+      <td>79.798918</td>
     </tr>
   </tbody>
 </table>
@@ -4664,11 +4775,11 @@ for T0,T1 in zip(intervals[:-1],intervals[1:]):
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>157.598</td>
+      <td>157.597836</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>159.598</td>
+      <td>159.597836</td>
     </tr>
   </tbody>
 </table>
@@ -4746,7 +4857,7 @@ display_spectrum_model_counts(jl, step=False,figsize=(10,10));
 
 
 
-<table id="table10831621328">
+<table id="table5664581200">
 <tr><td>1.00</td><td>-0.31</td><td>-0.00</td></tr>
 <tr><td>-0.31</td><td>1.00</td><td>0.00</td></tr>
 <tr><td>-0.00</td><td>0.00</td><td>1.00</td></tr>
@@ -4783,11 +4894,11 @@ display_spectrum_model_counts(jl, step=False,figsize=(10,10));
   <tbody>
     <tr>
       <th>LAT4X4</th>
-      <td>21.0058</td>
+      <td>21.005799</td>
     </tr>
     <tr>
       <th>total</th>
-      <td>21.0058</td>
+      <td>21.005799</td>
     </tr>
   </tbody>
 </table>
@@ -4824,11 +4935,11 @@ display_spectrum_model_counts(jl, step=False,figsize=(10,10));
   <tbody>
     <tr>
       <th>AIC</th>
-      <td>40.0116</td>
+      <td>40.011598</td>
     </tr>
     <tr>
       <th>BIC</th>
-      <td>42.0116</td>
+      <td>42.011598</td>
     </tr>
   </tbody>
 </table>
@@ -4863,59 +4974,59 @@ fig.set_size_inches(10,10)
 ```
 
 
-    processing MLE analyses:   0%|          | 0/13 [00:00<?, ?it/s]
+    processing MLE analyses:   0%|                                                                                …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
 
-    Propagating errors:   0%|          | 0/100 [00:00<?, ?it/s]
+    Propagating errors:   0%|                                                                                     …
 
 
     [[34mDEBUG   [0m][34m converting MeV to MeV[0m
