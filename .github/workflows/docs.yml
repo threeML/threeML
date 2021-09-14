@@ -195,8 +195,6 @@ jobs:
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
 
-          # temporary fix for fermi tools
-          conda install -c conda-forge clhep=2.4.4.1
 
       - name: Install the package
         shell: bash -l {0}
@@ -216,8 +214,12 @@ jobs:
           mkdir -p ~/.config/threeML
           cp threeML/data/doc_config.yml ~/.config/threeML/
 
-          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_LAT.md
-          jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
+          #jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/Fermipy_LAT.md
+
+          #jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
+
+          jupytext --to py --pipe black docs/md_docs/slow_execute/LAT_Transient_Builder_Example.md
+          python docs/md_docs/slow_execute/LAT_Transient_Builder_Example.py
 
           #jupytext --to ipynb --pipe black --execute docs/md_docs/slow_execute/optimizer_docs.md
 
@@ -282,9 +284,6 @@ jobs:
           #sudo apt-get install texlive
 
           conda install ${compilers} jupytext jupyterthemes jupyter_latex_envs emcee pymultinest ultranest
-
-          # temporary fix for fermi tools
-
 
       - name: Install the package
         shell: bash -l {0}
