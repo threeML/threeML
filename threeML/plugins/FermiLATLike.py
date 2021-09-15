@@ -40,7 +40,7 @@ log = setup_logger(__name__)
 
 class MyPointSource(LikelihoodComponent.GenericSource):
     def __init__(self, source, name, temp_file):
-        """FIXME! briefly describe function
+        """Container class for indexing likelihood sources
 
         :param source: 
         :param name: 
@@ -64,11 +64,11 @@ class LikelihoodModelConverter:
     
 
     def set_file_spectrum_energies(self, emin_kev, emax_kev, n_energies):
-        """FIXME! briefly describe function
+        """Make a log spaced array from emin_kev, to emax_kev with n_energies bins
 
-        :param emin_kev: 
-        :param emax_kev: 
-        :param n_energies: 
+        :param emin_kev: starting energy in keV
+        :param emax_kev: ending energy in keV
+        :param n_energies: number of energy bins
         :returns: 
         :rtype: 
 
@@ -77,7 +77,10 @@ class LikelihoodModelConverter:
         self.energies_kev = numpy.logspace(numpy.log10(emin_kev), numpy.log10(emax_kev), n_energies)
 
     def write_xml(self, xmlfile, ra, dec, roi) -> List[str]:
-        """FIXME! briefly describe function
+        """Loop through all the sources in the likelihood model and generate a FileSpectrum
+           for all of them. This is necessary to allow the FermiLATLike class
+           to update the spectrum in pyLikelihood without having to write and read a .xml file
+           on the disk
 
         :param xmlfile: 
         :param ra: 
@@ -87,12 +90,6 @@ class LikelihoodModelConverter:
         :rtype: 
 
         """
-        
-
-        # Loop through all the sources in the likelihood model and generate a FileSpectrum
-        # for all of them. This is necessary to allow the FermiLATLike class
-        # to update the spectrum in pyLikelihood without having to write and read a .xml file
-        # on the disk
 
         all_sources_for_pylike = []
 
@@ -158,10 +155,11 @@ class LikelihoodModelConverter:
         return temp_files
 
     def _make_file_spectrum(self, ip) -> MyPointSource:
-        """FIXME! briefly describe function
+        """Write the xml code for one point source. The model used is the FileFunction,
+        so we can accomodate any model from astromodels
 
-        :param ip: 
-        :returns: 
+        :param ip: identification number for the source
+        :returns: MyPointSource
         :rtype: 
 
         """
@@ -226,16 +224,17 @@ class FermiLATUnpickler(object):
 
     def __call__(self, name, event_file, ft2_file, livetime_cube_file, kind, exposure_map_file, likelihood_model,
                  inner_minimization):
-        """FIXME! briefly describe function
+        """Create an instance of the FermiLATLike pligin
 
-        :param name: 
-        :param event_file: 
-        :param ft2_file: 
-        :param livetime_cube_file: 
-        :param kind: 
-        :param exposure_map_file: 
-        :param likelihood_model: 
-        :param inner_minimization: 
+        :param name: name for the plugin
+        :param event_file: FT1 file congtaining the events
+        :param ft2_file: FT2 file containing  the pointing history of the satellite
+        :param livetime_cube_file: Livetime cube file (created by the fermitool gtltcube)
+        :param kind: Analysis type, BINNED or UNBINNED
+        :param exposure_map_file: exposure map file created by the fermitool gtexpmap
+        :param likelihood_model: file containing the likelihood model
+        :param inner_minimization: Turn on/off the minimization of the internal Fermi
+        parameters
         :returns: 
         :rtype: 
 
@@ -265,18 +264,16 @@ class FermiLATLike(PluginPrototype):
 
         Fermi-LAT plugin utilizing the low-end Fermi ST stack. Allows for binned
         or unbinned analysis
-
-        :param name: 
-        :param event_file: 
-        :param ft2_file: 
-        :param livetime_cubefile: 
-        :param kind: 
-        :param exposure_map_file: 
-        :param source_maps: 
-        :param binned_expo_map:
-        :param source_name:
-        :returns: 
-        :rtype: 
+        :param name: name for the plugin
+        :param event_file: FT1 file congtaining the events
+        :param ft2_file: FT2 file containing  the pointing history of the satellite
+        :param livetime_cube_file: Livetime cube file (created by the fermitool gtltcube)
+        :param kind: Analysis type, BINNED or UNBINNED
+        :param source_maps:: source map file created by the fermitool gtsrcmap
+        :param binned_expo_map: binned exposure map
+        :param source_name: Name of  the source to be fitted
+        :returns:
+        :rtype:
 
         """
 
@@ -304,7 +301,7 @@ class FermiLATLike(PluginPrototype):
         self.n_energies = 200
 
         with fits.open(event_file) as file:
-            self.DELTA_T_OBS = file[0].header['TSTOP'] - file[0].header['TSTART']
+            self.__observation_duration = file[0].header['TSTOP'] - file[0].header['TSTART']
 
 
         # This is the limit on the effective area correction factor,
@@ -385,6 +382,9 @@ class FermiLATLike(PluginPrototype):
         Must be a likelihood_model instance.
 
         This method can also set or override a previously set source name.
+        :param likelihood_model: Model of the ROI for the likelihood analysis
+        :param source_name: source to be fitted
+        :return:
         """
 
         # with suppress_stdout():
@@ -474,7 +474,7 @@ class FermiLATLike(PluginPrototype):
         Turn on the minimization of the internal Fermi
         parameters
 
-        :param flag: 
+        :param flag: turing on and off the minimization  of the Fermi internal parameters
         :type flag: bool
         :returns: 
 
@@ -592,7 +592,8 @@ class FermiLATLike(PluginPrototype):
         return fake, fake, fake, fake
 
     def get_observation_duration(self) -> float:
-        return self.DELTA_T_OBS
+
+        return self.__observation_duration
 
     def display(self):
 
@@ -676,20 +677,15 @@ class FermiLATLike(PluginPrototype):
         data_color: str = "k",
         model_color: str = "r",
         background_color: str = "b",
-        step: bool = True,
         show_data: bool = True,
         show_residuals: bool = True,
         ratio_residuals: bool = False,
         show_legend: bool = True,
-        min_rate: Union[int, float] = 1e-99,
         model_label: Optional[str] = None,
         model_kwargs: Optional[Dict[str, Any]] = None,
         data_kwargs: Optional[
         Dict[str, Any]] = None,
-        background_label: Optional[str] = None,
         background_kwargs: Optional[Dict[str, Any]] = None,
-        source_only: bool = True,
-        show_background: bool = False,
         ** kwargs
     ) -> ResidualPlot:
         """
@@ -705,16 +701,14 @@ class FermiLATLike(PluginPrototype):
 
         :param data_color: the color of the data
         :param model_color: the color of the model
-        :param step: (bool) create a step count histogram or interpolate the model
         :param show_data: (bool) show_the data with the model
         :param show_residuals: (bool) shoe the residuals
         :param ratio_residuals: (bool) use model ratio instead of residuals
         :param show_legend: (bool) show legend
-        :param min_rate: the minimum rate per bin
         :param model_label: (optional) the label to use for the model default is plugin name
-        :param model_subplot: (optional) axis or list of axes to plot to
         :param model_kwargs: plotting kwargs affecting the plotting of the model
         :param data_kwargs:  plotting kwargs affecting the plotting of the data and residuls
+        :param background_kwargs: plotting kwargs affecting the plotting of the background
         :return:
         """
 
@@ -834,7 +828,7 @@ class FermiLATLike(PluginPrototype):
         ec = (e1 + e2) / 2.0
         de = (e2 - e1) / 2.0
 
-        conversion_factor = de * self.DELTA_T_OBS
+        conversion_factor = de * self.__observation_duration
         sum_model = numpy.zeros_like(
             self.like._srcCnts(self.like.sourceNames()[0]))
 
