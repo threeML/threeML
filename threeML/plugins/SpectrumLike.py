@@ -369,15 +369,18 @@ class SpectrumLike(PluginPrototype):
 
                 self._observed_count_errors = None
 
-                self._observed_counts = self._observed_counts.astype(np.int64)
+                self._observed_counts = np.around(
+                    self._observed_counts
+                ).astype(np.int64)
 
                 if self._background_spectrum.is_poisson:
 
                     observation_noise_model = "poisson"
                     background_noise_model = "poisson"
 
-                    self._background_counts = self._background_counts.astype(
-                        np.int64)
+                    self._background_counts = np.around(
+                        self._background_counts
+                    ).astype(np.int64)
 
                     if not np.all(self._observed_counts >= 0):
 
@@ -431,7 +434,9 @@ class SpectrumLike(PluginPrototype):
             if self._observed_spectrum.is_poisson:
 
                 self._observed_count_errors = None
-                self._observed_counts = self._observed_counts.astype(np.int64)
+                self._observed_counts = np.around(
+                    self._observed_counts
+                ).astype(np.int64)
 
                 if not np.all(self._observed_counts >= 0):
 

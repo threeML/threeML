@@ -82,7 +82,7 @@ If you find this package useful in you analysis, or the code in your own custom 
 
 
 ### Acknowledgements 
-3ML makes use of the Spanish Virtual Observatory's Filter Profile servce (http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NIRT).
+3ML makes use of the Spanish Virtual Observatory's Filter Profile service (http://svo2.cab.inta-csic.es/svo/theory/fps3/index.php?mode=browse&gname=NIRT).
 
 If you use these profiles in your research, please consider citing them by using the following suggested sentence in your paper:
 

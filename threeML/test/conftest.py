@@ -25,6 +25,8 @@ from threeML.utils.numba_utils import VectorFloat64
 
 from threeML.io.logging import debug_mode
 
+np.random.seed(12345)
+
 # useful for testing
 debug_mode()
 
