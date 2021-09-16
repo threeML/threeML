@@ -8,7 +8,7 @@ on:
 jobs:
     build-conda:
         name: Build and verify with Conda
-        if: startsWith(github.event.ref, 'refs/tags') == false
+        if: startsWith(github.ref, 'refs/tags') == false
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
@@ -85,7 +85,7 @@ jobs:
 
     publish-conda:
         name: Publish to Conda
-        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
@@ -149,19 +149,27 @@ jobs:
               run: |
 
                   conda install -c conda-forge anaconda-client
-                  echo "Uploading ${{matrix.os}}"
+                  echo "Uploading ${{matrix.os}} IsDev: ${ISDEV} "
+
+                  if [[ "${ISDEV}" == "true"]]; then
+
+                  LABEL="--label dev"
+
+                  fi
 
                   if [[ "${{matrix.os}}" == "ubuntu-latest" ]]; then
 
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/share/miniconda/conda-bld/linux-64/*.tar.bz2 --force
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/share/miniconda/conda-bld/linux-64/*.tar.bz2 --force $LABEL
 
                   else
 
-                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/local/miniconda/conda-bld/osx-64/*.tar.bz2 --force
+                  anaconda -v --show-traceback -t $UPLOAD_TOKEN upload -u threeml /usr/local/miniconda/conda-bld/osx-64/*.tar.bz2 --force $LABEL
 
                   fi
 
               env:
                   UPLOAD_TOKEN: ${{secrets.CONDA_TOKEN}}
                   CURRENT_OS: ${{matrix.os}}
+                  ISDEV: ${{endsWith(github.ref, 'dev')}}
+
