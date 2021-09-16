@@ -267,7 +267,7 @@ conda config --add channels threeml
 conda config --add channels conda-forge
 
 PACKAGES_TO_INSTALL="astromodels>=2 threeml>=2 iminuit>=2"
-
+#tbb=2021.3.0 numba=0.54 pygmo=2.18
 if [[ "${INSTALL_XSPEC}" == "yes" ]]; then
 
     PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} xspec-modelsonly=6.25"
@@ -278,6 +278,7 @@ fi
 if [[ "${INSTALL_ROOT}" == "yes" ]]; then
 
     PACKAGES_TO_INSTALL="${PACKAGES_TO_INSTALL} root=6.22"
+    #astropy=4.2 ipyparallel=6.3 numba=0.53 scipy=1.5.3 numba=0.53 pygmo=2.16.1"
 
 fi
 
@@ -296,7 +297,13 @@ fi
 
 # Now we have conda installed, let's install 3ML
 
-conda create --yes --name ${ENV_NAME} python=$PYTHON_VERSION ${PACKAGES_TO_INSTALL}
+conda create --yes --name ${ENV_NAME} python=$PYTHON_VERSION mamba
+
+conda activate ${ENV_NAME}
+
+mamba install python=$PYTHON_VERSION ${PACKAGES_TO_INSTALL}
+
+conda deactivate
 
 line
 echo "Generating setup scripts"
