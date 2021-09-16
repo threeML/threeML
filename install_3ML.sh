@@ -299,7 +299,11 @@ fi
 
 conda create --yes --name ${ENV_NAME} python=$PYTHON_VERSION mamba
 
+conda activate ${ENV_NAME}
+
 mamba install python=$PYTHON_VERSION ${PACKAGES_TO_INSTALL}
+
+conda deactivate
 
 line
 echo "Generating setup scripts"
