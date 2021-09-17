@@ -3,9 +3,7 @@ on:
     push:
       branches:
         - '*'
-        - '!master'
-        - '!dev'
-        
+
       paths-ignore:
         - "README.md"
         - "**/docs/**"
@@ -14,7 +12,7 @@ on:
     pull_request:
       branches:
         - master
-        - 'dev'
+        - dev
 
     schedule:
         - cron: "0 11 * * *"
