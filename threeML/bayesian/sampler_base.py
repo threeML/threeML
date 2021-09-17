@@ -397,7 +397,6 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
         if not np.isfinite(log_like):
             # Issue warning
-            # for some samplers (like multinest) the
             keys = self._likelihood_model.free_parameters.keys()
             params = [
                 f"{key}: {self._likelihood_model.free_parameters[key].value}"
