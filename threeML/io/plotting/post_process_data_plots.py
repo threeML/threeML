@@ -9,6 +9,13 @@ from past.utils import old_div
 
 import threeML.plugins.PhotometryLike as photolike
 import threeML.plugins.SpectrumLike as speclike
+
+try:
+    from threeML.plugins.FermiLATLike import FermiLATLike
+    LATLike = True
+except:
+    LATLike = False
+
 from threeML.config.config import threeML_config
 from threeML.config.plotting_structure import BinnedSpectrumPlot
 from threeML.exceptions.custom_exceptions import custom_warnings
@@ -84,19 +91,19 @@ def display_spectrum_model_counts(analysis, data=(), **kwargs):
             if isinstance(
                 analysis.data_list[key], speclike.SpectrumLike
             ):
-
                 new_data_keys.append(key)
-
+            elif LATLike and isinstance(
+                            analysis.data_list[key], FermiLATLike
+                ):
+                new_data_keys.append(key)
             else:
-
                 log.warning(
-                    "Dataset %s is not of the SpectrumLike kind. Cannot be plotted by "
-                    "display_spectrum_model_counts" % key
+                    "Dataset %s is not of the SpectrumLike or FermiLATLike  kind. Cannot be plotted by display_spectrum_model_counts" % key
                 )
 
     if not new_data_keys:
         RuntimeError(
-            "There were no valid SpectrumLike data requested for plotting. Please use the detector names in the data list"
+            "There were no valid SpectrumLike or FermiLATLike data requested for plotting. Please use the detector names in the data list"
         )
 
     data_keys = new_data_keys
