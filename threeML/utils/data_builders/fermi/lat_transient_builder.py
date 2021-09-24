@@ -1,21 +1,28 @@
 import collections
 import os
-import pandas as pd
+import re
+import shutil
 import site
 import subprocess
-from glob import glob
-import re
 import uuid
-import shutil
+from glob import glob
 
+import pandas as pd
 import yaml
 
+from threeML.config import threeML_config
+from threeML.io.file_utils import file_existing_and_readable
+from threeML.io.logging import setup_logger
+
 pd.reset_option('display.float_format')
+
+log = setup_logger(__name__)
 
 
 try: 
     from GtBurst import IRFS
     from GtBurst.Configuration import Configuration
+
     from threeML import FermiLATLike
 
     irfs = IRFS.IRFS.keys()
@@ -28,9 +35,14 @@ try:
 except (ImportError):
 
     has_fermitools = False
-    print('No fermitools installed')
 
-from threeML.io.file_utils import file_existing_and_readable
+    if threeML_config.logging.startup_warnings:
+
+        log.warning('No fermitools installed')
+        
+
+
+
 
 class LATLikelihoodParameter(object):
 
@@ -591,7 +603,7 @@ class TransientLATDataBuilder(object):
 
         site_pkg = site.getsitepackages()[0]
         cmd = os.path.join(site_pkg, cmd)
-        print('About to run the following command:\n%s' % cmd)
+        log.info('About to run the following command:\n%s' % cmd)
 
         # see what we already have
 
@@ -605,11 +617,11 @@ class TransientLATDataBuilder(object):
                 #  We will move the old intervals to a tmp directory
                 # so that they are not lost
 
-                print('You have choosen to recompute the time intervals in this folder')
+                log.info('You have choosen to recompute the time intervals in this folder')
 
                 tmp_dir = 'tmp_%s' % str(uuid.uuid4())
 
-                print('The older entries will be moved to %s' % tmp_dir)
+                log.info('The older entries will be moved to %s' % tmp_dir)
 
                 os.mkdir(tmp_dir)
 
@@ -657,7 +669,7 @@ class TransientLATDataBuilder(object):
 
             if interval in intervals_before_run:
 
-                print(
+                log.info(
                     '%s existed before this run,\n it will not be auto included in the list,\n but you can manually see grab the data.' % interval
                 )
             else:
@@ -672,35 +684,39 @@ class TransientLATDataBuilder(object):
                 event_file = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt.fit' % self._triggername)
 
                 if not file_existing_and_readable(event_file):
-                    print('The event file does not exist. Please examine!')
+                    log.info('The event file does not exist. Please examine!')
 
                 ft2_file = os.path.join(interval, 'gll_ft2_tr_bn%s_v00_filt.fit' % self._triggername)
 
                 if not file_existing_and_readable(ft2_file):
-                    print('The ft2 file does not exist. Please examine!')
-                    print('we will grab the data file for you.')
+                    log.info('The ft2 file does not exist. Please examine!')
+                    log.info('we will grab the data file for you.')
 
                     base_ft2_file = os.path.join('%s' % self.datarepository.get_disp_value(),
                                                  'bn%s' % self._triggername,
                                                  'gll_ft2_tr_bn%s_v00.fit' % self._triggername)
 
-                    assert file_existing_and_readable(base_ft2_file), 'Cannot find any FT2 files!'
+                    if not file_existing_and_readable(base_ft2_file):
 
+                        log.error('Cannot find any FT2 files!')
+
+                        raise AssertionError()
+                        
                     shutil.copy(base_ft2_file, interval)
 
                     ft2_file = os.path.join(interval, 'gll_ft2_tr_bn%s_v00.fit' % self._triggername)
 
-                    print('copied %s to %s' % (base_ft2_file, ft2_file))
+                    log.info('copied %s to %s' % (base_ft2_file, ft2_file))
 
                 exposure_map = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_expomap.fit' % self._triggername)
 
                 if not file_existing_and_readable(exposure_map):
-                    print('The exposure map does not exist. Please examine!')
+                    log.info('The exposure map does not exist. Please examine!')
 
                 livetime_cube = os.path.join(interval, 'gll_ft1_tr_bn%s_v00_filt_ltcube.fit' % self._triggername)
 
                 if not file_existing_and_readable(livetime_cube):
-                    print('The livetime_cube does not exist. Please examine!')
+                    log.info('The livetime_cube does not exist. Please examine!')
 
                 # optional bin_file parameter
                 #if self._parameters['bin_file'].value is not None:
