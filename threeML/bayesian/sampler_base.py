@@ -397,9 +397,14 @@ class SamplerBase(with_metaclass(abc.ABCMeta, object)):
 
         if not np.isfinite(log_like):
             # Issue warning
+            keys = self._likelihood_model.free_parameters.keys()
+            params = [
+                f"{key}: {self._likelihood_model.free_parameters[key].value}"
+                for key in keys
+            ]
 
             log.warning(
-                "Likelihood value is infinite for parameters %s" % trial_values,
+                f"Likelihood value is infinite for parameters: {params}"
             )
 
             return -np.inf

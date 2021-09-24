@@ -105,8 +105,8 @@ setup(
 optional_dependencies = {
     "cthreeML": [False, "needed by HAWC plugin"],
     "pymultinest": [False, "provides the Multinest sampler for Bayesian analysis"],
-    "ultranest": [False, "procides the UltraNest sampler for Bayesian Analysis"],
-    "zeus": [False, "procides the zeus sampler for Bayesian Analysis"],
+    "ultranest": [False, "provides the UltraNest sampler for Bayesian Analysis"],
+    "zeus": [False, "provides the zeus sampler for Bayesian Analysis"],
     "pyOpt": [False, "provides more optimizers"],
     "ROOT": [False, "provides the ROOT optimizer"],
     "ipywidgets": [False, "provides widget for jypyter (like the HTML progress bar)"],
